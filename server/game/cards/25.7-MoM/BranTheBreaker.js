@@ -1,7 +1,7 @@
 const DrawCard = require('../../drawcard.js');
 
 class BranTheBreaker extends DrawCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.attachmentRestriction({ type: 'location', unique: true });
         this.persistentEffect({
             condition: () => this.game.isDuringChallenge({ attacker: this.controller }),

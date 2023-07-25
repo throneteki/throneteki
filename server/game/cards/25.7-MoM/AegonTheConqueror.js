@@ -1,7 +1,7 @@
 const DrawCard = require('../../drawcard.js');
 
 class AegonTheConqueror extends DrawCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.attachmentRestriction({ type: 'location', unique: true });
         this.persistentEffect({
             condition: () => this.controller.anyCardsInPlay({ type: 'character', attacking: true, trait: 'Dragon', printedCostOrHigher: 7 }),

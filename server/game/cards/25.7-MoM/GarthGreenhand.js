@@ -1,7 +1,7 @@
 const DrawCard = require('../../drawcard.js');
 
 class GarthGreenhand extends DrawCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.attachmentRestriction({ type: 'location', unique: true });
         this.plotModifiers({
             gold: 1
