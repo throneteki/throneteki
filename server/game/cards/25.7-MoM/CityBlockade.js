@@ -1,6 +1,6 @@
-const DrawCard = require('../../drawcard.js');
+const PlotCard = require('../../plotcard.js');
 
-class CityBlockade extends DrawCard {
+class CityBlockade extends PlotCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetController: 'any',
