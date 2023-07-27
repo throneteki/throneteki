@@ -1409,6 +1409,25 @@ const Effects = {
             }
         };
     },
+    lookAtBottomCard: function(playersFunc) {
+        return {
+            targetType: 'player',
+            apply: function(player, context) {
+                playersFunc = playersFunc || (() => [player]);
+                let revealFunc = (card, viewingPlayer) => viewingPlayer === player && playersFunc().filter(target => target.drawDeck.length > 0).map(target => target.drawDeck[target.drawDeck.length - 1]).includes(card);
+
+                context.lookAtBottomCard = context.lookAtBottomCard || {};
+                context.lookAtBottomCard[player.name] = revealFunc;
+                context.game.cardVisibility.addRule(revealFunc);
+            },
+            unapply: function(player, context) {
+                let revealFunc = context.lookAtBottomCard[player.name];
+
+                context.game.cardVisibility.removeRule(revealFunc);
+                delete context.lookAtBottomCard[player.name];
+            }
+        };
+    },
     revealTopCards: function(amount) {
         let topCardsFunc = player => player.drawDeck.slice(0, amount);
         return {
