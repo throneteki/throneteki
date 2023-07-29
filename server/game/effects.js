@@ -813,6 +813,8 @@ const Effects = {
             }
         };
     },
+    cannotGainIcons: cannotEffect('gainIcon'),
+    cannotLoseIcons: cannotEffect('loseIcon'),
     cannotTarget: cannotEffect('target'),
     cannotTargetUsingAssault: cannotEffect('assault'),
     cannotTargetUsingStealth: cannotEffect('stealth'),
