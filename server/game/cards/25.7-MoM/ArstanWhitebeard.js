@@ -11,6 +11,7 @@ class ArstanWhitebeard extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => !this.controller.anyCardsInPlay({ type: 'character', trait: ['Lord', 'Lady'] }),
+            match: this,
             effect: ability.effects.cannotBeKneeled()
         });
     }
