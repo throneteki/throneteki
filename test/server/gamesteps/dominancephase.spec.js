@@ -34,6 +34,8 @@ describe('the DominancePhase', () => {
                 phase.determineWinner();
                 expect(game.addPower).not.toHaveBeenCalled();
             });
+            // TODO: Add scenario for dominance tied, and one player winning ties (that player should win)
+            // TODO: Add scenario for dominance tied, and more than one player winning ties (nobody should win)
         });
 
         describe('when dominance strength is not tied', () => {

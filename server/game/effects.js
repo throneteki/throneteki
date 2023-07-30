@@ -1063,6 +1063,28 @@ const Effects = {
             }
         };
     },
+    winsTiesForInitiative: function() {
+        return {
+            targetType: 'player',
+            apply: function(player) {
+                player.flags.add('winsInitiativeTies');
+            },
+            unapply: function(player) {
+                player.flags.remove('winsInitiativeTies');
+            }
+        };
+    },
+    winsTiesForDominance: function() {
+        return {
+            targetType: 'player',
+            apply: function(player) {
+                player.flags.add('winsDominanceTies');
+            },
+            unapply: function(player) {
+                player.flags.remove('winsDominanceTies');
+            }
+        };
+    },
     canPlay: function(predicate) {
         let playableLocation = new PlayableLocation('play', predicate);
         return {

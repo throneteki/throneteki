@@ -8,8 +8,8 @@ describe('RevealPlots', function() {
 
     describe('getInitiativeResult()', function() {
         beforeEach(function() {
-            this.player1Spy = jasmine.createSpyObj('player', ['getTotalInitiative', 'getTotalPower']);
-            this.player2Spy = jasmine.createSpyObj('player', ['getTotalInitiative', 'getTotalPower']);
+            this.player1Spy = jasmine.createSpyObj('player', ['getTotalInitiative', 'getTotalPower', 'hasFlag']);
+            this.player2Spy = jasmine.createSpyObj('player', ['getTotalInitiative', 'getTotalPower', 'hasFlag']);
             this.gameSpy.getPlayers.and.returnValue([this.player1Spy, this.player2Spy]);
         });
 
@@ -77,5 +77,7 @@ describe('RevealPlots', function() {
                 }));
             });
         });
+        // TODO: Add scenario for initiative tied, and one player winning ties (that player should win)
+        // TODO: Add scenario for initiative tied, and more than one player winning ties (should continue checking with only players which win ties)
     });
 });
