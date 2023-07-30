@@ -13,7 +13,7 @@ class DanceOfTheDragons extends PlotCard {
                 args: { 
                     amount: context => Math.min(context.event.challenge.loser.faction.power, 2),
                     loser: context => context.event.challenge.loser
-                 }
+                }
             },
             handler: context => {
                 context.replaceHandler(() => {
