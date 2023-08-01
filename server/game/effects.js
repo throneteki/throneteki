@@ -813,6 +813,8 @@ const Effects = {
             }
         };
     },
+    cannotGainIcons: cannotEffect('gainIcon'),
+    cannotLoseIcons: cannotEffect('loseIcon'),
     cannotTarget: cannotEffect('target'),
     cannotTargetUsingAssault: cannotEffect('assault'),
     cannotTargetUsingStealth: cannotEffect('stealth'),
@@ -1058,6 +1060,28 @@ const Effects = {
             },
             unapply: function(player) {
                 player.cannotWinChallenge = false;
+            }
+        };
+    },
+    winsTiesForInitiative: function() {
+        return {
+            targetType: 'player',
+            apply: function(player) {
+                player.flags.add('winsInitiativeTies');
+            },
+            unapply: function(player) {
+                player.flags.remove('winsInitiativeTies');
+            }
+        };
+    },
+    winsTiesForDominance: function() {
+        return {
+            targetType: 'player',
+            apply: function(player) {
+                player.flags.add('winsDominanceTies');
+            },
+            unapply: function(player) {
+                player.flags.remove('winsDominanceTies');
             }
         };
     },

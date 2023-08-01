@@ -90,7 +90,11 @@ class RevealPlots extends BaseStep {
         if(result.powerTied) {
             this.game.addMessage('{0} was randomly selected to win initiative because both initiative values and power were tied', initiativeWinner);
         } else if(result.initiativeTied) {
-            this.game.addMessage('{0} won initiative because initiative values were tied but {0} had the lowest power', initiativeWinner);
+            if(result.autoTieWinner) {
+                this.game.addMessage('{0} won initiative because initiative values were tied and {0} wins ties', initiativeWinner);
+            } else {
+                this.game.addMessage('{0} won initiative because initiative values were tied but {0} had the lowest power', initiativeWinner);
+            }
         } else {
             this.game.addMessage('{0} won initiative', initiativeWinner);
         }
@@ -103,7 +107,7 @@ class RevealPlots extends BaseStep {
     getInitiativeResult(sampleFunc = sample) {
         let result = { initiativeTied: false, powerTied: false, player: undefined };
         let playerInitiatives = this.game.getPlayers().map(player => {
-            return { player: player, initiative: player.getTotalInitiative(), power: player.getTotalPower() };
+            return { player: player, initiative: player.getTotalInitiative(), power: player.getTotalPower(), winsTies: player.hasFlag('winsInitiativeTies') };
         });
         let initiativeValues = playerInitiatives.map(p => p.initiative);
         let highestInitiative = Math.max(...initiativeValues);
@@ -112,6 +116,10 @@ class RevealPlots extends BaseStep {
         result.initiativeTied = potentialWinners.length > 1;
 
         if(result.initiativeTied) {
+            let tieWinners = potentialWinners.filter(p => p.winsTies);
+            potentialWinners = tieWinners.length > 0 ? tieWinners : potentialWinners;
+            result.autoTieWinner = tieWinners.length === 1;
+            
             let powerValues = potentialWinners.map(p => p.power);
             let lowestPower = Math.min(...powerValues);
             potentialWinners = potentialWinners.filter(p => p.power === lowestPower);
