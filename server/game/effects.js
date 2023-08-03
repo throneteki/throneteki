@@ -1576,6 +1576,17 @@ const Effects = {
             }
         };
     },
+    setPrintedValue: function(stat, value) {
+        return {
+            apply: function(card) {
+                card.printedValues[stat].push(value);
+            },
+            unapply: function(card) {
+                const index = card.printedValues[stat].lastIndexOf(value);
+                card.printedValues[stat].splice(index, 1);
+            }
+        };
+    },
     //Meereen only effect
     removeCardsFromHand: function() {
         return {

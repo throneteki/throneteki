@@ -62,6 +62,7 @@ class BaseCard {
         this.eventsForRegistration = [];
         this.keywordSources = [];
 
+        this.printedValues = {};
         this.power = 0;
         this.tokens = {};
         this.plotModifierValues = {
