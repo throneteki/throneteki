@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 
 class Pyke extends DrawCard {
     setupCardAbilities(ability) {
@@ -20,17 +21,17 @@ class Pyke extends DrawCard {
                     !card.isLoyal()
             },
             handler: context => {
-                context.target.owner.moveCardToTopOfDeck(context.target);
                 this.game.addMessage('{0} kneels {1} to move {2} to the top of {3}\'s deck', context.player, this, context.target, context.target.owner);
-                
-                if(context.target.location === 'draw deck') {
-                    this.game.once('onAtEndOfPhase', () => {
-                        if(context.target.owner.canDraw()) {
-                            context.target.owner.drawCardsToHand(1);
-                            this.game.addMessage('{0} draws 1 card for {1}', context.target.owner, this);
-                        }
-                    });
-                }
+                this.game.resolveGameAction(GameActions.returnCardToDeck({ card: context.target }))
+                    .thenExecute(() => {
+                        this.game.once('onAtEndOfPhase', () => {
+                            if(context.target.owner.canDraw()) {
+                                context.target.owner.drawCardsToHand(1);
+                                this.game.addMessage('{0} draws 1 card for {1}', context.target.owner, this);
+                            }
+                        });
+                    }
+                    );
             }
         });
     }
