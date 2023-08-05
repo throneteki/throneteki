@@ -5,7 +5,11 @@ class HarlawScout extends DrawCard {
     setupCardAbilities(ability) {
         this.interrupt({
             when: {
-                'onCardDiscarded:aggregate': event => event.events.some(discardEvent => (discardEvent.source === 'reserve'))
+                'onCardDiscarded:aggregate': event => 
+                    event.events.some(discardEvent => 
+                        discardEvent.source === 'reserve' &&
+                        discardEvent.cardStateWhenDiscarded.controller !== this.controller
+                    )
             },
             limit: ability.limit.perRound(2),
             message: '{player} uses {source} to gain 1 gold',
