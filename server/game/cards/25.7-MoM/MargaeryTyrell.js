@@ -3,9 +3,11 @@ const DrawCard = require('../../drawcard.js');
 
 class MargaeryTyrell extends DrawCard {
     setupCardAbilities(ability) {
-        this.reaction({
+        this.interrupt({
             when: {
-                onCardRevealed: event => event.card.isFaction('tyrell') && event.card.controller === this.controller && ['hand', 'draw deck'].includes(event.card.location)
+                onCardRevealed: event => event.card.isFaction('tyrell')
+                    && event.card.controller === this.controller
+                    && ['hand', 'draw deck'].includes(event.card.location)
             },
             limit: ability.limit.perRound(2),
             message: {
@@ -18,6 +20,6 @@ class MargaeryTyrell extends DrawCard {
 }
 
 MargaeryTyrell.code = '25585';
-MargaeryTyrell.version = '1.0';
+MargaeryTyrell.version = '1.1';
 
 module.exports = MargaeryTyrell;
