@@ -16,7 +16,7 @@ class Greyscale extends DrawCard {
                         player: context.chosenPlayer
                     })).then({
                         gameAction: GameActions.ifCondition({
-                            condition: context => context.revealed.hasPrintedCost() && this.parent.hasPrintedCost() && context.revealed.getPrintedCost() >= this.parent.getPrintedCost(),
+                            condition: context => context.parentContext.revealed[0].hasPrintedCost() && this.parent.hasPrintedCost() && context.parentContext.revealed[0].getPrintedCost() >= this.parent.getPrintedCost(),
                             thenAction: {
                                 message: {
                                     format: 'Then, {player} kills {parent} and attaches {source} to another eligible character',
@@ -26,6 +26,7 @@ class Greyscale extends DrawCard {
                                     GameActions.ifCondition({
                                         condition: context => context.game.anyCardsInPlay(card => this.allowMoveAttachment(card)),
                                         thenAction: GameActions.genericHandler(context => {
+                                            // TODO: Fix this - currently it cannot simultaneously move whilst the attached character is also being killed, and is instead returned to hand 
                                             context.game.promptForSelect(context.player, {
                                                 activePromptTitle: 'Select a character',
                                                 source: this,
@@ -40,7 +41,7 @@ class Greyscale extends DrawCard {
                             elseAction: {
                                 message: 'Then, {player} draws 1 card',
                                 gameAction: GameActions.drawCards(context => ({
-                                    player: context.chosenPlayer,
+                                    player: context.parentContext.chosenPlayer,
                                     amount: 1
                                 }))
                             }
