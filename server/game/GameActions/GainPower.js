@@ -14,8 +14,8 @@ class GainPower extends GameAction {
         return Message.fragment('gains {amount} power on {card}', { amount, card });
     }
 
-    canChangeGameState({ card }) {
-        return ['active plot', 'faction', 'play area'].includes(card.location);
+    canChangeGameState({ card, amount }) {
+        return ['active plot', 'faction', 'play area'].includes(card.location) && amount > 0;
     }
 
     createEvent({ card, amount = 1, reason = 'ability' }) {

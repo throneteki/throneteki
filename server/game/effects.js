@@ -197,6 +197,22 @@ const Effects = {
     restrictAttachmentsTo: function(trait) {
         return Effects.addKeyword(`No attachments except <i>${trait}</i>`);
     },
+    addAttachmentRestriction: function(restriction) {
+        // TODO: Properly move this into below add/remove function
+        // It is required here so that "remove" function can properly find/filter the restriction if it's a CardMatcher
+        const attachmentRestriction = typeof(restriction) === 'function' ? restriction : CardMatcher.createAttachmentMatcher(restriction);
+        return {
+            apply: function(card, context) {
+                context.addAttachmentRestriction = context.addAttachmentRestriction || {};
+                context.addAttachmentRestriction[card.uuid] = attachmentRestriction;
+                card.addAdditionalAttachmentRestriction(context.addAttachmentRestriction[card.uuid]);
+            },
+            unapply: function(card, context) {
+                card.removeAdditionalAttachmentRestriction(context.addAttachmentRestriction[card.uuid]);
+                delete context.addAttachmentRestriction[card.uuid];
+            }
+        };
+    },
     modifyStrength: function(value) {
         return {
             gameAction: value < 0 ? 'decreaseStrength' : 'increaseStrength',

@@ -2,6 +2,7 @@ const CostBuilder = require('./CostBuilder');
 const DiscardDuplicateCost = require('./DiscardDuplicateCost');
 const DiscardFromHandCost = require('./DiscardFromHandCost');
 const DiscardFromShadowsCost = require('./DiscardFromShadowsCost');
+const DiscardFromPlayCost = require('./DiscardFromPlayCost');
 const DiscardPowerCost = require('./DiscardPowerCost');
 const DiscardTokenCost = require('./DiscardTokenCost');
 const KillCost = require('./KillCost');
@@ -30,6 +31,10 @@ const CostBuilders = {
     discardFromShadows: new CostBuilder(new DiscardFromShadowsCost(), {
         select: 'Select card to discard from shadows',
         selectMultiple: number => `Select ${number} cards to discard from shadows`
+    }),
+    discardFromPlay: new CostBuilder(new DiscardFromPlayCost(), {
+        select: 'Select card to discard',
+        selectMultiple: number => `Select ${number} cards to discard`
     }),
     discardPower: function(amount = 1) {
         return new CostBuilder(new DiscardPowerCost(amount), {
