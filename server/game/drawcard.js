@@ -365,7 +365,7 @@ class DrawCard extends BaseCard {
         }
 
         let context = { player: player };
-        
+
         return attachmentRestrictions.some(restriction => restriction(card, context));
     }
 
