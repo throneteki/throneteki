@@ -9,8 +9,8 @@ class AllardSeaworth extends DrawCard {
             cost: ability.costs.discardFromPlay(card => card.facedown && card.getType() === 'attachment' && card.parent && card.parent.controller === this.controller && card.parent.isFaction('baratheon')),
             limit: ability.limit.perPhase(2),
             message: {
-                format: '{player} uses {source} and discards {costs.discardFromPlay} from {parent} to gain 1 power for their faction',
-                args: { parent: context => context.costs.discardFromPlay.parent }
+                format: '{player} uses {source} and discards {costs.discardFromPlay} from underneath {parent} to gain 1 power for their faction',
+                args: { parent: context => context.costStatesWhenInitiated.discardFromPlay.parent }
             },
             gameAction: GameActions.gainPower(context => ({ card: context.player.faction, amount: 1 }))
         });
