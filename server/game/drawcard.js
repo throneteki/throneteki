@@ -311,6 +311,29 @@ class DrawCard extends BaseCard {
             return CardMatcher.createAttachmentMatcher(restriction);
         });
     }
+    
+    addAdditionalAttachmentRestriction(restriction) {
+        this.additionalAttachmentRestrictions = this.additionalAttachmentRestrictions || [];
+        this.additionalAttachmentRestrictions.push(restriction);
+    }
+
+    removeAdditionalAttachmentRestriction(restriction) {
+        if(this.additionalAttachmentRestrictions) {
+            this.additionalAttachmentRestrictions = this.additionalAttachmentRestrictions.filter(r => r !== restriction);
+        }
+    }
+
+    getAttachmentRestrictions() {
+        if(!(this.attachmentRestrictions || this.additionalAttachmentRestrictions)) {
+            return undefined;
+        }
+        let restrictions = ((this.isAnyBlank() || this.facedown) ? undefined : this.attachmentRestrictions) || [];
+        let additional = this.additionalAttachmentRestrictions || [];
+
+        restrictions = restrictions.concat(additional);
+
+        return restrictions.length > 0 ? restrictions : undefined;
+    }
 
     /**
      * Checks 'no attachment' restrictions for this card when attempting to
@@ -335,13 +358,15 @@ class DrawCard extends BaseCard {
             return false;
         }
 
-        if(!this.attachmentRestrictions || this.isAnyBlank() || this.facedown) {
+        let attachmentRestrictions = this.getAttachmentRestrictions();
+
+        if(!attachmentRestrictions) {
             return card.getType() === 'character';
         }
 
         let context = { player: player };
-
-        return this.attachmentRestrictions.some(restriction => restriction(card, context));
+        
+        return attachmentRestrictions.some(restriction => restriction(card, context));
     }
 
     addChildCard(card, location) {

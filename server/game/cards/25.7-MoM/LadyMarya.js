@@ -31,7 +31,8 @@ class LadyMarya extends DrawCard {
                     match: topCard,
                     effect: [
                         ability.effects.setCardType('attachment'),
-                        ability.effects.addKeyword('Terminal')
+                        ability.effects.addKeyword('Terminal'),
+                        ability.effects.addAttachmentRestriction({ type: 'location' })
                     ]
                 }));
             }
