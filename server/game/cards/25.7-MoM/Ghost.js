@@ -8,7 +8,7 @@ class Ghost extends DrawCard {
                 afterChallenge: event => event.challenge.winner === this.controller && this.controller.anyCardsInPlay(card => card.isAttacking() && card.hasTrait('Direwolf') && card.getType() === 'character')
             },
             message: '{player} uses {source} to draw 1 card',
-            gameAction: GameActions.drawCards({ amount: 1 })
+            gameAction: GameActions.drawCards(context => ({ player: context.player, amount: 1 }))
         });
 
         this.interrupt({
