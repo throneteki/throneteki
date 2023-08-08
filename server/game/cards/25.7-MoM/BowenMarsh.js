@@ -15,7 +15,7 @@ class BowenMarsh extends DrawCard {
                 },
                 'Stand character': context => {
                     this.game.promptForSelect(context.player, {
-                        cardCondition: { type: 'character', faction: 'thenightswatch', printedCostOrLower: 3 },
+                        cardCondition: { location: 'play area', type: 'character', faction: 'thenightswatch', printedCostOrLower: 3 },
                         source: this,
                         onSelect: (player, card) => this.onCardSelected(player, card, context),
                         onCancel: player => this.onCancel(player)
