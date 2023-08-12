@@ -29,7 +29,7 @@ class TheUsurper extends DrawCard {
     }
 }
 
-TheUsurper.code = '05036';
+TheUsurper.code = '25510';
 TheUsurper.version = '1.0';
 
 module.exports = TheUsurper;
