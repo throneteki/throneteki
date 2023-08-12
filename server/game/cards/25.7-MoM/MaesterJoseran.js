@@ -18,7 +18,7 @@ class MaesterJoseran extends DrawCard {
     }
 }
 
-MaesterJoseran.code = '15041';
+MaesterJoseran.code = '25517';
 MaesterJoseran.version = '1.0';
 
 module.exports = MaesterJoseran;
