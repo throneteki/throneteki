@@ -341,11 +341,11 @@ class PendingGame {
             //1. the game is NOT private
             //2. the game hasn´t started yet
             //3. agenda and faction are actually not undefined
-            var agenda = undefined; 
+            let agenda; 
             if(!this.gamePrivate && this.started && player.agenda) {
                 agenda = player.agenda.cardData.code;
             }
-            var faction = undefined;
+            let faction;
             if(!this.gamePrivate && this.started && player.faction) {
                 faction = player.faction.cardData.code;
             }
