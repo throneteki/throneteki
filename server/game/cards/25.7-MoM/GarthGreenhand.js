@@ -8,7 +8,7 @@ class GarthGreenhand extends DrawCard {
         });
         this.persistentEffect({
             condition: () => this.game.isDuringChallenge(),
-            match: card => card.controller === this.controller && card.isParticipating() && card.isFaction('tyrell'),
+            match: card => card.controller === this.controller && card.isParticipating() && card.isFaction('tyrell') && card.isUnique(),
             effect: ability.effects.modifyStrength(1)
         });
     }
