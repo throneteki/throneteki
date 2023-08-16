@@ -13,19 +13,20 @@ class DominancePhase extends Phase {
 
     determineWinner() {
         var dominanceWinner = undefined;
+        var dominanceDifference = undefined;
 
         let playerDominance = this.game.getPlayersInFirstPlayerOrder().map(player => {
             return { player: player, dominance: player.getDominance(), winsTies: player.hasFlag('winsDominanceTies') };
         });
-
-        var highestDominance = Math.max(...playerDominance.map(p => p.dominance));
-        var potentialWinners = playerDominance.filter(p => p.dominance === highestDominance);
+        var distinctSorted = [...new Set(playerDominance.map(p => p.dominance).sort((a, b) => b - a))];
+        var potentialWinners = playerDominance.filter(p => p.dominance === distinctSorted[0]);
 
         var dominanceTied = potentialWinners.length > 1;
         potentialWinners = dominanceTied ? potentialWinners.filter(p => p.winsTies) : potentialWinners;
 
         if(potentialWinners.length === 1) {
             dominanceWinner = potentialWinners[0].player;
+            dominanceDifference = distinctSorted[0] - distinctSorted[1];
         }
 
         if(dominanceTied) {
@@ -45,7 +46,7 @@ class DominancePhase extends Phase {
             this.game.addMessage('No one wins dominance');
         }
 
-        this.game.raiseEvent('onDominanceDetermined', { winner: dominanceWinner });
+        this.game.raiseEvent('onDominanceDetermined', { winner: dominanceWinner, difference: dominanceDifference });
     }
 }
 
