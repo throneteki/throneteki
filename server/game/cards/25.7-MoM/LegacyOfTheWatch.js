@@ -2,7 +2,7 @@ const DrawCard = require('../../drawcard.js');
 
 class LegacyOfTheWatch extends DrawCard {
     setupCardAbilities(ability) {
-        this.attachmentRestriction({ type: 'location', unique: true });
+        this.attachmentRestriction({ type: 'location', faction: 'thenightswatch', controller: 'current', unique: true });
         this.persistentEffect({
             targetController: 'current',
             effect: ability.effects.lookAtBottomCard(() => this.game.getOpponents(this.controller))
@@ -27,6 +27,6 @@ class LegacyOfTheWatch extends DrawCard {
 }
 
 LegacyOfTheWatch.code = '25557';
-LegacyOfTheWatch.version = '1.0';
+LegacyOfTheWatch.version = '1.1';
 
 module.exports = LegacyOfTheWatch;

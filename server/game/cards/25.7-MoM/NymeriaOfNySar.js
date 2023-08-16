@@ -4,7 +4,7 @@ const SimpleStep = require('../../gamesteps/simplestep.js');
 
 class NymeriaOfNySar extends DrawCard {
     setupCardAbilities(ability) {
-        this.attachmentRestriction({ type: 'location', unique: true });
+        this.attachmentRestriction({ type: 'location', faction: 'martell', controller: 'current', unique: true });
         this.reaction({
             cannotBeCanceled: true,
             when: {
@@ -51,6 +51,6 @@ class NymeriaOfNySar extends DrawCard {
 }
 
 NymeriaOfNySar.code = '25545';
-NymeriaOfNySar.version = '1.0';
+NymeriaOfNySar.version = '1.1';
 
 module.exports = NymeriaOfNySar;

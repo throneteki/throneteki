@@ -2,7 +2,7 @@ const DrawCard = require('../../drawcard.js');
 
 class GarthGreenhand extends DrawCard {
     setupCardAbilities(ability) {
-        this.attachmentRestriction({ type: 'location', unique: true });
+        this.attachmentRestriction({ type: 'location', faction: 'tyrell', controller: 'current', unique: true });
         this.plotModifiers({
             gold: 1
         });
@@ -15,6 +15,6 @@ class GarthGreenhand extends DrawCard {
 }
 
 GarthGreenhand.code = '25593';
-GarthGreenhand.version = '1.0';
+GarthGreenhand.version = '1.1';
 
 module.exports = GarthGreenhand;
