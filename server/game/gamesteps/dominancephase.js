@@ -26,7 +26,7 @@ class DominancePhase extends Phase {
 
         if(potentialWinners.length === 1) {
             dominanceWinner = potentialWinners[0].player;
-            dominanceDifference = distinctSorted[0] - distinctSorted[1];
+            dominanceDifference = distinctSorted[0] - (distinctSorted.length > 1 ? distinctSorted[1] : 0);
         }
 
         if(dominanceTied) {
