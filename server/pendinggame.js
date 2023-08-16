@@ -337,10 +337,23 @@ class PendingGame {
                 deck = {};
             }
 
+            //the agenda and faction should only be sent to the client if
+            //1. the game is NOT private
+            //2. the game hasn´t started yet
+            //3. agenda and faction are actually not undefined
+            var agenda = undefined; 
+            if(!this.gamePrivate && this.started && player.agenda) {
+                agenda = player.agenda.cardData.code;
+            }
+            var faction = undefined;
+            if(!this.gamePrivate && this.started && player.faction) {
+                faction = player.faction.cardData.code;
+            }
+
             playerSummaries[player.name] = {
-                agenda: this.started && player.agenda ? player.agenda.cardData.code : undefined,
+                agenda: agenda,
                 deck: activePlayer ? deck : {},
-                faction: this.started && player.faction ? player.faction.cardData.code : undefined,
+                faction: faction,
                 id: player.id,
                 left: player.left,
                 name: player.name,
