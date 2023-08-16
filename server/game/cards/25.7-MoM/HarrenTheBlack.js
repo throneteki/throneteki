@@ -3,7 +3,7 @@ const DrawCard = require('../../drawcard.js');
 
 class HarrenTheBlack extends DrawCard {
     setupCardAbilities() {
-        this.attachmentRestriction({ type: 'location', unique: true });
+        this.attachmentRestriction({ type: 'location', faction: 'greyjoy', controller: 'current', unique: true });
         this.forcedReaction({
             when: {
                 onCardDiscarded: event => event.isPillage && event.source.controller === this.controller
@@ -15,6 +15,6 @@ class HarrenTheBlack extends DrawCard {
 }
 
 HarrenTheBlack.code = '25521';
-HarrenTheBlack.version = '1.0';
+HarrenTheBlack.version = '1.1';
 
 module.exports = HarrenTheBlack;

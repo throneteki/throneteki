@@ -2,7 +2,7 @@ const DrawCard = require('../../drawcard.js');
 
 class TheLaughingStorm extends DrawCard {
     setupCardAbilities(ability) {
-        this.attachmentRestriction({ type: 'location', unique: true });
+        this.attachmentRestriction({ type: 'location', faction: 'baratheon', controller: 'current', unique: true });
         this.persistentEffect({
             condition: () => this.eachOpponentHasFewerStandingCharacters(),
             targetLocation: 'hand',
@@ -16,6 +16,6 @@ class TheLaughingStorm extends DrawCard {
 }
 
 TheLaughingStorm.code = '25509';
-TheLaughingStorm.version = '1.0';
+TheLaughingStorm.version = '1.1';
 
 module.exports = TheLaughingStorm;
