@@ -7,7 +7,7 @@ class BericDondarrion extends DrawCard {
                 afterChallenge: event => event.challenge.winner === this.controller && this.isAttacking()
             },
             target: {
-                cardCondition: (card, context) => card.location === 'play area' && card.getType() === 'character' && card.controller === context.challenge.loser
+                cardCondition: (card, context) => card.location === 'play area' && card.getType() === 'character' && card.controller === context.event.challenge.loser
             },
             message: '{player} uses {source} to prevent {target} from standing or kneeling',
             handler: context => {

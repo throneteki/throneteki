@@ -22,7 +22,7 @@ class GilbertOfTheVines extends DrawCard {
                             numCards,
                             cardCondition: card => context.revealed.includes(card),
                             onSelect: (player, cards) => {
-                                // TODO: Confirm that 'cards' is still an array if 'numCards' is 1
+                                cards = Array.isArray(cards) ? cards : [cards];
                                 this.game.addMessage('{0} adds {1} to their hand', player, cards);
                                 this.game.resolveGameAction(GameActions.simultaneously(() => cards.map(card => GameActions.addToHand({ card }))), context);
                                 return true;
