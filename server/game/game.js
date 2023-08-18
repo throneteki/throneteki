@@ -1343,7 +1343,7 @@ class Game extends EventEmitter {
                 faction: player.faction.name || player.faction.value,
                 agenda: player.agenda ? player.agenda.name : undefined,
                 power: player.getTotalPower(),
-                playtested: this.isPlaytesting() ? player.preparedDeck.drawCards.concat(player.preparedDeck.plotCards).filter(card => card.cardData.wip).map(card => `${card.name} (${card.version})`) : undefined
+                playtested: this.isPlaytesting() ? player.preparedDeck.drawCards.concat(player.preparedDeck.plotCards).filter(card => !!card.version).map(card => card.cardData) : undefined
             };
         });
 
