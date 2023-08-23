@@ -35,7 +35,7 @@ class GameService {
         return this.games.find()
             .then(games => {
                 return _.filter(games, game => {
-                    return game.startedAt >= new Date(from) && game.startedAt < new Date(to);
+                    return (from ? game.startedAt >= new Date(from) : true) && (to ? game.startedAt < new Date(to) : true);
                 });
             })
             .catch(err => {
