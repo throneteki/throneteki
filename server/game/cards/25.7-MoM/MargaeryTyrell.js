@@ -20,6 +20,6 @@ class MargaeryTyrell extends DrawCard {
 }
 
 MargaeryTyrell.code = '25585';
-MargaeryTyrell.version = '1.1';
+MargaeryTyrell.version = '1.2';
 
 module.exports = MargaeryTyrell;

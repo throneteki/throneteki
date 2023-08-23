@@ -15,6 +15,6 @@ class AegonTargaryen extends DrawCard {
 }
 
 AegonTargaryen.code = '25573';
-AegonTargaryen.version = '1.0';
+AegonTargaryen.version = '1.1';
 
 module.exports = AegonTargaryen;

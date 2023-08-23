@@ -14,6 +14,6 @@ class RalfKenning extends DrawCard {
 }
 
 RalfKenning.code = '25516';
-RalfKenning.version = '1.0';
+RalfKenning.version = '1.1';
 
 module.exports = RalfKenning;

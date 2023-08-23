@@ -25,6 +25,6 @@ class ArstanWhitebeard extends DrawCard {
 }
 
 ArstanWhitebeard.code = '25576';
-ArstanWhitebeard.version = '1.0';
+ArstanWhitebeard.version = '1.1';
 
 module.exports = ArstanWhitebeard;
