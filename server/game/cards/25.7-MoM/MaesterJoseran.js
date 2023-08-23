@@ -1,5 +1,6 @@
 const DrawCard = require('../../drawcard');
 const GameActions = require('../../GameActions');
+const {flatten} = require('../../../Array');
 
 class MaesterJoseran extends DrawCard {
     setupCardAbilities() {
@@ -10,10 +11,9 @@ class MaesterJoseran extends DrawCard {
                     this.game.getPlayers().every(player => player.agenda)
             },
             message: '{player} uses {source} to have each player put the top card of their decks under their agenda',
-            handler: context => {
-                const topCards = this.game.getPlayers().map(player => player.drawDeck.slice(0, 1));
-                this.game.resolveGameAction(GameActions.simultaneously(() => topCards.map(card => GameActions.placeCard({ player: card.controller, card, location: 'conclave' }))), context);
-            }
+            gameAction: GameActions.simultaneously(() =>
+                flatten(this.game.getPlayers().map(player => player.drawDeck.slice(0, 1))).map(card => GameActions.placeCard({ player: card.controller, card, location: 'conclave' }))
+            )
         });
     }
 }
