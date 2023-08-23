@@ -4,7 +4,7 @@ class WingedKnight extends DrawCard {
     setupCardAbilities(ability) {
         this.interrupt({
             when: {
-                onCharacterKilled: event => event.card.isMatch({ trait: ['Lord', 'Lady']}) && event.card.canBeSaved() && event.allowSave
+                onCharacterKilled: event => event.card.isMatch({ trait: ['Lord', 'Lady']})
             },
             cost: ability.costs.sacrificeSelf(),
             message: {
