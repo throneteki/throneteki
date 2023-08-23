@@ -38,12 +38,13 @@ class MoveCardEventGenerator {
         });
     }
 
-    createDiscardCardEvent({ card, allowSave = true, isPillage = false, source }) {
+    createDiscardCardEvent({ card, allowSave = true, isPillage = false, isRandom = false, source }) {
         let params = {
             card: card,
             allowSave: allowSave,
             originalLocation: card.location,
             isPillage: !!isPillage,
+            isRandom: !!isRandom,
             source: source,
             snapshotName: 'cardStateWhenDiscarded'
         };

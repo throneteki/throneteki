@@ -3,28 +3,29 @@ const GameActions = require('../../GameActions');
 
 class TheGoldPrice extends AgendaCard {
     setupCardAbilities() {
-        this.interrupt({
+        this.reaction({
             when: {
-                onCardDiscarded: event => event.card.getType() === 'character' && event.card.owner !== this.controller && event.originalLocation === 'hand'
+                onCardDiscarded: event => event.card.getType() === 'character' && event.card.owner !== this.controller && event.originalLocation === 'hand' && event.isRandom
             },
             message: {
-                format: '{player} uses {source} to put {card} into play instead of placing it in {opponent}\'s discard pile',
-                args: { card: context => context.event.card, opponent: context => context.event.card.owner }
+                format: '{player} uses {source} to put {card} into play under their control',
+                args: { card: context => context.event.card }
             },
-            handler: context => {
-                context.event.replaceHandler(event => {
-                    event.thenAttachEvent(GameActions.putIntoPlay({ player: context.player, card: context.event.card }).createEvent());
+            gameAction: GameActions.putIntoPlay(context => ({ player: context.player, card: context.event.card }))
+                .thenExecute(event => {
+                    let context = this.game.currentAbilityContext;
                     this.game.once('onAtEndOfPhase', () => {
-                        const prompt = new PayOrSacrificePrompt({
-                            card: context.event.card,
-                            game: this.game,
-                            player: context.player,
-                            source: context.source
-                        });
-                        prompt.resolve();
+                        if(['play area', 'duplicate'].includes(event.card.location)) {
+                            const prompt = new PayOrSacrificePrompt({
+                                card: event.card,
+                                game: this.game,
+                                player: context.player,
+                                source: context.source
+                            });
+                            prompt.resolve();
+                        }
                     });
-                });
-            }
+                })
         });
     }
 }
@@ -37,12 +38,12 @@ class PayOrSacrificePrompt {
     }
 
     resolve() {
-        if(this.player.getSpendableGold() >= this.card.getCost()) {
+        if(this.player.getSpendableGold() >= this.card.getPrintedCost()) {
             this.game.promptWithMenu(this.player, this, {
                 activePrompt: {
                     menuTitle: `Keep ${this.card.name}?`,
                     buttons: [
-                        { text: `Pay ${this.card.getCost()} gold`, method: 'resolvePay' },
+                        { text: `Pay ${this.card.getPrintedCost()} gold`, method: 'resolvePay' },
                         { text: 'Sacrifice', method: 'resolveSacrifice' }
                     ]
                 },
@@ -54,8 +55,8 @@ class PayOrSacrificePrompt {
     }
 
     resolvePay() {
-        this.game.addMessage('{0} pays {1} to keep {2} for {3}', this.player, this.card.getCost(), this.card, this.source);
-        this.game.spendGold({ amount: this.card.getCost(), player: this.player });
+        this.game.addMessage('{0} pays {1} to keep {2} for {3}', this.player, this.card.getPrintedCost(), this.card, this.source);
+        this.game.spendGold({ amount: this.card.getPrintedCost(), player: this.player });
         return true;
     }
 
@@ -67,6 +68,6 @@ class PayOrSacrificePrompt {
 }
 
 TheGoldPrice.code = '25619';
-TheGoldPrice.version = '1.0';
+TheGoldPrice.version = '1.1';
 
 module.exports = TheGoldPrice;
