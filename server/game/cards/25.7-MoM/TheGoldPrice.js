@@ -2,6 +2,12 @@ const AgendaCard = require('../../agendacard');
 const GameActions = require('../../GameActions');
 
 class TheGoldPrice extends AgendaCard {
+    constructor(owner, cardData) {
+        super(owner, cardData);
+
+        this.registerEvents(['onCardEntersPlay']);
+    }
+
     setupCardAbilities() {
         this.reaction({
             when: {
@@ -27,6 +33,13 @@ class TheGoldPrice extends AgendaCard {
                     });
                 })
         });
+    }
+
+    onCardEntersPlay(event) {
+        if(event.card.controller === this.controller && event.card.getType() === 'location') {
+            this.game.addMessage('{0} enters play knelt due to {1}', event.card, this);
+            event.card.kneeled = true;
+        }
     }
 }
 class PayOrSacrificePrompt {
