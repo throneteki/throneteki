@@ -14,9 +14,9 @@ let args = process.argv.slice(2);
 
 if(_.size(args) === 0) {
     console.info('Running stats on all games');
-} else if (_.size(args) === 1) {
+} else if(_.size(args) === 1) {
     console.info('Running stats on games from ', args[0], ' onwards');
-} else if (_.size(args) > 1) {
+} else if(_.size(args) > 1) {
     console.info('Running stats on games between', args[0], 'and', args[1]);
 }
 
