@@ -3,49 +3,31 @@ const GameActions = require('../../GameActions');
 const { Tokens } = require('../../Constants');
 
 class TheGiftOfMercy extends AgendaCard {
-    setupCardAbilities(ability) {
+    setupCardAbilities() {
         this.reaction({
             when: {
-                onTargetsChosen: event => (
-                    event.ability.isTriggeredAbility() &&
-                    event.targets.hasSingleTarget() &&
-                    event.targets.anySelection(selection => (
-                        selection.choosingPlayer === this.controller &&
-                        selection.value.getType() === 'character'
-                    ))
-                )
+                afterChallenge: event => event.challenge.loser !== this.controller
             },
-            message: {
-                format: '{player} uses {source} to place 1 Valar Morghulis token on {card}',
-                args: { card: context => context.event.targets.getTargets()[0] }
+            target: {
+                cardCondition: { type: 'character', participating: true, condition: (card, context) => card.controller === context.event.challenge.loser }
             },
-            gameAction: GameActions.placeToken(context => ({
-                card: context.event.targets.getTargets()[0],
-                token: Tokens.valarmorghulis
-            })),
-            limit: ability.limit.perPhase(1)
+            message: '{player} uses {source} to place a Valar Morghulis token on {target}',
+            handler: context => {
+                this.game.resolveGameAction(GameActions.placeToken(context => ({ card: context.target, token: Tokens.valarmorghulis })), context);
+            }
         });
 
-        const playersThatDoNotControlCard = context => context.game.getPlayers().filter(player => player !== context.event.card.controller);
-        this.forcedInterrupt({
+        this.interrupt({
             when: {
-                onCardLeftPlay: event => event.card.getType() === 'character' && event.card.hasToken(Tokens.valarmorghulis)
+                onCharacterKilled: event => event.card.getType() === 'character' && event.card.tokens[Tokens.valarmorghulis] >= 3
             },
-            message: {
-                format: '{player} is forced by {source} to have {gainingPlayers} to gain {amount} power',
-                args: { gainingPlayers: playersThatDoNotControlCard, amount: context => context.event.card.tokens[Tokens.valarmorghulis] }
-            },
-            gameAction: GameActions.simultaneously(context => playersThatDoNotControlCard(context).map(player => (
-                GameActions.gainPower({
-                    amount: context.event.card.tokens[Tokens.valarmorghulis],
-                    card: player.faction
-                })
-            )))
+            message: '{player} uses {source} to gain 3 power for their faction',
+            gameAction: GameActions.gainPower(context => ({ card: context.player.faction, amount: 3 }))
         });
     }
 }
 
 TheGiftOfMercy.code = '25618';
-TheGiftOfMercy.version = '1.0';
+TheGiftOfMercy.version = '1.1';
 
 module.exports = TheGiftOfMercy;
