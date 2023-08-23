@@ -6,7 +6,7 @@ class BlackwaterForces extends DrawCard {
         this.reaction({
             when: {
                 'onCardRevealed:aggregate': event => (
-                    event.events.some(revealEvent => revealEvent.cardStateWhenRevealed.location === 'hand')
+                    event.events.some(revealEvent => ['hand', 'draw deck'].includes(revealEvent.cardStateWhenRevealed.location))
                 )
             },
             message: '{player} uses {source} to return {source} to its owner\'s hand',
@@ -16,6 +16,6 @@ class BlackwaterForces extends DrawCard {
 }
 
 BlackwaterForces.code = '25589';
-BlackwaterForces.version = '1.0';
+BlackwaterForces.version = '1.1';
 
 module.exports = BlackwaterForces;
