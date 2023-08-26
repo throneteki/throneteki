@@ -7,13 +7,13 @@ class Greyscale extends DrawCard {
             title: 'Reveal from hand',
             phase: 'dominance',
             cost: ability.costs.kneelSelf(),
-            choosePlayer: player => player.hand.length > 0,
-            message: '{player} kneels {source} to reveal a card at random from {chosenPlayer}\'s hand',
+            chooseOpponent: player => player.hand.length > 0,
+            message: '{player} kneels {source} to reveal a card at random from {opponent}\'s hand',
             handler: context => {
                 this.game.resolveGameAction(
                     GameActions.revealCards(context => ({
-                        cards: [this.getCardAtRandomFromHand(context.chosenPlayer)],
-                        player: context.chosenPlayer
+                        cards: [this.getCardAtRandomFromHand(context.opponent)],
+                        player: context.opponent
                     })).then({
                         gameAction: GameActions.ifCondition({
                             condition: context => context.parentContext.revealed[0].hasPrintedCost() && this.parent.hasPrintedCost() && context.parentContext.revealed[0].getPrintedCost() >= this.parent.getPrintedCost(),
@@ -41,7 +41,7 @@ class Greyscale extends DrawCard {
                             elseAction: {
                                 message: 'Then, {player} draws 1 card',
                                 gameAction: GameActions.drawCards(context => ({
-                                    player: context.parentContext.chosenPlayer,
+                                    player: context.parentContext.opponent,
                                     amount: 1
                                 }))
                             }

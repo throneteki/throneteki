@@ -6,7 +6,8 @@ class TheDornishWars extends PlotCard {
             targetController: 'opponent',
             match: card => card.getType() === 'character',
             // Note that existing "gain icon" abilities may need to be updated for checking target can gain icons
-            effect: ability.effects.cannotGainIcons()
+            // Even though ability does not say "by card effects", we need to ensure this is not applying when an icon lose ability unapplies
+            effect: ability.effects.cannotGainIcons(context => context.resolutionStage === 'effect')
         });
 
         this.reaction({

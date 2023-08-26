@@ -11,23 +11,23 @@ class HighbornRecruit extends DrawCard {
             cost: ability.costs.kneelSelf(),
             handler: context => {
                 context.game.resolveGameAction(GameActions.choose({
-                    title: context => `Choose keyword for ${context.target}`,
+                    title: context => `Choose keyword for ${context.target.name} to gain`,
                     message: {
                         format: '{player} kneels {source} to have {target} gain {keyword} until the end of the phase',
                         args: { keyword: context => context.selectedChoice.text.toLowerCase() }
                     },
                     choices: {
-                        'Renown': GameActions.genericHandler(context => this.gainKeyword(context.selectedChoice.text.toLowerCase())),
-                        'Insight': GameActions.genericHandler(context => this.gainKeyword(context.selectedChoice.text.toLowerCase()))
+                        'Renown': GameActions.genericHandler(context => this.gainKeyword(context, 'renown')),
+                        'Insight': GameActions.genericHandler(context => this.gainKeyword(context, 'insight'))
                     }
                 }), context);
             }
         });
     }
 
-    gainKeyword(keyword) {
-        this.untilEndOfChallenge(ability => ({
-            match: this,
+    gainKeyword(context, keyword) {
+        this.untilEndOfPhase(ability => ({
+            match: context.target,
             effect: ability.effects.addKeyword(keyword)
         }));
         return true;
