@@ -16,7 +16,7 @@ class WeirwoodGrove extends DrawCard {
                 args: { plot: context => context.event.plot }
             },
             gameAction: GameActions.genericHandler(context => {
-                let whenRevealed = context.target.getWhenRevealedAbility();
+                let whenRevealed = context.event.plot.getWhenRevealedAbility();
                 // Attach the current When Revealed event to the new context
                 let newContext = whenRevealed.createContext(context.event);
                 newContext.player = context.player;
