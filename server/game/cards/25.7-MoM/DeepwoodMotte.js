@@ -5,13 +5,11 @@ class DeepwoodMotte extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onPlotsRevealed: event => event.plots.some(plot => plot.hasTrait('Winter')) && !this.kneeled
+                onPlotRevealed: event => event.plot.hasTrait('Winter') && !this.kneeled
             },
             cost: ability.costs.kneelSelf(),
             handler: context => {
-                let xValue = context.event.plots.reduce(function(prev, current) {
-                    return (prev.getReserve() > current.getReserve()) ? prev.getReserve() : current.getReserve();
-                });
+                let xValue = context.event.plot.getReserve();
 
                 this.game.addMessage('{0} uses {1} to kneel up to {2} locations with printed cost 1 or lower', context.player, this, xValue);
                 this.game.promptForSelect(context.player, {
