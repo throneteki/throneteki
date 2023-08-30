@@ -1,9 +1,9 @@
 const DrawCard = require('../../drawcard.js');
 const GameActions = require('../../GameActions/index.js');
 
-class TheWardenOfTheWest extends DrawCard {
+class TheWardenOfTheSouth extends DrawCard {
     setupCardAbilities(ability) {
-        this.attachmentRestriction({ faction: 'lannister', trait: 'Lord' });
+        this.attachmentRestriction({ faction: 'tyrell', trait: 'Lord' });
 
         this.whileAttached({
             effect: [
@@ -26,6 +26,7 @@ class TheWardenOfTheWest extends DrawCard {
     }
 }
 
-TheWardenOfTheWest.code = '25594';
+TheWardenOfTheSouth.code = '25594';
+TheWardenOfTheSouth.version = '1.0';
 
-module.exports = TheWardenOfTheWest;
+module.exports = TheWardenOfTheSouth;
