@@ -2,7 +2,7 @@ const GameActions = require('../../GameActions/index.js');
 const PlotCard = require('../../plotcard.js');
 
 class TheHourOfTheWolf extends PlotCard {
-    setupCardAbilities(ability) {
+    setupCardAbilities() {
         this.whenRevealed({
             target: {
                 choosingPlayer: 'each',
