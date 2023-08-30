@@ -131,13 +131,10 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
             return true;
         }
 
-        let unclickableCards = availableTargets.filter(card => card.location === 'active plot');
-
         this.game.promptForSelect(player, {
             activePromptTitle: `Choose triggering card for ${card.name}`,
             isCardEffect: false,
             cardCondition: card => availableTargets.includes(card),
-            additionalButtons: this.getButtons(player, unclickableCards),
             cardType: ['agenda', 'attachment', 'character', 'event', 'location', 'plot', 'title'],
             onSelect: (player, selectedCard) => {
                 let choice = choices.find(choice => this.getCardFromChoice(choice) === selectedCard);
@@ -147,23 +144,6 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
                 }
 
                 this.chooseAbility(choice);
-
-                return true;
-            },
-            onMenuCommand: (player, arg) => {
-                if(arg === 'Done') {
-                    this.pass();
-                } else {
-                    let choice = choices.find(choice => {
-                        let card = this.getCardFromChoice(choice); return card && card.uuid === arg;
-                    });
-
-                    if(!choice) {
-                        return false;
-                    }
-
-                    this.chooseAbility(choice);
-                }
 
                 return true;
             }
