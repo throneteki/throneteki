@@ -1431,6 +1431,32 @@ const Effects = {
             }
         };
     },
+    mustShowPlotSelection: function(opponent) {
+        return {
+            targetType: 'player',
+            apply: function(player, context) {
+                // TODO: Account for any level of looking loops (eg. PlayerA > PlayerB > PlayerC > PlayerA will cause issue)
+                // TODO: Likely redesign this closer to release to properly manage cascading 'mustShowPlotSelections'
+                player.mustShowPlotSelection.push(opponent);
+                // Only add visibility rule if it previously would not have been active
+                if(player.mustShowPlotSelection.length === 1) {
+                    let revealFunc = (card, viewingPlayer) => card === player.selectedPlot && player.mustShowPlotSelection.includes(viewingPlayer);
+                    context.mustShowPlotSelection = context.mustShowPlotSelection || {};
+                    context.mustShowPlotSelection[player.name] = revealFunc;
+                    context.game.cardVisibility.addRule(revealFunc);
+                }
+            },
+            unapply: function(player) {
+                player.mustShowPlotSelection = player.mustShowPlotSelection.filter(o => o !== opponent);
+                // Only remove visibility rule if there are no more players
+                if(player.mustShowPlotSelection.length === 0) {
+                    let revealFunc = context.mustShowPlotSelection[player.name];
+                    context.game.cardVisibility.removeRule(revealFunc);
+                    delete context.mustShowPlotSelection[player.name];
+                }
+            }
+        }
+    },
     lookAtTopCard: function() {
         return {
             targetType: 'player',

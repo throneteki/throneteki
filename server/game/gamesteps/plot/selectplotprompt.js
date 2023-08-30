@@ -20,7 +20,16 @@ class SelectPlotPrompt extends AllPlayerPrompt {
         return !!player.selectedPlot || player.hasFlag('cannotRevealPlot');
     }
 
-    activePrompt() {
+    activePrompt(player) {
+        if(player.confirmingPlot) {
+            return {
+                menuTitle: 'Show plot selection to ' + player.mustShowPlotSelection.map(p => p.name).join(', ') + '?',
+                buttons: [
+                    { arg: 'plotconfirmed', text: 'Yes' },
+                    { arg: 'plotcancelled', text: 'No' }
+                ]
+            }
+        }
         return {
             menuTitle: 'Select a plot',
             buttons: [
@@ -33,12 +42,12 @@ class SelectPlotPrompt extends AllPlayerPrompt {
     waitingPrompt(player) {
         if(player.mustRevealPlot || player.hasFlag('cannotRevealPlot')) {
             return {
-                menuTitle: 'Waiting for opponent to select plot'
+                menuTitle: 'Waiting for opponent(s) to select plot'
             };
         }
-
+        
         return {
-            menuTitle: 'Waiting for opponent to select plot',
+            menuTitle: 'Waiting for opponent(s) to select plot',
             buttons: [
                 { arg: 'changeplot', text: 'Change Plot' }
             ]
@@ -47,18 +56,50 @@ class SelectPlotPrompt extends AllPlayerPrompt {
 
     onMenuCommand(player, arg) {
         if(arg === 'changeplot') {
-            player.selectedPlot = undefined;
-            this.game.addMessage('{0} has cancelled their plot selection', player);
-
+            this.unSelectPlot(player, false);
             return;
         }
 
+        if(arg === 'plotconfirmed' && player.confirmingPlot) {
+            this.selectPlot(player, player.confirmingPlot);
+            delete player.confirmingPlot;
+            return;
+        }
+
+        if(arg === 'plotcancelled' && player.confirmingPlot) {
+            delete player.confirmingPlot;
+            return;
+        }
         let plot = player.plotDeck.find(card => card.selected);
 
         if(!plot) {
             return;
         }
 
+        if(player.mustShowPlotSelection.length > 0) {
+            player.confirmingPlot = plot;
+            return;
+        }
+
+        this.selectPlot(player, plot);
+    }
+
+    unSelectPlot(player, forced = false) {
+        if(player.selectedPlot) {
+            player.selectedPlot = undefined;
+            if(forced) {
+                this.game.addMessage('{0} has been forced to cancel their plot selection', player);
+            } else {
+                this.game.addMessage('{0} has cancelled their plot selection', player);
+            }
+            // Force all players who must see this plot selection to unselect their current selection to prevent plot reveals
+            for(let p of player.mustShowPlotSelection) {
+                this.unSelectPlot(p, true);
+            }
+        }
+    }
+
+    selectPlot(player, plot) {
         player.selectedPlot = plot;
         player.clearSelectableCards();
 
