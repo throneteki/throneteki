@@ -4,7 +4,7 @@ class ShadowedAcolyte extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.game.getOpponents(this.controller).some(opponent => opponent.shadows.length > 0),
-            match: card => card === this,
+            match: this,
             effect: ability.effects.addKeyword('insight')
         });
     }
