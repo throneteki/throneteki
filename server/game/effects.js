@@ -1446,7 +1446,7 @@ const Effects = {
                     context.game.cardVisibility.addRule(revealFunc);
                 }
             },
-            unapply: function(player) {
+            unapply: function(player, context) {
                 player.mustShowPlotSelection = player.mustShowPlotSelection.filter(o => o !== opponent);
                 // Only remove visibility rule if there are no more players
                 if(player.mustShowPlotSelection.length === 0) {
@@ -1455,7 +1455,7 @@ const Effects = {
                     delete context.mustShowPlotSelection[player.name];
                 }
             }
-        }
+        };
     },
     lookAtTopCard: function() {
         return {

@@ -28,7 +28,7 @@ class SelectPlotPrompt extends AllPlayerPrompt {
                     { arg: 'plotconfirmed', text: 'Yes' },
                     { arg: 'plotcancelled', text: 'No' }
                 ]
-            }
+            };
         }
         return {
             menuTitle: 'Select a plot',
