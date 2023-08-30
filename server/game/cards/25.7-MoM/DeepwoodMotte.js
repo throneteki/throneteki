@@ -1,43 +1,27 @@
 const DrawCard = require('../../drawcard.js');
-const TextHelper = require('../../TextHelper');
+const GameActions = require('../../GameActions/index.js');
 
 class DeepwoodMotte extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onPlotRevealed: event => event.plot.hasTrait('Winter') && !this.kneeled
+                onPlotRevealed: event => event.plot.hasTrait('Winter')
+            },
+            target: {
+                mode: 'upTo',
+                numCards: context => context.event.plot.getReserve(),
+                activePromptTitle: context => 'Select up to ' + context.event.plot.getReserve() + ' cards',
+                cardCondition: card => card.getType() === 'location' && card.location === 'play area' && card.hasPrintedCost() && card.getPrintedCost() <= 1 && !card.kneeled
             },
             cost: ability.costs.kneelSelf(),
+            message: '{player} kneels {costs.kneel} to kneel {target}',
             handler: context => {
-                let xValue = context.event.plot.getReserve();
-
-                this.game.addMessage('{0} uses {1} to kneel up to {2} locations with printed cost 1 or lower', context.player, this, xValue);
-                this.game.promptForSelect(context.player, {
-                    activePromptTitle: `Select up to ${TextHelper.count(xValue, 'locations')}`,
-                    optional: true,
-                    ifAble: true,
-                    numCards: xValue,
-                    source: this,
-                    cardCondition: card => card.getType() === 'location' && card.location === 'play area' && !card.kneeled,
-                    onSelect: (player, cards) => this.onCardsSelected(player, cards),
-                    onCancel: (player) => this.onSelectionCancelled(player)
-                });
+                this.game.resolveGameAction(
+                    GameActions.simultaneously(context.targets.getTargets().map(card => GameActions.kneelCard({ card, source: this }))),
+                    context
+                );
             }
         });
-    }
-
-    onSelectionCancelled(player) {
-        this.game.addMessage('{0} does not select any location for {1}', player, this);
-        this.proceedToNextStep();
-    }
-
-    onCardsSelected(player, cards) {
-        for(let card of cards) {
-            player.kneelCard(card);
-        }
-
-        this.game.addMessage('{0} uses {1} to kneel {2}', player, this, cards);
-        return true;
     }
 }
 
