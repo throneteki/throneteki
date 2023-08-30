@@ -98,6 +98,7 @@ class Player extends Spectator {
         }
 
         this.promptState = new PlayerPromptState();
+        this.mustShowPlotSelection = [];
     }
 
     createDefaultPlayableLocations() {
@@ -1306,7 +1307,8 @@ class Player extends Spectator {
             name: this.name,
             numPlotCards: this.plotDeck.length,
             phase: this.game.currentPhase,
-            plotSelected: !!this.selectedPlot,
+            selectedPlot: this.selectedPlot ? this.selectedPlot.getSummary(activePlayer) : undefined,
+            mustShowPlotSelection: this.mustShowPlotSelection.includes(activePlayer),
             promptedActionWindows: this.promptedActionWindows,
             promptDupes: this.promptDupes,
             revealTopCard: this.isRevealingTopOfDeck(),
