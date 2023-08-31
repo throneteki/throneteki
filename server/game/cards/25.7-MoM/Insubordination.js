@@ -12,7 +12,7 @@ class Insubordination extends DrawCard {
                 format: '{player} sacrifices {costs.sacrifice} to kill {parent}',
                 args: { parent: () => this.parent }
             },
-            gameAction: GameActions.kill({ card: this.parent })
+            gameAction: GameActions.kill(() => ({ card: this.parent }))
         });
     }
 }
