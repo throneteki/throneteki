@@ -5,7 +5,7 @@ class CardTextDefinition {
     }
 
     action(properties) {
-        this.actionDefinitions.push(properties);
+        this.actionDefinitions.push(Object.assign({isGained: true}, properties));
     }
 
     apply(card) {

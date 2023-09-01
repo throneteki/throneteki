@@ -29,6 +29,8 @@ const EventRegistrar = require('./eventregistrar.js');
  *                other than the card's controller. Defaults to false.
  * clickToActivate - boolean that indicates the action should be activated when
  *                   the card is clicked.
+ * isGained     - boolean indicating whether the action is printed or gained through
+ *                  other effect
  */
 class CardAction extends BaseAbility {
     constructor(game, card, properties) {
@@ -42,6 +44,7 @@ class CardAction extends BaseAbility {
 
         this.game = game;
         this.card = card;
+        this.isGained = !!properties.isGained;
         this.title = properties.title;
         this.max = properties.max;
         this.phase = this.buildPhase(properties);
@@ -123,8 +126,8 @@ class CardAction extends BaseAbility {
             return false;
         }
 
-        if(this.card.isAnyBlank()) {
-            return false ;
+        if(this.card.isAnyBlank() && !this.isGained) {
+            return false;
         }
 
         if(this.condition && !this.condition(context)) {
