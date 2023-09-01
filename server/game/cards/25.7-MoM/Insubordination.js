@@ -17,7 +17,7 @@ class Insubordination extends DrawCard {
     }
 }
 
-Insubordination.code = '25551';
+Insubordination.code = '25558';
 Insubordination.version = '1.0';
 
 module.exports = Insubordination;
