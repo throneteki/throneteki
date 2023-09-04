@@ -8,7 +8,7 @@ class NymeriaOfNySar extends DrawCard {
         this.reaction({
             cannotBeCanceled: true,
             when: {
-                afterChallenge: event => event.challenge.winner === this.controller && event.challenge.strengthDifference >= 10 && !this.controller.hasFlag('cannotRevealPlot')
+                afterChallenge: event => event.challenge.winner === this.controller && event.challenge.strengthDifference >= 5 && !this.controller.hasFlag('cannotRevealPlot')
             },
             cost: ability.costs.kneelFactionCard(),
             target: {
@@ -17,7 +17,7 @@ class NymeriaOfNySar extends DrawCard {
                 cardCondition: (card, context) => 
                     card.controller === context.player && 
                     card.location === 'plot deck' && 
-                    (card.hasTrait('Summer') || card.hasTrait('Scheme')),
+                    (card.hasTrait('Summer') || card.isFaction('martell')),
                 cardType: 'plot'
             },
             message: '{player} uses {source} and kneels their faction card to reveal {target}',
@@ -25,6 +25,7 @@ class NymeriaOfNySar extends DrawCard {
         });
 
         this.action({
+            cannotBeCanceled: true,
             title: 'Manually trigger',
             cost: ability.costs.kneelFactionCard(),
             condition: () => !this.controller.hasFlag('cannotRevealPlot'),
@@ -34,7 +35,7 @@ class NymeriaOfNySar extends DrawCard {
                 cardCondition: (card, context) => 
                     card.controller === context.player && 
                     card.location === 'plot deck' && 
-                    (card.hasTrait('Summer') || card.hasTrait('Scheme')),
+                    (card.hasTrait('Summer') || card.isFaction('martell')),
                 cardType: 'plot'
             },
             handler: context => this.trigger(context)
@@ -51,6 +52,6 @@ class NymeriaOfNySar extends DrawCard {
 }
 
 NymeriaOfNySar.code = '25545';
-NymeriaOfNySar.version = '1.1';
+NymeriaOfNySar.version = '1.2';
 
 module.exports = NymeriaOfNySar;

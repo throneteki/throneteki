@@ -10,22 +10,16 @@ class Nightfall extends DrawCard {
 
         this.reaction({
             when: {
-                'onCardDiscarded': event => event.source === 'reserve' && event.card.controller !== this.controller && ['attachment', 'location'].includes(event.card.getType())
+                afterChallenge: event => event.challenge.winner === this.controller && this.parent && this.parent.isParticipating()
             },
-            cost: ability.costs.sacrificeSelf(),
-            message: {
-                format: '{player} sacrfices {costs.sacrifice} to put {card} into play under their control',
-                args: { card: context => context.event.card }
-            },
-            gameAction: GameActions.putIntoPlay(context => ({
-                card: context.event.card,
-                player: this.controller
-            }))
+            cost: ability.costs.kneelSelf(),
+            message: '{player} kneels {costs.kneel} to have each player check for reserve',
+            gameAction: GameActions.checkReserve()
         });
     }
 }
 
 Nightfall.code = '25522';
-Nightfall.version = '1.0';
+Nightfall.version = '1.1';
 
 module.exports = Nightfall;

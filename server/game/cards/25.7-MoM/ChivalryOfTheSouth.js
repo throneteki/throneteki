@@ -7,13 +7,13 @@ class ChivalryOfTheSouth extends PlotCard {
             when: {
                 onChallengeFinished: event => event.challenge.getParticipants().length === 0
             },
-            message: '{player} uses {source} to gain 1 power for their faction',
-            gameAction: GameActions.gainPower(context => ({ card: context.player.faction, amount: 1 }))
+            message: '{player} uses {source} to gain 2 power for their faction',
+            gameAction: GameActions.gainPower(context => ({ card: context.player.faction, amount: 2 }))
         });
     }
 }
 
 ChivalryOfTheSouth.code = '25596';
-ChivalryOfTheSouth.version = '1.0';
+ChivalryOfTheSouth.version = '1.1';
 
 module.exports = ChivalryOfTheSouth;
