@@ -10,7 +10,7 @@ class TheStepstones extends DrawCard {
         });
         this.forcedReaction({
             when: {
-                afterChallenge: event => event.challenge.loser === this.controller
+                afterChallenge: event => event.challenge.loser === this.controller && event.challenge.challengeType === 'military'
             },
             gameAction: GameActions.ifCondition({
                 condition: context => context.source.hasToken(Tokens.gold),
@@ -43,6 +43,6 @@ class TheStepstones extends DrawCard {
 }
 
 TheStepstones.code = '25544';
-TheStepstones.version = '1.0';
+TheStepstones.version = '1.1';
 
 module.exports = TheStepstones;
