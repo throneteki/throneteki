@@ -13,7 +13,7 @@ class NaughtButAshes extends DrawCard {
             handler: context => {
                 this.untilEndOfPhase(ability => ({
                     match: context.target,
-                    effect: ability.effects.modifyStrength(this.amount())
+                    effect: ability.effects.modifyStrength(this.getAmount())
                 }));
             }
         });
