@@ -18,7 +18,7 @@ class Qyburn extends DrawCard {
                     match: context.target,
                     condition: () => ['play area', 'duplicate'].includes(context.target.location),
                     targetLocation: 'any',
-                    effect: ability.effects.shuffleIntODeckIfStillInPlay(true)
+                    effect: ability.effects.shuffleIntoDeckIfStillInPlay()
                 }));
             }
         });
