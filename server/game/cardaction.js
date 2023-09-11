@@ -51,6 +51,7 @@ class CardAction extends BaseAbility {
         this.location = properties.location || DefaultLocationForType[card.getPrintedType()] || 'play area';
         this.events = new EventRegistrar(game, this);
         this.activationContexts = [];
+        this.gainedByOtherCard = properties.gainedByOtherCard || false;
 
         if(card.getPrintedType() === 'event') {
             this.cost = this.cost.concat(Costs.playEvent());
@@ -123,7 +124,7 @@ class CardAction extends BaseAbility {
             return false;
         }
 
-        if(this.card.isAnyBlank()) {
+        if(this.card.isAnyBlank() && !this.gainedByOtherCard) {
             return false ;
         }
 
