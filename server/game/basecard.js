@@ -611,6 +611,14 @@ class BaseCard {
         return this.game.currentChallenge.isParticipating(this);
     }
 
+    isDeclaredAsAttacker() {
+        if(!this.game.currentChallenge) {
+            return false;
+        }
+
+        return this.game.currentChallenge.isDeclared(this);
+    }
+
     setCardType(cardType) {
         this.cardTypeSet = cardType;
     }

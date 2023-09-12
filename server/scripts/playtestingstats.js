@@ -88,14 +88,13 @@ gameService.getAllGames(args[0], args[1]).then(games => {
         let losses = playtest.lossesBy.length;
         let games = wins + losses;
 
-        return { name: playtest.groupBy.name, wins, losses, winRate: Math.round(((wins / games) * 100)) };
+        return { name: playtest.groupBy.name, wins, losses, winRate: Math.round(wins / games) };
     });
 
     console.info('### Playtesting Winrate (By Name)\n');
-    console.info('Card | Wins | Losses | Win Rate');
-    console.info('----|----|----|----');
-    _.each(playtestedWinRatesByName, playtest => {
-        console.info(playtest.name, ' | ', playtest.wins, ' | ', playtest.losses, ' | ', playtest.winRate + '%');
+    console.info('Card,Wins,Losses,Win Rate');
+    _.each(_.sortBy(playtestedWinRatesByName, 'name'), playtest => {
+        console.info(playtest.name, ',', playtest.wins, ',', playtest.losses, ',', playtest.winRate);
     });
 
     // Win Rates by Name + Version
@@ -104,14 +103,13 @@ gameService.getAllGames(args[0], args[1]).then(games => {
         let losses = playtest.lossesBy.length;
         let games = wins + losses;
 
-        return { name: playtest.groupBy.name, version: playtest.groupBy.version, wins, losses, winRate: Math.round(((wins / games) * 100)) };
+        return { name: playtest.groupBy.name, version: playtest.groupBy.version, wins, losses, winRate: Math.round(wins / games) };
     });
     console.info('\n\n');
-    console.info('### Playtesting Winrate (By Name & Version)\n');
-    console.info('Card | Version | Wins | Losses | Win Rate');
-    console.info('----|----|----|----|----');
-    _.each(playtestedWinRatesByNameVersion, playtest => {
-        console.info(playtest.name, ' | ', playtest.version, ' | ', playtest.wins, ' | ', playtest.losses, ' | ', playtest.winRate + '%');
+    console.info('Playtesting Winrate (By Name & Version)\n');
+    console.info('Card,Version,Wins,Losses,Win Rate');
+    _.each(_.sortBy(playtestedWinRatesByNameVersion, 'name'), playtest => {
+        console.info(playtest.name, ',', playtest.version, ',', playtest.wins, ',', playtest.losses, ',', playtest.winRate);
     });
 
     // Games Played by Name
@@ -121,11 +119,10 @@ gameService.getAllGames(args[0], args[1]).then(games => {
         return { name: playtest.groupBy.name, games };
     });
     console.info('\n\n');
-    console.info('### Top Played Cards\n');
-    console.info('Card | Games Played');
-    console.info('----|----');
+    console.info('Top Played Cards\n');
+    console.info('Card,Games Played');
     _.each(gamesPlayedByName, playtest => {
-        console.info(playtest.name, ' | ', playtest.games);
+        console.info(playtest.name, ',', playtest.games);
     });
 
     // Games Played by Name + Playtester
@@ -141,11 +138,10 @@ gameService.getAllGames(args[0], args[1]).then(games => {
         return all.concat(playtested);
     }, []);
     console.info('\n\n');
-    console.info('### Top Played Cards (By Playtester)\n');
-    console.info('Playtester | Card | Games Played | Wins | Losses');
-    console.info('----|----|----|----|----|----');
+    console.info('Top Played Cards (By Playtester)\n');
+    console.info('Playtester,Card,Games Played,Wins,Losses');
     _.each(gamesPlayedByNamePlaytester, playtest => {
-        console.info(playtest.playtester, ' | ', playtest.name, ' | ', playtest.games, ' | ', playtest.wins, ' | ', playtest.losses);
+        console.info(playtest.playtester, ',', playtest.name, ',', playtest.games, ',', playtest.wins, ',', playtest.losses);
     });
 })
     .then(() => db.close())

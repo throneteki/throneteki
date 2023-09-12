@@ -13,8 +13,10 @@ class Castamere extends DrawCard {
                 ability.costs.sacrificeSelf()
             ],
             message: '{player} kneels and sacrifices {costs.sacrifice} to also apply military claim',
-            gameAction: GameActions.genericHandler(() => {
-                this.game.queueStep(new ApplyClaim(this.game, 'military'));
+            gameAction: GameActions.genericHandler(context => {
+                let claim = context.event.claim.clone();
+                claim.challengeType = 'military';
+                this.game.queueStep(new ApplyClaim(this.game, claim));
             })
         });
     }

@@ -21,7 +21,7 @@ class TheWardenOfTheSouth extends DrawCard {
                 format: '{player} kneels {costs.kneel} to stand {parent}',
                 args: { parent: () => this.parent }
             },
-            gameAction: GameActions.standCard({ card: this.parent })
+            gameAction: GameActions.standCard(() => ({ card: this.parent }))
         });
     }
 }

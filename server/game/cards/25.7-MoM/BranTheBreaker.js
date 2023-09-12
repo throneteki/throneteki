@@ -4,7 +4,7 @@ class BranTheBreaker extends DrawCard {
     setupCardAbilities(ability) {
         this.attachmentRestriction({ type: 'location', faction: 'stark', controller: 'current', unique: true });
         this.persistentEffect({
-            condition: () => this.game.isDuringChallenge({ attacker: this.controller }),
+            condition: () => this.game.isDuringChallenge({ attackingPlayer: this.controller }),
             match: card => card.getType() === 'character' && card.hasPrintedCost() && card.getPrintedCost() <= this.controller.getClaim(),
             targetController: 'any',
             effect: ability.effects.cannotBeKilled()

@@ -21,6 +21,6 @@ class SchemingSnake extends DrawCard {
 }
 
 SchemingSnake.code = '25541';
-SchemingSnake.version = '1.0';
+SchemingSnake.version = '1.1';
 
 module.exports = SchemingSnake;
