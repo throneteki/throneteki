@@ -23,7 +23,7 @@ class StealthKeyword extends ChallengeKeywordAbility {
     }
 
     meetsKeywordRequirements(context) {
-        return context.source.isAttacking();
+        return context.source.isDeclaredAsAttacker();
     }
 }
 

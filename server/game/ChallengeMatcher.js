@@ -12,7 +12,8 @@ class ChallengeMatcher {
             Matcher.containsValue(matchers.initiatedAgainstPlayer, () => challenge.initiatedAgainstPlayer) &&
             Matcher.containsValue(matchers.loser, () => challenge.loser) &&
             Matcher.containsValue(matchers.winner, () => challenge.winner) &&
-            Matcher.anyValue(matchers.attackingAlone, card => card.isAttacking() && challenge.attackers.length === 1) &&
+            //check for both attacking and declaredAsAttacker to make cards like The Knight work (having Stealth when attacking alone)
+            Matcher.anyValue(matchers.attackingAlone, card => (card.isAttacking() || card.isDeclaredAsAttacker()) && challenge.attackers.length === 1) && 
             Matcher.anyValue(matchers.defendingAlone, card => card.isDefending() && challenge.defenders.length === 1) &&
             Matcher.containsValue(matchers.number, () => challenge.number) &&
             Matcher.containsValue(matchers.unopposed, () => challenge.isUnopposed()) &&
