@@ -36,7 +36,7 @@ class AssaultKeyword extends ChallengeKeywordAbility {
     }
 
     meetsKeywordRequirements(context) {
-        return context.source.isAttacking();
+        return context.source.isDeclaredAsAttacker();
     }
 
     executeHandler(context) {

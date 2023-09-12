@@ -45,7 +45,9 @@ class TimeLimit {
     }
 
     checkForTimeLimitReached() {
-        if(this.game.useGameTimeLimit && !this.isTimeLimitReached) {
+        //only check for the end of the game if the timelimit has not been reached yet
+        //and the timer is currently active (not paused)
+        if(!this.isTimeLimitReached && this.timeLimitStarted) {
             let differenceBetweenStartOfTimerAndNow = moment.duration(moment().diff(this.timeLimitStartedAt));
             if(differenceBetweenStartOfTimerAndNow.asSeconds() >= this.timeLimitInSeconds) {
                 this.game.addAlert('warning', 'Time up.  The game will end after the current round has finished');
@@ -53,7 +55,9 @@ class TimeLimit {
                 this.timeLimitStarted = false;
                 this.game.timeExpired();
             }
-        } else if(this.isTimeLimitReached && this.timer) {
+        }
+        //clear the timer if the time is up
+        if(this.isTimeLimitReached && this.timer) {
             clearInterval(this.timer);
             this.timer = undefined;
         }
