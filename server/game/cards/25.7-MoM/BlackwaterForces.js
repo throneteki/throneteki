@@ -1,21 +1,26 @@
-const GameActions = require('../../GameActions/index.js');
 const DrawCard = require('../../drawcard.js');
 
 class BlackwaterForces extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                'onCardRevealed:aggregate': event => (
-                    event.events.some(revealEvent => ['hand', 'draw deck'].includes(revealEvent.cardStateWhenRevealed.location))
-                )
+                onCardStood: event => event.card === this && this.game.isDuringChallenge()
             },
-            message: '{player} uses {source} to return {source} to its owner\'s hand',
-            gameAction: GameActions.returnCardToHand({ card: this })
+            target: {
+                cardCondition: { location: 'play area', type: 'character', participating: true }
+            },
+            message: '{player} uses {source} to give {target} +2 STR until the end of the challenge',
+            handler: context => {
+                this.untilEndOfChallenge(ability => ({
+                    match: context.target,
+                    effect: ability.effects.modifyStrength(2)
+                }));
+            }
         });
     }
 }
 
 BlackwaterForces.code = '25589';
-BlackwaterForces.version = '1.1';
+BlackwaterForces.version = '1.2';
 
 module.exports = BlackwaterForces;
