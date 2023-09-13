@@ -3,7 +3,7 @@ const GameActions = require('../../GameActions/index.js');
 
 class HarlawScout extends DrawCard {
     setupCardAbilities(ability) {
-        this.interrupt({
+        this.reaction({
             when: {
                 'onCardDiscarded:aggregate': event => 
                     event.events.some(discardEvent => 
