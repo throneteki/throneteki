@@ -8,12 +8,12 @@ class AThousandEyesAndOne extends DrawCard {
             cost: ability.costs.kneelFactionCard(),
             chooseOpponent: true,
             handler: context => {
-                context.game.resolveGameAction(GameActions.choose({
+                this.game.resolveGameAction(GameActions.choose({
                     title: context => `Look at ${context.opponent.name}'s hand or shadows area?`,
                     choices: {
                         'Hand': {
                             message: '{player} chooses to look at {opponent}\'s hand',
-                            gameAction: GameActions.lookAtHand(context => ({ player: context.player, opponent: context.opponent, context }))
+                            gameAction: GameActions.lookAtHand(context => ({ player: context.player, opponent: context.opponent, context })).then(thenAction())
                         },
                         'Shadows area': {
                             message: '{player} chooses to look at {opponent}\'s shadows area',
@@ -26,20 +26,25 @@ class AThousandEyesAndOne extends DrawCard {
                                     cardCondition: card => card.location === 'shadows' && card.controller === context.opponent,
                                     onSelect: () => true
                                 });
-                            })
+                            }).then(thenAction())
                         }
                     }
-                })).then({
-                    message: {
-                        format: 'Then, {player} and {opponent} each draw 1 card',
-                        args: { opponent: context => context.parentContext.opponent }
-                    },
-                    gameAction: GameActions.simultaneously(context => 
-                        [context.player, context.parentContext.opponent].map(player => GameActions.drawCards({ player, amount: 1 }))
-                    )
-                });
+                }), context);
             }
         });
+    }
+
+    // TODO: Add proper 'then' logic to ChooseGameAction (should simply attach the ThenAbilityAction to the chosen gameAction)
+    thenAction() {
+        return {
+            message: {
+                format: 'Then, {player} and {opponent} each draw 1 card',
+                args: { opponent: context => context.parentContext.opponent }
+            },
+            gameAction: GameActions.simultaneously(context => 
+                [context.player, context.parentContext.opponent].map(player => GameActions.drawCards({ player, amount: 1 }))
+            )
+        }
     }
 }
 
