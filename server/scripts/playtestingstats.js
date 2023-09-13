@@ -178,10 +178,9 @@ gameService.getAllGames(from, to).then(games => {
     });
     resultMap.set(title, rows);
 
-
     for(const [title, rows] of resultMap) {
         switch(format) {
-            case 'console':
+            case 'console': {
                 console.log('\n' + title);
                 const headers = rows[0];
                 const tableData = rows.slice(1).map(row => {
@@ -193,7 +192,8 @@ gameService.getAllGames(from, to).then(games => {
                 });
                 console.table(tableData);
                 break;
-            case 'csv':
+            }
+            case 'csv': {
                 try {
                     const filePath = __dirname + '/' + title.replace(/\s/g, '_') + '.csv';
                     let content = '';
@@ -205,21 +205,23 @@ gameService.getAllGames(from, to).then(games => {
                 } catch(err) {
                     console.error(err);
                 }
+                break;
+            }
         }
     }
 })
-.then(() => db.close())
-.catch((ex) => {
-    console.log(ex.stack);
-    db.close();
-});
+    .then(() => db.close())
+    .catch((ex) => {
+        console.log(ex.stack);
+        db.close();
+    });
 
 function getArg(name, defaultVal = undefined) {
     const argIndex = process.argv.indexOf('--' + name);
     let value = defaultVal;
     if(argIndex > -1) {
         if(process.argv.length <= argIndex + 1) {
-            throw 'Failed to process args: must provide value for "--' + name +'".';
+            throw 'Failed to process args: must provide value for "--' + name + '".';
         }
         value = process.argv[argIndex + 1];
     }

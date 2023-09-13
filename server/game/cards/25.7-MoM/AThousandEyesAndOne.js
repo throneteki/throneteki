@@ -13,7 +13,7 @@ class AThousandEyesAndOne extends DrawCard {
                     choices: {
                         'Hand': {
                             message: '{player} chooses to look at {opponent}\'s hand',
-                            gameAction: GameActions.lookAtHand(context => ({ player: context.player, opponent: context.opponent, context })).then(thenAction())
+                            gameAction: GameActions.lookAtHand(context => ({ player: context.player, opponent: context.opponent, context })).then(this.thenAction())
                         },
                         'Shadows area': {
                             message: '{player} chooses to look at {opponent}\'s shadows area',
@@ -26,7 +26,7 @@ class AThousandEyesAndOne extends DrawCard {
                                     cardCondition: card => card.location === 'shadows' && card.controller === context.opponent,
                                     onSelect: () => true
                                 });
-                            }).then(thenAction())
+                            }).then(this.thenAction())
                         }
                     }
                 }), context);
@@ -44,7 +44,7 @@ class AThousandEyesAndOne extends DrawCard {
             gameAction: GameActions.simultaneously(context => 
                 [context.player, context.parentContext.opponent].map(player => GameActions.drawCards({ player, amount: 1 }))
             )
-        }
+        };
     }
 }
 
