@@ -1,4 +1,3 @@
-const GameActions = require('../../GameActions/index.js');
 const DrawCard = require('../../drawcard.js');
 
 class BowenMarsh extends DrawCard {
@@ -7,38 +6,42 @@ class BowenMarsh extends DrawCard {
             when: {
                 onCardOutOfShadows: event => event.card.controller === this.controller
             },
-            limit: ability.limit.perPhase(1),
-            choices: {
-                'Draw 1 card': {
-                    message: '{player} uses {source} to draw 1 card',
-                    gameAction: GameActions.drawCards(context => ({ player: context.player, amount: 1 }))
-                },
-                'Stand character': context => {
-                    this.game.promptForSelect(context.player, {
-                        cardCondition: { location: 'play area', type: 'character', faction: 'thenightswatch', printedCostOrLower: 3 },
-                        source: this,
-                        onSelect: (player, card) => this.onCardSelected(player, card, context),
-                        onCancel: player => this.onCancel(player)
-                    });
-                }
+            limit: ability.limit.perPhase(3),
+            target: {
+                cardCondition: card => card.location === 'play area' && card.getType() === 'character'
+            },
+            handler: (context) => {
+                this.selectedCharacter = context.target;
+
+                this.game.promptWithMenu(this.controller, this, {
+                    activePrompt: {
+                        menuTitle: 'Select a challenge type',
+                        buttons: ChallengeTypes.asButtons({ method: 'selectChallengeType' })
+                    },
+                    source: this
+                });
             }
         });
     }
 
-    onCardSelected(player, card, context) {
-        this.game.addMessage('{0} uses {1} to stand {2}', player, this, card);
-        this.game.resolveGameAction(GameActions.standCard({ card }), context);
-        return true;
-    }
+    selectChallengeType(player, challengeType) {
+        this.untilEndOfPhase(ability => ({
+            condition: () => this.game.isDuringChallenge({ challengeType }),
+            match: this.selectedCharacter,
+            effect: ability.effects.cannotBeDeclaredAsAttacker()
 
-    onCancel(player) {
-        this.game.addAlert('danger', '{0} did not select a card to stand', player);
+        }));
+
+        this.game.addMessage('{0} uses {1} to make {2} unable to be declared as an attacker in {3} challenges this phase',
+            player, this, this.selectedCharacter, challengeType);
+
+        this.selectedCharacter = null;
 
         return true;
     }
 }
 
 BowenMarsh.code = '25549';
-BowenMarsh.version = '1.0';
+BowenMarsh.version = '1.1';
 
 module.exports = BowenMarsh;
