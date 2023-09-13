@@ -7,6 +7,7 @@ class TheKnight extends DrawCard {
         this.tracker = ChallengeTracker.forPhase(this.game);
         
         this.action({
+            title: 'Return 2 characters to raise claim',
             phase: 'challenge',
             limit: ability.limit.perRound(1),
             chooseOpponent: player => player.discardPile.filter(card => card.getType() === 'character').length >= 2,
@@ -47,6 +48,6 @@ class TheKnight extends DrawCard {
 }
 
 TheKnight.code = '25513';
-TheKnight.version = '1.1';
+TheKnight.version = '1.2';
 
 module.exports = TheKnight;
