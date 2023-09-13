@@ -4,7 +4,7 @@ class NaughtButAshes extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Give character -X STR',
-            target: { location: 'play area', type: 'character' },
+            target: { location: 'play area', type: 'character', participating: true, hasAttachments: true },
             max: ability.limit.perRound(1),
             message: {
                 format: '{player} plays {source} to give {target} {amount} STR until the end of the phase',
@@ -25,6 +25,6 @@ class NaughtButAshes extends DrawCard {
 }
 
 NaughtButAshes.code = '25583';
-NaughtButAshes.version = '1.0';
+NaughtButAshes.version = '1.1';
 
 module.exports = NaughtButAshes;
