@@ -35,6 +35,6 @@ class HighbornRecruit extends DrawCard {
 }
 
 HighbornRecruit.code = '25554';
-HighbornRecruit.version = '1.0';
+HighbornRecruit.version = '1.1';
 
 module.exports = HighbornRecruit;
