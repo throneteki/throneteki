@@ -7,7 +7,7 @@ class GrandMaesterPycelle extends DrawCard {
             when: {
                 onCardDiscarded: event => event.originalLocation === 'hand'
             },
-            limit: ability.limit.perPhase(2),
+            limit: ability.limit.perRound(2),
             message: {
                 format: '{player} uses {source} to place a discarded card facedown under {controller}\'s agenda instead of placing it in their discard pile',
                 args: { controller: context => context.event.card.controller }
@@ -18,6 +18,6 @@ class GrandMaesterPycelle extends DrawCard {
 }
 
 GrandMaesterPycelle.code = '25526';
-GrandMaesterPycelle.version = '1.0';
+GrandMaesterPycelle.version = '1.1';
 
 module.exports = GrandMaesterPycelle;
