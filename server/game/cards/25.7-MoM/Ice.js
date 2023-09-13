@@ -3,7 +3,10 @@ const DrawCard = require('../../drawcard.js');
 
 class Ice extends DrawCard {
     setupCardAbilities(ability) {
-        this.attachmentRestriction({ faction: 'stark' });
+        this.attachmentRestriction({ unique: true, faction: 'stark' });
+        this.whileAttached({
+            effect: ability.effects.modifyStrength(2)
+        });
         this.reaction({
             when: {
                 onCardSaved: event => event.card.getType() === 'character'
@@ -15,6 +18,6 @@ class Ice extends DrawCard {
 }
 
 Ice.code = '25570';
-Ice.version = '1.0';
+Ice.version = '1.1';
 
 module.exports = Ice;

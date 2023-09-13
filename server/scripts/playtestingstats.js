@@ -1,5 +1,6 @@
 /*eslint no-console: 0*/
 
+const fs = require('fs');
 const _ = require('underscore');
 const monk = require('monk');
 
@@ -10,20 +11,17 @@ let configService = ServiceFactory.configService();
 let db = monk(configService.getValue('dbPath'));
 let gameService = new GameService(db);
 
-let args = process.argv.slice(2);
+const from = getArg('from');
+const to = getArg('to');
+const format = getArg('format', 'console');
 
-if(_.size(args) === 0) {
-    console.info('Running stats on all games');
-} else if(_.size(args) === 1) {
-    console.info('Running stats on games from ', args[0], ' onwards');
-} else if(_.size(args) > 1) {
-    console.info('Running stats on games between', args[0], 'and', args[1]);
-}
+console.info('Running stats on games from', from ? from : 'the beginning of time', 'to', to ? to : 'the end of time', '.');
+console.info('Writing to', format, '...');
 
-gameService.getAllGames(args[0], args[1]).then(games => {
-    let rejected = { singlePlayer: 0, noWinner: 0 };
+gameService.getAllGames(from, to).then(games => {
     console.info('' + _.size(games.filter(game => game.players.some(player => !!player.playtested))), 'total playtesting games');
 
+    let rejected = { singlePlayer: 0, noWinner: 0 };
     let players = {};
     let playtested = {};
 
@@ -82,70 +80,150 @@ gameService.getAllGames(args[0], args[1]).then(games => {
         return groups;
     };
 
-    // Win Rates by Name
-    let playtestedWinRatesByName = _.map(groupCardsBy(card => ({ name: card.name })), playtest => {
+    const resultMap = new Map();
+    let title = '';
+    let rows = [];
+    let dataSet = [];
+
+    ///////////////////////
+    // Win Rates by Name //
+    ///////////////////////
+    
+    title = 'Playtesting Winrate (By Name)';
+    rows = [['Card', 'Wins', 'Losses', 'Win Rate']];
+    dataSet = _.map(groupCardsBy(card => ({ name: card.name })), playtest => {
         let wins = playtest.winsBy.length;
         let losses = playtest.lossesBy.length;
         let games = wins + losses;
 
-        return { name: playtest.groupBy.name, wins, losses, winRate: Math.round(wins / games) };
+        return { name: playtest.groupBy.name, wins, losses, winRate: Number((wins / games).toFixed(2)) };
     });
-
-    console.info('### Playtesting Winrate (By Name)\n');
-    console.info('Card,Wins,Losses,Win Rate');
-    _.each(_.sortBy(playtestedWinRatesByName, 'name'), playtest => {
-        console.info(playtest.name, ',', playtest.wins, ',', playtest.losses, ',', playtest.winRate);
+    _.each(_.sortBy(dataSet, 'winRate').reverse(), playtest => {
+        rows.push([playtest.name, playtest.wins, playtest.losses, playtest.winRate]);
     });
+    resultMap.set(title, rows);
 
-    // Win Rates by Name + Version
-    let playtestedWinRatesByNameVersion = _.map(groupCardsBy(card => ({ name: card.name, version: card.version })), playtest => {
+    /////////////////////////////////
+    // Win Rates by Name + Version //
+    /////////////////////////////////
+
+    title = 'Playtesting Winrate (By Name & Version)';
+    rows = [['Card', 'Version', 'Wins', 'Losses', 'Win Rate']];
+    dataSet = _.map(groupCardsBy(card => ({ name: card.name, version: card.version })), playtest => {
         let wins = playtest.winsBy.length;
         let losses = playtest.lossesBy.length;
         let games = wins + losses;
 
-        return { name: playtest.groupBy.name, version: playtest.groupBy.version, wins, losses, winRate: Math.round(wins / games) };
+        return { name: playtest.groupBy.name, version: playtest.groupBy.version, wins, losses, winRate: Number((wins / games).toFixed(2)) };
     });
-    console.info('\n\n');
-    console.info('Playtesting Winrate (By Name & Version)\n');
-    console.info('Card,Version,Wins,Losses,Win Rate');
-    _.each(_.sortBy(playtestedWinRatesByNameVersion, 'name'), playtest => {
-        console.info(playtest.name, ',', playtest.version, ',', playtest.wins, ',', playtest.losses, ',', playtest.winRate);
+    _.each(_.sortBy(dataSet, 'winRate').reverse(), playtest => {
+        rows.push([playtest.name, playtest.version, playtest.wins, playtest.losses, playtest.winRate]);
     });
+    resultMap.set(title, rows);
 
-    // Games Played by Name
-    let gamesPlayedByName = _.map(groupCardsBy(card => ({ name: card.name })), playtest => {
+    //////////////////////////
+    // Games Played by Name //
+    //////////////////////////
+    title = 'Top Played Cards';
+    rows = [['Card', 'Games Played']];
+    dataSet = _.map(groupCardsBy(card => ({ name: card.name })), playtest => {
         let games = playtest.winsBy.length + playtest.lossesBy.length;
 
         return { name: playtest.groupBy.name, games };
     });
-    console.info('\n\n');
-    console.info('Top Played Cards\n');
-    console.info('Card,Games Played');
-    _.each(gamesPlayedByName, playtest => {
-        console.info(playtest.name, ',', playtest.games);
+    _.each(_.sortBy(dataSet, 'games').reverse(), playtest => {
+        rows.push([playtest.name, playtest.games]);
     });
+    resultMap.set(title, rows);
 
-    // Games Played by Name + Playtester
-    let gamesPlayedByNamePlaytester = _.reduce(players, (all, player) => {
+    ///////////////////////////////////////
+    // Games Played by Name + Playtester //
+    ///////////////////////////////////////
+    title = 'Top Played Cards (By Playtester)';
+    rows = [['Playtester', 'Card', 'Wins', 'Losses', 'Win Rate']];
+    dataSet = _.reduce(players, (all, player) => {
         let playtested = _.map(groupCardsBy(card => ({ name: card.name })), playtest => {
             let wins = playtest.winsBy.filter(playerName => playerName === player.name).length;
             let losses = playtest.lossesBy.filter(playerName => playerName === player.name).length;
             let games = wins + losses;
 
-            return { playtester: player.name, name: playtest.groupBy.name, wins, losses, games };
-        }).filter(playtest => playtest.games > 0);
+            return { playtester: player.name, name: playtest.groupBy.name, wins, losses, winRate: Number((wins / games).toFixed(2)) };
+        }).filter(playtest => playtest.wins + playtest.losses > 0);
 
         return all.concat(playtested);
     }, []);
-    console.info('\n\n');
-    console.info('Top Played Cards (By Playtester)\n');
-    console.info('Playtester,Card,Games Played,Wins,Losses');
-    _.each(gamesPlayedByNamePlaytester, playtest => {
-        console.info(playtest.playtester, ',', playtest.name, ',', playtest.games, ',', playtest.wins, ',', playtest.losses);
+    _.each(_.sortBy(dataSet, 'winRate').reverse(), playtest => {
+        rows.push([playtest.playtester, playtest.name, playtest.wins, playtest.losses, playtest.winRate]);
     });
+    resultMap.set(title, rows);
+
+    /////////////////////
+    // All Usable Data //
+    /////////////////////
+    title = 'All Data';
+    rows = [['Playtester', 'Card', 'Version', 'Faction', 'Wins', 'Losses']];
+    dataSet = _.reduce(players, (all, player) => {
+        let playtested = _.map(groupCardsBy(card => ({ name: card.name, version: card.version, faction: card.faction })), playtest => {
+            let wins = playtest.winsBy.filter(playerName => playerName === player.name).length;
+            let losses = playtest.lossesBy.filter(playerName => playerName === player.name).length;
+            let games = wins + losses;
+
+            return { playtester: player.name, name: playtest.groupBy.name, version: playtest.groupBy.version, faction: playtest.groupBy.faction, wins, losses, winRate: Number((wins / games).toFixed(2)) };
+        }).filter(playtest => playtest.wins + playtest.losses > 0);
+
+        return all.concat(playtested);
+    }, []);
+    _.each(_.sortBy(dataSet, 'card').reverse(), playtest => {
+        rows.push([playtest.playtester, playtest.name, playtest.version, playtest.faction, playtest.wins, playtest.losses]);
+    });
+    resultMap.set(title, rows);
+
+    for(const [title, rows] of resultMap) {
+        switch(format) {
+            case 'console': {
+                console.log('\n' + title);
+                const headers = rows[0];
+                const tableData = rows.slice(1).map(row => {
+                    let obj = {};
+                    for(const index in headers) {
+                        obj[headers[index]] = row[index];
+                    }
+                    return obj;
+                });
+                console.table(tableData);
+                break;
+            }
+            case 'csv': {
+                try {
+                    const filePath = __dirname + '/' + title.replace(/\s/g, '_') + '.csv';
+                    let content = '';
+                    for(const row of rows) {
+                        content += (row.join(',') + '\n');
+                    }
+                    fs.writeFileSync(filePath, content, { flag: 'w+' });
+                    console.log('Successfully written to ' + filePath + '!');
+                } catch(err) {
+                    console.error(err);
+                }
+                break;
+            }
+        }
+    }
 })
     .then(() => db.close())
     .catch((ex) => {
         console.log(ex.stack);
         db.close();
     });
+
+function getArg(name, defaultVal = undefined) {
+    const argIndex = process.argv.indexOf('--' + name);
+    let value = defaultVal;
+    if(argIndex > -1) {
+        if(process.argv.length <= argIndex + 1) {
+            throw 'Failed to process args: must provide value for "--' + name + '".';
+        }
+        value = process.argv[argIndex + 1];
+    }
+    return value;
+}

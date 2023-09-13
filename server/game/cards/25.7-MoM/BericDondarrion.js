@@ -1,7 +1,7 @@
 const DrawCard = require('../../drawcard.js');
 
 class BericDondarrion extends DrawCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
                 afterChallenge: event => event.challenge.winner === this.controller && this.isAttacking()
@@ -9,9 +9,10 @@ class BericDondarrion extends DrawCard {
             target: {
                 cardCondition: (card, context) => card.location === 'play area' && card.getType() === 'character' && card.controller === context.event.challenge.loser
             },
-            message: '{player} uses {source} to prevent {target} from standing or kneeling',
+            limit: ability.limit.perRound(1),
+            message: '{player} uses {source} to prevent {target} from standing or kneeling until the end of the round',
             handler: context => {
-                this.untilEndOfPhase(ability => ({
+                this.untilEndOfRound(ability => ({
                     match: context.target,
                     effect: [
                         ability.effects.cannotBeStood(),
