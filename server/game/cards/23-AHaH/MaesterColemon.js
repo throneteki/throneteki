@@ -25,7 +25,7 @@ class MaesterColemon extends DrawCard {
                         newParent.location === 'play area'
                     ),
                     onSelect: (player, newParent) => {
-                        player.attach(player, attachment, newParent);
+                        attachment.controller.attach(attachment.controller, attachment, newParent);
                         return true;
                     }
                 });
