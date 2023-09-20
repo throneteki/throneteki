@@ -30,6 +30,6 @@ class ALannistersHonor extends DrawCard {
 }
 
 ALannistersHonor.code = '25535';
-ALannistersHonor.version = '1.1';
+ALannistersHonor.version = '1.2';
 
 module.exports = ALannistersHonor;
