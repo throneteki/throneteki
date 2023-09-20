@@ -21,7 +21,7 @@ class Winterfell extends DrawCard {
             },
             gameAction: GameActions.discardTopCards(context => ({
                 player: context.event.card.owner,
-                amount: this.getAmount(),
+                amount: this.getAmount(context),
                 source: this
             }))
         });

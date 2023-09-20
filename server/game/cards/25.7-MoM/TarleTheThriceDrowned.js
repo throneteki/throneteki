@@ -3,42 +3,33 @@ const DrawCard = require('../../drawcard.js');
 
 class TarleTheThriceDrowned extends DrawCard {
     setupCardAbilities(ability) {
-        this.forcedReaction({
+        this.reaction({
             when: {
-                onCardEntersPlay: event => (
-                    event.card.getType() === 'character' &&
-                    event.card.controller === this.controller &&
-                    event.card.isFaction('greyjoy') &&
-                    event.originalLocation === 'dead pile'
-                )
+                onCardPlaced: event => event.card.location === 'dead pile'
+                                        && event.card.getType() === 'character'
+                                        && event.card.controller === this.controller
+                                        && (event.card.hasTrait('Drowned God') || event.card.hasTrait('Ironborn'))
             },
-            limit: ability.limit.perRound(2),
-            gameAction: GameActions.simultaneously(context =>
-                context.game.getPlayersInFirstPlayerOrder().map(player => 
-                    GameActions.ifCondition({
-                        condition: () => player.faction.kneeled,
-                        thenAction: GameActions.discardPower({ card: player.faction, amount: 1 }),
-                        elseAction: GameActions.choose({
-                            player: () => player,
-                            choices: {
-                                'Discard Power': {
-                                    message: '{choosingPlayer} chooses to discard 1 power from their faction card',
-                                    gameAction: GameActions.discardPower({ card: player.faction, amount: 1 })
-                                },
-                                'Kneel Faction Card': {
-                                    message: '{choosingPlayer} chooses to kneel their faction card',
-                                    gameAction: GameActions.kneelCard({ card: player.faction })
-                                }
-                            }
-                        })
-                    })
-                )
-            )
+            limit: ability.limit.perRound(1),
+            message: {
+                format: '{player} uses {source} to put {character} into play',
+                args: { character: context => context.event.card }
+            },
+            gameAction: GameActions.putIntoPlay(context => ({ card: context.event.card }))
+                .then({
+                    target: {
+                        cardCondition: { type: 'character', location: 'play area', controller: 'current' }
+                    },
+                    message: 'Then, {player} kills {target}',
+                    handler: context => {
+                        this.game.resolveGameAction(GameActions.kill(context => ({ card: context.target })), context);
+                    }
+                })
         });
     }
 }
 
 TarleTheThriceDrowned.code = '25514';
-TarleTheThriceDrowned.version = '1.0';
+TarleTheThriceDrowned.version = '1.1';
 
 module.exports = TarleTheThriceDrowned;

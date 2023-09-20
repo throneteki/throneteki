@@ -8,7 +8,10 @@ class AtTheTowerOfJoy extends PlotCard {
             },
             message: '{player} uses {source} to make {target} unkillable until the end of the round',
             handler: context => {
-                this.untilEndOfRound(ability => ({
+                this.lastingEffect(ability => ({
+                    until: {
+                        onCardEntersPlay: event => event.card.getType() === 'plot' && event.card.controller === context.player
+                    },
                     match: context.target,
                     effect: ability.effects.cannotBeKilled()
                 }));
@@ -18,6 +21,6 @@ class AtTheTowerOfJoy extends PlotCard {
 }
 
 AtTheTowerOfJoy.code = '25611';
-AtTheTowerOfJoy.version = '1.0';
+AtTheTowerOfJoy.version = '1.1';
 
 module.exports = AtTheTowerOfJoy;
