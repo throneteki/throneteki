@@ -6,10 +6,10 @@ class CalmAsStillWater extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCharacterKilled: event => event.card.getPrintedStrength() <= 3 && event.card.canBeSaved() && event.allowSave
+                onCharacterKilled: event => event.card.hasPrintedCost() && event.card.getPrintedCost() <= 3 && event.card.canBeSaved() && event.allowSave
             },
             message: {
-                format: '{player} plays {source} to save {character} and return them to their\'s owners hand',
+                format: '{player} plays {source} to save {character} and return it to its owner\'s hand',
                 args: { character: context => context.event.card }
             },
             gameAction: GameActions.simultaneously([
@@ -23,6 +23,6 @@ class CalmAsStillWater extends DrawCard {
 }
 
 CalmAsStillWater.code = '25608';
-CalmAsStillWater.version = '1.0';
+CalmAsStillWater.version = '1.1';
 
 module.exports = CalmAsStillWater;
