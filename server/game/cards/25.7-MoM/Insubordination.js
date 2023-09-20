@@ -7,9 +7,9 @@ class Insubordination extends DrawCard {
             when: {
                 onChallengeInitiated: event => event.challenge.isMatch({ initiatedAgainstPlayer: this.controller, attackingAlone: this.parent })
             },
-            cost: ability.costs.sacrificeSelf(),
+            cost: ability.costs.kneelSelf(),
             message: {
-                format: '{player} sacrifices {costs.sacrifice} to kill {parent}',
+                format: '{player} kneels {costs.kneel} to kill {parent}',
                 args: { parent: () => this.parent }
             },
             gameAction: GameActions.kill(() => ({ card: this.parent }))
@@ -18,6 +18,6 @@ class Insubordination extends DrawCard {
 }
 
 Insubordination.code = '25558';
-Insubordination.version = '1.0';
+Insubordination.version = '1.1';
 
 module.exports = Insubordination;
