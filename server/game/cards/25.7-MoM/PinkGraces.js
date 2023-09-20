@@ -33,6 +33,6 @@ class PinkGraces extends DrawCard {
 }
 
 PinkGraces.code = '25578';
-PinkGraces.version = '1.1';
+PinkGraces.version = '1.2';
 
 module.exports = PinkGraces;
