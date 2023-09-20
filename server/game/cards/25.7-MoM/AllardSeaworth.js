@@ -7,7 +7,7 @@ class AllardSeaworth extends DrawCard {
             title: 'Discard facedown card',
             phase: 'dominance',
             cost: ability.costs.discardFromPlay(card => card.facedown && card.getType() === 'attachment' && card.parent && card.parent.controller === this.controller && card.parent.isFaction('baratheon')),
-            limit: ability.limit.perPhase(2),
+            limit: ability.limit.perPhase(1),
             message: {
                 format: '{player} uses {source} and discards {costs.discardFromPlay} from underneath {parent} to gain 1 power for their faction',
                 args: { parent: context => context.costStatesWhenInitiated.discardFromPlay.parent }
@@ -18,6 +18,6 @@ class AllardSeaworth extends DrawCard {
 }
 
 AllardSeaworth.code = '25503';
-AllardSeaworth.version = '1.0';
+AllardSeaworth.version = '1.1';
 
 module.exports = AllardSeaworth;
