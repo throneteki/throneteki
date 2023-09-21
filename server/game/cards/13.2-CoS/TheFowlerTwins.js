@@ -13,7 +13,7 @@ class TheFowlerTwins extends DrawCard {
             limit: ability.limit.perPhase(1),
             message: '{player} uses {source} to force {target} to be declared as a participant in the next challenge initated this phase',
             handler: context => {
-                let currentTotalNumber = Math.max(this.tracker.challenges.map(challenge => challenge.totalNumber));
+                let currentTotalNumber = Math.max(...this.tracker.challenges.map(challenge => challenge.totalNumber), 0);
                 
                 this.untilEndOfPhase(ability => ({
                     condition: () => this.game.isDuringChallenge({ totalNumber: currentTotalNumber + 1 }),
