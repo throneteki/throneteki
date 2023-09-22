@@ -14,7 +14,7 @@ class ToTheSpears extends DrawCard {
                 let martellCharacters = context.player.filterCardsInPlay(card => card.getType() === 'character' && card.isFaction('martell'));
 
                 this.untilEndOfPhase(ability => ({
-                    condition: () => this.game.isDuringChallenge({ number: currentNumber + 1 }),
+                    condition: () => this.game.isDuringChallenge({ attackingPlayer: context.player, number: currentNumber + 1 }),
                     match: martellCharacters,
                     effect: ability.effects.doesNotKneelAsAttacker()
                 }));
