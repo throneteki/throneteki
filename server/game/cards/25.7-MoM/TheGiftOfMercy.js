@@ -9,7 +9,7 @@ class TheGiftOfMercy extends AgendaCard {
                 afterChallenge: event => event.challenge.loser !== this.controller
             },
             target: {
-                cardCondition: { type: 'character', condition: (card, context) => card.controller === context.event.challenge.loser }
+                cardCondition: { type: 'character', location: 'play area', condition: (card, context) => card.controller === context.event.challenge.loser }
             },
             message: '{player} uses {source} to place a Valar Morghulis token on {target}',
             handler: context => {
