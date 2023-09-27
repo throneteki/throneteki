@@ -36,6 +36,6 @@ class VictarionGreyjoy extends DrawCard {
 }
 
 VictarionGreyjoy.code = '25515';
-VictarionGreyjoy.version = '1.1';
+VictarionGreyjoy.version = '1.2';
 
 module.exports = VictarionGreyjoy;
