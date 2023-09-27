@@ -9,7 +9,7 @@ class TheGiftOfMercy extends AgendaCard {
                 afterChallenge: event => event.challenge.loser !== this.controller
             },
             target: {
-                cardCondition: { type: 'character', participating: true, condition: (card, context) => card.controller === context.event.challenge.loser }
+                cardCondition: { type: 'character', condition: (card, context) => card.controller === context.event.challenge.loser }
             },
             message: '{player} uses {source} to place a Valar Morghulis token on {target}',
             handler: context => {
@@ -19,15 +19,18 @@ class TheGiftOfMercy extends AgendaCard {
 
         this.interrupt({
             when: {
-                onCharacterKilled: event => event.card.getType() === 'character' && event.card.tokens[Tokens.valarmorghulis] >= 3
+                onCardLeftPlay: event => event.card.getType() === 'character' && event.card.tokens[Tokens.valarmorghulis] >= 3
             },
-            message: '{player} uses {source} to gain 3 power for their faction',
+            message: {
+                format: '{player} uses {source} to gain 3 power for their faction from {card} leaving play',
+                args: { card: context => context.event.card }
+            },
             gameAction: GameActions.gainPower(context => ({ card: context.player.faction, amount: 3 }))
         });
     }
 }
 
 TheGiftOfMercy.code = '25618';
-TheGiftOfMercy.version = '1.1';
+TheGiftOfMercy.version = '1.2';
 
 module.exports = TheGiftOfMercy;
