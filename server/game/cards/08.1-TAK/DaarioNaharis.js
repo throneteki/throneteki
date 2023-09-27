@@ -1,3 +1,4 @@
+const GameActions = require('../../GameActions/index.js');
 const DrawCard = require('../../drawcard.js');
 
 class DaarioNaharis extends DrawCard {
@@ -7,20 +8,22 @@ class DaarioNaharis extends DrawCard {
                 afterChallenge: event => event.challenge.winner === this.controller && this.isAttacking()
             },
             target: {
-                cardCondition: card => card.location === 'play area' && card !== this &&
-                                       (card.hasTrait('Ally') || card.hasTrait('Companion') || card.hasTrait('Mercenary'))
+                cardCondition: { type: 'character', location: 'play area', trait: ['Ally', 'Companion', 'Mercenary'], condition: card => card !== this }
             },
+            message: '{player} uses {source} to stand and take control of {target} until the end of the phase',
             handler: context => {
-                if(context.target.kneeled) {
-                    context.target.controller.standCard(context.target);
-                }
-
-                this.untilEndOfPhase(ability => ({
-                    match: context.target,
-                    effect: ability.effects.takeControl(this.controller)
-                }));
-
-                this.game.addMessage('{0} uses {1} to stand and take control of {2}', context.player, this, context.target);
+                this.game.resolveGameAction(
+                    GameActions.simultaneously([
+                        GameActions.standCard(context => ({ card: context.target })),
+                        GameActions.genericHandler(context => {
+                            this.untilEndOfPhase(ability => ({
+                                match: context.target,
+                                effect: ability.effects.takeControl(context.player)
+                            }));
+                        })
+                    ]),
+                    context
+                );
             }
         });
     }

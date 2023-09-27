@@ -17,6 +17,7 @@ class Challenge {
         this.challengeType = properties.challengeType;
         this.declareDefendersFirst = false;
         this.number = properties.number;
+        this.totalNumber = properties.totalNumber;
         this.attackers = [];
         this.declaredAttackers = [];
         this.attackerStrength = 0;
