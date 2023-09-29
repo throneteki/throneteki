@@ -40,7 +40,7 @@ class GameSocket extends EventEmitter {
         this.subscriber.on('error', this.onError);
         this.publisher.on('error', this.onError);
 
-        const commands = ['LOBBYHELLO2', 'STARTGAME2'];
+        const commands = ['LOBBYHELLO2', 'STARTGAME2', 'PING2', 'CLOSEGAME2'];
 
         for (let command of commands) {
             this.subscriber.subscribe(command, this.onMessage.bind(this, command));
@@ -82,7 +82,7 @@ class GameSocket extends EventEmitter {
 
         switch (command) {
             case 'PING2':
-                this.send('PONG');
+                this.send('PONG2');
                 break;
             case 'STARTGAME2':
                 this.emit('onStartGame', message.arg);
