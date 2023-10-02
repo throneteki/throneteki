@@ -1,4 +1,5 @@
 const AgendaCard = require('../../agendacard');
+const GameActions = require('../../GameActions');
 
 class ThePrinceThatWasPromised extends AgendaCard {
     constructor(owner, cardData) {
@@ -21,35 +22,29 @@ class ThePrinceThatWasPromised extends AgendaCard {
                 afterChallenge: event => this.hasWonBy5(event)
             },
             cost: ability.costs.kneelFactionCard(),
+            message: {
+                format: '{player} uses {source} and kneels their faction card to either stand {namedCharacter} and draw, or search for them',
+                args: { namedCharacter: () => this.selectedCardName }
+            },
             choices: {
-                // TODO: This needs a condition that the player can either stand
-                // the Promise One, or can draw a card.
-                'Stand and draw': context => {
-                    let message = '{0} uses {1} and kneels their faction card to ';
-                    let messageSegments = [];
-                    let promised = this.getThePromised(context.player);
-
-                    if(promised && promised.kneeled && promised.allowGameAction('stand')) {
-                        context.player.standCard(promised);
-                        messageSegments.push('stand {2}');
-                    }
-
-                    if(context.player.canDraw()) {
-                        context.player.drawCardsToHand(1);
-                        messageSegments.push('draw 1 card');
-                    }
-
-                    this.game.addMessage(message + messageSegments.join(', '), context.player, context.source, promised);
+                'Stand and draw': {
+                    message: '{player} chooses, and {gameAction}',
+                    gameAction: GameActions.simultaneously(context => {
+                        let actions = this.getThePromised(context.player) ? [GameActions.standCard(context => ({ card: this.getThePromised(context.player) }))] : [];
+                        actions.push(GameActions.drawCards(context => ({ player: context.player, amount: 1 })));
+                        return actions;
+                    })
                 },
-                'Search': context => {
-                    this.game.promptForDeckSearch(context.player, {
-                        activePromptTitle: 'Select a card',
-                        cardCondition: card => card.name === this.selectedCardName && card.getType() === 'character',
-                        additionalLocations: ['dead pile', 'discard pile'],
-                        onSelect: (player, card) => this.cardSelected(player, card),
-                        onCancel: player => this.doneSelecting(player),
-                        source: this
-                    });
+                'Search': {
+                    gameAction: GameActions.search({
+                        title: 'Select a character',
+                        match: { type: 'character', condition: card => card.name === this.selectedCardName },
+                        location: ['draw deck', 'discard pile', 'dead pile'],
+                        message: '{player} chooses to search their deck, discard pile and dead pile, and {gameAction}',
+                        gameAction: GameActions.addToHand(context => ({
+                            card: context.searchTarget
+                        }))
+                    })
                 }
             }
         });
@@ -68,20 +63,6 @@ class ThePrinceThatWasPromised extends AgendaCard {
             card.getType() === 'character' &&
             card.name === this.selectedCardName
         ))[0];
-    }
-
-    controlsKneelingChar(player) {
-        let promised = this.getThePromised(player);
-        return promised && promised.kneeled && promised.allowGameAction('stand');
-    }
-
-    cardSelected(player, card) {
-        this.game.addMessage('{0} uses {1} to search and add {2} to their hand from their {3}', player, this, card, card.location);
-        player.moveCard(card, 'hand');
-    }
-
-    doneSelecting(player) {
-        this.game.addMessage('{0} uses {1} to search their deck, but does not put any card into play', player, this);
     }
 
     onDecksPrepared() {

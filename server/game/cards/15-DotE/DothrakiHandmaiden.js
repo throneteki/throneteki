@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard');
+const GameActions = require('../../GameActions');
 
 class DothrakiHandmaiden extends DrawCard {
     setupCardAbilities(ability) {
@@ -16,15 +17,27 @@ class DothrakiHandmaiden extends DrawCard {
                 activePromptTitle: 'Select an attachment',
                 cardCondition: (card, context) => card.isMatch({ type: 'attachment', location: 'hand' }) && card.controller === context.player
             },
+            phase: 'marshal',
+            message: '{player} uses {source} to reveal an attachment from their hand',
             handler: context => {
-                this.game.addMessage('{0} uses {1} to reveal {2} and attach it under {1}', context.player, this, context.target);
-                context.player.attach(context.player, context.target, this, 'play', true);
-                this.lastingEffect(() => ({
-                    condition: () => context.target.parent === this,
-                    targetLocation: 'any',
-                    match: context.target,
-                    effect: ability.effects.setCardType('attachment')
-                }));
+                this.game.resolveGameAction(
+                    GameActions.revealCards(context => ({
+                        player: context.player,
+                        cards: [context.target]
+                    })).then({
+                        condition: context => context.event.revealed.length > 0,
+                        handler: context => {
+                            context.player.attach(context.player, context.event.revealed[0], this, 'play', true);
+                            this.lastingEffect(() => ({
+                                condition: () => context.event.revealed[0].parent === context.source,
+                                targetLocation: 'any',
+                                match: context.event.revealed[0],
+                                effect: ability.effects.setCardType('attachment')
+                            }));
+                        }
+                    }),
+                    context
+                );
             }
         });
     }

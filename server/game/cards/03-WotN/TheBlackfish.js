@@ -1,3 +1,4 @@
+const GameActions = require('../../GameActions/index.js');
 const DrawCard = require('../../drawcard.js');
 
 class TheBlackfish extends DrawCard {
@@ -13,13 +14,11 @@ class TheBlackfish extends DrawCard {
                 afterChallenge: event =>
                     event.challenge.winner === this.controller &&
                     event.challenge.challengeType === 'military' &&
-                    event.challenge.isAttackerTheWinner() &&
-                    this.controller.canDraw()
+                    event.challenge.isAttackerTheWinner()
             },
-            handler: () => {
-                this.controller.drawCardsToHand(1);
-                this.game.addMessage('{0} uses {1} to draw a card', this.controller, this);
-            }
+            limit: ability.limit.perPhase(1),
+            message: '{player} uses {source} to draw 1 card',
+            gameAction: GameActions.drawCards(context => ({ player: context.player, amount: 1, source: this }))
         });
     }
 }

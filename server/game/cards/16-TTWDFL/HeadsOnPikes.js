@@ -10,7 +10,8 @@ class HeadsOnPikes extends DrawCard {
             gameAction: GameActions.simultaneously(context => this.game.getOpponents(context.player).map(
                 opponent => GameActions.discardTopCards({
                     player: opponent,
-                    amount: opponent.deadPile.length * 2
+                    amount: opponent.deadPile.length * 2,
+                    source: context.source
                 }).thenExecute(event => {
                     this.game.addMessage('{player} discards {topCards}', event);
                 })

@@ -15,12 +15,10 @@ class ArianneMartell extends DrawCard {
                 this.game.resolveGameAction(
                     GameActions.putIntoPlay(context => ({
                         card: context.target
-                    })).then(preThenContext => ({
-                        // If the card is in the "dupe" location, then a "character" wasn't put into play
-                        condition: () => preThenContext.target.location === 'play area',
+                    })).then({
                         message: 'Then {player} returns {source} to hand',
-                        gameAction: GameActions.returnCardToHand(context => ({ card: context.source }))
-                    })),
+                        gameAction: GameActions.returnCardToHand(context => ({ card: context.source, allowSave: false }))
+                    }),
                     context
                 );
             }

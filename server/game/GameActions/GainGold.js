@@ -1,8 +1,14 @@
 const GameAction = require('./GameAction');
+const Message = require('../Message');
 
 class GainGold extends GameAction {
     constructor() {
         super('gainGold');
+    }
+
+    message({ player, amount }) {
+        const actualAmount = player.getGoldToGain(amount);
+        return Message.fragment('gains {actualAmount} gold', { actualAmount});
     }
 
     canChangeGameState({ player, amount }) {
@@ -11,7 +17,8 @@ class GainGold extends GameAction {
 
     createEvent({ player, amount }) {
         let actualAmount = player.getGoldToGain(amount);
-        return this.event('onGoldGained', { player, amount: actualAmount, desiredAmount: amount }, event => {
+        const isFullyResolved = event => event.amount === event.desiredAmount;
+        return this.event('onGoldGained', { player, amount: actualAmount, desiredAmount: amount, isFullyResolved }, event => {
             event.player.gainedGold += event.amount;
 
             event.player.modifyGold(event.amount);

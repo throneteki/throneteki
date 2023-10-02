@@ -33,7 +33,7 @@ describe('doesNotKneelAsAttacker', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('stark', [
                     'A Noble Cause',
-                    'The Blackfish', 'The Wolf King'
+                    'The Blackfish (WotN)', 'The Wolf King'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
@@ -57,7 +57,6 @@ describe('doesNotKneelAsAttacker', function() {
 
                 // Both the Wolf King and Blackfish effects should keep him standing
                 this.unopposedChallenge(this.player1, 'Military', this.character);
-                this.player1.clickPrompt('Pass');
                 this.player1.clickPrompt('Continue');
 
                 expect(this.character.kneeled).toBe(false);

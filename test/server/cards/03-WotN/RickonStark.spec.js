@@ -6,7 +6,7 @@ describe('Rickon Stark', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('stark', [
                     'A Noble Cause', 'Here to Serve',
-                    'Rickon Stark'
+                    'Rickon Stark', 'Maester Aemon (Core)'
                 ]);
 
                 this.player1.selectDeck(deck);
@@ -15,10 +15,16 @@ describe('Rickon Stark', function() {
                 this.keepStartingHands();
 
                 this.rickon = this.player1.findCardByName('Rickon Stark', 'hand');
+                this.p1deckCard = this.player1.findCardByName('Maester Aemon', 'hand');
+                this.p2deckCard = this.player2.findCardByName('Maester Aemon', 'hand');
 
                 this.player1.clickCard(this.rickon);
 
                 this.completeSetup();
+                
+                // Search effect requires card in deck to actually trigger
+                this.player1.dragCard(this.p1deckCard, 'draw deck');
+                this.player2.dragCard(this.p2deckCard, 'draw deck');
             });
 
             describe('and the search is for the opponent', function() {

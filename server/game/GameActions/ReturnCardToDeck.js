@@ -1,3 +1,4 @@
+const Message = require('../Message');
 const GameAction = require('./GameAction');
 const LeavePlay = require('./LeavePlay');
 const PlaceCard = require('./PlaceCard');
@@ -5,6 +6,10 @@ const PlaceCard = require('./PlaceCard');
 class ReturnCardToDeck extends GameAction {
     constructor() {
         super('returnCardToDeck');
+    }
+
+    message({ card, bottom }) {
+        return Message.fragment('returns {card} to the {position} of their deck', { card, position: bottom ? 'bottom' : 'top' });
     }
 
     canChangeGameState({ card }) {

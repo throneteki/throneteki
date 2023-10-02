@@ -52,7 +52,7 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
             cardCondition: card => cardsForPlayer.includes(card),
             cardType: ['agenda', 'attachment', 'character', 'event', 'location', 'plot', 'title'],
             additionalButtons: this.getButtons(player, unclickableCards),
-            additionalControls: this.getAdditionalPromptControls(),
+            additionalControls: this.getAdditionalPromptControls(player),
             doneButtonText: 'Pass',
             onSelect: (player, card) => this.chooseCardToTrigger(player, card),
             onCancel: () => this.pass(),
@@ -88,25 +88,29 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
         return buttons;
     }
 
-    getAdditionalPromptControls() {
+    getAdditionalPromptControls(player) {
         let controls = [];
         for(let event of this.event.getConcurrentEvents()) {
             if(event.name === 'onCardAbilityInitiated' && event.targets.length > 0) {
                 controls.push({
                     type: 'targeting',
                     source: event.source.getShortSummary(),
-                    targets: event.targets.map(target => target.getShortSummary())
+                    targets: this.buildTargetSummaries(player, event.targets, event.targetsToValidate)
                 });
             } else if(event.name === 'onTargetsChosen') {
                 controls.push({
                     type: 'targeting',
                     source: event.ability.card.getShortSummary(),
-                    targets: event.targets.getTargets().map(target => target.getShortSummary())
+                    targets: this.buildTargetSummaries(player, event.targets.getTargets(), event.targets.getTargetsToValidate())
                 });
             }
         }
 
         return controls;
+    }
+
+    buildTargetSummaries(player, targets, targetsToValidate) {
+        return targets.map(target => target.getShortSummary(targetsToValidate.includes(target) || this.game.isCardVisible(target, player)));
     }
 
     chooseCardToTrigger(player, card) {

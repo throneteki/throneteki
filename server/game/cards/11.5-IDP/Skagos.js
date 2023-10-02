@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 
 class Skagos extends DrawCard {
     setupCardAbilities(ability) {
@@ -8,26 +9,17 @@ class Skagos extends DrawCard {
                 ability.costs.kneelSelf(),
                 ability.costs.sacrifice(card => card.isFaction('stark') && !card.kneeled && card.location !== 'duplicate')
             ],
-            handler: context => {
-                this.currentContext = context;
-                this.game.promptForDeckSearch(context.player, {
-                    activePromptTitle: 'Select a card',
-                    cardCondition: card => card.name === context.costs.sacrifice.name && context.player.canPutIntoPlay(card),
-                    onSelect: (player, card) => this.cardSelected(player, card),
-                    onCancel: player => this.doneSelecting(player),
-                    source: this
-                });
-            }
+            message: '{player} kneels {source} and sacrifices {costs.sacrifice} to search their deck for a card of the same title',
+            gameAction: GameActions.search({
+                title: 'Select a card',
+                match: { condition: (card, context) => card.name === context.costs.sacrifice.name },
+                reveal: false,
+                message: '{player} {gameAction}',
+                gameAction: GameActions.putIntoPlay(context => ({
+                    card: context.searchTarget
+                }))
+            })
         });
-    }
-
-    cardSelected(player, card) {
-        this.game.addMessage('{0} kneels {1} and sacrifices {2} to search their deck and put {3} into play', player, this, this.currentContext.costs.sacrifice, card);
-        player.putIntoPlay(card);
-    }
-
-    doneSelecting(player) {
-        this.game.addMessage('{0} kneels {1} and sacrifices {2} to search their deck, but does not put a card into play', player, this, this.currentContext.costs.sacrifice);
     }
 }
 

@@ -10,6 +10,10 @@ class FightToTheLast extends DrawCard {
             },
             location: 'hand',
             handler: context => {
+                this.untilEndOfPhase(ability => ({
+                    match: context.event.card,
+                    effect: ability.effects.setStrength(1)
+                }));
                 context.event.saveCard();
                 let savedCard = context.event.card;
                 if(context.event.card.kneeled && context.event.card.allowGameAction('stand')) {
@@ -18,10 +22,6 @@ class FightToTheLast extends DrawCard {
                         context
                     );
                 }
-                this.untilEndOfPhase(ability => ({
-                    match: context.event.card,
-                    effect: ability.effects.setStrength(1)
-                }));
 
                 this.game.addMessage('{0} plays {1} to save, stand and set {2}\'s STR to 1 until the end of the phase',
                     this.controller, this, context.event.card);

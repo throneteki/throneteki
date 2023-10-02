@@ -17,19 +17,15 @@ class Leathers extends DrawCard {
             when: {
                 onCardEntersPlay: event => event.card === this
             },
-            handler: context => {
-                this.game.resolveGameAction(
-                    GameActions.search({
-                        title: 'Select a character',
-                        match: { trait: 'Giant', type: 'character' },
-                        message: '{player} uses {source} to search their deck and adds {searchTarget} to their hand',
-                        gameAction: GameActions.addToHand(context => ({
-                            card: context.searchTarget
-                        }))
-                    }),
-                    context
-                );
-            }
+            message: '{player} uses {source} to search their deck for a Giant character',
+            gameAction: GameActions.search({
+                title: 'Select a character',
+                match: { trait: 'Giant', type: 'character' },
+                message: '{player} {gameAction}',
+                gameAction: GameActions.addToHand(context => ({
+                    card: context.searchTarget
+                }))
+            })
         });
     }
 }

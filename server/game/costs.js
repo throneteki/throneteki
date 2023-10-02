@@ -9,6 +9,7 @@ const MoveTokenFromSelfCost = require('./costs/MoveTokenFromSelfCost.js');
 const MovePowerFromFactionCost = require('./costs/MovePowerFromFactionCost');
 const DiscardFromDeckCost = require('./costs/DiscardFromDeckCost');
 const {Tokens} = require('./Constants');
+const MovePowerFromCardCost = require('./costs/MovePowerFromCardCost');
 
 const Costs = {
     /**
@@ -108,6 +109,10 @@ const Costs = {
      */
     placeSelfInDeadPileFromHand: () => CostBuilders.placeInDeadPileFromHand.self(),
     /**
+     * Cost that will place in the dead pile from hand the card that initiated the ability.
+     */
+    placeOnBottomFromHand: condition => CostBuilders.placeOnBottomFromHand.select(condition),
+    /**
      * Cost that reveals a specific card passed into the function
      */
     revealSpecific: cardFunc => CostBuilders.reveal.specific(cardFunc),
@@ -116,6 +121,26 @@ const Costs = {
      * the passed condition predicate function.
      */
     revealCards: (number, condition) => CostBuilders.reveal.selectMultiple(number, condition),
+    /**
+     * Cost that requires revealing up to a number of cards in hand that match
+     * the passed condition predicate function.
+     */
+    revealUpTo: (number, condition, zeroAllowed) => CostBuilders.reveal.selectUpTo(number, condition, zeroAllowed),
+    /**
+     * Cost that requires revealing a players hand. 
+     * 
+     * TODO: Ensure this is updated properly when Alla Reveal implementation is applied.
+     */
+    revealHand: function() {
+        return {
+            canPay: function(context) {
+                return context.player.hand.length > 0;
+            },
+            pay: function(context) {
+                context.game.addMessage('{0} reveals {1} from their hand', context.player, context.player.hand);
+            }
+        };
+    },
     /**
      * Cost that will stand the card that initiated the ability (e.g.,
      * Barristan Selmy (TS)).
@@ -135,6 +160,10 @@ const Costs = {
      */
     removeParentFromChallenge: () => CostBuilders.removeFromChallenge.parent(),
     /**
+     * Cost that will remove a card that matches the passed condition predicate function from the challenge.
+     */
+    removeFromChallenge: condition => CostBuilders.removeFromChallenge.select(condition),
+    /**
      * Cost that will place the played event card in the player's discard pile.
      */
     expendEvent: function() {
@@ -148,6 +177,8 @@ const Costs = {
                 // of their effects.
                 // Ruling: http://www.cardgamedb.com/forums/index.php?/topic/35981-the-annals-of-castle-black/
                 context.originalLocation = context.source.location;
+                // For events being played from underneath another card
+                context.originalParent = context.source.parent;
                 context.source.controller.moveCard(context.source, 'being played');
             }
         };
@@ -221,6 +252,11 @@ const Costs = {
      * destination card matching the passed condition predicate function.
      */
     movePowerFromFaction: ({amount, condition}) => new MovePowerFromFactionCost({amount, condition }),
+    /**
+     * Cost that will move a fixed amount of a power from a card matching the passed condition predicate function
+     * to a fixed target card
+     */
+    movePowerFromCardToFixedTarget: ({target, amount, condition}) => new MovePowerFromCardCost({target, amount, condition}),
     /**
      * Cost that will discard faction power matching the passed amount.
      */
@@ -388,6 +424,7 @@ const Costs = {
             }
         };
     },
+    shuffleSelfIntoDeck: () => CostBuilders.shuffleCardIntoDeck.self(),
     shuffleCardIntoDeck: condition => CostBuilders.shuffleCardIntoDeck.select(condition),
     giveControl: function(card, opponentFunc) {
         return {

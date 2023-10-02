@@ -16,6 +16,7 @@ const {Tokens} = require('./Constants');
 
 const ValidKeywords = [
     'ambush',
+    'assault',
     'bestow',
     'insight',
     'intimidate',
@@ -59,6 +60,7 @@ class BaseCard {
         this.powerOptions = new ReferenceCountedSetProperty();
         this.controllerStack = [];
         this.eventsForRegistration = [];
+        this.keywordSources = [];
 
         this.power = 0;
         this.tokens = {};
@@ -71,7 +73,8 @@ class BaseCard {
         this.canProvidePlotModifier = {
             gold: true,
             initiative: true,
-            reserve: true
+            reserve: true,
+            claim: true
         };
 
         this.abilityRestrictions = [];
@@ -148,6 +151,14 @@ class BaseCard {
                 match: card => card.controller.activePlot === card,
                 targetController: 'current',
                 effect: AbilityDsl.effects.modifyReserve(modifiers.reserve)
+            });
+        }
+        if(modifiers.claim) {
+            this.persistentEffect({
+                condition: () => this.canProvidePlotModifier['claim'],
+                match: card => card.controller.activePlot === card,
+                targetController: 'current',
+                effect: AbilityDsl.effects.modifyClaim(modifiers.claim)
             });
         }
     }
@@ -257,13 +268,22 @@ class BaseCard {
         var properties = propertyFactory(AbilityDsl);
         this.game.addEffect(this, Object.assign({ duration: 'atEndOfPhase', location: 'any' }, properties));
     }
-
+    
     /**
      * Applies an immediate effect which lasts until the end of the round.
      */
     untilEndOfRound(propertyFactory) {
         var properties = propertyFactory(AbilityDsl);
         this.game.addEffect(this, Object.assign({ duration: 'untilEndOfRound', location: 'any' }, properties));
+    }
+
+    /**
+     * Applies an immediate effect which expires at the end of the round. Per
+     * game rules this duration is outside of the round.
+     */
+    atEndOfRound(propertyFactory) {
+        var properties = propertyFactory(AbilityDsl);
+        this.game.addEffect(this, Object.assign({ duration: 'atEndOfRound', location: 'any' }, properties));
     }
 
     /**
@@ -377,6 +397,10 @@ class BaseCard {
         return this.keywords.getPrizedValue();
     }
 
+    getKeywordTriggerModifier(keyword) {
+        return this.keywords.getTriggerModifier(keyword);
+    }
+
     hasTrait(trait) {
         if(this.losesAspects.contains('traits')) {
             return false;
@@ -426,6 +450,10 @@ class BaseCard {
 
     isLoyal() {
         return !!this.cardData.loyal;
+    }
+
+    canBeSaved() {
+        return this.allowGameAction('save');
     }
 
     canGainPower() {
@@ -559,15 +587,35 @@ class BaseCard {
     }
 
     isAttacking() {
-        return this.game.currentChallenge && this.game.currentChallenge.isAttacking(this);
+        if(!this.game.currentChallenge) {
+            return false;
+        }
+
+        return this.game.currentChallenge.isAttacking(this);
     }
 
     isDefending() {
-        return this.game.currentChallenge && this.game.currentChallenge.isDefending(this);
+        if(!this.game.currentChallenge) {
+            return false;
+        }
+
+        return this.game.currentChallenge.isDefending(this);
     }
 
     isParticipating() {
-        return this.game.currentChallenge && this.game.currentChallenge.isParticipating(this);
+        if(!this.game.currentChallenge) {
+            return false;
+        }
+
+        return this.game.currentChallenge.isParticipating(this);
+    }
+
+    isDeclaredAsAttacker() {
+        if(!this.game.currentChallenge) {
+            return false;
+        }
+
+        return this.game.currentChallenge.isDeclared(this);
     }
 
     setCardType(cardType) {
@@ -609,6 +657,10 @@ class BaseCard {
     removeAbilityRestriction(restriction) {
         this.abilityRestrictions = this.abilityRestrictions.filter(r => r !== restriction);
         this.markAsDirty();
+    }
+
+    modifyKeywordTriggerAmount(keyword, amount) {
+        this.keywords.modifyTriggerAmount(keyword, amount);
     }
 
     addKeyword(keyword) {
@@ -724,7 +776,13 @@ class BaseCard {
         return 'card';
     }
 
-    getShortSummary() {
+    getShortSummary(isVisible = true) {
+        if(!isVisible) {
+            return {
+                facedown: true,
+                shadowPosition: this.location === 'shadows' ? this.controller.shadows.indexOf(this) + 1 : undefined
+            };
+        }
         return {
             code: this.cardData.code,
             label: this.cardData.label,

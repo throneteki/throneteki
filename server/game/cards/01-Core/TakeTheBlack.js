@@ -7,17 +7,13 @@ class TakeTheBlack extends DrawCard {
             max: ability.limit.perRound(1),
             phase: 'dominance',
             target: {
-                cardCondition: card => this.cardCondition(card)
+                cardCondition: { type: 'character', unique: false, printedCostOrLower: 6, location: 'play area' }
             },
+            message: '{player} plays {source} to take control of {target}',
             handler: context => {
                 this.game.takeControl(context.player, context.target);
-                this.game.addMessage('{0} plays {1} to take control of {2}', context.player, this, context.target);
             }
         });
-    }
-
-    cardCondition(card) {
-        return card.getType() === 'character' && !card.isUnique() && card.getPrintedCost() <= 6;
     }
 }
 

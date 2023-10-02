@@ -10,7 +10,7 @@ class BaelorBlacktyde extends DrawCard {
 
     hasCopyInDiscard(card) {
         let discardPile = card.controller.discardPile;
-        return discardPile.some(discardedCard => card.isCopyOf(discardedCard));
+        return discardPile.some(discardedCard => card !== discardedCard && card.isCopyOf(discardedCard));
     }
 }
 

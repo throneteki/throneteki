@@ -1,10 +1,12 @@
+const GameActions = require('../GameActions');
+
 class SacrificeCost {
     constructor() {
         this.name = 'sacrifice';
     }
 
     isEligible(card) {
-        return card.location === 'play area';
+        return card.location === 'play area' && GameActions.sacrificeCard({ card }).allow();
     }
 
     pay(cards, context) {

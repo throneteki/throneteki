@@ -20,20 +20,35 @@ class EachPlayerCardSelector extends BaseCardSelector {
             `Select ${this.numCardsPerPlayer} characters controlled by each player`;
     }
 
-    hasEnoughSelected(selectedCards, numPlayers) {
-        return selectedCards.length === 0 && this.optional || selectedCards.length === (numPlayers * this.numCardsPerPlayer);
+    hasEnoughSelected(selectedCards, numPlayers, context) {
+        return selectedCards.length === 0 && this.optional 
+            || selectedCards.length === (numPlayers * this.numCardsPerPlayer)
+            || this.ifAble && selectedCards.length === this.getMaximumSelectable(context);
+    }
+
+    getMaximumSelectable(context) {
+        return context.game.getPlayers().reduce((numSelectable, player) => {
+            return numSelectable + Math.min(this.getMatchingCardsForPlayer(context, player).length, this.numCardsPerPlayer);
+        }, 0);
     }
 
     hasEnoughTargets(context) {
-        return this.optional || context.game.getPlayers().every(player => {
-            let playerCards = context.game.allCards.filter(card => card.controller === player);
-            let matchingCards = playerCards.filter(card => super.canTarget(card, context));
-            return matchingCards.length >= this.numCardsPerPlayer;
+        return this.optional || this.ifAble || context.game.getPlayers().every(player => {
+            return this.getMatchingCardsForPlayer(context, player).length >= this.numCardsPerPlayer;
         });
+    }
+
+    getMatchingCardsForPlayer(context, player) {
+        let playerCards = context.game.allCards.filter(card => card.controller === player);
+        return playerCards.filter(card => super.canTarget(card, context));
     }
 
     hasReachedLimit(selectedCards, numPlayers) {
         return selectedCards.length >= (numPlayers * this.numCardsPerPlayer);
+    }
+
+    rejectAllowed(context) {
+        return this.ifAble && this.getMaximumSelectable(context) === 0;
     }
 }
 

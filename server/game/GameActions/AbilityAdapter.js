@@ -11,6 +11,11 @@ class AbilityAdapter {
         this.thenExecuteHandlers = [];
     }
 
+    message(context) {
+        let properties = this.resolveProperties(context);
+        return this.action.message(properties);
+    }
+
     allow(context) {
         let properties = this.resolveProperties(context);
         return this.action.allow(properties);

@@ -3,7 +3,7 @@ describe('Renly Baratheon (TtB)', function() {
         beforeEach(function() {
             const deck = this.buildDeck('baratheon', [
                 'Sneak Attack',
-                'Renly Baratheon (TtB)', 'Dragonstone Faithful', 'Castle Black', 'Steward at the Wall', 'Steward at the Wall'
+                'Renly Baratheon (TtB)', 'Dragonstone Faithful', 'Castle Black (Core)', 'Steward at the Wall', 'Steward at the Wall'
             ]);
             this.player1.selectDeck(deck);
             this.player2.selectDeck(deck);

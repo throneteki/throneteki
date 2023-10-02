@@ -13,13 +13,19 @@ class GameWonPrompt extends AllPlayerPrompt {
     }
 
     activePrompt() {
+        var buttons = [
+            { arg: 'continue', text: 'Continue Playing' },
+            { arg: 'rematch', text: 'Rematch' }
+        ];
+
+        if(this.game.isPlaytesting() && this.game.instance.reviewFormId) {
+            buttons.unshift({ arg: `googleForm:${this.game.instance.reviewFormId}`, text: 'Submit card review (external page)' });
+        }
+
         return {
             promptTitle: 'Game Won',
             menuTitle: this.winner === null ? 'Game ends in a draw' : this.winner.name + ' has won the game!',
-            buttons: [
-                { arg: 'continue', text: 'Continue Playing' },
-                { arg: 'rematch', text: 'Rematch' }
-            ]
+            buttons
         };
     }
 

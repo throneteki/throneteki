@@ -1,4 +1,5 @@
 const GameAction = require('./GameAction');
+const Message = require('../Message');
 const TextHelper = require('../TextHelper');
 
 class DrawCards extends GameAction {
@@ -8,12 +9,7 @@ class DrawCards extends GameAction {
 
     message({ player, amount }) {
         const actualAmount = player.getNumCardsToDraw(amount);
-        return {
-            format: 'draw {cards}',
-            args: {
-                cards: TextHelper.count(actualAmount, 'card')
-            }
-        };
+        return Message.fragment('draws {cards}', { cards: TextHelper.count(actualAmount, 'card') });
     }
 
     canChangeGameState({ player, amount }) {
@@ -26,6 +22,7 @@ class DrawCards extends GameAction {
             amount: actualAmount,
             cards: [],
             desiredAmount: amount,
+            isFullyResolved: event => event.amount === event.desiredAmount,
             length: actualAmount, // Needed for legacy reason
             player,
             reason,

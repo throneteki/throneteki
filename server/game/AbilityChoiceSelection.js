@@ -5,11 +5,14 @@ class AbilityChoiceSelection {
     constructor(options) {
         this.choosingPlayer = options.choosingPlayer;
         this.eligibleChoices = options.eligibleChoices;
+        this.requiresValidation = options.requiresValidation;
         this.targetingType = options.targetingType;
         this.name = options.name;
+        this.subResults = options.subResults;
         this.resolved = false;
         this.cancelled = false;
         this.value = null;
+        this.numValues = null;
     }
 
     hasNoChoices() {
@@ -31,11 +34,13 @@ class AbilityChoiceSelection {
     resolve(value) {
         this.resolved = true;
         this.value = value;
+        this.numValues = Array.isArray(this.value) ? this.value.length : this.value ? 1 : 0;
     }
 
     reject() {
         this.resolved = true;
         this.value = null;
+        this.numValues = null;
     }
 
     cancel() {

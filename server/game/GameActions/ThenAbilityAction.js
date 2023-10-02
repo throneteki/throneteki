@@ -6,6 +6,10 @@ class ThenAbilityAction {
         this.abilityPropertiesFactory = typeof(abilityPropertiesFactory) === 'function' ? abilityPropertiesFactory : () => abilityPropertiesFactory;
     }
 
+    message(context) {
+        return this.preThenAction.message(context);
+    }
+
     allow(context) {
         return this.preThenAction.allow(context);
     }
@@ -18,7 +22,7 @@ class ThenAbilityAction {
                 return;
             }
 
-            let abilityProperties = this.abilityPropertiesFactory(context);
+            let abilityProperties = this.abilityPropertiesFactory(context, event);
             let ability = new ThenClauseAbility(abilityProperties);
             let thenContext = ability.createContext(context, event);
 

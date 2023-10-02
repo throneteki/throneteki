@@ -5,6 +5,7 @@ class AbilityContext {
         this.ability = properties.ability;
         this.challenge = properties.challenge;
         this.game = properties.game;
+        this.gameAction = properties.ability && properties.ability.gameAction;
         this.source = properties.source;
         this.player = properties.player;
         this.costs = {};

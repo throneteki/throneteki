@@ -8,6 +8,7 @@ class KeywordsProperty {
         this.bestowMaxes = [];
         this.shadowCosts = [];
         this.prizedValues = [];
+        this.triggerAmountModifiers = new Map();
     }
 
     add(value) {
@@ -22,6 +23,10 @@ class KeywordsProperty {
 
     contains(value) {
         return this.data.contains(value);
+    }
+
+    getCount(value) {
+        return this.data.getCountForReference(value);
     }
 
     getValues() {
@@ -94,6 +99,18 @@ class KeywordsProperty {
         }
 
         return values.reduce((a, b) => func(a, b));
+    }
+
+    modifyTriggerAmount(value, amount) {
+        let lowerCaseValue = value.toLowerCase();
+        let currentModifier = this.triggerAmountModifiers.get(lowerCaseValue) || 0;
+        this.triggerAmountModifiers.set(lowerCaseValue, currentModifier + amount);
+    }
+
+    getTriggerModifier(value) {
+        let lowerCaseValue = value.toLowerCase();
+        let currentModifier = this.triggerAmountModifiers.get(lowerCaseValue) || 0;
+        return currentModifier;
     }
 }
 

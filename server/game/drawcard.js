@@ -19,10 +19,10 @@ class DrawCard extends BaseCard {
         this.dominanceOptions = new ReferenceCountedSetProperty();
         this.kneeled = false;
         this.inChallenge = false;
+        this.isContributing = false;
         this.inDanger = false;
         this.saved = false;
         this.challengeOptions = new ReferenceCountedSetProperty();
-        this.stealthLimit = 1;
         this.minCost = 0;
         this.eventPlacementLocation = 'discard pile';
     }
@@ -71,6 +71,7 @@ class DrawCard extends BaseCard {
             abilitySourceType: 'game',
             canCancel: true,
             cannotBeCanceled: true,
+            ignoreEventCosts: true,
             location: 'duplicate',
             when: {
                 onCharacterKilled: dupeCondition,
@@ -135,6 +136,10 @@ class DrawCard extends BaseCard {
         return this.hasKeyword('Stealth');
     }
 
+    isAssault() {
+        return this.hasKeyword('Assault');
+    }
+
     isTerminal() {
         return this.hasKeyword('Terminal');
     }
@@ -181,6 +186,10 @@ class DrawCard extends BaseCard {
 
     getShadowCost() {
         return this.keywords.getShadowCost();
+    }
+
+    getShadowPosition() {
+        return this.location === 'shadows' ? this.controller.shadows.indexOf(this) + 1 : null;
     }
 
     modifyStrength(amount, applying = true) {
@@ -326,7 +335,7 @@ class DrawCard extends BaseCard {
             return false;
         }
 
-        if(!this.attachmentRestrictions || this.isAnyBlank()) {
+        if(!this.attachmentRestrictions || this.isAnyBlank() || this.facedown) {
             return card.getType() === 'character';
         }
 
@@ -366,9 +375,10 @@ class DrawCard extends BaseCard {
     }
 
     resetForChallenge() {
-        this.stealth = false;
-        this.stealthTarget = undefined;
+        this.bypassedByStealth = false;
+        this.targetedByAssault = false;
         this.inChallenge = false;
+        this.isContributing = false;
     }
 
     kneelsAsAttacker(challengeType) {
@@ -399,7 +409,6 @@ class DrawCard extends BaseCard {
         return (
             this.canParticipateInChallenge() &&
             this.location === 'play area' &&
-            !this.stealth &&
             canKneelForChallenge &&
             (this.hasIcon(challengeType) || this.challengeOptions.contains('canBeDeclaredWithoutIcon'))
         );
@@ -422,10 +431,6 @@ class DrawCard extends BaseCard {
         return this.allowGameAction('discard');
     }
 
-    canBeSaved() {
-        return this.allowGameAction('save');
-    }
-
     markAsInDanger() {
         this.inDanger = true;
     }
@@ -438,6 +443,24 @@ class DrawCard extends BaseCard {
     clearDanger() {
         this.inDanger = false;
         this.saved = false;
+    }
+
+    setIsBurning(burning) {
+        this.isBurning = burning;
+        //register/unregister onChallengeFinished event so when the challenge is finished
+        //the burn effect gets evaluated again
+        if(burning) {
+            this.events.register(['onChallengeFinished']);
+        } else {
+            this.events.unregisterHandlerForEventName('onChallengeFinished');
+        }
+    }
+
+    //evaluate the burn effect again when the challenge is finished
+    onChallengeFinished() {
+        if(this.isBurning && this.getStrength() <= 0) {
+            this.game.killCharacter(this, { allowSave: false, isBurn: true });
+        }
     }
 
     getSummary(activePlayer) {
@@ -470,10 +493,12 @@ class DrawCard extends BaseCard {
             iconsAdded: this.getIconsAdded(),
             iconsRemoved: this.getIconsRemoved(),
             inChallenge: this.inChallenge,
+            isContributing: this.isContributing,
             inDanger: this.inDanger,
             saved: this.saved,
             strength: this.getStrength(),
-            stealth: this.stealth
+            stealth: this.bypassedByStealth,
+            assault: this.targetedByAssault
         });
     }
 }

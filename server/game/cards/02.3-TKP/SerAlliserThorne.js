@@ -11,7 +11,7 @@ class SerAlliserThorne extends DrawCard {
         this.reaction({
             location: 'hand',
             when: {
-                onChallengeInitiated: event => event.challenge.challengeType === 'military' && event.challenge.initiatedAgainstPlayer === this.controller &&
+                onChallengeInitiated: event => event.challenge.initiatedChallengeType === 'military' && event.challenge.initiatedAgainstPlayer === this.controller &&
                                                this.controller.canPutIntoPlay(this)
             },
             cost: [

@@ -63,7 +63,7 @@ class ChessClock {
     }
 
     timeRanOut() {
-        this.player.game.addMessage('{0}\'s clock has run out', this.player);
+        this.player.game.addAlert('warning', '{0}\'s clock has run out', this.player);
         //TODO make this melee friendly
         this.player.game.recordWinner(this.player.game.getOpponents(this.player)[0], 'time');
         return;

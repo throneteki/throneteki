@@ -69,6 +69,7 @@ class SelectCardPrompt extends UiPrompt {
                 this.cannotUnselectMustSelect = true;
             }
         }
+        this.activePromptTitleFunc = typeof(properties.activePromptTitle) === 'function' ? properties.activePromptTitle : () => properties.activePromptTitle;
         this.revealTargets = properties.revealTargets;
         this.revealFunc = null;
         this.savePreviouslySelectedCards();
@@ -88,6 +89,7 @@ class SelectCardPrompt extends UiPrompt {
     }
 
     savePreviouslySelectedCards() {
+        // TODO: This never actually saves the previously selected cards, as this.choosingPlayer.selectedCards is undefined
         this.previouslySelectedCards = this.choosingPlayer.selectedCards;
         this.choosingPlayer.clearSelectedCards();
         this.choosingPlayer.setSelectedCards(this.selectedCards);
@@ -122,7 +124,7 @@ class SelectCardPrompt extends UiPrompt {
         return {
             selectCard: true,
             selectOrder: this.properties.ordered,
-            menuTitle: this.properties.activePromptTitle || this.selector.defaultActivePromptTitle(),
+            menuTitle: this.activePromptTitleFunc(this.context) || this.selector.defaultActivePromptTitle(),
             buttons: this.properties.additionalButtons.concat([
                 { text: this.properties.doneButtonText || 'Done', arg: 'done' }
             ]),
@@ -223,7 +225,7 @@ class SelectCardPrompt extends UiPrompt {
             return;
         }
 
-        if(this.selector.hasEnoughSelected(this.selectedCards, this.numPlayers)) {
+        if(this.selector.hasEnoughSelected(this.selectedCards, this.numPlayers, this.context)) {
             this.fireOnSelect();
         } else if(this.selectedCards.length === 0) {
             this.properties.onCancel(player);

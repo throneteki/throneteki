@@ -8,55 +8,62 @@ class HaldonHalfmaester extends DrawCard {
             when: {
                 afterChallenge: event => this.isParticipating() && event.challenge.isMatch({ winner: this.controller })
             },
-            handler: context => {
-                let topCard = context.player.drawDeck[0];
-                this.msgExtension = '';
-
-                //place 1 gold on card of the same type
-                if(['character', 'location', 'attachment'].includes(topCard.getType())) {
-                    if(this.game.anyCardsInPlay(card => card.getType() === topCard.getType())) {
+            message: '{player} uses {source} to reveal the top card of their deck',
+            gameAction: GameActions.revealTopCards(context => ({
+                player: context.player
+            })).then({
+                condition: context => context.event.revealed.length > 0,
+                handler: context => {
+                    let topCard = context.event.revealed[0];
+                    //place 1 gold on card of the same type
+                    if(['character', 'location', 'attachment'].includes(topCard.getType()) &&
+                        this.game.anyCardsInPlay(card => card.getType() === topCard.getType())) {
                         this.game.promptForSelect(context.player, {
                             activePromptTitle: 'Select card to gain 1 gold',
                             cardCondition: card => card.getType() === topCard.getType() && card.location === 'play area',
                             source: this,
-                            onSelect: (player, card) => this.onCardSelectedForGold(card, topCard, context)
+                            onSelect: (player, card) => {
+                                this.continueHandler(card, context);
+                                return true;
+                            }
                         });
                     } else {
-                        this.continueHandler(topCard, context);
+                        this.continueHandler(null, context);
                     }
-                } else {
-                    this.continueHandler(topCard, context);
                 }
-            }
+            })
         });
     }
 
-    onCardSelectedForGold(card, topCard, context) {
-        card.modifyToken(Tokens.gold, 1);
-        this.msgExtension = this.msgExtension + ` and have ${card} gain 1 gold`;
-        this.continueHandler(topCard, context);
-        return true;                
-    }
+    continueHandler(goldCard, context) {
+        const gameAction = GameActions.simultaneously([
+            GameActions.ifCondition({
+                condition: context => context.event.revealed.some(card => card.isMatch({ type: 'event' })),
+                thenAction: GameActions.drawSpecific(context => ({
+                    player: context.player,
+                    cards: context.event.revealed
+                }))
+            }),
+            GameActions.ifCondition({
+                condition: context => context.event.revealed.some(card => card.isMatch({ name: 'Aegon Targaryen' })),
+                thenAction: GameActions.putIntoPlay(context => ({
+                    card: context.event.revealed.filter(card => card.isMatch({ name: 'Aegon Targaryen' }))[0]
+                }))
+            }),
+            GameActions.ifCondition({
+                condition: () => !!goldCard,
+                thenAction: GameActions.placeToken(() => ({
+                    card: goldCard,
+                    token: Tokens.gold,
+                    amount: 1
+                }))
+            })
+        ]);
 
-    continueHandler(topCard, context) {
-        if(topCard.getType() === 'event') {
-            if(context.player.canDraw()) {
-                context.player.drawCardsToHand(1);
-                this.msgExtension = this.msgExtension + ' and draw it';
-            }
+        if(gameAction.allow(context)) {
+            this.game.addMessage('{0} {1}', context.player, gameAction.message(context));
+            this.game.resolveGameAction(gameAction, context);
         }
-        if(topCard.name === 'Aegon Targaryen' && context.player.canPutIntoPlay(topCard)) {
-            this.game.resolveGameAction(
-                GameActions.putIntoPlay(() => ({
-                    card: topCard
-                })),
-                context
-            );
-            this.msgExtension = this.msgExtension + ` and put ${topCard} into play`;
-        }
-
-        this.game.addMessage('{0} uses {1} to reveal {2} as the top card of their deck' + this.msgExtension,
-            context.player, this, topCard);
     }
 }
 

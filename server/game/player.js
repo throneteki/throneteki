@@ -496,7 +496,7 @@ class Player extends Spectator {
     }
 
     isCharacterDead(card) {
-        return card.getPrintedType() === 'character' && card.isUnique() && this.deadPile.some(c => c.name === card.name);
+        return card.isUnique() && this.deadPile.some(c => c.name === card.name);
     }
 
     playCard(card) {
@@ -549,6 +549,10 @@ class Player extends Spectator {
             return false;
         }
 
+        if(card.getPrintedType() === 'attachment' && options.attachmentTargets && !this.anyCardsInPlay(options.attachmentTargets)) {
+            return false;
+        }
+
         if(!options.isEffectExpiration && !this.canPlay(card, playingType)) {
             return false;
         }
@@ -598,7 +602,7 @@ class Player extends Spectator {
         var dupeCard = this.getDuplicateInPlay(card);
 
         if(card.getPrintedType() === 'attachment' && playingType !== 'setup' && !dupeCard) {
-            this.promptForAttachment(card, playingType);
+            this.promptForAttachment(card, playingType, options.attachmentTargets);
             return;
         }
 
@@ -842,9 +846,9 @@ class Player extends Spectator {
         }
     }
 
-    promptForAttachment(card, playingType) {
+    promptForAttachment(card, playingType, targets) {
         // TODO: Really want to move this out of here.
-        this.game.queueStep(new AttachmentPrompt(this.game, this, card, playingType));
+        this.game.queueStep(new AttachmentPrompt(this.game, this, card, playingType, targets));
     }
 
     resetChallengesPerformed() {
@@ -906,6 +910,10 @@ class Player extends Spectator {
         return this.game.resolveGameAction(RemoveFromGame, { allowSave, card, player: this });
     }
 
+    isRevealingTopOfDeck() {
+        return this.drawDeck.length > 0 && this.game.getPlayers().every(player => this.game.isCardVisible(this.drawDeck[0], player));
+    }
+
     moveCardToTopOfDeck(card, allowSave = true) {
         return this.game.resolveGameAction(GameActions.returnCardToDeck({ card, allowSave }));
     }
@@ -915,15 +923,7 @@ class Player extends Spectator {
     }
 
     putIntoShadows(card, allowSave = true, callback = () => true) {
-        let playingType = this.game.currentPhase === 'setup' ? 'setup' : 'put';
-        if(this.canPutIntoShadows(card, playingType)) {
-            this.game.applyGameAction('putIntoShadows', card, card => {
-                this.game.raiseEvent('onCardPutIntoShadows', { player: this, card: card, allowSave: allowSave }, event => {
-                    event.cardStateWhenMoved = card.createSnapshot();
-                    this.moveCard(card, 'shadows', { allowSave: allowSave }, callback);
-                });
-            });
-        }
+        return this.game.resolveGameAction(GameActions.putIntoShadows({ card, allowSave })).thenExecute(callback);
     }
 
     shuffleCardIntoDeck(card, allowSave = true) {
@@ -1045,7 +1045,7 @@ class Player extends Spectator {
 
         this.placeCardInPile({ card, location: targetLocation, bottom: options.bottom, wasFacedown: options.wasFacedown });
 
-        if(['dead pile', 'discard pile', 'revealed plots'].includes(targetLocation)) {
+        if(['dead pile', 'discard pile', 'revealed plots', 'out of game'].includes(targetLocation)) {
             this.game.raiseEvent('onCardPlaced', { card: card, location: targetLocation, player: this });
         }
     }
@@ -1157,6 +1157,10 @@ class Player extends Spectator {
         return this.multipleOpponentClaim.includes(claimType);
     }
 
+    getSelectedCards() {
+        return this.promptState.selectedCards;
+    }
+
     setSelectedCards(cards) {
         this.promptState.setSelectedCards(cards);
     }
@@ -1206,6 +1210,7 @@ class Player extends Spectator {
     getStats(isActivePlayer) {
         return {
             claim: this.getClaim(),
+            initiative: this.getTotalInitiative(),
             gold: !isActivePlayer && this.game.currentPhase === 'setup' ? 0 : this.gold,
             reserve: this.getTotalReserve(),
             totalPower: this.getTotalPower()
@@ -1303,7 +1308,7 @@ class Player extends Spectator {
             plotSelected: !!this.selectedPlot,
             promptedActionWindows: this.promptedActionWindows,
             promptDupes: this.promptDupes,
-            revealTopCard: this.flags.contains('revealTopCard'),
+            revealTopCard: this.isRevealingTopOfDeck(),
             showDeck: this.showDeck,
             stats: this.getStats(isActivePlayer),
             timerSettings: this.timerSettings,

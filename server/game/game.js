@@ -4,8 +4,10 @@ const moment = require('moment');
 const AttachmentValidityCheck = require('./AttachmentValidityCheck.js');
 const ChatCommands = require('./chatcommands.js');
 const GameChat = require('./gamechat.js');
+const DynamicKeywordsEffect = require('./DynamicKeywordsEffect');
 const EffectEngine = require('./effectengine.js');
 const Effect = require('./effect.js');
+const Effects = require('./effects');
 const Player = require('./player.js');
 const Spectator = require('./spectator.js');
 const AnonymousSpectator = require('./anonymousspectator.js');
@@ -35,6 +37,7 @@ const DropCommand = require('./ServerCommands/DropCommand');
 const CardVisibility = require('./CardVisibility');
 const PlainTextGameChatFormatter = require('./PlainTextGameChatFormatter');
 const GameActions = require('./GameActions');
+const EndRound = require('./GameActions/EndRound');
 const TimeLimit = require('./timeLimit.js');
 const PrizedKeywordListener = require('./PrizedKeywordListener');
 const GameWonPrompt = require('./gamesteps/GameWonPrompt');
@@ -43,6 +46,7 @@ class Game extends EventEmitter {
     constructor(details, options = {}) {
         super();
 
+        this.instance = details.instance;
         this.event = details.event;
         this.eventName = details.event && details.event.name;
         this.restrictedList = details.restrictedList;
@@ -68,10 +72,11 @@ class Game extends EventEmitter {
         this.gameTimeLimit = details.gameTimeLimit;
         this.useChessClocks = details.useChessClocks;
         this.chessClockTimeLimit = details.chessClockTimeLimit;
-        this.delayToStartClock = 5;
+        this.delayToStartClock = details.delayToStartClock;
         this.clockPaused = false;
         this.timeLimit = new TimeLimit(this);
         this.savedGameId = details.savedGameId;
+        this.gamePrivate = details.gamePrivate;
         this.gameType = details.gameType;
         this.abilityContextStack = [];
         this.abilityWindowStack = [];
@@ -109,6 +114,10 @@ class Game extends EventEmitter {
         this.pushAbilityContext({ resolutionStage: 'framework' });
     }
 
+    isPlaytesting() {
+        return this.instance && this.instance.type === 'playtesting';
+    }
+
     reportError(e) {
         this.router.handleError(this, e);
     }
@@ -134,8 +143,12 @@ class Game extends EventEmitter {
         return this.playersAndSpectators[playerName] && !this.playersAndSpectators[playerName].left;
     }
 
-    getPlayers() {
+    getAllPlayers() {
         return Object.values(this.playersAndSpectators).filter(player => !player.isSpectator());
+    }
+
+    getPlayers() {
+        return this.getAllPlayers().filter(player => !player.eliminated);
     }
 
     getNumberOfPlayers() {
@@ -184,7 +197,7 @@ class Game extends EventEmitter {
     }
 
     setFirstPlayer(firstPlayer) {
-        for(let player of this.getPlayers()) {
+        for(let player of this.getAllPlayers()) {
             player.firstPlayer = player === firstPlayer;
         }
         this.raiseEvent('onFirstPlayerDetermined', { player: firstPlayer });
@@ -497,28 +510,50 @@ class Game extends EventEmitter {
         player.modifyGold(-appliedAmount);
     }
 
-    checkWinCondition(player) {
-        if(player.getTotalPower() >= 15 && player.canWinGame()) {
-            this.recordWinner(player, 'power');
-        }
-    }
-
-    checkPlayerElimination() {
-        if(this.currentPhase === 'setup') {
+    checkWinAndLossConditions() {
+        if(this.currentPhase === 'setup' || this.winner) {
             return;
         }
 
-        let players = this.getPlayers();
-        let deckedPlayers = players.filter(player => player.drawDeck.length === 0 && !player.lost);
+        let players = this.getPlayersInFirstPlayerOrder();
 
-        // TODO: When all remaining players are decked simultaneously, first
-        // player chooses the winner.
-        for(let player of deckedPlayers) {
-            this.addAlert('info', '{0} loses the game because their draw deck is empty', player);
-            player.lost = true;
+        if(players.length === 0) {
+            return;
         }
 
-        let remainingPlayers = players.filter(player => !player.lost);
+        let deckedPlayers = players.filter(player => player.drawDeck.length === 0);
+
+        if(deckedPlayers.length === players.length) {
+            const potentialWinners = deckedPlayers.filter(player => player.canWinGame());
+            if(potentialWinners.length === 0) {
+                this.recordDraw(deckedPlayers);
+            } else if(potentialWinners.length === 1) {
+                this.recordWinner(potentialWinners[0], 'decked');
+            } else if(!this.disableWonPrompt) {
+                this.addAlert('info', '{0} will be eliminated because their draw decks are empty. {1} chooses the winner because they are first player', deckedPlayers, players[0]);
+                this.queueStep(new ChoosePlayerPrompt(this, players[0], {
+                    activePromptTitle: 'Select the winning player',
+                    condition: player => potentialWinners.includes(player),
+                    onSelect: chosenPlayer => {
+                        this.addAlert('info', '{0} chooses {1} to win the game', players[0], chosenPlayer);
+                        this.recordWinner(chosenPlayer, 'decked');
+                    }
+                }));
+            }
+            return;
+        }
+
+        for(let player of deckedPlayers) {
+            this.addAlert('info', '{0} is eliminated from the game because their draw deck is empty', player);
+            player.eliminated = true;
+        }
+
+        let remainingPlayers = players.filter(player => !player.eliminated);
+
+        // If the first player is eliminated, the next non-eliminated player in order becomes first player
+        if(players[0].eliminated && remainingPlayers.length > 1) {
+            this.setFirstPlayer(remainingPlayers[0]);
+        }
 
         if(remainingPlayers.length === 1) {
             let lastPlayer = remainingPlayers[0];
@@ -528,6 +563,22 @@ class Game extends EventEmitter {
             } else {
                 this.recordDraw(lastPlayer);
             }
+        }
+
+        let potentialWinners = remainingPlayers.filter(player => player.getTotalPower() >= 15 && player.canWinGame());
+        if(potentialWinners.length === 1) {
+            this.recordWinner(potentialWinners[0], 'power');
+        } else if(potentialWinners.length > 1) {
+            const firstPlayer = this.getFirstPlayer();
+            this.addAlert('info', '{0} have reached 15 power. {1} chooses the winner because they are first player', potentialWinners, firstPlayer);
+            this.queueStep(new ChoosePlayerPrompt(this, firstPlayer, {
+                activePromptTitle: 'Select the winning player',
+                condition: player => potentialWinners.includes(player),
+                onSelect: chosenPlayer => {
+                    this.addAlert('info', '{0} chooses {1} to win the game', firstPlayer, chosenPlayer);
+                    this.recordWinner(chosenPlayer, 'power');
+                }
+            }));
         }
     }
 
@@ -542,6 +593,9 @@ class Game extends EventEmitter {
         this.winReason = 'draw';
 
         this.router.gameWon(this, this.winReason, this.winner);
+        for(const player of this.getAllPlayers()) {
+            player.eliminated = false;
+        }
         this.queueStep(new GameWonPrompt(this, null));
     }
 
@@ -557,6 +611,9 @@ class Game extends EventEmitter {
         this.winReason = reason;
 
         this.router.gameWon(this, reason, winner);
+        for(const player of this.getAllPlayers()) {
+            player.eliminated = false;
+        }
         this.queueStep(new GameWonPrompt(this, winner));
     }
 
@@ -570,27 +627,45 @@ class Game extends EventEmitter {
 
         if(stat === 'power') {
             target = player.faction;
-        } else if(stat === 'reserve' || stat === 'claim') {
+        } else if(stat === 'reserve' || stat === 'claim' || stat === 'initiative') {
             if(!player.activePlot) {
                 return;
             }
 
-            target = player.activePlot.cardData.plotStats;
-        }
+            target = player.activePlot;
 
-        // Ensure that manually setting reserve isn't limited by any min reserve effects
-        if(stat === 'reserve') {
-            player.minReserve = 0;
-        }
-
-        if(stat === 'claim' && typeof (player.activePlot.claimSet) === 'number') {
-            player.activePlot.claimSet += value;
-
-            if(player.activePlot.claimSet < 0) {
-                player.activePlot.claimSet = 0;
-            } else {
-                this.addAlert('danger', '{0} changes the set claim value to be {1} ({2})', player, player.activePlot.claimSet, (value > 0 ? '+' : '') + value);
+            let effect;
+            let valueGetter;
+            switch(stat) {
+                case 'claim':
+                    if(typeof (player.activePlot.claimSet) === 'number') {
+                        effect = Effects.setClaim(Math.max(player.getClaim() + value, 0));
+                    } else {
+                        effect = Effects.modifyClaim(value);
+                    }
+                    valueGetter = () => player.getClaim();
+                    break;
+                case 'initiative':
+                    effect = Effects.modifyInitiative(value);
+                    valueGetter = () => player.getTotalInitiative();
+                    break;
+                case 'reserve':
+                    effect = Effects.modifyReserve(value);
+                    valueGetter = () => player.getTotalReserve();
+                    break;
             }
+
+            if(valueGetter() <= 0 && value < 0) {
+                return;
+            }
+
+            target.lastingEffect(() => ({
+                condition: () => target.location === 'active plot',
+                match: target,
+                effect: effect
+            }));
+            this.postEventCalculations();
+            this.addAlert('danger', '{0} sets {1} to {2} ({3})', player, stat, valueGetter(), (value > 0 ? '+' : '') + value);
             return;
         }
 
@@ -640,9 +715,9 @@ class Game extends EventEmitter {
         }
 
         this.addAlert('info', '{0} concedes', player);
-        player.lost = true;
+        player.eliminated = true;
 
-        let remainingPlayers = this.getPlayers().filter(player => !player.lost);
+        let remainingPlayers = this.getPlayers().filter(player => !player.eliminated);
 
         if(remainingPlayers.length === 1) {
             this.recordWinner(remainingPlayers[0], 'concede');
@@ -819,11 +894,20 @@ class Game extends EventEmitter {
                 return false;
             }
         });
+        this.queueStep(new SimpleStep(this, () => this.resolveGameAction(EndRound, { game: this })));
         this.queueStep(new SimpleStep(this, () => this.beginRound()));
     }
 
     addPhase(phase) {
         this.remainingPhases.unshift(phase);
+    }
+
+    addPhaseAfter(phase, after) {
+        if(this.currentPhase === after) {
+            this.addPhase(phase);
+        } else {
+            this.remainingPhases.splice(this.remainingPhases.indexOf(after), 0, phase);
+        }
     }
 
     queueStep(step) {
@@ -974,7 +1058,7 @@ class Game extends EventEmitter {
         this.effectEngine.recalculateDirtyTargets();
         this.effectEngine.reapplyStateDependentEffects();
         this.attachmentValidityCheck.enforceValidity();
-        this.checkPlayerElimination();
+        this.checkWinAndLossConditions();
     }
 
     isPhaseSkipped(name) {
@@ -1080,7 +1164,6 @@ class Game extends EventEmitter {
         }
 
         this.raiseEvent('onCardTakenControl', { card: card });
-        this.checkWinCondition(card.controller);
     }
 
     applyGameAction(actionType, cards, func, options = {}) {
@@ -1114,7 +1197,6 @@ class Game extends EventEmitter {
         }
 
         this.playersAndSpectators[user.username] = new Spectator(socketId, user);
-        this.addAlert('info', '{0} has joined the game as a spectator', user.username);
 
         return true;
     }
@@ -1152,11 +1234,10 @@ class Game extends EventEmitter {
             return;
         }
 
-        this.addAlert('info', '{0} has left the game', player);
-
         if(player.isSpectator() || !this.started) {
             delete this.playersAndSpectators[playerName];
         } else {
+            this.addAlert('info', '{0} has left the game', player);
             player.left = true;
 
             if(!this.finishedAt) {
@@ -1172,11 +1253,10 @@ class Game extends EventEmitter {
             return;
         }
 
-        this.addAlert('warning', '{0} has disconnected.  The game will wait up to 30 seconds for them to reconnect', player);
-
         if(player.isSpectator()) {
             delete this.playersAndSpectators[playerName];
         } else {
+            this.addAlert('warning', '{0} has disconnected.  The game will wait up to 30 seconds for them to reconnect', player);
             player.disconnectedAt = new Date();
         }
 
@@ -1230,6 +1310,7 @@ class Game extends EventEmitter {
     }
 
     activatePersistentEffects() {
+        this.effectEngine.add(new DynamicKeywordsEffect({ game: this }));
         this.effectEngine.activatePersistentEffects();
     }
 
@@ -1261,7 +1342,8 @@ class Game extends EventEmitter {
                 name: player.name,
                 faction: player.faction.name || player.faction.value,
                 agenda: player.agenda ? player.agenda.name : undefined,
-                power: player.getTotalPower()
+                power: player.getTotalPower(),
+                playtested: this.isPlaytesting() ? player.preparedDeck.drawCards.concat(player.preparedDeck.plotCards).filter(card => card.cardData.wip).map(card => card.name) : undefined
             };
         });
 
@@ -1281,7 +1363,7 @@ class Game extends EventEmitter {
         let playerState = {};
 
         if(this.started) {
-            for(let player of this.getPlayers()) {
+            for(let player of this.getAllPlayers()) {
                 playerState[player.name] = player.getState(activePlayer);
             }
 
@@ -1310,7 +1392,8 @@ class Game extends EventEmitter {
                 gameTimeLimitTime: this.timeLimit.timeLimitInSeconds,
                 muteSpectators: this.muteSpectators,
                 useChessClocks: this.useChessClocks,
-                chessClockTimeLimit: this.chessClockTimeLimit
+                chessClockTimeLimit: this.chessClockTimeLimit,
+                delayToStartClock: this.delayToStartClock
             };
         }
 
@@ -1320,7 +1403,7 @@ class Game extends EventEmitter {
     getSummary(activePlayerName, options = {}) {
         var playerSummaries = {};
 
-        for(let player of this.getPlayers()) {
+        for(let player of this.getAllPlayers()) {
             var deck = undefined;
             if(player.left) {
                 return;
@@ -1350,6 +1433,7 @@ class Game extends EventEmitter {
         return {
             allowSpectators: this.allowSpectators,
             createdAt: this.createdAt,
+            gamePrivate: this.gamePrivate,
             event: this.event,
             gameType: this.gameType,
             id: this.id,
@@ -1369,6 +1453,7 @@ class Game extends EventEmitter {
                 };
             }),
             muteSpectators: this.muteSpectators,
+            restrictedList: this.restrictedList,
             useChessClocks: this.useChessClocks
         };
     }

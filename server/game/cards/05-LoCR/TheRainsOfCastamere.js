@@ -13,7 +13,8 @@ class TheRainsOfCastamere extends AgendaCard {
             when: {
                 afterChallenge: event => event.challenge.challengeType === 'intrigue' &&
                     event.challenge.winner === this.owner &&
-                    event.challenge.strengthDifference >= 5
+                    event.challenge.strengthDifference >= 5 &&
+                    !this.owner.hasFlag('cannotRevealPlot')
             },
             cost: ability.costs.kneelFactionCard(),
             target: {
@@ -28,6 +29,7 @@ class TheRainsOfCastamere extends AgendaCard {
         this.action({
             title: 'Manually trigger',
             cost: ability.costs.kneelFactionCard(),
+            condition: () => !this.owner.hasFlag('cannotRevealPlot'),
             target: {
                 type: 'select',
                 activePromptTitle: 'Select a plot',

@@ -19,6 +19,8 @@ const { sortBy } = require('./Array');
 
 class Lobby {
     constructor(server, options = {}) {
+        this.instance = options.instance;
+
         this.sockets = {};
         this.users = {};
         this.games = {};
@@ -369,6 +371,7 @@ class Lobby {
         this.broadcastUserMessage(user, 'newuser');
         this.sendFilteredMessages(socket);
         this.sendUserListFilteredWithBlockList(socket, this.getUserList());
+        this.broadcastGameList(socket);
 
         let game = this.findGameForUser(user.username);
         if(game && game.started) {
@@ -432,7 +435,14 @@ class Lobby {
 
         if(gameDetails.quickJoin) {
             let sortedGames = sortBy(Object.values(this.games), game => game.createdAt);
-            let gameToJoin = sortedGames.find(game => !game.started && game.gameType === gameDetails.gameType && Object.values(game.players).length < 2 && !game.password);
+            let gameToJoin = sortedGames.find(
+                (game) =>
+                    !game.started &&
+                    game.gameType === gameDetails.gameType &&
+                    Object.values(game.players).length < 2 &&
+                    !game.password &&
+                    !game.gamePrivate
+            );
 
             if(gameToJoin) {
                 let message = gameToJoin.join(socket.id, socket.user);
@@ -445,7 +455,6 @@ class Lobby {
                 socket.joinChannel(gameToJoin.id);
 
                 this.sendGameState(gameToJoin);
-
                 this.broadcastGameMessage('updategame', gameToJoin);
 
                 return;
@@ -454,7 +463,7 @@ class Lobby {
 
         const restrictedListsResult = this.cardService.getRestrictedList();
         const draftCubesResult = this.draftCubeService.getAll();
-        const eventResult = gameDetails.eventId === 'none' ? Promise.resolve({ _id: 'none' }) : this.eventService.getEventById(gameDetails.eventId);
+        const eventResult = (!gameDetails.eventId || gameDetails.eventId === 'none') ? Promise.resolve({ _id: 'none' }) : this.eventService.getEventById(gameDetails.eventId);
 
         return Promise.all([eventResult, restrictedListsResult, draftCubesResult]).then(([event, restrictedLists, draftCubes]) => {
             const defaultRestrictedList = restrictedLists[0];
@@ -478,8 +487,8 @@ class Lobby {
 
             const startedByEventOrganizer = event.restrictTableCreators && event.validTableCreators && event.validTableCreators.includes(socket.user.username);
 
-            let game = new PendingGame(socket.user, {event, restrictedList, ...gameDetails});
-            game.newGame(socket.id, socket.user, gameDetails.password, !startedByEventOrganizer);
+            let game = new PendingGame(socket.user, this.instance, {event, restrictedList, ...gameDetails});
+            game.newGame(socket.id, socket.user, gameDetails.password, true, !startedByEventOrganizer);
 
             socket.joinChannel(game.id);
             this.sendGameState(game);
@@ -529,6 +538,7 @@ class Lobby {
 
         let gameNode = this.router.startGame(game);
         if(!gameNode) {
+            socket.send('gameerror', 'No game nodes available. Try again later.');
             return;
         }
 
@@ -760,18 +770,21 @@ class Lobby {
         delete this.games[gameId];
         this.broadcastGameMessage('removegame', game);
 
-        let newGame = new PendingGame(game.owner, {
+        let newGame = new PendingGame(game.owner, game.instance, {
+            name: game.name,
             event: game.event,
             restrictedList: game.restrictedList,
             spectators: game.allowSpectators,
             showHand: game.showHand,
             gameType: game.gameType,
+            gamePrivate: game.gamePrivate,
             isMelee: game.isMelee,
             useRookery: game.useRookery,
             useGameTimeLimit: game.useGameTimeLimit,
             gameTimeLimit: game.gameTimeLimit,
             useChessClocks: game.useChessClocks,
-            chessClockTimeLimit: game.chessClockTimeLimit
+            chessClockTimeLimit: game.chessClockTimeLimit,
+            delayToStartClock: game.delayToStartClock
         });
         newGame.rematch = true;
 
@@ -787,7 +800,7 @@ class Lobby {
         }
 
         this.games[newGame.id] = newGame;
-        newGame.newGame(socket.id, socket.user);
+        newGame.newGame(socket.id, socket.user, null, true);
 
         socket.joinChannel(newGame.id);
         this.sendGameState(newGame);
@@ -904,13 +917,14 @@ class Lobby {
                 continue;
             }
 
-            let syncGame = new PendingGame(new User(owner.user), { spectators: game.allowSpectators, name: game.name, event: game.event });
+            let syncGame = new PendingGame(new User(owner.user), game.instance, { spectators: game.allowSpectators, name: game.name, event: game.event });
             syncGame.id = game.id;
             syncGame.node = this.router.workers[nodeName];
             syncGame.createdAt = game.startedAt;
             syncGame.started = game.started;
             syncGame.gameType = game.gameType;
             syncGame.password = game.password;
+            syncGame.restrictedList = game.restrictedList;
             syncGame.tableType = game.tableType;
 
             for(let player of Object.values(game.players)) {

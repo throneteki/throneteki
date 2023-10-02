@@ -6,7 +6,7 @@ class EffectEngine {
     constructor(game) {
         this.game = game;
         this.events = new EventRegistrar(game, this);
-        this.events.register(['onCardMoved', 'onCardTakenControl', 'onCardBlankToggled', 'onChallengeFinished', 'onPhaseEnded', 'onAtEndOfChallenge', 'onAtEndOfPhase', 'onRoundEnded']);
+        this.events.register(['onCardMoved', 'onCardTakenControl', 'onCardBlankToggled', 'onChallengeFinished', 'onPhaseEnded', 'onAtEndOfChallenge', 'onAtEndOfPhase', 'onRoundEnded', 'onAtEndOfRound']);
         this.effects = [];
         this.customDurationEvents = [];
         this.effectsBeingRecalculated = [];
@@ -33,7 +33,7 @@ class EffectEngine {
     }
 
     getTargets() {
-        const validLocations = ['active plot', 'being played', 'dead pile', 'discard pile', 'draw deck', 'faction', 'hand', 'play area', 'duplicate', 'plot deck', 'shadows'];
+        const validLocations = ['active plot', 'being played', 'dead pile', 'discard pile', 'draw deck', 'faction', 'hand', 'play area', 'duplicate', 'plot deck', 'shadows', 'revealed plots'];
         let validTargets = this.game.allCards.filter(card => validLocations.includes(card.location));
         return validTargets.concat(this.game.getPlayers()).concat([this.game]);
     }
@@ -139,6 +139,10 @@ class EffectEngine {
 
     onRoundEnded() {
         this.unapplyAndRemove(effect => effect.duration === 'untilEndOfRound');
+    }
+
+    onAtEndOfRound() {
+        this.unapplyAndRemove(effect => effect.duration === 'atEndOfRound');
     }
 
     activatePersistentEffects() {

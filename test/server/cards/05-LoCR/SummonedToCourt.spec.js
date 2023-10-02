@@ -46,10 +46,10 @@ describe('Summoned to Court', function() {
             it('should prompt both players to put it into play', function() {
                 expect(this.player2).toHavePrompt('Put Balon Greyjoy into play?');
                 this.player2.clickPrompt('Yes');
-                expect(this.player2.findCardByName('Balon Greyjoy').location).toBe('play area');
 
                 expect(this.player1).toHavePrompt('Put Balon Greyjoy into play?');
                 this.player1.clickPrompt('Yes');
+                expect(this.player2.findCardByName('Balon Greyjoy').location).toBe('play area');
                 expect(this.player1.findCardByName('Balon Greyjoy').location).toBe('play area');
             });
         });

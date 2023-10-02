@@ -21,7 +21,7 @@ class TheLordOfTheCrossing extends AgendaCard {
     }
 
     isAttackingDuringChallengeNumber(challengeNumber) {
-        return this.game.isDuringChallenge({ initiated: true, attackingPlayer: this.controller, number: challengeNumber });
+        return this.game.isDuringChallenge({ attackingPlayer: this.controller, number: challengeNumber });
     }
 
     afterChallenge(event) {

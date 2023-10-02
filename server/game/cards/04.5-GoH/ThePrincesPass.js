@@ -22,18 +22,21 @@ class ThePrincesPass extends DrawCard {
                     this.game.addMessage('{0} kneels {1} to remove {2} {3} icon from {4}',
                         this.controller, this, icon === 'intrigue' ? 'an' : 'a', icon, this.targetCharacter);
 
-                    if(this.targetCharacter.getNumberOfIcons() === 0) {
-                        this.game.promptWithMenu(this.controller, this, {
-                            activePrompt: {
-                                menuTitle: 'Sacrifice ' + this.name + ' to discard ' + this.targetCharacter.name + '?',
-                                buttons: [
-                                    { text: 'Yes', method: 'sacrifice' },
-                                    { text: 'No', method: 'pass' }
-                                ]
-                            },
-                            source: this
-                        });
-                    }
+                    //put the then part in a simple step after the effect above is fully applied
+                    this.game.queueSimpleStep(() => {
+                        if(this.targetCharacter.getNumberOfIcons() === 0) {
+                            this.game.promptWithMenu(this.controller, this, {
+                                activePrompt: {
+                                    menuTitle: 'Sacrifice ' + this.name + ' to discard ' + this.targetCharacter.name + '?',
+                                    buttons: [
+                                        { text: 'Yes', method: 'sacrifice' },
+                                        { text: 'No', method: 'pass' }
+                                    ]
+                                },
+                                source: this
+                            });
+                        }
+                    });                    
                 });
             }
         });

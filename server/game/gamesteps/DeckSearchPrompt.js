@@ -1,4 +1,6 @@
+const AbilityAdapter = require('../GameActions/AbilityAdapter');
 const BaseStep = require('./basestep');
+const RevealCards = require('../GameActions/RevealCards');
 
 /**
  * Prompt that will search the player's deck, present them with matching cards,
@@ -47,15 +49,17 @@ class DeckSearchPrompt extends BaseStep {
             cardCondition: () => true,
             cardType: ['attachment', 'character', 'event', 'location'],
             onSelect: () => true,
-            onCancel: () => true
+            onCancel: () => true,
+            reveal: true
         };
     }
 
     continue() {
-        let context = { selectedCards: [] };
+        let context = { selectedCards: [], game: this.game, source: this.properties.source };
         let validCards = this.searchCards(context);
         let revealFunc = this.revealDrawDeckCards.bind(this);
         let modeProps = this.properties.numToSelect ? { mode: 'upTo', numCards: this.properties.numToSelect } : {};
+        let revealGameAction = this.properties.reveal ? new AbilityAdapter(RevealCards, context => ({ cards: Array.isArray(context.result) ? context.result : [context.result], player: context.player })) : null;
 
         this.game.cardVisibility.addRule(revealFunc);
         this.game.promptForSelect(this.choosingPlayer, Object.assign(modeProps, {
@@ -63,20 +67,43 @@ class DeckSearchPrompt extends BaseStep {
             context: context,
             cardCondition: (card, context) => (validCards.includes(card) || this.inAdditionalLocation(card)) && this.checkCardCondition(card, context),
             onSelect: (player, result) => {
-                this.properties.onSelect(player, result);
+                this.game.cardVisibility.removeRule(revealFunc);
+                if(revealGameAction) {
+                    context.result = result;
+                    context.player = this.choosingPlayer;
+                    this.game.resolveGameAction(revealGameAction, context)
+                        .thenExecute(revealEvent => this.evaluateOnSelect(player, result, revealEvent.revealed))
+                        .thenExecute(() => this.queueShuffle());
+                    return true;
+                }
+                this.properties.onSelect(player, result, result);
+                this.queueShuffle();
                 return true;
             },
             onCancel: (player, result) => {
+                this.game.cardVisibility.removeRule(revealFunc);
                 this.properties.onCancel(player, result);
+                this.queueShuffle();
                 return true;
             },
             source: this.properties.source
         }));
+    }
+
+    queueShuffle() {
         this.game.queueSimpleStep(() => {
-            this.game.cardVisibility.removeRule(revealFunc);
             this.choosingPlayer.shuffleDrawDeck();
             this.game.addMessage('{0} shuffles their deck', this.choosingPlayer);
         });
+    }
+
+    evaluateOnSelect(player, searched, revealed) {
+        // Filtering valid cards to those which were successfully revealed & are still in search locations
+        let valid = revealed.filter(card => card.location === 'draw deck' || this.inAdditionalLocation(card));
+        // Converting valid to be same format as to what onSelect expects (Array or single object)
+        valid = this.properties.numToSelect ? valid : (valid.length > 0 ? valid[0] : null);
+
+        this.properties.onSelect(player, searched, valid);
     }
 
     revealDrawDeckCards(card, player) {

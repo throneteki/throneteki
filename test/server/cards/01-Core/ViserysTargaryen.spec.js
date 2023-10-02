@@ -8,7 +8,7 @@ describe('Viserys Targaryen', function() {
             const deck2 = this.buildDeck('stark', [
                 'A Feast for Crows',
                 'Tumblestone Knight',
-                'Lady'
+                'Lady (TtB)'
             ]);
             this.player1.selectDeck(deck1);
             this.player2.selectDeck(deck2);

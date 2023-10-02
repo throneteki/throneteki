@@ -1,10 +1,12 @@
+const GameActions = require('../GameActions');
+
 class ReturnToHandCost {
     constructor() {
         this.name = 'returnToHand';
     }
 
     isEligible(card) {
-        return card.location === 'play area';
+        return card.location === 'play area' && GameActions.returnCardToHand({ card }).allow();
     }
 
     pay(cards, context) {

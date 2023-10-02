@@ -1,8 +1,10 @@
 const logger = require('../log');
+const DeckService = require('./DeckService.js');
 
 class EventService {
     constructor(db) {
         this.events = db.get('events');
+        this.deckService = new DeckService(db);
     }
 
     async getEvents() {
@@ -44,6 +46,7 @@ class EventService {
     }
 
     async delete(id) {
+        await this.deckService.removeEventIdAndUnlockDecks(id);
         return this.events.remove({ _id: id });
     }
 }

@@ -3,7 +3,7 @@ describe('intimidate', function() {
         beforeEach(function() {
             const deck = this.buildDeck('baratheon', [
                 'Trading with the Pentoshi',
-                'Robert Baratheon (Core)', 'Dragonstone Faithful', 'Bastard in Hiding', 'Maester Cressen', 'Gendry', 'Grey Wind'
+                'Robert Baratheon (Core)', 'Dragonstone Faithful', 'Bastard in Hiding', 'Maester Cressen', 'Gendry (NMG)', 'Grey Wind (Core)'
             ]);
             this.player1.selectDeck(deck);
             this.player2.selectDeck(deck);
@@ -52,7 +52,7 @@ describe('intimidate', function() {
             });
 
             it('should prompt to kneel characters', function() {
-                expect(this.player1).toHavePrompt('Select a character to intimidate');
+                expect(this.player1).toHavePrompt('Select a character to intimidate for Robert Baratheon');
             });
 
             it('should allow a character with strengt up to the winning strength difference to be knelt', function() {
@@ -88,12 +88,12 @@ describe('intimidate', function() {
             });
 
             it('should prompt only once', function() {
-                expect(this.player1).toHavePrompt('Select a character to intimidate');
+                expect(this.player1).toHavePrompt('Select a character to intimidate for Robert Baratheon');
 
                 this.player1.clickCard(this.gendry);
                 expect(this.gendry.kneeled).toBe(true);
 
-                expect(this.player1).not.toHavePrompt('Select a character to intimidate');
+                expect(this.player1).not.toHavePrompt('Select a character to intimidate for Grey Wind');
                 expect(this.player1).not.toHavePrompt('Choose and kneel a character with 10 strength or less');
             });
         });

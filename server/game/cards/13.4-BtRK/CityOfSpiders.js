@@ -37,6 +37,8 @@ class CityOfSpiders extends PlotCard {
             this.game.resolveAbility(whenRevealed, context);
         }
 
+        this.resolving = false;
+        
         return true;
     }
 }

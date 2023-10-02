@@ -8,7 +8,7 @@ class PrincesLoyalist extends DrawCard {
             when: {
                 //Restrict triggering on own triggered abilities to forced triggered abilities
                 onCardAbilityInitiated: event => event.ability.isTriggeredAbility() &&
-                                                 event.source.getType() === 'characcter' &&
+                                                 event.source.getType() === 'character' &&
                                                  (event.ability.isForcedAbility() || event.source.controller !== this.controller)
             },
             cost: ability.costs.payGold(2),

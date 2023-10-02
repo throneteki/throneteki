@@ -73,6 +73,22 @@ class CostBuilder {
     }
 
     /**
+     * Returns a cost that asks the player to select up to a number of cards matching the passed condition.
+     * @param {number} number The number of cards that must be selected.
+     * @param {function} conditionOrMatcher Either a function that takes a card and ability context and returns whether to allow the player to select it, or a properties hash to be used as a card matcher.
+     * @param {boolean} zeroAllowed Boolean denoting whether 0 is a valid amount of the cost to be paid.
+     */
+    selectUpTo(number, conditionOrMatcher = () => true, zeroAllowed = true) {
+        return new SelectCardCost(this.action, {
+            mode: 'upTo',
+            numCards: number,
+            optional: zeroAllowed,
+            activePromptTitle: this.titles.selectUpTo(number),
+            cardCondition: CardMatcher.createMatcher(conditionOrMatcher)
+        });
+    }    
+
+    /**
      * Returns a cost that is applied to the parent card that the activating card is attached to.
      */
     parent() {

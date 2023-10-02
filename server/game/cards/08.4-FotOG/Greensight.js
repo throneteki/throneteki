@@ -1,4 +1,5 @@
 const AgendaCard = require('../../agendacard.js');
+const GameActions = require('../../GameActions');
 
 class Greensight extends AgendaCard {
     setupCardAbilities() {
@@ -6,44 +7,25 @@ class Greensight extends AgendaCard {
             when: {
                 onPhaseStarted: event => event.phase === 'draw'
             },
-            handler: () => {
-                for(let player of this.game.getPlayers()) {
-                    let card = player.drawDeck[0];
-                    this.game.addMessage('{0} is forced by {1} to reveal {2} from {3}\'s deck', this.controller, this, card, player);
-                }
-
-                if(this.controller.faction.kneeled) {
-                    return true;
-                }
-
-                this.game.promptWithMenu(this.controller, this, {
-                    activePrompt: {
-                        menuTitle: 'Kneel faction card to discard cards?',
-                        buttons: [
-                            { text: 'Yes', method: 'discard' },
-                            { text: 'No', method: 'cancel' }
-                        ]
-                    },
-                    source: this
-                });
-            }
+            message: '{player} is forced by {source} to reveal the top cards of each player\'s deck',
+            gameAction: GameActions.revealCards(context => ({
+                cards: context.game.getPlayers().map(player => player.drawDeck[0]),
+                whileRevealed: GameActions.may({
+                    title: 'Kneel faction card to discard cards?',
+                    gameAction: GameActions.kneelCard(context => ({
+                        card: context.player.faction
+                    })).then({
+                        message: {
+                            format: '{player} kneels their faction card to discard {revealed}',
+                            args: { revealed: context => context.parentContext.revealed }
+                        },
+                        gameAction: GameActions.simultaneously(context => 
+                            context.parentContext.revealed.map(card => GameActions.discardCard({ card, source: this }))
+                        )
+                    })
+                })
+            }))
         });
-    }
-
-    discard() {
-        this.controller.kneelCard(this.controller.faction);
-
-        for(let player of this.game.getPlayers()) {
-            player.discardFromDraw(1);
-        }
-
-        this.game.addMessage('{0} uses {1} and kneels their faction card to have revealed cards discarded', this.controller, this);
-
-        return true;
-    }
-
-    cancel() {
-        return true;
     }
 }
 

@@ -50,8 +50,7 @@ class FriendsAtCourt extends DrawCard {
         for(const card of cards) {
             const player = card.controller;
             const cardsForPlayer = playersToCards.get(player) || [];
-            const position = player.shadows.indexOf(card) + 1;
-            cardsForPlayer.push(position);
+            cardsForPlayer.push(card.getShadowPosition());
             playersToCards.set(card.controller, cardsForPlayer);
         }
 
@@ -60,9 +59,8 @@ class FriendsAtCourt extends DrawCard {
 
     handleSelectCard(player, card) {
         if(player.getSpendableGold({ player, playingType: 'ability' }) >= 2) {
-            const position = card.controller.shadows.indexOf(card) + 1;
             this.game.spendGold({ amount: 2, player });
-            this.game.addMessage('Then {0} pays 2 gold to return card #{1} in {2}\'s shadow area to its owner\'s hand', player, position, card.controller);
+            this.game.addMessage('Then {0} pays 2 gold to return card #{1} in {2}\'s shadow area to its owner\'s hand', player, card.getShadowPosition(), card.controller);
             this.game.resolveGameAction(GameActions.returnCardToHand({ card }));
         }
 

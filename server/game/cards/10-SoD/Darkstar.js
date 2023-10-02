@@ -1,22 +1,19 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions/index.js');
 
 class Darkstar extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Return each participating character to hand',
-            condition: () => this.isAttacking() &&
-                             this.game.currentChallenge.getNumberOfParticipants() > 1,
+            condition: () => this.isAttacking(),
             cost: ability.costs.sacrificeSelf(),
-            handler: context => {
-                let participants = this.game.currentChallenge.getParticipants();
-
-                for(let card of participants) {
-                    card.owner.returnCardToHand(card);
-                }
-
-                this.game.addMessage('{0} sacrifices {1} to return {2} to its owner\'s hand',
-                    context.player, this, participants);
-            }
+            message: {
+                format: '{player} sacrifices {costs.sacrifice} to return {participants} to its owner\'s hand',
+                args: { participants: context => context.game.currentChallenge.getParticipants() }
+            },
+            gameAction: GameActions.simultaneously(context => 
+                context.game.currentChallenge.getParticipants().map(card => GameActions.returnCardToHand({ card }))
+            )
         });
     }
 }

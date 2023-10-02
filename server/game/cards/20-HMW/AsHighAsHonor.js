@@ -17,14 +17,15 @@ class AsHighAsHonor extends DrawCard {
                         player: context.player,
                         card: context.target,
                         kneeled: true
-                    })),
+                    })).then({
+                        condition: context => context.parentContext.target.hasTrait('House Arryn'),
+                        message: { format: 'Then {player} stands {originalTarget}', args: { originalTarget: context => context.parentContext.target } },
+                        gameAction: GameActions.standCard(context => ({
+                            card: context.parentContext.target
+                        }))
+                    }),
                     context
-                ).thenExecute(() => {
-                    if(context.target.hasTrait('House Arryn') && context.target.allowGameAction('stand')) {
-                        this.game.addMessage('{0} then uses {1} to stand {2}', context.player, this, context.target);
-                        context.target.controller.standCard(context.target);
-                    }
-                });
+                );
             }
         });
     }

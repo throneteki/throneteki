@@ -30,7 +30,7 @@ class AllowedChallenges {
     }
 
     useAllowedChallenge(challenge) {
-        let allowedChallenge = this.allowedChallenges.find(allowedChallenge => allowedChallenge.isMatch(challenge.challengeType, challenge.defendingPlayer));
+        let allowedChallenge = this.allowedChallenges.find(allowedChallenge => allowedChallenge.isMatch(challenge.initiatedChallengeType, challenge.defendingPlayer));
         if(allowedChallenge) {
             allowedChallenge.markUsed(challenge);
         }

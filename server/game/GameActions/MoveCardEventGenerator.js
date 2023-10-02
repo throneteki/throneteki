@@ -1,4 +1,5 @@
 const AtomicEvent = require('../AtomicEvent');
+const BestowPrompt = require('../gamesteps/bestowprompt');
 const Event = require('../event');
 
 class MoveCardEventGenerator {
@@ -63,12 +64,21 @@ class MoveCardEventGenerator {
     createReturnCardToHandEvent({ card, allowSave = true }) {
         let params = {
             card: card,
-            allowSave: allowSave
+            allowSave: allowSave,
+            snapshotName: 'cardStateWhenReturned'
         };
-        return this.event('onCardReturnedToHand', params, event => {
-            event.cardStateWhenReturned = card.createSnapshot();
-            event.card.controller.moveCard(card, 'hand', { allowSave: allowSave });
+        const returnEvent = this.event('onCardReturnedToHand', params, event => {
+            event.thenAttachEvent(this.createPlaceCardEvent({ card: event.card, player: event.card.controller, location: 'hand' }));
         });
+
+        if(['play area', 'duplicate'].includes(card.location)) {
+            return this.atomic(
+                returnEvent,
+                this.createLeavePlayEvent({ card, allowSave })
+            );
+        }
+
+        return returnEvent;
     }
 
     createPlaceCardEvent({ card, player, location, bottom = false }) {
@@ -76,6 +86,37 @@ class MoveCardEventGenerator {
         return this.event('onCardPlaced', { card, location, player, bottom }, event => {
             const actualPlayer = event.location !== 'play area' ? event.card.owner : event.player;
             actualPlayer.placeCardInPile({ card, location, bottom });
+        });
+    }
+
+    createEntersPlayEvent({ card, player, playingType = 'play', kneeled = false, isDupe = false }) {
+        const originalLocation = card.location;
+
+        player = player || card.controller;
+        const game = player.game;
+        const isFullyResolved = event => event.card.location === 'play area';
+
+        return this.event('onCardEntersPlay', { card, playingType, originalLocation, isFullyResolved }, event => {
+            // Attachments placed in setup should not be considered to be 'played',
+            // as it will cause then to double their effects when attached later.
+            let isSetupAttachment = playingType === 'setup' && event.card.getPrintedType() === 'attachment';
+
+            let originalFacedownState = event.card.facedown;
+            event.card.facedown = game.currentPhase === 'setup';
+            event.card.new = true;
+            player.placeCardInPile({ card: event.card, location: 'play area', wasFacedown: originalFacedownState });
+            event.card.takeControl(player);
+            event.card.kneeled = playingType !== 'setup' && !!event.card.entersPlayKneeled || !!kneeled;
+
+            if(!isDupe && !isSetupAttachment) {
+                event.card.applyPersistentEffects();
+            }
+
+            game.queueSimpleStep(() => {
+                if(game.currentPhase !== 'setup' && event.card.isBestow()) {
+                    game.queueStep(new BestowPrompt(game, player, event.card));
+                }
+            });
         });
     }
 

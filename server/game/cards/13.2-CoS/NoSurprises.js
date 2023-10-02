@@ -1,37 +1,33 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions/index.js');
 
 class NoSurprises extends DrawCard {
     setupCardAbilities() {
         this.action({
             title: 'Reveal your hand',
-            chooseOpponent: true,
-            condition: () => this.controller.hand.length !== 0,
-            handler: context => {
-                let opponent = context.opponent;
-                this.game.addMessage('{0} plays {1} to reveal their hand', context.player, this);
-                // TODO: Update to reveal hand and apply effect to all opponents in Melee
-                this.game.promptForSelect(opponent, {
-                    activePromptTitle: 'Look at opponets hand and continue',
-                    source: this,
-                    revealTargets: true,
-                    cardCondition: card => card.location === 'hand' && card.controller === context.player,
-                    onSelect: () => this.onCardSelected(context),
-                    onCancel: () => this.onCardSelected(context)
-                });
-                this.untilEndOfPhase(ability => ({
-                    match: opponent,
-                    effect: [
-                        ability.effects.cannotPutIntoPlay((card) => card.location === 'shadows'),
-                        ability.effects.cannotPlay(card => card.getPrintedType() === 'event')
-                    ]
-                }));
-            }
+            condition: context => context.player.hand.length > 1,
+            message: '{player} plays {source} to reveal their hand',
+            gameAction: GameActions.revealCards(context => ({
+                player: context.player,
+                cards: context.player.hand
+            })).then({
+                message: {
+                    format: 'Then, until the end of the phase, {opponents} cannot play events or bring cards out of shadows',
+                    args: { opponents: context => context.game.getOpponents(context.player) }
+                },
+                handler: context => {
+                    for(const opponent of context.game.getOpponents(context.player)) {
+                        this.untilEndOfPhase(ability => ({
+                            match: opponent,
+                            effect: [
+                                ability.effects.cannotPutIntoPlay((card) => card.location === 'shadows'),
+                                ability.effects.cannotPlay(card => card.getPrintedType() === 'event')
+                            ]
+                        }));
+                    }
+                }
+            })
         });
-    }
-
-    onCardSelected(context) {
-        this.game.addMessage('{0} uses {1} to prevent opponents to play events or bring cards out of shadows', context.player, this);
-        return true;
     }
 }
 

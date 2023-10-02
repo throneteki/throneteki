@@ -29,7 +29,7 @@ class Spearmaiden extends DrawCard {
 
         this.untilEndOfChallenge(ability => ({
             targetController: 'opponent',
-            effect: ability.effects.mustChooseAsClaim(context.target)
+            effect: ability.effects.mustChooseAsClaim(card => card === context.target)
         }));
     }
 }

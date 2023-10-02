@@ -1,3 +1,4 @@
+const PutIntoShadows = require('../GameActions/PutIntoShadows');
 const BaseAbility = require('../baseability');
 const Costs = require('../costs');
 
@@ -32,13 +33,25 @@ class MarshalIntoShadowsAction extends BaseAbility {
             card: context.source,
             originalController: context.source.controller,
             originalLocation: context.source.location,
+            originalParent: context.source.parent,
+            wasFacedownAttachment: context.source.facedown && context.source.getType() === 'attachment',
             player: context.player,
             type: 'shadows'
         };
-        context.game.raiseEvent('onCardMarshalled', params, () => {
-            context.game.addMessage('{0} marshals a card into shadows costing {1} gold', context.player, context.costs.gold);
-            context.player.putIntoShadows(context.source);
+        context.game.raiseEvent('onCardMarshalled', params, event => {
+            event.thenAttachEvent(PutIntoShadows.createEvent({ card: context.source, reason: 'marshal' }));
+            context.game.addMessage(this.getMessageFormat(params), context.player, params.originalLocation, params.originalParent, context.costs.gold);
         });
+    }
+
+    getMessageFormat(params) {
+        const messages = {
+            'hand': '{0} marshals a card into shadows costing {3} gold',
+            'underneath': '{0} marshals a card from underneath {2} into shadows costing {3} gold',
+            'other': '{0} marshals a card from their {1} into shadows costing {3} gold'
+        };
+        let marshalLocation = params.originalLocation === 'hand' ? 'hand' : params.originalLocation === 'underneath' || params.wasFacedownAttachment ? 'underneath' : 'other';
+        return messages[marshalLocation] || messages['hand'];
     }
 
     shouldHideSourceInMessage() {

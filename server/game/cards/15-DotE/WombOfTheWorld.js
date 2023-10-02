@@ -6,35 +6,27 @@ class WombOfTheWorld extends DrawCard {
         this.action({
             title: 'Reveal top 5 cards',
             cost: ability.costs.kneelSelf(),
-            handler: context => {
-                const revealedCards = context.player.drawDeck.slice(0, 5);
-                const revealFunction = (card) => revealedCards.includes(card);
-
-                this.game.addMessage('{0} kneels {1} to reveal {2} from the top of their deck', context.player, this, revealedCards);
-
-                this.game.cardVisibility.addRule(revealFunction);
-
-                this.game.promptForSelect(context.player, {
-                    activePromptTitle: 'Select a character',
-                    cardCondition: card => (
-                        revealedCards.includes(card) &&
-                        card.isMatch({ trait: 'Dothraki', type: 'character' }) &&
-                        context.player.canPutIntoPlay(card)
-                    ),
-                    onSelect: (player, card) => this.putCharacterIntoPlay(player, card),
-                    onCancel: (player) => this.promptToCancel(player),
-                    source: this
-                });
-                this.game.queueSimpleStep(() => {
-                    this.game.cardVisibility.removeRule(revealFunction);
-
-                    this.game.addMessage('{0} shuffles their deck', this.controller);
-                    this.game.resolveGameAction(
-                        GameActions.shuffle(context => ({ player: context.player })),
-                        context
-                    );
-                });
-            }
+            message: '{player} kneels {source} to reveal the top 5 cards of their deck',
+            gameAction: GameActions.revealTopCards(context => ({
+                player: context.player,
+                amount: 5,
+                whileRevealed: GameActions.genericHandler(context => {
+                    this.game.promptForSelect(context.player, {
+                        activePromptTitle: 'Select a character',
+                        cardCondition: card => (
+                            context.revealed.includes(card) &&
+                            card.isMatch({ trait: 'Dothraki', type: 'character' }) &&
+                            context.player.canPutIntoPlay(card)
+                        ),
+                        onSelect: (player, card) => this.putCharacterIntoPlay(player, card),
+                        onCancel: (player) => this.promptToCancel(player),
+                        source: this
+                    });
+                })
+            })).then({
+                message: '{player} shuffles their deck',
+                gameAction: GameActions.shuffle(context => ({ player: context.player }))
+            })
         });
     }
 

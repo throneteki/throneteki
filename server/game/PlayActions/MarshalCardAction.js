@@ -35,24 +35,28 @@ class MarshalCardAction extends BaseAbility {
             card: context.source,
             originalController: context.source.controller,
             originalLocation: context.source.location,
+            originalParent: context.source.parent,
+            wasFacedownAttachment: context.source.facedown && context.source.getType() === 'attachment',
             player: context.player,
             type: 'card'
         };
         context.game.raiseEvent('onCardMarshalled', params, () => {
-            context.game.addMessage(this.getMessageFormat(params), context.player, context.source, params.originalController, params.originalLocation, context.costs.gold);
             context.player.putIntoPlay(context.source, 'marshal');
+            context.game.addMessage(this.getMessageFormat(params), context.player, context.source, params.originalController, params.originalLocation, params.originalParent, context.costs.gold);
         });
     }
 
     getMessageFormat(params) {
         const messages = {
-            'card.hand.current': '{0} marshals {1} costing {4} gold',
-            'card.other.current': '{0} marshals {1} from their {3} costing {4} gold',
-            'card.other.opponent': '{0} marshals {1} from {2}\'s {3} costing {4} gold'
+            'hand.current': '{0} marshals {1} costing {5} gold',
+            'other.current': '{0} marshals {1} from their {3} costing {5} gold',
+            'other.opponent': '{0} marshals {1} from {2}\'s {3} costing {5} gold',
+            'underneath.current': '{0} marshals {1} from underneath {4} costing {5} gold',
+            'underneath.opponent': '{0} marshals {1} from underneath {2}\'s {4} costing {5} gold'
         };
-        let hand = params.originalLocation === 'hand' ? 'hand' : 'other';
+        let marshalLocation = params.originalLocation === 'hand' ? 'hand' : params.originalLocation === 'underneath' || params.wasFacedownAttachment ? 'underneath' : 'other';
         let current = params.originalController === params.player ? 'current' : 'opponent';
-        return messages[`card.${hand}.${current}`] || messages['card.hand.current'];
+        return messages[`${marshalLocation}.${current}`] || messages['hand.current'];
     }
 }
 

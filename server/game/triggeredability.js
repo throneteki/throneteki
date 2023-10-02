@@ -116,15 +116,11 @@ class TriggeredAbility extends BaseAbility {
             return false;
         }
 
-        if(this.card.getPrintedType() !== 'event' && this.card.facedown) {
+        if(this.card.getPrintedType() !== 'event' && this.card.facedown && this.card.location !== 'duplicate') {
             return false;
         }
 
         if(!this.canResolvePlayer(context) || !this.canPayCosts(context) || !this.canResolveTargets(context)) {
-            return false;
-        }
-
-        if(this.card.getPrintedType() !== 'event' && this.card.facedown) {
             return false;
         }
 
@@ -140,7 +136,7 @@ class TriggeredAbility extends BaseAbility {
         // Also apparently the draw deck because of Maester Gormon.
         // Also also apparently under conclave due to Archmaester Marwyn.
         if(this.isPlayableEventAbility()) {
-            return ['conclave', 'discard pile', 'draw deck', 'hand', 'shadows', 'play area'].includes(location);
+            return ['conclave', 'discard pile', 'draw deck', 'hand', 'shadows', 'play area', 'underneath'].includes(location);
         }
 
         return this.location.includes(location);

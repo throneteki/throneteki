@@ -10,7 +10,8 @@ class RimeGate extends DrawCard {
                     event.card.controller === this.controller && 
                     event.card.getType() === 'location' && 
                     event.card.canBeSaved() && 
-                    event.allowSave)
+                    event.allowSave &&
+                    event.card.location === 'play area')
             },
             cost: ability.costs.kneelSelf(),
             handler: context => {

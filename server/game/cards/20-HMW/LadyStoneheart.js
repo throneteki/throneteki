@@ -11,7 +11,11 @@ class LadyStoneheart extends DrawCard {
             target: {
                 choosingPlayer: 'each',
                 ifAble: true,
-                cardCondition: (card, context) => card.location === 'play area' && card.controller === context.choosingPlayer && card.getType() === 'character' && (card.isLoyal() || card.hasTrait('House Frey'))
+                cardCondition: (card, context) => card.location === 'play area' 
+                            && card.controller === context.choosingPlayer 
+                            && card.getType() === 'character' 
+                            && card.canBeKilled()
+                            && (card.isLoyal() || card.hasTrait('House Frey'))
             },
             handler: context => {
                 let selections = context.targets.selections.filter(selection => !!selection.value);

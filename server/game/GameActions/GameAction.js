@@ -67,6 +67,10 @@ class GameAction {
         }
         return event;
     }
+
+    message() {
+        return '';
+    }
 }
 
 module.exports = GameAction;

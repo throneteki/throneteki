@@ -1,7 +1,4 @@
 const {flatten} = require('../Array');
-const BaseCard = require('./basecard');
-const Spectator = require('./spectator');
-
 class Message {
     static fragment(format, ...args) {
         if(args.length === 1 && !format.includes('{0}')) {
@@ -40,6 +37,9 @@ class Message {
     }
 
     formatArg(arg) {
+        const BaseCard = require('./basecard');
+        const Spectator = require('./spectator');
+
         if(Array.isArray(arg)) {
             return this.formatArray(arg);
         } else if(arg instanceof BaseCard) {
@@ -48,7 +48,7 @@ class Message {
             }
             return { code: arg.code, label: arg.name, type: arg.getType(), argType: 'card' };
         } else if(arg instanceof Spectator) {
-            return { name: arg.user.username, argType: 'nonAvatarPlayer' };
+            return { name: arg.name, argType: 'nonAvatarPlayer' };
         } else if(arg instanceof Message) {
             return arg.flatten();
         }
