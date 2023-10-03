@@ -13,15 +13,14 @@ class AddToChallenge extends GameAction {
     }
 
     canChangeGameState({ card }) {
-        return !card.isParticipating();
+        return card.game.isDuringChallenge() && card.getType() === 'character' && card.location === 'play area' && !card.isParticipating();
     }
 
     createEvent({ card, player }) {
-        const challenge = card.game.currentChallenge;
         player = player || card.controller;
         const eventProps = {
             card,
-            challenge,
+            challenge: card.game.currentChallenge,
             player
         };
         return this.event('onAddedToChallenge', eventProps, event => {
