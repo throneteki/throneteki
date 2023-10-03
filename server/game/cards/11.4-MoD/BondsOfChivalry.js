@@ -1,42 +1,44 @@
 const DrawCard = require('../../drawcard');
+const GameActions = require('../../GameActions/index.js');
 
 class BondsOfChivalry extends DrawCard {
     setupCardAbilities() {
+        const standAndRemoveAction = GameActions.simultaneously([
+            GameActions.standCard(context => ({ card: context.target })),
+            GameActions.removeFromChallenge(context => ({ card: context.target }))
+        ]);
         this.action({
             title: 'Stand and remove Knight',
-            condition: () => this.game.isDuringChallenge(),
             target: {
-                cardCondition: card => card.controller === this.controller && card.getType() === 'character' && card.isParticipating() && card.hasTrait('Knight')
+                cardCondition: { type: 'character', controller: 'current', participating: true, trait: 'Knight', condition: (card, context) => standAndRemoveAction.allow({ ...context, target: card }) }
             },
+            message: '{player} plays {source} to stand and remove {target} from the challenge',
             handler: context => {
-                let target = context.target;
-
-                if(!target.kneeled || !target.allowGameAction('stand', context)) {
-                    this.game.addMessage('{0} plays {1} to remove {2} from the challenge', this.controller, this, target);
-                    this.game.currentChallenge.removeFromChallenge(target);
-                    return;
-                }
-
-                this.game.addMessage('{0} plays {1} to stand and remove {2} from the challenge', this.controller, this, target);
-                this.game.currentChallenge.removeFromChallenge(target);
-                this.controller.standCard(target);
-
-                this.game.promptForSelect(this.controller, {
-                    activePromptTitle: 'Select a new participant',
-                    cardCondition: card => card !== target && card.location === 'play area' && card.controller === this.controller && card.getType() === 'character' && card.hasTrait('Knight') && !card.isParticipating() && !card.kneeled && card.allowGameAction('kneel', context),
-                    onSelect: (player, card) => this.addToChallenge(card),
-                    source: this
-                });
+                this.game.resolveGameAction(
+                    standAndRemoveAction.then({
+                        target: {
+                            optional: true,
+                            cardCondition: { type: 'character', controller: 'current', trait: 'Knight', condition: (card, context) => card !== context.parentContext.target && GameActions.kneelCard({ card }).allow() && GameActions.addToChallenge({ card }).allow() }
+                        },
+                        handler: context => {
+                            this.game.resolveGameAction(
+                                GameActions.ifCondition({
+                                    condition: context => context.target,
+                                    thenAction: {
+                                        gameAction: GameActions.simultaneously([
+                                            GameActions.kneelCard(context => ({ card: context.target })),
+                                            GameActions.addToChallenge(context => ({ card: context.target }))
+                                        ]),
+                                        // message: 'Then, {player} kneels {target} to have it participate in the challenge on their side'
+                                        message: '{player} {gameAction}'
+                                    }
+                                }), context
+                            );
+                        }
+                    }), context
+                );
             }
         });
-    }
-
-    addToChallenge(card) {
-        this.game.addMessage('{0} kneels {1} to have it participate in the challenge', this.controller, card);
-        this.controller.kneelCard(card);
-        this.game.currentChallenge.addParticipantToSide(this.controller, card);
-
-        return true;
     }
 }
 
