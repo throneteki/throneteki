@@ -1,8 +1,13 @@
+const Message = require('../Message');
 const GameAction = require('./GameAction');
 
 class KneelCard extends GameAction {
     constructor() {
         super('kneel');
+    }
+
+    message({ card }) {
+        return Message.fragment('kneels {card}', { card });
     }
 
     canChangeGameState({ card }) {
