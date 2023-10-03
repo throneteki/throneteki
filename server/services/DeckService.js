@@ -5,10 +5,18 @@ class DeckService {
         this.decks = db.get('decks');
     }
 
+    isDeckLocked(deck) {
+        //a deck is locked when the eventId is set and the event is NOT a draft
+        if(deck.eventId && !deck.draftCubeId) {
+            return true;
+        }
+        return false;
+    }
+
     getById(id) {
         return this.decks.findOne({ _id: id })
             .then(deck => {
-                deck.locked = deck.eventId ? true : false; // lock the deck from further changes if the eventId is set //TODO refactor this when draft is finished
+                deck.locked = this.isDeckLocked(deck);
                 return deck;
             })
             .catch(err => {
@@ -20,7 +28,7 @@ class DeckService {
     getByName(name) {
         return this.decks.findOne({ name })
             .then(deck => {
-                deck.locked = deck.eventId ? true : false; // lock the deck from further changes if the eventId is set //TODO refactor this when draft is finished
+                deck.locked = this.isDeckLocked(deck);
                 return deck;
             })
             .catch(err => {
@@ -40,7 +48,7 @@ class DeckService {
     findByUserName(username) {
         return this.decks.find({ username: username }, { sort: { lastUpdated: -1 } })
             .then(decks => {
-                decks.forEach(d => d.locked = d.eventId ? true : false);
+                decks.forEach(deck => deck.locked = this.isDeckLocked(deck));
                 return decks;
             });
     }
@@ -78,7 +86,6 @@ class DeckService {
             plotCards: deck.plotCards,
             bannerCards: deck.bannerCards,
             drawCards: deck.drawCards,
-            eventId: deck.eventId,
             faction: deck.faction,
             agenda: deck.agenda,
             rookeryCards: deck.rookeryCards || [],
