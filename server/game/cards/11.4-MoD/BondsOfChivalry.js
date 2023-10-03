@@ -29,8 +29,7 @@ class BondsOfChivalry extends DrawCard {
                                             GameActions.kneelCard(context => ({ card: context.target })),
                                             GameActions.addToChallenge(context => ({ card: context.target }))
                                         ]),
-                                        // message: 'Then, {player} kneels {target} to have it participate in the challenge on their side'
-                                        message: '{player} {gameAction}'
+                                        message: 'Then, {player} kneels {target} to have it participate in the challenge on their side'
                                     }
                                 }), context
                             );
