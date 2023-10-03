@@ -7,7 +7,7 @@ class DeckService {
 
     isDeckLocked(deck) {
         //a deck is locked when the eventId is set and the event is NOT a draft
-        if(deck.eventId && !deck.draftCubeId) {
+        if(deck.eventId && deck.format !== 'draft') {
             return true;
         }
         return false;
@@ -118,8 +118,8 @@ class DeckService {
             throw new Error('Locked decks can not be updated');
         }
 
-        //if the eventId is set on the deck, check if the user already has a deck with the same eventId
-        if(deck.eventId) {
+        //if the eventId is set on the deck and the deck is not a draft deck, check if the user already has a deck with the same eventId
+        if(deck.eventId && deck.format !== 'draft') {
             //if a deck for the event already exists, do not update the deck
             if(await this.userAlreadyHasDeckForEvent(previousVersion.username, deck.eventId)) {
                 throw new Error(`User ${previousVersion.username } already has a deck configured for event ${deck.eventId}`);
