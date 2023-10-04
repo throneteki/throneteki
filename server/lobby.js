@@ -486,12 +486,16 @@ class Lobby {
             }
 
             const startedByEventOrganizer = event.restrictTableCreators && event.validTableCreators && event.validTableCreators.includes(socket.user.username);
+            //if the game is NOT started by one of the configured event organizers, join the game as usual after hosting it 
+            const doJoinGame = !startedByEventOrganizer;
 
             let game = new PendingGame(socket.user, this.instance, {event, restrictedList, ...gameDetails});
-            game.newGame(socket.id, socket.user, gameDetails.password, true, !startedByEventOrganizer);
+            game.newGame(socket.id, socket.user, gameDetails.password, doJoinGame); 
 
-            socket.joinChannel(game.id);
-            this.sendGameState(game);
+            if(doJoinGame) {
+                socket.joinChannel(game.id);
+                this.sendGameState(game);
+            }
 
             this.games[game.id] = game;
             this.broadcastGameMessage('newgame', game);
