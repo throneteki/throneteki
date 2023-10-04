@@ -1,7 +1,5 @@
 const EventEmitter = require('events');
 const moment = require('moment');
-
-const AnonymousSpectator = require('./game/anonymousspectator');
 const DraftingPlayer = require('./DraftingPlayer');
 const DraftCube = require('./DraftCube');
 const DraftingTable = require('./DraftingTable');
@@ -106,7 +104,9 @@ class DraftingTableGame extends EventEmitter {
         return Object.values(this.playersAndSpectators).filter(player => player.isSpectator());
     }
 
-    drop(playerName, cardId, source, target) {
+    //not needed for draft
+    drop() {
+        return false;
     }
 
     chat(playerName, message) {
@@ -137,7 +137,8 @@ class DraftingTableGame extends EventEmitter {
         this.draftingTable.startRound();
     }
 
-    watch(socketId, user) {
+    //not needed for draft
+    watch() {
         return false;
     }
 
