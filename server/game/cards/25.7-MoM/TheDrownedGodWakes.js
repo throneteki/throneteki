@@ -1,18 +1,20 @@
 const DrawCard = require('../../drawcard.js');
-const {flatMap} = require('../../../Array');
 
 class TheDrownedGodWakes extends DrawCard {
-    setupCardAbilities(ability) {
+    setupCardAbilities() {
         this.reaction({
             when: {
-                onDominanceDetermined: event => this.controller === event.winner && event.difference >= 15
+                onDominanceDetermined: event => this.controller === event.winner && event.difference >= 10
             },
-            cost: ability.costs.kneelFactionCard(),
-            message: '{player} uses {source} and kneels their faction card to kill each character',
-            handler: () => {
-                // TODO: Fix VM issue to conver that & this card into gameaction
-                let players = this.game.getPlayersInFirstPlayerOrder();
-                let characters = flatMap(players, player => player.filterCardsInPlay(card => card.getType() === 'character'));
+            message: '{player} plays {source} to have each player choose a character they control, and kill the others',
+            target: {
+                choosingPlayer: 'each',
+                ifAble: true,
+                cardCondition: (card, context) => card.location === 'play area' && card.getType() === 'character' && card.controller === context.choosingPlayer
+            },
+            handler: context => {
+                const targets = context.targets.getTargets();
+                let characters = this.game.filterCardsInPlay(card => !targets.includes(card) && card.getType() === 'character');
                 this.game.killCharacters(characters);
             }
         });
@@ -20,6 +22,6 @@ class TheDrownedGodWakes extends DrawCard {
 }
 
 TheDrownedGodWakes.code = '25523';
-TheDrownedGodWakes.version = '1.1';
+TheDrownedGodWakes.version = '1.2';
 
 module.exports = TheDrownedGodWakes;
