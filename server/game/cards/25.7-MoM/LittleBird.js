@@ -15,18 +15,18 @@ class LittleBird extends DrawCard {
                         player: context.player,
                         lookingAt: context.opponent,
                         amount: 1
-                    })),
+                    })).then({
+                        gameAction: GameActions.simultaneously(context =>
+                            // TODO: Add a 'decline message' to GameActions.may
+                            context.game.getPlayersInFirstPlayerOrder().map(player => GameActions.may({
+                                player,
+                                title: context => 'Draw 1 card from ' + context.source.name + '?',
+                                message: '{choosingPlayer} chooses to draw 1 card',
+                                gameAction: GameActions.drawCards(context => ({ player: context.choosingPlayer, amount: 1 }))
+                            })))
+                    }),
                     context
-                ).thenExecute(() => {
-                    GameActions.simultaneously(context =>
-                        // TODO: Add a 'decline message' to GameActions.may
-                        context.game.getPlayersInFirstPlayerOrder().map(player => GameActions.may({
-                            player,
-                            title: context => 'Draw 1 card from ' + context.source.name + '?',
-                            message: '{choosingPlayer} draws 1 card',
-                            gameAction: GameActions.drawCards(context => ({ player: context.choosingPlayer, amount: 1 }))
-                        })));
-                });
+                );
             }
         });
     }
