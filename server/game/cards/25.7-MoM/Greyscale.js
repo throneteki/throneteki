@@ -1,5 +1,6 @@
 const GameActions = require('../../GameActions/index.js');
 const DrawCard = require('../../drawcard.js');
+const Message = require('../../Message');
 
 class Greyscale extends DrawCard {
     setupCardAbilities(ability) {
@@ -12,34 +13,35 @@ class Greyscale extends DrawCard {
             handler: context => {
                 this.game.resolveGameAction(
                     GameActions.revealCards(context => ({
-                        cards: [this.getCardAtRandomFromHand(context.opponent)],
+                        cards: [context.opponent.hand[Math.floor(Math.random() * context.opponent.hand.length)]],
                         player: context.opponent
                     })).then({
                         gameAction: GameActions.ifCondition({
                             condition: context => context.parentContext.revealed[0].hasPrintedCost() && this.parent.hasPrintedCost() && context.parentContext.revealed[0].getPrintedCost() >= this.parent.getPrintedCost(),
                             thenAction: {
-                                message: {
-                                    format: 'Then, {player} kills {parent} and attaches {source} to another eligible character',
-                                    args: { parent: context => context.cardStateWhenInitiated.parent }
-                                },
-                                gameAction: GameActions.simultaneously([
-                                    GameActions.ifCondition({
-                                        condition: context => context.game.anyCardsInPlay(card => this.allowMoveAttachment(card)),
-                                        thenAction: GameActions.genericHandler(context => {
-                                            // TODO: Fix this - currently it cannot simultaneously move whilst the attached character is also being killed, and is instead returned to hand 
-                                            context.game.promptForSelect(context.player, {
+                                gameAction: GameActions.genericHandler(context => {
+                                    let bonuses = this.satisfiableBonuses(context);
+                                    if(bonuses.length > 0) {
+                                        if(bonuses.includes('attach')) {
+                                            this.game.promptForSelect(context.player, {
                                                 activePromptTitle: 'Select a character',
-                                                source: this,
-                                                cardCondition: card => this.allowMoveAttachment(card),
-                                                onSelect: (player, card) => this.onCardSelected(player, card)
+                                                cardCondition: card => this.canAttachToCharacter(context, card),
+                                                onSelect: (player, card) => this.activateBonuses(context, bonuses, card),
+                                                onCancel: () => this.activateBonuses(context, bonuses, null),
+                                                source: this
                                             });
-                                        })
-                                    }),
-                                    GameActions.kill(context => ({ card: context.cardStateWhenInitiated.parent }))
-                                ])
+                                            return;
+                                        }
+                        
+                                        this.activateBonuses(context, bonuses, null);
+                                    }
+                                })
                             },
                             elseAction: {
-                                message: 'Then, {player} draws 1 card',
+                                message: {
+                                    format: 'Then, {opponent} draws 1 card',
+                                    args: { opponent: context => context.parentContext.opponent }
+                                },
                                 gameAction: GameActions.drawCards(context => ({
                                     player: context.parentContext.opponent,
                                     amount: 1
@@ -53,22 +55,45 @@ class Greyscale extends DrawCard {
         });
     }
 
-    getCardAtRandomFromHand(player) {
-        var cardIndex = Math.floor(Math.random() * player.hand.length);
-        return player.hand[cardIndex];
+    canAttachToCharacter(context, card) {
+        return card.getType() === 'character' && card !== this.parent && context.player.canAttach(this, card);
     }
 
-    allowMoveAttachment(card) {
-        return card !== this.parent && this.controller.canAttach(this, card);
+    satisfiableBonuses(context) {
+        let satisfiable = [];
+        if(GameActions.kill({ card: this.parent }).allow()) {
+            satisfiable.push('kill');
+        }
+        if(context.game.anyCardsInPlay(card => this.canAttachToCharacter(context, card))) {
+            satisfiable.push('attach');
+        }
+        return satisfiable;
     }
 
-    onCardSelected(player, card) {
-        player.attach(player, this, card);
+    activateBonuses(context, bonuses, attachTo) {
+        let bonusMessages = [];
+        let gameActions = [];
+
+        if(bonuses.includes('kill')) {
+            gameActions.push(GameActions.kill({ card: this.parent }));
+            bonusMessages.push(Message.fragment('kill {parent}', { parent: this.parent }));
+        }
+
+        if(bonuses.includes('attach') && attachTo) {
+            gameActions.push(GameActions.genericHandler(() => {
+                context.player.attach(context.player, this, attachTo);
+            }));
+            bonusMessages.push(Message.fragment('attach {source} to {attachTo}', { source: this, attachTo }));
+        }
+
+        this.game.addMessage('Then, {0} uses {1} to {2}', context.player, this, bonusMessages);
+        // Reverse to ensure "attach" happens first, if applicable
+        this.game.resolveGameAction(GameActions.simultaneously(gameActions.reverse()));
         return true;
     }
 }
 
 Greyscale.code = '25607';
-Greyscale.version = '1.0';
+Greyscale.version = '1.1';
 
 module.exports = Greyscale;
