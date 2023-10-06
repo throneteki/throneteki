@@ -7,11 +7,6 @@ class DaenerysTargaryen extends DrawCard {
             match: card => card.name === 'Khal Drogo' && card.controller === this.controller,
             effect: ability.effects.addKeyword('intimidate')
         });
-        this.persistentEffect({
-            condition: () => this.controller.anyCardsInPlay(card => card.hasTrait('Companion') && card.getType() === 'character'),
-            match: this,
-            effect: ability.effects.addKeyword('insight')
-        });
         this.reaction({
             when: {
                 afterChallenge: event => event.challenge.winner === this.controller
@@ -31,6 +26,6 @@ class DaenerysTargaryen extends DrawCard {
 }
 
 DaenerysTargaryen.code = '25574';
-DaenerysTargaryen.version = '1.0';
+DaenerysTargaryen.version = '1.1';
 
 module.exports = DaenerysTargaryen;
