@@ -9,11 +9,11 @@ class TheThroneOfDorne extends DrawCard {
             },
             cost: ability.costs.kneelSelf(),
             target: {
-                cardCondition: { location: 'play area', faction: 'martell', controller: 'current', condition: card => GameActions.placeCard({ card, location: 'shadows' }).allow() }
+                cardCondition: { location: 'play area', faction: 'martell', controller: 'current', condition: card => GameActions.putIntoShadows({ card }).allow() }
             },
             message: '{player} kneels {costs.kneel} to place {target} in shadows',
             handler: context => {
-                context.game.resolveGameAction(GameActions.placeCard(context => ({ card: context.target, location: 'shadows' })), context);
+                context.game.resolveGameAction(GameActions.putIntoShadows(context => ({ card: context.target })), context);
             }
         });
     }
