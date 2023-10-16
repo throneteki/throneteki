@@ -7,18 +7,18 @@ class TheHourOfTheWolf extends PlotCard {
             target: {
                 choosingPlayer: 'each',
                 ifAble: true,
-                cardCondition: (card, context) => card.location === 'play area' && card.controller === context.choosingPlayer && card.getType() === 'character'
+                cardCondition: { location: 'play area', type: 'character', loyal: false, controller: 'choosingPlayer' }
             },
             message: {
                 format: '{player} uses {source} to have each player sacrifice {targets}',
                 args: { targets: context => context.targets.getTargets() }
             },
             handler: context => {
-                let selections = context.targets.selections.filter(selection => !!selection.value);
                 this.game.resolveGameAction(
-                    GameActions.simultaneously(
-                        selections.map(selection => GameActions.sacrificeCard({ player: selection.choosingPlayer, card: selection.value }))
-                    )
+                    GameActions.simultaneously(context =>
+                        context.targets.getTargets().map(card => GameActions.sacrificeCard({ card }))
+                    ),
+                    context
                 );
             }
         });
