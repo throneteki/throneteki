@@ -7,25 +7,20 @@ class DeepwoodMotte extends DrawCard {
             when: {
                 onPlotRevealed: event => event.plot.hasTrait('Winter')
             },
-            target: {
-                mode: 'upTo',
-                numCards: context => context.event.plot.getReserve(),
-                activePromptTitle: context => 'Select up to ' + context.event.plot.getReserve() + ' cards',
-                cardCondition: card => card.getType() === 'location' && card.location === 'play area' && card.hasPrintedCost() && card.getPrintedCost() <= 1 && !card.kneeled
-            },
             cost: ability.costs.kneelSelf(),
+            target: {
+                activePromptTitle: 'Select a location',
+                cardCondition: { type: 'location', location: 'play area', limited: false }
+            },
             message: '{player} kneels {costs.kneel} to kneel {target}',
             handler: context => {
-                this.game.resolveGameAction(
-                    GameActions.simultaneously(context.targets.getTargets().map(card => GameActions.kneelCard({ card, source: this }))),
-                    context
-                );
+                this.game.resolveGameAction(GameActions.kneelCard(context => ({ card: context.target, source: this })), context);
             }
         });
     }
 }
 
 DeepwoodMotte.code = '25507';
-DeepwoodMotte.version = '1.0';
+DeepwoodMotte.version = '1.1';
 
 module.exports = DeepwoodMotte;
