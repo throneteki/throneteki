@@ -3,34 +3,38 @@ const PlotCard = require('../../plotcard');
 
 class BurningTheBooks extends PlotCard {
     setupCardAbilities(ability) {
-        this.persistentEffect({
-            match: card => card.getType() === 'plot' && card.location === 'revealed plots' && card.controller !== this.controller,
-            targetController: 'any',
-            effect: ability.effects.fullBlank
-        });
-
         this.whenRevealed({
             target: {
-                choosingPlayer: 'each',
+                choosingPlayer: 'eachOpponent',
                 ifAble: true,
-                activePromptTitle: 'Select an attachment',
-                cardCondition: { location: 'play area', controller: 'choosingPlayer', type: 'attachment', not: { trait: 'The Seven' } },
-                gameAction: 'removeFromGame'
+                cardCondition: { type: 'attachment', not: { trait: 'The Seven' }, location: 'play area', controller: 'choosingPlayer' }
             },
-            message: '{player} uses {source} to remove {target} from the game',
+            message: '{player} uses {source} to discard {target}',
             handler: context => {
                 this.game.resolveGameAction(
-                    GameActions.simultaneously(context => 
-                        context.targets.getTargets().map(card => GameActions.removeFromGame({ card, allowSave: false }))
-                    ), 
+                    GameActions.simultaneously(
+                        context.targets.getTargets().map(card => GameActions.discardCard({ card, source: this }))
+                    ).then(originalContext => ({
+                        condition: () => this.hasValidTargets(originalContext.player),
+                        cost: ability.costs.discardPower(1, card => card.getType() === 'character'),
+                        message: 'Then, {player} discards 1 power from {costs.discardPower} to initiate the effect of {source} again',
+                        handler: () => {
+                            let newContext = originalContext.ability.createContext(originalContext.event);
+                            this.game.resolveAbility(newContext.ability, newContext);
+                        }
+                    })),
                     context
                 );
             }
         });
     }
+
+    hasValidTargets(player) {
+        return this.game.getOpponents(player).some(opponent => opponent.anyCardsInPlay(card => card.getType() === 'attachment'));
+    }
 }
 
 BurningTheBooks.code = '25613';
-BurningTheBooks.version = '1.0';
+BurningTheBooks.version = '1.1';
 
 module.exports = BurningTheBooks;
