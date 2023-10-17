@@ -20,6 +20,6 @@ class Bloodraven extends DrawCard {
 }
 
 Bloodraven.code = '25597';
-Bloodraven.version = '1.0';
+Bloodraven.version = '1.1';
 
 module.exports = Bloodraven;

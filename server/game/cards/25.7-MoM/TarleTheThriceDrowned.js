@@ -8,7 +8,7 @@ class TarleTheThriceDrowned extends DrawCard {
                 onCardPlaced: event => event.card.location === 'dead pile'
                                         && event.card.getType() === 'character'
                                         && event.card.controller === this.controller
-                                        && (event.card.hasTrait('Drowned God') || event.card.hasTrait('Ironborn'))
+                                        && event.card.hasTrait('Drowned God')
             },
             limit: ability.limit.perRound(1),
             message: {
@@ -30,6 +30,6 @@ class TarleTheThriceDrowned extends DrawCard {
 }
 
 TarleTheThriceDrowned.code = '25514';
-TarleTheThriceDrowned.version = '1.1';
+TarleTheThriceDrowned.version = '1.2';
 
 module.exports = TarleTheThriceDrowned;

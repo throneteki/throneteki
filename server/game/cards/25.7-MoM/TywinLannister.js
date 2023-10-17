@@ -2,14 +2,10 @@ const GameActions = require('../../GameActions/index.js');
 const DrawCard = require('../../drawcard.js');
 
 class TywinLannister extends DrawCard {
-    setupCardAbilities() {
-        this.plotModifiers({
-            gold: 1
-        });
-        
+    setupCardAbilities() {        
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.winner === this.controller && this.isAttacking()
+                afterChallenge: event => event.challenge.winner === this.controller && this.isParticipating()
             },
             message: {
                 format: '{player} uses {source} to have {source} gain {amount} power',
@@ -20,11 +16,11 @@ class TywinLannister extends DrawCard {
     }
 
     getPowerAmount(context) {
-        return Math.floor(context.player.gold / 2);
+        return Math.floor(context.player.gold / 3);
     }
 }
 
 TywinLannister.code = '25525';
-TywinLannister.version = '1.0';
+TywinLannister.version = '1.1';
 
 module.exports = TywinLannister;
