@@ -4,6 +4,7 @@ const logger = require('./log.js');
 const monk = require('monk');
 const EventEmitter = require('events');
 
+const DeckService = require('./services/DeckService.js');
 const GameService = require('./services/GameService.js');
 const ServiceFactory = require('./services/ServiceFactory.js');
 
@@ -15,6 +16,7 @@ class GameRouter extends EventEmitter {
 
         this.workers = {};
         this.gameService = new GameService(monk(configService.getValue('dbPath')));
+        this.deckService = new DeckService(monk(configService.getValue('dbPath')));
 
         router.bind(`tcp://0.0.0.0:${configService.getValue('mqPort')}`, err => {
             if(err) {
@@ -222,6 +224,9 @@ class GameRouter extends EventEmitter {
 
                 this.emit('onPlayerLeft', message.arg.gameId, message.arg.player);
 
+                break;
+            case 'SAVEDECK':
+                this.deckService.create(message.arg.deck);
                 break;
         }
 

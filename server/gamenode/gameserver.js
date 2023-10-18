@@ -10,6 +10,7 @@ const config = require('config');
 const { detectBinary } = require('../util');
 const logger = require('../log.js');
 const ZmqSocket = require('./zmqsocket.js');
+const DraftingTableGame = require('../DraftingTableGame');
 const Game = require('../game/game.js');
 const Socket = require('../socket.js');
 const version = require('../../version.js');
@@ -204,6 +205,10 @@ class GameServer {
         this.zmqSocket.send('GAMEWIN', { game: game.getSaveState(), winner: winner.name, reason: reason });
     }
 
+    saveDeck(deck) {
+        this.zmqSocket.send('SAVEDECK', { deck });
+    }
+
     rematch(game) {
         this.zmqSocket.send('REMATCH', { game: game.getSaveState() });
 
@@ -221,15 +226,25 @@ class GameServer {
     }
 
     onStartGame(pendingGame) {
-        let game = new Game(pendingGame, { router: this, titleCardData: this.titleCardData, cardData: this.cardData, packData: this.packData, restrictedListData: this.restrictedListData });
+        const gameOptions = {
+            cardData: this.cardData,
+            packData: this.packData,
+            restrictedListData: this.restrictedListData,
+            router: this,
+            titleCardData: this.titleCardData
+        };
+        const game = pendingGame.tableType === 'drafting-table' ? new DraftingTableGame(pendingGame, gameOptions) : new Game(pendingGame, gameOptions);
+
         game.on('onTimeExpired', () => {
             this.sendGameState(game);
         });
         this.games[pendingGame.id] = game;
 
         game.started = true;
-        for(let player of Object.values(pendingGame.players)) {
-            game.selectDeck(player.name, player.deck);
+        if(pendingGame.tableType !== 'drafting-table') {
+            for(let player of Object.values(pendingGame.players)) {
+                game.selectDeck(player.name, player.deck);
+            }
         }
 
         game.initialise();

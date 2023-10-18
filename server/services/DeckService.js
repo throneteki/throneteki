@@ -5,10 +5,27 @@ class DeckService {
         this.decks = db.get('decks');
     }
 
+    isDeckLockedForEditing(deck) {
+        //a deck is locked for editing when the eventId is set and the event is NOT a draft
+        if(deck.eventId && deck.format !== 'draft') {
+            return true;
+        }
+        return false;
+    }
+
+    isDeckLockedForDeletion(deck) {
+        //a deck is locked for deletion when the eventId is set
+        if(deck.eventId) {
+            return true;
+        }
+        return false;
+    }
+
     getById(id) {
         return this.decks.findOne({ _id: id })
             .then(deck => {
-                deck.locked = deck.eventId ? true : false; // lock the deck from further changes if the eventId is set //TODO refactor this when draft is finished
+                deck.lockedForEditing = this.isDeckLockedForEditing(deck);
+                deck.lockedForDeletion = this.isDeckLockedForDeletion(deck);
                 return deck;
             })
             .catch(err => {
@@ -20,7 +37,8 @@ class DeckService {
     getByName(name) {
         return this.decks.findOne({ name })
             .then(deck => {
-                deck.locked = deck.eventId ? true : false; // lock the deck from further changes if the eventId is set //TODO refactor this when draft is finished
+                deck.lockedForEditing = this.isDeckLockedForEditing(deck);
+                deck.lockedForDeletion = this.isDeckLockedForDeletion(deck);
                 return deck;
             })
             .catch(err => {
@@ -40,7 +58,10 @@ class DeckService {
     findByUserName(username) {
         return this.decks.find({ username: username }, { sort: { lastUpdated: -1 } })
             .then(decks => {
-                decks.forEach(d => d.locked = d.eventId ? true : false);
+                decks.forEach(deck => {
+                    deck.lockedForEditing = this.isDeckLockedForEditing(deck);
+                    deck.lockedForDeletion = this.isDeckLockedForDeletion(deck);
+                });
                 return decks;
             });
     }
@@ -71,10 +92,13 @@ class DeckService {
         let properties = {
             username: deck.username,
             name: deck.deckName,
+            draftCubeId: deck.draftCubeId,
+            eventId: deck.eventId,
+            format: deck.format,
+            draftedCards: deck.draftedCards,
             plotCards: deck.plotCards,
             bannerCards: deck.bannerCards,
             drawCards: deck.drawCards,
-            eventId: deck.eventId,
             faction: deck.faction,
             agenda: deck.agenda,
             rookeryCards: deck.rookeryCards || [],
@@ -103,12 +127,12 @@ class DeckService {
     async update(deck) {
         let previousVersion = await this.getById(deck.id);
         //do not save the deck if the deck is locked
-        if(previousVersion.locked) {
+        if(previousVersion.lockedForEditing) {
             throw new Error('Locked decks can not be updated');
         }
 
-        //if the eventId is set on the deck, check if the user already has a deck with the same eventId
-        if(deck.eventId) {
+        //if the eventId is set on the deck and the deck is not a draft deck, check if the user already has a deck with the same eventId
+        if(deck.eventId && deck.format !== 'draft') {
             //if a deck for the event already exists, do not update the deck
             if(await this.userAlreadyHasDeckForEvent(previousVersion.username, deck.eventId)) {
                 throw new Error(`User ${previousVersion.username } already has a deck configured for event ${deck.eventId}`);
@@ -133,7 +157,7 @@ class DeckService {
     async delete(id) {
         let previousVersion = await this.getById(id);
         //do not delete the deck if the deck is locked
-        if(previousVersion.locked) {
+        if(previousVersion.lockedForDeletion) {
             throw new Error('Can not delete a locked deck');
         }
         return this.decks.remove({ _id: id });

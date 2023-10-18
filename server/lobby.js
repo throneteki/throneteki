@@ -11,6 +11,7 @@ const PendingGame = require('./pendinggame.js');
 const GameRouter = require('./gamerouter.js');
 const ServiceFactory = require('./services/ServiceFactory');
 const DeckService = require('./services/DeckService.js');
+const DraftCubeService = require('./services/DraftCubeService');
 const CardService = require('./services/CardService.js');
 const EventService = require('./services/EventService.js');
 const User = require('./models/User');
@@ -26,6 +27,7 @@ class Lobby {
         this.configService = options.configService || ServiceFactory.configService();
         this.messageService = options.messageService || ServiceFactory.messageService(options.db);
         this.deckService = options.deckService || new DeckService(options.db);
+        this.draftCubeService = options.draftCubeService || new DraftCubeService(options.db);
         this.cardService = options.cardService || new CardService(options.db);
         this.eventService = options.eventService || new EventService(options.db);
         this.userService = options.userService || ServiceFactory.userService(options.db, this.configService);
@@ -460,9 +462,10 @@ class Lobby {
         }
 
         const restrictedListsResult = this.cardService.getRestrictedList();
+        const draftCubesResult = this.draftCubeService.getAll();
         const eventResult = (!gameDetails.eventId || gameDetails.eventId === 'none') ? Promise.resolve({ _id: 'none' }) : this.eventService.getEventById(gameDetails.eventId);
 
-        return Promise.all([eventResult, restrictedListsResult]).then(([event, restrictedLists]) => {
+        return Promise.all([eventResult, restrictedListsResult, draftCubesResult]).then(([event, restrictedLists, draftCubes]) => {
             const defaultRestrictedList = restrictedLists[0];
             let restrictedList;
 
@@ -478,11 +481,21 @@ class Lobby {
                 }
             }
 
-            let game = new PendingGame(socket.user, this.instance, {event, restrictedList, ...gameDetails});
-            game.newGame(socket.id, socket.user, gameDetails.password, true);
+            if(event.draftOptions && event.draftOptions.draftCubeId) {
+                gameDetails.draftCube = draftCubes.find(draftCube => draftCube._id.toHexString() === event.draftOptions.draftCubeId);
+            }
 
-            socket.joinChannel(game.id);
-            this.sendGameState(game);
+            const startedByEventOrganizer = event.restrictTableCreators && event.validTableCreators && event.validTableCreators.includes(socket.user.username);
+            //if the game is NOT started by one of the configured event organizers, join the game as usual after hosting it 
+            const doJoinGame = !startedByEventOrganizer;
+
+            let game = new PendingGame(socket.user, this.instance, {event, restrictedList, ...gameDetails});
+            game.newGame(socket.id, socket.user, gameDetails.password, doJoinGame); 
+
+            if(doJoinGame) {
+                socket.joinChannel(game.id);
+                this.sendGameState(game);
+            }
 
             this.games[game.id] = game;
             this.broadcastGameMessage('newgame', game);
@@ -519,9 +532,7 @@ class Lobby {
             return;
         }
 
-        if(Object.values(game.getPlayers()).some(player => {
-            return !player.deck;
-        })) {
+        if(!game.isReady()) {
             return;
         }
 
@@ -918,6 +929,7 @@ class Lobby {
             syncGame.gameType = game.gameType;
             syncGame.password = game.password;
             syncGame.restrictedList = game.restrictedList;
+            syncGame.tableType = game.tableType;
 
             for(let player of Object.values(game.players)) {
                 syncGame.players[player.name] = {

@@ -13,6 +13,7 @@ class PendingGame {
         this.spectators = {};
         this.id = uuid.v1();
         this.name = details.name;
+        this.draftCube = details.draftCube;
         this.event = details.event || { _id: 'none' };
         this.restrictedList = details.restrictedList;
         this.allowSpectators = details.spectators;
@@ -30,7 +31,14 @@ class PendingGame {
         this.chessClockTimeLimit = details.chessClockTimeLimit;
         this.delayToStartClock = details.delayToStartClock;
         this.started = false;
-        this.maxPlayers = 2;
+        this.tableType = details.tableType || 'game';
+        if(this.tableType === 'game') {
+            this.maxPlayers = 2;
+        } else if(this.tableType === 'drafting-table') {
+            this.maxPlayers = 8;
+        } else {
+            this.maxPlayers = 2;
+        }
     }
 
     // Getters
@@ -58,7 +66,7 @@ class PendingGame {
         var players = _.map(this.getPlayers(), player => {
             return {
                 agenda: player.agenda ? player.agenda.cardData.name : undefined,
-                faction: player.faction.cardData.name,
+                faction: player.faction && player.faction.cardData.name,
                 name: player.name
             };
         });
@@ -67,7 +75,8 @@ class PendingGame {
             gameId: this.id,
             gameType: this.gameType,
             players: players,
-            startedAt: this.createdAt
+            startedAt: this.createdAt,
+            tableType: this.tableType
         };
     }
 
@@ -131,7 +140,7 @@ class PendingGame {
     }
 
     join(id, user, password) {
-        if(_.size(this.players) === 2 || this.started) {
+        if(_.size(this.players) === this.maxPlayers || this.started) {
             return 'Game full';
         }
 
@@ -256,6 +265,10 @@ class PendingGame {
             return;
         }
 
+        if(this.event.format === 'draft' && deck.eventId !== this.event._id.toHexString()) {
+            return;
+        }
+
         if(player.deck) {
             player.deck.selected = false;
         }
@@ -268,6 +281,16 @@ class PendingGame {
     }
 
     // interrogators
+    isReady() {
+        if(this.tableType === 'drafting-table') {
+            return true;
+        }
+
+        return Object.values(this.getPlayers()).some(player => {
+            return !!player.deck;
+        });
+    }
+
     isEmpty() {
         return !_.any(this.getPlayersAndSpectators(), (player) =>
             this.hasActivePlayer(player.name)
@@ -393,7 +416,8 @@ class PendingGame {
             muteSpectators: this.muteSpectators,
             useChessClocks: this.useChessClocks,
             chessClockTimeLimit: this.chessClockTimeLimit,
-            delayToStartClock: this.delayToStartClock
+            delayToStartClock: this.delayToStartClock,
+            tableType: this.tableType
         };
     }
 
@@ -423,6 +447,7 @@ class PendingGame {
             instance: this.instance,
             allowSpectators: this.allowSpectators,
             createdAt: this.createdAt,
+            draftCube: this.draftCube,
             event: this.event,
             gamePrivate: this.gamePrivate,
             gameType: this.gameType,
@@ -440,7 +465,8 @@ class PendingGame {
             muteSpectators: this.muteSpectators,
             useChessClocks: this.useChessClocks,
             chessClockTimeLimit: this.chessClockTimeLimit,
-            delayToStartClock: this.delayToStartClock
+            delayToStartClock: this.delayToStartClock,
+            tableType: this.tableType
         };
     }
 }

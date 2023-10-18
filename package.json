@@ -41,6 +41,7 @@
     "jsonwebtoken": "^8.2.2",
     "lodash.range": "^3.2.0",
     "lodash.sample": "^4.2.1",
+    "lodash.samplesize": "^4.2.0",
     "lodash.shuffle": "^4.2.0",
     "moment": "^2.21.0",
     "mongodb": "^2.2.31",

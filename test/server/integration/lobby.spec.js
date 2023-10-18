@@ -24,7 +24,9 @@ describe('lobby', function() {
 
         this.eventService = jasmine.createSpyObj('eventService', ['getEventById']);
 
-        this.lobby = new Lobby({}, { io: this.ioSpy, messageService: this.messageService, cardService: this.cardService, deckService: {}, eventService: this.eventService, userService: this.userService, router: this.routerSpy, config: {} });
+        this.draftCubeService = jasmine.createSpyObj('draftCubeService', ['getAll']);
+
+        this.lobby = new Lobby({}, { io: this.ioSpy, messageService: this.messageService, cardService: this.cardService, deckService: {}, eventService: this.eventService, userService: this.userService, router: this.routerSpy, config: {}, draftCubeService: this.draftCubeService });
         this.lobby.sockets[this.socketSpy.id] = this.socketSpy;
     });
 

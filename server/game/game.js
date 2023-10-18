@@ -1434,6 +1434,7 @@ class Game extends EventEmitter {
             allowSpectators: this.allowSpectators,
             createdAt: this.createdAt,
             gamePrivate: this.gamePrivate,
+            event: this.event,
             gameType: this.gameType,
             id: this.id,
             isMelee: this.isMelee,

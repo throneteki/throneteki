@@ -14,9 +14,11 @@ function extractEventFromRequest(req) {
         pods,
         restricted,
         restrictSpectators,
+        restrictTableCreators,
         useDefaultRestrictedList,
         useEventGameOptions,
         validSpectators,
+        validTableCreators,
         lockDecks
     } = req.body.event;
     return {
@@ -30,9 +32,11 @@ function extractEventFromRequest(req) {
         pods,
         restricted,
         restrictSpectators,
+        restrictTableCreators,
         useDefaultRestrictedList,
         useEventGameOptions,
         validSpectators,
+        validTableCreators,
         lockDecks
     };
 }
