@@ -32,7 +32,13 @@ class PendingGame {
         this.delayToStartClock = details.delayToStartClock;
         this.started = false;
         this.tableType = details.tableType || 'game';
-        this.maxPlayers = this.tableType === 'game' ? 2 : 8;
+        if(this.tableType === 'game') {
+            this.maxPlayers = 2;
+        } else if(this.tableType === 'drafting-table') {
+            this.maxPlayers = 8;
+        } else {
+            this.maxPlayers = 2;
+        }
     }
 
     // Getters
