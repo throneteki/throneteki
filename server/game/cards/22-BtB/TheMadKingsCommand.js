@@ -42,7 +42,7 @@ class TheMadKingsCommand extends PlotCard {
                 messages: {
                     selected: {
                         format: '{targetSelection.choosingPlayer} chooses {formattedCards} for {source}',
-                        args: { formattedCards: context => this.buildCardMessages(context.currentTargetSelection.value) }
+                        args: { formattedCards: context => this.formatForMessage(context.currentTargetSelection.value) }
                     },
                     unable: '{targetSelection.choosingPlayer} has no cards for {source}',
                     noneSelected: '{targetSelection.choosingPlayer} chooses no cards for {source}',
@@ -52,73 +52,33 @@ class TheMadKingsCommand extends PlotCard {
                     }
                 }
             },
-            handler: context => {
-                this.promptPlayersForOrder(context.targets.selections);
-            }
-        });
-    }
-
-    promptPlayersForOrder(selections) {
-        let potentialCards = this.game.allCards.filter(card => (
-            card.allowGameAction('returnCardToDeck') && (
-                ['hand', 'shadows'].includes(card.location) || 
-                (card.location === 'play area' && ['character', 'location', 'attachment'].includes(card.getType()))
-            )
-        ));
-        let selectedCards = selections.reduce((selectedCards, selection) => {
-            return selectedCards.concat(selection.value || []);
-        }, []);
-        let toMove = potentialCards.filter(card => !selectedCards.includes(card));
-
-        for(let player of this.game.getPlayersInFirstPlayerOrder()) {
-            let cardsOwnedByPlayer = toMove.filter(card => card.owner === player);
-            
-            if(cardsOwnedByPlayer.length >= 2) {
-                this.game.promptForSelect(player, {
-                    ordered: true,
-                    mode: 'exactly',
-                    numCards: cardsOwnedByPlayer.length,
-                    activePromptTitle: 'Select bottom deck order (last chosen ends up on bottom)',
-                    cardCondition: card => cardsOwnedByPlayer.includes(card),
-                    onSelect: (player, selectedCards) => {
-                        toMove = toMove.filter(card => card.owner !== player).concat(selectedCards);
-
-                        return true;
+            message: context => {
+                const toBeMoved = this.toBeMoved(context);
+                context.targets.selections.map(selection => selection.choosingPlayer).forEach(player => {
+                    const cards = toBeMoved.filter(card => card.owner === player);
+                    if(cards.length > 0) {
+                        this.game.addMessage('{0} moves {1} to the bottom of their deck for {2}', player, this.formatForMessage(cards), context.source);
+                    } else {
+                        this.game.addMessage('{0} does not have any cards moved to the bottom of their deck for {1}', player, context.source);
                     }
                 });
+            },
+            handler: context => {
+                this.game.resolveGameAction(
+                    GameActions.simultaneously(this.toBeMoved(context).map(card => GameActions.returnCardToDeck({ card, bottom: true, allowSave: false })))
+                );
             }
-        }
-
-        this.game.queueSimpleStep(() => {
-            this.moveCardsToBottom(toMove);
         });
     }
 
-    moveCardsToBottom(toMove) {
-        let gameActions = [];
-
-        for(let player of this.game.getPlayersInFirstPlayerOrder()) {
-            let cardsOwnedByPlayer = toMove.filter(card => card.owner === player);
-
-            if(cardsOwnedByPlayer.length !== 0) {
-                for(let card of cardsOwnedByPlayer) {
-                    // Detach any moving attachments first, so they dont get re-added to owners hand
-                    card.attachments = card.attachments.filter(attachment => !toMove.includes(attachment));
-                    
-                    gameActions.push(GameActions.returnCardToDeck({ card, bottom: true, allowSave: false }));
-                }
-
-                this.game.addMessage('{0} moves {1} to the bottom of their deck for {2}', player, this.buildCardMessages(cardsOwnedByPlayer), this);
-            } else {
-                this.game.addMessage('{0} does not have any cards moved to the bottom of their deck for {1}',
-                    player, this);
-            }
-        }
-
-        this.game.resolveGameAction(GameActions.simultaneously(gameActions));
+    toBeMoved(context) {
+        const targets = context.targets.getTargets();
+        return this.game.allCards.filter(card => 
+            !targets.includes(card) && (['hand', 'shadows'].includes(card.location) || (card.location === 'play area' && ['character', 'location', 'attachment'].includes(card.getType())))
+        );
     }
 
-    buildCardMessages(cards) {
+    formatForMessage(cards) {
         let messageArray = [];
         let cardsFromPlay = cards.filter(card => card.location === 'play area' && !card.facedown);
         if(cardsFromPlay.length !== 0) {

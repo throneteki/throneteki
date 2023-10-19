@@ -1,3 +1,4 @@
+const {flatten} = require('../Array');
 class SimultaneousEvents {
     constructor() {
         this.childEvents = [];
@@ -38,7 +39,7 @@ class SimultaneousEvents {
     }
 
     executeHandler() {
-        for(let event of this.activeChildEvents) {
+        for(let event of this.activeChildEvents.sort((a, b) => a.order - b.order)) {
             event.executeHandler();
         }
     }
@@ -59,8 +60,8 @@ class SimultaneousEvents {
         }, []);
     }
 
-    getPrimaryEvent() {
-        return this.activeChildEvents[0];
+    getPrimaryEvents() {
+        return flatten(this.activeChildEvents.map(event => event.getPrimaryEvents()));
     }
 
     thenExecute(func) {

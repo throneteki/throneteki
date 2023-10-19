@@ -52,7 +52,7 @@ class AtomicEvent {
     }
 
     executeHandler() {
-        for(let event of this.childEvents) {
+        for(let event of this.childEvents.sort((a, b) => a.order - b.order)) {
             event.executeHandler();
         }
     }
@@ -72,8 +72,8 @@ class AtomicEvent {
         return this.childEvents.reduce((concurrentEvents, event) => concurrentEvents.concat(event.getConcurrentEvents()), []);
     }
 
-    getPrimaryEvent() {
-        return this.childEvents[0];
+    getPrimaryEvents() {
+        return [this.childEvents[0]];
     }
 
     thenExecute(func) {

@@ -35,8 +35,8 @@ class NullEvent {
         return [this];
     }
 
-    getPrimaryEvent() {
-        return this;
+    getPrimaryEvents() {
+        return [this];
     }
 
     thenAttachEvent() {

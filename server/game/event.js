@@ -108,8 +108,8 @@ class Event {
         }, [this]);
     }
 
-    getPrimaryEvent() {
-        return this;
+    getPrimaryEvents() {
+        return [this];
     }
 
     thenAttachEvent(event) {

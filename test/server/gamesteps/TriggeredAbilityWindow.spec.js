@@ -11,10 +11,10 @@ describe('TriggeredAbilityWindow', function() {
         this.gameSpy = jasmine.createSpyObj('game', ['getPlayersInFirstPlayerOrder', 'promptForSelect', 'resolveAbility']);
         this.gameSpy.getPlayersInFirstPlayerOrder.and.returnValue([this.player1Spy, this.player2Spy]);
 
-        this.eventSpy = jasmine.createSpyObj('event', ['emitTo', 'getConcurrentEvents', 'getPrimaryEvent']);
+        this.eventSpy = jasmine.createSpyObj('event', ['emitTo', 'getConcurrentEvents', 'getPrimaryEvents']);
         this.eventSpy.attachedEvents = [];
         this.eventSpy.getConcurrentEvents.and.returnValue([this.eventSpy]);
-        this.eventSpy.getPrimaryEvent.and.returnValue(this.eventSpy);
+        this.eventSpy.getPrimaryEvents.and.returnValue([this.eventSpy]);
 
         this.window = new TriggeredAbilityWindow(this.gameSpy, {
             event: this.eventSpy,

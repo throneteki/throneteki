@@ -6,7 +6,7 @@ const EventToTitleFunc = {
     onCardReturnedToHand: event => `${event.card.name} being returned to hand`,
     onClaimApplied: () => 'to claim effects being applied',
     onCharacterKilled: event => `${event.card.name} being killed`,
-    onCharactersKilled: () => 'characters being killed',
+    onCharacterKilled_simultaneous: () => 'characters being killed',
     onIconGained: event => `${event.card.name} gaining an icon`,
     onIconLost: event => `${event.card.name} losing an icon`,
     onPhaseEnded: event => `${event.phase} phase ending`,
@@ -26,9 +26,10 @@ const AbilityTypeToWord = {
 };
 
 const AbilityWindowTitles = {
-    getTitle: function(abilityType, event) {
+    getTitle: function(abilityType, events) {
         let abilityWord = AbilityTypeToWord[abilityType] || abilityType;
-        let titleFunc = EventToTitleFunc[event.name];
+        let event = events[0];
+        let titleFunc = EventToTitleFunc[events.length > 1 ? event.name + '_simultaneous' : event.name];
 
         if(['forcedreaction', 'forcedinterrupt', 'whenrevealed'].includes(abilityType)) {
             if(titleFunc) {

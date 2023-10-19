@@ -65,6 +65,9 @@ describe('A Mummer´s Farce', function() {
                 expect(this.jinglebell.getStrength()).toBe(4);
                 this.player1.clickCard(this.blessed);
                 this.player1.clickCard(this.jinglebell);
+                
+                // Skip order of discarded cards
+                this.player1.clickPrompt('Done');
             });
 
             it('the weapon attachments should be discarded because they are invalidly attached', function() {
