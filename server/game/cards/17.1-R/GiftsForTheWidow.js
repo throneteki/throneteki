@@ -9,6 +9,10 @@ class GiftsForTheWidow extends DrawCard {
                 ability.costs.kneelFactionCard(),
                 ability.costs.payXGold(() => 0, () => 99)
             ],
+            message: {
+                format: '{player} plays {source} and kneels their faction card to search their deck for an attachment with printed cost {xValue} or lower',
+                args: { xValue: context => context.xValue }
+            },
             gameAction: GameActions.search({
                 title: 'Select an attachment',
                 match: { type: 'attachment', condition: (card, context) => card.hasPrintedCost() && card.getPrintedCost() <= context.xValue },
