@@ -6,11 +6,10 @@ class NymeriaOfNySar extends DrawCard {
     setupCardAbilities(ability) {
         this.attachmentRestriction({ type: 'location', faction: 'martell', controller: 'current', unique: true });
         this.reaction({
-            cannotBeCanceled: true,
             when: {
                 afterChallenge: event => event.challenge.winner === this.controller && event.challenge.strengthDifference >= 5 && !this.controller.hasFlag('cannotRevealPlot')
             },
-            cost: ability.costs.kneelFactionCard(),
+            cost: ability.costs.kneelSelf(),
             target: {
                 type: 'select',
                 activePromptTitle: 'Select a plot',
@@ -25,9 +24,8 @@ class NymeriaOfNySar extends DrawCard {
         });
 
         this.action({
-            cannotBeCanceled: true,
             title: 'Manually trigger',
-            cost: ability.costs.kneelFactionCard(),
+            cost: ability.costs.kneelSelf(),
             condition: () => !this.controller.hasFlag('cannotRevealPlot'),
             target: {
                 type: 'select',
