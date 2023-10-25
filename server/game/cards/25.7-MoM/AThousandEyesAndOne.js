@@ -24,9 +24,10 @@ class AThousandEyesAndOne extends DrawCard {
                                     source: context.source,
                                     revealTargets: true,
                                     cardCondition: card => card.location === 'shadows' && card.controller === context.opponent,
-                                    onSelect: () => true
+                                    onSelect: () => this.drawCards(context),
+                                    onCancel: () => this.drawCards(context)
                                 });
-                            }).then(this.thenAction())
+                            })
                         }
                     }
                 }), context);
@@ -34,17 +35,14 @@ class AThousandEyesAndOne extends DrawCard {
         });
     }
 
-    // TODO: Add proper 'then' logic to ChooseGameAction (should simply attach the ThenAbilityAction to the chosen gameAction)
-    thenAction() {
-        return {
-            message: {
-                format: 'Then, {player} and {opponent} each draw 1 card',
-                args: { opponent: context => context.parentContext.opponent }
-            },
-            gameAction: GameActions.simultaneously(context => 
-                [context.player, context.parentContext.opponent].map(player => GameActions.drawCards({ player, amount: 1 }))
-            )
-        };
+    drawCards(context) {
+        this.game.addMessage('Then, {0} and {1} each draw 1 card', context.player, context.opponent);
+        this.game.resolveGameAction(
+            GameActions.simultaneously(context => 
+                [context.player, context.opponent].map(player => GameActions.drawCards({ player, amount: 1 }))
+            ),
+            context
+        );
     }
 }
 
