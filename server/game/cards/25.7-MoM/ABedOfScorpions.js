@@ -8,7 +8,7 @@ class ABedOfScorpions extends DrawCard {
                 afterChallenge: event => event.challenge.isMatch({ winner: this.controller, challengeType: 'intrigue' })
             },
             target: {
-                cardCondition: { type: 'character', participating: true, condition: card => !card.hasIcon('intrigue') && GameActions.kill({ card }).allow() }
+                cardCondition: { type: 'character', participating: true, condition: card => GameActions.kill({ card }).allow() }
             },
             message: '{player} plays {source} to kill {target}',
             handler: context => {
@@ -19,6 +19,6 @@ class ABedOfScorpions extends DrawCard {
 }
 
 ABedOfScorpions.code = '25547';
-ABedOfScorpions.version = '1.0';
+ABedOfScorpions.version = '1.2';
 
 module.exports = ABedOfScorpions;
