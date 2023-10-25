@@ -12,7 +12,8 @@ class LadyMarya extends DrawCard {
 
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.isMatch({ winner: this.controller, attackingPlayer: this.controller })
+                afterChallenge: event => event.challenge.isMatch({ winner: this.controller, attackingPlayer: this.controller }) &&
+                    event.challenge.getWinnerCards().some(card => card.hasTrait('Captain') || card.hasTrait('Smuggler'))
             },
             cost: ability.costs.kneelSelf(),
             message: {
@@ -45,6 +46,6 @@ class LadyMarya extends DrawCard {
 }
 
 LadyMarya.code = '25508';
-LadyMarya.version = '1.1';
+LadyMarya.version = '1.2';
 
 module.exports = LadyMarya;

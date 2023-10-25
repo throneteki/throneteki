@@ -8,30 +8,32 @@ class Winterfell extends DrawCard {
         });
         this.reaction({
             when: {
-                onSacrificed: () => this.game.anyPlotHasTrait('Winter'),
-                onCharacterKilled: () => this.game.anyPlotHasTrait('Winter')
+                onTopCardsDiscarded: event => event.source.controller === this.controller && event.isPillage && event.card.getType() === 'character'
             },
-            cost: ability.costs.kneelSelf(),
+            cost: [
+                ability.costs.kneelSelf(),
+                ability.costs.sacrificeSelf()
+            ],
             message: {
-                format: '{player} kneels {costs.kneel} to discard the top {amount} cards of {owner}\'s deck',
-                args: {
-                    amount: context => this.getAmount(context),
-                    owner: context => context.event.card.owner
-                }
+                format: '{player} kneels and sacrifices {costs.kneel} to put {card} into play under their control',
+                args: { card: context => context.event.card }
             },
-            gameAction: GameActions.discardTopCards(context => ({
-                player: context.event.card.owner,
-                amount: this.getAmount(context),
-                source: this
-            }))
+            gameAction: GameActions.putIntoPlay(context => ({
+                player: context.player,
+                card: context.event.card
+            })).thenExecute(event => {
+                this.atEndOfPhase(ability => ({
+                    match: event.card,
+                    condition: () => ['play area', 'duplicate'].includes(event.card.location),
+                    targetLocation: 'any',
+                    effect: ability.effects.discardIfStillInPlay(false)
+                }));
+            })
         });
-    }
-    getAmount(context) {
-        return context.event.card.getPrintedCost();
     }
 }
 
 Winterfell.code = '25520';
-Winterfell.version = '1.0';
+Winterfell.version = '1.1';
 
 module.exports = Winterfell;

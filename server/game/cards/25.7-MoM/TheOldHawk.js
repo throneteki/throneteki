@@ -11,6 +11,6 @@ class TheOldHawk extends DrawCard {
 }
 
 TheOldHawk.code = '25537';
-TheOldHawk.version = '1.1';
+TheOldHawk.version = '1.2';
 
 module.exports = TheOldHawk;

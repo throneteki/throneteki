@@ -2,12 +2,13 @@ const GameActions = require('../../GameActions/index.js');
 const DrawCard = require('../../drawcard.js');
 
 class SavedByTheWatch extends DrawCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
                 onCardDiscarded: event => this.isCharacterControlledByOpponent(event.cardStateWhenDiscarded),
                 onSacrificed: event => this.isCharacterControlledByOpponent(event.cardStateWhenSacrificed)
             },
+            cost: ability.costs.kneelFactionCard(),
             message: {
                 format: '{player} plays {source} to put {character} into play',
                 args: { character: context => context.event.card }
@@ -51,6 +52,6 @@ class SavedByTheWatch extends DrawCard {
 }
 
 SavedByTheWatch.code = '25559';
-SavedByTheWatch.version = '1.0';
+SavedByTheWatch.version = '1.1';
 
 module.exports = SavedByTheWatch;

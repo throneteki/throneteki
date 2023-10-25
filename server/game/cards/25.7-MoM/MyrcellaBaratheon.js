@@ -10,6 +10,7 @@ class MyrcellaBaratheon extends DrawCard {
                 )
             },
             cost: ability.costs.returnSelfToHand(),
+            max: ability.limit.perPhase(1),
             handler: context => {
                 this.untilEndOfPhase(ability => ({
                     targetController: 'current',
@@ -23,6 +24,6 @@ class MyrcellaBaratheon extends DrawCard {
 }
 
 MyrcellaBaratheon.code = '25528';
-MyrcellaBaratheon.version = '1.0';
+MyrcellaBaratheon.version = '1.1';
 
 module.exports = MyrcellaBaratheon;
