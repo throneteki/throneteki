@@ -50,6 +50,6 @@ class NymeriaOfNySar extends DrawCard {
 }
 
 NymeriaOfNySar.code = '25545';
-NymeriaOfNySar.version = '1.2';
+NymeriaOfNySar.version = '1.3';
 
 module.exports = NymeriaOfNySar;
