@@ -40,7 +40,6 @@ class ChallengeFlow extends BaseStep {
             attacking: true,
             challenge: this.challenge,
             cannotCancel: this.challenge.declareDefendersFirst,
-            gameAction: 'declareAsAttacker',
             mustBeDeclaredOption: 'mustBeDeclaredAsAttacker',
             limitsProperty: 'attackerLimits',
             activePromptTitle: 'Select challenge attackers',
@@ -57,7 +56,6 @@ class ChallengeFlow extends BaseStep {
         this.defenderPrompt = new ChooseParticipantsPrompt(this.game, this.challenge.defendingPlayer, {
             attacking: false,
             challenge: this.challenge,
-            gameAction: 'declareAsDefender',
             mustBeDeclaredOption: 'mustBeDeclaredAsDefender',
             limitsProperty: 'defenderLimits',
             activePromptTitle: 'Select defenders',

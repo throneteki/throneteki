@@ -317,7 +317,11 @@ class Player extends Spectator {
             return false;
         }
 
-        return this.challenges.canInitiate(challengeType, opponent);
+        if(!this.challenges.canInitiate(challengeType, opponent)) {
+            return false;
+        }
+
+        return this.anyCardsInPlay(card => card.canParticipate({ attacking: true, challengeType }));
     }
 
     canGainGold() {
