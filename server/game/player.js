@@ -317,6 +317,14 @@ class Player extends Spectator {
             return false;
         }
 
+        if(this.nextChallengeType && this.canInitiateChallengeInternal(this.nextChallengeType, opponent)) {
+            return challengeType === this.nextChallengeType;
+        }
+
+        return this.canInitiateChallengeInternal(challengeType, opponent);
+    }
+
+    canInitiateChallengeInternal(challengeType, opponent) {
         if(!this.challenges.canInitiate(challengeType, opponent)) {
             return false;
         }

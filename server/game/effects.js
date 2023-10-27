@@ -194,6 +194,17 @@ const Effects = {
             }
         };
     },
+    forceNextChallengeType: function(challengeType) {
+        return {
+            targetType: 'player',
+            apply: function(player) {
+                player.nextChallengeType = challengeType;
+            },
+            unapply: function(player) {
+                player.nextChallengeType = null;
+            }
+        };
+    },
     restrictAttachmentsTo: function(trait) {
         return Effects.addKeyword(`No attachments except <i>${trait}</i>`);
     },
