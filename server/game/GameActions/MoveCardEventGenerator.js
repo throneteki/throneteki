@@ -1,6 +1,7 @@
 const AtomicEvent = require('../AtomicEvent');
 const BestowPrompt = require('../gamesteps/bestowprompt');
 const Event = require('../event');
+const orderableLocatons = ['draw deck', 'shadows', 'discard pile', 'dead pile'];
 
 class MoveCardEventGenerator {
     createLeavePlayEvent({ card, allowSave = false }) {
@@ -81,7 +82,7 @@ class MoveCardEventGenerator {
         return returnEvent;
     }
 
-    createPlaceCardEvent({ card, player, location, bottom = false, orderable = true }) {
+    createPlaceCardEvent({ card, player, location, bottom = false, orderable = orderableLocatons.includes(location) }) {
         player = player || card.controller;
         return this.event('onCardPlaced', { card, location, player, bottom, orderable }, event => {
             const actualPlayer = event.location !== 'play area' ? event.card.owner : event.player;
