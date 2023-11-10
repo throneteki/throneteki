@@ -23,6 +23,6 @@ class GalbartGlover extends DrawCard {
 }
 
 GalbartGlover.code = '25562';
-GalbartGlover.version = '1.0';
+GalbartGlover.version = '1.1';
 
 module.exports = GalbartGlover;
