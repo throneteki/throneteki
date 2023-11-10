@@ -317,7 +317,23 @@ class Player extends Spectator {
             return false;
         }
 
-        return this.challenges.canInitiate(challengeType, opponent);
+        if(this.nextChallengeOpponent && this.nextChallengeOpponent !== opponent) {
+            return false;
+        }
+
+        if(this.nextChallengeType && this.canInitiateChallengeInternal(this.nextChallengeType, opponent)) {
+            return challengeType === this.nextChallengeType;
+        }
+
+        return this.canInitiateChallengeInternal(challengeType, opponent);
+    }
+
+    canInitiateChallengeInternal(challengeType, opponent) {
+        if(!this.challenges.canInitiate(challengeType, opponent)) {
+            return false;
+        }
+
+        return this.anyCardsInPlay(card => card.canParticipate({ attacking: true, challengeType }));
     }
 
     canGainGold() {

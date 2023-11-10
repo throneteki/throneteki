@@ -938,6 +938,28 @@ const Effects = {
             }
         };
     },
+    forceNextChallengeAgainst(opponent) {
+        return {
+            targetType: 'player',
+            apply: function(player) {
+                player.nextChallengeOpponent = opponent;
+            },
+            unapply: function(player) {
+                player.nextChallengeOpponent = null;
+            }
+        };
+    },
+    forceNextChallengeType: function(challengeType) {
+        return {
+            targetType: 'player',
+            apply: function(player) {
+                player.nextChallengeType = challengeType;
+            },
+            unapply: function(player) {
+                player.nextChallengeType = null;
+            }
+        };
+    },
     canSpendGold: function(allowSpendingFunc) {
         return {
             apply: function(card, context) {

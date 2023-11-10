@@ -53,7 +53,7 @@ describe('Dragonglass Dagger', function() {
                 it('should immunize the charcter with the dagger from Theon\'s effect', function() {
                     expect(this.player2).not.toHavePromptButton('Apply Claim');
                     // Challenge completed, kicked back to challenge declaration
-                    expect(this.player2).toHavePromptButton('Intrigue');
+                    expect(this.player2.currentPrompt().buttons.map(button => button.text)).toContain('Intrigue');
                 });
             });
         });

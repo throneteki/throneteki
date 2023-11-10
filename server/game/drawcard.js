@@ -424,6 +424,13 @@ class DrawCard extends BaseCard {
         return keys.every(key => !this.challengeOptions.contains(key));
     }
 
+    canParticipate({ attacking, challengeType }) {
+        return this.getType() === 'character' &&
+            this.canDeclareAsParticipant({ attacking, challengeType }) &&
+            this.allowGameAction(attacking ? 'declareAsAttacker' : 'declareAsDefender') &&
+            !this.isParticipating();
+    }
+
     canDeclareAsParticipant({ attacking, challengeType }) {
         let canKneelForChallenge =
             attacking && !this.kneeled && !this.kneelsAsAttacker(challengeType) ||

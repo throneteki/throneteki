@@ -3,7 +3,7 @@ describe('Marriage Pact', function() {
         beforeEach(function() {
             const deck = this.buildDeck('greyjoy', [
                 'A Noble Cause',
-                'Hedge Knight', 'Marriage Pact'
+                'Hedge Knight', 'Hedge Knight', 'Marriage Pact'
             ]);
 
             this.player1.selectDeck(deck);
@@ -13,10 +13,11 @@ describe('Marriage Pact', function() {
 
             this.character = this.player1.findCardByName('Hedge Knight', 'hand');
             this.pact = this.player1.findCardByName('Marriage Pact', 'hand');
-            this.opponentCharacter = this.player2.findCardByName('Hedge Knight', 'hand');
+            [this.opponentCharacter, this.opponentCharacter2] = this.player2.filterCardsByName('Hedge Knight', 'hand');
 
             this.player1.clickCard(this.character);
             this.player2.clickCard(this.opponentCharacter);
+            this.player2.clickCard(this.opponentCharacter2);
             this.completeSetup();
 
             this.selectFirstPlayer(this.player1);

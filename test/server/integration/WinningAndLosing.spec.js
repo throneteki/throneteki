@@ -36,7 +36,7 @@ describe('Winning and losing', function() {
 
                     expect(this.player3).not.toHavePrompt('Marshal your cards');
                     // Player 1's turn on the challenges phase
-                    expect(this.player1).toHavePromptButton('Military');
+                    expect(this.player1).toHaveDisabledPromptButton('Military');
                 });
             });
 
