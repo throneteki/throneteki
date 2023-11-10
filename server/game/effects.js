@@ -197,6 +197,22 @@ const Effects = {
     restrictAttachmentsTo: function(trait) {
         return Effects.addKeyword(`No attachments except <i>${trait}</i>`);
     },
+    addAttachmentRestriction: function(restriction) {
+        // TODO: Properly move this into below add/remove function
+        // It is required here so that "remove" function can properly find/filter the restriction if it's a CardMatcher
+        const attachmentRestriction = typeof(restriction) === 'function' ? restriction : CardMatcher.createAttachmentMatcher(restriction);
+        return {
+            apply: function(card, context) {
+                context.addAttachmentRestriction = context.addAttachmentRestriction || {};
+                context.addAttachmentRestriction[card.uuid] = attachmentRestriction;
+                card.addAdditionalAttachmentRestriction(context.addAttachmentRestriction[card.uuid]);
+            },
+            unapply: function(card, context) {
+                card.removeAdditionalAttachmentRestriction(context.addAttachmentRestriction[card.uuid]);
+                delete context.addAttachmentRestriction[card.uuid];
+            }
+        };
+    },
     modifyStrength: function(value) {
         return {
             gameAction: value < 0 ? 'decreaseStrength' : 'increaseStrength',
@@ -813,6 +829,8 @@ const Effects = {
             }
         };
     },
+    cannotGainIcons: cannotEffect('gainIcon'),
+    cannotLoseIcons: cannotEffect('loseIcon'),
     cannotTarget: cannotEffect('target'),
     cannotTargetUsingAssault: cannotEffect('assault'),
     cannotTargetUsingStealth: cannotEffect('stealth'),
@@ -1058,6 +1076,28 @@ const Effects = {
             },
             unapply: function(player) {
                 player.cannotWinChallenge = false;
+            }
+        };
+    },
+    winsTiesForInitiative: function() {
+        return {
+            targetType: 'player',
+            apply: function(player) {
+                player.flags.add('winsInitiativeTies');
+            },
+            unapply: function(player) {
+                player.flags.remove('winsInitiativeTies');
+            }
+        };
+    },
+    winsTiesForDominance: function() {
+        return {
+            targetType: 'player',
+            apply: function(player) {
+                player.flags.add('winsDominanceTies');
+            },
+            unapply: function(player) {
+                player.flags.remove('winsDominanceTies');
             }
         };
     },
@@ -1326,6 +1366,17 @@ const Effects = {
             isStateDependent: true
         };
     },
+    choosesIntrigueClaim: function() {
+        return {
+            targetType: 'player',
+            apply: function(player) {
+                player.choosesIntrigueClaim = true;
+            },
+            unapply: function(player) {
+                player.choosesIntrigueClaim = false;
+            }
+        };
+    },
     mustChooseAsClaim: function(cardFunc) {
         return {
             targetType: 'player',
@@ -1380,6 +1431,32 @@ const Effects = {
             }
         };
     },
+    mustShowPlotSelection: function(opponent) {
+        return {
+            targetType: 'player',
+            apply: function(player, context) {
+                // TODO: Account for any level of looking loops (eg. PlayerA > PlayerB > PlayerC > PlayerA will cause issue)
+                // TODO: Likely redesign this closer to release to properly manage cascading 'mustShowPlotSelections'
+                player.mustShowPlotSelection.push(opponent);
+                // Only add visibility rule if it previously would not have been active
+                if(player.mustShowPlotSelection.length === 1) {
+                    let revealFunc = (card, viewingPlayer) => card === player.selectedPlot && player.mustShowPlotSelection.includes(viewingPlayer);
+                    context.mustShowPlotSelection = context.mustShowPlotSelection || {};
+                    context.mustShowPlotSelection[player.name] = revealFunc;
+                    context.game.cardVisibility.addRule(revealFunc);
+                }
+            },
+            unapply: function(player, context) {
+                player.mustShowPlotSelection = player.mustShowPlotSelection.filter(o => o !== opponent);
+                // Only remove visibility rule if there are no more players
+                if(player.mustShowPlotSelection.length === 0) {
+                    let revealFunc = context.mustShowPlotSelection[player.name];
+                    context.game.cardVisibility.removeRule(revealFunc);
+                    delete context.mustShowPlotSelection[player.name];
+                }
+            }
+        };
+    },
     lookAtTopCard: function() {
         return {
             targetType: 'player',
@@ -1395,6 +1472,25 @@ const Effects = {
 
                 context.game.cardVisibility.removeRule(revealFunc);
                 delete context.lookAtTopCard[player.name];
+            }
+        };
+    },
+    lookAtBottomCard: function(playersFunc) {
+        return {
+            targetType: 'player',
+            apply: function(player, context) {
+                playersFunc = playersFunc || (() => [player]);
+                let revealFunc = (card, viewingPlayer) => viewingPlayer === player && playersFunc().filter(target => target.drawDeck.length > 0).map(target => target.drawDeck[target.drawDeck.length - 1]).includes(card);
+
+                context.lookAtBottomCard = context.lookAtBottomCard || {};
+                context.lookAtBottomCard[player.name] = revealFunc;
+                context.game.cardVisibility.addRule(revealFunc);
+            },
+            unapply: function(player, context) {
+                let revealFunc = context.lookAtBottomCard[player.name];
+
+                context.game.cardVisibility.removeRule(revealFunc);
+                delete context.lookAtBottomCard[player.name];
             }
         };
     },
@@ -1519,6 +1615,17 @@ const Effects = {
             },
             unapply: function(player) {
                 player.flags.remove('cannotRevealPlot');
+            }
+        };
+    },
+    setPrintedValue: function(stat, value) {
+        return {
+            apply: function(card) {
+                card.printedValues[stat].push(value);
+            },
+            unapply: function(card) {
+                const index = card.printedValues[stat].lastIndexOf(value);
+                card.printedValues[stat].splice(index, 1);
             }
         };
     },

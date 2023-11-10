@@ -62,6 +62,7 @@ class BaseCard {
         this.eventsForRegistration = [];
         this.keywordSources = [];
 
+        this.printedValues = {};
         this.power = 0;
         this.tokens = {};
         this.plotModifierValues = {
@@ -772,6 +773,26 @@ class BaseCard {
         return false;
     }
 
+    getAlertStatus() {
+        // Only build alert status if card is in development
+        if(this.cardData.version) {
+            if(!this.version) {
+                return {
+                    type: 'error',
+                    message: 'Card not implemented'
+                };
+            }
+            if(this.cardData.version !== this.version) {
+                return {
+                    type: 'warning',
+                    message: 'Card version is outdated'
+                };
+            }
+        }
+
+        return undefined;
+    }
+
     getGameElementType() {
         return 'card';
     }
@@ -809,7 +830,8 @@ class BaseCard {
             power: this.power,
             tokens: this.tokens,
             type: this.getType(),
-            uuid: this.uuid
+            uuid: this.uuid,
+            alertStatus: this.getAlertStatus()
         };
 
         return Object.assign(state, selectionState);

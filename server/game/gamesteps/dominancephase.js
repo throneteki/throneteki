@@ -12,43 +12,41 @@ class DominancePhase extends Phase {
     }
 
     determineWinner() {
-        var highestDominance = 0;
-        var lowestDominance = 0;
         var dominanceWinner = undefined;
+        var dominanceDifference = undefined;
 
-        for(let player of this.game.getPlayers()) {
-            var dominance = player.getDominance();
+        let playerDominance = this.game.getPlayersInFirstPlayerOrder().map(player => {
+            return { player: player, dominance: player.getDominance(), winsTies: player.hasFlag('winsDominanceTies') };
+        });
+        var distinctSorted = [...new Set(playerDominance.map(p => p.dominance).sort((a, b) => b - a))];
+        var potentialWinners = playerDominance.filter(p => p.dominance === distinctSorted[0]);
 
-            lowestDominance = dominance;
+        var dominanceTied = potentialWinners.length > 1;
+        potentialWinners = dominanceTied ? potentialWinners.filter(p => p.winsTies) : potentialWinners;
 
-            if(dominance === highestDominance) {
-                dominanceWinner = undefined;
-            }
+        if(potentialWinners.length === 1) {
+            dominanceWinner = potentialWinners[0].player;
+            dominanceDifference = distinctSorted[0] - (distinctSorted.length > 1 ? distinctSorted[1] : 0);
+        }
 
-            if(dominance > highestDominance) {
-                lowestDominance = highestDominance;
-                highestDominance = dominance;
-                dominanceWinner = player;
-            } else {
-                lowestDominance = dominance;
-            }
+        if(dominanceTied) {
+            this.game.addMessage('There was a tie for dominance');
         }
 
         if(dominanceWinner) {
             //save the winner of dominance on the game object in order to use this information in determining the winner of the game after the time limit has expired
             this.game.winnerOfDominanceInLastRound = dominanceWinner;
             if(dominanceWinner.canGainFactionPower() && !dominanceWinner.hasFlag('cannotGainDominancePower')) {
-                this.game.addMessage('{0} wins dominance ({1} vs {2})', dominanceWinner, highestDominance, lowestDominance);
+                this.game.addMessage('{0} wins dominance ({1})', dominanceWinner, playerDominance.map(p => p.dominance).join(' vs '));
                 this.game.addPower(dominanceWinner, 1);
             } else {
                 this.game.addMessage('{0} wins dominance, but cannot gain power for their faction', dominanceWinner);
             }
         } else {
-            this.game.addMessage('There was a tie for dominance');
             this.game.addMessage('No one wins dominance');
         }
 
-        this.game.raiseEvent('onDominanceDetermined', { winner: dominanceWinner });
+        this.game.raiseEvent('onDominanceDetermined', { winner: dominanceWinner, difference: dominanceDifference });
     }
 }
 

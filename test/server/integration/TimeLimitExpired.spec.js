@@ -4,7 +4,7 @@ describe('time limit', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('baratheon', [
                     'Time of Plenty',
-                    'Tycho Nestoris', 'Maester Cressen',
+                    'Tycho Nestoris', 'Maester Cressen (Core)',
                     'Tycho Nestoris', 'Robert Baratheon (Core)',
                     'Ser Davos Seaworth (Core)', 'Bastard in Hiding',
                     'Advisor to the Crown', 'Advisor to the Crown',
