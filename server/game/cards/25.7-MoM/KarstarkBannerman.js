@@ -3,7 +3,7 @@ const DrawCard = require('../../drawcard.js');
 
 class KarstarkBannerman extends DrawCard {
     setupCardAbilities() {
-        this.forcedinterrupt({
+        this.forcedInterrupt({
             when: {
                 onCharacterKilled: event => event.card === this,
                 onSacrificed: event => event.card === this
