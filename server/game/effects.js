@@ -194,17 +194,6 @@ const Effects = {
             }
         };
     },
-    forceNextChallengeType: function(challengeType) {
-        return {
-            targetType: 'player',
-            apply: function(player) {
-                player.nextChallengeType = challengeType;
-            },
-            unapply: function(player) {
-                player.nextChallengeType = null;
-            }
-        };
-    },
     restrictAttachmentsTo: function(trait) {
         return Effects.addKeyword(`No attachments except <i>${trait}</i>`);
     },
@@ -946,6 +935,28 @@ const Effects = {
             },
             unapply: function(player) {
                 player.removeChallengeRestriction(restriction);
+            }
+        };
+    },
+    forceNextChallengeAgainst(opponent) {
+        return {
+            targetType: 'player',
+            apply: function(player) {
+                player.nextChallengeOpponent = opponent;
+            },
+            unapply: function(player) {
+                player.nextChallengeOpponent = null;
+            }
+        };
+    },
+    forceNextChallengeType: function(challengeType) {
+        return {
+            targetType: 'player',
+            apply: function(player) {
+                player.nextChallengeType = challengeType;
+            },
+            unapply: function(player) {
+                player.nextChallengeType = null;
             }
         };
     },

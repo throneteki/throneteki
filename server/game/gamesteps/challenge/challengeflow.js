@@ -111,27 +111,8 @@ class ChallengeFlow extends BaseStep {
         if(this.challenge.isSinglePlayer || !this.challenge.declareDefendersFirst) {
             return;
         }
-
-        if(!this.challenge.attackingPlayer.anyCardsInPlay(card => this.attackerPrompt.canParticipate(card))) {
-            this.game.promptWithMenu(this.challenge.attackingPlayer, this, {
-                activePrompt: {
-                    menuTitle: 'You do not control enough elibile characters to legally initiate this challenge. Do you want to continue with defenders being declared anyway?',
-                    buttons: [
-                        { text: 'Yes', method: 'illegallyPromptForDefenders' },
-                        { text: 'No', method: 'cancelChallenge' }
-                    ]
-                },
-                source: this
-            });
-        } else {
-            this.game.queueStep(this.defenderPrompt);
-        }
-    }
-
-    illegallyPromptForDefenders() {
-        this.game.addAlert('danger', '{0} does not control enough eligible characters to legally initiate this challenge, but has chosen to continue with declaring defenders anyway', this.challenge.attackingPlayer);
+        
         this.game.queueStep(this.defenderPrompt);
-        return true;
     }
 
     promptForDefenders() {

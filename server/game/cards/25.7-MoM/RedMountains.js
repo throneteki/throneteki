@@ -15,7 +15,7 @@ class RedMountains extends DrawCard {
             ],
             chooseOpponent: true,
             message: {
-                format: '{player} kneels and sacrifices {source} to force {opponent} to initiate their next challenge as a {challengeType} challenge',
+                format: '{player} kneels and sacrifices {source} to force {opponent} to initiate their next challenge as a {challengeType} challenge against {player}',
                 args: { challengeType: () => 'military' }
             },
             handler: context => {
@@ -25,7 +25,10 @@ class RedMountains extends DrawCard {
                         onPhaseEnded: () => true
                     },
                     match: context.opponent,
-                    effect: ability.effects.forceNextChallengeType('military')
+                    effect: [
+                        ability.effects.forceNextChallengeType('military'),
+                        ability.effects.forceNextChallengeAgainst(context.player)
+                    ]
                 }));
             }
         });
