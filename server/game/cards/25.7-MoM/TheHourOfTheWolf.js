@@ -26,6 +26,6 @@ class TheHourOfTheWolf extends PlotCard {
 }
 
 TheHourOfTheWolf.code = '25572';
-TheHourOfTheWolf.version = '2.0';
+TheHourOfTheWolf.version = '2.1';
 
 module.exports = TheHourOfTheWolf;

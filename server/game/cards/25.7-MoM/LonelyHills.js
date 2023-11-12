@@ -1,6 +1,6 @@
 const DrawCard = require('../../drawcard.js');
 
-class LonelyHill extends DrawCard {
+class LonelyHills extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => !this.kneeled && this.controller.plotDeck.length > 1,
@@ -11,7 +11,7 @@ class LonelyHill extends DrawCard {
     }
 }
 
-LonelyHill.code = '25568';
-LonelyHill.version = '1.1';
+LonelyHills.code = '25568';
+LonelyHills.version = '1.2';
 
-module.exports = LonelyHill;
+module.exports = LonelyHills;

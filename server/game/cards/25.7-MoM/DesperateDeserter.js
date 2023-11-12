@@ -6,12 +6,12 @@ class DesperateDeserter extends DrawCard {
         this.plotModifiers({
             gold: -1
         });
-        this.forcedReaction({
+        this.reaction({
             when: {
                 onCardOutOfShadows: event => event.card.controller === this.controller
             },
             chooseOpponent: true,
-            message: '{player} is forced to give control of {source} to {opponent}',
+            message: '{player} uses {source} to give control of {source} to {opponent}',
             handler: context => {
                 this.game.resolveGameAction(
                     GameActions.takeControl(context => ({ player: context.opponent, card: this, context }))
@@ -23,6 +23,6 @@ class DesperateDeserter extends DrawCard {
 }
 
 DesperateDeserter.code = '25553';
-DesperateDeserter.version = '1.0';
+DesperateDeserter.version = '1.1';
 
 module.exports = DesperateDeserter;

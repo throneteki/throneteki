@@ -5,28 +5,28 @@ class TasteTheBlood extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCharacterKilled: event => this.meetsCommonCondition(event.card),
-                onSacrificed: event => event.card.getType() === 'character' && this.meetsCommonCondition(event.card)
+                afterChallenge: event => event.challenge.winner === this.controller && event.challenge.challengeType === 'intrigue' && this.controller.anyCardsInPlay(card => card.getType() === 'character' && card.hasTrait('Old Gods') && card.isParticipating())
             },
-            message: {
-                format: '{player} plays {source} to stand {cards}',
-                args: { cards: context => this.getStandingCards(context) }
+            target: {
+                activePromptTitle: 'Select a plot',
+                cardCondition: (card, context) => card.location === 'revealed plots' && card.controller === context.event.challenge.loser && !card.notConsideredToBeInPlotDeck,
+                cardType: 'plot'
             },
-            gameAction: GameActions.simultaneously(context => this.getStandingCards(context).map(card => GameActions.standCard({ card })))
+            message: '{player} plays {source} to initiate the when revealed ability of {target}',
+            handler: context => {
+                let whenRevealed = context.target.getWhenRevealedAbility();
+                if(whenRevealed) {
+                    // Attach the current When Revealed event to the new context
+                    let newContext = whenRevealed.createContext(context.event);
+                    newContext.player = newContext.player;
+                    this.game.resolveAbility(whenRevealed, newContext);
+                }
+            }
         });
-    }
-
-    meetsCommonCondition(card) {
-        return card.controller !== this.controller && card.hasPrintedCost();
-    }
-
-    getStandingCards(context) {
-        let eventCard = context.event.cardStateWhenKilled || context.event.cardStateWhenSacrificed;
-        return context.player.filterCardsInPlay(card => card.hasTrait('Old Gods') && card.hasPrintedCost() && card.getPrintedCost() <= eventCard.getPrintedCost());
     }
 }
 
 TasteTheBlood.code = '25571';
-TasteTheBlood.version = '1.0';
+TasteTheBlood.version = '1.1';
 
 module.exports = TasteTheBlood;

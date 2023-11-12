@@ -8,7 +8,7 @@ class Winterfell extends DrawCard {
         });
         this.reaction({
             when: {
-                onTopCardsDiscarded: event => event.source.controller === this.controller && event.isPillage && event.card.getType() === 'character'
+                onCardDiscarded: event => event.isPillage && event.source.controller === this.controller && event.card.getType() === 'character'
             },
             cost: [
                 ability.costs.kneelSelf(),

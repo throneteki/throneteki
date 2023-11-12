@@ -32,6 +32,6 @@ class JonSnow extends DrawCard {
 }
 
 JonSnow.code = '25563';
-JonSnow.version = '1.1';
+JonSnow.version = '1.2';
 
 module.exports = JonSnow;

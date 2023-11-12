@@ -24,6 +24,6 @@ class KingRobertsLegacy extends DrawCard {
 }
 
 KingRobertsLegacy.code = '25511';
-KingRobertsLegacy.version = '1.0';
+KingRobertsLegacy.version = '1.1';
 
 module.exports = KingRobertsLegacy;

@@ -3,17 +3,18 @@ const DrawCard = require('../../drawcard.js');
 
 class KarstarkBannerman extends DrawCard {
     setupCardAbilities() {
-        this.interrupt({
+        this.forcedInterrupt({
             when: {
                 onCharacterKilled: event => event.card === this,
                 onSacrificed: event => event.card === this
             },
             target: {
+                activePromptTitle: 'Select a location',
                 choosingPlayer: 'each',
                 ifAble: true,
-                cardCondition: { type: 'character', location: 'play area', controller: 'choosingPlayer', condition: card => GameActions.gainPower({ card, amount: 1 }).allow() }
+                cardCondition: { type: 'location', location: 'play area', controller: 'choosingPlayer', condition: card => GameActions.gainPower({ card, amount: 1 }).allow() }
             },
-            message: '{player} uses {source} to have each player choose a character they control to gain 1 power, if able',
+            message: '{player} uses {source} to have each player choose a location they control to gain 1 power, if able',
             handler: context => {
                 context.game.resolveGameAction(GameActions.simultaneously(context => context.targets.getTargets().map(card => GameActions.gainPower({ card, amount: 1 }))), context);
             }
@@ -22,6 +23,6 @@ class KarstarkBannerman extends DrawCard {
 }
 
 KarstarkBannerman.code = '25566';
-KarstarkBannerman.version = '1.0';
+KarstarkBannerman.version = '1.1';
 
 module.exports = KarstarkBannerman;

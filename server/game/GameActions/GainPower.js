@@ -6,7 +6,7 @@ class GainPower extends GameAction {
         super('gainPower');
     }
 
-    message({ card, amount }) {
+    message({ card, amount = 1 }) {
         if(card.getType() === 'faction') {
             return Message.fragment('gains {amount} power on {player}\'s faction card', { amount, player: card.controller });
         }
@@ -14,7 +14,7 @@ class GainPower extends GameAction {
         return Message.fragment('gains {amount} power on {card}', { amount, card });
     }
 
-    canChangeGameState({ card, amount }) {
+    canChangeGameState({ card, amount = 1 }) {
         return ['active plot', 'faction', 'play area'].includes(card.location) && amount > 0;
     }
 

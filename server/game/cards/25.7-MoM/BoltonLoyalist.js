@@ -47,6 +47,6 @@ class BoltonLoyalist extends DrawCard {
 }
 
 BoltonLoyalist.code = '25565';
-BoltonLoyalist.version = '1.0';
+BoltonLoyalist.version = '1.1';
 
 module.exports = BoltonLoyalist;
