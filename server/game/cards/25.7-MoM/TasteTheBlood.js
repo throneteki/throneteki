@@ -1,4 +1,3 @@
-const GameActions = require('../../GameActions');
 const DrawCard = require('../../drawcard');
 
 class TasteTheBlood extends DrawCard {
@@ -18,7 +17,7 @@ class TasteTheBlood extends DrawCard {
                 if(whenRevealed) {
                     // Attach the current When Revealed event to the new context
                     let newContext = whenRevealed.createContext(context.event);
-                    newContext.player = newContext.player;
+                    newContext.player = context.player;
                     this.game.resolveAbility(whenRevealed, newContext);
                 }
             }
