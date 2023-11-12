@@ -1,3 +1,4 @@
+const GameActions = require('../../GameActions/index.js');
 const DrawCard = require('../../drawcard.js');
 
 class SerAndrewEstermont extends DrawCard {
@@ -10,18 +11,20 @@ class SerAndrewEstermont extends DrawCard {
             cost: ability.costs.kill(card => card.hasTrait('R\'hllor')),
             limit: ability.limit.perRound(1),
             message: {
-                format: '{player} uses {source} and kills {costs.kill} to save {character}',
+                format: '{player} uses {source} and kills {costs.kill} to save {character} and have it gain 1 power',
                 args: { character: context => context.event.card }
             },
-            handler: context => {
-                context.event.saveCard();
-                this.game.addMessage('{0} kills {1} to save {2}', context.player, this, context.event.card);
-            }
+            gameAction: GameActions.simultaneously([
+                GameActions.genericHandler(context => {
+                    context.event.saveCard();
+                }),
+                GameActions.gainPower(context => ({ card: context.event.card }))
+            ])
         });
     }
 }
 
 SerAndrewEstermont.code = '25502';
-SerAndrewEstermont.version = '1.0';
+SerAndrewEstermont.version = '1.1';
 
 module.exports = SerAndrewEstermont;
