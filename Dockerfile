@@ -1,4 +1,4 @@
-FROM node:latest
+FROM node:16
 RUN mkdir -p /usr/src/lobby
 WORKDIR /usr/src/lobby
 COPY package.json /usr/src/lobby/
