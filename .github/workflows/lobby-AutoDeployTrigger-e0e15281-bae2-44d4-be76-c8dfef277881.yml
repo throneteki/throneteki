@@ -35,7 +35,7 @@ jobs:
           registryPassword: ${{ secrets.LOBBY_REGISTRY_PASSWORD }}
           containerAppName: lobby
           resourceGroup: TheIronThrone
-          imageToBuild: theironthrone/throneteki:lobby-${{ github.sha }}
+          imageToBuild: cryogen/throneteki-lobby:${{ github.sha }}
           
 
      
