@@ -33,7 +33,7 @@ jobs:
           registryUrl: docker.io
           registryUsername: ${{ secrets.LOBBY_REGISTRY_USERNAME }}
           registryPassword: ${{ secrets.LOBBY_REGISTRY_PASSWORD }}
-          containerAppName: lobby
+          containerAppName: lobbyapp
           resourceGroup: TheIronThrone
           imageToBuild: cryogen/throneteki-lobby:${{ github.sha }}
           
