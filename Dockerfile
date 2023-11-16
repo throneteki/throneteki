@@ -25,6 +25,7 @@ WORKDIR /app/lobby
 
 COPY --from=base /usr/src/lobby .
 COPY --from=client /app/throneteki-client/dist ./public
+COPY --from=client /app/throneteki-client/assets ./public
 
 RUN rm -rf /usr/src/lobby
 
