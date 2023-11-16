@@ -27,7 +27,7 @@ jobs:
         with:
           creds: ${{ secrets.LOBBY_AZURE_CREDENTIALS }}
 
-      - name: Build and push container image to registry
+      - name: Build and push lobby container image to registry
         uses: azure/container-apps-deploy-action@v2
         with:
           appSourcePath: ${{ github.workspace }} 
@@ -37,7 +37,17 @@ jobs:
           containerAppName: lobbyapp
           resourceGroup: TheIronThrone
           imageToBuild: cryogen/throneteki-lobby:${{ github.sha }}
-          
+
+      - name: Build and push game node container image to registry
+        uses: azure/container-apps-deploy-action@v2
+        with:
+          appSourcePath: ${{ github.workspace }} 
+          registryUrl: docker.io
+          registryUsername: ${{ secrets.LOBBY_REGISTRY_USERNAME }}
+          registryPassword: ${{ secrets.LOBBY_REGISTRY_PASSWORD }}
+          containerAppName: nodeapp
+          resourceGroup: TheIronThrone
+          imageToBuild: cryogen/throneteki-node:${{ github.sha }}
 
      
 
