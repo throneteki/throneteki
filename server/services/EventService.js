@@ -13,7 +13,7 @@ class EventService {
                 return event;
             })
             .catch(err => {
-                logger.error('Error fetching events', err);
+                logger.error('Error fetching events %s', err);
 
                 throw new Error('Error occured fetching events');
             });
@@ -29,7 +29,7 @@ class EventService {
                 return entry;
             })
             .catch(err => {
-                logger.error('Error adding event', err, entry);
+                logger.error('Error adding event %s %s', err, entry);
 
                 throw new Error('Error occured adding event');
             });
@@ -40,7 +40,7 @@ class EventService {
 
         return this.events.update({ _id: id }, { '$set': properties })
             .catch(err => {
-                logger.error('Unable to update event', err);
+                logger.error('Unable to update event %s', err);
                 throw new Error('Unable to update event');
             });
     }

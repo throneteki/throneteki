@@ -22,7 +22,7 @@ class NewsService {
                 return result;
             })
             .catch(err => {
-                logger.error('Error adding news item', err);
+                logger.error('Error adding news item %s', err);
 
                 throw new Error('Error occured adding news item');
             });
@@ -34,7 +34,7 @@ class NewsService {
                 return true;
             })
             .catch(err => {
-                logger.error('Error saving news item', err);
+                logger.error('Error saving news item %s', err);
 
                 throw new Error('Error occured saving news item');
             });
@@ -46,7 +46,7 @@ class NewsService {
                 return true;
             })
             .catch(err => {
-                logger.error('Error deleting news item', err, id);
+                logger.error('Error deleting news item %s %s', err, id);
 
                 throw new Error('Error occured deleting news item');
             });

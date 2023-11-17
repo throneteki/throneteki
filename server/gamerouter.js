@@ -1,11 +1,11 @@
-const zmq = require('zeromq');
-const router = zmq.socket('router');
+const redis = require('redis');
 const logger = require('./log.js');
 const monk = require('monk');
 const EventEmitter = require('events');
 
 const GameService = require('./services/GameService.js');
 const ServiceFactory = require('./services/ServiceFactory.js');
+const { detectBinary } = require('./util');
 
 class GameRouter extends EventEmitter {
     constructor() {
@@ -16,15 +16,23 @@ class GameRouter extends EventEmitter {
         this.workers = {};
         this.gameService = new GameService(monk(configService.getValue('dbPath')));
 
-        router.bind(`tcp://0.0.0.0:${configService.getValue('mqPort')}`, err => {
-            if(err) {
-                logger.info(err);
-            }
+        this.subscriber = redis.createClient(configService.getValue('redisUrl'));
+        this.publisher = this.subscriber.duplicate();
+
+        this.subscriber.on('error', this.onError);
+        this.publisher.on('error', this.onError);
+
+        this.subscriber.subscribe('nodemessage');
+        this.subscriber.on('message', this.onMessage.bind(this));
+        this.subscriber.on('subscribe', () => {
+            this.sendCommand('allnodes', 'LOBBYHELLO');
         });
 
-        router.on('message', this.onMessage.bind(this));
-
         setInterval(this.checkTimeouts.bind(this), 1000 * 60);
+    }
+
+    onError(err) {
+        logger.error('Redis error: %s', err);
     }
 
     // External methods
@@ -140,45 +148,47 @@ class GameRouter extends EventEmitter {
     }
 
     // Events
-    onMessage(identity, msg) {
-        var identityStr = identity.toString();
-
-        var worker = this.workers[identityStr];
-
-        var message = undefined;
-
-        try {
-            message = JSON.parse(msg.toString());
-        } catch(err) {
-            logger.info(err);
+    onMessage(channel, msg) {
+        if(channel !== 'nodemessage') {
+            logger.warn(`Message '${msg}' received for unknown channel ${channel}`);
             return;
         }
 
+        let message;
+        try {
+            message = JSON.parse(msg);
+        } catch(err) {
+            logger.info(
+                `Error decoding redis message. Channel ${channel}, message '${msg}' %o`,
+                err
+            );
+            return;
+        }
+
+        const identity = message.identity;
+        let worker = this.workers[identity];
+
         if(worker && worker.disconnected) {
-            logger.info(`Worker ${identityStr} came back`);
+            logger.info(`Worker ${identity} came back`);
             worker.disconnected = false;
         }
 
         switch(message.command) {
             case 'HELLO':
-                this.emit('onWorkerStarted', identityStr);
-                if(this.workers[identityStr]) {
-                    logger.info(`Worker ${identityStr} was already known, presume reconnected`);
-                    this.workers[identityStr].disconnected = false;
+                this.emit('onWorkerStarted', identity);
+                if(this.workers[identity]) {
+                    logger.info(`Worker ${identity} was already known, presume reconnected`);
+                    this.workers[identity].disconnected = false;
                 }
 
-                this.workers[identityStr] = {
-                    identity: identityStr,
-                    maxGames: message.arg.maxGames,
+                this.workers[identity] = {
+                    identity: identity,
                     numGames: 0,
-                    address: message.arg.address,
-                    port: message.arg.port,
-                    protocol: message.arg.protocol,
-                    version: message.arg.version
+                    ...message.arg
                 };
-                worker = this.workers[identityStr];
+                worker = this.workers[identity];
 
-                this.emit('onNodeReconnected', identityStr, message.arg.games);
+                this.emit('onNodeReconnected', identity, message.arg.games);
 
                 worker.numGames = message.arg.games.length;
 
@@ -199,7 +209,7 @@ class GameRouter extends EventEmitter {
                 if(worker) {
                     worker.numGames--;
                 } else {
-                    logger.error('Got close game for non existant worker', identity);
+                    logger.error('Got close game for non existant worker %s', identity);
                 }
 
                 this.emit('onGameRematch', message.arg.game);
@@ -209,7 +219,7 @@ class GameRouter extends EventEmitter {
                 if(worker) {
                     worker.numGames--;
                 } else {
-                    logger.error('Got close game for non existant worker', identity);
+                    logger.error('Got close game for non existant worker %s', identity);
                 }
 
                 this.emit('onGameClosed', message.arg.game);
@@ -231,8 +241,29 @@ class GameRouter extends EventEmitter {
     }
 
     // Internal methods
-    sendCommand(identity, command, arg) {
-        router.send([identity, '', JSON.stringify({ command: command, arg: arg })]);
+    sendCommand(channel, command, arg = {}) {
+        let object = {
+            command: command,
+            arg: arg
+        };
+
+        let objectStr = '';
+        try {
+            objectStr = JSON.stringify(object);
+        } catch(err) {
+            logger.error('Failed to stringify node data %s', err);
+            for(let obj of Object.values(detectBinary(arg))) {
+                logger.error(`Path: ${obj.path}, Type: ${obj.type}`);
+            }
+
+            return;
+        }
+
+        try {
+            this.publisher.publish(channel, objectStr);
+        } catch(err) {
+            logger.error(err);
+        }
     }
 
     checkTimeouts() {
@@ -245,7 +276,7 @@ class GameRouter extends EventEmitter {
             }
 
             if(worker.pingSent && currentTime - worker.pingSent > pingTimeout) {
-                logger.info('worker', worker.identity + ' timed out');
+                logger.info('worker %s timed out', worker.identity);
                 worker.disconnected = true;
                 this.emit('onWorkerTimedOut', worker.identity);
             } else if(!worker.pingSent) {

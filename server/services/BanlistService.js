@@ -11,7 +11,7 @@ class BanlistService {
                 return banlist;
             })
             .catch(err => {
-                logger.error('Error fetching banlist', err);
+                logger.error('Error fetching banlist %s', err);
 
                 throw new Error('Error occured fetching banlist');
             });
@@ -23,7 +23,7 @@ class BanlistService {
                 return banlist[0];
             })
             .catch(err => {
-                logger.error('Error fetching banlist', err);
+                logger.error('Error fetching banlist %s', err);
 
                 throw new Error('Error occured fetching banlist');
             });
@@ -35,7 +35,7 @@ class BanlistService {
                 return entry;
             })
             .catch(err => {
-                logger.error('Error adding banlist entry', err, entry);
+                logger.error('Error adding banlist entry %s %s', err, entry);
 
                 throw new Error('Error occured adding banlist entry');
             });
