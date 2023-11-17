@@ -16,6 +16,8 @@ class ZmqSocket extends EventEmitter {
         this.socket.identity = process.env.SERVER || config.nodeIdentity;
         this.socket.monitor(500, 0);
 
+        logger.info(`Connecting to zeromq: tcp://${config.mqHost}:${config.mqPort}`);
+
         this.socket.connect(`tcp://${config.mqHost}:${config.mqPort}`, err => {
             if(err) {
                 logger.info(err);
