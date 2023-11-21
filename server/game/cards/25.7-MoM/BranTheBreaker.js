@@ -5,7 +5,7 @@ class BranTheBreaker extends DrawCard {
         this.attachmentRestriction({ type: 'location', faction: 'stark', controller: 'current', unique: true });
         this.action({
             title: 'Raise claim by 1',
-            condition: () => this.game.isDuringChallenge() && this.game.getPlayers().some(player => player.activePlot && player.activePlot.hasTrait('Winter')),
+            condition: () => this.game.isDuringChallenge({ match: challenge => challenge.attackers.filter(card => this.isUniqueStark(card)).length >= 2 }),
             cost: ability.costs.kneelSelf(),
             message: '{player} kneels {source} to raise the claim value on their revealed plot card by 1 until the end of the challenge',
             handler: () => {
@@ -16,9 +16,13 @@ class BranTheBreaker extends DrawCard {
             }
         });
     }
+
+    isUniqueStark(card) {
+        return card.controller === this.controller && card.getType() === 'character' && card.isUnique() && card.isFaction('stark');
+    }
 }
 
 BranTheBreaker.code = '25569';
-BranTheBreaker.version = '1.2';
+BranTheBreaker.version = '1.3';
 
 module.exports = BranTheBreaker;
