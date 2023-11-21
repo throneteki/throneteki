@@ -22,7 +22,7 @@ class UserService extends EventEmitter {
                 return users[0] && new User(users[0]);
             })
             .catch(err => {
-                logger.error('Error fetching users', err);
+                logger.error('Error fetching users %s', err);
 
                 throw new Error('Error occured fetching users');
             });
@@ -34,7 +34,7 @@ class UserService extends EventEmitter {
                 return users[0] && new User(users[0]);
             })
             .catch(err => {
-                logger.error('Error fetching users', err);
+                logger.error('Error fetching users %s', err);
 
                 throw new Error('Error occured fetching users');
             });
@@ -46,7 +46,7 @@ class UserService extends EventEmitter {
                 return users[0] && new User(users[0]);
             })
             .catch(err => {
-                logger.error('Error fetching users', err);
+                logger.error('Error fetching users %s', err);
 
                 throw new Error('Error occured fetching users');
             });
@@ -58,7 +58,7 @@ class UserService extends EventEmitter {
                 return user;
             })
             .catch(err => {
-                logger.error('Error adding user', err, user);
+                logger.error('Error adding user %s %s', err, user);
 
                 throw new Error('Error occured adding user');
             });
@@ -232,7 +232,7 @@ class UserService extends EventEmitter {
         let ips = [...new Set(user.tokens.map(token => token.ip).filter(ip => ip))];
 
         return this.users.find({ 'tokens.ip': { '$in': ips } }).catch(err => {
-            logger.error('Error finding related ips', err, user.username);
+            logger.error('Error finding related ips %s %s', err, user.username);
         });
     }
 }

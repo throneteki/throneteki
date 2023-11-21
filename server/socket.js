@@ -74,7 +74,7 @@ class Socket extends EventEmitter {
     }
 
     onError(err) {
-        logger.info('Socket.IO error', err, '. Socket ID ', this.socket.id);
+        logger.info('Socket.IO error %s. Socket Id: %s', err, this.socket.id);
     }
 }
 
