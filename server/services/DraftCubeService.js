@@ -11,7 +11,7 @@ class DraftCubeService {
                 return draftCube;
             })
             .catch(err => {
-                logger.error('Error fetching draft cubes', err);
+                logger.error('Error fetching draft cubes %s', err);
 
                 throw new Error('Error occured fetching draft cubes');
             });
@@ -20,7 +20,7 @@ class DraftCubeService {
     async getById(id) {
         return this.draftCubes.findOne({ _id: id })
             .catch(err => {
-                logger.error('Unable to fetch draft cube', err);
+                logger.error('Unable to fetch draft cube %s', err);
                 throw new Error('Unable to fetch draft cube ' + id);
             });
     }

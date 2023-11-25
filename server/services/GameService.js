@@ -10,7 +10,7 @@ class GameService {
     create(game) {
         return this.games.insert(game)
             .catch(err => {
-                logger.error('Unable to create game', err);
+                logger.error('Unable to create game %s', err);
                 throw new Error('Unable to create game');
             });
     }
@@ -26,7 +26,7 @@ class GameService {
         };
         return this.games.update({ gameId: game.gameId }, { '$set': properties })
             .catch(err => {
-                logger.error('Unable to update game', err);
+                logger.error('Unable to update game %s', err);
                 throw new Error('Unable to update game');
             });
     }
@@ -39,7 +39,7 @@ class GameService {
                 });
             })
             .catch(err => {
-                logger.error('Unable to get all games from', from, 'to', to, err);
+                logger.error('Unable to get all games from %s to %s %s', from, to, err);
                 throw new Error('Unable to get all games');
             });
     }
