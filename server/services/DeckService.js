@@ -12,7 +12,7 @@ class DeckService {
                 return deck;
             })
             .catch(err => {
-                logger.error('Unable to fetch deck', err);
+                logger.error('Unable to fetch deck %s', err);
                 throw new Error('Unable to fetch deck ' + id);
             });
     }
@@ -24,7 +24,7 @@ class DeckService {
                 return deck;
             })
             .catch(err => {
-                logger.error('Unable to fetch deck', err);
+                logger.error('Unable to fetch deck %s', err);
                 throw new Error('Unable to fetch deck ' + name);
             });
     }
@@ -32,7 +32,7 @@ class DeckService {
     getByStandaloneId(id) {
         return this.decks.findOne({ standaloneDeckId: id })
             .catch(err => {
-                logger.error('Unable to fetch standalone deck', err);
+                logger.error('Unable to fetch standalone deck %s', err);
                 throw new Error('Unable to fetch standalone deck ' + id);
             });
     }

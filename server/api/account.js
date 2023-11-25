@@ -37,7 +37,7 @@ function sendEmail(address, subject, email) {
     };
 
     return sendgrid.send(message).catch(err => {
-        logger.error('Unable to send email', err);
+        logger.error('Unable to send email %s', err);
     });
 }
 
@@ -149,17 +149,17 @@ module.exports.init = function(server, options) {
                 let answer = JSON.parse(response);
 
                 if(answer.request_status !== 'success') {
-                    logger.warn('Failed to check email address', answer);
+                    logger.warn('Failed to check email address %s', answer);
                 }
 
                 if(answer.domain_status === 'block') {
-                    logger.warn('Blocking', domain, 'from registering the account', req.body.username);
+                    logger.warn('Blocking %s from registering the account %s', domain, req.body.username);
                     res.send({ success: false, message: 'One time use email services are not permitted on this site.  Please use a real email address' });
 
                     return next();
                 }
             } catch(err) {
-                logger.warn('Could not valid email address', domain, err);
+                logger.warn('Could not valid email address %s %s', domain, err);
             }
         }
 
@@ -235,7 +235,7 @@ module.exports.init = function(server, options) {
         }
 
         if(!user.activationToken) {
-            logger.error('Got unexpected activate request for user', user.username);
+            logger.error('Got unexpected activate request for user %s', user.username);
 
             res.send({ success: false, message: 'An error occured activating your account, check the url you have entered and try again.' });
 
@@ -246,7 +246,7 @@ module.exports.init = function(server, options) {
         if(user.activationTokenExpiry < now) {
             res.send({ success: false, message: 'The activation token you have provided has expired.' });
 
-            logger.error('Token expired', user.username);
+            logger.error('Token expired %s', user.username);
 
             return next();
         }
@@ -457,7 +457,7 @@ module.exports.init = function(server, options) {
         }
 
         if(!user.resetToken) {
-            logger.error('Got unexpected reset request for user', user.username);
+            logger.error('Got unexpected reset request for user %s', user.username);
 
             res.send({ success: false, message: 'An error occured resetting your password, check the url you have entered and try again.' });
 
@@ -468,7 +468,7 @@ module.exports.init = function(server, options) {
         if(user.tokenExpires < now) {
             res.send({ success: false, message: 'The reset token you have provided has expired.' });
 
-            logger.error('Token expired', user.username);
+            logger.error('Token expired %s', user.username);
 
             return next();
         }
@@ -477,7 +477,7 @@ module.exports.init = function(server, options) {
         let resetToken = hmac.update('RESET ' + user.username + ' ' + user.tokenExpires).digest('hex');
 
         if(resetToken !== req.body.token) {
-            logger.error('Invalid reset token', user.username, req.body.token);
+            logger.error('Invalid reset token %s %s', user.username, req.body.token);
 
             res.send({ success: false, message: 'An error occured resetting your password, check the url you have entered and try again.' });
 
@@ -507,7 +507,7 @@ module.exports.init = function(server, options) {
 
         let user = await userService.getUserByUsername(req.body.username);
         if(!user) {
-            logger.error('Username not found for password reset', req.body.username);
+            logger.error('Username not found for password reset %s', req.body.username);
 
             return;
         }
