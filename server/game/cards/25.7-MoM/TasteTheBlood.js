@@ -1,17 +1,18 @@
 const DrawCard = require('../../drawcard');
 
 class TasteTheBlood extends DrawCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
                 afterChallenge: event => event.challenge.winner === this.controller && event.challenge.challengeType === 'intrigue' && this.controller.anyCardsInPlay(card => card.getType() === 'character' && card.hasTrait('Old Gods') && card.isParticipating())
             },
             target: {
                 activePromptTitle: 'Select a plot',
-                cardCondition: (card, context) => card.location === 'revealed plots' && card.controller === context.event.challenge.loser && !card.notConsideredToBeInPlotDeck,
+                cardCondition: card => card.location === 'revealed plots' && !card.notConsideredToBeInPlotDeck,
                 cardType: 'plot'
             },
-            message: '{player} plays {source} to initiate the when revealed ability of {target}',
+            cost: ability.costs.kneelFactionCard(),
+            message: '{player} kneels their faction card and plays {source} to initiate the when revealed ability of {target}',
             handler: context => {
                 let whenRevealed = context.target.getWhenRevealedAbility();
                 if(whenRevealed) {
@@ -26,6 +27,6 @@ class TasteTheBlood extends DrawCard {
 }
 
 TasteTheBlood.code = '25571';
-TasteTheBlood.version = '1.1';
+TasteTheBlood.version = '1.2';
 
 module.exports = TasteTheBlood;

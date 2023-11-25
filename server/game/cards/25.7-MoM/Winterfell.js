@@ -34,6 +34,6 @@ class Winterfell extends DrawCard {
 }
 
 Winterfell.code = '25520';
-Winterfell.version = '1.1';
+Winterfell.version = '1.2';
 
 module.exports = Winterfell;

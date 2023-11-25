@@ -8,7 +8,7 @@ class LegacyOfTheWatch extends DrawCard {
 
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.winner === this.controller && this.satisfiableBonuses(event.challenge).length > 0
+                afterChallenge: event => event.challenge.winner === this.controller && event.challenge.strengthDifference >= 5 && this.satisfiableBonuses(event.challenge).length > 0
             },
             handler: context => {
                 let bonuses = this.satisfiableBonuses(context.event.challenge);
@@ -35,13 +35,13 @@ class LegacyOfTheWatch extends DrawCard {
     satisfiableBonuses(challenge) {
         let satisfiable = [];
         let participants = challenge.getParticipants().filter(card => card.controller === this.controller);
-        if(participants.filter(card => card.hasTrait('Ranger')).length >= 3 && this.controller.canGainFactionPower()) {
+        if(participants.filter(card => card.hasTrait('Ranger')).length >= 2 && this.controller.canGainFactionPower()) {
             satisfiable.push('power');
         }
-        if(participants.filter(card => card.hasTrait('Steward')).length >= 3 && this.controller.canDraw()) {
+        if(participants.filter(card => card.hasTrait('Steward')).length >= 2 && this.controller.canDraw()) {
             satisfiable.push('draw');
         }
-        if(participants.filter(card => card.hasTrait('Builder')).length >= 3 && this.game.anyCardsInPlay(card => this.canStandLocation(card))) {
+        if(participants.filter(card => card.hasTrait('Builder')).length >= 2 && this.game.anyCardsInPlay(card => this.canStandLocation(card))) {
             satisfiable.push('stand');
         }
         return satisfiable;
@@ -73,6 +73,6 @@ class LegacyOfTheWatch extends DrawCard {
 }
 
 LegacyOfTheWatch.code = '25557';
-LegacyOfTheWatch.version = '1.3';
+LegacyOfTheWatch.version = '1.4';
 
 module.exports = LegacyOfTheWatch;

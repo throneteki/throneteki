@@ -5,12 +5,15 @@ class OldCaptain extends DrawCard {
         this.persistentEffect({
             condition: () => !this.kneeled,
             match: this,
-            effect: ability.effects.addKeyword('renown')
+            effect: [
+                ability.effects.addKeyword('pillage'),
+                ability.effects.addKeyword('renown')
+            ]
         });
     }
 }
 
 OldCaptain.code = '25519';
-OldCaptain.version = '1.0';
+OldCaptain.version = '1.1';
 
 module.exports = OldCaptain;

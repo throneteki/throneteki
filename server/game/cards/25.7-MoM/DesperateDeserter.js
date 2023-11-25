@@ -4,7 +4,8 @@ const DrawCard = require('../../drawcard.js');
 class DesperateDeserter extends DrawCard {
     setupCardAbilities() {
         this.plotModifiers({
-            gold: -1
+            gold: -1,
+            initiative: -1
         });
         this.reaction({
             when: {
@@ -23,6 +24,6 @@ class DesperateDeserter extends DrawCard {
 }
 
 DesperateDeserter.code = '25553';
-DesperateDeserter.version = '1.1';
+DesperateDeserter.version = '1.2';
 
 module.exports = DesperateDeserter;
