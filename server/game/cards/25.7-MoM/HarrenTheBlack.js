@@ -2,8 +2,12 @@ const GameActions = require('../../GameActions/index.js');
 const DrawCard = require('../../drawcard.js');
 
 class HarrenTheBlack extends DrawCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.attachmentRestriction({ type: 'location', faction: 'greyjoy', controller: 'current', unique: true });
+        this.persistentEffect({
+            targetController: 'opponent',
+            effect: ability.effects.cannotMarshal(card => card.getType() === 'location' && this.hasCopyInDiscard(card))
+        });
         this.forcedReaction({
             when: {
                 onCardDiscarded: event => event.isPillage && event.source.controller === this.controller
@@ -12,9 +16,14 @@ class HarrenTheBlack extends DrawCard {
             gameAction: GameActions.simultaneously(context => context.game.getPlayersInFirstPlayerOrder().map(player => GameActions.discardTopCards({ player, amount: 1, source: this })))
         });
     }
+
+    hasCopyInDiscard(card) {
+        let discardPile = card.controller.discardPile;
+        return discardPile.some(discardedCard => card !== discardedCard && card.isCopyOf(discardedCard));
+    }
 }
 
 HarrenTheBlack.code = '25521';
-HarrenTheBlack.version = '1.1';
+HarrenTheBlack.version = '1.2';
 
 module.exports = HarrenTheBlack;
