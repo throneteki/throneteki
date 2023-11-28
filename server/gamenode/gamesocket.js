@@ -24,6 +24,7 @@ class GameSocket extends EventEmitter {
         this.subscriber.on('error', this.onError);
         this.publisher.on('error', this.onError);
 
+        this.subscriber.subscribe(this.nodeName);
         this.subscriber.subscribe('allnodes');
         this.subscriber.on('subscribe', this.onConnect.bind(this));
         this.subscriber.on('message', this.onMessage.bind(this));
