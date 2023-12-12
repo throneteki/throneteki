@@ -1,7 +1,7 @@
 const DrawCard = require('../../drawcard.js');
 
 class NaughtButAshes extends DrawCard {
-    setupCardAbilities(ability) {
+    setupCardAbilities() {
         this.action({
             title: 'Give character -X STR',
             target: {
