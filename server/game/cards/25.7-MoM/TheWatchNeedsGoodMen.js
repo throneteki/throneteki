@@ -17,6 +17,6 @@ class TheWatchNeedsGoodMen extends PlotCard {
 }
 
 TheWatchNeedsGoodMen.code = '25560';
-TheWatchNeedsGoodMen.version = '1.1';
+TheWatchNeedsGoodMen.version = '1.2';
 
 module.exports = TheWatchNeedsGoodMen;
