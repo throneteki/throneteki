@@ -20,6 +20,6 @@ class BattleOnTheGreenFork extends PlotCard {
 }
 
 BattleOnTheGreenFork.code = '25612';
-BattleOnTheGreenFork.version = '1.0';
+BattleOnTheGreenFork.version = '1.1';
 
 module.exports = BattleOnTheGreenFork;

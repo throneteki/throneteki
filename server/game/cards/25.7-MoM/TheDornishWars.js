@@ -18,7 +18,7 @@ class TheDornishWars extends PlotCard {
                 cardCondition: { type: 'character', location: 'play area' },
                 gameAction: 'loseIcon'
             },
-            limit: ability.limit.perPhase(3),
+            limit: ability.limit.perPhase(2),
             handler: context => {
                 this.game.promptForIcon(context.player, this, icon => {
                     this.untilEndOfPhase(ability => ({
@@ -36,6 +36,6 @@ class TheDornishWars extends PlotCard {
 }
 
 TheDornishWars.code = '25548';
-TheDornishWars.version = '1.0';
+TheDornishWars.version = '1.1';
 
 module.exports = TheDornishWars;

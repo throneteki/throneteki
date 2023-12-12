@@ -34,6 +34,6 @@ class TheSackOfKingsLanding extends PlotCard {
 }
 
 TheSackOfKingsLanding.code = '25536';
-TheSackOfKingsLanding.version = '1.0';
+TheSackOfKingsLanding.version = '1.1';
 
 module.exports = TheSackOfKingsLanding;

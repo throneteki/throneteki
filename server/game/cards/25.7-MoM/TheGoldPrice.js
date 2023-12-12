@@ -8,7 +8,7 @@ class TheGoldPrice extends AgendaCard {
         this.registerEvents(['onCardEntersPlay']);
     }
 
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
                 onCardDiscarded: event => event.card.getType() === 'character' && event.card.owner !== this.controller && event.originalLocation === 'hand' && event.isRandom
@@ -17,6 +17,7 @@ class TheGoldPrice extends AgendaCard {
                 format: '{player} uses {source} to put {card} into play under their control',
                 args: { card: context => context.event.card }
             },
+            limit: ability.limit.perPhase(1),
             gameAction: GameActions.putIntoPlay(context => ({ player: context.player, card: context.event.card }))
                 .thenExecute(event => {
                     let context = this.game.currentAbilityContext;
@@ -36,7 +37,7 @@ class TheGoldPrice extends AgendaCard {
     }
 
     onCardEntersPlay(event) {
-        if(event.card.controller === this.controller && event.card.getType() === 'location') {
+        if(this.game.currentPhase !== 'setup' && event.card.controller === this.controller && event.card.getType() === 'location') {
             this.game.addMessage('{0} enters play knelt due to {1}', event.card, this);
             event.card.kneeled = true;
         }
@@ -81,6 +82,6 @@ class PayOrSacrificePrompt {
 }
 
 TheGoldPrice.code = '25619';
-TheGoldPrice.version = '1.1';
+TheGoldPrice.version = '1.2';
 
 module.exports = TheGoldPrice;

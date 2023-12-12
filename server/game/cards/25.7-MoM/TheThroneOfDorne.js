@@ -3,6 +3,9 @@ const DrawCard = require('../../drawcard.js');
 
 class TheThroneOfDorne extends DrawCard {
     setupCardAbilities(ability) {
+        this.plotModifiers({
+            reserve: 1
+        });
         this.reaction({
             when: {
                 onDominanceDetermined: event => event.winner && this.controller !== event.winner
@@ -20,6 +23,6 @@ class TheThroneOfDorne extends DrawCard {
 }
 
 TheThroneOfDorne.code = '25543';
-TheThroneOfDorne.version = '1.0';
+TheThroneOfDorne.version = '1.1';
 
 module.exports = TheThroneOfDorne;

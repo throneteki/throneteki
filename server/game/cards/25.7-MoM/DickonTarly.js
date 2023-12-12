@@ -7,7 +7,7 @@ class DickonTarly extends DrawCard {
             when: {
                 onCardStood: event => event.card.controller === this.controller && event.card.isFaction('tyrell')
             },
-            limit: ability.limit.perRound(1),
+            limit: ability.limit.perPhase(1),
             message: '{player} uses {source} to stand {source}',
             gameAction: GameActions.standCard({ card: this })
         });
@@ -15,6 +15,6 @@ class DickonTarly extends DrawCard {
 }
 
 DickonTarly.code = '25588';
-DickonTarly.version = '1.0';
+DickonTarly.version = '1.1';
 
 module.exports = DickonTarly;
