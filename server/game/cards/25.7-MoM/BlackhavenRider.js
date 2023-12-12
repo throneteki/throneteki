@@ -25,6 +25,6 @@ class BlackhavenRider extends DrawCard {
 }
 
 BlackhavenRider.code = '25505';
-BlackhavenRider.version = '1.0';
+BlackhavenRider.version = '1.1';
 
 module.exports = BlackhavenRider;
