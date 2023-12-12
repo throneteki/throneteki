@@ -1,9 +1,9 @@
 const GameActions = require('../../GameActions/index.js');
 const DrawCard = require('../../drawcard.js');
 
-class KarstarkBannerman extends DrawCard {
+class KarstarkLancer extends DrawCard {
     setupCardAbilities() {
-        this.forcedInterrupt({
+        this.interrupt({
             when: {
                 onCharacterKilled: event => event.card === this,
                 onSacrificed: event => event.card === this
@@ -22,7 +22,7 @@ class KarstarkBannerman extends DrawCard {
     }
 }
 
-KarstarkBannerman.code = '25566';
-KarstarkBannerman.version = '1.1';
+KarstarkLancer.code = '25566';
+KarstarkLancer.version = '1.2';
 
-module.exports = KarstarkBannerman;
+module.exports = KarstarkLancer;
