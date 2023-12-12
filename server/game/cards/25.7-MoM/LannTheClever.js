@@ -5,7 +5,6 @@ class LannTheClever extends DrawCard {
     setupCardAbilities(ability) {
         this.attachmentRestriction({ type: 'location', faction: 'lannister', controller: 'current', unique: true });
         this.reaction({
-            cannotBeCanceled: true,
             when: {
                 afterChallenge: event => event.challenge.challengeType === 'intrigue' && event.challenge.winner === this.controller
             },
