@@ -7,7 +7,6 @@ class NaughtButAshes extends DrawCard {
             target: {
                 cardCondition: { location: 'play area', type: 'character', participating: true, hasAttachments: true }
             },
-            max: ability.limit.perRound(1),
             message: {
                 format: '{player} plays {source} to give {target} {amount} STR until the end of the phase',
                 args: { amount: () => this.getAmount() }
@@ -27,6 +26,6 @@ class NaughtButAshes extends DrawCard {
 }
 
 NaughtButAshes.code = '25583';
-NaughtButAshes.version = '1.1';
+NaughtButAshes.version = '1.2';
 
 module.exports = NaughtButAshes;
