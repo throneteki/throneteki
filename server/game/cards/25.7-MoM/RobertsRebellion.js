@@ -8,22 +8,28 @@ class RobertsRebellion extends PlotCard {
 
         this.forcedInterrupt({
             when: {
-                onPhaseEnded: event => event.phase === 'challenge' && this.tracker.some({ loser: this.controller, challengeType: 'power' })
+                onPhaseEnded: event => event.phase === 'challenge'
             },
             message: {
-                format: '{player} is forced to discard {amount} power from their faction card for {source}',
-                args: { amount: context => this.getPowerAmount(context) }
+                format: '{players} are forced to discard 2 power from their faction card for {source}, if able',
+                args: { players: () => this.getLosingPlayers() }
             },
-            gameAction: GameActions.discardPower(context => ({ card: context.player.faction, amount: this.getPowerAmount(context) }))
+            gameAction: GameActions.simultaneously(
+                this.getLosingPlayers().map(player => GameActions.discardPower({ card: player.faction, amount: this.getPowerAmount(player) })) 
+            )
         });
     }
 
-    getPowerAmount(context) {
-        return Math.min(context.player.faction.power, 3);
+    getLosingPlayers() {
+        return [...new Set(this.tracker.filter({ challengeType: 'power', match: challenge => challenge.loser }).map(challenge => challenge.loser))];
+    }
+
+    getPowerAmount(player) {
+        return Math.min(player.faction.power, 2);
     }
 }
 
 RobertsRebellion.code = '25512';
-RobertsRebellion.version = '1.0';
+RobertsRebellion.version = '1.1';
 
 module.exports = RobertsRebellion;
