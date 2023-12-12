@@ -35,6 +35,6 @@ class EnemiesInEveryShadow extends PlotCard {
 }
 
 EnemiesInEveryShadow.code = '25615';
-EnemiesInEveryShadow.version = '1.1';
+EnemiesInEveryShadow.version = '1.2';
 
 module.exports = EnemiesInEveryShadow;
