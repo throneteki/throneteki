@@ -18,7 +18,7 @@ class Qyburn extends DrawCard {
                     match: context.target,
                     condition: () => ['play area', 'duplicate'].includes(context.target.location),
                     targetLocation: 'any',
-                    effect: ability.effects.shuffleIntoDeckIfStillInPlay()
+                    effect: ability.effects.removeFromGame()
                 }));
             }
         });
@@ -26,6 +26,6 @@ class Qyburn extends DrawCard {
 }
 
 Qyburn.code = '25527';
-Qyburn.version = '1.0';
+Qyburn.version = '1.1';
 
 module.exports = Qyburn;
