@@ -15,6 +15,7 @@ on:
       
 jobs:
   build-and-deploy:
+    if: github.repository == 'throneteki/throneteki'
     runs-on: ubuntu-latest
 
     steps:
