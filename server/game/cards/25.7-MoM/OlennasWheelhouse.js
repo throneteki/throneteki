@@ -28,6 +28,6 @@ class OlennasWheelhouse extends DrawCard {
 }
 
 OlennasWheelhouse.code = '25592';
-OlennasWheelhouse.version = '1.0';
+OlennasWheelhouse.version = '1.1';
 
 module.exports = OlennasWheelhouse;
