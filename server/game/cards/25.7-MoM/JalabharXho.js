@@ -15,6 +15,6 @@ class JalabharXho extends DrawCard {
 }
 
 JalabharXho.code = '25598';
-JalabharXho.version = '1.1';
+JalabharXho.version = '1.2';
 
 module.exports = JalabharXho;
