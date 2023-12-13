@@ -1,26 +1,25 @@
 {
-    env: 'development',
-    // This is for specific instance-based data which will be passed into each game; not required.
-    //instance: {
-    //    type: 'development'
-    //},
+  env: "development",
+  // This is for specific instance-based data which will be passed into each game; not required.
+  //instance: {
+  //    type: 'development'
+  //},
 
-    secret: 'somethingverysecret',
-    hmacSecret: 'somethingevenmoresecret',
-    
-    //captchaKey: 'captchaKey',
-    //emailKey: 'emailKey',
+  secret: "somethingverysecret",
+  hmacSecret: "somethingevenmoresecret",
 
-    dbPath: 'mongodb://mongo:27017/throneteki',
-    // This is the host/port of the Zero MQ server which does the node load balancing
-    requireActiviation: false,
-    appName: 'The Iron Throne',
+  //captchaKey: 'captchaKey',
+  //emailKey: 'emailKey',
 
-    mqHost: 'lobby',
-    mqPort: 6000,
+  dbPath: "mongodb://mongo:27017/throneteki",
+  // This is the host/port of the Zero MQ server which does the node load balancing
+  requireActiviation: false,
+  appName: "The Iron Throne",
 
-    minLobbyChatTime: 0, // The time (in seconds) an account has to be registered before it can chat in the lobby
-    nodeIdentity: 'node1',
-    host: 'localhost',
-    socketioPort: 5000
+  redisUrl: "redis://redis/",
+
+  minLobbyChatTime: 0, // The time (in seconds) an account has to be registered before it can chat in the lobby
+  nodeIdentity: "node1",
+  host: "localhost",
+  socketioPort: 5000,
 }

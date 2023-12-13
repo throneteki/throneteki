@@ -11,7 +11,7 @@ class MessageService extends EventEmitter {
     addMessage(message) {
         return this.messages.insert(message)
             .catch(err => {
-                logger.error('Unable to insert message', err);
+                logger.error('Unable to insert message %s', err);
                 throw new Error('Unable to insert message');
             });
     }

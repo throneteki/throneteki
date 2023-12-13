@@ -44,7 +44,7 @@ class PatreonService {
         try {
             response = await this.patreonOAuthClient.refreshToken(user.patreon.refresh_token);
         } catch(err) {
-            logger.error('Error refreshing patreon account', err);
+            logger.error('Error refreshing patreon account %s', err);
             return undefined;
         }
         
@@ -67,7 +67,7 @@ class PatreonService {
         try {
             response = await this.patreonOAuthClient.getTokens(code, this.callbackUrl);
         } catch(err) {
-            logger.error('Error linking patreon account', err);
+            logger.error('Error linking patreon account %s', err);
             return false;
         }
 
