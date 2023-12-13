@@ -5,13 +5,12 @@ name: Check successful build and test
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master", "development-*" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "master", "development-*" ]
 
 jobs:
   build:
-    if: github.repository == 'throneteki/throneteki'
     runs-on: ubuntu-latest
 
     strategy:
