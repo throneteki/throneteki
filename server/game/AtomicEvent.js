@@ -1,6 +1,7 @@
 class AtomicEvent {
     constructor() {
         this.cancelled = false;
+        this.invalid = false;
         this.childEvents = [];
         this.attachedEvents = [];
         this.params = {};
@@ -48,6 +49,12 @@ class AtomicEvent {
     replaceHandler(handler) {
         if(this.childEvents.length !== 0) {
             this.childEvents[0].replaceHandler(handler);
+        }
+    }
+
+    checkExecuteValidity() {
+        for(let event of this.childEvents) {
+            event.checkExecuteValidity();
         }
     }
 

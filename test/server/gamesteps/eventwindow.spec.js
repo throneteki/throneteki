@@ -3,7 +3,7 @@ const EventWindow = require('../../../server/game/gamesteps/eventwindow.js');
 describe('EventWindow', function() {
     beforeEach(function() {
         this.gameSpy = jasmine.createSpyObj('game', ['openAbilityWindow', 'openInterruptWindowForAttachedEvents', 'saveWithDupe']);
-        this.eventSpy = jasmine.createSpyObj('event', ['allowAutomaticSave', 'cancel', 'clearAttachedEvents', 'emitTo', 'executeHandler', 'executePostHandler', 'getConcurrentEvents']);
+        this.eventSpy = jasmine.createSpyObj('event', ['allowAutomaticSave', 'cancel', 'clearAttachedEvents', 'emitTo', 'checkExecuteValidity', 'executeHandler', 'executePostHandler', 'getConcurrentEvents']);
         this.eventSpy.attachedEvents = [];
         this.eventSpy.getConcurrentEvents.and.returnValue([]);
         this.eventWindow = new EventWindow(this.gameSpy, this.eventSpy);
@@ -24,7 +24,8 @@ describe('EventWindow', function() {
                 expect(this.gameSpy.openAbilityWindow).toHaveBeenCalledWith({ abilityType: 'reaction', event: this.eventSpy });
             });
 
-            it('should call the handler', function() {
+            it('should call the validator and handler', function() {
+                expect(this.eventSpy.checkExecuteValidity).toHaveBeenCalled();
                 expect(this.eventSpy.executeHandler).toHaveBeenCalled();
             });
         });
@@ -89,8 +90,9 @@ describe('EventWindow', function() {
                 expect(this.gameSpy.openAbilityWindow).not.toHaveBeenCalledWith({ abilityType: 'reaction', event: this.eventSpy });
             });
 
-            it('should not call the handler', function() {
+            it('should not call the validator and handler', function() {
                 this.eventWindow.continue();
+                expect(this.eventSpy.checkExecuteValidity).not.toHaveBeenCalled();
                 expect(this.eventSpy.executeHandler).not.toHaveBeenCalled();
             });
 

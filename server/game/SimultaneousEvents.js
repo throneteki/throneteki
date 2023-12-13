@@ -38,6 +38,12 @@ class SimultaneousEvents {
         }
     }
 
+    checkExecuteValidity() {
+        for(let event of this.childEvents) {
+            event.checkExecuteValidity();
+        }
+    }
+
     executeHandler() {
         for(let event of this.activeChildEvents.sort((a, b) => a.order - b.order)) {
             event.executeHandler();

@@ -1,7 +1,7 @@
 const BaseStep = require('./basestep.js');
 const GamePipeline = require('../gamepipeline.js');
 const SimpleStep = require('./simplestep.js');
-const InterruptWindowOrder = require('./InterruptWindowOrdering.js');
+const InterruptWindowOrder = require('./InterruptWindowOrder.js');
 
 class InterruptWindow extends BaseStep {
     constructor(game, event, postHandlerFunc = () => true) {
@@ -14,6 +14,7 @@ class InterruptWindow extends BaseStep {
             new SimpleStep(game, () => this.automaticSaveWithDupes()),
             new SimpleStep(game, () => this.openAbilityWindow('forcedinterrupt')),
             new SimpleStep(game, () => this.openAbilityWindow('interrupt')),
+            new SimpleStep(game, () => this.validateExecution()),
             new SimpleStep(game, () => this.selectExecuteOrder()),
             new SimpleStep(game, () => this.executeHandler()),
             new SimpleStep(game, () => this.openWindowForAttachedEvents()),
@@ -69,7 +70,15 @@ class InterruptWindow extends BaseStep {
             event: this.event
         });
     }
-    
+
+    validateExecution() {
+        if(this.event.cancelled) {
+            return;
+        }
+
+        this.event.checkExecuteValidity();
+    }
+
     selectExecuteOrder() {
         if(this.event.cancelled) {
             return;
