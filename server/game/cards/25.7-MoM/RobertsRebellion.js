@@ -1,35 +1,28 @@
 const GameActions = require('../../GameActions/index.js');
 const PlotCard = require('../../plotcard.js');
 const {ChallengeTracker} = require('../../EventTrackers');
-
 class RobertsRebellion extends PlotCard {
     setupCardAbilities() {
         this.tracker = ChallengeTracker.forRound(this.game);
 
         this.forcedInterrupt({
             when: {
-                onPhaseEnded: event => event.phase === 'challenge'
+                onPhaseEnded: event => event.phase === 'challenge' && this.tracker.some({ loser: this.controller, challengeType: 'power' })
             },
             message: {
-                format: '{players} are forced to discard 2 power from their faction card for {source}, if able',
-                args: { players: () => this.getLosingPlayers() }
+                format: '{player} is forced to discard {amount} power from their faction card for {source}',
+                args: { amount: context => this.getPowerAmount(context) }
             },
-            gameAction: GameActions.simultaneously(
-                this.getLosingPlayers().map(player => GameActions.discardPower({ card: player.faction, amount: this.getPowerAmount(player) })) 
-            )
+            gameAction: GameActions.discardPower(context => ({ card: context.player.faction, amount: this.getPowerAmount(context) }))
         });
     }
 
-    getLosingPlayers() {
-        return [...new Set(this.tracker.filter({ challengeType: 'power', match: challenge => challenge.loser }).map(challenge => challenge.loser))];
-    }
-
-    getPowerAmount(player) {
-        return Math.min(player.faction.power, 2);
+    getPowerAmount(context) {
+        return Math.min(context.player.faction.power, 3);
     }
 }
 
 RobertsRebellion.code = '25512';
-RobertsRebellion.version = '1.1';
+RobertsRebellion.version = '1.2';
 
 module.exports = RobertsRebellion;
