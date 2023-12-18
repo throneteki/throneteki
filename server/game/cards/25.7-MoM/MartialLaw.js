@@ -14,6 +14,6 @@ class MartialLaw extends DrawCard {
 }
 
 MartialLaw.code = '25510';
-MartialLaw.version = '2.1';
+MartialLaw.version = '2.2';
 
 module.exports = MartialLaw;
