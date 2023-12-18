@@ -24,6 +24,6 @@ class DesperateDeserter extends DrawCard {
 }
 
 DesperateDeserter.code = '25553';
-DesperateDeserter.version = '1.2';
+DesperateDeserter.version = '1.3';
 
 module.exports = DesperateDeserter;

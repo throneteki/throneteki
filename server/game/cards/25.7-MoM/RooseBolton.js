@@ -14,6 +14,6 @@ class RooseBolton extends DrawCard {
 }
 
 RooseBolton.code = '25561';
-RooseBolton.version = '1.3';
+RooseBolton.version = '1.4';
 
 module.exports = RooseBolton;

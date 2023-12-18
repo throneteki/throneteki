@@ -22,6 +22,6 @@ class TywinLannister extends DrawCard {
 }
 
 TywinLannister.code = '25525';
-TywinLannister.version = '1.2';
+TywinLannister.version = '1.3';
 
 module.exports = TywinLannister;
