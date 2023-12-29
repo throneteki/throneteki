@@ -73,7 +73,8 @@ class BaseCard {
         this.canProvidePlotModifier = {
             gold: true,
             initiative: true,
-            reserve: true
+            reserve: true,
+            claim: true
         };
 
         this.abilityRestrictions = [];
@@ -150,6 +151,14 @@ class BaseCard {
                 match: card => card.controller.activePlot === card,
                 targetController: 'current',
                 effect: AbilityDsl.effects.modifyReserve(modifiers.reserve)
+            });
+        }
+        if(modifiers.claim) {
+            this.persistentEffect({
+                condition: () => this.canProvidePlotModifier['claim'],
+                match: card => card.controller.activePlot === card,
+                targetController: 'current',
+                effect: AbilityDsl.effects.modifyClaim(modifiers.claim)
             });
         }
     }
@@ -388,6 +397,10 @@ class BaseCard {
         return this.keywords.getPrizedValue();
     }
 
+    getKeywordTriggerModifier(keyword) {
+        return this.keywords.getTriggerModifier(keyword);
+    }
+
     hasTrait(trait) {
         if(this.losesAspects.contains('traits')) {
             return false;
@@ -597,6 +610,14 @@ class BaseCard {
         return this.game.currentChallenge.isParticipating(this);
     }
 
+    isDeclaredAsAttacker() {
+        if(!this.game.currentChallenge) {
+            return false;
+        }
+
+        return this.game.currentChallenge.isDeclared(this);
+    }
+
     setCardType(cardType) {
         this.cardTypeSet = cardType;
     }
@@ -636,6 +657,10 @@ class BaseCard {
     removeAbilityRestriction(restriction) {
         this.abilityRestrictions = this.abilityRestrictions.filter(r => r !== restriction);
         this.markAsDirty();
+    }
+
+    modifyKeywordTriggerAmount(keyword, amount) {
+        this.keywords.modifyTriggerAmount(keyword, amount);
     }
 
     addKeyword(keyword) {
@@ -751,7 +776,13 @@ class BaseCard {
         return 'card';
     }
 
-    getShortSummary() {
+    getShortSummary(isVisible = true) {
+        if(!isVisible) {
+            return {
+                facedown: true,
+                shadowPosition: this.location === 'shadows' ? this.controller.shadows.indexOf(this) + 1 : undefined
+            };
+        }
         return {
             code: this.cardData.code,
             label: this.cardData.label,

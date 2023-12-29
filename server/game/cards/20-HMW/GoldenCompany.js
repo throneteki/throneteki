@@ -10,6 +10,7 @@ class GoldenCompany extends DrawCard {
         });
         
         this.interrupt({
+            canCancel: true,
             when: {
                 onCardReturnedToHand: event =>
                     event.allowSave &&

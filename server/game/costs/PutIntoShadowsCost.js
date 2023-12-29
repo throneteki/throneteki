@@ -1,3 +1,4 @@
+const GameActions = require('../GameActions');
 const LeavePlay = require('../GameActions/LeavePlay');
 
 class PutIntoShadowsCost {
@@ -13,9 +14,11 @@ class PutIntoShadowsCost {
     }
 
     pay(cards, context) {
-        for(let card of cards) {
-            context.player.putIntoShadows(card, false);
-        }
+        context.game.resolveGameAction(
+            GameActions.simultaneously(
+                cards.map(card => GameActions.putIntoShadows({ card, reason: 'cost' }))
+            )
+        );
     }
 }
 

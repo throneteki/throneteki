@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 
 class Drogon extends DrawCard {
     setupCardAbilities(ability) {
@@ -11,13 +12,13 @@ class Drogon extends DrawCard {
             when: {
                 afterChallenge: event => event.challenge.winner === this.controller && this.isAttacking()
             },
-            handler: context => {
-                let characters = this.game.currentChallenge.defendingPlayer.filterCardsInPlay(card => card.getType() === 'character' && card.getStrength() <= 1);
-                this.game.killCharacters(characters);
-
-                this.game.addMessage('{0} uses {1} to kill all characters {2} controls with STR 1 or lower',
-                    context.player, this, this.game.currentChallenge.defendingPlayer);
-            }
+            message: {
+                format: '{player} uses {source} to kill each character {defendingPlayer} controls with STR 1 or lower',
+                args: { defendingPlayer: context => context.event.challenge.defendingPlayer }
+            },
+            gameAction: GameActions.simultaneously(context =>
+                context.event.challenge.defendingPlayer.filterCardsInPlay(card => card.getType() === 'character' && card.getStrength() <= 1).map(card => GameActions.kill({ card }))
+            )
         });
     }
 }

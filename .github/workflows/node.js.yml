@@ -1,28 +1,28 @@
 # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
-name: Node.js CI
+name: Check successful build and test
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master", "development-*" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "master", "development-*" ]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [10.x, 12.x]
+        node-version: [14.x, 16.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout source and submodules
+      uses: actions/checkout@v3
       with:
-        submodules: recursive
+          submodules: recursive
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:

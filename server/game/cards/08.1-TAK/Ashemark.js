@@ -1,5 +1,6 @@
 const DrawCard = require('../../drawcard.js');
 const {Tokens} = require('../../Constants');
+const GameActions = require('../../GameActions/index.js');
 
 class Ashemark extends DrawCard {
     setupCardAbilities(ability) {
@@ -11,17 +12,14 @@ class Ashemark extends DrawCard {
                 ability.costs.kneelSelf(),
                 ability.costs.sacrificeSelf()
             ],
-            handler: context => {
-                for(let player of this.game.getPlayers()) {
-                    let characters = player.filterCardsInPlay(card => card.getType() === 'character' && card.hasPrintedCost() && card.getPrintedCost() <= context.cardStateWhenInitiated.tokens.gold);
-                    for(let card of characters) {
-                        card.owner.returnCardToHand(card);
-                    }
-                }
-
-                this.game.addMessage('{0} kneels and sacrifices {1} to return each character with printed cost {2} or less to its owner\'s hand',
-                    context.player, this, context.cardStateWhenInitiated.tokens.gold);
-            }
+            message: {
+                format: '{player} kneels and sacrifices {costs.kneel} to return each character with printed cost {gold} or less to its owner\'s hand',
+                args: { gold: context => context.cardStateWhenInitiated.tokens.gold }
+            },
+            gameAction: GameActions.simultaneously(context => 
+                context.game.filterCardsInPlay(card => card.isMatch({ type: 'character', printedCostOrLower: context.cardStateWhenInitiated.tokens.gold }))
+                    .map(card => GameActions.returnCardToHand({ card }))
+            )
         });
     }
 }

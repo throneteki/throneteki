@@ -12,7 +12,7 @@ class KneelCost {
     pay(cards, context) {
         context.game.resolveGameAction(
             GameActions.simultaneously(
-                cards.map(card => GameActions.kneelCard({ card }))
+                cards.map(card => GameActions.kneelCard({ card, reason: 'cost' }))
             )
         );
     }

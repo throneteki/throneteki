@@ -324,26 +324,17 @@ const Effects = {
             }
         };
     },
-    addStealthLimit: function(value) {
+    modifyKeywordTriggerAmount: function(keyword, value) {
         return {
             apply: function(card) {
-                card.stealthLimit += value;
+                card.modifyKeywordTriggerAmount(keyword, value);
             },
             unapply: function(card) {
-                card.stealthLimit -= value;
+                card.modifyKeywordTriggerAmount(keyword, -value);
             }
         };
     },
-    addPillageLimit: function(value) {
-        return {
-            apply: function(card) {
-                card.pillageLimit += value;
-            },
-            unapply: function(card) {
-                card.pillageLimit -= value;
-            }
-        };
-    },
+    ignoresAssaultLocationCost: challengeOptionEffect('ignoresAssaultLocationCost'),
     addIcon: function(icon) {
         return {
             apply: function(card, context) {
@@ -761,6 +752,10 @@ const Effects = {
         let restriction = (card, playingType) => playingType === 'marshal' && condition(card);
         return this.cannotPutIntoPlay(restriction);
     },
+    cannotBringOutOfShadows: function(condition) {
+        let restriction = (card, playingType) => playingType === 'outOfShadows' && condition(card);
+        return this.cannotPutIntoPlay(restriction);
+    },
     cannotPlay: function(condition) {
         let restriction = (card, playingType) => card.getType() === 'event' && playingType === 'play' && condition(card);
         return this.cannotPutIntoPlay(restriction);
@@ -792,6 +787,7 @@ const Effects = {
             }
         };
     },
+    cannotBeTargetedByAssault: cannotEffect('targetByAssault'),
     cannotBeBypassedByStealth: cannotEffect('bypassByStealth'),
     cannotBeDiscarded: cannotEffect('discard'),
     cannotBeKneeled: cannotEffect('kneel'),
@@ -818,7 +814,8 @@ const Effects = {
         };
     },
     cannotTarget: cannotEffect('target'),
-    cannotAssault: cannotEffect('assault'),
+    cannotTargetUsingAssault: cannotEffect('assault'),
+    cannotTargetUsingStealth: cannotEffect('stealth'),
     setMaxGoldGain: function(max) {
         return {
             targetType: 'player',
@@ -1138,6 +1135,17 @@ const Effects = {
             }
         };
     },
+    cannotGainDominancePower: function() {
+        return {
+            targetType: 'player',
+            apply: function(player) {
+                player.flags.add('cannotGainDominancePower');
+            },
+            unapply: function(player) {
+                player.flags.remove('cannotGainDominancePower');
+            }
+        };
+    },
     canSelectAsFirstPlayer: function(condition) {
         return {
             targetType: 'player',
@@ -1318,14 +1326,14 @@ const Effects = {
             isStateDependent: true
         };
     },
-    mustChooseAsClaim: function(card) {
+    mustChooseAsClaim: function(cardFunc) {
         return {
             targetType: 'player',
             apply: function(player) {
-                player.mustChooseAsClaim.push(card);
+                player.mustChooseAsClaim.push(cardFunc);
             },
             unapply: function(player) {
-                player.mustChooseAsClaim = player.mustChooseAsClaim.filter(c => c !== card);
+                player.mustChooseAsClaim = player.mustChooseAsClaim.filter(c => c !== cardFunc);
             }
         };
     },
@@ -1443,31 +1451,47 @@ const Effects = {
         return {
             targetType: 'player',
             apply: function(player, context) {
-                const shadows = player.shadows;
-                const revealFunc = reveal => shadows.includes(reveal);
+                // making a snapshot of the shadows area through a shallow copy. This way eventual changes to
+                // player.shadows array content (first level) are not reflected in the snapshot
+                const shadows = [...player.shadows];
 
+                // we define the reveal function just once, so it must be bound to the player to keep track of the
+                // content of the shadows area when the function is called by the engine
+                const revealFunc = reveal => player.shadows.includes(reveal);
+                context.game.cardVisibility.addRule(revealFunc);
+
+                // saving in the context a reference to the revealFunc (so we can remove it from the engine when the
+                // effect expires) and the actual snapshot of the cards in the shadows area for which we are resolving
+                // the reveal game action (to avoid a second resolution of the same game action in case of reapply)
                 context.revealShadows = context.revealShadows || {};
                 context.revealShadows[player.name] = {
                     revealFunc,
                     revealed: shadows
                 };
-                context.game.cardVisibility.addRule(revealFunc);
 
-                context.game.resolveGameAction(GameActions.revealCards({
-                    cards: shadows,
-                    player,
-                    revealWithMessage: false,
-                    highlight: false,
-                    source: context.source
-                }), context);
+                // resolving the 'reveal' game action for cards in shadows (if there are any)
+                if(shadows.length > 0) {
+                    context.game.resolveGameAction(GameActions.revealCards({
+                        cards: shadows,
+                        player,
+                        revealWithMessage: false,
+                        highlight: false,
+                        source: context.source
+                    }), context);
+                }
             },
             reapply: function(player, context) {
-                const shadows = player.shadows;
+                // making a snapshot of the shadows area through a shallow copy. This way eventual changes to
+                // player.shadows array content (first level) are not reflected in the snapshot
+                const shadows = [...player.shadows];
+
+                // calculating the newly revealed cards
                 const newReveals = shadows.filter(card => !context.revealShadows[player.name].revealed.includes(card));
 
+                // updating the context reference with the actual snapshot of the cards in the shadows area
                 context.revealShadows[player.name].revealed = shadows;
 
-                // Only trigger reveal event for newly revealed cards
+                // Only trigger reveal event for newly revealed cards (if there are any)
                 if(newReveals.length > 0) {
                     context.game.resolveGameAction(GameActions.revealCards({
                         cards: newReveals,

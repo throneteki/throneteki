@@ -6,8 +6,9 @@ const logger = require('./log.js');
 const GameChat = require('./game/gamechat.js');
 
 class PendingGame {
-    constructor(owner, details) {
+    constructor(owner, instance, details) {
         this.owner = owner;
+        this.instance = instance;
         this.players = {};
         this.spectators = {};
         this.id = uuid.v1();
@@ -27,6 +28,7 @@ class PendingGame {
         this.muteSpectators = details.muteSpectators;
         this.useChessClocks = details.useChessClocks;
         this.chessClockTimeLimit = details.chessClockTimeLimit;
+        this.delayToStartClock = details.delayToStartClock;
         this.started = false;
         this.maxPlayers = 2;
     }
@@ -335,10 +337,23 @@ class PendingGame {
                 deck = {};
             }
 
+            //the agenda and faction should only be sent to the client if
+            //1. the game is NOT private
+            //2. the game hasn´t started yet
+            //3. agenda and faction are actually not undefined
+            let agenda; 
+            if(!this.gamePrivate && this.started && player.agenda) {
+                agenda = player.agenda.cardData.code;
+            }
+            let faction;
+            if(!this.gamePrivate && this.started && player.faction) {
+                faction = player.faction.cardData.code;
+            }
+
             playerSummaries[player.name] = {
-                agenda: this.started && player.agenda ? player.agenda.cardData.code : undefined,
+                agenda: agenda,
                 deck: activePlayer ? deck : {},
-                faction: this.started && player.faction ? player.faction.cardData.code : undefined,
+                faction: faction,
                 id: player.id,
                 left: player.left,
                 name: player.name,
@@ -377,7 +392,8 @@ class PendingGame {
             gameTimeLimit: this.gameTimeLimit,
             muteSpectators: this.muteSpectators,
             useChessClocks: this.useChessClocks,
-            chessClockTimeLimit: this.chessClockTimeLimit
+            chessClockTimeLimit: this.chessClockTimeLimit,
+            delayToStartClock: this.delayToStartClock
         };
     }
 
@@ -404,6 +420,7 @@ class PendingGame {
         }
 
         return {
+            instance: this.instance,
             allowSpectators: this.allowSpectators,
             createdAt: this.createdAt,
             event: this.event,
@@ -422,7 +439,8 @@ class PendingGame {
             gameTimeLimit: this.gameTimeLimit,
             muteSpectators: this.muteSpectators,
             useChessClocks: this.useChessClocks,
-            chessClockTimeLimit: this.chessClockTimeLimit
+            chessClockTimeLimit: this.chessClockTimeLimit,
+            delayToStartClock: this.delayToStartClock
         };
     }
 }

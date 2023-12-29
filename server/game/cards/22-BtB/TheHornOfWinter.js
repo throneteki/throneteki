@@ -12,7 +12,7 @@ class TheHornOfWinter extends DrawCard {
             },
             target: {
                 activePromptTitle: 'Select a location',
-                cardCondition: (card, context) => card.location === 'play area' && card.getType() === 'location' && context.event.challenge.assaultData.some(ad => ad.target === card)
+                cardCondition: card => card.location === 'play area' && card.getType() === 'location' && card.targetedByAssault
             },
             cost: ability.costs.sacrificeSelf(),
             handler: context => {

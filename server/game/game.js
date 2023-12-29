@@ -46,6 +46,7 @@ class Game extends EventEmitter {
     constructor(details, options = {}) {
         super();
 
+        this.instance = details.instance;
         this.event = details.event;
         this.eventName = details.event && details.event.name;
         this.restrictedList = details.restrictedList;
@@ -71,7 +72,7 @@ class Game extends EventEmitter {
         this.gameTimeLimit = details.gameTimeLimit;
         this.useChessClocks = details.useChessClocks;
         this.chessClockTimeLimit = details.chessClockTimeLimit;
-        this.delayToStartClock = 5;
+        this.delayToStartClock = details.delayToStartClock;
         this.clockPaused = false;
         this.timeLimit = new TimeLimit(this);
         this.savedGameId = details.savedGameId;
@@ -119,6 +120,10 @@ class Game extends EventEmitter {
         this.router = options.router;
 
         this.pushAbilityContext({ resolutionStage: 'framework' });
+    }
+
+    isPlaytesting() {
+        return this.instance && this.instance.type === 'playtesting';
     }
 
     reportError(e) {
@@ -1498,7 +1503,8 @@ class Game extends EventEmitter {
             return {
                 name: player.name,
                 deckId: player.deck.id,
-                power: player.getTotalPower()
+                power: player.getTotalPower(),
+                playtested: this.isPlaytesting() ? player.preparedDeck.drawCards.concat(player.preparedDeck.plotCards).filter(card => card.cardData.wip).map(card => card.name) : undefined
             };
         });
 
@@ -1547,7 +1553,8 @@ class Game extends EventEmitter {
                 gameTimeLimitTime: this.timeLimit.timeLimitInSeconds,
                 muteSpectators: this.muteSpectators,
                 useChessClocks: this.useChessClocks,
-                chessClockTimeLimit: this.chessClockTimeLimit
+                chessClockTimeLimit: this.chessClockTimeLimit,
+                delayToStartClock: this.delayToStartClock
             };
         }
 

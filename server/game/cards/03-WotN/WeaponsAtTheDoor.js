@@ -1,3 +1,4 @@
+const GameActions = require('../../GameActions/index.js');
 const PlotCard = require('../../plotcard.js');
 
 class WeaponsAtTheDoor extends PlotCard {
@@ -6,14 +7,11 @@ class WeaponsAtTheDoor extends PlotCard {
             when: {
                 onPhaseStarted: event => event.phase === 'challenge'
             },
-            handler: () => {
-                let attachments = this.game.allCards.filter(card => card.getPrintedType() === 'attachment' && card.parent && !card.facedown);
-                for(let card of attachments) {
-                    card.owner.returnCardToHand(card);
-                }
-
-                this.game.addMessage('{0} uses {1} to force both players to return each card with printed attachment card type to their hand', this.controller, this);
-            }
+            message: '{player} uses {source} to force each player to return each card with printed attachment cardtype to their hand',
+            gameAction: GameActions.simultaneously(context => 
+                context.game.filterCardsInPlay(card => card.getPrintedType() === 'attachment' && card.parent && !card.facedown)
+                    .map(card => GameActions.returnCardToHand({ card }))
+            )
         });
     }
 }

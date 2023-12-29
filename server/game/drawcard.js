@@ -23,8 +23,6 @@ class DrawCard extends BaseCard {
         this.inDanger = false;
         this.saved = false;
         this.challengeOptions = new ReferenceCountedSetProperty();
-        this.stealthLimit = 1;
-        this.pillageLimit = 1;
         this.minCost = 0;
         this.eventPlacementLocation = 'discard pile';
     }
@@ -77,6 +75,7 @@ class DrawCard extends BaseCard {
             abilitySourceType: 'game',
             canCancel: true,
             cannotBeCanceled: true,
+            ignoreEventCosts: true,
             location: 'duplicate',
             when: {
                 onCharacterKilled: dupeCondition,
@@ -148,7 +147,7 @@ class DrawCard extends BaseCard {
     }
 
     isAssault() {
-        return this.hasKeyword('Assault') && this.allowGameAction('assault');
+        return this.hasKeyword('Assault');
     }
 
     isTerminal() {
@@ -197,6 +196,10 @@ class DrawCard extends BaseCard {
 
     getShadowCost() {
         return this.keywords.getShadowCost();
+    }
+
+    getShadowPosition() {
+        return this.location === 'shadows' ? this.controller.shadows.indexOf(this) + 1 : null;
     }
 
     modifyStrength(amount, applying = true) {
@@ -385,8 +388,8 @@ class DrawCard extends BaseCard {
     }
 
     resetForChallenge() {
-        this.stealth = false;
-        this.stealthTarget = undefined;
+        this.bypassedByStealth = false;
+        this.targetedByAssault = false;
         this.inChallenge = false;
         this.isContributing = false;
     }
@@ -413,7 +416,6 @@ class DrawCard extends BaseCard {
         return (
             this.canParticipateInChallenge() &&
             this.location === 'play area' &&
-            !this.stealth &&
             canKneelForChallenge &&
             (this.hasIcon(challengeType) ||
                 this.challengeOptions.contains('canBeDeclaredWithoutIcon'))
@@ -502,7 +504,8 @@ class DrawCard extends BaseCard {
             inDanger: this.inDanger,
             saved: this.saved,
             strength: this.getStrength(),
-            stealth: this.stealth
+            stealth: this.bypassedByStealth,
+            assault: this.targetedByAssault
         });
     }
 }

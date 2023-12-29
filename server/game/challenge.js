@@ -17,6 +17,7 @@ class Challenge {
         this.challengeType = properties.challengeType;
         this.declareDefendersFirst = false;
         this.number = properties.number;
+        this.totalNumber = properties.totalNumber;
         this.attackers = [];
         this.declaredAttackers = [];
         this.attackerStrength = 0;
@@ -24,8 +25,7 @@ class Challenge {
         this.declaredDefenders = [];
         this.defenderStrength = 0;
         this.challengeContributions = new ChallengeContributions();
-        this.stealthData = [];
-        this.assaultData = [];
+        this.initiationActions = [];
         this.events = new EventRegistrar(game, this);
         this.registerEvents(['onCardLeftPlay']);
     }
@@ -119,11 +119,11 @@ class Challenge {
     }
 
     isAttacking(card) {
-        return this.attackers.includes(card);
+        return this.isInitiated && this.attackers.includes(card);
     }
 
     isDefending(card) {
-        return this.defenders.includes(card);
+        return this.isInitiated && this.defenders.includes(card);
     }
 
     isParticipating(card) {
@@ -162,20 +162,12 @@ class Challenge {
         }, 0);
     }
 
-    clearStealthChoices() {
-        this.stealthData = [];
+    addInitiationAction(action, properties) {
+        this.initiationActions.push({ action, properties });
     }
 
-    clearAssaultChoices() {
-        this.assaultData = [];
-    }
-
-    addStealthChoice(source, target) {
-        this.stealthData.push({ source: source, target: target });
-    }
-
-    addAssaultChoice(source, target) {
-        this.assaultData.push({ source: source, target: target });
+    clearInitiationActions() {
+        this.initiationActions = [];
     }
 
     calculateStrength() {

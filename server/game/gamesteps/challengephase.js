@@ -90,7 +90,8 @@ class ChallengePhase extends Phase {
             attackingPlayer: attackingPlayer,
             defendingPlayer: defendingPlayer,
             challengeType: challengeType,
-            number: this.tracker.count({ attackingPlayer }) + 1
+            number: this.tracker.count({ attackingPlayer }) + 1,
+            totalNumber: this.tracker.count({}) + 1
         });
         this.game.currentChallenge = challenge;
         this.game.currentChallengeStep = new ChallengeFlow(this.game, challenge);

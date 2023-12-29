@@ -35,7 +35,10 @@ class TheSeedIsStrong extends DrawCard {
 
     onCardSelected(context, card) {
         this.game.addMessage('{0} discards {1} from their {2}', context.event.winner, card, card.location);
-        GameActions.discardCard({ card });
+        this.game.resolveGameAction(
+            GameActions.discardCard({ card }),
+            context
+        );
         return true;
     }
 

@@ -12,6 +12,7 @@ const logger = require('../log.js');
 const GameSocket = require('./gamesocket');
 const Game = require('../game/game.js');
 const Socket = require('../socket.js');
+const ConfigService = require('../services/ConfigService');
 const version = require('../../version.js');
 const ServiceFactory = require('../services/ServiceFactory.js');
 const jsondiffpatch = require('jsondiffpatch').create({
@@ -43,6 +44,7 @@ if (config.sentryDsn) {
 
 class GameServer {
     constructor() {
+        this.configService = new ConfigService();
         this.games = {};
 
         let configService = ServiceFactory.configService();
@@ -319,7 +321,7 @@ class GameServer {
             return retGame;
         });
 
-        logger.info('syncing', _.size(gameSummaries), ' games');
+        logger.info('syncing %d games', _.size(gameSummaries));
 
         callback(gameSummaries);
     }
@@ -378,7 +380,7 @@ class GameServer {
 
         var game = this.findGameForUser(ioSocket.request.user.username);
         if (!game) {
-            logger.info('No game for', ioSocket.request.user.username, 'disconnecting');
+            logger.info('No game for %s, disconnecting', ioSocket.request.user.username);
             ioSocket.disconnect();
             return;
         }

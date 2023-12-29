@@ -18,6 +18,8 @@ const { sortBy } = require('./Array');
 
 class Lobby {
     constructor(server, options = {}) {
+        this.instance = options.instance;
+
         this.sockets = {};
         this.users = {};
         this.games = {};
@@ -144,7 +146,7 @@ class Lobby {
                 this.userService.getUserById(user._id).then(dbUser => {
                     let socket = this.sockets[ioSocket.id];
                     if(!socket) {
-                        logger.error('Tried to authenticate socket but could not find it', dbUser.username);
+                        logger.error('Tried to authenticate socket but could not find it %s', dbUser.username);
                         return;
                     }
 
@@ -255,7 +257,7 @@ class Lobby {
 
         for(let player of Object.values(game.getPlayersAndSpectators())) {
             if(!this.sockets[player.id]) {
-                logger.info('Wanted to send to ', player.id, ' but have no socket');
+                logger.info('Wanted to send to %s but have no socket', player.id);
                 continue;
             }
 
@@ -278,7 +280,7 @@ class Lobby {
         let staleGames = Object.values(this.games).filter(game => !game.started && Date.now() - game.createdAt > timeout);
 
         for(let game of staleGames) {
-            logger.info('closed pending game', game.id, 'due to inactivity');
+            logger.info('closed pending game %s due to inactivity', game.id);
             delete this.games[game.id];
         }
 
@@ -476,7 +478,7 @@ class Lobby {
                 }
             }
 
-            let game = new PendingGame(socket.user, {event, restrictedList, ...gameDetails});
+            let game = new PendingGame(socket.user, this.instance, {event, restrictedList, ...gameDetails});
             game.newGame(socket.id, socket.user, gameDetails.password, true);
 
             socket.joinChannel(game.id);
@@ -681,7 +683,7 @@ class Lobby {
             return;
         }
 
-        logger.info(socket.user.username, 'closed game', game.id, '(' + game.name + ') forcefully');
+        logger.info(socket.user.username, 'closed game %s (%s) forcefully', game.id, game.name);
 
         if(!game.started) {
             delete this.games[game.id];
@@ -761,19 +763,21 @@ class Lobby {
         delete this.games[gameId];
         this.broadcastGameMessage('removegame', game);
 
-        let newGame = new PendingGame(game.owner, {
+        let newGame = new PendingGame(game.owner, game.instance, {
             name: game.name,
             event: game.event,
             restrictedList: game.restrictedList,
             spectators: game.allowSpectators,
             showHand: game.showHand,
             gameType: game.gameType,
+            gamePrivate: game.gamePrivate,
             isMelee: game.isMelee,
             useRookery: game.useRookery,
             useGameTimeLimit: game.useGameTimeLimit,
             gameTimeLimit: game.gameTimeLimit,
             useChessClocks: game.useChessClocks,
-            chessClockTimeLimit: game.chessClockTimeLimit
+            chessClockTimeLimit: game.chessClockTimeLimit,
+            delayToStartClock: game.delayToStartClock
         });
         newGame.rematch = true;
 
@@ -856,7 +860,7 @@ class Lobby {
             let game = this.findGameForUser(username);
 
             if(game) {
-                logger.info('closed game', game.id, '(' + game.name + ') forcefully due to clear session on', username);
+                logger.info('closed game %s (%s) forcefully due to clear session on %s', game.id, game.name, username);
 
                 if(!game.started) {
                     delete this.games[game.id];
@@ -902,11 +906,11 @@ class Lobby {
             let owner = game.players[game.owner];
 
             if(!owner) {
-                logger.error('Got a game where the owner wasn\'t a player', game.owner);
+                logger.error('Got a game where the owner wasn\'t a player: %s', game.owner);
                 continue;
             }
 
-            let syncGame = new PendingGame(new User(owner.user), { spectators: game.allowSpectators, name: game.name, event: game.event });
+            let syncGame = new PendingGame(new User(owner.user), game.instance, { spectators: game.allowSpectators, name: game.name, event: game.event });
             syncGame.id = game.id;
             syncGame.node = this.router.workers[nodeName];
             syncGame.createdAt = game.startedAt;

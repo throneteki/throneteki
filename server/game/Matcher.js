@@ -4,16 +4,16 @@ class Matcher {
      * the expected value is an array, it returns true if the actual value is
      * contained in that array.
      */
-    static containsValue(expected, actual) {
+    static containsValue(expected, actualFunc) {
         if(expected === undefined) {
             return true;
         }
 
         if(Array.isArray(expected)) {
-            return expected.includes(actual);
+            return expected.includes(actualFunc());
         }
 
-        return expected === actual;
+        return expected === actualFunc();
     }
 
     /**
