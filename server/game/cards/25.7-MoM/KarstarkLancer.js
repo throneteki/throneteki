@@ -23,6 +23,6 @@ class KarstarkLancer extends DrawCard {
 }
 
 KarstarkLancer.code = '25566';
-KarstarkLancer.version = '1.2';
+KarstarkLancer.version = '1.3';
 
 module.exports = KarstarkLancer;
