@@ -5,9 +5,9 @@ class TheLaughingStorm extends DrawCard {
     setupCardAbilities(ability) {
         this.attachmentRestriction({ type: 'location', faction: 'baratheon', controller: 'current', unique: true });
         this.persistentEffect({
-            condition: () => !this.kneeled && this.game.currentPhase === 'challenge',
+            condition: () => !this.kneeled,
             targetLocation: 'hand',
-            effect: ability.effects.cannotBeDiscarded()
+            effect: ability.effects.cannotBeDiscardedAtRandom()
         });
 
         this.reaction({
@@ -27,6 +27,6 @@ class TheLaughingStorm extends DrawCard {
 }
 
 TheLaughingStorm.code = '25509';
-TheLaughingStorm.version = '1.2';
+TheLaughingStorm.version = '1.3';
 
 module.exports = TheLaughingStorm;
