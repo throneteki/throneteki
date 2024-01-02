@@ -6,8 +6,8 @@ class TheMoonDoor extends DrawCard {
         this.persistentEffect({
             targetController: 'current',
             effect: [
-                ability.effects.winsTiesForInitiative(),
-                ability.effects.winsTiesForDominance()
+                ability.effects.choosesWinnerForInitiativeTies(),
+                ability.effects.choosesWinnerForDominanceTies()
             ]
         });
         this.reaction({
@@ -25,6 +25,6 @@ class TheMoonDoor extends DrawCard {
 }
 
 TheMoonDoor.code = '25606';
-TheMoonDoor.version = '2.0';
+TheMoonDoor.version = '2.1';
 
 module.exports = TheMoonDoor;
