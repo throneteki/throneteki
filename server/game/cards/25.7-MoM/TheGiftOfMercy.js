@@ -22,15 +22,22 @@ class TheGiftOfMercy extends AgendaCard {
                 onCardLeftPlay: event => event.card.getType() === 'character' && event.card.tokens[Tokens.valarmorghulis] >= 3
             },
             message: {
-                format: '{player} uses {source} to gain 2 power for their faction from {card} leaving play',
-                args: { card: context => context.event.card }
+                format: '{player} uses {source} to have {players} gain 2 power for their faction from {card} leaving play',
+                args: {
+                    players: context => this.getPlayersNotControlling(context.event.card),
+                    card: context => context.event.card
+                }
             },
-            gameAction: GameActions.gainPower(context => ({ card: context.player.faction, amount: 2 }))
+            gameAction: GameActions.simultaneously(context => this.getPlayersNotControlling(context.event.card).map(player => GameActions.gainPower({ card: player.faction, amount: 2 })))
         });
+    }
+
+    getPlayersNotControlling(card) {
+        return this.game.getPlayers().filter(player => player !== card.controller);
     }
 }
 
 TheGiftOfMercy.code = '25618';
-TheGiftOfMercy.version = '1.3';
+TheGiftOfMercy.version = '1.4';
 
 module.exports = TheGiftOfMercy;

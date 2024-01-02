@@ -806,6 +806,7 @@ const Effects = {
     cannotBeTargetedByAssault: cannotEffect('targetByAssault'),
     cannotBeBypassedByStealth: cannotEffect('bypassByStealth'),
     cannotBeDiscarded: cannotEffect('discard'),
+    cannotBeDiscardedAtRandom: cannotEffect('discardAtRandom'),
     cannotBeKneeled: cannotEffect('kneel'),
     cannotBeStood: cannotEffect('stand'),
     cannotBeKilled: cannotEffect('kill'),
@@ -1101,25 +1102,31 @@ const Effects = {
             }
         };
     },
-    winsTiesForInitiative: function() {
+    choosesWinnerForInitiativeTies: function() {
         return {
             targetType: 'player',
-            apply: function(player) {
-                player.flags.add('winsInitiativeTies');
+            apply: function(player, context) {
+                player.choosesWinnerForInitiativeTies = true;
+                for(let opponent of context.game.getOpponents(player)) {
+                    delete opponent.choosesWinnerForInitiativeTies;
+                }
             },
             unapply: function(player) {
-                player.flags.remove('winsInitiativeTies');
+                delete player.choosesWinnerForInitiativeTies;
             }
         };
     },
-    winsTiesForDominance: function() {
+    choosesWinnerForDominanceTies: function() {
         return {
             targetType: 'player',
-            apply: function(player) {
-                player.flags.add('winsDominanceTies');
+            apply: function(player, context) {
+                player.choosesWinnerForDominanceTies = true;
+                for(let opponent of context.game.getOpponents(player)) {
+                    delete opponent.choosesWinnerForDominanceTies;
+                }
             },
             unapply: function(player) {
-                player.flags.remove('winsDominanceTies');
+                delete player.choosesWinnerForDominanceTies;
             }
         };
     },

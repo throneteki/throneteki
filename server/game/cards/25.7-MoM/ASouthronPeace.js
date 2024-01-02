@@ -33,6 +33,6 @@ class ASouthronPeace extends PlotCard {
 }
 
 ASouthronPeace.code = '25610';
-ASouthronPeace.version = '1.2';
+ASouthronPeace.version = '1.3';
 
 module.exports = ASouthronPeace;

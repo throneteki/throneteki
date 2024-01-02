@@ -5,7 +5,7 @@ class NaughtButAshes extends DrawCard {
         this.action({
             title: 'Give character -X STR',
             target: {
-                cardCondition: { location: 'play area', type: 'character', participating: true, hasAttachments: true }
+                cardCondition: { location: 'play area', type: 'character', participating: true, hasAttachments: false }
             },
             message: {
                 format: '{player} plays {source} to give {target} {amount} STR until the end of the phase',

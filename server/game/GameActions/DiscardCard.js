@@ -22,11 +22,14 @@ class DiscardCard extends GameAction {
         return Message.fragment('discards {card} from {controller}\'s {location}', { card, controller: card.controller, location: card.location });
     }
 
-    canChangeGameState({ card }) {
+    canChangeGameState({ card, isRandom = false, context }) {
         if(card.location === 'play area' && !LeavePlay.allow({ card })) {
             return false;
         }
-
+        // TODO: Probably handle this better, likely separating regular discard from random discard (two separate GameActions)
+        if(isRandom && !card.allowGameAction('discardAtRandom', { card, context })) {
+            return false;
+        }
         return ['draw deck', 'hand', 'play area', 'shadows', 'duplicate', 'underneath'].includes(card.location);
     }
 

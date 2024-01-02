@@ -13,7 +13,7 @@ class AThousandEyesAndOne extends DrawCard {
                     choices: {
                         'Hand': {
                             message: '{player} chooses to look at {opponent}\'s hand',
-                            gameAction: GameActions.lookAtHand(context => ({ player: context.player, opponent: context.opponent, context })).then(this.thenAction())
+                            gameAction: GameActions.lookAtHand(context => ({ player: context.player, opponent: context.opponent, context })).then(context => this.drawCard(context))
                         },
                         'Shadows area': {
                             message: '{player} chooses to look at {opponent}\'s shadows area',
@@ -24,8 +24,8 @@ class AThousandEyesAndOne extends DrawCard {
                                     source: context.source,
                                     revealTargets: true,
                                     cardCondition: card => card.location === 'shadows' && card.controller === context.opponent,
-                                    onSelect: () => this.drawCards(context),
-                                    onCancel: () => this.drawCards(context)
+                                    onSelect: () => this.drawCard(context),
+                                    onCancel: () => this.drawCard(context)
                                 });
                             })
                         }
@@ -35,18 +35,16 @@ class AThousandEyesAndOne extends DrawCard {
         });
     }
 
-    drawCards(context) {
-        this.game.addMessage('Then, {0} and {1} each draw 1 card', context.player, context.opponent);
+    drawCard(context) {
+        this.game.addMessage('Then, {0} draws 1 card', context.player);
         this.game.resolveGameAction(
-            GameActions.simultaneously(context => 
-                [context.player, context.opponent].map(player => GameActions.drawCards({ player, amount: 1 }))
-            ),
+            GameActions.drawCards({ player: context.player, amount: 1 }),
             context
         );
     }
 }
 
 AThousandEyesAndOne.code = '25609';
-AThousandEyesAndOne.version = '1.0';
+AThousandEyesAndOne.version = '1.1';
 
 module.exports = AThousandEyesAndOne;
