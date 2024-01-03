@@ -42,6 +42,7 @@ class DominancePhase extends Phase {
                     },
                     onCancel: () => {
                         // Nobody wins dominance
+                        this.determineWinner(result);
                     }
                 });
         
@@ -51,8 +52,8 @@ class DominancePhase extends Phase {
         } else {
             result.player = potentialWinners[0].player;
             result.difference = distinctSorted[0] - (distinctSorted.length > 1 ? distinctSorted[1] : 0);
+            this.determineWinner(result);
         }
-        this.determineWinner(result);
     }
 
     determineWinner(result) {
