@@ -14,42 +14,41 @@ on:
   workflow_dispatch:
       
 jobs:
-  build-and-deploy:
-    if: github.repository == 'throneteki/throneteki'
+  package:
+    if: github.repository == 'throneteki/throneteki' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout to the branch
-        uses: actions/checkout@v2
-        with:
-          submodules: 'true'
-      - name: Azure Login
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.LOBBY_AZURE_CREDENTIALS }}
-
-      - name: Build and push lobby container image to registry
-        uses: azure/container-apps-deploy-action@v2
-        with:
-          appSourcePath: ${{ github.workspace }} 
-          registryUrl: docker.io
-          registryUsername: ${{ secrets.LOBBY_REGISTRY_USERNAME }}
-          registryPassword: ${{ secrets.LOBBY_REGISTRY_PASSWORD }}
-          containerAppName: lobbyapp
-          resourceGroup: TheIronThrone
-          imageToBuild: cryogen/throneteki-lobby:${{ github.sha }}
-
-      - name: Build and push game node container image to registry
-        uses: azure/container-apps-deploy-action@v2
-        with:
-          appSourcePath: ${{ github.workspace }} 
-          dockerfilePath: server/gamenode/Dockerfile
-          registryUrl: docker.io
-          registryUsername: ${{ secrets.LOBBY_REGISTRY_USERNAME }}
-          registryPassword: ${{ secrets.LOBBY_REGISTRY_PASSWORD }}
-          containerAppName: nodeapp
-          resourceGroup: TheIronThrone
-          imageToBuild: cryogen/throneteki-node:${{ github.sha }}
+    - name: Checkout source and submodules
+      uses: actions/checkout@v3
+      with:
+         fetch-depth: '0'
+         submodules: recursive
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+    - name: Login to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_PASSWORD }}
+    - uses: actions/setup-node@v3
+      with:
+        node-version: lts/*
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v0.9.14
+      with:
+        versionSpec: 5.x
+    - id: determine_version
+      name: Determine Version
+      uses: gittools/actions/gitversion/execute@v0.9.14
+      with:
+        additionalArguments: /overrideconfig mode=Mainline
+    - name: Build and push
+      uses: docker/build-push-action@v3
+      with:
+        push: true
+        tags: cryogen/throneteki:lobby-${{ steps.determine_version.outputs.semVer }}    
 
      
 
