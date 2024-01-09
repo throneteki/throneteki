@@ -48,7 +48,7 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         push: true
-        tags: cryogen/throneteki:lobby-${{ steps.determine_version.outputs.semVer }}    
+        tags: cryogen/throneteki-lobby:${{ steps.determine_version.outputs.semVer }}    
 
      
 
