@@ -29,26 +29,19 @@ class SamwellTarly extends DrawCard {
                 handler: thenContext => {
                     if(thenContext.targets.cardInHand) {
                         this.game.addMessage('{0} swaps a card from hand with a card in their deck', thenContext.player);
-                        thenContext.player.moveCard(thenContext.targets.cardInHand, 'draw deck');
-                        thenContext.player.moveCard(thenContext.targets.cardInDeck, 'hand');
+                        this.game.resolveGameAction(
+                            GameActions.simultaneously([
+                                GameActions.placeCard({ card: thenContext.targets.cardInHand, location: 'draw deck'}),
+                                GameActions.placeCard({ card: thenContext.targets.cardInDeck, location: 'hand' })
+                            ])
+                        );
                     }
                 }
             }).then({
-                target: {
-                    type: 'select',
-                    mode: 'exactly',
-                    numCards: 4,
-                    activePromptTitle: 'Select order (top first)',
-                    cardCondition: (card, context) => context.player.drawDeck.slice(0, 4).includes(card),
-                    revealTargets: true
-                },
-                message: 'Then {player} reorders the top cards of their deck',
-                handler: thenContext => {
-                    const cards = [...thenContext.target].reverse();
-                    for(const card of cards) {
-                        thenContext.player.moveCard(card, 'draw deck');
-                    }
-                }
+                message: 'Then, {player} reorders the top cards of their deck',
+                gameAction: GameActions.simultaneously(context => 
+                    context.player.drawDeck.slice(0, 4).map(card => GameActions.placeCard({ card, location: 'draw deck' }))
+                )
             })
         });
     }

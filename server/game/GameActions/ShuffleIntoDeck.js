@@ -14,7 +14,7 @@ class ShuffleIntoDeck extends GameAction {
     createEvent({ cards, allowSave = true }) {
         return this.event('onCardsShuffledIntoDeck', { cards }, event => {
             for(const card of event.cards) {
-                event.thenAttachEvent(ReturnCardToDeck.createEvent({card, allowSave}));
+                event.thenAttachEvent(ReturnCardToDeck.createEvent({ card, allowSave, orderable: false }));
             }
             event.thenAttachEvent(this.createShuffleSequenceEvent(event.cards));
         });

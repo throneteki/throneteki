@@ -92,11 +92,11 @@ describe('Valar Morghulis', function() {
             });
 
             it('should not prompt to choose dead pile order if only one character will die', function() {
-                expect(this.player1).not.toHavePrompt('Select order to place cards in dead pile (top first)');
+                expect(this.player1).not.toHavePrompt('Select order to place cards in your dead pile (top first)');
             });
 
             it('should prompt to choose dead pile order for multiple characters', function() {
-                expect(this.player2).toHavePrompt('Select order to place cards in dead pile (top first)');
+                expect(this.player2).toHavePrompt('Select order to place cards in your dead pile (top first)');
             });
 
             it('should allow dead pile order to be chosen', function() {

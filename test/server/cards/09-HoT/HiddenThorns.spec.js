@@ -39,6 +39,9 @@ describe('Hidden Thorns', function() {
                 this.player2.clickCard(this.card1);
                 this.player2.clickCard(this.card2);
                 this.player2.clickPrompt('Done');
+
+                // Skip order of discarded cards
+                this.player2.clickPrompt('Done');
             });
 
             it('should discard the cards', function() {
@@ -61,6 +64,9 @@ describe('Hidden Thorns', function() {
 
                 this.player2.clickCard(this.card1);
                 this.player2.clickCard(this.card2);
+                this.player2.clickPrompt('Done');
+                
+                // Skip order of discarded cards
                 this.player2.clickPrompt('Done');
             });
 

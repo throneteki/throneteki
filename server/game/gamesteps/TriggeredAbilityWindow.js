@@ -47,7 +47,7 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
         let unclickableCards = cardsForPlayer.filter(card => card.location === 'draw deck');
 
         this.game.promptForSelect(player, {
-            activePromptTitle: TriggeredAbilityWindowTitles.getTitle(this.abilityType, this.event.getPrimaryEvent()),
+            activePromptTitle: TriggeredAbilityWindowTitles.getTitle(this.abilityType, this.event.getPrimaryEvents()),
             isCardEffect: false,
             cardCondition: card => cardsForPlayer.includes(card),
             cardType: ['agenda', 'attachment', 'character', 'event', 'location', 'plot', 'title'],
