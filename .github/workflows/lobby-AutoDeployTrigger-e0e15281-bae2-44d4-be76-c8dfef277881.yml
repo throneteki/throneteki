@@ -48,13 +48,13 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         push: true
-        tags: cryogen/throneteki-lobby:latest cryogen/throneteki-lobby:${{ steps.determine_version.outputs.semVer }}   
+        tags: cryogen/throneteki-lobby:latest, cryogen/throneteki-lobby:${{ steps.determine_version.outputs.semVer }}   
     - name: Build and push node
       uses: docker/build-push-action@v3
       with:
         push: true
         file: server/gamenode/Dockerfile
-        tags: cryogen/throneteki-node:latest cryogen/throneteki-node:${{ steps.determine_version.outputs.semVer }} 
+        tags: cryogen/throneteki-node:latest, cryogen/throneteki-node:${{ steps.determine_version.outputs.semVer }} 
 
      
 
