@@ -20,6 +20,7 @@ class HowToPlay extends React.Component {
                                 <li><a href='#action'>Action Windows</a></li>
                                 <li><a href='#timed'>Timed Interrupt Window</a></li>
                             </ul>
+                            <li><a href='#framework-timing-sheet'>Framework Timing Sheet</a></li>
                             <li><a href='#bugs'>Bugs and Automation</a></li>
                             <li><a href='#interactions'>Specific Card Interactions</a></li>
                             <ul className='htp-sub-list'>
@@ -49,6 +50,11 @@ class HowToPlay extends React.Component {
                             <p>The combination of automated gameplay and the ability to play reactions or interrupts from hand has the potential to “leak” information about what your opponent might hold in his hand. For example: if after playing an event there is a pause before it resolves, you might guess correctly that was due to your opponent being prompted to use The Hand’s Judgment. The three most notable cards that would be leaked this way are <a target='_blank' href='https://thronesdb.com/card/01045'>The Hand's Judgment</a>, <a target='_blank' href='https://thronesdb.com/card/01102'>Treachery</a> and <a target='_blank' href='https://thronesdb.com/card/02096'>Vengeance for Elia</a>. To solve this issue, the Timed Interrupt Window was created. Depending on which options you have checked, you get a timed prompt during certain triggers asking for interrupts whether you are able to interrupt these triggers or not. Now your opponent experiences the same pause any time and won’t be able to correctly guess whether you’re holding certain cards anymore.</p>
                             <p>There are a couple of options: you can decide whether you want to always be prompted for triggered card abilities (useful if you’re playing Treachery), events (useful if you’re playing The Hand’s Judgment, The Pack Survives, etc.) or both. Claim (useful if you’re playing Vengeance for Elia) is currently combined with the event option. The timer duration can be modified too. Obviously, if you don’t care about leaking cards from your hand (or you don’t play these cards anyway) and just want a quick game, deselecting both options will allow for that. You will still get prompted to use the aforementioned cards, but only when you actually have them.</p>
                         </div>
+                    </div>
+                    <div className='htp-topic'>
+                        <h3 className='htp-title' id='framework-timing-sheet'>Framework Timing Sheet</h3>
+                        <p>Below you will find a sheet summarizing the framework and the timings of the game in a quick reference:</p>
+                        <img src='/img/AGOT-2nd-Ed-framework-timing-sheet.jpg' className='img-framework-timing-sheet'/>
                     </div>
                     <div className='htp-topic'>
                         <h3 className='htp-title' id='bugs'>Bugs and automation</h3>
