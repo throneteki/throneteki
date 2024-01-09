@@ -293,11 +293,11 @@ class InnerCard extends React.Component {
         let content = this.props.connectDragSource(
             <div className='card-frame'>
                 { this.getDragFrame(image) }
-                { this.getCardOrder() }
                 <div className={ cardClass }
                     onMouseOver={ this.props.disableMouseOver ? null : this.onMouseOver.bind(this, this.props.card) }
                     onMouseOut={ this.props.disableMouseOver ? null : this.onMouseOut }
                     onClick={ ev => this.onClick(ev, this.props.card) }>
+                    { this.getCardOrder() }
                     <div>
                         <span className='card-name'>{ this.props.card.name }</span>
                         { image }
