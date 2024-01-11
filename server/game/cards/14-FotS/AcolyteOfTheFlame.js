@@ -44,7 +44,7 @@ class AcolyteOfTheFlame extends DrawCard {
         this.game.addMessage('Then {0} places the top 2 cards on the bottom of {1}\'s deck for {2}', this.context.player, this.context.opponent, this);
         this.game.resolveGameAction(
             GameActions.simultaneously(topCards.map(card => (
-                GameActions.placeCard({ card, location: 'draw deck', bottom: true })
+                GameActions.placeCard({ card, location: 'draw deck', bottom: true, orderable: false })
             )))
         );
 
