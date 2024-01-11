@@ -14,7 +14,7 @@ class GroupedCardEvent extends Event {
     removeCard(card) {
         this.cards = this.cards.filter(c => c !== card);
 
-        let primaryEvents = this.childEvents.map(event => event.getPrimaryEvent());
+        let primaryEvents = this.childEvents.map(event => event.getPrimaryEvents()[0]);
         for(let event of primaryEvents) {
             if(event.card === card) {
                 event.cancel();

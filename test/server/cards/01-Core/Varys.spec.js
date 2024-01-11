@@ -30,6 +30,8 @@ describe('Varys (Core)', function() {
                 this.completeChallengesPhase();
 
                 this.player1.triggerAbility('Varys');
+                // Skip order prompt
+                this.player2.clickPrompt('Done');
             });
 
             it('should cause all cards to be discarded simultaneously', function() {

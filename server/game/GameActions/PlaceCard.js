@@ -18,8 +18,8 @@ class PlaceCard extends GameAction {
         return card.location !== location;
     }
 
-    createEvent({ card, player, location, bottom = false }) {
-        return MoveCardEventGenerator.createPlaceCardEvent({ card, player, location, bottom });
+    createEvent({ card, player, location, bottom = false, orderable }) {
+        return MoveCardEventGenerator.createPlaceCardEvent({ card, player, location, bottom, orderable });
     }
 }
 

@@ -10,10 +10,10 @@ describe('ForcedTriggeredAbilityWindow', function() {
         this.gameSpy = jasmine.createSpyObj('game', ['getFirstPlayer', 'promptWithMenu', 'resolveAbility']);
         this.gameSpy.getFirstPlayer.and.returnValue(this.player1Spy);
 
-        this.eventSpy = jasmine.createSpyObj('event', ['emitTo', 'getConcurrentEvents', 'getPrimaryEvent']);
+        this.eventSpy = jasmine.createSpyObj('event', ['emitTo', 'getConcurrentEvents', 'getPrimaryEvents']);
         this.eventSpy.attachedEvents = [];
         this.eventSpy.getConcurrentEvents.and.returnValue([this.eventSpy]);
-        this.eventSpy.getPrimaryEvent.and.returnValue(this.eventSpy);
+        this.eventSpy.getPrimaryEvents.and.returnValue([this.eventSpy]);
 
         this.window = new ForcedTriggeredAbilityWindow(this.gameSpy, {
             event: this.eventSpy,

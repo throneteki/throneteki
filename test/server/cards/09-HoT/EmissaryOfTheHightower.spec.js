@@ -70,6 +70,9 @@ describe('Emissary of the Hightower', function() {
                 this.player2.clickCard('Varys', 'hand');
                 this.player2.clickPrompt('Done');
 
+                // Skip order of discarded cards
+                this.player2.clickPrompt('Done');
+
                 this.player1.clickPrompt('Apply Claim');
                 this.completeChallengesPhase();
             });

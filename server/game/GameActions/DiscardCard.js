@@ -15,8 +15,8 @@ class DiscardCard extends GameAction {
         return ['draw deck', 'hand', 'play area', 'shadows', 'duplicate', 'underneath'].includes(card.location);
     }
 
-    createEvent({ card, allowSave = true, isPillage = false, source }) {
-        return MoveCardEventGenerator.createDiscardCardEvent({ card, allowSave, isPillage, source });
+    createEvent({ card, allowSave = true, isPillage = false, source, orderable }) {
+        return MoveCardEventGenerator.createDiscardCardEvent({ card, allowSave, isPillage, source, orderable });
     }
 }
 
