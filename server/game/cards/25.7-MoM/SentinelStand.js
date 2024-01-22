@@ -11,6 +11,6 @@ class SentinelStand extends DrawCard {
 }
 
 SentinelStand.code = '25555';
-SentinelStand.version = '1.0';
+SentinelStand.version = '1.1';
 
 module.exports = SentinelStand;
