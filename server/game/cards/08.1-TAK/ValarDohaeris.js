@@ -13,67 +13,31 @@ class ValarDohaeris extends PlotCard {
                 cardStat: card => card.getPrintedCost(),
                 cardCondition: (card, context) => card.location === 'play area' && card.controller === context.choosingPlayer && card.getType() === 'character'
             },
-            handler: context => {
-                this.promptPlayersForOrder(context.targets.selections);
-            }
-        });
-    }
-
-    promptPlayersForOrder(selections) {
-        let toMove = [];
-
-        for(let selection of selections) {
-            let player = selection.choosingPlayer;
-            let cardsInPlay = player.filterCardsInPlay(card => card.getType() === 'character' && card.allowGameAction('returnCardToDeck'));
-            let selectedCards = selection.value || [];
-            let playerSpecificToMove = cardsInPlay.filter(card => !selectedCards.includes(card));
-            toMove = toMove.concat(playerSpecificToMove);
-        }
-
-        for(let player of this.game.getPlayersInFirstPlayerOrder()) {
-            let cardsOwnedByPlayer = toMove.filter(card => card.owner === player);
-
-            if(cardsOwnedByPlayer.length >= 2) {
-                this.game.promptForSelect(player, {
-                    ordered: true,
-                    mode: 'exactly',
-                    numCards: cardsOwnedByPlayer.length,
-                    activePromptTitle: 'Select bottom deck order (last chosen ends up on bottom)',
-                    cardCondition: card => cardsOwnedByPlayer.includes(card),
-                    onSelect: (player, selectedCards) => {
-                        toMove = toMove.filter(card => card.owner !== player).concat(selectedCards);
-
-                        return true;
+            message: context => {
+                const toBeMoved = this.toBeMoved(context);
+                context.targets.selections.map(selection => selection.choosingPlayer).forEach(player => {
+                    const cards = toBeMoved.filter(card => card.owner === player);
+                    if(cards.length > 0) {
+                        this.game.addMessage('{0} moves {1} to the bottom of their deck for {2}', player, cards, context.source);
+                    } else {
+                        this.game.addMessage('{0} does not have any cards moved to the bottom of their deck for {1}', player, context.source);
                     }
                 });
+            },
+            handler: context => {
+                this.game.resolveGameAction(
+                    GameActions.simultaneously(context =>
+                        this.toBeMoved(context).map(card => GameActions.returnCardToDeck({ card, bottom: true, allowSave: false }))
+                    ),
+                    context
+                );
             }
-        }
-
-        this.game.queueSimpleStep(() => {
-            this.moveCardsToBottom(toMove);
         });
     }
 
-    moveCardsToBottom(toMove) {
-        let gameActions = [];
-
-        for(let player of this.game.getPlayersInFirstPlayerOrder()) {
-            let cardsOwnedByPlayer = toMove.filter(card => card.owner === player);
-
-            if(cardsOwnedByPlayer.length !== 0) {
-                for(let card of cardsOwnedByPlayer) {
-                    gameActions.push(GameActions.returnCardToDeck({ card, bottom: true, allowSave: false }));
-                }
-
-                this.game.addMessage('{0} moves {1} to the bottom of their deck for {2}',
-                    player, cardsOwnedByPlayer, this);
-            } else {
-                this.game.addMessage('{0} does not have any characters moved to the bottom of their deck for {1}',
-                    player, this);
-            }
-        }
-
-        this.game.resolveGameAction(GameActions.simultaneously(gameActions));
+    toBeMoved(context) {
+        const targets = context.targets.getTargets();
+        return this.game.filterCardsInPlay(card => card.getType() === 'character' && !targets.includes(card));
     }
 }
 

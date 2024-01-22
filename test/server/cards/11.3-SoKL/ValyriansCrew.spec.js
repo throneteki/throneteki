@@ -66,6 +66,8 @@ describe('Valyrian\'s Crew', function() {
                     this.completeChallengesPhase();
 
                     this.player2.discardToReserve();
+                    // Skip order of discarded cards
+                    this.player2.clickPrompt('Done');
 
                     this.player1.selectPlot('A Noble Cause');
                     this.player2.selectPlot('Blood of the Dragon');
@@ -96,6 +98,8 @@ describe('Valyrian\'s Crew', function() {
                     this.completeChallengesPhase();
 
                     this.player2.discardToReserve();
+                    // Skip order of discarded cards
+                    this.player2.clickPrompt('Done');
 
                     this.player1.selectPlot('A Noble Cause');
                     this.player2.selectPlot('A Noble Cause');
@@ -141,6 +145,8 @@ describe('Valyrian\'s Crew', function() {
 
                 this.completeChallengesPhase();
                 this.player2.discardToReserve();
+                // Skip order of discarded cards
+                this.player2.clickPrompt('Done');
 
                 this.player1.selectPlot('A Noble Cause');
                 this.player2.selectPlot('A Noble Cause');

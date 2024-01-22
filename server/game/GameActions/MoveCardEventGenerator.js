@@ -1,6 +1,7 @@
 const AtomicEvent = require('../AtomicEvent');
 const BestowPrompt = require('../gamesteps/bestowprompt');
 const Event = require('../event');
+const orderableLocatons = ['draw deck', 'shadows', 'discard pile', 'dead pile'];
 
 class MoveCardEventGenerator {
     createLeavePlayEvent({ card, allowSave = false }) {
@@ -38,7 +39,7 @@ class MoveCardEventGenerator {
         });
     }
 
-    createDiscardCardEvent({ card, allowSave = true, isPillage = false, isRandom = false, source }) {
+    createDiscardCardEvent({ card, allowSave = true, isPillage = false, isRandom = false, source, orderable }) {
         let params = {
             card: card,
             allowSave: allowSave,
@@ -49,7 +50,7 @@ class MoveCardEventGenerator {
             snapshotName: 'cardStateWhenDiscarded'
         };
         const discardEvent = this.event('onCardDiscarded', params, event => {
-            event.thenAttachEvent(this.createPlaceCardEvent({ card: event.card, player: event.card.controller, location: 'discard pile' }));
+            event.thenAttachEvent(this.createPlaceCardEvent({ card: event.card, player: event.card.controller, location: 'discard pile', orderable }));
         });
 
         if(['play area', 'duplicate'].includes(card.location)) {
@@ -82,9 +83,9 @@ class MoveCardEventGenerator {
         return returnEvent;
     }
 
-    createPlaceCardEvent({ card, player, location, bottom = false }) {
+    createPlaceCardEvent({ card, player, location, bottom = false, orderable = orderableLocatons.includes(location) }) {
         player = player || card.controller;
-        return this.event('onCardPlaced', { card, location, player, bottom }, event => {
+        return this.event('onCardPlaced', { card, location, player, bottom, orderable }, event => {
             const actualPlayer = event.location !== 'play area' ? event.card.owner : event.player;
             actualPlayer.placeCardInPile({ card, location, bottom });
         });

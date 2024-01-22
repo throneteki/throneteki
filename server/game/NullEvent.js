@@ -2,6 +2,7 @@ class NullEvent {
     constructor() {
         this.attachedEvents = [];
         this.cancelled = false;
+        this.invalid = false;
     }
 
     get resolved() {
@@ -25,6 +26,10 @@ class NullEvent {
     replaceHandler() {
     }
 
+    checkExecuteValidity() {
+        this.invalid = true;
+    }
+
     executeHandler() {
     }
 
@@ -35,8 +40,8 @@ class NullEvent {
         return [this];
     }
 
-    getPrimaryEvent() {
-        return this;
+    getPrimaryEvents() {
+        return [this];
     }
 
     thenAttachEvent() {

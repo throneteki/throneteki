@@ -36,7 +36,7 @@ class ForcedTriggeredAbilityWindow extends BaseAbilityWindow {
 
         this.game.promptWithMenu(this.game.getFirstPlayer(), this, {
             activePrompt: {
-                menuTitle: TriggeredAbilityWindowTitles.getTitle(this.abilityType, this.event.getPrimaryEvent()),
+                menuTitle: TriggeredAbilityWindowTitles.getTitle(this.abilityType, this.event.getPrimaryEvents()),
                 buttons: buttons
             },
             waitingPromptTitle: 'Waiting for opponents to resolve forced abilities'

@@ -23,7 +23,7 @@ class DiscardTopCards extends GameAction {
         return this.event('onTopCardsDiscarded', params, event => {
             event.topCards = event.player.drawDeck.slice(0, event.amount);
             for(const card of event.topCards) {
-                event.thenAttachEvent(DiscardCard.createEvent({ card, isPillage: event.isPillage, source: event.source }));
+                event.thenAttachEvent(DiscardCard.createEvent({ card, isPillage: event.isPillage, source: event.source, orderable: false }));
             }
         });
     }
