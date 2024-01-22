@@ -6,7 +6,7 @@ class OpenRevolt extends PlotCard {
     setupCardAbilities() {
         this.tracker = ChallengeTracker.forPhase(this.game);
 
-        const amountToGain = context => context.player.outOfGamePile.filter(card => card.isMatch({ type: 'plot', trait: ['Scheme', 'War'] })).length >= 3 ? 4 : 2;
+        const amountToGain = context => context.player.outOfGamePile.filter(card => card.isMatch({ type: 'plot', trait: 'Scheme' })).length >= 3 ? 4 : 2;
         this.interrupt({
             when: {
                 onPhaseEnded: event => event.phase === 'challenge' && this.tracker.count({ challengeType: 'intrigue', loser: this.controller }) === 0
@@ -24,6 +24,6 @@ class OpenRevolt extends PlotCard {
 }
 
 OpenRevolt.code = '25617';
-OpenRevolt.version = '1.1';
+OpenRevolt.version = '1.2';
 
 module.exports = OpenRevolt;
