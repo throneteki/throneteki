@@ -34,7 +34,7 @@ class DiscardCard extends GameAction {
     }
 
     createEvent({ card, allowSave = true, isPillage = false, isRandom = false, source, orderable }) {
-        return MoveCardEventGenerator.createDiscardCardEvent({ card, allowSave, isPillage, source, orderable });
+        return MoveCardEventGenerator.createDiscardCardEvent({ card, allowSave, isPillage, source, isRandom, orderable });
     }
 }
 
