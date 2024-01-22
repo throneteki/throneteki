@@ -98,6 +98,7 @@ class Player extends Spectator {
         }
 
         this.promptState = new PlayerPromptState();
+        this.mustShowPlotSelection = [];
     }
 
     createDefaultPlayableLocations() {
@@ -161,11 +162,11 @@ class Player extends Spectator {
     }
 
     getNumberOfUsedPlots() {
-        return this.plotDiscard.length + this.usedPlotsModifier + this.usedPlotsModifierByTrait.getValues().reduce((sum, entry) => sum + this.usedPlotsModifierByTrait.getCountForReference(entry), 0);
+        return Math.max(this.plotDiscard.length + this.usedPlotsModifier + this.usedPlotsModifierByTrait.getValues().reduce((sum, entry) => sum + this.usedPlotsModifierByTrait.getCountForReference(entry), 0), 0);
     }
 
     getNumberOfUsedPlotsByTrait(trait) {
-        return this.plotDiscard.filter(card => card.hasTrait(trait)).length + this.usedPlotsModifierByTrait.getCountForReference(trait);
+        return Math.max(this.plotDiscard.filter(card => card.hasTrait(trait)).length + this.usedPlotsModifierByTrait.getCountForReference(trait), 0);
     }
 
     getTraitsOfUsedPlots() {
@@ -308,7 +309,7 @@ class Player extends Spectator {
         this.discardCards(cards, false, discarded => {
             this.game.addMessage('{0} discards {1} at random', this, discarded);
             callback(discarded);
-        });
+        }, { isRandom: true });
     }
 
     canInitiateChallenge(challengeType, opponent) {
@@ -316,7 +317,23 @@ class Player extends Spectator {
             return false;
         }
 
-        return this.challenges.canInitiate(challengeType, opponent);
+        if(this.nextChallengeOpponent && this.nextChallengeOpponent !== opponent) {
+            return false;
+        }
+
+        if(this.nextChallengeType && this.canInitiateChallengeInternal(this.nextChallengeType, opponent)) {
+            return challengeType === this.nextChallengeType;
+        }
+
+        return this.canInitiateChallengeInternal(challengeType, opponent);
+    }
+
+    canInitiateChallengeInternal(challengeType, opponent) {
+        if(!this.challenges.canInitiate(challengeType, opponent)) {
+            return false;
+        }
+
+        return this.anyCardsInPlay(card => card.canParticipate({ attacking: true, challengeType }));
     }
 
     canGainGold() {
@@ -889,6 +906,7 @@ class Player extends Spectator {
                 card,
                 allowSave,
                 isPillage: options.isPillage,
+                isRandom: options.isRandom,
                 source: options.source,
                 force: options.force
             }))
@@ -1305,7 +1323,8 @@ class Player extends Spectator {
             name: this.name,
             numPlotCards: this.plotDeck.length,
             phase: this.game.currentPhase,
-            plotSelected: !!this.selectedPlot,
+            selectedPlot: this.selectedPlot ? this.selectedPlot.getSummary(activePlayer) : undefined,
+            mustShowPlotSelection: this.mustShowPlotSelection.includes(activePlayer),
             promptedActionWindows: this.promptedActionWindows,
             promptDupes: this.promptDupes,
             revealTopCard: this.isRevealingTopOfDeck(),

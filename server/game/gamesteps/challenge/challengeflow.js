@@ -40,7 +40,6 @@ class ChallengeFlow extends BaseStep {
             attacking: true,
             challenge: this.challenge,
             cannotCancel: this.challenge.declareDefendersFirst,
-            gameAction: 'declareAsAttacker',
             mustBeDeclaredOption: 'mustBeDeclaredAsAttacker',
             limitsProperty: 'attackerLimits',
             activePromptTitle: 'Select challenge attackers',
@@ -57,7 +56,6 @@ class ChallengeFlow extends BaseStep {
         this.defenderPrompt = new ChooseParticipantsPrompt(this.game, this.challenge.defendingPlayer, {
             attacking: false,
             challenge: this.challenge,
-            gameAction: 'declareAsDefender',
             mustBeDeclaredOption: 'mustBeDeclaredAsDefender',
             limitsProperty: 'defenderLimits',
             activePromptTitle: 'Select defenders',
@@ -113,27 +111,8 @@ class ChallengeFlow extends BaseStep {
         if(this.challenge.isSinglePlayer || !this.challenge.declareDefendersFirst) {
             return;
         }
-
-        if(!this.challenge.attackingPlayer.anyCardsInPlay(card => this.attackerPrompt.canParticipate(card))) {
-            this.game.promptWithMenu(this.challenge.attackingPlayer, this, {
-                activePrompt: {
-                    menuTitle: 'You do not control enough elibile characters to legally initiate this challenge. Do you want to continue with defenders being declared anyway?',
-                    buttons: [
-                        { text: 'Yes', method: 'illegallyPromptForDefenders' },
-                        { text: 'No', method: 'cancelChallenge' }
-                    ]
-                },
-                source: this
-            });
-        } else {
-            this.game.queueStep(this.defenderPrompt);
-        }
-    }
-
-    illegallyPromptForDefenders() {
-        this.game.addAlert('danger', '{0} does not control enough eligible characters to legally initiate this challenge, but has chosen to continue with declaring defenders anyway', this.challenge.attackingPlayer);
+        
         this.game.queueStep(this.defenderPrompt);
-        return true;
     }
 
     promptForDefenders() {

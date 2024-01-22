@@ -7,7 +7,7 @@ describe('Ser Gregor Clegane (TKP)', function () {
             ]);
             const deck2 = this.buildDeck('baratheon', [
                 'Sneak Attack',
-                'Hedge Knight', 'Maester Cressen', 'Hedge Knight', 'Shireen Baratheon (Core)', 'The Roseroad'
+                'Hedge Knight', 'Maester Cressen (Core)', 'Hedge Knight', 'Shireen Baratheon (Core)', 'The Roseroad'
             ]);
             this.player1.selectDeck(deck1);
             this.player2.selectDeck(deck2);
@@ -23,7 +23,7 @@ describe('Ser Gregor Clegane (TKP)', function () {
 
             this.shireen = this.player2.findCardByName('Shireen Baratheon (Core)', 'play area');
             this.roseroad = this.player2.findCardByName('The Roseroad', 'hand');
-            this.cressen = this.player2.findCardByName('Maester Cressen', 'hand');
+            this.cressen = this.player2.findCardByName('Maester Cressen (Core)', 'hand');
             this.knight = this.player2.findCardByName('Hedge Knight', 'hand');
         });
 

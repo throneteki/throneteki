@@ -49,7 +49,7 @@ describe('Hand of the King', function () {
             beforeEach(function () {
                 const deck = this.buildDeck('stark', [
                     'Sailing the Summer Sea',
-                    'Bastard in Hiding', 'Shireen Baratheon (Core)'
+                    'Bastard in Hiding', 'Bastard in Hiding', 'Shireen Baratheon (Core)'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
@@ -57,6 +57,7 @@ describe('Hand of the King', function () {
                 this.startGame();
                 this.keepStartingHands();
 
+                this.player1.clickCard('Bastard in Hiding', 'hand');
                 this.player1.clickCard('Bastard in Hiding', 'hand');
                 this.player1.clickCard('Shireen Baratheon (Core)', 'hand');
 

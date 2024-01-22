@@ -10,6 +10,12 @@ class PlotCard extends BaseCard {
         this.initiativeModifier = 0;
         this.claimModifier = 0;
         this.claimSet = undefined;
+        this.printedValues = {
+            claim: [cardData.plotStats.claim],
+            income: [cardData.plotStats.income],
+            initiative: [cardData.plotStats.initiative],
+            reserve: [cardData.plotStats.reserve]
+        };
     }
 
     whenRevealed(properties) {
@@ -33,7 +39,7 @@ class PlotCard extends BaseCard {
     }
 
     getPrintedInitiative() {
-        return this.getPrintedNumberFor(this.cardData.plotStats.initiative);
+        return this.getPrintedNumberFor(this.printedValues.initiative[this.printedValues.initiative.length - 1]);
     }
 
     getIncome() {
@@ -43,7 +49,7 @@ class PlotCard extends BaseCard {
     }
 
     getPrintedIncome() {
-        return this.getPrintedNumberFor(this.cardData.plotStats.income);
+        return this.getPrintedNumberFor(this.printedValues.income[this.printedValues.income.length - 1]);
     }
 
     getReserve() {
@@ -52,11 +58,11 @@ class PlotCard extends BaseCard {
     }
 
     getPrintedReserve() {
-        return this.getPrintedNumberFor(this.cardData.plotStats.reserve);
+        return this.getPrintedNumberFor(this.printedValues.reserve[this.printedValues.reserve.length - 1]);
     }
 
     getPrintedClaim() {
-        return this.getPrintedNumberFor(this.cardData.plotStats.claim);
+        return this.getPrintedNumberFor(this.printedValues.claim[this.printedValues.claim.length - 1]);
     }
 
     getClaim() {

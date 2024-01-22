@@ -2,6 +2,7 @@ const sample = require('lodash.sample');
 const BaseStep = require('./basestep.js');
 const SimpleStep = require('./simplestep.js');
 const FirstPlayerPrompt = require('./plot/firstplayerprompt.js');
+const ChoosePlayerPrompt = require('./ChoosePlayerPrompt.js');
 const Event = require('../event');
 const RevealPlot = require('../GameActions/RevealPlot');
 
@@ -11,6 +12,7 @@ class RevealPlots extends BaseStep {
 
         this.plots = plots;
         this.parentEvent = parentEvent;
+        this.sampleFunc = sample;
     }
 
     continue() {
@@ -80,50 +82,79 @@ class RevealPlots extends BaseStep {
     }
 
     determineInitiative() {
-        let result = this.getInitiativeResult();
-        let initiativeWinner = result.player;
-
-        if(!initiativeWinner) {
-            return false;
-        }
-
-        if(result.powerTied) {
-            this.game.addMessage('{0} was randomly selected to win initiative because both initiative values and power were tied', initiativeWinner);
-        } else if(result.initiativeTied) {
-            this.game.addMessage('{0} won initiative because initiative values were tied but {0} had the lowest power', initiativeWinner);
-        } else {
-            this.game.addMessage('{0} won initiative', initiativeWinner);
-        }
-
-        this.game.raiseEvent('onInitiativeDetermined', { winner: initiativeWinner }, event => {
-            this.initiativeWinner = event.winner;
-        });
-    }
-
-    getInitiativeResult(sampleFunc = sample) {
         let result = { initiativeTied: false, powerTied: false, player: undefined };
         let playerInitiatives = this.game.getPlayers().map(player => {
             return { player: player, initiative: player.getTotalInitiative(), power: player.getTotalPower() };
         });
         let initiativeValues = playerInitiatives.map(p => p.initiative);
         let highestInitiative = Math.max(...initiativeValues);
-        let potentialWinners = playerInitiatives.filter(p => p.initiative === highestInitiative);
+        let potentialWinners = result.potentialWinners = playerInitiatives.filter(p => p.initiative === highestInitiative);
 
         result.initiativeTied = potentialWinners.length > 1;
 
         if(result.initiativeTied) {
-            let powerValues = potentialWinners.map(p => p.power);
-            let lowestPower = Math.min(...powerValues);
-            potentialWinners = potentialWinners.filter(p => p.power === lowestPower);
+            let choosingPlayer = this.game.getPlayers().find(player => player.choosesWinnerForInitiativeTies);
+            if(choosingPlayer) {
+                let prompt = new ChoosePlayerPrompt(this.game, choosingPlayer, {
+                    condition: player => potentialWinners.map(pw => pw.player).includes(player),
+                    activePromptTitle: 'Choose player to win initiative',
+                    waitingPromptTitle: 'Waiting for opponent to choose initiative winner',
+                    onSelect: chosenPlayer => {
+                        result.chosenBy = choosingPlayer;
+                        result.player = chosenPlayer;
+
+                        this.determineWinner(result);
+                    },
+                    onCancel: () => {
+                        this.determineTieWinner(result);
+                    }
+                });
+        
+                this.game.queueStep(prompt);
+            } else {
+                this.determineTieWinner(result);
+            }
+        } else {
+            this.determineWinner(result);
+        }
+    }
+
+    determineTieWinner(result) {
+        let powerValues = result.potentialWinners.map(p => p.power);
+        let lowestPower = Math.min(...powerValues);
+        result.potentialWinners = result.potentialWinners.filter(p => p.power === lowestPower);
+
+        this.determineWinner(result);
+    }
+
+    determineWinner(result) {
+        result.powerTied = result.potentialWinners.length > 1;
+
+        if(result.potentialWinners.length > 0) {
+            result.player = this.sampleFunc(result.potentialWinners).player;
+        }
+        delete result.potentialWinners;
+        this.initiativeResult = result;
+
+        if(!result.player) {
+            return false;
         }
 
-        result.powerTied = potentialWinners.length > 1;
+        this.game.raiseEvent('onInitiativeDetermined', { winner: result.player }, event => {
+            if(result.powerTied) {
+                this.game.addMessage('{0} was randomly selected to win initiative because both initiative values and power were tied', event.winner);
+            } else if(result.initiativeTied) {
+                if(result.chosenBy) {
+                    this.game.addMessage('{0} has chosen {1} to win initiative because initiative values were tied and they choose the winner', result.chosenBy, event.winner);
+                } else {
+                    this.game.addMessage('{0} won initiative because initiative values were tied but {0} had the lowest power', event.winner);
+                }
+            } else {
+                this.game.addMessage('{0} won initiative', event.winner);
+            }
 
-        if(potentialWinners.length > 0) {
-            result.player = sampleFunc(potentialWinners).player;
-        }
-
-        return result;
+            this.initiativeWinner = event.winner;
+        });
     }
 }
 

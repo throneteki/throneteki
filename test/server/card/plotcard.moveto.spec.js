@@ -2,7 +2,7 @@ const PlotCard = require('../../../server/game/plotcard.js');
 
 describe('PlotCard', function () {
     beforeEach(function () {
-        this.testCard = { code: '111', label: 'test 1(some pack)', name: 'test 1' };
+        this.testCard = { code: '111', label: 'test 1(some pack)', name: 'test 1', plotStats: {} };
         this.gameSpy = jasmine.createSpyObj('game', ['raiseEvent']);
         this.card = new PlotCard({ game: this.gameSpy }, this.testCard);
         spyOn(this.card.events, 'register');

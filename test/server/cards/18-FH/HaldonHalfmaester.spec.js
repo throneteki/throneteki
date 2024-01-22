@@ -5,7 +5,7 @@ describe('Haldon Halfmaester', function() {
         beforeEach(function() {
             const deck1 = this.buildDeck('tyrell', [
                 'Marching Orders',
-                'Haldon Halfmaester', 'Aegon Targaryen', 'Bribery (R)', 'Hedge Knight', 'Hedge Knight'
+                'Haldon Halfmaester', 'Aegon Targaryen (TSC)', 'Bribery (R)', 'Hedge Knight', 'Hedge Knight'
             ]);
             this.player1.selectDeck(deck1);
             this.player2.selectDeck(deck1);
@@ -13,7 +13,7 @@ describe('Haldon Halfmaester', function() {
             this.keepStartingHands();
 
             this.haldon = this.player1.findCardByName('Haldon Halfmaester');
-            this.aegon = this.player1.findCardByName('Aegon Targaryen');
+            this.aegon = this.player1.findCardByName('Aegon Targaryen (TSC)');
             [this.hedge1, this.hedge2] = this.player1.filterCardsByName('Hedge Knight', 'hand');
             this.event = this.player1.findCardByName('Bribery');
             this.player1.clickCard(this.hedge1);

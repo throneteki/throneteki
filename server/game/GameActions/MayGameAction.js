@@ -4,39 +4,49 @@ const AbilityMessage = require('../AbilityMessage');
 class MayGameAction extends GameAction {
     constructor({ player, gameAction, message, title }) {
         super('may');
-
-        this.player = player;
+        this.player = player || (context => context.player);
         this.gameAction = gameAction;
-        this.abilityMessage = AbilityMessage.create(message);
+        this.abilityMessage = AbilityMessage.create(message, this.specialArgs());
         this.title = title;
     }
 
+    specialArgs() {
+        return {
+            choosingPlayer: context => context.choosingPlayer
+        };
+    }
+
     message(context) {
-        return this.gameAction.message(context);
+        const choosingPlayer = this.player instanceof Function ? this.player(context) : this.player;
+        let tempContext = { ...context, choosingPlayer };
+        return this.gameAction.message(tempContext);
     }
 
     allow(context) {
-        return this.gameAction.allow(context);
+        const choosingPlayer = this.player instanceof Function ? this.player(context) : this.player;
+        let tempContext = { ...context, choosingPlayer };
+        return this.gameAction.allow(tempContext);
     }
 
     createEvent(context) {
-        const titleString = this.title instanceof Function ? this.title(context) : this.title;
-
         return this.event('__PLACEHOLDER_EVENT__', {}, event => {
+            const title = this.title instanceof Function ? this.title(context) : this.title;
+            const choosingPlayer = this.player instanceof Function ? this.player(context) : this.player;
+            let tempContext = { ...context, choosingPlayer };
             const handler = new MayPromptHandler({
                 yesHandler: () => {
-                    if(this.gameAction.allow(context)) {
-                        this.abilityMessage.output(context.game, { ...context, gameAction: this.gameAction });
-                        event.thenAttachEvent(this.gameAction.createEvent(context));
+                    if(this.gameAction.allow(tempContext)) {
+                        this.abilityMessage.output(tempContext.game, { ...tempContext, gameAction: this.gameAction });
+                        event.thenAttachEvent(this.gameAction.createEvent(tempContext));
                     }
                     return true;
                 }
             });
             handler.prompt({
-                game: context.game,
-                player: this.player || context.player,
-                title: titleString,
-                source: context.source
+                game: tempContext.game,
+                choosingPlayer,
+                title,
+                source: tempContext.source
             });
         });
     }
@@ -48,8 +58,8 @@ class MayPromptHandler {
         this.noHandler = noHandler;
     }
 
-    prompt({ game, player, source, title }) {
-        game.promptWithMenu(player, this, {
+    prompt({ game, choosingPlayer, source, title }) {
+        game.promptWithMenu(choosingPlayer, this, {
             activePrompt: {
                 menuTitle: title,
                 buttons: [

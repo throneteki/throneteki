@@ -207,6 +207,11 @@ const Costs = {
      */
     discardFromShadows: condition => CostBuilders.discardFromShadows.select(condition),
     /**
+     * Cost that requires discarding a card from play matching the passed
+     * condition predicate function.
+     */
+    discardFromPlay: condition => CostBuilders.discardFromPlay.select(condition),
+    /**
      * Cost that requires discarding the top card from the draw deck.
      */
     discardFromDeck: () => new DiscardFromDeckCost(),

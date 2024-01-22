@@ -3,7 +3,7 @@ describe('intimidate', function() {
         beforeEach(function() {
             const deck = this.buildDeck('baratheon', [
                 'Trading with the Pentoshi',
-                'Robert Baratheon (Core)', 'Dragonstone Faithful', 'Bastard in Hiding', 'Maester Cressen', 'Gendry (NMG)', 'Grey Wind (Core)'
+                'Robert Baratheon (Core)', 'Dragonstone Faithful', 'Bastard in Hiding', 'Maester Cressen (Core)', 'Gendry (NMG)', 'Grey Wind (Core)'
             ]);
             this.player1.selectDeck(deck);
             this.player2.selectDeck(deck);
@@ -14,7 +14,7 @@ describe('intimidate', function() {
 
             this.faithful = this.player2.findCardByName('Dragonstone Faithful', 'hand');
             this.bastard = this.player2.findCardByName('Bastard in Hiding', 'hand');
-            this.cressen = this.player2.findCardByName('Maester Cressen', 'hand');
+            this.cressen = this.player2.findCardByName('Maester Cressen (Core)', 'hand');
             this.gendry = this.player2.findCardByName('Gendry', 'hand');
 
             this.player2.clickCard(this.faithful);
