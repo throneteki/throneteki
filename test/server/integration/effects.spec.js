@@ -353,7 +353,9 @@ describe('effects', function() {
                 expect(this.character.tokens[Tokens.poison]).toBeTruthy();
 
                 this.player2.clickPrompt('Apply Claim');
-
+                // Skip order of discarded cards
+                this.player1.clickPrompt('Done');
+                
                 this.player2.clickPrompt('Done');
 
                 this.player1.triggerAbility('Winter Festival');

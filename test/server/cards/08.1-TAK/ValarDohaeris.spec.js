@@ -75,6 +75,10 @@ describe('Valar Dohaeris', function() {
                 // Don't choose order for bottom for Dohaeris
                 this.player2.clickPrompt('Done');
                 this.player1.clickPrompt('Done');
+
+                // Don't choose order for attachments to discard pile
+                this.player2.clickPrompt('Done');
+                this.player1.clickPrompt('Done');
             });
 
             it('puts all attachments in discard before triggering archivist', function() {

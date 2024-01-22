@@ -1,6 +1,7 @@
 class AtomicEvent {
     constructor() {
         this.cancelled = false;
+        this.invalid = false;
         this.childEvents = [];
         this.attachedEvents = [];
         this.params = {};
@@ -51,8 +52,14 @@ class AtomicEvent {
         }
     }
 
-    executeHandler() {
+    checkExecuteValidity() {
         for(let event of this.childEvents) {
+            event.checkExecuteValidity();
+        }
+    }
+
+    executeHandler() {
+        for(let event of this.childEvents.sort((a, b) => a.order - b.order)) {
             event.executeHandler();
         }
     }
@@ -72,8 +79,8 @@ class AtomicEvent {
         return this.childEvents.reduce((concurrentEvents, event) => concurrentEvents.concat(event.getConcurrentEvents()), []);
     }
 
-    getPrimaryEvent() {
-        return this.childEvents[0];
+    getPrimaryEvents() {
+        return [this.childEvents[0]];
     }
 
     thenExecute(func) {

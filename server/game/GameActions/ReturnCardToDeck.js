@@ -16,7 +16,7 @@ class ReturnCardToDeck extends GameAction {
         return card.location !== 'draw deck';
     }
 
-    createEvent({ card, allowSave = true, bottom = false }) {
+    createEvent({ card, allowSave = true, bottom = false, orderable }) {
         let params = {
             card: card,
             allowSave: allowSave,
@@ -24,7 +24,7 @@ class ReturnCardToDeck extends GameAction {
             snapshotName: 'cardStateWhenMoved'
         };
         const returnEvent = this.event('onCardReturnedToDeck', params, event => {
-            event.thenAttachEvent(PlaceCard.createEvent({ card: event.card, location: 'draw deck', bottom }));
+            event.thenAttachEvent(PlaceCard.createEvent({ card: event.card, location: 'draw deck', bottom, orderable }));
         });
 
         if(card.location === 'play area') {

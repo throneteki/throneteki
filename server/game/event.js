@@ -6,7 +6,8 @@ const ReservedEventParamKeys = [
     'name',
     'params',
     'parent',
-    'postHandlers'
+    'postHandlers',
+    'cardStateWhenEventCreated'
 ];
 
 class Event {
@@ -15,6 +16,7 @@ class Event {
 
         this.name = name;
         this.cancelled = false;
+        this.invalid = false;
         this.handler = handler;
         this.postHandlers = [postHandler];
         this.childEvents = [];
@@ -23,6 +25,10 @@ class Event {
         this.isFullyResolved = isFullyResolved || (() => true);
 
         this.assignParamProperties(otherParams);
+
+        if(this.params.card && this.params.card.createSnapshot) {
+            this.cardStateWhenEventCreated = this.params.card.createSnapshot();
+        }
     }
 
     assignParamProperties(params) {
@@ -81,11 +87,25 @@ class Event {
         this.handler = handler;
     }
 
+    checkExecuteValidity() {
+        // When the card in which the event affects is moved before the event can start resolving, it should not execute (but is also not cancelled)
+        if(this.params.card && this.cardStateWhenEventCreated && this.params.card.location !== this.cardStateWhenEventCreated.location) {
+            this.invalid = true;
+        }
+
+        for(let event of this.childEvents) {
+            event.checkExecuteValidity();
+        }
+    }
+
     executeHandler() {
         if(this.params.card && this.params.card.createSnapshot && this.params.snapshotName) {
             this[this.params.snapshotName] = this.params.card.createSnapshot();
         }
-        this.handler(this);
+        
+        if(!this.invalid) {
+            this.handler(this);
+        }
 
         for(let event of this.childEvents) {
             event.executeHandler();
@@ -108,8 +128,8 @@ class Event {
         }, [this]);
     }
 
-    getPrimaryEvent() {
-        return this;
+    getPrimaryEvents() {
+        return [this];
     }
 
     thenAttachEvent(event) {
