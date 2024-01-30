@@ -12,7 +12,7 @@ class TheManyFacedGod extends AgendaCard {
             title: 'Give icons, affiliation, keywords and traits',
             cost: ability.costs.kneelFactionCard(),
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character'
+                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.controller === this.controller
             },
             choosePlayer: player => player.deadPile.length > 0,
             handler: context => {

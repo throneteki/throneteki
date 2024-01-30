@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 
 class TheSilverSteed extends DrawCard {
     setupCardAbilities(ability) {
@@ -17,16 +18,23 @@ class TheSilverSteed extends DrawCard {
             when: {
                 onCardPowerGained: event => event.card === this.parent && event.reason === 'renown'
             },
-            handler: () => {
-                // The sacrifice here is specifically an effect, not a cost
-                this.controller.sacrificeCard(this);
-
-                this.untilEndOfPhase(ability => ({
-                    targetController: 'current',
-                    effect: ability.effects.mayInitiateAdditionalChallenge('power')
-                }));
-
-                this.game.addMessage('{0} sacrifices {1} and is able to initiate an additional {2} challenge this phase', this.controller, this, 'power');
+            message: '{player} sacrifices {source}',
+            handler: context => {
+                this.game.resolveGameAction(
+                    GameActions.sacrificeCard({ card: this })
+                        .then(() => ({
+                            message: {
+                                format: 'Then {player} is able to initiate an additional power challenge this phase'
+                            },
+                            handler: () => {
+                                this.untilEndOfPhase(ability => ({
+                                    targetController: 'current',
+                                    effect: ability.effects.mayInitiateAdditionalChallenge('power')
+                                }));
+                            }
+                        })),
+                    context
+                );
             }
         });
     }
