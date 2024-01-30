@@ -38,7 +38,7 @@ const placeholderPlayer = {
     faction: null,
     firstPlayer: false,
     numDrawCards: 0,
-    plotSelected: false,
+    selectedPlot: null,
     stats: null,
     title: null,
     user: null
@@ -284,7 +284,8 @@ export class GameBoard extends React.Component {
                 isMe={ false }
                 plotDeck={ otherPlayer.cardPiles.plotDeck }
                 plotDiscard={ otherPlayer.cardPiles.plotDiscard }
-                plotSelected={ otherPlayer.plotSelected } />
+                selectedPlot={ otherPlayer.selectedPlot }
+                mustShowPlotSelection={ otherPlayer.mustShowPlotSelection } />
             { this.getTimer(thisPlayer, otherPlayer) }
             <PlayerPlots
                 { ...commonProps }
@@ -294,7 +295,8 @@ export class GameBoard extends React.Component {
                 isMe
                 plotDeck={ thisPlayer.cardPiles.plotDeck }
                 plotDiscard={ thisPlayer.cardPiles.plotDiscard }
-                plotSelected={ thisPlayer.plotSelected } />
+                selectedPlot={ thisPlayer.selectedPlot }
+                mustShowPlotSelection={ false } />
         </div>);
     }
 

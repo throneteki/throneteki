@@ -26,9 +26,9 @@ class PlayerPlots extends React.Component {
         let plotDeck = (<CardPile
             key='plots'
             cards={ this.props.plotDeck }
-            className={ this.props.plotSelected ? 'plot plot-selected' : 'plot' }
+            className={ this.props.selectedPlot ? 'plot plot-selected' : 'plot' }
             closeOnClick={ this.props.isMe }
-            hiddenTopCard
+            hiddenTopCard={ !this.props.mustShowPlotSelection }
             disablePopup={ !this.props.isMe }
             onDragDrop={ this.props.onDragDrop }
             onCardClick={ this.props.onCardClick }
@@ -38,7 +38,7 @@ class PlayerPlots extends React.Component {
             source='plot deck'
             title='Plots'
             popupLocation={ this.props.isMe ? 'bottom' : 'top' }
-            topCard={ { facedown: true, kneeled: true } }
+            topCard={ this.props.mustShowPlotSelection && !!this.props.selectedPlot ? this.props.selectedPlot : { facedown: true, kneeled: true } }
             size={ this.props.cardSize } />);
 
         let piles = [
@@ -78,6 +78,7 @@ PlayerPlots.propTypes = {
     cardSize: PropTypes.string,
     direction: PropTypes.oneOf(['default', 'reverse']),
     isMe: PropTypes.bool,
+    mustShowPlotSelection: PropTypes.bool,
     onCardClick: PropTypes.func,
     onCardMouseOut: PropTypes.func,
     onCardMouseOver: PropTypes.func,
@@ -85,7 +86,7 @@ PlayerPlots.propTypes = {
     onMenuItemClick: PropTypes.func,
     plotDeck: PropTypes.array,
     plotDiscard: PropTypes.array,
-    plotSelected: PropTypes.bool
+    selectedPlot: PropTypes.object
 };
 
 export default PlayerPlots;

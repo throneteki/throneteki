@@ -231,6 +231,19 @@ class InnerCard extends React.Component {
         return (<div className='card-order'>{ this.props.card.order }</div>);
     }
 
+    getAlertStatus() {
+        if(!this.props.card.alertStatus) {
+            return null;
+        }
+
+        return (
+            <div className={ 'status-container ' + this.props.card.alertStatus.type }>
+                <div className='status-icon glyphicon glyphicon-exclamation-sign'/>
+                <span className='status-message'>{ this.props.card.alertStatus.message }</span>
+            </div>
+        );
+    }
+
     showMenu() {
         if(!this.isAllowedMenuSource()) {
             return false;
@@ -293,16 +306,17 @@ class InnerCard extends React.Component {
         let content = this.props.connectDragSource(
             <div className='card-frame'>
                 { this.getDragFrame(image) }
+                { this.getCardOrder() }
                 <div className={ cardClass }
                     onMouseOver={ this.props.disableMouseOver ? null : this.onMouseOver.bind(this, this.props.card) }
                     onMouseOut={ this.props.disableMouseOver ? null : this.onMouseOut }
                     onClick={ ev => this.onClick(ev, this.props.card) }>
-                    { this.getCardOrder() }
                     <div>
                         <span className='card-name'>{ this.props.card.name }</span>
                         { image }
                     </div>
                     { !this.props.hideTokens ? <CardCounters counters={ this.getCountersForCard(this.props.card) } /> : null }
+                    { !this.isFacedown() ? this.getAlertStatus() : null }
                 </div>
                 { this.showMenu() ? <CardMenu menu={ this.props.card.menu } onMenuItemClick={ this.onMenuItemClick } /> : null }
             </div>);
@@ -374,6 +388,11 @@ class InnerCard extends React.Component {
 InnerCard.displayName = 'Card';
 InnerCard.propTypes = {
     card: PropTypes.shape({
+        alertStatus: PropTypes.shape({
+            type: PropTypes.string,
+            message: PropTypes.string
+        }),
+        assault: PropTypes.bool,
         attached: PropTypes.bool,
         attachments: PropTypes.array,
         baseStrength: PropTypes.number,
@@ -387,6 +406,7 @@ InnerCard.propTypes = {
         iconsRemoved: PropTypes.array,
         inChallenge: PropTypes.bool,
         inDanger: PropTypes.bool,
+        isContributing: PropTypes.bool,
         kneeled: PropTypes.bool,
         menu: PropTypes.array,
         name: PropTypes.string,

@@ -112,7 +112,7 @@ class LobbyChat extends React.Component {
                 <div key={ timestamp + firstMessage.user.username + (index++).toString() }>
                     <Avatar username={ firstMessage.user.username } float />
                     <span className={ userClass }>{ firstMessage.user.username }</span>
-                    <span>{ timestamp }</span>
+                    <span className='timestamp'>{ timestamp }</span>
                     { renderedMessages }
                 </div>
             );
