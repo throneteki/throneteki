@@ -197,6 +197,19 @@ const Effects = {
     restrictAttachmentsTo: function(trait) {
         return Effects.addKeyword(`No attachments except <i>${trait}</i>`);
     },
+    addAttachmentRestriction: function(restriction) {
+        return {
+            apply: function(card, context) {
+                context.addAttachmentRestriction = context.addAttachmentRestriction || {};
+                context.addAttachmentRestriction[card.uuid] = typeof(restriction) === 'function' ? restriction : CardMatcher.createAttachmentMatcher(restriction);
+                card.addAdditionalAttachmentRestriction(context.addAttachmentRestriction[card.uuid]);
+            },
+            unapply: function(card, context) {
+                card.removeAdditionalAttachmentRestriction(context.addAttachmentRestriction[card.uuid]);
+                delete context.addAttachmentRestriction[card.uuid];
+            }
+        };
+    },
     modifyStrength: function(value) {
         return {
             gameAction: value < 0 ? 'decreaseStrength' : 'increaseStrength',
@@ -1377,6 +1390,32 @@ const Effects = {
             },
             unapply: function(player) {
                 player.multipleOpponentClaim = player.multipleOpponentClaim.filter(c => c === claimType);
+            }
+        };
+    },
+    mustShowPlotSelection: function(opponent) {
+        return {
+            targetType: 'player',
+            apply: function(player, context) {
+                // TODO: - Account for any level of looking loops (eg. PlayerA > PlayerB > PlayerC > PlayerA will cause issue).
+                //         This could be fixed with a wider change to account for First Player choosing the priority of simultaneously applying persistent effects.
+                player.mustShowPlotSelection.push(opponent);
+                // Only add visibility rule if it previously would not have been active
+                if(player.mustShowPlotSelection.length === 1) {
+                    let revealFunc = (card, viewingPlayer) => card === player.selectedPlot && player.mustShowPlotSelection.includes(viewingPlayer);
+                    context.mustShowPlotSelection = context.mustShowPlotSelection || {};
+                    context.mustShowPlotSelection[player.name] = revealFunc;
+                    context.game.cardVisibility.addRule(revealFunc);
+                }
+            },
+            unapply: function(player, context) {
+                player.mustShowPlotSelection = player.mustShowPlotSelection.filter(o => o !== opponent);
+                // Only remove visibility rule if there are no more players
+                if(player.mustShowPlotSelection.length === 0) {
+                    let revealFunc = context.mustShowPlotSelection[player.name];
+                    context.game.cardVisibility.removeRule(revealFunc);
+                    delete context.mustShowPlotSelection[player.name];
+                }
             }
         };
     },

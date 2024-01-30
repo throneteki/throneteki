@@ -1,0 +1,17 @@
+name: Close Linked Issues
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - development-*
+
+jobs:
+  closeIssueOnPrMergeTrigger:
+    if: github.event.pull_request.merged
+    runs-on: ubuntu-latest
+    steps:
+      - name: Closes linked issues.
+        uses: ldez/gha-mjolnir@v1.3.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
