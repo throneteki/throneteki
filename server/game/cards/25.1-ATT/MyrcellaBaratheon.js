@@ -11,13 +11,16 @@ class MyrcellaBaratheon extends DrawCard {
             },
             cost: ability.costs.returnSelfToHand(),
             max: ability.limit.perPhase(1),
+            message: {
+                format: '{player} returns {source} to their hand to initiate an additional intrigue challenge this phase against {opponent}',
+                args: { opponent: context => context.event.challenge.loser }
+            },
             handler: context => {
                 this.untilEndOfPhase(ability => ({
                     targetController: 'current',
                     effect: ability.effects.mayInitiateAdditionalChallenge('intrigue', opponent => opponent === context.event.challenge.loser)
 
                 }));
-                this.game.addMessage('{0} uses {1} to be able to initiate an additional intrigue challenge this phase against {2} ', context.player, this, this.game.currentChallenge.loser);
             }
         });
     }
