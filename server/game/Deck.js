@@ -96,7 +96,9 @@ class Deck {
         if(cardClass.cardData) {
             cardData = Object.assign({}, cardData, cardClass.cardData);
         }
-        return new cardClass(player, cardData);
+        let card = new cardClass(player, cardData);
+        card.version = cardClass.version;
+        return card;
     }
 
     createCard(player, cardData) {
