@@ -303,6 +303,7 @@ class DrawCard extends BaseCard {
      * Defines restrictions on what cards this attachment can be placed on.
      */
     attachmentRestriction(...restrictions) {
+        // TODO: Re-work printed attachmentRestrictions to apply as a persistent effect, rather than manually (similar to keywords, and must account for facedown).
         this.attachmentRestrictions = restrictions.map(restriction => {
             if(typeof(restriction) === 'function') {
                 return restriction;

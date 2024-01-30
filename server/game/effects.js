@@ -198,13 +198,10 @@ const Effects = {
         return Effects.addKeyword(`No attachments except <i>${trait}</i>`);
     },
     addAttachmentRestriction: function(restriction) {
-        // TODO: Properly move this into below add/remove function
-        // It is required here so that "remove" function can properly find/filter the restriction if it's a CardMatcher
-        const attachmentRestriction = typeof(restriction) === 'function' ? restriction : CardMatcher.createAttachmentMatcher(restriction);
         return {
             apply: function(card, context) {
                 context.addAttachmentRestriction = context.addAttachmentRestriction || {};
-                context.addAttachmentRestriction[card.uuid] = attachmentRestriction;
+                context.addAttachmentRestriction[card.uuid] = typeof(restriction) === 'function' ? restriction : CardMatcher.createAttachmentMatcher(restriction);
                 card.addAdditionalAttachmentRestriction(context.addAttachmentRestriction[card.uuid]);
             },
             unapply: function(card, context) {
