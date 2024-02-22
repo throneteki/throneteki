@@ -22,7 +22,7 @@ describe('The Art of Seduction', function() {
             });
 
             it('does not allow the opponent to reveal a new plot card', function() {
-                expect(this.player2).toHavePrompt('Waiting for opponent to select plot');
+                expect(this.player2).toHavePrompt('Waiting for opponent(s) to select plot');
             });
 
             describe('when the second plot phase occurs', function() {

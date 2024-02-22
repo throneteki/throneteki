@@ -98,6 +98,7 @@ class Player extends Spectator {
         }
 
         this.promptState = new PlayerPromptState();
+        this.mustShowPlotSelection = [];
     }
 
     createDefaultPlayableLocations() {
@@ -161,11 +162,11 @@ class Player extends Spectator {
     }
 
     getNumberOfUsedPlots() {
-        return this.plotDiscard.length + this.usedPlotsModifier + this.usedPlotsModifierByTrait.getValues().reduce((sum, entry) => sum + this.usedPlotsModifierByTrait.getCountForReference(entry), 0);
+        return Math.max(this.plotDiscard.length + this.usedPlotsModifier + this.usedPlotsModifierByTrait.getValues().reduce((sum, entry) => sum + this.usedPlotsModifierByTrait.getCountForReference(entry), 0), 0);
     }
 
     getNumberOfUsedPlotsByTrait(trait) {
-        return this.plotDiscard.filter(card => card.hasTrait(trait)).length + this.usedPlotsModifierByTrait.getCountForReference(trait);
+        return Math.max(this.plotDiscard.filter(card => card.hasTrait(trait)).length + this.usedPlotsModifierByTrait.getCountForReference(trait), 0);
     }
 
     getTraitsOfUsedPlots() {
@@ -1305,7 +1306,8 @@ class Player extends Spectator {
             name: this.name,
             numPlotCards: this.plotDeck.length,
             phase: this.game.currentPhase,
-            plotSelected: !!this.selectedPlot,
+            selectedPlot: this.selectedPlot ? this.selectedPlot.getSummary(activePlayer) : undefined,
+            mustShowPlotSelection: this.mustShowPlotSelection.includes(activePlayer),
             promptedActionWindows: this.promptedActionWindows,
             promptDupes: this.promptDupes,
             revealTopCard: this.isRevealingTopOfDeck(),
