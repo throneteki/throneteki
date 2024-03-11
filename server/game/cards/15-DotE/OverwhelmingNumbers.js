@@ -16,12 +16,10 @@ class OverwhelmingNumbers extends DrawCard {
             },
             handler: context => {
                 for(const card of context.target) {
-                    
-                    if (!this.controller.anyCardsInPlay(attacking => attacking.name===card.name) || !card.isUnique()){
+                    if(!this.controller.anyCardsInPlay(attacking => attacking.name === card.name) || !card.isUnique()) {
                         context.player.putIntoPlay(card, 'play', { kneeled: true });
                         this.game.currentChallenge.addAttacker(card);
-                    }
-                    else{
+                    } else {
                         context.player.putIntoPlay(card, 'play', { kneeled: true });
                     }
                     this.atEndOfChallenge(ability => ({
