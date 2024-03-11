@@ -25,7 +25,7 @@ class PutIntoPlay extends GameAction {
             && (card.getType() !== 'attachment' || player.game.anyCardsInPlay(c => player.canAttach(card, c) && attachmentTargets(c)));
     }
 
-    createEvent({ player, card, kneeled, playingType, attachmentTargets }) {
+    createEvent({ player, card, kneeled, playingType, attachmentTargets, dupeIsValid = false }) {
         player = player || card.controller;
 
         let dupeCard = player.getDuplicateInPlay(card);
@@ -42,7 +42,7 @@ class PutIntoPlay extends GameAction {
         }
 
         if(dupeCard && playingType !== 'setup') {
-            const isFullyResolved = event => ['play area', 'duplicate'].includes(event.card.location);
+            const isFullyResolved = event => dupeIsValid || event.card.location === 'play area';
             return this.atomic(
                 this.event('onDupeEntersPlay', { card, isFullyResolved, target: dupeCard }, event => {
                     event.card.controller.removeCardFromPile(event.card);
