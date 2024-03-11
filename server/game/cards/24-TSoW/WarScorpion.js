@@ -30,7 +30,7 @@ class WarScorpion extends DrawCard {
                             choices: {
                                 'Kill': {
                                     message: '{player} chooses to kill {target}',
-                                    gameAction: GameActions.kill(context => ({ card: context.target }))
+                                    gameAction: GameActions.kill(context => ({ victims: { card: context.target } }))
                                 },
                                 'Remove from challenge': {
                                     message: '{player} chooses to remove {target} from the challenge',

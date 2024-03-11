@@ -27,11 +27,11 @@ class BattleOfTheCamps extends PlotCard {
                             choices: {
                                 'Kill': {
                                     message: '{player} chooses to kill {target}',
-                                    gameAction: GameActions.kill(context => ({ card: context.target }))
+                                    gameAction: GameActions.kill(context => ({ victims: { card: context.target } }))
                                 },
                                 'Kneel': {
                                     message: '{player} chooses to kneel {target}',
-                                    gameAction: GameActions.kneelCard(context => ({ card: context.target }))
+                                    gameAction: GameActions.kneelCard(context => ({ victims: { card: context.target } }))
                                 }
                             }
                         })

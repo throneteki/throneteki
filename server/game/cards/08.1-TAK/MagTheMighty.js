@@ -15,7 +15,7 @@ class MagTheMighty extends DrawCard {
             handler: context => {
                 this.game.resolveGameAction(
                     GameActions.kill(context => ({
-                        card: context.target
+                        victims: { card: context.target }
                     })).then(preThenContext => ({
                         target: {
                             choosingPlayer: player => player === preThenContext.event.challenge.loser,

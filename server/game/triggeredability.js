@@ -44,7 +44,7 @@ class TriggeredAbility extends BaseAbility {
     }
 
     eventHandler(event) {
-        if(!this.isTriggeredByEvent(event)) {
+        if(!this.isTriggeredByEvent(event) || this.card.isAnyBlank()) {
             return;
         }
 
