@@ -6,7 +6,7 @@ class ACaskOfAle extends DrawCard {
         this.reaction({
             when: {
                 afterChallenge: event => (event.challenge.isMatch({ winner: this.controller, challengeType: 'power' }) 
-                    && this.game.allCards.some(card => (card.location === 'active plot', 'faction', 'play area' && card.getPower()>0)))
+                    && this.game.allCards.some(card => (card.location === 'active plot', 'faction', 'play area' && card.getPower() > 0)))
             },
             target: {
                 mode: 'exactly',
@@ -57,11 +57,11 @@ class ACaskOfAle extends DrawCard {
         this.game.addMessage('{0} plays {1} to move {2} power from {3} to {4}', this.context.player, this, amount, this.fromCard, this.toCard);
 
         this.game.resolveGameAction(
-            GameActions.movePower(context => ({
+            GameActions.movePower({
                 from: this.fromCard,
                 to: this.toCard,
                 amount
-            })),
+            }),
             this.context
         );
 
