@@ -8,6 +8,5 @@ COPY package-lock.json /app/node/
 
 RUN npm install
 COPY . /app/node
-EXPOSE 9500
 
 CMD [ "npm", "run", "gamenode" ]

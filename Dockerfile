@@ -29,6 +29,4 @@ COPY --from=client /app/throneteki-client/assets ./public
 
 RUN rm -rf /usr/src/lobby
 
-EXPOSE 4000
-
 CMD [ "npm", "start" ]
