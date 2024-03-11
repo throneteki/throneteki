@@ -6,7 +6,7 @@ class ACaskOfAle extends DrawCard {
         this.reaction({
             when: {
                 afterChallenge: event => (event.challenge.isMatch({ winner: this.controller, challengeType: 'power' }) 
-                    && this.game.allCards.some(card => (card.location === 'active plot', 'faction', 'play area' && card.getPower() > 0)))
+                    && this.game.allCards.some(card => (['active plot', 'faction', 'play area'].includes(card.location) && card.getPower() > 0)))
             },
             target: {
                 mode: 'exactly',
