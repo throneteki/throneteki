@@ -1,3 +1,13 @@
 const runServer = require('./server');
 
-runServer();
+const run = async () => {
+    await runServer();
+};
+
+run()
+    .then(() => {
+        console.info('Shutting down');
+    })
+    .catch((err) => {
+        console.info(err);
+    });

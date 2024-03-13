@@ -18,20 +18,19 @@ const version = require('../version.js');
 
 class Server {
     constructor(isDeveloping) {
+        this.isDeveloping = isDeveloping;
         this.configService = ServiceFactory.configService();
-
-        monk(this.configService.getValue('dbPath'))
-            .then((db) => {
-                this.userService = ServiceFactory.userService(db, this.configService);
-                this.isDeveloping = isDeveloping;
-                this.server = http.Server(app);
-            })
-            .catch((err) => {
-                logger.error(err);
-            });
     }
 
-    init(options) {
+    async init(options) {
+        try {
+            const db = await monk(this.configService.getValue('dbPath'));
+            this.userService = ServiceFactory.userService(db, this.configService);
+            this.server = http.Server(app);
+        } catch (err) {
+            logger.error(err);
+        }
+
         if (!this.isDeveloping) {
             Raven.config(this.configService.getValue('sentryDsn'), {
                 release: version.releaseDate
