@@ -16,6 +16,7 @@ async function runServer() {
         options.db = await monk(configService.getValue('dbPath'));
     } catch (err) {
         logger.error(err);
+        console.info(err);
     }
 
     let server = new Server(process.env.NODE_ENV !== 'production');
