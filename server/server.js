@@ -20,16 +20,22 @@ class Server {
     constructor(isDeveloping) {
         this.configService = ServiceFactory.configService();
 
-        let db = monk(this.configService.getValue('dbPath'));
-
-        this.userService = ServiceFactory.userService(db, this.configService);
-        this.isDeveloping = isDeveloping;
-        this.server = http.Server(app);
+        monk(this.configService.getValue('dbPath'))
+            .then((db) => {
+                this.userService = ServiceFactory.userService(db, this.configService);
+                this.isDeveloping = isDeveloping;
+                this.server = http.Server(app);
+            })
+            .catch((err) => {
+                logger.error(err);
+            });
     }
 
     init(options) {
-        if(!this.isDeveloping) {
-            Raven.config(this.configService.getValue('sentryDsn'), { release: version.releaseDate }).install();
+        if (!this.isDeveloping) {
+            Raven.config(this.configService.getValue('sentryDsn'), {
+                release: version.releaseDate
+            }).install();
 
             app.use(Raven.requestHandler());
             app.use(Raven.errorHandler());
@@ -39,17 +45,22 @@ class Server {
         opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
         opts.secretOrKey = this.configService.getValue('secret');
 
-        passport.use(new JwtStrategy(opts, (jwtPayload, done) => {
-            this.userService.getUserById(jwtPayload._id).then(user => {
-                if(user) {
-                    return done(null, user.getWireSafeDetails());
-                }
+        passport.use(
+            new JwtStrategy(opts, (jwtPayload, done) => {
+                this.userService
+                    .getUserById(jwtPayload._id)
+                    .then((user) => {
+                        if (user) {
+                            return done(null, user.getWireSafeDetails());
+                        }
 
-                return done(null, false);
-            }).catch(err => {
-                return done(err, false);
-            });
-        }));
+                        return done(null, false);
+                    })
+                    .catch((err) => {
+                        return done(err, false);
+                    });
+            })
+        );
         app.use(passport.initialize());
 
         app.use(bodyParser.json());
@@ -64,10 +75,10 @@ class Server {
         });
 
         // Define error middleware last
-        app.use(function(err, req, res, next) {
+        app.use(function (err, req, res, next) {
             logger.error(err);
 
-            if(!res.headersSent && req.xhr) {
+            if (!res.headersSent && req.xhr) {
                 return res.status(500).send({ success: false });
             }
 
@@ -81,16 +92,20 @@ class Server {
         let port = process.env.PORT || this.configService.getValue('port') || 4000;
 
         this.server.listen(port, '0.0.0.0', function onStart(err) {
-            if(err) {
+            if (err) {
                 logger.error(err);
             }
 
-            logger.info('==> ?? Listening on port %s. Open up http://0.0.0.0:%s/ in your browser.', port, port);
+            logger.info(
+                '==> ?? Listening on port %s. Open up http://0.0.0.0:%s/ in your browser.',
+                port,
+                port
+            );
         });
     }
 
     serializeUser(user, done) {
-        if(user) {
+        if (user) {
             done(null, user._id);
         }
     }
