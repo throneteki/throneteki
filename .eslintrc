@@ -16,13 +16,13 @@
             }
         ],
         "indent": [
-            2,
+            0,
             4,
             {
                 "SwitchCase": 1
             }
         ],
-        "quotes": [2, "single"],
+        "quotes": [0, "single"],
         "strict": [1, "global"],
         "global-strict": 0,
         "brace-style": [2, "1tbs"],
