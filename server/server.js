@@ -7,7 +7,6 @@ const api = require('./api');
 const path = require('path');
 const http = require('http');
 const Raven = require('raven');
-const monk = require('monk');
 const passportJwt = require('passport-jwt');
 const JwtStrategy = passportJwt.Strategy;
 const ExtractJwt = passportJwt.ExtractJwt;
@@ -22,14 +21,9 @@ class Server {
         this.configService = ServiceFactory.configService();
     }
 
-    async init(options) {
-        try {
-            const db = await monk(this.configService.getValue('dbPath'));
-            this.userService = ServiceFactory.userService(db, this.configService);
-            this.server = http.Server(app);
-        } catch (err) {
-            logger.error(err);
-        }
+    init(options) {
+        this.userService = ServiceFactory.userService(options.db, this.configService);
+        this.server = http.Server(app);
 
         if (!this.isDeveloping) {
             Raven.config(this.configService.getValue('sentryDsn'), {
