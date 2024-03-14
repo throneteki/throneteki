@@ -2,7 +2,6 @@ const Server = require('./server.js');
 const Lobby = require('./lobby.js');
 const pmx = require('pmx');
 const monk = require('monk');
-const logger = require('./log.js');
 const ServiceFactory = require('./services/ServiceFactory.js');
 
 let configService = ServiceFactory.configService();
