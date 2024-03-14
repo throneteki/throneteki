@@ -2,7 +2,7 @@ const RevealPlots = require('../../../server/game/gamesteps/revealplots.js');
 
 describe('RevealPlots', function() {
     beforeEach(function() {
-        this.gameSpy = jasmine.createSpyObj('game', ['addMessage', 'getPlayers']);
+        this.gameSpy = jasmine.createSpyObj('game', ['addMessage', 'getPlayers', 'raiseEvent']);
         this.phase = new RevealPlots(this.gameSpy, []);
     });
 
@@ -21,11 +21,11 @@ describe('RevealPlots', function() {
                 this.player2Spy.getTotalInitiative.and.returnValue(5);
                 this.player2Spy.getTotalPower.and.returnValue(5);
 
-                this.result = this.phase.getInitiativeResult();
+                this.phase.determineInitiative();
             });
 
             it('should set the winner to that player', function() {
-                expect(this.result).toEqual(jasmine.objectContaining({
+                expect(this.phase.initiativeResult).toEqual(jasmine.objectContaining({
                     initiativeTied: false,
                     powerTied: false,
                     player: this.player2Spy
@@ -41,16 +41,17 @@ describe('RevealPlots', function() {
                 this.player2Spy.getTotalInitiative.and.returnValue(5);
                 this.player2Spy.getTotalPower.and.returnValue(5);
 
-                this.result = this.phase.getInitiativeResult();
+                this.phase.determineInitiative();
             });
 
             it('should set the winner to that player', function() {
-                expect(this.result).toEqual(jasmine.objectContaining({
+                expect(this.phase.initiativeResult).toEqual(jasmine.objectContaining({
                     initiativeTied: true,
                     powerTied: false,
                     player: this.player1Spy
                 }));
             });
+            // TODO: Add scenario to choose winner from tie
         });
 
         describe('when initiative and power are tied', function() {
@@ -64,13 +65,14 @@ describe('RevealPlots', function() {
                 // Set up sampling function to just return the last entry.
                 this.sampleFunc = jasmine.createSpy('sample');
                 this.sampleFunc.and.callFake(array => array[array.length - 1]);
+                this.phase.sampleFunc = this.sampleFunc;
 
-                this.result = this.phase.getInitiativeResult(this.sampleFunc);
+                this.phase.determineInitiative();
             });
 
             it('should set the winner at random', function() {
                 expect(this.sampleFunc).toHaveBeenCalled();
-                expect(this.result).toEqual(jasmine.objectContaining({
+                expect(this.phase.initiativeResult).toEqual(jasmine.objectContaining({
                     initiativeTied: true,
                     powerTied: true,
                     player: this.player2Spy
