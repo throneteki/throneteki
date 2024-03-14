@@ -7,7 +7,7 @@ class DiscardCard extends GameAction {
         super('discard');
     }
 
-    canChangeGameState({ card, isRandom = false, context  }) {
+    canChangeGameState({ card, isRandom = false, context }) {
         if(card.location === 'play area' && !LeavePlay.allow({ card })) {
             return false;
         }
