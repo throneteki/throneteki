@@ -13,11 +13,14 @@ async function runServer() {
     };
 
     try {
+        console.info('about to start db', configService.getValue('dbPath'));
         options.db = await monk(configService.getValue('dbPath'));
     } catch (err) {
         logger.error(err);
         console.info(err);
     }
+
+    console.info('after start db');
 
     let server = new Server(process.env.NODE_ENV !== 'production');
     let httpServer = server.init(options);
