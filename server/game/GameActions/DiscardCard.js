@@ -7,16 +7,18 @@ class DiscardCard extends GameAction {
         super('discard');
     }
 
-    canChangeGameState({ card }) {
+    canChangeGameState({ card, isRandom = false, context  }) {
         if(card.location === 'play area' && !LeavePlay.allow({ card })) {
             return false;
         }
-
+        if(isRandom && !card.allowGameAction('discardAtRandom', { card, context })) {
+            return false;
+        }
         return ['draw deck', 'hand', 'play area', 'shadows', 'duplicate', 'underneath'].includes(card.location);
     }
 
-    createEvent({ card, allowSave = true, isPillage = false, source, orderable }) {
-        return MoveCardEventGenerator.createDiscardCardEvent({ card, allowSave, isPillage, source, orderable });
+    createEvent({ card, allowSave = true, isPillage = false, isRandom = false, source, orderable }) {
+        return MoveCardEventGenerator.createDiscardCardEvent({ card, allowSave, isPillage, source, isRandom, orderable });
     }
 }
 
