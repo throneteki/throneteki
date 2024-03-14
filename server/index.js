@@ -16,6 +16,7 @@ async function runServer() {
             options.db = db;
         })
         .catch((err) => {
+            console.info(err);
             throw err;
         });
 
