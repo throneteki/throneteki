@@ -20,7 +20,8 @@ class SerMarkMullendore extends DrawCard {
                     },
                     gameAction: GameActions.putIntoPlay(context => ({
                         player: context.player,
-                        card: context.event.revealed[0]
+                        card: context.event.revealed[0],
+                        dupeIsValid: true
                     })).then({
                         gameAction: GameActions.returnCardToDeck(context => ({
                             allowSave: false,
