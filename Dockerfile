@@ -19,6 +19,8 @@ RUN git clone https://github.com/throneteki/throneteki-client.git
 
 WORKDIR /app/throneteki-client
 
+ENV VERSION ${VERSION}
+
 RUN npm install
 RUN npm run build
 
