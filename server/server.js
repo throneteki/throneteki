@@ -6,14 +6,12 @@ const logger = require('./log.js');
 const api = require('./api');
 const path = require('path');
 const http = require('http');
-const Raven = require('raven');
+const Sentry = require('@sentry/node');
 const passportJwt = require('passport-jwt');
 const JwtStrategy = passportJwt.Strategy;
 const ExtractJwt = passportJwt.ExtractJwt;
 
 const ServiceFactory = require('./services/ServiceFactory.js');
-
-const version = require('../version.js');
 
 class Server {
     constructor(isDeveloping) {
@@ -26,12 +24,12 @@ class Server {
         this.server = http.Server(app);
 
         if (!this.isDeveloping) {
-            Raven.config(this.configService.getValue('sentryDsn'), {
-                release: version.releaseDate
-            }).install();
-
-            app.use(Raven.requestHandler());
-            app.use(Raven.errorHandler());
+            Sentry.init({
+                dsn: this.configService.getValue('sentryDsn'),
+                release: process.env.VERSION || 'Local build'
+            });
+            app.use(Sentry.Handlers.requestHandler());
+            app.use(Sentry.Handlers.errorHandler());
         }
 
         var opts = {};

@@ -6,6 +6,9 @@ COPY package.json /usr/src/lobby/
 COPY package-lock.json /usr/src/lobby/
 RUN npm install
 
+ARG VERSION
+ENV VERSION ${VERSION}
+
 COPY . /usr/src/lobby
 
 FROM node:16 as client
