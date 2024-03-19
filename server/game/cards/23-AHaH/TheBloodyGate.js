@@ -1,4 +1,3 @@
-const { context } = require('raven');
 const DrawCard = require('../../drawcard');
 const GameActions = require('../../GameActions');
 const Message = require('../../Message');
@@ -35,14 +34,14 @@ class TheBloodyGate extends DrawCard {
                         activePromptTitle: 'Select a card',
                         source: this,
                         cardCondition: card => card.location === 'hand' && card.controller === context.event.challenge.winner,
-                        onSelect: (player, card) => this.onCardSelected(player, card)
+                        onSelect: (player, card) => this.onCardSelected(context, player, card)
                     });
                 })
             })
         });
     }
 
-    onCardSelected(player, card) {
+    onCardSelected(context, player, card) {
         this.game.addMessage('{0} chooses to discard {1} from their hand', card.controller, card);
         this.game.resolveGameAction(GameActions.discardCard({ card, source: this }), context);
         return true;

@@ -2,11 +2,9 @@ const socketio = require('socket.io');
 const Socket = require('./socket.js');
 const jwt = require('jsonwebtoken');
 const _ = require('underscore');
-const moment = require('moment');
 const { validateDeck, formatDeckAsFullCards } = require('throneteki-deck-helper');
 
 const logger = require('./log.js');
-const version = moment(require('../version.js'));
 const PendingGame = require('./pendinggame.js');
 const GameRouter = require('./gamerouter.js');
 const ServiceFactory = require('./services/ServiceFactory');
@@ -135,8 +133,6 @@ class Lobby {
     }
 
     handshake(ioSocket, next) {
-        let versionInfo = undefined;
-
         if (ioSocket.handshake.query.token && ioSocket.handshake.query.token !== 'undefined') {
             jwt.verify(
                 ioSocket.handshake.query.token,
@@ -177,11 +173,7 @@ class Lobby {
             );
         }
 
-        if (ioSocket.handshake.query.version) {
-            versionInfo = moment(ioSocket.handshake.query.version);
-        }
-
-        if (!versionInfo || versionInfo < version.releaseDate) {
+        if ((process.env.VERSION || 'Local build') !== ioSocket.handshake.query.version) {
             ioSocket.emit(
                 'banner',
                 'Your client version is out of date, please refresh or clear your cache to get the latest version'

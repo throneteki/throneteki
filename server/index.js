@@ -2,7 +2,6 @@ const Server = require('./server.js');
 const Lobby = require('./lobby.js');
 const pmx = require('pmx');
 const monk = require('monk');
-const logger = require('./log.js');
 const ServiceFactory = require('./services/ServiceFactory.js');
 
 let configService = ServiceFactory.configService();
@@ -12,15 +11,14 @@ async function runServer() {
         instance: configService.getValue('instance') || {}
     };
 
-    try {
-        console.info('about to start db', configService.getValue('dbPath'));
-        options.db = await monk(configService.getValue('dbPath'));
-    } catch (err) {
-        logger.error(err);
-        console.info(err);
-    }
-
-    console.info('after start db');
+    await monk(configService.getValue('dbPath'))
+        .then((db) => {
+            options.db = db;
+        })
+        .catch((err) => {
+            console.info(err);
+            throw err;
+        });
 
     let server = new Server(process.env.NODE_ENV !== 'production');
     let httpServer = server.init(options);
