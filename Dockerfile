@@ -21,6 +21,8 @@ WORKDIR /app/throneteki-client
 
 ENV VERSION ${VERSION}
 
+RUN ECHO ${VERSION}
+
 RUN npm install
 RUN npm run build
 
