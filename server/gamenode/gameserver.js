@@ -65,16 +65,14 @@ class GameServer {
             options.path = '/' + (process.env.SERVER || config.nodeIdentity) + '/socket.io';
         }
 
+        const corsOrigin = config.origin;
+        if (corsOrigin) {
+            options.origins = corsOrigin;
+        }
+
         this.io = socketio(server, options);
         this.io.set('heartbeat timeout', 30000);
         this.io.use(this.handshake.bind(this));
-
-        if (process.env.NODE_ENV === 'production') {
-            this.io.set(
-                'origins',
-                'http://www.throneteki.net:* https://www.throneteki.net:* http://www.theironthrone.net:* https://www.theironthrone.net:*'
-            );
-        }
 
         this.io.on('connection', this.onConnection.bind(this));
 
