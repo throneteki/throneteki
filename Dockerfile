@@ -19,8 +19,9 @@ RUN git clone https://github.com/throneteki/throneteki-client.git
 
 WORKDIR /app/throneteki-client
 
-ENV VERSION ${VERSION}
+ENV VERSION ${GITVERSION_SEMVER}
 
+RUN echo ${GITVERSION_SEMVER}
 RUN echo ${VERSION}
 
 RUN npm install
