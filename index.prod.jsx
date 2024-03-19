@@ -13,7 +13,7 @@ import { default as TouchBackend } from 'react-dnd-touch-backend';
 import ErrorBoundary from './Components/Site/ErrorBoundary';
 
 const sentryOptions = {
-    dsn: 'https://8e2615acba9548ba8d83fa2735de2bd2@sentry.io/1515148',
+    dsn: 'https://f5286cd580bf46898e7180c7a46de2f6@o57348.ingest.us.sentry.io/123019',
     denyUrls: [
         // Facebook flakiness
         /graph\.facebook\.com/i,
