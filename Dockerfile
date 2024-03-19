@@ -13,15 +13,15 @@ COPY . /usr/src/lobby
 
 FROM node:16 as client
 
+ARG VERSION
+ENV VERSION ${VERSION}
+
 WORKDIR /app
 
 RUN git clone https://github.com/throneteki/throneteki-client.git
 
 WORKDIR /app/throneteki-client
 
-ENV VERSION ${GITVERSION_SEMVER}
-
-RUN echo ${GITVERSION_SEMVER}
 RUN echo ${VERSION}
 
 RUN npm install
