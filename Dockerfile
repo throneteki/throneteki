@@ -6,15 +6,23 @@ COPY package.json /usr/src/lobby/
 COPY package-lock.json /usr/src/lobby/
 RUN npm install
 
+ARG VERSION
+ENV VERSION ${VERSION}
+
 COPY . /usr/src/lobby
 
 FROM node:16 as client
+
+ARG VERSION
+ENV VERSION ${VERSION}
 
 WORKDIR /app
 
 RUN git clone https://github.com/throneteki/throneteki-client.git
 
 WORKDIR /app/throneteki-client
+
+RUN echo ${VERSION}
 
 RUN npm install
 RUN npm run build
@@ -28,7 +36,5 @@ COPY --from=client /app/throneteki-client/dist ./public
 COPY --from=client /app/throneteki-client/assets ./public
 
 RUN rm -rf /usr/src/lobby
-
-EXPOSE 4000
 
 CMD [ "npm", "start" ]

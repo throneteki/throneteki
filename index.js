@@ -1,3 +1,7 @@
 const runServer = require('./server');
 
-runServer();
+const run = async () => {
+    await runServer();
+};
+
+run();

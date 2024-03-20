@@ -309,7 +309,7 @@ class Player extends Spectator {
         this.discardCards(cards, false, discarded => {
             this.game.addMessage('{0} discards {1} at random', this, discarded);
             callback(discarded);
-        });
+        }, { isRandom: true });
     }
 
     canInitiateChallenge(challengeType, opponent) {
@@ -890,6 +890,7 @@ class Player extends Spectator {
                 card,
                 allowSave,
                 isPillage: options.isPillage,
+                isRandom: options.isRandom,
                 source: options.source,
                 force: options.force
             }))

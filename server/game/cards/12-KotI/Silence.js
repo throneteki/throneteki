@@ -17,7 +17,7 @@ class Silence extends DrawCard {
             ],
             target: {
                 activePromptTitle: 'Select a card',
-                cardCondition: card => card.getType() === 'location' && card.location === 'hand' && card.hasTrait('Warship') && this.controller.canPutIntoPlay(card)
+                cardCondition: { type: 'location', location: 'hand', controller: 'current', trait: 'Warship', condition: (card, context) => GameActions.putIntoPlay({ player: context.player, card: card }).allow() }
 
             },
             message: '{player} uses and kneels {source} to put {target} into play',

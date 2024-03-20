@@ -1074,6 +1074,34 @@ const Effects = {
             }
         };
     },
+    choosesWinnerForInitiativeTies: function() {
+        return {
+            targetType: 'player',
+            apply: function(player, context) {
+                player.choosesWinnerForInitiativeTies = true;
+                for(let opponent of context.game.getOpponents(player)) {
+                    delete opponent.choosesWinnerForInitiativeTies;
+                }
+            },
+            unapply: function(player) {
+                delete player.choosesWinnerForInitiativeTies;
+            }
+        };
+    },
+    choosesWinnerForDominanceTies: function() {
+        return {
+            targetType: 'player',
+            apply: function(player, context) {
+                player.choosesWinnerForDominanceTies = true;
+                for(let opponent of context.game.getOpponents(player)) {
+                    delete opponent.choosesWinnerForDominanceTies;
+                }
+            },
+            unapply: function(player) {
+                delete player.choosesWinnerForDominanceTies;
+            }
+        };
+    },
     canPlay: function(predicate) {
         let playableLocation = new PlayableLocation('play', predicate);
         return {
