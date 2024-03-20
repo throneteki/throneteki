@@ -2,6 +2,7 @@
 const commandLineArgs = require('command-line-args');
 const monk = require('monk');
 const path = require('path');
+const ServiceFactory = require('../services/ServiceFactory.js');
 
 const CardImport = require('./fetchdata/CardImport.js');
 const CardgameDbImageSource = require('./fetchdata/CardgameDbImageSource.js');
@@ -42,7 +43,8 @@ function createImageSource(options) {
 
 let options = commandLineArgs(optionsDefinition);
 
-let db = monk('mongodb://127.0.0.1:27017/throneteki');
+let configService = ServiceFactory.configService();
+let db = monk(configService.getValue('dbPath'));
 let dataSource = createDataSource(options);
 let imageSource = createImageSource(options);
 let cardImport = new CardImport(db, dataSource, imageSource, options['image-dir']);

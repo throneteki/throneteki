@@ -1,8 +1,10 @@
 /*eslint no-console:0 */
 const monk = require('monk');
 const _ = require('underscore');
+const ServiceFactory = require('../services/ServiceFactory.js');
 
-let db = monk('mongodb://127.0.0.1:27017/throneteki');
+let configService = ServiceFactory.configService();
+let db = monk(configService.getValue('dbPath'));
 
 let dbDecks = db.get('decks');
 

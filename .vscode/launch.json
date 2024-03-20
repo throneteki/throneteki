@@ -2,6 +2,22 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Docker: Attach to Game",
+            "type": "node",
+            "request": "attach",
+            "port": 9500,
+            "localRoot": "${workspaceFolder}",
+            "remoteRoot": "/usr/src/app"
+        },
+        {
+            "name": "Docker: Attach to Lobby",
+            "type": "node",
+            "request": "attach",
+            "port": 4000,
+            "localRoot": "${workspaceFolder}",
+            "remoteRoot": "/usr/src/app"
+        },
+        {
             "name": "Launch (Lobby Server)",
             "type": "node",
             "request": "launch",

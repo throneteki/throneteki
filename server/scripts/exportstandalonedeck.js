@@ -1,13 +1,15 @@
 /*eslint no-console:0 */
 
 const monk = require('monk');
+const ServiceFactory = require('../services/ServiceFactory.js');
 
 const CardService = require('../services/CardService');
 const DeckService = require('../services/DeckService');
 
 class ExportStandaloneDecks {
     constructor() {
-        this.db = monk('mongodb://127.0.0.1:27017/throneteki');
+        let configService = ServiceFactory.configService();
+        this.db = monk(configService.getValue('dbPath'));
         this.cardService = new CardService(this.db);
         this.deckService = new DeckService(this.db);
     }
