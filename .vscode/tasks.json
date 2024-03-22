@@ -4,7 +4,7 @@
       {
         "type": "shell",
         "label": "docker-compose-up-debug",
-        "command": "docker-compose -f docker-compose.yml -f docker-compose.debug.yml up -d --build",
+        "command": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build",
         "presentation": {
           "reveal": "always"
         }
@@ -12,7 +12,7 @@
       {
         "type": "shell",
         "label": "docker-compose-down-debug",
-        "command": "docker-compose -f docker-compose.yml -f docker-compose.debug.yml down",
+        "command": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml down",
         "presentation": {
           "reveal": "always"
         }

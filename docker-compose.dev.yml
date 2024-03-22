@@ -1,11 +1,15 @@
 version: "3.3"
 services:
   lobby:
+    build:
+      dockerfile: ./Dockerfile.dev
     environment:
       - NODE_ENV=development
     volumes:
       - client:/app/lobby/public
   node:
+    build:
+      dockerfile: ./server/gamenode/Dockerfile.dev
     environment:
       - NODE_ENV=development
   redis:
