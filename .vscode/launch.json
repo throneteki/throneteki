@@ -2,22 +2,6 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Docker: Attach to Game",
-            "type": "node",
-            "request": "attach",
-            "port": 9500,
-            "localRoot": "${workspaceFolder}",
-            "remoteRoot": "/usr/src/app"
-        },
-        {
-            "name": "Docker: Attach to Lobby",
-            "type": "node",
-            "request": "attach",
-            "port": 4000,
-            "localRoot": "${workspaceFolder}",
-            "remoteRoot": "/usr/src/app"
-        },
-        {
             "name": "Launch (Lobby Server)",
             "type": "node",
             "request": "launch",
@@ -56,10 +40,20 @@
             "sourceMaps": false
         },
         {
+            "name": "Attach (Docker Game)",
             "type": "node",
             "request": "attach",
-            "name": "Attach",
-            "port": 9229
+            "port": 9339,
+            "localRoot": "${workspaceFolder}",
+            "remoteRoot": "/app/lobby/server/gamenode"
+        },
+        {
+            "name": "Attach (Docker Lobby)",
+            "type": "node",
+            "request": "attach",
+            "port": 9229,
+            "localRoot": "${workspaceFolder}",
+            "remoteRoot": "/app/lobby"
         },
         {
             "type": "node",
@@ -90,6 +84,14 @@
                 "JASMINE_CONFIG_PATH": "./jasmine.json"
             },
             "cwd": "${workspaceRoot}"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Launch (Docker)",
+            "configurations": ["Attach (Docker Lobby)", "Attach (Docker Game)", "Launch Chrome"],
+            "preLaunchTask": "docker-compose-up-debug",
+            "stopAll": true
         }
     ]
 }

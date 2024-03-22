@@ -1,0 +1,23 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "type": "shell",
+        "label": "docker-compose-up-debug",
+        "command": "docker-compose -f docker-compose.yml -f docker-compose.debug.yml up -d --build",
+        "presentation": {
+          "reveal": "always",
+          "panel": "new"
+        }
+      },
+      {
+        "type": "shell",
+        "label": "docker-compose-down-debug",
+        "command": "docker-compose -f docker-compose.yml -f docker-compose.debug.yml down",
+        "presentation": {
+          "reveal": "always",
+          "panel": "new"
+        }
+      }
+    ]
+  }
