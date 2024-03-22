@@ -6,8 +6,7 @@
         "label": "docker-compose-up-debug",
         "command": "docker-compose -f docker-compose.yml -f docker-compose.debug.yml up -d --build",
         "presentation": {
-          "reveal": "always",
-          "panel": "new"
+          "reveal": "always"
         }
       },
       {
@@ -15,8 +14,7 @@
         "label": "docker-compose-down-debug",
         "command": "docker-compose -f docker-compose.yml -f docker-compose.debug.yml down",
         "presentation": {
-          "reveal": "always",
-          "panel": "new"
+          "reveal": "always"
         }
       }
     ]
