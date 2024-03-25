@@ -309,7 +309,7 @@ class NewGame extends React.Component {
         let charsLeft = GameNameMaxLength - this.state.gameName.length;
         let content = [];
 
-        if(!this.props.events) {
+        if(!this.props.events || !this.props.restrictedLists) {
             return <div>Loading...</div>;
         }
 
