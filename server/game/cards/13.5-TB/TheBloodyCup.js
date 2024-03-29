@@ -7,7 +7,8 @@ class TheBloodyCup extends DrawCard {
                 afterChallenge: event => event.challenge.isMatch({ winner: this.controller, unopposed: true })
             },
             target: {
-                cardCondition: (card, context) => card.location === 'play area' && card.getType() === 'character' && card.controller === context.event.challenge.loser
+                cardCondition: (card, context) => card.location === 'play area' && card.getType() === 'character' && card.controller === context.event.challenge.loser &&
+                                                  card.allowGameAction('returnCardToDeck')
             },
             message: {
                 format: '{player} plays {source} to place {target} on top of {loser}\'s deck',

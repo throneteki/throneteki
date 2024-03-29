@@ -8,7 +8,8 @@ class ForgottenByHistory extends DrawCard {
             cost: ability.costs.kneelFactionCard(),
             target: {
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' &&
-                                       card.getPrintedCost() <= card.controller.faction.power
+                                       card.getPrintedCost() <= card.controller.faction.power &&
+                                       card.allowGameAction('returnCardToDeck')
             },
             handler: context => {
                 context.target.owner.shuffleCardIntoDeck(context.target);
