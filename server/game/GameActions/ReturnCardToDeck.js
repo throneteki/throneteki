@@ -13,6 +13,10 @@ class ReturnCardToDeck extends GameAction {
     }
 
     canChangeGameState({ card }) {
+        if(card.location === 'play area' && !LeavePlay.allow({ card })) {
+            return false;
+        }
+
         return card.location !== 'draw deck';
     }
 

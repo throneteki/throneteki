@@ -1,4 +1,5 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../drawcard');
+const GameActions = require('../../GameActions');
 
 class RaidingTheBayOfIce extends DrawCard {
     setupCardAbilities(ability) {
@@ -13,12 +14,18 @@ class RaidingTheBayOfIce extends DrawCard {
                     card.location === 'play area' &&
                     !card.isLimited() &&
                     card.getType() === 'location' &&
-                    card.controller === this.game.currentChallenge.loser)
+                    card.controller === this.game.currentChallenge.loser &&
+                    GameActions.returnCardToDeck({ card }).allow()
+                )
             },
+            message: '{player} plays {source} to place {target} on top of its owner\'s deck',
             handler: context => {
-                context.target.owner.moveCardToTopOfDeck(context.target);
-                this.game.addMessage('{0} plays {1} to move {2} to the top of {3}\'s deck',
-                    this.controller, this, context.target, context.target.owner);
+                this.game.resolveGameAction(
+                    GameActions.returnCardToDeck(context => ({
+                        card: context.target
+                    })),
+                    context
+                );
             }
         });
     }

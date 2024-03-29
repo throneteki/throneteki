@@ -1,4 +1,5 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../drawcard');
+const GameActions = require('../../GameActions');
 
 class CoastalReaver extends DrawCard {
     setupCardAbilities() {
@@ -22,7 +23,9 @@ class CoastalReaver extends DrawCard {
     }
 
     onCardSelected(player, card) {
-        card.owner.moveCardToTopOfDeck(card);
+        this.game.resolveGameAction(
+            GameActions.returnCardToDeck({ card })
+        );
         this.game.addMessage('{0} moves one card to the top of their deck for {1}', player, this);
 
         return true;
