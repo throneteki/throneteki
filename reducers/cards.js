@@ -24,6 +24,9 @@ function processDeck(deck, state) {
     }
 
     let formattedDeck = formatDeckAsFullCards(deck, state);
+    //copy over the locked properties from the server deck object
+    formattedDeck.lockedForEditing = deck.lockedForEditing;
+    formattedDeck.lockedForDeletion = deck.lockedForDeletion;
     const fallbackRestrictedList = state.restrictedList ? state.restrictedList.slice(0, 1) : undefined;
     const restrictedLists = state.currentRestrictedList ? [state.currentRestrictedList] : fallbackRestrictedList;
 

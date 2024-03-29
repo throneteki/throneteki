@@ -24,6 +24,8 @@ class EventEditor extends React.Component {
             restricted: [],
             banned: [],
             restrictSpectators: false,
+            restrictTableCreators: false,
+            validTableCreators: [],
             validSpectators: [],
             lockDecks: false
         }, props.event);
@@ -41,9 +43,12 @@ class EventEditor extends React.Component {
             useEventGameOptions: event.useEventGameOptions,
             eventGameOptions: event.eventGameOptions,
             restrictSpectators: event.restrictSpectators,
+            restrictTableCreators: event.restrictTableCreators,
             validSpectators: event.validSpectators,
             validSpectatorsText: this.formatListTextForUsers(event.validSpectators),
-            lockDecks: event.lockDecks
+            lockDecks: event.lockDecks,
+            validTableCreators: event.validTableCreators,
+            validTableCreatorsText: this.formatListTextForUsers(event.validTableCreators)
         };
     }
 
@@ -60,7 +65,7 @@ class EventEditor extends React.Component {
             name: this.state.name,
             draftOptions: this.state.draftOptions,
             format: this.state.format,
-            useDefaultRestrictedList: ['draft', 'standard', 'valyrian'].includes(this.state.format),
+            useDefaultRestrictedList: ['standard', 'valyrian'].includes(this.state.format),
             defaultRestrictedList,
             useEventGameOptions: this.state.useEventGameOptions,
             eventGameOptions: this.state.eventGameOptions,
@@ -68,8 +73,10 @@ class EventEditor extends React.Component {
             banned: this.state.banned,
             pods: this.state.pods,
             restrictSpectators: this.state.restrictSpectators,
+            restrictTableCreators: this.state.restrictTableCreators,
             validSpectators: this.state.validSpectators,
-            lockDecks: this.state.lockDecks
+            lockDecks: this.state.lockDecks,
+            validTableCreators: this.state.validTableCreators
         };
     }
 
@@ -103,6 +110,21 @@ class EventEditor extends React.Component {
         let state = this.state;
 
         const value = event.target ? event.target.value : event.value;
+
+        const fields = field.split('.');
+        if(fields.length === 1) {
+            state[field] = value;
+        } else {
+            state[fields[0]][fields[1]] = value;
+        }
+
+        this.setState({ state });
+    }
+
+    onChangeNumber(field, event) {
+        let state = this.state;
+
+        const value = Number(event.target ? event.target.value : event.value);
 
         const fields = field.split('.');
         if(fields.length === 1) {
@@ -310,7 +332,6 @@ class EventEditor extends React.Component {
                         options={ formats }
                         value={ this.state.format }
                         onChange={ this.onChange.bind(this, 'format') } />
-
                     <Checkbox name='lockDecks' label='Prevent users from making changes to their decks for the duration of the event' labelClass='col-sm-4' fieldClass='col-sm-offset-3 col-sm-8'
                         onChange={ this.onCheckboxChange.bind(this, 'lockDecks') } checked={ this.state.lockDecks } />
 
@@ -359,6 +380,12 @@ class EventEditor extends React.Component {
                     <div className='form-group'>
                         <label className='col-sm-3 col-xs-2 control-label'>Settings for Judges/Streamers</label>
                     </div>
+                    <Checkbox name='restrictTableCreators' label='Restrict table creators to those on the following list' labelClass='col-sm-4' fieldClass='col-sm-offset-3 col-sm-8'
+                        onChange={ this.onCheckboxChange.bind(this, 'restrictTableCreators') } checked={ this.state.restrictTableCreators } />
+                    { this.state.restrictTableCreators
+                    && <TextArea label='Valid Creators' labelClass='col-sm-3' fieldClass='col-sm-9' rows='10' value={ this.state.validTableCreatorsText }
+                        onChange={ event => this.handleUserListChange({ event, textProperty: 'validTableCreatorsText', arrayProperty: 'validTableCreators' }) } />
+                    }
                     <Checkbox name='restrictSpectators' label='Restrict spectators to those on the following list' labelClass='col-sm-4' fieldClass='col-sm-offset-3 col-sm-8'
                         onChange={ this.onCheckboxChange.bind(this, 'restrictSpectators') } checked={ this.state.restrictSpectators } />
                     { this.state.restrictSpectators
@@ -380,7 +407,7 @@ class EventEditor extends React.Component {
                             fieldClass='col-sm-9'
                             type='text'
                             value={ this.state.draftOptions.numOfRounds }
-                            onChange={ this.onChange.bind(this, 'draftOptions.numOfRounds') } />
+                            onChange={ this.onChangeNumber.bind(this, 'draftOptions.numOfRounds') } />
                     </div>) }
                     { this.state.format === 'custom-joust' && (<div>
                         <div className='form-group'>

@@ -1,44 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import CardLink from './CardLink';
-
+import { groupCards } from './CardingGrouping';
 class CardTypeGroup extends React.Component {
-    hasTrait(card, trait) {
-        return card.traits.some(t => t.toLowerCase() === trait.toLowerCase());
-    }
-
-    groupCardsByType() {
-        const { cards, useSchemes } = this.props;
-        let groupedCards = {};
-
-        for(const card of cards) {
-            let typeCode = card.card.type;
-            if(!typeCode) {
-                continue;
-            }
-
-            let type = typeCode[0].toUpperCase() + typeCode.slice(1);
-
-            if(useSchemes) {
-                if(this.hasTrait(card.card, 'scheme')) {
-                    type = 'Scheme';
-                }
-            }
-
-            if(!groupedCards[type]) {
-                groupedCards[type] = [card];
-            } else {
-                groupedCards[type].push(card);
-            }
-        }
-
-        return groupedCards;
-    }
-
     renderCardItem(cardQuantity, index) {
-        const { onCardClick, onCardMouseOut, onCardMouseOver } = this.props;
+        const { displayFactionIcons, onCardClick, onCardMouseOut, onCardMouseOver } = this.props;
         return (
-            <div key={ `${cardQuantity.card.code}${index++}` }>
+            <div key={ `${cardQuantity.card.code}${index++}` } >
+                { displayFactionIcons && <span className={ `deck-list-icon thronesicon thronesicon-${cardQuantity.card.faction} with-background` } /> }
                 <span>{ cardQuantity.count + 'x ' }</span>
                 <CardLink
                     card={ cardQuantity.card }
@@ -50,28 +19,35 @@ class CardTypeGroup extends React.Component {
     }
 
     render() {
+        const { cards, groupBy, sortCardsBy, useSchemes } = this.props;
         let cardsToRender = [];
-        let groupedCards = this.groupCardsByType();
+        let groupedCards = groupCards({ cards, groupBy, sortCardsBy, useSchemes });
 
-        for(const [key, cardList] of Object.entries(groupedCards)) {
-            let cards = [];
+        for(const {cards, group, title} of groupedCards) {
+            let renderedCards = [];
             let count = 0;
             let index = 0;
 
-            for(const card of cardList) {
-                cards.push(this.renderCardItem(card, index++));
+            for(const card of cards) {
+                renderedCards.push(this.renderCardItem(card, index++));
                 count += parseInt(card.count);
             }
 
+            if(cards.length === 0) {
+                continue;
+            }
+
             cardsToRender.push(
-                <div className='cards-no-break' key={ key }>
-                    <div className='card-group-title'>{ key + ' (' + count.toString() + ')' }</div>
-                    <div key={ key } className='card-group'>{ cards }</div>
+                <div className='cards-no-break' key={ group }>
+                    <div className='card-group-title'>{ title + ' (' + count.toString() + ')' }</div>
+                    <div key={ group } className='card-group'>{ renderedCards }</div>
                 </div>);
         }
 
+        let cardsClassName = this.props.displayFactionIcons ? 'cards-two-columns' : 'cards';
+
         return (
-            <div className='cards'>
+            <div className={ cardsClassName }>
                 { cardsToRender }
             </div>);
     }
@@ -80,10 +56,17 @@ class CardTypeGroup extends React.Component {
 CardTypeGroup.displayName = 'CardTypeGroup';
 CardTypeGroup.propTypes = {
     cards: PropTypes.array,
+    displayFactionIcons: PropTypes.bool,
+    groupBy: PropTypes.oneOf(['type', 'cost']),
     onCardClick: PropTypes.func,
     onCardMouseOut: PropTypes.func,
     onCardMouseOver: PropTypes.func,
+    sortCardsBy: PropTypes.oneOf(['name', 'faction']),
     useSchemes: PropTypes.bool
+};
+CardTypeGroup.defaultProps = {
+    sortCardsBy: 'name',
+    groupBy: 'type'
 };
 
 export default CardTypeGroup;

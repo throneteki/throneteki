@@ -80,12 +80,13 @@ class DraftDeckEditor extends React.Component {
         return remainingCards;
     }
 
-    getDeckFromState(restrictedList) {
+    getDeckFromState() {
         let deck = {
             _id: this.state.deckId,
             name: this.state.deckName,
             eventId: this.props.deck.eventId,
             faction: this.state.faction,
+            format: this.props.deck.format,
             agenda: this.state.agenda,
             bannerCards: this.state.bannerCards,
             plotCards: this.state.plotCards,
@@ -96,7 +97,8 @@ class DraftDeckEditor extends React.Component {
         if(!this.props.restrictedList && !this.props.currentRestrictedList) {
             deck.status = {};
         } else {
-            const selectedRestrictedList = restrictedList || this.props.currentRestrictedList;
+            const draftEventRestrictedList = this.props.restrictedList.filter(rl => rl._id === this.props.deck.eventId)[0];
+            const selectedRestrictedList = draftEventRestrictedList || this.props.currentRestrictedList;
             const restrictedLists = selectedRestrictedList ? [selectedRestrictedList] : this.props.restrictedList;
             deck.status = validateDeck(deck, { packs: this.props.packs, restrictedLists });
         }
@@ -104,8 +106,8 @@ class DraftDeckEditor extends React.Component {
         return deck;
     }
 
-    triggerDeckUpdated(restrictedList) {
-        const deck = this.getDeckFromState(restrictedList);
+    triggerDeckUpdated() {
+        const deck = this.getDeckFromState();
 
         if(this.props.onDeckUpdated) {
             this.props.onDeckUpdated(deck);
@@ -358,7 +360,7 @@ class DraftDeckEditor extends React.Component {
                     </div>
                 </div>
                 <div className='row'>
-                    <div className='col-sm-12' style={ { 'text-align': 'center', 'margin-bottom': '1em' } }>
+                    <div className='col-sm-12' style={ { textAlign: 'center', marginBottom: '1em' } }>
                         Click cards under the "Remaining Drafted Cards" to move them into your deck and vice-versa.
                     </div>
                 </div>
@@ -372,10 +374,11 @@ class DraftDeckEditor extends React.Component {
                                 cards={ this.state.remainingCards }
                                 onCardClick={ card => this.handleAddCard(card.code) }
                                 onCardMouseOut={ () => this.clearHoverCard() }
-                                onCardMouseOver={ card => this.updateHoverCard(card) } />
+                                onCardMouseOver={ card => this.updateHoverCard(card) }
+                                displayFactionIcons />
                         </div>
                     </div>
-                    <div className='col-sm-1' style={ { 'text-align': 'center' } }>
+                    <div className='col-sm-1' style={ { 'textAlign': 'center' } }>
                         <span className='glyphicon glyphicon-arrow-left' />
                         <span className='glyphicon glyphicon-arrow-right' />
                     </div>
@@ -389,7 +392,8 @@ class DraftDeckEditor extends React.Component {
                                 onCardClick={ card => this.handleRemoveCard(card.code) }
                                 onCardMouseOut={ () => this.clearHoverCard() }
                                 onCardMouseOver={ card => this.updateHoverCard(card) }
-                                useSchemes={ this.state.agenda && this.state.agenda.code === '05045' } />
+                                useSchemes={ this.state.agenda && this.state.agenda.code === '05045' }
+                                displayFactionIcons />
                         </div>
                     </div>
                 </div>

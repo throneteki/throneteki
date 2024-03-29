@@ -28,6 +28,7 @@ import BanlistAdmin from './pages/BanlistAdmin';
 import EventsAdmin from './pages/EventsAdmin';
 import EditEvent from './pages/EventsAdmin/EditEvent';
 import EditDraftCube from './pages/EventsAdmin/EditDraftCube';
+import DraftingTable from './Components/Drafting/DraftingTable';
 
 const routes = [
     { path: '/', action: () => <Lobby key='lobby' /> },
@@ -42,7 +43,20 @@ const routes = [
     { path: '/login', action: () => <Login key='login' /> },
     { path: '/logout', action: () => <Logout key='logout' /> },
     { path: '/news', action: () => <NewsAdmin key='newsadmin' />, permission: 'canEditNews' },
-    { path: '/play', action: context => (context.currentGame && context.currentGame.started) ? <GameBoard key='gameboard' /> : <GameLobby key='gamelobby' gameId={ context.params.gameId } /> },
+    {
+        path: '/play',
+        action: context => {
+            if(context.currentGame && context.currentGame.started) {
+                if(context.currentGame.tableType === 'drafting-session') {
+                    return <DraftingTable key='drafting-table' />;
+                }
+
+                return <GameBoard key='gameboard' />;
+            }
+
+            return <GameLobby key='gamelobby' gameId={ context.params.gameId } />;
+        }
+    },
     { path: '/profile', action: () => <Profile key='profile' /> },
     { path: '/register', action: () => <Register key='register' /> },
     { path: '/reset-password', action: context => <ResetPassword key='resetpassword' id={ context.params.id } token={ context.params.token } /> },
