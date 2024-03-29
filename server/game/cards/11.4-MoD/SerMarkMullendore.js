@@ -15,7 +15,7 @@ class SerMarkMullendore extends DrawCard {
                 gameAction: GameActions.may({
                     title: context => `Put ${context.event.revealed[0].name} into play?`,
                     message: {
-                        format: '{player} puts {revealed} into play and returns {source} to the top of their deck',
+                        format: '{player} puts {revealed} into play and places {source} on top of their deck',
                         args: { revealed: context => context.event.revealed[0] }
                     },
                     gameAction: GameActions.putIntoPlay(context => ({

@@ -26,7 +26,7 @@ class CoastalReaver extends DrawCard {
         this.game.resolveGameAction(
             GameActions.returnCardToDeck({ card })
         );
-        this.game.addMessage('{0} moves one card to the top of their deck for {1}', player, this);
+        this.game.addMessage('{0} places a card on top of their deck for {1}', player, this);
 
         return true;
     }

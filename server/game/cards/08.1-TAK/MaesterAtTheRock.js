@@ -10,7 +10,7 @@ class MaesterAtTheRock extends DrawCard {
             cost: ability.costs.kneelSelf(),
             handler: context => {
                 this.controller.moveCard(context.event.card, 'draw deck');
-                this.game.addMessage('{0} kneels {1} to move {2} to the top of their deck', this.controller, this, context.event.card);
+                this.game.addMessage('{0} kneels {1} to place {2} on top of their deck', this.controller, this, context.event.card);
             }
         });
     }

@@ -11,7 +11,7 @@ class WyllaManderly extends DrawCard {
             target: {
                 cardCondition: (card, context) => card.location === 'discard pile' && card.controller === this.controller && card !== context.event.card
             },
-            message: '{player} uses {source} to move {target} to the bottom of their deck',
+            message: '{player} uses {source} to place {target} on the bottom of their deck',
             handler: context => {
                 this.game.resolveGameAction(
                     GameActions.returnCardToDeck(context => ({ card: context.target, bottom: true })),

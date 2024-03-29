@@ -639,7 +639,7 @@ const Effects = {
                     context.game.resolveGameAction(
                         GameActions.returnCardToDeck({ card, allowSave, bottom: true })
                     );
-                    context.game.addMessage('{0} moves {1} to the bottom of its owner\'s deck at the end of the phase because of {2}', context.source.controller, card, context.source);
+                    context.game.addMessage('{0} places {1} on the bottom of its owner\'s deck at the end of the phase because of {2}', context.source.controller, card, context.source);
                 }
             }
         };
