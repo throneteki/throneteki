@@ -3,16 +3,16 @@ services:
   lobby:
     build:
       dockerfile: ./Dockerfile.dev
+    ports:
+      - "4000:4000"
     environment:
       - NODE_ENV=development
-    volumes:
-      - client:/app/lobby/public
+      - VERSION=Local build
   node:
     build:
       dockerfile: ./server/gamenode/Dockerfile.dev
     environment:
       - NODE_ENV=development
+      - VERSION=Local build
   redis:
     image: redis
-volumes:
-  client:

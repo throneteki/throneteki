@@ -86,9 +86,9 @@
     ],
     "compounds": [
         {
-            "name": "Build & Launch (Docker)",
-            "configurations": ["Attach (Docker Lobby)", "Attach (Docker Game)", "Launch Chrome"],
-            "preLaunchTask": "docker-compose-up-debug",
+            "name": "Docker Launch",
+            "configurations": ["Attach (Docker Lobby)", "Attach (Docker Game)"],
+            "preLaunchTask": "Docker Compose Up (Dev)",
             "stopAll": true
         }
     ]

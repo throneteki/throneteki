@@ -2,17 +2,32 @@
     "version": "2.0.0",
     "tasks": [
       {
-        "type": "shell",
-        "label": "docker-compose-up-debug",
-        "command": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build",
+        "type": "docker-compose",
+        "label": "Docker Compose Up (Dev)",
+        "dockerCompose": {
+          "up": {
+            "detached": true,
+            "build": true
+          },
+          "files": [
+            "${workspaceFolder}/docker-compose.yml",
+            "${workspaceFolder}/docker-compose.dev.yml"
+          ]
+        },
         "presentation": {
           "reveal": "always"
         }
       },
       {
-        "type": "shell",
-        "label": "docker-compose-down-debug",
-        "command": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml down",
+        "type": "docker-compose",
+        "label": "Docker Compose Down (Dev)",
+        "dockerCompose": {
+          "down": true,
+          "files": [
+            "${workspaceFolder}/docker-compose.yml",
+            "${workspaceFolder}/docker-compose.dev.yml"
+          ]
+        },
         "presentation": {
           "reveal": "always"
         }
