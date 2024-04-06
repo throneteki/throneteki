@@ -3,17 +3,9 @@ const webpack = require('webpack');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-let OctoWebpackPlugin;
-let version;
-
-if(process.env.TEAMCITY_VERSION) {
-    OctoWebpackPlugin = require('./OctoWebpackPlugin');
-    version = require('./version');
-}
-
 module.exports = {
     resolve: { extensions: ['.js', '.jsx'] },
-    plugins: (process.env.TEAMCITY_VERSION ? [new OctoWebpackPlugin({ version: version.build })] : []).concat([
+    plugins: [
         new CleanWebpackPlugin(),
         new HtmlWebpackPlugin({
             template: './views/index.pug',
@@ -24,7 +16,7 @@ module.exports = {
             jQuery: 'jquery'
         }),
         new webpack.EnvironmentPlugin(['VERSION'])
-    ]),
+    ],
     output: {
         path: path.resolve(__dirname, 'dist'),
         publicPath: '/'
@@ -49,7 +41,12 @@ module.exports = {
             { test: /\.css$/, use: ['style-loader', 'css-loader'] },
             { test: /\.less$/, use: ['style-loader', 'css-loader', 'less-loader'] },
             { test: /\.scss$/, use: ['style-loader', 'css-loader', 'sass-loader'] },
-            { test: /\.json/, exclude: /node_modules/, type: 'javascript/auto', use: [require.resolve('json-loader')] },
+            {
+                test: /\.json/,
+                exclude: /node_modules/,
+                type: 'javascript/auto',
+                use: [require.resolve('json-loader')]
+            },
             { test: /\.pug$/, include: path.join(__dirname, 'views'), loaders: ['pug-loader'] }
         ]
     }

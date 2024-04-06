@@ -4,7 +4,13 @@ const common = require('./webpack.common.js');
 
 module.exports = merge(common, {
     entry: {
-        'bundle': ['react-hot-loader/patch', './index.jsx']
+        bundle: [
+            '@babel/polyfill',
+            'eventsource',
+            'react-hot-loader/patch',
+            './client/index.jsx',
+            'webpack-hot-middleware/client'
+        ]
     },
     output: {
         filename: '[name].[hash].js'
@@ -12,16 +18,11 @@ module.exports = merge(common, {
     mode: 'development',
     devtool: 'inline-source-map',
     devServer: {
-        contentBase: './assets',
+        contentBase: './dist',
         hot: true,
-        host: process.env.HOST || 'localhost',
+        inline: true,
         historyApiFallback: true,
-        proxy: [{
-            context: ['/api', '/socket.io'],
-            target: `http://${process.env.LOBBYHOST || 'localhost'}:4000`
-        }]
+        publicPath: '/'
     },
-    plugins: [
-        new webpack.HotModuleReplacementPlugin()
-    ]
+    plugins: [new webpack.HotModuleReplacementPlugin()]
 });

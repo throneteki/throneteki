@@ -1,7 +1,11 @@
 const runServer = require('./server');
+const logger = require('./server/log');
 
-const run = async () => {
-    await runServer();
-};
-
-run();
+runServer()
+    .then(() => {
+        logger.info('Server finished startup');
+    })
+    .catch((err) => {
+        logger.error('Server crashed', err);
+        console.info(err);
+    });
