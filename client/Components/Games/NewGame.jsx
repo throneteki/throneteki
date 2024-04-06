@@ -29,12 +29,10 @@ class NewGame extends React.Component {
         this.onChessClockTimeLimitChange = this.onChessClockTimeLimitChange.bind(this);
         this.onDelayToStartClockChange = this.onDelayToStartClockChange.bind(this);
 
-        const defaultRestrictedList = props.restrictedLists.filter(rl => rl.official)[0];
-
         this.state = {
-            selectedMode: `none:${defaultRestrictedList && defaultRestrictedList._id}`,
+            selectedMode: `none:none`,
             eventId: 'none',
-            restrictedListId: defaultRestrictedList && defaultRestrictedList._id,
+            restrictedListId: 'none',
             optionsLocked: false,
             spectators: true,
             showHand: false,
