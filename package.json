@@ -7,7 +7,7 @@
         "test": "npm run jasmine",
         "jasmine": "cross-env JASMINE_CONFIG_PATH=./jasmine.json jasmine",
         "cover": "cross-env JASMINE_CONFIG_PATH=./jasmine.json istanbul cover --include-all-sources jasmine",
-        "lint": "eslint server/ test/server/ --ext=js",
+        "lint": "eslint server/ test/server/ client/ --ext=js --ext=jsx",
         "pack-lobby": "node ./pack.js",
         "start": "node ./index.js",
         "build": "webpack --config webpack.production.js",

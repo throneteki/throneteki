@@ -7,5 +7,5 @@ runServer()
     })
     .catch((err) => {
         logger.error('Server crashed', err);
-        console.info(err);
+        throw err;
     });
