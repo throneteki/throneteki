@@ -11,14 +11,9 @@ async function runServer() {
         instance: configService.getValue('instance') || {}
     };
 
-    await monk(configService.getValue('dbPath'))
-        .then((db) => {
-            options.db = db;
-        })
-        .catch((err) => {
-            console.info(err);
-            throw err;
-        });
+    options.db = await monk(configService.getValue('dbPath')).then((db) => {
+        options.db = db;
+    });
 
     let server = new Server(process.env.NODE_ENV !== 'production');
     let httpServer = server.init(options);

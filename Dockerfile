@@ -1,40 +1,19 @@
-FROM node:16 as base
+FROM --platform=linux/amd64 node:16
 
-RUN mkdir -p /usr/src/lobby
-WORKDIR /usr/src/lobby
-COPY package.json /usr/src/lobby/
-COPY package-lock.json /usr/src/lobby/
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
+COPY package.json /usr/src/app
+COPY package-lock.json /usr/src/app
+
 RUN npm install
 
 ARG VERSION
 ENV VERSION ${VERSION}
 
-COPY . /usr/src/lobby
+ENV NODE_ENV production
 
-FROM node:16 as client
+COPY . /usr/src/app
 
-ARG VERSION
-ENV VERSION ${VERSION}
-
-WORKDIR /app
-
-RUN git clone https://github.com/throneteki/throneteki-client.git
-
-WORKDIR /app/throneteki-client
-
-RUN echo ${VERSION}
-
-RUN npm install
 RUN npm run build
 
-FROM base as final
-
-WORKDIR /app/lobby
-
-COPY --from=base /usr/src/lobby .
-COPY --from=client /app/throneteki-client/dist ./public
-COPY --from=client /app/throneteki-client/assets ./public
-
-RUN rm -rf /usr/src/lobby
-
-CMD [ "npm", "start" ]
+CMD [ "node", "." ]
