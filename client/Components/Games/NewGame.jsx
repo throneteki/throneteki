@@ -30,7 +30,7 @@ class NewGame extends React.Component {
         this.onDelayToStartClockChange = this.onDelayToStartClockChange.bind(this);
 
         this.state = {
-            selectedMode: `none:none`,
+            selectedMode: 'none:none',
             eventId: 'none',
             restrictedListId: 'none',
             optionsLocked: false,
