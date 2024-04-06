@@ -11,7 +11,7 @@ async function runServer() {
         instance: configService.getValue('instance') || {}
     };
 
-    options.db = await monk(configService.getValue('dbPath')).then((db) => {
+    await monk(configService.getValue('dbPath')).then((db) => {
         options.db = db;
     });
 
