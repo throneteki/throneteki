@@ -2,7 +2,7 @@ const socketio = require('socket.io');
 const Socket = require('./socket.js');
 const jwt = require('jsonwebtoken');
 const _ = require('underscore');
-const { validateDeck, formatDeckAsFullCards } = require('throneteki-deck-helper');
+const { validateDeck, formatDeckAsFullCards } = require('../deck-helper');
 
 const logger = require('./log.js');
 const PendingGame = require('./pendinggame.js');

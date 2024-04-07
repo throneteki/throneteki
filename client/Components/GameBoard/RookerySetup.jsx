@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { validateDeck, formatDeckAsShortCards } from 'throneteki-deck-helper';
+import { validateDeck, formatDeckAsShortCards } from '../../../deck-helper';
 
 import CardTiledList from './CardTiledList';
 import DeckStatus from '../Decks/DeckStatus';
