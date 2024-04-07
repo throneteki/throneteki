@@ -1,4 +1,4 @@
-const { validateDeck, formatDeckAsShortCards, formatDeckAsFullCards } = require('../../../deck-helper');
+const { validateDeck, formatDeckAsShortCards, formatDeckAsFullCards } = require('../../../../deck-helper');
 
 const AllPlayerPrompt = require('../allplayerprompt.js');
 
