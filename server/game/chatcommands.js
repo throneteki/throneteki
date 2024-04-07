@@ -431,11 +431,11 @@ class ChatCommands {
     moveBottom(player) {
         this.game.promptForSelect(player, {
             activePromptTitle: 'Select a card',
-            waitingPromptTitle: 'Waiting for opponent to move a card to the bottom of his deck',
+            waitingPromptTitle: 'Waiting for opponent to place a card on the bottom of their deck',
             cardCondition: card => card.controller === player && card.owner === player,
             onSelect: (p, card) => {
                 player.moveCard(card, 'draw deck', { bottom: true });
-                this.game.addAlert('danger', '{0} uses the /move-bottom command to move {1} to the bottom of their deck', p, card);
+                this.game.addAlert('danger', '{0} uses the /move-bottom command to place {1} on the bottom of their deck', p, card);
                 return true;
             }
         });

@@ -55,7 +55,7 @@ class OldtownUndercity extends DrawCard {
 
         player.moveCard(this.remainingCards[0], 'draw deck');
 
-        this.game.addMessage('{0} uses {1} to look at the top three cards of their deck, adds 1 to their hand, places one on the bottom of their deck and places the other on the top of their deck',
+        this.game.addMessage('{0} uses {1} to look at the top three cards of their deck, adds 1 to their hand, places one on the bottom of their deck and places the other on top of their deck',
             player, this);
 
         return true;

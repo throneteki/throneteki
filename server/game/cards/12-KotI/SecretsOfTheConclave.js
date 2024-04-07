@@ -71,7 +71,7 @@ class SecretsOfTheConclave extends PlotCard {
         if(this.remainingCards.length > 0) {
             this.promptToPlaceNextCard();
         } else {
-            this.game.addMessage('{0} uses {1} to look at the top 5 cards of their deck, add 1 to their hand, discard 1, and place the rest on the top of their deck', this.controller, this);
+            this.game.addMessage('{0} uses {1} to look at the top 5 cards of their deck, add 1 to their hand, discard 1, and place the rest on top of their deck', this.controller, this);
         }
 
         return true;

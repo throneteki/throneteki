@@ -103,6 +103,10 @@ class AbilityTarget {
             return context.game.getPlayersInFirstPlayerOrder().filter(player => this.choosingPlayer(player, context));
         }
 
+        if (this.choosingPlayer === 'opponent') {
+            return [context.opponent];
+        }
+
         if(this.choosingPlayer === 'each') {
             return context.game.getPlayersInFirstPlayerOrder();
         }

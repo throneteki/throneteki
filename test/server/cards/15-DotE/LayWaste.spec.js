@@ -36,9 +36,9 @@ describe('Lay Waste', function() {
 
                 // put western fiefdom back into the deck so it can be searched for
                 this.westernFiefdom = this.player2.findCardByName('Western Fiefdom', 'hand');
-                this.player2Object.shuffleCardIntoDeck(this.westernFiefdom);
+                this.player2.dragCard(this.westernFiefdom, 'draw deck');
                 this.ironThrone = this.player2.findCardByName('The Iron Throne (Core)', 'hand');
-                this.player2Object.shuffleCardIntoDeck(this.ironThrone);
+                this.player2.dragCard(this.ironThrone, 'draw deck');
 
                 this.completeChallengesPhase();
 
