@@ -31,7 +31,7 @@ class DraftDeckEditor extends React.Component {
             }
         };
 
-        if (props.deck) {
+        if(props.deck) {
             this.state.deckId = props.deck._id;
             this.state.deckName = props.deck.name;
             this.state.plotCards = props.deck.plotCards;
@@ -51,7 +51,7 @@ class DraftDeckEditor extends React.Component {
     }
 
     componentWillReceiveProps(props) {
-        if (props.factions && !this.state.faction) {
+        if(props.factions && !this.state.faction) {
             this.setState({ faction: props.factions['baratheon'] }, this.triggerDeckUpdated);
         }
     }
@@ -60,17 +60,15 @@ class DraftDeckEditor extends React.Component {
         let remainingCards = [];
 
         const allCards = deck.drawCards.concat(deck.plotCards);
-        for (const draftCardQuantity of deck.draftedCards) {
+        for(const draftCardQuantity of deck.draftedCards) {
             const card = this.props.cards[draftCardQuantity.code];
 
-            if (card.type === 'agenda') {
+            if(card.type === 'agenda') {
                 continue;
             }
 
-            const usedCardQuantity = allCards.find(
-                (cq) => cq.card.code === draftCardQuantity.code
-            ) || { count: 0, code: draftCardQuantity.code, card };
-            if (draftCardQuantity.count > usedCardQuantity.count) {
+            const usedCardQuantity = allCards.find(cq => cq.card.code === draftCardQuantity.code) || { count: 0, code: draftCardQuantity.code, card };
+            if(draftCardQuantity.count > usedCardQuantity.count) {
                 remainingCards.push({
                     count: draftCardQuantity.count - usedCardQuantity.count,
                     code: draftCardQuantity.code,
@@ -96,17 +94,12 @@ class DraftDeckEditor extends React.Component {
             draftedCards: this.props.deck.draftedCards
         };
 
-        if (!this.props.restrictedList && !this.props.currentRestrictedList) {
+        if(!this.props.restrictedList && !this.props.currentRestrictedList) {
             deck.status = {};
         } else {
-            const draftEventRestrictedList = this.props.restrictedList.filter(
-                (rl) => rl._id === this.props.deck.eventId
-            )[0];
-            const selectedRestrictedList =
-                draftEventRestrictedList || this.props.currentRestrictedList;
-            const restrictedLists = selectedRestrictedList
-                ? [selectedRestrictedList]
-                : this.props.restrictedList;
+            const draftEventRestrictedList = this.props.restrictedList.filter(rl => rl._id === this.props.deck.eventId)[0];
+            const selectedRestrictedList = draftEventRestrictedList || this.props.currentRestrictedList;
+            const restrictedLists = selectedRestrictedList ? [selectedRestrictedList] : this.props.restrictedList;
             deck.status = validateDeck(deck, { packs: this.props.packs, restrictedLists });
         }
 
@@ -116,7 +109,7 @@ class DraftDeckEditor extends React.Component {
     triggerDeckUpdated() {
         const deck = this.getDeckFromState();
 
-        if (this.props.onDeckUpdated) {
+        if(this.props.onDeckUpdated) {
             this.props.onDeckUpdated(deck);
         }
     }
@@ -140,39 +133,36 @@ class DraftDeckEditor extends React.Component {
         let drawCards = this.state.drawCards;
         let plotCards = this.state.plotCards;
 
-        const cardQuantity = remainingCards.find((cardQuantity) => cardQuantity.code === cardCode);
+        const cardQuantity = remainingCards.find(cardQuantity => cardQuantity.code === cardCode);
         const card = this.props.cards[cardCode];
 
-        if (cardQuantity.count === 1) {
-            remainingCards = remainingCards.filter((cq) => cq.code !== cardCode);
+        if(cardQuantity.count === 1) {
+            remainingCards = remainingCards.filter(cq => cq.code !== cardCode);
         } else {
             cardQuantity.count -= 1;
         }
 
-        if (card.type === 'plot') {
-            const existingCardQuantity = plotCards.find((cq) => cq.card.code === cardCode);
-            if (existingCardQuantity) {
+        if(card.type === 'plot') {
+            const existingCardQuantity = plotCards.find(cq => cq.card.code === cardCode);
+            if(existingCardQuantity) {
                 existingCardQuantity.count += 1;
             } else {
                 plotCards.push({ count: 1, card });
             }
         } else {
-            const existingCardQuantity = drawCards.find((cq) => cq.card.code === cardCode);
-            if (existingCardQuantity) {
+            const existingCardQuantity = drawCards.find(cq => cq.card.code === cardCode);
+            if(existingCardQuantity) {
                 existingCardQuantity.count += 1;
             } else {
                 drawCards.push({ count: 1, card });
             }
         }
 
-        this.setState(
-            {
-                drawCards,
-                plotCards,
-                remainingCards
-            },
-            this.triggerDeckUpdated
-        );
+        this.setState({
+            drawCards,
+            plotCards,
+            remainingCards
+        }, this.triggerDeckUpdated);
     }
 
     handleRemoveCard(cardCode) {
@@ -180,41 +170,36 @@ class DraftDeckEditor extends React.Component {
         let drawCards = this.state.drawCards;
         let plotCards = this.state.plotCards;
 
-        const remainingCardQuantity = remainingCards.find(
-            (cardQuantity) => cardQuantity.code === cardCode
-        );
+        const remainingCardQuantity = remainingCards.find(cardQuantity => cardQuantity.code === cardCode);
         const card = this.props.cards[cardCode];
 
-        if (remainingCardQuantity) {
+        if(remainingCardQuantity) {
             remainingCardQuantity.count += 1;
         } else {
             remainingCards.push({ count: 1, card, code: cardCode });
         }
 
-        if (card.type === 'plot') {
-            const existingCardQuantity = plotCards.find((cq) => cq.card.code === cardCode);
-            if (existingCardQuantity.count > 1) {
+        if(card.type === 'plot') {
+            const existingCardQuantity = plotCards.find(cq => cq.card.code === cardCode);
+            if(existingCardQuantity.count > 1) {
                 existingCardQuantity.count -= 1;
             } else {
-                plotCards = plotCards.filter((cq) => cq.card.code !== cardCode);
+                plotCards = plotCards.filter(cq => cq.card.code !== cardCode);
             }
         } else {
-            const existingCardQuantity = drawCards.find((cq) => cq.card.code === cardCode);
-            if (existingCardQuantity.count > 1) {
+            const existingCardQuantity = drawCards.find(cq => cq.card.code === cardCode);
+            if(existingCardQuantity.count > 1) {
                 existingCardQuantity.count -= 1;
             } else {
-                drawCards = drawCards.filter((cq) => cq.card.code !== cardCode);
+                drawCards = drawCards.filter(cq => cq.card.code !== cardCode);
             }
         }
 
-        this.setState(
-            {
-                drawCards,
-                plotCards,
-                remainingCards
-            },
-            this.triggerDeckUpdated
-        );
+        this.setState({
+            drawCards,
+            plotCards,
+            remainingCards
+        }, this.triggerDeckUpdated);
     }
 
     onChange(field, event) {
@@ -239,7 +224,7 @@ class DraftDeckEditor extends React.Component {
             showBanners: this.isAllianceAgenda(selectedAgenda)
         };
 
-        if (!toUpdate.showBanners) {
+        if(!toUpdate.showBanners) {
             toUpdate.bannerCards = [];
         }
 
@@ -253,21 +238,19 @@ class DraftDeckEditor extends React.Component {
     onAddBanner(event) {
         event.preventDefault();
 
-        if (!this.state.selectedBanner || !this.state.selectedBanner.code) {
+        if(!this.state.selectedBanner || !this.state.selectedBanner.code) {
             return;
         }
 
         // Don't allow more than 2 banners
-        if (this.state.bannerCards.length >= 2) {
+        if(this.state.bannerCards.length >= 2) {
             return;
         }
 
         // Don't allow duplicate banners
-        if (
-            this.state.bannerCards.some((banner) => {
-                return banner.code === this.state.selectedBanner.code;
-            })
-        ) {
+        if(this.state.bannerCards.some(banner => {
+            return banner.code === this.state.selectedBanner.code;
+        })) {
             return;
         }
 
@@ -278,7 +261,7 @@ class DraftDeckEditor extends React.Component {
     }
 
     onRemoveBanner(banner) {
-        const banners = this.state.bannerCards.filter((card) => {
+        const banners = this.state.bannerCards.filter(card => {
             return card.code !== banner.code;
         });
 
@@ -292,29 +275,21 @@ class DraftDeckEditor extends React.Component {
     onSaveClick(event) {
         event.preventDefault();
 
-        if (this.props.onDeckSave) {
+        if(this.props.onDeckSave) {
             this.props.onDeckSave(this.getDeckFromState());
         }
     }
 
     getBannerList() {
-        if (this.state.bannerCards.length === 0) {
+        if(this.state.bannerCards.length === 0) {
             return null;
         }
 
-        return this.state.bannerCards.map((card) => {
-            return (
-                <div key={card.code}>
-                    <span key={card.code} className='card-link col-sm-10'>
-                        {card.label}
-                    </span>
-                    <span
-                        className='glyphicon glyphicon-remove icon-danger btn col-sm-1'
-                        aria-hidden='true'
-                        onClick={this.onRemoveBanner.bind(this, card)}
-                    />
-                </div>
-            );
+        return this.state.bannerCards.map(card => {
+            return (<div key={ card.code }>
+                <span key={ card.code } className='card-link col-sm-10'>{ card.label }</span>
+                <span className='glyphicon glyphicon-remove icon-danger btn col-sm-1' aria-hidden='true' onClick={ this.onRemoveBanner.bind(this, card) } />
+            </div>);
         });
     }
 
@@ -323,139 +298,70 @@ class DraftDeckEditor extends React.Component {
     }
 
     render() {
-        if (
-            !this.props.factions ||
-            !this.props.cards ||
-            !this.props.restrictedList ||
-            !this.props.events
-        ) {
+        if(!this.props.factions || !this.props.cards || !this.props.restrictedList || !this.props.events) {
             return <div>Please wait while loading from the server...</div>;
         }
 
-        const agendas = this.props.deck.draftedCards
-            .map((cardQuantity) => this.props.cards[cardQuantity.code])
-            .filter((card) => card.type === 'agenda');
+        const agendas = this.props.deck.draftedCards.map(cardQuantity => this.props.cards[cardQuantity.code]).filter(card => card.type === 'agenda');
         let banners = this.getBannerList();
 
-        const event = this.props.events.find((event) => event._id === this.props.deck.eventId);
+        const event = this.props.events.find(event => event._id === this.props.deck.eventId);
 
         return (
             <div>
-                {this.state.cardToShow && <CardHoverPreview card={this.state.cardToShow} />}
+                { this.state.cardToShow && <CardHoverPreview card={ this.state.cardToShow } /> }
                 <div className='row'>
                     <div className='col-sm-5'>
-                        <ApiStatus
-                            apiState={this.props.apiState}
-                            successMessage='Deck saved successfully.'
-                        />
+                        <ApiStatus apiState={ this.props.apiState } successMessage='Deck saved successfully.' />
 
                         <div className='form-group'>
                             <div className='col-xs-12 deck-buttons'>
                                 <span className='col-xs-2'>
-                                    <button
-                                        ref='submit'
-                                        type='submit'
-                                        className='btn btn-primary'
-                                        onClick={this.onSaveClick.bind(this)}
-                                    >
-                                        Save{' '}
-                                        {this.props.apiState && this.props.apiState.loading && (
-                                            <span className='spinner button-spinner' />
-                                        )}
-                                    </button>
+                                    <button ref='submit' type='submit' className='btn btn-primary' onClick={ this.onSaveClick.bind(this) }>Save { this.props.apiState && this.props.apiState.loading && <span className='spinner button-spinner' /> }</button>
                                 </span>
-                                <button
-                                    ref='submit'
-                                    type='button'
-                                    className='btn btn-primary'
-                                    onClick={this.onCancelClick.bind(this)}
-                                >
-                                    Cancel
-                                </button>
+                                <button ref='submit' type='button' className='btn btn-primary' onClick={ this.onCancelClick.bind(this) }>Cancel</button>
                             </div>
                         </div>
 
                         <form className='form form-horizontal'>
-                            {event && (
+                            { event && (
                                 <div className='form-group'>
                                     <label className='col-sm-3 control-label'>Event:</label>
-                                    <div className='col-sm-9 control-label'>{event.name}</div>
+                                    <div className='col-sm-9 control-label'>{ event.name }</div>
                                 </div>
-                            )}
-                            <Input
-                                name='deckName'
-                                label='Deck Name'
-                                labelClass='col-sm-3'
-                                fieldClass='col-sm-9'
-                                placeholder='Deck Name'
-                                type='text'
-                                onChange={this.onChange.bind(this, 'deckName')}
-                                value={this.state.deckName}
-                            />
-                            <Select
-                                name='faction'
-                                label='Faction'
-                                labelClass='col-sm-3'
-                                fieldClass='col-sm-9'
-                                options={Object.values(this.props.factions)}
-                                onChange={this.onFactionChange.bind(this)}
-                                value={this.state.faction ? this.state.faction.value : undefined}
-                            />
-                            <Select
-                                name='agenda'
-                                label='Agenda'
-                                labelClass='col-sm-3'
-                                fieldClass='col-sm-9'
-                                options={agendas}
-                                onChange={this.onAgendaChange.bind(this)}
-                                value={this.state.agenda ? this.state.agenda.code : undefined}
-                                valueKey='code'
-                                nameKey='label'
-                                blankOption={{ label: '- Select -', code: '' }}
-                            />
+                            ) }
+                            <Input name='deckName' label='Deck Name' labelClass='col-sm-3' fieldClass='col-sm-9' placeholder='Deck Name'
+                                type='text' onChange={ this.onChange.bind(this, 'deckName') } value={ this.state.deckName } />
+                            <Select name='faction' label='Faction' labelClass='col-sm-3' fieldClass='col-sm-9' options={ Object.values(this.props.factions) }
+                                onChange={ this.onFactionChange.bind(this) } value={ this.state.faction ? this.state.faction.value : undefined } />
+                            <Select name='agenda' label='Agenda' labelClass='col-sm-3' fieldClass='col-sm-9' options={ agendas }
+                                onChange={ this.onAgendaChange.bind(this) } value={ this.state.agenda ? this.state.agenda.code : undefined }
+                                valueKey='code' nameKey='label' blankOption={ { label: '- Select -', code: '' } } />
 
-                            {this.state.showBanners && (
+                            { this.state.showBanners &&
                                 <div>
-                                    <Select
-                                        name='banners'
-                                        label='Banners'
-                                        labelClass='col-sm-3'
-                                        fieldClass='col-sm-9'
-                                        options={this.props.banners}
-                                        onChange={this.onBannerChange.bind(this)}
-                                        value={
-                                            this.state.selectedBanner
-                                                ? this.state.selectedBanner.code
-                                                : undefined
-                                        }
-                                        valueKey='code'
-                                        nameKey='label'
-                                        blankOption={{ label: '- Select -', code: '' }}
-                                        button={{
-                                            text: 'Add',
-                                            onClick: this.onAddBanner.bind(this)
-                                        }}
-                                    />
+                                    <Select name='banners' label='Banners' labelClass='col-sm-3' fieldClass='col-sm-9' options={ this.props.banners }
+                                        onChange={ this.onBannerChange.bind(this) } value={ this.state.selectedBanner ? this.state.selectedBanner.code : undefined }
+                                        valueKey='code' nameKey='label'
+                                        blankOption={ { label: '- Select -', code: '' } } button={ { text: 'Add', onClick: this.onAddBanner.bind(this) } } />
                                     <div className='col-sm-9 col-sm-offset-3 banner-list'>
-                                        {banners}
+                                        { banners }
                                     </div>
                                 </div>
-                            )}
+                            }
                         </form>
                     </div>
                     <div className='col-sm-1' />
                     <div className='col-sm-6'>
                         <DeckSummaryHeader
-                            deck={this.getDeckFromState()}
-                            onCardMouseOut={() => this.clearHoverCard()}
-                            onCardMouseOver={(card) => this.updateHoverCard(card)}
-                        />
+                            deck={ this.getDeckFromState() }
+                            onCardMouseOut={ () => this.clearHoverCard() }
+                            onCardMouseOver={ card => this.updateHoverCard(card) } />
                     </div>
                 </div>
                 <div className='row'>
-                    <div className='col-sm-12' style={{ textAlign: 'center', marginBottom: '1em' }}>
-                        Click cards under the "Remaining Drafted Cards" to move them into your deck
-                        and vice-versa.
+                    <div className='col-sm-12' style={ { textAlign: 'center', marginBottom: '1em' } }>
+                        Click cards under the "Remaining Drafted Cards" to move them into your deck and vice-versa.
                     </div>
                 </div>
                 <div className='row'>
@@ -465,15 +371,14 @@ class DraftDeckEditor extends React.Component {
                         </div>
                         <div className='col-sm-12'>
                             <CardTypeGroups
-                                cards={this.state.remainingCards}
-                                onCardClick={(card) => this.handleAddCard(card.code)}
-                                onCardMouseOut={() => this.clearHoverCard()}
-                                onCardMouseOver={(card) => this.updateHoverCard(card)}
-                                displayFactionIcons
-                            />
+                                cards={ this.state.remainingCards }
+                                onCardClick={ card => this.handleAddCard(card.code) }
+                                onCardMouseOut={ () => this.clearHoverCard() }
+                                onCardMouseOver={ card => this.updateHoverCard(card) }
+                                displayFactionIcons />
                         </div>
                     </div>
-                    <div className='col-sm-1' style={{ textAlign: 'center' }}>
+                    <div className='col-sm-1' style={ { 'textAlign': 'center' } }>
                         <span className='glyphicon glyphicon-arrow-left' />
                         <span className='glyphicon glyphicon-arrow-right' />
                     </div>
@@ -483,13 +388,12 @@ class DraftDeckEditor extends React.Component {
                         </div>
                         <div className='col-sm-12'>
                             <CardTypeGroups
-                                cards={this.state.plotCards.concat(this.state.drawCards)}
-                                onCardClick={(card) => this.handleRemoveCard(card.code)}
-                                onCardMouseOut={() => this.clearHoverCard()}
-                                onCardMouseOver={(card) => this.updateHoverCard(card)}
-                                useSchemes={this.state.agenda && this.state.agenda.code === '05045'}
-                                displayFactionIcons
-                            />
+                                cards={ this.state.plotCards.concat(this.state.drawCards) }
+                                onCardClick={ card => this.handleRemoveCard(card.code) }
+                                onCardMouseOut={ () => this.clearHoverCard() }
+                                onCardMouseOver={ card => this.updateHoverCard(card) }
+                                useSchemes={ this.state.agenda && this.state.agenda.code === '05045' }
+                                displayFactionIcons />
                         </div>
                     </div>
                 </div>
