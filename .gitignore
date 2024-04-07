@@ -1,6 +1,8 @@
 bower_components
 node_modules
-public
+public/img/cards
+public/img/avatar
+public/img/bgs
 typings
 coverage
 *.log
