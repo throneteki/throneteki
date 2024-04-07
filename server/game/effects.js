@@ -639,7 +639,7 @@ const Effects = {
                     context.game.resolveGameAction(
                         GameActions.returnCardToDeck({ card, allowSave, bottom: true })
                     );
-                    context.game.addMessage('{0} moves {1} to the bottom of its owner\'s deck at the end of the phase because of {2}', context.source.controller, card, context.source);
+                    context.game.addMessage('{0} places {1} on the bottom of its owner\'s deck at the end of the phase because of {2}', context.source.controller, card, context.source);
                 }
             }
         };
@@ -685,7 +685,7 @@ const Effects = {
             unapply: function(card, context) {
                 if(['play area', 'duplicate'].includes(card.location) && context.shuffleIntoDeckIfStillInPlay.includes(card)) {
                     context.shuffleIntoDeckIfStillInPlay = context.shuffleIntoDeckIfStillInPlay.filter(c => c !== card);
-                    card.owner.shuffleCardIntoDeck(card, allowSave);
+                    context.game.resolveGameAction(GameActions.shuffleIntoDeck({ cards: [card], allowSave }));
                     context.game.addMessage('{0} shuffles {1} into their deck at the end of the phase because of {2}', card.owner, card, context.source);
                 }
             }
@@ -1002,7 +1002,7 @@ const Effects = {
                 if(!challenge) {
                     return;
                 }
-                
+
                 challenge.removeContribution(contribution);
             }
         };
@@ -1016,7 +1016,7 @@ const Effects = {
                 if(!challenge) {
                     return;
                 }
-                
+
                 contribution = new ValueContribution(player, card, value);
                 challenge.addContribution(contribution);
             },

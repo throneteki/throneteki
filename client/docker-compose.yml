@@ -1,0 +1,44 @@
+version: "3.3"
+services:
+  client:
+    restart: always
+    build:
+      context: .
+    image: throneteki:client
+    ports:
+      - "8080:8080"
+    environment:
+      - HOST=client
+      - LOBBYHOST=lobby
+    command: "sh -c 'npm install && npm start'"
+  lobby:
+    restart: always
+    image: throneteki/lobby
+    ports:
+      - "4000:4000"
+      - "9229:9229"
+    links:
+      - mongo
+    depends_on:
+      - mongo
+    command:
+      - node
+      - "--inspect=0.0.0.0"
+      - "."
+  node:
+    restart: always
+    image: throneteki/node
+    ports:
+      - "9500:9500"
+      - "9339:9339"
+    command:
+      - node
+      - "--inspect=0.0.0.0:9339"
+      - "server/gamenode"      
+  mongo:
+    image: mongo
+    volumes:
+      - mongodb:/data/db
+volumes:
+  mongodb:
+  node_modules:

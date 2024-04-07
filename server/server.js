@@ -6,6 +6,11 @@ const logger = require('./log.js');
 const api = require('./api');
 const path = require('path');
 const http = require('http');
+const webpackDevMiddleware = require('webpack-dev-middleware');
+const webpackHotMiddleware = require('webpack-hot-middleware');
+const historyApiFallback = require('connect-history-api-fallback');
+const webpack = require('webpack');
+const webpackConfig = require('../webpack.dev.js');
 const Sentry = require('@sentry/node');
 const passportJwt = require('passport-jwt');
 const JwtStrategy = passportJwt.Strategy;
@@ -60,10 +65,43 @@ class Server {
         api.init(app, options);
 
         app.use(express.static(__dirname + '/../public'));
+        app.use(express.static(__dirname + '/../dist'));
 
-        app.get('*', (req, res) => {
-            res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
-        });
+        if (this.isDeveloping) {
+            const compiler = webpack(webpackConfig);
+            const middleware = webpackDevMiddleware(compiler, {
+                hot: true,
+                contentBase: 'client',
+                publicPath: '/',
+                stats: {
+                    colors: true,
+                    hash: false,
+                    timings: true,
+                    chunks: false,
+                    chunkModules: false,
+                    modules: false
+                },
+                historyApiFallback: true
+            });
+
+            app.set('view engine', 'pug');
+            app.set('views', path.join(__dirname, '..', 'views'));
+
+            app.use(middleware);
+            app.use(
+                webpackHotMiddleware(compiler, {
+                    log: false,
+                    path: '/__webpack_hmr',
+                    heartbeat: 2000
+                })
+            );
+            app.use(historyApiFallback());
+            app.use(middleware);
+        } else {
+            app.get('*', (req, res) => {
+                res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+            });
+        }
 
         // Define error middleware last
         app.use(function (err, req, res, next) {

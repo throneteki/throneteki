@@ -13,7 +13,7 @@ class CaptainsDaughter extends DrawCard {
             ],
             handler: context => {
                 context.event.card.owner.moveCard(context.event.card, 'draw deck');
-                this.game.addMessage('{0} sacrifices {1} and kneels their faction card to move {2} to the top of {3}\'s deck',
+                this.game.addMessage('{0} sacrifices {1} and kneels their faction card to place {2} on top of {3}\'s deck',
                     context.player, this, context.event.card, context.event.card.owner);
             }
         });

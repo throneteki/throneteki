@@ -12,7 +12,7 @@ class SchemingSepton extends DrawCard {
                 this.game.addMessage('{0} uses {1} to draw {2} card and gain {3} gold', this.controller, this, numCardsDrawn, goldGained);
                 if(numCardsDrawn === 1 && goldGained === 2) {
                     this.controller.moveCard(this, 'draw deck');
-                    this.game.addMessage('{0} then moves {1} to the top of their deck', this.controller, this);
+                    this.game.addMessage('{0} then places {1} on top of their deck', this.controller, this);
                 }
             }
         });

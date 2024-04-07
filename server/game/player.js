@@ -916,20 +916,12 @@ class Player extends Spectator {
         return this.drawDeck.length > 0 && this.game.getPlayers().every(player => this.game.isCardVisible(this.drawDeck[0], player));
     }
 
-    moveCardToTopOfDeck(card, allowSave = true) {
-        return this.game.resolveGameAction(GameActions.returnCardToDeck({ card, allowSave }));
-    }
-
     canPutIntoShadows(card, playingType = 'put') {
         return !this.putIntoShadowsRestrictions.some(restriction => restriction(card, playingType));
     }
 
     putIntoShadows(card, allowSave = true, callback = () => true) {
         return this.game.resolveGameAction(GameActions.putIntoShadows({ card, allowSave })).thenExecute(callback);
-    }
-
-    shuffleCardIntoDeck(card, allowSave = true) {
-        return this.game.resolveGameAction(GameActions.shuffleIntoDeck({ cards: [card], allowSave: allowSave }));
     }
 
     /**
@@ -1052,7 +1044,7 @@ class Player extends Spectator {
         }
     }
 
-    placeCardInPile({ card, location, bottom = false, wasFacedown = false }) {        
+    placeCardInPile({ card, location, bottom = false, wasFacedown = false }) {
         this.removeCardFromPile(card);
 
         let targetPile = this.getSourceList(location);
