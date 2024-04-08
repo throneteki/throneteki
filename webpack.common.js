@@ -15,7 +15,7 @@ module.exports = {
             $: 'jquery',
             jQuery: 'jquery'
         }),
-        new webpack.EnvironmentPlugin(['VERSION'])
+        new webpack.EnvironmentPlugin({ VERSION: 'Local build' })
     ],
     output: {
         path: path.resolve(__dirname, 'dist'),

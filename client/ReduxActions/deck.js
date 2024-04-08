@@ -1,4 +1,4 @@
-import { formatDeckAsShortCards } from 'throneteki-deck-helper';
+import { formatDeckAsShortCards } from '../../deck-helper';
 
 export function loadDecks() {
     return {
@@ -14,9 +14,11 @@ export function loadDeck(deckId) {
     return {
         types: ['REQUEST_DECK', 'RECEIVE_DECK'],
         shouldCallAPI: (state) => {
-            let ret = state.cards.decks.length === 0 || !state.cards.decks.some(deck => {
-                return deck._id === deckId;
-            });
+            let ret =
+                state.cards.decks.length === 0 ||
+                !state.cards.decks.some((deck) => {
+                    return deck._id === deckId;
+                });
 
             return ret;
         },
@@ -67,7 +69,7 @@ export function saveDeck(deck) {
         types: ['SAVE_DECK', 'DECK_SAVED'],
         shouldCallAPI: () => true,
         APIParams: {
-            url: `/api/decks/${(deck._id || '')}`,
+            url: `/api/decks/${deck._id || ''}`,
             type: deck._id ? 'PUT' : 'POST',
             data: str
         }

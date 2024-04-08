@@ -1,9 +1,9 @@
-import { formatDeckAsFullCards } from 'throneteki-deck-helper';
+import { formatDeckAsFullCards } from '../../deck-helper';
 
 import { sendGameMessage } from './socket';
 
 export function startAbilityTimer(timeLimit, timerProps) {
-    return dispatch => {
+    return (dispatch) => {
         let started = new Date();
 
         let handle = setTimeout(() => {
@@ -26,9 +26,11 @@ export function stopAbilityTimer() {
 }
 
 export function expireAbilityTimer(timerProps) {
-    return dispatch => {
+    return (dispatch) => {
         dispatch(stopAbilityTimer());
-        dispatch(sendGameMessage('menuButton', timerProps.arg, timerProps.method, timerProps.promptId));
+        dispatch(
+            sendGameMessage('menuButton', timerProps.arg, timerProps.method, timerProps.promptId)
+        );
     };
 }
 
@@ -45,7 +47,7 @@ export function openRookeryPrompt(rookery) {
 }
 
 export function submitRookeryPrompt(deck, promptId) {
-    return dispatch => {
+    return (dispatch) => {
         dispatch(sendGameMessage('menuButton', deck, null, promptId));
     };
 }
