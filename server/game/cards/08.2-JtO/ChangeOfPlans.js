@@ -14,7 +14,7 @@ class ChangeOfPlans extends DrawCard {
             },
             handler: context => {
                 context.player.moveCard(context.target, 'revealed plots', { bottom: true });
-                this.game.addMessage('{0} plays {1} to move {2} to the bottom of their used pile',
+                this.game.addMessage('{0} plays {1} to place {2} on the bottom of their used pile',
                     context.player, this, context.target);
             }
         });

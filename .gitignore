@@ -1,6 +1,8 @@
 bower_components
 node_modules
-public
+public/img/cards
+public/img/avatar
+public/img/bgs
 typings
 coverage
 *.log
@@ -14,3 +16,5 @@ features/conf/*
 testoutput/*
 dist/*
 local.json5
+client/assets/img/cards
+client/out

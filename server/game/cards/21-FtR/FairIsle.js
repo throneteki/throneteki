@@ -41,14 +41,14 @@ class FairIsle extends DrawCard {
             }
         });
     }
-    
+
     onSelectCard(player, cards) {
         let gameActions = [];
         for(let card of cards) {
             gameActions.push(GameActions.returnCardToDeck({ card }));
         }
         this.game.resolveGameAction(GameActions.simultaneously(gameActions));
-        this.game.addMessage('{0} moves {1} cards to the top of their deck for {2}', player, cards.length, this);
+        this.game.addMessage('{0} places {1} cards on top of their deck for {2}', player, cards.length, this);
         return true;
     }
 

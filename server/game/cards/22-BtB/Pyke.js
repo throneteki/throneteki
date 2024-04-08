@@ -21,7 +21,7 @@ class Pyke extends DrawCard {
                     !card.isLoyal()
             },
             handler: context => {
-                this.game.addMessage('{0} kneels {1} to move {2} to the top of {3}\'s deck', context.player, this, context.target, context.target.owner);
+                this.game.addMessage('{0} kneels {1} to place {2} on top of {3}\'s deck', context.player, this, context.target, context.target.owner);
                 this.game.resolveGameAction(GameActions.returnCardToDeck({ card: context.target }))
                     .thenExecute(() => {
                         this.game.once('onAtEndOfPhase', () => {

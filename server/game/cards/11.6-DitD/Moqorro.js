@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard');
+const GameActions = require('../../GameActions');
 
 class Moqorro extends DrawCard {
     setupCardAbilities() {
@@ -7,12 +8,16 @@ class Moqorro extends DrawCard {
                 onCardOutOfShadows: event => event.card === this
             },
             target: {
-                cardCondition: card => card.isDefending()
+                cardCondition: card => card.isDefending() && GameActions.returnCardToDeck({ card }).allow()
             },
+            message: '{player} uses {source} to place {target} on top of its owner\'s deck',
             handler: context => {
-                context.target.owner.moveCardToTopOfDeck(context.target);
-                this.game.addMessage('{0} uses {1} to move {2} to the top of {3}\'s deck',
-                    context.player, this, context.target, context.target.owner);
+                this.game.resolveGameAction(
+                    GameActions.returnCardToDeck(context => ({
+                        card: context.target
+                    })),
+                    context
+                );
             }
         });
     }

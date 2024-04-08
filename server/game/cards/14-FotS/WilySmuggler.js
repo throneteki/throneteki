@@ -1,3 +1,4 @@
+const GameActions = require('../../GameActions');
 const DrawCard = require('../../drawcard');
 
 class WilySmuggler extends DrawCard {
@@ -7,11 +8,16 @@ class WilySmuggler extends DrawCard {
             target: {
                 type: 'select',
                 activePromptTitle: 'Select a card',
-                cardCondition: card => card.location === 'hand' && card.controller === this.controller
+                cardCondition: card => card.location === 'hand' && card.controller === this.controller && GameActions.returnCardToDeck({ card }).allow()
             },
             message: '{player} uses {source} to place a card on top of their deck',
             handler: context => {
-                context.player.moveCardToTopOfDeck(context.target);
+                this.game.resolveGameAction(
+                    GameActions.returnCardToDeck(context => ({
+                        card: context.target
+                    })),
+                    context
+                );
 
                 this.game.once('onAtEndOfPhase', () => {
                     if(!context.player.canDraw()) {

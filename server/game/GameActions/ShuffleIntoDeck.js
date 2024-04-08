@@ -8,7 +8,7 @@ class ShuffleIntoDeck extends GameAction {
     }
 
     canChangeGameState({ cards }) {
-        return cards.some(card => card.location !== 'draw deck');
+        return cards.some(card => ReturnCardToDeck.allow({ card }));
     }
 
     createEvent({ cards, allowSave = true }) {

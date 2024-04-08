@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard');
+const GameActions = require('../../GameActions');
 
 class TheBloodyCup extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,15 +8,20 @@ class TheBloodyCup extends DrawCard {
                 afterChallenge: event => event.challenge.isMatch({ winner: this.controller, unopposed: true })
             },
             target: {
-                cardCondition: (card, context) => card.location === 'play area' && card.getType() === 'character' && card.controller === context.event.challenge.loser
+                cardCondition: (card, context) => card.location === 'play area' && card.getType() === 'character' && card.controller === context.event.challenge.loser &&
+                                                  GameActions.returnCardToDeck({ card }).allow()
             },
             message: {
                 format: '{player} plays {source} to place {target} on top of {loser}\'s deck',
                 args: { loser: context => context.event.challenge.loser }
             },
             handler: context => {
-                const loser = context.event.challenge.loser;
-                loser.moveCardToTopOfDeck(context.target);
+                this.game.resolveGameAction(
+                    GameActions.returnCardToDeck(context => ({
+                        card: context.target
+                    })),
+                    context
+                );
             },
             max: ability.limit.perChallenge(1)
         });

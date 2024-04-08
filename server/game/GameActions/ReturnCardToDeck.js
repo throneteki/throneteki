@@ -9,10 +9,14 @@ class ReturnCardToDeck extends GameAction {
     }
 
     message({ card, bottom }) {
-        return Message.fragment('returns {card} to the {position} of their deck', { card, position: bottom ? 'bottom' : 'top' });
+        return Message.fragment('places {card} on {position} of their deck', { card, position: bottom ? 'the bottom' : 'top' });
     }
 
     canChangeGameState({ card }) {
+        if(card.location === 'play area' && !LeavePlay.allow({ card })) {
+            return false;
+        }
+
         return card.location !== 'draw deck';
     }
 

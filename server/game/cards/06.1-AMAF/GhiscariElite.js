@@ -14,7 +14,7 @@ class GhiscariElite extends DrawCard {
                 cardCondition: card => this.eventOrAttachmentInDiscard(card)
             },
             handler: context => {
-                this.game.addMessage('{0} uses {1} to move {2} to the bottom of their deck', this.controller, this, context.target);
+                this.game.addMessage('{0} uses {1} to place {2} on the bottom of their deck', this.controller, this, context.target);
                 this.controller.moveCard(context.target, 'draw deck', { bottom: true });
             }
         });

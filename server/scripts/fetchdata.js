@@ -11,14 +11,22 @@ const NoImageSource = require('./fetchdata/NoImageSource.js');
 
 const optionsDefinition = [
     { name: 'card-source', type: String, defaultValue: 'json' },
-    { name: 'card-dir', type: String, defaultValue: path.join(__dirname, '..', '..', 'throneteki-json-data') },
+    {
+        name: 'card-dir',
+        type: String,
+        defaultValue: path.join(__dirname, '..', '..', 'throneteki-json-data')
+    },
     { name: 'image-source', type: String, defaultValue: 'cardgamedb' },
-    { name: 'image-dir', type: String, defaultValue: path.join(__dirname, '..', '..', 'public', 'img', 'cards') },
+    {
+        name: 'image-dir',
+        type: String,
+        defaultValue: path.join(__dirname, '..', '..', 'public', 'img', 'cards')
+    },
     { name: 'no-images', type: Boolean, defaultValue: false }
 ];
 
 function createDataSource(options) {
-    switch(options['card-source']) {
+    switch (options['card-source']) {
         case 'json':
             return new JsonCardSource(options['card-dir']);
     }
@@ -27,11 +35,11 @@ function createDataSource(options) {
 }
 
 function createImageSource(options) {
-    if(options['no-images']) {
+    if (options['no-images']) {
         return new NoImageSource();
     }
 
-    switch(options['image-source']) {
+    switch (options['image-source']) {
         case 'none':
             return new NoImageSource();
         case 'cardgamedb':
@@ -50,4 +58,3 @@ let imageSource = createImageSource(options);
 let cardImport = new CardImport(db, dataSource, imageSource, options['image-dir']);
 
 cardImport.import();
-
