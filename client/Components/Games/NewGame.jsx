@@ -307,7 +307,7 @@ class NewGame extends React.Component {
                 <div className='col-sm-8'>
                     <label htmlFor='gameName'>Mode</label>
                     <select className='form-control' value={ this.state.selectedMode } onChange={ this.onEventChange }>
-                        { restrictedLists.filter(rl => rl.official).map(rl => (<option value={ `none:${rl._id}` }>{ `${cardSetLabel(rl.cardSet)}` }</option>)) }
+                        { restrictedLists.filter(rl => rl.official).map(rl => (<option key={ rl._id } value={ `none:${rl._id}` }>{ `${cardSetLabel(rl.cardSet)}` }</option>)) }
                         { allowedEvents.map(event => (<option value={ event._id }>Event - { event.name }</option>)) }
                     </select>
                 </div>
