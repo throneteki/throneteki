@@ -28,7 +28,7 @@ services:
     command:
       - node
       - "--inspect=0.0.0.0:9339"
-      - "server/gamenode"      
+      - "server/gamenode"
   mongo:
     image: mongo
     volumes:

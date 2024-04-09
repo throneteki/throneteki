@@ -3,16 +3,27 @@ services:
   lobby:
     build:
       dockerfile: ./Dockerfile.dev
+    image: throneteki:lobby
     ports:
       - "4000:4000"
     environment:
       - NODE_ENV=development
       - VERSION=Local build
+    volumes:
+      - cards:/app/lobby/public/img/cards
   node:
     build:
       dockerfile: ./server/gamenode/Dockerfile.dev
+    image: throneteki:node
     environment:
       - NODE_ENV=development
       - VERSION=Local build
   redis:
     image: redis
+volumes:
+  cards:
+    external: true
+    name: throneteki_cards
+  mongodb:
+    external: true
+    name: throneteki_mongodb

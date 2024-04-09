@@ -22,7 +22,10 @@
         "type": "docker-compose",
         "label": "Docker Compose Down (Dev)",
         "dockerCompose": {
-          "down": true,
+          "down": {
+            "removeImages": "local",
+            "removeVolumes": true
+          },
           "files": [
             "${workspaceFolder}/docker-compose.yml",
             "${workspaceFolder}/docker-compose.dev.yml"
@@ -32,5 +35,6 @@
           "reveal": "always"
         }
       }
+      // TODO: Add "Initialite Docker" task to create external "throneteki_mongodb" volume, create external "throneteki_card" volume, and run fetch data
     ]
   }
