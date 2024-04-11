@@ -2,7 +2,16 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch (Lobby Server)",
+            "name": "Attach (Client)",
+            "type": "msedge",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "url": "http://localhost:4000",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Launch (Lobby)",
             "type": "node",
             "request": "launch",
             "program": "${workspaceRoot}/index.js",
@@ -20,7 +29,7 @@
             "sourceMaps": false
         },
         {
-            "name": "Launch (Game Server)",
+            "name": "Launch (Game)",
             "type": "node",
             "request": "launch",
             "program": "${workspaceRoot}/server/gamenode/index.js",
@@ -38,7 +47,7 @@
             "sourceMaps": false
         },
         {
-            "name": "Docker Launch",
+            "name": "Docker Launch (Client)",
             "type": "msedge",
             "request": "launch",
             "url": "http://localhost:4000",

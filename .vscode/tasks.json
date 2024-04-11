@@ -10,10 +10,11 @@
             "build": true
           },
           "files": [
-            "${workspaceFolder}/docker-compose.yml",
-            "${workspaceFolder}/docker-compose.dev.yml"
+            "${workspaceFolder}\\docker-compose.yml",
+            "${workspaceFolder}\\docker-compose.dev.yml"
           ]
         },
+        "dependsOn": "Docker Initialise Volumes",
         "presentation": {
           "reveal": "always"
         }
@@ -27,14 +28,30 @@
             "removeVolumes": true
           },
           "files": [
-            "${workspaceFolder}/docker-compose.yml",
-            "${workspaceFolder}/docker-compose.dev.yml"
+            "${workspaceFolder}\\docker-compose.yml",
+            "${workspaceFolder}\\docker-compose.dev.yml"
           ]
         },
         "presentation": {
           "reveal": "always"
         }
+      },
+      {
+        "type": "shell",
+        "label": "Docker Initialise Volumes",
+        "command": "docker volume create throneteki_mongodb"
+      },
+      {
+        "type": "shell",
+        "label": "Fetch Data (Docker)",
+        "command": "docker exec -it throneteki-lobby-1 node server\\scripts\\fetchdata.js && docker exec -it throneteki-lobby-1 node server\\scripts\\importstandalonedecks.js",
+        "problemMatcher": []
+      },
+      {
+        "type": "shell",
+        "label": "Fetch Data (Local)",
+        "command": "node server\\scripts\\fetchdata.js && node server\\scripts\\importstandalonedecks.js",
+        "problemMatcher": []
       }
-      // TODO: Add "Initialite Docker" task to create external "throneteki_mongodb" volume, create external "throneteki_card" volume, and run fetch data
     ]
   }
