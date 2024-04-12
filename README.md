@@ -103,7 +103,7 @@ Running directly through Visual Studio Code has the benefit of being quick & eas
     ...
     redisUrl: "redis://localhost:{redis port}/",
 ```
-After you have both services running, you can debug your lobby with the **Launch (Lobby)** configuration, and your game server with the **Launch (Game)** configuration. Additionally, you can debug the client through the **Attach (Client)** configuration. There is also the **Fetch Data (Local)** task to fetch updates to your database.
+After you have both services running, you can debug your lobby with the **Launch (Lobby)** configuration, and your game server with the **Launch (Game)** configuration. Additionally, you can debug the client through the **Launch (Client)** configuration. There is also the **Fetch Data (Local)** task to fetch updates to your database.
 
 #### Terminal
 Running through terminal has the benefits of being as light-weight as possible, but does come at the cost of complexity & requires additional tools to debug. Similar to the above, it will require you to set up & run MongoDB & Redis separately, and update your `local.json5` config to point to those running service ports:
