@@ -1,7 +1,7 @@
 const patreon = require('patreon');
 const patreonAPI = patreon.patreon;
 const patreonOAuth = patreon.oauth;
-const pledge_schema = require('patreon/dist/schemas/pledge').default;
+const pledgeSchema = require('patreon/dist/schemas/pledge').default;
 
 const logger = require('../log.js');
 
@@ -20,7 +20,7 @@ class PatreonService {
         try {
             response = await patreonApiClient('/current_user', {
                 fields: {
-                    pledge: [...pledge_schema.default_attributes, pledge_schema.attributes.declined_since, pledge_schema.attributes.created_at]
+                    pledge: [...pledgeSchema.default_attributes, pledgeSchema.attributes.declined_since, pledgeSchema.attributes.created_at]
                 }
             });
         } catch(err) {
