@@ -48,31 +48,6 @@
             "sourceMaps": false
         },
         {
-            "name": "Docker Launch (Client)",
-            "type": "msedge",
-            "request": "launch",
-            "url": "http://localhost:4000",
-            "webRoot": "${workspaceFolder}",
-            "preLaunchTask": "Docker Compose Up (Dev)",
-            "postDebugTask": "Docker Compose Down (Dev)"
-        },
-        {
-            "name": "Docker Attach (Lobby)",
-            "type": "node",
-            "request": "attach",
-            "port": 9229,
-            "localRoot": "${workspaceFolder}",
-            "remoteRoot": "/app/lobby"
-        },
-        {
-            "name": "Docker Attach (Game)",
-            "type": "node",
-            "request": "attach",
-            "port": 9339,
-            "localRoot": "${workspaceFolder}",
-            "remoteRoot": "/app/node"
-        },
-        {
             "type": "node",
             "request": "attach",
             "name": "Attach by Process ID",

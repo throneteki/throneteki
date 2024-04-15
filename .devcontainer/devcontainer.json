@@ -1,0 +1,26 @@
+{
+	"name": "Throneteki - Dev Container",
+	"dockerComposeFile": ["../docker-compose.yml", "../docker-compose.dev.yml"],
+	"service": "throneteki",
+	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+	"mounts": [
+		"source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind"
+    ],
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"mongodb.mongodb-vscode",
+				"dbaeumer.vscode-eslint",
+				"ms-azuretools.vscode-docker"
+			]
+		}
+	},
+	"portsAttributes": {
+		"4000": {
+			"label": "Client/Lobby"
+		},
+		"9500": {
+			"label": "Gamenode"
+		}
+	}
+}

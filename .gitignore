@@ -9,6 +9,7 @@ coverage
 *.json
 !.vscode/launch.json
 !.vscode/tasks.json
+!.devcontainer/devcontainer.json
 nodeconfig.js
 server/events.txt
 server/logs/*.gz

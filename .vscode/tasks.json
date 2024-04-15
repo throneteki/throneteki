@@ -2,55 +2,14 @@
     "version": "2.0.0",
     "tasks": [
       {
-        "type": "docker-compose",
-        "label": "Docker Compose Up (Dev)",
-        "dockerCompose": {
-          "up": {
-            "detached": true,
-            "build": true
-          },
-          "files": [
-            "${workspaceFolder}\\docker-compose.yml",
-            "${workspaceFolder}\\docker-compose.dev.yml"
-          ]
-        },
-        "dependsOn": "Docker Initialise Volumes",
-        "presentation": {
-          "reveal": "always"
-        }
-      },
-      {
-        "type": "docker-compose",
-        "label": "Docker Compose Down (Dev)",
-        "dockerCompose": {
-          "down": {
-            "removeImages": "local",
-            "removeVolumes": true
-          },
-          "files": [
-            "${workspaceFolder}\\docker-compose.yml",
-            "${workspaceFolder}\\docker-compose.dev.yml"
-          ]
-        },
-        "presentation": {
-          "reveal": "always"
-        }
-      },
-      {
         "type": "shell",
-        "label": "Docker Initialise Volumes",
+        "label": "Initialise Docker Volumes",
         "command": "docker volume create throneteki_mongodb"
       },
       {
         "type": "shell",
-        "label": "Fetch Data (Docker)",
-        "command": "docker exec -it throneteki-lobby-1 node server\\scripts\\fetchdata.js && docker exec -it throneteki-lobby-1 node server\\scripts\\importstandalonedecks.js",
-        "problemMatcher": []
-      },
-      {
-        "type": "shell",
-        "label": "Fetch Data (Local)",
-        "command": "node server\\scripts\\fetchdata.js && node server\\scripts\\importstandalonedecks.js",
+        "label": "Fetch Data",
+        "command": "node server${pathSeparator}scripts${pathSeparator}fetchdata.js && node server${pathSeparator}scripts${pathSeparator}importstandalonedecks.js",
         "problemMatcher": []
       }
     ]

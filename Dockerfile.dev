@@ -1,17 +1,5 @@
 FROM node:16
 
-RUN mkdir -p /app/lobby
-WORKDIR /app/lobby
+WORKDIR /workspaces/${workspaceFolderBasename}
 
-COPY package.json .
-COPY package-lock.json .
-
-# Perform clean install rather than attempting to update
-RUN npm ci
-
-# Hardcode version for local development
-ENV VERSION Local build
-
-COPY . .
-
-CMD [ "npm", "start" ]
+CMD npm install
