@@ -6,7 +6,11 @@
 	"mounts": [
 		"source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind"
     ],
-	"onCreateCommand": "git submodule update --init && npm install",
+	"onCreateCommand": [
+		"git submodule update --init",
+		"git config --global core.autocrlf input",
+		"npm install"
+	],
 	"customizations": {
 		"vscode": {
 			"extensions": [
