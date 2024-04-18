@@ -96,16 +96,14 @@ function handleGameState(action, state) {
     if(!currentState || !currentState.players[username] || currentState.players[username].left) {
         delete retState.currentGame;
         retState.newGame = false;
+    } else if(currentState && !currentState.started) {
+        retState.newGame = true;
     }
 
     if(currentState) {
         delete retState.passwordGame;
         delete retState.passwordJoinType;
         delete retState.passwordError;
-    }
-
-    if(retState.currentGame && !retState.currentGame.started) {
-        retState.newGame = true;
     }
 
     return retState;
