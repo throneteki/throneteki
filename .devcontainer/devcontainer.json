@@ -6,6 +6,7 @@
 	"mounts": [
 		"source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind"
     ],
+	"onCreateCommand": "git submodule update --init && npm install",
 	"customizations": {
 		"vscode": {
 			"extensions": [

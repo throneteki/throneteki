@@ -1,8 +1,1 @@
 FROM node:16
-
-WORKDIR /workspaces/${workspaceFolderBasename}
-
-RUN git submodule update --init
-RUN git config core.autocrlf input
-
-CMD npm install
