@@ -10,5 +10,4 @@ services:
     network_mode: service:mongo
 volumes:
   mongodb:
-    external: true
-    name: throneteki_mongodb
+    name: throneteki_db
