@@ -2,4 +2,4 @@ FROM node:16
 
 WORKDIR /workspaces/${workspaceFolderBasename}
 
-CMD npm install
+CMD git submodule init && git sumbodule update && npm install
