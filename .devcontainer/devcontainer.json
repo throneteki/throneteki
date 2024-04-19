@@ -5,14 +5,14 @@
 	"workspaceFolder": "/workspaces/throneteki",
 	"remoteUser": "root",
 	"postCreateCommand": {
-		"npm": "npm install", // Ensures Git expects Unix line endings (LF)
-		"createConfig": "cp -n config/default.json5 config/local.json5",
-		"fetchData": "node server/scripts/fetchdata.js && node server/scripts/importstandalonedecks.js"
+		"npm": "npm install",
+		"createConfig": "cp -n config/default.json5 config/local.json5"
 	},
-	// Git commands must be on start, as local .gitconfig not copied until after 'postCreateCommand'
+	// Git commands must be postStartCommand, as local .gitconfig not copied until after postCreateCommand
 	"postStartCommand": {
 		"submodule": "git submodule update --init",
-		"unixLineEndings": "git config --global core.autocrlf input"
+		"unixLineEndings": "git config --global core.autocrlf input", // Ensures Git expects Unix line endings (LF)
+		"fetchData": "node server/scripts/fetchdata.js && node server/scripts/importstandalonedecks.js"
 	},
 	"customizations": {
 		"vscode": {
