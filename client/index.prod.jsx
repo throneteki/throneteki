@@ -47,7 +47,8 @@ const sentryOptions = {
 
         return event;
     },
-    release: process.env.VERSION || 'Local build'
+    release: process.env.VERSION || 'Local build',
+    includeLocalVariables: true
 };
 
 Sentry.init(sentryOptions);
