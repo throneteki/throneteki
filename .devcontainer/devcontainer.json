@@ -2,15 +2,18 @@
 	"name": "Throneteki - Dev Container",
 	"dockerComposeFile": ["../docker-compose.yml", "../docker-compose.dev.yml"],
 	"service": "throneteki",
-	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
-	"mounts": [
-		"source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind"
-    ],
-	"onCreateCommand": [
-		"git submodule update --init",
-		"git config --global core.autocrlf input",
-		"npm install"
-	],
+	"workspaceFolder": "/workspaces/throneteki",
+	"remoteUser": "root",
+	"postCreateCommand": {
+		"npm": "npm install", // Ensures Git expects Unix line endings (LF)
+		"createConfig": "cp -n config/default.json5 config/local.json5",
+		"fetchData": "node server/scripts/fetchdata.js && node server/scripts/importstandalonedecks.js"
+	},
+	// Git commands must be on start, as local .gitconfig not copied until after 'postCreateCommand'
+	"postStartCommand": {
+		"submodule": "git submodule update --init",
+		"unixLineEndings": "git config --global core.autocrlf input"
+	},
 	"customizations": {
 		"vscode": {
 			"extensions": [

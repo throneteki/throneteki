@@ -1,11 +1,8 @@
 services:
   throneteki:
-    build:
-      context: .
-      dockerfile: Dockerfile.dev
-    image: development
+    image: "node:16"
     volumes:
-      - .:/workspaces/${workspaceFolderBasename}:cached
+      - .:/workspaces/throneteki:cached
     command: sleep infinity
     network_mode: service:mongo
 volumes:
