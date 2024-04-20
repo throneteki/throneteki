@@ -15,7 +15,7 @@ function CardSizeOption(props) {
         <div key={ name } className='card-settings' onClick={ handleClick }>
             <div className={ classNames('card', 'vertical', name, { 'selected': selected }) }>
                 <img className={ classNames('card', 'vertical', name) }
-                    src='img/cards/cardback.jpg' />
+                    src='img/cards/cardback.png' />
             </div>
             <span className='bg-label'>{ label }</span>
         </div>);
