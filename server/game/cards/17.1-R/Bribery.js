@@ -20,16 +20,14 @@ class Bribery extends DrawCard {
                 this.game.resolveGameAction(
                     GameActions.kneelCard(context => ({ card: context.target }))
                         .then({
-                            gameAction: GameActions.ifCondition({
-                                condition: context => context.parentContext.target.match({ trait: ['Ally', 'Mercenary'], hasAttachments: false }),
-                                thenAction: GameActions.may({
-                                    title: context => `Take control of ${context.parentContext.target.name}?`,
-                                    message: {
-                                        format: 'Then, {player} takes control of {target}',
-                                        args: { target: context => context.parentContext.target }
-                                    },
-                                    gameAaction: GameActions.takeControl(context => ({ player: context.player, card: context.parentContext.target }))
-                                })
+                            condition: context => context.parentContext.target.isMatch({ trait: ['Ally', 'Mercenary'], hasAttachments: false }),
+                            gameAction: GameActions.may({
+                                title: context => `Take control of ${context.parentContext.target.name}?`,
+                                message: {
+                                    format: 'Then, {player} takes control of {card}',
+                                    args: { card: context => context.event.card }
+                                },
+                                gameAction: GameActions.takeControl(context => ({ player: context.player, card: context.parentContext.target }))
                             })
                         }),
                     context
