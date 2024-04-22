@@ -11,24 +11,14 @@ class TheDornishmansWife extends DrawCard {
                 this.opponentControlsMoreCharacters(opponent)
             ),
             handler: context => {
-                let gameActions = [];
-                
-                if(this.opponentHasMorePower(context.opponent)) {
-                    gameActions.push(GameActions.gainGold(context => ({ player: context.player, amount: 1 })));
-                }
+                const action = GameActions.simultaneously(context => ([
+                    ...this.opponentHasMorePower(context.opponent) ? GameActions.gainGold(context => ({ player: context.player, amount: 1 })) : [],
+                    ...this.opponentHasMoreCardsInHand(context.opponent) ? GameActions.gainPower(context => ({ card: context.player.faction, amount: 1 })) : [],
+                    ...this.opponentControlsMoreCharacters(context.opponent) ? GameActions.drawCards(context => ({ player: context.player, amount: 1 })) : []
+                ]));
 
-                if(this.opponentHasMoreCardsInHand(context.opponent)) {
-                    gameActions.push(GameActions.gainPower(context => ({ card: context.player.faction, amount: 1 })));
-                }
-
-                if(this.opponentControlsMoreCharacters(context.opponent)) {
-                    gameActions.push(GameActions.drawCards(context => ({ player: context.player, amount: 1 })));
-                }
-
-                const action = GameActions.simultaneously(gameActions);
-
-                this.game.addMessage('{0} plays {1} to {gameAction}',
-                    this.controller, this, context.opponent, action.message(context));
+                this.game.addMessage('{0} plays {1} and {2}',
+                    context.player, context.source, action.message(context));
 
                 this.game.resolveGameAction(action, context);
             }
