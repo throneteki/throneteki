@@ -11,11 +11,11 @@ class TheDornishmansWife extends DrawCard {
                 this.opponentControlsMoreCharacters(opponent)
             ),
             handler: context => {
-                const action = GameActions.simultaneously(context => ([
-                    ...this.opponentHasMorePower(context.opponent) ? GameActions.gainGold(context => ({ player: context.player, amount: 1 })) : [],
-                    ...this.opponentHasMoreCardsInHand(context.opponent) ? GameActions.gainPower(context => ({ card: context.player.faction, amount: 1 })) : [],
-                    ...this.opponentControlsMoreCharacters(context.opponent) ? GameActions.drawCards(context => ({ player: context.player, amount: 1 })) : []
-                ]));
+                const action = GameActions.simultaneously(context => [
+                    ...(this.opponentHasMorePower(context.opponent) ? [GameActions.gainGold(context => ({ player: context.player, amount: 2 }))] : []),
+                    ...(this.opponentHasMoreCardsInHand(context.opponent) ? [GameActions.gainPower(context => ({ card: context.player.faction, amount: 1 }))] : []),
+                    ...(this.opponentControlsMoreCharacters(context.opponent) ? [GameActions.drawCards(context => ({ player: context.player, amount: 1 }))] : [])
+                ]);
 
                 this.game.addMessage('{0} plays {1} and {2}',
                     context.player, context.source, action.message(context));
