@@ -1,3 +1,4 @@
+const GameActions = require('../../GameActions/index.js');
 const DrawCard = require('../../drawcard.js');
 
 class TheDornishmansWife extends DrawCard {
@@ -10,25 +11,26 @@ class TheDornishmansWife extends DrawCard {
                 this.opponentControlsMoreCharacters(opponent)
             ),
             handler: context => {
-                let bonusMessage = [];
-
-                if(this.opponentHasMorePower(context.opponent) && this.controller.canGainGold()) {
-                    let gold = this.game.addGold(this.controller, 2);
-                    bonusMessage.push('gain {1} gold', gold);
+                let gameActions = [];
+                
+                if(this.opponentHasMorePower(context.opponent)) {
+                    gameActions.push(GameActions.gainGold(context => ({ player: context.player, amount: 1 })));
                 }
 
-                if(this.opponentHasMoreCardsInHand(context.opponent) && this.controller.canGainFactionPower()) {
-                    this.game.addPower(this.controller, 1);
-                    bonusMessage.push('gain 1 power for their faction');
+                if(this.opponentHasMoreCardsInHand(context.opponent)) {
+                    gameActions.push(GameActions.gainPower(context => ({ card: context.player.faction, amount: 1 })));
                 }
 
-                if(this.opponentControlsMoreCharacters(context.opponent) && this.controller.canDraw()) {
-                    this.controller.drawCardsToHand(1);
-                    bonusMessage.push('draw 1 card');
+                if(this.opponentControlsMoreCharacters(context.opponent)) {
+                    gameActions.push(GameActions.drawCards(context => ({ player: context.player, amount: 1 })));
                 }
 
-                this.game.addMessage('{0} uses {1} to choose {2} and {3}',
-                    this.controller, this, context.opponent, bonusMessage);
+                const action = GameActions.simultaneously(gameActions);
+
+                this.game.addMessage('{0} plays {1} to {gameAction}',
+                    this.controller, this, context.opponent, action.message(context));
+
+                this.game.resolveGameAction(action, context);
             }
         });
     }

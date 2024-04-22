@@ -8,7 +8,7 @@ class GainGold extends GameAction {
 
     message({ player, amount }) {
         const actualAmount = player.getGoldToGain(amount);
-        return Message.fragment('gains {actualAmount} gold', { actualAmount});
+        return Message.fragment('gains {actualAmount} gold', { actualAmount });
     }
 
     canChangeGameState({ player, amount }) {
