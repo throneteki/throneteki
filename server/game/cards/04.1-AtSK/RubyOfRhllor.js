@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 
 class RubyOfRhllor extends DrawCard {
     setupCardAbilities() {
@@ -15,7 +16,17 @@ class RubyOfRhllor extends DrawCard {
             handler: context => {
                 this.game.promptForCardName({
                     player: context.player,
-                    onSelect: (player, cardName) => this.selectCardName(player, cardName),
+                    onSelect: (player, cardName) => {
+                        this.game.resolveGameAction(
+                            GameActions.revealCards(context => ({
+                                cards: [...context.game.currentChallenge.loser.hand],
+                                player: context.player,
+                                revealWithMessage: false
+                            }))
+                            , context);
+                        this.selectCardName(player, cardName);
+                        return true;
+                    },
                     source: context.source
                 });
             }
