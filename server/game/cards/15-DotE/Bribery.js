@@ -11,33 +11,25 @@ class Bribery extends DrawCard {
                     (!context.xValue || card.getPrintedCost() <= context.xValue) &&
                     (
                         card.isMatch({ kneeled: false }) && card.allowGameAction('kneel') ||
-                        card.isMatch({ trait: ['Ally', 'Mercenary'] })
+                        card.isMatch({ trait: ['Ally', 'Mercenary'] }) && card.allowGameAction('takeControl')
                     )
                 )
             },
             handler: context => {
-                const buttons = [];
-
-                this.context = context;
-                if(!context.target.kneeled && context.target.allowGameAction('kneel')) {
-                    buttons.push({ text: 'Kneel', method: 'kneelCharacter' });
-                }
-
-                if(context.target.hasTrait('Ally') || context.target.hasTrait('Mercenary')) {
-                    buttons.push({ text: 'Take control', method: 'takeControl' });
-                }
-
-                if(buttons.length > 1) {
-                    this.game.promptWithMenu(context.player, this, {
-                        activePrompt: {
-                            menuTitle: 'Take control of character?',
-                            buttons: buttons
+                this.game.resolveGameAction(
+                    GameActions.ifCondition({
+                        condition: context => context.target.isMatch({ trait: ['Ally', 'Mercenary'] }),
+                        thenAction: {
+                            message: '{player} plays {source} to take control of {target}',
+                            gameAction: GameActions.takeControl(context => ({ player: context.player, card: context.target }))
                         },
-                        source: this
-                    });
-                } else {
-                    this[buttons[0].method](context.player);
-                }
+                        elseAction: {
+                            message: '{player} players {source} to kneel {target}',
+                            gameAction: GameActions.kneelCard(context => ({ card: context.target }))
+                        }
+                    }),
+                    context
+                );
             }
         });
     }
@@ -49,26 +41,6 @@ class Bribery extends DrawCard {
         );
         const costs = characters.map(card => card.getPrintedCost());
         return Math.min(...costs);
-    }
-
-    kneelCharacter(player) {
-        this.game.resolveGameAction(
-            GameActions.kneelCard({ card: this.context.target })
-        );
-
-        this.game.addMessage('{0} plays {1} and pays {2} gold to kneel {3}',
-            player, this, this.context.xValue, this.context.target);
-
-        return true;
-    }
-
-    takeControl(player) {
-        this.game.takeControl(player, this.context.target);
-
-        this.game.addMessage('{0} plays {1} and pays {2} gold to take control of {3}',
-            player, this, this.context.xValue, this.context.target);
-
-        return true;
     }
 }
 
