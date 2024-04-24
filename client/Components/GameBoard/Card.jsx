@@ -325,7 +325,7 @@ class InnerCard extends React.Component {
     }
 
     get imageUrl() {
-        let image = 'cardback.jpg';
+        let image = 'cardback.png';
 
         if(!this.isFacedown()) {
             image = `${this.props.card.code}.png`;
