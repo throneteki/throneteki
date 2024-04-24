@@ -31,7 +31,8 @@ class Server {
         if (!this.isDeveloping) {
             Sentry.init({
                 dsn: this.configService.getValue('sentryDsn'),
-                release: process.env.VERSION || 'Local build'
+                release: process.env.VERSION || 'Local build',
+                includeLocalVariables: true
             });
             app.use(Sentry.Handlers.requestHandler());
             app.use(Sentry.Handlers.errorHandler());
