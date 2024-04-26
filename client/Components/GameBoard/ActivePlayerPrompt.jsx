@@ -96,16 +96,17 @@ class ActivePlayerPrompt extends React.Component {
                 case 'targeting':
                     return (
                         <AbilityTargeting
+                            key={ control.promptId }
                             onMouseOut={ this.props.onMouseOut }
                             onMouseOver={ this.props.onMouseOver }
                             source={ control.source }
                             targets={ control.targets } />);
                 case 'card-name':
-                    return <CardNameLookup cards={ this.props.cards } onValueSelected={ this.handleLookupValueSelected.bind(this, control.command, control.method, control.promptId) } />;
+                    return <CardNameLookup key={ control.promptId } cards={ this.props.cards } onValueSelected={ this.handleLookupValueSelected.bind(this, control.command, control.method, control.promptId) } />;
                 case 'trait-name':
-                    return <TraitNameLookup cards={ this.props.cards } onValueSelected={ this.handleLookupValueSelected.bind(this, control.command, control.method, control.promptId) } />;
+                    return <TraitNameLookup key={ control.promptId } cards={ this.props.cards } onValueSelected={ this.handleLookupValueSelected.bind(this, control.command, control.method, control.promptId) } />;
                 case 'select-from-values':
-                    return <SelectFromValuesLookup selectableValues={ control.selectableValues } onValueSelected={ this.handleLookupValueSelected.bind(this, control.command, control.method, control.promptId) } />;
+                    return <SelectFromValuesLookup key={ control.promptId } selectableValues={ control.selectableValues } onValueSelected={ this.handleLookupValueSelected.bind(this, control.command, control.method, control.promptId) } />;
             }
         });
     }
