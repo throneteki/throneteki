@@ -18,16 +18,26 @@ class Bribery extends DrawCard {
             handler: context => {
                 this.game.resolveGameAction(
                     GameActions.ifCondition({
-                        condition: context => context.target.isMatch({ trait: ['Ally', 'Mercenary'] }),
+                        condition: context => !context.target.isMatch({ trait: ['Ally', 'Mercenary'] }),
                         thenAction: {
-                            message: '{player} plays {source} to take control of {target}',
-                            gameAction: GameActions.takeControl(context => ({ player: context.player, card: context.target }))
-                        },
-                        elseAction: {
-                            message: '{player} players {source} to kneel {target}',
+                            message: '{player} plays {source} to kneel {target}',
                             gameAction: GameActions.kneelCard(context => ({ card: context.target }))
-                        }
-                    }),
+                        },
+                        elseAction: GameActions.choose({
+                            title: context => `Take control of ${context.target.name} instead?`,
+                            choices: {
+                                'Take control': {
+                                    message: '{player} plays {source} to take control of {target}',
+                                    gameAction: GameActions.takeControl(context => ({ player: context.player, card: context.target }))
+                                },
+                                'Kneel': {
+                                    message: '{player} plays {source} to kneel {target}',
+                                    gameAction: GameActions.kneelCard(context => ({ card: context.target }))
+                                }
+                            }
+                        })
+                    })
+                    ,
                     context
                 );
             }
