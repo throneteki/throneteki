@@ -12,31 +12,24 @@ class Bribery extends DrawCard {
                     card.allowGameAction('kneel')
                 )
             },
+            message: {
+                format: '{player} plays {source} and pays {xValue} gold to kneel {target}',
+                args: { xValue: context => context.xValue }
+            },
             handler: context => {
-                this.game.addMessage('{0} plays {1} and pays {2} gold to kneel {3}',
-                    this.controller, this, context.xValue, context.target);
-                
-                //save context on this object to later use in button methods
-                this.context = context;
-
                 this.game.resolveGameAction(
                     GameActions.kneelCard(context => ({ card: context.target }))
-                        .then(preThenContext => ({
-                            handler: () => {
-                                if((preThenContext.target.hasTrait('Ally') || preThenContext.target.hasTrait('Mercenary')) && preThenContext.target.attachments.length === 0) {
-                                    const buttons = [];
-                                    buttons.push({ text: 'Take control', method: 'takeControl' });
-                                    buttons.push({ text: 'Cancel', method: 'cancelTakeControl' });
-                                    this.game.promptWithMenu(context.player, this, {
-                                        activePrompt: {
-                                            menuTitle: 'Take control of character?',
-                                            buttons: buttons
-                                        },
-                                        source: this
-                                    });
-                                }
-                            }
-                        })),
+                        .then({
+                            condition: context => context.parentContext.target.isMatch({ trait: ['Ally', 'Mercenary'], hasAttachments: false }),
+                            gameAction: GameActions.may({
+                                title: context => `Take control of ${context.parentContext.target.name}?`,
+                                message: {
+                                    format: 'Then, {player} takes control of {card}',
+                                    args: { card: context => context.event.card }
+                                },
+                                gameAction: GameActions.takeControl(context => ({ player: context.player, card: context.parentContext.target }))
+                            })
+                        }),
                     context
                 );
             }
@@ -47,22 +40,6 @@ class Bribery extends DrawCard {
         const characters = this.game.filterCardsInPlay(card => card.isMatch({ type: 'character', kneeled: false }));
         const costs = characters.map(card => card.getPrintedCost());
         return Math.min(...costs);
-    }
-
-    takeControl(player) {
-        this.game.takeControl(player, this.context.target);
-
-        this.game.addMessage('{0} then uses {1} to take control of {2}',
-            player, this, this.context.target);
-
-        return true;
-    }
-
-    cancelTakeControl(player) {
-        this.game.addMessage('{0} then uses {1} but does not take control of {2}',
-            player, this, this.context.target);
-
-        return true;
     }
 }
 

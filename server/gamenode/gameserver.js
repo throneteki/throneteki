@@ -15,7 +15,11 @@ const Socket = require('../socket.js');
 const ConfigService = require('../services/ConfigService');
 
 if (config.sentryDsn) {
-    Sentry.init({ dsn: config.sentryDsn, release: process.env.VERSION || 'Local build' });
+    Sentry.init({
+        dsn: config.sentryDsn,
+        release: process.env.VERSION || 'Local build',
+        includeLocalVariables: true
+    });
 }
 
 class GameServer {

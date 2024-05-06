@@ -6,9 +6,9 @@ class GainPower extends GameAction {
         super('gainPower');
     }
 
-    message({ card, amount = 1 }) {
+    message({ card, amount = 1, context }) {
         if(card.getType() === 'faction') {
-            return Message.fragment('gains {amount} power on {player}\'s faction card', { amount, player: card.controller });
+            return Message.fragment(`gains {amount} power on ${context.player !== card.controller ? '{player}\'s' : 'their' } faction card`, { amount, player: card.controller });
         }
 
         return Message.fragment('gains {amount} power on {card}', { amount, card });

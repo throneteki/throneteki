@@ -15,8 +15,8 @@ class Messages extends React.Component {
         };
 
         this.tokens = {
-            card: { className: 'icon-card', imageSrc: '/img/cards/cardback.jpg' },
-            cards: { className: 'icon-card', imageSrc: '/img/cards/cardback.jpg' },
+            card: { className: 'icon-card', imageSrc: '/img/cards/cardback.png' },
+            cards: { className: 'icon-card', imageSrc: '/img/cards/cardback.png' },
             gold: { className: 'icon-gold', imageSrc: '/img/Gold.png' }
         };
 

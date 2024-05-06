@@ -31,7 +31,8 @@ class Server {
         if (!this.isDeveloping) {
             Sentry.init({
                 dsn: this.configService.getValue('sentryDsn'),
-                release: process.env.VERSION || 'Local build'
+                release: process.env.VERSION || 'Local build',
+                includeLocalVariables: true
             });
             app.use(Sentry.Handlers.requestHandler());
             app.use(Sentry.Handlers.errorHandler());
@@ -99,7 +100,7 @@ class Server {
             app.use(middleware);
         } else {
             app.get('*', (req, res) => {
-                res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+                res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'));
             });
         }
 
