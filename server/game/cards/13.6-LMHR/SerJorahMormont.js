@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SerJorahMormont extends DrawCard {
     setupCardAbilities() {
@@ -7,15 +8,13 @@ class SerJorahMormont extends DrawCard {
                 onCardDiscarded: (event) => event.card === this && event.originalLocation === 'hand'
             },
             location: ['hand'],
+            message:
+                '{player} uses {source} to put {source} into shadows instead of placing him in their discard pile',
             handler: (context) => {
-                this.game.addMessage(
-                    '{0} uses {1} to put {1} into shadows instead of placing it in their discard pile',
-                    this.controller,
-                    this
+                context.replaceChildEvent(
+                    'placeCard',
+                    GameActions.putIntoShadows({ card: this }).createEvent()
                 );
-                context.event.replaceHandler(() => {
-                    this.controller.putIntoShadows(this);
-                });
             }
         });
     }

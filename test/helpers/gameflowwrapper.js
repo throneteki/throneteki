@@ -40,6 +40,7 @@ class GameFlowWrapper {
         this.game.started = true;
         this.game.disableWonPrompt = true;
         this.game.disableRevealAcknowledgement = true;
+        this.game.disableOrderPrompt = true;
 
         this.allPlayers = this.game
             .getPlayers()

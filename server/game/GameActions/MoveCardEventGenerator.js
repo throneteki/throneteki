@@ -1,6 +1,8 @@
 import AtomicEvent from '../AtomicEvent.js';
 import BestowPrompt from '../gamesteps/bestowprompt.js';
+import CompositeEvent from '../CompositeEvent.js';
 import Event from '../event.js';
+
 const orderableLocatons = ['draw deck', 'shadows', 'discard pile', 'dead pile'];
 
 class MoveCardEventGenerator {
@@ -12,19 +14,19 @@ class MoveCardEventGenerator {
             snapshotName: 'cardStateWhenLeftPlay'
         };
 
-        return this.event('onCardLeftPlay', params, (event) => {
+        const leavePlayEvent = this.event('onCardLeftPlay', params, (event) => {
             event.card.leavesPlay();
-
-            for (const attachment of event.card.attachments || []) {
-                event.thenAttachEvent(this.createRemoveAttachmentEvent(attachment));
-            }
-
-            for (const dupe of event.card.dupes || []) {
-                event.thenAttachEvent(
-                    this.createDiscardCardEvent({ card: dupe, allowSave: false })
-                );
-            }
         });
+        for (const attachment of card.attachments || []) {
+            leavePlayEvent.addChildEvent(this.createRemoveAttachmentEvent(attachment));
+        }
+        for (const dupe of card.dupes || []) {
+            leavePlayEvent.addChildEvent(
+                this.createDiscardCardEvent({ card: dupe, allowSave: false })
+            );
+        }
+
+        return leavePlayEvent;
     }
 
     createRemoveAttachmentEvent(attachment) {
@@ -49,7 +51,7 @@ class MoveCardEventGenerator {
         source,
         orderable
     }) {
-        let params = {
+        const params = {
             card: card,
             allowSave: allowSave,
             originalLocation: card.location,
@@ -58,43 +60,77 @@ class MoveCardEventGenerator {
             source: source,
             snapshotName: 'cardStateWhenDiscarded'
         };
-        const discardEvent = this.event('onCardDiscarded', params, (event) => {
-            event.thenAttachEvent(
-                this.createPlaceCardEvent({
-                    card: event.card,
-                    player: event.card.controller,
-                    location: 'discard pile',
-                    orderable
-                })
-            );
-        });
 
-        if (['play area', 'duplicate'].includes(card.location)) {
-            return this.atomic(discardEvent, this.createLeavePlayEvent({ card, allowSave }));
-        }
+        const placeCardEvent = this.createPlaceCardEvent({
+            card,
+            player: card.controller,
+            location: 'discard pile',
+            orderable
+        });
+        const discardEvent = this.compositeEvent('onCardDiscarded', params, {
+            name: 'placeCard',
+            event: placeCardEvent
+        });
 
         return discardEvent;
     }
 
+    createKillCharacterEvent({ card, allowSave = true, isBurn = false }) {
+        const params = {
+            card,
+            allowSave,
+            isBurn,
+            snapshotName: 'cardStateWhenKilled'
+        };
+        const placeCardEvent = this.createPlaceCardEvent({
+            card,
+            player: card.controller,
+            location: 'dead pile'
+        });
+        const killedEvent = this.compositeEvent('onCharacterKilled', params, {
+            name: 'placeCard',
+            event: placeCardEvent
+        });
+
+        return killedEvent;
+    }
+
+    createSacrificeCardEvent({ card, player }) {
+        player = player || card.controller;
+        const params = {
+            card,
+            player,
+            snapshotName: 'cardStateWhenSacrificed'
+        };
+        const placeCardEvent = this.createPlaceCardEvent({
+            card,
+            player: card.controller,
+            location: 'discard pile'
+        });
+        const sacrificeEvent = this.compositeEvent('onSacrificed', params, {
+            name: 'placeCard',
+            event: placeCardEvent
+        });
+
+        return sacrificeEvent;
+    }
+
     createReturnCardToHandEvent({ card, allowSave = true }) {
-        let params = {
+        const params = {
             card: card,
             allowSave: allowSave,
             snapshotName: 'cardStateWhenReturned'
         };
-        const returnEvent = this.event('onCardReturnedToHand', params, (event) => {
-            event.thenAttachEvent(
-                this.createPlaceCardEvent({
-                    card: event.card,
-                    player: event.card.controller,
-                    location: 'hand'
-                })
-            );
-        });
 
-        if (['play area', 'duplicate'].includes(card.location)) {
-            return this.atomic(returnEvent, this.createLeavePlayEvent({ card, allowSave }));
-        }
+        const placeCardEvent = this.createPlaceCardEvent({
+            card,
+            player: card.controller,
+            location: 'hand'
+        });
+        const returnEvent = this.compositeEvent('onCardReturnedToHand', params, {
+            name: 'placeCard',
+            event: placeCardEvent
+        });
 
         return returnEvent;
     }
@@ -103,11 +139,12 @@ class MoveCardEventGenerator {
         card,
         player,
         location,
+        allowSave,
         bottom = false,
         orderable = orderableLocatons.includes(location)
     }) {
         player = player || card.controller;
-        return this.event(
+        const onCardPlacedEvent = this.event(
             'onCardPlaced',
             { card, location, player, bottom, orderable },
             (event) => {
@@ -116,6 +153,16 @@ class MoveCardEventGenerator {
                 actualPlayer.placeCardInPile({ card, location, bottom });
             }
         );
+
+        if (
+            ['play area', 'duplicate'].includes(card.location) &&
+            !['play area', 'duplicate'].includes(location)
+        ) {
+            return this.atomic(onCardPlacedEvent, this.createLeavePlayEvent({ card, allowSave }));
+        }
+        // TODO: Handle entering play as well
+
+        return onCardPlacedEvent;
     }
 
     createEntersPlayEvent({ card, player, playingType = 'play', kneeled = false, isDupe = false }) {
@@ -161,6 +208,14 @@ class MoveCardEventGenerator {
 
     event(name, params, handler) {
         return new Event(name, params, handler);
+    }
+
+    compositeEvent(name, params, ...namedChildEvents) {
+        const compositeEvent = new CompositeEvent(name, params);
+        for (const { name, event } of namedChildEvents) {
+            compositeEvent.setChildEvent(name, event);
+        }
+        return compositeEvent;
     }
 
     atomic(...events) {

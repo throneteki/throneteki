@@ -1,6 +1,5 @@
 import GameAction from './GameAction.js';
 import Message from '../Message.js';
-import LeavePlay from './LeavePlay.js';
 import PlaceCard from './PlaceCard.js';
 
 class PutIntoShadows extends GameAction {
@@ -20,28 +19,26 @@ class PutIntoShadows extends GameAction {
         );
     }
 
-    createEvent({ player, card, allowSave = true, reason = 'ability' }) {
+    createEvent({
+        card,
+        allowSave = true,
+        reason = 'ability',
+        placeCardEvent = PlaceCard.createEvent({
+            card,
+            player: card.controller,
+            location: 'shadows'
+        })
+    }) {
         const params = {
             card,
-            player: player || card.controller,
             allowSave,
             snapshotName: 'cardStateWhenMoved',
-            reason
+            reason,
+            placeCardEvent
         };
 
-        const putIntoShadowsEvent = this.event('onCardPutIntoShadows', params, (event) => {
-            event.thenAttachEvent(
-                PlaceCard.createEvent({
-                    card: event.card,
-                    player: event.player,
-                    location: 'shadows'
-                })
-            );
-        });
-
-        if (card.location === 'play area') {
-            return this.atomic(putIntoShadowsEvent, LeavePlay.createEvent({ card, allowSave }));
-        }
+        const putIntoShadowsEvent = this.event('onCardPutIntoShadows', params);
+        putIntoShadowsEvent.addChildEvent(placeCardEvent);
 
         return putIntoShadowsEvent;
     }

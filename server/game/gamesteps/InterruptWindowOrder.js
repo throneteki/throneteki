@@ -75,6 +75,9 @@ const OrderableEventFunc = {
 
 const InterruptWindowOrder = {
     orderConcurrentEvents: function (game, event) {
+        if (game.disableOrderPrompt) {
+            return;
+        }
         // Prompt for any simultaneous events which can be ordered
         for (const eventName of Object.keys(OrderableEventFunc)) {
             const orderableEvents = event

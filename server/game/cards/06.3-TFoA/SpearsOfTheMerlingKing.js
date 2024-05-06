@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SpearsOfTheMerlingKing extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,17 +8,15 @@ class SpearsOfTheMerlingKing extends DrawCard {
                 onCharacterKilled: (event) => event.card.controller === this.controller
             },
             cost: ability.costs.sacrificeSelf(),
+            message: {
+                format: '{player} sacrifices {source} to return {card} to their hand',
+                args: { card: (context) => context.event.card }
+            },
             handler: (context) => {
-                this.game.addMessage(
-                    '{0} sacrifices {1} to return {2} to their hand',
-                    context.player,
-                    this,
-                    context.event.card
+                context.replaceChildEvent(
+                    'placeCard',
+                    GameActions.returnCardToHand({ card: context.event.card }).createEvent()
                 );
-                context.replaceHandler(() => {
-                    context.event.cardStateWhenKilled = context.event.card.createSnapshot();
-                    this.controller.moveCard(context.event.card, 'hand');
-                });
             }
         });
     }

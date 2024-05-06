@@ -14,6 +14,10 @@ class TriggeredAbilityContext extends AbilityContext {
     replaceHandler(handler) {
         this.event.replaceHandler(handler);
     }
+
+    replaceChildEvent(name, event) {
+        this.event.replaceChildEvent(name, event);
+    }
 }
 
 export default TriggeredAbilityContext;

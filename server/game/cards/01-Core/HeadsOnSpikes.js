@@ -18,14 +18,13 @@ class HeadsOnSpikes extends PlotCard {
                             let powerMessage = '';
 
                             if (card.getType() === 'character') {
-                                event.replaceHandler(() => {
-                                    event.thenAttachEvent(
-                                        GameActions.placeCard({
-                                            card: event.card,
-                                            location: 'dead pile'
-                                        }).createEvent()
-                                    );
-                                });
+                                event.replaceChildEvent(
+                                    'placeCard',
+                                    GameActions.placeCard({
+                                        card: event.card,
+                                        location: 'dead pile'
+                                    }).createEvent()
+                                );
                                 const gainPower = GameActions.gainPower({
                                     amount: 2,
                                     card: context.player.faction

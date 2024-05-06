@@ -2,23 +2,8 @@ import LeavePlay from '../../../server/game/GameActions/LeavePlay.js';
 
 describe('LeavePlay', function () {
     beforeEach(function () {
-        this.cardSpy = jasmine.createSpyObj('card', [
-            'allowGameAction',
-            'createSnapshot',
-            'leavesPlay'
-        ]);
+        this.cardSpy = jasmine.createSpyObj('card', ['allowGameAction', 'leavesPlay']);
         this.cardSpy.location = 'play area';
-        this.cardSpy.createSnapshot.and.returnValue('SNAPSHOT');
-        this.nonTerminalAttachmentSpy = jasmine.createSpyObj('nonTerminalAttachment', [
-            'isTerminal'
-        ]);
-        this.nonTerminalAttachmentSpy.isTerminal.and.returnValue(false);
-        this.terminalAttachmentSpy = jasmine.createSpyObj('terminalAttachment', ['isTerminal']);
-        this.terminalAttachmentSpy.isTerminal.and.returnValue(true);
-        this.dupeSpy = jasmine.createSpyObj('dupe', ['']);
-
-        this.cardSpy.dupes = [this.dupeSpy];
-        this.cardSpy.attachments = [this.nonTerminalAttachmentSpy, this.terminalAttachmentSpy];
 
         this.props = { card: this.cardSpy, allowSave: true };
     });
@@ -64,51 +49,84 @@ describe('LeavePlay', function () {
     describe('createEvent()', function () {
         beforeEach(function () {
             this.event = LeavePlay.createEvent(this.props);
+            this.concurrentEvents = this.event.getConcurrentEvents();
         });
 
-        it('creates a onCardLeftPlay event', function () {
-            expect(this.event.name).toBe('onCardLeftPlay');
-            expect(this.event.card).toBe(this.cardSpy);
-            expect(this.event.allowSave).toBe(true);
-            expect(this.event.automaticSaveWithDupe).toBe(true);
+        it('creates an onCardLeftPlay event', function () {
+            const eventObj = {
+                name: 'onCardLeftPlay',
+                card: this.cardSpy,
+                allowSave: true,
+                automaticSaveWithDupe: true,
+                snapshotName: 'cardStateWhenLeftPlay'
+            };
+            expect(this.concurrentEvents).toContain(jasmine.objectContaining(eventObj));
+        });
+
+        describe('when the card has a duplicate', function () {
+            beforeEach(function () {
+                this.dupeSpy = jasmine.createSpyObj('dupe', ['']);
+                this.cardSpy.dupes = [this.dupeSpy];
+
+                this.concurrentEvents = LeavePlay.createEvent(this.props).getConcurrentEvents();
+            });
+
+            it('creates a concurrent onCardDiscarded event', function () {
+                const eventObj = {
+                    name: 'onCardDiscarded',
+                    card: this.dupeSpy
+                };
+                expect(this.concurrentEvents).toContain(jasmine.objectContaining(eventObj));
+            });
+        });
+
+        describe('when the card has a terminal attachment attached to it', function () {
+            beforeEach(function () {
+                this.terminalAttachmentSpy = jasmine.createSpyObj('terminalAttachment', [
+                    'isTerminal'
+                ]);
+                this.terminalAttachmentSpy.isTerminal.and.returnValue(true);
+                this.cardSpy.attachments = [this.terminalAttachmentSpy];
+
+                this.concurrentEvents = LeavePlay.createEvent(this.props).getConcurrentEvents();
+            });
+
+            it('creates a concurrent onCardDiscarded event', function () {
+                const eventObj = {
+                    name: 'onCardDiscarded',
+                    card: this.terminalAttachmentSpy
+                };
+                expect(this.concurrentEvents).toContain(jasmine.objectContaining(eventObj));
+            });
+        });
+
+        describe('when the card has a non-terminal attachment attached to it', function () {
+            beforeEach(function () {
+                this.nonTerminalAttachmentSpy = jasmine.createSpyObj('nonTerminalAttachment', [
+                    'isTerminal'
+                ]);
+                this.nonTerminalAttachmentSpy.isTerminal.and.returnValue(false);
+                this.cardSpy.attachments = [this.nonTerminalAttachmentSpy];
+
+                this.concurrentEvents = LeavePlay.createEvent(this.props).getConcurrentEvents();
+            });
+
+            it('creates a concurrent onCardReturnedToHand event', function () {
+                const eventObj = {
+                    name: 'onCardReturnedToHand',
+                    card: this.nonTerminalAttachmentSpy
+                };
+                expect(this.concurrentEvents).toContain(jasmine.objectContaining(eventObj));
+            });
         });
 
         describe('the event handler', function () {
             beforeEach(function () {
                 this.event.executeHandler();
-                this.attachedEvents = this.event.attachedEvents.map((event) => ({
-                    name: event.name,
-                    card: event.card
-                }));
             });
 
             it('calls leavePlay on the card', function () {
                 expect(this.cardSpy.leavesPlay).toHaveBeenCalled();
-            });
-
-            it('creates a snapshot', function () {
-                expect(this.event.snapshotName).toBe('cardStateWhenLeftPlay');
-            });
-
-            it('attaches discard events for the dupes', function () {
-                expect(this.attachedEvents).toContain({
-                    name: 'onCardDiscarded',
-                    card: this.dupeSpy
-                });
-            });
-
-            it('attaches discard events for terminal attachments', function () {
-                expect(this.attachedEvents).toContain({
-                    name: 'onCardDiscarded',
-                    card: this.terminalAttachmentSpy
-                });
-            });
-
-            it('attaches return to hand events for non-terminal attachments', function () {
-                expect(this.attachedEvents).toContain({
-                    name: 'onCardReturnedToHand',
-                    card: this.nonTerminalAttachmentSpy
-                });
             });
         });
     });

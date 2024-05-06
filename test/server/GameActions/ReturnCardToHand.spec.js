@@ -2,10 +2,8 @@ import ReturnCardToHand from '../../../server/game/GameActions/ReturnCardToHand.
 
 describe('ReturnCardToHand', function () {
     beforeEach(function () {
-        this.playerSpy = jasmine.createSpyObj('player', ['']);
-        this.cardSpy = jasmine.createSpyObj('card', ['allowGameAction', 'createSnapshot']);
-        this.cardSpy.controller = this.playerSpy;
-        this.props = { card: this.cardSpy, allowSave: true };
+        this.cardSpy = jasmine.createSpyObj('card', ['allowGameAction']);
+        this.props = { card: this.cardSpy };
     });
 
     describe('allow()', function () {
@@ -38,56 +36,42 @@ describe('ReturnCardToHand', function () {
 
     describe('createEvent()', function () {
         beforeEach(function () {
-            this.event = ReturnCardToHand.createEvent(this.props);
+            this.concurrentEvents = ReturnCardToHand.createEvent(this.props).getConcurrentEvents();
         });
 
-        it('creates a onCardReturnedToHand event', function () {
-            expect(this.event.name).toBe('onCardReturnedToHand');
-            expect(this.event.card).toBe(this.cardSpy);
-            expect(this.event.allowSave).toBe(true);
+        it('creates an onCardReturnedToHand event', function () {
+            const eventObj = {
+                name: 'onCardReturnedToHand',
+                card: this.cardSpy,
+                allowSave: true,
+                snapshotName: 'cardStateWhenReturned'
+            };
+            expect(this.concurrentEvents).toContain(jasmine.objectContaining(eventObj));
+        });
+
+        it('creates a concurrent onCardPlaced event', function () {
+            const eventObj = {
+                name: 'onCardPlaced',
+                card: this.cardSpy,
+                location: 'hand'
+            };
+            expect(this.concurrentEvents).toContain(jasmine.objectContaining(eventObj));
         });
 
         describe('when the card is in play area', function () {
             beforeEach(function () {
                 this.cardSpy.location = 'play area';
-                const event = ReturnCardToHand.createEvent(this.props);
-                this.returnCardEvent = event
-                    .getConcurrentEvents()
-                    .find((event) => event.name === 'onCardReturnedToHand');
-                this.leaveEvent = event
-                    .getConcurrentEvents()
-                    .find((event) => event.name === 'onCardLeftPlay');
+                this.concurrentEvents = ReturnCardToHand.createEvent(
+                    this.props
+                ).getConcurrentEvents();
             });
 
-            it('creates a onCardReturnedToHand event', function () {
-                expect(this.returnCardEvent.name).toBe('onCardReturnedToHand');
-                expect(this.returnCardEvent.card).toBe(this.cardSpy);
-                expect(this.returnCardEvent.allowSave).toBe(true);
-            });
-
-            it('creates an onCardLeftPlay event', function () {
-                expect(this.leaveEvent.name).toBe('onCardLeftPlay');
-                expect(this.leaveEvent.card).toBe(this.cardSpy);
-                expect(this.leaveEvent.allowSave).toBe(true);
-            });
-        });
-
-        describe('the event handler', function () {
-            beforeEach(function () {
-                this.cardSpy.createSnapshot.and.returnValue('snapshot');
-                this.event.executeHandler();
-            });
-
-            it('sets the card snapshot on the event', function () {
-                expect(this.event.cardStateWhenReturned).toBe('snapshot');
-            });
-
-            it('places the card in the hand', function () {
-                const placeEvent = this.event.attachedEvents[0];
-                expect(placeEvent.name).toBe('onCardPlaced');
-                expect(placeEvent.card).toBe(this.cardSpy);
-                expect(placeEvent.player).toBe(this.playerSpy);
-                expect(placeEvent.location).toBe('hand');
+            it('creates a concurrent onCardLeftPlay event', function () {
+                const eventObj = {
+                    name: 'onCardLeftPlay',
+                    card: this.cardSpy
+                };
+                expect(this.concurrentEvents).toContain(jasmine.objectContaining(eventObj));
             });
         });
     });
