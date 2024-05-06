@@ -15,7 +15,7 @@ class TheLaughingStorm extends DrawCard {
                 afterChallenge: event => event.challenge.winner === this.controller
             },
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && GameActions.kneelCard({ card }).allow()
+                cardCondition: (card, context) => card.isMatch({ location: 'play area', type: 'character', controller: context.event.challenge.loser }) && GameActions.kneelCard({ card }).allow()
             },
             cost: ability.costs.kneelSelf(),
             message: '{player} kneels {source} to kneel {target}',

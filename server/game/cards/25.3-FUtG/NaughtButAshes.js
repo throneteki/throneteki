@@ -21,7 +21,7 @@ class NaughtButAshes extends DrawCard {
     }
 
     getAmount() {
-        return this.game.getPlayers().reduce((acc, player) => acc + player.shadows.filter(card => card !== this).length, 0) * -1;
+        return this.game.getPlayers().reduce((acc, player) => acc + player.shadows.length, 0) * -1;
     }
 }
 

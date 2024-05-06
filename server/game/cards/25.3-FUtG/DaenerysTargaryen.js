@@ -9,7 +9,7 @@ class DaenerysTargaryen extends DrawCard {
         });
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.winner === this.controller
+                afterChallenge: event => event.challenge.attackingPlayer === this.controller && event.challenge.winner === this.controller
             },
             limit: ability.limit.perPhase(1),
             message: {
