@@ -21,8 +21,8 @@ class VultureKing extends DrawCard {
                         effect: ability.effects.removeIcon(icon)
                     }));
                     
-                    this.game.addMessage('{0} uses {1} to have {2} lose {3} {4} icon until the end of the phase',
-                        context.player, context.source, context.target, icon === 'intrigue' ? 'an' : 'a', icon);
+                    this.game.addMessage('{0} chooses to have {1} lose {2} {3} icon until the end of the phase',
+                        context.player, context.target, icon === 'intrigue' ? 'an' : 'a', icon);
                 });
             }
         });
