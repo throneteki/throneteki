@@ -21,7 +21,6 @@ class TheDrownedGodWakes extends DrawCard {
     }
 }
 
-TheDrownedGodWakes.code = '25523';
-TheDrownedGodWakes.version = '1.2';
+TheDrownedGodWakes.code = '25044';
 
 module.exports = TheDrownedGodWakes;

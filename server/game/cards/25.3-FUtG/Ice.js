@@ -17,7 +17,6 @@ class Ice extends DrawCard {
     }
 }
 
-Ice.code = '25570';
-Ice.version = '1.1';
+Ice.code = '25052';
 
 module.exports = Ice;

@@ -93,7 +93,6 @@ class Greyscale extends DrawCard {
     }
 }
 
-Greyscale.code = '25607';
-Greyscale.version = '1.1';
+Greyscale.code = '25059';
 
 module.exports = Greyscale;

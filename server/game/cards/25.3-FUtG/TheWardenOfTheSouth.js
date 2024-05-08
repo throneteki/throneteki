@@ -26,7 +26,6 @@ class TheWardenOfTheSouth extends DrawCard {
     }
 }
 
-TheWardenOfTheSouth.code = '25594';
-TheWardenOfTheSouth.version = '1.0';
+TheWardenOfTheSouth.code = '25056';
 
 module.exports = TheWardenOfTheSouth;

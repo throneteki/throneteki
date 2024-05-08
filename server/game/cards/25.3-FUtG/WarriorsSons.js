@@ -15,7 +15,6 @@ class WarriorsSons extends DrawCard {
     }
 }
 
-WarriorsSons.code = '25529';
-WarriorsSons.version = '1.0';
+WarriorsSons.code = '25045';
 
 module.exports = WarriorsSons;

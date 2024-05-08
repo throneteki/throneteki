@@ -10,7 +10,6 @@ class SerArysOakheart extends DrawCard {
     }
 }
 
-SerArysOakheart.code = '25538';
-SerArysOakheart.version = '1.0';
+SerArysOakheart.code = '25047';
 
 module.exports = SerArysOakheart;

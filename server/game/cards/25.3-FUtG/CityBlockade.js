@@ -13,7 +13,6 @@ class CityBlockade extends PlotCard {
     }
 }
 
-CityBlockade.code = '25614';
-CityBlockade.version = '1.1';
+CityBlockade.code = '25060';
 
 module.exports = CityBlockade;

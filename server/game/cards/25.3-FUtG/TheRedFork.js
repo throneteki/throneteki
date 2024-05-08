@@ -17,7 +17,6 @@ class TheRedFork extends DrawCard {
     }
 }
 
-TheRedFork.code = '25605';
-TheRedFork.version = '1.0';
+TheRedFork.code = '25058';
 
 module.exports = TheRedFork;

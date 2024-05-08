@@ -26,7 +26,6 @@ class TheLaughingStorm extends DrawCard {
     }
 }
 
-TheLaughingStorm.code = '25509';
-TheLaughingStorm.version = '1.3';
+TheLaughingStorm.code = '25042';
 
 module.exports = TheLaughingStorm;

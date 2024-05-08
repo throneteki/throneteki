@@ -29,7 +29,6 @@ class TarleTheThriceDrowned extends DrawCard {
     }
 }
 
-TarleTheThriceDrowned.code = '25514';
-TarleTheThriceDrowned.version = '1.3';
+TarleTheThriceDrowned.code = '25043';
 
 module.exports = TarleTheThriceDrowned;

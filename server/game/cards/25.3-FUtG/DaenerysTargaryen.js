@@ -25,7 +25,6 @@ class DaenerysTargaryen extends DrawCard {
     }
 }
 
-DaenerysTargaryen.code = '25574';
-DaenerysTargaryen.version = '1.1';
+DaenerysTargaryen.code = '25053';
 
 module.exports = DaenerysTargaryen;

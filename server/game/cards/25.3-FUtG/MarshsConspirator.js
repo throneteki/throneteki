@@ -20,7 +20,6 @@ class MarshsConspirator extends DrawCard {
     }
 }
 
-MarshsConspirator.code = '25552';
-MarshsConspirator.version = '1.0';
+MarshsConspirator.code = '25049';
 
 module.exports = MarshsConspirator;

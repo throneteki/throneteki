@@ -29,7 +29,6 @@ class VultureKing extends DrawCard {
     }
 }
 
-VultureKing.code = '25546';
-VultureKing.version = '1.2';
+VultureKing.code = '25048';
 
 module.exports = VultureKing;

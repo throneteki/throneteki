@@ -25,7 +25,6 @@ class NaughtButAshes extends DrawCard {
     }
 }
 
-NaughtButAshes.code = '25583';
-NaughtButAshes.version = '1.2';
+NaughtButAshes.code = '25054';
 
 module.exports = NaughtButAshes;

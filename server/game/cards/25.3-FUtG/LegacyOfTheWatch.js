@@ -72,7 +72,6 @@ class LegacyOfTheWatch extends DrawCard {
     }
 }
 
-LegacyOfTheWatch.code = '25557';
-LegacyOfTheWatch.version = '1.4';
+LegacyOfTheWatch.code = '25050';
 
 module.exports = LegacyOfTheWatch;

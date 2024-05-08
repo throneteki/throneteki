@@ -9,7 +9,6 @@ class WillasTyrell extends DrawCard {
     }
 }
 
-WillasTyrell.code = '25586';
-WillasTyrell.version = '1.0';
+WillasTyrell.code = '25055';
 
 module.exports = WillasTyrell;

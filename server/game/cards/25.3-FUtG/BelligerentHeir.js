@@ -39,7 +39,6 @@ class BelligerentHeir extends DrawCard {
     }
 }
 
-BelligerentHeir.code = '25601';
-BelligerentHeir.version = '1.0';
+BelligerentHeir.code = '25057';
 
 module.exports = BelligerentHeir;

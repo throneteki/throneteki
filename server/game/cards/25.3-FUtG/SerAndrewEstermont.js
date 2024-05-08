@@ -24,7 +24,6 @@ class SerAndrewEstermont extends DrawCard {
     }
 }
 
-SerAndrewEstermont.code = '25502';
-SerAndrewEstermont.version = '1.1';
+SerAndrewEstermont.code = '25041';
 
 module.exports = SerAndrewEstermont;
