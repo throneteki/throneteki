@@ -1,6 +1,6 @@
 import GameAction from './GameAction.js';
 import Message from '../Message.js';
-import PlaceCard from './PlaceCard.js';
+import MoveCardEventGenerator from './MoveCardEventGenerator.js';
 
 class PutIntoShadows extends GameAction {
     constructor() {
@@ -19,28 +19,8 @@ class PutIntoShadows extends GameAction {
         );
     }
 
-    createEvent({
-        card,
-        allowSave = true,
-        reason = 'ability',
-        placeCardEvent = PlaceCard.createEvent({
-            card,
-            player: card.controller,
-            location: 'shadows'
-        })
-    }) {
-        const params = {
-            card,
-            allowSave,
-            snapshotName: 'cardStateWhenMoved',
-            reason,
-            placeCardEvent
-        };
-
-        const putIntoShadowsEvent = this.event('onCardPutIntoShadows', params);
-        putIntoShadowsEvent.addChildEvent(placeCardEvent);
-
-        return putIntoShadowsEvent;
+    createEvent({ card, allowSave = true, reason = 'ability' }) {
+        return MoveCardEventGenerator.createPutIntoShadowsEvent({ card, allowSave, reason });
     }
 }
 

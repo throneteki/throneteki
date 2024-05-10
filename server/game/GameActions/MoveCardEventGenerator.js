@@ -65,6 +65,7 @@ class MoveCardEventGenerator {
             card,
             player: card.controller,
             location: 'discard pile',
+            allowSave,
             orderable
         });
         const discardEvent = this.compositeEvent('onCardDiscarded', params, {
@@ -85,7 +86,8 @@ class MoveCardEventGenerator {
         const placeCardEvent = this.createPlaceCardEvent({
             card,
             player: card.controller,
-            location: 'dead pile'
+            location: 'dead pile',
+            allowSave
         });
         const killedEvent = this.compositeEvent('onCharacterKilled', params, {
             name: 'placeCard',
@@ -125,7 +127,8 @@ class MoveCardEventGenerator {
         const placeCardEvent = this.createPlaceCardEvent({
             card,
             player: card.controller,
-            location: 'hand'
+            location: 'hand',
+            allowSave
         });
         const returnEvent = this.compositeEvent('onCardReturnedToHand', params, {
             name: 'placeCard',
@@ -133,6 +136,52 @@ class MoveCardEventGenerator {
         });
 
         return returnEvent;
+    }
+
+    createReturnCardToDeckEvent({ card, allowSave = true, bottom = false, orderable }) {
+        const params = {
+            card: card,
+            allowSave: allowSave,
+            bottom: bottom,
+            snapshotName: 'cardStateWhenReturned'
+        };
+
+        const placeCardEvent = this.createPlaceCardEvent({
+            card,
+            player: card.controller,
+            location: 'draw deck',
+            allowSave,
+            bottom,
+            orderable
+        });
+        const returnEvent = this.compositeEvent('onCardReturnedToDeck', params, {
+            name: 'placeCard',
+            event: placeCardEvent
+        });
+
+        return returnEvent;
+    }
+
+    createPutIntoShadowsEvent({ card, allowSave = true, reason = 'ability' }) {
+        const params = {
+            card,
+            allowSave,
+            snapshotName: 'cardStateWhenPut',
+            reason
+        };
+
+        const placeCardEvent = this.createPlaceCardEvent({
+            card,
+            player: card.controller,
+            allowSave,
+            location: 'shadows'
+        });
+        const putEvent = this.compositeEvent('onCardPutIntoShadows', params, {
+            name: 'placeCard',
+            event: placeCardEvent
+        });
+
+        return putEvent;
     }
 
     createPlaceCardEvent({
@@ -210,10 +259,14 @@ class MoveCardEventGenerator {
         return new Event(name, params, handler);
     }
 
-    compositeEvent(name, params, ...namedChildEvents) {
+    compositeEvent(name, params, ...events) {
         const compositeEvent = new CompositeEvent(name, params);
-        for (const { name, event } of namedChildEvents) {
-            compositeEvent.setChildEvent(name, event);
+        for (const event of events) {
+            if (event.name && event.event) {
+                compositeEvent.setChildEvent(event.name, event.event);
+            } else {
+                compositeEvent.addChildEvent(event);
+            }
         }
         return compositeEvent;
     }
