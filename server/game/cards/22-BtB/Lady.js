@@ -2,7 +2,11 @@ const DrawCard = require('../../drawcard.js');
 
 class Lady extends DrawCard {
     setupCardAbilities(ability) {
-        let leftPlayCondition = event => event.allowSave && event.card.canBeSaved() && event.card !== this && (event.card.hasTrait('Direwolf') || event.card.name === 'Sansa Stark');
+        let leftPlayCondition = (event) =>
+            event.allowSave &&
+            event.card.canBeSaved() &&
+            event.card !== this &&
+            (event.card.hasTrait('Direwolf') || event.card.name === 'Sansa Stark');
         this.interrupt({
             when: {
                 onCharacterKilled: leftPlayCondition,
@@ -13,9 +17,14 @@ class Lady extends DrawCard {
                 onCardPutIntoShadows: leftPlayCondition
             },
             cost: ability.costs.killSelf(),
-            handler: context => {
+            handler: (context) => {
                 context.event.saveCard();
-                this.game.addMessage('{0} kills {1} to save {2}', context.player, this, context.event.card);
+                this.game.addMessage(
+                    '{0} kills {1} to save {2}',
+                    context.player,
+                    this,
+                    context.event.card
+                );
             }
         });
     }

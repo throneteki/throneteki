@@ -22,7 +22,9 @@ class JonSnow extends DrawCard {
     }
 
     hasCharacterWithTrait(trait) {
-        return this.controller.anyCardsInPlay(card => card.getType() === 'character' && card.hasTrait(trait));
+        return this.controller.anyCardsInPlay(
+            (card) => card.getType() === 'character' && card.hasTrait(trait)
+        );
     }
 }
 

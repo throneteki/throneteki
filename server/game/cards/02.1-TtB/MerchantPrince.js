@@ -5,10 +5,7 @@ class MerchantPrince extends DrawCard {
         this.persistentEffect({
             condition: () => this.attachments.length >= 1,
             match: this,
-            effect: [
-                ability.effects.modifyStrength(1),
-                ability.effects.addIcon('military')
-            ]
+            effect: [ability.effects.modifyStrength(1), ability.effects.addIcon('military')]
         });
     }
 }

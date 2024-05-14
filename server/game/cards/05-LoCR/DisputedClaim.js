@@ -5,16 +5,15 @@ class DisputedClaim extends DrawCard {
         this.attachmentRestriction({ trait: ['Bastard', 'Lord', 'Lady'] });
         this.whileAttached({
             condition: () => this.hasMostFactionPower(),
-            effect: [
-                ability.effects.modifyStrength(2),
-                ability.effects.addKeyword('Renown')
-            ]
+            effect: [ability.effects.modifyStrength(2), ability.effects.addKeyword('Renown')]
         });
     }
 
     hasMostFactionPower() {
         let opponents = this.game.getOpponents(this.controller);
-        return opponents.every(opponent => this.controller.faction.power > opponent.faction.power);
+        return opponents.every(
+            (opponent) => this.controller.faction.power > opponent.faction.power
+        );
     }
 }
 

@@ -5,11 +5,12 @@ class PublicExecution extends DrawCard {
         this.action({
             phase: 'marshal',
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.kneeled,
+                cardCondition: (card) =>
+                    card.location === 'play area' && card.getType() === 'character' && card.kneeled,
                 gameAction: 'kill'
             },
             message: '{player} plays {source} to kill {target}',
-            handler: context => {
+            handler: (context) => {
                 this.game.killCharacter(context.target);
             }
         });

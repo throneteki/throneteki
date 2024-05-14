@@ -4,7 +4,7 @@ class Unsullied extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.isAttacking(),
-            match: card => card.isDefending(),
+            match: (card) => card.isDefending(),
             targetController: 'opponent',
             effect: ability.effects.modifyStrength(-1)
         });

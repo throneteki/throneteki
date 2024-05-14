@@ -23,7 +23,9 @@ class Rakharo extends DrawCard {
     }
 
     hasAnotherBloodrider() {
-        return this.controller.anyCardsInPlay(card => card !== this && card.getType() === 'character' && card.hasTrait('Bloodrider'));
+        return this.controller.anyCardsInPlay(
+            (card) => card !== this && card.getType() === 'character' && card.hasTrait('Bloodrider')
+        );
     }
 }
 

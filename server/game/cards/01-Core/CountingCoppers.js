@@ -4,10 +4,14 @@ const TextHelper = require('../../TextHelper');
 class CountingCoppers extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
-            handler: context => {
+            handler: (context) => {
                 let cards = context.player.drawCardsToHand(3).length;
-                this.game.addMessage('{0} uses {1} to draw {2} to hand',
-                    context.player, this, TextHelper.count(cards, 'card'));
+                this.game.addMessage(
+                    '{0} uses {1} to draw {2} to hand',
+                    context.player,
+                    this,
+                    TextHelper.count(cards, 'card')
+                );
             }
         });
     }

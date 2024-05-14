@@ -10,14 +10,19 @@ class Qyburn extends DrawCard {
             cost: ability.costs.kneelSelf(),
             handler: () => {
                 let cards = this.controller.drawCardsToHand(2).length;
-                this.game.addMessage('{0} kneels {1} to draw {2}',
-                    this.controller, this, TextHelper.count(cards, 'card'));
+                this.game.addMessage(
+                    '{0} kneels {1} to draw {2}',
+                    this.controller,
+                    this,
+                    TextHelper.count(cards, 'card')
+                );
 
                 this.game.promptForSelect(this.controller, {
                     activePromptTitle: 'Select a card',
-                    cardCondition: card => card.controller === this.controller && card.location === 'hand',
+                    cardCondition: (card) =>
+                        card.controller === this.controller && card.location === 'hand',
                     onSelect: (player, card) => this.putCardBack(player, card),
-                    onCancel: player => this.cancelResolution(player)
+                    onCancel: (player) => this.cancelResolution(player)
                 });
             }
         });

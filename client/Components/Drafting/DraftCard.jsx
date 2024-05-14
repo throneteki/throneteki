@@ -15,52 +15,62 @@ class DraftCard extends React.Component {
     }
 
     onMouseOver(card) {
-        if(this.props.onMouseOver) {
+        if (this.props.onMouseOver) {
             this.props.onMouseOver(card);
         }
     }
 
     onMouseOut() {
-        if(this.props.onMouseOut) {
+        if (this.props.onMouseOut) {
             this.props.onMouseOut();
         }
     }
 
     onClick(event, card) {
-        if(this.props.onClick) {
+        if (this.props.onClick) {
             this.props.onClick(card);
         }
     }
 
     getCard() {
-        if(!this.props.card) {
+        if (!this.props.card) {
             return <div />;
         }
 
-        let cardClass = classNames('card', `card-type-${this.props.card.type}`, this.props.className, this.sizeClass, this.statusClass, {
-            'custom-card': this.props.card.code && this.props.card.code.startsWith('custom'),
-            'horizontal': this.props.orientation !== 'vertical',
-            'vertical': this.props.orientation === 'vertical'
-        });
+        let cardClass = classNames(
+            'card',
+            `card-type-${this.props.card.type}`,
+            this.props.className,
+            this.sizeClass,
+            this.statusClass,
+            {
+                'custom-card': this.props.card.code && this.props.card.code.startsWith('custom'),
+                horizontal: this.props.orientation !== 'vertical',
+                vertical: this.props.orientation === 'vertical'
+            }
+        );
         let imageClass = classNames('card-image', this.sizeClass, {
-            'horizontal': this.props.card.type === 'plot',
-            'vertical': this.props.card.type !== 'plot'
+            horizontal: this.props.card.type === 'plot',
+            vertical: this.props.card.type !== 'plot'
         });
 
-        let image = <img className={ imageClass } src={ this.imageUrl } />;
+        let image = <img className={imageClass} src={this.imageUrl} />;
 
         return (
             <div className='card-frame'>
-                <div className={ cardClass }
-                    onMouseOver={ this.onMouseOver.bind(this, this.props.card) }
-                    onMouseOut={ this.onMouseOut }
-                    onClick={ ev => this.onClick(ev, this.props.card) }>
+                <div
+                    className={cardClass}
+                    onMouseOver={this.onMouseOver.bind(this, this.props.card)}
+                    onMouseOut={this.onMouseOut}
+                    onClick={(ev) => this.onClick(ev, this.props.card)}
+                >
                     <div>
-                        <span className='card-name'>{ this.props.card.name }</span>
-                        { image }
+                        <span className='card-name'>{this.props.card.name}</span>
+                        {image}
                     </div>
                 </div>
-            </div>);
+            </div>
+        );
     }
 
     get imageUrl() {
@@ -76,21 +86,22 @@ class DraftCard extends React.Component {
     }
 
     get statusClass() {
-        if(!this.props.selected) {
+        if (!this.props.selected) {
             return;
         }
 
-        if(this.props.selected) {
+        if (this.props.selected) {
             return 'selected';
         }
     }
 
     render() {
-        if(this.props.wrapped) {
+        if (this.props.wrapped) {
             return (
-                <div className='card-wrapper' style={ this.props.style }>
-                    { this.getCard() }
-                </div>);
+                <div className='card-wrapper' style={this.props.style}>
+                    {this.getCard()}
+                </div>
+            );
         }
 
         return this.getCard();

@@ -5,7 +5,8 @@ class DaenerysFavor extends DrawCard {
         this.attachmentRestriction({ faction: 'targaryen' });
         this.persistentEffect({
             condition: () => this.parent && this.parent.isParticipating(),
-            match: card => card.isParticipating() && card.getType() === 'character' && card !== this.parent,
+            match: (card) =>
+                card.isParticipating() && card.getType() === 'character' && card !== this.parent,
             targetController: 'any',
             effect: ability.effects.modifyStrength(-1)
         });

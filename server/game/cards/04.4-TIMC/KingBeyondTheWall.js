@@ -8,7 +8,10 @@ class KingBeyondTheWall extends DrawCard {
         });
 
         this.persistentEffect({
-            condition: () => this.game.currentChallenge && this.game.currentChallenge.isAttacking(this.parent) && this.hasLessTotalPower(this.game.currentChallenge.defendingPlayer),
+            condition: () =>
+                this.game.currentChallenge &&
+                this.game.currentChallenge.isAttacking(this.parent) &&
+                this.hasLessTotalPower(this.game.currentChallenge.defendingPlayer),
             match: (card) => card === this.controller.activePlot,
             effect: ability.effects.modifyClaim(1)
         });

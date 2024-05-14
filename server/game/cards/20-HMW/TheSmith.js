@@ -5,15 +5,22 @@ class TheSmith extends PlotCard {
         this.action({
             title: 'Kneel a location',
             phase: 'marshal',
-            cost: ability.costs.kneel(card => card.getType() === 'attachment'),
+            cost: ability.costs.kneel((card) => card.getType() === 'attachment'),
             target: {
-                cardCondition: card => card.getType() === 'location' && card.location === 'play area' && !card.kneeled,
+                cardCondition: (card) =>
+                    card.getType() === 'location' && card.location === 'play area' && !card.kneeled,
                 gameAction: 'kneel'
             },
-            handler: context => {
+            handler: (context) => {
                 context.target.controller.kneelCard(context.target);
 
-                this.game.addMessage('{0} uses {1} and kneels {2} to kneel {3}', context.player, this, context.costs.kneel, context.target);
+                this.game.addMessage(
+                    '{0} uses {1} and kneels {2} to kneel {3}',
+                    context.player,
+                    this,
+                    context.costs.kneel,
+                    context.target
+                );
             }
         });
     }

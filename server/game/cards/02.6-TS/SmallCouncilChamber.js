@@ -4,11 +4,12 @@ class SmallCouncilChamber extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,
-            effect: ability.effects.immuneTo(card => card.getType() === 'event')
+            effect: ability.effects.immuneTo((card) => card.getType() === 'event')
         });
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.winner === this.controller &&
+                afterChallenge: (event) =>
+                    event.challenge.winner === this.controller &&
                     event.challenge.challengeType === 'intrigue' &&
                     this.allowGameAction('gainPower')
             },

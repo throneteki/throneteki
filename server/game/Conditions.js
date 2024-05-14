@@ -2,11 +2,11 @@ class Conditions {
     static allInPlay({ player, type, match }) {
         const cardsInPlay = player.filterCardsInPlay({ type });
 
-        if(cardsInPlay.length === 0) {
+        if (cardsInPlay.length === 0) {
             return false;
         }
 
-        return cardsInPlay.every(card => card.isMatch(match));
+        return cardsInPlay.every((card) => card.isMatch(match));
     }
 
     static allCharactersAreStark({ player }) {

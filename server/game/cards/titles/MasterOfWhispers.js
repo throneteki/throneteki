@@ -9,11 +9,12 @@ class MasterOfWhispers extends TitleCard {
             effect: ability.effects.applyClaimToMultipleOpponents('intrigue')
         });
         this.persistentEffect({
-            condition: () => (
+            condition: () =>
                 this.game.currentChallenge &&
                 this.game.currentChallenge.challengeType === 'intrigue' &&
-                this.game.currentChallenge.anyParticipants(card => card.controller === this.controller)
-            ),
+                this.game.currentChallenge.anyParticipants(
+                    (card) => card.controller === this.controller
+                ),
             targetController: 'current',
             effect: ability.effects.contributeStrength(this, 1)
         });

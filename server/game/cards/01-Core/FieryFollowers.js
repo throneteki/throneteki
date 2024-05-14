@@ -4,7 +4,7 @@ class FieryFollowers extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onPhaseStarted: event => event.phase === 'dominance' && this.kneeled
+                onPhaseStarted: (event) => event.phase === 'dominance' && this.kneeled
             },
             handler: () => {
                 this.controller.standCard(this);

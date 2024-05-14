@@ -8,7 +8,7 @@ class EastwatchByTheSea extends DrawCard {
 
         this.reaction({
             when: {
-                onPhaseStarted: event =>
+                onPhaseStarted: (event) =>
                     event.phase === 'dominance' &&
                     this.hasHigherReserveThanOpponent() &&
                     this.controller.canDraw()
@@ -22,7 +22,9 @@ class EastwatchByTheSea extends DrawCard {
 
     hasHigherReserveThanOpponent() {
         let opponents = this.game.getOpponents(this.controller);
-        return opponents.some(opponent => this.controller.getTotalReserve() > opponent.getTotalReserve());
+        return opponents.some(
+            (opponent) => this.controller.getTotalReserve() > opponent.getTotalReserve()
+        );
     }
 }
 

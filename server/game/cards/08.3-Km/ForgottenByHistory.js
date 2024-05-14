@@ -8,17 +8,19 @@ class ForgottenByHistory extends DrawCard {
             phase: 'dominance',
             cost: ability.costs.kneelFactionCard(),
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' &&
-                                       card.getPrintedCost() <= card.controller.faction.power &&
-                                       GameActions.shuffleIntoDeck({ cards: [card] }).allow()
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    card.getPrintedCost() <= card.controller.faction.power &&
+                    GameActions.shuffleIntoDeck({ cards: [card] }).allow()
             },
             message: {
-                format: '{player} plays {source} to shuffle {target} into {owner}\'s deck',
-                args: { owner: context => context.target.owner }
+                format: "{player} plays {source} to shuffle {target} into {owner}'s deck",
+                args: { owner: (context) => context.target.owner }
             },
-            handler: context => {
+            handler: (context) => {
                 this.game.resolveGameAction(
-                    GameActions.shuffleIntoDeck(context => ({ cards: [context.target] })),
+                    GameActions.shuffleIntoDeck((context) => ({ cards: [context.target] })),
                     context
                 );
             }

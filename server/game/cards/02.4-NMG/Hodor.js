@@ -3,7 +3,7 @@ const DrawCard = require('../../drawcard.js');
 class Hodor extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => !this.controller.anyCardsInPlay(card => card.name === 'Bran Stark'),
+            condition: () => !this.controller.anyCardsInPlay((card) => card.name === 'Bran Stark'),
             match: this,
             effect: ability.effects.cannotBeDeclaredAsAttacker()
         });

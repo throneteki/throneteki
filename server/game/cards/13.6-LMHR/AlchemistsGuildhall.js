@@ -7,17 +7,22 @@ class AlchemistsGuildhall extends DrawCard {
             max: ability.limit.perPhase(1),
             when: {
                 //Restrict triggering on own character abilities to forced triggered abilities
-                onCardAbilityInitiated: event => event.source.getType() === 'character' && event.ability.isTriggeredAbility() &&
-                                                 (event.ability.isForcedAbility() || event.source.controller !== this.controller) &&
-                                                 !event.source.isShadow()
+                onCardAbilityInitiated: (event) =>
+                    event.source.getType() === 'character' &&
+                    event.ability.isTriggeredAbility() &&
+                    (event.ability.isForcedAbility() ||
+                        event.source.controller !== this.controller) &&
+                    !event.source.isShadow()
             },
-            cost: [
-                ability.costs.kneelSelf(),
-                ability.costs.putSelfIntoShadows()
-            ],
-            handler: context => {
+            cost: [ability.costs.kneelSelf(), ability.costs.putSelfIntoShadows()],
+            handler: (context) => {
                 context.event.cancel();
-                this.game.addMessage('{0} kneels and returns {1} to shadows to cancel {2}', this.controller, this, context.event.source);
+                this.game.addMessage(
+                    '{0} kneels and returns {1} to shadows to cancel {2}',
+                    this.controller,
+                    this,
+                    context.event.source
+                );
             }
         });
     }

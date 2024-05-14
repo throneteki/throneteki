@@ -12,7 +12,7 @@ const ReservedEventParamKeys = [
 
 class Event {
     constructor(name, params = {}, handler = () => true, postHandler = () => true) {
-        const {isFullyResolved, ...otherParams} = params;
+        const { isFullyResolved, ...otherParams } = params;
 
         this.name = name;
         this.cancelled = false;
@@ -26,15 +26,17 @@ class Event {
 
         this.assignParamProperties(otherParams);
 
-        if(this.params.card && this.params.card.createSnapshot) {
+        if (this.params.card && this.params.card.createSnapshot) {
             this.cardStateWhenEventCreated = this.params.card.createSnapshot();
         }
     }
 
     assignParamProperties(params) {
-        let reservedKeys = ReservedEventParamKeys.filter(key => !!params[key]);
-        if(reservedKeys.length !== 0) {
-            throw new Error(`Event '${this.name}' cannot have params with keys: ${reservedKeys.map(key => `'${key}'`).join(', ')}`);
+        let reservedKeys = ReservedEventParamKeys.filter((key) => !!params[key]);
+        if (reservedKeys.length !== 0) {
+            throw new Error(
+                `Event '${this.name}' cannot have params with keys: ${reservedKeys.map((key) => `'${key}'`).join(', ')}`
+            );
         }
 
         Object.assign(this, params);
@@ -53,7 +55,7 @@ class Event {
         let fullName = suffix ? `${this.name}:${suffix}` : this.name;
         emitter.emit(fullName, this);
 
-        for(let event of this.childEvents) {
+        for (let event of this.childEvents) {
             event.emitTo(emitter, suffix);
         }
     }
@@ -63,7 +65,7 @@ class Event {
     }
 
     saveCard() {
-        if(!this.card || this.cancelled) {
+        if (!this.card || this.cancelled) {
             return;
         }
 
@@ -74,11 +76,11 @@ class Event {
     cancel() {
         this.cancelled = true;
 
-        for(let event of this.childEvents) {
+        for (let event of this.childEvents) {
             event.cancel();
         }
 
-        if(this.parent) {
+        if (this.parent) {
             this.parent.onChildCancelled(this);
         }
     }
@@ -89,43 +91,50 @@ class Event {
 
     checkExecuteValidity() {
         // When the card in which the event affects is moved before the event can start resolving, it should not execute (but is also not cancelled)
-        if(this.params.card && this.cardStateWhenEventCreated && this.params.card.location !== this.cardStateWhenEventCreated.location) {
+        if (
+            this.params.card &&
+            this.cardStateWhenEventCreated &&
+            this.params.card.location !== this.cardStateWhenEventCreated.location
+        ) {
             this.invalid = true;
         }
 
-        for(let event of this.childEvents) {
+        for (let event of this.childEvents) {
             event.checkExecuteValidity();
         }
     }
 
     executeHandler() {
-        if(this.params.card && this.params.card.createSnapshot && this.params.snapshotName) {
+        if (this.params.card && this.params.card.createSnapshot && this.params.snapshotName) {
             this[this.params.snapshotName] = this.params.card.createSnapshot();
         }
-        
-        if(!this.invalid) {
+
+        if (!this.invalid) {
             this.handler(this);
         }
 
-        for(let event of this.childEvents) {
+        for (let event of this.childEvents) {
             event.executeHandler();
         }
     }
 
     executePostHandler() {
-        for(let postHandler of this.postHandlers) {
+        for (let postHandler of this.postHandlers) {
             postHandler(this);
         }
     }
 
     onChildCancelled(event) {
-        this.childEvents = this.childEvents.filter(e => e !== event);
+        this.childEvents = this.childEvents.filter((e) => e !== event);
     }
 
     getConcurrentEvents() {
-        return this.childEvents.reduce((concurrentEvents, event) => {
-            return concurrentEvents.concat(event.getConcurrentEvents());
-        }, [this]);
+        return this.childEvents.reduce(
+            (concurrentEvents, event) => {
+                return concurrentEvents.concat(event.getConcurrentEvents());
+            },
+            [this]
+        );
     }
 
     getPrimaryEvents() {
@@ -142,15 +151,15 @@ class Event {
     }
 
     clearAttachedEvents() {
-        for(let event of this.attachedEvents) {
+        for (let event of this.attachedEvents) {
             this.addChildEvent(event);
         }
         this.attachedEvents = [];
     }
 
     toString() {
-        if(this.childEvents.length !== 0) {
-            return `${this.name} + children(${this.childEvents.map(e => e.toString()).join(', ')})`;
+        if (this.childEvents.length !== 0) {
+            return `${this.name} + children(${this.childEvents.map((e) => e.toString()).join(', ')})`;
         }
 
         return this.name;

@@ -7,15 +7,21 @@ class TheTickler extends DrawCard {
             phase: 'dominance',
             chooseOpponent: true,
             cost: ability.costs.kneelSelf(),
-            handler: context => {
-                context.opponent.discardFromDraw(1, cards => {
+            handler: (context) => {
+                context.opponent.discardFromDraw(1, (cards) => {
                     let topCard = cards[0];
-                    this.game.addMessage('{0} uses {1} to discard the top card of {2}\'s deck', this.controller, this, context.opponent);
+                    this.game.addMessage(
+                        "{0} uses {1} to discard the top card of {2}'s deck",
+                        this.controller,
+                        this,
+                        context.opponent
+                    );
 
                     this.game.promptForSelect(this.controller, {
                         activePromptTitle: 'Select a copy of ' + topCard.name,
                         source: this,
-                        cardCondition: card => card.location === 'play area' && card.isCopyOf(topCard),
+                        cardCondition: (card) =>
+                            card.location === 'play area' && card.isCopyOf(topCard),
                         onSelect: (p, card) => this.onCardSelected(p, card)
                     });
                 });

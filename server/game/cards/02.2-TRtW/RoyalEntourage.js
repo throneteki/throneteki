@@ -1,11 +1,12 @@
-
 const DrawCard = require('../../drawcard.js');
 
 class RoyalEntourage extends DrawCard {
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                afterChallenge: event => event.challenge.loser === this.controller && event.challenge.challengeType === 'intrigue'
+                afterChallenge: (event) =>
+                    event.challenge.loser === this.controller &&
+                    event.challenge.challengeType === 'intrigue'
             },
             handler: () => {
                 this.controller.kneelCard(this);

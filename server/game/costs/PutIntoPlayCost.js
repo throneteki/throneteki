@@ -8,7 +8,7 @@ class PutIntoPlayCost {
     }
 
     pay(cards, context) {
-        for(let card of cards) {
+        for (let card of cards) {
             context.player.putIntoPlay(card);
         }
     }

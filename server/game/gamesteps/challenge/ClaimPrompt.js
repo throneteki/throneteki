@@ -23,7 +23,7 @@ class ClaimPrompt extends BaseStep {
     }
 
     applyClaim() {
-        if(this.claim.allowMultipleOpponentClaim()) {
+        if (this.claim.allowMultipleOpponentClaim()) {
             this.promptForAdditionalOpponents();
         } else {
             this.processClaim();
@@ -39,23 +39,23 @@ class ClaimPrompt extends BaseStep {
     }
 
     promptForAdditionalOpponents() {
-        let opponents = this.game.getOpponents(this.claim.winner).filter(opponent => !this.claim.recipients.includes(opponent));
+        let opponents = this.game
+            .getOpponents(this.claim.winner)
+            .filter((opponent) => !this.claim.recipients.includes(opponent));
 
-        if(opponents.length === 0) {
+        if (opponents.length === 0) {
             this.processClaim();
             return true;
         }
 
-        let buttons = opponents.map(opponent => {
+        let buttons = opponents.map((opponent) => {
             return { text: opponent.name, method: 'addOpponent', arg: opponent.name };
         });
 
         this.game.promptWithMenu(this.challenge.winner, this, {
             activePrompt: {
                 menuTitle: `Apply ${this.challenge.challengeType} claim against additional opponents?`,
-                buttons: buttons.concat([
-                    { text: 'Done', method: 'processClaim' }
-                ])
+                buttons: buttons.concat([{ text: 'Done', method: 'processClaim' }])
             },
             waitingPromptTitle: 'Waiting for opponent to apply claim'
         });
@@ -64,7 +64,7 @@ class ClaimPrompt extends BaseStep {
     addOpponent(player, opponentName) {
         let opponent = this.game.getPlayerByName(opponentName);
 
-        if(!opponent) {
+        if (!opponent) {
             return false;
         }
 
@@ -76,9 +76,13 @@ class ClaimPrompt extends BaseStep {
     }
 
     processClaim() {
-        this.game.raiseEvent('onClaimApplied', { player: this.challenge.winner, challenge: this.challenge, claim: this.claim }, () => {
-            this.game.queueStep(new ApplyClaim(this.game, this.claim));
-        });
+        this.game.raiseEvent(
+            'onClaimApplied',
+            { player: this.challenge.winner, challenge: this.challenge, claim: this.claim },
+            () => {
+                this.game.queueStep(new ApplyClaim(this.game, this.claim));
+            }
+        );
 
         return true;
     }

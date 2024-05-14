@@ -15,7 +15,7 @@ class StandCard extends GameAction {
     }
 
     createEvent({ card }) {
-        return this.event('onCardStood', { card }, event => {
+        return this.event('onCardStood', { card }, (event) => {
             event.card.kneeled = false;
         });
     }

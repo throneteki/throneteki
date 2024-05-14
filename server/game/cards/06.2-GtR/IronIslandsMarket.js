@@ -6,7 +6,7 @@ class IronIslandsMarket extends DrawCard {
             title: 'Gain gold',
             phase: 'marshal',
             cost: ability.costs.kneelSelf(),
-            handler: context => {
+            handler: (context) => {
                 let gold = this.opponentDiscardPileHas8() ? 2 : 1;
                 gold = this.game.addGold(context.player, gold);
 
@@ -17,7 +17,7 @@ class IronIslandsMarket extends DrawCard {
 
     opponentDiscardPileHas8() {
         let opponents = this.game.getOpponents(this.controller);
-        return opponents.some(opponent => opponent.discardPile.length >= 8);
+        return opponents.some((opponent) => opponent.discardPile.length >= 8);
     }
 }
 

@@ -4,7 +4,7 @@ class StalwartShields extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.isParticipating(),
-            match: card => card.controller !== this.controller && card.hasTrait('Army'),
+            match: (card) => card.controller !== this.controller && card.hasTrait('Army'),
             effect: ability.effects.losesAllKeywords()
         });
     }

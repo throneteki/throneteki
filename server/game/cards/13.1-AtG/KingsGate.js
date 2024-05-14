@@ -8,13 +8,17 @@ class KingsGate extends DrawCard {
         });
         this.action({
             title: 'Sacrifice to draw 2 cards',
-            condition: context => context.player.faction.power >= 5,
+            condition: (context) => context.player.faction.power >= 5,
             phase: 'challenge',
             cost: ability.costs.sacrificeSelf(),
-            handler: context => {
+            handler: (context) => {
                 let cards = context.player.drawCardsToHand(2).length;
-                this.game.addMessage('{0} sacrifices {1} to draw {2}',
-                    context.player, this, TextHelper.count(cards, 'card'));
+                this.game.addMessage(
+                    '{0} sacrifices {1} to draw {2}',
+                    context.player,
+                    this,
+                    TextHelper.count(cards, 'card')
+                );
             }
         });
     }

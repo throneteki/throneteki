@@ -15,7 +15,7 @@ class AbilityContext {
     }
 
     addCost(name, value) {
-        if(!this.costValues[name]) {
+        if (!this.costValues[name]) {
             this.costValues[name] = [];
         }
 

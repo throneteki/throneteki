@@ -9,7 +9,9 @@ class DaceyMormont extends DrawCard {
     }
 
     getSTR() {
-        return this.controller.getNumberOfCardsInPlay(card => card.getType() === 'character' && card.isFaction('stark'));
+        return this.controller.getNumberOfCardsInPlay(
+            (card) => card.getType() === 'character' && card.isFaction('stark')
+        );
     }
 }
 

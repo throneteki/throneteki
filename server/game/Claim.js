@@ -21,7 +21,7 @@ class Claim {
     }
 
     addRecipient(player) {
-        if(this.recipients.includes(player)) {
+        if (this.recipients.includes(player)) {
             return;
         }
 
@@ -29,7 +29,9 @@ class Claim {
     }
 
     replaceRecipient(origPlayer, newPlayer) {
-        this.recipients = this.recipients.filter(player => player !== origPlayer).concat(newPlayer);
+        this.recipients = this.recipients
+            .filter((player) => player !== origPlayer)
+            .concat(newPlayer);
     }
 
     clone() {

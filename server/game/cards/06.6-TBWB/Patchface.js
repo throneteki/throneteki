@@ -7,7 +7,9 @@ class Patchface extends DrawCard {
         this.persistentEffect({
             match: this,
             effect: [
-                ability.effects.dynamicKeywordSources(card => card.isMatch({ type: 'character', trait: 'Fool' }) && card !== this),
+                ability.effects.dynamicKeywordSources(
+                    (card) => card.isMatch({ type: 'character', trait: 'Fool' }) && card !== this
+                ),
                 ability.effects.dynamicIcons(() => this.getFoolIcons())
             ]
         });
@@ -15,11 +17,13 @@ class Patchface extends DrawCard {
 
     getFoolIcons() {
         let foolIcons = [];
-        let fools = this.game.filterCardsInPlay(card => card.getType() === 'character' && card.hasTrait('Fool') && card !== this);
+        let fools = this.game.filterCardsInPlay(
+            (card) => card.getType() === 'character' && card.hasTrait('Fool') && card !== this
+        );
 
-        for(let card of fools) {
-            for(let icon of Icons) {
-                if(card.hasIcon(icon)) {
+        for (let card of fools) {
+            for (let icon of Icons) {
+                if (card.hasIcon(icon)) {
                     foolIcons.push(icon);
                 }
             }

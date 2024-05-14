@@ -1,4 +1,3 @@
-  
 const DrawCard = require('../../drawcard.js');
 
 class GreywaterWatch extends DrawCard {
@@ -11,13 +10,23 @@ class GreywaterWatch extends DrawCard {
             cost: [
                 ability.costs.kneelSelf(),
                 ability.costs.putSelfIntoShadows(),
-                ability.costs.kneel(card => card.getType() === 'character' && card.isFaction('stark') && card.canParticipateInChallenge())
+                ability.costs.kneel(
+                    (card) =>
+                        card.getType() === 'character' &&
+                        card.isFaction('stark') &&
+                        card.canParticipateInChallenge()
+                )
             ],
-            handler: context => {
+            handler: (context) => {
                 let card = context.costs.kneel;
                 this.game.currentChallenge.addParticipantToSide(context.player, card);
 
-                this.game.addMessage('{0} uses {1} to kneel {2} and add them to the challenge', context.player, this, card);
+                this.game.addMessage(
+                    '{0} uses {1} to kneel {2} and add them to the challenge',
+                    context.player,
+                    this,
+                    card
+                );
             }
         });
     }

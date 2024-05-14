@@ -6,10 +6,10 @@ class GreatRanging extends DrawCard {
         this.plotModifiers({
             reserve: 1
         });
-        
+
         this.reaction({
             when: {
-                onCardEntersPlay: event => event.card === this && event.playingType === 'marshal'
+                onCardEntersPlay: (event) => event.card === this && event.playingType === 'marshal'
             },
             message: '{player} uses {source} to search their deck for First of the First Men',
             gameAction: GameActions.search({
@@ -18,7 +18,7 @@ class GreatRanging extends DrawCard {
                 reveal: false,
                 location: ['draw deck', 'hand', 'discard pile'],
                 message: '{player} {gameAction}',
-                gameAction: GameActions.putIntoPlay(context => ({
+                gameAction: GameActions.putIntoPlay((context) => ({
                     card: context.searchTarget
                 }))
             })

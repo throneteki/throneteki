@@ -10,10 +10,14 @@ class SelectCardCost {
 
     createSelector(action, properties) {
         let condition = (card, context) => {
-            return card.controller === context.player && action.isEligible(card, context) && properties.cardCondition(card, context);
+            return (
+                card.controller === context.player &&
+                action.isEligible(card, context) &&
+                properties.cardCondition(card, context)
+            );
         };
 
-        let fullProperties = Object.assign({ }, properties, { cardCondition: condition });
+        let fullProperties = Object.assign({}, properties, { cardCondition: condition });
 
         return CardSelector.for(fullProperties);
     }

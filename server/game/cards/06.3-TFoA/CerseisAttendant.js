@@ -11,7 +11,7 @@ class CerseisAttendant extends DrawCard {
 
     opponentHasNoCardsInHand() {
         let challenge = this.game.currentChallenge;
-        if(!challenge) {
+        if (!challenge) {
             return false;
         }
 

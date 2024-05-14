@@ -6,7 +6,7 @@ class AlertPanel extends React.Component {
         var icon = 'glyphicon';
         var alertClass = 'alert fade in';
 
-        switch(this.props.type) {
+        switch (this.props.type) {
             case 'warning':
                 icon += ' glyphicon-warning-sign';
                 alertClass += ' alert-warning';
@@ -25,16 +25,18 @@ class AlertPanel extends React.Component {
                 break;
         }
 
-        if(this.props.multiLine) {
+        if (this.props.multiLine) {
             alertClass += ' multiline';
         }
 
-        return (<div ref='alertPanel' className={ alertClass } role='alert'>
-            { this.props.noIcon ? null : <span className={ icon } aria-hidden='true' /> }
-            { this.props.title ? <span className='sr-only'>{ this.props.title }</span> : null }
-            { this.props.message ? <span>&nbsp;{ this.props.message }</span> : null }
-            &nbsp;{ this.props.children }
-        </div>);
+        return (
+            <div ref='alertPanel' className={alertClass} role='alert'>
+                {this.props.noIcon ? null : <span className={icon} aria-hidden='true' />}
+                {this.props.title ? <span className='sr-only'>{this.props.title}</span> : null}
+                {this.props.message ? <span>&nbsp;{this.props.message}</span> : null}
+                &nbsp;{this.props.children}
+            </div>
+        );
     }
 }
 

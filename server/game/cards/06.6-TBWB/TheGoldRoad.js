@@ -11,7 +11,7 @@ class TheGoldroad extends DrawCard {
             phase: 'challenge',
             condition: () => this.controller.canGainGold(),
             cost: ability.costs.kneelSelf(),
-            handler: context => {
+            handler: (context) => {
                 this.game.addGold(context.player, 1);
                 this.game.addMessage('{0} kneels {1} to gain 1 gold', context.player, this);
             }

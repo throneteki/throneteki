@@ -10,7 +10,7 @@ class CancelEffects extends GameAction {
     }
 
     createEvent({ event }) {
-        return this.event('onEffectsCanceled', { canceledEvent: event }, event => {
+        return this.event('onEffectsCanceled', { canceledEvent: event }, (event) => {
             event.canceledEvent.cancel();
         });
     }

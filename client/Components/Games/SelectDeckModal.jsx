@@ -9,10 +9,10 @@ class SelectDeckModal extends React.Component {
     render() {
         let renderedDeckList = null;
 
-        if(this.props.loading) {
+        if (this.props.loading) {
             renderedDeckList = <div>Loading decks from the server...</div>;
-        } else if(this.props.apiError) {
-            renderedDeckList = <AlertPanel type='error' message={ this.props.apiError } />;
+        } else if (this.props.apiError) {
+            renderedDeckList = <AlertPanel type='error' message={this.props.apiError} />;
         } else {
             let { allowStandaloneDecks, decks, filterDecks, standaloneDecks } = this.props;
 
@@ -20,21 +20,32 @@ class SelectDeckModal extends React.Component {
 
             renderedDeckList = (
                 <div>
-                    <DeckList className='deck-list-popup' decks={ decks } onSelectDeck={ this.props.onDeckSelected } events={ this.props.events } />
-                    { allowStandaloneDecks && standaloneDecks && standaloneDecks.length !== 0 && (
+                    <DeckList
+                        className='deck-list-popup'
+                        decks={decks}
+                        onSelectDeck={this.props.onDeckSelected}
+                        events={this.props.events}
+                    />
+                    {allowStandaloneDecks && standaloneDecks && standaloneDecks.length !== 0 && (
                         <div>
                             <h3 className='deck-list-header'>Or choose a standalone deck:</h3>
-                            <DeckList className='deck-list-popup' decks={ standaloneDecks } onSelectDeck={ this.props.onDeckSelected } events={ this.props.events } />
-                        </div>)
-                    }
+                            <DeckList
+                                className='deck-list-popup'
+                                decks={standaloneDecks}
+                                onSelectDeck={this.props.onDeckSelected}
+                                events={this.props.events}
+                            />
+                        </div>
+                    )}
                 </div>
             );
         }
 
         return (
-            <Modal id={ this.props.id } className='deck-popup' title='Select Deck'>
-                { renderedDeckList }
-            </Modal>);
+            <Modal id={this.props.id} className='deck-popup' title='Select Deck'>
+                {renderedDeckList}
+            </Modal>
+        );
     }
 }
 

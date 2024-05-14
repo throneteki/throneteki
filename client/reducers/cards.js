@@ -1,7 +1,7 @@
 import { validateDeck, formatDeckAsFullCards } from '../../deck-helper';
 
 function selectDeck(state, deck) {
-    if(state.decks.length !== 0) {
+    if (state.decks.length !== 0) {
         state.selectedDeck = deck;
     } else {
         delete state.selectedDeck;
@@ -11,15 +11,15 @@ function selectDeck(state, deck) {
 }
 
 function processDecks(decks, state) {
-    if(!decks) {
+    if (!decks) {
         return;
     }
 
-    return decks.map(deck => processDeck(deck, state));
+    return decks.map((deck) => processDeck(deck, state));
 }
 
 function processDeck(deck, state) {
-    if(!state.cards || !deck || !deck.faction) {
+    if (!state.cards || !deck || !deck.faction) {
         return Object.assign({ status: {} }, deck);
     }
 
@@ -27,10 +27,14 @@ function processDeck(deck, state) {
     //copy over the locked properties from the server deck object
     formattedDeck.lockedForEditing = deck.lockedForEditing;
     formattedDeck.lockedForDeletion = deck.lockedForDeletion;
-    const fallbackRestrictedList = state.restrictedList ? state.restrictedList.slice(0, 1) : undefined;
-    const restrictedLists = state.currentRestrictedList ? [state.currentRestrictedList] : fallbackRestrictedList;
+    const fallbackRestrictedList = state.restrictedList
+        ? state.restrictedList.slice(0, 1)
+        : undefined;
+    const restrictedLists = state.currentRestrictedList
+        ? [state.currentRestrictedList]
+        : fallbackRestrictedList;
 
-    if(!restrictedLists) {
+    if (!restrictedLists) {
         formattedDeck.status = {};
     } else {
         formattedDeck.status = validateDeck(formattedDeck, { packs: state.packs, restrictedLists });
@@ -39,19 +43,19 @@ function processDeck(deck, state) {
     return formattedDeck;
 }
 
-export default function(state = { decks: [] }, action) {
+export default function (state = { decks: [] }, action) {
     let newState;
-    switch(action.type) {
+    switch (action.type) {
         case 'RECEIVE_CARDS':
             var agendas = {};
 
-            for(const card of Object.values(action.response.cards)) {
-                if(card.type === 'agenda') {
+            for (const card of Object.values(action.response.cards)) {
+                if (card.type === 'agenda') {
                     agendas[card.code] = card;
                 }
             }
 
-            var banners = Object.values(agendas).filter(card => {
+            var banners = Object.values(agendas).filter((card) => {
                 return card.traits.includes('Banner');
             });
 
@@ -72,7 +76,7 @@ export default function(state = { decks: [] }, action) {
         case 'RECEIVE_FACTIONS':
             var factions = {};
 
-            for(const faction of action.response.factions) {
+            for (const faction of action.response.factions) {
                 factions[faction.value] = faction;
             }
 
@@ -100,7 +104,7 @@ export default function(state = { decks: [] }, action) {
 
             // Force an update to the validation results
             newState.decks = processDecks(newState.decks, newState);
-            if(newState.selectedDeck) {
+            if (newState.selectedDeck) {
                 newState.selectedDeck = processDeck(newState.selectedDeck, newState);
             }
 
@@ -137,8 +141,8 @@ export default function(state = { decks: [] }, action) {
                 deckDeleted: false
             });
 
-            if(newState.selectedDeck && !newState.selectedDeck._id) {
-                if(newState.decks.length !== 0) {
+            if (newState.selectedDeck && !newState.selectedDeck._id) {
+                if (newState.decks.length !== 0) {
                     newState.selectedDeck = newState.decks[0];
                 }
             }
@@ -150,11 +154,11 @@ export default function(state = { decks: [] }, action) {
                 deckSaved: false
             });
 
-            if(!newState.decks.some(deck => deck._id === action.response.deck._id)) {
+            if (!newState.decks.some((deck) => deck._id === action.response.deck._id)) {
                 newState.decks.push(processDeck(action.response.deck, state));
             }
 
-            var selected = newState.decks.find(deck => {
+            var selected = newState.decks.find((deck) => {
                 return deck._id === action.response.deck._id;
             });
 
@@ -196,7 +200,7 @@ export default function(state = { decks: [] }, action) {
                 deckDeleted: true
             });
 
-            newState.decks = newState.decks.filter(deck => {
+            newState.decks = newState.decks.filter((deck) => {
                 return deck._id !== action.response.deckId;
             });
 

@@ -5,13 +5,17 @@ class AMeagerContribution extends DrawCard {
         this.reaction({
             max: ability.limit.perRound(1),
             when: {
-                onIncomeCollected: event => event.player !== this.controller
+                onIncomeCollected: (event) => event.player !== this.controller
             },
-            handler: context => {
+            handler: (context) => {
                 let opponent = context.event.player;
                 this.game.transferGold({ from: opponent, to: this.controller, amount: 1 });
-                this.game.addMessage('{0} plays {1} to move 1 gold from {2}\'s gold pool to their own',
-                    this.controller, this, opponent);
+                this.game.addMessage(
+                    "{0} plays {1} to move 1 gold from {2}'s gold pool to their own",
+                    this.controller,
+                    this,
+                    opponent
+                );
             }
         });
     }

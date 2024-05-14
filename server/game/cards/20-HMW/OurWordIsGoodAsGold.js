@@ -11,10 +11,10 @@ class OurWordIsGoodAsGold extends DrawCard {
                 topCards: 10,
                 reveal: false,
                 message: '{player} {gameAction}',
-                gameAction: GameActions.putIntoPlay(context => ({
+                gameAction: GameActions.putIntoPlay((context) => ({
                     card: context.searchTarget
-                })).thenExecute(event => {
-                    this.atEndOfPhase(ability => ({
+                })).thenExecute((event) => {
+                    this.atEndOfPhase((ability) => ({
                         match: event.card,
                         condition: () => ['play area', 'duplicate'].includes(event.card.location),
                         targetLocation: 'any',

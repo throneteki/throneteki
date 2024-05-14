@@ -12,7 +12,7 @@ class MinMaxProperty {
 
     removeMin(value) {
         let index = this.minValues.indexOf(value);
-        if(index !== -1) {
+        if (index !== -1) {
             this.minValues.splice(index, 1);
         }
     }
@@ -23,13 +23,13 @@ class MinMaxProperty {
 
     removeMax(value) {
         let index = this.maxValues.indexOf(value);
-        if(index !== -1) {
+        if (index !== -1) {
             this.maxValues.splice(index, 1);
         }
     }
 
     getMin() {
-        if(this.minValues.length === 0) {
+        if (this.minValues.length === 0) {
             return this.defaultMin;
         }
 
@@ -37,7 +37,7 @@ class MinMaxProperty {
     }
 
     getMax() {
-        if(this.maxValues.length === 0) {
+        if (this.maxValues.length === 0) {
             return this.defaultMax;
         }
 

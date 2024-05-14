@@ -11,29 +11,37 @@ class TheBloodyGate extends DrawCard {
                         defendingPlayer: context.player,
                         loser: context.player,
                         challengeType: 'military',
-                        match: challenge => challenge.defenders.some(card => card.controller === context.player)
-                            && challenge.winner.hand.length > 0
+                        match: (challenge) =>
+                            challenge.defenders.some(
+                                (card) => card.controller === context.player
+                            ) && challenge.winner.hand.length > 0
                     })
             },
             message: {
                 format: '{player} uses {source} to {potentialAction}',
-                args: { 
-                    potentialAction: context => {
-                        let message = this.kneeled ? 'discard a card at random from {winner}\'s hand' : 'have {winner} choose and discard a card from their hand';
-                        return Message.fragment(message, { winner: context.event.challenge.winner });
+                args: {
+                    potentialAction: (context) => {
+                        let message = this.kneeled
+                            ? "discard a card at random from {winner}'s hand"
+                            : 'have {winner} choose and discard a card from their hand';
+                        return Message.fragment(message, {
+                            winner: context.event.challenge.winner
+                        });
                     }
                 }
             },
             gameAction: GameActions.ifCondition({
                 condition: () => this.kneeled,
-                thenAction: GameActions.discardAtRandom(context => ({
+                thenAction: GameActions.discardAtRandom((context) => ({
                     player: context.event.challenge.winner
                 })),
-                elseAction: GameActions.genericHandler(context => {
+                elseAction: GameActions.genericHandler((context) => {
                     this.game.promptForSelect(context.event.challenge.winner, {
                         activePromptTitle: 'Select a card',
                         source: this,
-                        cardCondition: card => card.location === 'hand' && card.controller === context.event.challenge.winner,
+                        cardCondition: (card) =>
+                            card.location === 'hand' &&
+                            card.controller === context.event.challenge.winner,
                         onSelect: (player, card) => this.onCardSelected(context, player, card)
                     });
                 })

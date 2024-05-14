@@ -11,7 +11,14 @@ class RevealCost {
     }
 
     pay(cards, context) {
-        context.game.resolveGameAction(GameActions.revealCards({ cards, player: context.player, revealWithMessage: false, context }));
+        context.game.resolveGameAction(
+            GameActions.revealCards({
+                cards,
+                player: context.player,
+                revealWithMessage: false,
+                context
+            })
+        );
     }
 }
 

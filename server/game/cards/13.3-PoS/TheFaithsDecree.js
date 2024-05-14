@@ -4,11 +4,15 @@ class TheFaithsDecree extends DrawCard {
     setupCardAbilities() {
         this.action({
             title: 'Prevent abilities',
-            condition: context => context.player.anyCardsInPlay({ type: ['character', 'location'], trait: 'The Seven' }),
-            handler: context => {
+            condition: (context) =>
+                context.player.anyCardsInPlay({
+                    type: ['character', 'location'],
+                    trait: 'The Seven'
+                }),
+            handler: (context) => {
                 this.game.promptForCardName({
                     player: context.player,
-                    match: cardData => !['agenda', 'plot'].includes(cardData.type),
+                    match: (cardData) => !['agenda', 'plot'].includes(cardData.type),
                     onSelect: (player, cardName) => this.selectCardName(player, cardName),
                     source: this
                 });
@@ -17,10 +21,17 @@ class TheFaithsDecree extends DrawCard {
     }
 
     selectCardName(player, cardName) {
-        this.game.addMessage('{0} plays {1} to prevent opponents from triggering {2}', player, this, cardName);
-        this.untilEndOfPhase(ability => ({
+        this.game.addMessage(
+            '{0} plays {1} to prevent opponents from triggering {2}',
+            player,
+            this,
+            cardName
+        );
+        this.untilEndOfPhase((ability) => ({
             targetController: 'opponent',
-            effect: ability.effects.cannotTriggerCardAbilities(ability => ability.card.name === cardName)
+            effect: ability.effects.cannotTriggerCardAbilities(
+                (ability) => ability.card.name === cardName
+            )
         }));
     }
 }

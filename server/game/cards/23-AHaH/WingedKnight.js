@@ -4,14 +4,14 @@ class WingedKnight extends DrawCard {
     setupCardAbilities(ability) {
         this.interrupt({
             when: {
-                onCharacterKilled: event => event.card.isMatch({ trait: ['Lord', 'Lady']})
+                onCharacterKilled: (event) => event.card.isMatch({ trait: ['Lord', 'Lady'] })
             },
             cost: ability.costs.sacrificeSelf(),
             message: {
-                format: '{player} sacrifices {source} to remove {character} from the game instead of placing it in it\'s owners dead pile',
-                args: { character: context => context.event.card }
+                format: "{player} sacrifices {source} to remove {character} from the game instead of placing it in it's owners dead pile",
+                args: { character: (context) => context.event.card }
             },
-            handler: context => {
+            handler: (context) => {
                 context.replaceHandler(() => {
                     context.event.cardStateWhenKilled = context.event.card.createSnapshot();
                     this.controller.moveCard(context.event.card, 'out of game');

@@ -3,7 +3,7 @@ const DrawCard = require('../../drawcard.js');
 class PriestOfTheDrownedGod extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: card => card.getType() === 'character' && card.hasTrait('Drowned God'),
+            match: (card) => card.getType() === 'character' && card.hasTrait('Drowned God'),
             effect: ability.effects.modifyStrength(1)
         });
     }

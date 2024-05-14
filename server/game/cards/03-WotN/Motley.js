@@ -8,13 +8,17 @@ class Motley extends DrawCard {
         });
         this.reaction({
             when: {
-                onDeclaredAsAttacker: event => event.card === this.parent,
-                onDeclaredAsDefender: event => event.card === this.parent
+                onDeclaredAsAttacker: (event) => event.card === this.parent,
+                onDeclaredAsDefender: (event) => event.card === this.parent
             },
             handler: () => {
                 this.parent.controller.discardAtRandom(1);
-                this.game.addMessage('{0} uses {1} to discard 1 card at random from {2}\'s hand',
-                    this.controller, this, this.parent.controller);
+                this.game.addMessage(
+                    "{0} uses {1} to discard 1 card at random from {2}'s hand",
+                    this.controller,
+                    this,
+                    this.parent.controller
+                );
             }
         });
     }

@@ -36,40 +36,59 @@ class Decks extends React.Component {
 
         let successPanel = null;
 
-        if(this.props.deckDeleted) {
+        if (this.props.deckDeleted) {
             setTimeout(() => {
                 this.props.clearDeckStatus();
             }, 5000);
-            successPanel = (
-                <AlertPanel message='Deck deleted successfully' type={ 'success' } />
-            );
+            successPanel = <AlertPanel message='Deck deleted successfully' type={'success'} />;
         }
 
-        if(this.props.apiLoading || !this.props.cards || !this.props.decks || !this.props.restrictedLists) {
+        if (
+            this.props.apiLoading ||
+            !this.props.cards ||
+            !this.props.decks ||
+            !this.props.restrictedLists
+        ) {
             content = <div>Loading decks from the server...</div>;
-        } else if(!this.props.apiSuccess) {
-            content = <AlertPanel type='error' message={ this.props.apiMessage } />;
+        } else if (!this.props.apiSuccess) {
+            content = <AlertPanel type='error' message={this.props.apiMessage} />;
         } else {
             content = (
                 <div className='full-height'>
-                    <div className='col-xs-12'>
-                        { successPanel }
-                    </div>
+                    <div className='col-xs-12'>{successPanel}</div>
                     <div className='col-sm-5 full-height'>
                         <Panel title='Your decks'>
                             <div className='form-group'>
-                                <Link className='btn btn-primary' href='/decks/add'>New Deck</Link>
+                                <Link className='btn btn-primary' href='/decks/add'>
+                                    New Deck
+                                </Link>
                             </div>
                             <div>
-                                <RestrictedListDropdown currentRestrictedList={ this.props.currentRestrictedList } restrictedLists={ this.props.restrictedLists } setCurrentRestrictedList={ this.props.setCurrentRestrictedList } />
+                                <RestrictedListDropdown
+                                    currentRestrictedList={this.props.currentRestrictedList}
+                                    restrictedLists={this.props.restrictedLists}
+                                    setCurrentRestrictedList={this.props.setCurrentRestrictedList}
+                                />
                             </div>
-                            <DeckList className='deck-list' activeDeck={ this.props.selectedDeck } decks={ this.props.decks } onSelectDeck={ this.props.selectDeck } events={ this.props.events } />
+                            <DeckList
+                                className='deck-list'
+                                activeDeck={this.props.selectedDeck}
+                                decks={this.props.decks}
+                                onSelectDeck={this.props.selectDeck}
+                                events={this.props.events}
+                            />
                         </Panel>
                     </div>
-                    { !!this.props.selectedDeck &&
-                        <ViewDeck deck={ this.props.selectedDeck } cards={ this.props.cards } onEditDeck={ this.handleEditDeck } onDeleteDeck={ this.handleDeleteDeck } />
-                    }
-                </div>);
+                    {!!this.props.selectedDeck && (
+                        <ViewDeck
+                            deck={this.props.selectedDeck}
+                            cards={this.props.cards}
+                            onEditDeck={this.handleEditDeck}
+                            onDeleteDeck={this.handleDeleteDeck}
+                        />
+                    )}
+                </div>
+            );
         }
 
         return content;

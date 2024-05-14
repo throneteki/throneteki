@@ -6,7 +6,7 @@ class DiscardTokenCost {
     }
 
     isEligible(card) {
-        if(typeof(this.amount) === 'function') {
+        if (typeof this.amount === 'function') {
             return card.tokens[this.token] >= this.amount(card);
         }
 
@@ -14,13 +14,13 @@ class DiscardTokenCost {
     }
 
     pay(cards) {
-        for(let card of cards) {
-            if(typeof(this.amount) === 'function') {
+        for (let card of cards) {
+            if (typeof this.amount === 'function') {
                 let amount = this.amount(card);
                 card.modifyToken(this.token, -amount);
             } else {
                 card.modifyToken(this.token, -this.amount);
-            }            
+            }
         }
     }
 }

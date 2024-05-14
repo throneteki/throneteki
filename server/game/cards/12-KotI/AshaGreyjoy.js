@@ -3,7 +3,11 @@ const DrawCard = require('../../drawcard.js');
 class AshaGreyjoy extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: card => card !== this && card.isUnique() && card.hasTrait('ironborn') && card.getType() === 'character',
+            match: (card) =>
+                card !== this &&
+                card.isUnique() &&
+                card.hasTrait('ironborn') &&
+                card.getType() === 'character',
             effect: ability.effects.addKeyword('stealth')
         });
     }

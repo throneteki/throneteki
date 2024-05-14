@@ -16,15 +16,15 @@ class AbilityMessage {
             }
         }
 
-        if(!formatOrProperties) {
+        if (!formatOrProperties) {
             return new NullValue();
         }
 
-        if(typeof(formatOrProperties) === 'function') {
+        if (typeof formatOrProperties === 'function') {
             return new FunctionAdapter(formatOrProperties);
         }
 
-        if(typeof(formatOrProperties) === 'string') {
+        if (typeof formatOrProperties === 'string') {
             return new AbilityMessage({ format: formatOrProperties, args: specialArgs });
         }
 
@@ -44,7 +44,7 @@ class AbilityMessage {
         let result = format;
         let index = 0;
 
-        for(let arg of args) {
+        for (let arg of args) {
             result = result.replace(new RegExp(`\\{${arg.name}\\}`, 'g'), `{${index}}`);
             ++index;
         }
@@ -53,12 +53,16 @@ class AbilityMessage {
     }
 
     validateNamedArgs(format, args) {
-        let definedArgNames = args.map(arg => arg.name);
+        let definedArgNames = args.map((arg) => arg.name);
         let usedArgNames = this.getUsedArgNames(format);
-        let undefinedArgNames = usedArgNames.filter(argName => !definedArgNames.includes(argName));
+        let undefinedArgNames = usedArgNames.filter(
+            (argName) => !definedArgNames.includes(argName)
+        );
 
-        if(undefinedArgNames.length !== 0) {
-            throw new Error(`Undefined argument names for ability message: ${ undefinedArgNames.join(', ') }`);
+        if (undefinedArgNames.length !== 0) {
+            throw new Error(
+                `Undefined argument names for ability message: ${undefinedArgNames.join(', ')}`
+            );
         }
     }
 
@@ -67,7 +71,7 @@ class AbilityMessage {
         let namedArgRegex = /{(\w+)}/g;
         let match;
 
-        while((match = namedArgRegex.exec(format)) !== null) {
+        while ((match = namedArgRegex.exec(format)) !== null) {
             result.push(match[1]);
         }
 
@@ -76,38 +80,49 @@ class AbilityMessage {
 
     createArgs(format, customArgsHash) {
         const standardArgs = [
-            { name: 'player', getValue: context => context.player },
-            { name: 'source', getValue: context => context.source },
-            { name: 'target', getValue: context => context.target }
+            { name: 'player', getValue: (context) => context.player },
+            { name: 'source', getValue: (context) => context.source },
+            { name: 'target', getValue: (context) => context.target }
         ];
         const optionalArgs = this.getOptionalArgs(format);
         const targetSelectionArgs = this.getTargetSelectionArgs(format);
         const costArgs = this.getCostArgs(format);
-        const customArgs = Object.entries(customArgsHash).map(([name, getValue]) => ({ name, getValue }));
+        const customArgs = Object.entries(customArgsHash).map(([name, getValue]) => ({
+            name,
+            getValue
+        }));
 
-        return standardArgs.concat(optionalArgs).concat(targetSelectionArgs).concat(costArgs).concat(customArgs);
+        return standardArgs
+            .concat(optionalArgs)
+            .concat(targetSelectionArgs)
+            .concat(costArgs)
+            .concat(customArgs);
     }
 
     getOptionalArgs(format) {
         const optionalArgTypes = [
-            { name: 'opponent', getValue: context => context.opponent },
-            { name: 'chosenPlayer', getValue: context => context.chosenPlayer },
-            { name: 'searchTarget', getValue: context => context.searchTarget },
-            { name: 'gameAction', getValue: context => context.gameAction && context.gameAction.message(context) }
+            { name: 'opponent', getValue: (context) => context.opponent },
+            { name: 'chosenPlayer', getValue: (context) => context.chosenPlayer },
+            { name: 'searchTarget', getValue: (context) => context.searchTarget },
+            {
+                name: 'gameAction',
+                getValue: (context) => context.gameAction && context.gameAction.message(context)
+            }
         ];
 
-        return optionalArgTypes.filter(argType => format.includes(`{${argType.name}}`));
+        return optionalArgTypes.filter((argType) => format.includes(`{${argType.name}}`));
     }
 
     getTargetSelectionArgs(format) {
         let args = [];
         let regex = /{targetSelection\.(\w+)}/g;
         let match;
-        while((match = regex.exec(format)) !== null) {
+        while ((match = regex.exec(format)) !== null) {
             let property = match[1];
             args.push({
                 name: `targetSelection.${property}`,
-                getValue: context => context.currentTargetSelection && context.currentTargetSelection[property]
+                getValue: (context) =>
+                    context.currentTargetSelection && context.currentTargetSelection[property]
             });
         }
 
@@ -118,11 +133,11 @@ class AbilityMessage {
         let args = [];
         let regex = /{costs\.(\w+)}/g;
         let match;
-        while((match = regex.exec(format)) !== null) {
+        while ((match = regex.exec(format)) !== null) {
             let property = match[1];
             args.push({
                 name: `costs.${property}`,
-                getValue: context => context.costs && context.costs[property]
+                getValue: (context) => context.costs && context.costs[property]
             });
         }
 
@@ -132,7 +147,7 @@ class AbilityMessage {
     output(outputter, context) {
         let args = this.generateArgValues(context);
 
-        if(this.type === 'message') {
+        if (this.type === 'message') {
             outputter.addMessage(this.format, ...args);
         } else {
             outputter.addAlert(this.type, this.format, ...args);
@@ -140,7 +155,7 @@ class AbilityMessage {
     }
 
     generateArgValues(context) {
-        return this.args.map(arg => arg.getValue(context));
+        return this.args.map((arg) => arg.getValue(context));
     }
 }
 

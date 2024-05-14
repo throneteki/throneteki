@@ -9,24 +9,30 @@ class SeaBitch extends DrawCard {
                 activePromptTitle: 'Select a location',
                 cardCondition: (card, context) => this.cardCondition(card, context)
             },
-            handler: context => {
-                this.untilEndOfPhase(ability => ({
+            handler: (context) => {
+                this.untilEndOfPhase((ability) => ({
                     match: context.target,
                     effect: ability.effects.takeControl(context.player)
                 }));
 
-                this.game.addMessage('{0} sacrifices {1} to take control of {2} until the end of the phase',
-                    context.player, this, context.target);
+                this.game.addMessage(
+                    '{0} sacrifices {1} to take control of {2} until the end of the phase',
+                    context.player,
+                    this,
+                    context.target
+                );
             }
         });
     }
 
     cardCondition(card, context) {
-        return card.getType() === 'location'
-            && card.location === 'play area'
-            && !card.hasKeyword('Limited')
-            && card.name !== this.name
-            && context.player.canControl(card);
+        return (
+            card.getType() === 'location' &&
+            card.location === 'play area' &&
+            !card.hasKeyword('Limited') &&
+            card.name !== this.name &&
+            context.player.canControl(card)
+        );
     }
 }
 

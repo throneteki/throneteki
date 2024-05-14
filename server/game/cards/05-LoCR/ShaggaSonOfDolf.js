@@ -15,26 +15,33 @@ class ShaggaSonOfDolf extends DrawCard {
 
         this.forcedReaction({
             when: {
-                onCardEntersPlay: event => event.card === this && event.playingType === 'ambush'
+                onCardEntersPlay: (event) => event.card === this && event.playingType === 'ambush'
             },
             target: {
-                cardCondition: card =>
-                    card.location === 'play area'
-                    && card.controller === this.controller
-                    && card.isFaction('lannister')
-                    && card.getType() === 'character',
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.controller === this.controller &&
+                    card.isFaction('lannister') &&
+                    card.getType() === 'character',
                 gameAction: 'kill'
             },
-            handler: context => {
-                this.game.addMessage('{0} is forced by {1} to kill a character', this.controller, this);
+            handler: (context) => {
+                this.game.addMessage(
+                    '{0} is forced by {1} to kill a character',
+                    this.controller,
+                    this
+                );
                 context.target.controller.killCharacter(context.target);
             }
         });
     }
 
     hasClansmanOrTyrion() {
-        let cards = this.controller.filterCardsInPlay(card => {
-            return (card.hasTrait('Clansman') && card.getType() === 'character') || card.name === 'Tyrion Lannister';
+        let cards = this.controller.filterCardsInPlay((card) => {
+            return (
+                (card.hasTrait('Clansman') && card.getType() === 'character') ||
+                card.name === 'Tyrion Lannister'
+            );
         });
 
         return cards.length > 0;

@@ -1,6 +1,5 @@
-
 const DrawCard = require('../../drawcard.js');
-const {Tokens} = require('../../Constants');
+const { Tokens } = require('../../Constants');
 
 class GodryTheGiantslayer extends DrawCard {
     setupCardAbilities(ability) {
@@ -15,10 +14,13 @@ class GodryTheGiantslayer extends DrawCard {
         });
         this.reaction({
             when: {
-                onCardEntersPlay: event => event.playingType === 'marshal' && event.card !== this
-                    && event.card.controller === this.controller 
-                    && (event.card.hasTrait('R\'hllor') || event.card.hasTrait('Knight')),
-                onCardPlayed: event => event.card.controller === this.controller && event.card.hasTrait('R\'hllor')
+                onCardEntersPlay: (event) =>
+                    event.playingType === 'marshal' &&
+                    event.card !== this &&
+                    event.card.controller === this.controller &&
+                    (event.card.hasTrait("R'hllor") || event.card.hasTrait('Knight')),
+                onCardPlayed: (event) =>
+                    event.card.controller === this.controller && event.card.hasTrait("R'hllor")
             },
             limit: ability.limit.perPhase(1),
             handler: () => {

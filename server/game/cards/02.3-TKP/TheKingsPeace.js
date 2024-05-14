@@ -4,22 +4,24 @@ class TheKingsPeace extends PlotCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onChallengeInitiated: event => event.challenge.initiatedAgainstPlayer === this.controller &&
-                                               (event.challenge.initiatedChallengeType === 'military' || event.challenge.initiatedChallengeType === 'power')
+                onChallengeInitiated: (event) =>
+                    event.challenge.initiatedAgainstPlayer === this.controller &&
+                    (event.challenge.initiatedChallengeType === 'military' ||
+                        event.challenge.initiatedChallengeType === 'power')
             },
             handler: () => {
                 let otherPlayer = this.game.currentChallenge.attackingPlayer;
                 let buttons = [];
 
-                if(!otherPlayer.faction.kneeled) {
+                if (!otherPlayer.faction.kneeled) {
                     buttons.push({ text: 'Kneel faction card', method: 'kneel' });
                 }
 
-                if(otherPlayer.faction.power >= 1) {
+                if (otherPlayer.faction.power >= 1) {
                     buttons.push({ text: 'Move 1 power', method: 'movePower' });
                 }
 
-                if(buttons.length === 0) {
+                if (buttons.length === 0) {
                     this.cancelChallenge(otherPlayer);
 
                     return true;
@@ -35,8 +37,12 @@ class TheKingsPeace extends PlotCard {
                     waitingPromptTitle: 'Waiting for opponent to choose'
                 });
 
-                this.game.addMessage('{0} uses {1} to force {2} to kneel their faction card, move 1 power to {0}\'s faction card or cancel the challenge', this.controller,
-                    this, otherPlayer);
+                this.game.addMessage(
+                    "{0} uses {1} to force {2} to kneel their faction card, move 1 power to {0}'s faction card or cancel the challenge",
+                    this.controller,
+                    this,
+                    otherPlayer
+                );
 
                 return true;
             }
@@ -46,7 +52,10 @@ class TheKingsPeace extends PlotCard {
     kneel(player) {
         player.kneelCard(player.faction);
 
-        this.game.addMessage('{0} chooses to kneel their faction card to let the challenge continue', player);
+        this.game.addMessage(
+            '{0} chooses to kneel their faction card to let the challenge continue',
+            player
+        );
 
         return true;
     }
@@ -54,7 +63,11 @@ class TheKingsPeace extends PlotCard {
     movePower(player) {
         this.game.movePower(player.faction, this.controller.faction, 1);
 
-        this.game.addMessage('{0} chooses to transfer 1 power to {1} to let the challenge continue', player, this.controller);
+        this.game.addMessage(
+            '{0} chooses to transfer 1 power to {1} to let the challenge continue',
+            player,
+            this.controller
+        );
 
         return true;
     }

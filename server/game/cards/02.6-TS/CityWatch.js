@@ -12,7 +12,7 @@ class CityWatch extends DrawCard {
 
     hasMorePowerThanAnOpponent() {
         let opponents = this.game.getOpponents(this.controller);
-        return opponents.some(opponent => this.controller.faction.power > opponent.faction.power);
+        return opponents.some((opponent) => this.controller.faction.power > opponent.faction.power);
     }
 }
 

@@ -7,13 +7,20 @@ class DonalNoye extends DrawCard {
             cost: ability.costs.discardGold(),
             target: {
                 activePromptTitle: 'Select an attachment',
-                cardCondition: card => card.location === 'hand' && card.controller === this.controller &&
-                                       card.hasTrait('weapon') && card.getType() === 'attachment'
+                cardCondition: (card) =>
+                    card.location === 'hand' &&
+                    card.controller === this.controller &&
+                    card.hasTrait('weapon') &&
+                    card.getType() === 'attachment'
             },
-            handler: context => {
+            handler: (context) => {
                 context.player.putIntoPlay(context.target);
-                this.game.addMessage('{0} discards 1 gold from {1} to put {2} into play',
-                    this.controller, this, context.target);
+                this.game.addMessage(
+                    '{0} discards 1 gold from {1} to put {2} into play',
+                    this.controller,
+                    this,
+                    context.target
+                );
             }
         });
     }

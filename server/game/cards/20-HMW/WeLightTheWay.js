@@ -1,23 +1,32 @@
 const DrawCard = require('../../drawcard.js');
-const {Tokens} = require('../../Constants');
+const { Tokens } = require('../../Constants');
 
 class WeLightTheWay extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Put card into shadows',
-            cost: ability.costs.kneel(card => card.hasTrait('House Hightower') || card.hasTrait('Oldtown')),
-            handler: context => {
+            cost: ability.costs.kneel(
+                (card) => card.hasTrait('House Hightower') || card.hasTrait('Oldtown')
+            ),
+            handler: (context) => {
                 this.topCard = context.player.drawDeck[0];
-                this.game.addMessage('{0} uses {1} and kneels {2} to put the top card of their deck into shadow', context.player, this, context.costs.kneel);
+                this.game.addMessage(
+                    '{0} uses {1} and kneels {2} to put the top card of their deck into shadow',
+                    context.player,
+                    this,
+                    context.costs.kneel
+                );
                 context.player.putIntoShadows(this.topCard, false, () => {
                     this.topCard.modifyToken(Tokens.shadow, 1);
 
-                    if(!this.topCard.isShadow()) {
-                        this.lastingEffect(ability => ({
+                    if (!this.topCard.isShadow()) {
+                        this.lastingEffect((ability) => ({
                             condition: () => this.topCard.location === 'shadows',
                             targetLocation: 'any',
                             match: this.topCard,
-                            effect: ability.effects.addKeyword(`Shadow (${this.topCard.getPrintedCost()})`)
+                            effect: ability.effects.addKeyword(
+                                `Shadow (${this.topCard.getPrintedCost()})`
+                            )
                         }));
                     }
                 });

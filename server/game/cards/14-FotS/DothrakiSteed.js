@@ -2,7 +2,13 @@ const DrawCard = require('../../drawcard');
 
 class DothrakiSteed extends DrawCard {
     setupCardAbilities(ability) {
-        this.attachmentRestriction(card => card.getType() === 'character' && card.attachments.every(attachment => attachment === this || attachment.name !== 'Dothraki Steed'));
+        this.attachmentRestriction(
+            (card) =>
+                card.getType() === 'character' &&
+                card.attachments.every(
+                    (attachment) => attachment === this || attachment.name !== 'Dothraki Steed'
+                )
+        );
 
         this.whileAttached({
             condition: () => this.parent.isAttacking(),

@@ -5,7 +5,7 @@ class RiverRunner extends DrawCard {
         this.persistentEffect({
             condition: () => this.isAttacking(),
             targetController: 'any',
-            match: card => card.getType() === 'character' && card.getPower() > 0,
+            match: (card) => card.getType() === 'character' && card.getPower() > 0,
             effect: ability.effects.cannotBeDeclaredAsDefender()
         });
     }

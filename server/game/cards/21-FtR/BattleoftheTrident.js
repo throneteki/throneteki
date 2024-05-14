@@ -3,26 +3,30 @@ const RevealPlots = require('../../gamesteps/revealplots');
 const SimpleStep = require('../../gamesteps/simplestep.js');
 
 class BattleoftheTrident extends AgendaCard {
-    setupCardAbilities(ability) {                
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onClaimApplied: event => 
+                onClaimApplied: (event) =>
                     event.challenge.winner === this.owner &&
                     event.challenge.attackingPlayer === this.owner &&
-                    event.challenge.attackers.some(attacker => attacker.hasTrait('Army') || attacker.hasTrait('Commander')) &&
+                    event.challenge.attackers.some(
+                        (attacker) => attacker.hasTrait('Army') || attacker.hasTrait('Commander')
+                    ) &&
                     !this.owner.hasFlag('cannotRevealPlot')
             },
             cost: ability.costs.kneelFactionCard(),
             target: {
                 type: 'select',
                 activePromptTitle: 'Select a plot',
-                cardCondition: (card, context) => 
-                    card.controller === context.player && 
-                    card.location === 'plot deck' && 
-                    card.hasTrait(this.translateChallengeTypeToTrait(context.event.challenge.challengeType)),
+                cardCondition: (card, context) =>
+                    card.controller === context.player &&
+                    card.location === 'plot deck' &&
+                    card.hasTrait(
+                        this.translateChallengeTypeToTrait(context.event.challenge.challengeType)
+                    ),
                 cardType: 'plot'
             },
-            handler: context => this.trigger(context)
+            handler: (context) => this.trigger(context)
         });
 
         this.action({
@@ -33,12 +37,11 @@ class BattleoftheTrident extends AgendaCard {
                 type: 'select',
                 activePromptTitle: 'Select a plot',
                 //do not filter the plotTrait when triggering manually
-                cardCondition: (card, context) => 
-                    card.controller === context.player && 
-                    card.location === 'plot deck',
+                cardCondition: (card, context) =>
+                    card.controller === context.player && card.location === 'plot deck',
                 cardType: 'plot'
             },
-            handler: context => this.trigger(context)
+            handler: (context) => this.trigger(context)
         });
 
         //this reaction is not intended to trigger, only to be used directly by the trigger() function
@@ -51,15 +54,19 @@ class BattleoftheTrident extends AgendaCard {
             target: {
                 type: 'select',
                 activePromptTitle: 'Select a plot',
-                cardCondition: card => card.controller === this.controller && card.location === 'revealed plots',
+                cardCondition: (card) =>
+                    card.controller === this.controller && card.location === 'revealed plots',
                 cardType: 'plot'
             },
-            handler: context => {
-                this.game.addMessage('{0} then removes {1} from the game',
-                    context.player, context.target);
-                this.lastingEffect(ability => ({
+            handler: (context) => {
+                this.game.addMessage(
+                    '{0} then removes {1} from the game',
+                    context.player,
+                    context.target
+                );
+                this.lastingEffect((ability) => ({
                     until: {
-                        onCardPlaced: event => 
+                        onCardPlaced: (event) =>
                             event.card.getType() === 'plot' &&
                             event.player === context.player &&
                             context.player.getPlots().length === 1
@@ -73,27 +80,35 @@ class BattleoftheTrident extends AgendaCard {
     }
 
     trigger(context) {
-        this.game.addMessage('{0} uses {1} and kneels their faction card to reveal {2}',
-            context.player, this, context.target);
+        this.game.addMessage(
+            '{0} uses {1} and kneels their faction card to reveal {2}',
+            context.player,
+            this,
+            context.target
+        );
 
         context.player.selectedPlot = context.target;
         this.game.queueStep(new RevealPlots(this.game, [context.target]));
-        this.game.queueStep(new SimpleStep(this.game, () => {
-            context.player.recyclePlots();
-            if(context.player.plotDiscard.length > 0) {
-                let removeFromGameAction = this.abilities.reactions.find(reaction => reaction.title === 'removeFromGameMarker');
-                if(removeFromGameAction) {
-                    let removeContext = removeFromGameAction.createContext(context.event);
-                    removeContext.player = context.player;
-                    this.game.resolveAbility(removeFromGameAction, removeContext);
+        this.game.queueStep(
+            new SimpleStep(this.game, () => {
+                context.player.recyclePlots();
+                if (context.player.plotDiscard.length > 0) {
+                    let removeFromGameAction = this.abilities.reactions.find(
+                        (reaction) => reaction.title === 'removeFromGameMarker'
+                    );
+                    if (removeFromGameAction) {
+                        let removeContext = removeFromGameAction.createContext(context.event);
+                        removeContext.player = context.player;
+                        this.game.resolveAbility(removeFromGameAction, removeContext);
+                    }
                 }
-            }
-        }));
+            })
+        );
     }
 
     translateChallengeTypeToTrait(challengeType) {
-        if(challengeType) {
-            switch(challengeType) {
+        if (challengeType) {
+            switch (challengeType) {
                 case 'military':
                     return 'War';
                 case 'intrigue':

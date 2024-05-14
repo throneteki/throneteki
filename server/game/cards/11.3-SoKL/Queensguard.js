@@ -8,10 +8,15 @@ class Queensguard extends DrawCard {
             condition: () => this.parent.kneeled,
             cost: ability.costs.discardFromHand(),
             limit: ability.limit.perRound(3),
-            handler: context => {
+            handler: (context) => {
                 context.player.standCard(this.parent);
-                this.game.addMessage('{0} uses {1} and discards {2} from their hand to stand {3}',
-                    context.player, this, context.costs.discardFromHand, this.parent);
+                this.game.addMessage(
+                    '{0} uses {1} and discards {2} from their hand to stand {3}',
+                    context.player,
+                    this,
+                    context.costs.discardFromHand,
+                    this.parent
+                );
             }
         });
     }

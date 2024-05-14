@@ -6,15 +6,13 @@ class TheWardenOfTheSouth extends DrawCard {
         this.attachmentRestriction({ faction: 'tyrell', trait: 'Lord' });
 
         this.whileAttached({
-            effect: [
-                ability.effects.addTrait('Commander'),
-                ability.effects.modifyStrength(1)
-            ]
+            effect: [ability.effects.addTrait('Commander'), ability.effects.modifyStrength(1)]
         });
 
         this.reaction({
             when: {
-                onCardStrengthChanged: event => this.parent && event.card === this.parent && event.amount > 0 && event.applying
+                onCardStrengthChanged: (event) =>
+                    this.parent && event.card === this.parent && event.amount > 0 && event.applying
             },
             cost: ability.costs.kneelSelf(),
             message: {

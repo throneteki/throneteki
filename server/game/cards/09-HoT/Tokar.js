@@ -10,7 +10,7 @@ class Tokar extends DrawCard {
 
         this.persistentEffect({
             condition: () => this.parent && this.parent.isParticipating(),
-            match: card => card.getType() === 'character' && card.attachments.length === 0,
+            match: (card) => card.getType() === 'character' && card.attachments.length === 0,
             targetController: 'any',
             effect: ability.effects.cannotGainPower()
         });

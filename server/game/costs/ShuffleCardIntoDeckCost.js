@@ -6,7 +6,9 @@ class ShuffleCardIntoDeckCost {
     }
 
     isEligible(card) {
-        return card.location === 'play area' && GameActions.shuffleIntoDeck({ cards: [card] }).allow();
+        return (
+            card.location === 'play area' && GameActions.shuffleIntoDeck({ cards: [card] }).allow()
+        );
     }
 
     pay(cards, context) {

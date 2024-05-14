@@ -7,7 +7,7 @@ class UnitingTheSevenKingdoms extends AgendaCard {
             effect: ability.effects.increaseCost({
                 playingTypes: ['marshal', 'play'],
                 amount: 1,
-                match: card => card.isOutOfFaction()
+                match: (card) => card.isOutOfFaction()
             })
         });
     }

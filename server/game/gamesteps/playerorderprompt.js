@@ -13,14 +13,14 @@ class PlayerOrderPrompt extends UiPrompt {
     }
 
     lazyFetchPlayers() {
-        if(!this.players) {
+        if (!this.players) {
             this.players = this.game.getPlayersInFirstPlayerOrder();
         }
     }
 
     skipPlayers() {
         this.lazyFetchPlayers();
-        this.players = this.players.filter(p => !this.skipCondition(p));
+        this.players = this.players.filter((p) => !this.skipCondition(p));
     }
 
     skipCondition() {

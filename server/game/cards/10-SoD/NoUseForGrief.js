@@ -11,17 +11,26 @@ class NoUseForGrief extends DrawCard {
     setupCardAbilities() {
         this.action({
             title: 'Put Sand Snake into play',
-            condition: () => this.tracker.anyKilledThisRound(card => card.isFaction('martell') && card.controller === this.controller),
+            condition: () =>
+                this.tracker.anyKilledThisRound(
+                    (card) => card.isFaction('martell') && card.controller === this.controller
+                ),
             message: {
                 format: '{player} plays {source} to search their deck for a Sand Snake character with printed cost {printedCost} or lower',
-                args: { printedCost: context => this.getCostLimit(context.player) }
+                args: { printedCost: (context) => this.getCostLimit(context.player) }
             },
             gameAction: GameActions.search({
                 title: 'Select a character',
-                match: { type: 'character', trait: 'Sand Snake', condition: (card, context) => card.hasPrintedCost() && card.getPrintedCost() <= this.getCostLimit(context.player) },
+                match: {
+                    type: 'character',
+                    trait: 'Sand Snake',
+                    condition: (card, context) =>
+                        card.hasPrintedCost() &&
+                        card.getPrintedCost() <= this.getCostLimit(context.player)
+                },
                 reveal: false,
                 message: '{player} {gameAction}',
-                gameAction: GameActions.putIntoPlay(context => ({
+                gameAction: GameActions.putIntoPlay((context) => ({
                     card: context.searchTarget
                 }))
             })
@@ -29,7 +38,7 @@ class NoUseForGrief extends DrawCard {
     }
 
     getCostLimit(player) {
-        return player.deadPile.some(card => card.name === 'The Red Viper') ? 6 : 3;
+        return player.deadPile.some((card) => card.name === 'The Red Viper') ? 6 : 3;
     }
 }
 

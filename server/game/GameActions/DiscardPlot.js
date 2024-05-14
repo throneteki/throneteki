@@ -12,8 +12,10 @@ class DiscardPlot extends GameAction {
     }
 
     createEvent({ card, player }) {
-        const discardPlotEvent = this.event('onPlotDiscarded', { card, player }, event => {
-            event.thenAttachEvent(PlaceCard.createEvent({ card, player, location: 'revealed plots' }));
+        const discardPlotEvent = this.event('onPlotDiscarded', { card, player }, (event) => {
+            event.thenAttachEvent(
+                PlaceCard.createEvent({ card, player, location: 'revealed plots' })
+            );
         });
         const leavesPlayEvent = LeavePlay.createEvent({ card });
         return this.atomic(discardPlotEvent, leavesPlayEvent);

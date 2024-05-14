@@ -12,7 +12,7 @@ class ShowOfStrength extends DrawCard {
             handler: () => {
                 let characters = this.getLowStrengthCharacters();
 
-                this.untilEndOfPhase(ability => ({
+                this.untilEndOfPhase((ability) => ({
                     match: characters,
                     effect: ability.effects.blankExcludingTraits
                 }));
@@ -21,7 +21,9 @@ class ShowOfStrength extends DrawCard {
     }
 
     getLowStrengthCharacters() {
-        return this.game.filterCardsInPlay(card => card.getType() === 'character' && card.getStrength() <= 3);
+        return this.game.filterCardsInPlay(
+            (card) => card.getType() === 'character' && card.getStrength() <= 3
+        );
     }
 }
 

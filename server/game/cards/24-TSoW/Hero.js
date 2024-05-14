@@ -5,18 +5,26 @@ class Hero extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: event =>
-                    event.challenge.winner === this.controller
-                    && this.isParticipating()
-                    && this.controller.hand.length < event.challenge.loser.hand.length
+                afterChallenge: (event) =>
+                    event.challenge.winner === this.controller &&
+                    this.isParticipating() &&
+                    this.controller.hand.length < event.challenge.loser.hand.length
             },
             target: {
-                cardCondition: { or: [{ type: 'character', trait: 'Army', location: 'play area' }, { name: 'Grey Worm', location: 'play area' }] }
+                cardCondition: {
+                    or: [
+                        { type: 'character', trait: 'Army', location: 'play area' },
+                        { name: 'Grey Worm', location: 'play area' }
+                    ]
+                }
             },
             limit: ability.limit.perPhase(2),
             message: '{player} uses {source} to stand {target}',
-            handler: context => {
-                this.game.resolveGameAction(GameActions.standCard(context => ({ card: context.target })), context);
+            handler: (context) => {
+                this.game.resolveGameAction(
+                    GameActions.standCard((context) => ({ card: context.target })),
+                    context
+                );
             }
         });
     }

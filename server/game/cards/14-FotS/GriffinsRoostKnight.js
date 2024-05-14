@@ -1,6 +1,6 @@
 const DrawCard = require('../../drawcard');
 const GameActions = require('../../GameActions');
-const {ChallengeTracker} = require('../../EventTrackers');
+const { ChallengeTracker } = require('../../EventTrackers');
 
 class GriffinsRoostKnight extends DrawCard {
     setupCardAbilities() {
@@ -8,13 +8,14 @@ class GriffinsRoostKnight extends DrawCard {
 
         this.interrupt({
             when: {
-                onPhaseEnded: event => event.phase === 'challenge' && !this.tracker.some({ loser: this.controller, challengeType: 'power' }) && this.allowGameAction('stand')
+                onPhaseEnded: (event) =>
+                    event.phase === 'challenge' &&
+                    !this.tracker.some({ loser: this.controller, challengeType: 'power' }) &&
+                    this.allowGameAction('stand')
             },
             message: '{player} uses {source} to stand {source}',
             handler: () => {
-                this.game.resolveGameAction(
-                    GameActions.standCard({ card: this })
-                );
+                this.game.resolveGameAction(GameActions.standCard({ card: this }));
             }
         });
     }

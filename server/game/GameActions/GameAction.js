@@ -62,7 +62,7 @@ class GameAction {
 
     atomic(...events) {
         let event = new AtomicEvent();
-        for(let childEvent of events) {
+        for (let childEvent of events) {
             event.addChildEvent(childEvent);
         }
         return event;

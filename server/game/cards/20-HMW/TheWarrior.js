@@ -10,7 +10,9 @@ class TheWarrior extends PlotCard {
     }
 
     hasAttackingSeven() {
-        return this.controller.anyCardsInPlay(card => card.isAttacking() && card.hasTrait('The Seven'));
+        return this.controller.anyCardsInPlay(
+            (card) => card.isAttacking() && card.hasTrait('The Seven')
+        );
     }
 }
 

@@ -10,7 +10,7 @@ class PlayActionPrompt extends BaseStep {
 
     continue() {
         var index = 0;
-        var buttons = this.playActions.map(action => {
+        var buttons = this.playActions.map((action) => {
             var button = { text: action.title, method: 'selectAction', arg: index };
             index++;
             return button;

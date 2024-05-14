@@ -9,11 +9,10 @@ class MessageService extends EventEmitter {
     }
 
     addMessage(message) {
-        return this.messages.insert(message)
-            .catch(err => {
-                logger.error('Unable to insert message %s', err);
-                throw new Error('Unable to insert message');
-            });
+        return this.messages.insert(message).catch((err) => {
+            logger.error('Unable to insert message %s', err);
+            throw new Error('Unable to insert message');
+        });
     }
 
     getLastMessages() {
@@ -31,16 +30,18 @@ class MessageService extends EventEmitter {
     }
 
     setMotdMessage(message) {
-        return this.messages.findOneAndUpdate({ type: 'motd' },
+        return this.messages.findOneAndUpdate(
+            { type: 'motd' },
             {
-                '$set': {
+                $set: {
                     message: message.message,
                     user: message.user,
                     time: message.time,
                     motdType: message.motdType
                 }
             },
-            { upsert: true, new: true });
+            { upsert: true, new: true }
+        );
     }
 }
 

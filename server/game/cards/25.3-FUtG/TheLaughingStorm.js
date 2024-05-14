@@ -3,7 +3,12 @@ const DrawCard = require('../../drawcard.js');
 
 class TheLaughingStorm extends DrawCard {
     setupCardAbilities(ability) {
-        this.attachmentRestriction({ type: 'location', faction: 'baratheon', controller: 'current', unique: true });
+        this.attachmentRestriction({
+            type: 'location',
+            faction: 'baratheon',
+            controller: 'current',
+            unique: true
+        });
         this.persistentEffect({
             condition: () => !this.kneeled,
             targetLocation: 'hand',
@@ -12,15 +17,23 @@ class TheLaughingStorm extends DrawCard {
 
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.winner === this.controller
+                afterChallenge: (event) => event.challenge.winner === this.controller
             },
             target: {
-                cardCondition: (card, context) => card.isMatch({ location: 'play area', type: 'character', controller: context.event.challenge.loser }) && GameActions.kneelCard({ card }).allow()
+                cardCondition: (card, context) =>
+                    card.isMatch({
+                        location: 'play area',
+                        type: 'character',
+                        controller: context.event.challenge.loser
+                    }) && GameActions.kneelCard({ card }).allow()
             },
             cost: ability.costs.kneelSelf(),
             message: '{player} kneels {source} to kneel {target}',
-            handler: context => {
-                this.game.resolveGameAction(GameActions.kneelCard(context => ({ card: context.target })), context);
+            handler: (context) => {
+                this.game.resolveGameAction(
+                    GameActions.kneelCard((context) => ({ card: context.target })),
+                    context
+                );
             }
         });
     }

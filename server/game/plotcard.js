@@ -24,11 +24,13 @@ class PlotCard extends BaseCard {
     }
 
     getWhenRevealedAbility() {
-        return this.abilities.reactions.find(ability => ability instanceof CardWhenRevealed);
+        return this.abilities.reactions.find((ability) => ability instanceof CardWhenRevealed);
     }
 
     getInitiative() {
-        const baseValue = this.canProvidePlotModifier['initiative'] ? this.getPrintedInitiative() : 0;
+        const baseValue = this.canProvidePlotModifier['initiative']
+            ? this.getPrintedInitiative()
+            : 0;
         return Math.max(baseValue + this.initiativeModifier, 0);
     }
 
@@ -37,7 +39,9 @@ class PlotCard extends BaseCard {
     }
 
     getIncome() {
-        let baseValue = this.canProvidePlotModifier['gold'] ? (this.baseIncome || this.getPrintedIncome()) : 0;
+        let baseValue = this.canProvidePlotModifier['gold']
+            ? this.baseIncome || this.getPrintedIncome()
+            : 0;
 
         return baseValue + this.goldModifier;
     }
@@ -62,7 +66,7 @@ class PlotCard extends BaseCard {
     getClaim() {
         let baseClaim = this.getPrintedClaim();
 
-        if(typeof(this.claimSet) === 'number') {
+        if (typeof this.claimSet === 'number') {
             return this.claimSet;
         }
 

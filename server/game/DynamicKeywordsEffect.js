@@ -15,28 +15,23 @@ class DynamicKeywordsEffect {
         return true;
     }
 
-    addTargets() {
-    }
+    addTargets() {}
 
-    clearInvalidTargets() {
-    }
+    clearInvalidTargets() {}
 
-    updateAppliedTargets() {
-    }
+    updateAppliedTargets() {}
 
     hasEnded() {
         return false;
     }
 
-    cancel() {
-    }
+    cancel() {}
 
-    setActive() {
-    }
+    setActive() {}
 
     reapply() {
-        for(const [card, keywords] of this.appliedKeywords.entries()) {
-            for(const keyword of keywords) {
+        for (const [card, keywords] of this.appliedKeywords.entries()) {
+            for (const keyword of keywords) {
                 card.removeKeyword(keyword);
             }
         }
@@ -44,14 +39,14 @@ class DynamicKeywordsEffect {
         this.graph = this.buildGraph();
 
         const cardToKeywordsMap = new Map();
-        for(const card of this.graph.keys()) {
+        for (const card of this.graph.keys()) {
             const connectedSources = this.bfs(card);
-            const keywords = new Set(flatMap(connectedSources, source => source.getKeywords()));
+            const keywords = new Set(flatMap(connectedSources, (source) => source.getKeywords()));
             cardToKeywordsMap.set(card, keywords);
         }
 
-        for(const [card, keywords] of cardToKeywordsMap.entries()) {
-            for(const keyword of keywords) {
+        for (const [card, keywords] of cardToKeywordsMap.entries()) {
+            for (const keyword of keywords) {
                 card.addKeyword(keyword);
             }
         }
@@ -61,10 +56,14 @@ class DynamicKeywordsEffect {
 
     buildGraph() {
         const graph = new Map();
-        const cardsWithDynamicKeywords = this.game.filterCardsInPlay(card => card.keywordSources.length > 0);
+        const cardsWithDynamicKeywords = this.game.filterCardsInPlay(
+            (card) => card.keywordSources.length > 0
+        );
         const inPlayCards = this.game.filterCardsInPlay(() => true);
-        for(const card of cardsWithDynamicKeywords) {
-            const sources = inPlayCards.filter(inPlayCard => card.keywordSources.some(sourceFunc => sourceFunc(inPlayCard)));
+        for (const card of cardsWithDynamicKeywords) {
+            const sources = inPlayCards.filter((inPlayCard) =>
+                card.keywordSources.some((sourceFunc) => sourceFunc(inPlayCard))
+            );
             graph.set(card, sources);
         }
         return graph;
@@ -77,13 +76,13 @@ class DynamicKeywordsEffect {
         visited.set(startingNode, true);
         nodeQueue.push(startingNode);
 
-        while(nodeQueue.length > 0) {
+        while (nodeQueue.length > 0) {
             let currentNode = nodeQueue.shift();
 
             const sources = this.graph.get(currentNode) || [];
 
-            for(const source of sources) {
-                if(!visited.get(source)) {
+            for (const source of sources) {
+                if (!visited.get(source)) {
                     visited.set(source, true);
                     nodeQueue.push(source);
                 }

@@ -14,12 +14,16 @@ class EventPlayedTracker {
         // ability has resolved. That would be too late in case of chains of
         // interrupt cards, e.g. Hand's Judgment vs Hand's Judgment vs Hand's
         // Judgment
-        game.on('onCardAbilityInitiated:cancelinterrupt', event => this.trackEvent(event));
+        game.on('onCardAbilityInitiated:cancelinterrupt', (event) => this.trackEvent(event));
         game.on(endingEvent, () => this.clearEvents());
     }
 
     trackEvent(event) {
-        if(event.source.getType() !== 'event' || this.events.includes(event) || !event.ability.isPlayableEventAbility()) {
+        if (
+            event.source.getType() !== 'event' ||
+            this.events.includes(event) ||
+            !event.ability.isPlayableEventAbility()
+        ) {
             return;
         }
 
@@ -32,15 +36,19 @@ class EventPlayedTracker {
 
     getNumberOfPlayedEvents(player, playedFromLocation) {
         return this.events.reduce((count, event) => {
-            return event.player === player && (!playedFromLocation || playedFromLocation === event.originalLocation) ? count + 1 : count;
+            return event.player === player &&
+                (!playedFromLocation || playedFromLocation === event.originalLocation)
+                ? count + 1
+                : count;
         }, 0);
     }
 
     hasPlayedEvent(player, eventCardPredicateOrMatcher) {
-        const predicate = typeof(eventCardPredicateOrMatcher) === 'function'
-            ? eventCardPredicateOrMatcher
-            : card => CardMatcher.isMatch(card, eventCardPredicateOrMatcher);
-        return this.events.some(event => event.player === player && predicate(event.source));
+        const predicate =
+            typeof eventCardPredicateOrMatcher === 'function'
+                ? eventCardPredicateOrMatcher
+                : (card) => CardMatcher.isMatch(card, eventCardPredicateOrMatcher);
+        return this.events.some((event) => event.player === player && predicate(event.source));
     }
 }
 

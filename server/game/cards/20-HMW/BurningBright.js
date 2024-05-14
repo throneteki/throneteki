@@ -6,21 +6,20 @@ class BurningBright extends DrawCard {
             title: 'Put character into play',
             target: {
                 type: 'select',
-                cardCondition: (card, context) => (
+                cardCondition: (card, context) =>
                     card.getType() === 'character' &&
                     (card.hasTrait('Knight') || card.hasTrait('Army')) &&
                     card.controller === context.player &&
                     'discard pile' === card.location &&
                     context.player.canPutIntoPlay(card)
-                )
             },
             message: {
                 format: '{player} uses {source} to put {target} into play from their {originalLocation}',
-                args: { originalLocation: context => context.target.location }
+                args: { originalLocation: (context) => context.target.location }
             },
-            handler: context => {
+            handler: (context) => {
                 context.player.putIntoPlay(context.target);
-                this.atEndOfPhase(ability => ({
+                this.atEndOfPhase((ability) => ({
                     match: context.target,
                     condition: () => ['play area', 'duplicate'].includes(context.target.location),
                     targetLocation: 'any',

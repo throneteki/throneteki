@@ -10,10 +10,13 @@ class JonSnow extends DrawCard {
     }
 
     hasOtherAttackingNightsWatch() {
-        return this.controller.anyCardsInPlay(card => card.isAttacking() &&
-                                                      card.isFaction('thenightswatch') &&
-                                                      card.getType() === 'character' &&
-                                                      card !== this);
+        return this.controller.anyCardsInPlay(
+            (card) =>
+                card.isAttacking() &&
+                card.isFaction('thenightswatch') &&
+                card.getType() === 'character' &&
+                card !== this
+        );
     }
 }
 

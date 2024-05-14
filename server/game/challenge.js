@@ -2,7 +2,7 @@ const Player = require('./player.js');
 const EventRegistrar = require('./eventregistrar.js');
 const Settings = require('../settings.js');
 const ChallengeMatcher = require('./ChallengeMatcher');
-const {ChallengeContributions} = require('./ChallengeContributions');
+const { ChallengeContributions } = require('./ChallengeContributions');
 
 class Challenge {
     constructor(game, properties) {
@@ -31,7 +31,12 @@ class Challenge {
     }
 
     singlePlayerDefender() {
-        let dummyPlayer = new Player('', Settings.getUserWithDefaultsSet({ name: 'Dummy Player' }), false, this.game);
+        let dummyPlayer = new Player(
+            '',
+            Settings.getUserWithDefaultsSet({ name: 'Dummy Player' }),
+            false,
+            this.game
+        );
         dummyPlayer.initialise();
         dummyPlayer.resetForStartOfRound();
         dummyPlayer.isFake = true;
@@ -64,7 +69,7 @@ class Challenge {
     addAttacker(attacker) {
         this.addAttackers([attacker]);
     }
-    
+
     declareDefenders(defenders) {
         this.addDefenders(defenders);
         this.declaredDefenders = this.declaredDefenders.concat(defenders);
@@ -82,7 +87,7 @@ class Challenge {
     }
 
     removeFromChallenge(card) {
-        if(!this.isParticipating(card)) {
+        if (!this.isParticipating(card)) {
             return;
         }
         const eventProps = {
@@ -93,10 +98,10 @@ class Challenge {
             isDefending: this.isDefending(card)
         };
 
-        this.attackers = this.attackers.filter(c => c !== card);
-        this.declaredAttackers = this.declaredAttackers.filter(c => c !== card);
-        this.defenders = this.defenders.filter(c => c !== card);
-        this.declaredDefenders = this.declaredDefenders.filter(c => c !== card);
+        this.attackers = this.attackers.filter((c) => c !== card);
+        this.declaredAttackers = this.declaredAttackers.filter((c) => c !== card);
+        this.defenders = this.defenders.filter((c) => c !== card);
+        this.declaredDefenders = this.declaredDefenders.filter((c) => c !== card);
 
         card.inChallenge = false;
 
@@ -108,7 +113,7 @@ class Challenge {
     }
 
     markAsParticipating(cards) {
-        for(let card of cards) {
+        for (let card of cards) {
             card.inChallenge = true;
             card.markAsDirty();
         }
@@ -144,7 +149,7 @@ class Challenge {
     }
 
     hasSingleParticipant(player) {
-        if(this.attackingPlayer === player) {
+        if (this.attackingPlayer === player) {
             return this.attackers.length === 1;
         }
 
@@ -154,7 +159,7 @@ class Challenge {
     getNumberOfParticipants(predicate = () => true) {
         let participants = this.attackers.concat(this.defenders);
         return participants.reduce((count, card) => {
-            if(predicate(card)) {
+            if (predicate(card)) {
                 return count + 1;
             }
 
@@ -171,7 +176,7 @@ class Challenge {
     }
 
     calculateStrength() {
-        if(this.winnerDetermined) {
+        if (this.winnerDetermined) {
             return;
         }
 
@@ -180,7 +185,7 @@ class Challenge {
     }
 
     addParticipantToSide(player, card) {
-        if(this.attackingPlayer === player) {
+        if (this.attackingPlayer === player) {
             this.addAttacker(card);
         } else {
             this.addDefender(card);
@@ -203,7 +208,7 @@ class Challenge {
         this.winnerDetermined = true;
 
         let result = this.checkNoWinnerOrLoser();
-        if(result.noWinner) {
+        if (result.noWinner) {
             this.noWinnerMessage = result.message;
             this.loser = undefined;
             this.winner = undefined;
@@ -213,7 +218,7 @@ class Challenge {
             return;
         }
 
-        if(this.attackerStrength >= this.defenderStrength) {
+        if (this.attackerStrength >= this.defenderStrength) {
             this.loser = this.defendingPlayer;
             this.loserStrength = this.defenderStrength;
             this.winner = this.attackingPlayer;
@@ -232,29 +237,42 @@ class Challenge {
         const noWinnerRules = [
             {
                 condition: () => this.attackerStrength === 0 && this.defenderStrength === 0,
-                message: 'There is no winner or loser for this challenge because the attacker strength is 0'
+                message:
+                    'There is no winner or loser for this challenge because the attacker strength is 0'
             },
             {
-                condition: () => this.attackerStrength >= this.defenderStrength && this.attackingPlayer.cannotWinChallenge,
-                message: 'There is no winner or loser for this challenge because the attacker cannot win'
+                condition: () =>
+                    this.attackerStrength >= this.defenderStrength &&
+                    this.attackingPlayer.cannotWinChallenge,
+                message:
+                    'There is no winner or loser for this challenge because the attacker cannot win'
             },
             {
-                condition: () => this.attackerStrength >= this.defenderStrength && this.attackers.length === 0,
-                message: 'There is no winner or loser for this challenge because the attacker has no participants'
+                condition: () =>
+                    this.attackerStrength >= this.defenderStrength && this.attackers.length === 0,
+                message:
+                    'There is no winner or loser for this challenge because the attacker has no participants'
             },
             {
-                condition: () => this.defenderStrength > this.attackerStrength && this.defendingPlayer.cannotWinChallenge,
-                message: 'There is no winner or loser for this challenge because the defender cannot win'
+                condition: () =>
+                    this.defenderStrength > this.attackerStrength &&
+                    this.defendingPlayer.cannotWinChallenge,
+                message:
+                    'There is no winner or loser for this challenge because the defender cannot win'
             },
             {
-                condition: () => this.defenderStrength > this.attackerStrength && this.defenders.length === 0,
-                message: 'There is no winner or loser for this challenge because the defender has no participants'
+                condition: () =>
+                    this.defenderStrength > this.attackerStrength && this.defenders.length === 0,
+                message:
+                    'There is no winner or loser for this challenge because the defender has no participants'
             }
         ];
 
-        return noWinnerRules
-            .map(rule => ({ noWinner: !!rule.condition(), message: rule.message }))
-            .find(match => match.noWinner) || { noWinner: false };
+        return (
+            noWinnerRules
+                .map((rule) => ({ noWinner: !!rule.condition(), message: rule.message }))
+                .find((match) => match.noWinner) || { noWinner: false }
+        );
     }
 
     isAttackerTheWinner() {
@@ -262,7 +280,11 @@ class Challenge {
     }
 
     isUnopposed() {
-        return this.loserStrength <= 0 && this.winnerStrength > 0 && this.winner === this.attackingPlayer;
+        return (
+            this.loserStrength <= 0 &&
+            this.winnerStrength > 0 &&
+            this.winner === this.attackingPlayer
+        );
     }
 
     isRivalWin() {
@@ -274,9 +296,9 @@ class Challenge {
     }
 
     getWinnerCards() {
-        if(this.winner === this.attackingPlayer) {
+        if (this.winner === this.attackingPlayer) {
             return this.attackers;
-        } else if(this.winner === this.defendingPlayer) {
+        } else if (this.winner === this.defendingPlayer) {
             return this.defenders;
         }
 
@@ -301,11 +323,11 @@ class Challenge {
     }
 
     finish() {
-        for(let card of this.attackers.concat(this.defenders)) {
+        for (let card of this.attackers.concat(this.defenders)) {
             card.inChallenge = false;
         }
         this.challengeContributions.clear();
-        
+
         this.isInitiated = false;
     }
 
@@ -315,7 +337,11 @@ class Challenge {
 
         this.resetCards();
 
-        this.game.addMessage('{0}\'s {1} challenge is cancelled', this.attackingPlayer, this.challengeType);
+        this.game.addMessage(
+            "{0}'s {1} challenge is cancelled",
+            this.attackingPlayer,
+            this.challengeType
+        );
     }
 
     isMatch(matchers) {

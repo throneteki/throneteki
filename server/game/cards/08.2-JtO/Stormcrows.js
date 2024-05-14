@@ -7,15 +7,19 @@ class Stormcrows extends DrawCard {
             title: 'Give character(s) -1 STR',
             phase: 'challenge',
             limit: ability.limit.perPhase(1),
-            cost: ability.costs.discardXGold(() => 1, () => this.game.getNumberOfCardsInPlay(card => card.getType() === 'character')),
-            handler: context => {
+            cost: ability.costs.discardXGold(
+                () => 1,
+                () => this.game.getNumberOfCardsInPlay((card) => card.getType() === 'character')
+            ),
+            handler: (context) => {
                 let xValue = context.xValue;
                 this.game.promptForSelect(this.controller, {
                     mode: 'exactly',
                     numCards: xValue,
                     activePromptTitle: `Select ${TextHelper.count(xValue, 'character')}`,
                     source: this,
-                    cardCondition: card => card.location === 'play area' && card.getType() === 'character',
+                    cardCondition: (card) =>
+                        card.location === 'play area' && card.getType() === 'character',
                     onSelect: (player, cards) => this.targetsSelected(player, cards, xValue)
                 });
             }
@@ -23,14 +27,19 @@ class Stormcrows extends DrawCard {
     }
 
     targetsSelected(player, cards, xValue) {
-        this.untilEndOfPhase(ability => ({
+        this.untilEndOfPhase((ability) => ({
             match: cards,
             targetController: 'any',
             effect: ability.effects.modifyStrength(-1)
         }));
 
-        this.game.addMessage('{0} discards {1} gold from {2} to give -1 STR to {3} until the end of the phase',
-            player, xValue, this, cards);
+        this.game.addMessage(
+            '{0} discards {1} gold from {2} to give -1 STR to {3} until the end of the phase',
+            player,
+            xValue,
+            this,
+            cards
+        );
 
         return true;
     }

@@ -13,11 +13,12 @@ class MadKingAerys extends DrawCard {
             phase: 'dominance',
             cost: ability.costs.kneelSelf(),
             target: {
-                cardCondition: card => card.isMatch({ location: 'play area', trait: ['Lord', 'Lady'] }),
+                cardCondition: (card) =>
+                    card.isMatch({ location: 'play area', trait: ['Lord', 'Lady'] }),
                 gameAction: 'kill'
             },
             message: '{player} kneels {source} to kill {target}',
-            handler: context => {
+            handler: (context) => {
                 this.game.killCharacter(context.target);
             },
             limit: ability.limit.perRound(1)
@@ -25,10 +26,13 @@ class MadKingAerys extends DrawCard {
     }
 
     opponentControlsKingslayer() {
-        return this.game.anyCardsInPlay(card => (
-            card.controller !== this.controller &&
-            (card.hasTrait('Lord') || card.hasTrait('Lady') || card.name === 'Ser Jaime Lannister')
-        ));
+        return this.game.anyCardsInPlay(
+            (card) =>
+                card.controller !== this.controller &&
+                (card.hasTrait('Lord') ||
+                    card.hasTrait('Lady') ||
+                    card.name === 'Ser Jaime Lannister')
+        );
     }
 }
 

@@ -7,22 +7,32 @@ class Nymeria extends DrawCard {
             condition: () => this.isStarkCardParticipatingInChallenge(),
             cost: [
                 ability.costs.kneelSelf(),
-                ability.costs.kneelAny(card => card.hasTrait('Direwolf') && card.getType() === 'character' && card !== this, true)
+                ability.costs.kneelAny(
+                    (card) =>
+                        card.hasTrait('Direwolf') &&
+                        card.getType() === 'character' &&
+                        card !== this,
+                    true
+                )
             ],
-            handler: context => {
+            handler: (context) => {
                 let direwolvesToAdd = context.getCostValuesFor('kneel');
 
-                for(let card of direwolvesToAdd) {
+                for (let card of direwolvesToAdd) {
                     this.game.currentChallenge.addParticipantToSide(context.player, card);
                 }
 
-                this.game.addMessage('{0} kneels {1} to add them to the challenge', context.player, direwolvesToAdd);
+                this.game.addMessage(
+                    '{0} kneels {1} to add them to the challenge',
+                    context.player,
+                    direwolvesToAdd
+                );
             }
         });
     }
 
     isStarkCardParticipatingInChallenge() {
-        return this.controller.anyCardsInPlay(card => {
+        return this.controller.anyCardsInPlay((card) => {
             return card.isParticipating() && card.isFaction('stark');
         });
     }

@@ -5,21 +5,27 @@ class HighSepton extends DrawCard {
         this.interrupt({
             limit: ability.limit.perPhase(1),
             when: {
-                onTargetsChosen: event => (
+                onTargetsChosen: (event) =>
                     event.ability.isTriggeredAbility() &&
                     event.targets.hasSingleTarget() &&
-                    event.targets.anySelection(selection => (
-                        selection.choosingPlayer !== this.controller &&
-                        selection.value.getType() === 'character' &&
-                        selection.value.controller === this.controller
-                    ))
-                )
+                    event.targets.anySelection(
+                        (selection) =>
+                            selection.choosingPlayer !== this.controller &&
+                            selection.value.getType() === 'character' &&
+                            selection.value.controller === this.controller
+                    )
             },
             target: {
                 cardCondition: (card, context) => this.isEligibleCharacter(card, context)
             },
-            handler: context => {
-                this.game.addMessage('{0} uses {1} to choose {2} as the target for {3} instead', this.controller, this, context.target, context.event.ability.card);
+            handler: (context) => {
+                this.game.addMessage(
+                    '{0} uses {1} to choose {2} as the target for {3} instead',
+                    this.controller,
+                    this,
+                    context.target,
+                    context.event.ability.card
+                );
                 context.event.targets.selections[0].resolve(context.target);
             }
         });

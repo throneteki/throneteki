@@ -12,7 +12,7 @@ class CrowKillers extends DrawCard {
     opponentHasHigherReserve() {
         let challenge = this.game.currentChallenge;
 
-        if(!challenge) {
+        if (!challenge) {
             return false;
         }
 

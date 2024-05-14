@@ -8,11 +8,13 @@ class Darkstar extends DrawCard {
             condition: () => this.isAttacking(),
             cost: ability.costs.sacrificeSelf(),
             message: {
-                format: '{player} sacrifices {costs.sacrifice} to return {participants} to its owner\'s hand',
-                args: { participants: context => context.game.currentChallenge.getParticipants() }
+                format: "{player} sacrifices {costs.sacrifice} to return {participants} to its owner's hand",
+                args: { participants: (context) => context.game.currentChallenge.getParticipants() }
             },
-            gameAction: GameActions.simultaneously(context => 
-                context.game.currentChallenge.getParticipants().map(card => GameActions.returnCardToHand({ card }))
+            gameAction: GameActions.simultaneously((context) =>
+                context.game.currentChallenge
+                    .getParticipants()
+                    .map((card) => GameActions.returnCardToHand({ card }))
             )
         });
     }

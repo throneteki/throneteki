@@ -6,15 +6,21 @@ class Rebuilding extends PlotCard {
             target: {
                 numCards: 3,
                 activePromptTitle: 'Select up to 3 cards',
-                cardCondition: (card, context) => context.player === card.controller && card.location === 'discard pile'
+                cardCondition: (card, context) =>
+                    context.player === card.controller && card.location === 'discard pile'
             },
-            handler: context => {
-                for(let card of context.target) {
+            handler: (context) => {
+                for (let card of context.target) {
                     context.player.moveCard(card, 'draw deck');
                 }
 
                 context.player.shuffleDrawDeck();
-                this.game.addMessage('{0} uses {1} to shuffle {2} into their deck', context.player, this, context.target);
+                this.game.addMessage(
+                    '{0} uses {1} to shuffle {2} into their deck',
+                    context.player,
+                    this,
+                    context.target
+                );
             }
         });
     }

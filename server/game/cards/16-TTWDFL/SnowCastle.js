@@ -2,7 +2,8 @@ const DrawCard = require('../../drawcard');
 
 class SnowCastle extends DrawCard {
     setupCardAbilities(ability) {
-        const strength = context => context.player.getNumberOfCardsInPlay({ faction: 'stark', type: 'character' });
+        const strength = (context) =>
+            context.player.getNumberOfCardsInPlay({ faction: 'stark', type: 'character' });
 
         this.action({
             title: 'Give +STR',
@@ -14,8 +15,8 @@ class SnowCastle extends DrawCard {
                 format: '{player} kneels {source} to give {target} +{strength} STR',
                 args: { strength }
             },
-            handler: context => {
-                this.untilEndOfPhase(ability => ({
+            handler: (context) => {
+                this.untilEndOfPhase((ability) => ({
                     match: context.target,
                     effect: ability.effects.modifyStrength(strength(context))
                 }));

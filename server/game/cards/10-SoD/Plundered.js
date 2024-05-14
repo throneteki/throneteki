@@ -5,15 +5,21 @@ class Plundered extends DrawCard {
         this.attachmentRestriction({ type: 'location', controller: 'opponent' });
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.loser === this.parent.controller &&
-                                         event.challenge.defendingPlayer === this.parent.controller &&
-                                         !this.parent.kneeled
+                afterChallenge: (event) =>
+                    event.challenge.loser === this.parent.controller &&
+                    event.challenge.defendingPlayer === this.parent.controller &&
+                    !this.parent.kneeled
             },
-            handler: context => {
+            handler: (context) => {
                 this.parent.controller.kneelCard(this.parent);
-                this.game.addMessage('{0} uses {1} to kneel {2}', context.player, this, this.parent);
+                this.game.addMessage(
+                    '{0} uses {1} to kneel {2}',
+                    context.player,
+                    this,
+                    this.parent
+                );
 
-                if(!context.player.canGainGold()) {
+                if (!context.player.canGainGold()) {
                     return true;
                 }
 
@@ -34,7 +40,12 @@ class Plundered extends DrawCard {
     sacrifice() {
         this.controller.sacrificeCard(this);
         let gold = this.game.addGold(this.controller, 3);
-        this.game.addMessage('{0} then sacrifices {1} to gain {2} gold', this.controller, this, gold);
+        this.game.addMessage(
+            '{0} then sacrifices {1} to gain {2} gold',
+            this.controller,
+            this,
+            gold
+        );
         return true;
     }
 

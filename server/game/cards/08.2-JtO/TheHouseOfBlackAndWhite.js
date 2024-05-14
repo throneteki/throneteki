@@ -9,21 +9,33 @@ class TheHouseOfBlackAndWhite extends DrawCard {
             phase: 'dominance',
             cost: [
                 ability.costs.kneelSelf(),
-                ability.costs.discardXGold(() => this.getMinimumDiscardGoldAmount(), () => 99)
+                ability.costs.discardXGold(
+                    () => this.getMinimumDiscardGoldAmount(),
+                    () => 99
+                )
             ],
             target: {
-                cardCondition: (card, context) => card.location === 'play area' && card.getType() === 'character' &&
-                                                  (context.xValue ? (card.getPrintedStrength() <= context.xValue) : (card.getPrintedStrength() <= this.tokens.gold))
+                cardCondition: (card, context) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    (context.xValue
+                        ? card.getPrintedStrength() <= context.xValue
+                        : card.getPrintedStrength() <= this.tokens.gold)
             },
-            handler: context => {
+            handler: (context) => {
                 this.game.killCharacter(context.target);
-                this.game.addMessage('{0} kneels and discards {1} gold from {2} to kill {3}',
-                    context.player, context.xValue, this, context.target);
+                this.game.addMessage(
+                    '{0} kneels and discards {1} gold from {2} to kill {3}',
+                    context.player,
+                    context.xValue,
+                    this,
+                    context.target
+                );
 
-                if(context.player.getSpendableGold() > 0) {
+                if (context.player.getSpendableGold() > 0) {
                     let rangeArray = range(1, context.player.getSpendableGold() + 1).reverse();
 
-                    let buttons = rangeArray.map(gold => {
+                    let buttons = rangeArray.map((gold) => {
                         return { text: gold.toString(), method: 'moveGold', arg: gold };
                     });
                     buttons.push({ text: 'Done', method: 'moveGold', arg: 0 });
@@ -41,7 +53,7 @@ class TheHouseOfBlackAndWhite extends DrawCard {
     }
 
     moveGold(player, gold) {
-        if(gold === 0) {
+        if (gold === 0) {
             return true;
         }
 
@@ -52,8 +64,8 @@ class TheHouseOfBlackAndWhite extends DrawCard {
     }
 
     getMinimumDiscardGoldAmount() {
-        let characters = this.game.filterCardsInPlay(card => card.getType() === 'character');
-        let characterPrintedStrengths = characters.map(card => card.getPrintedStrength());
+        let characters = this.game.filterCardsInPlay((card) => card.getType() === 'character');
+        let characterPrintedStrengths = characters.map((card) => card.getPrintedStrength());
         let lowestStrength = Math.min(...characterPrintedStrengths);
 
         return Math.max(lowestStrength, 1);

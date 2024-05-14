@@ -4,10 +4,7 @@ class VanguardLeader extends DrawCard {
     setupCardAbilities(ability) {
         this.attachmentRestriction({ unique: true });
         this.whileAttached({
-            effect: [
-                ability.effects.addTrait('Commander'),
-                ability.effects.modifyStrength(1)
-            ]
+            effect: [ability.effects.addTrait('Commander'), ability.effects.modifyStrength(1)]
         });
     }
 }

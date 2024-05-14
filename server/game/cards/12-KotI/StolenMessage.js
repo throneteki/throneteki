@@ -13,10 +13,19 @@ class StolenMessage extends PlotCard {
             cost: ability.costs.payGold(1),
             chooseOpponent: true,
             limit: ability.limit.perRound(3),
-            handler: context => {
-                this.game.addMessage('{0} uses {1} to place the top card of {2}\'s deck on the bottom of their deck', context.player, this, context.opponent);
+            handler: (context) => {
+                this.game.addMessage(
+                    "{0} uses {1} to place the top card of {2}'s deck on the bottom of their deck",
+                    context.player,
+                    this,
+                    context.opponent
+                );
                 this.game.resolveGameAction(
-                    GameActions.placeCard(context => ({ card: context.opponent.drawDeck[0], location: 'draw deck', bottom: true })),
+                    GameActions.placeCard((context) => ({
+                        card: context.opponent.drawDeck[0],
+                        location: 'draw deck',
+                        bottom: true
+                    })),
                     context
                 );
             }

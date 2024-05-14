@@ -11,14 +11,18 @@ class TheBlackfish extends DrawCard {
 
         this.reaction({
             when: {
-                afterChallenge: event =>
+                afterChallenge: (event) =>
                     event.challenge.winner === this.controller &&
                     event.challenge.challengeType === 'military' &&
                     event.challenge.isAttackerTheWinner()
             },
             limit: ability.limit.perPhase(1),
             message: '{player} uses {source} to draw 1 card',
-            gameAction: GameActions.drawCards(context => ({ player: context.player, amount: 1, source: this }))
+            gameAction: GameActions.drawCards((context) => ({
+                player: context.player,
+                amount: 1,
+                source: this
+            }))
         });
     }
 }

@@ -12,7 +12,7 @@ class Harlaw extends DrawCard {
             effect: ability.effects.reduceCost({
                 playingTypes: 'marshal',
                 amount: 1,
-                match: card => card.hasTrait('House Harlaw')
+                match: (card) => card.hasTrait('House Harlaw')
             })
         });
         this.plotModifiers({

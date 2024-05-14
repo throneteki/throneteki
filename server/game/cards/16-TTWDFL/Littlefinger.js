@@ -10,14 +10,15 @@ class Littlefinger extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCardAbilityInitiated: event => event.source.getType() === 'event' && event.player !== this.controller
+                onCardAbilityInitiated: (event) =>
+                    event.source.getType() === 'event' && event.player !== this.controller
             },
             cost: ability.costs.kneelSelf(),
             message: {
                 format: '{player} kneels {source} to cancel {event}',
-                args: { event: context => context.event.source }
+                args: { event: (context) => context.event.source }
             },
-            handler: context => {
+            handler: (context) => {
                 context.event.cancel();
             }
         });

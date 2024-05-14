@@ -7,14 +7,17 @@ class InsightKeyword extends ChallengeKeywordAbility {
         super('Insight', {
             message: {
                 format: '{player} draws {amount} from Insight on {source}',
-                args: { amount: context => TextHelper.count(this.getTriggerAmount(context), 'card') }
+                args: {
+                    amount: (context) => TextHelper.count(this.getTriggerAmount(context), 'card')
+                }
             },
-            gameAction: GameActions.drawCards(context => ({
+            gameAction: GameActions.drawCards((context) => ({
                 player: context.challenge.winner,
                 amount: this.getTriggerAmount(context),
                 reason: 'insight',
                 source: context.source
-            }))});
+            }))
+        });
     }
 }
 

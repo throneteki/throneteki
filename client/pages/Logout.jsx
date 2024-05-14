@@ -18,8 +18,10 @@ class Logout extends React.Component {
     }
 
     componentWillReceiveProps(props) {
-        if(props.loggedOut) {
-            this.setState({ successMessage: 'You were successfully logged out, redirecting you shortly.' });
+        if (props.loggedOut) {
+            this.setState({
+                successMessage: 'You were successfully logged out, redirecting you shortly.'
+            });
 
             setTimeout(() => {
                 this.props.navigate('/');
@@ -30,10 +32,16 @@ class Logout extends React.Component {
     render() {
         return (
             <div className='col-sm-6 col-sm-offset-3'>
-                <ApiStatus apiState={ this.props.apiState } successMessage={ this.state.successMessage } />
+                <ApiStatus
+                    apiState={this.props.apiState}
+                    successMessage={this.state.successMessage}
+                />
 
-                { this.props.apiState && this.props.apiState.loading && <span>Logging you out of your account, please wait...</span> }
-            </div>);
+                {this.props.apiState && this.props.apiState.loading && (
+                    <span>Logging you out of your account, please wait...</span>
+                )}
+            </div>
+        );
     }
 }
 

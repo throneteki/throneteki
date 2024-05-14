@@ -13,9 +13,7 @@ class MarshalCardsPrompt extends UiPrompt {
     activePrompt() {
         return {
             menuTitle: 'Marshal your cards',
-            buttons: [
-                { text: 'Done' }
-            ]
+            buttons: [{ text: 'Done' }]
         };
     }
 
@@ -24,7 +22,7 @@ class MarshalCardsPrompt extends UiPrompt {
     }
 
     onMenuCommand(player) {
-        if(this.player !== player) {
+        if (this.player !== player) {
             return false;
         }
 

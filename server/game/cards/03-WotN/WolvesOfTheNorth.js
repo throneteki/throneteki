@@ -4,19 +4,26 @@ class WolvesOfTheNorth extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onBypassedByStealth: event => event.source === this
+                onBypassedByStealth: (event) => event.source === this
             },
-            handler: context => {
+            handler: (context) => {
                 let target = context.event.target;
-                let strDecrease = -this.controller.getNumberOfCardsInPlay(c => c.hasTrait('Direwolf'));
+                let strDecrease = -this.controller.getNumberOfCardsInPlay((c) =>
+                    c.hasTrait('Direwolf')
+                );
 
-                this.untilEndOfPhase(ability => ({
+                this.untilEndOfPhase((ability) => ({
                     match: target,
                     effect: ability.effects.modifyStrength(strDecrease)
                 }));
 
-                this.game.addMessage('{0} uses {1} to give {2} {3}STR until the end of the phase',
-                    this.controller, this, target, strDecrease);
+                this.game.addMessage(
+                    '{0} uses {1} to give {2} {3}STR until the end of the phase',
+                    this.controller,
+                    this,
+                    target,
+                    strDecrease
+                );
             }
         });
     }

@@ -10,7 +10,9 @@ class MusterTheRealm extends PlotCard {
     }
 
     hasAttackingArmy() {
-        return this.controller.anyCardsInPlay(card => card.isAttacking() && card.hasTrait('Army'));
+        return this.controller.anyCardsInPlay(
+            (card) => card.isAttacking() && card.hasTrait('Army')
+        );
     }
 }
 

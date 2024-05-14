@@ -3,17 +3,20 @@ const ChoosePlayerPrompt = require('./gamesteps/ChoosePlayerPrompt');
 
 class AbilityChoosePlayerDefinition {
     static create(properties) {
-        if(properties.chooseOpponent) {
-            let opponentCondition = AbilityChoosePlayerDefinition.createConditionFunction(properties.chooseOpponent);
+        if (properties.chooseOpponent) {
+            let opponentCondition = AbilityChoosePlayerDefinition.createConditionFunction(
+                properties.chooseOpponent
+            );
             return new AbilityChoosePlayerDefinition({
                 name: 'opponent',
-                condition: (player, context) => player !== context.choosingPlayer && opponentCondition(player, context),
+                condition: (player, context) =>
+                    player !== context.choosingPlayer && opponentCondition(player, context),
                 activePromptTitle: 'Select an opponent',
                 waitingPromptTitle: 'Waiting for player to select an opponent'
             });
         }
 
-        if(properties.choosePlayer) {
+        if (properties.choosePlayer) {
             return new AbilityChoosePlayerDefinition({
                 name: 'chosenPlayer',
                 condition: properties.choosePlayer,
@@ -26,7 +29,7 @@ class AbilityChoosePlayerDefinition {
     }
 
     static createConditionFunction(conditionProperty) {
-        if(typeof(conditionProperty) === 'function') {
+        if (typeof conditionProperty === 'function') {
             return conditionProperty;
         }
 
@@ -42,7 +45,7 @@ class AbilityChoosePlayerDefinition {
 
     eligibleChoices(context) {
         context.choosingPlayer = context.player;
-        return context.game.getPlayers().filter(player => this.isEligible(player, context));
+        return context.game.getPlayers().filter((player) => this.isEligible(player, context));
     }
 
     isEligible(player, context) {
@@ -62,12 +65,12 @@ class AbilityChoosePlayerDefinition {
         });
 
         let prompt = new ChoosePlayerPrompt(context.game, context.player, {
-            condition: player => choices.includes(player),
+            condition: (player) => choices.includes(player),
             activePromptTitle: this.activePromptTitle,
             waitingPromptTitle: this.waitingPromptTitle,
             source: context.source,
-            onSelect: chosenPlayer => {
-                if(this.name === 'opponent') {
+            onSelect: (chosenPlayer) => {
+                if (this.name === 'opponent') {
                     context.opponent = chosenPlayer;
                 } else {
                     context.chosenPlayer = chosenPlayer;

@@ -3,11 +3,13 @@ const PlotCard = require('../../plotcard.js');
 class ATourneyForTheKing extends PlotCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: card => card.getType() === 'character' && card.hasTrait('Knight'),
+            match: (card) => card.getType() === 'character' && card.hasTrait('Knight'),
             targetController: 'current',
             effect: [
                 ability.effects.addKeyword('Renown'),
-                ability.effects.immuneTo(card => card.controller !== this.controller && card.getType() === 'event')
+                ability.effects.immuneTo(
+                    (card) => card.controller !== this.controller && card.getType() === 'event'
+                )
             ]
         });
     }

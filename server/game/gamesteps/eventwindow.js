@@ -45,7 +45,7 @@ class EventWindow extends BaseStep {
     }
 
     openAbilityWindow(abilityType) {
-        if(this.event.cancelled) {
+        if (this.event.cancelled) {
             return;
         }
 
@@ -56,7 +56,7 @@ class EventWindow extends BaseStep {
     }
 
     emitBaseEvent() {
-        if(this.event.cancelled) {
+        if (this.event.cancelled) {
             return;
         }
 
@@ -64,11 +64,11 @@ class EventWindow extends BaseStep {
     }
 
     openWhenRevealedWindow() {
-        if(this.event.cancelled) {
+        if (this.event.cancelled) {
             return;
         }
 
-        if(this.event.getConcurrentEvents().some(event => event.name === 'onPlotRevealed')) {
+        if (this.event.getConcurrentEvents().some((event) => event.name === 'onPlotRevealed')) {
             this.openAbilityWindow('whenrevealed');
         }
     }

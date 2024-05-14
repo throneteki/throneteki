@@ -7,13 +7,18 @@ class HighGround extends DrawCard {
             title: 'Stand character',
             cost: ability.costs.kneelSelf(),
             target: {
-                cardCondition: { location: 'play area', trait: 'Army', type: 'character', kneeled: true },
+                cardCondition: {
+                    location: 'play area',
+                    trait: 'Army',
+                    type: 'character',
+                    kneeled: true
+                },
                 gameAction: 'stand'
             },
             message: '{player} kneels {source} to stand {target}',
-            handler: context => {
+            handler: (context) => {
                 this.game.resolveGameAction(
-                    GameActions.standCard(context => ({
+                    GameActions.standCard((context) => ({
                         card: context.target
                     })),
                     context

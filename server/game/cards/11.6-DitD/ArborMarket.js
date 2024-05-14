@@ -13,13 +13,17 @@ class ArborMarket extends DrawCard {
             phase: 'challenge',
 
             target: {
-                cardCondition: card => card.location === 'play area' && card.isParticipating()
+                cardCondition: (card) => card.location === 'play area' && card.isParticipating()
             },
-            handler: context => {
-                this.game.addMessage('{0} kneels {1} to give +1 STR to {2} until the end of the challenge',
-                    this.controller, this, context.target);
+            handler: (context) => {
+                this.game.addMessage(
+                    '{0} kneels {1} to give +1 STR to {2} until the end of the challenge',
+                    this.controller,
+                    this,
+                    context.target
+                );
 
-                this.untilEndOfChallenge(ability => ({
+                this.untilEndOfChallenge((ability) => ({
                     match: context.target,
                     effect: ability.effects.modifyStrength(1)
                 }));

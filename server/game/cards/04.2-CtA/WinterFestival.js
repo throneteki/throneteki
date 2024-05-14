@@ -4,7 +4,10 @@ class WinterFestival extends PlotCard {
     setupCardAbilities() {
         this.interrupt({
             when: {
-                onPhaseEnded: event => event.phase === 'challenge' && !this.game.anyPlotHasTrait('Summer') && this.controller.canGainFactionPower()
+                onPhaseEnded: (event) =>
+                    event.phase === 'challenge' &&
+                    !this.game.anyPlotHasTrait('Summer') &&
+                    this.controller.canGainFactionPower()
             },
             handler: () => {
                 this.game.addPower(this.controller, 2);

@@ -7,7 +7,7 @@ class GatesOfTheMoon extends DrawCard {
         });
 
         this.persistentEffect({
-            match: card => card === card.controller.activePlot,
+            match: (card) => card === card.controller.activePlot,
             targetController: 'opponent',
             effect: ability.effects.modifyGold(1)
         });

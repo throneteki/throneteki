@@ -14,8 +14,10 @@ class GrizzledMiner extends DrawCard {
 
     getDiscount() {
         let cards = this.controller.filterCardsInPlay(
-            card => card.isFaction('thenightswatch')
-                && (card.getType() === 'attachment' || card.getType() === 'location'));
+            (card) =>
+                card.isFaction('thenightswatch') &&
+                (card.getType() === 'attachment' || card.getType() === 'location')
+        );
 
         return cards.length;
     }

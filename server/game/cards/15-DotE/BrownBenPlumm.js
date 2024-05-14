@@ -5,14 +5,12 @@ class BrownBenPlumm extends DrawCard {
     setupCardAbilities() {
         this.forcedInterrupt({
             when: {
-                onPhaseEnded: event => event.phase === 'challenge' && this.controller.gold === 0
+                onPhaseEnded: (event) => event.phase === 'challenge' && this.controller.gold === 0
             },
-            message: '{player} is forced to sacrifice {source} because they have no gold left in their gold pool',
-            handler: context => {
-                this.game.resolveGameAction(
-                    GameActions.sacrificeCard({ card: this }),
-                    context
-                );
+            message:
+                '{player} is forced to sacrifice {source} because they have no gold left in their gold pool',
+            handler: (context) => {
+                this.game.resolveGameAction(GameActions.sacrificeCard({ card: this }), context);
             }
         });
     }

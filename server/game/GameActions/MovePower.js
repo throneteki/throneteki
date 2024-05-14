@@ -20,10 +20,14 @@ class MovePower extends GameAction {
 
     createEvent({ from, to, amount = 1 }) {
         let appliedPower = Math.min(from.power, amount);
-        return this.event('onCardPowerMoved', { source: from, target: to, power: appliedPower }, event => {
-            event.source.power -= appliedPower;
-            event.target.power += appliedPower;
-        });
+        return this.event(
+            'onCardPowerMoved',
+            { source: from, target: to, power: appliedPower },
+            (event) => {
+                event.source.power -= appliedPower;
+                event.target.power += appliedPower;
+            }
+        );
     }
 }
 

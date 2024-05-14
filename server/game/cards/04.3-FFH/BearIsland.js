@@ -4,7 +4,7 @@ class BearIsland extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardEntersPlay: event =>
+                onCardEntersPlay: (event) =>
                     event.card.getType() !== 'plot' &&
                     event.card.controller === this.controller &&
                     event.card.isLoyal() &&

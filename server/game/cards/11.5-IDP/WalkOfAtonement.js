@@ -7,12 +7,18 @@ class WalkOfAtonement extends DrawCard {
             title: 'Discard cards and draw',
             phase: 'dominance',
             condition: () => this.controller.canDraw() || this.anyOpponentHasCards(this.controller),
-            cost: ability.costs.discardAnyPower(card => card.getType() === 'character'),
-            handler: context => {
-                this.game.addMessage('{0} plays {1} and discards {2} power from {3} to discard {4} from each opponent and draw {4}',
-                    context.player, this, context.xValue, context.costs.discardPower, TextHelper.count(context.xValue, 'card'));
+            cost: ability.costs.discardAnyPower((card) => card.getType() === 'character'),
+            handler: (context) => {
+                this.game.addMessage(
+                    '{0} plays {1} and discards {2} power from {3} to discard {4} from each opponent and draw {4}',
+                    context.player,
+                    this,
+                    context.xValue,
+                    context.costs.discardPower,
+                    TextHelper.count(context.xValue, 'card')
+                );
 
-                for(let opponent of this.game.getOpponents(context.player)) {
+                for (let opponent of this.game.getOpponents(context.player)) {
                     opponent.discardAtRandom(context.xValue);
                 }
 
@@ -23,7 +29,7 @@ class WalkOfAtonement extends DrawCard {
 
     anyOpponentHasCards(player) {
         let opponents = this.game.getOpponents(player);
-        return opponents.some(opponent => opponent.hand.length > 0);
+        return opponents.some((opponent) => opponent.hand.length > 0);
     }
 }
 

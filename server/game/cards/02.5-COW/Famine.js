@@ -7,7 +7,7 @@ class Famine extends PlotCard {
             effect: ability.effects.increaseCost({
                 playingTypes: 'marshal',
                 amount: 1,
-                match: card => card.getPrintedType() === 'character'
+                match: (card) => card.getPrintedType() === 'character'
             })
         });
     }

@@ -9,10 +9,12 @@ class ATimeForWolves extends PlotCard {
                 title: 'Select a card',
                 match: { trait: 'Direwolf' },
                 gameAction: GameActions.ifCondition({
-                    condition: context => context.searchTarget.getPrintedCost() > 3 || !context.player.canPutIntoPlay(context.searchTarget),
+                    condition: (context) =>
+                        context.searchTarget.getPrintedCost() > 3 ||
+                        !context.player.canPutIntoPlay(context.searchTarget),
                     thenAction: {
                         message: '{player} {gameAction}',
-                        gameAction: GameActions.addToHand(context => ({
+                        gameAction: GameActions.addToHand((context) => ({
                             card: context.searchTarget
                         }))
                     },
@@ -20,8 +22,12 @@ class ATimeForWolves extends PlotCard {
                         title: 'Put card into play?',
                         message: '{player} {gameAction}',
                         choices: {
-                            'Add to hand': GameActions.addToHand(context => ({ card: context.searchTarget })),
-                            'Put in play': GameActions.putIntoPlay(context => ({ card: context.searchTarget }))
+                            'Add to hand': GameActions.addToHand((context) => ({
+                                card: context.searchTarget
+                            })),
+                            'Put in play': GameActions.putIntoPlay((context) => ({
+                                card: context.searchTarget
+                            }))
                         }
                     })
                 })

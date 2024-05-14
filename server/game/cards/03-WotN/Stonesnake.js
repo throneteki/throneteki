@@ -4,13 +4,15 @@ class Stonesnake extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onBypassedByStealth: event => event.source === this &&
-                                               this.hasCopyableKeyword(event.target)
+                onBypassedByStealth: (event) =>
+                    event.source === this && this.hasCopyableKeyword(event.target)
             },
-            handler: context => {
+            handler: (context) => {
                 const keywords = context.event.target.getKeywords();
-                let buttons = keywords.map(keyword => ({
-                    text: keyword, method: 'keywordSelected', arg: keyword.toLowerCase()
+                let buttons = keywords.map((keyword) => ({
+                    text: keyword,
+                    method: 'keywordSelected',
+                    arg: keyword.toLowerCase()
                 }));
 
                 this.game.promptWithMenu(this.controller, this, {
@@ -25,13 +27,17 @@ class Stonesnake extends DrawCard {
     }
 
     keywordSelected(player, keyword) {
-        this.untilEndOfPhase(ability => ({
+        this.untilEndOfPhase((ability) => ({
             match: this,
             effect: ability.effects.addKeyword(keyword)
         }));
 
-        this.game.addMessage('{0} uses {1} to have {1} gain {2} until the end of the phase',
-            this.controller, this, keyword);
+        this.game.addMessage(
+            '{0} uses {1} to have {1} gain {2} until the end of the phase',
+            this.controller,
+            this,
+            keyword
+        );
 
         return true;
     }

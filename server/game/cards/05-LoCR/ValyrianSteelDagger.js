@@ -4,10 +4,7 @@ class ValyrianSteelDagger extends DrawCard {
     setupCardAbilities(ability) {
         this.whileAttached({
             condition: () => this.game.isDuringChallenge({ challengeType: 'intrigue' }),
-            effect: [
-                ability.effects.modifyStrength(2),
-                ability.effects.addKeyword('stealth')
-            ]
+            effect: [ability.effects.modifyStrength(2), ability.effects.addKeyword('stealth')]
         });
     }
 }

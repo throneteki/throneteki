@@ -7,16 +7,20 @@ class JeynePoole extends DrawCard {
             phase: 'marshal',
             cost: ability.costs.sacrificeSelf(),
             target: {
-                cardCondition: (card, context) => (
+                cardCondition: (card, context) =>
                     card.location === 'discard pile' &&
                     card.controller === context.player &&
                     card.hasTrait('Lady') &&
-                    card.getType() === 'character')
+                    card.getType() === 'character'
             },
-            handler: context => {
+            handler: (context) => {
                 context.player.moveCard(context.target, 'hand');
-                this.game.addMessage('{0} sacrifices {1} to move {2} from their discard pile to their hand',
-                    context.player, this, context.target);
+                this.game.addMessage(
+                    '{0} sacrifices {1} to move {2} from their discard pile to their hand',
+                    context.player,
+                    this,
+                    context.target
+                );
             }
         });
     }

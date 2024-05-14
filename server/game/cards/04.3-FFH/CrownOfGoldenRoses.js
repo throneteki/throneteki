@@ -13,16 +13,22 @@ class CrownOfGoldenRoses extends DrawCard {
             condition: () => this.parent.getNumberOfIcons() >= 1,
             limit: ability.limit.perRound(2),
             cost: ability.costs.discardFromHand(),
-            handler: context => {
+            handler: (context) => {
                 let strBoost = this.parent.getNumberOfIcons();
 
-                this.untilEndOfPhase(ability => ({
+                this.untilEndOfPhase((ability) => ({
                     match: this.parent,
                     effect: ability.effects.modifyStrength(strBoost)
                 }));
 
-                this.game.addMessage('{0} uses {1} and discards {2} from their hand to give +{3} STR to {4} until the end of the phase',
-                    this.controller, this, context.costs.discardFromHand, strBoost, this.parent);
+                this.game.addMessage(
+                    '{0} uses {1} and discards {2} from their hand to give +{3} STR to {4} until the end of the phase',
+                    this.controller,
+                    this,
+                    context.costs.discardFromHand,
+                    strBoost,
+                    this.parent
+                );
             }
         });
     }

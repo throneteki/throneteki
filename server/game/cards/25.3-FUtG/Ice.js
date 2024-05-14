@@ -9,10 +9,10 @@ class Ice extends DrawCard {
         });
         this.reaction({
             when: {
-                onCardSaved: event => event.card.getType() === 'character'
+                onCardSaved: (event) => event.card.getType() === 'character'
             },
             cost: ability.costs.kneelSelf(),
-            gameAction: GameActions.kill(context => ({ card: context.event.card }))
+            gameAction: GameActions.kill((context) => ({ card: context.event.card }))
         });
     }
 }

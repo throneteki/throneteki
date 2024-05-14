@@ -36,7 +36,7 @@ export function saveEvent(event) {
         types: ['SAVE_EVENT', 'EVENT_SAVED'],
         shouldCallAPI: () => true,
         APIParams: {
-            url: `/api/events/${(event._id || '')}`,
+            url: `/api/events/${event._id || ''}`,
             type: event._id ? 'PUT' : 'POST',
             data: str
         }
@@ -81,7 +81,7 @@ export function saveDraftCube(draftCube) {
         types: ['SAVE_DRAFT_CUBE', 'DRAFT_CUBE_SAVED'],
         shouldCallAPI: () => true,
         APIParams: {
-            url: `/api/draft-cubes/${(draftCube._id || '')}`,
+            url: `/api/draft-cubes/${draftCube._id || ''}`,
             type: draftCube._id ? 'PUT' : 'POST',
             data: str
         }

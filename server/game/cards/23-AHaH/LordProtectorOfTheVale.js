@@ -6,7 +6,7 @@ class LordProtectorOfTheVale extends DrawCard {
         this.attachmentRestriction({ trait: 'Lord', controller: 'current' });
 
         this.whileAttached({
-            match: card => card.name === 'Littlefinger',
+            match: (card) => card.name === 'Littlefinger',
             effect: ability.effects.modifyStrength(2)
         });
 
@@ -14,18 +14,23 @@ class LordProtectorOfTheVale extends DrawCard {
             title: 'Contribute attached STR',
             phase: 'challenge',
             cost: ability.costs.kneelSelf(),
-            condition: () => this.game.isDuringChallenge()
-                && this.game.currentChallenge.challengeType === 'power'
-                && this.controller.anyCardsInPlay({ trait: 'House Arryn', type: 'character', participating: true }),
+            condition: () =>
+                this.game.isDuringChallenge() &&
+                this.game.currentChallenge.challengeType === 'power' &&
+                this.controller.anyCardsInPlay({
+                    trait: 'House Arryn',
+                    type: 'character',
+                    participating: true
+                }),
             message: {
-                format: '{player} kneels {source} to have {parent} contribute its STR (currently {str}) to {player}\'s side of the challenge',
+                format: "{player} kneels {source} to have {parent} contribute its STR (currently {str}) to {player}'s side of the challenge",
                 args: {
                     parent: () => this.parent,
                     str: () => this.parent.getStrength()
                 }
             },
             gameAction: GameActions.genericHandler(() => {
-                this.untilEndOfChallenge(ability => ({
+                this.untilEndOfChallenge((ability) => ({
                     targetController: 'current',
                     effect: ability.effects.contributeCharacterStrength(this.parent)
                 }));

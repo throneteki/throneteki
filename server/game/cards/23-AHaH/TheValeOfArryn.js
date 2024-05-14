@@ -5,10 +5,16 @@ class TheValeOfArryn extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.isMatch({ winner: this.controller, by5: true })
+                afterChallenge: (event) =>
+                    event.challenge.isMatch({ winner: this.controller, by5: true })
             },
             target: {
-                cardCondition: { type: 'character', participating: true, or: [{ loyal: true }, { trait: 'House Arryn' }], controller: 'current' },
+                cardCondition: {
+                    type: 'character',
+                    participating: true,
+                    or: [{ loyal: true }, { trait: 'House Arryn' }],
+                    controller: 'current'
+                },
                 gameAction: 'gainPower'
             },
             message: {
@@ -16,10 +22,13 @@ class TheValeOfArryn extends DrawCard {
                 args: { numberOfPower: () => this.getNumberOfPower() }
             },
             limit: ability.limit.perPhase(1),
-            handler: context => {
+            handler: (context) => {
                 this.game.resolveGameAction(
-                    GameActions.gainPower(context => ({ card: context.target, amount: this.getNumberOfPower() }))
-                    , context
+                    GameActions.gainPower((context) => ({
+                        card: context.target,
+                        amount: this.getNumberOfPower()
+                    })),
+                    context
                 );
             }
         });

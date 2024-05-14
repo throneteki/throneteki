@@ -4,7 +4,7 @@ class SeizeTheInitiative extends DrawCard {
     setupCardAbilities() {
         this.interrupt({
             when: {
-                onPhaseEnded: event => event.phase === 'marshal' && !this.controller.firstPlayer
+                onPhaseEnded: (event) => event.phase === 'marshal' && !this.controller.firstPlayer
             },
             handler: () => {
                 this.game.setFirstPlayer(this.controller);

@@ -5,24 +5,30 @@ class ACaskOfAle extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: event => (event.challenge.isMatch({ winner: this.controller, challengeType: 'power' }) 
-                    && this.game.allCards.some(card => (['active plot', 'faction', 'play area'].includes(card.location) && card.getPower() > 0)))
+                afterChallenge: (event) =>
+                    event.challenge.isMatch({ winner: this.controller, challengeType: 'power' }) &&
+                    this.game.allCards.some(
+                        (card) =>
+                            ['active plot', 'faction', 'play area'].includes(card.location) &&
+                            card.getPower() > 0
+                    )
             },
             target: {
                 mode: 'exactly',
                 numCards: 2,
                 activePromptTitle: 'Select 2 cards',
                 singleController: true,
-                cardCondition: card => ['active plot', 'faction', 'play area'].includes(card.location),
+                cardCondition: (card) =>
+                    ['active plot', 'faction', 'play area'].includes(card.location),
                 cardType: ['attachment', 'character', 'faction', 'location', 'plot'],
                 gameAction: 'movePower'
             },
-            handler: context => {
+            handler: (context) => {
                 this.context = context;
                 this.game.promptForSelect(context.player, {
                     activePromptTitle: 'Select card with power',
                     source: this,
-                    cardCondition: card => context.target.includes(card) && card.getPower() > 0,
+                    cardCondition: (card) => context.target.includes(card) && card.getPower() > 0,
                     cardType: ['attachment', 'character', 'faction', 'location', 'plot'],
                     onSelect: (player, card) => this.fromCardSelected(player, card),
                     onCancel: (player) => this.cancelSelection(player)
@@ -32,9 +38,9 @@ class ACaskOfAle extends DrawCard {
     }
     fromCardSelected(player, fromCard) {
         this.fromCard = fromCard;
-        this.toCard = this.context.target.find(card => card !== fromCard);
+        this.toCard = this.context.target.find((card) => card !== fromCard);
 
-        if(fromCard.power > 1) {
+        if (fromCard.power > 1) {
             this.game.promptWithMenu(this.context.player, this, {
                 activePrompt: {
                     menuTitle: 'Choose amount of power',
@@ -54,7 +60,14 @@ class ACaskOfAle extends DrawCard {
     }
 
     selectPowerAmount(player, amount) {
-        this.game.addMessage('{0} plays {1} to move {2} power from {3} to {4}', this.context.player, this, amount, this.fromCard, this.toCard);
+        this.game.addMessage(
+            '{0} plays {1} to move {2} power from {3} to {4}',
+            this.context.player,
+            this,
+            amount,
+            this.fromCard,
+            this.toCard
+        );
 
         this.game.resolveGameAction(
             GameActions.movePower({

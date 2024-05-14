@@ -7,7 +7,7 @@ class SelyseBaratheon extends DrawCard {
             effect: ability.effects.reduceCost({
                 playingTypes: 'marshal',
                 amount: 3,
-                match: card => card.getType() === 'attachment' && card.hasTrait('R\'hllor')
+                match: (card) => card.getType() === 'attachment' && card.hasTrait("R'hllor")
             })
         });
     }

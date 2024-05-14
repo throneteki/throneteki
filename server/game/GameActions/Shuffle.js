@@ -14,7 +14,7 @@ class Shuffle extends GameAction {
     }
 
     createEvent({ player }) {
-        return this.event('onDeckShuffled', { player }, event => {
+        return this.event('onDeckShuffled', { player }, (event) => {
             event.player.shuffleDrawDeck();
         });
     }

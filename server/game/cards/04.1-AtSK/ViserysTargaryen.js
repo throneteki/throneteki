@@ -5,13 +5,16 @@ class ViserysTargaryen extends DrawCard {
         this.persistentEffect({
             condition: () => this.isAttacking(),
             targetController: 'any',
-            match: card => card.hasTrait('King') && card.getType() === 'character',
+            match: (card) => card.hasTrait('King') && card.getType() === 'character',
             effect: ability.effects.mustBeDeclaredAsDefender()
         });
 
         this.interrupt({
             when: {
-                onPhaseEnded: event => event.phase === 'dominance' && this.opponentHasNoKing() && this.allowGameAction('gainPower')
+                onPhaseEnded: (event) =>
+                    event.phase === 'dominance' &&
+                    this.opponentHasNoKing() &&
+                    this.allowGameAction('gainPower')
             },
             handler: () => {
                 this.modifyPower(1);
@@ -22,7 +25,9 @@ class ViserysTargaryen extends DrawCard {
 
     opponentHasNoKing() {
         let opponents = this.game.getOpponents(this.controller);
-        return opponents.every(opponent => !opponent.anyCardsInPlay(card => card.hasTrait('King')));
+        return opponents.every(
+            (opponent) => !opponent.anyCardsInPlay((card) => card.hasTrait('King'))
+        );
     }
 }
 

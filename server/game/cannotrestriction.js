@@ -9,7 +9,7 @@ class CannotRestriction {
     }
 
     checkCondition(context) {
-        if(!this.condition) {
+        if (!this.condition) {
             return true;
         }
 

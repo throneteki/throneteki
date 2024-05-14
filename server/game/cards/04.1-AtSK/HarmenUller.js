@@ -4,7 +4,7 @@ class HarmenUller extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetLocation: 'hand',
-            match: card => card.hasTrait('Sand Snake'),
+            match: (card) => card.hasTrait('Sand Snake'),
             effect: ability.effects.gainAmbush(-1)
         });
     }

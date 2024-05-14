@@ -4,7 +4,7 @@ class StannisBaratheon extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetController: 'any',
-            effect: ability.effects.cannotStandMoreThan(2, card => card.getType() === 'character')
+            effect: ability.effects.cannotStandMoreThan(2, (card) => card.getType() === 'character')
         });
     }
 }

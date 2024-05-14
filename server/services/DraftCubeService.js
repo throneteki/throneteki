@@ -6,11 +6,12 @@ class DraftCubeService {
     }
 
     async getAll() {
-        return this.draftCubes.find({})
-            .then(draftCube => {
+        return this.draftCubes
+            .find({})
+            .then((draftCube) => {
                 return draftCube;
             })
-            .catch(err => {
+            .catch((err) => {
                 logger.error('Error fetching draft cubes %s', err);
 
                 throw new Error('Error occured fetching draft cubes');
@@ -18,11 +19,10 @@ class DraftCubeService {
     }
 
     async getById(id) {
-        return this.draftCubes.findOne({ _id: id })
-            .catch(err => {
-                logger.error('Unable to fetch draft cube %s', err);
-                throw new Error('Unable to fetch draft cube ' + id);
-            });
+        return this.draftCubes.findOne({ _id: id }).catch((err) => {
+            logger.error('Unable to fetch draft cube %s', err);
+            throw new Error('Unable to fetch draft cube ' + id);
+        });
     }
 
     async create(draftCube) {
@@ -44,7 +44,7 @@ class DraftCubeService {
             lastUpdated: new Date()
         };
 
-        return this.draftCubes.update({ _id: draftCube.id }, { '$set': properties });
+        return this.draftCubes.update({ _id: draftCube.id }, { $set: properties });
     }
 
     async delete(id) {
@@ -53,4 +53,3 @@ class DraftCubeService {
 }
 
 export default DraftCubeService;
-

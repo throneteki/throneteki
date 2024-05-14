@@ -1,5 +1,5 @@
 const DrawCard = require('../../drawcard');
-const {Tokens} = require('../../Constants');
+const { Tokens } = require('../../Constants');
 
 class Saltcliffe extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,11 +7,15 @@ class Saltcliffe extends DrawCard {
             title: 'Move gold',
             cost: ability.costs.kneelSelf(),
             target: {
-                cardCondition: card => card.location === 'play area' && !card.hasToken(Tokens.gold) && card.getType() === 'character' && card.hasTrait('Raider')
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    !card.hasToken(Tokens.gold) &&
+                    card.getType() === 'character' &&
+                    card.hasTrait('Raider')
             },
-            handler: context => {
+            handler: (context) => {
                 this.target = context.target;
-                if(this.game.anyCardsInPlay(card => card.hasToken(Tokens.gold))) {
+                if (this.game.anyCardsInPlay((card) => card.hasToken(Tokens.gold))) {
                     this.game.promptWithMenu(context.player, this, {
                         activePrompt: {
                             menuTitle: 'Move gold from treasury or card?',
@@ -24,15 +28,14 @@ class Saltcliffe extends DrawCard {
                     });
                 } else {
                     this.moveGoldFromTreasury(context.player);
-                } 
+                }
             }
         });
     }
 
     moveGoldFromTreasury(player) {
         this.target.modifyToken(Tokens.gold, 1);
-        this.game.addMessage('{0} kneels {1} to have {2} gain 1 gold',
-            player, this, this.target);
+        this.game.addMessage('{0} kneels {1} to have {2} gain 1 gold', player, this, this.target);
 
         return true;
     }
@@ -41,7 +44,7 @@ class Saltcliffe extends DrawCard {
         this.game.promptForSelect(player, {
             activePromptTitle: 'Select a card',
             source: this,
-            cardCondition: card => card.location === 'play area' && card.hasToken(Tokens.gold),
+            cardCondition: (card) => card.location === 'play area' && card.hasToken(Tokens.gold),
             onSelect: (player, card) => this.goldSourceSelected(player, card)
         });
 
@@ -50,8 +53,13 @@ class Saltcliffe extends DrawCard {
 
     goldSourceSelected(player, card) {
         this.game.transferGold({ from: card, to: this.target, amount: 1 });
-        this.game.addMessage('{0} uses {1} to move 1 gold from {2} to {3}',
-            player, this, card, this.target);
+        this.game.addMessage(
+            '{0} uses {1} to move 1 gold from {2} to {3}',
+            player,
+            this,
+            card,
+            this.target
+        );
 
         return true;
     }

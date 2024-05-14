@@ -1,17 +1,22 @@
 const range = require('lodash.range');
 
 const DrawCard = require('../../drawcard.js');
-const {Tokens} = require('../../Constants');
+const { Tokens } = require('../../Constants');
 
 class LannisportTreasury extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onPhaseStarted: event => event.phase === 'taxation' && this.controller.getSpendableGold() >= 1
+                onPhaseStarted: (event) =>
+                    event.phase === 'taxation' && this.controller.getSpendableGold() >= 1
             },
             handler: () => {
                 this.game.transferGold({ from: this.controller, to: this, amount: 1 });
-                this.game.addMessage('{0} moves 1 gold from their gold pool to {1}', this.controller, this);
+                this.game.addMessage(
+                    '{0} moves 1 gold from their gold pool to {1}',
+                    this.controller,
+                    this
+                );
             }
         });
 
@@ -20,9 +25,9 @@ class LannisportTreasury extends DrawCard {
             phase: 'marshal',
             condition: () => this.hasToken(Tokens.gold),
             cost: ability.costs.kneelSelf(),
-            handler: context => {
+            handler: (context) => {
                 let rangeArray = range(1, this.tokens[Tokens.gold] + 1).reverse();
-                let buttons = rangeArray.map(gold => {
+                let buttons = rangeArray.map((gold) => {
                     return { text: gold, method: 'moveGold', arg: gold };
                 });
 
@@ -39,7 +44,12 @@ class LannisportTreasury extends DrawCard {
 
     moveGold(player, gold) {
         this.game.transferGold({ from: this, to: player, amount: gold });
-        this.game.addMessage('{0} moves {1} gold from {2} to their gold pool', this.controller, gold, this);
+        this.game.addMessage(
+            '{0} moves {1} gold from {2} to their gold pool',
+            this.controller,
+            gold,
+            this
+        );
 
         return true;
     }

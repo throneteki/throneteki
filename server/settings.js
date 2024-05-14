@@ -29,16 +29,28 @@ const defaultTimerSettings = {
 function getUserWithDefaultsSet(user) {
     let userToReturn = user;
 
-    if(!userToReturn) {
+    if (!userToReturn) {
         return userToReturn;
     }
 
     userToReturn.settings = Object.assign({}, defaultSettings, userToReturn.settings);
-    userToReturn.settings.keywordSettings = Object.assign({}, defaultKeywordSettings, userToReturn.settings.keywordSettings);
-    userToReturn.settings.timerSettings = Object.assign({}, defaultTimerSettings, userToReturn.settings.timerSettings);
+    userToReturn.settings.keywordSettings = Object.assign(
+        {},
+        defaultKeywordSettings,
+        userToReturn.settings.keywordSettings
+    );
+    userToReturn.settings.timerSettings = Object.assign(
+        {},
+        defaultTimerSettings,
+        userToReturn.settings.timerSettings
+    );
     userToReturn.permissions = Object.assign({}, userToReturn.permissions);
-    userToReturn.promptedActionWindows = Object.assign({}, defaultWindows, userToReturn.promptedActionWindows);
-    if(!userToReturn.blockList) {
+    userToReturn.promptedActionWindows = Object.assign(
+        {},
+        defaultWindows,
+        userToReturn.promptedActionWindows
+    );
+    if (!userToReturn.blockList) {
         userToReturn.blockList = [];
     }
 

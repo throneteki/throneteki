@@ -4,17 +4,21 @@ class GhiscariElite extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardKneeled: event => (
+                onCardKneeled: (event) =>
                     event.card === this &&
-                    this.controller.discardPile.some(c => this.eventOrAttachmentInDiscard(c))
-                )
+                    this.controller.discardPile.some((c) => this.eventOrAttachmentInDiscard(c))
             },
             target: {
                 activePromptTitle: 'Select attachment or event',
-                cardCondition: card => this.eventOrAttachmentInDiscard(card)
+                cardCondition: (card) => this.eventOrAttachmentInDiscard(card)
             },
-            handler: context => {
-                this.game.addMessage('{0} uses {1} to place {2} on the bottom of their deck', this.controller, this, context.target);
+            handler: (context) => {
+                this.game.addMessage(
+                    '{0} uses {1} to place {2} on the bottom of their deck',
+                    this.controller,
+                    this,
+                    context.target
+                );
                 this.controller.moveCard(context.target, 'draw deck', { bottom: true });
             }
         });

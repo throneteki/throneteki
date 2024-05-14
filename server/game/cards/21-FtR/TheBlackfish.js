@@ -3,7 +3,8 @@ const DrawCard = require('../../drawcard.js');
 class TheBlackfish extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: card => card.getType() === 'character' && card.hasTrait('Army') && card.isFaction('stark'),
+            match: (card) =>
+                card.getType() === 'character' && card.hasTrait('Army') && card.isFaction('stark'),
             effect: ability.effects.addIcon('intrigue')
         });
     }

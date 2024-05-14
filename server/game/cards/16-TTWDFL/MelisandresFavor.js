@@ -9,7 +9,7 @@ class MelisandresFavor extends DrawCard {
 
         this.forcedInterrupt({
             when: {
-                onPhaseEnded: event => event.phase === 'dominance'
+                onPhaseEnded: (event) => event.phase === 'dominance'
             },
             message: '{player} is forced to sacrifice {source}',
             gameAction: GameActions.sacrificeCard({

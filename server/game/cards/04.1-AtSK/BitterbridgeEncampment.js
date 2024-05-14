@@ -4,7 +4,8 @@ class BitterbridgeEncampment extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onPlotsRevealed: event => event.plots.some(plot => plot.hasTrait('Summer')) && !this.kneeled
+                onPlotsRevealed: (event) =>
+                    event.plots.some((plot) => plot.hasTrait('Summer')) && !this.kneeled
             },
             handler: () => {
                 this.controller.kneelCard(this);
@@ -30,19 +31,22 @@ class BitterbridgeEncampment extends DrawCard {
     }
 
     doPutIntoPlay() {
-        for(let selection of this.selections) {
+        for (let selection of this.selections) {
             let player = selection.player;
             player.putIntoPlay(selection.card);
         }
     }
 
     proceedToNextStep() {
-        if(this.remainingPlayers.length > 0) {
+        if (this.remainingPlayers.length > 0) {
             let currentPlayer = this.remainingPlayers.shift();
             this.game.promptForSelect(currentPlayer, {
                 source: this,
-                cardCondition: card => card.controller === currentPlayer && card.getType() === 'character' && card.location === 'hand' &&
-                                       currentPlayer.canPutIntoPlay(card),
+                cardCondition: (card) =>
+                    card.controller === currentPlayer &&
+                    card.getType() === 'character' &&
+                    card.location === 'hand' &&
+                    currentPlayer.canPutIntoPlay(card),
                 onSelect: (player, card) => this.onCardSelected(player, card),
                 onCancel: (player) => this.cancelSelection(player)
             });

@@ -5,10 +5,10 @@ class DarkWingsDarkWords extends AgendaCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardPlayed: event => event.player === this.controller
+                onCardPlayed: (event) => event.player === this.controller
             },
             message: '{player} uses {source} to draw 1 card',
-            gameAction: GameActions.drawCards(context => ({
+            gameAction: GameActions.drawCards((context) => ({
                 amount: 1,
                 player: context.player
             })),

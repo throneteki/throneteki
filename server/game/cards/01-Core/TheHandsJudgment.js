@@ -5,8 +5,8 @@ class TheHandsJudgment extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCardAbilityInitiated: event => {
-                    if(event.source.getType() !== 'event' || event.player === this.controller) {
+                onCardAbilityInitiated: (event) => {
+                    if (event.source.getType() !== 'event' || event.player === this.controller) {
                         return false;
                     }
 
@@ -15,16 +15,21 @@ class TheHandsJudgment extends DrawCard {
                     return true;
                 }
             },
-            handler: context => {
+            handler: (context) => {
                 context.event.cancel();
 
-                this.game.addMessage('{0} plays {1} to cancel {2}', this.controller, this, context.event.source);
+                this.game.addMessage(
+                    '{0} plays {1} to cancel {2}',
+                    this.controller,
+                    this,
+                    context.event.source
+                );
             }
         });
     }
 
     getCost() {
-        if(!this.eventToInterrupt) {
+        if (!this.eventToInterrupt) {
             return super.getCost();
         }
 

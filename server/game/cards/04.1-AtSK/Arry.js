@@ -7,10 +7,14 @@ class Arry extends DrawCard {
             title: 'Draw 1 card',
             cost: ability.costs.returnSelfToHand(),
             condition: () => this.controller.canDraw(),
-            handler: context => {
+            handler: (context) => {
                 context.player.drawCardsToHand(1);
 
-                this.game.addMessage('{0} returns {1} to their hand and draws 1 card', context.player, this);
+                this.game.addMessage(
+                    '{0} returns {1} to their hand and draws 1 card',
+                    context.player,
+                    this
+                );
             }
         });
     }

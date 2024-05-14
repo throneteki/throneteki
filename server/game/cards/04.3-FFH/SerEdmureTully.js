@@ -4,21 +4,25 @@ class SerEdmureTully extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardPowerGained: event => event.card.getType() === 'character'
+                onCardPowerGained: (event) => event.card.getType() === 'character'
             },
             limit: ability.limit.perRound(1),
             target: {
-                cardCondition: (card, context) => (
+                cardCondition: (card, context) =>
                     card !== context.event.card &&
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
                     card.hasTrait('House Tully')
-                )
             },
-            handler: context => {
+            handler: (context) => {
                 this.game.movePower(context.event.card, context.target, 1);
-                this.game.addMessage('{0} uses {1} to move 1 power from {2} to {3}',
-                    this.controller, this, context.event.card, context.target);
+                this.game.addMessage(
+                    '{0} uses {1} to move 1 power from {2} to {3}',
+                    this.controller,
+                    this,
+                    context.event.card,
+                    context.target
+                );
             }
         });
     }

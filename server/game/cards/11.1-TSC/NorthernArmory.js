@@ -13,12 +13,20 @@ class NorthernArmory extends DrawCard {
             title: 'Stand a character',
             cost: ability.costs.kneelSelf(),
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.isFaction('stark'),
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    card.isFaction('stark'),
                 gameAction: 'stand'
             },
-            handler: context => {
+            handler: (context) => {
                 this.controller.standCard(context.target);
-                this.game.addMessage('{0} kneels {1} to stand {2}', this.controller, this, context.target);
+                this.game.addMessage(
+                    '{0} kneels {1} to stand {2}',
+                    this.controller,
+                    this,
+                    context.target
+                );
             }
         });
     }

@@ -23,10 +23,12 @@ class ChallengeKeywordAbility extends BaseAbility {
     }
 
     meetsRequirements(context) {
-        return context.source.hasKeyword(this.title) 
-            && context.source.allowGameAction(this.title, context) 
-            && this.meetsKeywordRequirements(context) 
-            && this.getTriggerAmount(context) > 0;
+        return (
+            context.source.hasKeyword(this.title) &&
+            context.source.allowGameAction(this.title, context) &&
+            this.meetsKeywordRequirements(context) &&
+            this.getTriggerAmount(context) > 0
+        );
     }
 }
 

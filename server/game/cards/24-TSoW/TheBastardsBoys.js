@@ -7,12 +7,23 @@ class TheBastardsBoys extends DrawCard {
             title: 'Sacrifice to put character into play',
             phase: 'challenge',
             target: {
-                cardCondition: { location: 'hand', controller: 'current', type: 'character', printedCostOrLower: 5, or: [{ not: { faction: 'stark' } }, { trait: 'House Bolton' }], condition: (card, context) => context.player.canPutIntoPlay(card) }
+                cardCondition: {
+                    location: 'hand',
+                    controller: 'current',
+                    type: 'character',
+                    printedCostOrLower: 5,
+                    or: [{ not: { faction: 'stark' } }, { trait: 'House Bolton' }],
+                    condition: (card, context) => context.player.canPutIntoPlay(card)
+                }
             },
             cost: ability.costs.sacrificeSelf(),
-            message: '{player} sacrifices {costs.sacrifice} to put {target} into play from their hand',
-            handler: context => {
-                this.game.resolveGameAction(GameActions.putIntoPlay({ card: context.target }), context);
+            message:
+                '{player} sacrifices {costs.sacrifice} to put {target} into play from their hand',
+            handler: (context) => {
+                this.game.resolveGameAction(
+                    GameActions.putIntoPlay({ card: context.target }),
+                    context
+                );
             }
         });
     }

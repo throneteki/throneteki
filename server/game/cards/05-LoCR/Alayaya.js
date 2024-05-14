@@ -4,16 +4,21 @@ class Alayaya extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: event => (
+                afterChallenge: (event) =>
                     event.challenge.winner === this.controller &&
                     this.isParticipating() &&
-                    event.challenge.loser.gold >= 1)
+                    event.challenge.loser.gold >= 1
             },
-            handler: context => {
+            handler: (context) => {
                 let otherPlayer = context.event.challenge.loser;
 
                 this.game.transferGold({ from: otherPlayer, to: this.controller, amount: 1 });
-                this.game.addMessage('{0} uses {1} to move 1 gold from {2}\'s gold pool to their own', this.controller, this, otherPlayer);
+                this.game.addMessage(
+                    "{0} uses {1} to move 1 gold from {2}'s gold pool to their own",
+                    this.controller,
+                    this,
+                    otherPlayer
+                );
             }
         });
     }

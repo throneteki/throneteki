@@ -11,7 +11,7 @@ class EndPhase extends GameAction {
 
     createEvent({ game }) {
         const phase = game.currentPhase;
-        return this.event('onPhaseEnded', { phase }, event => {
+        return this.event('onPhaseEnded', { phase }, (event) => {
             game.currentPhase = '';
 
             event.thenAttachEvent(this.event('onAtEndOfPhase', { phase }));

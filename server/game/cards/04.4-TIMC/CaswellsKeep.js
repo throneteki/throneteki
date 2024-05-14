@@ -4,17 +4,19 @@ class CaswellsKeep extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onPlotsRevealed: event => event.plots.some(plot => plot.controller === this.controller)
+                onPlotsRevealed: (event) =>
+                    event.plots.some((plot) => plot.controller === this.controller)
             },
             choosePlayer: true,
-            message:'{player} uses {source} to look at the top 2 cards of {chosenPlayer}\'s deck',
-            handler: context => {
+            message: "{player} uses {source} to look at the top 2 cards of {chosenPlayer}'s deck",
+            handler: (context) => {
                 this.selectedPlayer = context.chosenPlayer;
 
                 this.topCards = this.selectedPlayer.searchDrawDeck(2);
 
-                let buttons = this.topCards.map(card => ({
-                    method: 'selectCard', card: card
+                let buttons = this.topCards.map((card) => ({
+                    method: 'selectCard',
+                    card: card
                 }));
 
                 this.game.promptWithMenu(this.controller, this, {
@@ -29,16 +31,20 @@ class CaswellsKeep extends DrawCard {
     }
 
     selectCard(player, cardId) {
-        let card = this.topCards.find(c => c.uuid === cardId);
-        let otherCard = this.topCards.find(c => c.uuid !== cardId);
+        let card = this.topCards.find((c) => c.uuid === cardId);
+        let otherCard = this.topCards.find((c) => c.uuid !== cardId);
 
-        if(!card) {
+        if (!card) {
             return false;
         }
 
         this.selectedPlayer.moveCard(card, 'draw deck', { bottom: true });
         this.selectedPlayer.moveCard(otherCard, 'draw deck', { bottom: false });
-        this.game.addMessage('{0} placed 1 card on the bottom of {1}\'s deck and the rest on top', this.controller, this.selectedPlayer);
+        this.game.addMessage(
+            "{0} placed 1 card on the bottom of {1}'s deck and the rest on top",
+            this.controller,
+            this.selectedPlayer
+        );
 
         return true;
     }

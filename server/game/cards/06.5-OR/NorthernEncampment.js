@@ -8,7 +8,8 @@ class NorthernEncampment extends DrawCard {
 
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.game.currentPhase === 'standing' && !this.tracker.hasWonDominanceThisRound,
+            condition: () =>
+                this.game.currentPhase === 'standing' && !this.tracker.hasWonDominanceThisRound,
             match: this,
             effect: ability.effects.cannotBeStood()
         });
@@ -18,7 +19,7 @@ class NorthernEncampment extends DrawCard {
             phase: 'marshal',
             condition: () => this.controller.canGainGold(),
             cost: ability.costs.kneelSelf(),
-            handler: context => {
+            handler: (context) => {
                 let gold = this.game.addGold(context.player, 2);
                 this.game.addMessage('{0} kneels {1} to gain {2} gold', context.player, this, gold);
             }
@@ -29,8 +30,11 @@ class NorthernEncampment extends DrawCard {
 class DominanceTracker {
     constructor(game, card) {
         this.hasWonDominanceThisRound = undefined;
-        game.on('onDominanceDetermined', event => this.hasWonDominanceThisRound = card.controller === event.winner);
-        game.on('onRoundEnded', () => this.hasWonDominanceThisRound = undefined);
+        game.on(
+            'onDominanceDetermined',
+            (event) => (this.hasWonDominanceThisRound = card.controller === event.winner)
+        );
+        game.on('onRoundEnded', () => (this.hasWonDominanceThisRound = undefined));
     }
 }
 

@@ -6,15 +6,23 @@ class IronFleetScout extends DrawCard {
             title: 'Give character +STR',
             cost: ability.costs.kneelSelf(),
             target: {
-                cardCondition: card => card.getType() === 'character' && card.location === 'play area' &&
-                                       card.isParticipating() && card.isFaction('greyjoy')
+                cardCondition: (card) =>
+                    card.getType() === 'character' &&
+                    card.location === 'play area' &&
+                    card.isParticipating() &&
+                    card.isFaction('greyjoy')
             },
-            handler: context => {
+            handler: (context) => {
                 let strBoost = this.controller.firstPlayer ? 2 : 1;
-                this.game.addMessage('{0} kneels {1} to give {2} +{3} STR until the end of the challenge',
-                    this.controller, this, context.target, strBoost);
+                this.game.addMessage(
+                    '{0} kneels {1} to give {2} +{3} STR until the end of the challenge',
+                    this.controller,
+                    this,
+                    context.target,
+                    strBoost
+                );
 
-                this.untilEndOfChallenge(ability => ({
+                this.untilEndOfChallenge((ability) => ({
                     match: context.target,
                     effect: ability.effects.modifyStrength(strBoost)
                 }));

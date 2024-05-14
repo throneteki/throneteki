@@ -7,12 +7,14 @@ class Sellsails extends DrawCard {
             cost: ability.costs.discardGold(),
             limit: ability.limit.perPhase(1),
             target: {
-                cardCondition: card => card.location === 'play area' && card.kneeled &&
-                                       (card.hasTrait('Smuggler') || card.hasTrait('Warship')),
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.kneeled &&
+                    (card.hasTrait('Smuggler') || card.hasTrait('Warship')),
                 gameAction: 'stand'
             },
             message: '{player} discards 1 gold from {source} to stand {target}',
-            handler: context => {
+            handler: (context) => {
                 context.target.controller.standCard(context.target);
             }
         });

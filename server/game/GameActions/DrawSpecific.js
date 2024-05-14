@@ -7,18 +7,18 @@ class DrawSpecific extends GameAction {
     }
 
     message({ player, cards }) {
-        const drawableCards = cards.filter(card => card.location === 'draw deck');
+        const drawableCards = cards.filter((card) => card.location === 'draw deck');
         const actualDraw = drawableCards.slice(0, player.getNumCardsToDraw(drawableCards.length));
         return Message.fragment('draws {cards}', { cards: actualDraw });
     }
 
     canChangeGameState({ player, cards }) {
-        const drawableCards = cards.filter(card => card.location === 'draw deck');
+        const drawableCards = cards.filter((card) => card.location === 'draw deck');
         return player.getNumCardsToDraw(drawableCards.length) > 0;
     }
 
     createEvent({ player, cards, reason = 'ability', source }) {
-        const drawableCards = cards.filter(card => card.location === 'draw deck');
+        const drawableCards = cards.filter((card) => card.location === 'draw deck');
         const actualDraw = drawableCards.slice(0, player.getNumCardsToDraw(drawableCards.length));
         const eventProps = {
             cards: actualDraw,
@@ -27,13 +27,17 @@ class DrawSpecific extends GameAction {
             reason,
             source
         };
-        return this.event('onCardsDrawn', eventProps, event => {
-            for(const card of cards) {
+        return this.event('onCardsDrawn', eventProps, (event) => {
+            for (const card of cards) {
                 event.thenAttachEvent(
-                    this.event('onCardDrawn', { card, player: event.player, reason, source }, () => {
-                        player.placeCardInPile({ card, location: 'hand' });
-                        player.drawnCards += 1;
-                    })
+                    this.event(
+                        'onCardDrawn',
+                        { card, player: event.player, reason, source },
+                        () => {
+                            player.placeCardInPile({ card, location: 'hand' });
+                            player.drawnCards += 1;
+                        }
+                    )
                 );
             }
 

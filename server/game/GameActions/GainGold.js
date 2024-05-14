@@ -17,12 +17,16 @@ class GainGold extends GameAction {
 
     createEvent({ player, amount }) {
         let actualAmount = player.getGoldToGain(amount);
-        const isFullyResolved = event => event.amount === event.desiredAmount;
-        return this.event('onGoldGained', { player, amount: actualAmount, desiredAmount: amount, isFullyResolved }, event => {
-            event.player.gainedGold += event.amount;
+        const isFullyResolved = (event) => event.amount === event.desiredAmount;
+        return this.event(
+            'onGoldGained',
+            { player, amount: actualAmount, desiredAmount: amount, isFullyResolved },
+            (event) => {
+                event.player.gainedGold += event.amount;
 
-            event.player.modifyGold(event.amount);
-        });
+                event.player.modifyGold(event.amount);
+            }
+        );
     }
 }
 

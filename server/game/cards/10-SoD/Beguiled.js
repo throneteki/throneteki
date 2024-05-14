@@ -6,15 +6,21 @@ class Beguiled extends DrawCard {
             title: 'Remove icon',
             phase: 'challenge',
             cost: ability.costs.kneelSelf(),
-            handler: context => {
-                this.game.promptForIcon(context.player, this, icon => {
-                    this.untilEndOfPhase(ability => ({
+            handler: (context) => {
+                this.game.promptForIcon(context.player, this, (icon) => {
+                    this.untilEndOfPhase((ability) => ({
                         match: this.parent,
                         effect: ability.effects.removeIcon(icon)
                     }));
 
-                    this.game.addMessage('{0} kneels {1} to remove {2} {3} icon from {4}',
-                        context.player, this, icon === 'intrigue' ? 'an' : 'a', icon, this.parent);
+                    this.game.addMessage(
+                        '{0} kneels {1} to remove {2} {3} icon from {4}',
+                        context.player,
+                        this,
+                        icon === 'intrigue' ? 'an' : 'a',
+                        icon,
+                        this.parent
+                    );
                 });
             }
         });

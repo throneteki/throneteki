@@ -9,7 +9,7 @@ class NewsService {
         var params = {};
 
         params.sort = { datePublished: -1 };
-        if(options.limit) {
+        if (options.limit) {
             params.limit = parseInt(options.limit);
         }
 
@@ -17,11 +17,12 @@ class NewsService {
     }
 
     addNews(news) {
-        return this.news.insert(news)
-            .then(result => {
+        return this.news
+            .insert(news)
+            .then((result) => {
                 return result;
             })
-            .catch(err => {
+            .catch((err) => {
                 logger.error('Error adding news item %s', err);
 
                 throw new Error('Error occured adding news item');
@@ -29,11 +30,12 @@ class NewsService {
     }
 
     editNews(id, text) {
-        return this.news.update({ _id: id }, { '$set': { text: text } })
+        return this.news
+            .update({ _id: id }, { $set: { text: text } })
             .then(() => {
                 return true;
             })
-            .catch(err => {
+            .catch((err) => {
                 logger.error('Error saving news item %s', err);
 
                 throw new Error('Error occured saving news item');
@@ -41,11 +43,12 @@ class NewsService {
     }
 
     deleteNews(id) {
-        return this.news.remove({_id: id})
+        return this.news
+            .remove({ _id: id })
             .then(() => {
                 return true;
             })
-            .catch(err => {
+            .catch((err) => {
                 logger.error('Error deleting news item %s %s', err, id);
 
                 throw new Error('Error occured deleting news item');

@@ -5,7 +5,11 @@ class WardensOfTheEast extends PlotCard {
         this.persistentEffect({
             targetController: 'any',
             effect: [
-                ability.effects.cannotPlay(card => card.getPrintedType() === 'event' && card.isFaction(card.controller.faction.getPrintedFaction())),
+                ability.effects.cannotPlay(
+                    (card) =>
+                        card.getPrintedType() === 'event' &&
+                        card.isFaction(card.controller.faction.getPrintedFaction())
+                ),
                 ability.effects.revealShadows()
             ]
         });

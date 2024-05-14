@@ -5,16 +5,15 @@ class FistOfTheFirstMen extends DrawCard {
         this.persistentEffect({
             condition: () => this.hasHigherReserveThanOpponent(),
             match: (card) => card.getType() === 'character' && card.hasTrait('Ranger'),
-            effect: [
-                ability.effects.modifyStrength(1),
-                ability.effects.cannotBeBypassedByStealth()
-            ]
+            effect: [ability.effects.modifyStrength(1), ability.effects.cannotBeBypassedByStealth()]
         });
     }
 
     hasHigherReserveThanOpponent() {
         let opponents = this.game.getOpponents(this.controller);
-        return opponents.some(opponent => this.controller.getTotalReserve() > opponent.getTotalReserve());
+        return opponents.some(
+            (opponent) => this.controller.getTotalReserve() > opponent.getTotalReserve()
+        );
     }
 }
 

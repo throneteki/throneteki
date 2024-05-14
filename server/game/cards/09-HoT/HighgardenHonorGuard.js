@@ -10,7 +10,9 @@ class HighgardenHonorGuard extends DrawCard {
     }
 
     getNumberOfReachLocations() {
-        return this.controller.getNumberOfCardsInPlay(card => card.getType() === 'location' && card.hasTrait('The Reach'));
+        return this.controller.getNumberOfCardsInPlay(
+            (card) => card.getType() === 'location' && card.hasTrait('The Reach')
+        );
     }
 }
 

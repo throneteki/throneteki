@@ -10,21 +10,21 @@ class TheStormlands extends DrawCard {
 
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.isMatch({ winner: this.controller, challengeType: 'power' })
+                afterChallenge: (event) =>
+                    event.challenge.isMatch({ winner: this.controller, challengeType: 'power' })
             },
             cost: ability.costs.kneelSelf(),
             target: {
-                cardCondition: card => (
+                cardCondition: (card) =>
                     card.isParticipating() &&
                     card.getType() === 'character' &&
-                    (card.hasTrait('King') || card.hasTrait('Queen'))
-                ),
+                    (card.hasTrait('King') || card.hasTrait('Queen')),
                 gameAction: 'stand'
             },
             message: '{player} kneels {source} to stand {target}',
-            handler: context => {
+            handler: (context) => {
                 this.game.resolveGameAction(
-                    GameActions.standCard(context => ({ card: context.target })),
+                    GameActions.standCard((context) => ({ card: context.target })),
                     context
                 );
             }

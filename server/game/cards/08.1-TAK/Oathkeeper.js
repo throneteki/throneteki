@@ -9,18 +9,19 @@ class Oathkeeper extends DrawCard {
 
         this.reaction({
             when: {
-                afterChallenge: event =>
+                afterChallenge: (event) =>
                     event.challenge.winner === this.controller &&
                     event.challenge.strengthDifference >= 5 &&
                     event.challenge.isParticipating(this.parent)
             },
             cost: ability.costs.sacrificeSelf(),
-            message: '{player} sacrifices {costs.sacrifice} to search their deck for a non-Tyrell character',
+            message:
+                '{player} sacrifices {costs.sacrifice} to search their deck for a non-Tyrell character',
             gameAction: GameActions.search({
                 title: 'Select a character',
                 match: { type: 'character', not: { faction: 'tyrell' } },
                 message: '{player} {gameAction}',
-                gameAction: GameActions.addToHand(context => ({
+                gameAction: GameActions.addToHand((context) => ({
                     card: context.searchTarget
                 }))
             })

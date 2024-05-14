@@ -4,21 +4,32 @@ class FalsePlans extends DrawCard {
     setupCardAbilities() {
         this.action({
             phase: 'challenge',
-            chooseOpponent: opponent => opponent.hand.length !== 0,
-            handler: context => {
-                this.game.addMessage('{0} plays {1} to have {2} discard 1 card at random', context.player, this, context.opponent);
+            chooseOpponent: (opponent) => opponent.hand.length !== 0,
+            handler: (context) => {
+                this.game.addMessage(
+                    '{0} plays {1} to have {2} discard 1 card at random',
+                    context.player,
+                    this,
+                    context.opponent
+                );
                 context.opponent.discardAtRandom(1);
             }
         });
         this.reaction({
             when: {
-                onCardDiscarded: event => event.card === this && this.isApplyingIntrigueClaimFromOpponent()
+                onCardDiscarded: (event) =>
+                    event.card === this && this.isApplyingIntrigueClaimFromOpponent()
             },
             ignoreEventCosts: true,
             location: 'discard pile',
-            handler: context => {
+            handler: (context) => {
                 let opponent = this.game.currentChallenge.winner;
-                this.game.addMessage('{0} uses {1} to have {2} discard 2 cards at random', context.player, this, opponent);
+                this.game.addMessage(
+                    '{0} uses {1} to have {2} discard 2 cards at random',
+                    context.player,
+                    this,
+                    opponent
+                );
                 opponent.discardAtRandom(2);
             }
         });

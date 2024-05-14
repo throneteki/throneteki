@@ -8,25 +8,26 @@ class LayWaste extends DrawCard {
             phase: 'dominance',
             target: {
                 activePromptTitle: 'Select a non-limited location or attachment',
-                cardCondition: card => card.isMatch({
-                    location: 'play area',
-                    type: ['attachment', 'location'],
-                    limited: false
-                }),
+                cardCondition: (card) =>
+                    card.isMatch({
+                        location: 'play area',
+                        type: ['attachment', 'location'],
+                        limited: false
+                    }),
                 gameAction: 'discard'
             },
             message: '{player} plays {source} to discard {target} from play',
-            handler: context => {
+            handler: (context) => {
                 this.game.resolveGameAction(
-                    GameActions.discardCard(context => ({
+                    GameActions.discardCard((context) => ({
                         card: context.target
                     })).then({
                         message: {
                             format: 'Then, {targetOwner} searches their deck for an attachment or location with a lower printed cost',
-                            args: { targetOwner: context => context.parentContext.target.owner }
+                            args: { targetOwner: (context) => context.parentContext.target.owner }
                         },
                         gameAction: GameActions.search({
-                            player: context => context.parentContext.target.owner,
+                            player: (context) => context.parentContext.target.owner,
                             title: 'Select a card',
                             match: {
                                 type: ['attachment', 'location'],
@@ -35,9 +36,11 @@ class LayWaste extends DrawCard {
                             reveal: false,
                             message: {
                                 format: '{targetOwner} {gameAction}',
-                                args: { targetOwner: context => context.parentContext.target.owner }
+                                args: {
+                                    targetOwner: (context) => context.parentContext.target.owner
+                                }
                             },
-                            gameAction: GameActions.putIntoPlay(context => ({
+                            gameAction: GameActions.putIntoPlay((context) => ({
                                 player: context.parentContext.target.owner,
                                 card: context.searchTarget
                             }))

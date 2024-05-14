@@ -3,12 +3,12 @@ const DrawCard = require('../../drawcard.js');
 class Penny extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.game.getOpponents(this.controller).every(opponent => opponent.shadows.length < this.controller.shadows.length),
+            condition: () =>
+                this.game
+                    .getOpponents(this.controller)
+                    .every((opponent) => opponent.shadows.length < this.controller.shadows.length),
             match: this,
-            effect: [
-                ability.effects.addIcon('intrigue'),
-                ability.effects.addKeyword('stealth')
-            ]            
+            effect: [ability.effects.addIcon('intrigue'), ability.effects.addKeyword('stealth')]
         });
     }
 }

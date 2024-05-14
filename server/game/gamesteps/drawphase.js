@@ -14,11 +14,9 @@ class DrawPhase extends Phase {
 
     draw() {
         const players = this.game.getPlayers();
-        const actions = players.map(player => this.createAction(player));
+        const actions = players.map((player) => this.createAction(player));
 
-        this.game.resolveGameAction(
-            GameActions.simultaneously(actions)
-        );
+        this.game.resolveGameAction(GameActions.simultaneously(actions));
     }
 
     createAction(player) {
@@ -26,7 +24,7 @@ class DrawPhase extends Phase {
             amount: player.drawPhaseCards,
             player,
             reason: 'drawPhase'
-        }).thenExecute(event => {
+        }).thenExecute((event) => {
             this.game.addMessage('{0} draws {1} cards', event.player, event.amount);
         });
     }

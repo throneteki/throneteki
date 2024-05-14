@@ -6,16 +6,23 @@ class CerseisInformer extends DrawCard {
             title: 'Draw card',
             limit: ability.limit.perRound(1),
             condition: () => this.controller.canDraw(),
-            cost: ability.costs.moveTokenFromSelf('gold', 1, card => this.destinationCondition(card)),
-            handler: context => {
+            cost: ability.costs.moveTokenFromSelf('gold', 1, (card) =>
+                this.destinationCondition(card)
+            ),
+            handler: (context) => {
                 context.player.drawCardsToHand(1);
-                this.game.addMessage('{0} moves 1 gold from {1} to {2} to draw 1 card',
-                    context.player, this, context.costs.moveTokenFromSelf);
+                this.game.addMessage(
+                    '{0} moves 1 gold from {1} to {2} to draw 1 card',
+                    context.player,
+                    this,
+                    context.costs.moveTokenFromSelf
+                );
 
                 this.game.promptForSelect(context.player, {
                     activePromptTitle: 'Select a card',
                     source: this,
-                    cardCondition: card => card.location === 'hand' && card.controller === context.player,
+                    cardCondition: (card) =>
+                        card.location === 'hand' && card.controller === context.player,
                     onSelect: (player, card) => this.cardSelected(player, card)
                 });
             }
@@ -29,7 +36,11 @@ class CerseisInformer extends DrawCard {
     }
 
     destinationCondition(card) {
-        return !card.hasTrait('Spy') && card.location === 'play area' && card.controller === this.controller;
+        return (
+            !card.hasTrait('Spy') &&
+            card.location === 'play area' &&
+            card.controller === this.controller
+        );
     }
 }
 

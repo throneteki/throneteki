@@ -4,14 +4,19 @@ class WhatIsDeadMayNeverDie extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onDominanceDetermined: event => this.controller === event.winner
+                onDominanceDetermined: (event) => this.controller === event.winner
             },
             target: {
-                cardCondition: card => this.cardCondition(card)
+                cardCondition: (card) => this.cardCondition(card)
             },
-            handler: context => {
+            handler: (context) => {
                 context.player.putIntoPlay(context.target);
-                this.game.addMessage('{0} plays {1} to put {2} into play from their dead pile', context.player, this, context.target);
+                this.game.addMessage(
+                    '{0} plays {1} to put {2} into play from their dead pile',
+                    context.player,
+                    this,
+                    context.target
+                );
             }
         });
     }

@@ -7,7 +7,9 @@ class DragonglassDagger extends DrawCard {
             condition: () => this.parent.isParticipating(),
             effect: [
                 ability.effects.modifyStrength(2),
-                ability.effects.immuneTo(card => card.controller !== this.controller && card.getType() === 'character')
+                ability.effects.immuneTo(
+                    (card) => card.controller !== this.controller && card.getType() === 'character'
+                )
             ]
         });
     }

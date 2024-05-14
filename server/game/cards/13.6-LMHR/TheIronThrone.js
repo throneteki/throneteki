@@ -7,7 +7,7 @@ class TheIronThrone extends DrawCard {
                 onPhaseStarted: () => true
             },
             cost: ability.costs.kneelSelf(),
-            handler: context => {
+            handler: (context) => {
                 this.game.promptForCardName({
                     player: context.player,
                     onSelect: (player, cardName) => this.selectCardName(player, cardName),
@@ -19,12 +19,18 @@ class TheIronThrone extends DrawCard {
 
     selectCardName(player, cardName) {
         this.game.addMessage('{0} kneels {1} to name {2}', player, this, cardName);
-        this.untilEndOfPhase(ability => ({
+        this.untilEndOfPhase((ability) => ({
             targetController: 'any',
             effect: [
-                ability.effects.cannotMarshal(card => card.name.toLowerCase() === cardName.toLowerCase()),
-                ability.effects.cannotPlay(card => card.name.toLowerCase() === cardName.toLowerCase()),
-                ability.effects.cannotPutIntoPlay(card => card.name.toLowerCase() === cardName.toLowerCase())
+                ability.effects.cannotMarshal(
+                    (card) => card.name.toLowerCase() === cardName.toLowerCase()
+                ),
+                ability.effects.cannotPlay(
+                    (card) => card.name.toLowerCase() === cardName.toLowerCase()
+                ),
+                ability.effects.cannotPutIntoPlay(
+                    (card) => card.name.toLowerCase() === cardName.toLowerCase()
+                )
             ]
         }));
     }

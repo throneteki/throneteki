@@ -4,7 +4,7 @@ class VaramyrSixskins extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onPhaseStarted: event => event.phase === 'challenge'
+                onPhaseStarted: (event) => event.phase === 'challenge'
             },
             handler: () => {
                 this.game.promptWithMenu(this.controller, this, {
@@ -24,21 +24,22 @@ class VaramyrSixskins extends DrawCard {
     }
 
     bearSelected() {
-        this.untilEndOfPhase(ability => ({
+        this.untilEndOfPhase((ability) => ({
             match: this,
-            effect: [
-                ability.effects.addTrait('Bear'),
-                ability.effects.modifyStrength(5)
-            ]
+            effect: [ability.effects.addTrait('Bear'), ability.effects.modifyStrength(5)]
         }));
 
-        this.game.addMessage('{0} uses {1} and has it gain the Bear trait and 5 STR until the end of the phase', this.controller, this);
+        this.game.addMessage(
+            '{0} uses {1} and has it gain the Bear trait and 5 STR until the end of the phase',
+            this.controller,
+            this
+        );
 
         return true;
     }
 
     eagleSelected() {
-        this.untilEndOfPhase(ability => ({
+        this.untilEndOfPhase((ability) => ({
             match: this,
             effect: [
                 ability.effects.addTrait('Eagle'),
@@ -47,13 +48,18 @@ class VaramyrSixskins extends DrawCard {
             ]
         }));
 
-        this.game.addMessage('{0} uses {1} and has it gain the Eagle trait, an {2} icon and insight until the end of the phase', this.controller, this, 'intrigue');
+        this.game.addMessage(
+            '{0} uses {1} and has it gain the Eagle trait, an {2} icon and insight until the end of the phase',
+            this.controller,
+            this,
+            'intrigue'
+        );
 
         return true;
     }
 
     catSelected() {
-        this.untilEndOfPhase(ability => ({
+        this.untilEndOfPhase((ability) => ({
             match: this,
             effect: [
                 ability.effects.addTrait('Cat'),
@@ -62,13 +68,18 @@ class VaramyrSixskins extends DrawCard {
             ]
         }));
 
-        this.game.addMessage('{0} uses {1} and has it gain the Cat trait, an {2} icon and stealth until the end of the phase', this.controller, this, 'power');
+        this.game.addMessage(
+            '{0} uses {1} and has it gain the Cat trait, an {2} icon and stealth until the end of the phase',
+            this.controller,
+            this,
+            'power'
+        );
 
         return true;
     }
 
     wolfSelected() {
-        this.untilEndOfPhase(ability => ({
+        this.untilEndOfPhase((ability) => ({
             match: this,
             effect: [
                 ability.effects.addTrait('Wolf'),
@@ -77,7 +88,11 @@ class VaramyrSixskins extends DrawCard {
             ]
         }));
 
-        this.game.addMessage('{0} uses {1} and has it gain the Wolf trait, intimidate and 2 STR until the end of the phase', this.controller, this);
+        this.game.addMessage(
+            '{0} uses {1} and has it gain the Wolf trait, intimidate and 2 STR until the end of the phase',
+            this.controller,
+            this
+        );
 
         return true;
     }

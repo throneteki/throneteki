@@ -5,17 +5,22 @@ class PaidOff extends DrawCard {
         this.attachmentRestriction({ controller: 'opponent' });
         this.reaction({
             when: {
-                afterChallenge: event =>
+                afterChallenge: (event) =>
                     event.challenge.challengeType === 'intrigue' &&
                     !this.parent.kneeled &&
                     event.challenge.winner === this.controller
             },
             handler: () => {
                 this.parent.controller.kneelCard(this.parent);
-                this.game.addMessage('{0} uses {1} to kneel {2}', this.controller, this, this.parent);
+                this.game.addMessage(
+                    '{0} uses {1} to kneel {2}',
+                    this.controller,
+                    this,
+                    this.parent
+                );
 
                 let player = this.parent.controller;
-                if(player.getSpendableGold({ activePlayer: player }) < 1) {
+                if (player.getSpendableGold({ activePlayer: player }) < 1) {
                     this.cancel(player);
                     return false;
                 }
@@ -35,7 +40,7 @@ class PaidOff extends DrawCard {
     }
 
     stand(player) {
-        if(player.getSpendableGold({ activePlayer: player }) < 1) {
+        if (player.getSpendableGold({ activePlayer: player }) < 1) {
             return false;
         }
 
@@ -48,8 +53,12 @@ class PaidOff extends DrawCard {
     }
 
     cancel(player) {
-        this.game.addMessage('{0} does not pay 1 gold for {1} so {2} remains kneeled',
-            player, this, this.parent);
+        this.game.addMessage(
+            '{0} does not pay 1 gold for {1} so {2} remains kneeled',
+            player,
+            this,
+            this.parent
+        );
 
         return true;
     }

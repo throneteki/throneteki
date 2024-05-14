@@ -3,10 +3,7 @@ const DrawCard = require('../../drawcard.js');
 class Knighted extends DrawCard {
     setupCardAbilities(ability) {
         this.whileAttached({
-            effect: [
-                ability.effects.modifyStrength(1),
-                ability.effects.addTrait('Knight')
-            ]
+            effect: [ability.effects.modifyStrength(1), ability.effects.addTrait('Knight')]
         });
     }
 }

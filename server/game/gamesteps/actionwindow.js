@@ -11,7 +11,7 @@ class ActionWindow extends PlayerOrderPrompt {
     continue() {
         let completed = super.continue();
 
-        if(!completed) {
+        if (!completed) {
             this.game.currentActionWindow = this;
         } else {
             this.game.currentActionWindow = null;
@@ -23,19 +23,19 @@ class ActionWindow extends PlayerOrderPrompt {
     activePrompt() {
         return {
             menuTitle: 'Initiate an action',
-            buttons: [
-                { text: 'Pass' }
-            ],
+            buttons: [{ text: 'Pass' }],
             promptTitle: this.title
         };
     }
 
     skipCondition() {
-        return this.game.getPlayersInFirstPlayerOrder().every(player => !player.promptedActionWindows[this.windowName]);
+        return this.game
+            .getPlayersInFirstPlayerOrder()
+            .every((player) => !player.promptedActionWindows[this.windowName]);
     }
 
     onMenuCommand(player) {
-        if(this.currentPlayer !== player) {
+        if (this.currentPlayer !== player) {
             return false;
         }
 

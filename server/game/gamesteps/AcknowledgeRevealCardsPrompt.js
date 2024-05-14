@@ -5,11 +5,13 @@ class AcknowledgeRevealCardsPrompt extends UiPrompt {
     constructor(game, cards, player, source) {
         super(game);
         this.cards = cards;
-        this.revealLocations = [...new Set(cards.map(card => card.location))];
-        this.revealers = player ? [player] : [...new Set(cards.map(card => card.controller))];
-        this.acknowledgers = this.game.getPlayers().filter(player => cards.some(card => card.controller !== player));
+        this.revealLocations = [...new Set(cards.map((card) => card.location))];
+        this.revealers = player ? [player] : [...new Set(cards.map((card) => card.controller))];
+        this.acknowledgers = this.game
+            .getPlayers()
+            .filter((player) => cards.some((card) => card.controller !== player));
         this.source = source;
-        this.clickedButton = { };
+        this.clickedButton = {};
     }
 
     activeCondition(player) {
@@ -20,14 +22,14 @@ class AcknowledgeRevealCardsPrompt extends UiPrompt {
         return {
             promptTitle: `Acknowledge Revealed Card${this.cards.length > 1 ? 's' : ''}`,
             menuTitle: this.buildTitle(),
-            buttons: [
-                { text: 'Continue' }
-            ]
+            buttons: [{ text: 'Continue' }]
         };
     }
 
     waitingPrompt() {
-        return { menuTitle: `Waiting for other player(s) to acknowledge revealed card${this.cards.length > 1 ? 's' : ''}` };
+        return {
+            menuTitle: `Waiting for other player(s) to acknowledge revealed card${this.cards.length > 1 ? 's' : ''}`
+        };
     }
 
     onMenuCommand(player) {
@@ -41,11 +43,14 @@ class AcknowledgeRevealCardsPrompt extends UiPrompt {
     }
 
     isComplete() {
-        return this.game.disableRevealAcknowledgement || this.acknowledgers.every(acknowledger => this.completionCondition(acknowledger));
+        return (
+            this.game.disableRevealAcknowledgement ||
+            this.acknowledgers.every((acknowledger) => this.completionCondition(acknowledger))
+        );
     }
 
     buildTitle() {
-        if(this.revealers.length > 1) {
+        if (this.revealers.length > 1) {
             return 'Multiple players are revealing cards';
         }
 
@@ -57,7 +62,7 @@ class AcknowledgeRevealCardsPrompt extends UiPrompt {
             TextHelper.formatList(this.revealLocations, 'and')
         ];
 
-        if(this.source) {
+        if (this.source) {
             elements.push(`for ${this.source.name}`);
         }
         return elements.join(' ');

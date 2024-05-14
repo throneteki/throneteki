@@ -9,13 +9,19 @@ class TheAnnalsOfCastleBlack extends PlotCard {
 
         this.forcedReaction({
             when: {
-                onCardPlaced: event => event.card.getType() === 'event' && event.location === 'discard pile'
+                onCardPlaced: (event) =>
+                    event.card.getType() === 'event' && event.location === 'discard pile'
             },
-            handler: context => {
+            handler: (context) => {
                 let eventCard = context.event.card;
                 let player = eventCard.controller;
 
-                this.game.addMessage('{0} is forced by {1} to remove {2} from the game', player, this, eventCard);
+                this.game.addMessage(
+                    '{0} is forced by {1} to remove {2} from the game',
+                    player,
+                    this,
+                    eventCard
+                );
                 player.moveCard(eventCard, 'out of game');
             }
         });

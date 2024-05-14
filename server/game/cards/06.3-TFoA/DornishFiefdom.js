@@ -7,7 +7,7 @@ class DornishFiefdom extends DrawCard {
             phase: 'marshal',
             condition: () => this.controller.canGainGold(),
             cost: ability.costs.kneelSelf(),
-            handler: context => {
+            handler: (context) => {
                 let gold = !this.controller.firstPlayer ? 2 : 1;
                 gold = this.game.addGold(context.player, gold);
 

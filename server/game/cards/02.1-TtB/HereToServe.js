@@ -10,7 +10,7 @@ class HereToServe extends PlotCard {
                 match: { type: 'character', trait: 'Maester', printedCostOrLower: 3 },
                 reveal: false,
                 message: '{player} {gameAction}',
-                gameAction: GameActions.putIntoPlay(context => ({
+                gameAction: GameActions.putIntoPlay((context) => ({
                     card: context.searchTarget
                 }))
             })

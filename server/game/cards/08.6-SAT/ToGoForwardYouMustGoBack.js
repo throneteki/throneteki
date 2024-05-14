@@ -6,9 +6,10 @@ class ToGoForwardYouMustGoBack extends DrawCard {
         this.action({
             title: 'Shuffle hand',
             phase: 'dominance',
-            message: '{player} plays {source} to allow each player to shuffle their hand into their deck and draw 5 cards',
-            gameAction: GameActions.simultaneously(context => 
-                context.game.getPlayersInFirstPlayerOrder().map(player =>
+            message:
+                '{player} plays {source} to allow each player to shuffle their hand into their deck and draw 5 cards',
+            gameAction: GameActions.simultaneously((context) =>
+                context.game.getPlayersInFirstPlayerOrder().map((player) =>
                     GameActions.may({
                         player,
                         title: 'Shuffle your hand and draw 5 cards?',
@@ -16,10 +17,9 @@ class ToGoForwardYouMustGoBack extends DrawCard {
                             format: '{selectingPlayer} chooses to shuffle their hand into their deck and draw 5 cards',
                             args: { selectingPlayer: () => player }
                         },
-                        gameAction: GameActions.shuffleIntoDeck({ cards: player.hand })
-                            .then({
-                                gameAction: GameActions.drawCards({ player, amount: 5, source: this })
-                            })
+                        gameAction: GameActions.shuffleIntoDeck({ cards: player.hand }).then({
+                            gameAction: GameActions.drawCards({ player, amount: 5, source: this })
+                        })
                     })
                 )
             )

@@ -8,9 +8,7 @@ class SetupCardsPrompt extends AllPlayerPrompt {
     activePrompt() {
         return {
             menuTitle: 'Select setup cards',
-            buttons: [
-                { arg: 'setupdone', text: 'Done' }
-            ]
+            buttons: [{ arg: 'setupdone', text: 'Done' }]
         };
     }
 

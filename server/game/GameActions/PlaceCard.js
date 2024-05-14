@@ -8,10 +8,10 @@ class PlaceCard extends GameAction {
 
     canChangeGameState({ player, card, location, bottom = false }) {
         player = location === 'play area' ? player || card.controller : card.owner;
-        if(location === 'draw deck') {
+        if (location === 'draw deck') {
             return (
-                player.drawDeck[0] !== card && !bottom ||
-                player.drawDeck[player.drawDeck.length - 1] !== card && bottom
+                (player.drawDeck[0] !== card && !bottom) ||
+                (player.drawDeck[player.drawDeck.length - 1] !== card && bottom)
             );
         }
 
@@ -19,7 +19,13 @@ class PlaceCard extends GameAction {
     }
 
     createEvent({ card, player, location, bottom = false, orderable }) {
-        return MoveCardEventGenerator.createPlaceCardEvent({ card, player, location, bottom, orderable });
+        return MoveCardEventGenerator.createPlaceCardEvent({
+            card,
+            player,
+            location,
+            bottom,
+            orderable
+        });
     }
 }
 

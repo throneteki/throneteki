@@ -6,18 +6,20 @@ class LyseniGalley extends DrawCard {
             title: 'Give +1 STR',
             cost: ability.costs.kneelSelf(),
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character'
+                cardCondition: (card) =>
+                    card.location === 'play area' && card.getType() === 'character'
             },
             message: {
                 format: '{player} kneels {source} to give {target} +1 STR {additionalEffect}',
                 args: {
-                    additionalEffect: context => this.isSmugglerOrCaptain(context.target) ? 'and stealth' : ''
+                    additionalEffect: (context) =>
+                        this.isSmugglerOrCaptain(context.target) ? 'and stealth' : ''
                 }
             },
-            handler: context => {
+            handler: (context) => {
                 let effects = [ability.effects.modifyStrength(1)];
 
-                if(this.isSmugglerOrCaptain(context.target)) {
+                if (this.isSmugglerOrCaptain(context.target)) {
                     effects.push(ability.effects.addKeyword('Stealth'));
                 }
 
@@ -30,7 +32,7 @@ class LyseniGalley extends DrawCard {
     }
 
     isSmugglerOrCaptain(card) {
-        return ['Smuggler', 'Captain'].some(trait => card.hasTrait(trait));
+        return ['Smuggler', 'Captain'].some((trait) => card.hasTrait(trait));
     }
 }
 

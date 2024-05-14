@@ -7,24 +7,35 @@ class TrisBotley extends DrawCard {
             limit: ability.limit.perRound(1),
             target: {
                 activePromptTitle: 'Select a card',
-                cardCondition: card => card.location === 'discard pile' && card.controller !== this.controller
+                cardCondition: (card) =>
+                    card.location === 'discard pile' && card.controller !== this.controller
             },
-            handler: context => {
+            handler: (context) => {
                 context.target.owner.moveCard(context.target, 'out of game');
 
-                this.lastingEffect(ability => ({
+                this.lastingEffect((ability) => ({
                     until: {
-                        onCardLeftPlay: event => event.card === this
+                        onCardLeftPlay: (event) => event.card === this
                     },
                     targetController: context.target.owner,
                     effect: [
-                        ability.effects.cannotMarshal(card => card.isCopyOf(context.target)),
-                        ability.effects.cannotPlay(card => card.isCopyOf(context.target))
+                        ability.effects.cannotMarshal((card) => card.isCopyOf(context.target)),
+                        ability.effects.cannotPlay((card) => card.isCopyOf(context.target))
                     ]
                 }));
 
-                this.game.addMessage('{0} uses {1} to remove {2} from the game', this.controller, this, context.target);
-                this.game.addMessage('{0} cannot marshal or play any copy of {1} until {2} leaves play', context.target.owner, context.target, this);
+                this.game.addMessage(
+                    '{0} uses {1} to remove {2} from the game',
+                    this.controller,
+                    this,
+                    context.target
+                );
+                this.game.addMessage(
+                    '{0} cannot marshal or play any copy of {1} until {2} leaves play',
+                    context.target.owner,
+                    context.target,
+                    this
+                );
             }
         });
     }

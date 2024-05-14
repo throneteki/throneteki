@@ -30,23 +30,35 @@ class MarshalDuplicateAction extends BaseAbility {
             originalController: context.source.controller,
             originalLocation: context.source.location,
             originalParent: context.source.parent,
-            wasFacedownAttachment: context.source.facedown && context.source.getType() === 'attachment',
+            wasFacedownAttachment:
+                context.source.facedown && context.source.getType() === 'attachment',
             player: context.player,
             type: 'dupe'
         };
         context.game.raiseEvent('onCardMarshalled', params, () => {
             context.player.putIntoPlay(context.source, 'marshal');
-            context.game.addMessage(this.getMessageFormat(params), context.player, context.source, params.originalLocation, params.originalParent);
+            context.game.addMessage(
+                this.getMessageFormat(params),
+                context.player,
+                context.source,
+                params.originalLocation,
+                params.originalParent
+            );
         });
     }
 
     getMessageFormat(params) {
         const messages = {
-            'hand': '{0} duplicates {1} for free',
-            'underneath': '{0} duplicates {1} from underneath {3} for free',
-            'other': '{0} duplicates {1} from their {2} for free'
+            hand: '{0} duplicates {1} for free',
+            underneath: '{0} duplicates {1} from underneath {3} for free',
+            other: '{0} duplicates {1} from their {2} for free'
         };
-        let marshalLocation = params.originalLocation === 'hand' ? 'hand' : params.originalLocation === 'underneath' || params.wasFacedownAttachment ? 'underneath' : 'other';
+        let marshalLocation =
+            params.originalLocation === 'hand'
+                ? 'hand'
+                : params.originalLocation === 'underneath' || params.wasFacedownAttachment
+                  ? 'underneath'
+                  : 'other';
         return messages[marshalLocation] || messages['hand'];
     }
 }

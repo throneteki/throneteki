@@ -4,15 +4,24 @@ class JanosSlynt extends DrawCard {
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                onCardOutOfShadows: event => event.card === this
+                onCardOutOfShadows: (event) => event.card === this
             },
             target: {
-                cardCondition: card => card.controller === this.controller && card.location === 'play area' && card.getType() === 'character' && card.isFaction('thenightswatch'),
+                cardCondition: (card) =>
+                    card.controller === this.controller &&
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    card.isFaction('thenightswatch'),
                 gameAction: 'sacrifice'
             },
-            handler: context => {
+            handler: (context) => {
                 this.controller.sacrificeCard(context.target);
-                this.game.addMessage('{0} is forced by {1} to sacrifice {2}', this.controller, this, context.target);
+                this.game.addMessage(
+                    '{0} is forced by {1} to sacrifice {2}',
+                    this.controller,
+                    this,
+                    context.target
+                );
             }
         });
     }

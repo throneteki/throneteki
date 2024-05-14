@@ -1,5 +1,5 @@
 const GameAction = require('./GameAction');
-const DiscardToReservePrompt = require ('../gamesteps/taxation/DiscardToReservePrompt');
+const DiscardToReservePrompt = require('../gamesteps/taxation/DiscardToReservePrompt');
 
 class CheckReserve extends GameAction {
     constructor() {

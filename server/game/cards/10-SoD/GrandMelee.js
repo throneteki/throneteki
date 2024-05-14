@@ -6,7 +6,9 @@ class GrandMelee extends PlotCard {
             // Add always-on condition so that attacking / defending alone is
             // rechecked after participants are added or removed from challenges
             condition: () => true,
-            match: card => this.game.isDuringChallenge({ attackingAlone: card }) || this.game.isDuringChallenge({ defendingAlone: card }),
+            match: (card) =>
+                this.game.isDuringChallenge({ attackingAlone: card }) ||
+                this.game.isDuringChallenge({ defendingAlone: card }),
             targetController: 'any',
             effect: ability.effects.doesNotContributeStrength()
         });

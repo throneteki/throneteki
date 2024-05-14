@@ -8,10 +8,17 @@ class LongMayHeReign extends DrawCard {
         });
         this.forcedReaction({
             when: {
-                afterChallenge: event => event.challenge.loser === this.controller && event.challenge.challengeType === 'power' && event.challenge.defendingPlayer === this.controller
+                afterChallenge: (event) =>
+                    event.challenge.loser === this.controller &&
+                    event.challenge.challengeType === 'power' &&
+                    event.challenge.defendingPlayer === this.controller
             },
             handler: () => {
-                this.game.addMessage('{0} is forced by {1} to sacrifice {1}', this.controller, this);
+                this.game.addMessage(
+                    '{0} is forced by {1} to sacrifice {1}',
+                    this.controller,
+                    this
+                );
                 this.controller.sacrificeCard(this);
             }
         });

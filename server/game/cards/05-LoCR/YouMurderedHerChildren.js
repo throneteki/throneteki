@@ -7,23 +7,27 @@ class YouMurderedHerChildren extends DrawCard {
             phase: 'challenge',
             target: {
                 activePromptTitle: 'Choose character',
-                cardCondition: card => (
+                cardCondition: (card) =>
                     card.getType() === 'character' &&
                     card.isFaction('martell') &&
                     card.controller === this.controller
-                )
             },
-            handler: context => {
-                this.untilEndOfPhase(ability => ({
+            handler: (context) => {
+                this.untilEndOfPhase((ability) => ({
                     match: context.target,
                     effect: ability.effects.modifyStrengthMultiplier(2)
                 }));
-                this.atEndOfPhase(ability => ({
+                this.atEndOfPhase((ability) => ({
                     match: context.target,
                     condition: () => 'play area' === context.target.location,
                     effect: ability.effects.killIfStillInPlay(true)
                 }));
-                this.game.addMessage('{0} uses {1} to double the strength of {2}', this.controller, this, context.target);
+                this.game.addMessage(
+                    '{0} uses {1} to double the strength of {2}',
+                    this.controller,
+                    this,
+                    context.target
+                );
             }
         });
     }

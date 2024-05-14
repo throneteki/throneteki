@@ -6,13 +6,17 @@ class SerEldonEstermont extends DrawCard {
         this.action({
             title: 'Stand location',
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'location' && card.isFaction('baratheon') && card.kneeled,
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'location' &&
+                    card.isFaction('baratheon') &&
+                    card.kneeled,
                 gameAction: 'stand'
             },
             message: '{player} uses {source} to stand {target}',
-            handler: context => {
+            handler: (context) => {
                 this.game.resolveGameAction(
-                    GameActions.standCard(context => ({ card: context.target })),
+                    GameActions.standCard((context) => ({ card: context.target })),
                     context
                 );
             },

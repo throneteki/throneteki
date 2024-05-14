@@ -4,15 +4,23 @@ class TheSwordInTheDarkness extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.winner === this.controller && event.challenge.defendingPlayer === this.controller &&
-                                         event.challenge.strengthDifference >= 5 && this.hasNightsWatchParticipant()
+                afterChallenge: (event) =>
+                    event.challenge.winner === this.controller &&
+                    event.challenge.defendingPlayer === this.controller &&
+                    event.challenge.strengthDifference >= 5 &&
+                    this.hasNightsWatchParticipant()
             },
-            handler: context => {
+            handler: (context) => {
                 let opponent = context.event.challenge.loser;
 
-                this.game.addMessage('{0} plays {1} to prevent {2} from initiating any more challenges this round', this.controller, this, opponent);
+                this.game.addMessage(
+                    '{0} plays {1} to prevent {2} from initiating any more challenges this round',
+                    this.controller,
+                    this,
+                    opponent
+                );
 
-                this.untilEndOfRound(ability => ({
+                this.untilEndOfRound((ability) => ({
                     targetController: opponent,
                     effect: ability.effects.cannotInitiateChallengeAgainst(this.controller)
                 }));
@@ -21,7 +29,9 @@ class TheSwordInTheDarkness extends DrawCard {
     }
 
     hasNightsWatchParticipant() {
-        return this.game.currentChallenge.defenders.some(card => card.getType() === 'character' && card.isFaction('thenightswatch'));
+        return this.game.currentChallenge.defenders.some(
+            (card) => card.getType() === 'character' && card.isFaction('thenightswatch')
+        );
     }
 }
 

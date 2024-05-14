@@ -4,30 +4,39 @@ class TheBastardsLetter extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onChallengeInitiated: event => event.challenge.isMatch({ initiatedAgainstPlayer: this.controller, initiatedChallengeType: 'military' })
+                onChallengeInitiated: (event) =>
+                    event.challenge.isMatch({
+                        initiatedAgainstPlayer: this.controller,
+                        initiatedChallengeType: 'military'
+                    })
             },
             target: {
                 type: 'select',
                 mode: 'unlimited',
                 optional: true,
-                cardCondition: card => card.location === 'play area' && card.controller === this.controller && card.hasIcon('military') && card.kneeled,
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.controller === this.controller &&
+                    card.hasIcon('military') &&
+                    card.kneeled,
                 gameAction: 'stand'
             },
-            handler: context => {
-                let message = context.target.length === 0 ? '{0} plays {1}' : '{0} plays {1} to stand {2}';
+            handler: (context) => {
+                let message =
+                    context.target.length === 0 ? '{0} plays {1}' : '{0} plays {1} to stand {2}';
                 this.game.addMessage(message, context.player, this, context.target);
 
-                for(let card of context.target) {
+                for (let card of context.target) {
                     context.player.standCard(card);
                 }
 
-                this.game.once('afterChallenge', event => this.killAttackingCharacters(event));
+                this.game.once('afterChallenge', (event) => this.killAttackingCharacters(event));
             }
         });
     }
 
     killAttackingCharacters(event) {
-        if(event.challenge.winner !== this.controller) {
+        if (event.challenge.winner !== this.controller) {
             return;
         }
 

@@ -12,28 +12,28 @@ class GroupedCardEvent extends Event {
     }
 
     removeCard(card) {
-        this.cards = this.cards.filter(c => c !== card);
+        this.cards = this.cards.filter((c) => c !== card);
 
-        let primaryEvents = this.childEvents.map(event => event.getPrimaryEvents()[0]);
-        for(let event of primaryEvents) {
-            if(event.card === card) {
+        let primaryEvents = this.childEvents.map((event) => event.getPrimaryEvents()[0]);
+        for (let event of primaryEvents) {
+            if (event.card === card) {
                 event.cancel();
             }
         }
 
-        if(this.cards.length === 0) {
+        if (this.cards.length === 0) {
             this.cancel();
         }
     }
 
     replaceCards(newCards) {
-        if(newCards.length !== this.childEvents.length) {
+        if (newCards.length !== this.childEvents.length) {
             return;
         }
 
         let index = 0;
 
-        for(let card of newCards) {
+        for (let card of newCards) {
             this.childEvents[index].card = card;
             ++index;
         }

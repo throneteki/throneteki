@@ -1,5 +1,5 @@
 const DrawCard = require('../../drawcard.js');
-const {Tokens} = require('../../Constants');
+const { Tokens } = require('../../Constants');
 
 class Bronn extends DrawCard {
     setupCardAbilities(ability) {
@@ -11,20 +11,23 @@ class Bronn extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCharacterKilled: event => (
+                onCharacterKilled: (event) =>
                     event.allowSave &&
                     (event.card.hasTrait('Lord') || event.card.hasTrait('Lady')) &&
                     event.card.canBeSaved() &&
                     this.tokens[Tokens.gold] > 0
-                )
             },
             cost: ability.costs.discardGold(() => this.tokens[Tokens.gold]),
-            handler: context => {
+            handler: (context) => {
                 context.event.saveCard();
-                this.game.addMessage('{0} discards each gold from {1} to save {2}',
-                    context.player, this, context.event.card);
+                this.game.addMessage(
+                    '{0} discards each gold from {1} to save {2}',
+                    context.player,
+                    this,
+                    context.event.card
+                );
 
-                if(context.event.card.name === 'Tyrion Lannister') {
+                if (context.event.card.name === 'Tyrion Lannister') {
                     this.game.promptWithMenu(context.player, this, {
                         activePrompt: {
                             menuTitle: 'Return Bronn to hand?',
@@ -49,7 +52,7 @@ class Bronn extends DrawCard {
     cancel() {
         return true;
     }
-}                
+}
 
 Bronn.code = '20012';
 

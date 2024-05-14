@@ -1,5 +1,5 @@
 const DrawCard = require('../../drawcard.js');
-const {Tokens} = require('../../Constants');
+const { Tokens } = require('../../Constants');
 
 class OldtownInformer extends DrawCard {
     setupCardAbilities() {
@@ -12,14 +12,20 @@ class OldtownInformer extends DrawCard {
             },
             handler: () => {
                 this.controller.drawCardsToHand(this.tokens[Tokens.gold]);
-                this.game.addMessage('{0} uses {1} to draw {2} cards', this.controller, this, this.tokens[Tokens.gold]);
+                this.game.addMessage(
+                    '{0} uses {1} to draw {2} cards',
+                    this.controller,
+                    this,
+                    this.tokens[Tokens.gold]
+                );
 
                 this.game.promptForSelect(this.controller, {
                     mode: 'exactly',
                     numCards: this.tokens[Tokens.gold],
                     activePromptTitle: 'Select ' + this.tokens[Tokens.gold] + ' cards',
                     source: this,
-                    cardCondition: card => card.location === 'hand' && card.controller === this.controller,
+                    cardCondition: (card) =>
+                        card.location === 'hand' && card.controller === this.controller,
                     onSelect: (player, cards) => this.cardsSelected(player, cards)
                 });
             }

@@ -13,14 +13,17 @@ class TychoNestoris extends DrawCard {
         this.action({
             title: 'Blank Tycho Nestoris',
             cost: ability.costs.payGold(6),
-            handler: context => {
-                this.untilEndOfPhase(ability => ({
+            handler: (context) => {
+                this.untilEndOfPhase((ability) => ({
                     match: this,
                     effect: ability.effects.blankExcludingTraits
                 }));
 
-                this.game.addMessage('{0} pays 6 gold to treat the text box of {1} as blank until the end of the phase',
-                    context.player, this);
+                this.game.addMessage(
+                    '{0} pays 6 gold to treat the text box of {1} as blank until the end of the phase',
+                    context.player,
+                    this
+                );
             }
         });
     }

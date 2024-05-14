@@ -7,17 +7,21 @@ class TheWaterGardens extends DrawCard {
             condition: () => this.controller.getNumberOfUsedPlots() > 0,
             clickToActivate: true,
             cost: ability.costs.kneelSelf(),
-            handler: context => {
-                this.untilEndOfPhase(ability => ({
+            handler: (context) => {
+                this.untilEndOfPhase((ability) => ({
                     condition: () => !context.abilityDeactivated,
                     effect: ability.effects.reduceNextMarshalledPlayedOrAmbushedCardCost(
                         context.player.getNumberOfUsedPlots(),
-                        card => card.getType() !== 'character'
+                        (card) => card.getType() !== 'character'
                     )
                 }));
 
-                this.game.addMessage('{0} kneels {1} to reduce the cost of the next non-character card they marshal, play, or ambush by {2}',
-                    context.player, this, context.player.getNumberOfUsedPlots());
+                this.game.addMessage(
+                    '{0} kneels {1} to reduce the cost of the next non-character card they marshal, play, or ambush by {2}',
+                    context.player,
+                    this,
+                    context.player.getNumberOfUsedPlots()
+                );
             }
         });
     }

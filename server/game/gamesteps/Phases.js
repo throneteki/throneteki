@@ -22,15 +22,7 @@ class Phases {
     }
 
     names() {
-        return [
-            'plot',
-            'draw',
-            'marshal',
-            'challenge',
-            'dominance',
-            'standing',
-            'taxation'
-        ];
+        return ['plot', 'draw', 'marshal', 'challenge', 'dominance', 'standing', 'taxation'];
     }
 
     createStep(name, game) {

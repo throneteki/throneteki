@@ -10,11 +10,12 @@ class KingsHuntingParty extends DrawCard {
     }
 
     anyOpponentHasKing() {
-        return this.game.anyCardsInPlay(card => (
-            card.controller !== this.controller &&
-            card.getType() === 'character' &&
-            card.hasTrait('King')
-        ));
+        return this.game.anyCardsInPlay(
+            (card) =>
+                card.controller !== this.controller &&
+                card.getType() === 'character' &&
+                card.hasTrait('King')
+        );
     }
 }
 

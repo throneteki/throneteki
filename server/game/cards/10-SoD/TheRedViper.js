@@ -9,11 +9,12 @@ class TheRedViper extends DrawCard {
 
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.winner === this.controller &&
+                afterChallenge: (event) =>
+                    event.challenge.winner === this.controller &&
                     this.hasAttackingBastard() &&
                     this.allowGameAction('gainPower')
             },
-            handler: context => {
+            handler: (context) => {
                 this.modifyPower(1);
                 this.game.addMessage('{0} gains 1 power on {1}', context.player, this);
             }
@@ -21,7 +22,9 @@ class TheRedViper extends DrawCard {
     }
 
     hasAttackingBastard() {
-        return this.controller.anyCardsInPlay(card => card.isAttacking() && card.hasTrait('Bastard'));
+        return this.controller.anyCardsInPlay(
+            (card) => card.isAttacking() && card.hasTrait('Bastard')
+        );
     }
 }
 

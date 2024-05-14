@@ -6,18 +6,24 @@ class BloodyArakh extends DrawCard {
         this.reaction({
             max: ability.limit.perPhase(1),
             when: {
-                afterChallenge: event => event.challenge.winner === this.controller && event.challenge.challengeType === 'military' &&
-                                         event.challenge.isAttacking(this.parent)
+                afterChallenge: (event) =>
+                    event.challenge.winner === this.controller &&
+                    event.challenge.challengeType === 'military' &&
+                    event.challenge.isAttacking(this.parent)
             },
-            handler: context => {
+            handler: (context) => {
                 context.player.sacrificeCard(this);
 
-                this.untilEndOfPhase(ability => ({
+                this.untilEndOfPhase((ability) => ({
                     effect: ability.effects.mayInitiateAdditionalChallenge('military')
                 }));
 
-                this.game.addMessage('{0} sacrifices {1} and can initiate an additional {2} challenge this phase',
-                    context.player, this, 'military');
+                this.game.addMessage(
+                    '{0} sacrifices {1} and can initiate an additional {2} challenge this phase',
+                    context.player,
+                    this,
+                    'military'
+                );
             }
         });
     }

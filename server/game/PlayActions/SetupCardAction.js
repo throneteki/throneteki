@@ -5,10 +5,7 @@ class SetupCardAction extends BaseAbility {
     constructor() {
         super({
             abilitySourceType: 'game',
-            cost: [
-                Costs.payPrintedGoldCost(),
-                Costs.playLimited()
-            ]
+            cost: [Costs.payPrintedGoldCost(), Costs.playLimited()]
         });
         this.title = 'Setup';
     }

@@ -5,7 +5,7 @@ class SmallPaul extends DrawCard {
     setupCardAbilities() {
         this.interrupt({
             when: {
-                onCharacterKilled: event => event.card === this
+                onCharacterKilled: (event) => event.card === this
             },
             message: {
                 format: '{player} uses {source} to search the top {reserve} cards of their deck for any number of Steward characters',
@@ -13,11 +13,13 @@ class SmallPaul extends DrawCard {
             },
             gameAction: GameActions.search({
                 title: 'Select any number of characters',
-                numToSelect: context => context.player.getTotalReserve(),
-                topCards: context => context.player.getTotalReserve(),
+                numToSelect: (context) => context.player.getTotalReserve(),
+                topCards: (context) => context.player.getTotalReserve(),
                 match: { type: 'character', trait: 'Steward' },
                 message: '{player} adds {searchTarget} to their hand',
-                gameAction: GameActions.simultaneously(context => context.searchTarget.map(card => GameActions.addToHand({ card })))
+                gameAction: GameActions.simultaneously((context) =>
+                    context.searchTarget.map((card) => GameActions.addToHand({ card }))
+                )
             })
         });
     }

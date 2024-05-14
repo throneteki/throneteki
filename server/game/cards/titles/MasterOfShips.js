@@ -5,21 +5,21 @@ class MasterOfShips extends TitleCard {
         this.supports('Master of Whispers');
         this.rivals('Master of Laws', 'Hand of the King');
         this.persistentEffect({
-            condition: () => (
+            condition: () =>
                 this.game.currentChallenge &&
                 this.game.currentChallenge.challengeType === 'military' &&
                 this.game.currentChallenge.attackingPlayer === this.controller &&
-                this.controller.isRival(this.game.currentChallenge.defendingPlayer)
-            ),
-            match: card => card === this.controller.activePlot,
+                this.controller.isRival(this.game.currentChallenge.defendingPlayer),
+            match: (card) => card === this.controller.activePlot,
             effect: ability.effects.modifyClaim(1)
         });
         this.persistentEffect({
-            condition: () => (
+            condition: () =>
                 this.game.currentChallenge &&
                 this.game.currentChallenge.challengeType === 'military' &&
-                this.game.currentChallenge.anyParticipants(card => card.controller === this.controller)
-            ),
+                this.game.currentChallenge.anyParticipants(
+                    (card) => card.controller === this.controller
+                ),
             targetController: 'current',
             effect: ability.effects.contributeStrength(this, 1)
         });

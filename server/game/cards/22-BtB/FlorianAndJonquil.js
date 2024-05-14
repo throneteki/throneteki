@@ -5,22 +5,27 @@ class FlorianAndJonquil extends DrawCard {
         this.action({
             title: 'Select a character',
             target: {
-                cardCondition: card => card.location === 'play area' && 
-                                card.getType() === 'character' && 
-                                card.isUnique() && 
-                                card.getPrintedCost() <= 3
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    card.isUnique() &&
+                    card.getPrintedCost() <= 3
             },
-            handler: context => {
-                this.untilEndOfPhase(ability => ({
+            handler: (context) => {
+                this.untilEndOfPhase((ability) => ({
                     match: context.target,
                     effect: ability.effects.addKeyword('renown')
                 }));
 
-                this.game.addMessage('{0} plays {1} to have {2} gain renown until the end of the phase',
-                    context.player, this, context.target);
-                if(this.controller.canAttach(this, context.target)) {
+                this.game.addMessage(
+                    '{0} plays {1} to have {2} gain renown until the end of the phase',
+                    context.player,
+                    this,
+                    context.target
+                );
+                if (this.controller.canAttach(this, context.target)) {
                     this.controller.attach(this.controller, this, context.target, 'play');
-                    this.lastingEffect(ability => ({
+                    this.lastingEffect((ability) => ({
                         condition: () => !!this.parent,
                         targetLocation: 'any',
                         match: this,
@@ -29,12 +34,12 @@ class FlorianAndJonquil extends DrawCard {
                             ability.effects.addKeyword('Terminal')
                         ]
                     }));
-                    
-                    this.lastingEffect(ability => ({
+
+                    this.lastingEffect((ability) => ({
                         condition: () => this.location === 'play area',
                         targetLocation: 'any',
                         targetController: 'any',
-                        match: card => card === this.parent,
+                        match: (card) => card === this.parent,
                         effect: [
                             ability.effects.addTrait('Fool'),
                             ability.effects.addTrait('Knight')

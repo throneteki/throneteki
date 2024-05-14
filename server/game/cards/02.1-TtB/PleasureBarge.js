@@ -17,7 +17,7 @@ class PleasureBarge extends DrawCard {
         });
         this.reaction({
             when: {
-                onCardEntersPlay: event =>
+                onCardEntersPlay: (event) =>
                     event.card === this &&
                     event.playingType === 'marshal' &&
                     this.controller.canDraw() &&
@@ -25,8 +25,12 @@ class PleasureBarge extends DrawCard {
             },
             handler: () => {
                 let cards = this.controller.drawCardsToHand(3).length;
-                this.game.addMessage('{0} plays {1} to draw {2}',
-                    this.controller, this, TextHelper.count(cards, 'card'));
+                this.game.addMessage(
+                    '{0} plays {1} to draw {2}',
+                    this.controller,
+                    this,
+                    TextHelper.count(cards, 'card')
+                );
             }
         });
     }
@@ -35,12 +39,12 @@ class PleasureBarge extends DrawCard {
 class DrawTracker {
     constructor(game, player) {
         this.hasDrawnCardsThisPhase = false;
-        game.on('onCardsDrawn', event => {
-            if(event.player === player) {
+        game.on('onCardsDrawn', (event) => {
+            if (event.player === player) {
                 this.hasDrawnCardsThisPhase = true;
             }
         });
-        game.on('onPhaseEnded', () => this.hasDrawnCardsThisPhase = false);
+        game.on('onPhaseEnded', () => (this.hasDrawnCardsThisPhase = false));
     }
 }
 

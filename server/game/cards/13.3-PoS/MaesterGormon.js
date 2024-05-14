@@ -16,8 +16,8 @@ class MaesterGormon extends DrawCard {
             condition: () => !this.hasPlayedFromDeck() && !this.hasMarshalledFromDeck(),
             targetController: 'current',
             effect: [
-                ability.effects.canMarshal(card => this.isTopCard(card)),
-                ability.effects.canPlay(card => this.isTopCard(card))
+                ability.effects.canMarshal((card) => this.isTopCard(card)),
+                ability.effects.canPlay((card) => this.isTopCard(card))
             ]
         });
     }
@@ -32,19 +32,21 @@ class MaesterGormon extends DrawCard {
     }
 
     hasPlayedFromDeck() {
-        return this.playedTracker.events.some(event => (
-            event.originalLocation === 'draw deck' &&
-            event.player === this.controller &&
-            !event.card.isFaction('tyrell')
-        ));
+        return this.playedTracker.events.some(
+            (event) =>
+                event.originalLocation === 'draw deck' &&
+                event.player === this.controller &&
+                !event.card.isFaction('tyrell')
+        );
     }
 
     hasMarshalledFromDeck() {
-        return this.enterPlayTracker.events.some(event => (
-            event.originalLocation === 'draw deck' &&
-            event.card.controller === this.controller &&
-            !event.card.isFaction('tyrell')
-        ));
+        return this.enterPlayTracker.events.some(
+            (event) =>
+                event.originalLocation === 'draw deck' &&
+                event.card.controller === this.controller &&
+                !event.card.isFaction('tyrell')
+        );
     }
 }
 

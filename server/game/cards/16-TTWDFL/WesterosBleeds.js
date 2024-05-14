@@ -10,14 +10,14 @@ class WesterosBleeds extends DrawCard {
                 format: '{player} plays {source} to discard {characters}',
                 args: { characters: () => this.getCharactersInPlay() }
             },
-            gameAction: GameActions.simultaneously(() => this.getCharactersInPlay().map(
-                card => GameActions.discardCard({ card })
-            ))
+            gameAction: GameActions.simultaneously(() =>
+                this.getCharactersInPlay().map((card) => GameActions.discardCard({ card }))
+            )
         });
     }
 
     getCharactersInPlay() {
-        return this.game.filterCardsInPlay(card => card.getType() === 'character');
+        return this.game.filterCardsInPlay((card) => card.getType() === 'character');
     }
 }
 

@@ -4,7 +4,7 @@ class FreyHospitality extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: event =>
+                afterChallenge: (event) =>
                     event.challenge.winner === this.controller &&
                     event.challenge.number === 3 &&
                     this.hasAttackingFrey()
@@ -18,9 +18,10 @@ class FreyHospitality extends DrawCard {
                     activePromptTitle: 'Select character(s)',
                     source: this,
                     gameAction: 'kill',
-                    cardCondition: card => card.location === 'play area' &&
-                                           card.controller === this.game.currentChallenge.loser &&
-                                           card.getType() === 'character',
+                    cardCondition: (card) =>
+                        card.location === 'play area' &&
+                        card.controller === this.game.currentChallenge.loser &&
+                        card.getType() === 'character',
                     onSelect: (player, cards) => this.targetsSelected(player, cards)
                 });
             }
@@ -35,9 +36,10 @@ class FreyHospitality extends DrawCard {
     }
 
     hasAttackingFrey() {
-        return this.controller.anyCardsInPlay(card => card.isAttacking() &&
-                                                      card.hasTrait('House Frey') &&
-                                                      card.getType() === 'character');
+        return this.controller.anyCardsInPlay(
+            (card) =>
+                card.isAttacking() && card.hasTrait('House Frey') && card.getType() === 'character'
+        );
     }
 }
 

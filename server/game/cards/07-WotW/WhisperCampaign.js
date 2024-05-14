@@ -4,9 +4,9 @@ class WhisperCampaign extends PlotCard {
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                onCardEntersPlay: event => {
+                onCardEntersPlay: (event) => {
                     let card = event.card;
-                    if(card.getType() !== 'character' || card.hasIcon('intrigue')) {
+                    if (card.getType() !== 'character' || card.hasIcon('intrigue')) {
                         return false;
                     }
 
@@ -16,7 +16,12 @@ class WhisperCampaign extends PlotCard {
             },
             handler: () => {
                 this.pendingCard.controller.kneelCard(this.pendingCard);
-                this.game.addMessage('{0} is forced by {1} to kneel {2}', this.controller, this, this.pendingCard);
+                this.game.addMessage(
+                    '{0} is forced by {1} to kneel {2}',
+                    this.controller,
+                    this,
+                    this.pendingCard
+                );
             }
         });
     }

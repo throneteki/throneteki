@@ -30,11 +30,11 @@ class DrawCard extends BaseCard {
     createSnapshot() {
         let clone = new DrawCard(this.owner, this.cardData);
 
-        clone.attachments = this.attachments.map(attachment => attachment.createSnapshot());
+        clone.attachments = this.attachments.map((attachment) => attachment.createSnapshot());
         clone.blanks = this.blanks.clone();
-        clone.childCards = this.childCards.map(card => card.createSnapshot());
+        clone.childCards = this.childCards.map((card) => card.createSnapshot());
         clone.controllerStack = [...this.controllerStack];
-        clone.dupes = this.dupes.map(dupe => dupe.createSnapshot());
+        clone.dupes = this.dupes.map((dupe) => dupe.createSnapshot());
         clone.factions = this.factions.clone();
         clone.icons = this.icons.clone();
         clone.location = this.location;
@@ -57,7 +57,7 @@ class DrawCard extends BaseCard {
 
         this.icons = new ReferenceCountedSetProperty();
 
-        for(let icon of this.getPrintedIcons()) {
+        for (let icon of this.getPrintedIcons()) {
             this.icons.add(icon);
         }
 
@@ -65,7 +65,11 @@ class DrawCard extends BaseCard {
     }
 
     setupDuplicateAbility(ability) {
-        let dupeCondition = event => event.card === this.parent && this.parent.canBeSaved() && event.allowSave && (this.controller.promptDupes || this.parent.controller !== this.controller);
+        let dupeCondition = (event) =>
+            event.card === this.parent &&
+            this.parent.canBeSaved() &&
+            event.allowSave &&
+            (this.controller.promptDupes || this.parent.controller !== this.controller);
 
         this.interrupt({
             abilitySourceType: 'game',
@@ -82,9 +86,13 @@ class DrawCard extends BaseCard {
                 onCardPutIntoShadows: dupeCondition
             },
             cost: ability.costs.discardDuplicate(),
-            handler: context => {
+            handler: (context) => {
                 context.event.saveCard();
-                this.game.addMessage('{0} discards a duplicate to save {1}', this.owner, context.cardStateWhenInitiated.parent);
+                this.game.addMessage(
+                    '{0} discards a duplicate to save {1}',
+                    this.owner,
+                    context.cardStateWhenInitiated.parent
+                );
             }
         });
     }
@@ -94,7 +102,7 @@ class DrawCard extends BaseCard {
     }
 
     addDuplicate(card) {
-        if(!this.canBeDuplicated()) {
+        if (!this.canBeDuplicated()) {
             return;
         }
 
@@ -109,15 +117,15 @@ class DrawCard extends BaseCard {
     removeDuplicate(force = false) {
         var firstDupe = undefined;
 
-        if(!force) {
-            firstDupe = this.dupes.filter(dupe => {
+        if (!force) {
+            firstDupe = this.dupes.filter((dupe) => {
                 return dupe.owner === this.controller;
             })[0];
         } else {
             firstDupe = this.dupes[0];
         }
 
-        this.dupes = this.dupes.filter(dupe => {
+        this.dupes = this.dupes.filter((dupe) => {
             return dupe !== firstDupe;
         });
 
@@ -129,7 +137,9 @@ class DrawCard extends BaseCard {
     }
 
     isLimited() {
-        return this.hasKeyword('limited') || (!this.isAnyBlank() && this.hasPrintedKeyword('limited'));
+        return (
+            this.hasKeyword('limited') || (!this.isAnyBlank() && this.hasPrintedKeyword('limited'))
+        );
     }
 
     isStealth() {
@@ -195,14 +205,14 @@ class DrawCard extends BaseCard {
     modifyStrength(amount, applying = true) {
         this.strengthModifier += amount;
 
-        if(!this.strengthSet) {
+        if (!this.strengthSet) {
             let params = {
                 card: this,
                 amount: amount,
                 applying: applying
             };
             this.game.raiseEvent('onCardStrengthChanged', params, () => {
-                if(this.isBurning && this.getStrength() <= 0) {
+                if (this.isBurning && this.getStrength() <= 0) {
                     this.game.killCharacter(this, { allowSave: false, isBurn: true });
                 }
             });
@@ -214,7 +224,7 @@ class DrawCard extends BaseCard {
 
         this.strengthMultiplier *= amount;
 
-        if(!this.strengthSet) {
+        if (!this.strengthSet) {
             this.game.raiseEvent('onCardStrengthChanged', {
                 card: this,
                 amount: this.getStrength() - strengthBefore,
@@ -238,11 +248,11 @@ class DrawCard extends BaseCard {
     getBoostedStrength(boostValue) {
         let baseStrength = this.getPrintedStrength();
 
-        if(this.game.currentPhase === 'setup') {
+        if (this.game.currentPhase === 'setup') {
             return baseStrength;
         }
 
-        if(typeof(this.strengthSet) === 'number') {
+        if (typeof this.strengthSet === 'number') {
             return this.strengthSet;
         }
 
@@ -256,9 +266,12 @@ class DrawCard extends BaseCard {
     }
 
     getDominanceStrength() {
-        let baseStrength = this.getType() === 'character' &&
+        let baseStrength =
+            this.getType() === 'character' &&
             (!this.kneeled || this.dominanceOptions.contains('contributesWhileKneeling')) &&
-            !this.dominanceOptions.contains('doesNotContribute') ? this.getStrength() : 0;
+            !this.dominanceOptions.contains('doesNotContribute')
+                ? this.getStrength()
+                : 0;
 
         return Math.max(0, baseStrength + this.dominanceStrengthModifier);
     }
@@ -268,23 +281,23 @@ class DrawCard extends BaseCard {
     }
 
     getPrintedIcons() {
-        if(!this.cardData.icons) {
+        if (!this.cardData.icons) {
             return [];
         }
 
-        return Icons.filter(icon => !!this.cardData.icons[icon]);
+        return Icons.filter((icon) => !!this.cardData.icons[icon]);
     }
 
     getIconsAdded() {
         let icons = this.getIcons();
         let printedIcons = this.getPrintedIcons();
-        return icons.filter(icon => !printedIcons.includes(icon));
+        return icons.filter((icon) => !printedIcons.includes(icon));
     }
 
     getIconsRemoved() {
         let icons = this.getIcons();
         let printedIcons = this.getPrintedIcons();
-        return printedIcons.filter(icon => !icons.includes(icon));
+        return printedIcons.filter((icon) => !icons.includes(icon));
     }
 
     getNumberOfIcons() {
@@ -304,31 +317,34 @@ class DrawCard extends BaseCard {
      */
     attachmentRestriction(...restrictions) {
         // TODO: Re-work printed attachmentRestrictions to apply as a persistent effect, rather than manually (similar to keywords, and must account for facedown).
-        this.attachmentRestrictions = restrictions.map(restriction => {
-            if(typeof(restriction) === 'function') {
+        this.attachmentRestrictions = restrictions.map((restriction) => {
+            if (typeof restriction === 'function') {
                 return restriction;
             }
 
             return CardMatcher.createAttachmentMatcher(restriction);
         });
     }
-    
+
     addAdditionalAttachmentRestriction(restriction) {
         this.additionalAttachmentRestrictions = this.additionalAttachmentRestrictions || [];
         this.additionalAttachmentRestrictions.push(restriction);
     }
 
     removeAdditionalAttachmentRestriction(restriction) {
-        if(this.additionalAttachmentRestrictions) {
-            this.additionalAttachmentRestrictions = this.additionalAttachmentRestrictions.filter(r => r !== restriction);
+        if (this.additionalAttachmentRestrictions) {
+            this.additionalAttachmentRestrictions = this.additionalAttachmentRestrictions.filter(
+                (r) => r !== restriction
+            );
         }
     }
 
     getAttachmentRestrictions() {
-        if(!(this.attachmentRestrictions || this.additionalAttachmentRestrictions)) {
+        if (!(this.attachmentRestrictions || this.additionalAttachmentRestrictions)) {
             return undefined;
         }
-        let restrictions = ((this.isAnyBlank() || this.facedown) ? undefined : this.attachmentRestrictions) || [];
+        let restrictions =
+            (this.isAnyBlank() || this.facedown ? undefined : this.attachmentRestrictions) || [];
         let additional = this.additionalAttachmentRestrictions || [];
 
         restrictions = restrictions.concat(additional);
@@ -343,11 +359,11 @@ class DrawCard extends BaseCard {
     allowAttachment(attachment) {
         let requiredTraits = this.keywords.getRequiredAttachmentTraits();
 
-        if(requiredTraits.length === 0) {
+        if (requiredTraits.length === 0) {
             return true;
         }
 
-        return requiredTraits.every(trait => attachment.hasTrait(trait));
+        return requiredTraits.every((trait) => attachment.hasTrait(trait));
     }
 
     /**
@@ -355,19 +371,19 @@ class DrawCard extends BaseCard {
      * Opponent cards only, specific factions, etc) for this card.
      */
     canAttach(player, card) {
-        if(this.getType() !== 'attachment' || !card) {
+        if (this.getType() !== 'attachment' || !card) {
             return false;
         }
 
         let attachmentRestrictions = this.getAttachmentRestrictions();
 
-        if(!attachmentRestrictions) {
+        if (!attachmentRestrictions) {
             return card.getType() === 'character';
         }
 
         let context = { player: player };
 
-        return attachmentRestrictions.some(restriction => restriction(card, context));
+        return attachmentRestrictions.some((restriction) => restriction(card, context));
     }
 
     addChildCard(card, location) {
@@ -376,19 +392,19 @@ class DrawCard extends BaseCard {
     }
 
     removeChildCard(card) {
-        if(!card) {
+        if (!card) {
             return;
         }
 
-        this.attachments = this.attachments.filter(a => a !== card);
-        this.dupes = this.dupes.filter(a => a !== card);
-        this.childCards = this.childCards.filter(a => a !== card);
+        this.attachments = this.attachments.filter((a) => a !== card);
+        this.dupes = this.dupes.filter((a) => a !== card);
+        this.childCards = this.childCards.filter((a) => a !== card);
     }
 
     getPlayActions() {
-        return StandardPlayActions
-            .concat(this.abilities.playActions)
-            .concat(this.abilities.actions.filter(action => !action.allowMenu()));
+        return StandardPlayActions.concat(this.abilities.playActions).concat(
+            this.abilities.actions.filter((action) => !action.allowMenu())
+        );
     }
 
     leavesPlay() {
@@ -408,41 +424,35 @@ class DrawCard extends BaseCard {
     }
 
     kneelsAsAttacker(challengeType) {
-        const keys = [
-            'doesNotKneelAsAttacker.any',
-            `doesNotKneelAsAttacker.${challengeType}`
-        ];
+        const keys = ['doesNotKneelAsAttacker.any', `doesNotKneelAsAttacker.${challengeType}`];
 
-        return keys.every(key => !this.challengeOptions.contains(key));
+        return keys.every((key) => !this.challengeOptions.contains(key));
     }
 
     kneelsAsDefender(challengeType) {
-        const keys = [
-            'doesNotKneelAsDefender.any',
-            `doesNotKneelAsDefender.${challengeType}`
-        ];
+        const keys = ['doesNotKneelAsDefender.any', `doesNotKneelAsDefender.${challengeType}`];
 
-        return keys.every(key => !this.challengeOptions.contains(key));
+        return keys.every((key) => !this.challengeOptions.contains(key));
     }
 
     canDeclareAsParticipant({ attacking, challengeType }) {
         let canKneelForChallenge =
-            attacking && !this.kneeled && !this.kneelsAsAttacker(challengeType) ||
-            !attacking && !this.kneeled && !this.kneelsAsDefender(challengeType) ||
-            !this.kneeled && this.allowGameAction('kneel') ||
-            this.kneeled && this.challengeOptions.contains('canBeDeclaredWhileKneeling');
+            (attacking && !this.kneeled && !this.kneelsAsAttacker(challengeType)) ||
+            (!attacking && !this.kneeled && !this.kneelsAsDefender(challengeType)) ||
+            (!this.kneeled && this.allowGameAction('kneel')) ||
+            (this.kneeled && this.challengeOptions.contains('canBeDeclaredWhileKneeling'));
 
         return (
             this.canParticipateInChallenge() &&
             this.location === 'play area' &&
             canKneelForChallenge &&
-            (this.hasIcon(challengeType) || this.challengeOptions.contains('canBeDeclaredWithoutIcon'))
+            (this.hasIcon(challengeType) ||
+                this.challengeOptions.contains('canBeDeclaredWithoutIcon'))
         );
     }
 
     canParticipateInChallenge() {
-        return this.getType() === 'character'
-            && this.allowGameAction('participateInChallenge');
+        return this.getType() === 'character' && this.allowGameAction('participateInChallenge');
     }
 
     canBeKneeled() {
@@ -475,7 +485,7 @@ class DrawCard extends BaseCard {
         this.isBurning = burning;
         //register/unregister onChallengeFinished event so when the challenge is finished
         //the burn effect gets evaluated again
-        if(burning) {
+        if (burning) {
             this.events.register(['onChallengeFinished']);
         } else {
             this.events.unregisterHandlerForEventName('onChallengeFinished');
@@ -484,7 +494,7 @@ class DrawCard extends BaseCard {
 
     //evaluate the burn effect again when the challenge is finished
     onChallengeFinished() {
-        if(this.isBurning && this.getStrength() <= 0) {
+        if (this.isBurning && this.getStrength() <= 0) {
             this.game.killCharacter(this, { allowSave: false, isBurn: true });
         }
     }
@@ -494,14 +504,14 @@ class DrawCard extends BaseCard {
 
         let publicSummary = {
             attached: !!this.parent,
-            attachments: this.attachments.map(attachment => {
+            attachments: this.attachments.map((attachment) => {
                 return attachment.getSummary(activePlayer);
             }),
-            childCards: this.childCards.map(card => {
+            childCards: this.childCards.map((card) => {
                 return card.getSummary(activePlayer);
             }),
-            dupes: this.dupes.map(dupe => {
-                if(dupe.dupes.length !== 0) {
+            dupes: this.dupes.map((dupe) => {
+                if (dupe.dupes.length !== 0) {
                     throw new Error('A dupe should not have dupes! ' + dupe.name);
                 }
 
@@ -510,7 +520,7 @@ class DrawCard extends BaseCard {
             kneeled: this.kneeled
         };
 
-        if(baseSummary.facedown) {
+        if (baseSummary.facedown) {
             return Object.assign(baseSummary, publicSummary);
         }
 

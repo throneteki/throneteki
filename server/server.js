@@ -4,7 +4,7 @@ const app = express();
 import bodyParser from 'body-parser';
 import passport from 'passport';
 import logger from './log.js';
-import {init as ApiInit} from './api/index.js';
+import { init as ApiInit } from './api/index.js';
 import http from 'http';
 import Sentry from '@sentry/node';
 import passportJwt from 'passport-jwt';

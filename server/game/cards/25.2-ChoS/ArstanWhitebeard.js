@@ -7,10 +7,11 @@ class ArstanWhitebeard extends DrawCard {
 
         this.registerEvents(['onCardEntersPlay']);
     }
-    
+
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => !this.controller.anyCardsInPlay({ type: 'character', trait: ['Lord', 'Lady'] }),
+            condition: () =>
+                !this.controller.anyCardsInPlay({ type: 'character', trait: ['Lord', 'Lady'] }),
             match: this,
             effect: ability.effects.cannotBeKneeled()
         });
@@ -18,7 +19,7 @@ class ArstanWhitebeard extends DrawCard {
 
     onCardEntersPlay(event) {
         let card = event.card;
-        if(card.controller === this.controller && card.name === 'Ser Barristan Selmy') {
+        if (card.controller === this.controller && card.name === 'Ser Barristan Selmy') {
             this.game.resolveGameAction(GameActions.sacrificeCard({ card: this }));
         }
     }

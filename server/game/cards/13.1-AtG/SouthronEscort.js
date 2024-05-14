@@ -6,12 +6,12 @@ class SouthronEscort extends DrawCard {
             title: 'Put into play',
             condition: () => this.controller.canPutIntoPlay(this, 'outOfShadows'),
             location: 'shadows',
-            cost: ability.costs.discardFromShadows(card => card !== this),
+            cost: ability.costs.discardFromShadows((card) => card !== this),
             message: {
                 format: '{player} uses {source} and discards {discardedCard} from shadows to put {source} into play from shadows',
-                args: { discardedCard: context => context.costs.discardFromShadows }
+                args: { discardedCard: (context) => context.costs.discardFromShadows }
             },
-            handler: context => {
+            handler: (context) => {
                 context.player.putIntoPlay(this);
             }
         });

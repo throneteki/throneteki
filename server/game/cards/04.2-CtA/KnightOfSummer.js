@@ -5,10 +5,7 @@ class KnightOfSummer extends DrawCard {
         this.persistentEffect({
             condition: () => this.moreSummerThanWinterPlots(),
             match: this,
-            effect: [
-                ability.effects.addKeyword('Renown'),
-                ability.effects.modifyStrength(2)
-            ]
+            effect: [ability.effects.addKeyword('Renown'), ability.effects.modifyStrength(2)]
         });
     }
 
@@ -16,11 +13,11 @@ class KnightOfSummer extends DrawCard {
         let summerPlots = 0;
         let winterPlots = 0;
 
-        for(let player of this.game.getPlayers()) {
-            if(player.activePlot && player.activePlot.hasTrait('winter')) {
+        for (let player of this.game.getPlayers()) {
+            if (player.activePlot && player.activePlot.hasTrait('winter')) {
                 winterPlots++;
             }
-            if(player.activePlot && player.activePlot.hasTrait('summer')) {
+            if (player.activePlot && player.activePlot.hasTrait('summer')) {
                 summerPlots++;
             }
         }

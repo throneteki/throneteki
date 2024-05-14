@@ -9,12 +9,12 @@ class WaterDancersSword extends DrawCard {
         });
         this.forcedInterrupt({
             when: {
-                onPhaseEnded: event => event.phase === 'challenge'
+                onPhaseEnded: (event) => event.phase === 'challenge'
             },
             message: '{player} is forced to return {source} to their hand',
-            handler: context => {
+            handler: (context) => {
                 this.game.resolveGameAction(
-                    GameActions.returnCardToHand(context => ({ card: context.source })),
+                    GameActions.returnCardToHand((context) => ({ card: context.source })),
                     context
                 );
             }

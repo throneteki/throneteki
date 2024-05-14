@@ -12,4 +12,3 @@ class TheShieldIslands extends DrawCard {
 TheShieldIslands.code = '12038';
 
 module.exports = TheShieldIslands;
-

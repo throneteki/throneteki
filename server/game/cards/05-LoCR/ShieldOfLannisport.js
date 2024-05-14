@@ -5,10 +5,7 @@ class ShieldOfLannisport extends DrawCard {
         this.attachmentRestriction({ faction: 'lannister', trait: ['Lord', 'Lady'] });
         this.whileAttached({
             condition: () => this.noOtherLordsOrLadies(),
-            effect: [
-                ability.effects.modifyStrength(2),
-                ability.effects.addKeyword('Renown')
-            ]
+            effect: [ability.effects.modifyStrength(2), ability.effects.addKeyword('Renown')]
         });
         this.plotModifiers({
             gold: 1
@@ -16,11 +13,12 @@ class ShieldOfLannisport extends DrawCard {
     }
 
     noOtherLordsOrLadies() {
-        return !this.controller.anyCardsInPlay(card => (
-            card !== this.parent &&
-            (card.hasTrait('Lord') || card.hasTrait('Lady')) &&
-            card.getPrintedCost() >= 4
-        ));
+        return !this.controller.anyCardsInPlay(
+            (card) =>
+                card !== this.parent &&
+                (card.hasTrait('Lord') || card.hasTrait('Lady')) &&
+                card.getPrintedCost() >= 4
+        );
     }
 }
 

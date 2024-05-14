@@ -16,9 +16,9 @@ const Tokens = {
     venom: 'venom',
     tale: 'tale',
     list: () => {
-        return Object.values(Tokens).filter(token => typeof token !== 'function');
+        return Object.values(Tokens).filter((token) => typeof token !== 'function');
     },
-    includes: token => {
+    includes: (token) => {
         return Object.values(Tokens).includes(token.toLowerCase());
     }
 };

@@ -5,14 +5,20 @@ class SerDontosHollard extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCharacterKilled: event => event.allowSave && event.card.canBeSaved() && this.isLady(event.card),
-                onCardDiscarded: event => event.allowSave && event.card.canBeSaved() && this.isLady(event.card)
+                onCharacterKilled: (event) =>
+                    event.allowSave && event.card.canBeSaved() && this.isLady(event.card),
+                onCardDiscarded: (event) =>
+                    event.allowSave && event.card.canBeSaved() && this.isLady(event.card)
             },
             cost: ability.costs.standSelf(),
-            handler: context => {
+            handler: (context) => {
                 context.event.saveCard();
-                this.game.addMessage('{0} stands {1} to save {2}',
-                    this.controller, this, context.event.card);
+                this.game.addMessage(
+                    '{0} stands {1} to save {2}',
+                    this.controller,
+                    this,
+                    context.event.card
+                );
             }
         });
     }

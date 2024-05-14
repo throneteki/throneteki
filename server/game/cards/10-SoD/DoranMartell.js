@@ -6,23 +6,30 @@ class DoranMartell extends DrawCard {
             title: 'Remove character from challenge',
             cost: ability.costs.kneelFactionCard(),
             target: {
-                cardCondition: card => card.location === 'play area' && card.isParticipating() &&
-                                       card.getNumberOfIcons() < 2
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.isParticipating() &&
+                    card.getNumberOfIcons() < 2
             },
-            handler: context => {
+            handler: (context) => {
                 this.game.currentChallenge.removeFromChallenge(context.target);
-                this.game.addMessage('{0} uses {1} and kneels their faction card to remove {2} from the challenge',
-                    context.player, this, context.target);
+                this.game.addMessage(
+                    '{0} uses {1} and kneels their faction card to remove {2} from the challenge',
+                    context.player,
+                    this,
+                    context.target
+                );
             }
         });
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.loser === this.controller
+                afterChallenge: (event) => event.challenge.loser === this.controller
             },
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character'
+                cardCondition: (card) =>
+                    card.location === 'play area' && card.getType() === 'character'
             },
-            handler: context => {
+            handler: (context) => {
                 this.game.promptWithMenu(context.player, this.createPromptContext(context), {
                     activePrompt: {
                         menuTitle: 'Choose for ' + context.target.name + '?',
@@ -45,14 +52,21 @@ class DoranMartell extends DrawCard {
     }
 
     handleIcon(context, isGain) {
-        this.game.promptForIcon(context.player, this, icon => {
-            this.untilEndOfPhase(ability => ({
+        this.game.promptForIcon(context.player, this, (icon) => {
+            this.untilEndOfPhase((ability) => ({
                 match: context.target,
                 effect: isGain ? ability.effects.addIcon(icon) : ability.effects.removeIcon(icon)
             }));
 
-            this.game.addMessage('{0} uses {1} to have {2} {3} {4} {5} icon until the end of the phase',
-                context.player, this, context.target, isGain ? 'gain' : 'lose', icon === 'intrigue' ? 'an' : 'a', icon);
+            this.game.addMessage(
+                '{0} uses {1} to have {2} {3} {4} {5} icon until the end of the phase',
+                context.player,
+                this,
+                context.target,
+                isGain ? 'gain' : 'lose',
+                icon === 'intrigue' ? 'an' : 'a',
+                icon
+            );
         });
         return true;
     }

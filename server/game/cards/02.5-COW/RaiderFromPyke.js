@@ -4,7 +4,7 @@ class RaiderFromPyke extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetLocation: 'hand',
-            match: card => card.hasTrait('Weapon'),
+            match: (card) => card.hasTrait('Weapon'),
             effect: ability.effects.gainAmbush()
         });
     }

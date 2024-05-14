@@ -14,13 +14,20 @@ class FactionCostReducer extends DrawCard {
             clickToActivate: true,
             phase: 'marshal',
             cost: ability.costs.kneelSelf(),
-            handler: context => {
-                this.game.addMessage('{0} uses {1} to reduce the cost of the next {2} card by {3}',
-                    this.controller, this, this.faction, this.reduceBy);
-                this.untilEndOfPhase(ability => ({
+            handler: (context) => {
+                this.game.addMessage(
+                    '{0} uses {1} to reduce the cost of the next {2} card by {3}',
+                    this.controller,
+                    this,
+                    this.faction,
+                    this.reduceBy
+                );
+                this.untilEndOfPhase((ability) => ({
                     condition: () => !context.abilityDeactivated,
                     targetController: 'current',
-                    effect: ability.effects.reduceNextMarshalledCardCost(this.reduceBy, card => card.isFaction(this.faction))
+                    effect: ability.effects.reduceNextMarshalledCardCost(this.reduceBy, (card) =>
+                        card.isFaction(this.faction)
+                    )
                 }));
             }
         });
@@ -41,15 +48,20 @@ class FactionCharacterCostReducer extends DrawCard {
             clickToActivate: true,
             phase: 'marshal',
             cost: ability.costs.kneelSelf(),
-            handler: context => {
-                this.game.addMessage('{0} uses {1} to reduce the cost of the next {2} character by {3}',
-                    this.controller, this, this.faction, this.reduceBy);
-                this.untilEndOfPhase(ability => ({
+            handler: (context) => {
+                this.game.addMessage(
+                    '{0} uses {1} to reduce the cost of the next {2} character by {3}',
+                    this.controller,
+                    this,
+                    this.faction,
+                    this.reduceBy
+                );
+                this.untilEndOfPhase((ability) => ({
                     condition: () => !context.abilityDeactivated,
                     targetController: 'current',
                     effect: ability.effects.reduceNextMarshalledCardCost(
                         this.reduceBy,
-                        card => card.getType() === 'character' && card.isFaction(this.faction)
+                        (card) => card.getType() === 'character' && card.isFaction(this.faction)
                     )
                 }));
             }

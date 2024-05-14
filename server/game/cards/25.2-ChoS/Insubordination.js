@@ -5,7 +5,11 @@ class Insubordination extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onChallengeInitiated: event => event.challenge.isMatch({ initiatedAgainstPlayer: this.controller, attackingAlone: this.parent })
+                onChallengeInitiated: (event) =>
+                    event.challenge.isMatch({
+                        initiatedAgainstPlayer: this.controller,
+                        attackingAlone: this.parent
+                    })
             },
             cost: ability.costs.kneelSelf(),
             message: {

@@ -9,9 +9,7 @@ class CheckAttachmentsPrompt extends AllPlayerPrompt {
     activePrompt() {
         return {
             menuTitle: 'Select attachment locations',
-            buttons: [
-                { command: 'mapattachments', text: 'Done' }
-            ]
+            buttons: [{ command: 'mapattachments', text: 'Done' }]
         };
     }
 
@@ -20,11 +18,11 @@ class CheckAttachmentsPrompt extends AllPlayerPrompt {
     }
 
     onCardClicked(player, card) {
-        if(player !== card.controller) {
+        if (player !== card.controller) {
             return false;
         }
 
-        if(card.getType() !== 'attachment') {
+        if (card.getType() !== 'attachment') {
             return false;
         }
 

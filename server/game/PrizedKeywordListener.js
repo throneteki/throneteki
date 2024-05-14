@@ -8,43 +8,48 @@ class PrizedKeywordListener {
     }
 
     registerEvents() {
-        this.game.on('onCardLeftPlay', event => this.handlePrizedKeyword({
-            controller: event.cardStateWhenLeftPlay.controller,
-            prizedValue: event.cardStateWhenLeftPlay.getPrizedValue(),
-            card: event.card 
-        }));
-        this.game.on('onCardPlayed', event => this.handlePrizedKeyword({
-            controller: event.player,
-            prizedValue: event.card.getPrizedValue(),
-            card: event.card 
-        }));
+        this.game.on('onCardLeftPlay', (event) =>
+            this.handlePrizedKeyword({
+                controller: event.cardStateWhenLeftPlay.controller,
+                prizedValue: event.cardStateWhenLeftPlay.getPrizedValue(),
+                card: event.card
+            })
+        );
+        this.game.on('onCardPlayed', (event) =>
+            this.handlePrizedKeyword({
+                controller: event.player,
+                prizedValue: event.card.getPrizedValue(),
+                card: event.card
+            })
+        );
     }
 
     handlePrizedKeyword({ controller, prizedValue, card }) {
-        if(prizedValue === 0) {
+        if (prizedValue === 0) {
             return;
         }
 
-        this.game.resolveGameAction(
-            this.createGameAction({ controller, prizedValue, card })
-        );
+        this.game.resolveGameAction(this.createGameAction({ controller, prizedValue, card }));
     }
 
     createGameAction({ controller, prizedValue, card }) {
         const opponents = this.game.getOpponents(controller);
 
         return GameActions.simultaneously(
-            opponents.map(opponent => (
+            opponents.map((opponent) =>
                 GameActions.gainPower({
                     card: opponent.faction,
                     amount: prizedValue
                 }).thenExecute(() => {
-                    this.game.addMessage('{opponent} gains {prizedValue} power for Prized on {card}', {
-                        opponent,
-                        prizedValue,
-                        card
-                    });
-                }))
+                    this.game.addMessage(
+                        '{opponent} gains {prizedValue} power for Prized on {card}',
+                        {
+                            opponent,
+                            prizedValue,
+                            card
+                        }
+                    );
+                })
             )
         );
     }

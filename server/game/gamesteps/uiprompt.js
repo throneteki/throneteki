@@ -14,14 +14,14 @@ class UiPrompt extends BaseStep {
 
     complete() {
         this.completed = true;
-        if(this.getPlayer()) {
+        if (this.getPlayer()) {
             this.getPlayer().stopClock();
         }
     }
 
     setPrompt() {
-        for(let player of this.game.getPlayers()) {
-            if(this.activeCondition(player)) {
+        for (let player of this.game.getPlayers()) {
+            if (this.activeCondition(player)) {
                 player.setPrompt(this.addDefaultCommandToButtons(this.activePrompt(player)));
                 player.startClock();
             } else {
@@ -35,20 +35,19 @@ class UiPrompt extends BaseStep {
         return true;
     }
 
-    activePrompt() {
-    }
+    activePrompt() {}
 
     addDefaultCommandToButtons(original) {
         var prompt = Object.assign({}, original);
-        if(prompt.buttons) {
-            for(let button of prompt.buttons) {
+        if (prompt.buttons) {
+            for (let button of prompt.buttons) {
                 button.command = button.command || 'menuButton';
                 button.promptId = this.promptId;
             }
         }
 
-        if(prompt.controls) {
-            for(let control of prompt.controls) {
+        if (prompt.controls) {
+            for (let control of prompt.controls) {
                 control.promptId = this.promptId;
             }
         }
@@ -60,10 +59,10 @@ class UiPrompt extends BaseStep {
         return { menuTitle: 'Waiting for opponent' };
     }
 
-    continue() {        
+    continue() {
         var completed = this.isComplete();
 
-        if(completed) {
+        if (completed) {
             this.clearPrompts();
             this.onCompleted();
         } else {
@@ -74,13 +73,13 @@ class UiPrompt extends BaseStep {
     }
 
     clearPrompts() {
-        for(let player of this.game.getPlayers()) {
+        for (let player of this.game.getPlayers()) {
             player.cancelPrompt();
         }
     }
 
     isCorrectPrompt(promptId) {
-        if(!promptId) {
+        if (!promptId) {
             return false;
         }
 
@@ -90,8 +89,7 @@ class UiPrompt extends BaseStep {
     /**
      * Handler that will be called once isComplete() returns true.
      */
-    onCompleted() {
-    }
+    onCompleted() {}
 
     /**
      * Will be implemented in sub classes that have a specific player that is using the prompt

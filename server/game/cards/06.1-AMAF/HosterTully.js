@@ -4,7 +4,8 @@ class HosterTully extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.isParticipating(),
-            match: card => card !== this && card.isParticipating() && card.hasTrait('House Tully'),
+            match: (card) =>
+                card !== this && card.isParticipating() && card.hasTrait('House Tully'),
             effect: ability.effects.addKeyword('Renown')
         });
     }

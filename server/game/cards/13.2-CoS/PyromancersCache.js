@@ -12,12 +12,12 @@ class PyromancersCache extends DrawCard {
         // TODO: Currently blanking is checking on the card gaining the text, not
         // the card giving the text. So the ability does not actualy work.
         this.whileAttached({
-            effect: ability.effects.gainText(text => {
+            effect: ability.effects.gainText((text) => {
                 text.action({
                     title: 'Draw 1 card',
                     cost: ability.costs.kneelSelf(),
                     message: '{player} kneels {source} to draw 1 card',
-                    gameAction: GameActions.drawCards(context => ({
+                    gameAction: GameActions.drawCards((context) => ({
                         player: context.player,
                         amount: 1
                     }))
@@ -30,4 +30,3 @@ class PyromancersCache extends DrawCard {
 PyromancersCache.code = '13030';
 
 module.exports = PyromancersCache;
-

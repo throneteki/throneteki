@@ -3,13 +3,17 @@ const DrawCard = require('../../drawcard.js');
 class Longtable extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: card => card.hasTrait('Small Council') && card.controller === this.controller,
+            match: (card) => card.hasTrait('Small Council') && card.controller === this.controller,
             effect: ability.effects.modifyStrength(1)
         });
-      
+
         this.persistentEffect({
             targetController: 'current',
-            effect: ability.effects.reduceFirstCardCostEachPhase(['marshal', 'ambush', 'outOfShadows'], 1, card => card.hasTrait('Small Council') || card.hasTrait('Spy'))
+            effect: ability.effects.reduceFirstCardCostEachPhase(
+                ['marshal', 'ambush', 'outOfShadows'],
+                1,
+                (card) => card.hasTrait('Small Council') || card.hasTrait('Spy')
+            )
         });
     }
 }

@@ -11,7 +11,7 @@ class MusicOfDragons extends DrawCard {
                 title: 'Select a character',
                 match: { type: 'character', trait: 'Dragon' },
                 message: '{player} {gameAction}',
-                gameAction: GameActions.addToHand(context => ({
+                gameAction: GameActions.addToHand((context) => ({
                     card: context.searchTarget
                 }))
             })

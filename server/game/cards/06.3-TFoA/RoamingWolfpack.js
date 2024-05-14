@@ -4,7 +4,8 @@ class RoamingWolfpack extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.isAttacking(),
-            match: card => card.isAttacking() && card.hasTrait('Direwolf') && card.getType() === 'character',
+            match: (card) =>
+                card.isAttacking() && card.hasTrait('Direwolf') && card.getType() === 'character',
             effect: ability.effects.modifyStrength(2)
         });
     }

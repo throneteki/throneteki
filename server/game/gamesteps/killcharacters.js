@@ -11,14 +11,16 @@ class KillCharacters extends BaseStep {
 
     continue() {
         this.game.resolveGameAction(
-            GameActions.simultaneously(this.cards.map(card => (
-                GameActions.kill({
-                    allowSave: this.options.allowSave,
-                    card,
-                    force: this.options.force,
-                    isBurn: this.options.isBurn
-                })
-            )))
+            GameActions.simultaneously(
+                this.cards.map((card) =>
+                    GameActions.kill({
+                        allowSave: this.options.allowSave,
+                        card,
+                        force: this.options.force,
+                        isBurn: this.options.isBurn
+                    })
+                )
+            )
         );
     }
 }

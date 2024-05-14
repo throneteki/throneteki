@@ -8,8 +8,13 @@ class JalabharXho extends DrawCard {
             phase: 'marshal',
             anyPlayer: true,
             cost: ability.costs.discardFactionPower(1),
-            message: '{player} discards 1 power from their faction card to take control of {source}',
-            gameAction: GameActions.takeControl(context => ({ player: context.player, card: this, context }))
+            message:
+                '{player} discards 1 power from their faction card to take control of {source}',
+            gameAction: GameActions.takeControl((context) => ({
+                player: context.player,
+                card: this,
+                context
+            }))
         });
     }
 }

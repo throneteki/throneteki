@@ -8,11 +8,12 @@ class EventService {
     }
 
     async getEvents() {
-        return this.events.find({})
-            .then(event => {
+        return this.events
+            .find({})
+            .then((event) => {
                 return event;
             })
-            .catch(err => {
+            .catch((err) => {
                 logger.error('Error fetching events %s', err);
 
                 throw new Error('Error occured fetching events');
@@ -24,11 +25,12 @@ class EventService {
     }
 
     async create(entry) {
-        return this.events.insert(entry)
+        return this.events
+            .insert(entry)
             .then(() => {
                 return entry;
             })
-            .catch(err => {
+            .catch((err) => {
                 logger.error('Error adding event %s %s', err, entry);
 
                 throw new Error('Error occured adding event');
@@ -38,11 +40,10 @@ class EventService {
     async update(event) {
         const { id, ...properties } = event;
 
-        return this.events.update({ _id: id }, { '$set': properties })
-            .catch(err => {
-                logger.error('Unable to update event %s', err);
-                throw new Error('Unable to update event');
-            });
+        return this.events.update({ _id: id }, { $set: properties }).catch((err) => {
+            logger.error('Unable to update event %s', err);
+            throw new Error('Unable to update event');
+        });
     }
 
     async delete(id) {

@@ -5,10 +5,7 @@ class DagosManwoody extends DrawCard {
         this.persistentEffect({
             condition: () => this.numOfTraitsInUsedPile() >= 5,
             match: this,
-            effect: [
-                ability.effects.addKeyword('Stealth'),
-                ability.effects.addKeyword('Renown')
-            ]
+            effect: [ability.effects.addKeyword('Stealth'), ability.effects.addKeyword('Renown')]
         });
     }
 

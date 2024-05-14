@@ -9,20 +9,28 @@ class MalleonsTome extends DrawCard {
 
         this.reaction({
             when: {
-                afterChallenge: event =>
+                afterChallenge: (event) =>
                     event.challenge.attackingPlayer === this.controller &&
-                    event.challenge.winner === this.controller && this.parent &&
+                    event.challenge.winner === this.controller &&
+                    this.parent &&
                     this.parent.isAttacking()
             },
-            handler: context => {
-                let message = '{0} plays {1} to look at {2}\'s hand';
+            handler: (context) => {
+                let message = "{0} plays {1} to look at {2}'s hand";
                 let messageArgs = [context.player, this, context.event.challenge.loser];
 
                 this.game.resolveGameAction(
-                    GameActions.lookAtHand({ player: context.player, opponent: context.event.challenge.loser, context })
+                    GameActions.lookAtHand({
+                        player: context.player,
+                        opponent: context.event.challenge.loser,
+                        context
+                    })
                 );
 
-                if(this.parent && this.parent.name === 'Eddard Stark' || this.parent.hasTrait('Maester')) {
+                if (
+                    (this.parent && this.parent.name === 'Eddard Stark') ||
+                    this.parent.hasTrait('Maester')
+                ) {
                     this.parent.controller.standCard(this.parent);
                     message += ' and stand {3}';
                     messageArgs.push(this.parent);

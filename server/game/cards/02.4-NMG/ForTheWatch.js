@@ -1,15 +1,14 @@
 const PlotCard = require('../../plotcard');
-const {ChallengeTracker} = require('../../EventTrackers');
+const { ChallengeTracker } = require('../../EventTrackers');
 
 class ForTheWatch extends PlotCard {
     setupCardAbilities(ability) {
         this.tracker = ChallengeTracker.forPhase(this.game);
 
         this.persistentEffect({
-            condition: () => (
+            condition: () =>
                 this.game.isDuringChallenge({ defendingPlayer: this.controller }) &&
-                this.numOfChallengesInitiatedAgainst() <= 1
-            ),
+                this.numOfChallengesInitiatedAgainst() <= 1,
             targetController: 'opponent',
             effect: ability.effects.cannotWinChallenge()
         });

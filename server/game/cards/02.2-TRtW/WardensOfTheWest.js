@@ -4,7 +4,7 @@ class WardensOfTheWest extends PlotCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: event =>
+                afterChallenge: (event) =>
                     event.challenge.winner === this.controller &&
                     event.challenge.challengeType === 'intrigue'
             },
@@ -14,12 +14,19 @@ class WardensOfTheWest extends PlotCard {
                     numCards: 2,
                     activePromptTitle: 'Select 2 cards to discard',
                     source: this,
-                    cardCondition: card => card.controller === this.game.currentChallenge.loser && card.location === 'hand',
+                    cardCondition: (card) =>
+                        card.controller === this.game.currentChallenge.loser &&
+                        card.location === 'hand',
                     onSelect: (player, cards) => this.onSelect(player, cards),
                     onCancel: (player) => this.cancelSelection(player)
                 });
 
-                this.game.addMessage('{0} uses {1} and pay 2 gold to have {2} discard 2 cards from their hand', this.controller, this, this.game.currentChallenge.loser);
+                this.game.addMessage(
+                    '{0} uses {1} and pay 2 gold to have {2} discard 2 cards from their hand',
+                    this.controller,
+                    this,
+                    this.game.currentChallenge.loser
+                );
             }
         });
     }

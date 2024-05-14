@@ -5,19 +5,29 @@ class TheStranger extends PlotCard {
         this.whenRevealed({
             target: {
                 choosingPlayer: 'each',
-                cardCondition: (card, context) => card.location === 'play area' && card.getType() === 'character' && card.controller !== context.choosingPlayer
+                cardCondition: (card, context) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    card.controller !== context.choosingPlayer
             },
-            handler: context => {
+            handler: (context) => {
                 const uniqueCards = this.getChosenCards(context);
-                const printedCosts = uniqueCards.map(card => card.getPrintedCost());
-                let characters = this.game.filterCardsInPlay(card => printedCosts.includes(card.getPrintedCost()) && card.getType() === 'character' && card.hasPrintedCost());
+                const printedCosts = uniqueCards.map((card) => card.getPrintedCost());
+                let characters = this.game.filterCardsInPlay(
+                    (card) =>
+                        printedCosts.includes(card.getPrintedCost()) &&
+                        card.getType() === 'character' &&
+                        card.hasPrintedCost()
+                );
                 this.game.killCharacters(characters);
             }
         });
     }
-    
+
     getChosenCards(context) {
-        const cards = context.targets.selections.map(selection => selection.value).filter(card => !!card);
+        const cards = context.targets.selections
+            .map((selection) => selection.value)
+            .filter((card) => !!card);
         return [...new Set(cards)];
     }
 }

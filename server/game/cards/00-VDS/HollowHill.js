@@ -4,7 +4,7 @@ class HollowHill extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: event =>
+                onCardEntersPlay: (event) =>
                     event.playingType === 'marshal' &&
                     event.card.getType() === 'character' &&
                     event.card.controller === this.controller &&
@@ -21,17 +21,17 @@ class HollowHill extends DrawCard {
     doesNotMatchAnotherControlledFaction(marshalledCard) {
         let marshalledFaction = marshalledCard.getPrintedFaction();
 
-        if(marshalledFaction === 'neutral') {
+        if (marshalledFaction === 'neutral') {
             return false;
         }
 
         let factionsInPlay = [];
 
-        for(const card of this.controller.cardsInPlay) {
-            if(card !== marshalledCard) {
+        for (const card of this.controller.cardsInPlay) {
+            if (card !== marshalledCard) {
                 let factions = card.getFactions();
-                for(const faction of factions) {
-                    if(!factionsInPlay.includes(faction) && faction !== 'neutral') {
+                for (const faction of factions) {
+                    if (!factionsInPlay.includes(faction) && faction !== 'neutral') {
                         factionsInPlay.push(faction);
                     }
                 }

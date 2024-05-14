@@ -4,7 +4,8 @@ class Hellholt extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.loser === this.controller &&
+                afterChallenge: (event) =>
+                    event.challenge.loser === this.controller &&
                     event.challenge.strengthDifference >= 5 &&
                     this.allowGameAction('gainPower')
             },

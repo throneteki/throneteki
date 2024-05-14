@@ -82,8 +82,8 @@ class GameRouter extends EventEmitter {
                 status: worker.disconnected
                     ? 'disconnected'
                     : worker.disabled
-                    ? 'disabled'
-                    : 'active',
+                      ? 'disabled'
+                      : 'active',
                 version: worker.version
             };
         });

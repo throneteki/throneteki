@@ -3,7 +3,7 @@ const PlotCard = require('../../plotcard.js');
 class FrozenExpanse extends PlotCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: card => card.getType() === 'character' && card.getStrength() <= 2,
+            match: (card) => card.getType() === 'character' && card.getStrength() <= 2,
             targetController: 'any',
             effect: ability.effects.cannotBeStood()
         });

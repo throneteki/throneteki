@@ -6,10 +6,13 @@ class APitOfSnakes extends DrawCard {
             title: 'Place poison token',
             phase: 'challenge',
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.getNumberOfIcons() === 0
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    card.getNumberOfIcons() === 0
             },
-            handler: context => {
-                this.atEndOfPhase(ability => ({
+            handler: (context) => {
+                this.atEndOfPhase((ability) => ({
                     match: context.target,
                     effect: ability.effects.poison
                 }));

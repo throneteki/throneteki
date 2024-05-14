@@ -10,7 +10,9 @@ class DothrakiOutriders extends DrawCard {
     }
 
     getNumberOfDothraki() {
-        return this.controller.getNumberOfCardsInPlay(card => card.hasTrait('Dothraki') && card.getType() === 'character');
+        return this.controller.getNumberOfCardsInPlay(
+            (card) => card.hasTrait('Dothraki') && card.getType() === 'character'
+        );
     }
 }
 

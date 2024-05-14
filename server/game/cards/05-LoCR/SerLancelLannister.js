@@ -5,16 +5,23 @@ class SerLancelLannister extends DrawCard {
         this.persistentEffect({
             condition: () => this.getSingleOtherLannisterLordOrLady(),
             match: this,
-            effect: ability.effects.dynamicStrength(() => this.getSingleOtherLannisterLordOrLady().getStrength())
+            effect: ability.effects.dynamicStrength(() =>
+                this.getSingleOtherLannisterLordOrLady().getStrength()
+            )
         });
     }
 
     getSingleOtherLannisterLordOrLady() {
-        let cards = this.controller.filterCardsInPlay(card => {
-            return card.isFaction('lannister') && (card.hasTrait('Lord') || card.hasTrait('Lady')) && card.getType() === 'character' && card !== this;
+        let cards = this.controller.filterCardsInPlay((card) => {
+            return (
+                card.isFaction('lannister') &&
+                (card.hasTrait('Lord') || card.hasTrait('Lady')) &&
+                card.getType() === 'character' &&
+                card !== this
+            );
         });
 
-        if(cards.length === 1) {
+        if (cards.length === 1) {
             return cards[0];
         }
 
@@ -25,4 +32,3 @@ class SerLancelLannister extends DrawCard {
 SerLancelLannister.code = '05014';
 
 module.exports = SerLancelLannister;
-

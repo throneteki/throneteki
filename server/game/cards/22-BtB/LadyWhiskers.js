@@ -4,7 +4,7 @@ class LadyWhiskers extends DrawCard {
     setupCardAbilities(ability) {
         this.attachmentRestriction({ unique: true, printedCostOrLower: 3 });
         this.whileAttached({
-            match: card => card.name === 'Tommen Baratheon',
+            match: (card) => card.name === 'Tommen Baratheon',
             effect: ability.effects.addKeyword('Stealth')
         });
         this.whileAttached({

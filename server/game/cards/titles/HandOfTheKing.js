@@ -1,5 +1,5 @@
 const TitleCard = require('../../TitleCard');
-const {ChallengeTracker} = require('../../EventTrackers');
+const { ChallengeTracker } = require('../../EventTrackers');
 
 class HandOfTheKing extends TitleCard {
     setupCardAbilities(ability) {
@@ -9,14 +9,17 @@ class HandOfTheKing extends TitleCard {
         this.rivals('Master of Coin', 'Master of Ships');
         this.persistentEffect({
             targetController: 'current',
-            effect: ability.effects.mayInitiateAdditionalChallenge('power', opponent => this.allowOpponent(opponent))
+            effect: ability.effects.mayInitiateAdditionalChallenge('power', (opponent) =>
+                this.allowOpponent(opponent)
+            )
         });
         this.persistentEffect({
-            condition: () => (
+            condition: () =>
                 this.game.currentChallenge &&
                 this.game.currentChallenge.challengeType === 'power' &&
-                this.game.currentChallenge.anyParticipants(card => card.controller === this.controller)
-            ),
+                this.game.currentChallenge.anyParticipants(
+                    (card) => card.controller === this.controller
+                ),
             targetController: 'current',
             effect: ability.effects.contributeStrength(this, 1)
         });
@@ -25,11 +28,11 @@ class HandOfTheKing extends TitleCard {
     allowOpponent(opponent) {
         let opponents = this.powerChallengeOpponents();
 
-        if(opponents.size === 0) {
+        if (opponents.size === 0) {
             return false;
         }
 
-        if(opponents.size === 1) {
+        if (opponents.size === 1) {
             return !opponents.has(opponent);
         }
 
@@ -37,9 +40,12 @@ class HandOfTheKing extends TitleCard {
     }
 
     powerChallengeOpponents() {
-        let powerChallenges = this.tracker.filter({ attackingPlayer: this.controller, challengeType: 'power' });
+        let powerChallenges = this.tracker.filter({
+            attackingPlayer: this.controller,
+            challengeType: 'power'
+        });
 
-        return new Set(powerChallenges.map(challenge => challenge.defendingPlayer));
+        return new Set(powerChallenges.map((challenge) => challenge.defendingPlayer));
     }
 }
 

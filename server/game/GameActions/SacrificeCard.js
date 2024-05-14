@@ -23,7 +23,7 @@ class SacrificeCard extends GameAction {
             player,
             snapshotName: 'cardStateWhenSacrificed'
         };
-        const sacrificeEvent = this.event('onSacrificed', params, event => {
+        const sacrificeEvent = this.event('onSacrificed', params, (event) => {
             event.thenAttachEvent(PlaceCard.createEvent({ card: card, location: 'discard pile' }));
         });
         const leavePlayEvent = LeavePlay.createEvent({ card });

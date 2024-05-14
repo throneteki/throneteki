@@ -7,10 +7,14 @@ class Osha extends DrawCard {
             phase: 'challenge',
             limit: ability.limit.perPhase(1),
             condition: () => this.isParticipating(),
-            handler: context => {
+            handler: (context) => {
                 this.game.currentChallenge.removeFromChallenge(this);
                 this.controller.standCard(this);
-                this.game.addMessage('{0} removes {1} from the challenge and stands her', context.player, this);
+                this.game.addMessage(
+                    '{0} removes {1} from the challenge and stands her',
+                    context.player,
+                    this
+                );
             }
         });
     }

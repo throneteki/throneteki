@@ -11,7 +11,7 @@ class FleetCaptain extends DrawCard {
     }
 
     calculateStrength() {
-        let cards = this.controller.filterCardsInPlay(card => {
+        let cards = this.controller.filterCardsInPlay((card) => {
             return card.getType() === 'location' && card.hasTrait('Warship');
         });
 

@@ -4,23 +4,33 @@ class LadyMarya extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             effect: [
-                ability.effects.canMarshal(card => this.isFacedownAttachment(card) && card.getPrintedType() !== 'event'),
-                ability.effects.canMarshalIntoShadows(card => this.isFacedownAttachment(card)),
-                ability.effects.canPlay(card => this.isFacedownAttachment(card) && card.getPrintedType() === 'event')
+                ability.effects.canMarshal(
+                    (card) => this.isFacedownAttachment(card) && card.getPrintedType() !== 'event'
+                ),
+                ability.effects.canMarshalIntoShadows((card) => this.isFacedownAttachment(card)),
+                ability.effects.canPlay(
+                    (card) => this.isFacedownAttachment(card) && card.getPrintedType() === 'event'
+                )
             ]
         });
 
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.isMatch({ winner: this.controller, attackingPlayer: this.controller }) &&
-                    event.challenge.getWinnerCards().some(card => card.hasTrait('Captain') || card.hasTrait('Smuggler'))
+                afterChallenge: (event) =>
+                    event.challenge.isMatch({
+                        winner: this.controller,
+                        attackingPlayer: this.controller
+                    }) &&
+                    event.challenge
+                        .getWinnerCards()
+                        .some((card) => card.hasTrait('Captain') || card.hasTrait('Smuggler'))
             },
             cost: ability.costs.kneelSelf(),
             message: {
-                format: '{player} kneels {costs.kneel} to attach the top card of {loser}\'s deck facedown under {source}',
-                args: { loser: context => context.event.challenge.loser }
+                format: "{player} kneels {costs.kneel} to attach the top card of {loser}'s deck facedown under {source}",
+                args: { loser: (context) => context.event.challenge.loser }
             },
-            handler: context => {
+            handler: (context) => {
                 let opponent = context.event.challenge.loser;
                 let topCard = opponent.drawDeck[0];
 
@@ -41,7 +51,12 @@ class LadyMarya extends DrawCard {
     }
 
     isFacedownAttachment(card) {
-        return card.facedown && card.controller === this.controller && card.getType() === 'attachment' && this.attachments.includes(card);
+        return (
+            card.facedown &&
+            card.controller === this.controller &&
+            card.getType() === 'attachment' &&
+            this.attachments.includes(card)
+        );
     }
 }
 

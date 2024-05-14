@@ -7,7 +7,7 @@ class LittleFingersMeddling extends PlotCard {
             effect: ability.effects.reduceCost({
                 playingTypes: 'play',
                 amount: 2,
-                match: card => card.getType() === 'event'
+                match: (card) => card.getType() === 'event'
             })
         });
     }

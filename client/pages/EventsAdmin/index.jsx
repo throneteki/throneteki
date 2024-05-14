@@ -32,7 +32,7 @@ class EventsAdmin extends React.Component {
     }
 
     render() {
-        if(this.props.apiState && this.props.apiState.loading || !this.props.draftCubes) {
+        if ((this.props.apiState && this.props.apiState.loading) || !this.props.draftCubes) {
             return 'Loading events, please wait...';
         }
 
@@ -41,7 +41,9 @@ class EventsAdmin extends React.Component {
         return (
             <div className='col-xs-12'>
                 <Panel title='Events administration'>
-                    <a className='btn btn-primary' onClick={ () => navigate('/events/add') }>Add event</a>
+                    <a className='btn btn-primary' onClick={() => navigate('/events/add')}>
+                        Add event
+                    </a>
                     <table className='table table-striped'>
                         <thead>
                             <tr>
@@ -50,20 +52,35 @@ class EventsAdmin extends React.Component {
                             </tr>
                         </thead>
                         <tbody>
-                            { events.map(event => (
+                            {events.map((event) => (
                                 <tr>
-                                    <td>{ event.name }</td>
+                                    <td>{event.name}</td>
                                     <td>
-                                        <button className='btn btn-primary' onClick={ () => navigate(`/events/${event._id}`) }>Edit</button>
-                                        <button className='btn btn-danger' onClick={ () => this.handleDeleteClick(event._id) }>Delete</button>
+                                        <button
+                                            className='btn btn-primary'
+                                            onClick={() => navigate(`/events/${event._id}`)}
+                                        >
+                                            Edit
+                                        </button>
+                                        <button
+                                            className='btn btn-danger'
+                                            onClick={() => this.handleDeleteClick(event._id)}
+                                        >
+                                            Delete
+                                        </button>
                                     </td>
                                 </tr>
-                            )) }
+                            ))}
                         </tbody>
                     </table>
                 </Panel>
                 <Panel title='Draft Cubes'>
-                    <a className='btn btn-primary' onClick={ () => navigate('/events/draft-cubes/add') }>Add draft cube</a>
+                    <a
+                        className='btn btn-primary'
+                        onClick={() => navigate('/events/draft-cubes/add')}
+                    >
+                        Add draft cube
+                    </a>
                     <table className='table table-striped'>
                         <thead>
                             <tr>
@@ -72,19 +89,34 @@ class EventsAdmin extends React.Component {
                             </tr>
                         </thead>
                         <tbody>
-                            { draftCubes.map(draftCube => (
-                                <tr key={ `draft-cube:${draftCubes.name}` }>
-                                    <td>{ draftCube.name }</td>
+                            {draftCubes.map((draftCube) => (
+                                <tr key={`draft-cube:${draftCubes.name}`}>
+                                    <td>{draftCube.name}</td>
                                     <td>
-                                        <button className='btn btn-primary' onClick={ () => navigate(`/events/draft-cubes/${draftCube._id}`) }>Edit</button>
-                                        <button className='btn btn-danger' onClick={ () => this.handleDeleteDraftCubeClick(draftCube._id) }>Delete</button>
+                                        <button
+                                            className='btn btn-primary'
+                                            onClick={() =>
+                                                navigate(`/events/draft-cubes/${draftCube._id}`)
+                                            }
+                                        >
+                                            Edit
+                                        </button>
+                                        <button
+                                            className='btn btn-danger'
+                                            onClick={() =>
+                                                this.handleDeleteDraftCubeClick(draftCube._id)
+                                            }
+                                        >
+                                            Delete
+                                        </button>
                                     </td>
                                 </tr>
-                            )) }
+                            ))}
                         </tbody>
                     </table>
                 </Panel>
-            </div>);
+            </div>
+        );
     }
 }
 

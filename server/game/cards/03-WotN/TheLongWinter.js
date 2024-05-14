@@ -5,7 +5,9 @@ class TheLongWinter extends PlotCard {
         this.whenRevealed({
             handler: () => {
                 this.selections = [];
-                this.remainingPlayers = this.game.getPlayersInFirstPlayerOrder().filter(player => !player.activePlot.hasTrait('Summer'));
+                this.remainingPlayers = this.game
+                    .getPlayersInFirstPlayerOrder()
+                    .filter((player) => !player.activePlot.hasTrait('Summer'));
                 this.proceedToNextStep();
             }
         });
@@ -28,8 +30,12 @@ class TheLongWinter extends PlotCard {
     }
 
     doPower() {
-        for(let selection of this.selections) {
-            this.game.addMessage('{0} discards 1 power from {1}', selection.player, selection.cardFragment);
+        for (let selection of this.selections) {
+            this.game.addMessage(
+                '{0} discards 1 power from {1}',
+                selection.player,
+                selection.cardFragment
+            );
             selection.card.modifyPower(-1);
         }
 
@@ -37,19 +43,24 @@ class TheLongWinter extends PlotCard {
     }
 
     proceedToNextStep() {
-        if(this.remainingPlayers.length > 0) {
+        if (this.remainingPlayers.length > 0) {
             let currentPlayer = this.remainingPlayers.shift();
-            if(currentPlayer.getTotalPower() >= 1) {
+            if (currentPlayer.getTotalPower() >= 1) {
                 this.game.promptForSelect(currentPlayer, {
                     activePromptTitle: 'Select a card',
                     source: this,
-                    cardCondition: card => card.controller === currentPlayer && card.getPower() > 0,
+                    cardCondition: (card) =>
+                        card.controller === currentPlayer && card.getPower() > 0,
                     cardType: ['attachment', 'character', 'faction', 'location'],
                     onSelect: (player, card) => this.onCardSelected(player, card),
                     onCancel: (player) => this.cancelSelection(player)
                 });
             } else {
-                this.game.addMessage('{0} does not have any power to discard for {1}', currentPlayer, this);
+                this.game.addMessage(
+                    '{0} does not have any power to discard for {1}',
+                    currentPlayer,
+                    this
+                );
                 this.proceedToNextStep();
             }
         } else {

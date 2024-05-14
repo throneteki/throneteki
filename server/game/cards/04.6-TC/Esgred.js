@@ -16,13 +16,13 @@ class Esgred extends DrawCard {
 
     onCardEntersPlay(event) {
         let card = event.card;
-        if(card !== this && card.name !== 'Asha Greyjoy') {
+        if (card !== this && card.name !== 'Asha Greyjoy') {
             return;
         }
 
-        let asha = this.controller.cardsInPlay.find(card => card.name === 'Asha Greyjoy');
+        let asha = this.controller.cardsInPlay.find((card) => card.name === 'Asha Greyjoy');
 
-        if(!asha) {
+        if (!asha) {
             return;
         }
 

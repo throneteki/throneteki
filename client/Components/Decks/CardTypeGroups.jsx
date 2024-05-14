@@ -6,14 +6,19 @@ class CardTypeGroup extends React.Component {
     renderCardItem(cardQuantity, index) {
         const { displayFactionIcons, onCardClick, onCardMouseOut, onCardMouseOver } = this.props;
         return (
-            <div key={ `${cardQuantity.card.code}${index++}` } >
-                { displayFactionIcons && <span className={ `deck-list-icon thronesicon thronesicon-${cardQuantity.card.faction} with-background` } /> }
-                <span>{ cardQuantity.count + 'x ' }</span>
+            <div key={`${cardQuantity.card.code}${index++}`}>
+                {displayFactionIcons && (
+                    <span
+                        className={`deck-list-icon thronesicon thronesicon-${cardQuantity.card.faction} with-background`}
+                    />
+                )}
+                <span>{cardQuantity.count + 'x '}</span>
                 <CardLink
-                    card={ cardQuantity.card }
-                    onClick={ onCardClick }
-                    onMouseOut={ onCardMouseOut }
-                    onMouseOver={ onCardMouseOver } />
+                    card={cardQuantity.card}
+                    onClick={onCardClick}
+                    onMouseOut={onCardMouseOut}
+                    onMouseOver={onCardMouseOver}
+                />
             </div>
         );
     }
@@ -23,33 +28,33 @@ class CardTypeGroup extends React.Component {
         let cardsToRender = [];
         let groupedCards = groupCards({ cards, groupBy, sortCardsBy, useSchemes });
 
-        for(const {cards, group, title} of groupedCards) {
+        for (const { cards, group, title } of groupedCards) {
             let renderedCards = [];
             let count = 0;
             let index = 0;
 
-            for(const card of cards) {
+            for (const card of cards) {
                 renderedCards.push(this.renderCardItem(card, index++));
                 count += parseInt(card.count);
             }
 
-            if(cards.length === 0) {
+            if (cards.length === 0) {
                 continue;
             }
 
             cardsToRender.push(
-                <div className='cards-no-break' key={ group }>
-                    <div className='card-group-title'>{ title + ' (' + count.toString() + ')' }</div>
-                    <div key={ group } className='card-group'>{ renderedCards }</div>
-                </div>);
+                <div className='cards-no-break' key={group}>
+                    <div className='card-group-title'>{title + ' (' + count.toString() + ')'}</div>
+                    <div key={group} className='card-group'>
+                        {renderedCards}
+                    </div>
+                </div>
+            );
         }
 
         let cardsClassName = this.props.displayFactionIcons ? 'cards-two-columns' : 'cards';
 
-        return (
-            <div className={ cardsClassName }>
-                { cardsToRender }
-            </div>);
+        return <div className={cardsClassName}>{cardsToRender}</div>;
     }
 }
 

@@ -5,11 +5,11 @@ class DragonstoneConvert extends DrawCard {
         this.action({
             title: 'Prevent event',
             phase: 'challenge',
-            handler: context => {
+            handler: (context) => {
                 this.game.promptForCardName({
                     player: context.player,
                     title: 'Name an event',
-                    match: cardData => cardData.type === 'event',
+                    match: (cardData) => cardData.type === 'event',
                     onSelect: (player, cardName) => this.selectCardName(player, cardName),
                     source: this
                 });
@@ -19,10 +19,15 @@ class DragonstoneConvert extends DrawCard {
     }
 
     selectCardName(player, cardName) {
-        this.game.addMessage('{0} uses {1} to prevent events with the title {2} to be played', player, this, cardName);
-        this.untilEndOfPhase(ability => ({
+        this.game.addMessage(
+            '{0} uses {1} to prevent events with the title {2} to be played',
+            player,
+            this,
+            cardName
+        );
+        this.untilEndOfPhase((ability) => ({
             targetController: 'any',
-            effect: ability.effects.cannotPlay(card => card.name === cardName)
+            effect: ability.effects.cannotPlay((card) => card.name === cardName)
         }));
     }
 }

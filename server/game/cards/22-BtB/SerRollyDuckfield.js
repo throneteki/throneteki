@@ -9,13 +9,22 @@ class SerRollyDuckfield extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCharacterKilled: event => event.allowSave && event.card.canBeSaved() && (event.card.hasTrait('Lord') || event.card.hasTrait('King'))
+                onCharacterKilled: (event) =>
+                    event.allowSave &&
+                    event.card.canBeSaved() &&
+                    (event.card.hasTrait('Lord') || event.card.hasTrait('King'))
             },
             cost: ability.costs.discardFromHand(),
             limit: ability.limit.perRound(1),
-            handler: context => {
+            handler: (context) => {
                 context.event.saveCard();
-                this.game.addMessage('{0} uses {1} and discards {2} from their hand to save {3}', context.player, this, context.costs.discardFromHand, context.event.card);
+                this.game.addMessage(
+                    '{0} uses {1} and discards {2} from their hand to save {3}',
+                    context.player,
+                    this,
+                    context.costs.discardFromHand,
+                    context.event.card
+                );
             }
         });
     }

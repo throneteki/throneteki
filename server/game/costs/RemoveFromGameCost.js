@@ -10,7 +10,7 @@ class RemoveFromGameCost {
     }
 
     pay(cards) {
-        for(let card of cards) {
+        for (let card of cards) {
             card.owner.moveCard(card, 'out of game');
         }
     }

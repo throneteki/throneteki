@@ -6,10 +6,18 @@ class BloodOfTheViper extends DrawCard {
 
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.loser === this.controller && this.parent.isParticipating() && this.parent.kneeled
+                afterChallenge: (event) =>
+                    event.challenge.loser === this.controller &&
+                    this.parent.isParticipating() &&
+                    this.parent.kneeled
             },
-            handler: context => {
-                this.game.addMessage('{0} uses {1} to stand {2}', context.player, this, this.parent);
+            handler: (context) => {
+                this.game.addMessage(
+                    '{0} uses {1} to stand {2}',
+                    context.player,
+                    this,
+                    this.parent
+                );
                 context.player.standCard(this.parent);
             }
         });

@@ -7,11 +7,10 @@ class GameService {
     }
 
     create(game) {
-        return this.games.insert(game)
-            .catch(err => {
-                logger.error('Unable to create game %s', err);
-                throw new Error('Unable to create game');
-            });
+        return this.games.insert(game).catch((err) => {
+            logger.error('Unable to create game %s', err);
+            throw new Error('Unable to create game');
+        });
     }
 
     update(game) {
@@ -23,21 +22,24 @@ class GameService {
             winReason: game.winReason,
             finishedAt: new Date(game.finishedAt)
         };
-        return this.games.update({ gameId: game.gameId }, { '$set': properties })
-            .catch(err => {
-                logger.error('Unable to update game %s', err);
-                throw new Error('Unable to update game');
-            });
+        return this.games.update({ gameId: game.gameId }, { $set: properties }).catch((err) => {
+            logger.error('Unable to update game %s', err);
+            throw new Error('Unable to update game');
+        });
     }
 
     getAllGames(from, to) {
-        return this.games.find()
-            .then(games => {
-                return _.filter(games, game => {
-                    return (from ? game.startedAt >= new Date(from) : true) && (to ? game.startedAt < new Date(to) : true);
+        return this.games
+            .find()
+            .then((games) => {
+                return _.filter(games, (game) => {
+                    return (
+                        (from ? game.startedAt >= new Date(from) : true) &&
+                        (to ? game.startedAt < new Date(to) : true)
+                    );
                 });
             })
-            .catch(err => {
+            .catch((err) => {
                 logger.error('Unable to get all games from %s to %s %s', from, to, err);
                 throw new Error('Unable to get all games');
             });
@@ -45,4 +47,3 @@ class GameService {
 }
 
 export default GameService;
-

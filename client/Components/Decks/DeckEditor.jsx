@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import {validateDeck} from '../../../deck-helper';
+import { validateDeck } from '../../../deck-helper';
 
 import Input from '../Form/Input';
 import Select from '../Form/Select';

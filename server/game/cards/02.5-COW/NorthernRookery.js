@@ -7,7 +7,10 @@ class NorthernRookery extends DrawCard {
         });
         this.reaction({
             when: {
-                onCardEntersPlay: event => event.card === this && event.playingType === 'marshal' && this.controller.canDraw()
+                onCardEntersPlay: (event) =>
+                    event.card === this &&
+                    event.playingType === 'marshal' &&
+                    this.controller.canDraw()
             },
             handler: () => {
                 this.controller.drawCardsToHand(1);

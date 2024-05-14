@@ -22,20 +22,24 @@ class DrawCards extends GameAction {
             amount: actualAmount,
             cards: [],
             desiredAmount: amount,
-            isFullyResolved: event => event.amount === event.desiredAmount,
+            isFullyResolved: (event) => event.amount === event.desiredAmount,
             length: actualAmount, // Needed for legacy reason
             player,
             reason,
             source
         };
-        return this.event('onCardsDrawn', eventProps, event => {
+        return this.event('onCardsDrawn', eventProps, (event) => {
             let cards = player.drawDeck.slice(0, event.amount);
-            for(const card of cards) {
+            for (const card of cards) {
                 event.thenAttachEvent(
-                    this.event('onCardDrawn', { card, player: event.player, reason, source }, () => {
-                        player.placeCardInPile({ card, location: 'hand' });
-                        player.drawnCards += 1;
-                    })
+                    this.event(
+                        'onCardDrawn',
+                        { card, player: event.player, reason, source },
+                        () => {
+                            player.placeCardInPile({ card, location: 'hand' });
+                            player.drawnCards += 1;
+                        }
+                    )
                 );
             }
 

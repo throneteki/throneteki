@@ -11,9 +11,7 @@ class StandCost {
 
     pay(cards, context) {
         context.game.resolveGameAction(
-            GameActions.simultaneously(
-                cards.map(card => GameActions.standCard({ card }))
-            )
+            GameActions.simultaneously(cards.map((card) => GameActions.standCard({ card })))
         );
     }
 }

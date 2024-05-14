@@ -4,7 +4,8 @@ class TheRedViper extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.isAttacking(),
-            match: card => card.isDefending() && card.getType() === 'character' && card.getNumberOfIcons() < 2,
+            match: (card) =>
+                card.isDefending() && card.getType() === 'character' && card.getNumberOfIcons() < 2,
             targetController: 'any',
             effect: ability.effects.doesNotContributeStrength()
         });

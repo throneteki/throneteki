@@ -1,5 +1,5 @@
 const DrawCard = require('../../drawcard.js');
-const {Tokens} = require('../../Constants');
+const { Tokens } = require('../../Constants');
 
 class SilencesCrew extends DrawCard {
     setupCardAbilities(ability) {
@@ -10,12 +10,18 @@ class SilencesCrew extends DrawCard {
 
         this.reaction({
             when: {
-                onCardDiscarded: event => event.isPillage && event.source === this &&
-                                    (event.card.getType() === 'location' || event.card.getType() === 'attachment')
+                onCardDiscarded: (event) =>
+                    event.isPillage &&
+                    event.source === this &&
+                    (event.card.getType() === 'location' || event.card.getType() === 'attachment')
             },
             handler: () => {
                 this.modifyToken(Tokens.gold, 1);
-                this.game.addMessage('{0} moves 1 gold token from the treasury to {1}', this.controller, this);
+                this.game.addMessage(
+                    '{0} moves 1 gold token from the treasury to {1}',
+                    this.controller,
+                    this
+                );
             }
         });
     }

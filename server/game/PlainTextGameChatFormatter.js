@@ -12,7 +12,7 @@ class PlainTextGameChatFormatter {
     }
 
     format() {
-        return this.messages.map(messageProps => this.formatMessage(messageProps)).join('\n');
+        return this.messages.map((messageProps) => this.formatMessage(messageProps)).join('\n');
     }
 
     formatMessage(messageProps) {
@@ -21,15 +21,15 @@ class PlainTextGameChatFormatter {
 
     formatMessageFragment(messageProps) {
         let result = '';
-        for(const [key, fragment] of Object.entries(messageProps)) {
-            if(fragment === null || fragment === undefined) {
+        for (const [key, fragment] of Object.entries(messageProps)) {
+            if (fragment === null || fragment === undefined) {
                 continue;
             }
 
-            if(key === 'alert') {
+            if (key === 'alert') {
                 let message = this.formatMessageFragment(fragment.message);
 
-                switch(fragment.type) {
+                switch (fragment.type) {
                     case 'endofround':
                     case 'phasestart':
                     case 'startofround':
@@ -45,13 +45,13 @@ class PlainTextGameChatFormatter {
                         result += message;
                         break;
                 }
-            } else if(fragment.message) {
+            } else if (fragment.message) {
                 result += this.formatMessageFragment(fragment.message);
-            } else if(fragment.argType === 'card') {
+            } else if (fragment.argType === 'card') {
                 result += fragment.label;
-            } else if(fragment.name && fragment.argType === 'player') {
+            } else if (fragment.name && fragment.argType === 'player') {
                 result += `${fragment.name}:`;
-            } else if(fragment.argType === 'nonAvatarPlayer') {
+            } else if (fragment.argType === 'nonAvatarPlayer') {
                 result += fragment.name;
             } else {
                 result += fragment.toString();

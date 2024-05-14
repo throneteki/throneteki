@@ -2,12 +2,14 @@ const DrawCard = require('../../drawcard.js');
 
 class KingRenlySHost extends DrawCard {
     setupCardAbilities(ability) {
-        this.persistentEffect({ // STR increase while Summer
+        this.persistentEffect({
+            // STR increase while Summer
             condition: () => this.anyPlotHasTrait('Summer'),
             match: this,
             effect: ability.effects.modifyStrength(4)
         });
-        this.persistentEffect({ // cannot attack while Winter
+        this.persistentEffect({
+            // cannot attack while Winter
             condition: () => this.anyPlotHasTrait('Winter'),
             match: this,
             effect: ability.effects.cannotBeDeclaredAsAttacker()
@@ -15,9 +17,9 @@ class KingRenlySHost extends DrawCard {
     }
 
     anyPlotHasTrait(trait) {
-        return this.game.getPlayers().some(player =>
-            player.activePlot
-                     && player.activePlot.hasTrait(trait));
+        return this.game
+            .getPlayers()
+            .some((player) => player.activePlot && player.activePlot.hasTrait(trait));
     }
 }
 

@@ -14,7 +14,9 @@ class HauntedForestScout extends DrawCard {
     }
 
     getNumberOfRangers() {
-        return this.controller.getNumberOfCardsInPlay(card => card.getType() === 'character' && card.hasTrait('Ranger'));
+        return this.controller.getNumberOfCardsInPlay(
+            (card) => card.getType() === 'character' && card.hasTrait('Ranger')
+        );
     }
 }
 

@@ -5,7 +5,7 @@ class LoanFromTheIronBank extends PlotCard {
         this.persistentEffect({
             location: 'any',
             condition: () => this.location === 'revealed plots',
-            match: card => card === card.controller.activePlot,
+            match: (card) => card === card.controller.activePlot,
             targetController: 'current',
             effect: ability.effects.modifyGold(-1)
         });

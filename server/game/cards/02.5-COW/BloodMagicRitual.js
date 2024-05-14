@@ -5,15 +5,16 @@ class BloodMagicRitual extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCharacterKilled: event => event.allowSave && event.card.canBeSaved() && !event.card.hasTrait('Army')
+                onCharacterKilled: (event) =>
+                    event.allowSave && event.card.canBeSaved() && !event.card.hasTrait('Army')
             },
             location: 'hand',
-            handler: context => {
+            handler: (context) => {
                 context.event.saveCard();
 
-                if(this.controller.canAttach(this, context.event.card)) {
+                if (this.controller.canAttach(this, context.event.card)) {
                     this.controller.attach(this.controller, this, context.event.card, 'play');
-                    this.lastingEffect(ability => ({
+                    this.lastingEffect((ability) => ({
                         condition: () => !!this.parent,
                         targetLocation: 'any',
                         match: this,
@@ -25,15 +26,20 @@ class BloodMagicRitual extends DrawCard {
                     }));
                 }
 
-                this.lastingEffect(ability => ({
+                this.lastingEffect((ability) => ({
                     condition: () => this.location === 'play area',
                     targetLocation: 'any',
                     targetController: 'any',
-                    match: card => card === this.parent,
+                    match: (card) => card === this.parent,
                     effect: ability.effects.blankExcludingTraits
                 }));
 
-                this.game.addMessage('{0} plays {1} to save {2}', this.controller, this, context.event.card);
+                this.game.addMessage(
+                    '{0} plays {1} to save {2}',
+                    this.controller,
+                    this,
+                    context.event.card
+                );
             }
         });
     }

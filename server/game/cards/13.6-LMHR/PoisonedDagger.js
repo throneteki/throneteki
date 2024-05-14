@@ -8,27 +8,36 @@ class PoisonedDagger extends DrawCard {
         });
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.winner === this.controller && this.parent.isParticipating() && event.challenge.challengeType === 'intrigue'
+                afterChallenge: (event) =>
+                    event.challenge.winner === this.controller &&
+                    this.parent.isParticipating() &&
+                    event.challenge.challengeType === 'intrigue'
             },
-            cost: ability.costs.sacrificeSelf(), 
-            handler: context => {
+            cost: ability.costs.sacrificeSelf(),
+            handler: (context) => {
                 let otherPlayer = context.event.challenge.loser;
                 this.game.promptForSelect(otherPlayer, {
-                    cardCondition: card => (
+                    cardCondition: (card) =>
                         card.isParticipating() &&
                         card.getType() === 'character' &&
-                        card.controller === otherPlayer),
+                        card.controller === otherPlayer,
                     activePromptTitle: 'Select character to kill',
                     source: this,
                     gameAction: 'kill',
-                    onCancel: player => {
+                    onCancel: (player) => {
                         this.game.addAlert('danger', '{0} cancels resolution of {1}', player, this);
-                        
+
                         return true;
                     },
                     onSelect: (player, card) => {
                         card.controller.killCharacter(card);
-                        this.game.addMessage('{0} uses {1} to force {2} to kill {3}', this.controller, this, otherPlayer, card);
+                        this.game.addMessage(
+                            '{0} uses {1} to force {2} to kill {3}',
+                            this.controller,
+                            this,
+                            otherPlayer,
+                            card
+                        );
 
                         return true;
                     }

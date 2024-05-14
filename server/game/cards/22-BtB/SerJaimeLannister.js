@@ -5,12 +5,15 @@ class SerJaimeLannister extends DrawCard {
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                onCardEntersPlay: event => this.kneeled && this.game.currentPhase === 'challenge' && event.card.getType() === 'character'
+                onCardEntersPlay: (event) =>
+                    this.kneeled &&
+                    this.game.currentPhase === 'challenge' &&
+                    event.card.getType() === 'character'
             },
             message: '{player} uses {source} to stand {source}',
-            gameAction: GameActions.standCard(context => ({
+            gameAction: GameActions.standCard((context) => ({
                 card: context.source
-            })).then(preThenContext => ({
+            })).then((preThenContext) => ({
                 message: {
                     format: 'Then {player} discards {enteredPlay} from play',
                     args: { enteredPlay: () => preThenContext.event.card }

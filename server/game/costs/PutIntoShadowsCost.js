@@ -7,7 +7,7 @@ class PutIntoShadowsCost {
     }
 
     isEligible(card) {
-        if(card.location === 'play area' && !LeavePlay.allow({ card })) {
+        if (card.location === 'play area' && !LeavePlay.allow({ card })) {
             return false;
         }
         return card.location !== 'shadows';
@@ -16,7 +16,7 @@ class PutIntoShadowsCost {
     pay(cards, context) {
         context.game.resolveGameAction(
             GameActions.simultaneously(
-                cards.map(card => GameActions.putIntoShadows({ card, reason: 'cost' }))
+                cards.map((card) => GameActions.putIntoShadows({ card, reason: 'cost' }))
             )
         );
     }

@@ -1,16 +1,17 @@
 const DrawCard = require('../../drawcard.js');
 const GameActions = require('../../GameActions');
-const {flatten} = require('../../../Array');
+const { flatten } = require('../../../Array');
 
 class AWallOfRoses extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onChallengeInitiated: event => event.challenge.initiatedAgainstPlayer === this.controller
+                onChallengeInitiated: (event) =>
+                    event.challenge.initiatedAgainstPlayer === this.controller
             },
             message: '{player} plays {source} to reveal their hand',
             max: ability.limit.perChallenge(1),
-            gameAction: GameActions.revealCards(context => ({
+            gameAction: GameActions.revealCards((context) => ({
                 cards: context.player.hand
             })).then({
                 target: {
@@ -20,12 +21,19 @@ class AWallOfRoses extends DrawCard {
                     cardCondition: { type: 'character', attacking: true }
                 },
                 message: 'Then, {player} stands and removes {target} from the challenge',
-                handler: context => {
+                handler: (context) => {
                     this.game.resolveGameAction(
-                        GameActions.simultaneously(context => 
-                            flatten(context.targets.getTargets().map(target => [GameActions.standCard({ card: target }), GameActions.removeFromChallenge({ card: target })]))
-                        )
-                        , context
+                        GameActions.simultaneously((context) =>
+                            flatten(
+                                context.targets
+                                    .getTargets()
+                                    .map((target) => [
+                                        GameActions.standCard({ card: target }),
+                                        GameActions.removeFromChallenge({ card: target })
+                                    ])
+                            )
+                        ),
+                        context
                     );
                 }
             })

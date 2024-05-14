@@ -10,7 +10,12 @@ class RobertBaratheon extends DrawCard {
 
     calculateStrength() {
         return this.game.allCards.reduce((counter, card) => {
-            if(card === this || card.location !== 'play area' || card.getType() !== 'character' || !card.kneeled) {
+            if (
+                card === this ||
+                card.location !== 'play area' ||
+                card.getType() !== 'character' ||
+                !card.kneeled
+            ) {
                 return counter;
             }
 

@@ -6,15 +6,15 @@ class SwornToTheWatch extends DrawCard {
             effect: ability.effects.addFaction('thenightswatch')
         });
         this.whileAttached({
-            match: card => card.hasIcon('military'),
+            match: (card) => card.hasIcon('military'),
             effect: ability.effects.addTrait('Ranger')
         });
         this.whileAttached({
-            match: card => card.hasIcon('intrigue'),
+            match: (card) => card.hasIcon('intrigue'),
             effect: ability.effects.addTrait('Steward')
         });
         this.whileAttached({
-            match: card => card.hasIcon('power'),
+            match: (card) => card.hasIcon('power'),
             effect: ability.effects.addTrait('Builder')
         });
     }

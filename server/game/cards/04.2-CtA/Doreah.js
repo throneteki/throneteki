@@ -11,12 +11,15 @@ class Doreah extends DrawCard {
 
     hasParticipatingLordOrLady() {
         let challenge = this.game.currentChallenge;
-        if(!challenge) {
+        if (!challenge) {
             return false;
         }
 
-        let ourCards = challenge.attackingPlayer === this.controller ? challenge.attackers : challenge.defenders;
-        return ourCards.some(card => card.hasTrait('Lord') || card.hasTrait('Lady'));
+        let ourCards =
+            challenge.attackingPlayer === this.controller
+                ? challenge.attackers
+                : challenge.defenders;
+        return ourCards.some((card) => card.hasTrait('Lord') || card.hasTrait('Lady'));
     }
 }
 

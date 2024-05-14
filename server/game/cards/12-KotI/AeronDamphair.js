@@ -4,7 +4,8 @@ class AeronDamphair extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCharacterKilled: event => event.card.hasTrait('drowned god') && event.card.controller === this.controller
+                onCharacterKilled: (event) =>
+                    event.card.hasTrait('drowned god') && event.card.controller === this.controller
             },
             limit: ability.limit.perPhase(1),
             handler: () => {

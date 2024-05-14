@@ -10,8 +10,8 @@ class Deck {
     }
 
     createFactionCard(player) {
-        if(this.data.faction) {
-            let factionData = Factions.find(faction => faction.value === this.data.faction.value);
+        if (this.data.faction) {
+            let factionData = Factions.find((faction) => faction.value === this.data.faction.value);
             return new DrawCard(player, {
                 code: this.data.faction.value,
                 type: 'faction',
@@ -25,7 +25,7 @@ class Deck {
     }
 
     createAgendaCard(player) {
-        if(this.data.agenda) {
+        if (this.data.agenda) {
             return this.createCardForType(AgendaCard, player, this.data.agenda);
         }
 
@@ -46,16 +46,16 @@ class Deck {
             plotCards: []
         };
 
-        this.eachRepeatedCard(this.data.drawCards || [], cardData => {
-            if(this.isDrawCard(cardData)) {
+        this.eachRepeatedCard(this.data.drawCards || [], (cardData) => {
+            if (this.isDrawCard(cardData)) {
                 var drawCard = this.createCardForType(DrawCard, player, cardData);
                 drawCard.moveTo('draw deck');
                 result.drawCards.push(drawCard);
             }
         });
 
-        this.eachRepeatedCard(this.data.plotCards || [], cardData => {
-            if(this.isPlotCard(cardData)) {
+        this.eachRepeatedCard(this.data.plotCards || [], (cardData) => {
+            if (this.isPlotCard(cardData)) {
                 var plotCard = this.createCardForType(PlotCard, player, cardData);
                 plotCard.moveTo('plot deck');
                 result.plotCards.push(plotCard);
@@ -68,14 +68,16 @@ class Deck {
         result.allCards = [result.faction].concat(result.drawCards).concat(result.plotCards);
 
         result.agenda = this.createAgendaCard(player);
-        if(result.agenda) {
+        if (result.agenda) {
             result.agenda.moveTo('agenda');
             result.allCards.push(result.agenda);
         }
 
-        result.bannerCards = (this.data.bannerCards || []).map(card => this.createCardForType(AgendaCard, player, card));
+        result.bannerCards = (this.data.bannerCards || []).map((card) =>
+            this.createCardForType(AgendaCard, player, card)
+        );
 
-        for(let card of result.bannerCards) {
+        for (let card of result.bannerCards) {
             card.moveTo('agenda');
             result.allCards.push(card);
         }
@@ -84,8 +86,8 @@ class Deck {
     }
 
     eachRepeatedCard(cards, func) {
-        for(let cardEntry of cards) {
-            for(var i = 0; i < cardEntry.count; i++) {
+        for (let cardEntry of cards) {
+            for (var i = 0; i < cardEntry.count; i++) {
                 func(cardEntry.card);
             }
         }
@@ -93,7 +95,7 @@ class Deck {
 
     createCardForType(baseClass, player, cardData) {
         let cardClass = cards[cardData.code] || baseClass;
-        if(cardClass.cardData) {
+        if (cardClass.cardData) {
             cardData = Object.assign({}, cardData, cardClass.cardData);
         }
         let card = new cardClass(player, cardData);
@@ -102,13 +104,13 @@ class Deck {
     }
 
     createCard(player, cardData) {
-        if(this.isDrawCard(cardData)) {
+        if (this.isDrawCard(cardData)) {
             var drawCard = this.createCardForType(DrawCard, player, cardData);
             drawCard.moveTo('draw deck');
             return drawCard;
         }
 
-        if(this.isPlotCard(cardData)) {
+        if (this.isPlotCard(cardData)) {
             var plotCard = this.createCardForType(PlotCard, player, cardData);
             plotCard.moveTo('plot deck');
             return plotCard;

@@ -3,8 +3,9 @@ const DrawCard = require('../../drawcard.js');
 class SerJaimeLannister extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.game.currentChallenge && this.game.currentChallenge.attackers.length === 1,
-            match: card => card.hasTrait('Knight') && card.isAttacking(),
+            condition: () =>
+                this.game.currentChallenge && this.game.currentChallenge.attackers.length === 1,
+            match: (card) => card.hasTrait('Knight') && card.isAttacking(),
             effect: ability.effects.addKeyword('Renown')
         });
 
@@ -14,11 +15,17 @@ class SerJaimeLannister extends DrawCard {
             phase: 'challenge',
             target: {
                 activePromptTitle: 'Select character',
-                cardCondition: card => this.isKingsguardCharacter(card)
+                cardCondition: (card) => this.isKingsguardCharacter(card)
             },
-            handler: context => {
-                this.game.addMessage('{0} uses {1} to give {2} an {3} icon', context.player, this, context.target, 'intrigue');
-                this.untilEndOfPhase(ability => ({
+            handler: (context) => {
+                this.game.addMessage(
+                    '{0} uses {1} to give {2} an {3} icon',
+                    context.player,
+                    this,
+                    context.target,
+                    'intrigue'
+                );
+                this.untilEndOfPhase((ability) => ({
                     match: context.target,
                     effect: ability.effects.addIcon('intrigue')
                 }));
@@ -27,7 +34,11 @@ class SerJaimeLannister extends DrawCard {
     }
 
     isKingsguardCharacter(card) {
-        return card.location === 'play area' && card.hasTrait('Kingsguard') && card.getType() === 'character';
+        return (
+            card.location === 'play area' &&
+            card.hasTrait('Kingsguard') &&
+            card.getType() === 'character'
+        );
     }
 }
 

@@ -8,10 +8,13 @@ class BlackEars extends DrawCard {
             },
             location: 'hand',
             cost: ability.costs.payGold(2),
-            handler: context => {
+            handler: (context) => {
                 this.controller.putIntoPlay(this);
-                this.game.addMessage('{0} pays 2 gold to put {1} into play from their hand',
-                    context.player, this);
+                this.game.addMessage(
+                    '{0} pays 2 gold to put {1} into play from their hand',
+                    context.player,
+                    this
+                );
             }
         });
     }

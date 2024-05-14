@@ -1,5 +1,5 @@
 const DrawCard = require('../../drawcard');
-const {ChallengeTracker} = require('../../EventTrackers');
+const { ChallengeTracker } = require('../../EventTrackers');
 
 class PrivilegedPosition extends DrawCard {
     setupCardAbilities() {
@@ -8,15 +8,19 @@ class PrivilegedPosition extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCardAbilityInitiated: event => (
+                onCardAbilityInitiated: (event) =>
                     !this.hasLostPowerChallenge() &&
                     event.ability.isTriggeredAbility() &&
                     ['event', 'location'].includes(event.source.getType()) &&
                     event.source.controller !== this.controller
-                )
             },
-            handler: context => {
-                this.game.addMessage('{0} plays {1} to cancel {2}', this.controller, this, context.event.source);
+            handler: (context) => {
+                this.game.addMessage(
+                    '{0} plays {1} to cancel {2}',
+                    this.controller,
+                    this,
+                    context.event.source
+                );
                 context.event.cancel();
             }
         });

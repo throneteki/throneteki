@@ -12,15 +12,23 @@ class MeereeneseMarket extends DrawCard {
             cost: ability.costs.kneelSelf(),
             target: {
                 activePromptTitle: 'Select a card',
-                cardCondition: card => card.location === 'discard pile'
+                cardCondition: (card) => card.location === 'discard pile'
             },
-            handler: context => {
+            handler: (context) => {
                 this.game.resolveGameAction(
-                    GameActions.returnCardToDeck(context => ({ card: context.target, bottom: true })),
+                    GameActions.returnCardToDeck((context) => ({
+                        card: context.target,
+                        bottom: true
+                    })),
                     context
                 );
-                this.game.addMessage('{0} kneels {1} to place {2} on the bottom of {3}\'s deck',
-                    this.controller, this, context.target, context.target.owner);
+                this.game.addMessage(
+                    "{0} kneels {1} to place {2} on the bottom of {3}'s deck",
+                    this.controller,
+                    this,
+                    context.target,
+                    context.target.owner
+                );
             }
         });
     }

@@ -12,7 +12,7 @@ class ThePrinceWhoCameTooLate extends PlotCard {
                 title: 'Select a character',
                 match: { type: 'character' },
                 message: '{player} {gameAction}',
-                gameAction: GameActions.putIntoPlay(context => ({
+                gameAction: GameActions.putIntoPlay((context) => ({
                     card: context.searchTarget
                 }))
             })

@@ -6,15 +6,15 @@ class ExposeDuplicity extends PlotCard {
         this.whenRevealed({
             message: '{player} uses {source} to discard each card in shadows',
             handler: () => {
-                let cardsInShadows = this.game.allCards.filter(card => card.location === 'shadows');
+                let cardsInShadows = this.game.allCards.filter(
+                    (card) => card.location === 'shadows'
+                );
 
-                let actions = cardsInShadows.map(cardInShadow => {
+                let actions = cardsInShadows.map((cardInShadow) => {
                     return GameActions.discardCard({ card: cardInShadow });
                 });
 
-                this.game.resolveGameAction(
-                    GameActions.simultaneously(actions)
-                );
+                this.game.resolveGameAction(GameActions.simultaneously(actions));
             }
         });
     }

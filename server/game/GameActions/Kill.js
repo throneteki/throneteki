@@ -24,8 +24,14 @@ class Kill extends GameAction {
             isBurn,
             snapshotName: 'cardStateWhenKilled'
         };
-        const event = this.event('onCharacterKilled', params, event => {
-            event.thenAttachEvent(PlaceCard.createEvent({ card: event.card, player: event.player, location: 'dead pile' }));
+        const event = this.event('onCharacterKilled', params, (event) => {
+            event.thenAttachEvent(
+                PlaceCard.createEvent({
+                    card: event.card,
+                    player: event.player,
+                    location: 'dead pile'
+                })
+            );
         });
 
         const leavePlayEvent = LeavePlay.createEvent({ card, allowSave });

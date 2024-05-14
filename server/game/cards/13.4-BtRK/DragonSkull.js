@@ -5,16 +5,15 @@ class DragonSkull extends DrawCard {
         this.attachmentRestriction({ faction: 'targaryen' });
         this.whileAttached({
             condition: () => this.areNoDragonsInPlay(),
-            effect: [
-                ability.effects.addKeyword('Intimidate'),
-                ability.effects.addKeyword('Renown')
-            ]
-        });   
+            effect: [ability.effects.addKeyword('Intimidate'), ability.effects.addKeyword('Renown')]
+        });
     }
 
     areNoDragonsInPlay() {
-        return !this.game.getPlayers().some(player => {
-            return player.anyCardsInPlay(card => card.getType() === 'character' && card.hasTrait('Dragon'));
+        return !this.game.getPlayers().some((player) => {
+            return player.anyCardsInPlay(
+                (card) => card.getType() === 'character' && card.hasTrait('Dragon')
+            );
         });
     }
 }

@@ -6,10 +6,12 @@ class UnbowedUnbentUnbroken extends DrawCard {
         this.reaction({
             max: ability.limit.perChallenge(1),
             when: {
-                afterChallenge: event => !this.controller.firstPlayer && event.challenge.defendingPlayer === this.controller &&
+                afterChallenge: (event) =>
+                    !this.controller.firstPlayer &&
+                    event.challenge.defendingPlayer === this.controller &&
                     event.challenge.loser === this.controller
             },
-            handler: context => {
+            handler: (context) => {
                 this.challengeWinner = context.event.challenge.winner;
                 this.game.promptWithMenu(this.controller, this, {
                     activePrompt: {
@@ -25,12 +27,18 @@ class UnbowedUnbentUnbroken extends DrawCard {
     }
 
     trigger(player, challengeType) {
-        this.untilEndOfPhase(ability => ({
+        this.untilEndOfPhase((ability) => ({
             targetController: this.challengeWinner,
             effect: ability.effects.cannotInitiateChallengeType(challengeType)
         }));
 
-        this.game.addMessage('{0} plays {1} to make {2} unable to initiate {3} challenges until the end of the phase', player, this, this.challengeWinner, challengeType);
+        this.game.addMessage(
+            '{0} plays {1} to make {2} unable to initiate {3} challenges until the end of the phase',
+            player,
+            this,
+            this.challengeWinner,
+            challengeType
+        );
 
         return true;
     }

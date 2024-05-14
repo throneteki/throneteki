@@ -12,7 +12,7 @@ class DiscardPower extends GameAction {
     createEvent({ card, amount = 1 }) {
         let finalAmount = Math.min(card.power, amount);
 
-        return this.event('onCardPowerDiscarded', { card, power: finalAmount }, event => {
+        return this.event('onCardPowerDiscarded', { card, power: finalAmount }, (event) => {
             event.card.power -= event.power;
         });
     }

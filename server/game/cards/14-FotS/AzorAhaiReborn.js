@@ -11,12 +11,13 @@ class AzorAhaiReborn extends DrawCard {
     }
 
     hasAttackingRhllor() {
-        return this.controller.anyCardsInPlay(card => (
-            card.isAttacking() &&
-            card.getType() === 'character' &&
-            card.hasTrait('R\'hllor') &&
-            card !== this.parent
-        ));
+        return this.controller.anyCardsInPlay(
+            (card) =>
+                card.isAttacking() &&
+                card.getType() === 'character' &&
+                card.hasTrait("R'hllor") &&
+                card !== this.parent
+        );
     }
 }
 

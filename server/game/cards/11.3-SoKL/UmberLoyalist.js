@@ -5,26 +5,31 @@ class UmberLoyalist extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: event => event.card === this && this.controller.canDraw()
+                onCardEntersPlay: (event) => event.card === this && this.controller.canDraw()
             },
-            handler: context => {
+            handler: (context) => {
                 let numDrawn = context.player.drawCardsToHand(2).length;
-                this.game.addMessage('{0} uses {1} to draw {2}',
-                    context.player, this, TextHelper.count(numDrawn, 'card'));
+                this.game.addMessage(
+                    '{0} uses {1} to draw {2}',
+                    context.player,
+                    this,
+                    TextHelper.count(numDrawn, 'card')
+                );
             }
         });
         this.forcedInterrupt({
             when: {
-                onCardLeftPlay: event => event.card === this && this.controller.hand.length >= 2
+                onCardLeftPlay: (event) => event.card === this && this.controller.hand.length >= 2
             },
-            handler: context => {
+            handler: (context) => {
                 this.game.promptForSelect(context.player, {
                     activePromptTitle: 'Select 2 cards',
                     numCards: 2,
                     mode: 'exactly',
-                    cardCondition: card => card.controller === context.player && card.location === 'hand',
+                    cardCondition: (card) =>
+                        card.controller === context.player && card.location === 'hand',
                     onSelect: (player, cards) => this.onCardsSelected(player, cards),
-                    onCancel: player => this.cancelResolution(player)
+                    onCancel: (player) => this.cancelResolution(player)
                 });
             }
         });

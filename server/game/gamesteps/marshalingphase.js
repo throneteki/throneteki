@@ -30,7 +30,7 @@ class MarshalingPhase extends Phase {
     }
 
     collectIncome(player) {
-        if(player.canGainGold()) {
+        if (player.canGainGold()) {
             let gold = this.game.addGold(player, player.getTotalIncome());
             this.game.addMessage('{0} collects {1} gold', player, gold);
         }

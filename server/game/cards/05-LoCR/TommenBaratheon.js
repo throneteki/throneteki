@@ -4,7 +4,7 @@ class TommenBaratheon extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetController: 'any',
-            match: player => player.hand.length === 0,
+            match: (player) => player.hand.length === 0,
             effect: ability.effects.cannotGainChallengeBonus()
         });
     }

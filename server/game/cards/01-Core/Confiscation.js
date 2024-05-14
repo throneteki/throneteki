@@ -5,13 +5,18 @@ class Confiscation extends PlotCard {
         this.whenRevealed({
             target: {
                 activePromptTitle: 'Select an attachment',
-                cardCondition: card => this.cardCondition(card)
+                cardCondition: (card) => this.cardCondition(card)
             },
-            handler: context => {
+            handler: (context) => {
                 let attachment = context.target;
                 attachment.owner.discardCard(attachment);
 
-                this.game.addMessage('{0} uses {1} to discard {2}', context.player, this, attachment);
+                this.game.addMessage(
+                    '{0} uses {1} to discard {2}',
+                    context.player,
+                    this,
+                    attachment
+                );
             }
         });
     }

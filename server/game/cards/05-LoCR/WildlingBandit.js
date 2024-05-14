@@ -3,9 +3,11 @@ const DrawCard = require('../../drawcard.js');
 class WildlingBandit extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => (
+            condition: () =>
                 this.isAttacking() &&
-                this.game.isDuringChallenge({ match: challenge => challenge.defendingPlayer.gold > this.controller.gold })),
+                this.game.isDuringChallenge({
+                    match: (challenge) => challenge.defendingPlayer.gold > this.controller.gold
+                }),
             match: this,
             effect: ability.effects.modifyStrength(2)
         });

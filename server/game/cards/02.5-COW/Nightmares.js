@@ -6,15 +6,22 @@ class Nightmares extends DrawCard {
             title: 'Blank a character or location',
             target: {
                 activePromptTitle: 'Select a character or location',
-                cardCondition: card => card.location === 'play area' && (card.getType() === 'character' || card.getType() === 'location')
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    (card.getType() === 'character' || card.getType() === 'location')
             },
-            handler: context => {
-                this.untilEndOfPhase(ability => ({
+            handler: (context) => {
+                this.untilEndOfPhase((ability) => ({
                     match: context.target,
                     effect: ability.effects.blankExcludingTraits
                 }));
 
-                this.game.addMessage('{0} uses {1} to treat the text box of {2} as blank until the end of the phase', context.player, this, context.target);
+                this.game.addMessage(
+                    '{0} uses {1} to treat the text box of {2} as blank until the end of the phase',
+                    context.player,
+                    this,
+                    context.target
+                );
             }
         });
     }

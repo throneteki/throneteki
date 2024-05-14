@@ -7,7 +7,13 @@ class SealOfTheHand extends DrawCard {
             title: 'Stand attached character',
             condition: () => this.parent.kneeled,
             cost: ability.costs.kneelSelf(),
-            message: () => this.game.addMessage('{0} kneels {1} to stand {2}', this.controller, this, this.parent),
+            message: () =>
+                this.game.addMessage(
+                    '{0} kneels {1} to stand {2}',
+                    this.controller,
+                    this,
+                    this.parent
+                ),
             handler: () => {
                 this.controller.standCard(this.parent);
             }

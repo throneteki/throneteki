@@ -5,14 +5,19 @@ class NaughtButAshes extends DrawCard {
         this.action({
             title: 'Give character -X STR',
             target: {
-                cardCondition: { location: 'play area', type: 'character', participating: true, hasAttachments: false }
+                cardCondition: {
+                    location: 'play area',
+                    type: 'character',
+                    participating: true,
+                    hasAttachments: false
+                }
             },
             message: {
                 format: '{player} plays {source} to give {target} {amount} STR until the end of the phase',
                 args: { amount: () => this.getAmount() }
             },
-            handler: context => {
-                this.untilEndOfPhase(ability => ({
+            handler: (context) => {
+                this.untilEndOfPhase((ability) => ({
                     match: context.target,
                     effect: ability.effects.modifyStrength(this.getAmount())
                 }));

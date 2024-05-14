@@ -10,13 +10,13 @@ class FavorOfTheOldGods extends DrawCard {
 
         this.action({
             title: 'Stand attached character',
-            condition: context => Conditions.allCardsAreStark({ player: context.player }),
+            condition: (context) => Conditions.allCardsAreStark({ player: context.player }),
             cost: ability.costs.kneelSelf(),
             message: {
                 format: '{player} kneels {source} to stand {parent}',
-                args: { parent: context => context.source.parent }
+                args: { parent: (context) => context.source.parent }
             },
-            gameAction: GameActions.standCard(context => ({
+            gameAction: GameActions.standCard((context) => ({
                 card: context.source.parent
             }))
         });

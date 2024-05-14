@@ -4,19 +4,25 @@ class RedKeepSpy extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: event => event.playingType === 'ambush' && this === event.card
+                onCardEntersPlay: (event) => event.playingType === 'ambush' && this === event.card
             },
             target: {
-                cardCondition: card => (
+                cardCondition: (card) =>
                     card.location === 'play area' &&
                     card.controller !== this.controller &&
                     card.controller.hand.length < this.controller.hand.length &&
                     card.getType() === 'character' &&
-                    card.getPrintedCost() <= 3)
+                    card.getPrintedCost() <= 3
             },
-            handler: context => {
+            handler: (context) => {
                 context.target.owner.returnCardToHand(context.target);
-                this.game.addMessage('{0} uses {1} to return {2} to {3}\'s hand', this.controller, this, context.target, context.target.controller);
+                this.game.addMessage(
+                    "{0} uses {1} to return {2} to {3}'s hand",
+                    this.controller,
+                    this,
+                    context.target,
+                    context.target.controller
+                );
             }
         });
     }

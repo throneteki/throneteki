@@ -9,18 +9,27 @@ class ReturnToTheFields extends PlotCard {
                 type: 'select',
                 mode: 'upTo',
                 numCards: 3,
-                cardCondition: (card, context) => card.getType() === 'character' && card.location === 'play area' && card.controller === context.player,
+                cardCondition: (card, context) =>
+                    card.getType() === 'character' &&
+                    card.location === 'play area' &&
+                    card.controller === context.player,
                 gameAction: 'sacrifice'
             },
             handler: (context) => {
                 this.game.resolveGameAction(
                     GameActions.simultaneously(
-                        context.target.map(card => GameActions.sacrificeCard({ card }))
+                        context.target.map((card) => GameActions.sacrificeCard({ card }))
                     )
                 );
 
                 let cardsDrawn = context.player.drawCardsToHand(context.target.length).length;
-                this.game.addMessage('{0} uses {1} to sacrifice {2} and draw {3}', context.player, this, context.target, TextHelper.count(cardsDrawn, 'card'));
+                this.game.addMessage(
+                    '{0} uses {1} to sacrifice {2} and draw {3}',
+                    context.player,
+                    this,
+                    context.target,
+                    TextHelper.count(cardsDrawn, 'card')
+                );
             }
         });
     }

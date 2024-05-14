@@ -3,8 +3,9 @@ const DrawCard = require('../../drawcard.js');
 class ImprovedFortifications extends DrawCard {
     setupCardAbilities(ability) {
         this.attachmentRestriction({ type: 'location' });
-        
-        let leftPlayCondition = event => event.allowSave && event.card.canBeSaved() && event.card === this.parent;
+
+        let leftPlayCondition = (event) =>
+            event.allowSave && event.card.canBeSaved() && event.card === this.parent;
         this.interrupt({
             canCancel: true,
             when: {
@@ -15,9 +16,14 @@ class ImprovedFortifications extends DrawCard {
                 onCardPutIntoShadows: leftPlayCondition
             },
             cost: ability.costs.sacrificeSelf(),
-            handler: context => {
+            handler: (context) => {
                 context.event.saveCard();
-                this.game.addMessage('{0} sacrifices {1} to save {2}', context.player, this, this.parent);
+                this.game.addMessage(
+                    '{0} sacrifices {1} to save {2}',
+                    context.player,
+                    this,
+                    this.parent
+                );
             }
         });
     }

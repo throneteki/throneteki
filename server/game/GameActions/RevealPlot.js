@@ -12,15 +12,19 @@ class RevealPlot extends GameAction {
     }
 
     createEvent({ card, player }) {
-        const event = this.event('__REVEAL_PLOT__', { card, player }, event => {
+        const event = this.event('__REVEAL_PLOT__', { card, player }, (event) => {
             event.player.selectedPlot = null;
             event.card.flipFaceup();
             event.thenAttachEvent(PlaceCard.createEvent({ card, player, location: 'active plot' }));
         });
-        const entersPlayEvent = this.event('onCardEntersPlay', { card, playingType: 'plot', originalLocation: card.location });
+        const entersPlayEvent = this.event('onCardEntersPlay', {
+            card,
+            playingType: 'plot',
+            originalLocation: card.location
+        });
         const events = [event, entersPlayEvent];
 
-        if(player.activePlot) {
+        if (player.activePlot) {
             events.push(DiscardPlot.createEvent({ card: player.activePlot, player }));
         }
 

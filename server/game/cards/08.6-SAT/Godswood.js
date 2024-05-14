@@ -5,7 +5,7 @@ class Godswood extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: event =>
+                afterChallenge: (event) =>
                     event.challenge.winner === this.controller &&
                     event.challenge.attackingPlayer === this.controller &&
                     this.moreWinterThanSummerPlotsRevealed() &&
@@ -16,8 +16,12 @@ class Godswood extends DrawCard {
                 let cards = this.controller.activePlot.getClaim();
                 cards = this.controller.drawCardsToHand(cards).length;
 
-                this.game.addMessage('{0} kneels {1} to draw {2}',
-                    this.controller, this, TextHelper.count(cards, 'card'));
+                this.game.addMessage(
+                    '{0} kneels {1} to draw {2}',
+                    this.controller,
+                    this,
+                    TextHelper.count(cards, 'card')
+                );
             }
         });
     }

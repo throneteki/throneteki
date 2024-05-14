@@ -5,12 +5,21 @@ class MaesterAemon extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCharacterKilled: event => event.allowSave && event.card.canBeSaved() && event.card.isFaction('thenightswatch') && event.card.controller === this.controller
+                onCharacterKilled: (event) =>
+                    event.allowSave &&
+                    event.card.canBeSaved() &&
+                    event.card.isFaction('thenightswatch') &&
+                    event.card.controller === this.controller
             },
             cost: ability.costs.kneelSelf(),
-            handler: context => {
+            handler: (context) => {
                 context.event.saveCard();
-                this.game.addMessage('{0} kneels {1} to save {2}', this.controller, this, context.target);
+                this.game.addMessage(
+                    '{0} kneels {1} to save {2}',
+                    this.controller,
+                    this,
+                    context.target
+                );
             }
         });
     }

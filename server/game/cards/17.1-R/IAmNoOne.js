@@ -5,14 +5,15 @@ class IAmNoOne extends DrawCard {
         this.action({
             title: 'Give character insight',
             target: {
-                cardCondition: card => card.location === 'play area' &&
-                                       (
-                                           (card.name === 'Arya Stark')
-                                            ||
-                                           (card.getType() === 'character' && card.isUnique() && card.getPrintedCost() <= 3 && card.controller === this.controller)
-                                       )
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    (card.name === 'Arya Stark' ||
+                        (card.getType() === 'character' &&
+                            card.isUnique() &&
+                            card.getPrintedCost() <= 3 &&
+                            card.controller === this.controller))
             },
-            handler: context => {
+            handler: (context) => {
                 this.untilEndOfPhase(() => ({
                     match: context.target,
                     effect: [
@@ -23,8 +24,12 @@ class IAmNoOne extends DrawCard {
                     ]
                 }));
 
-                this.game.addMessage('{0} plays {1} and chooses {2} as its target',
-                    context.player, this, context.target);
+                this.game.addMessage(
+                    '{0} plays {1} and chooses {2} as its target',
+                    context.player,
+                    this,
+                    context.target
+                );
             }
         });
     }

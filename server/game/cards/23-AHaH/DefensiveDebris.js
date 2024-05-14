@@ -16,17 +16,21 @@ class DefensiveDebris extends DrawCard {
             limit: ability.limit.perPhase(1),
             message: {
                 format: '{player} discards 1 gold from {source} and chooses {target} to prevent cards with printed cost {printedCost} from being played or entering play until the end of the phase',
-                args: { printedCost: context => context.target.getPrintedCost() }
+                args: { printedCost: (context) => context.target.getPrintedCost() }
             },
-            handler: context => {
-                this.untilEndOfPhase(ability => ({
+            handler: (context) => {
+                this.untilEndOfPhase((ability) => ({
                     targetController: 'any',
                     effect: [
-                        ability.effects.cannotPutIntoPlay(card => card.getPrintedCost() === context.target.getPrintedCost()),
-                        ability.effects.cannotPlay(card => card.getPrintedCost() === context.target.getPrintedCost())
+                        ability.effects.cannotPutIntoPlay(
+                            (card) => card.getPrintedCost() === context.target.getPrintedCost()
+                        ),
+                        ability.effects.cannotPlay(
+                            (card) => card.getPrintedCost() === context.target.getPrintedCost()
+                        )
                     ]
                 }));
-            } 
+            }
         });
     }
 }

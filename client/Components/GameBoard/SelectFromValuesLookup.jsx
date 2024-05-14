@@ -4,7 +4,9 @@ import PropTypes from 'prop-types';
 import TypeaheadLookup from './TypeaheadLookup';
 
 function SelectFromValuesLookup(props) {
-    return <TypeaheadLookup values={ props.selectableValues } onValueSelected={ props.onValueSelected } />;
+    return (
+        <TypeaheadLookup values={props.selectableValues} onValueSelected={props.onValueSelected} />
+    );
 }
 
 SelectFromValuesLookup.displayName = 'SelectFromValuesLookup';

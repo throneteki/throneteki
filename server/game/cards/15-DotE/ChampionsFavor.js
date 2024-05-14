@@ -7,7 +7,10 @@ class ChampionsFavor extends DrawCard {
             title: 'Give STR',
             cost: ability.costs.kneelParent(),
             target: {
-                cardCondition: card => card.isParticipating() && !card.hasTrait('Lady') && card.getType() === 'character'
+                cardCondition: (card) =>
+                    card.isParticipating() &&
+                    !card.hasTrait('Lady') &&
+                    card.getType() === 'character'
             },
             message: {
                 format: '{player} uses {source} and kneels {parent} to give {target} +{strength} STR until the end of the challenge',
@@ -16,9 +19,9 @@ class ChampionsFavor extends DrawCard {
                     strength: () => this.parent.getStrength() + 2
                 }
             },
-            handler: context => {
+            handler: (context) => {
                 let str = this.parent.getStrength() + 2;
-                this.untilEndOfChallenge(ability => ({
+                this.untilEndOfChallenge((ability) => ({
                     match: context.target,
                     effect: ability.effects.modifyStrength(str)
                 }));

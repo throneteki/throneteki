@@ -4,7 +4,9 @@ const Conditions = require('../../Conditions');
 class AlysaneMormont extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => Conditions.allCharactersAreStark({ player: this.controller }) && this.game.isDuringChallenge({ challengeType: 'military'}),
+            condition: () =>
+                Conditions.allCharactersAreStark({ player: this.controller }) &&
+                this.game.isDuringChallenge({ challengeType: 'military' }),
             match: this,
             effect: [
                 ability.effects.addKeyword('stealth'),

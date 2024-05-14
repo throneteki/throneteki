@@ -1,12 +1,12 @@
 const PlotCard = require('../../plotcard');
-const {ChallengeTracker} = require('../../EventTrackers');
+const { ChallengeTracker } = require('../../EventTrackers');
 
 class GossipAndLies extends PlotCard {
     setupCardAbilities(ability) {
         this.tracker = ChallengeTracker.forPhase(this.game);
 
         this.persistentEffect({
-            match: card => card.getType() === 'character',
+            match: (card) => card.getType() === 'character',
             condition: () => this.isAttackingInFirstIntrigueChallenge(),
             effect: ability.effects.doesNotKneelAsAttacker({ challengeType: 'intrigue' })
         });

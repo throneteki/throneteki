@@ -7,13 +7,18 @@ class OldGreyGull extends DrawCard {
             cost: ability.costs.kneelSelf(),
             target: {
                 type: 'select',
-                cardCondition: card => card !== this && card.location === 'play area' && card.getType() === 'character' && card.isFaction('greyjoy') && card.controller === this.controller
+                cardCondition: (card) =>
+                    card !== this &&
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    card.isFaction('greyjoy') &&
+                    card.controller === this.controller
             },
             message: '{player} kneels {source} to kill {target}',
-            handler: context => {
+            handler: (context) => {
                 this.game.killCharacter(context.target);
                 this.game.queueSimpleStep(() => {
-                    if(context.target.location !== 'dead pile') {
+                    if (context.target.location !== 'dead pile') {
                         return;
                     }
 

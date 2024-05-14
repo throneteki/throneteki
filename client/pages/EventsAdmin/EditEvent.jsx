@@ -7,36 +7,48 @@ import EventEditor from './EventEditor';
 
 class EditEvent extends React.Component {
     componentWillMount() {
-        const {loadDraftCubes, loadEventEditor, eventId} = this.props;
+        const { loadDraftCubes, loadEventEditor, eventId } = this.props;
 
         loadDraftCubes();
         loadEventEditor(eventId);
     }
 
     componentWillReceiveProps(newProps) {
-        if(newProps.eventSaved) {
+        if (newProps.eventSaved) {
             newProps.navigate('/events');
         }
     }
 
     render() {
-        const { apiState, cards, draftCubes, eventId, events, navigate, packs, saveEvent, restrictedLists } = this.props;
+        const {
+            apiState,
+            cards,
+            draftCubes,
+            eventId,
+            events,
+            navigate,
+            packs,
+            saveEvent,
+            restrictedLists
+        } = this.props;
 
-        if(!cards || !packs || !events || !restrictedLists || !draftCubes) {
+        if (!cards || !packs || !events || !restrictedLists || !draftCubes) {
             return <div>Please wait while loading from the server...</div>;
         }
 
         return (
-            <EventEditor { ...{
-                apiState,
-                cards,
-                draftCubes,
-                event: events.find(event => event._id === eventId),
-                navigate,
-                packs,
-                onEventSave: saveEvent,
-                restrictedLists: restrictedLists
-            } } />
+            <EventEditor
+                {...{
+                    apiState,
+                    cards,
+                    draftCubes,
+                    event: events.find((event) => event._id === eventId),
+                    navigate,
+                    packs,
+                    onEventSave: saveEvent,
+                    restrictedLists: restrictedLists
+                }}
+            />
         );
     }
 }
@@ -52,7 +64,7 @@ EditEvent.propTypes = {
     loadEventEditor: PropTypes.func,
     navigate: PropTypes.func,
     packs: PropTypes.array,
-    restrictedLists : PropTypes.array,
+    restrictedLists: PropTypes.array,
     saveEvent: PropTypes.func
 };
 

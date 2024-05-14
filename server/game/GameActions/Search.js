@@ -6,19 +6,40 @@ const CardMatcher = require('../CardMatcher');
 const Shuffle = require('./Shuffle');
 
 class Search extends GameAction {
-    constructor({ gameAction, location, match, message, cancelMessage, topCards, numToSelect, player, searchedPlayer, title, reveal = true }) {
+    constructor({
+        gameAction,
+        location,
+        match,
+        message,
+        cancelMessage,
+        topCards,
+        numToSelect,
+        player,
+        searchedPlayer,
+        title,
+        reveal = true
+    }) {
         super('search');
         this.gameAction = gameAction;
         this.match = match || {};
-        this.topCardsFunc = (typeof topCards === 'function') ? topCards : () => topCards;
-        this.numToSelectFunc = (typeof numToSelect === 'function') ? numToSelect : () => numToSelect;
-        this.playerFunc = player || (context => context.player);
+        this.topCardsFunc = typeof topCards === 'function' ? topCards : () => topCards;
+        this.numToSelectFunc = typeof numToSelect === 'function' ? numToSelect : () => numToSelect;
+        this.playerFunc = player || ((context) => context.player);
         this.searchedPlayerFunc = searchedPlayer || this.playerFunc;
-        this.titleFunc = (typeof title === 'function') ? title : () => title;
+        this.titleFunc = typeof title === 'function' ? title : () => title;
         this.location = location || ['draw deck'];
-        this.revealGameAction = reveal ? new AbilityAdapter(RevealCards, context => ({ cards: Array.isArray(context.searchTarget) ? context.searchTarget : [context.searchTarget], player: context.player })) : null;
+        this.revealGameAction = reveal
+            ? new AbilityAdapter(RevealCards, (context) => ({
+                  cards: Array.isArray(context.searchTarget)
+                      ? context.searchTarget
+                      : [context.searchTarget],
+                  player: context.player
+              }))
+            : null;
         this.abilityMessage = AbilityMessage.create(message);
-        this.abilityCancelMessage = AbilityMessage.create(cancelMessage || '{player} does not find any cards');
+        this.abilityCancelMessage = AbilityMessage.create(
+            cancelMessage || '{player} does not find any cards'
+        );
     }
 
     message({ context }) {
@@ -36,54 +57,74 @@ class Search extends GameAction {
         const title = this.titleFunc(context);
         const topCards = this.topCardsFunc(context);
         const numToSelect = this.numToSelectFunc(context);
-        return this.event('onDeckSearched', { player, searchedPlayer, title, topCards, numToSelect }, event => {
-            const revealFunc = this.createRevealDrawDeckCards({ choosingPlayer: event.player, searchedPlayer: event.searchedPlayer, numCards: event.topCards });
-            const searchCondition = this.createSearchCondition(event.searchedPlayer, event.topCards, event.numToSelect);
-            const modeProps = event.numToSelect ? { mode: 'upTo', numCards: event.numToSelect } : {};
+        return this.event(
+            'onDeckSearched',
+            { player, searchedPlayer, title, topCards, numToSelect },
+            (event) => {
+                const revealFunc = this.createRevealDrawDeckCards({
+                    choosingPlayer: event.player,
+                    searchedPlayer: event.searchedPlayer,
+                    numCards: event.topCards
+                });
+                const searchCondition = this.createSearchCondition(
+                    event.searchedPlayer,
+                    event.topCards,
+                    event.numToSelect
+                );
+                const modeProps = event.numToSelect
+                    ? { mode: 'upTo', numCards: event.numToSelect }
+                    : {};
 
-            context.game.cardVisibility.addRule(revealFunc);
-            context.game.promptForSelect(event.player, Object.assign(modeProps, {
-                activePromptTitle: event.title,
-                context: context,
-                cardCondition: searchCondition,
-                onSelect: (player, result) => {
-                    context.gameAction = this.gameAction;
-                    context.searchTarget = result;
-                    context.game.cardVisibility.removeRule(revealFunc);
-                    if(this.revealGameAction) {
-                        let revealEvent = this.revealGameAction.createEvent(context);
-                        event.thenAttachEvent(revealEvent);
-                        revealEvent.thenExecute(() => {
-                            this.attachGameActionEvent(revealEvent, context);
-                        });
-                        return true;
-                    }
-                    this.abilityMessage.output(context.game, { ...context, card: context.searchTarget });
-                    event.thenAttachEvent(this.gameAction.createEvent(context));
-                    return true;
-                },
-                onCancel: () => {
-                    context.game.cardVisibility.removeRule(revealFunc);
-                    this.abilityCancelMessage.output(context.game, context);
-                    return true;
-                },
-                source: context.source
-            }));
-            event.thenExecute(() => {
-                event.thenAttachEvent(Shuffle.createEvent({ player: event.searchedPlayer }));
-                context.game.addMessage('{0} shuffles their deck', event.searchedPlayer);
-            });
-        });
+                context.game.cardVisibility.addRule(revealFunc);
+                context.game.promptForSelect(
+                    event.player,
+                    Object.assign(modeProps, {
+                        activePromptTitle: event.title,
+                        context: context,
+                        cardCondition: searchCondition,
+                        onSelect: (player, result) => {
+                            context.gameAction = this.gameAction;
+                            context.searchTarget = result;
+                            context.game.cardVisibility.removeRule(revealFunc);
+                            if (this.revealGameAction) {
+                                let revealEvent = this.revealGameAction.createEvent(context);
+                                event.thenAttachEvent(revealEvent);
+                                revealEvent.thenExecute(() => {
+                                    this.attachGameActionEvent(revealEvent, context);
+                                });
+                                return true;
+                            }
+                            this.abilityMessage.output(context.game, {
+                                ...context,
+                                card: context.searchTarget
+                            });
+                            event.thenAttachEvent(this.gameAction.createEvent(context));
+                            return true;
+                        },
+                        onCancel: () => {
+                            context.game.cardVisibility.removeRule(revealFunc);
+                            this.abilityCancelMessage.output(context.game, context);
+                            return true;
+                        },
+                        source: context.source
+                    })
+                );
+                event.thenExecute(() => {
+                    event.thenAttachEvent(Shuffle.createEvent({ player: event.searchedPlayer }));
+                    context.game.addMessage('{0} shuffles their deck', event.searchedPlayer);
+                });
+            }
+        );
     }
 
     createRevealDrawDeckCards({ choosingPlayer, searchedPlayer, numCards }) {
         const validLocations = this.location;
-        return function(card, player) {
-            if(player !== choosingPlayer) {
+        return function (card, player) {
+            if (player !== choosingPlayer) {
                 return false;
             }
 
-            if(numCards) {
+            if (numCards) {
                 let cards = choosingPlayer.searchDrawDeck(numCards);
                 return cards.includes(card);
             }
@@ -98,11 +139,11 @@ class Search extends GameAction {
         const topCardsList = topCards ? player.searchDrawDeck(topCards) : [];
 
         return (card, context) => {
-            if(!baseMatcher(card, context)) {
+            if (!baseMatcher(card, context)) {
                 return false;
             }
 
-            if(topCards && !topCardsList.includes(card)) {
+            if (topCards && !topCardsList.includes(card)) {
                 return false;
             }
 
@@ -116,13 +157,15 @@ class Search extends GameAction {
     }
 
     attachGameActionEvent(revealEvent, context) {
-        if(revealEvent.parent.numToSelect) {
+        if (revealEvent.parent.numToSelect) {
             // Do not attach gameAction if no searchTargets are left in search location
-            context.searchTarget = context.searchTarget.filter(card => this.location.includes(card.location));
-            if(context.searchTarget.length === 0) {
+            context.searchTarget = context.searchTarget.filter((card) =>
+                this.location.includes(card.location)
+            );
+            if (context.searchTarget.length === 0) {
                 return;
             }
-        } else if(!this.location.includes(context.searchTarget.location)) {
+        } else if (!this.location.includes(context.searchTarget.location)) {
             // Do not attach gameAction if single searchTarget is not in search location
             context.searchTarget = null;
             return;

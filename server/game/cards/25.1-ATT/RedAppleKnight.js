@@ -10,9 +10,15 @@ class RedAppleKnight extends DrawCard {
     }
 
     getSingleKnight() {
-        let cards = this.controller.filterCardsInPlay(card => card.isFaction('tyrell') && card.hasTrait('knight') && card.getType() === 'character' && card.isUnique());
+        let cards = this.controller.filterCardsInPlay(
+            (card) =>
+                card.isFaction('tyrell') &&
+                card.hasTrait('knight') &&
+                card.getType() === 'character' &&
+                card.isUnique()
+        );
 
-        if(cards.length === 1) {
+        if (cards.length === 1) {
             return cards[0];
         }
 

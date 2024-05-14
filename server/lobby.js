@@ -1,4 +1,4 @@
-import {Server as socketio} from 'socket.io';
+import { Server as socketio } from 'socket.io';
 import Socket from './socket.js';
 import jwt from 'jsonwebtoken';
 import _ from 'underscore';

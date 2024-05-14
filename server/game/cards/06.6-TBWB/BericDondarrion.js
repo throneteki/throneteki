@@ -1,6 +1,6 @@
 const DrawCard = require('../../drawcard.js');
 const GameActions = require('../../GameActions');
-const {Tokens} = require('../../Constants');
+const { Tokens } = require('../../Constants');
 
 class BericDondarrion extends DrawCard {
     setupCardAbilities(ability) {
@@ -11,11 +11,11 @@ class BericDondarrion extends DrawCard {
 
         this.forcedReaction({
             when: {
-                onCardEntersPlay: event => event.card === this && event.playingType === 'marshal'
+                onCardEntersPlay: (event) => event.card === this && event.playingType === 'marshal'
             },
             cannotBeCanceled: true,
             message: '{player} is forced to place 6 kiss tokens on {source}',
-            handler: context => {
+            handler: (context) => {
                 this.game.resolveGameAction(
                     GameActions.placeToken(() => ({ card: this, token: Tokens.kiss, amount: 6 })),
                     context
@@ -26,12 +26,17 @@ class BericDondarrion extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCharacterKilled: event => event.allowSave && event.card === this && this.canBeSaved()
+                onCharacterKilled: (event) =>
+                    event.allowSave && event.card === this && this.canBeSaved()
             },
             cost: ability.costs.discardTokenFromSelf(Tokens.kiss),
-            handler: context => {
+            handler: (context) => {
                 context.event.saveCard();
-                this.game.addMessage('{0} discards a kiss token to save {1}', this.controller, this);
+                this.game.addMessage(
+                    '{0} discards a kiss token to save {1}',
+                    this.controller,
+                    this
+                );
             }
         });
     }

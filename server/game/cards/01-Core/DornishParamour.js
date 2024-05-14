@@ -4,22 +4,26 @@ class DornishParamour extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onDeclaredAsAttacker: event => event.card === this
+                onDeclaredAsAttacker: (event) => event.card === this
             },
             target: {
-                cardCondition: card => (
+                cardCondition: (card) =>
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
-                    card.controller === this.game.currentChallenge.defendingPlayer)
+                    card.controller === this.game.currentChallenge.defendingPlayer
             },
-            handler: context => {
-                this.untilEndOfChallenge(ability => ({
+            handler: (context) => {
+                this.untilEndOfChallenge((ability) => ({
                     match: context.target,
                     effect: ability.effects.mustBeDeclaredAsDefender()
                 }));
 
-                this.game.addMessage('{0} uses {1} to force {2} to be declared as a defender this challenge, if able',
-                    this.controller, this, context.target);
+                this.game.addMessage(
+                    '{0} uses {1} to force {2} to be declared as a defender this challenge, if able',
+                    this.controller,
+                    this,
+                    context.target
+                );
             }
         });
     }

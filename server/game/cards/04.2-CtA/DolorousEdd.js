@@ -5,22 +5,27 @@ class DolorousEdd extends DrawCard {
         this.action({
             title: 'Add as a defender',
             location: 'hand',
-            condition: () => (
-                this.game.isDuringChallenge({ challengeType: 'intrigue', defendingPlayer: this.controller }) &&
-                this.controller.canPutIntoPlay(this)
-            ),
+            condition: () =>
+                this.game.isDuringChallenge({
+                    challengeType: 'intrigue',
+                    defendingPlayer: this.controller
+                }) && this.controller.canPutIntoPlay(this),
             cost: ability.costs.kneelFactionCard(),
             handler: () => {
-                this.game.addMessage('{0} kneels their faction card to put {1} into play as a defender', this.controller, this);
+                this.game.addMessage(
+                    '{0} kneels their faction card to put {1} into play as a defender',
+                    this.controller,
+                    this
+                );
                 this.controller.putIntoPlay(this, 'play', { kneeled: true });
                 this.game.currentChallenge.addDefender(this);
-                this.game.once('afterChallenge', event => this.promptOnWin(event.challenge));
+                this.game.once('afterChallenge', (event) => this.promptOnWin(event.challenge));
             }
         });
     }
 
     promptOnWin(challenge) {
-        if(challenge.winner !== this.controller || this.location !== 'play area') {
+        if (challenge.winner !== this.controller || this.location !== 'play area') {
             return;
         }
 
@@ -36,7 +41,11 @@ class DolorousEdd extends DrawCard {
     }
 
     returnToHand() {
-        this.game.addMessage('{0} chooses to return {1} to their hand after winning the challenge', this.controller, this);
+        this.game.addMessage(
+            '{0} chooses to return {1} to their hand after winning the challenge',
+            this.controller,
+            this
+        );
         this.controller.returnCardToHand(this, false);
         return true;
     }

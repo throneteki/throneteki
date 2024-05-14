@@ -6,9 +6,9 @@ class RenownKeyword extends ChallengeKeywordAbility {
         super('Renown', {
             message: {
                 format: '{player} gains {amount} power on {source} from Renown',
-                args: { amount: context => this.getTriggerAmount(context) }
+                args: { amount: (context) => this.getTriggerAmount(context) }
             },
-            gameAction: GameActions.gainPower(context => ({
+            gameAction: GameActions.gainPower((context) => ({
                 card: context.source,
                 amount: this.getTriggerAmount(context),
                 reason: 'renown',

@@ -5,9 +5,11 @@ class CityBlockade extends PlotCard {
         this.persistentEffect({
             targetController: 'any',
             effect: [
-                ability.effects.cannotMarshal(card => card.hasKeyword('limited')),
-                ability.effects.cannotPlay(card => card.getPrintedType() === 'event' && card.hasKeyword('limited')),
-                ability.effects.cannotPutIntoPlay(card => card.hasKeyword('limited'))
+                ability.effects.cannotMarshal((card) => card.hasKeyword('limited')),
+                ability.effects.cannotPlay(
+                    (card) => card.getPrintedType() === 'event' && card.hasKeyword('limited')
+                ),
+                ability.effects.cannotPutIntoPlay((card) => card.hasKeyword('limited'))
             ]
         });
     }

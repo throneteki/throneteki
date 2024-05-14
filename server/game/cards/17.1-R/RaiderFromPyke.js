@@ -1,14 +1,14 @@
-
 const DrawCard = require('../../drawcard.js');
 
 class RaiderFromPyke extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetLocation: 'hand',
-            match: card => card.getType() === 'attachment' 
-                && ((card.hasTrait('Weapon') || card.hasTrait('Item')) 
-                && card.getPrintedCost() >= 0)
-                && !['-', 'X'].includes(this.cardData.cost),
+            match: (card) =>
+                card.getType() === 'attachment' &&
+                (card.hasTrait('Weapon') || card.hasTrait('Item')) &&
+                card.getPrintedCost() >= 0 &&
+                !['-', 'X'].includes(this.cardData.cost),
             effect: ability.effects.gainAmbush()
         });
     }

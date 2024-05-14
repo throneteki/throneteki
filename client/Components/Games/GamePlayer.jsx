@@ -12,31 +12,67 @@ function GamePlayer(props) {
 
     let playerAndFactionAgenda;
 
-    if(props.firstPlayer) {
-        playerAndFactionAgenda = (<div className='game-faction-row first-player'>
-            <div className='game-player-name'>
-                <span className='gamelist-avatar'><Avatar username={ props.player.name } /></span>
-                <span className='bold'>{ props.player.name }</span>
+    if (props.firstPlayer) {
+        playerAndFactionAgenda = (
+            <div className='game-faction-row first-player'>
+                <div className='game-player-name'>
+                    <span className='gamelist-avatar'>
+                        <Avatar username={props.player.name} />
+                    </span>
+                    <span className='bold'>{props.player.name}</span>
+                </div>
+                <div className='agenda-mini'>
+                    {
+                        <img
+                            className='img-responsive'
+                            src={`/img/cards/${props.player.agenda || 'cardback'}.png`}
+                        />
+                    }
+                </div>
+                <div className='faction-mini'>
+                    {
+                        <img
+                            className='img-responsive'
+                            src={`/img/cards/${props.player.faction || 'cardback'}.png`}
+                        />
+                    }
+                </div>
             </div>
-            <div className='agenda-mini'>{ <img className='img-responsive' src={ `/img/cards/${props.player.agenda || 'cardback'}.png` } /> }</div>
-            <div className='faction-mini'>{ <img className='img-responsive' src={ `/img/cards/${props.player.faction || 'cardback'}.png` } /> }</div>
-        </div >);
+        );
     } else {
-        playerAndFactionAgenda = (<div className='game-faction-row other-player'>
-            <div className='faction-mini'>{ <img className='img-responsive' src={ `/img/cards/${props.player.faction || 'cardback'}.png` } /> }</div>
-            <div className='agenda-mini'>{ <img className='img-responsive' src={ `/img/cards/${props.player.agenda || 'cardback'}.png` } /> }</div>
-            <div className='game-player-name'>
-                <span className='bold'>{ props.player.name }</span>
-                <span className='gamelist-avatar'><Avatar username={ props.player.name } /></span>
+        playerAndFactionAgenda = (
+            <div className='game-faction-row other-player'>
+                <div className='faction-mini'>
+                    {
+                        <img
+                            className='img-responsive'
+                            src={`/img/cards/${props.player.faction || 'cardback'}.png`}
+                        />
+                    }
+                </div>
+                <div className='agenda-mini'>
+                    {
+                        <img
+                            className='img-responsive'
+                            src={`/img/cards/${props.player.agenda || 'cardback'}.png`}
+                        />
+                    }
+                </div>
+                <div className='game-player-name'>
+                    <span className='bold'>{props.player.name}</span>
+                    <span className='gamelist-avatar'>
+                        <Avatar username={props.player.name} />
+                    </span>
+                </div>
             </div>
-        </div>);
+        );
     }
 
-    return (<div key={ props.player.name } className={ classes }>
-        <div>
-            { playerAndFactionAgenda }
+    return (
+        <div key={props.player.name} className={classes}>
+            <div>{playerAndFactionAgenda}</div>
         </div>
-    </div>);
+    );
 }
 
 GamePlayer.displayName = 'GamePlayer';

@@ -6,7 +6,9 @@ class DagmerCleftjaw extends DrawCard {
             location: 'any',
             condition: () => this.game.anyPlotHasTrait('Winter'),
             targetController: 'current',
-            effect: ability.effects.canMarshalIntoShadows(card => card === this && card.location === 'dead pile')
+            effect: ability.effects.canMarshalIntoShadows(
+                (card) => card === this && card.location === 'dead pile'
+            )
         });
     }
 }

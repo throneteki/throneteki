@@ -7,15 +7,15 @@ class EveryCaptainIsAKing extends DrawCard {
             condition: () => this.getCaptains(this.controller).length > 0,
             message: {
                 format: '{player} plays {source} to have {captains} gain the King trait',
-                args: { captains: context => this.getCaptains(context.player) }
+                args: { captains: (context) => this.getCaptains(context.player) }
             },
-            handler: context => {
+            handler: (context) => {
                 let captains = this.getCaptains(context.player);
-                this.untilEndOfPhase(ability => ({
+                this.untilEndOfPhase((ability) => ({
                     match: captains,
                     effect: ability.effects.addTrait('King')
                 }));
-                this.untilEndOfPhase(ability => ({
+                this.untilEndOfPhase((ability) => ({
                     match: captains,
                     effect: ability.effects.doesNotKneelAsAttacker({ challengeType: 'power' })
                 }));
@@ -24,7 +24,9 @@ class EveryCaptainIsAKing extends DrawCard {
     }
 
     getCaptains(player) {
-        return player.filterCardsInPlay(card => card.getType() === 'character' && card.hasTrait('Captain'));
+        return player.filterCardsInPlay(
+            (card) => card.getType() === 'character' && card.hasTrait('Captain')
+        );
     }
 }
 

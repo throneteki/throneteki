@@ -4,7 +4,11 @@ class ParentCost {
     }
 
     canPay(context) {
-        return !!context.source.parent && context.source.parent.controller === context.source.controller && this.action.isEligible(context.source.parent, context);
+        return (
+            !!context.source.parent &&
+            context.source.parent.controller === context.source.controller &&
+            this.action.isEligible(context.source.parent, context)
+        );
     }
 
     resolve(context, result = { resolved: false }) {

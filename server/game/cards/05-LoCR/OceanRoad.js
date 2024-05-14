@@ -7,15 +7,20 @@ class OceanRoad extends DrawCard {
             clickToActivate: true,
             phase: 'marshal',
             cost: ability.costs.kneelSelf(),
-            handler: context => {
-                this.game.addMessage('{0} uses {1} to reduce the cost of the next neutral or out of faction card by 1',
-                    this.controller, this);
-                this.untilEndOfPhase(ability => ({
+            handler: (context) => {
+                this.game.addMessage(
+                    '{0} uses {1} to reduce the cost of the next neutral or out of faction card by 1',
+                    this.controller,
+                    this
+                );
+                this.untilEndOfPhase((ability) => ({
                     condition: () => !context.abilityDeactivated,
                     targetController: 'current',
                     effect: ability.effects.reduceNextMarshalledCardCost(
                         1,
-                        card => card.isFaction('neutral') || !card.isFaction(this.controller.faction.getPrintedFaction())
+                        (card) =>
+                            card.isFaction('neutral') ||
+                            !card.isFaction(this.controller.faction.getPrintedFaction())
                     )
                 }));
             }

@@ -5,10 +5,7 @@ class OldCaptain extends DrawCard {
         this.persistentEffect({
             condition: () => !this.kneeled,
             match: this,
-            effect: [
-                ability.effects.addKeyword('pillage'),
-                ability.effects.addKeyword('renown')
-            ]
+            effect: [ability.effects.addKeyword('pillage'), ability.effects.addKeyword('renown')]
         });
     }
 }

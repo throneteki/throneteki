@@ -1,4 +1,4 @@
-const {flatten} = require('../Array');
+const { flatten } = require('../Array');
 class SimultaneousEvents {
     constructor() {
         this.childEvents = [];
@@ -6,7 +6,7 @@ class SimultaneousEvents {
     }
 
     get activeChildEvents() {
-        return this.childEvents.filter(event => !event.cancelled);
+        return this.childEvents.filter((event) => !event.cancelled);
     }
 
     addChildEvent(event) {
@@ -15,47 +15,47 @@ class SimultaneousEvents {
     }
 
     emitTo(emitter, suffix) {
-        for(let event of this.activeChildEvents) {
+        for (let event of this.activeChildEvents) {
             event.emitTo(emitter, suffix);
         }
     }
 
     get resolved() {
-        return this.childEvents.every(event => event.resolved);
+        return this.childEvents.every((event) => event.resolved);
     }
 
     get cancelled() {
-        return this.childEvents.every(event => event.cancelled);
+        return this.childEvents.every((event) => event.cancelled);
     }
 
     cancel() {
-        for(let event of this.activeChildEvents) {
+        for (let event of this.activeChildEvents) {
             event.cancel();
         }
 
-        if(this.parent) {
+        if (this.parent) {
             this.parent.onChildCancelled(this);
         }
     }
 
     checkExecuteValidity() {
-        for(let event of this.childEvents) {
+        for (let event of this.childEvents) {
             event.checkExecuteValidity();
         }
     }
 
     executeHandler() {
-        for(let event of this.activeChildEvents.sort((a, b) => a.order - b.order)) {
+        for (let event of this.activeChildEvents.sort((a, b) => a.order - b.order)) {
             event.executeHandler();
         }
     }
 
     executePostHandler() {
-        for(let event of this.activeChildEvents) {
+        for (let event of this.activeChildEvents) {
             event.executePostHandler();
         }
 
-        for(let postHandler of this.postHandlers) {
+        for (let postHandler of this.postHandlers) {
             postHandler(this);
         }
     }
@@ -67,7 +67,7 @@ class SimultaneousEvents {
     }
 
     getPrimaryEvents() {
-        return flatten(this.activeChildEvents.map(event => event.getPrimaryEvents()));
+        return flatten(this.activeChildEvents.map((event) => event.getPrimaryEvents()));
     }
 
     thenExecute(func) {
@@ -76,7 +76,7 @@ class SimultaneousEvents {
     }
 
     toString() {
-        return `simultaneous(${this.activeChildEvents.map(e => e.toString()).join(', ')})`;
+        return `simultaneous(${this.activeChildEvents.map((e) => e.toString()).join(', ')})`;
     }
 }
 

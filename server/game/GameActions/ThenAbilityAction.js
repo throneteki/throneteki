@@ -3,7 +3,10 @@ const ThenClauseAbility = require('../ThenClauseAbility');
 class ThenAbilityAction {
     constructor(preThenAction, abilityPropertiesFactory) {
         this.preThenAction = preThenAction;
-        this.abilityPropertiesFactory = typeof(abilityPropertiesFactory) === 'function' ? abilityPropertiesFactory : () => abilityPropertiesFactory;
+        this.abilityPropertiesFactory =
+            typeof abilityPropertiesFactory === 'function'
+                ? abilityPropertiesFactory
+                : () => abilityPropertiesFactory;
     }
 
     message(context) {
@@ -17,8 +20,8 @@ class ThenAbilityAction {
     createEvent(context) {
         let event = this.preThenAction.createEvent(context);
 
-        event.thenExecute(event => {
-            if(!event.resolved) {
+        event.thenExecute((event) => {
+            if (!event.resolved) {
                 return;
             }
 
@@ -26,7 +29,7 @@ class ThenAbilityAction {
             let ability = new ThenClauseAbility(abilityProperties);
             let thenContext = ability.createContext(context, event);
 
-            if(ability.canResolve(thenContext)) {
+            if (ability.canResolve(thenContext)) {
                 thenContext.game.resolveAbility(ability, thenContext);
             }
         });

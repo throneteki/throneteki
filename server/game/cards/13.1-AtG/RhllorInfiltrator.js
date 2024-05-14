@@ -10,9 +10,9 @@ class RhllorInfiltrator extends DrawCard {
             cost: ability.costs.kneelSelf(),
             message: {
                 format: '{player} kneels {source} to give control of {source} to {opponent} and gain 1 power',
-                args: { opponent: context => context.opponent }
+                args: { opponent: (context) => context.opponent }
             },
-            handler: context => {
+            handler: (context) => {
                 this.game.takeControl(context.opponent, this);
                 this.game.addPower(context.player, 1);
             }

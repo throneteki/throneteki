@@ -30,7 +30,7 @@ class RematchPrompt extends AllPlayerPrompt {
     }
 
     onMenuCommand(player, arg) {
-        if(arg === 'yes') {
+        if (arg === 'yes') {
             this.game.addAlert('info', '{0} agrees to a rematch, setting it up now', player);
             this.completedPlayers.add(player);
         } else {
@@ -42,12 +42,16 @@ class RematchPrompt extends AllPlayerPrompt {
     }
 
     onCompleted() {
-        if(this.cancelled) {
+        if (this.cancelled) {
             return;
         }
 
         this.game.rematch();
-        this.game.addAlert('danger', '{0} uses /rematch to reset the game and start a rematch', this.requestingPlayer);
+        this.game.addAlert(
+            'danger',
+            '{0} uses /rematch to reset the game and start a rematch',
+            this.requestingPlayer
+        );
     }
 }
 

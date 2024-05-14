@@ -5,15 +5,16 @@ class ShadowTowerMason extends DrawCard {
         this.persistentEffect({
             condition: () => this.getCardCount() >= 3,
             match: this,
-            effect: [
-                ability.effects.addIcon('military'),
-                ability.effects.addIcon('intrigue')
-            ]
+            effect: [ability.effects.addIcon('military'), ability.effects.addIcon('intrigue')]
         });
     }
 
     getCardCount() {
-        return this.controller.getNumberOfCardsInPlay(card => ['attachment', 'location'].includes(card.getType()) && card.isFaction('thenightswatch'));
+        return this.controller.getNumberOfCardsInPlay(
+            (card) =>
+                ['attachment', 'location'].includes(card.getType()) &&
+                card.isFaction('thenightswatch')
+        );
     }
 }
 

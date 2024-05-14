@@ -11,14 +11,17 @@ class Lady extends DrawCard {
             cost: ability.costs.payGold(1),
             target: {
                 type: 'select',
-                cardCondition: card => this.controller.canAttach(this, card) && card.location === 'play area' && card !== this.parent
+                cardCondition: (card) =>
+                    this.controller.canAttach(this, card) &&
+                    card.location === 'play area' &&
+                    card !== this.parent
             },
             limit: ability.limit.perPhase(1),
-            handler: context => {
+            handler: (context) => {
                 this.controller.attach(this.controller, this, context.target);
                 let message = '{0} pays 1 gold to attach {1} to {2}';
 
-                if(context.target.name === 'Sansa Stark' && context.target.kneeled) {
+                if (context.target.name === 'Sansa Stark' && context.target.kneeled) {
                     context.target.controller.standCard(context.target);
                     message += ' and stand her';
                 }

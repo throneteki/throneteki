@@ -5,20 +5,44 @@ class TheDornishmansWife extends DrawCard {
     setupCardAbilities() {
         this.action({
             title: 'Gain gold/power/card',
-            chooseOpponent: opponent => (
+            chooseOpponent: (opponent) =>
                 this.opponentHasMorePower(opponent) ||
                 this.opponentHasMoreCardsInHand(opponent) ||
-                this.opponentControlsMoreCharacters(opponent)
-            ),
-            handler: context => {
-                const action = GameActions.simultaneously(context => [
-                    ...(this.opponentHasMorePower(context.opponent) ? [GameActions.gainGold(context => ({ player: context.player, amount: 2 }))] : []),
-                    ...(this.opponentHasMoreCardsInHand(context.opponent) ? [GameActions.gainPower(context => ({ card: context.player.faction, amount: 1 }))] : []),
-                    ...(this.opponentControlsMoreCharacters(context.opponent) ? [GameActions.drawCards(context => ({ player: context.player, amount: 1 }))] : [])
+                this.opponentControlsMoreCharacters(opponent),
+            handler: (context) => {
+                const action = GameActions.simultaneously((context) => [
+                    ...(this.opponentHasMorePower(context.opponent)
+                        ? [
+                              GameActions.gainGold((context) => ({
+                                  player: context.player,
+                                  amount: 2
+                              }))
+                          ]
+                        : []),
+                    ...(this.opponentHasMoreCardsInHand(context.opponent)
+                        ? [
+                              GameActions.gainPower((context) => ({
+                                  card: context.player.faction,
+                                  amount: 1
+                              }))
+                          ]
+                        : []),
+                    ...(this.opponentControlsMoreCharacters(context.opponent)
+                        ? [
+                              GameActions.drawCards((context) => ({
+                                  player: context.player,
+                                  amount: 1
+                              }))
+                          ]
+                        : [])
                 ]);
 
-                this.game.addMessage('{0} plays {1} and {2}',
-                    context.player, context.source, action.message(context));
+                this.game.addMessage(
+                    '{0} plays {1} and {2}',
+                    context.player,
+                    context.source,
+                    action.message(context)
+                );
 
                 this.game.resolveGameAction(action, context);
             }
@@ -34,11 +58,11 @@ class TheDornishmansWife extends DrawCard {
     }
 
     opponentControlsMoreCharacters(opponent) {
-        let ownChars = this.controller.filterCardsInPlay(card => {
+        let ownChars = this.controller.filterCardsInPlay((card) => {
             return card.getType() === 'character';
         });
 
-        let oppChars = opponent.filterCardsInPlay(card => {
+        let oppChars = opponent.filterCardsInPlay((card) => {
             return card.getType() === 'character';
         });
 

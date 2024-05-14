@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
 import * as actions from '../../actions';
 
@@ -23,7 +23,11 @@ class Link extends React.Component {
     }
 
     render() {
-        return (<a className={ this.props.className } href={ this.props.href } onClick={ this.onClick }>{ this.props.children }</a>);
+        return (
+            <a className={this.props.className} href={this.props.href} onClick={this.onClick}>
+                {this.props.children}
+            </a>
+        );
     }
 }
 

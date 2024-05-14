@@ -5,15 +5,14 @@ class HedgeKnight extends DrawCard {
         this.persistentEffect({
             condition: () => this.isControlAnotherKnight(),
             match: this,
-            effect: [
-                ability.effects.modifyStrength(1),
-                ability.effects.addIcon('power')
-            ]
+            effect: [ability.effects.modifyStrength(1), ability.effects.addIcon('power')]
         });
     }
 
     isControlAnotherKnight() {
-        return this.controller.anyCardsInPlay(card => card.hasTrait('Knight') && card !== this && card.getType() === 'character');
+        return this.controller.anyCardsInPlay(
+            (card) => card.hasTrait('Knight') && card !== this && card.getType() === 'character'
+        );
     }
 }
 

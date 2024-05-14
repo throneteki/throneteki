@@ -10,15 +10,20 @@ class EuronCrowsEye extends DrawCard {
         });
         this.reaction({
             when: {
-                onCardEntersPlay: event => event.card === this
+                onCardEntersPlay: (event) => event.card === this
             },
-            message: '{player} uses {source} to either put a Warship location into play, or search for Silence',
+            message:
+                '{player} uses {source} to either put a Warship location into play, or search for Silence',
             choices: {
                 'Put Warship into play': {
-                    condition: context => context.player.hand.some(card => this.isValidWarship(card)),
-                    gameAction: GameActions.genericHandler(context => {
+                    condition: (context) =>
+                        context.player.hand.some((card) => this.isValidWarship(card)),
+                    gameAction: GameActions.genericHandler((context) => {
                         this.game.promptForSelect(context.player, {
-                            cardCondition: card => card.location === 'hand' && context.player === card.controller && this.isValidWarship(card),
+                            cardCondition: (card) =>
+                                card.location === 'hand' &&
+                                context.player === card.controller &&
+                                this.isValidWarship(card),
                             source: this,
                             onSelect: (player, card) => this.warshipSelected(player, card)
                         });
@@ -29,7 +34,7 @@ class EuronCrowsEye extends DrawCard {
                         title: 'Select a card',
                         match: { name: 'Silence' },
                         message: '{player} chooses to search their deck, and {gameAction}',
-                        gameAction: GameActions.addToHand(context => ({
+                        gameAction: GameActions.addToHand((context) => ({
                             card: context.searchTarget
                         }))
                     })
@@ -37,9 +42,13 @@ class EuronCrowsEye extends DrawCard {
             }
         });
     }
-    
+
     isValidWarship(card) {
-        return card.getType() === 'location' && card.hasTrait('Warship') && this.controller.canPutIntoPlay(card);
+        return (
+            card.getType() === 'location' &&
+            card.hasTrait('Warship') &&
+            this.controller.canPutIntoPlay(card)
+        );
     }
 
     warshipSelected(player, card) {
@@ -49,7 +58,9 @@ class EuronCrowsEye extends DrawCard {
     }
 
     hasAnotherRaider() {
-        let cards = this.controller.filterCardsInPlay(card => card.getType() === 'character' && card.hasTrait('Raider') && card !== this);
+        let cards = this.controller.filterCardsInPlay(
+            (card) => card.getType() === 'character' && card.hasTrait('Raider') && card !== this
+        );
         return cards.length > 0;
     }
 }

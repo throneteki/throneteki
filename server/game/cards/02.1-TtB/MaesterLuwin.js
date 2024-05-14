@@ -14,7 +14,9 @@ class MaesterLuwin extends DrawCard {
 
         this.persistentEffect({
             match: (card) => card.name === 'Bran Stark',
-            effect: ability.effects.immuneTo(card => card.controller !== this.controller && card.getType() === 'plot')
+            effect: ability.effects.immuneTo(
+                (card) => card.controller !== this.controller && card.getType() === 'plot'
+            )
         });
 
         this.persistentEffect({

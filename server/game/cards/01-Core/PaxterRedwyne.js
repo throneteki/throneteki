@@ -7,7 +7,10 @@ class PaxterRedwyne extends DrawCard {
         });
         this.persistentEffect({
             targetController: 'current',
-            effect: ability.effects.reduceFirstPlayedCardCostEachRound(1, card => card.getType() === 'event')
+            effect: ability.effects.reduceFirstPlayedCardCostEachRound(
+                1,
+                (card) => card.getType() === 'event'
+            )
         });
     }
 }

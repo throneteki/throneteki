@@ -21,43 +21,47 @@ class PlotPhase extends Phase {
     }
 
     clearNewCards() {
-        for(const card of this.game.allCards) {
+        for (const card of this.game.allCards) {
             card.new = false;
         }
     }
 
     startPlotPhase() {
-        for(const player of this.game.getPlayers()) {
+        for (const player of this.game.getPlayers()) {
             player.resetForStartOfRound();
         }
     }
 
     announceForcedPlotSelection() {
-        for(const player of this.game.getPlayers()) {
-            if(player.mustRevealPlot) {
+        for (const player of this.game.getPlayers()) {
+            if (player.mustRevealPlot) {
                 this.game.addMessage('{0} is forced to select a plot', player);
-            } else if(player.hasFlag('cannotRevealPlot')) {
+            } else if (player.hasFlag('cannotRevealPlot')) {
                 this.game.addMessage('{0} cannot reveal a new plot', player);
             }
         }
     }
 
     choosePlots() {
-        let choosingPlayers = this.game.getPlayers().filter(player => !player.mustRevealPlot && !player.hasFlag('cannotRevealPlot'));
+        let choosingPlayers = this.game
+            .getPlayers()
+            .filter((player) => !player.mustRevealPlot && !player.hasFlag('cannotRevealPlot'));
         this.game.raiseEvent('onChoosePlot', { players: choosingPlayers }, () => {
             this.game.queueStep(new SelectPlotPrompt(this.game));
         });
     }
 
     recyclePlots() {
-        for(const player of this.game.getPlayers()) {
+        for (const player of this.game.getPlayers()) {
             player.recyclePlots();
         }
     }
 
     getSelectedPlots() {
-        const revealingPlayers = this.game.getPlayers().filter(player => !!player.selectedPlot && !player.hasFlag('cannotRevealPlot'));
-        return revealingPlayers.map(player => player.selectedPlot);
+        const revealingPlayers = this.game
+            .getPlayers()
+            .filter((player) => !!player.selectedPlot && !player.hasFlag('cannotRevealPlot'));
+        return revealingPlayers.map((player) => player.selectedPlot);
     }
 }
 

@@ -24,8 +24,8 @@ class ReferenceCountedSetProperty {
     getValues() {
         let values = [];
 
-        for(let [value, count] of this.referenceCounts) {
-            if(count > 0) {
+        for (let [value, count] of this.referenceCounts) {
+            if (count > 0) {
                 values.push(value);
             }
         }
@@ -40,8 +40,8 @@ class ReferenceCountedSetProperty {
     size() {
         let size = 0;
 
-        for(let count of this.referenceCounts.values()) {
-            if(count > 0) {
+        for (let count of this.referenceCounts.values()) {
+            if (count > 0) {
                 size += 1;
             }
         }

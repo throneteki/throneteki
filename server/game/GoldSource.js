@@ -9,7 +9,7 @@ class GoldSource {
     }
 
     get name() {
-        if(this.playerOrCard.getGameElementType() === 'player') {
+        if (this.playerOrCard.getGameElementType() === 'player') {
             return `${this.playerOrCard.name}'s gold pool`;
         }
 

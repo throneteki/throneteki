@@ -15,7 +15,7 @@ class KneelCard extends GameAction {
     }
 
     createEvent({ card, reason = 'ability', source }) {
-        return this.event('onCardKneeled', { card, source, reason }, event => {
+        return this.event('onCardKneeled', { card, source, reason }, (event) => {
             event.card.kneeled = true;
         });
     }

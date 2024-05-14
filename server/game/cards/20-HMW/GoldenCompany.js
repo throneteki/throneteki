@@ -1,5 +1,5 @@
 const DrawCard = require('../../drawcard.js');
-const {Tokens} = require('../../Constants');
+const { Tokens } = require('../../Constants');
 
 class GoldenCompany extends DrawCard {
     setupCardAbilities(ability) {
@@ -8,22 +8,26 @@ class GoldenCompany extends DrawCard {
             match: this,
             effect: ability.effects.addKeyword('Renown')
         });
-        
+
         this.interrupt({
             canCancel: true,
             when: {
-                onCardReturnedToHand: event =>
+                onCardReturnedToHand: (event) =>
                     event.allowSave &&
                     event.card.getType() === 'character' &&
                     event.card.hasTrait('Mercenary') &&
                     event.card.location === 'play area' &&
                     event.card.owner === this.controller //check for owner of the returned card in case mercenary card got stolen by the opponent
-
             },
             cost: ability.costs.discardGold(),
-            handler: context => {
+            handler: (context) => {
                 context.event.saveCard();
-                this.game.addMessage('{0} discards 1 gold from {1} to save {2}', this.controller, this, context.event.card);
+                this.game.addMessage(
+                    '{0} discards 1 gold from {1} to save {2}',
+                    this.controller,
+                    this,
+                    context.event.card
+                );
             }
         });
     }

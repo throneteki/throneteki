@@ -5,7 +5,7 @@ class AryaStark extends DrawCard {
         this.persistentEffect({
             condition: () => !this.kneeled,
             targetController: 'any',
-            match: card => card.getType() === 'character',
+            match: (card) => card.getType() === 'character',
             effect: ability.effects.cannotBeSaved()
         });
     }

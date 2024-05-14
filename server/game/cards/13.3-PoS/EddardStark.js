@@ -6,14 +6,17 @@ class EddardStark extends DrawCard {
         this.action({
             title: 'Kill a character',
             phase: 'dominance',
-            condition: context => Conditions.allCharactersAreStark({ player: context.player }),
+            condition: (context) => Conditions.allCharactersAreStark({ player: context.player }),
             cost: ability.costs.kneelSelf(),
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.getPrintedCost() <= 4,
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    card.getPrintedCost() <= 4,
                 gameAction: 'kill'
             },
             message: '{player} kneels {source} to kill {target}',
-            handler: context => {
+            handler: (context) => {
                 this.game.killCharacter(context.target);
             },
             limit: ability.limit.perPhase(1)

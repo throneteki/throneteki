@@ -4,12 +4,21 @@ class ChallengeContributions {
     }
 
     addParticipants(participants, towardsPlayer) {
-        this.contributions = this.contributions.concat(participants.map(card => new CharacterStrengthContribution(towardsPlayer, card, true)));
+        this.contributions = this.contributions.concat(
+            participants.map((card) => new CharacterStrengthContribution(towardsPlayer, card, true))
+        );
         this.refresh(participants);
     }
 
     removeParticipants(participants) {
-        this.contributions = this.contributions.filter(c => !(c instanceof CharacterStrengthContribution && c.isParticipation && participants.includes(c.card)));
+        this.contributions = this.contributions.filter(
+            (c) =>
+                !(
+                    c instanceof CharacterStrengthContribution &&
+                    c.isParticipation &&
+                    participants.includes(c.card)
+                )
+        );
         this.refresh(participants);
     }
 
@@ -20,43 +29,47 @@ class ChallengeContributions {
 
     removeContribution(contribution) {
         let index = this.contributions.indexOf(contribution);
-        if(index >= 0) {
+        if (index >= 0) {
             this.contributions.splice(index, 1);
         }
         this.refresh([contribution.card]);
     }
 
     clear(cards) {
-        cards = cards || this.contributions.map(c => c.card);
-        this.contributions = this.contributions.filter(c => !cards.includes(c.card));
+        cards = cards || this.contributions.map((c) => c.card);
+        this.contributions = this.contributions.filter((c) => !cards.includes(c.card));
         this.refresh(cards);
     }
 
     refresh(cards) {
-        cards = cards || this.contributions.map(c => c.card);
-        for(let card of cards) {
+        cards = cards || this.contributions.map((c) => c.card);
+        for (let card of cards) {
             card.isContributing = this.isContributing(card);
 
             // Updating character contributions for that card to ensure only latest is applied
-            let characterContributions = this.contributions.filter(c => c instanceof CharacterStrengthContribution && c.card === card).reverse();
-            for(let index in characterContributions) {
-                characterContributions[index].isLatest = (index === '0');
+            let characterContributions = this.contributions
+                .filter((c) => c instanceof CharacterStrengthContribution && c.card === card)
+                .reverse();
+            for (let index in characterContributions) {
+                characterContributions[index].isLatest = index === '0';
             }
         }
     }
 
     isContributing(card) {
-        return this.contributions.some(c => c.card === card);
+        return this.contributions.some((c) => c.card === card);
     }
 
     getTotalFor(player) {
-        return this.contributions.filter(c => c.towardsPlayer === player).reduce((sum, c) => {
-            if(!c.isActive()) {
-                return sum;
-            }
+        return this.contributions
+            .filter((c) => c.towardsPlayer === player)
+            .reduce((sum, c) => {
+                if (!c.isActive()) {
+                    return sum;
+                }
 
-            return sum + c.getStrength();
-        }, 0);
+                return sum + c.getStrength();
+            }, 0);
     }
 }
 
@@ -89,7 +102,13 @@ class CharacterStrengthContribution {
     }
 
     isActive() {
-        if(this.isLatest && !(this.card.challengeOptions && this.card.challengeOptions.contains('doesNotContributeStrength'))) {
+        if (
+            this.isLatest &&
+            !(
+                this.card.challengeOptions &&
+                this.card.challengeOptions.contains('doesNotContributeStrength')
+            )
+        ) {
             return true;
         }
         return false;

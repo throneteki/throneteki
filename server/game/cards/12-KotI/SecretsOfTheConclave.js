@@ -4,11 +4,15 @@ class SecretsOfTheConclave extends PlotCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onPhaseStarted: event => event.phase === 'challenge'
+                onPhaseStarted: (event) => event.phase === 'challenge'
             },
-            handler: context => {
+            handler: (context) => {
                 this.remainingCards = context.player.searchDrawDeck(5);
-                let buttons = this.remainingCards.map(card => ({ method: 'selectCardForHand', card: card, mapCard: true }));
+                let buttons = this.remainingCards.map((card) => ({
+                    method: 'selectCardForHand',
+                    card: card,
+                    mapCard: true
+                }));
 
                 this.game.promptWithMenu(this.controller, this, {
                     activePrompt: {
@@ -22,15 +26,17 @@ class SecretsOfTheConclave extends PlotCard {
     }
 
     selectCardForHand(player, card) {
-        this.remainingCards = this.remainingCards.filter(c => c !== card);
+        this.remainingCards = this.remainingCards.filter((c) => c !== card);
         this.controller.moveCard(card, 'hand');
         this.promptCardForDiscard();
         return true;
     }
 
     promptCardForDiscard() {
-        let buttons = this.remainingCards.map(card => ({
-            method: 'selectCardForDiscard', card: card, mapCard: true
+        let buttons = this.remainingCards.map((card) => ({
+            method: 'selectCardForDiscard',
+            card: card,
+            mapCard: true
         }));
 
         this.game.promptWithMenu(this.controller, this, {
@@ -43,7 +49,7 @@ class SecretsOfTheConclave extends PlotCard {
     }
 
     selectCardForDiscard(player, card) {
-        this.remainingCards = this.remainingCards.filter(c => c !== card);
+        this.remainingCards = this.remainingCards.filter((c) => c !== card);
         player.discardCard(card);
         this.promptToPlaceNextCard();
 
@@ -51,8 +57,10 @@ class SecretsOfTheConclave extends PlotCard {
     }
 
     promptToPlaceNextCard() {
-        let buttons = this.remainingCards.map(card => ({
-            method: 'selectCardForTop', card: card, mapCard: true
+        let buttons = this.remainingCards.map((card) => ({
+            method: 'selectCardForTop',
+            card: card,
+            mapCard: true
         }));
 
         this.game.promptWithMenu(this.controller, this, {
@@ -65,13 +73,17 @@ class SecretsOfTheConclave extends PlotCard {
     }
 
     selectCardForTop(player, card) {
-        this.remainingCards = this.remainingCards.filter(c => c !== card);
+        this.remainingCards = this.remainingCards.filter((c) => c !== card);
         this.controller.moveCard(card, 'draw deck');
 
-        if(this.remainingCards.length > 0) {
+        if (this.remainingCards.length > 0) {
             this.promptToPlaceNextCard();
         } else {
-            this.game.addMessage('{0} uses {1} to look at the top 5 cards of their deck, add 1 to their hand, discard 1, and place the rest on top of their deck', this.controller, this);
+            this.game.addMessage(
+                '{0} uses {1} to look at the top 5 cards of their deck, add 1 to their hand, discard 1, and place the rest on top of their deck',
+                this.controller,
+                this
+            );
         }
 
         return true;

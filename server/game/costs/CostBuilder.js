@@ -86,7 +86,7 @@ class CostBuilder {
             activePromptTitle: this.titles.selectUpTo(number),
             cardCondition: CardMatcher.createMatcher(conditionOrMatcher)
         });
-    }    
+    }
 
     /**
      * Returns a cost that is applied to the parent card that the activating card is attached to.

@@ -4,7 +4,9 @@ class Ygritte extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,
-            effect: ability.effects.cannotBeKneeled(context => context.resolutionStage === 'effect')
+            effect: ability.effects.cannotBeKneeled(
+                (context) => context.resolutionStage === 'effect'
+            )
         });
         this.persistentEffect({
             condition: () => this.controlsAnotherWildling(),
@@ -14,7 +16,9 @@ class Ygritte extends DrawCard {
     }
 
     controlsAnotherWildling() {
-        return this.controller.anyCardsInPlay(card => card !== this && card.getType() === 'character' && card.hasTrait('Wildling'));
+        return this.controller.anyCardsInPlay(
+            (card) => card !== this && card.getType() === 'character' && card.hasTrait('Wildling')
+        );
     }
 }
 

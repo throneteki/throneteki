@@ -1,6 +1,6 @@
 const DrawCard = require('../../drawcard.js');
 
-class SerArysOakheart extends DrawCard {    
+class SerArysOakheart extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.isAttacking(),

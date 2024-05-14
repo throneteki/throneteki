@@ -10,13 +10,17 @@ class Defiance extends DrawCard {
             title: 'Stand character',
             phase: 'challenge',
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.kneeled && !this.tracker.hasParticipated(card),
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    card.kneeled &&
+                    !this.tracker.hasParticipated(card),
                 gameAction: 'stand'
             },
             message: '{player} plays {source} to stand {target}',
-            handler: context => {
+            handler: (context) => {
                 this.game.resolveGameAction(
-                    GameActions.standCard(context => ({ card: context.target })),
+                    GameActions.standCard((context) => ({ card: context.target })),
                     context
                 );
             },

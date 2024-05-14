@@ -5,17 +5,23 @@ class TheSpidersWeb extends PlotCard {
         this.reaction({
             limit: ability.limit.perPhase(1),
             when: {
-                onClaimApplied: event => event.player === this.controller && event.challenge.challengeType === 'intrigue'
+                onClaimApplied: (event) =>
+                    event.player === this.controller && event.challenge.challengeType === 'intrigue'
             },
             handler: () => {
-                this.game.addMessage('{0} uses {1} to be able to initiate an additional {2} challenge with claim raised by 1', this.controller, this, 'intrigue');
-                this.untilEndOfPhase(ability => ({
+                this.game.addMessage(
+                    '{0} uses {1} to be able to initiate an additional {2} challenge with claim raised by 1',
+                    this.controller,
+                    this,
+                    'intrigue'
+                );
+                this.untilEndOfPhase((ability) => ({
                     targetController: 'current',
                     effect: ability.effects.mayInitiateAdditionalChallenge('intrigue')
                 }));
-                this.untilEndOfPhase(ability => ({
+                this.untilEndOfPhase((ability) => ({
                     condition: () => this.game.isDuringChallenge({ challengeType: 'intrigue' }),
-                    match: card => card === this.controller.activePlot,
+                    match: (card) => card === this.controller.activePlot,
                     effect: ability.effects.modifyClaim(1)
                 }));
             }

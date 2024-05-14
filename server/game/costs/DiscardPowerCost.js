@@ -9,12 +9,15 @@ class DiscardPowerCost {
     }
 
     isEligible(card, context) {
-        return ['faction', 'play area'].includes(card.location) && card.getPower() >= this.getAmountValue(context);
+        return (
+            ['faction', 'play area'].includes(card.location) &&
+            card.getPower() >= this.getAmountValue(context)
+        );
     }
 
     pay(cards, context) {
         let amount = this.getAmountValue(context);
-        for(let card of cards) {
+        for (let card of cards) {
             card.modifyPower(-amount);
         }
     }

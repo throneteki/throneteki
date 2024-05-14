@@ -4,7 +4,7 @@ class LadySansasRose extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: event =>
+                afterChallenge: (event) =>
                     event.challenge.winner === this.controller &&
                     this.hasSingleParticipatingChar() &&
                     this.hasParticipatingKnight()
@@ -12,36 +12,46 @@ class LadySansasRose extends DrawCard {
             max: ability.limit.perChallenge(1),
             handler: (context) => {
                 let power = this.hasLadyCharacter() ? 3 : 1;
-                let participatingCard = this.controller.filterCardsInPlay(card => {
-                    return (card.isParticipating() &&
-                    card.hasTrait('Knight') &&
-                    card.getType() === 'character');
+                let participatingCard = this.controller.filterCardsInPlay((card) => {
+                    return (
+                        card.isParticipating() &&
+                        card.hasTrait('Knight') &&
+                        card.getType() === 'character'
+                    );
                 });
                 participatingCard[0].modifyPower(power);
-                this.game.addMessage('{0} plays {1} to have {2} gain {3} power', context.player, this, participatingCard[0], power);
+                this.game.addMessage(
+                    '{0} plays {1} to have {2} gain {3} power',
+                    context.player,
+                    this,
+                    participatingCard[0],
+                    power
+                );
             }
         });
     }
 
     hasSingleParticipatingChar() {
-        if(this.game.currentChallenge.attackingPlayer === this.controller) {
+        if (this.game.currentChallenge.attackingPlayer === this.controller) {
             return this.game.currentChallenge.attackers.length === 1;
         }
         return this.game.currentChallenge.defenders.length === 1;
     }
 
     hasParticipatingKnight() {
-        let cards = this.controller.filterCardsInPlay(card => {
-            return (card.isParticipating() &&
-                    card.hasTrait('Knight') &&
-                    card.getType() === 'character');
+        let cards = this.controller.filterCardsInPlay((card) => {
+            return (
+                card.isParticipating() && card.hasTrait('Knight') && card.getType() === 'character'
+            );
         });
 
         return !!cards.length;
     }
 
     hasLadyCharacter() {
-        return this.controller.anyCardsInPlay(card => card.hasTrait('Lady') && card.getType() === 'character');
+        return this.controller.anyCardsInPlay(
+            (card) => card.hasTrait('Lady') && card.getType() === 'character'
+        );
     }
 }
 

@@ -1,6 +1,6 @@
 const DrawCard = require('../../drawcard.js');
 const ChallengeTypes = require('../../ChallengeTypes');
-const {ChallengeTracker} = require('../../EventTrackers');
+const { ChallengeTracker } = require('../../EventTrackers');
 
 class LysasLetter extends DrawCard {
     setupCardAbilities() {
@@ -8,10 +8,10 @@ class LysasLetter extends DrawCard {
 
         this.reaction({
             when: {
-                onPhaseStarted: event => event.phase === 'challenge'
+                onPhaseStarted: (event) => event.phase === 'challenge'
             },
             choosePlayer: () => true,
-            handler: context => {
+            handler: (context) => {
                 this.chosenPlayer = context.chosenPlayer;
                 this.game.promptWithMenu(context.player, this, {
                     activePrompt: {
@@ -25,11 +25,18 @@ class LysasLetter extends DrawCard {
     }
 
     setChallengeType(player, challengeType) {
-        this.game.addMessage('{0} uses {1} to choose {2} and name {3} challenges', player, this, this.chosenPlayer, challengeType);
-        
-        this.untilEndOfPhase(ability => ({
-            condition: () => !this.challengeTypesInitiated(this.chosenPlayer).includes(challengeType),
-            match: card => card === this.chosenPlayer.activePlot,
+        this.game.addMessage(
+            '{0} uses {1} to choose {2} and name {3} challenges',
+            player,
+            this,
+            this.chosenPlayer,
+            challengeType
+        );
+
+        this.untilEndOfPhase((ability) => ({
+            condition: () =>
+                !this.challengeTypesInitiated(this.chosenPlayer).includes(challengeType),
+            match: (card) => card === this.chosenPlayer.activePlot,
             targetController: this.chosenPlayer,
             effect: ability.effects.setClaim(0)
         }));
@@ -39,7 +46,7 @@ class LysasLetter extends DrawCard {
 
     challengeTypesInitiated(player) {
         let challengesInitiated = this.tracker.filter({ attackingPlayer: player });
-        return challengesInitiated.map(challenge => challenge.challengeType);
+        return challengesInitiated.map((challenge) => challenge.challengeType);
     }
 }
 

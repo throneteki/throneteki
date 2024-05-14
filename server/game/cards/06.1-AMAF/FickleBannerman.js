@@ -1,16 +1,18 @@
 const DrawCard = require('../../drawcard.js');
-const {Tokens} = require('../../Constants');
+const { Tokens } = require('../../Constants');
 
 class FickleBannerman extends DrawCard {
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                afterChallenge: event => event.challenge.loser === this.controller && event.challenge.challengeType === 'power'
+                afterChallenge: (event) =>
+                    event.challenge.loser === this.controller &&
+                    event.challenge.challengeType === 'power'
             },
-            handler: context => {
+            handler: (context) => {
                 this.challengeWinner = context.event.challenge.winner;
 
-                if(!this.hasToken(Tokens.gold)) {
+                if (!this.hasToken(Tokens.gold)) {
                     this.loseControl();
                     return;
                 }

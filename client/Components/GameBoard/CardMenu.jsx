@@ -5,25 +5,29 @@ import classNames from 'classnames';
 
 class CardMenu extends React.Component {
     onMenuItemClick(menuItem) {
-        if(this.props.onMenuItemClick) {
+        if (this.props.onMenuItemClick) {
             this.props.onMenuItemClick(menuItem);
         }
     }
 
     render() {
         var menuIndex = 0;
-        var menuItems = this.props.menu.map(menuItem => {
+        var menuItems = this.props.menu.map((menuItem) => {
             let className = classNames('menu-item', {
-                'disabled': !!menuItem.disabled
+                disabled: !!menuItem.disabled
             });
-            return <div key={ menuIndex++ } className={ className } onClick={ this.onMenuItemClick.bind(this, menuItem) }>{ menuItem.text }</div>;
+            return (
+                <div
+                    key={menuIndex++}
+                    className={className}
+                    onClick={this.onMenuItemClick.bind(this, menuItem)}
+                >
+                    {menuItem.text}
+                </div>
+            );
         });
 
-        return (
-            <div className='panel menu'>
-                { menuItems }
-            </div>
-        );
+        return <div className='panel menu'>{menuItems}</div>;
     }
 }
 

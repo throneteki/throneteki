@@ -11,11 +11,11 @@ describe('The RadioGroup component', () => {
     });
 
     test('renders without crashing', () => {
-        shallow(<RadioGroup buttons={ buttons }/>);
+        shallow(<RadioGroup buttons={buttons} />);
     });
 
     test('renders no radio buttons when none are passed in', () => {
-        let wrapper = shallow(<RadioGroup buttons={ buttons } />);
+        let wrapper = shallow(<RadioGroup buttons={buttons} />);
 
         expect(wrapper.find(RadioButton).length).toEqual(0);
     });
@@ -27,7 +27,7 @@ describe('The RadioGroup component', () => {
             buttons = [];
             buttons.push({ value: 'test', label: 'Test Button' });
 
-            wrapper = shallow(<RadioGroup buttons={ buttons } />);
+            wrapper = shallow(<RadioGroup buttons={buttons} />);
         });
 
         test('a button is rendered with the correct properties', () => {
@@ -40,7 +40,7 @@ describe('The RadioGroup component', () => {
 
         describe('and a button is clicked', () => {
             beforeEach(() => {
-                wrapper = shallow(<RadioGroup buttons={ buttons } />);
+                wrapper = shallow(<RadioGroup buttons={buttons} />);
                 wrapper.find(RadioButton).prop('onClick')();
             });
 
@@ -51,7 +51,9 @@ describe('The RadioGroup component', () => {
             describe('and a callback is specified', () => {
                 const onValueSelected = jest.fn();
                 beforeEach(() => {
-                    wrapper = shallow(<RadioGroup buttons={ buttons } onValueSelected={ onValueSelected } />);
+                    wrapper = shallow(
+                        <RadioGroup buttons={buttons} onValueSelected={onValueSelected} />
+                    );
                     wrapper.find(RadioButton).first().prop('onClick')();
                 });
 
@@ -86,7 +88,7 @@ describe('The RadioGroup component', () => {
             buttons.push({ value: 'test2' });
             buttons.push({ value: 'test3' });
 
-            wrapper = shallow(<RadioGroup buttons={ buttons } />);
+            wrapper = shallow(<RadioGroup buttons={buttons} />);
         });
 
         test('all of the buttons are rendered', () => {

@@ -17,12 +17,12 @@ const defaultProperties = {
 };
 
 const ModeToSelector = {
-    eachPlayer: p => new EachPlayerCardSelector(p),
-    exactly: p => new ExactlyXCardSelector(p.numCards, p),
-    maxStat: p => new MaxStatCardSelector(p),
-    single: p => new SingleCardSelector(p),
-    unlimited: p => new UnlimitedCardSelector(p),
-    upTo: p => new UpToXCardSelector(p.numCards, p)
+    eachPlayer: (p) => new EachPlayerCardSelector(p),
+    exactly: (p) => new ExactlyXCardSelector(p.numCards, p),
+    maxStat: (p) => new MaxStatCardSelector(p),
+    single: (p) => new SingleCardSelector(p),
+    unlimited: (p) => new UnlimitedCardSelector(p),
+    upTo: (p) => new UpToXCardSelector(p.numCards, p)
 };
 
 class CardSelector {
@@ -31,7 +31,7 @@ class CardSelector {
 
         let factory = ModeToSelector[properties.mode];
 
-        if(!factory) {
+        if (!factory) {
             throw new Error(`Unknown card selector mode of ${properties.mode}`);
         }
 
@@ -40,17 +40,20 @@ class CardSelector {
 
     static getDefaultedProperties(properties) {
         properties = Object.assign({}, defaultProperties, properties);
-        properties.numCards = typeof(properties.numCards) === 'function' ? properties.numCards(properties.context) : properties.numCards;
+        properties.numCards =
+            typeof properties.numCards === 'function'
+                ? properties.numCards(properties.context)
+                : properties.numCards;
 
-        if(properties.mode) {
+        if (properties.mode) {
             return properties;
         }
 
-        if(properties.maxStat) {
+        if (properties.maxStat) {
             properties.mode = 'maxStat';
-        } else if(properties.numCards === 1 && !properties.multiSelect) {
+        } else if (properties.numCards === 1 && !properties.multiSelect) {
             properties.mode = 'single';
-        } else if(properties.numCards === 0) {
+        } else if (properties.numCards === 0) {
             properties.mode = 'unlimited';
         } else {
             properties.mode = 'upTo';

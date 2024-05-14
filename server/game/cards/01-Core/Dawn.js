@@ -6,7 +6,7 @@ class Dawn extends DrawCard {
             effect: ability.effects.dynamicStrength(() => this.controller.getNumberOfUsedPlots())
         });
         this.whileAttached({
-            match: card => card.hasTrait('House Dayne'),
+            match: (card) => card.hasTrait('House Dayne'),
             effect: ability.effects.addKeyword('Intimidate')
         });
     }

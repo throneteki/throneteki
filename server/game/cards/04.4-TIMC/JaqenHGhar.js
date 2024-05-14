@@ -1,6 +1,6 @@
 const DrawCard = require('../../drawcard.js');
 const GameActions = require('../../GameActions');
-const {Tokens} = require('../../Constants');
+const { Tokens } = require('../../Constants');
 
 class JaqenHGhar extends DrawCard {
     constructor(owner, cardData) {
@@ -12,22 +12,27 @@ class JaqenHGhar extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: event => event.card === this
+                onCardEntersPlay: (event) => event.card === this
             },
             target: {
                 numCards: 3,
                 activePromptTitle: 'Select up to 3 characters',
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.isUnique()
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    card.isUnique()
             },
             message: '{player} uses {source} to add Valar Morghulis tokens to {target}',
-            handler: context => {
+            handler: (context) => {
                 this.selectedCards = context.target;
                 this.game.resolveGameAction(
                     GameActions.simultaneously(
-                        context.target.map(card => GameActions.placeToken({
-                            card,
-                            token: Tokens.valarmorghulis
-                        }))
+                        context.target.map((card) =>
+                            GameActions.placeToken({
+                                card,
+                                token: Tokens.valarmorghulis
+                            })
+                        )
                     ),
                     context
                 );
@@ -36,29 +41,38 @@ class JaqenHGhar extends DrawCard {
 
         this.reaction({
             when: {
-                afterChallenge: () => this.game.isDuringChallenge({ winner: this.controller, attackingAlone: this })
+                afterChallenge: () =>
+                    this.game.isDuringChallenge({ winner: this.controller, attackingAlone: this })
             },
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.hasToken(Tokens.valarmorghulis),
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    card.hasToken(Tokens.valarmorghulis),
                 gameAction: 'kill'
             },
-            handler: context => {
+            handler: (context) => {
                 this.game.killCharacter(context.target);
-                this.game.addMessage('{0} uses {1} to kill {2}', context.player, this, context.target);
+                this.game.addMessage(
+                    '{0} uses {1} to kill {2}',
+                    context.player,
+                    this,
+                    context.target
+                );
             }
         });
     }
 
     onCardLeftPlay(event) {
-        if(event.card !== this) {
+        if (event.card !== this) {
             return;
         }
 
-        if(!this.selectedCards) {
+        if (!this.selectedCards) {
             return;
         }
 
-        for(let card of this.selectedCards) {
+        for (let card of this.selectedCards) {
             card.modifyToken(Tokens.valarmorghulis, -1);
         }
 

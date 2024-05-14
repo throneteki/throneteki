@@ -1,6 +1,5 @@
-
 const DrawCard = require('../../drawcard.js');
-const {Tokens} = require('../../Constants');
+const { Tokens } = require('../../Constants');
 
 class Balerion extends DrawCard {
     setupCardAbilities(ability) {
@@ -13,10 +12,15 @@ class Balerion extends DrawCard {
             cost: ability.costs.kneelSelf(),
             target: {
                 activePromptTitle: 'Select a card',
-                cardCondition: card => card.hasToken(Tokens.gold)
+                cardCondition: (card) => card.hasToken(Tokens.gold)
             },
-            handler: context => {
-                this.game.addMessage('{0} kneels {1} to discard 1 gold from {2}', this.controller, this, context.target);
+            handler: (context) => {
+                this.game.addMessage(
+                    '{0} kneels {1} to discard 1 gold from {2}',
+                    this.controller,
+                    this,
+                    context.target
+                );
                 context.target.modifyToken(Tokens.gold, -1);
             }
         });

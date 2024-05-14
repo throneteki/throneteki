@@ -4,7 +4,10 @@ class SwornBrother extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetController: 'current',
-            effect: ability.effects.reduceFirstMarshalledCardCostEachRound(1, card => card.getType() === 'location')
+            effect: ability.effects.reduceFirstMarshalledCardCostEachRound(
+                1,
+                (card) => card.getType() === 'location'
+            )
         });
     }
 }

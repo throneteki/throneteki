@@ -1,18 +1,19 @@
-
 const DrawCard = require('../../drawcard.js');
 
 class MellarioOfNorvos extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) => card.name === 'Doran Martell',
-            effect: ability.effects.immuneTo(card => card.controller !== this.controller && card.getType() === 'plot')
+            effect: ability.effects.immuneTo(
+                (card) => card.controller !== this.controller && card.getType() === 'plot'
+            )
         });
 
         this.persistentEffect({
             effect: ability.effects.reduceCost({
                 playingTypes: 'marshal',
                 amount: 1,
-                match: card => card.name === 'Arianne Martell'
+                match: (card) => card.name === 'Arianne Martell'
             })
         });
 

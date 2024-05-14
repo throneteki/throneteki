@@ -9,18 +9,12 @@ class FormerChampion extends DrawCard {
         this.persistentEffect({
             condition: () => this.getStrength() <= 3,
             match: this,
-            effect: [
-                ability.effects.addIcon('power'),
-                ability.effects.addKeyword('Stealth')
-            ]
+            effect: [ability.effects.addIcon('power'), ability.effects.addKeyword('Stealth')]
         });
         this.persistentEffect({
             condition: () => this.getStrength() <= 1,
             match: this,
-            effect: [
-                ability.effects.addIcon('intrigue'),
-                ability.effects.addKeyword('Intimidate')
-            ]
+            effect: [ability.effects.addIcon('intrigue'), ability.effects.addKeyword('Intimidate')]
         });
     }
 }

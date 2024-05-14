@@ -19,11 +19,17 @@ class RemoveFromGame extends GameAction {
             player,
             snapshotName: 'cardStateWhenRemoved'
         };
-        const removeEvent = this.event('onCardRemovedFromGame', params, event => {
-            event.thenAttachEvent(MoveCardEventGenerator.createPlaceCardEvent({ card: event.card, player: event.player, location: 'out of game' }));
+        const removeEvent = this.event('onCardRemovedFromGame', params, (event) => {
+            event.thenAttachEvent(
+                MoveCardEventGenerator.createPlaceCardEvent({
+                    card: event.card,
+                    player: event.player,
+                    location: 'out of game'
+                })
+            );
         });
 
-        if(['play area', 'duplicate'].includes(card.location)) {
+        if (['play area', 'duplicate'].includes(card.location)) {
             return this.atomic(removeEvent, LeavePlay.createEvent({ card, allowSave }));
         }
 

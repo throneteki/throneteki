@@ -1,7 +1,5 @@
 const BaseCard = require('./basecard.js');
 
-class AgendaCard extends BaseCard {
-
-}
+class AgendaCard extends BaseCard {}
 
 module.exports = AgendaCard;

@@ -10,13 +10,11 @@ class ShadowPolitics extends DrawCard {
             title: 'Discard from shadows',
             target: {
                 activePromptTitle: 'Select a card',
-                cardCondition: card => card.location === 'shadows' && card !== this
+                cardCondition: (card) => card.location === 'shadows' && card !== this
             },
             message: '{player} plays {source} to discard {target} from shadows',
-            handler: context => {
-                this.game.resolveGameAction(
-                    GameActions.discardCard({ card: context.target })
-                );
+            handler: (context) => {
+                this.game.resolveGameAction(GameActions.discardCard({ card: context.target }));
             }
         });
 
@@ -26,27 +24,29 @@ class ShadowPolitics extends DrawCard {
                 numCards: 5,
                 activePromptTitle: 'Select up to 5 cards',
                 singleController: true,
-                cardCondition: card => card.location === 'discard pile'
+                cardCondition: (card) => card.location === 'discard pile'
             },
             message: '{player} plays {source} to remove {target} from the game',
-            handler: context => {
-                let actions = context.target.map(target => {
+            handler: (context) => {
+                let actions = context.target.map((target) => {
                     return GameActions.removeFromGame({ card: target, player: context.player });
                 });
 
-                this.game.resolveGameAction(
-                    GameActions.simultaneously(actions)
-                );
+                this.game.resolveGameAction(GameActions.simultaneously(actions));
             }
         });
 
         this.action({
             title: 'Look at hand',
-            chooseOpponent: opponent => opponent.hand.length > 0,
-            message: '{player} plays {source} to look at {opponent}\'s hand',
-            handler: context => {
+            chooseOpponent: (opponent) => opponent.hand.length > 0,
+            message: "{player} plays {source} to look at {opponent}'s hand",
+            handler: (context) => {
                 this.game.resolveGameAction(
-                    GameActions.lookAtHand({ player: context.player, opponent: context.opponent, context })
+                    GameActions.lookAtHand({
+                        player: context.player,
+                        opponent: context.opponent,
+                        context
+                    })
                 );
             }
         });

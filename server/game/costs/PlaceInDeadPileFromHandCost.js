@@ -8,7 +8,7 @@ class PlaceInDeadPileFromHandCost {
     }
 
     pay(cards, context) {
-        for(let card of cards) {
+        for (let card of cards) {
             context.player.moveCard(card, 'dead pile');
         }
     }

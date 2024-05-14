@@ -4,11 +4,10 @@ class BalonGreyjoy extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.isAttacking(),
-            match: card => (
+            match: (card) =>
                 card.isDefending() &&
                 card.getType() === 'character' &&
-                card.getStrength() < this.getStrength()
-            ),
+                card.getStrength() < this.getStrength(),
             targetController: 'opponent',
             effect: ability.effects.doesNotContributeStrength()
         });

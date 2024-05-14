@@ -3,7 +3,7 @@ const PlotCard = require('../../plotcard.js');
 class FortifiedPosition extends PlotCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: card => card.getType() === 'character',
+            match: (card) => card.getType() === 'character',
             targetController: 'any',
             effect: ability.effects.blankExcludingTraits
         });

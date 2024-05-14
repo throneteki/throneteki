@@ -7,8 +7,12 @@ class Bronn extends DrawCard {
             phase: 'marshal',
             anyPlayer: true,
             cost: ability.costs.payGold(1),
-            handler: context => {
-                this.game.addMessage('{0} pays 1 gold to take control of {1}', context.player, this);
+            handler: (context) => {
+                this.game.addMessage(
+                    '{0} pays 1 gold to take control of {1}',
+                    context.player,
+                    this
+                );
 
                 this.game.takeControl(context.player, this);
             }

@@ -8,9 +8,11 @@ class Thenns extends DrawCard {
             effect: ability.effects.cannotTargetUsingAssault()
         });
     }
-  
+
     anyNonArmyOrWildlingInPlay() {
-        return this.game.anyCardsInPlay(card => card.isAttacking() && !card.hasTrait('Army') && !card.hasTrait('Wildling'));
+        return this.game.anyCardsInPlay(
+            (card) => card.isAttacking() && !card.hasTrait('Army') && !card.hasTrait('Wildling')
+        );
     }
 }
 

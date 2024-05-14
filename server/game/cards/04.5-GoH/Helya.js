@@ -4,7 +4,7 @@ class Helya extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetController: 'any',
-            match: card => card.getType() === 'attachment',
+            match: (card) => card.getType() === 'attachment',
             effect: ability.effects.addKeyword('Terminal')
         });
     }

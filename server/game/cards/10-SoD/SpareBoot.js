@@ -8,28 +8,31 @@ class SpareBoot extends DrawCard {
             limit: ability.limit.perPhase(1),
             target: {
                 activePromptTitle: 'Select an attachment',
-                cardCondition: card => card.location === 'play area' && card.getType() === 'attachment' &&
-                                       card.parent && card.parent.controller === this.controller &&
-                                       (this.allowMoveAttachment(card) || card.kneeled)
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'attachment' &&
+                    card.parent &&
+                    card.parent.controller === this.controller &&
+                    (this.allowMoveAttachment(card) || card.kneeled)
             },
-            handler: context => {
+            handler: (context) => {
                 let attachment = context.target;
                 let canMove = this.allowMoveAttachment(attachment);
                 let canStand = attachment.kneeled;
 
-                if(canMove) {
+                if (canMove) {
                     context.player.attach(attachment.controller, attachment, this);
                 }
 
-                if(canStand) {
+                if (canStand) {
                     context.player.standCard(attachment);
                 }
 
                 let message;
 
-                if(canMove && canStand) {
+                if (canMove && canStand) {
                     message = '{0} uses {1} to stand {2} and move it to {1}';
-                } else if(canMove) {
+                } else if (canMove) {
                     message = '{0} uses {1} to move {2} to {1}';
                 } else {
                     message = '{0} uses {1} to stand {2}';

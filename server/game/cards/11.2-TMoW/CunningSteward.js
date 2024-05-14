@@ -5,10 +5,7 @@ class CunningSteward extends DrawCard {
         this.persistentEffect({
             condition: () => this.game.isDuringChallenge({ defendingPlayer: this.controller }),
             match: this,
-            effect: [
-                ability.effects.addIcon('military'),
-                ability.effects.addIcon('power')
-            ]
+            effect: [ability.effects.addIcon('military'), ability.effects.addIcon('power')]
         });
     }
 }

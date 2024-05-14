@@ -4,13 +4,21 @@ class SerHorasRedwyne extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardKneeled: event => event.card === this
+                onCardKneeled: (event) => event.card === this
             },
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.hasTrait('Lady')
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    card.hasTrait('Lady')
             },
-            handler: context => {
-                this.game.addMessage('{0} uses {1} to stand {2}', context.player, this, context.target);
+            handler: (context) => {
+                this.game.addMessage(
+                    '{0} uses {1} to stand {2}',
+                    context.player,
+                    this,
+                    context.target
+                );
                 this.controller.standCard(context.target);
             }
         });

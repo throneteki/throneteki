@@ -1,4 +1,4 @@
-import {formatDeckAsFullCards} from '../../deck-helper';
+import { formatDeckAsFullCards } from '../../deck-helper';
 
 import { sendGameMessage } from './socket';
 

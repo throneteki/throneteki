@@ -49,19 +49,19 @@ class InterruptWindow extends BaseStep {
     }
 
     automaticSaveWithDupes() {
-        if(this.event.cancelled) {
+        if (this.event.cancelled) {
             return;
         }
 
-        for(let event of this.event.getConcurrentEvents()) {
-            if(event.allowAutomaticSave() && this.game.saveWithDupe(event.card)) {
+        for (let event of this.event.getConcurrentEvents()) {
+            if (event.allowAutomaticSave() && this.game.saveWithDupe(event.card)) {
                 event.cancel();
             }
         }
     }
 
     openAbilityWindow(abilityType) {
-        if(this.event.cancelled) {
+        if (this.event.cancelled) {
             return;
         }
 
@@ -72,7 +72,7 @@ class InterruptWindow extends BaseStep {
     }
 
     validateExecution() {
-        if(this.event.cancelled) {
+        if (this.event.cancelled) {
             return;
         }
 
@@ -80,7 +80,7 @@ class InterruptWindow extends BaseStep {
     }
 
     selectExecuteOrder() {
-        if(this.event.cancelled) {
+        if (this.event.cancelled) {
             return;
         }
 
@@ -88,7 +88,7 @@ class InterruptWindow extends BaseStep {
     }
 
     executeHandler() {
-        if(this.event.cancelled) {
+        if (this.event.cancelled) {
             return;
         }
 
@@ -96,7 +96,7 @@ class InterruptWindow extends BaseStep {
     }
 
     openWindowForAttachedEvents() {
-        if(this.event.cancelled) {
+        if (this.event.cancelled) {
             return;
         }
 
@@ -104,7 +104,7 @@ class InterruptWindow extends BaseStep {
     }
 
     executePostHandler() {
-        if(this.event.cancelled) {
+        if (this.event.cancelled) {
             return;
         }
 

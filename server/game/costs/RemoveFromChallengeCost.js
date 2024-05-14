@@ -10,7 +10,7 @@ class RemoveFromChallengeCost {
 
     pay(cards, context) {
         let challenge = context.game.currentChallenge;
-        for(let card of cards) {
+        for (let card of cards) {
             challenge.removeFromChallenge(card);
         }
     }

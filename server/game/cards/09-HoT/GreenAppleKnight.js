@@ -14,7 +14,9 @@ class GreenAppleKnight extends DrawCard {
     }
 
     getNumberOfOtherKnights() {
-        return this.controller.getNumberOfCardsInPlay(card => card !== this && card.getType() === 'character' && card.hasTrait('Knight'));
+        return this.controller.getNumberOfCardsInPlay(
+            (card) => card !== this && card.getType() === 'character' && card.hasTrait('Knight')
+        );
     }
 }
 

@@ -9,16 +9,17 @@ class TheHighroad extends DrawCard {
         this.action({
             title: 'Kneel and sacrifice',
             clickToActivate: true,
-            cost: [
-                ability.costs.kneelSelf(),
-                ability.costs.sacrificeSelf()
-            ],
-            message: '{player} kneels and sacrifices {source} to reduce the cost of the next non-character they marshal or play by 2',
-            gameAction: GameActions.genericHandler(context => {
-                this.untilEndOfPhase(ability => ({
+            cost: [ability.costs.kneelSelf(), ability.costs.sacrificeSelf()],
+            message:
+                '{player} kneels and sacrifices {source} to reduce the cost of the next non-character they marshal or play by 2',
+            gameAction: GameActions.genericHandler((context) => {
+                this.untilEndOfPhase((ability) => ({
                     targetController: 'any',
-                    match: player => player === context.player,
-                    effect: ability.effects.reduceNextMarshalledOrPlayedCardCost(2, card => card.getType() !== 'character')
+                    match: (player) => player === context.player,
+                    effect: ability.effects.reduceNextMarshalledOrPlayedCardCost(
+                        2,
+                        (card) => card.getType() !== 'character'
+                    )
                 }));
             })
         });

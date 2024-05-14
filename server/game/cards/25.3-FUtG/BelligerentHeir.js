@@ -10,31 +10,47 @@ class BelligerentHeir extends DrawCard {
         });
         this.reaction({
             when: {
-                onChallengeInitiated: event => event.challenge.attackingPlayer === this.controller
+                onChallengeInitiated: (event) => event.challenge.attackingPlayer === this.controller
             },
             target: {
                 type: 'select',
-                cardCondition: { type: 'character', attacking: true, faction: 'neutral', controller: 'current' }
+                cardCondition: {
+                    type: 'character',
+                    attacking: true,
+                    faction: 'neutral',
+                    controller: 'current'
+                }
             },
             limit: ability.limit.perPhase(1),
             message: '{player} uses {source} to place 1 gold on {source}',
-            handler: context => {
+            handler: (context) => {
                 this.game.resolveGameAction(
-                    GameActions.placeToken(context => ({ token: Tokens.gold, card: context.target, amount: 1 })),
+                    GameActions.placeToken((context) => ({
+                        token: Tokens.gold,
+                        card: context.target,
+                        amount: 1
+                    })),
                     context
                 );
 
-                this.game.once('afterChallenge:interrupt', event => this.resolveIfLose(event.challenge, context));
+                this.game.once('afterChallenge:interrupt', (event) =>
+                    this.resolveIfLose(event.challenge, context)
+                );
             }
         });
     }
 
     resolveIfLose(challenge, context) {
-        if(challenge.loser !== context.player) {
+        if (challenge.loser !== context.player) {
             return;
         }
 
-        this.game.addMessage('{0} is forced to sacrifice {1} due to {2}', context.target.controller, context.target, this);
+        this.game.addMessage(
+            '{0} is forced to sacrifice {1} due to {2}',
+            context.target.controller,
+            context.target,
+            this
+        );
         this.game.resolveGameAction(GameActions.sacrificeCard({ card: context.target }));
     }
 }

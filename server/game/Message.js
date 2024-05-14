@@ -1,7 +1,7 @@
 import flatten from '../Array.js';
 class Message {
     static fragment(format, ...args) {
-        if(args.length === 1 && !format.includes('{0}')) {
+        if (args.length === 1 && !format.includes('{0}')) {
             return new Message({ format, args: args[0] });
         }
 
@@ -21,14 +21,14 @@ class Message {
         let messageFragments = this.format.split(/(\{\w+\})/);
         let returnedFraments = [];
 
-        for(const fragment of messageFragments) {
+        for (const fragment of messageFragments) {
             let argMatch = fragment.match(/\{(\w+)\}/);
-            if(argMatch) {
+            if (argMatch) {
                 let arg = this.args[argMatch[1]];
-                if(arg || arg === 0) {
+                if (arg || arg === 0) {
                     returnedFraments.push(this.formatArg(arg));
                 }
-            } else if(fragment) {
+            } else if (fragment) {
                 returnedFraments.push(fragment);
             }
         }
@@ -40,16 +40,16 @@ class Message {
         const BaseCard = require('./basecard');
         const Spectator = require('./spectator');
 
-        if(Array.isArray(arg)) {
+        if (Array.isArray(arg)) {
             return this.formatArray(arg);
-        } else if(arg instanceof BaseCard) {
-            if(arg.facedown) {
+        } else if (arg instanceof BaseCard) {
+            if (arg.facedown) {
                 return 'a facedown card';
             }
             return { code: arg.code, label: arg.name, type: arg.getType(), argType: 'card' };
-        } else if(arg instanceof Spectator) {
+        } else if (arg instanceof Spectator) {
             return { name: arg.name, argType: 'nonAvatarPlayer' };
-        } else if(arg instanceof Message) {
+        } else if (arg instanceof Message) {
             return arg.flatten();
         }
 
@@ -57,12 +57,12 @@ class Message {
     }
 
     formatArray(arg) {
-        if(arg.length === 0) {
+        if (arg.length === 0) {
             return '';
         }
 
         const result = [this.formatArg(arg[0])];
-        for(let i = 1; i < arg.length; ++i) {
+        for (let i = 1; i < arg.length; ++i) {
             result.push(i === arg.length - 1 ? ', and ' : ', ');
             result.push(this.formatArg(arg[i]));
         }

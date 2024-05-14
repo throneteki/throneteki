@@ -5,10 +5,12 @@ class OldtownCityWatch extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: event => event.card === this
+                onCardEntersPlay: (event) => event.card === this
             },
             message: '{player} uses {source} to reveal the top card of each players deck',
-            gameAction: GameActions.revealCards(context => ({ cards: context.game.getPlayers().map(player => player.drawDeck[0]) }))
+            gameAction: GameActions.revealCards((context) => ({
+                cards: context.game.getPlayers().map((player) => player.drawDeck[0])
+            }))
         });
     }
 }

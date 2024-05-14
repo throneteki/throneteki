@@ -7,15 +7,20 @@ class SaltWife extends DrawCard {
             phase: 'challenge',
             cost: ability.costs.sacrificeSelf(),
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character'
+                cardCondition: (card) =>
+                    card.location === 'play area' && card.getType() === 'character'
             },
-            handler: context => {
-                this.untilEndOfPhase(ability => ({
+            handler: (context) => {
+                this.untilEndOfPhase((ability) => ({
                     match: context.target,
                     effect: ability.effects.cannotBeDeclaredAsDefender()
                 }));
-                this.game.addMessage('{0} sacrifices {1} to make {2} unable to be declared as a defender',
-                    context.player, this, context.target);
+                this.game.addMessage(
+                    '{0} sacrifices {1} to make {2} unable to be declared as a defender',
+                    context.player,
+                    this,
+                    context.target
+                );
             }
         });
     }

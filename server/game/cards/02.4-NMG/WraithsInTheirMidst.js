@@ -4,7 +4,7 @@ class WraithsInTheirMidst extends PlotCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetController: 'opponent',
-            match: card => card === card.controller.activePlot,
+            match: (card) => card === card.controller.activePlot,
             effect: ability.effects.modifyReserve(-2)
         });
         this.persistentEffect({

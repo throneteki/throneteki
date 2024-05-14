@@ -14,8 +14,9 @@ class BlueGraces extends DrawCard {
                     printedCostOrHigher: 6
                 }
             },
-            message: '{player} removes {source} from the game to shuffle {target} back into their deck',
-            handler: context => {
+            message:
+                '{player} removes {source} from the game to shuffle {target} back into their deck',
+            handler: (context) => {
                 context.target.owner.moveCard(context.target, 'draw deck');
                 context.target.owner.shuffleDrawDeck();
             }

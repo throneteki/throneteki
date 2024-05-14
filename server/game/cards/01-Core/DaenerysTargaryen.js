@@ -4,7 +4,7 @@ class DaenerysTargaryen extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => !this.kneeled,
-            match: card => card.isParticipating() && card.getType() === 'character',
+            match: (card) => card.isParticipating() && card.getType() === 'character',
             targetController: 'opponent',
             effect: ability.effects.modifyStrength(-1)
         });

@@ -2,7 +2,12 @@ const DrawCard = require('../../drawcard.js');
 
 class FamilyDutyHonor extends DrawCard {
     setupCardAbilities(ability) {
-        let leftPlayCondition = event => event.allowSave && event.card.canBeSaved() && event.card.hasTrait('House Tully') && event.card.controller === this.controller && event.card.getPower() > 0;
+        let leftPlayCondition = (event) =>
+            event.allowSave &&
+            event.card.canBeSaved() &&
+            event.card.hasTrait('House Tully') &&
+            event.card.controller === this.controller &&
+            event.card.getPower() > 0;
         this.interrupt({
             when: {
                 onCharacterKilled: leftPlayCondition,
@@ -13,10 +18,14 @@ class FamilyDutyHonor extends DrawCard {
                 onCardPutIntoShadows: leftPlayCondition
             },
             cost: ability.costs.discardPower(1, (card, context) => card === context.event.card),
-            handler: context => {
+            handler: (context) => {
                 context.event.saveCard();
-                this.game.addMessage('{0} plays {1} and discards 1 power from {2} to save it',
-                    context.player, this, context.event.card);
+                this.game.addMessage(
+                    '{0} plays {1} and discards 1 power from {2} to save it',
+                    context.player,
+                    this,
+                    context.event.card
+                );
             }
         });
     }

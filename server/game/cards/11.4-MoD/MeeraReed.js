@@ -4,9 +4,10 @@ class MeeraReed extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onSacrificed: event => this.isControlledStarkCharacter(event.cardStateWhenSacrificed)
+                onSacrificed: (event) =>
+                    this.isControlledStarkCharacter(event.cardStateWhenSacrificed)
             },
-            handler: context => {
+            handler: (context) => {
                 this.game.addMessage('{0} uses {1} to return {1} to shadows', context.player, this);
                 context.player.putIntoShadows(this, false);
             }
@@ -14,24 +15,34 @@ class MeeraReed extends DrawCard {
 
         this.reaction({
             when: {
-                onCardOutOfShadows: event => event.card === this
+                onCardOutOfShadows: (event) => event.card === this
             },
             target: {
-                cardCondition: card => card.getType() === 'character' && card.location === 'play area'
+                cardCondition: (card) =>
+                    card.getType() === 'character' && card.location === 'play area'
             },
-            handler: context => {
-                this.untilEndOfPhase(ability => ({
+            handler: (context) => {
+                this.untilEndOfPhase((ability) => ({
                     match: context.target,
                     effect: ability.effects.blankExcludingTraits
                 }));
 
-                this.game.addMessage('{0} uses {1} to treat the text box of {2} as blank until the end of the phase', context.player, this, context.target);
+                this.game.addMessage(
+                    '{0} uses {1} to treat the text box of {2} as blank until the end of the phase',
+                    context.player,
+                    this,
+                    context.target
+                );
             }
         });
     }
 
     isControlledStarkCharacter(card) {
-        return card.controller === this.controller && card.getType() === 'character' && card.isFaction('stark');
+        return (
+            card.controller === this.controller &&
+            card.getType() === 'character' &&
+            card.isFaction('stark')
+        );
     }
 }
 

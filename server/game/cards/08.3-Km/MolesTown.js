@@ -1,5 +1,5 @@
 const DrawCard = require('../../drawcard.js');
-const {Tokens} = require('../../Constants');
+const { Tokens } = require('../../Constants');
 
 class MolesTown extends DrawCard {
     setupCardAbilities(ability) {
@@ -8,18 +8,29 @@ class MolesTown extends DrawCard {
             condition: () => this.hasToken(Tokens.gold),
             cost: ability.costs.kneelSelf(),
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && !card.hasToken(Tokens.gold)
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    !card.hasToken(Tokens.gold)
             },
-            handler: context => {
+            handler: (context) => {
                 this.game.transferGold({ from: this, to: context.target, amount: 1 });
-                this.game.addMessage('{0} kneels {1} to move 1 gold to {2}', context.player, this, context.target);
+                this.game.addMessage(
+                    '{0} kneels {1} to move 1 gold to {2}',
+                    context.player,
+                    this,
+                    context.target
+                );
 
-                this.untilEndOfPhase(ability => ({
+                this.untilEndOfPhase((ability) => ({
                     match: context.target,
                     effect: ability.effects.cannotBeDeclaredAsAttacker()
                 }));
 
-                this.game.addMessage('{0} cannot be declared as an attacker until the end of the phase', context.target);
+                this.game.addMessage(
+                    '{0} cannot be declared as an attacker until the end of the phase',
+                    context.target
+                );
             }
         });
     }

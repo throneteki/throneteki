@@ -6,18 +6,19 @@ class CatelynStark extends DrawCard {
         this.action({
             title: 'Add as a defender',
             location: 'hand',
-            condition: () => (
-                this.game.isDuringChallenge({ challengeType: ['intrigue', 'power'], defendingPlayer: this.controller }) &&
-                this.controller.canPutIntoPlay(this)
-            ),
+            condition: () =>
+                this.game.isDuringChallenge({
+                    challengeType: ['intrigue', 'power'],
+                    defendingPlayer: this.controller
+                }) && this.controller.canPutIntoPlay(this),
             message: '{player} puts {source} into play as a defender',
-            gameAction: GameActions.putIntoPlay(context => ({
+            gameAction: GameActions.putIntoPlay((context) => ({
                 player: context.player,
                 card: this,
                 kneeled: true
             })).thenExecute(() => {
                 this.game.currentChallenge.addDefender(this);
-                this.atEndOfPhase(ability => ({
+                this.atEndOfPhase((ability) => ({
                     match: this,
                     condition: () => 'play area' === this.location,
                     effect: ability.effects.returnToHandIfStillInPlay(true)

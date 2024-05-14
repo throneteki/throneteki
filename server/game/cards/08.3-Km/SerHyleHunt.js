@@ -8,13 +8,18 @@ class SerHyleHunt extends DrawCard {
             condition: () => this.isParticipating(),
             cost: ability.costs.payGold(1),
             target: {
-                cardCondition: card => card.isParticipating() && card.getStrength() < this.getStrength()
+                cardCondition: (card) =>
+                    card.isParticipating() && card.getStrength() < this.getStrength()
             },
-            handler: context => {
+            handler: (context) => {
                 context.target.controller.standCard(context.target);
                 this.game.currentChallenge.removeFromChallenge(context.target);
-                this.game.addMessage('{0} uses {1} and pays 1 gold to stand and remove {2} from the challenge',
-                    context.player, this, context.target);
+                this.game.addMessage(
+                    '{0} uses {1} and pays 1 gold to stand and remove {2} from the challenge',
+                    context.player,
+                    this,
+                    context.target
+                );
             }
         });
     }

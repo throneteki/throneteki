@@ -9,19 +9,26 @@ class Braavos extends DrawCard {
             cost: ability.costs.kneelSelf(),
             handler: () => {
                 const goldGained = this.game.addGold(this.controller, this.getNumberOfFactions());
-                this.game.addMessage('{0} kneels {1} to gain {2} gold', this.controller, this, goldGained);
+                this.game.addMessage(
+                    '{0} kneels {1} to gain {2} gold',
+                    this.controller,
+                    this,
+                    goldGained
+                );
             }
         });
     }
 
     getNumberOfFactions() {
-        let charactersInPlay = this.controller.filterCardsInPlay(card => card.getType() === 'character' && !card.isFaction('neutral'));
+        let charactersInPlay = this.controller.filterCardsInPlay(
+            (card) => card.getType() === 'character' && !card.isFaction('neutral')
+        );
         let factionsInPlay = [];
 
-        for(let card of charactersInPlay) {
+        for (let card of charactersInPlay) {
             let factions = card.getFactions();
-            for(let faction of factions) {
-                if(!factionsInPlay.includes(faction)) {
+            for (let faction of factions) {
+                if (!factionsInPlay.includes(faction)) {
                     factionsInPlay.push(faction);
                 }
             }

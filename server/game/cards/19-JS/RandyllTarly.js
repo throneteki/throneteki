@@ -6,16 +6,23 @@ class RandyllTarly extends DrawCard {
         this.action({
             title: 'Stand Army or reveal top card',
             limit: ability.limit.perPhase(2),
-            cost: ability.costs.kneel(card => card.getType() === 'location' && card.hasTrait('The Reach')),
-            message: '{player} uses {source} and kneels {costs.kneel} to either stand an Army character, or reveal the top card of their deck',
+            cost: ability.costs.kneel(
+                (card) => card.getType() === 'location' && card.hasTrait('The Reach')
+            ),
+            message:
+                '{player} uses {source} and kneels {costs.kneel} to either stand an Army character, or reveal the top card of their deck',
             gameAction: GameActions.choose({
                 choices: {
                     'Stand an Army': {
-                        gameAction: GameActions.genericHandler(context => {
+                        gameAction: GameActions.genericHandler((context) => {
                             this.game.promptForSelect(context.player, {
                                 activePromptTitle: 'Select an Army',
                                 source: this,
-                                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.hasTrait('Army') && card.kneeled,
+                                cardCondition: (card) =>
+                                    card.location === 'play area' &&
+                                    card.getType() === 'character' &&
+                                    card.hasTrait('Army') &&
+                                    card.kneeled,
                                 gameAction: 'stand',
                                 onSelect: (player, card) => this.onArmySelected(player, card),
                                 onCancel: (player) => this.cancelSelection(player)
@@ -24,18 +31,21 @@ class RandyllTarly extends DrawCard {
                     },
                     'Reveal top card': {
                         message: '{player} chooses, and {gameAction}',
-                        gameAction: GameActions.revealTopCards(context => ({
+                        gameAction: GameActions.revealTopCards((context) => ({
                             player: context.player,
                             revealWithMessage: false
                         })).then({
-                            condition: context => context.event.cards[0].isMatch({ type: 'location' }) && context.event.revealed.length > 0,
+                            condition: (context) =>
+                                context.event.cards[0].isMatch({ type: 'location' }) &&
+                                context.event.revealed.length > 0,
                             message: '{player} {gameAction}',
                             gameAction: GameActions.ifCondition({
-                                condition: context => context.event.cards[0].isMatch({ trait: 'The Reach' }),
-                                thenAction: GameActions.putIntoPlay(context => ({
+                                condition: (context) =>
+                                    context.event.cards[0].isMatch({ trait: 'The Reach' }),
+                                thenAction: GameActions.putIntoPlay((context) => ({
                                     card: context.event.revealed[0]
                                 })),
-                                elseAction: GameActions.drawSpecific(context => ({
+                                elseAction: GameActions.drawSpecific((context) => ({
                                     player: context.player,
                                     cards: context.event.revealed
                                 }))

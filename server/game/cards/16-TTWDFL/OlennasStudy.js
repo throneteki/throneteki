@@ -9,7 +9,7 @@ class OlennasStudy extends DrawCard {
 
         this.persistentEffect({
             condition: () => this.game.isDuringChallenge({ challengeType: 'intrigue' }),
-            match: card => card.isMatch({ type: 'character', unique: false }),
+            match: (card) => card.isMatch({ type: 'character', unique: false }),
             targetController: 'any',
             effect: [
                 ability.effects.cannotBeDeclaredAsAttacker(),

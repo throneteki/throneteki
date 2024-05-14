@@ -31,7 +31,7 @@ class CancelChallengePrompt extends AllPlayerPrompt {
     }
 
     onMenuCommand(player, arg) {
-        if(arg === 'yes') {
+        if (arg === 'yes') {
             this.game.addAlert('info', '{0} allows cancelling the current challenge', player);
             this.completedPlayers.add(player);
         } else {
@@ -43,12 +43,16 @@ class CancelChallengePrompt extends AllPlayerPrompt {
     }
 
     onCompleted() {
-        if(this.cancelled) {
+        if (this.cancelled) {
             return;
         }
 
-        this.game.addAlert('danger', '{0} cancels the current challenge. Manually stand any knelt characters and work around any abilities already used', this.requestingPlayer);
-        for(let player of this.game.getPlayers()) {
+        this.game.addAlert(
+            'danger',
+            '{0} cancels the current challenge. Manually stand any knelt characters and work around any abilities already used',
+            this.requestingPlayer
+        );
+        for (let player of this.game.getPlayers()) {
             player.untrackChallenge(this.challenge);
         }
         this.game.currentChallengeStep.cancelChallengeResolution();

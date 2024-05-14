@@ -5,12 +5,18 @@ class RhymesWithMeek extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.isMatch({ winner: this.controller, unopposed: true })
+                afterChallenge: (event) =>
+                    event.challenge.isMatch({ winner: this.controller, unopposed: true })
             },
-            handler: context => {
+            handler: (context) => {
                 let amount = context.cardStateWhenInitiated.location === 'shadows' ? 3 : 2;
                 let numCardsDrawn = context.player.drawCardsToHand(amount).length;
-                this.game.addMessage('{0} plays {1} to draw {2}', context.player, this, TextHelper.count(numCardsDrawn, 'card'));
+                this.game.addMessage(
+                    '{0} plays {1} to draw {2}',
+                    context.player,
+                    this,
+                    TextHelper.count(numCardsDrawn, 'card')
+                );
             }
         });
     }

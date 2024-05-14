@@ -3,7 +3,8 @@ const DrawCard = require('../../drawcard.js');
 class SerJaremyRykker extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: card => card !== this && card.hasTrait('Ranger') && card.getType() === 'character',
+            match: (card) =>
+                card !== this && card.hasTrait('Ranger') && card.getType() === 'character',
             effect: ability.effects.addIcon('power')
         });
     }

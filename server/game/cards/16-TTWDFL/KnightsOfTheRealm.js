@@ -16,13 +16,31 @@ class KnightsOfTheRealm extends AgendaCard {
     }
 
     controlsMoreKnights() {
-        const controlledKnights = this.controller.getNumberOfCardsInPlay({ trait: 'Knight', type: 'character' });
-        return this.game.getOpponents(this.controller).every(opponent => controlledKnights > opponent.getNumberOfCardsInPlay({ trait: 'Knight', type: 'character' }));
+        const controlledKnights = this.controller.getNumberOfCardsInPlay({
+            trait: 'Knight',
+            type: 'character'
+        });
+        return this.game
+            .getOpponents(this.controller)
+            .every(
+                (opponent) =>
+                    controlledKnights >
+                    opponent.getNumberOfCardsInPlay({ trait: 'Knight', type: 'character' })
+            );
     }
 
     controlsFewerKnights() {
-        const controlledKnights = this.controller.getNumberOfCardsInPlay({ trait: 'Knight', type: 'character' });
-        return this.game.getOpponents(this.controller).every(opponent => controlledKnights < opponent.getNumberOfCardsInPlay({ trait: 'Knight', type: 'character' }));
+        const controlledKnights = this.controller.getNumberOfCardsInPlay({
+            trait: 'Knight',
+            type: 'character'
+        });
+        return this.game
+            .getOpponents(this.controller)
+            .every(
+                (opponent) =>
+                    controlledKnights <
+                    opponent.getNumberOfCardsInPlay({ trait: 'Knight', type: 'character' })
+            );
     }
 }
 

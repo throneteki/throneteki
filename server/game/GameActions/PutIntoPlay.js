@@ -11,18 +11,33 @@ class PutIntoPlay extends GameAction {
         player = player || card.controller;
 
         // Only show where the card came from if it is not already revealed
-        let message = 'puts {card} into play'
-            + (kneeled ? ' knelt' : '')
-            + (context.revealed && context.revealed.includes(card) ? '' : (player === card.controller ? ' from their {originalLocation}' : ' from {controller}\'s {originalLocation} under their control'));
+        let message =
+            'puts {card} into play' +
+            (kneeled ? ' knelt' : '') +
+            (context.revealed && context.revealed.includes(card)
+                ? ''
+                : player === card.controller
+                  ? ' from their {originalLocation}'
+                  : " from {controller}'s {originalLocation} under their control");
 
-        return Message.fragment(message, { card, controller: card.controller, originalLocation: card.location });
+        return Message.fragment(message, {
+            card,
+            controller: card.controller,
+            originalLocation: card.location
+        });
     }
 
     canChangeGameState({ player, card, attachmentTargets }) {
         player = player || card.controller;
         attachmentTargets = attachmentTargets || (() => true);
-        return card.location !== 'play area' && player.canPutIntoPlay(card) 
-            && (card.getType() !== 'attachment' || player.game.anyCardsInPlay(c => player.canAttach(card, c) && attachmentTargets(c)));
+        return (
+            card.location !== 'play area' &&
+            player.canPutIntoPlay(card) &&
+            (card.getType() !== 'attachment' ||
+                player.game.anyCardsInPlay(
+                    (c) => player.canAttach(card, c) && attachmentTargets(c)
+                ))
+        );
     }
 
     createEvent({ player, card, kneeled, playingType, attachmentTargets, dupeIsValid = false }) {
@@ -30,24 +45,30 @@ class PutIntoPlay extends GameAction {
 
         let dupeCard = player.getDuplicateInPlay(card);
 
-        if(card.getPrintedType() === 'attachment' && playingType !== 'setup' && !dupeCard) {
-            return this.event('__PLACEHOLDER_EVENT__', { player, card }, event => {
+        if (card.getPrintedType() === 'attachment' && playingType !== 'setup' && !dupeCard) {
+            return this.event('__PLACEHOLDER_EVENT__', { player, card }, (event) => {
                 event.player.putIntoPlay(event.card, 'play', { kneeled, attachmentTargets });
             });
         }
 
         const additionalEvents = [];
-        if(card.location === 'shadows') {
-            additionalEvents.push(this.event('onCardOutOfShadows', { player, card, type: dupeCard ? 'dupe' : 'card' }));
+        if (card.location === 'shadows') {
+            additionalEvents.push(
+                this.event('onCardOutOfShadows', { player, card, type: dupeCard ? 'dupe' : 'card' })
+            );
         }
 
-        if(dupeCard && playingType !== 'setup') {
-            const isFullyResolved = event => dupeIsValid || event.card.location === 'play area';
+        if (dupeCard && playingType !== 'setup') {
+            const isFullyResolved = (event) => dupeIsValid || event.card.location === 'play area';
             return this.atomic(
-                this.event('onDupeEntersPlay', { card, isFullyResolved, target: dupeCard }, event => {
-                    event.card.controller.removeCardFromPile(event.card);
-                    event.target.addDuplicate(event.card);
-                }),
+                this.event(
+                    'onDupeEntersPlay',
+                    { card, isFullyResolved, target: dupeCard },
+                    (event) => {
+                        event.card.controller.removeCardFromPile(event.card);
+                        event.target.addDuplicate(event.card);
+                    }
+                ),
                 ...additionalEvents
             );
         }
@@ -60,10 +81,7 @@ class PutIntoPlay extends GameAction {
             playingType
         });
 
-        return this.atomic(
-            entersPlayEvent,
-            ...additionalEvents
-        );
+        return this.atomic(entersPlayEvent, ...additionalEvents);
     }
 }
 

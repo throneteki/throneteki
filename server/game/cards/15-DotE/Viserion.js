@@ -9,12 +9,11 @@ class Viserion extends DrawCard {
 
         this.persistentEffect({
             condition: () => this.isAttacking(),
-            match: card => (
+            match: (card) =>
                 card.isParticipating() &&
                 card.getType() === 'character' &&
                 !card.hasTrait('Dragon') &&
-                !card.hasTrait('Stormborn')
-            ),
+                !card.hasTrait('Stormborn'),
             targetController: 'any',
             effect: ability.effects.modifyStrength(-2)
         });

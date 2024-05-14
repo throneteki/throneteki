@@ -4,7 +4,7 @@ class TheWolfswood extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetLocation: 'hand',
-            match: card => card.hasTrait('Direwolf'),
+            match: (card) => card.hasTrait('Direwolf'),
             effect: ability.effects.gainAmbush()
         });
     }

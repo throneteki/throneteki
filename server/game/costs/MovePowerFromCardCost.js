@@ -1,10 +1,17 @@
 const CardSelector = require('../CardSelector');
 
 class MovePowerFromCardCost {
-    constructor({ target, amount = 1, condition = card => card.location === 'play area' && card.power >= amount }) {
+    constructor({
+        target,
+        amount = 1,
+        condition = (card) => card.location === 'play area' && card.power >= amount
+    }) {
         this.name = 'movePowerFromCard';
         this.amount = amount;
-        this.selector = CardSelector.for({cardCondition: condition, cardType: ['attachment', 'character', 'location', 'faction', 'plot']});
+        this.selector = CardSelector.for({
+            cardCondition: condition,
+            cardType: ['attachment', 'character', 'location', 'faction', 'plot']
+        });
         this.target = target;
         this.activePromptTitle = `Select card to move ${amount} power from`;
     }

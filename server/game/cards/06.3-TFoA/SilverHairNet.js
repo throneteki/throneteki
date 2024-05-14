@@ -14,7 +14,7 @@ class SilverHairNet extends DrawCard {
             effect: ability.effects.reduceCost({
                 playingTypes: 'play',
                 amount: 1,
-                match: card => card.getType() === 'event'
+                match: (card) => card.getType() === 'event'
             })
         });
     }

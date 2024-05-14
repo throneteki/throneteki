@@ -6,10 +6,17 @@ class FireAndBlood extends DrawCard {
             title: 'Shuffle card from dead pile back into deck',
             phase: 'challenge',
             target: {
-                cardCondition: card => card.controller === this.controller && card.location === 'dead pile' && card.isUnique() && card.isFaction('targaryen')
+                cardCondition: (card) =>
+                    card.controller === this.controller &&
+                    card.location === 'dead pile' &&
+                    card.isUnique() &&
+                    card.isFaction('targaryen')
             },
-            handler: context => {
-                if(context.target.hasTrait('Hatchling') && this.controller.canPutIntoPlay(context.target)) {
+            handler: (context) => {
+                if (
+                    context.target.hasTrait('Hatchling') &&
+                    this.controller.canPutIntoPlay(context.target)
+                ) {
                     this.selectedCard = context.target;
                     this.game.promptWithMenu(context.player, this, {
                         activePrompt: {
@@ -31,7 +38,12 @@ class FireAndBlood extends DrawCard {
     putIntoPlay(player) {
         player.putIntoPlay(this.selectedCard);
 
-        this.game.addMessage('{0} plays {1} to remove {2} from their dead pile and put it into play', player, this, this.selectedCard);
+        this.game.addMessage(
+            '{0} plays {1} to remove {2} from their dead pile and put it into play',
+            player,
+            this,
+            this.selectedCard
+        );
 
         return true;
     }
@@ -46,7 +58,12 @@ class FireAndBlood extends DrawCard {
         this.controller.moveCard(card, 'draw deck');
         this.controller.shuffleDrawDeck();
 
-        this.game.addMessage('{0} plays {1} to remove {2} from their dead pile and shuffle it into their deck', this.controller, this, card);
+        this.game.addMessage(
+            '{0} plays {1} to remove {2} from their dead pile and shuffle it into their deck',
+            this.controller,
+            this,
+            card
+        );
     }
 }
 

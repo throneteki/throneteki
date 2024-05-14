@@ -1,5 +1,5 @@
 const DrawCard = require('../../drawcard.js');
-const {Tokens} = require('../../Constants');
+const { Tokens } = require('../../Constants');
 const GameActions = require('../../GameActions');
 const Array = require('../../../Array');
 
@@ -7,15 +7,16 @@ class BraveCompanions extends DrawCard {
     setupCardAbilities(ability) {
         const selectableTraits = ['Army', 'Commander', 'Mercenary'];
         this.persistentEffect({
-            match: card => card === this,
+            match: (card) => card === this,
             effect: ability.effects.dynamicStrength(() => this.calculateStrength())
         });
-                      
+
         this.reaction({
             when: {
-                onCardEntersPlay: event => event.card === this && event.playingType === 'marshal'
+                onCardEntersPlay: (event) => event.card === this && event.playingType === 'marshal'
             },
-            message: '{player} uses {source} to search the top 10 cards of their deck for an Army character, a Commander character and a Mercenary character',
+            message:
+                '{player} uses {source} to search the top 10 cards of their deck for an Army character, a Commander character and a Mercenary character',
             gameAction: GameActions.search({
                 title: 'Select cards',
                 topCards: 10,
@@ -23,20 +24,25 @@ class BraveCompanions extends DrawCard {
                 match: {
                     type: 'character',
                     // Checking if the card is already selected || if it has one of the selectable traits && that trait is remaining for selection
-                    condition: (card, context) => context.selectedCards.includes(card) 
-                        || selectableTraits.some(trait => card.hasTrait(trait)) 
-                        && Array.availableToPair(selectableTraits, context.selectedCards, (trait, card) => card.hasTrait(trait)).some(trait => card.hasTrait(trait))
+                    condition: (card, context) =>
+                        context.selectedCards.includes(card) ||
+                        (selectableTraits.some((trait) => card.hasTrait(trait)) &&
+                            Array.availableToPair(
+                                selectableTraits,
+                                context.selectedCards,
+                                (trait, card) => card.hasTrait(trait)
+                            ).some((trait) => card.hasTrait(trait)))
                 },
                 message: '{player} adds {searchTarget} to their hand',
-                gameAction: GameActions.simultaneously(context => (
-                    context.searchTarget.map(card => GameActions.addToHand({ card }))
-                ))
+                gameAction: GameActions.simultaneously((context) =>
+                    context.searchTarget.map((card) => GameActions.addToHand({ card }))
+                )
             })
         });
     }
-    
+
     calculateStrength() {
-        let cards = this.controller.filterCardsInPlay(card => {
+        let cards = this.controller.filterCardsInPlay((card) => {
             return card.getType() === 'character' && card.hasToken(Tokens.gold);
         });
 
