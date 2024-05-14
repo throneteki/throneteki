@@ -1,5 +1,5 @@
-const GameActions = require('../../GameActions/index.js');
-const DrawCard = require('../../drawcard.js');
+import GameActions from '../../GameActions/index.js';
+import DrawCard from '../../drawcard.js';
 
 class TheMoonDoor extends DrawCard {
     setupCardAbilities(ability) {
@@ -36,4 +36,4 @@ class TheMoonDoor extends DrawCard {
 
 TheMoonDoor.code = '25038';
 
-module.exports = TheMoonDoor;
+export default TheMoonDoor;

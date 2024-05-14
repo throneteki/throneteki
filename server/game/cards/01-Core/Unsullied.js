@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Unsullied extends DrawCard {
     setupCardAbilities(ability) {
@@ -13,4 +13,4 @@ class Unsullied extends DrawCard {
 
 Unsullied.code = '01171';
 
-module.exports = Unsullied;
+export default Unsullied;

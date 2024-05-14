@@ -1,5 +1,5 @@
-const PlotCard = require('../../plotcard.js');
-const EventPlayedTracker = require('../../EventTrackers/EventPlayedTracker');
+import PlotCard from '../../plotcard.js';
+import EventPlayedTracker from '../../EventTrackers/EventPlayedTracker.js';
 
 class TheAnnalsOfCastleBlack extends PlotCard {
     setupCardAbilities(ability) {
@@ -34,4 +34,4 @@ class TheAnnalsOfCastleBlack extends PlotCard {
 
 TheAnnalsOfCastleBlack.code = '17158';
 
-module.exports = TheAnnalsOfCastleBlack;
+export default TheAnnalsOfCastleBlack;

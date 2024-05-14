@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions/index.js');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class CaggoCorpsekiller extends DrawCard {
     setupCardAbilities(ability) {
@@ -45,4 +45,4 @@ class CaggoCorpsekiller extends DrawCard {
 
 CaggoCorpsekiller.code = '24011';
 
-module.exports = CaggoCorpsekiller;
+export default CaggoCorpsekiller;

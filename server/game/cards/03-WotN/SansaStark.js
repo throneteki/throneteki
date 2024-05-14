@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class SansaStark extends DrawCard {
     setupCardAbilities(ability) {
@@ -26,4 +26,4 @@ class SansaStark extends DrawCard {
 
 SansaStark.code = '03013';
 
-module.exports = SansaStark;
+export default SansaStark;

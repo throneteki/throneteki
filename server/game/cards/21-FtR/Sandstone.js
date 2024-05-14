@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Sandstone extends DrawCard {
     setupCardAbilities(ability) {
@@ -34,4 +34,4 @@ class Sandstone extends DrawCard {
 
 Sandstone.code = '21012';
 
-module.exports = Sandstone;
+export default Sandstone;

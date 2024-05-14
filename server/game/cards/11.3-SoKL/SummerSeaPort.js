@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class SummerSeaPort extends DrawCard {
     setupCardAbilities() {
@@ -11,4 +11,4 @@ class SummerSeaPort extends DrawCard {
 
 SummerSeaPort.code = '11056';
 
-module.exports = SummerSeaPort;
+export default SummerSeaPort;

@@ -1,4 +1,4 @@
-const BaseAbility = require('../baseability');
+import BaseAbility from '../baseability.js';
 
 class MarshalDuplicateAction extends BaseAbility {
     constructor() {
@@ -63,4 +63,4 @@ class MarshalDuplicateAction extends BaseAbility {
     }
 }
 
-module.exports = MarshalDuplicateAction;
+export default MarshalDuplicateAction;

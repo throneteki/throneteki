@@ -1,4 +1,4 @@
-const CardMatcher = require('../CardMatcher');
+import CardMatcher from '../CardMatcher.js';
 
 class EventPlayedTracker {
     static forPhase(game) {
@@ -52,4 +52,4 @@ class EventPlayedTracker {
     }
 }
 
-module.exports = EventPlayedTracker;
+export default EventPlayedTracker;

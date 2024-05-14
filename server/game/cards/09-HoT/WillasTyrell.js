@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class WillasTyrell extends DrawCard {
     setupCardAbilities() {
@@ -74,4 +74,4 @@ class WillasTyrell extends DrawCard {
 
 WillasTyrell.code = '09008';
 
-module.exports = WillasTyrell;
+export default WillasTyrell;

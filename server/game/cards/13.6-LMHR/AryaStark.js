@@ -1,6 +1,6 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
-const { Tokens } = require('../../Constants');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
+import { Tokens } from '../../Constants/index.js';
 
 class AryaStark extends DrawCard {
     constructor(owner, cardData) {
@@ -98,4 +98,4 @@ class AryaStark extends DrawCard {
 
 AryaStark.code = '13101';
 
-module.exports = AryaStark;
+export default AryaStark;

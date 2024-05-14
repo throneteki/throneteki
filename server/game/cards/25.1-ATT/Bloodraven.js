@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Bloodraven extends DrawCard {
     setupCardAbilities(ability) {
@@ -22,4 +22,4 @@ class Bloodraven extends DrawCard {
 
 Bloodraven.code = '25017';
 
-module.exports = Bloodraven;
+export default Bloodraven;

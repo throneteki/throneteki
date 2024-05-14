@@ -1,5 +1,5 @@
-const BaseStep = require('./basestep.js');
-const uuid = require('uuid');
+import BaseStep from './basestep.js';
+import uuid from 'uuid';
 
 class UiPrompt extends BaseStep {
     constructor(game) {
@@ -99,4 +99,4 @@ class UiPrompt extends BaseStep {
     }
 }
 
-module.exports = UiPrompt;
+export default UiPrompt;

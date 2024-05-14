@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TheHauntedForest extends DrawCard {
     setupCardAbilities(ability) {
@@ -23,4 +23,4 @@ class TheHauntedForest extends DrawCard {
 
 TheHauntedForest.code = '04066';
 
-module.exports = TheHauntedForest;
+export default TheHauntedForest;

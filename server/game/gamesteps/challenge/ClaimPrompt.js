@@ -1,6 +1,6 @@
-const BaseStep = require('../basestep');
-const ApplyClaim = require('./applyclaim');
-const Claim = require('../../Claim');
+import BaseStep from '../basestep.js';
+import ApplyClaim from './applyclaim.js';
+import Claim from '../../Claim.js';
 
 class ClaimPrompt extends BaseStep {
     constructor(game, challenge) {
@@ -88,4 +88,4 @@ class ClaimPrompt extends BaseStep {
     }
 }
 
-module.exports = ClaimPrompt;
+export default ClaimPrompt;

@@ -1,5 +1,5 @@
-const AtomicEvent = require('../AtomicEvent');
-const Event = require('../event');
+import AtomicEvent from '../AtomicEvent.js';
+import Event from '../event.js';
 
 /**
  * A game action is anything that changes the state of the game, e.g. draw X
@@ -73,4 +73,4 @@ class GameAction {
     }
 }
 
-module.exports = GameAction;
+export default GameAction;

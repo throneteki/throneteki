@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class SpearsOfTheMerlingKing extends DrawCard {
     setupCardAbilities(ability) {
@@ -25,4 +25,4 @@ class SpearsOfTheMerlingKing extends DrawCard {
 
 SpearsOfTheMerlingKing.code = '06048';
 
-module.exports = SpearsOfTheMerlingKing;
+export default SpearsOfTheMerlingKing;

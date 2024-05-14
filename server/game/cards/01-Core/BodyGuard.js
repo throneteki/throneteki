@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class BodyGuard extends DrawCard {
     setupCardAbilities(ability) {
@@ -28,4 +28,4 @@ class BodyGuard extends DrawCard {
 
 BodyGuard.code = '01033';
 
-module.exports = BodyGuard;
+export default BodyGuard;

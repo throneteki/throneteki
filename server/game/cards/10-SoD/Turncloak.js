@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Turncloak extends DrawCard {
     setupCardAbilities() {
@@ -23,4 +23,4 @@ class Turncloak extends DrawCard {
 
 Turncloak.code = '10032';
 
-module.exports = Turncloak;
+export default Turncloak;

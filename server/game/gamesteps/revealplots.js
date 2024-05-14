@@ -1,10 +1,10 @@
-const sample = require('lodash.sample');
-const BaseStep = require('./basestep.js');
-const SimpleStep = require('./simplestep.js');
-const FirstPlayerPrompt = require('./plot/firstplayerprompt.js');
-const ChoosePlayerPrompt = require('./ChoosePlayerPrompt.js');
-const Event = require('../event');
-const RevealPlot = require('../GameActions/RevealPlot');
+import sample from 'lodash.sample';
+import BaseStep from './basestep.js';
+import SimpleStep from './simplestep.js';
+import FirstPlayerPrompt from './plot/firstplayerprompt.js';
+import ChoosePlayerPrompt from './ChoosePlayerPrompt.js';
+import Event from '../event.js';
+import RevealPlot from '../GameActions/RevealPlot.js';
 
 class RevealPlots extends BaseStep {
     constructor(game, plots, parentEvent = null) {
@@ -182,4 +182,4 @@ class RevealPlots extends BaseStep {
     }
 }
 
-module.exports = RevealPlots;
+export default RevealPlots;

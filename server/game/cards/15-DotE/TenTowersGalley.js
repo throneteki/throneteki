@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TenTowersGalley extends DrawCard {
     setupCardAbilities(ability) {
@@ -31,4 +31,4 @@ class TenTowersGalley extends DrawCard {
 
 TenTowersGalley.code = '15028';
 
-module.exports = TenTowersGalley;
+export default TenTowersGalley;

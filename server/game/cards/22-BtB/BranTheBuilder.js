@@ -1,5 +1,5 @@
-const PlotCard = require('../../plotcard.js');
-const GameActions = require('../../GameActions');
+import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class BranTheBuilder extends PlotCard {
     setupCardAbilities(ability) {
@@ -25,4 +25,4 @@ class BranTheBuilder extends PlotCard {
 
 BranTheBuilder.code = '22029';
 
-module.exports = BranTheBuilder;
+export default BranTheBuilder;

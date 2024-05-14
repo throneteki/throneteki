@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class WhisperCampaign extends PlotCard {
     setupCardAbilities() {
@@ -29,4 +29,4 @@ class WhisperCampaign extends PlotCard {
 
 WhisperCampaign.code = '07048';
 
-module.exports = WhisperCampaign;
+export default WhisperCampaign;

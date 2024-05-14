@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const { Tokens } = require('../../Constants');
+import DrawCard from '../../drawcard.js';
+import { Tokens } from '../../Constants/index.js';
 
 class FickleBannerman extends DrawCard {
     setupCardAbilities() {
@@ -48,4 +48,4 @@ class FickleBannerman extends DrawCard {
 
 FickleBannerman.code = '06007';
 
-module.exports = FickleBannerman;
+export default FickleBannerman;

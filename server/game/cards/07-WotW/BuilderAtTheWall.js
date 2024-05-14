@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class BuilderAtTheWall extends DrawCard {
     setupCardAbilities(ability) {
@@ -31,4 +31,4 @@ class BuilderAtTheWall extends DrawCard {
 
 BuilderAtTheWall.code = '07016';
 
-module.exports = BuilderAtTheWall;
+export default BuilderAtTheWall;

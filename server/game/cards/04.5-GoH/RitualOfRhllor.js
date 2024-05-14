@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const TextHelper = require('../../TextHelper');
+import DrawCard from '../../drawcard.js';
+import TextHelper from '../../TextHelper.js';
 
 class RitualOfRhllor extends DrawCard {
     setupCardAbilities(ability) {
@@ -57,4 +57,4 @@ class RitualOfRhllor extends DrawCard {
 
 RitualOfRhllor.code = '04088';
 
-module.exports = RitualOfRhllor;
+export default RitualOfRhllor;

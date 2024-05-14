@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const TextHelper = require('../../TextHelper');
+import DrawCard from '../../drawcard.js';
+import TextHelper from '../../TextHelper.js';
 
 class AMissionInEssos extends DrawCard {
     setupCardAbilities() {
@@ -31,4 +31,4 @@ class AMissionInEssos extends DrawCard {
 
 AMissionInEssos.code = '11076';
 
-module.exports = AMissionInEssos;
+export default AMissionInEssos;

@@ -1,4 +1,4 @@
-const GameAction = require('./GameAction');
+import GameAction from './GameAction.js';
 
 class DiscardToken extends GameAction {
     constructor() {
@@ -26,4 +26,4 @@ class DiscardToken extends GameAction {
     }
 }
 
-module.exports = new DiscardToken();
+export default new DiscardToken();

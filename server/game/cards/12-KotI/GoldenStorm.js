@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class GoldenStorm extends DrawCard {
     setupCardAbilities(ability) {
@@ -58,4 +58,4 @@ class GoldenStorm extends DrawCard {
 
 GoldenStorm.code = '12018';
 
-module.exports = GoldenStorm;
+export default GoldenStorm;

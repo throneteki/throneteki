@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class RhllorInfiltrator extends DrawCard {
     setupCardAbilities(ability) {
@@ -22,4 +22,4 @@ class RhllorInfiltrator extends DrawCard {
 
 RhllorInfiltrator.code = '13007';
 
-module.exports = RhllorInfiltrator;
+export default RhllorInfiltrator;

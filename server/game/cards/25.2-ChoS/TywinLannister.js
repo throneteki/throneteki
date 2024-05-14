@@ -1,5 +1,5 @@
-const GameActions = require('../../GameActions/index.js');
-const DrawCard = require('../../drawcard.js');
+import GameActions from '../../GameActions/index.js';
+import DrawCard from '../../drawcard.js';
 
 class TywinLannister extends DrawCard {
     setupCardAbilities(ability) {
@@ -27,4 +27,4 @@ class TywinLannister extends DrawCard {
 
 TywinLannister.code = '25025';
 
-module.exports = TywinLannister;
+export default TywinLannister;

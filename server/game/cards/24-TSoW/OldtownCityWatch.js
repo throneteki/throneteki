@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions/index.js');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class OldtownCityWatch extends DrawCard {
     setupCardAbilities() {
@@ -17,4 +17,4 @@ class OldtownCityWatch extends DrawCard {
 
 OldtownCityWatch.code = '24023';
 
-module.exports = OldtownCityWatch;
+export default OldtownCityWatch;

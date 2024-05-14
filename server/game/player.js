@@ -1,28 +1,26 @@
-const shuffle = require('lodash.shuffle');
-
-const Spectator = require('./spectator.js');
-const CardMatcher = require('./CardMatcher');
-const DrawCard = require('./drawcard.js');
-const Deck = require('./Deck');
-const AtomicEvent = require('./AtomicEvent');
-const Event = require('./event');
-const AbilityContext = require('./AbilityContext.js');
-const AttachmentPrompt = require('./gamesteps/attachmentprompt.js');
-const BestowPrompt = require('./gamesteps/bestowprompt.js');
-const AllowedChallenges = require('./AllowedChallenges');
-const PlayableLocation = require('./playablelocation.js');
-const PlayActionPrompt = require('./gamesteps/playactionprompt.js');
-const PlayerPromptState = require('./playerpromptstate.js');
-const MinMaxProperty = require('./PropertyTypes/MinMaxProperty');
-const ReferenceCountedSetProperty = require('./PropertyTypes/ReferenceCountedSetProperty');
-const GoldSource = require('./GoldSource.js');
-const GameActions = require('./GameActions');
-const RemoveFromGame = require('./GameActions/RemoveFromGame');
-const SacrificeCard = require('./GameActions/SacrificeCard');
-const ChessClock = require('./ChessClock.js');
-
-const { DrawPhaseCards, MarshalIntoShadowsCost, SetupGold } = require('./Constants');
-const { flatten } = require('underscore');
+import shuffle from 'lodash.shuffle';
+import { flatten } from 'underscore';
+import Spectator from './spectator.js';
+import CardMatcher from './CardMatcher.js';
+import DrawCard from './drawcard.js';
+import Deck from './Deck.js';
+import AtomicEvent from './AtomicEvent.js';
+import Event from './event.js';
+import AbilityContext from './AbilityContext.js';
+import AttachmentPrompt from './gamesteps/attachmentprompt.js';
+import BestowPrompt from './gamesteps/bestowprompt.js';
+import AllowedChallenges from './AllowedChallenges.js';
+import PlayableLocation from './playablelocation.js';
+import PlayActionPrompt from './gamesteps/playactionprompt.js';
+import PlayerPromptState from './playerpromptstate.js';
+import MinMaxProperty from './PropertyTypes/MinMaxProperty.js';
+import ReferenceCountedSetProperty from './PropertyTypes/ReferenceCountedSetProperty.js';
+import GoldSource from './GoldSource.js';
+import GameActions from './GameActions/index.js';
+import RemoveFromGame from './GameActions/RemoveFromGame.js';
+import SacrificeCard from './GameActions/SacrificeCard.js';
+import ChessClock from './ChessClock.js';
+import { DrawPhaseCards, MarshalIntoShadowsCost, SetupGold } from './Constants/index.js';
 
 class Player extends Spectator {
     constructor(id, user, owner, game) {
@@ -1487,4 +1485,4 @@ class Player extends Spectator {
     }
 }
 
-module.exports = Player;
+export default Player;

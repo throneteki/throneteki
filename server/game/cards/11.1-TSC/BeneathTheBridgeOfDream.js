@@ -1,6 +1,5 @@
-const sample = require('lodash.sample');
-
-const DrawCard = require('../../drawcard');
+import sample from 'lodash.sample';
+import DrawCard from '../../drawcard.js';
 
 class BeneathTheBridgeOfDream extends DrawCard {
     setupCardAbilities() {
@@ -38,4 +37,4 @@ class BeneathTheBridgeOfDream extends DrawCard {
 
 BeneathTheBridgeOfDream.code = '11011';
 
-module.exports = BeneathTheBridgeOfDream;
+export default BeneathTheBridgeOfDream;

@@ -1,5 +1,5 @@
-const ChallengeKeywordAbility = require('./ChallengeKeywordAbility.js');
-const TargetByAssault = require('./GameActions/TargetByAssault.js');
+import ChallengeKeywordAbility from './ChallengeKeywordAbility.js';
+import TargetByAssault from './GameActions/TargetByAssault.js';
 
 class AssaultKeyword extends ChallengeKeywordAbility {
     constructor() {
@@ -61,4 +61,4 @@ class AssaultKeyword extends ChallengeKeywordAbility {
     }
 }
 
-module.exports = AssaultKeyword;
+export default AssaultKeyword;

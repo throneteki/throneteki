@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const { ChallengeTracker } = require('../../EventTrackers');
+import DrawCard from '../../drawcard.js';
+import { ChallengeTracker } from '../../EventTrackers/index.js';
 
 class PrivilegedPosition extends DrawCard {
     setupCardAbilities() {
@@ -33,4 +33,4 @@ class PrivilegedPosition extends DrawCard {
 
 PrivilegedPosition.code = '11068';
 
-module.exports = PrivilegedPosition;
+export default PrivilegedPosition;

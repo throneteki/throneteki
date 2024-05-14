@@ -1,6 +1,6 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
-const KillTracker = require('../../EventTrackers/KillTracker');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
+import KillTracker from '../../EventTrackers/KillTracker.js';
 
 class NoUseForGrief extends DrawCard {
     constructor(owner, cardData) {
@@ -44,4 +44,4 @@ class NoUseForGrief extends DrawCard {
 
 NoUseForGrief.code = '10022';
 
-module.exports = NoUseForGrief;
+export default NoUseForGrief;

@@ -30,4 +30,4 @@ class KillTracker {
     }
 }
 
-module.exports = KillTracker;
+export default KillTracker;

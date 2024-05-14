@@ -24,4 +24,4 @@ class ParentCost {
     }
 }
 
-module.exports = ParentCost;
+export default ParentCost;

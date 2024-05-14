@@ -1,9 +1,10 @@
-describe('doesNotKneelAsDefender', function() {
-    integration(function() {
-        beforeEach(function() {
+describe('doesNotKneelAsDefender', function () {
+    integration(function () {
+        beforeEach(function () {
             const deck = this.buildDeck('stark', [
                 'A Noble Cause',
-                'Littlefinger (Core)', 'Myrcella Baratheon (GoH)'
+                'Littlefinger (Core)',
+                'Myrcella Baratheon (GoH)'
             ]);
             this.player1.selectDeck(deck);
             this.player2.selectDeck(deck);
@@ -20,8 +21,8 @@ describe('doesNotKneelAsDefender', function() {
             this.completeMarshalPhase();
         });
 
-        describe('when the character is declared as a defender', function() {
-            beforeEach(function() {
+        describe('when the character is declared as a defender', function () {
+            beforeEach(function () {
                 this.player1.clickPrompt('Power');
                 this.player1.clickCard(this.attacker);
                 this.player1.clickPrompt('Done');
@@ -32,7 +33,7 @@ describe('doesNotKneelAsDefender', function() {
                 this.player2.clickPrompt('Done');
             });
 
-            it('should not kneel the character', function() {
+            it('should not kneel the character', function () {
                 expect(this.game.currentChallenge.isDefending(this.character));
                 expect(this.character.kneeled).toBe(false);
             });

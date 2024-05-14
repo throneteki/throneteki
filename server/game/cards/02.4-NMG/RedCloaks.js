@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const { Tokens } = require('../../Constants');
+import DrawCard from '../../drawcard.js';
+import { Tokens } from '../../Constants/index.js';
 
 class RedCloaks extends DrawCard {
     setupCardAbilities(ability) {
@@ -26,4 +26,4 @@ class RedCloaks extends DrawCard {
 
 RedCloaks.code = '02070';
 
-module.exports = RedCloaks;
+export default RedCloaks;

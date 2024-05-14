@@ -1,5 +1,5 @@
-const GameAction = require('./GameAction');
-const Message = require('../Message');
+import GameAction from './GameAction.js';
+import Message from '../Message.js';
 
 class TakeControl extends GameAction {
     constructor() {
@@ -21,4 +21,4 @@ class TakeControl extends GameAction {
     }
 }
 
-module.exports = new TakeControl();
+export default new TakeControl();

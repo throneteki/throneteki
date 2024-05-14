@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class DefensiveDebris extends DrawCard {
     setupCardAbilities(ability) {
@@ -37,4 +37,4 @@ class DefensiveDebris extends DrawCard {
 
 DefensiveDebris.code = '23010';
 
-module.exports = DefensiveDebris;
+export default DefensiveDebris;

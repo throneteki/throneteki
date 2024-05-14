@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TheSeastoneChair extends DrawCard {
     setupCardAbilities(ability) {
@@ -35,4 +35,4 @@ class TheSeastoneChair extends DrawCard {
 
 TheSeastoneChair.code = '02011';
 
-module.exports = TheSeastoneChair;
+export default TheSeastoneChair;

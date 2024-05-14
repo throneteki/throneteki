@@ -1,15 +1,21 @@
-describe('Winning and losing', function() {
-    integration({ isMelee: true }, function() {
-        beforeEach(function() {
+describe('Winning and losing', function () {
+    integration({ isMelee: true }, function () {
+        beforeEach(function () {
             // Enable losing / winning prompts
             this.game.disableWonPrompt = false;
         });
 
-        describe('losing the game', function() {
-            describe('when a player draws their last card', function() {
-                beforeEach(function() {
-                    const deck = this.buildDeck('stark', ['A Noble Cause', { name: 'Hedge Knight', count: 60 }]);
-                    const losingDeck = this.buildDeck('stark', ['A Noble Cause', { name: 'Hedge Knight', count: 9 }]);
+        describe('losing the game', function () {
+            describe('when a player draws their last card', function () {
+                beforeEach(function () {
+                    const deck = this.buildDeck('stark', [
+                        'A Noble Cause',
+                        { name: 'Hedge Knight', count: 60 }
+                    ]);
+                    const losingDeck = this.buildDeck('stark', [
+                        'A Noble Cause',
+                        { name: 'Hedge Knight', count: 9 }
+                    ]);
 
                     this.player1.selectDeck(deck);
                     this.player2.selectDeck(deck);
@@ -26,11 +32,11 @@ describe('Winning and losing', function() {
                     this.player3.selectTitle('Master of Laws');
                 });
 
-                it('eliminates the player', function() {
+                it('eliminates the player', function () {
                     expect(this.player3Object.eliminated).toBe(true);
                 });
 
-                it('does not prompt eliminated players further', function() {
+                it('does not prompt eliminated players further', function () {
                     this.player1.clickPrompt('Done');
                     this.player2.clickPrompt('Done');
 
@@ -40,10 +46,16 @@ describe('Winning and losing', function() {
                 });
             });
 
-            describe('when the first player draws their last card', function() {
-                beforeEach(function() {
-                    const deck = this.buildDeck('stark', ['A Noble Cause', { name: 'Hedge Knight', count: 60 }]);
-                    const losingDeck = this.buildDeck('stark', ['A Noble Cause', { name: 'Hedge Knight', count: 9 }]);
+            describe('when the first player draws their last card', function () {
+                beforeEach(function () {
+                    const deck = this.buildDeck('stark', [
+                        'A Noble Cause',
+                        { name: 'Hedge Knight', count: 60 }
+                    ]);
+                    const losingDeck = this.buildDeck('stark', [
+                        'A Noble Cause',
+                        { name: 'Hedge Knight', count: 9 }
+                    ]);
 
                     this.player1.selectDeck(deck);
                     this.player2.selectDeck(losingDeck);
@@ -60,17 +72,23 @@ describe('Winning and losing', function() {
                     this.player1.selectTitle('Master of Ships');
                 });
 
-                it('the next clockwise player becomes first player', function() {
+                it('the next clockwise player becomes first player', function () {
                     expect(this.player2Object.firstPlayer).toBe(false);
                     expect(this.player3Object.firstPlayer).toBe(true);
                     expect(this.game.getFirstPlayer()).toBe(this.player3Object);
                 });
             });
 
-            describe('when all but one player draws their last card', function() {
-                beforeEach(function() {
-                    const deck = this.buildDeck('stark', ['A Noble Cause', { name: 'Hedge Knight', count: 60 }]);
-                    const losingDeck = this.buildDeck('stark', ['A Noble Cause', { name: 'Hedge Knight', count: 9 }]);
+            describe('when all but one player draws their last card', function () {
+                beforeEach(function () {
+                    const deck = this.buildDeck('stark', [
+                        'A Noble Cause',
+                        { name: 'Hedge Knight', count: 60 }
+                    ]);
+                    const losingDeck = this.buildDeck('stark', [
+                        'A Noble Cause',
+                        { name: 'Hedge Knight', count: 9 }
+                    ]);
 
                     this.player1.selectDeck(losingDeck);
                     this.player2.selectDeck(deck);
@@ -87,15 +105,25 @@ describe('Winning and losing', function() {
                     this.player3.selectTitle('Master of Laws');
                 });
 
-                it('the remaining player wins the game', function() {
+                it('the remaining player wins the game', function () {
                     expect(this.game.winner).toBe(this.player2Object);
                 });
             });
 
-            describe('when all players draw their last card', function() {
-                beforeEach(function() {
-                    const losingDeck = this.buildDeck('stark', ['A Noble Cause', 'A Noble Cause', 'A Noble Cause', { name: 'Hedge Knight', count: 9 }]);
-                    const deck = this.buildDeck('stark', ['A Noble Cause', 'A Noble Cause', 'A Noble Cause', { name: 'Hedge Knight', count: 11 }]);
+            describe('when all players draw their last card', function () {
+                beforeEach(function () {
+                    const losingDeck = this.buildDeck('stark', [
+                        'A Noble Cause',
+                        'A Noble Cause',
+                        'A Noble Cause',
+                        { name: 'Hedge Knight', count: 9 }
+                    ]);
+                    const deck = this.buildDeck('stark', [
+                        'A Noble Cause',
+                        'A Noble Cause',
+                        'A Noble Cause',
+                        { name: 'Hedge Knight', count: 11 }
+                    ]);
 
                     this.player1.selectDeck(deck);
                     this.player2.selectDeck(losingDeck);
@@ -131,7 +159,7 @@ describe('Winning and losing', function() {
                     this.player3.selectTitle('Master of Laws');
                 });
 
-                it('has the first player choose the winner', function() {
+                it('has the first player choose the winner', function () {
                     expect(this.player1).toHavePrompt('Select the winning player');
                     this.player1.clickPrompt('player3');
 
@@ -140,10 +168,14 @@ describe('Winning and losing', function() {
             });
         });
 
-        describe('winning the game', function() {
-            describe('when a single player reaches 15 power', function() {
-                beforeEach(function() {
-                    const deck = this.buildDeck('stark', ['A Noble Cause', 'A Game of Thrones', { name: 'Hedge Knight', count: 60 }]);
+        describe('winning the game', function () {
+            describe('when a single player reaches 15 power', function () {
+                beforeEach(function () {
+                    const deck = this.buildDeck('stark', [
+                        'A Noble Cause',
+                        'A Game of Thrones',
+                        { name: 'Hedge Knight', count: 60 }
+                    ]);
                     this.player1.selectDeck(deck);
                     this.player2.selectDeck(deck);
                     this.player3.selectDeck(deck);
@@ -168,14 +200,18 @@ describe('Winning and losing', function() {
                     this.completeChallengesPhase();
                 });
 
-                it('wins the game for that player', function() {
+                it('wins the game for that player', function () {
                     expect(this.game.winner).toBe(this.player1Object);
                 });
             });
 
-            describe('when a multiple players reach 15 power simultaneously', function() {
-                beforeEach(function() {
-                    const deck = this.buildDeck('stark', ['Valar Morghulis', 'A Noble Cause', { name: 'Jon Arryn', count: 60 }]);
+            describe('when a multiple players reach 15 power simultaneously', function () {
+                beforeEach(function () {
+                    const deck = this.buildDeck('stark', [
+                        'Valar Morghulis',
+                        'A Noble Cause',
+                        { name: 'Jon Arryn', count: 60 }
+                    ]);
                     this.player1.selectDeck(deck);
                     this.player2.selectDeck(deck);
                     this.player3.selectDeck(deck);
@@ -198,7 +234,7 @@ describe('Winning and losing', function() {
                     this.player1.clickPrompt('Gain 1 power');
                 });
 
-                it('wins the game for that player', function() {
+                it('wins the game for that player', function () {
                     expect(this.player2).toHavePrompt('Select the winning player');
                     this.player2.clickPrompt('player3');
 

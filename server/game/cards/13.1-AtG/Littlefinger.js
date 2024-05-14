@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const TextHelper = require('../../TextHelper');
+import DrawCard from '../../drawcard.js';
+import TextHelper from '../../TextHelper.js';
 
 class Littlefinger extends DrawCard {
     setupCardAbilities(ability) {
@@ -88,4 +88,4 @@ class Littlefinger extends DrawCard {
 
 Littlefinger.code = '13017';
 
-module.exports = Littlefinger;
+export default Littlefinger;

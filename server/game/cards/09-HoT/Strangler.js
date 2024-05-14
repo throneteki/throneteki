@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Strangler extends DrawCard {
     setupCardAbilities(ability) {
@@ -11,4 +11,4 @@ class Strangler extends DrawCard {
 
 Strangler.code = '09043';
 
-module.exports = Strangler;
+export default Strangler;

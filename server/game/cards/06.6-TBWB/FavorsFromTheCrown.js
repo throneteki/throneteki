@@ -1,5 +1,5 @@
-const PlotCard = require('../../plotcard.js');
-const { Tokens } = require('../../Constants');
+import PlotCard from '../../plotcard.js';
+import { Tokens } from '../../Constants/index.js';
 
 class FavorsFromTheCrown extends PlotCard {
     setupCardAbilities() {
@@ -28,4 +28,4 @@ class FavorsFromTheCrown extends PlotCard {
 
 FavorsFromTheCrown.code = '06120';
 
-module.exports = FavorsFromTheCrown;
+export default FavorsFromTheCrown;

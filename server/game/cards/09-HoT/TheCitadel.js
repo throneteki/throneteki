@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheCitadel extends DrawCard {
     setupCardAbilities(ability) {
@@ -23,4 +23,4 @@ class TheCitadel extends DrawCard {
 
 TheCitadel.code = '09042';
 
-module.exports = TheCitadel;
+export default TheCitadel;

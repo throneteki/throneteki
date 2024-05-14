@@ -1,6 +1,6 @@
-const DrawCard = require('../../drawcard');
-const shuffle = require('lodash.shuffle');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import shuffle from 'lodash.shuffle';
+import GameActions from '../../GameActions/index.js';
 
 class BoundForTheWall extends DrawCard {
     setupCardAbilities(ability) {
@@ -74,4 +74,4 @@ class BoundForTheWall extends DrawCard {
 
 BoundForTheWall.code = '13086';
 
-module.exports = BoundForTheWall;
+export default BoundForTheWall;

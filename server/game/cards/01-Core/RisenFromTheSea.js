@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class RisenFromTheSea extends DrawCard {
     setupCardAbilities() {
@@ -67,4 +67,4 @@ class RisenFromTheSea extends DrawCard {
 
 RisenFromTheSea.code = '01081';
 
-module.exports = RisenFromTheSea;
+export default RisenFromTheSea;

@@ -14,4 +14,4 @@ class ImmunityRestriction {
     }
 }
 
-module.exports = ImmunityRestriction;
+export default ImmunityRestriction;

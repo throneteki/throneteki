@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const { ChallengeTracker } = require('../../EventTrackers');
+import DrawCard from '../../drawcard.js';
+import { ChallengeTracker } from '../../EventTrackers/index.js';
 
 class ServeObeyProtect extends DrawCard {
     setupCardAbilities(ability) {
@@ -39,4 +39,4 @@ class ServeObeyProtect extends DrawCard {
 
 ServeObeyProtect.code = '11036';
 
-module.exports = ServeObeyProtect;
+export default ServeObeyProtect;

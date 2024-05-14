@@ -1,5 +1,5 @@
-const GameAction = require('./GameAction');
-const Message = require('../Message');
+import GameAction from './GameAction.js';
+import Message from '../Message.js';
 
 class AddToHand extends GameAction {
     constructor() {
@@ -29,4 +29,4 @@ class AddToHand extends GameAction {
     }
 }
 
-module.exports = new AddToHand();
+export default new AddToHand();

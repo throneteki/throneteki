@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Sunspear extends DrawCard {
     setupCardAbilities(ability) {
@@ -29,4 +29,4 @@ class Sunspear extends DrawCard {
 
 Sunspear.code = '01117';
 
-module.exports = Sunspear;
+export default Sunspear;

@@ -1,6 +1,6 @@
-const DrawCard = require('../../drawcard.js');
-const { Tokens } = require('../../Constants');
-const GameActions = require('../../GameActions/index.js');
+import DrawCard from '../../drawcard.js';
+import { Tokens } from '../../Constants/index.js';
+import GameActions from '../../GameActions/index.js';
 
 class Ashemark extends DrawCard {
     setupCardAbilities(ability) {
@@ -29,4 +29,4 @@ class Ashemark extends DrawCard {
 
 Ashemark.code = '08011';
 
-module.exports = Ashemark;
+export default Ashemark;

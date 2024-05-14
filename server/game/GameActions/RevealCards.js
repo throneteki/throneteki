@@ -1,8 +1,8 @@
-const GameAction = require('./GameAction');
-const HandlerGameActionWrapper = require('./HandlerGameActionWrapper');
-const AbilityMessage = require('../AbilityMessage');
-const AcknowledgeRevealCardsPrompt = require('../gamesteps/AcknowledgeRevealCardsPrompt');
-const Message = require('../Message');
+import GameAction from './GameAction.js';
+import HandlerGameActionWrapper from './HandlerGameActionWrapper.js';
+import AbilityMessage from '../AbilityMessage.js';
+import AcknowledgeRevealCardsPrompt from '../gamesteps/AcknowledgeRevealCardsPrompt.js';
+import Message from '../Message.js';
 
 class RevealCards extends GameAction {
     constructor() {
@@ -172,4 +172,4 @@ class RevealCards extends GameAction {
     }
 }
 
-module.exports = new RevealCards();
+export default new RevealCards();

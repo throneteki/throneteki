@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions/index.js');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class WhiteHarbor extends DrawCard {
     setupCardAbilities() {
@@ -64,4 +64,4 @@ class WhiteHarbor extends DrawCard {
 
 WhiteHarbor.code = '11042';
 
-module.exports = WhiteHarbor;
+export default WhiteHarbor;

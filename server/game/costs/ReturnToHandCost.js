@@ -1,4 +1,4 @@
-const GameActions = require('../GameActions');
+import GameActions from '../GameActions/index.js';
 
 class ReturnToHandCost {
     constructor() {
@@ -16,4 +16,4 @@ class ReturnToHandCost {
     }
 }
 
-module.exports = ReturnToHandCost;
+export default ReturnToHandCost;

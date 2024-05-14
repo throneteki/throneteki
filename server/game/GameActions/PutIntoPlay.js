@@ -1,6 +1,6 @@
-const GameAction = require('./GameAction');
-const MoveCardEventGenerator = require('./MoveCardEventGenerator');
-const Message = require('../Message');
+import GameAction from './GameAction.js';
+import MoveCardEventGenerator from './MoveCardEventGenerator.js';
+import Message from '../Message.js';
 
 class PutIntoPlay extends GameAction {
     constructor() {
@@ -85,4 +85,4 @@ class PutIntoPlay extends GameAction {
     }
 }
 
-module.exports = new PutIntoPlay();
+export default new PutIntoPlay();

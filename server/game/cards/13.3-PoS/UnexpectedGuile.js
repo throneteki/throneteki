@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class UnexpectedGuile extends DrawCard {
     setupCardAbilities(ability) {
@@ -28,4 +28,4 @@ class UnexpectedGuile extends DrawCard {
 
 UnexpectedGuile.code = '13044';
 
-module.exports = UnexpectedGuile;
+export default UnexpectedGuile;

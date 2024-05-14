@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class YoungBuilder extends DrawCard {
     setupCardAbilities(ability) {
@@ -25,4 +25,4 @@ class YoungBuilder extends DrawCard {
 
 YoungBuilder.code = '08006';
 
-module.exports = YoungBuilder;
+export default YoungBuilder;

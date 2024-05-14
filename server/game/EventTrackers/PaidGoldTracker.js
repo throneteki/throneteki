@@ -21,4 +21,4 @@ class PaidGoldTracker {
     }
 }
 
-module.exports = PaidGoldTracker;
+export default PaidGoldTracker;

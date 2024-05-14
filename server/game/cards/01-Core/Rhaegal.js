@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Rhaegal extends DrawCard {
     setupCardAbilities(ability) {
@@ -31,4 +31,4 @@ class Rhaegal extends DrawCard {
 
 Rhaegal.code = '01164';
 
-module.exports = Rhaegal;
+export default Rhaegal;

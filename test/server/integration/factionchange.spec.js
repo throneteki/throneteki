@@ -1,10 +1,13 @@
-describe('faction change', function() {
-    integration(function() {
-        describe('when using an attachment to gain faction affiliation', function() {
-            beforeEach(function() {
+describe('faction change', function () {
+    integration(function () {
+        describe('when using an attachment to gain faction affiliation', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('thenightswatch', [
-                    'Sneak Attack', 'Confiscation',
-                    'Hedge Knight', 'Sworn to the Watch', 'The Wall (Core)'
+                    'Sneak Attack',
+                    'Confiscation',
+                    'Hedge Knight',
+                    'Sworn to the Watch',
+                    'The Wall (Core)'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
@@ -23,17 +26,17 @@ describe('faction change', function() {
                 this.player1.clickCard(this.character);
             });
 
-            it('should grant faction affiliation', function() {
+            it('should grant faction affiliation', function () {
                 expect(this.character.isFaction('thenightswatch')).toBe(true);
             });
 
-            it('should recalculate effects for that card', function() {
+            it('should recalculate effects for that card', function () {
                 // 2 STR base + 1 STR from the Wall
                 expect(this.character.getStrength()).toBe(3);
             });
 
-            describe('when the attachment is removed', function() {
-                beforeEach(function() {
+            describe('when the attachment is removed', function () {
+                beforeEach(function () {
                     this.player1.selectPlot('Confiscation');
                     this.player2.selectPlot('Sneak Attack');
                     this.selectFirstPlayer(this.player1);
@@ -42,26 +45,28 @@ describe('faction change', function() {
                     this.player1.clickCard('Sworn to the Watch', 'play area');
                 });
 
-                it('should lose faction affiliation', function() {
+                it('should lose faction affiliation', function () {
                     expect(this.character.isFaction('thenightswatch')).toBe(false);
                 });
 
-                it('should recalculate effects for that card', function() {
+                it('should recalculate effects for that card', function () {
                     // 2 STR base, no more bonus from the Wall.
                     expect(this.character.getStrength()).toBe(2);
                 });
             });
         });
 
-        describe('when a character with gained affiliation is killed', function() {
-            beforeEach(function() {
+        describe('when a character with gained affiliation is killed', function () {
+            beforeEach(function () {
                 const deck1 = this.buildDeck('stark', [
                     'A Noble Cause',
-                    'Robb Stark (Core)', 'Ward (TS)'
+                    'Robb Stark (Core)',
+                    'Ward (TS)'
                 ]);
                 const deck2 = this.buildDeck('targaryen', [
                     'A Noble Cause',
-                    'Targaryen Loyalist', 'Ser Jorah Mormont (Core)'
+                    'Targaryen Loyalist',
+                    'Ser Jorah Mormont (Core)'
                 ]);
                 this.player1.selectDeck(deck1);
                 this.player2.selectDeck(deck2);
@@ -97,7 +102,7 @@ describe('faction change', function() {
                 this.player1.clickCard(this.character);
             });
 
-            it('should count as that affiliation having been killed', function() {
+            it('should count as that affiliation having been killed', function () {
                 expect(this.player1).toAllowAbilityTrigger('Robb Stark');
             });
         });

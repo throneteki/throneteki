@@ -1,6 +1,6 @@
-const DrawCard = require('../../drawcard');
-const CardEntersPlayTracker = require('../../EventTrackers/CardEntersPlayTracker');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import CardEntersPlayTracker from '../../EventTrackers/CardEntersPlayTracker.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheMostDevout extends DrawCard {
     setupCardAbilities(ability) {
@@ -35,4 +35,4 @@ class TheMostDevout extends DrawCard {
 
 TheMostDevout.code = '13057';
 
-module.exports = TheMostDevout;
+export default TheMostDevout;

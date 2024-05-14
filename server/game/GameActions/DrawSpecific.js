@@ -1,5 +1,5 @@
-const GameAction = require('./GameAction');
-const Message = require('../Message');
+import GameAction from './GameAction.js';
+import Message from '../Message.js';
 
 class DrawSpecific extends GameAction {
     constructor() {
@@ -46,4 +46,4 @@ class DrawSpecific extends GameAction {
     }
 }
 
-module.exports = new DrawSpecific();
+export default new DrawSpecific();

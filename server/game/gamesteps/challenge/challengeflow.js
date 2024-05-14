@@ -1,13 +1,13 @@
-const BaseStep = require('../basestep.js');
-const GamePipeline = require('../../gamepipeline.js');
-const SimpleStep = require('../simplestep.js');
-const ChooseParticipantsPrompt = require('./ChooseParticipantsPrompt');
-const ClaimPrompt = require('./ClaimPrompt');
-const ActionWindow = require('../actionwindow.js');
-const InitiatingKeywordsWindow = require('../InitiatingKeywordsWindow.js');
-const ResolutionKeywordsWindow = require('../ResolutionKeywordsWindow.js');
-const InitiateChallenge = require('../../GameActions/InitiateChallenge');
-const DeclareDefenders = require('../../GameActions/DeclareDefenders.js');
+import BaseStep from '../basestep.js';
+import GamePipeline from '../../gamepipeline.js';
+import SimpleStep from '../simplestep.js';
+import ChooseParticipantsPrompt from './ChooseParticipantsPrompt.js';
+import ClaimPrompt from './ClaimPrompt.js';
+import ActionWindow from '../actionwindow.js';
+import InitiatingKeywordsWindow from '../InitiatingKeywordsWindow.js';
+import ResolutionKeywordsWindow from '../ResolutionKeywordsWindow.js';
+import InitiateChallenge from '../../GameActions/InitiateChallenge.js';
+import DeclareDefenders from '../../GameActions/DeclareDefenders.js';
 
 class ChallengeFlow extends BaseStep {
     constructor(game, challenge) {
@@ -332,4 +332,4 @@ class ChallengeFlow extends BaseStep {
     }
 }
 
-module.exports = ChallengeFlow;
+export default ChallengeFlow;

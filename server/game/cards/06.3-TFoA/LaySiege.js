@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class LaySiege extends DrawCard {
     setupCardAbilities() {
@@ -32,4 +32,4 @@ class LaySiege extends DrawCard {
 
 LaySiege.code = '06059';
 
-module.exports = LaySiege;
+export default LaySiege;

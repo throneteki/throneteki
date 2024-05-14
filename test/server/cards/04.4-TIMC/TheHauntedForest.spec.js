@@ -1,16 +1,22 @@
-describe('The Haunted Forest', function() {
-    integration(function() {
-        beforeEach(function() {
+describe('The Haunted Forest', function () {
+    integration(function () {
+        beforeEach(function () {
             const deck = this.buildDeck('thenightswatch', [
                 'Sneak Attack',
-                'The Haunted Forest', 'The Haunted Forest', 'Steward at the Wall', 'Maester Aemon (Core)'
+                'The Haunted Forest',
+                'The Haunted Forest',
+                'Steward at the Wall',
+                'Maester Aemon (Core)'
             ]);
             this.player1.selectDeck(deck);
             this.player2.selectDeck(deck);
             this.startGame();
             this.keepStartingHands();
 
-            [this.forest1, this.forest2] = this.player1.filterCardsByName('The Haunted Forest', 'hand');
+            [this.forest1, this.forest2] = this.player1.filterCardsByName(
+                'The Haunted Forest',
+                'hand'
+            );
 
             this.player1.clickCard(this.forest1);
             this.player1.clickCard(this.forest2);
@@ -23,8 +29,8 @@ describe('The Haunted Forest', function() {
             this.completeMarshalPhase();
         });
 
-        describe('when a challenge can be won by the strength provided', function() {
-            beforeEach(function() {
+        describe('when a challenge can be won by the strength provided', function () {
+            beforeEach(function () {
                 this.player2.clickPrompt('Intrigue');
                 this.player2.clickCard('Steward at the Wall', 'play area');
                 this.player2.clickPrompt('Done');
@@ -34,20 +40,20 @@ describe('The Haunted Forest', function() {
                 this.player1.clickPrompt('Done');
             });
 
-            it('should provide strength', function() {
+            it('should provide strength', function () {
                 expect(this.game.currentChallenge.attackerStrength).toBe(1);
                 expect(this.game.currentChallenge.defenderStrength).toBe(2);
             });
 
-            it('should win the challenge', function() {
+            it('should win the challenge', function () {
                 this.skipActionWindow();
 
                 expect(this.player2).not.toHavePrompt('Apply Claim');
             });
         });
 
-        describe('when a challenge is lost', function() {
-            beforeEach(function() {
+        describe('when a challenge is lost', function () {
+            beforeEach(function () {
                 this.player2.clickPrompt('Intrigue');
                 this.player2.clickCard('Maester Aemon', 'play area');
                 this.player2.clickPrompt('Done');
@@ -61,12 +67,12 @@ describe('The Haunted Forest', function() {
                 this.player2.clickPrompt('player1 - The Haunted Forest');
             });
 
-            it('should kneel the Haunted Forest', function() {
+            it('should kneel the Haunted Forest', function () {
                 expect(this.forest1.kneeled).toBe(true);
                 expect(this.forest2.kneeled).toBe(true);
             });
 
-            it('should not grant unopposed power', function() {
+            it('should not grant unopposed power', function () {
                 expect(this.player2Object.getTotalPower()).toBe(0);
             });
         });

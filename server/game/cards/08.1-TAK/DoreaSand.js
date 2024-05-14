@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class DoreaSand extends DrawCard {
     setupCardAbilities() {
@@ -35,4 +35,4 @@ class DoreaSand extends DrawCard {
 
 DoreaSand.code = '08016';
 
-module.exports = DoreaSand;
+export default DoreaSand;

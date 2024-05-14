@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TheCouncilConsents extends DrawCard {
     setupCardAbilities() {
@@ -37,4 +37,4 @@ class TheCouncilConsents extends DrawCard {
 
 TheCouncilConsents.code = '05044';
 
-module.exports = TheCouncilConsents;
+export default TheCouncilConsents;

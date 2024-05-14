@@ -1,6 +1,6 @@
-const DrawCard = require('../../drawcard.js');
-const Message = require('../../Message');
-const GameActions = require('../../GameActions/index.js');
+import DrawCard from '../../drawcard.js';
+import Message from '../../Message.js';
+import GameActions from '../../GameActions/index.js';
 
 class DefendingTheWall extends DrawCard {
     setupCardAbilities() {
@@ -49,4 +49,4 @@ class DefendingTheWall extends DrawCard {
 
 DefendingTheWall.code = '24015';
 
-module.exports = DefendingTheWall;
+export default DefendingTheWall;

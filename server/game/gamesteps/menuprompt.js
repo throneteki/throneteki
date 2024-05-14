@@ -1,4 +1,4 @@
-const UiPrompt = require('./uiprompt.js');
+import UiPrompt from './uiprompt.js';
 
 /**
  * General purpose menu prompt. By specifying a context object, the buttons in
@@ -88,4 +88,4 @@ class MenuPrompt extends UiPrompt {
     }
 }
 
-module.exports = MenuPrompt;
+export default MenuPrompt;

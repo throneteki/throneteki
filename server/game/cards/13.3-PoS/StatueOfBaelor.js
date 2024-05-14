@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class StatueOfBaelor extends DrawCard {
     setupCardAbilities(ability) {
@@ -32,4 +32,4 @@ class StatueOfBaelor extends DrawCard {
 
 StatueOfBaelor.code = '13058';
 
-module.exports = StatueOfBaelor;
+export default StatueOfBaelor;

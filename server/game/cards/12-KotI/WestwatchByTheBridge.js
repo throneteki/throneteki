@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class WestwatchByTheBridge extends DrawCard {
     setupCardAbilities(ability) {
@@ -46,4 +46,4 @@ class WestwatchByTheBridge extends DrawCard {
 
 WestwatchByTheBridge.code = '12032';
 
-module.exports = WestwatchByTheBridge;
+export default WestwatchByTheBridge;

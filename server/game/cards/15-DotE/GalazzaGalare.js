@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class GalazzaGalare extends DrawCard {
     setupCardAbilities() {
@@ -45,4 +45,4 @@ class GalazzaGalare extends DrawCard {
 
 GalazzaGalare.code = '15006';
 
-module.exports = GalazzaGalare;
+export default GalazzaGalare;

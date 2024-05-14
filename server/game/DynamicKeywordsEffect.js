@@ -1,4 +1,4 @@
-const { flatMap } = require('../Array');
+import { flatMap } from '../Array.js';
 
 class DynamicKeywordsEffect {
     constructor({ game }) {
@@ -93,4 +93,4 @@ class DynamicKeywordsEffect {
     }
 }
 
-module.exports = DynamicKeywordsEffect;
+export default DynamicKeywordsEffect;

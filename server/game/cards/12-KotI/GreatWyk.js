@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class GreatWyk extends DrawCard {
     setupCardAbilities(ability) {
@@ -41,4 +41,4 @@ class GreatWyk extends DrawCard {
 
 GreatWyk.code = '12017';
 
-module.exports = GreatWyk;
+export default GreatWyk;

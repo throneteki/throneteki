@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class HosterTully extends DrawCard {
     setupCardAbilities(ability) {
@@ -13,4 +13,4 @@ class HosterTully extends DrawCard {
 
 HosterTully.code = '06001';
 
-module.exports = HosterTully;
+export default HosterTully;

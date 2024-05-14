@@ -1,6 +1,6 @@
-const PlotCard = require('../../plotcard.js');
-const GameActions = require('../../GameActions/index.js');
-const Messages = require('../../Messages');
+import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
+import Messages from '../../Messages/index.js';
 
 class SummonedToCourt extends PlotCard {
     setupCardAbilities() {
@@ -56,4 +56,4 @@ class SummonedToCourt extends PlotCard {
 
 SummonedToCourt.code = '05048';
 
-module.exports = SummonedToCourt;
+export default SummonedToCourt;

@@ -159,4 +159,4 @@ class AbilityMessage {
     }
 }
 
-module.exports = AbilityMessage;
+export default AbilityMessage;

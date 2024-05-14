@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class NaiveScout extends DrawCard {
     setupCardAbilities(ability) {
@@ -12,4 +12,4 @@ class NaiveScout extends DrawCard {
 
 NaiveScout.code = '11045';
 
-module.exports = NaiveScout;
+export default NaiveScout;

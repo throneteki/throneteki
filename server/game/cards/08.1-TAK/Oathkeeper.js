@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions/index.js');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Oathkeeper extends DrawCard {
     setupCardAbilities(ability) {
@@ -31,4 +31,4 @@ class Oathkeeper extends DrawCard {
 
 Oathkeeper.code = '08005';
 
-module.exports = Oathkeeper;
+export default Oathkeeper;

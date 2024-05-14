@@ -1,6 +1,6 @@
-const DrawCard = require('../../drawcard.js');
-const Conditions = require('../../Conditions');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import Conditions from '../../Conditions.js';
+import GameActions from '../../GameActions/index.js';
 
 class FavorOfTheOldGods extends DrawCard {
     setupCardAbilities(ability) {
@@ -25,4 +25,4 @@ class FavorOfTheOldGods extends DrawCard {
 
 FavorOfTheOldGods.code = '08062';
 
-module.exports = FavorOfTheOldGods;
+export default FavorOfTheOldGods;

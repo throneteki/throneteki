@@ -1,4 +1,4 @@
-const BaseStep = require('./basestep.js');
+import BaseStep from './basestep.js';
 
 /**
  * Prompt that asks the current player to select a player.
@@ -65,4 +65,4 @@ class ChoosePlayerPrompt extends BaseStep {
     }
 }
 
-module.exports = ChoosePlayerPrompt;
+export default ChoosePlayerPrompt;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class MaesterAemon extends DrawCard {
     setupCardAbilities(ability) {
@@ -27,4 +27,4 @@ class MaesterAemon extends DrawCard {
 
 MaesterAemon.code = '01125';
 
-module.exports = MaesterAemon;
+export default MaesterAemon;

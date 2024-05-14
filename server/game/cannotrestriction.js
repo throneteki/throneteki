@@ -17,4 +17,4 @@ class CannotRestriction {
     }
 }
 
-module.exports = CannotRestriction;
+export default CannotRestriction;

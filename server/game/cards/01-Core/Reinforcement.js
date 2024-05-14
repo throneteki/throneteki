@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class Reinforcements extends PlotCard {
     setupCardAbilities() {
@@ -27,4 +27,4 @@ class Reinforcements extends PlotCard {
 
 Reinforcements.code = '01020';
 
-module.exports = Reinforcements;
+export default Reinforcements;

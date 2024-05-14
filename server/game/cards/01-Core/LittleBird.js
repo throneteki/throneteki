@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class LittleBird extends DrawCard {
     setupCardAbilities(ability) {
@@ -10,4 +10,4 @@ class LittleBird extends DrawCard {
 
 LittleBird.code = '01034';
 
-module.exports = LittleBird;
+export default LittleBird;

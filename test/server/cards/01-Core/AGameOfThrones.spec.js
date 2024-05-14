@@ -1,10 +1,12 @@
-describe('A Game Of Thrones', function() {
-    integration(function() {
-        describe('when dupes are put out in the setup phase', function() {
-            beforeEach(function() {
+describe('A Game Of Thrones', function () {
+    integration(function () {
+        describe('when dupes are put out in the setup phase', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('baratheon', [
-                    'A Noble Cause', 'A Game of Thrones',
-                    'Wildling Scout', 'Stannis Baratheon (Core)'
+                    'A Noble Cause',
+                    'A Game of Thrones',
+                    'Wildling Scout',
+                    'Stannis Baratheon (Core)'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
@@ -25,27 +27,27 @@ describe('A Game Of Thrones', function() {
                 this.completeMarshalPhase();
             });
 
-            describe('when the player has not won an intrigue challenge', function() {
-                it('should not allow military challenges to be declared', function() {
+            describe('when the player has not won an intrigue challenge', function () {
+                it('should not allow military challenges to be declared', function () {
                     expect(this.player1).toHaveDisabledPromptButton('Military');
                 });
 
-                it('should not allow power challenges to be declared', function() {
+                it('should not allow power challenges to be declared', function () {
                     expect(this.player1).toHaveDisabledPromptButton('Power');
                 });
             });
 
-            describe('when the player has won an intrigue challenge', function() {
-                beforeEach(function() {
+            describe('when the player has won an intrigue challenge', function () {
+                beforeEach(function () {
                     this.unopposedChallenge(this.player1, 'Intrigue', this.wildlingScout);
                     this.player1.clickPrompt('Apply Claim');
                 });
 
-                it('should allow military challenges to be declared', function() {
+                it('should allow military challenges to be declared', function () {
                     expect(this.player1).toHavePromptButton('Military');
                 });
 
-                it('should allow power challenges to be declared', function() {
+                it('should allow power challenges to be declared', function () {
                     expect(this.player1).toHavePromptButton('Power');
                 });
             });

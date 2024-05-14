@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const TextHelper = require('../../TextHelper');
+import DrawCard from '../../drawcard.js';
+import TextHelper from '../../TextHelper.js';
 
 class StarfallCavalry extends DrawCard {
     setupCardAbilities() {
@@ -24,4 +24,4 @@ class StarfallCavalry extends DrawCard {
 
 StarfallCavalry.code = '04035';
 
-module.exports = StarfallCavalry;
+export default StarfallCavalry;

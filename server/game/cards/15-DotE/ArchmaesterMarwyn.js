@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GenericTracker = require('../../EventTrackers/GenericTracker');
+import DrawCard from '../../drawcard.js';
+import GenericTracker from '../../EventTrackers/GenericTracker.js';
 
 class ArchmaesterMarwyn extends DrawCard {
     setupCardAbilities(ability) {
@@ -48,4 +48,4 @@ class ArchmaesterMarwyn extends DrawCard {
 
 ArchmaesterMarwyn.code = '15041';
 
-module.exports = ArchmaesterMarwyn;
+export default ArchmaesterMarwyn;

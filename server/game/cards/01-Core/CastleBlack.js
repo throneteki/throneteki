@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class CastleBlack extends DrawCard {
     setupCardAbilities(ability) {
@@ -33,4 +33,4 @@ class CastleBlack extends DrawCard {
 
 CastleBlack.code = '01136';
 
-module.exports = CastleBlack;
+export default CastleBlack;

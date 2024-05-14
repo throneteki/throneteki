@@ -1,4 +1,4 @@
-const Matcher = require('./Matcher');
+import Matcher from './Matcher.js';
 
 class ChallengeMatcher {
     static isMatch(challenge, matchers) {
@@ -52,4 +52,4 @@ class ChallengeMatcher {
     }
 }
 
-module.exports = ChallengeMatcher;
+export default ChallengeMatcher;

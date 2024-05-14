@@ -1,15 +1,15 @@
-const AnyNumberCost = require('./costs/AnyNumberCost');
-const ChooseCost = require('./costs/choosecost.js');
-const CostBuilders = require('./costs/CostBuilders.js');
-const KneelCost = require('./costs/KneelCost.js');
-const XValuePrompt = require('./costs/XValuePrompt.js');
-const SelfCost = require('./costs/SelfCost.js');
-const StandCost = require('./costs/StandCost.js');
-const MoveTokenFromSelfCost = require('./costs/MoveTokenFromSelfCost.js');
-const MovePowerFromFactionCost = require('./costs/MovePowerFromFactionCost');
-const DiscardFromDeckCost = require('./costs/DiscardFromDeckCost');
-const { Tokens } = require('./Constants');
-const MovePowerFromCardCost = require('./costs/MovePowerFromCardCost');
+import AnyNumberCost from './costs/AnyNumberCost.js';
+import ChooseCost from './costs/choosecost.js';
+import CostBuilders from './costs/CostBuilders.js';
+import KneelCost from './costs/KneelCost.js';
+import XValuePrompt from './costs/XValuePrompt.js';
+import SelfCost from './costs/SelfCost.js';
+import StandCost from './costs/StandCost.js';
+import MoveTokenFromSelfCost from './costs/MoveTokenFromSelfCost.js';
+import MovePowerFromFactionCost from './costs/MovePowerFromFactionCost.js';
+import DiscardFromDeckCost from './costs/DiscardFromDeckCost.js';
+import { Tokens } from './Constants/index.js';
+import MovePowerFromCardCost from './costs/MovePowerFromCardCost.js';
 
 const Costs = {
     /**
@@ -482,4 +482,4 @@ const Costs = {
     }
 };
 
-module.exports = Costs;
+export default Costs;

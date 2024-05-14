@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class LionsTooth extends DrawCard {
     setupCardAbilities(ability) {
@@ -31,4 +31,4 @@ class LionsTooth extends DrawCard {
 
 LionsTooth.code = '09030';
 
-module.exports = LionsTooth;
+export default LionsTooth;

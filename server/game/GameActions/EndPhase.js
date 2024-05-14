@@ -1,4 +1,4 @@
-const GameAction = require('./GameAction');
+import GameAction from './GameAction.js';
 
 class EndPhase extends GameAction {
     constructor() {
@@ -19,4 +19,4 @@ class EndPhase extends GameAction {
     }
 }
 
-module.exports = new EndPhase();
+export default new EndPhase();

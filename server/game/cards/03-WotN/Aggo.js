@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Aggo extends DrawCard {
     setupCardAbilities(ability) {
@@ -27,4 +27,4 @@ class Aggo extends DrawCard {
 
 Aggo.code = '03035';
 
-module.exports = Aggo;
+export default Aggo;

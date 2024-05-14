@@ -1,5 +1,5 @@
-const GameActions = require('../../GameActions/index.js');
-const PlotCard = require('../../plotcard.js');
+import GameActions from '../../GameActions/index.js';
+import PlotCard from '../../plotcard.js';
 
 class ATimeForWolves extends PlotCard {
     setupCardAbilities() {
@@ -38,4 +38,4 @@ class ATimeForWolves extends PlotCard {
 
 ATimeForWolves.code = '03046';
 
-module.exports = ATimeForWolves;
+export default ATimeForWolves;

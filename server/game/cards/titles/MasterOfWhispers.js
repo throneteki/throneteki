@@ -1,4 +1,4 @@
-const TitleCard = require('../../TitleCard.js');
+import TitleCard from '../../TitleCard.js';
 
 class MasterOfWhispers extends TitleCard {
     setupCardAbilities(ability) {
@@ -23,4 +23,4 @@ class MasterOfWhispers extends TitleCard {
 
 MasterOfWhispers.code = '01206';
 
-module.exports = MasterOfWhispers;
+export default MasterOfWhispers;

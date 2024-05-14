@@ -1,4 +1,4 @@
-const Event = require('./event.js');
+import Event from './event.js';
 
 class GroupedCardEvent extends Event {
     allowAutomaticSave() {
@@ -47,4 +47,4 @@ class GroupedCardEvent extends Event {
     }
 }
 
-module.exports = GroupedCardEvent;
+export default GroupedCardEvent;

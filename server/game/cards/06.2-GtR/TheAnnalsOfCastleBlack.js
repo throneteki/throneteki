@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class TheAnnalsOfCastleBlack extends PlotCard {
     setupCardAbilities(ability) {
@@ -30,4 +30,4 @@ class TheAnnalsOfCastleBlack extends PlotCard {
 
 TheAnnalsOfCastleBlack.code = '06040';
 
-module.exports = TheAnnalsOfCastleBlack;
+export default TheAnnalsOfCastleBlack;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class HollowHill extends DrawCard {
     setupCardAbilities() {
@@ -44,4 +44,4 @@ class HollowHill extends DrawCard {
 
 HollowHill.code = '00018';
 
-module.exports = HollowHill;
+export default HollowHill;

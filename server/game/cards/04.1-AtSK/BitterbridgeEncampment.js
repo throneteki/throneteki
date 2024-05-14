@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class BitterbridgeEncampment extends DrawCard {
     setupCardAbilities() {
@@ -58,4 +58,4 @@ class BitterbridgeEncampment extends DrawCard {
 
 BitterbridgeEncampment.code = '04005';
 
-module.exports = BitterbridgeEncampment;
+export default BitterbridgeEncampment;

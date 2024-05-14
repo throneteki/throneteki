@@ -1,5 +1,5 @@
-const AgendaCard = require('../../agendacard');
-const GameActions = require('../../GameActions');
+import AgendaCard from '../../agendacard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheWhiteBook extends AgendaCard {
     setupCardAbilities(ability) {
@@ -50,4 +50,4 @@ class TheWhiteBook extends AgendaCard {
 
 TheWhiteBook.code = '13099';
 
-module.exports = TheWhiteBook;
+export default TheWhiteBook;

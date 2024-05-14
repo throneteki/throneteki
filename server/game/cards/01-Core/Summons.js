@@ -1,5 +1,5 @@
-const PlotCard = require('../../plotcard.js');
-const GameActions = require('../../GameActions');
+import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Summons extends PlotCard {
     setupCardAbilities() {
@@ -21,4 +21,4 @@ class Summons extends PlotCard {
 
 Summons.code = '01022';
 
-module.exports = Summons;
+export default Summons;

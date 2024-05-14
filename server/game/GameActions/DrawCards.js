@@ -1,6 +1,6 @@
-const GameAction = require('./GameAction');
-const Message = require('../Message');
-const TextHelper = require('../TextHelper');
+import GameAction from './GameAction.js';
+import Message from '../Message.js';
+import TextHelper from '../TextHelper.js';
 
 class DrawCards extends GameAction {
     constructor() {
@@ -48,4 +48,4 @@ class DrawCards extends GameAction {
     }
 }
 
-module.exports = new DrawCards();
+export default new DrawCards();

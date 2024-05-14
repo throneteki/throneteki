@@ -1,4 +1,4 @@
-const PlayerOrderPrompt = require('./playerorderprompt.js');
+import PlayerOrderPrompt from './playerorderprompt.js';
 
 class ActionWindow extends PlayerOrderPrompt {
     constructor(game, title, windowName) {
@@ -57,4 +57,4 @@ class ActionWindow extends PlayerOrderPrompt {
     }
 }
 
-module.exports = ActionWindow;
+export default ActionWindow;

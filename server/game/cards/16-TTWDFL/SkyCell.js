@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SkyCell extends DrawCard {
     setupCardAbilities(ability) {
@@ -42,4 +42,4 @@ class SkyCell extends DrawCard {
 
 SkyCell.code = '16022';
 
-module.exports = SkyCell;
+export default SkyCell;

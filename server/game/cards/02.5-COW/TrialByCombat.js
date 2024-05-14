@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const ApplyClaim = require('../../gamesteps/challenge/applyclaim.js');
+import DrawCard from '../../drawcard.js';
+import ApplyClaim from '../../gamesteps/challenge/applyclaim.js';
 
 class TrialByCombat extends DrawCard {
     setupCardAbilities() {
@@ -37,4 +37,4 @@ class TrialByCombat extends DrawCard {
 
 TrialByCombat.code = '02090';
 
-module.exports = TrialByCombat;
+export default TrialByCombat;

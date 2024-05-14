@@ -1,7 +1,7 @@
-const DrawCard = require('../../drawcard.js');
-const Conditions = require('../../Conditions');
-const GameActions = require('../../GameActions');
-const TextHelper = require('../../TextHelper');
+import DrawCard from '../../drawcard.js';
+import Conditions from '../../Conditions.js';
+import GameActions from '../../GameActions/index.js';
+import TextHelper from '../../TextHelper.js';
 
 class OldGate extends DrawCard {
     setupCardAbilities(ability) {
@@ -31,4 +31,4 @@ class OldGate extends DrawCard {
 
 OldGate.code = '13002';
 
-module.exports = OldGate;
+export default OldGate;

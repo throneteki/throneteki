@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const ApplyClaim = require('../../gamesteps/challenge/applyclaim.js');
+import DrawCard from '../../drawcard.js';
+import ApplyClaim from '../../gamesteps/challenge/applyclaim.js';
 
 class MyaStone extends DrawCard {
     setupCardAbilities(ability) {
@@ -32,4 +32,4 @@ class MyaStone extends DrawCard {
 
 MyaStone.code = '08117';
 
-module.exports = MyaStone;
+export default MyaStone;

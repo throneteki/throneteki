@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class RangersCache extends PlotCard {
     setupCardAbilities() {
@@ -38,4 +38,4 @@ class RangersCache extends PlotCard {
 
 RangersCache.code = '03052';
 
-module.exports = RangersCache;
+export default RangersCache;

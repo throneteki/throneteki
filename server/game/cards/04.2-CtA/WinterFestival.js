@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class WinterFestival extends PlotCard {
     setupCardAbilities() {
@@ -20,4 +20,4 @@ class WinterFestival extends PlotCard {
 
 WinterFestival.code = '04040';
 
-module.exports = WinterFestival;
+export default WinterFestival;

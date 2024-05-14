@@ -1,8 +1,8 @@
-const TextHelper = require('./TextHelper');
-const CancelChallengePrompt = require('./gamesteps/CancelChallengePrompt');
-const Deck = require('./Deck');
-const RematchPrompt = require('./gamesteps/RematchPrompt');
-const { Tokens } = require('./Constants');
+import TextHelper from './TextHelper.js';
+import CancelChallengePrompt from './gamesteps/CancelChallengePrompt.js';
+import Deck from './Deck.js';
+import RematchPrompt from './gamesteps/RematchPrompt.js';
+import { Tokens } from './Constants/index.js';
 
 class ChatCommands {
     constructor(game) {
@@ -781,4 +781,4 @@ class ChatCommands {
     }
 }
 
-module.exports = ChatCommands;
+export default ChatCommands;

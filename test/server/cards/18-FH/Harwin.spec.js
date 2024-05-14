@@ -1,11 +1,12 @@
-const {Tokens} = require('../../../../server/game/Constants');
+import { Tokens } from '../../../../server/game/Constants/index.js';
 
-describe('Harwin', function() {
-    integration(function() {
-        beforeEach(function() {
+describe('Harwin', function () {
+    integration(function () {
+        beforeEach(function () {
             const deck1 = this.buildDeck('tyrell', [
                 'Marching Orders',
-                'Harwin', 'Robert Baratheon (Core)'
+                'Harwin',
+                'Robert Baratheon (Core)'
             ]);
             this.player1.selectDeck(deck1);
             this.player2.selectDeck(deck1);
@@ -20,8 +21,8 @@ describe('Harwin', function() {
             this.selectFirstPlayer(this.player1);
         });
 
-        describe('after Harwin´s action is used', function() {
-            beforeEach(function() {
+        describe('after Harwin´s action is used', function () {
+            beforeEach(function () {
                 this.player1.clickCard(this.harwin);
                 this.player1.clickPrompt('1');
                 this.completeMarshalPhase();
@@ -31,7 +32,7 @@ describe('Harwin', function() {
                 this.player1.clickMenu(this.harwin, 'Discard 1 gold');
             });
 
-            it('it should add the chosen character to the challenge', function() {
+            it('it should add the chosen character to the challenge', function () {
                 expect(this.player1).toHavePrompt('Select a character');
                 expect(this.robert.isParticipating()).toBe(false);
                 this.player1.clickCard(this.robert);

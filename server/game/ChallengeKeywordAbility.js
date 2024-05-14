@@ -1,4 +1,4 @@
-const BaseAbility = require('./baseability.js');
+import BaseAbility from './baseability.js';
 
 class ChallengeKeywordAbility extends BaseAbility {
     constructor(title, properties) {
@@ -32,4 +32,4 @@ class ChallengeKeywordAbility extends BaseAbility {
     }
 }
 
-module.exports = ChallengeKeywordAbility;
+export default ChallengeKeywordAbility;

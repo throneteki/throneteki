@@ -1,9 +1,9 @@
-const EachPlayerCardSelector = require('./CardSelectors/EachPlayerCardSelector');
-const ExactlyXCardSelector = require('./CardSelectors/ExactlyXCardSelector');
-const MaxStatCardSelector = require('./CardSelectors/MaxStatCardSelector');
-const SingleCardSelector = require('./CardSelectors/SingleCardSelector');
-const UnlimitedCardSelector = require('./CardSelectors/UnlimitedCardSelector');
-const UpToXCardSelector = require('./CardSelectors/UpToXCardSelector');
+import EachPlayerCardSelector from './CardSelectors/EachPlayerCardSelector.js';
+import ExactlyXCardSelector from './CardSelectors/ExactlyXCardSelector.js';
+import MaxStatCardSelector from './CardSelectors/MaxStatCardSelector.js';
+import SingleCardSelector from './CardSelectors/SingleCardSelector.js';
+import UnlimitedCardSelector from './CardSelectors/UnlimitedCardSelector.js';
+import UpToXCardSelector from './CardSelectors/UpToXCardSelector.js';
 
 const defaultProperties = {
     numCards: 1,
@@ -63,4 +63,4 @@ class CardSelector {
     }
 }
 
-module.exports = CardSelector;
+export default CardSelector;

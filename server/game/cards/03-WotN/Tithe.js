@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Tithe extends DrawCard {
     setupCardAbilities(ability) {
@@ -24,4 +24,4 @@ class Tithe extends DrawCard {
 
 Tithe.code = '03045';
 
-module.exports = Tithe;
+export default Tithe;

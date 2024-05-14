@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Jinglebell extends DrawCard {
     setupCardAbilities() {
@@ -26,4 +26,4 @@ class Jinglebell extends DrawCard {
 
 Jinglebell.code = '20046';
 
-module.exports = Jinglebell;
+export default Jinglebell;

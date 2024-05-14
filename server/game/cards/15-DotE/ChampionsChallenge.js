@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard');
+import PlotCard from '../../plotcard.js';
 
 class ChampionsChallenge extends PlotCard {
     setupCardAbilities(ability) {
@@ -32,4 +32,4 @@ class ChampionsChallenge extends PlotCard {
 
 ChampionsChallenge.code = '15049';
 
-module.exports = ChampionsChallenge;
+export default ChampionsChallenge;

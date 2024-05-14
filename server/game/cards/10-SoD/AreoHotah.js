@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class AreoHotah extends DrawCard {
     setupCardAbilities(ability) {
@@ -34,4 +34,4 @@ class AreoHotah extends DrawCard {
 
 AreoHotah.code = '10006';
 
-module.exports = AreoHotah;
+export default AreoHotah;

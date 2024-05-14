@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class ShieldOfLannisport extends DrawCard {
     setupCardAbilities(ability) {
@@ -24,4 +24,4 @@ class ShieldOfLannisport extends DrawCard {
 
 ShieldOfLannisport.code = '05020';
 
-module.exports = ShieldOfLannisport;
+export default ShieldOfLannisport;

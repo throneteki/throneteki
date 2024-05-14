@@ -142,4 +142,4 @@ class GamePipeline {
     }
 }
 
-module.exports = GamePipeline;
+export default GamePipeline;

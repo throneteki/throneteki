@@ -31,4 +31,4 @@ class CardTextDefinition {
     }
 }
 
-module.exports = CardTextDefinition;
+export default CardTextDefinition;

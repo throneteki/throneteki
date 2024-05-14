@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class WinterfellCrypt extends DrawCard {
     setupCardAbilities(ability) {
@@ -44,4 +44,4 @@ class WinterfellCrypt extends DrawCard {
 
 WinterfellCrypt.code = '02082';
 
-module.exports = WinterfellCrypt;
+export default WinterfellCrypt;

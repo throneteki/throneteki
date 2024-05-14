@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class SarellaSand extends DrawCard {
     setupCardAbilities(ability) {
@@ -30,4 +30,4 @@ class SarellaSand extends DrawCard {
 
 SarellaSand.code = '13075';
 
-module.exports = SarellaSand;
+export default SarellaSand;

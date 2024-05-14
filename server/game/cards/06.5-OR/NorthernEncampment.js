@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class NorthernEncampment extends DrawCard {
     constructor(owner, cardData) {
@@ -40,4 +40,4 @@ class DominanceTracker {
 
 NorthernEncampment.code = '06088';
 
-module.exports = NorthernEncampment;
+export default NorthernEncampment;

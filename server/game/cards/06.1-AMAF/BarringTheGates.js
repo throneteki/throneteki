@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class BarringTheGates extends PlotCard {
     setupCardAbilities(ability) {
@@ -13,4 +13,4 @@ class BarringTheGates extends PlotCard {
 
 BarringTheGates.code = '06019';
 
-module.exports = BarringTheGates;
+export default BarringTheGates;

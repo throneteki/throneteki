@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const { Tokens } = require('../../Constants');
+import DrawCard from '../../drawcard.js';
+import { Tokens } from '../../Constants/index.js';
 
 class DarkandFullofTerrors extends DrawCard {
     setupCardAbilities() {
@@ -37,4 +37,4 @@ class DarkandFullofTerrors extends DrawCard {
 
 DarkandFullofTerrors.code = '20003';
 
-module.exports = DarkandFullofTerrors;
+export default DarkandFullofTerrors;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class QhorinHalfhand extends DrawCard {
     setupCardAbilities() {
@@ -33,4 +33,4 @@ class QhorinHalfhand extends DrawCard {
 
 QhorinHalfhand.code = '04105';
 
-module.exports = QhorinHalfhand;
+export default QhorinHalfhand;

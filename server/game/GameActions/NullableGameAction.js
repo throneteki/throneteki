@@ -1,5 +1,5 @@
-const GameAction = require('./GameAction');
-const NullEvent = require('../NullEvent');
+import GameAction from './GameAction.js';
+import NullEvent from '../NullEvent.js';
 
 class NullableGameAction extends GameAction {
     constructor() {
@@ -19,4 +19,4 @@ class NullableGameAction extends GameAction {
     }
 }
 
-module.exports = new NullableGameAction();
+export default new NullableGameAction();

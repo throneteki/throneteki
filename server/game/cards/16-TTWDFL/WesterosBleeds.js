@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class WesterosBleeds extends DrawCard {
     setupCardAbilities() {
@@ -23,4 +23,4 @@ class WesterosBleeds extends DrawCard {
 
 WesterosBleeds.code = '16026';
 
-module.exports = WesterosBleeds;
+export default WesterosBleeds;

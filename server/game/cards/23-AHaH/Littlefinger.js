@@ -1,6 +1,6 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions/index.js');
-const Messages = require('../../Messages');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
+import Messages from '../../Messages/index.js';
 
 class Littlefinger extends DrawCard {
     setupCardAbilities(ability) {
@@ -66,4 +66,4 @@ class Littlefinger extends DrawCard {
 
 Littlefinger.code = '23017';
 
-module.exports = Littlefinger;
+export default Littlefinger;

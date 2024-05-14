@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class FirstBuilder extends DrawCard {
     setupCardAbilities(ability) {
@@ -50,4 +50,4 @@ class FirstBuilder extends DrawCard {
 
 FirstBuilder.code = '22015';
 
-module.exports = FirstBuilder;
+export default FirstBuilder;

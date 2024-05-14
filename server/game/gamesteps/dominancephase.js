@@ -1,8 +1,8 @@
-const Phase = require('./phase.js');
-const SimpleStep = require('./simplestep.js');
-const ActionWindow = require('./actionwindow.js');
-const ChoosePlayerPrompt = require('./ChoosePlayerPrompt.js');
-const GameActions = require('../GameActions/index.js');
+import Phase from './phase.js';
+import SimpleStep from './simplestep.js';
+import ActionWindow from './actionwindow.js';
+import ChoosePlayerPrompt from './ChoosePlayerPrompt.js';
+import GameActions from '../GameActions/index.js';
 
 class DominancePhase extends Phase {
     constructor(game) {
@@ -111,4 +111,4 @@ class DominancePhase extends Phase {
     }
 }
 
-module.exports = DominancePhase;
+export default DominancePhase;

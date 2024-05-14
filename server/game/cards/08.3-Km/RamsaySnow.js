@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class RamsaySnow extends DrawCard {
     setupCardAbilities() {
@@ -36,4 +36,4 @@ class RamsaySnow extends DrawCard {
 
 RamsaySnow.code = '08041';
 
-module.exports = RamsaySnow;
+export default RamsaySnow;

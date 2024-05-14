@@ -1,6 +1,6 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
-const Message = require('../../Message');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
+import Message from '../../Message.js';
 
 class TheBloodyGate extends DrawCard {
     setupCardAbilities() {
@@ -58,4 +58,4 @@ class TheBloodyGate extends DrawCard {
 
 TheBloodyGate.code = '23033';
 
-module.exports = TheBloodyGate;
+export default TheBloodyGate;

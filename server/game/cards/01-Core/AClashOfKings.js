@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class AClashOfKings extends PlotCard {
     setupCardAbilities() {
@@ -26,4 +26,4 @@ class AClashOfKings extends PlotCard {
 
 AClashOfKings.code = '01001';
 
-module.exports = AClashOfKings;
+export default AClashOfKings;

@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SerPrestonGreenfield extends DrawCard {
     setupCardAbilities() {
@@ -56,4 +56,4 @@ class SerPrestonGreenfield extends DrawCard {
 
 SerPrestonGreenfield.code = '13087';
 
-module.exports = SerPrestonGreenfield;
+export default SerPrestonGreenfield;

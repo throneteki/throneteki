@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class Catspaw extends DrawCard {
     setupCardAbilities(ability) {
@@ -42,4 +42,4 @@ class Catspaw extends DrawCard {
 
 Catspaw.code = '11049';
 
-module.exports = Catspaw;
+export default Catspaw;

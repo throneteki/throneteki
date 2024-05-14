@@ -1,7 +1,6 @@
-const { sortBy } = require('../../Array');
-
-const ChallengeKeywordsWindow = require('./ChallengeKeywordsWindow');
-const GameKeywords = require('../gamekeywords.js');
+import { sortBy } from '../../Array.js';
+import ChallengeKeywordsWindow from './ChallengeKeywordsWindow.js';
+import GameKeywords from '../gamekeywords.js';
 
 const resolutionKeywords = ['insight', 'intimidate', 'pillage', 'renown'];
 
@@ -98,4 +97,4 @@ class ResolutionKeywordsWindow extends ChallengeKeywordsWindow {
     }
 }
 
-module.exports = ResolutionKeywordsWindow;
+export default ResolutionKeywordsWindow;

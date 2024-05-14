@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class Chiswyck extends DrawCard {
     setupCardAbilities(ability) {
@@ -23,4 +23,4 @@ class Chiswyck extends DrawCard {
 
 Chiswyck.code = '13049';
 
-module.exports = Chiswyck;
+export default Chiswyck;

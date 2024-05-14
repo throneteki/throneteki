@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class OlennasCunning extends DrawCard {
     setupCardAbilities() {
@@ -39,4 +39,4 @@ class OlennasCunning extends DrawCard {
 
 OlennasCunning.code = '01196';
 
-module.exports = OlennasCunning;
+export default OlennasCunning;

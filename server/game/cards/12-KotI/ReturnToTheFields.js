@@ -1,6 +1,6 @@
-const PlotCard = require('../../plotcard');
-const TextHelper = require('../../TextHelper');
-const GameActions = require('../../GameActions');
+import PlotCard from '../../plotcard.js';
+import TextHelper from '../../TextHelper.js';
+import GameActions from '../../GameActions/index.js';
 
 class ReturnToTheFields extends PlotCard {
     setupCardAbilities() {
@@ -39,4 +39,4 @@ class ReturnToTheFields extends PlotCard {
 
 ReturnToTheFields.code = '12047';
 
-module.exports = ReturnToTheFields;
+export default ReturnToTheFields;

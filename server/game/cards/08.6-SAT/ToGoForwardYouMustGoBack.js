@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions/index.js');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class ToGoForwardYouMustGoBack extends DrawCard {
     setupCardAbilities() {
@@ -29,4 +29,4 @@ class ToGoForwardYouMustGoBack extends DrawCard {
 
 ToGoForwardYouMustGoBack.code = '08114';
 
-module.exports = ToGoForwardYouMustGoBack;
+export default ToGoForwardYouMustGoBack;

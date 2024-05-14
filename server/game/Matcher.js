@@ -34,4 +34,4 @@ class Matcher {
     }
 }
 
-module.exports = Matcher;
+export default Matcher;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class EastwatchByTheSea extends DrawCard {
     setupCardAbilities() {
@@ -30,4 +30,4 @@ class EastwatchByTheSea extends DrawCard {
 
 EastwatchByTheSea.code = '06006';
 
-module.exports = EastwatchByTheSea;
+export default EastwatchByTheSea;

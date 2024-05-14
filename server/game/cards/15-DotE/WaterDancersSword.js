@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class WaterDancersSword extends DrawCard {
     setupCardAbilities(ability) {
@@ -24,4 +24,4 @@ class WaterDancersSword extends DrawCard {
 
 WaterDancersSword.code = '15043';
 
-module.exports = WaterDancersSword;
+export default WaterDancersSword;

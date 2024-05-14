@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class SaltWife extends DrawCard {
     setupCardAbilities(ability) {
@@ -28,4 +28,4 @@ class SaltWife extends DrawCard {
 
 SaltWife.code = '07027';
 
-module.exports = SaltWife;
+export default SaltWife;

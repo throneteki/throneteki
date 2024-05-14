@@ -48,4 +48,4 @@ class NullEvent {
     clearAttachedEvents() {}
 }
 
-module.exports = NullEvent;
+export default NullEvent;

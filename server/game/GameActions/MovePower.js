@@ -1,4 +1,4 @@
-const GameAction = require('./GameAction');
+import GameAction from './GameAction.js';
 
 class MovePower extends GameAction {
     constructor() {
@@ -31,4 +31,4 @@ class MovePower extends GameAction {
     }
 }
 
-module.exports = new MovePower();
+export default new MovePower();

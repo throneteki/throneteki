@@ -1,9 +1,12 @@
-describe('Take the Black', function() {
-    integration(function() {
-        beforeEach(function() {
+describe('Take the Black', function () {
+    integration(function () {
+        beforeEach(function () {
             const deck = this.buildDeck('thenightswatch', [
                 'Trading with the Pentoshi',
-                'Take the Black', 'Dothraki Outriders', 'Maester Aemon (Core)', 'Wildling Horde'
+                'Take the Black',
+                'Dothraki Outriders',
+                'Maester Aemon (Core)',
+                'Wildling Horde'
             ]);
             this.player1.selectDeck(deck);
             this.player2.selectDeck(deck);
@@ -31,19 +34,19 @@ describe('Take the Black', function() {
             this.player1.clickCard('Take the Black', 'hand');
         });
 
-        it('should allow take control of non-unique, 6-gold-or-less characters', function() {
+        it('should allow take control of non-unique, 6-gold-or-less characters', function () {
             this.player1.clickCard(this.eligible);
 
             expect(this.eligible.controller.name).toBe(this.player1Object.name);
         });
 
-        it('should not allow take control of unique characters', function() {
+        it('should not allow take control of unique characters', function () {
             this.player1.clickCard(this.unique);
 
             expect(this.unique.controller).not.toBe(this.player1Object);
         });
 
-        it('should not allow take control of more expensive than 6 gold characters', function() {
+        it('should not allow take control of more expensive than 6 gold characters', function () {
             this.player1.clickCard(this.tooExpensive);
 
             expect(this.tooExpensive.controller).not.toBe(this.player1Object);

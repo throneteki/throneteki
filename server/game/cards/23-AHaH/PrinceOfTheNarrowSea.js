@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class PrinceOfTheNarrowSea extends DrawCard {
     setupCardAbilities(ability) {
@@ -58,4 +58,4 @@ class PrinceOfTheNarrowSea extends DrawCard {
 
 PrinceOfTheNarrowSea.code = '23002';
 
-module.exports = PrinceOfTheNarrowSea;
+export default PrinceOfTheNarrowSea;

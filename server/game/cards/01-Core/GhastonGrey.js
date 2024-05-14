@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class GhastonGrey extends DrawCard {
     setupCardAbilities(ability) {
@@ -32,4 +32,4 @@ class GhastonGrey extends DrawCard {
 
 GhastonGrey.code = '01116';
 
-module.exports = GhastonGrey;
+export default GhastonGrey;

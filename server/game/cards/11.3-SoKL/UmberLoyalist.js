@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const TextHelper = require('../../TextHelper');
+import DrawCard from '../../drawcard.js';
+import TextHelper from '../../TextHelper.js';
 
 class UmberLoyalist extends DrawCard {
     setupCardAbilities() {
@@ -49,4 +49,4 @@ class UmberLoyalist extends DrawCard {
 
 UmberLoyalist.code = '11041';
 
-module.exports = UmberLoyalist;
+export default UmberLoyalist;

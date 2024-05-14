@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class GreatjonsVanguard extends DrawCard {
     setupCardAbilities(ability) {
@@ -12,4 +12,4 @@ class GreatjonsVanguard extends DrawCard {
 
 GreatjonsVanguard.code = '02081';
 
-module.exports = GreatjonsVanguard;
+export default GreatjonsVanguard;

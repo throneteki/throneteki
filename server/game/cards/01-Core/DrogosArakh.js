@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const { ChallengeTracker } = require('../../EventTrackers');
+import DrawCard from '../../drawcard.js';
+import { ChallengeTracker } from '../../EventTrackers/index.js';
 
 class DrogosArakh extends DrawCard {
     setupCardAbilities(ability) {
@@ -20,4 +20,4 @@ class DrogosArakh extends DrawCard {
 
 DrogosArakh.code = '01172';
 
-module.exports = DrogosArakh;
+export default DrogosArakh;

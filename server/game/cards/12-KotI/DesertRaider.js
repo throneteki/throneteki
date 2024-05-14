@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const ChallengeTypes = require('../../ChallengeTypes');
+import DrawCard from '../../drawcard.js';
+import ChallengeTypes from '../../ChallengeTypes.js';
 
 class DesertRaider extends DrawCard {
     setupCardAbilities() {
@@ -60,4 +60,4 @@ class DesertRaider extends DrawCard {
 
 DesertRaider.code = '12029';
 
-module.exports = DesertRaider;
+export default DesertRaider;

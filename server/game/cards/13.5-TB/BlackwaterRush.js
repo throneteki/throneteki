@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class BlackwaterRush extends DrawCard {
     setupCardAbilities(ability) {
@@ -30,4 +30,4 @@ class BlackwaterRush extends DrawCard {
 
 BlackwaterRush.code = '13088';
 
-module.exports = BlackwaterRush;
+export default BlackwaterRush;

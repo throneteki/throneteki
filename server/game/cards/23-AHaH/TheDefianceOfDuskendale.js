@@ -1,5 +1,5 @@
-const GameActions = require('../../GameActions/index.js');
-const PlotCard = require('../../plotcard.js');
+import GameActions from '../../GameActions/index.js';
+import PlotCard from '../../plotcard.js';
 
 class TheDefianceOfDuskendale extends PlotCard {
     setupCardAbilities() {
@@ -19,4 +19,4 @@ class TheDefianceOfDuskendale extends PlotCard {
 
 TheDefianceOfDuskendale.code = '23038';
 
-module.exports = TheDefianceOfDuskendale;
+export default TheDefianceOfDuskendale;

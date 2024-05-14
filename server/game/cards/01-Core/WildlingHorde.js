@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class WildlingHorde extends DrawCard {
     setupCardAbilities(ability) {
@@ -31,4 +31,4 @@ class WildlingHorde extends DrawCard {
 
 WildlingHorde.code = '01031';
 
-module.exports = WildlingHorde;
+export default WildlingHorde;

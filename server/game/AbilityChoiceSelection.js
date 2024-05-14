@@ -49,4 +49,4 @@ class AbilityChoiceSelection {
     }
 }
 
-module.exports = AbilityChoiceSelection;
+export default AbilityChoiceSelection;

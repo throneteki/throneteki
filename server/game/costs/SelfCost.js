@@ -29,4 +29,4 @@ class SelfCost {
     }
 }
 
-module.exports = SelfCost;
+export default SelfCost;

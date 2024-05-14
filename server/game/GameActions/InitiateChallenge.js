@@ -1,6 +1,6 @@
-const GameAction = require('./GameAction');
-const DeclareAttackers = require('./DeclareAttackers');
-const DeclareDefenders = require('./DeclareDefenders');
+import GameAction from './GameAction.js';
+import DeclareAttackers from './DeclareAttackers.js';
+import DeclareDefenders from './DeclareDefenders.js';
 
 class InitiateChallenge extends GameAction {
     constructor() {
@@ -60,4 +60,4 @@ class InitiateChallenge extends GameAction {
     }
 }
 
-module.exports = new InitiateChallenge();
+export default new InitiateChallenge();

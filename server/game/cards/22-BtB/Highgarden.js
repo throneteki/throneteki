@@ -1,7 +1,7 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
-const Message = require('../../Message');
-const range = require('lodash.range');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
+import Message from '../../Message.js';
+import range from 'lodash.range';
 
 class Highgarden extends DrawCard {
     setupCardAbilities(ability) {
@@ -151,4 +151,4 @@ class Highgarden extends DrawCard {
 
 Highgarden.code = '22023';
 
-module.exports = Highgarden;
+export default Highgarden;

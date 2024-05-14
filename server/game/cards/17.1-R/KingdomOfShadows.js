@@ -1,4 +1,4 @@
-const AgendaCard = require('../../agendacard');
+import AgendaCard from '../../agendacard.js';
 
 class KingdomOfShadows extends AgendaCard {
     setupCardAbilities(ability) {
@@ -20,4 +20,4 @@ class KingdomOfShadows extends AgendaCard {
 
 KingdomOfShadows.code = '17148';
 
-module.exports = KingdomOfShadows;
+export default KingdomOfShadows;

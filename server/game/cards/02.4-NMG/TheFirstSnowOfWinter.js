@@ -1,5 +1,5 @@
-const GameActions = require('../../GameActions/index.js');
-const PlotCard = require('../../plotcard.js');
+import GameActions from '../../GameActions/index.js';
+import PlotCard from '../../plotcard.js';
 
 class TheFirstSnowOfWinter extends PlotCard {
     setupCardAbilities() {
@@ -22,4 +22,4 @@ class TheFirstSnowOfWinter extends PlotCard {
 
 TheFirstSnowOfWinter.code = '02079';
 
-module.exports = TheFirstSnowOfWinter;
+export default TheFirstSnowOfWinter;

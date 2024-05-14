@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class SmalljonUmber extends DrawCard {
     setupCardAbilities(ability) {
@@ -13,4 +13,4 @@ class SmalljonUmber extends DrawCard {
 
 SmalljonUmber.code = '13021';
 
-module.exports = SmalljonUmber;
+export default SmalljonUmber;

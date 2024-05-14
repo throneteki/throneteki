@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class BaelorBlacktyde extends DrawCard {
     setupCardAbilities(ability) {
@@ -18,4 +18,4 @@ class BaelorBlacktyde extends DrawCard {
 
 BaelorBlacktyde.code = '13011';
 
-module.exports = BaelorBlacktyde;
+export default BaelorBlacktyde;

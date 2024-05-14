@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class DragonstoneConvert extends DrawCard {
     setupCardAbilities(ability) {
@@ -34,4 +34,4 @@ class DragonstoneConvert extends DrawCard {
 
 DragonstoneConvert.code = '15026';
 
-module.exports = DragonstoneConvert;
+export default DragonstoneConvert;

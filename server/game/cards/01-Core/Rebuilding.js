@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class Rebuilding extends PlotCard {
     setupCardAbilities() {
@@ -28,4 +28,4 @@ class Rebuilding extends PlotCard {
 
 Rebuilding.code = '01019';
 
-module.exports = Rebuilding;
+export default Rebuilding;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class SeptaNysterica extends DrawCard {
     setupCardAbilities(ability) {
@@ -28,4 +28,4 @@ class SeptaNysterica extends DrawCard {
 
 SeptaNysterica.code = '08004';
 
-module.exports = SeptaNysterica;
+export default SeptaNysterica;

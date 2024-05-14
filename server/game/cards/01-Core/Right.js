@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Right extends DrawCard {
     setupCardAbilities(ability) {
@@ -16,4 +16,4 @@ class Right extends DrawCard {
 
 Right.code = '01184';
 
-module.exports = Right;
+export default Right;

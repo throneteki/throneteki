@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const TextHelper = require('../../TextHelper');
+import DrawCard from '../../drawcard.js';
+import TextHelper from '../../TextHelper.js';
 
 class TheMander extends DrawCard {
     setupCardAbilities(ability) {
@@ -26,4 +26,4 @@ class TheMander extends DrawCard {
 
 TheMander.code = '01193';
 
-module.exports = TheMander;
+export default TheMander;

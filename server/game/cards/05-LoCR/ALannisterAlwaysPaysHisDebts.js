@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const { ChallengeTracker } = require('../../EventTrackers');
+import DrawCard from '../../drawcard.js';
+import { ChallengeTracker } from '../../EventTrackers/index.js';
 
 class ALannisterAlwaysPaysHisDebts extends DrawCard {
     setupCardAbilities(ability) {
@@ -44,4 +44,4 @@ class ALannisterAlwaysPaysHisDebts extends DrawCard {
 
 ALannisterAlwaysPaysHisDebts.code = '05022';
 
-module.exports = ALannisterAlwaysPaysHisDebts;
+export default ALannisterAlwaysPaysHisDebts;

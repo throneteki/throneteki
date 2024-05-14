@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class LeytonHightower extends DrawCard {
     setupCardAbilities(ability) {
@@ -30,4 +30,4 @@ class LeytonHightower extends DrawCard {
 
 LeytonHightower.code = '10037';
 
-module.exports = LeytonHightower;
+export default LeytonHightower;

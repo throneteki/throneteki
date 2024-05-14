@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class PriestOfTheDrownedGod extends DrawCard {
     setupCardAbilities(ability) {
@@ -11,4 +11,4 @@ class PriestOfTheDrownedGod extends DrawCard {
 
 PriestOfTheDrownedGod.code = '02072';
 
-module.exports = PriestOfTheDrownedGod;
+export default PriestOfTheDrownedGod;

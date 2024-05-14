@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class BoltonFlayer extends DrawCard {
     setupCardAbilities() {
@@ -35,4 +35,4 @@ class BoltonFlayer extends DrawCard {
 
 BoltonFlayer.code = '11002';
 
-module.exports = BoltonFlayer;
+export default BoltonFlayer;

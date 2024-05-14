@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class WhiteTree extends DrawCard {
     setupCardAbilities(ability) {
@@ -28,4 +28,4 @@ class WhiteTree extends DrawCard {
 
 WhiteTree.code = '04007';
 
-module.exports = WhiteTree;
+export default WhiteTree;

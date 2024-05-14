@@ -22,4 +22,4 @@ class BaseStep {
     }
 }
 
-module.exports = BaseStep;
+export default BaseStep;

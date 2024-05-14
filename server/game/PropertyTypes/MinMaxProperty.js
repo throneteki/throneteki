@@ -45,4 +45,4 @@ class MinMaxProperty {
     }
 }
 
-module.exports = MinMaxProperty;
+export default MinMaxProperty;

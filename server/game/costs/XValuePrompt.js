@@ -1,6 +1,5 @@
-const range = require('lodash.range');
-
-const BaseStep = require('../gamesteps/basestep');
+import range from 'lodash.range';
+import BaseStep from '../gamesteps/basestep.js';
 
 class XValuePrompt extends BaseStep {
     constructor(min, max, context, reduction = 0) {
@@ -57,4 +56,4 @@ class XValuePrompt extends BaseStep {
     }
 }
 
-module.exports = XValuePrompt;
+export default XValuePrompt;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class BarsenaBlackhair extends DrawCard {
     setupCardAbilities(ability) {
@@ -18,4 +18,4 @@ class BarsenaBlackhair extends DrawCard {
 
 BarsenaBlackhair.code = '15011';
 
-module.exports = BarsenaBlackhair;
+export default BarsenaBlackhair;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class SeptonMeribald extends DrawCard {
     setupCardAbilities(ability) {
@@ -28,4 +28,4 @@ class SeptonMeribald extends DrawCard {
 
 SeptonMeribald.code = '10040';
 
-module.exports = SeptonMeribald;
+export default SeptonMeribald;

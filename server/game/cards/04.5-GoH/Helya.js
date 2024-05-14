@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Helya extends DrawCard {
     setupCardAbilities(ability) {
@@ -12,4 +12,4 @@ class Helya extends DrawCard {
 
 Helya.code = '04091';
 
-module.exports = Helya;
+export default Helya;

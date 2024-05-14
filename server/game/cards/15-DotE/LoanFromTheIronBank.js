@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard');
+import PlotCard from '../../plotcard.js';
 
 class LoanFromTheIronBank extends PlotCard {
     setupCardAbilities(ability) {
@@ -14,4 +14,4 @@ class LoanFromTheIronBank extends PlotCard {
 
 LoanFromTheIronBank.code = '15051';
 
-module.exports = LoanFromTheIronBank;
+export default LoanFromTheIronBank;

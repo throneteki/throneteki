@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TywinLannister extends DrawCard {
     setupCardAbilities() {
@@ -59,4 +59,4 @@ class TywinLannister extends DrawCard {
 
 TywinLannister.code = '05006';
 
-module.exports = TywinLannister;
+export default TywinLannister;

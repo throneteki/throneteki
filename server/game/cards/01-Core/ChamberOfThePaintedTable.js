@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class ChamberOfThePaintedTable extends DrawCard {
     setupCardAbilities(ability) {
@@ -53,4 +53,4 @@ class ChamberOfThePaintedTable extends DrawCard {
 
 ChamberOfThePaintedTable.code = '01060';
 
-module.exports = ChamberOfThePaintedTable;
+export default ChamberOfThePaintedTable;

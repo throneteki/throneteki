@@ -1,5 +1,5 @@
-const PlotCard = require('../../plotcard');
-const TextHelper = require('../../TextHelper');
+import PlotCard from '../../plotcard.js';
+import TextHelper from '../../TextHelper.js';
 
 class YouWinOrYouDie extends PlotCard {
     setupCardAbilities() {
@@ -19,4 +19,4 @@ class YouWinOrYouDie extends PlotCard {
 
 YouWinOrYouDie.code = '08120';
 
-module.exports = YouWinOrYouDie;
+export default YouWinOrYouDie;

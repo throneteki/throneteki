@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class KingStannisHost extends DrawCard {
     setupCardAbilities(ability) {
@@ -18,4 +18,4 @@ class KingStannisHost extends DrawCard {
 
 KingStannisHost.code = '21001';
 
-module.exports = KingStannisHost;
+export default KingStannisHost;

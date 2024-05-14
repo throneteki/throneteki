@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Plunder extends DrawCard {
     setupCardAbilities(ability) {
@@ -38,4 +38,4 @@ class Plunder extends DrawCard {
 
 Plunder.code = '06072';
 
-module.exports = Plunder;
+export default Plunder;

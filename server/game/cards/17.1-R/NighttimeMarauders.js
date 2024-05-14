@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class NighttimeMarauders extends DrawCard {
     setupCardAbilities() {
@@ -36,4 +36,4 @@ class NighttimeMarauders extends DrawCard {
 
 NighttimeMarauders.code = '17104';
 
-module.exports = NighttimeMarauders;
+export default NighttimeMarauders;

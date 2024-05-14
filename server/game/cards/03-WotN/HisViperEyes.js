@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class HisViperEyes extends DrawCard {
     setupCardAbilities() {
@@ -47,4 +47,4 @@ class HisViperEyes extends DrawCard {
 
 HisViperEyes.code = '03032';
 
-module.exports = HisViperEyes;
+export default HisViperEyes;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class ATaskForEveryTool extends DrawCard {
     setupCardAbilities() {
@@ -29,4 +29,4 @@ class ATaskForEveryTool extends DrawCard {
 
 ATaskForEveryTool.code = '06090';
 
-module.exports = ATaskForEveryTool;
+export default ATaskForEveryTool;

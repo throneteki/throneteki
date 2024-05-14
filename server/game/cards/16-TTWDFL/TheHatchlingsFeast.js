@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const Message = require('../../Message');
+import DrawCard from '../../drawcard.js';
+import Message from '../../Message.js';
 
 class TheHatchlingsFeast extends DrawCard {
     setupCardAbilities() {
@@ -74,4 +74,4 @@ class TheHatchlingsFeast extends DrawCard {
 
 TheHatchlingsFeast.code = '16014';
 
-module.exports = TheHatchlingsFeast;
+export default TheHatchlingsFeast;

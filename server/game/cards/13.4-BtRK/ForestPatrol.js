@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class ForestPatrol extends DrawCard {
     setupCardAbilities(ability) {
@@ -22,4 +22,4 @@ class ForestPatrol extends DrawCard {
 
 ForestPatrol.code = '13065';
 
-module.exports = ForestPatrol;
+export default ForestPatrol;

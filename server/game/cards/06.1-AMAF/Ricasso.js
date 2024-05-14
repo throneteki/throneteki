@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const { Tokens } = require('../../Constants');
+import DrawCard from '../../drawcard.js';
+import { Tokens } from '../../Constants/index.js';
 
 class Ricasso extends DrawCard {
     setupCardAbilities(ability) {
@@ -12,4 +12,4 @@ class Ricasso extends DrawCard {
 
 Ricasso.code = '06015';
 
-module.exports = Ricasso;
+export default Ricasso;

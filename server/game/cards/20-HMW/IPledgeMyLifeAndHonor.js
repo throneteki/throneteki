@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class IPledgeMyLifeAndHonor extends DrawCard {
     setupCardAbilities() {
@@ -48,4 +48,4 @@ class IPledgeMyLifeAndHonor extends DrawCard {
 
 IPledgeMyLifeAndHonor.code = '20024';
 
-module.exports = IPledgeMyLifeAndHonor;
+export default IPledgeMyLifeAndHonor;

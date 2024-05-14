@@ -1,4 +1,4 @@
-const Matcher = require('./Matcher.js');
+import Matcher from './Matcher.js';
 
 class CardMatcher {
     static isMatch(card, properties) {
@@ -145,4 +145,4 @@ class CardMatcher {
     }
 }
 
-module.exports = CardMatcher;
+export default CardMatcher;

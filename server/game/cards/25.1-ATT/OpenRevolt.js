@@ -1,6 +1,6 @@
-const ChallengeTracker = require('../../EventTrackers/ChallengeTracker');
-const GameActions = require('../../GameActions');
-const PlotCard = require('../../plotcard');
+import { ChallengeTracker } from '../../EventTrackers/ChallengeTracker.js';
+import GameActions from '../../GameActions/index.js';
+import PlotCard from '../../plotcard.js';
 
 class OpenRevolt extends PlotCard {
     setupCardAbilities() {
@@ -32,4 +32,4 @@ class OpenRevolt extends PlotCard {
 
 OpenRevolt.code = '25020';
 
-module.exports = OpenRevolt;
+export default OpenRevolt;

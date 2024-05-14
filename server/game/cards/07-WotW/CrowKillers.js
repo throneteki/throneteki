@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class CrowKillers extends DrawCard {
     setupCardAbilities(ability) {
@@ -25,4 +25,4 @@ class CrowKillers extends DrawCard {
 
 CrowKillers.code = '07041';
 
-module.exports = CrowKillers;
+export default CrowKillers;

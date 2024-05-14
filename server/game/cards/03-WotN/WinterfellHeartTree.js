@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class WinterfellHeartTree extends DrawCard {
     setupCardAbilities(ability) {
@@ -26,4 +26,4 @@ class WinterfellHeartTree extends DrawCard {
 
 WinterfellHeartTree.code = '03018';
 
-module.exports = WinterfellHeartTree;
+export default WinterfellHeartTree;

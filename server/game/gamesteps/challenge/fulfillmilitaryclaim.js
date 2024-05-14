@@ -1,4 +1,4 @@
-const BaseStep = require('../basestep.js');
+import BaseStep from '../basestep.js';
 
 class FulfillMilitaryClaim extends BaseStep {
     constructor(game, player, claim) {
@@ -90,4 +90,4 @@ class FulfillMilitaryClaim extends BaseStep {
     }
 }
 
-module.exports = FulfillMilitaryClaim;
+export default FulfillMilitaryClaim;

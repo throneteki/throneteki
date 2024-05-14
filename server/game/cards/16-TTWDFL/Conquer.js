@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class Conquer extends DrawCard {
     setupCardAbilities(ability) {
@@ -12,4 +12,4 @@ class Conquer extends DrawCard {
 
 Conquer.code = '16004';
 
-module.exports = Conquer;
+export default Conquer;

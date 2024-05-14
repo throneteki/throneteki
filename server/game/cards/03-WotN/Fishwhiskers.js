@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Fishwhiskers extends DrawCard {
     setupCardAbilities(ability) {
@@ -20,4 +20,4 @@ class Fishwhiskers extends DrawCard {
 
 Fishwhiskers.code = '03027';
 
-module.exports = Fishwhiskers;
+export default Fishwhiskers;

@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const { Tokens } = require('../../Constants');
+import DrawCard from '../../drawcard.js';
+import { Tokens } from '../../Constants/index.js';
 
 class Balerion extends DrawCard {
     setupCardAbilities(ability) {
@@ -29,4 +29,4 @@ class Balerion extends DrawCard {
 
 Balerion.code = '18018';
 
-module.exports = Balerion;
+export default Balerion;

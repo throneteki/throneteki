@@ -1,5 +1,5 @@
-const PlotCard = require('../../plotcard.js');
-const TextHelper = require('../../TextHelper');
+import PlotCard from '../../plotcard.js';
+import TextHelper from '../../TextHelper.js';
 
 class CountingCoppers extends PlotCard {
     setupCardAbilities() {
@@ -19,4 +19,4 @@ class CountingCoppers extends PlotCard {
 
 CountingCoppers.code = '01010';
 
-module.exports = CountingCoppers;
+export default CountingCoppers;

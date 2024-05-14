@@ -1,7 +1,7 @@
-const ApplyClaim = require('../../gamesteps/challenge/applyclaim.js');
-const DrawCard = require('../../drawcard.js');
-const Claim = require('../../Claim');
-const { ChallengeTracker } = require('../../EventTrackers');
+import ApplyClaim from '../../gamesteps/challenge/applyclaim.js';
+import DrawCard from '../../drawcard.js';
+import Claim from '../../Claim.js';
+import { ChallengeTracker } from '../../EventTrackers/index.js';
 
 class MaesterAemon extends DrawCard {
     setupCardAbilities() {
@@ -85,4 +85,4 @@ class MaesterAemon extends DrawCard {
 
 MaesterAemon.code = '07005';
 
-module.exports = MaesterAemon;
+export default MaesterAemon;

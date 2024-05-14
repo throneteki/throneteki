@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class BlueGraces extends DrawCard {
     setupCardAbilities(ability) {
@@ -26,4 +26,4 @@ class BlueGraces extends DrawCard {
 
 BlueGraces.code = '15013';
 
-module.exports = BlueGraces;
+export default BlueGraces;

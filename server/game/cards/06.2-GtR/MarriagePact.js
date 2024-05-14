@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class MarriagePact extends DrawCard {
     setupCardAbilities(ability) {
@@ -31,4 +31,4 @@ class MarriagePact extends DrawCard {
 
 MarriagePact.code = '06022';
 
-module.exports = MarriagePact;
+export default MarriagePact;

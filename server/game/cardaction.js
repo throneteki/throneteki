@@ -1,7 +1,7 @@
-const AbilityContext = require('./AbilityContext.js');
-const BaseAbility = require('./baseability.js');
-const Costs = require('./costs.js');
-const EventRegistrar = require('./eventregistrar.js');
+import AbilityContext from './AbilityContext.js';
+import BaseAbility from './baseability.js';
+import Costs from './costs.js';
+import EventRegistrar from './eventregistrar.js';
 
 /**
  * Represents an action ability provided by card text.
@@ -261,4 +261,4 @@ class CardAction extends BaseAbility {
     }
 }
 
-module.exports = CardAction;
+export default CardAction;

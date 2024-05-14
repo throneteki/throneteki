@@ -19,4 +19,4 @@ ChallengeTypes.all = [
     { text: 'Power', value: 'power', icon: 'power' }
 ];
 
-module.exports = ChallengeTypes;
+export default ChallengeTypes;

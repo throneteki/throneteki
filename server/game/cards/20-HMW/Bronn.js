@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const { Tokens } = require('../../Constants');
+import DrawCard from '../../drawcard.js';
+import { Tokens } from '../../Constants/index.js';
 
 class Bronn extends DrawCard {
     setupCardAbilities(ability) {
@@ -56,4 +56,4 @@ class Bronn extends DrawCard {
 
 Bronn.code = '20012';
 
-module.exports = Bronn;
+export default Bronn;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class LazyLeo extends DrawCard {
     setupCardAbilities() {
@@ -35,4 +35,4 @@ class LazyLeo extends DrawCard {
 
 LazyLeo.code = '11043';
 
-module.exports = LazyLeo;
+export default LazyLeo;

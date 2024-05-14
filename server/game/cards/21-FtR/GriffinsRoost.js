@@ -1,6 +1,6 @@
-const DrawCard = require('../../drawcard');
-const GenericTracker = require('../../EventTrackers/GenericTracker');
-const { Tokens } = require('../../Constants');
+import DrawCard from '../../drawcard.js';
+import GenericTracker from '../../EventTrackers/GenericTracker.js';
+import { Tokens } from '../../Constants/index.js';
 
 class GriffinsRoost extends DrawCard {
     setupCardAbilities(ability) {
@@ -53,4 +53,4 @@ class GriffinsRoost extends DrawCard {
 
 GriffinsRoost.code = '21021';
 
-module.exports = GriffinsRoost;
+export default GriffinsRoost;

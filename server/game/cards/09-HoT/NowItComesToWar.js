@@ -1,6 +1,5 @@
-const PlotCard = require('../../plotcard.js');
-
-const ApplyClaim = require('../../gamesteps/challenge/applyclaim.js');
+import PlotCard from '../../plotcard.js';
+import ApplyClaim from '../../gamesteps/challenge/applyclaim.js';
 
 class NowItComesToWar extends PlotCard {
     setupCardAbilities() {
@@ -55,4 +54,4 @@ class NowItComesToWar extends PlotCard {
 
 NowItComesToWar.code = '09050';
 
-module.exports = NowItComesToWar;
+export default NowItComesToWar;

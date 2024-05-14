@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TheTumblestone extends DrawCard {
     setupCardAbilities(ability) {
@@ -26,4 +26,4 @@ class TheTumblestone extends DrawCard {
 
 TheTumblestone.code = '06002';
 
-module.exports = TheTumblestone;
+export default TheTumblestone;

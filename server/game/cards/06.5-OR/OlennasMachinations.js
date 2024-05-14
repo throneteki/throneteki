@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class OlennasMachinations extends DrawCard {
     setupCardAbilities(ability) {
@@ -43,4 +43,4 @@ class OlennasMachinations extends DrawCard {
 
 OlennasMachinations.code = '06084';
 
-module.exports = OlennasMachinations;
+export default OlennasMachinations;

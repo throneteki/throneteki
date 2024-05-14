@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TomOfSevenstreams extends DrawCard {
     setupCardAbilities(ability) {
@@ -32,4 +32,4 @@ class TomOfSevenstreams extends DrawCard {
 
 TomOfSevenstreams.code = '08057';
 
-module.exports = TomOfSevenstreams;
+export default TomOfSevenstreams;

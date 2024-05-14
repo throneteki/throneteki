@@ -1,6 +1,6 @@
-const DrawCard = require('../../drawcard.js');
-const Message = require('../../Message');
-const GameActions = require('../../GameActions/index.js');
+import DrawCard from '../../drawcard.js';
+import Message from '../../Message.js';
+import GameActions from '../../GameActions/index.js';
 
 class WarScorpion extends DrawCard {
     setupCardAbilities(ability) {
@@ -64,4 +64,4 @@ class WarScorpion extends DrawCard {
 
 WarScorpion.code = '24012';
 
-module.exports = WarScorpion;
+export default WarScorpion;

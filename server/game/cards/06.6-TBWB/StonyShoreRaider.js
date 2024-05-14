@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class StonyShoreRaider extends DrawCard {
     setupCardAbilities(ability) {
@@ -29,4 +29,4 @@ class StonyShoreRaider extends DrawCard {
 
 StonyShoreRaider.code = '06111';
 
-module.exports = StonyShoreRaider;
+export default StonyShoreRaider;

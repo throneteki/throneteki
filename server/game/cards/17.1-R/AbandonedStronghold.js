@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class AbandonedStronghold extends DrawCard {
     setupCardAbilities(ability) {
@@ -41,4 +41,4 @@ class AbandonedStronghold extends DrawCard {
 
 AbandonedStronghold.code = '17120';
 
-module.exports = AbandonedStronghold;
+export default AbandonedStronghold;

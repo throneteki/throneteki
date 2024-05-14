@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class DrownedMen extends DrawCard {
     setupCardAbilities(ability) {
@@ -19,4 +19,4 @@ class DrownedMen extends DrawCard {
 
 DrownedMen.code = '01073';
 
-module.exports = DrownedMen;
+export default DrownedMen;

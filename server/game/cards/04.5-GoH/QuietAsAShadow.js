@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class QuietAsAShadow extends DrawCard {
     setupCardAbilities() {
@@ -29,4 +29,4 @@ class QuietAsAShadow extends DrawCard {
 
 QuietAsAShadow.code = '04099';
 
-module.exports = QuietAsAShadow;
+export default QuietAsAShadow;

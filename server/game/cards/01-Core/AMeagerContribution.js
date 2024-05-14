@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class AMeagerContribution extends DrawCard {
     setupCardAbilities(ability) {
@@ -23,4 +23,4 @@ class AMeagerContribution extends DrawCard {
 
 AMeagerContribution.code = '01138';
 
-module.exports = AMeagerContribution;
+export default AMeagerContribution;

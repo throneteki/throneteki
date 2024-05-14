@@ -1,7 +1,7 @@
-const BaseStep = require('./basestep.js');
-const GamePipeline = require('../gamepipeline.js');
-const SimpleStep = require('./simplestep.js');
-const InterruptWindow = require('./InterruptWindow');
+import BaseStep from './basestep.js';
+import GamePipeline from '../gamepipeline.js';
+import SimpleStep from './simplestep.js';
+import InterruptWindow from './InterruptWindow.js';
 
 class EventWindow extends BaseStep {
     constructor(game, event, postHandlerFunc = () => true) {
@@ -74,4 +74,4 @@ class EventWindow extends BaseStep {
     }
 }
 
-module.exports = EventWindow;
+export default EventWindow;

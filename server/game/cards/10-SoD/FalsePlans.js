@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class FalsePlans extends DrawCard {
     setupCardAbilities() {
@@ -51,4 +51,4 @@ class FalsePlans extends DrawCard {
 
 FalsePlans.code = '10023';
 
-module.exports = FalsePlans;
+export default FalsePlans;

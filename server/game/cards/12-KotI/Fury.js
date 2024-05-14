@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class Fury extends DrawCard {
     setupCardAbilities(ability) {
@@ -30,4 +30,4 @@ class Fury extends DrawCard {
 
 Fury.code = '12026';
 
-module.exports = Fury;
+export default Fury;

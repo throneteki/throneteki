@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class ShadowOfTheWall extends DrawCard {
     setupCardAbilities() {
@@ -38,4 +38,4 @@ class ShadowOfTheWall extends DrawCard {
 
 ShadowOfTheWall.code = '13026';
 
-module.exports = ShadowOfTheWall;
+export default ShadowOfTheWall;

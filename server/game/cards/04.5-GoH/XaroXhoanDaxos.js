@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class XaroXhoanDaxos extends DrawCard {
     setupCardAbilities(ability) {
@@ -22,4 +22,4 @@ class XaroXhoanDaxos extends DrawCard {
 
 XaroXhoanDaxos.code = '04093';
 
-module.exports = XaroXhoanDaxos;
+export default XaroXhoanDaxos;

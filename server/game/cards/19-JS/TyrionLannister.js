@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TyrionLannister extends DrawCard {
     setupCardAbilities(ability) {
@@ -37,4 +37,4 @@ class TyrionLannister extends DrawCard {
 
 TyrionLannister.code = '19014';
 
-module.exports = TyrionLannister;
+export default TyrionLannister;

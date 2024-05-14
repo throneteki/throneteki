@@ -1,6 +1,6 @@
-const PlotCard = require('../../plotcard.js');
-const GameActions = require('../../GameActions');
-const Messages = require('../../Messages');
+import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
+import Messages from '../../Messages/index.js';
 
 class RavagesOfWar extends PlotCard {
     setupCardAbilities() {
@@ -73,4 +73,4 @@ class RavagesOfWar extends PlotCard {
 }
 RavagesOfWar.code = '11120';
 
-module.exports = RavagesOfWar;
+export default RavagesOfWar;

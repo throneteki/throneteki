@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class BlackMarketMerchant extends DrawCard {
     setupCardAbilities() {
@@ -26,4 +26,4 @@ class BlackMarketMerchant extends DrawCard {
 
 BlackMarketMerchant.code = '13033';
 
-module.exports = BlackMarketMerchant;
+export default BlackMarketMerchant;

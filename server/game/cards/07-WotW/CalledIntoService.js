@@ -1,5 +1,5 @@
-const PlotCard = require('../../plotcard.js');
-const GameActions = require('../../GameActions');
+import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class CalledIntoService extends PlotCard {
     setupCardAbilities() {
@@ -32,4 +32,4 @@ class CalledIntoService extends PlotCard {
 
 CalledIntoService.code = '07049';
 
-module.exports = CalledIntoService;
+export default CalledIntoService;

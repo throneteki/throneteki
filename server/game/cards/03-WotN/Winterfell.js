@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Winterfell extends DrawCard {
     setupCardAbilities(ability) {
@@ -31,4 +31,4 @@ class Winterfell extends DrawCard {
 
 Winterfell.code = '03017';
 
-module.exports = Winterfell;
+export default Winterfell;

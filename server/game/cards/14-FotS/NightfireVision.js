@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class NightfireVision extends DrawCard {
     setupCardAbilities() {
@@ -59,4 +59,4 @@ class NightfireVision extends DrawCard {
 
 NightfireVision.code = '14024';
 
-module.exports = NightfireVision;
+export default NightfireVision;

@@ -1,4 +1,4 @@
-const CardMatcher = require('../CardMatcher');
+import CardMatcher from '../CardMatcher.js';
 
 /**
  * Base class that represents card selection requirements and the behaviours of
@@ -187,4 +187,4 @@ class BaseCardSelector {
     }
 }
 
-module.exports = BaseCardSelector;
+export default BaseCardSelector;

@@ -1,6 +1,6 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
-const { flatten } = require('../../../Array');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
+import { flatten } from '../../../Array.js';
 
 class AWallOfRoses extends DrawCard {
     setupCardAbilities(ability) {
@@ -43,4 +43,4 @@ class AWallOfRoses extends DrawCard {
 
 AWallOfRoses.code = '23016';
 
-module.exports = AWallOfRoses;
+export default AWallOfRoses;

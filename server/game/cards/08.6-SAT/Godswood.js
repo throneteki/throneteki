@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const TextHelper = require('../../TextHelper');
+import DrawCard from '../../drawcard.js';
+import TextHelper from '../../TextHelper.js';
 
 class Godswood extends DrawCard {
     setupCardAbilities(ability) {
@@ -36,4 +36,4 @@ class Godswood extends DrawCard {
 
 Godswood.code = '08102';
 
-module.exports = Godswood;
+export default Godswood;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class WhiteCloak extends DrawCard {
     setupCardAbilities(ability) {
@@ -28,4 +28,4 @@ class WhiteCloak extends DrawCard {
 
 WhiteCloak.code = '13098';
 
-module.exports = WhiteCloak;
+export default WhiteCloak;

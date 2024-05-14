@@ -1,8 +1,8 @@
-const { flatten } = require('../../Array');
-const Phase = require('./phase.js');
-const SimpleStep = require('./simplestep.js');
-const ActionWindow = require('./actionwindow.js');
-const GameActions = require('../GameActions');
+import { flatten } from '../../Array.js';
+import Phase from './phase.js';
+import SimpleStep from './simplestep.js';
+import ActionWindow from './actionwindow.js';
+import GameActions from '../GameActions/index.js';
 
 class StandingPhase extends Phase {
     constructor(game) {
@@ -103,4 +103,4 @@ class StandingPhase extends Phase {
     }
 }
 
-module.exports = StandingPhase;
+export default StandingPhase;

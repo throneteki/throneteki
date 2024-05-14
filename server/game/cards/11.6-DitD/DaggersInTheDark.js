@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class DaggersInTheDark extends DrawCard {
     setupCardAbilities() {
@@ -72,4 +72,4 @@ class DaggersInTheDark extends DrawCard {
 
 DaggersInTheDark.code = '11106';
 
-module.exports = DaggersInTheDark;
+export default DaggersInTheDark;

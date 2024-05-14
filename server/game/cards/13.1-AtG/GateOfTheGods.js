@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const TextHelper = require('../../TextHelper');
+import DrawCard from '../../drawcard.js';
+import TextHelper from '../../TextHelper.js';
 
 class GateOfTheGods extends DrawCard {
     setupCardAbilities(ability) {
@@ -38,4 +38,4 @@ class GateOfTheGods extends DrawCard {
 
 GateOfTheGods.code = '13004';
 
-module.exports = GateOfTheGods;
+export default GateOfTheGods;

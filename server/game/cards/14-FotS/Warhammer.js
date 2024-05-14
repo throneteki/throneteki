@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class Warhammer extends DrawCard {
     setupCardAbilities(ability) {
@@ -16,4 +16,4 @@ class Warhammer extends DrawCard {
 
 Warhammer.code = '14022';
 
-module.exports = Warhammer;
+export default Warhammer;

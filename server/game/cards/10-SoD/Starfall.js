@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Starfall extends DrawCard {
     setupCardAbilities(ability) {
@@ -33,4 +33,4 @@ class Starfall extends DrawCard {
 
 Starfall.code = '10018';
 
-module.exports = Starfall;
+export default Starfall;

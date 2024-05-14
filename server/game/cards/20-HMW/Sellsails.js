@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Sellsails extends DrawCard {
     setupCardAbilities(ability) {
@@ -23,4 +23,4 @@ class Sellsails extends DrawCard {
 
 Sellsails.code = '20002';
 
-module.exports = Sellsails;
+export default Sellsails;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class TasteTheBlood extends DrawCard {
     setupCardAbilities(ability) {
@@ -38,4 +38,4 @@ class TasteTheBlood extends DrawCard {
 
 TasteTheBlood.code = '25032';
 
-module.exports = TasteTheBlood;
+export default TasteTheBlood;

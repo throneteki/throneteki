@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class RoamingWolfpack extends DrawCard {
     setupCardAbilities(ability) {
@@ -13,4 +13,4 @@ class RoamingWolfpack extends DrawCard {
 
 RoamingWolfpack.code = '06041';
 
-module.exports = RoamingWolfpack;
+export default RoamingWolfpack;

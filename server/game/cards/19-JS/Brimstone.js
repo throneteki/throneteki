@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Brimstone extends DrawCard {
     setupCardAbilities(ability) {
@@ -34,4 +34,4 @@ class Brimstone extends DrawCard {
 
 Brimstone.code = '19008';
 
-module.exports = Brimstone;
+export default Brimstone;

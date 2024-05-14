@@ -1,5 +1,5 @@
-const GameAction = require('./GameAction');
-const Message = require('../Message');
+import GameAction from './GameAction.js';
+import Message from '../Message.js';
 
 class GainGold extends GameAction {
     constructor() {
@@ -30,4 +30,4 @@ class GainGold extends GameAction {
     }
 }
 
-module.exports = new GainGold();
+export default new GainGold();

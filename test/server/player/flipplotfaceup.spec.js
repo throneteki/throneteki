@@ -1,18 +1,26 @@
-const Player = require('../../../server/game/player.js');
+import Player from '../../../server/game/player.js';
 
-describe('Player', function() {
-    beforeEach(function() {
+describe('Player', function () {
+    beforeEach(function () {
         this.gameSpy = jasmine.createSpyObj('game', ['on', 'raiseEvent']);
 
         this.player = new Player('1', { username: 'Player 1', settings: {} }, true, this.gameSpy);
         this.player.initialise();
 
-        this.selectedPlotSpy = jasmine.createSpyObj('plot', ['createSnapshot', 'moveTo', 'applyPersistentEffects']);
+        this.selectedPlotSpy = jasmine.createSpyObj('plot', [
+            'createSnapshot',
+            'moveTo',
+            'applyPersistentEffects'
+        ]);
         this.selectedPlotSpy.uuid = '111';
         this.selectedPlotSpy.location = 'plot deck';
         this.selectedPlotSpy.controller = this.player;
         this.selectedPlotSpy.owner = this.player;
-        this.anotherPlotSpy = jasmine.createSpyObj('plot', ['createSnapshot', 'moveTo', 'applyPersistentEffects']);
+        this.anotherPlotSpy = jasmine.createSpyObj('plot', [
+            'createSnapshot',
+            'moveTo',
+            'applyPersistentEffects'
+        ]);
         this.anotherPlotSpy.uuid = '222';
         this.anotherPlotSpy.location = 'plot deck';
         this.anotherPlotSpy.controller = this.player;
@@ -22,9 +30,9 @@ describe('Player', function() {
         this.player.plotDeck = [this.selectedPlotSpy, this.anotherPlotSpy];
     });
 
-    describe('recyclePlots()', function() {
-        describe('when there are no plots left', function() {
-            beforeEach(function() {
+    describe('recyclePlots()', function () {
+        describe('when there are no plots left', function () {
+            beforeEach(function () {
                 this.player.activePlot = this.selectedPlotSpy;
                 this.player.plotDeck = [];
                 this.player.plotDiscard = [this.anotherPlotSpy];
@@ -33,20 +41,24 @@ describe('Player', function() {
                 this.player.recyclePlots();
             });
 
-            it('should move the contents of the used plots pile back to the plots pile', function() {
-                expect(this.anotherPlotSpy.moveTo).toHaveBeenCalledWith('plot deck', undefined, false);
+            it('should move the contents of the used plots pile back to the plots pile', function () {
+                expect(this.anotherPlotSpy.moveTo).toHaveBeenCalledWith(
+                    'plot deck',
+                    undefined,
+                    false
+                );
                 expect(this.player.plotDeck).toContain(this.anotherPlotSpy);
                 expect(this.player.plotDiscard).not.toContain(this.anotherPlotSpy);
             });
 
-            it('should not move the just revealed plot to any of the piles', function() {
+            it('should not move the just revealed plot to any of the piles', function () {
                 expect(this.player.plotDeck).not.toContain(this.selectedPlotSpy);
                 expect(this.player.plotDiscard).not.toContain(this.selectedPlotSpy);
             });
         });
 
-        describe('when there are plots left', function() {
-            beforeEach(function() {
+        describe('when there are plots left', function () {
+            beforeEach(function () {
                 this.player.plotDeck = [this.selectedPlotSpy];
                 this.player.plotDiscard = [this.anotherPlotSpy];
                 this.anotherPlotSpy.location = 'revealed plots';
@@ -54,7 +66,7 @@ describe('Player', function() {
                 this.player.recyclePlots();
             });
 
-            it('should not move the contents of the used plots pile back to the plots pile', function() {
+            it('should not move the contents of the used plots pile back to the plots pile', function () {
                 expect(this.anotherPlotSpy.moveTo).not.toHaveBeenCalledWith('plot deck');
                 expect(this.player.plotDeck).not.toContain(this.anotherPlotSpy);
                 expect(this.player.plotDiscard).toContain(this.anotherPlotSpy);

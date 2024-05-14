@@ -1,6 +1,6 @@
-const DrawCard = require('../../drawcard.js');
-const ChallengeTypes = require('../../ChallengeTypes');
-const { ChallengeTracker } = require('../../EventTrackers');
+import DrawCard from '../../drawcard.js';
+import ChallengeTypes from '../../ChallengeTypes.js';
+import { ChallengeTracker } from '../../EventTrackers/index.js';
 
 class LysasLetter extends DrawCard {
     setupCardAbilities() {
@@ -52,4 +52,4 @@ class LysasLetter extends DrawCard {
 
 LysasLetter.code = '23036';
 
-module.exports = LysasLetter;
+export default LysasLetter;

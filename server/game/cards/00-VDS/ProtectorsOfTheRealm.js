@@ -1,4 +1,4 @@
-const AgendaCard = require('../../agendacard.js');
+import AgendaCard from '../../agendacard.js';
 
 class ProtectorsOfTheRealm extends AgendaCard {
     setupCardAbilities(ability) {
@@ -30,4 +30,4 @@ class ProtectorsOfTheRealm extends AgendaCard {
 
 ProtectorsOfTheRealm.code = '00002';
 
-module.exports = ProtectorsOfTheRealm;
+export default ProtectorsOfTheRealm;

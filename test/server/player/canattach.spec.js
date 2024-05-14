@@ -1,7 +1,7 @@
-const Player = require('../../../server/game/player.js');
+import Player from '../../../server/game/player.js';
 
-describe('Player', function() {
-    beforeEach(function() {
+describe('Player', function () {
+    beforeEach(function () {
         this.gameSpy = jasmine.createSpyObj('game', ['raiseEvent']);
         this.player = new Player('1', { username: 'Player 1', settings: {} }, true, this.gameSpy);
         this.player.initialise();
@@ -13,39 +13,39 @@ describe('Player', function() {
         this.attachmentSpy.canAttach.and.returnValue(true);
     });
 
-    describe('canAttach()', function() {
-        describe('when everything is correct', function() {
-            it('should return true', function() {
+    describe('canAttach()', function () {
+        describe('when everything is correct', function () {
+            it('should return true', function () {
                 expect(this.player.canAttach(this.attachmentSpy, this.cardSpy)).toBe(true);
             });
         });
 
-        describe('when the card is not in play area', function() {
-            beforeEach(function() {
+        describe('when the card is not in play area', function () {
+            beforeEach(function () {
                 this.cardSpy.location = 'hand';
             });
 
-            it('should return false', function() {
+            it('should return false', function () {
                 expect(this.player.canAttach(this.attachmentSpy, this.cardSpy)).toBe(false);
             });
         });
 
-        describe('when the card does not allow the attachment', function() {
-            beforeEach(function() {
+        describe('when the card does not allow the attachment', function () {
+            beforeEach(function () {
                 this.cardSpy.allowAttachment.and.returnValue(false);
             });
 
-            it('should return false', function() {
+            it('should return false', function () {
                 expect(this.player.canAttach(this.attachmentSpy, this.cardSpy)).toBe(false);
             });
         });
 
-        describe('when the attachment cannot be attached to the card', function() {
-            beforeEach(function() {
+        describe('when the attachment cannot be attached to the card', function () {
+            beforeEach(function () {
                 this.attachmentSpy.canAttach.and.returnValue(false);
             });
 
-            it('should return false', function() {
+            it('should return false', function () {
                 expect(this.player.canAttach(this.attachmentSpy, this.cardSpy)).toBe(false);
             });
         });

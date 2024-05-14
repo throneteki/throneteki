@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class Confiscation extends PlotCard {
     setupCardAbilities() {
@@ -28,4 +28,4 @@ class Confiscation extends PlotCard {
 
 Confiscation.code = '01009';
 
-module.exports = Confiscation;
+export default Confiscation;

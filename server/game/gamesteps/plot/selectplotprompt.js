@@ -1,4 +1,4 @@
-const AllPlayerPrompt = require('../allplayerprompt.js');
+import AllPlayerPrompt from '../allplayerprompt.js';
 
 class SelectPlotPrompt extends AllPlayerPrompt {
     completionCondition(player) {
@@ -129,4 +129,4 @@ class SelectPlotPrompt extends AllPlayerPrompt {
     }
 }
 
-module.exports = SelectPlotPrompt;
+export default SelectPlotPrompt;

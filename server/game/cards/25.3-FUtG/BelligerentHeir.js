@@ -1,6 +1,6 @@
-const { Tokens } = require('../../Constants/index.js');
-const GameActions = require('../../GameActions/index.js');
-const DrawCard = require('../../drawcard.js');
+import { Tokens } from '../../Constants/index.js';
+import GameActions from '../../GameActions/index.js';
+import DrawCard from '../../drawcard.js';
 
 class BelligerentHeir extends DrawCard {
     setupCardAbilities(ability) {
@@ -57,4 +57,4 @@ class BelligerentHeir extends DrawCard {
 
 BelligerentHeir.code = '25057';
 
-module.exports = BelligerentHeir;
+export default BelligerentHeir;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class BearskinCloak extends DrawCard {
     setupCardAbilities(ability) {
@@ -15,4 +15,4 @@ class BearskinCloak extends DrawCard {
 
 BearskinCloak.code = '14034';
 
-module.exports = BearskinCloak;
+export default BearskinCloak;

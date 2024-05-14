@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheShavepate extends DrawCard {
     setupCardAbilities(ability) {
@@ -52,4 +52,4 @@ class TheShavepate extends DrawCard {
 
 TheShavepate.code = '15008';
 
-module.exports = TheShavepate;
+export default TheShavepate;

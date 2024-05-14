@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class TheIronThrone extends DrawCard {
     setupCardAbilities(ability) {
@@ -38,4 +38,4 @@ class TheIronThrone extends DrawCard {
 
 TheIronThrone.code = '13117';
 
-module.exports = TheIronThrone;
+export default TheIronThrone;

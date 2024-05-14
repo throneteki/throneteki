@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class OverwhelmingNumbers extends DrawCard {
     setupCardAbilities(ability) {
@@ -59,4 +59,4 @@ class OverwhelmingNumbers extends DrawCard {
 
 OverwhelmingNumbers.code = '15022';
 
-module.exports = OverwhelmingNumbers;
+export default OverwhelmingNumbers;

@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const { Tokens } = require('../../Constants');
+import DrawCard from '../../drawcard.js';
+import { Tokens } from '../../Constants/index.js';
 
 class TyrionLannister extends DrawCard {
     setupCardAbilities(ability) {
@@ -41,4 +41,4 @@ class TyrionLannister extends DrawCard {
 
 TyrionLannister.code = '13089';
 
-module.exports = TyrionLannister;
+export default TyrionLannister;

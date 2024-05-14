@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Harwin extends DrawCard {
     setupCardAbilities(ability) {
@@ -39,4 +39,4 @@ class Harwin extends DrawCard {
 
 Harwin.code = '18012';
 
-module.exports = Harwin;
+export default Harwin;

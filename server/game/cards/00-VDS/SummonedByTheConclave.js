@@ -1,5 +1,5 @@
-const PlotCard = require('../../plotcard.js');
-const GameActions = require('../../GameActions');
+import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SummonedByTheConclave extends PlotCard {
     setupCardAbilities() {
@@ -21,4 +21,4 @@ class SummonedByTheConclave extends PlotCard {
 
 SummonedByTheConclave.code = '00007';
 
-module.exports = SummonedByTheConclave;
+export default SummonedByTheConclave;

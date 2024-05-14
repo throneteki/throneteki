@@ -1,6 +1,6 @@
-const DrawCard = require('../drawcard.js');
+import DrawCard from '../drawcard.js';
 
-class FactionCostReducer extends DrawCard {
+export class FactionCostReducer extends DrawCard {
     constructor(owner, cardData, reduceBy, faction) {
         super(owner, cardData);
 
@@ -34,7 +34,7 @@ class FactionCostReducer extends DrawCard {
     }
 }
 
-class FactionCharacterCostReducer extends DrawCard {
+export class FactionCharacterCostReducer extends DrawCard {
     constructor(owner, cardData, reduceBy, faction) {
         super(owner, cardData);
 
@@ -68,8 +68,3 @@ class FactionCharacterCostReducer extends DrawCard {
         });
     }
 }
-
-module.exports = {
-    FactionCostReducer: FactionCostReducer,
-    FactionCharacterCostReducer: FactionCharacterCostReducer
-};

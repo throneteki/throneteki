@@ -23,4 +23,4 @@ class SpecificCardCost {
     }
 }
 
-module.exports = SpecificCardCost;
+export default SpecificCardCost;

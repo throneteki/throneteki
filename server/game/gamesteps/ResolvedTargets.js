@@ -1,4 +1,4 @@
-const { flatten, flatMap } = require('../../Array');
+import { flatten, flatMap } from '../../Array.js';
 
 /**
  * Encapsulates logic around what targets have been selected during resolution
@@ -80,4 +80,4 @@ class ResolvedTargets {
     }
 }
 
-module.exports = ResolvedTargets;
+export default ResolvedTargets;

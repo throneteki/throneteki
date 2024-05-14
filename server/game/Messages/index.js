@@ -23,4 +23,4 @@ const Messages = {
     eachPlayerSecretTargetingForCardType: createEachPlayerSecretTargetingForCardType
 };
 
-module.exports = Messages;
+export default Messages;

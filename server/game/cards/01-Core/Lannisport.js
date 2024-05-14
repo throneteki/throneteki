@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Lannisport extends DrawCard {
     setupCardAbilities() {
@@ -19,4 +19,4 @@ class Lannisport extends DrawCard {
 
 Lannisport.code = '01098';
 
-module.exports = Lannisport;
+export default Lannisport;

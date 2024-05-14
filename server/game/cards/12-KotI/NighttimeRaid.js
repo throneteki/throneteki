@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class RedRain extends DrawCard {
     setupCardAbilities() {
@@ -30,4 +30,4 @@ class RedRain extends DrawCard {
 
 RedRain.code = '12024';
 
-module.exports = RedRain;
+export default RedRain;

@@ -1,5 +1,5 @@
-const PlotCard = require('../../plotcard.js');
-const GameActions = require('../../GameActions');
+import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheMadKingsCommand extends PlotCard {
     setupCardAbilities() {
@@ -137,4 +137,4 @@ class TheMadKingsCommand extends PlotCard {
 
 TheMadKingsCommand.code = '22030';
 
-module.exports = TheMadKingsCommand;
+export default TheMadKingsCommand;

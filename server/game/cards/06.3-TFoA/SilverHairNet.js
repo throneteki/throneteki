@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class SilverHairNet extends DrawCard {
     setupCardAbilities(ability) {
@@ -22,4 +22,4 @@ class SilverHairNet extends DrawCard {
 
 SilverHairNet.code = '06044';
 
-module.exports = SilverHairNet;
+export default SilverHairNet;

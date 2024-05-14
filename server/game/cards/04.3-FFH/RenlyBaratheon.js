@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class RenlyBaratheon extends DrawCard {
     setupCardAbilities(ability) {
@@ -41,4 +41,4 @@ class RenlyBaratheon extends DrawCard {
 
 RenlyBaratheon.code = '04043';
 
-module.exports = RenlyBaratheon;
+export default RenlyBaratheon;

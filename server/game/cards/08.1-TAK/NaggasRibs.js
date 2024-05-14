@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class NaggasRibs extends DrawCard {
     setupCardAbilities(ability) {
@@ -32,4 +32,4 @@ class NaggasRibs extends DrawCard {
 
 NaggasRibs.code = '08013';
 
-module.exports = NaggasRibs;
+export default NaggasRibs;

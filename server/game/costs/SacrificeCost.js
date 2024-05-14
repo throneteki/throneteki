@@ -1,4 +1,4 @@
-const GameActions = require('../GameActions');
+import GameActions from '../GameActions/index.js';
 
 class SacrificeCost {
     constructor() {
@@ -16,4 +16,4 @@ class SacrificeCost {
     }
 }
 
-module.exports = SacrificeCost;
+export default SacrificeCost;

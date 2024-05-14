@@ -1,6 +1,6 @@
-const PlotCard = require('../../plotcard.js');
-const GameActions = require('../../GameActions');
-const { Tokens } = require('../../Constants');
+import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
+import { Tokens } from '../../Constants/index.js';
 
 class PowerBehindTheThrone extends PlotCard {
     setupCardAbilities(ability) {
@@ -37,4 +37,4 @@ class PowerBehindTheThrone extends PlotCard {
 
 PowerBehindTheThrone.code = '01018';
 
-module.exports = PowerBehindTheThrone;
+export default PowerBehindTheThrone;

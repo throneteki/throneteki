@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TyrionsChain extends DrawCard {
     setupCardAbilities(ability) {
@@ -73,4 +73,4 @@ class TyrionsChain extends DrawCard {
 
 TyrionsChain.code = '04110';
 
-module.exports = TyrionsChain;
+export default TyrionsChain;

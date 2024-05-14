@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions/index.js');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class CleverFeint extends DrawCard {
     setupCardAbilities(ability) {
@@ -28,4 +28,4 @@ class CleverFeint extends DrawCard {
 
 CleverFeint.code = '11070';
 
-module.exports = CleverFeint;
+export default CleverFeint;

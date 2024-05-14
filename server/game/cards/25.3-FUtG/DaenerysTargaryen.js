@@ -1,5 +1,5 @@
-const GameActions = require('../../GameActions/index.js');
-const DrawCard = require('../../drawcard.js');
+import GameActions from '../../GameActions/index.js';
+import DrawCard from '../../drawcard.js';
 
 class DaenerysTargaryen extends DrawCard {
     setupCardAbilities(ability) {
@@ -38,4 +38,4 @@ class DaenerysTargaryen extends DrawCard {
 
 DaenerysTargaryen.code = '25053';
 
-module.exports = DaenerysTargaryen;
+export default DaenerysTargaryen;

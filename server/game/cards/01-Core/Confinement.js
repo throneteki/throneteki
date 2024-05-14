@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Confinement extends DrawCard {
     setupCardAbilities() {
@@ -41,4 +41,4 @@ class Confinement extends DrawCard {
 
 Confinement.code = '01121';
 
-module.exports = Confinement;
+export default Confinement;

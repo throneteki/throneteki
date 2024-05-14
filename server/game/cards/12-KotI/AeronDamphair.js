@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class AeronDamphair extends DrawCard {
     setupCardAbilities(ability) {
@@ -18,4 +18,4 @@ class AeronDamphair extends DrawCard {
 
 AeronDamphair.code = '12005';
 
-module.exports = AeronDamphair;
+export default AeronDamphair;

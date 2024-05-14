@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class FieldsOfTheReach extends DrawCard {
     setupCardAbilities(ability) {
@@ -27,4 +27,4 @@ class FieldsOfTheReach extends DrawCard {
 
 FieldsOfTheReach.code = '14038';
 
-module.exports = FieldsOfTheReach;
+export default FieldsOfTheReach;

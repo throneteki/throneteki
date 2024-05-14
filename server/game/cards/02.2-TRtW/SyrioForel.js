@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class SyrioForel extends DrawCard {
     setupCardAbilities(ability) {
@@ -32,4 +32,4 @@ class SyrioForel extends DrawCard {
 
 SyrioForel.code = '02037';
 
-module.exports = SyrioForel;
+export default SyrioForel;

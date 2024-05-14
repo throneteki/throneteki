@@ -1,6 +1,6 @@
-const PutIntoShadows = require('../GameActions/PutIntoShadows');
-const BaseAbility = require('../baseability');
-const Costs = require('../costs');
+import PutIntoShadows from '../GameActions/PutIntoShadows.js';
+import BaseAbility from '../baseability.js';
+import Costs from '../costs.js';
 
 class MarshalIntoShadowsAction extends BaseAbility {
     constructor() {
@@ -71,4 +71,4 @@ class MarshalIntoShadowsAction extends BaseAbility {
     }
 }
 
-module.exports = MarshalIntoShadowsAction;
+export default MarshalIntoShadowsAction;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class VenomousBlade extends DrawCard {
     setupCardAbilities(ability) {
@@ -29,4 +29,4 @@ class VenomousBlade extends DrawCard {
 
 VenomousBlade.code = '04036';
 
-module.exports = VenomousBlade;
+export default VenomousBlade;

@@ -1,24 +1,24 @@
-const BaseStep = require('../../../server/game/gamesteps/basestep.js');
-const GamePipeline = require('../../../server/game/gamepipeline.js');
+import BaseStep from '../../../server/game/gamesteps/basestep.js';
+import GamePipeline from '../../../server/game/gamepipeline.js';
 
-describe('the GamePipeline', function() {
+describe('the GamePipeline', function () {
     var pipeline;
     var step = new BaseStep(null);
     var player = {};
     var arg = {};
     var method = {};
 
-    beforeEach(function() {
+    beforeEach(function () {
         pipeline = new GamePipeline();
     });
 
-    describe('the handleMenuCommand() function', function() {
-        describe('when the pipeline is empty', function() {
+    describe('the handleMenuCommand() function', function () {
+        describe('when the pipeline is empty', function () {
             beforeEach(() => {
                 pipeline.initialise([]);
             });
 
-            it('should return false', function() {
+            it('should return false', function () {
                 expect(pipeline.handleMenuCommand(player, arg, method)).toBe(false);
             });
         });
@@ -34,7 +34,7 @@ describe('the GamePipeline', function() {
                 expect(step.onMenuCommand).toHaveBeenCalledWith(player, arg, method, 'foo');
             });
 
-            it('should return false', function() {
+            it('should return false', function () {
                 expect(pipeline.handleMenuCommand(player, arg, method)).toBe(false);
             });
         });
@@ -50,7 +50,7 @@ describe('the GamePipeline', function() {
                 expect(step.onMenuCommand).toHaveBeenCalledWith(player, arg, method, 'foo');
             });
 
-            it('should return true', function() {
+            it('should return true', function () {
                 expect(pipeline.handleMenuCommand(player, arg, method)).toBe(true);
             });
         });

@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Leathers extends DrawCard {
     setupCardAbilities(ability) {
@@ -38,4 +38,4 @@ class Leathers extends DrawCard {
 
 Leathers.code = '18010';
 
-module.exports = Leathers;
+export default Leathers;

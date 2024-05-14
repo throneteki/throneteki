@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class BurningBright extends DrawCard {
     setupCardAbilities() {
@@ -31,4 +31,4 @@ class BurningBright extends DrawCard {
 }
 BurningBright.code = '20015';
 
-module.exports = BurningBright;
+export default BurningBright;

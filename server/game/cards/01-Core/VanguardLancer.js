@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class VanguardLancer extends DrawCard {
     setupCardAbilities() {
@@ -36,4 +36,4 @@ class VanguardLancer extends DrawCard {
 
 VanguardLancer.code = '01057';
 
-module.exports = VanguardLancer;
+export default VanguardLancer;

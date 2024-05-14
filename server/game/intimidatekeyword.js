@@ -1,5 +1,5 @@
-const ChallengeKeywordAbility = require('./ChallengeKeywordAbility.js');
-const GameActions = require('./GameActions');
+import ChallengeKeywordAbility from './ChallengeKeywordAbility.js';
+import GameActions from './GameActions/index.js';
 
 class IntimidateKeyword extends ChallengeKeywordAbility {
     constructor() {
@@ -65,4 +65,4 @@ class IntimidateKeyword extends ChallengeKeywordAbility {
     }
 }
 
-module.exports = IntimidateKeyword;
+export default IntimidateKeyword;

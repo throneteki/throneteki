@@ -1,10 +1,10 @@
-const Phase = require('./phase.js');
-const SimpleStep = require('./simplestep.js');
-const Challenge = require('../challenge.js');
-const ChallengeFlow = require('./challenge/challengeflow.js');
-const ChallengeTypes = require('../ChallengeTypes');
-const ActionWindow = require('./actionwindow.js');
-const { ChallengeTracker } = require('../EventTrackers');
+import Phase from './phase.js';
+import SimpleStep from './simplestep.js';
+import Challenge from '../challenge.js';
+import ChallengeFlow from './challenge/challengeflow.js';
+import ChallengeTypes from '../ChallengeTypes.js';
+import ActionWindow from './actionwindow.js';
+import { ChallengeTracker } from '../EventTrackers/index.js';
 
 class ChallengePhase extends Phase {
     constructor(game) {
@@ -117,4 +117,4 @@ class ChallengePhase extends Phase {
     }
 }
 
-module.exports = ChallengePhase;
+export default ChallengePhase;

@@ -1,5 +1,5 @@
-const AgendaCard = require('../../agendacard.js');
-const { Tokens } = require('../../Constants');
+import AgendaCard from '../../agendacard.js';
+import { Tokens } from '../../Constants/index.js';
 
 class FreeCompanies extends AgendaCard {
     setupCardAbilities(ability) {
@@ -37,4 +37,4 @@ class FreeCompanies extends AgendaCard {
 
 FreeCompanies.code = '18019';
 
-module.exports = FreeCompanies;
+export default FreeCompanies;

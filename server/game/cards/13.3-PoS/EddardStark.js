@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const Conditions = require('../../Conditions');
+import DrawCard from '../../drawcard.js';
+import Conditions from '../../Conditions.js';
 
 class EddardStark extends DrawCard {
     setupCardAbilities(ability) {
@@ -26,4 +26,4 @@ class EddardStark extends DrawCard {
 
 EddardStark.code = '13041';
 
-module.exports = EddardStark;
+export default EddardStark;

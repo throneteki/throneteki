@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class BattleOfOxcross extends PlotCard {
     setupCardAbilities(ability) {
@@ -14,4 +14,4 @@ class BattleOfOxcross extends PlotCard {
 
 BattleOfOxcross.code = '04060';
 
-module.exports = BattleOfOxcross;
+export default BattleOfOxcross;

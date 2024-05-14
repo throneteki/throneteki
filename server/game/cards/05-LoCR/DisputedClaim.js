@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class DisputedClaim extends DrawCard {
     setupCardAbilities(ability) {
@@ -19,4 +19,4 @@ class DisputedClaim extends DrawCard {
 
 DisputedClaim.code = '05026';
 
-module.exports = DisputedClaim;
+export default DisputedClaim;

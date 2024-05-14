@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class RaidingTheBayOfIce extends DrawCard {
     setupCardAbilities(ability) {
@@ -36,4 +36,4 @@ class RaidingTheBayOfIce extends DrawCard {
 
 RaidingTheBayOfIce.code = '07028';
 
-module.exports = RaidingTheBayOfIce;
+export default RaidingTheBayOfIce;

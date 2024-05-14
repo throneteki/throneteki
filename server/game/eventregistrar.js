@@ -75,4 +75,4 @@ class EventRegistrar {
     }
 }
 
-module.exports = EventRegistrar;
+export default EventRegistrar;

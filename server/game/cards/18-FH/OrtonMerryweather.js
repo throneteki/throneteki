@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class OrtonMerryweather extends DrawCard {
     setupCardAbilities(ability) {
@@ -57,4 +57,4 @@ class OrtonMerryweather extends DrawCard {
 
 OrtonMerryweather.code = '18015';
 
-module.exports = OrtonMerryweather;
+export default OrtonMerryweather;

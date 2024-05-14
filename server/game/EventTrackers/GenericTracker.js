@@ -30,4 +30,4 @@ class GenericTracker {
     }
 }
 
-module.exports = GenericTracker;
+export default GenericTracker;

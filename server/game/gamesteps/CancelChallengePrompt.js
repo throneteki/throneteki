@@ -1,4 +1,4 @@
-const AllPlayerPrompt = require('./allplayerprompt');
+import AllPlayerPrompt from './allplayerprompt.js';
 
 class CancelChallengePrompt extends AllPlayerPrompt {
     constructor(game, requestingPlayer) {
@@ -59,4 +59,4 @@ class CancelChallengePrompt extends AllPlayerPrompt {
     }
 }
 
-module.exports = CancelChallengePrompt;
+export default CancelChallengePrompt;

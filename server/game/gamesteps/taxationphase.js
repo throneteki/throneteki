@@ -1,7 +1,7 @@
-const Phase = require('./phase.js');
-const SimpleStep = require('./simplestep.js');
-const DiscardToReservePrompt = require('./taxation/DiscardToReservePrompt');
-const ActionWindow = require('./actionwindow.js');
+import Phase from './phase.js';
+import SimpleStep from './simplestep.js';
+import DiscardToReservePrompt from './taxation/DiscardToReservePrompt.js';
+import ActionWindow from './actionwindow.js';
 
 class TaxationPhase extends Phase {
     constructor(game) {
@@ -51,4 +51,4 @@ class TaxationPhase extends Phase {
     }
 }
 
-module.exports = TaxationPhase;
+export default TaxationPhase;

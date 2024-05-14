@@ -1,5 +1,5 @@
-const AllPlayerPrompt = require('../allplayerprompt.js');
-const AttachmentPrompt = require('../attachmentprompt.js');
+import AllPlayerPrompt from '../allplayerprompt.js';
+import AttachmentPrompt from '../attachmentprompt.js';
 
 class CheckAttachmentsPrompt extends AllPlayerPrompt {
     completionCondition(player) {
@@ -30,4 +30,4 @@ class CheckAttachmentsPrompt extends AllPlayerPrompt {
     }
 }
 
-module.exports = CheckAttachmentsPrompt;
+export default CheckAttachmentsPrompt;

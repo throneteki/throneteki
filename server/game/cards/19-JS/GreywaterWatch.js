@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class GreywaterWatch extends DrawCard {
     setupCardAbilities(ability) {
@@ -34,4 +34,4 @@ class GreywaterWatch extends DrawCard {
 
 GreywaterWatch.code = '19011';
 
-module.exports = GreywaterWatch;
+export default GreywaterWatch;

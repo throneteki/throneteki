@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class RubyOfRhllor extends DrawCard {
     setupCardAbilities() {
@@ -42,4 +42,4 @@ class RubyOfRhllor extends DrawCard {
 
 RubyOfRhllor.code = '04009';
 
-module.exports = RubyOfRhllor;
+export default RubyOfRhllor;

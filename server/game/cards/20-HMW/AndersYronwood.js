@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const { ChallengeTracker } = require('../../EventTrackers');
+import DrawCard from '../../drawcard.js';
+import { ChallengeTracker } from '../../EventTrackers/index.js';
 
 class AndersYronwood extends DrawCard {
     setupCardAbilities(ability) {
@@ -20,4 +20,4 @@ class AndersYronwood extends DrawCard {
 
 AndersYronwood.code = '20016';
 
-module.exports = AndersYronwood;
+export default AndersYronwood;

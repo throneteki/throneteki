@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class ArrogantContender extends DrawCard {
     setupCardAbilities(ability) {
@@ -39,4 +39,4 @@ class ArrogantContender extends DrawCard {
 
 ArrogantContender.code = '13023';
 
-module.exports = ArrogantContender;
+export default ArrogantContender;

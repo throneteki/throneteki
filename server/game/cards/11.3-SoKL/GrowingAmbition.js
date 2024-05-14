@@ -1,6 +1,6 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions/index.js');
-const TextHelper = require('../../TextHelper');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
+import TextHelper from '../../TextHelper.js';
 
 class GrowingAmbition extends DrawCard {
     setupCardAbilities(ability) {
@@ -82,4 +82,4 @@ class GrowingAmbition extends DrawCard {
 
 GrowingAmbition.code = '11044';
 
-module.exports = GrowingAmbition;
+export default GrowingAmbition;

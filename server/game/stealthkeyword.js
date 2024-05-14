@@ -1,5 +1,5 @@
-const ChallengeKeywordAbility = require('./ChallengeKeywordAbility.js');
-const BypassByStealth = require('./GameActions/BypassByStealth.js');
+import ChallengeKeywordAbility from './ChallengeKeywordAbility.js';
+import BypassByStealth from './GameActions/BypassByStealth.js';
 
 class StealthKeyword extends ChallengeKeywordAbility {
     constructor() {
@@ -36,4 +36,4 @@ class StealthKeyword extends ChallengeKeywordAbility {
     }
 }
 
-module.exports = StealthKeyword;
+export default StealthKeyword;

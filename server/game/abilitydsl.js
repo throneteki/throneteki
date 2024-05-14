@@ -1,6 +1,6 @@
-const AbilityLimit = require('./abilitylimit.js');
-const Effects = require('./effects.js');
-const Costs = require('./costs.js');
+import AbilityLimit from './abilitylimit.js';
+import Effects from './effects.js';
+import Costs from './costs.js';
 
 const AbilityDsl = {
     limit: AbilityLimit,
@@ -8,4 +8,4 @@ const AbilityDsl = {
     costs: Costs
 };
 
-module.exports = AbilityDsl;
+export default AbilityDsl;

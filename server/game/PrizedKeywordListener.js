@@ -1,4 +1,4 @@
-const GameActions = require('./GameActions');
+import GameActions from './GameActions/index.js';
 
 class PrizedKeywordListener {
     constructor(game) {
@@ -55,4 +55,4 @@ class PrizedKeywordListener {
     }
 }
 
-module.exports = PrizedKeywordListener;
+export default PrizedKeywordListener;

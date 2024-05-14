@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class PyromancersCache extends DrawCard {
     setupCardAbilities(ability) {
@@ -29,4 +29,4 @@ class PyromancersCache extends DrawCard {
 
 PyromancersCache.code = '13030';
 
-module.exports = PyromancersCache;
+export default PyromancersCache;

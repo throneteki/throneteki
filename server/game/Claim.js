@@ -44,4 +44,4 @@ class Claim {
     }
 }
 
-module.exports = Claim;
+export default Claim;

@@ -1,5 +1,5 @@
-const PlotCard = require('../../plotcard');
-const RevealPlots = require('../../gamesteps/revealplots');
+import PlotCard from '../../plotcard.js';
+import RevealPlots from '../../gamesteps/revealplots.js';
 
 class TheGatheringStorm extends PlotCard {
     setupCardAbilities() {
@@ -45,4 +45,4 @@ class TheGatheringStorm extends PlotCard {
 
 TheGatheringStorm.code = '16036';
 
-module.exports = TheGatheringStorm;
+export default TheGatheringStorm;

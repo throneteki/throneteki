@@ -1,5 +1,5 @@
-const GameActions = require('../GameActions');
-const LeavePlay = require('../GameActions/LeavePlay');
+import GameActions from '../GameActions/index.js';
+import LeavePlay from '../GameActions/LeavePlay.js';
 
 class PutIntoShadowsCost {
     constructor() {
@@ -22,4 +22,4 @@ class PutIntoShadowsCost {
     }
 }
 
-module.exports = PutIntoShadowsCost;
+export default PutIntoShadowsCost;

@@ -1,6 +1,6 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
-const { Tokens } = require('../../Constants');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
+import { Tokens } from '../../Constants/index.js';
 
 class Sunspear extends DrawCard {
     setupCardAbilities(ability) {
@@ -39,4 +39,4 @@ class Sunspear extends DrawCard {
 
 Sunspear.code = '22012';
 
-module.exports = Sunspear;
+export default Sunspear;

@@ -1,4 +1,4 @@
-const TitleCard = require('../../TitleCard.js');
+import TitleCard from '../../TitleCard.js';
 
 class MasterOfCoin extends TitleCard {
     setupCardAbilities() {
@@ -12,4 +12,4 @@ class MasterOfCoin extends TitleCard {
 
 MasterOfCoin.code = '01209';
 
-module.exports = MasterOfCoin;
+export default MasterOfCoin;

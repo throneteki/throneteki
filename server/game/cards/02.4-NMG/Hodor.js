@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Hodor extends DrawCard {
     setupCardAbilities(ability) {
@@ -16,4 +16,4 @@ class Hodor extends DrawCard {
 
 Hodor.code = '02061';
 
-module.exports = Hodor;
+export default Hodor;

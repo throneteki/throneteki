@@ -52,4 +52,4 @@ const AbilityWindowTitles = {
     }
 };
 
-module.exports = AbilityWindowTitles;
+export default AbilityWindowTitles;

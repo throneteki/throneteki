@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class WarlockOfQarth extends DrawCard {
     setupCardAbilities(ability) {
@@ -37,4 +37,4 @@ class WarlockOfQarth extends DrawCard {
 
 WarlockOfQarth.code = '22020';
 
-module.exports = WarlockOfQarth;
+export default WarlockOfQarth;

@@ -1,7 +1,7 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
-const { Tokens } = require('../../Constants');
-const { flatten } = require('../../../Array');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
+import { Tokens } from '../../Constants/index.js';
+import { flatten } from '../../../Array.js';
 
 class VargoHoat extends DrawCard {
     setupCardAbilities(ability) {
@@ -66,4 +66,4 @@ class VargoHoat extends DrawCard {
 
 VargoHoat.code = '18017';
 
-module.exports = VargoHoat;
+export default VargoHoat;

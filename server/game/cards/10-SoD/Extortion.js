@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Extortion extends DrawCard {
     setupCardAbilities() {
@@ -32,4 +32,4 @@ class Extortion extends DrawCard {
 
 Extortion.code = '10030';
 
-module.exports = Extortion;
+export default Extortion;

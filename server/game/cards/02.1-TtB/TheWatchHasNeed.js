@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheWatchHasNeed extends DrawCard {
     setupCardAbilities() {
@@ -39,4 +39,4 @@ class TheWatchHasNeed extends DrawCard {
 
 TheWatchHasNeed.code = '02002';
 
-module.exports = TheWatchHasNeed;
+export default TheWatchHasNeed;

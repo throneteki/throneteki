@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const TextHelper = require('../../TextHelper');
+import DrawCard from '../../drawcard.js';
+import TextHelper from '../../TextHelper.js';
 
 class PleasureBarge extends DrawCard {
     constructor(owner, cardData) {
@@ -50,4 +50,4 @@ class DrawTracker {
 
 PleasureBarge.code = '02006';
 
-module.exports = PleasureBarge;
+export default PleasureBarge;

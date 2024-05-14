@@ -1,11 +1,8 @@
-describe('Crown Regent', function() {
-    integration({ isMelee: true }, function() {
-        describe('redirecting a challenge', function() {
-            beforeEach(function() {
-                const deck = this.buildDeck('stark', [
-                    'Trading with the Pentoshi',
-                    'Hedge Knight'
-                ]);
+describe('Crown Regent', function () {
+    integration({ isMelee: true }, function () {
+        describe('redirecting a challenge', function () {
+            beforeEach(function () {
+                const deck = this.buildDeck('stark', ['Trading with the Pentoshi', 'Hedge Knight']);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
                 this.player3.selectDeck(deck);
@@ -37,17 +34,17 @@ describe('Crown Regent', function() {
                 this.player2.clickPrompt('Done');
             });
 
-            it('allows the challenge to be redirected', function() {
+            it('allows the challenge to be redirected', function () {
                 expect(this.player1).toAllowAbilityTrigger('Crown Regent');
             });
 
-            it('allows the initiating player to choose a player that supports them', function() {
+            it('allows the initiating player to choose a player that supports them', function () {
                 this.player1.triggerAbility('Crown Regent');
                 expect(this.player2).not.toHavePromptButton('player1');
                 expect(this.player2).toHavePromptButton('player3');
             });
 
-            it('updates the defending player', function() {
+            it('updates the defending player', function () {
                 this.player1.triggerAbility('Crown Regent');
                 this.player2.clickPrompt('player3');
                 expect(this.game.currentChallenge.defendingPlayer).toBe(this.player3Object);
@@ -55,11 +52,12 @@ describe('Crown Regent', function() {
             });
         });
 
-        describe('when a challenge involving stealth is redirected', function() {
-            beforeEach(function() {
+        describe('when a challenge involving stealth is redirected', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('stark', [
                     'A Noble Cause',
-                    'Hedge Knight', 'Maester Wendamyr'
+                    'Hedge Knight',
+                    'Maester Wendamyr'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
@@ -101,11 +99,11 @@ describe('Crown Regent', function() {
                 this.player2.clickPrompt('player3');
             });
 
-            it('allows the player to choose new stealth targets', function() {
+            it('allows the player to choose new stealth targets', function () {
                 expect(this.player2).toHavePrompt('Select stealth target for Maester Wendamyr');
             });
 
-            it('only bypasses the new character with stealth', function() {
+            it('only bypasses the new character with stealth', function () {
                 this.player2.clickCard(this.player3Char);
                 expect(this.player3Char.bypassedByStealth).toBe(true);
                 expect(this.player1Char.bypassedByStealth).toBe(false);

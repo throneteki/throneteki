@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class FilthyAccusations extends PlotCard {
     setupCardAbilities() {
@@ -20,4 +20,4 @@ class FilthyAccusations extends PlotCard {
 
 FilthyAccusations.code = '01011';
 
-module.exports = FilthyAccusations;
+export default FilthyAccusations;

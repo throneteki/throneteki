@@ -1,13 +1,12 @@
-const CardEntersPlayTracker = require('./CardEntersPlayTracker');
-const ChallengeTracker = require('./ChallengeTracker');
-const EventPlayedTracker = require('./EventPlayedTracker');
-const KillTracker = require('./KillTracker');
-const PaidGoldTracker = require('./PaidGoldTracker');
-const ParticipationTracker = require('./ParticipationTracker');
+import CardEntersPlayTracker from './CardEntersPlayTracker.js';
+export { ChallengeTracker } from './ChallengeTracker.js';
+import EventPlayedTracker from './EventPlayedTracker.js';
+import KillTracker from './KillTracker.js';
+import PaidGoldTracker from './PaidGoldTracker.js';
+import ParticipationTracker from './ParticipationTracker.js';
 
-module.exports = {
+export default {
     CardEntersPlayTracker,
-    ChallengeTracker,
     EventPlayedTracker,
     KillTracker,
     PaidGoldTracker,

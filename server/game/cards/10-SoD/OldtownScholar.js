@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const TextHelper = require('../../TextHelper');
+import DrawCard from '../../drawcard.js';
+import TextHelper from '../../TextHelper.js';
 
 class OldtownScholar extends DrawCard {
     setupCardAbilities(ability) {
@@ -27,4 +27,4 @@ class OldtownScholar extends DrawCard {
 
 OldtownScholar.code = '10041';
 
-module.exports = OldtownScholar;
+export default OldtownScholar;

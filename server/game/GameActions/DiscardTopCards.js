@@ -1,5 +1,5 @@
-const GameAction = require('./GameAction');
-const DiscardCard = require('./DiscardCard');
+import GameAction from './GameAction.js';
+import DiscardCard from './DiscardCard.js';
 
 class DiscardTopCards extends GameAction {
     constructor() {
@@ -36,4 +36,4 @@ class DiscardTopCards extends GameAction {
     }
 }
 
-module.exports = new DiscardTopCards();
+export default new DiscardTopCards();

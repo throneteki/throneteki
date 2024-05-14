@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class MessengerRaven extends DrawCard {
     setupCardAbilities(ability) {
@@ -22,4 +22,4 @@ class MessengerRaven extends DrawCard {
 
 MessengerRaven.code = '01130';
 
-module.exports = MessengerRaven;
+export default MessengerRaven;

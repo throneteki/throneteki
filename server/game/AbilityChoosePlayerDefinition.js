@@ -1,5 +1,5 @@
-const AbilityChoiceSelection = require('./AbilityChoiceSelection');
-const ChoosePlayerPrompt = require('./gamesteps/ChoosePlayerPrompt');
+import AbilityChoiceSelection from './AbilityChoiceSelection.js';
+import ChoosePlayerPrompt from './gamesteps/ChoosePlayerPrompt.js';
 
 class AbilityChoosePlayerDefinition {
     static create(properties) {
@@ -88,4 +88,4 @@ class AbilityChoosePlayerDefinition {
     }
 }
 
-module.exports = AbilityChoosePlayerDefinition;
+export default AbilityChoosePlayerDefinition;

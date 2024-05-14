@@ -1,5 +1,5 @@
-const GameActions = require('../../GameActions/index.js');
-const DrawCard = require('../../drawcard.js');
+import GameActions from '../../GameActions/index.js';
+import DrawCard from '../../drawcard.js';
 
 class CalmAsStillWater extends DrawCard {
     setupCardAbilities() {
@@ -28,4 +28,4 @@ class CalmAsStillWater extends DrawCard {
 
 CalmAsStillWater.code = '25018';
 
-module.exports = CalmAsStillWater;
+export default CalmAsStillWater;

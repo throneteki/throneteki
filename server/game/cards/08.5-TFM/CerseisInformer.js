@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class CerseisInformer extends DrawCard {
     setupCardAbilities(ability) {
@@ -46,4 +46,4 @@ class CerseisInformer extends DrawCard {
 
 CerseisInformer.code = '08089';
 
-module.exports = CerseisInformer;
+export default CerseisInformer;

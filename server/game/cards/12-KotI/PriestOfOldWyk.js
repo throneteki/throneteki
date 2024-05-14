@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class PriestOfOldWyk extends DrawCard {
     setupCardAbilities(ability) {
@@ -12,4 +12,4 @@ class PriestOfOldWyk extends DrawCard {
 
 PriestOfOldWyk.code = '12012';
 
-module.exports = PriestOfOldWyk;
+export default PriestOfOldWyk;

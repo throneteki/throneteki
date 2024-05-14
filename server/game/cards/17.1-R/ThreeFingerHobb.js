@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const TextHelper = require('../../TextHelper');
+import DrawCard from '../../drawcard.js';
+import TextHelper from '../../TextHelper.js';
 
 class ThreeFingerHobb extends DrawCard {
     setupCardAbilities() {
@@ -26,4 +26,4 @@ class ThreeFingerHobb extends DrawCard {
 
 ThreeFingerHobb.code = '17119';
 
-module.exports = ThreeFingerHobb;
+export default ThreeFingerHobb;

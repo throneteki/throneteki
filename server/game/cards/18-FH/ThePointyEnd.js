@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard');
+import PlotCard from '../../plotcard.js';
 
 class ThePointyEnd extends PlotCard {
     setupCardAbilities() {
@@ -37,4 +37,4 @@ class ThePointyEnd extends PlotCard {
 
 ThePointyEnd.code = '18020';
 
-module.exports = ThePointyEnd;
+export default ThePointyEnd;

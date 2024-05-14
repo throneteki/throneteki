@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class MaidensBane extends DrawCard {
     setupCardAbilities(ability) {
@@ -31,4 +31,4 @@ class MaidensBane extends DrawCard {
 
 MaidensBane.code = '12019';
 
-module.exports = MaidensBane;
+export default MaidensBane;

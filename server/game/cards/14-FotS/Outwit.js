@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard');
+import PlotCard from '../../plotcard.js';
 
 class Outwit extends PlotCard {
     setupCardAbilities(ability) {
@@ -32,4 +32,4 @@ class Outwit extends PlotCard {
 
 Outwit.code = '14047';
 
-module.exports = Outwit;
+export default Outwit;

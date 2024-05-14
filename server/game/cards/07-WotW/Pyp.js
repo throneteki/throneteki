@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Pyp extends DrawCard {
     setupCardAbilities() {
@@ -34,4 +34,4 @@ class Pyp extends DrawCard {
 
 Pyp.code = '07011';
 
-module.exports = Pyp;
+export default Pyp;

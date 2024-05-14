@@ -1,8 +1,8 @@
-const AbilityTargetMessages = require('./AbilityTargetMessages');
-const AbilityChoiceSelection = require('./AbilityChoiceSelection');
-const CardSelector = require('./CardSelector.js');
-const Messages = require('./Messages');
-const { flatMap } = require('../Array');
+import AbilityTargetMessages from './AbilityTargetMessages.js';
+import AbilityChoiceSelection from './AbilityChoiceSelection.js';
+import CardSelector from './CardSelector.js';
+import Messages from './Messages/index.js';
+import { flatMap } from '../Array.js';
 
 class AbilityTarget {
     static create(name, properties) {
@@ -184,4 +184,4 @@ class AbilityTarget {
     }
 }
 
-module.exports = AbilityTarget;
+export default AbilityTarget;

@@ -1,5 +1,5 @@
-const PlotCard = require('../../plotcard.js');
-const { ChallengeTracker } = require('../../EventTrackers');
+import PlotCard from '../../plotcard.js';
+import { ChallengeTracker } from '../../EventTrackers/index.js';
 
 class AGameOfThrones extends PlotCard {
     setupCardAbilities(ability) {
@@ -19,4 +19,4 @@ class AGameOfThrones extends PlotCard {
 
 AGameOfThrones.code = '01003';
 
-module.exports = AGameOfThrones;
+export default AGameOfThrones;

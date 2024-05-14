@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const TextHelper = require('../../TextHelper');
+import DrawCard from '../../drawcard.js';
+import TextHelper from '../../TextHelper.js';
 
 class Stormcrows extends DrawCard {
     setupCardAbilities(ability) {
@@ -47,4 +47,4 @@ class Stormcrows extends DrawCard {
 
 Stormcrows.code = '08033';
 
-module.exports = Stormcrows;
+export default Stormcrows;

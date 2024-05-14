@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class FreyBastard extends DrawCard {
     setupCardAbilities(ability) {
@@ -34,4 +34,4 @@ class FreyBastard extends DrawCard {
 
 FreyBastard.code = '06078';
 
-module.exports = FreyBastard;
+export default FreyBastard;

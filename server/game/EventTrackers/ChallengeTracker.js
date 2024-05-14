@@ -1,4 +1,4 @@
-class ChallengeTracker {
+export class ChallengeTracker {
     static forPhase(game) {
         return new ChallengeTracker(game, 'onPhaseEnded');
     }
@@ -44,5 +44,3 @@ class ChallengeTracker {
         }, 0);
     }
 }
-
-module.exports = ChallengeTracker;

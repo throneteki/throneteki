@@ -1,6 +1,6 @@
-const ChallengeKeywordAbility = require('./ChallengeKeywordAbility.js');
-const GameActions = require('./GameActions');
-const TextHelper = require('./TextHelper');
+import ChallengeKeywordAbility from './ChallengeKeywordAbility.js';
+import GameActions from './GameActions/index.js';
+import TextHelper from './TextHelper.js';
 
 class InsightKeyword extends ChallengeKeywordAbility {
     constructor() {
@@ -21,4 +21,4 @@ class InsightKeyword extends ChallengeKeywordAbility {
     }
 }
 
-module.exports = InsightKeyword;
+export default InsightKeyword;

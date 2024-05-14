@@ -1,5 +1,5 @@
-const AgendaCard = require('../../agendacard');
-const GameActions = require('../../GameActions');
+import AgendaCard from '../../agendacard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheGoldPrice extends AgendaCard {
     constructor(owner, cardData) {
@@ -99,4 +99,4 @@ class PayOrSacrificePrompt {
 
 TheGoldPrice.code = '25040';
 
-module.exports = TheGoldPrice;
+export default TheGoldPrice;

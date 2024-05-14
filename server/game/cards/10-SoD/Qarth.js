@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Qarth extends DrawCard {
     setupCardAbilities(ability) {
@@ -29,4 +29,4 @@ class Qarth extends DrawCard {
 
 Qarth.code = '10036';
 
-module.exports = Qarth;
+export default Qarth;

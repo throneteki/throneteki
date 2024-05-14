@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class JoustingContest extends PlotCard {
     setupCardAbilities(ability) {
@@ -11,4 +11,4 @@ class JoustingContest extends PlotCard {
 
 JoustingContest.code = '01014';
 
-module.exports = JoustingContest;
+export default JoustingContest;

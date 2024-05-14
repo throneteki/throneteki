@@ -1,5 +1,5 @@
-const GameActions = require('../../GameActions/index.js');
-const PlotCard = require('../../plotcard.js');
+import GameActions from '../../GameActions/index.js';
+import PlotCard from '../../plotcard.js';
 
 class WeaponsAtTheDoor extends PlotCard {
     setupCardAbilities() {
@@ -23,4 +23,4 @@ class WeaponsAtTheDoor extends PlotCard {
 
 WeaponsAtTheDoor.code = '03051';
 
-module.exports = WeaponsAtTheDoor;
+export default WeaponsAtTheDoor;

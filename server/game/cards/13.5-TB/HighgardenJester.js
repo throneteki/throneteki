@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const sample = require('lodash.sample');
+import DrawCard from '../../drawcard.js';
+import sample from 'lodash.sample';
 
 class HighgardenJester extends DrawCard {
     setupCardAbilities() {
@@ -56,4 +56,4 @@ class HighgardenJester extends DrawCard {
 
 HighgardenJester.code = '13083';
 
-module.exports = HighgardenJester;
+export default HighgardenJester;

@@ -1,5 +1,5 @@
-const GameAction = require('./GameAction');
-const RevealCards = require('./RevealCards');
+import GameAction from './GameAction.js';
+import RevealCards from './RevealCards.js';
 
 class RevealTopCards extends GameAction {
     constructor() {
@@ -39,4 +39,4 @@ class RevealTopCards extends GameAction {
     }
 }
 
-module.exports = new RevealTopCards();
+export default new RevealTopCards();

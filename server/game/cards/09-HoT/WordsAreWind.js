@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const TextHelper = require('../../TextHelper');
+import DrawCard from '../../drawcard.js';
+import TextHelper from '../../TextHelper.js';
 
 class WordsAreWind extends DrawCard {
     setupCardAbilities() {
@@ -60,4 +60,4 @@ class WordsAreWind extends DrawCard {
 
 WordsAreWind.code = '09044';
 
-module.exports = WordsAreWind;
+export default WordsAreWind;

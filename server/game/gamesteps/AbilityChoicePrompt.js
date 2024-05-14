@@ -1,5 +1,5 @@
-const AbilityMessage = require('../AbilityMessage');
-const BaseStep = require('./basestep');
+import AbilityMessage from '../AbilityMessage.js';
+import BaseStep from './basestep.js';
 
 class AbilityChoicePrompt extends BaseStep {
     constructor({
@@ -69,4 +69,4 @@ class AbilityChoicePrompt extends BaseStep {
     }
 }
 
-module.exports = AbilityChoicePrompt;
+export default AbilityChoicePrompt;

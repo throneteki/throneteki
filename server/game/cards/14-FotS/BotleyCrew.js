@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class BotleyCrew extends DrawCard {
     setupCardAbilities() {
@@ -27,4 +27,4 @@ class BotleyCrew extends DrawCard {
 
 BotleyCrew.code = '14025';
 
-module.exports = BotleyCrew;
+export default BotleyCrew;

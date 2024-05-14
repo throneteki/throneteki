@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class BlackLorren extends DrawCard {
     setupCardAbilities(ability) {
@@ -37,4 +37,4 @@ class BlackLorren extends DrawCard {
 
 BlackLorren.code = '20006';
 
-module.exports = BlackLorren;
+export default BlackLorren;

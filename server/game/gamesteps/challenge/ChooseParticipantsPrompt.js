@@ -1,4 +1,4 @@
-const BaseStep = require('../basestep');
+import BaseStep from '../basestep.js';
 
 class ChooseParticipantsPrompt extends BaseStep {
     constructor(game, choosingPlayer, properties) {
@@ -118,4 +118,4 @@ class ChooseParticipantsPrompt extends BaseStep {
     }
 }
 
-module.exports = ChooseParticipantsPrompt;
+export default ChooseParticipantsPrompt;

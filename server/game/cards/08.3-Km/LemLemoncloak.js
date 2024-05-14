@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class LemLemoncloak extends DrawCard {
     setupCardAbilities(ability) {
@@ -15,4 +15,4 @@ class LemLemoncloak extends DrawCard {
 
 LemLemoncloak.code = '08058';
 
-module.exports = LemLemoncloak;
+export default LemLemoncloak;

@@ -1,6 +1,6 @@
-const DrawCard = require('../../drawcard');
-const TextHelper = require('../../TextHelper');
-const { ChallengeTracker } = require('../../EventTrackers');
+import DrawCard from '../../drawcard.js';
+import TextHelper from '../../TextHelper.js';
+import { ChallengeTracker } from '../../EventTrackers/index.js';
 
 class TheRedKeep extends DrawCard {
     setupCardAbilities(ability) {
@@ -39,4 +39,4 @@ class TheRedKeep extends DrawCard {
 
 TheRedKeep.code = '01061';
 
-module.exports = TheRedKeep;
+export default TheRedKeep;

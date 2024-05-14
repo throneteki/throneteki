@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Satin extends DrawCard {
     setupCardAbilities(ability) {
@@ -30,4 +30,4 @@ class Satin extends DrawCard {
 
 Satin.code = '07013';
 
-module.exports = Satin;
+export default Satin;

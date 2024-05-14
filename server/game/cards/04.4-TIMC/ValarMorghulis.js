@@ -1,5 +1,5 @@
-const PlotCard = require('../../plotcard.js');
-const { flatMap } = require('../../../Array');
+import PlotCard from '../../plotcard.js';
+import { flatMap } from '../../../Array.js';
 
 class ValarMorghulis extends PlotCard {
     setupCardAbilities() {
@@ -17,4 +17,4 @@ class ValarMorghulis extends PlotCard {
 
 ValarMorghulis.code = '04080';
 
-module.exports = ValarMorghulis;
+export default ValarMorghulis;

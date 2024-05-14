@@ -1,9 +1,13 @@
-describe('Anya Waynwood', function() {
-    integration(function() {
-        beforeEach(function() {
+describe('Anya Waynwood', function () {
+    integration(function () {
+        beforeEach(function () {
             const deck = this.buildDeck('greyjoy', [
                 'Time of Plenty',
-                'Anya Waynwood', 'Lannisport Merchant', 'Lannisport Merchant', 'Lannisport Merchant', 'The Kingsroad'
+                'Anya Waynwood',
+                'Lannisport Merchant',
+                'Lannisport Merchant',
+                'Lannisport Merchant',
+                'The Kingsroad'
             ]);
             this.player1.selectDeck(deck);
             this.player2.selectDeck(deck);
@@ -12,9 +16,11 @@ describe('Anya Waynwood', function() {
 
             this.anya = this.player1.findCardByName('Anya Waynwood');
             this.location = this.player1.findCardByName('The Kingsroad');
-            [this.merchant1, this.merchant2] = this.player1.filterCardsByName('Lannisport Merchant');
+            [this.merchant1, this.merchant2] =
+                this.player1.filterCardsByName('Lannisport Merchant');
             this.opponentAnya = this.player2.findCardByName('Anya Waynwood');
-            [this.opponentMerchant1, this.opponentMerchant2, this.opponentMerchant3] = this.player2.filterCardsByName('Lannisport Merchant');
+            [this.opponentMerchant1, this.opponentMerchant2, this.opponentMerchant3] =
+                this.player2.filterCardsByName('Lannisport Merchant');
             this.opponentLocation = this.player2.findCardByName('The Kingsroad');
             this.player1.clickCard(this.anya);
             this.player1.clickCard(this.merchant1);
@@ -38,8 +44,8 @@ describe('Anya Waynwood', function() {
             this.player2Object.faction.power = 1;
         });
 
-        describe('when used against a non-participating character', function() {
-            it('contributes their STR to the challenge', function() {
+        describe('when used against a non-participating character', function () {
+            it('contributes their STR to the challenge', function () {
                 this.player1.clickPrompt('Power');
                 this.player1.clickCard(this.merchant1);
                 this.player1.clickPrompt('Done');
@@ -63,8 +69,8 @@ describe('Anya Waynwood', function() {
             });
         });
 
-        describe('when used early and the character is declared by opponent', function() {
-            it('the effect is overridden by declaring the character', function() {
+        describe('when used early and the character is declared by opponent', function () {
+            it('the effect is overridden by declaring the character', function () {
                 this.player1.clickPrompt('Power');
                 this.player1.clickCard(this.merchant1);
                 this.player1.clickPrompt('Done');
@@ -89,8 +95,8 @@ describe('Anya Waynwood', function() {
             });
         });
 
-        describe('when used twice on the same character', function() {
-            it('the last effect takes precedence', function() {
+        describe('when used twice on the same character', function () {
+            it('the last effect takes precedence', function () {
                 this.player1.clickPrompt('Power');
                 this.player1.clickCard(this.merchant1);
                 this.player1.clickPrompt('Done');

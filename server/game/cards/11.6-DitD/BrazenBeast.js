@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class BrazenBeast extends DrawCard {
     setupCardAbilities(ability) {
@@ -24,4 +24,4 @@ class BrazenBeast extends DrawCard {
 
 BrazenBeast.code = '11113';
 
-module.exports = BrazenBeast;
+export default BrazenBeast;

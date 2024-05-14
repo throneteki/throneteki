@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const TextHelper = require('../../TextHelper');
+import DrawCard from '../../drawcard.js';
+import TextHelper from '../../TextHelper.js';
 
 class KingsGate extends DrawCard {
     setupCardAbilities(ability) {
@@ -26,4 +26,4 @@ class KingsGate extends DrawCard {
 
 KingsGate.code = '13008';
 
-module.exports = KingsGate;
+export default KingsGate;

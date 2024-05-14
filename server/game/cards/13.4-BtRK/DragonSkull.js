@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class DragonSkull extends DrawCard {
     setupCardAbilities(ability) {
@@ -20,4 +20,4 @@ class DragonSkull extends DrawCard {
 
 DragonSkull.code = '13074';
 
-module.exports = DragonSkull;
+export default DragonSkull;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class ValyrianSteelDagger extends DrawCard {
     setupCardAbilities(ability) {
@@ -11,4 +11,4 @@ class ValyrianSteelDagger extends DrawCard {
 
 ValyrianSteelDagger.code = '05021';
 
-module.exports = ValyrianSteelDagger;
+export default ValyrianSteelDagger;

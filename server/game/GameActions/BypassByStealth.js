@@ -1,4 +1,4 @@
-const GameAction = require('./GameAction');
+import GameAction from './GameAction.js';
 
 class BypassByStealth extends GameAction {
     constructor() {
@@ -26,4 +26,4 @@ class BypassByStealth extends GameAction {
     }
 }
 
-module.exports = new BypassByStealth();
+export default new BypassByStealth();

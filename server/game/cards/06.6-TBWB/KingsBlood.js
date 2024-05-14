@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const { Tokens } = require('../../Constants');
+import DrawCard from '../../drawcard.js';
+import { Tokens } from '../../Constants/index.js';
 
 class KingsBlood extends DrawCard {
     setupCardAbilities(ability) {
@@ -30,4 +30,4 @@ class KingsBlood extends DrawCard {
 
 KingsBlood.code = '06108';
 
-module.exports = KingsBlood;
+export default KingsBlood;

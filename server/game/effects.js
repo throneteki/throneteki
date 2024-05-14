@@ -1,16 +1,16 @@
-const AbilityLimit = require('./abilitylimit.js');
-const AllowedChallenge = require('./AllowedChallenge');
-const CardMatcher = require('./CardMatcher');
-const CardTextDefinition = require('./CardTextDefinition');
-const { ValueContribution, CharacterStrengthContribution } = require('./ChallengeContributions');
-const CostReducer = require('./costreducer.js');
-const GameActions = require('./GameActions');
-const PlayableLocation = require('./playablelocation.js');
-const CannotRestriction = require('./cannotrestriction.js');
-const ChallengeRestriction = require('./ChallengeRestriction.js');
-const ImmunityRestriction = require('./immunityrestriction.js');
-const GoldSource = require('./GoldSource.js');
-const { Tokens } = require('./Constants');
+import AbilityLimit from './abilitylimit.js';
+import AllowedChallenge from './AllowedChallenge.js';
+import CardMatcher from './CardMatcher.js';
+import CardTextDefinition from './CardTextDefinition.js';
+import { ValueContribution, CharacterStrengthContribution } from './ChallengeContributions.js';
+import CostReducer from './costreducer.js';
+import GameActions from './GameActions/index.js';
+import PlayableLocation from './playablelocation.js';
+import CannotRestriction from './cannotrestriction.js';
+import ChallengeRestriction from './ChallengeRestriction.js';
+import ImmunityRestriction from './immunityrestriction.js';
+import GoldSource from './GoldSource.js';
+import { Tokens } from './Constants/index.js';
 
 function cannotEffect(type) {
     return function (predicate) {
@@ -1826,4 +1826,4 @@ const Effects = {
     }
 };
 
-module.exports = Effects;
+export default Effects;

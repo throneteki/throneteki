@@ -1,4 +1,4 @@
-const AgendaCard = require('../../agendacard.js');
+import AgendaCard from '../../agendacard.js';
 
 class Fealty extends AgendaCard {
     setupCardAbilities(ability) {
@@ -24,4 +24,4 @@ class Fealty extends AgendaCard {
 
 Fealty.code = '01027';
 
-module.exports = Fealty;
+export default Fealty;

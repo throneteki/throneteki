@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class BoundForTheWall extends DrawCard {
     setupCardAbilities(ability) {
@@ -50,4 +50,4 @@ class BoundForTheWall extends DrawCard {
 
 BoundForTheWall.code = '17121';
 
-module.exports = BoundForTheWall;
+export default BoundForTheWall;

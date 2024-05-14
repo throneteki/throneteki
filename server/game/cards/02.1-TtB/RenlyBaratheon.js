@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class RenlyBaratheon extends DrawCard {
     setupCardAbilities(ability) {
@@ -14,4 +14,4 @@ class RenlyBaratheon extends DrawCard {
 
 RenlyBaratheon.code = '02007';
 
-module.exports = RenlyBaratheon;
+export default RenlyBaratheon;

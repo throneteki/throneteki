@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class CovertLoyalist extends DrawCard {
     setupCardAbilities(ability) {
@@ -20,4 +20,4 @@ class CovertLoyalist extends DrawCard {
 
 CovertLoyalist.code = '13093';
 
-module.exports = CovertLoyalist;
+export default CovertLoyalist;

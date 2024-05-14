@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class AVeryLargeShadow extends DrawCard {
     setupCardAbilities(ability) {
@@ -27,4 +27,4 @@ class AVeryLargeShadow extends DrawCard {
 
 AVeryLargeShadow.code = '13090';
 
-module.exports = AVeryLargeShadow;
+export default AVeryLargeShadow;

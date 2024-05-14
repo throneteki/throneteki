@@ -12,4 +12,4 @@ class DiscardFromShadowsCost {
     }
 }
 
-module.exports = DiscardFromShadowsCost;
+export default DiscardFromShadowsCost;

@@ -1,6 +1,6 @@
-const BaseStep = require('../basestep.js');
-const FulfillMilitaryClaim = require('./fulfillmilitaryclaim.js');
-const TextHelper = require('../../TextHelper');
+import BaseStep from '../basestep.js';
+import FulfillMilitaryClaim from './fulfillmilitaryclaim.js';
+import TextHelper from '../../TextHelper.js';
 
 class ApplyClaim extends BaseStep {
     constructor(game, claim) {
@@ -76,4 +76,4 @@ class ApplyClaim extends BaseStep {
     }
 }
 
-module.exports = ApplyClaim;
+export default ApplyClaim;

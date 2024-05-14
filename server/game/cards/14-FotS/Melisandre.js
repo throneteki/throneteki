@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Melisandre extends DrawCard {
     setupCardAbilities() {
@@ -47,4 +47,4 @@ class Melisandre extends DrawCard {
 
 Melisandre.code = '14003';
 
-module.exports = Melisandre;
+export default Melisandre;

@@ -1,7 +1,7 @@
-const PlotCard = require('../../plotcard');
-const GameActions = require('../../GameActions');
-const Message = require('../../Message');
-const { flatten } = require('../../../Array');
+import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
+import Message from '../../Message.js';
+import { flatten } from '../../../Array.js';
 
 class RuleByDegree extends PlotCard {
     setupCardAbilities() {
@@ -64,4 +64,4 @@ class RuleByDegree extends PlotCard {
 
 RuleByDegree.code = '16033';
 
-module.exports = RuleByDegree;
+export default RuleByDegree;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class HagensDaughter extends DrawCard {
     setupCardAbilities() {
@@ -23,4 +23,4 @@ class HagensDaughter extends DrawCard {
 
 HagensDaughter.code = '11031';
 
-module.exports = HagensDaughter;
+export default HagensDaughter;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class ChampionsFavor extends DrawCard {
     setupCardAbilities(ability) {
@@ -32,4 +32,4 @@ class ChampionsFavor extends DrawCard {
 
 ChampionsFavor.code = '15038';
 
-module.exports = ChampionsFavor;
+export default ChampionsFavor;

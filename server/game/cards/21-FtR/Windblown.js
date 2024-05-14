@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class Windblown extends DrawCard {
     setupCardAbilities(ability) {
@@ -30,4 +30,4 @@ class Windblown extends DrawCard {
 
 Windblown.code = '21011';
 
-module.exports = Windblown;
+export default Windblown;

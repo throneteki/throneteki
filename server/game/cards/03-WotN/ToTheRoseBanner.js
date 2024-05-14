@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class ToTheRoseBanner extends DrawCard {
     setupCardAbilities() {
@@ -31,4 +31,4 @@ class ToTheRoseBanner extends DrawCard {
 
 ToTheRoseBanner.code = '03038';
 
-module.exports = ToTheRoseBanner;
+export default ToTheRoseBanner;

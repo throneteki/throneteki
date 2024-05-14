@@ -1,6 +1,6 @@
-const DrawCard = require('../../drawcard.js');
-const { ChallengeTracker } = require('../../EventTrackers');
-const TextHelper = require('../../TextHelper');
+import DrawCard from '../../drawcard.js';
+import { ChallengeTracker } from '../../EventTrackers/index.js';
+import TextHelper from '../../TextHelper.js';
 
 class RiverGate extends DrawCard {
     setupCardAbilities(ability) {
@@ -34,4 +34,4 @@ class RiverGate extends DrawCard {
 
 RiverGate.code = '13016';
 
-module.exports = RiverGate;
+export default RiverGate;

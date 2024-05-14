@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class SerLancelLannister extends DrawCard {
     setupCardAbilities(ability) {
@@ -31,4 +31,4 @@ class SerLancelLannister extends DrawCard {
 
 SerLancelLannister.code = '05014';
 
-module.exports = SerLancelLannister;
+export default SerLancelLannister;

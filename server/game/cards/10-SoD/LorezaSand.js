@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class LorezaSand extends DrawCard {
     setupCardAbilities(ability) {
@@ -21,4 +21,4 @@ class LorezaSand extends DrawCard {
 
 LorezaSand.code = '10013';
 
-module.exports = LorezaSand;
+export default LorezaSand;

@@ -1,6 +1,6 @@
-const AbilityAdapter = require('../GameActions/AbilityAdapter');
-const BaseStep = require('./basestep');
-const RevealCards = require('../GameActions/RevealCards');
+import AbilityAdapter from '../GameActions/AbilityAdapter.js';
+import BaseStep from './basestep.js';
+import RevealCards from '../GameActions/RevealCards.js';
 
 /**
  * Prompt that will search the player's deck, present them with matching cards,
@@ -161,4 +161,4 @@ class DeckSearchPrompt extends BaseStep {
     }
 }
 
-module.exports = DeckSearchPrompt;
+export default DeckSearchPrompt;

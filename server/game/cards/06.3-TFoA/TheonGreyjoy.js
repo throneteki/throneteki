@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TheonGreyjoy extends DrawCard {
     setupCardAbilities(ability) {
@@ -14,4 +14,4 @@ class TheonGreyjoy extends DrawCard {
 
 TheonGreyjoy.code = '06051';
 
-module.exports = TheonGreyjoy;
+export default TheonGreyjoy;

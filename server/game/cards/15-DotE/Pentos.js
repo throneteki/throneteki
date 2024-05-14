@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Pentos extends DrawCard {
     setupCardAbilities(ability) {
@@ -36,4 +36,4 @@ class Pentos extends DrawCard {
 
 Pentos.code = '15018';
 
-module.exports = Pentos;
+export default Pentos;

@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class ShadowOfTheThrone extends DrawCard {
     setupCardAbilities() {
@@ -33,4 +33,4 @@ class ShadowOfTheThrone extends DrawCard {
 
 ShadowOfTheThrone.code = '13048';
 
-module.exports = ShadowOfTheThrone;
+export default ShadowOfTheThrone;

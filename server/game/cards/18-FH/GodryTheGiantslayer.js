@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const { Tokens } = require('../../Constants');
+import DrawCard from '../../drawcard.js';
+import { Tokens } from '../../Constants/index.js';
 
 class GodryTheGiantslayer extends DrawCard {
     setupCardAbilities(ability) {
@@ -33,4 +33,4 @@ class GodryTheGiantslayer extends DrawCard {
 
 GodryTheGiantslayer.code = '18002';
 
-module.exports = GodryTheGiantslayer;
+export default GodryTheGiantslayer;

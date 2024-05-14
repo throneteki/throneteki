@@ -20,4 +20,4 @@ class FactionCardCost {
     }
 }
 
-module.exports = FactionCardCost;
+export default FactionCardCost;

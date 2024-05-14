@@ -1,9 +1,13 @@
-const AmbushCardAction = require('../../../server/game/PlayActions/AmbushCardAction');
+import AmbushCardAction from '../../../server/game/PlayActions/AmbushCardAction.js';
 
 describe('AmbushCardAction', function () {
-    beforeEach(function() {
+    beforeEach(function () {
         this.gameSpy = jasmine.createSpyObj('game', ['addMessage', 'on', 'removeListener']);
-        this.playerSpy = jasmine.createSpyObj('player', ['canPutIntoPlay', 'isCardInPlayableLocation', 'putIntoPlay']);
+        this.playerSpy = jasmine.createSpyObj('player', [
+            'canPutIntoPlay',
+            'isCardInPlayableLocation',
+            'putIntoPlay'
+        ]);
         this.cardSpy = jasmine.createSpyObj('card', ['getType', 'isAmbush']);
         this.context = {
             costs: {},
@@ -14,8 +18,8 @@ describe('AmbushCardAction', function () {
         this.action = new AmbushCardAction();
     });
 
-    describe('meetsRequirements()', function() {
-        beforeEach(function() {
+    describe('meetsRequirements()', function () {
+        beforeEach(function () {
             this.gameSpy.currentPhase = 'challenge';
             this.playerSpy.isCardInPlayableLocation.and.returnValue(true);
             this.playerSpy.canPutIntoPlay.and.returnValue(true);
@@ -23,69 +27,69 @@ describe('AmbushCardAction', function () {
             this.cardSpy.isAmbush.and.returnValue(true);
         });
 
-        describe('when all conditions are met', function() {
-            it('should return true', function() {
+        describe('when all conditions are met', function () {
+            it('should return true', function () {
                 expect(this.action.meetsRequirements(this.context)).toBe(true);
             });
         });
 
-        describe('when the phase is not challenge', function() {
-            beforeEach(function() {
+        describe('when the phase is not challenge', function () {
+            beforeEach(function () {
                 this.gameSpy.currentPhase = 'marshal';
             });
 
-            it('should return false', function() {
+            it('should return false', function () {
                 expect(this.action.meetsRequirements(this.context)).toBe(false);
             });
         });
 
-        describe('when the card is not in a playable location', function() {
-            beforeEach(function() {
+        describe('when the card is not in a playable location', function () {
+            beforeEach(function () {
                 this.playerSpy.isCardInPlayableLocation.and.returnValue(false);
             });
 
-            it('should return false', function() {
+            it('should return false', function () {
                 expect(this.action.meetsRequirements(this.context)).toBe(false);
             });
         });
 
-        describe('when the card is an event', function() {
-            beforeEach(function() {
+        describe('when the card is an event', function () {
+            beforeEach(function () {
                 this.cardSpy.getType.and.returnValue('event');
             });
 
-            it('should return false', function() {
+            it('should return false', function () {
                 expect(this.action.meetsRequirements(this.context)).toBe(false);
             });
         });
 
-        describe('when the card is not an ambushable card', function() {
-            beforeEach(function() {
+        describe('when the card is not an ambushable card', function () {
+            beforeEach(function () {
                 this.cardSpy.isAmbush.and.returnValue(false);
             });
 
-            it('should return false', function() {
+            it('should return false', function () {
                 expect(this.action.meetsRequirements(this.context)).toBe(false);
             });
         });
 
-        describe('when the card cannot be put into play', function() {
-            beforeEach(function() {
+        describe('when the card cannot be put into play', function () {
+            beforeEach(function () {
                 this.playerSpy.canPutIntoPlay.and.returnValue(false);
             });
 
-            it('should return false', function() {
+            it('should return false', function () {
                 expect(this.action.meetsRequirements(this.context)).toBe(false);
             });
         });
     });
 
-    describe('executeHandler()', function() {
-        beforeEach(function() {
+    describe('executeHandler()', function () {
+        beforeEach(function () {
             this.action.executeHandler(this.context);
         });
 
-        it('should put the card into play', function() {
+        it('should put the card into play', function () {
             expect(this.playerSpy.putIntoPlay).toHaveBeenCalledWith(this.cardSpy, 'ambush');
         });
     });

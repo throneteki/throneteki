@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class FirstRanger extends DrawCard {
     setupCardAbilities(ability) {
@@ -46,4 +46,4 @@ class FirstRanger extends DrawCard {
 
 FirstRanger.code = '20022';
 
-module.exports = FirstRanger;
+export default FirstRanger;

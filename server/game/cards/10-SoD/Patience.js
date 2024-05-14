@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Patience extends DrawCard {
     setupCardAbilities() {
@@ -22,4 +22,4 @@ class Patience extends DrawCard {
 
 Patience.code = '10020';
 
-module.exports = Patience;
+export default Patience;

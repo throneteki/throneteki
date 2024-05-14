@@ -1,6 +1,6 @@
-const GameActions = require('../../GameActions/index.js');
-const PlotCard = require('../../plotcard.js');
-const TextHelper = require('../../TextHelper');
+import GameActions from '../../GameActions/index.js';
+import PlotCard from '../../plotcard.js';
+import TextHelper from '../../TextHelper.js';
 
 class FalseSpring extends PlotCard {
     setupCardAbilities() {
@@ -75,4 +75,4 @@ class FalseSpring extends PlotCard {
 
 FalseSpring.code = '10052';
 
-module.exports = FalseSpring;
+export default FalseSpring;

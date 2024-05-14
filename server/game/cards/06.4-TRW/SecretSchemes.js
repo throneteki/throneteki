@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const TextHelper = require('../../TextHelper');
+import DrawCard from '../../drawcard.js';
+import TextHelper from '../../TextHelper.js';
 
 class SecretSchemes extends DrawCard {
     setupCardAbilities(ability) {
@@ -25,4 +25,4 @@ class SecretSchemes extends DrawCard {
 
 SecretSchemes.code = '06076';
 
-module.exports = SecretSchemes;
+export default SecretSchemes;

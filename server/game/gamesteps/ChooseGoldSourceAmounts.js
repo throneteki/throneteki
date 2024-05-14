@@ -1,6 +1,5 @@
-const range = require('lodash.range');
-
-const BaseStep = require('./basestep');
+import range from 'lodash.range';
+import BaseStep from './basestep.js';
 
 class ChooseGoldSourceAmounts extends BaseStep {
     constructor(game, spendParams, callback) {
@@ -59,4 +58,4 @@ class ChooseGoldSourceAmounts extends BaseStep {
     }
 }
 
-module.exports = ChooseGoldSourceAmounts;
+export default ChooseGoldSourceAmounts;

@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SeductivePromise extends DrawCard {
     setupCardAbilities(ability) {
@@ -34,4 +34,4 @@ class SeductivePromise extends DrawCard {
 
 SeductivePromise.code = '16025';
 
-module.exports = SeductivePromise;
+export default SeductivePromise;

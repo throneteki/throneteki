@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Cohollo extends DrawCard {
     setupCardAbilities(ability) {
@@ -21,4 +21,4 @@ class Cohollo extends DrawCard {
 
 Cohollo.code = '12035';
 
-module.exports = Cohollo;
+export default Cohollo;

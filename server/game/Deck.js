@@ -1,8 +1,8 @@
-const cards = require('./cards');
-const DrawCard = require('./drawcard.js');
-const PlotCard = require('./plotcard.js');
-const AgendaCard = require('./agendacard.js');
-const Factions = require('./Factions');
+import cards from './cards/index.js';
+import DrawCard from './drawcard.js';
+import PlotCard from './plotcard.js';
+import AgendaCard from './agendacard.js';
+import Factions from './Factions.js';
 
 class Deck {
     constructor(data) {
@@ -118,4 +118,4 @@ class Deck {
     }
 }
 
-module.exports = Deck;
+export default Deck;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class DonalNoye extends DrawCard {
     setupCardAbilities(ability) {
@@ -28,4 +28,4 @@ class DonalNoye extends DrawCard {
 
 DonalNoye.code = '06105';
 
-module.exports = DonalNoye;
+export default DonalNoye;

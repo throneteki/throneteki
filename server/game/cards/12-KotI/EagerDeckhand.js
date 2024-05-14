@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class EagerDeckhand extends DrawCard {
     setupCardAbilities() {
@@ -20,4 +20,4 @@ class EagerDeckhand extends DrawCard {
 
 EagerDeckhand.code = '12014';
 
-module.exports = EagerDeckhand;
+export default EagerDeckhand;

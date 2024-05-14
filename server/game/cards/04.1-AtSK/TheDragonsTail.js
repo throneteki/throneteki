@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TheDragonsTail extends DrawCard {
     setupCardAbilities() {
@@ -28,4 +28,4 @@ class TheDragonsTail extends DrawCard {
 
 TheDragonsTail.code = '04001';
 
-module.exports = TheDragonsTail;
+export default TheDragonsTail;

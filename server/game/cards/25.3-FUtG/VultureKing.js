@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class VultureKing extends DrawCard {
     setupCardAbilities(ability) {
@@ -43,4 +43,4 @@ class VultureKing extends DrawCard {
 
 VultureKing.code = '25048';
 
-module.exports = VultureKing;
+export default VultureKing;

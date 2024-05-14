@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const { Tokens } = require('../../Constants');
+import DrawCard from '../../drawcard.js';
+import { Tokens } from '../../Constants/index.js';
 
 class UnbridledGenerosity extends DrawCard {
     setupCardAbilities() {
@@ -29,4 +29,4 @@ class UnbridledGenerosity extends DrawCard {
 
 UnbridledGenerosity.code = '06118';
 
-module.exports = UnbridledGenerosity;
+export default UnbridledGenerosity;

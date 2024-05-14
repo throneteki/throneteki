@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class DragonglassDagger extends DrawCard {
     setupCardAbilities(ability) {
@@ -17,4 +17,4 @@ class DragonglassDagger extends DrawCard {
 
 DragonglassDagger.code = '04086';
 
-module.exports = DragonglassDagger;
+export default DragonglassDagger;

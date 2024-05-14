@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const { Tokens } = require('../../Constants');
+import DrawCard from '../../drawcard.js';
+import { Tokens } from '../../Constants/index.js';
 
 class Astapor extends DrawCard {
     setupCardAbilities(ability) {
@@ -33,4 +33,4 @@ class Astapor extends DrawCard {
 
 Astapor.code = '06054';
 
-module.exports = Astapor;
+export default Astapor;

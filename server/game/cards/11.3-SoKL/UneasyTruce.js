@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard');
+import PlotCard from '../../plotcard.js';
 
 class UneasyTruce extends PlotCard {
     setupCardAbilities(ability) {
@@ -30,4 +30,4 @@ class UneasyTruce extends PlotCard {
 
 UneasyTruce.code = '11060';
 
-module.exports = UneasyTruce;
+export default UneasyTruce;

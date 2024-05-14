@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class WeirwoodBow extends DrawCard {
     setupCardAbilities(ability) {
@@ -32,4 +32,4 @@ class WeirwoodBow extends DrawCard {
 
 WeirwoodBow.code = '07043';
 
-module.exports = WeirwoodBow;
+export default WeirwoodBow;

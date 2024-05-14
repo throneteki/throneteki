@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class ViserysTargaryen extends DrawCard {
     setupCardAbilities() {
@@ -26,4 +26,4 @@ class ViserysTargaryen extends DrawCard {
 
 ViserysTargaryen.code = '01167';
 
-module.exports = ViserysTargaryen;
+export default ViserysTargaryen;

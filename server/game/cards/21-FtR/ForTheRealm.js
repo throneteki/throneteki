@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class ForTheRealm extends PlotCard {
     setupCardAbilities(ability) {
@@ -14,4 +14,4 @@ class ForTheRealm extends PlotCard {
 
 ForTheRealm.code = '21029';
 
-module.exports = ForTheRealm;
+export default ForTheRealm;

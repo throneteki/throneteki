@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class IronEmmett extends DrawCard {
     setupCardAbilities(ability) {
@@ -12,4 +12,4 @@ class IronEmmett extends DrawCard {
 
 IronEmmett.code = '24013';
 
-module.exports = IronEmmett;
+export default IronEmmett;

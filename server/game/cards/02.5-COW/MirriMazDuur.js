@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class MirriMazDuur extends DrawCard {
     setupCardAbilities() {
@@ -32,4 +32,4 @@ class MirriMazDuur extends DrawCard {
 
 MirriMazDuur.code = '02093';
 
-module.exports = MirriMazDuur;
+export default MirriMazDuur;

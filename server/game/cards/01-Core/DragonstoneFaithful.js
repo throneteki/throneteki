@@ -1,4 +1,4 @@
-const FactionCharacterCostReducer = require('../reducer.js').FactionCharacterCostReducer;
+import { FactionCharacterCostReducer } from '../reducer.js';
 
 class DragonstoneFaithful extends FactionCharacterCostReducer {
     constructor(owner, cardData) {
@@ -8,4 +8,4 @@ class DragonstoneFaithful extends FactionCharacterCostReducer {
 
 DragonstoneFaithful.code = '01056';
 
-module.exports = DragonstoneFaithful;
+export default DragonstoneFaithful;

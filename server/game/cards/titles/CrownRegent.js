@@ -1,5 +1,5 @@
-const TitleCard = require('../../TitleCard.js');
-const InitiatingKeywordsWindow = require('../../gamesteps/InitiatingKeywordsWindow.js');
+import TitleCard from '../../TitleCard.js';
+import InitiatingKeywordsWindow from '../../gamesteps/InitiatingKeywordsWindow.js';
 
 class CrownRegent extends TitleCard {
     setupCardAbilities(ability) {
@@ -39,4 +39,4 @@ class CrownRegent extends TitleCard {
 
 CrownRegent.code = '01211';
 
-module.exports = CrownRegent;
+export default CrownRegent;

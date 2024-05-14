@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class NavalSuperiority extends PlotCard {
     setupCardAbilities(ability) {
@@ -14,4 +14,4 @@ class NavalSuperiority extends PlotCard {
 
 NavalSuperiority.code = '01017';
 
-module.exports = NavalSuperiority;
+export default NavalSuperiority;

@@ -1,5 +1,5 @@
-const PlotCard = require('../../plotcard');
-const GameActions = require('../../GameActions');
+import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class BeyondReproach extends PlotCard {
     setupCardAbilities() {
@@ -33,4 +33,4 @@ class BeyondReproach extends PlotCard {
 
 BeyondReproach.code = '10049';
 
-module.exports = BeyondReproach;
+export default BeyondReproach;

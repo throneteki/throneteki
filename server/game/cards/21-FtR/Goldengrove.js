@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Goldengrove extends DrawCard {
     setupCardAbilities(ability) {
@@ -40,4 +40,4 @@ class Goldengrove extends DrawCard {
 
 Goldengrove.code = '21024';
 
-module.exports = Goldengrove;
+export default Goldengrove;

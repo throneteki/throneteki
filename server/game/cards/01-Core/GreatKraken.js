@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class GreatKraken extends DrawCard {
     setupCardAbilities(ability) {
@@ -36,4 +36,4 @@ class GreatKraken extends DrawCard {
 
 GreatKraken.code = '01078';
 
-module.exports = GreatKraken;
+export default GreatKraken;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class PoisonedCoin extends DrawCard {
     setupCardAbilities(ability) {
@@ -30,4 +30,4 @@ class PoisonedCoin extends DrawCard {
 
 PoisonedCoin.code = '11078';
 
-module.exports = PoisonedCoin;
+export default PoisonedCoin;

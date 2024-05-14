@@ -1,8 +1,8 @@
-const PlotCard = require('../../plotcard');
-const GameActions = require('../../GameActions');
-const Message = require('../../Message');
-const TextHelper = require('../../TextHelper');
-const { flatten } = require('../../../Array');
+import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
+import Message from '../../Message.js';
+import TextHelper from '../../TextHelper.js';
+import { flatten } from '../../../Array.js';
 
 class TheLostMessage extends PlotCard {
     setupCardAbilities(ability) {
@@ -59,4 +59,4 @@ class TheLostMessage extends PlotCard {
 
 TheLostMessage.code = '15047';
 
-module.exports = TheLostMessage;
+export default TheLostMessage;

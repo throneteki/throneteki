@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Jhiqui extends DrawCard {
     setupCardAbilities(ability) {
@@ -32,4 +32,4 @@ class Jhiqui extends DrawCard {
 
 Jhiqui.code = '08053';
 
-module.exports = Jhiqui;
+export default Jhiqui;

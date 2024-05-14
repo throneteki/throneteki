@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class MyrcellaBaratheon extends DrawCard {
     setupCardAbilities(ability) {
@@ -26,4 +26,4 @@ class MyrcellaBaratheon extends DrawCard {
 
 MyrcellaBaratheon.code = '04095';
 
-module.exports = MyrcellaBaratheon;
+export default MyrcellaBaratheon;

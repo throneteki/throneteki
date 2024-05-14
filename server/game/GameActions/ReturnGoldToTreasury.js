@@ -1,4 +1,4 @@
-const GameAction = require('./GameAction');
+import GameAction from './GameAction.js';
 
 class ReturnGoldToTreasury extends GameAction {
     constructor() {
@@ -22,4 +22,4 @@ class ReturnGoldToTreasury extends GameAction {
     }
 }
 
-module.exports = new ReturnGoldToTreasury();
+export default new ReturnGoldToTreasury();

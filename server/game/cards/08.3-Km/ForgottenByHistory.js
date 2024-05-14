@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class ForgottenByHistory extends DrawCard {
     setupCardAbilities(ability) {
@@ -30,4 +30,4 @@ class ForgottenByHistory extends DrawCard {
 
 ForgottenByHistory.code = '08059';
 
-module.exports = ForgottenByHistory;
+export default ForgottenByHistory;

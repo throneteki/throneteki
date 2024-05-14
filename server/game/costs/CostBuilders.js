@@ -1,22 +1,22 @@
-const CostBuilder = require('./CostBuilder');
-const DiscardDuplicateCost = require('./DiscardDuplicateCost');
-const DiscardFromHandCost = require('./DiscardFromHandCost');
-const DiscardFromShadowsCost = require('./DiscardFromShadowsCost');
-const DiscardPowerCost = require('./DiscardPowerCost');
-const DiscardTokenCost = require('./DiscardTokenCost');
-const KillCost = require('./KillCost');
-const KneelCost = require('./KneelCost');
-const PlaceInDeadPileFromHandCost = require('./PlaceInDeadPileFromHandCost');
-const PlaceOnBottomCost = require('./PlaceOnBottomCost');
-const PutIntoPlayCost = require('./PutIntoPlayCost');
-const PutIntoShadowsCost = require('./PutIntoShadowsCost');
-const RemoveFromChallengeCost = require('./RemoveFromChallengeCost');
-const RemoveFromGameCost = require('./RemoveFromGameCost');
-const ReturnToHandCost = require('./ReturnToHandCost');
-const RevealCost = require('./RevealCost');
-const SacrificeCost = require('./SacrificeCost');
-const StandCost = require('./StandCost');
-const ShuffleCardIntoDeckCost = require('./ShuffleCardIntoDeckCost');
+import CostBuilder from './CostBuilder.js';
+import DiscardDuplicateCost from './DiscardDuplicateCost.js';
+import DiscardFromHandCost from './DiscardFromHandCost.js';
+import DiscardFromShadowsCost from './DiscardFromShadowsCost.js';
+import DiscardPowerCost from './DiscardPowerCost.js';
+import DiscardTokenCost from './DiscardTokenCost.js';
+import KillCost from './KillCost.js';
+import KneelCost from './KneelCost.js';
+import PlaceInDeadPileFromHandCost from './PlaceInDeadPileFromHandCost.js';
+import PlaceOnBottomCost from './PlaceOnBottomCost.js';
+import PutIntoPlayCost from './PutIntoPlayCost.js';
+import PutIntoShadowsCost from './PutIntoShadowsCost.js';
+import RemoveFromChallengeCost from './RemoveFromChallengeCost.js';
+import RemoveFromGameCost from './RemoveFromGameCost.js';
+import ReturnToHandCost from './ReturnToHandCost.js';
+import RevealCost from './RevealCost.js';
+import SacrificeCost from './SacrificeCost.js';
+import StandCost from './StandCost.js';
+import ShuffleCardIntoDeckCost from './ShuffleCardIntoDeckCost.js';
 
 const CostBuilders = {
     discardDuplicate: new CostBuilder(new DiscardDuplicateCost(), {
@@ -101,4 +101,4 @@ const CostBuilders = {
     })
 };
 
-module.exports = CostBuilders;
+export default CostBuilders;

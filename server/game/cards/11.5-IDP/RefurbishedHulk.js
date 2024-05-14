@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class RefurbishedHulk extends DrawCard {
     setupCardAbilities() {
@@ -11,4 +11,4 @@ class RefurbishedHulk extends DrawCard {
 
 RefurbishedHulk.code = '11092';
 
-module.exports = RefurbishedHulk;
+export default RefurbishedHulk;

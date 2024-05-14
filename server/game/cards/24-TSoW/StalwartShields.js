@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class StalwartShields extends DrawCard {
     setupCardAbilities(ability) {
@@ -12,4 +12,4 @@ class StalwartShields extends DrawCard {
 
 StalwartShields.code = '24020';
 
-module.exports = StalwartShields;
+export default StalwartShields;

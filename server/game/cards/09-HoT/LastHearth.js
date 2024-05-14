@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class LastHearth extends DrawCard {
     setupCardAbilities(ability) {
@@ -31,4 +31,4 @@ class LastHearth extends DrawCard {
 
 LastHearth.code = '09036';
 
-module.exports = LastHearth;
+export default LastHearth;

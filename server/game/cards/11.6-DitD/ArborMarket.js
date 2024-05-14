@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class ArborMarket extends DrawCard {
     setupCardAbilities(ability) {
@@ -34,4 +34,4 @@ class ArborMarket extends DrawCard {
 
 ArborMarket.code = '11104';
 
-module.exports = ArborMarket;
+export default ArborMarket;

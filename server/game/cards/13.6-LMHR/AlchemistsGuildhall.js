@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class AlchemistsGuildhall extends DrawCard {
     setupCardAbilities(ability) {
@@ -30,4 +30,4 @@ class AlchemistsGuildhall extends DrawCard {
 
 AlchemistsGuildhall.code = '13110';
 
-module.exports = AlchemistsGuildhall;
+export default AlchemistsGuildhall;

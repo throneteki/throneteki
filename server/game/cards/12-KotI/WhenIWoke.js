@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class WhenIWoke extends DrawCard {
     setupCardAbilities(ability) {
@@ -29,4 +29,4 @@ class WhenIWoke extends DrawCard {
 
 WhenIWoke.code = '12044';
 
-module.exports = WhenIWoke;
+export default WhenIWoke;

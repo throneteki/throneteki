@@ -1,5 +1,5 @@
-const GameAction = require('./GameAction');
-const KneelCard = require('./KneelCard');
+import GameAction from './GameAction.js';
+import KneelCard from './KneelCard.js';
 
 class DeclareDefenders extends GameAction {
     constructor() {
@@ -33,4 +33,4 @@ class DeclareDefenders extends GameAction {
     }
 }
 
-module.exports = new DeclareDefenders();
+export default new DeclareDefenders();

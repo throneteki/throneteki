@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const { Tokens } = require('../../Constants');
+import DrawCard from '../../drawcard.js';
+import { Tokens } from '../../Constants/index.js';
 
 class BanishedFromTheLight extends DrawCard {
     setupCardAbilities() {
@@ -38,4 +38,4 @@ class BanishedFromTheLight extends DrawCard {
 
 BanishedFromTheLight.code = '11108';
 
-module.exports = BanishedFromTheLight;
+export default BanishedFromTheLight;

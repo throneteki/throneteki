@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class SouthronMessenger extends DrawCard {
     setupCardAbilities() {
@@ -29,4 +29,4 @@ class SouthronMessenger extends DrawCard {
 
 SouthronMessenger.code = '07031';
 
-module.exports = SouthronMessenger;
+export default SouthronMessenger;

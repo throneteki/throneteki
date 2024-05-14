@@ -1,4 +1,4 @@
-const UiPrompt = require('../uiprompt.js');
+import UiPrompt from '../uiprompt.js';
 
 class MarshalCardsPrompt extends UiPrompt {
     constructor(game, player) {
@@ -35,4 +35,4 @@ class MarshalCardsPrompt extends UiPrompt {
     }
 }
 
-module.exports = MarshalCardsPrompt;
+export default MarshalCardsPrompt;

@@ -1,8 +1,8 @@
-const Player = require('./player.js');
-const EventRegistrar = require('./eventregistrar.js');
-const Settings = require('../settings.js');
-const ChallengeMatcher = require('./ChallengeMatcher');
-const { ChallengeContributions } = require('./ChallengeContributions');
+import Player from './player.js';
+import EventRegistrar from './eventregistrar.js';
+import Settings from '../settings.js';
+import ChallengeMatcher from './ChallengeMatcher.js';
+import { ChallengeContributions } from './ChallengeContributions.js';
 
 class Challenge {
     constructor(game, properties) {
@@ -349,4 +349,4 @@ class Challenge {
     }
 }
 
-module.exports = Challenge;
+export default Challenge;

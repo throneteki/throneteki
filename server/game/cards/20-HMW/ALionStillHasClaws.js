@@ -1,6 +1,6 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
-const { flatten } = require('../../../Array');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
+import { flatten } from '../../../Array.js';
 
 class ALionStillHasClaws extends DrawCard {
     setupCardAbilities(ability) {
@@ -79,4 +79,4 @@ class ALionStillHasClaws extends DrawCard {
 
 ALionStillHasClaws.code = '20014';
 
-module.exports = ALionStillHasClaws;
+export default ALionStillHasClaws;

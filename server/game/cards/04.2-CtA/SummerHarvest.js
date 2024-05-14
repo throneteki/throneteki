@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class SummerHarvest extends PlotCard {
     setupCardAbilities() {
@@ -13,4 +13,4 @@ class SummerHarvest extends PlotCard {
 
 SummerHarvest.code = '04039';
 
-module.exports = SummerHarvest;
+export default SummerHarvest;

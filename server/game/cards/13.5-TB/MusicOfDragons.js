@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class MusicOfDragons extends DrawCard {
     setupCardAbilities() {
@@ -21,4 +21,4 @@ class MusicOfDragons extends DrawCard {
 
 MusicOfDragons.code = '13094';
 
-module.exports = MusicOfDragons;
+export default MusicOfDragons;

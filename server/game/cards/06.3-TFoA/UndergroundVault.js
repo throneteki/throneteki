@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class UndergroundVault extends DrawCard {
     setupCardAbilities(ability) {
@@ -24,4 +24,4 @@ class UndergroundVault extends DrawCard {
 
 UndergroundVault.code = '06046';
 
-module.exports = UndergroundVault;
+export default UndergroundVault;

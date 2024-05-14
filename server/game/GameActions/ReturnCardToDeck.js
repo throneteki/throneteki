@@ -1,7 +1,7 @@
-const Message = require('../Message');
-const GameAction = require('./GameAction');
-const LeavePlay = require('./LeavePlay');
-const PlaceCard = require('./PlaceCard');
+import Message from '../Message.js';
+import GameAction from './GameAction.js';
+import LeavePlay from './LeavePlay.js';
+import PlaceCard from './PlaceCard.js';
 
 class ReturnCardToDeck extends GameAction {
     constructor() {
@@ -49,4 +49,4 @@ class ReturnCardToDeck extends GameAction {
     }
 }
 
-module.exports = new ReturnCardToDeck();
+export default new ReturnCardToDeck();

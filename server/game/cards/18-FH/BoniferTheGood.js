@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class BoniferTheGood extends DrawCard {
     setupCardAbilities(ability) {
@@ -14,4 +14,4 @@ class BoniferTheGood extends DrawCard {
 
 BoniferTheGood.code = '18001';
 
-module.exports = BoniferTheGood;
+export default BoniferTheGood;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class CerseiLannister extends DrawCard {
     setupCardAbilities(ability) {
@@ -26,4 +26,4 @@ class CerseiLannister extends DrawCard {
 
 CerseiLannister.code = '11109';
 
-module.exports = CerseiLannister;
+export default CerseiLannister;

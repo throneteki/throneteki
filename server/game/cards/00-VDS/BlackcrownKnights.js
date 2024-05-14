@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class BlackcrownKnights extends DrawCard {
     setupCardAbilities(ability) {
@@ -26,4 +26,4 @@ class BlackcrownKnights extends DrawCard {
 
 BlackcrownKnights.code = '00016';
 
-module.exports = BlackcrownKnights;
+export default BlackcrownKnights;

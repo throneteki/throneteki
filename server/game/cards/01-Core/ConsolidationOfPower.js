@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class ConsolidationOfPower extends DrawCard {
     setupCardAbilities() {
@@ -60,4 +60,4 @@ class ConsolidationOfPower extends DrawCard {
 
 ConsolidationOfPower.code = '01062';
 
-module.exports = ConsolidationOfPower;
+export default ConsolidationOfPower;

@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions/index.js');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class ThisMustBeAnsweredFiercely extends DrawCard {
     setupCardAbilities() {
@@ -25,4 +25,4 @@ class ThisMustBeAnsweredFiercely extends DrawCard {
 
 ThisMustBeAnsweredFiercely.code = '08104';
 
-module.exports = ThisMustBeAnsweredFiercely;
+export default ThisMustBeAnsweredFiercely;

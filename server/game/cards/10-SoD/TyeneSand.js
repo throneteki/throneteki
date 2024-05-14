@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TyeneSand extends DrawCard {
     setupCardAbilities(ability) {
@@ -28,4 +28,4 @@ class TyeneSand extends DrawCard {
 
 TyeneSand.code = '10008';
 
-module.exports = TyeneSand;
+export default TyeneSand;

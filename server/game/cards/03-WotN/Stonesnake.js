@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class Stonesnake extends DrawCard {
     setupCardAbilities() {
@@ -49,4 +49,4 @@ class Stonesnake extends DrawCard {
 
 Stonesnake.code = '03033';
 
-module.exports = Stonesnake;
+export default Stonesnake;

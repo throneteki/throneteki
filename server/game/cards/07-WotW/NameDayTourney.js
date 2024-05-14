@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class NameDayTourney extends PlotCard {
     setupCardAbilities() {
@@ -50,4 +50,4 @@ class NameDayTourney extends PlotCard {
 
 NameDayTourney.code = '07051';
 
-module.exports = NameDayTourney;
+export default NameDayTourney;

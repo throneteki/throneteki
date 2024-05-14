@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Jhogo extends DrawCard {
     setupCardAbilities(ability) {
@@ -31,4 +31,4 @@ class Jhogo extends DrawCard {
 
 Jhogo.code = '02113';
 
-module.exports = Jhogo;
+export default Jhogo;

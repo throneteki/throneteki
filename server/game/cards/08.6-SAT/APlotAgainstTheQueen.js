@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class APlotAgainstTheQueen extends DrawCard {
     setupCardAbilities(ability) {
@@ -31,4 +31,4 @@ class APlotAgainstTheQueen extends DrawCard {
 
 APlotAgainstTheQueen.code = '08110';
 
-module.exports = APlotAgainstTheQueen;
+export default APlotAgainstTheQueen;

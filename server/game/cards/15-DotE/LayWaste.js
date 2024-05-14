@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class LayWaste extends DrawCard {
     setupCardAbilities() {
@@ -55,4 +55,4 @@ class LayWaste extends DrawCard {
 
 LayWaste.code = '15044';
 
-module.exports = LayWaste;
+export default LayWaste;

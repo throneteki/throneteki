@@ -1,4 +1,4 @@
-const AgendaCard = require('../../agendacard');
+import AgendaCard from '../../agendacard.js';
 
 class AloofAndApart extends AgendaCard {
     setupCardAbilities(ability) {
@@ -20,4 +20,4 @@ class AloofAndApart extends AgendaCard {
 
 AloofAndApart.code = '16027';
 
-module.exports = AloofAndApart;
+export default AloofAndApart;

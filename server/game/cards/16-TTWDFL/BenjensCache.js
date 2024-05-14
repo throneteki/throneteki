@@ -1,5 +1,5 @@
-const PlotCard = require('../../plotcard.js');
-const GameActions = require('../../GameActions');
+import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class BenjensCache extends PlotCard {
     setupCardAbilities() {
@@ -18,4 +18,4 @@ class BenjensCache extends PlotCard {
 
 BenjensCache.code = '16031';
 
-module.exports = BenjensCache;
+export default BenjensCache;

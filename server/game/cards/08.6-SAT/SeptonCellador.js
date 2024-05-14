@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class SeptonCellador extends DrawCard {
     setupCardAbilities(ability) {
@@ -67,4 +67,4 @@ class SeptonCellador extends DrawCard {
 
 SeptonCellador.code = '08105';
 
-module.exports = SeptonCellador;
+export default SeptonCellador;

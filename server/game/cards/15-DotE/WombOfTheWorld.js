@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class WombOfTheWorld extends DrawCard {
     setupCardAbilities(ability) {
@@ -48,4 +48,4 @@ class WombOfTheWorld extends DrawCard {
 
 WombOfTheWorld.code = '15017';
 
-module.exports = WombOfTheWorld;
+export default WombOfTheWorld;

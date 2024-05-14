@@ -1,4 +1,4 @@
-const { flatten } = require('../Array');
+import { flatten } from '../Array.js';
 class SimultaneousEvents {
     constructor() {
         this.childEvents = [];
@@ -80,4 +80,4 @@ class SimultaneousEvents {
     }
 }
 
-module.exports = SimultaneousEvents;
+export default SimultaneousEvents;

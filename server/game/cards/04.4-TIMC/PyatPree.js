@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class PyatPree extends DrawCard {
     setupCardAbilities() {
@@ -27,4 +27,4 @@ class PyatPree extends DrawCard {
 
 PyatPree.code = '04073';
 
-module.exports = PyatPree;
+export default PyatPree;

@@ -1,6 +1,5 @@
-const { partition, sortBy } = require('../Array');
-
-const EventRegistrar = require('./eventregistrar.js');
+import { partition, sortBy } from '../Array.js';
+import EventRegistrar from './eventregistrar.js';
 
 class EffectEngine {
     constructor(game) {
@@ -246,4 +245,4 @@ class EffectEngine {
     }
 }
 
-module.exports = EffectEngine;
+export default EffectEngine;

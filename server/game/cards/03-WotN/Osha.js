@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Osha extends DrawCard {
     setupCardAbilities(ability) {
@@ -22,4 +22,4 @@ class Osha extends DrawCard {
 
 Osha.code = '03011';
 
-module.exports = Osha;
+export default Osha;

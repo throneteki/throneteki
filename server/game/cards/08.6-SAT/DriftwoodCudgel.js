@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class DriftwoodCudgel extends DrawCard {
     setupCardAbilities(ability) {
@@ -38,4 +38,4 @@ class DriftwoodCudgel extends DrawCard {
 
 DriftwoodCudgel.code = '08112';
 
-module.exports = DriftwoodCudgel;
+export default DriftwoodCudgel;

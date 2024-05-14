@@ -1,5 +1,5 @@
-const GameActions = require('../../GameActions/index.js');
-const PlotCard = require('../../plotcard.js');
+import GameActions from '../../GameActions/index.js';
+import PlotCard from '../../plotcard.js';
 
 class ChivalryOfTheSouth extends PlotCard {
     setupCardAbilities(ability) {
@@ -19,4 +19,4 @@ class ChivalryOfTheSouth extends PlotCard {
 
 ChivalryOfTheSouth.code = '25036';
 
-module.exports = ChivalryOfTheSouth;
+export default ChivalryOfTheSouth;

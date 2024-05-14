@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class WardensOfTheSouth extends PlotCard {
     setupCardAbilities() {
@@ -28,4 +28,4 @@ class WardensOfTheSouth extends PlotCard {
 
 WardensOfTheSouth.code = '09046';
 
-module.exports = WardensOfTheSouth;
+export default WardensOfTheSouth;

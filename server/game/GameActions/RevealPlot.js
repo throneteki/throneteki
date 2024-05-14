@@ -1,6 +1,6 @@
-const GameAction = require('./GameAction');
-const DiscardPlot = require('./DiscardPlot');
-const PlaceCard = require('./PlaceCard');
+import GameAction from './GameAction.js';
+import DiscardPlot from './DiscardPlot.js';
+import PlaceCard from './PlaceCard.js';
 
 class RevealPlot extends GameAction {
     constructor() {
@@ -32,4 +32,4 @@ class RevealPlot extends GameAction {
     }
 }
 
-module.exports = new RevealPlot();
+export default new RevealPlot();

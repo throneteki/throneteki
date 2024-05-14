@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions/index.js');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TywinsStratagem extends DrawCard {
     setupCardAbilities(ability) {
@@ -49,4 +49,4 @@ class TywinsStratagem extends DrawCard {
 
 TywinsStratagem.code = '06070';
 
-module.exports = TywinsStratagem;
+export default TywinsStratagem;

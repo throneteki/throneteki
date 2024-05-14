@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard');
+import PlotCard from '../../plotcard.js';
 
 class Rationing extends PlotCard {
     setupCardAbilities(ability) {
@@ -14,4 +14,4 @@ class Rationing extends PlotCard {
 
 Rationing.code = '14049';
 
-module.exports = Rationing;
+export default Rationing;

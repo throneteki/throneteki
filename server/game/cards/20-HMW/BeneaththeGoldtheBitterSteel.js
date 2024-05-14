@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const Tokens = require('../../Constants/Tokens.js');
+import DrawCard from '../../drawcard.js';
+import { Tokens } from '../../Constants/Tokens.js';
 
 class BeneaththeGoldtheBitterSteel extends DrawCard {
     setupCardAbilities() {
@@ -43,4 +43,4 @@ class BeneaththeGoldtheBitterSteel extends DrawCard {
 
 BeneaththeGoldtheBitterSteel.code = '20035';
 
-module.exports = BeneaththeGoldtheBitterSteel;
+export default BeneaththeGoldtheBitterSteel;

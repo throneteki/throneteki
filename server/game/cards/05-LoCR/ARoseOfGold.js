@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class ARoseOfGold extends DrawCard {
     setupCardAbilities() {
@@ -83,4 +83,4 @@ class ARoseOfGold extends DrawCard {
 
 ARoseOfGold.code = '05038';
 
-module.exports = ARoseOfGold;
+export default ARoseOfGold;

@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class DothrakiHandmaiden extends DrawCard {
     setupCardAbilities(ability) {
@@ -59,4 +59,4 @@ class DothrakiHandmaiden extends DrawCard {
 
 DothrakiHandmaiden.code = '15014';
 
-module.exports = DothrakiHandmaiden;
+export default DothrakiHandmaiden;

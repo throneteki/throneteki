@@ -1,6 +1,6 @@
-const GameAction = require('./GameAction');
-const LeavePlay = require('./LeavePlay');
-const MoveCardEventGenerator = require('./MoveCardEventGenerator');
+import GameAction from './GameAction.js';
+import LeavePlay from './LeavePlay.js';
+import MoveCardEventGenerator from './MoveCardEventGenerator.js';
 
 class RemoveFromGame extends GameAction {
     constructor() {
@@ -37,4 +37,4 @@ class RemoveFromGame extends GameAction {
     }
 }
 
-module.exports = new RemoveFromGame();
+export default new RemoveFromGame();

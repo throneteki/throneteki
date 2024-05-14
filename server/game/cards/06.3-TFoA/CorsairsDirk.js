@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class CorsairsDirk extends DrawCard {
     setupCardAbilities(ability) {
@@ -31,4 +31,4 @@ class CorsairsDirk extends DrawCard {
 
 CorsairsDirk.code = '06052';
 
-module.exports = CorsairsDirk;
+export default CorsairsDirk;

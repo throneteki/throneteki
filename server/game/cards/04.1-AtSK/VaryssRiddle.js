@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class VaryssRiddle extends PlotCard {
     setupCardAbilities() {
@@ -71,4 +71,4 @@ class VaryssRiddle extends PlotCard {
 
 VaryssRiddle.code = '04020';
 
-module.exports = VaryssRiddle;
+export default VaryssRiddle;

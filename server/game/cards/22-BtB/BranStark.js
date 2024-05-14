@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const TextHelper = require('../../TextHelper');
+import DrawCard from '../../drawcard.js';
+import TextHelper from '../../TextHelper.js';
 
 class BranStark extends DrawCard {
     setupCardAbilities(ability) {
@@ -68,4 +68,4 @@ class BranStark extends DrawCard {
 
 BranStark.code = '22016';
 
-module.exports = BranStark;
+export default BranStark;

@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const { flatten } = require('../../../Array');
+import DrawCard from '../../drawcard.js';
+import { flatten } from '../../../Array.js';
 
 class FacelessMan extends DrawCard {
     setupCardAbilities(ability) {
@@ -41,4 +41,4 @@ class FacelessMan extends DrawCard {
 
 FacelessMan.code = '09040';
 
-module.exports = FacelessMan;
+export default FacelessMan;

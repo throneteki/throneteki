@@ -42,4 +42,4 @@ class CancelTimer {
     }
 }
 
-module.exports = CancelTimer;
+export default CancelTimer;

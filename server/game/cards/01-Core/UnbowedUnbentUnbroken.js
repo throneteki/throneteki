@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const ChallengeTypes = require('../../ChallengeTypes');
+import DrawCard from '../../drawcard.js';
+import ChallengeTypes from '../../ChallengeTypes.js';
 
 class UnbowedUnbentUnbroken extends DrawCard {
     setupCardAbilities(ability) {
@@ -55,4 +55,4 @@ class UnbowedUnbentUnbroken extends DrawCard {
 
 UnbowedUnbentUnbroken.code = '01120';
 
-module.exports = UnbowedUnbentUnbroken;
+export default UnbowedUnbentUnbroken;

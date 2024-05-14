@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class AFeastForCrows extends PlotCard {
     setupCardAbilities() {
@@ -21,4 +21,4 @@ class AFeastForCrows extends PlotCard {
 
 AFeastForCrows.code = '01002';
 
-module.exports = AFeastForCrows;
+export default AFeastForCrows;

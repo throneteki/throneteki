@@ -1,5 +1,5 @@
-const PlotCard = require('../../plotcard');
-const { ChallengeTracker } = require('../../EventTrackers');
+import PlotCard from '../../plotcard.js';
+import { ChallengeTracker } from '../../EventTrackers/index.js';
 
 class TheNewGods extends PlotCard {
     setupCardAbilities(ability) {
@@ -19,4 +19,4 @@ class TheNewGods extends PlotCard {
 
 TheNewGods.code = '14052';
 
-module.exports = TheNewGods;
+export default TheNewGods;

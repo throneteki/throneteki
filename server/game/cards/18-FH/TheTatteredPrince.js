@@ -1,6 +1,6 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions/index.js');
-const { Tokens } = require('../../Constants');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
+import { Tokens } from '../../Constants/index.js';
 
 class TheTatteredPrince extends DrawCard {
     setupCardAbilities() {
@@ -40,4 +40,4 @@ class TheTatteredPrince extends DrawCard {
 
 TheTatteredPrince.code = '18008';
 
-module.exports = TheTatteredPrince;
+export default TheTatteredPrince;

@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class HothoHumpback extends DrawCard {
     setupCardAbilities(ability) {
@@ -25,4 +25,4 @@ class HothoHumpback extends DrawCard {
 
 HothoHumpback.code = '15027';
 
-module.exports = HothoHumpback;
+export default HothoHumpback;

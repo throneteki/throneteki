@@ -1,15 +1,12 @@
-describe('Catelyn Stark', function() {
-    integration(function() {
-        beforeEach(function() {
+describe('Catelyn Stark', function () {
+    integration(function () {
+        beforeEach(function () {
             const deck1 = this.buildDeck('stark', [
                 'Sneak Attack',
                 'Catelyn Stark (Core)',
                 'Septa Mordane'
             ]);
-            const deck2 = this.buildDeck('lannister', [
-                'Sneak Attack',
-                'Tyrion Lannister (Core)'
-            ]);
+            const deck2 = this.buildDeck('lannister', ['Sneak Attack', 'Tyrion Lannister (Core)']);
             this.player1.selectDeck(deck1);
             this.player2.selectDeck(deck2);
             this.startGame();
@@ -26,28 +23,28 @@ describe('Catelyn Stark', function() {
             this.coreCat = this.player1.findCardByName('Catelyn Stark (Core)', 'play area');
         });
 
-        describe('when core cat is not participating', function() {
-            beforeEach(function() {
+        describe('when core cat is not participating', function () {
+            beforeEach(function () {
                 this.player1.clickPrompt('Intrigue');
 
                 this.player1.clickCard('Septa Mordane', 'play area');
                 this.player1.clickPrompt('Done');
             });
 
-            it('should not prevent opponents card abilities', function() {
+            it('should not prevent opponents card abilities', function () {
                 expect(this.player2).toAllowAbilityTrigger('Tyrion Lannister');
             });
         });
 
-        describe('when core cat is participating', function() {
-            beforeEach(function() {
+        describe('when core cat is participating', function () {
+            beforeEach(function () {
                 this.player1.clickPrompt('Intrigue');
 
                 this.player1.clickCard('Catelyn Stark (Core)', 'play area');
                 this.player1.clickPrompt('Done');
             });
 
-            it('should prevent opponents card abilities', function() {
+            it('should prevent opponents card abilities', function () {
                 expect(this.player2).not.toAllowAbilityTrigger('Tyrion Lannister');
             });
         });

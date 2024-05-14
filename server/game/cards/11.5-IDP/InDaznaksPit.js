@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class InDaznaksPit extends DrawCard {
     setupCardAbilities(ability) {
@@ -29,4 +29,4 @@ class InDaznaksPit extends DrawCard {
 
 InDaznaksPit.code = '11094';
 
-module.exports = InDaznaksPit;
+export default InDaznaksPit;

@@ -95,4 +95,4 @@ class PlayerPromptState {
     }
 }
 
-module.exports = PlayerPromptState;
+export default PlayerPromptState;

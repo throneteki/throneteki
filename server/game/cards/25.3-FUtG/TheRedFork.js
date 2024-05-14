@@ -1,5 +1,5 @@
-const GameActions = require('../../GameActions/index.js');
-const DrawCard = require('../../drawcard.js');
+import GameActions from '../../GameActions/index.js';
+import DrawCard from '../../drawcard.js';
 
 class TheRedFork extends DrawCard {
     setupCardAbilities() {
@@ -24,4 +24,4 @@ class TheRedFork extends DrawCard {
 
 TheRedFork.code = '25058';
 
-module.exports = TheRedFork;
+export default TheRedFork;

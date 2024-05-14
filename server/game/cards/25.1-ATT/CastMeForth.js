@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class CastMeForth extends PlotCard {
     setupCardAbilities(ability) {
@@ -23,4 +23,4 @@ class CastMeForth extends PlotCard {
 
 CastMeForth.code = '25004';
 
-module.exports = CastMeForth;
+export default CastMeForth;

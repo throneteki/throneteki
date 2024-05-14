@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class Lionstar extends DrawCard {
     setupCardAbilities(ability) {
@@ -30,4 +30,4 @@ class Lionstar extends DrawCard {
 
 Lionstar.code = '14028';
 
-module.exports = Lionstar;
+export default Lionstar;

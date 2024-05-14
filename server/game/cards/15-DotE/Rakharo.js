@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Rakharo extends DrawCard {
     setupCardAbilities() {
@@ -36,4 +36,4 @@ class Rakharo extends DrawCard {
 
 Rakharo.code = '15009';
 
-module.exports = Rakharo;
+export default Rakharo;

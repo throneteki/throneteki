@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const { Tokens } = require('../../Constants');
+import DrawCard from '../../drawcard.js';
+import { Tokens } from '../../Constants/index.js';
 
 class Saltcliffe extends DrawCard {
     setupCardAbilities(ability) {
@@ -67,4 +67,4 @@ class Saltcliffe extends DrawCard {
 
 Saltcliffe.code = '20008';
 
-module.exports = Saltcliffe;
+export default Saltcliffe;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class RiverRunner extends DrawCard {
     setupCardAbilities(ability) {
@@ -13,4 +13,4 @@ class RiverRunner extends DrawCard {
 
 RiverRunner.code = '09025';
 
-module.exports = RiverRunner;
+export default RiverRunner;

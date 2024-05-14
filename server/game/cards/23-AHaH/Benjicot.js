@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Benjicot extends DrawCard {
     setupCardAbilities() {
@@ -40,4 +40,4 @@ class Benjicot extends DrawCard {
 
 Benjicot.code = '23027';
 
-module.exports = Benjicot;
+export default Benjicot;

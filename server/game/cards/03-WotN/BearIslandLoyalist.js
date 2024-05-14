@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class BearIslandLoyalist extends DrawCard {
     setupCardAbilities(ability) {
@@ -23,4 +23,4 @@ class BearIslandLoyalist extends DrawCard {
 
 BearIslandLoyalist.code = '03012';
 
-module.exports = BearIslandLoyalist;
+export default BearIslandLoyalist;

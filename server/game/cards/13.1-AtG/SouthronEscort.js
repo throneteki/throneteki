@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class SouthronEscort extends DrawCard {
     setupCardAbilities(ability) {
@@ -20,4 +20,4 @@ class SouthronEscort extends DrawCard {
 
 SouthronEscort.code = '13015';
 
-module.exports = SouthronEscort;
+export default SouthronEscort;

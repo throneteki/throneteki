@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const TextHelper = require('../../TextHelper');
+import DrawCard from '../../drawcard.js';
+import TextHelper from '../../TextHelper.js';
 
 class Qyburn extends DrawCard {
     setupCardAbilities(ability) {
@@ -44,4 +44,4 @@ class Qyburn extends DrawCard {
 
 Qyburn.code = '08109';
 
-module.exports = Qyburn;
+export default Qyburn;

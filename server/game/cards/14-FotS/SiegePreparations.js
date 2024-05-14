@@ -1,5 +1,5 @@
-const PlotCard = require('../../plotcard');
-const TextHelper = require('../../TextHelper');
+import PlotCard from '../../plotcard.js';
+import TextHelper from '../../TextHelper.js';
 
 class SiegePreparations extends PlotCard {
     setupCardAbilities(ability) {
@@ -26,4 +26,4 @@ class SiegePreparations extends PlotCard {
 
 SiegePreparations.code = '14048';
 
-module.exports = SiegePreparations;
+export default SiegePreparations;

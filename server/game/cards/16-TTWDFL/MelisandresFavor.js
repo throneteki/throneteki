@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class MelisandresFavor extends DrawCard {
     setupCardAbilities(ability) {
@@ -22,4 +22,4 @@ class MelisandresFavor extends DrawCard {
 
 MelisandresFavor.code = '16002';
 
-module.exports = MelisandresFavor;
+export default MelisandresFavor;

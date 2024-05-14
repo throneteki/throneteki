@@ -1,5 +1,5 @@
-const GameAction = require('./GameAction');
-const Message = require('../Message');
+import GameAction from './GameAction.js';
+import Message from '../Message.js';
 
 class AddToChallenge extends GameAction {
     constructor() {
@@ -38,4 +38,4 @@ class AddToChallenge extends GameAction {
     }
 }
 
-module.exports = new AddToChallenge();
+export default new AddToChallenge();

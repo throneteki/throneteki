@@ -69,4 +69,4 @@ class CostReducer {
     }
 }
 
-module.exports = CostReducer;
+export default CostReducer;

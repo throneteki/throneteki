@@ -1,4 +1,4 @@
-const moment = require('moment');
+import moment from 'moment';
 
 const HeaderDivider = '='.repeat(20);
 
@@ -62,4 +62,4 @@ class PlainTextGameChatFormatter {
     }
 }
 
-module.exports = PlainTextGameChatFormatter;
+export default PlainTextGameChatFormatter;

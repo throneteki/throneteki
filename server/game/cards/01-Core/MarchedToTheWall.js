@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class MarchedToTheWall extends PlotCard {
     setupCardAbilities() {
@@ -24,4 +24,4 @@ class MarchedToTheWall extends PlotCard {
 
 MarchedToTheWall.code = '01015';
 
-module.exports = MarchedToTheWall;
+export default MarchedToTheWall;

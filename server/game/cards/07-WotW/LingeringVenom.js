@@ -1,6 +1,6 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
-const { Tokens } = require('../../Constants');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
+import { Tokens } from '../../Constants/index.js';
 
 class LingeringVenom extends DrawCard {
     setupCardAbilities() {
@@ -33,4 +33,4 @@ class LingeringVenom extends DrawCard {
 
 LingeringVenom.code = '07032';
 
-module.exports = LingeringVenom;
+export default LingeringVenom;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class Wraith extends DrawCard {
     setupCardAbilities(ability) {
@@ -31,4 +31,4 @@ class Wraith extends DrawCard {
 
 Wraith.code = '19001';
 
-module.exports = Wraith;
+export default Wraith;

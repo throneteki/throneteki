@@ -1,4 +1,4 @@
-const GameActions = require('../GameActions');
+import GameActions from '../GameActions/index.js';
 
 class ShuffleCardIntoDeckCost {
     constructor() {
@@ -22,4 +22,4 @@ class ShuffleCardIntoDeckCost {
     }
 }
 
-module.exports = ShuffleCardIntoDeckCost;
+export default ShuffleCardIntoDeckCost;

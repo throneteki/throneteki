@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class OceanRoad extends DrawCard {
     setupCardAbilities(ability) {
@@ -30,4 +30,4 @@ class OceanRoad extends DrawCard {
 
 OceanRoad.code = '05042';
 
-module.exports = OceanRoad;
+export default OceanRoad;

@@ -1,5 +1,5 @@
-const GameActions = require('../GameActions/index.js');
-const BaseStep = require('./basestep.js');
+import GameActions from '../GameActions/index.js';
+import BaseStep from './basestep.js';
 
 class KillCharacters extends BaseStep {
     constructor(game, cards, options) {
@@ -25,4 +25,4 @@ class KillCharacters extends BaseStep {
     }
 }
 
-module.exports = KillCharacters;
+export default KillCharacters;

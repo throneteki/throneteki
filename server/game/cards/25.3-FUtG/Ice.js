@@ -1,5 +1,5 @@
-const GameActions = require('../../GameActions/index.js');
-const DrawCard = require('../../drawcard.js');
+import GameActions from '../../GameActions/index.js';
+import DrawCard from '../../drawcard.js';
 
 class Ice extends DrawCard {
     setupCardAbilities(ability) {
@@ -19,4 +19,4 @@ class Ice extends DrawCard {
 
 Ice.code = '25052';
 
-module.exports = Ice;
+export default Ice;

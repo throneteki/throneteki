@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const TextHelper = require('../../TextHelper');
+import DrawCard from '../../drawcard.js';
+import TextHelper from '../../TextHelper.js';
 
 class StormsEndMaester extends DrawCard {
     setupCardAbilities(ability) {
@@ -24,4 +24,4 @@ class StormsEndMaester extends DrawCard {
 
 StormsEndMaester.code = '11087';
 
-module.exports = StormsEndMaester;
+export default StormsEndMaester;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class Hardhome extends DrawCard {
     setupCardAbilities(ability) {
@@ -44,4 +44,4 @@ class Hardhome extends DrawCard {
 
 Hardhome.code = '11086';
 
-module.exports = Hardhome;
+export default Hardhome;

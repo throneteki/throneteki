@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Clydas extends DrawCard {
     setupCardAbilities(ability) {
@@ -17,4 +17,4 @@ class Clydas extends DrawCard {
 
 Clydas.code = '15033';
 
-module.exports = Clydas;
+export default Clydas;

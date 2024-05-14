@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class WhiteRaven extends DrawCard {
     setupCardAbilities() {
@@ -42,4 +42,4 @@ class WhiteRaven extends DrawCard {
 
 WhiteRaven.code = '04008';
 
-module.exports = WhiteRaven;
+export default WhiteRaven;

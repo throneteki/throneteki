@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class OxcrossSurvivors extends DrawCard {
     setupCardAbilities(ability) {
@@ -17,4 +17,4 @@ class OxcrossSurvivors extends DrawCard {
 
 OxcrossSurvivors.code = '24008';
 
-module.exports = OxcrossSurvivors;
+export default OxcrossSurvivors;

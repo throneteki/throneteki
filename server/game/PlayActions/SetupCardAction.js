@@ -1,5 +1,5 @@
-const BaseAbility = require('../baseability');
-const Costs = require('../costs');
+import BaseAbility from '../baseability.js';
+import Costs from '../costs.js';
 
 class SetupCardAction extends BaseAbility {
     constructor() {
@@ -24,4 +24,4 @@ class SetupCardAction extends BaseAbility {
     }
 }
 
-module.exports = SetupCardAction;
+export default SetupCardAction;

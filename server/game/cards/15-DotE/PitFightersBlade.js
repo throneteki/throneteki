@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class PitFightersBlade extends DrawCard {
     setupCardAbilities(ability) {
@@ -11,4 +11,4 @@ class PitFightersBlade extends DrawCard {
 
 PitFightersBlade.code = '15021';
 
-module.exports = PitFightersBlade;
+export default PitFightersBlade;

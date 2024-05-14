@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Hellholt extends DrawCard {
     setupCardAbilities() {
@@ -19,4 +19,4 @@ class Hellholt extends DrawCard {
 
 Hellholt.code = '09032';
 
-module.exports = Hellholt;
+export default Hellholt;

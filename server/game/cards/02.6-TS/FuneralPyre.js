@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const TextHelper = require('../../TextHelper');
+import DrawCard from '../../drawcard.js';
+import TextHelper from '../../TextHelper.js';
 
 class FuneralPyre extends DrawCard {
     setupCardAbilities(ability) {
@@ -26,4 +26,4 @@ class FuneralPyre extends DrawCard {
 
 FuneralPyre.code = '02114';
 
-module.exports = FuneralPyre;
+export default FuneralPyre;

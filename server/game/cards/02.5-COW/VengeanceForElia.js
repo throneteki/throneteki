@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const ApplyClaim = require('../../gamesteps/challenge/applyclaim.js');
+import DrawCard from '../../drawcard.js';
+import ApplyClaim from '../../gamesteps/challenge/applyclaim.js';
 
 class VengeanceForElia extends DrawCard {
     setupCardAbilities() {
@@ -31,4 +31,4 @@ class VengeanceForElia extends DrawCard {
 
 VengeanceForElia.code = '02096';
 
-module.exports = VengeanceForElia;
+export default VengeanceForElia;

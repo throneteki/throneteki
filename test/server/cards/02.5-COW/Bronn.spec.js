@@ -1,10 +1,7 @@
-describe('Bronn (CoW)', function() {
-    integration(function() {
-        beforeEach(function() {
-            const deck = this.buildDeck('targaryen', [
-                'A Noble Cause',
-                'Bronn (CoW)'
-            ]);
+describe('Bronn (CoW)', function () {
+    integration(function () {
+        beforeEach(function () {
+            const deck = this.buildDeck('targaryen', ['A Noble Cause', 'Bronn (CoW)']);
             this.player1.selectDeck(deck);
             this.player2.selectDeck(deck);
             this.startGame();
@@ -18,7 +15,7 @@ describe('Bronn (CoW)', function() {
             this.selectFirstPlayer(this.player2);
         });
 
-        it('should allow an opponent to take control', function() {
+        it('should allow an opponent to take control', function () {
             this.player2.clickMenu(this.bronn, 'Take control of Bronn');
 
             expect(this.bronn).toBeControlledBy(this.player2);

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class KingRobbsBannermen extends DrawCard {
     setupCardAbilities(ability) {
@@ -15,4 +15,4 @@ class KingRobbsBannermen extends DrawCard {
 
 KingRobbsBannermen.code = '24016';
 
-module.exports = KingRobbsBannermen;
+export default KingRobbsBannermen;

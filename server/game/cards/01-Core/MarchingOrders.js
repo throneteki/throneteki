@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class MarchingOrders extends PlotCard {
     setupCardAbilities(ability) {
@@ -15,4 +15,4 @@ class MarchingOrders extends PlotCard {
 
 MarchingOrders.code = '01016';
 
-module.exports = MarchingOrders;
+export default MarchingOrders;

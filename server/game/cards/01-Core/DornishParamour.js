@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class DornishParamour extends DrawCard {
     setupCardAbilities() {
@@ -31,4 +31,4 @@ class DornishParamour extends DrawCard {
 
 DornishParamour.code = '01111';
 
-module.exports = DornishParamour;
+export default DornishParamour;

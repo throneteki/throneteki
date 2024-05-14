@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class KingRenlySHost extends DrawCard {
     setupCardAbilities(ability) {
@@ -25,4 +25,4 @@ class KingRenlySHost extends DrawCard {
 
 KingRenlySHost.code = '04063';
 
-module.exports = KingRenlySHost;
+export default KingRenlySHost;

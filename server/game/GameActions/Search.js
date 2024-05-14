@@ -1,9 +1,9 @@
-const GameAction = require('./GameAction');
-const AbilityAdapter = require('./AbilityAdapter');
-const AbilityMessage = require('../AbilityMessage');
-const RevealCards = require('./RevealCards');
-const CardMatcher = require('../CardMatcher');
-const Shuffle = require('./Shuffle');
+import GameAction from './GameAction.js';
+import AbilityAdapter from './AbilityAdapter.js';
+import AbilityMessage from '../AbilityMessage.js';
+import RevealCards from './RevealCards.js';
+import CardMatcher from '../CardMatcher.js';
+import Shuffle from './Shuffle.js';
 
 class Search extends GameAction {
     constructor({
@@ -176,4 +176,4 @@ class Search extends GameAction {
     }
 }
 
-module.exports = Search;
+export default Search;

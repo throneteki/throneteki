@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class SmallfolkMob extends DrawCard {
     setupCardAbilities(ability) {
@@ -22,4 +22,4 @@ class SmallfolkMob extends DrawCard {
 
 SmallfolkMob.code = '13081';
 
-module.exports = SmallfolkMob;
+export default SmallfolkMob;

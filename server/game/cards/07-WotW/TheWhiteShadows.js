@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class TheWhiteShadows extends PlotCard {
     setupCardAbilities() {
@@ -33,4 +33,4 @@ class TheWhiteShadows extends PlotCard {
 
 TheWhiteShadows.code = '07050';
 
-module.exports = TheWhiteShadows;
+export default TheWhiteShadows;

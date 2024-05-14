@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class GhiscariElite extends DrawCard {
     setupCardAbilities() {
@@ -35,4 +35,4 @@ class GhiscariElite extends DrawCard {
 
 GhiscariElite.code = '06013';
 
-module.exports = GhiscariElite;
+export default GhiscariElite;

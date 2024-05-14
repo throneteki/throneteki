@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TychoNestoris extends DrawCard {
     setupCardAbilities(ability) {
@@ -31,4 +31,4 @@ class TychoNestoris extends DrawCard {
 
 TychoNestoris.code = '11037';
 
-module.exports = TychoNestoris;
+export default TychoNestoris;

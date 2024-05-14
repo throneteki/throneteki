@@ -1,5 +1,5 @@
-const ChallengeKeywordAbility = require('./ChallengeKeywordAbility.js');
-const GameActions = require('./GameActions');
+import ChallengeKeywordAbility from './ChallengeKeywordAbility.js';
+import GameActions from './GameActions/index.js';
 
 class PillageKeyword extends ChallengeKeywordAbility {
     constructor() {
@@ -23,4 +23,4 @@ class PillageKeyword extends ChallengeKeywordAbility {
     }
 }
 
-module.exports = PillageKeyword;
+export default PillageKeyword;

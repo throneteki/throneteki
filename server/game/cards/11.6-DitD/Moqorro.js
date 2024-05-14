@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Moqorro extends DrawCard {
     setupCardAbilities() {
@@ -26,4 +26,4 @@ class Moqorro extends DrawCard {
 
 Moqorro.code = '11111';
 
-module.exports = Moqorro;
+export default Moqorro;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Kingsmoot extends DrawCard {
     setupCardAbilities(ability) {
@@ -38,4 +38,4 @@ class Kingsmoot extends DrawCard {
 
 Kingsmoot.code = '08052';
 
-module.exports = Kingsmoot;
+export default Kingsmoot;

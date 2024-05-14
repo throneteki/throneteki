@@ -1,6 +1,5 @@
-const range = require('lodash.range');
-
-const BaseStep = require('./basestep');
+import range from 'lodash.range';
+import BaseStep from './basestep.js';
 
 class BestowPrompt extends BaseStep {
     constructor(game, player, card) {
@@ -59,4 +58,4 @@ class BestowPrompt extends BaseStep {
     }
 }
 
-module.exports = BestowPrompt;
+export default BestowPrompt;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Craven extends DrawCard {
     setupCardAbilities(ability) {
@@ -10,4 +10,4 @@ class Craven extends DrawCard {
 
 Craven.code = '04026';
 
-module.exports = Craven;
+export default Craven;

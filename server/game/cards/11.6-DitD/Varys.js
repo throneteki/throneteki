@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class Varys extends DrawCard {
     setupCardAbilities(ability) {
@@ -41,4 +41,4 @@ class Varys extends DrawCard {
 
 Varys.code = '11119';
 
-module.exports = Varys;
+export default Varys;

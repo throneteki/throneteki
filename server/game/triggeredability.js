@@ -1,6 +1,6 @@
-const BaseAbility = require('./baseability.js');
-const Costs = require('./costs.js');
-const TriggeredAbilityContext = require('./TriggeredAbilityContext.js');
+import BaseAbility from './baseability.js';
+import Costs from './costs.js';
+import TriggeredAbilityContext from './TriggeredAbilityContext.js';
 
 class TriggeredAbility extends BaseAbility {
     constructor(game, card, eventType, properties) {
@@ -219,4 +219,4 @@ class TriggeredAbility extends BaseAbility {
     }
 }
 
-module.exports = TriggeredAbility;
+export default TriggeredAbility;

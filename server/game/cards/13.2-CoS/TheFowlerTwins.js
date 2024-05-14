@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const { ChallengeTracker } = require('../../EventTrackers');
+import DrawCard from '../../drawcard.js';
+import { ChallengeTracker } from '../../EventTrackers/index.js';
 
 class TheFowlerTwins extends DrawCard {
     setupCardAbilities(ability) {
@@ -35,4 +35,4 @@ class TheFowlerTwins extends DrawCard {
 
 TheFowlerTwins.code = '13035';
 
-module.exports = TheFowlerTwins;
+export default TheFowlerTwins;

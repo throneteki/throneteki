@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class GoldenTooth extends DrawCard {
     setupCardAbilities(ability) {
@@ -28,4 +28,4 @@ class GoldenTooth extends DrawCard {
 
 GoldenTooth.code = '05017';
 
-module.exports = GoldenTooth;
+export default GoldenTooth;

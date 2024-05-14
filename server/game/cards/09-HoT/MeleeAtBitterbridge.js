@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const TextHelper = require('../../TextHelper');
+import DrawCard from '../../drawcard.js';
+import TextHelper from '../../TextHelper.js';
 
 class MeleeAtBitterbridge extends DrawCard {
     setupCardAbilities(ability) {
@@ -70,4 +70,4 @@ class MeleeAtBitterbridge extends DrawCard {
 
 MeleeAtBitterbridge.code = '09022';
 
-module.exports = MeleeAtBitterbridge;
+export default MeleeAtBitterbridge;

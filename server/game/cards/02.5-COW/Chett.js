@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Chett extends DrawCard {
     setupCardAbilities(ability) {
@@ -32,4 +32,4 @@ class Chett extends DrawCard {
 
 Chett.code = '02085';
 
-module.exports = Chett;
+export default Chett;

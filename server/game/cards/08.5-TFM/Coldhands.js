@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Coldhands extends DrawCard {
     setupCardAbilities(ability) {
@@ -43,4 +43,4 @@ class Coldhands extends DrawCard {
 
 Coldhands.code = '08085';
 
-module.exports = Coldhands;
+export default Coldhands;

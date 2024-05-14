@@ -1,4 +1,4 @@
-const UiPrompt = require('./uiprompt.js');
+import UiPrompt from './uiprompt.js';
 
 class AllPlayerPrompt extends UiPrompt {
     activeCondition(player) {
@@ -16,4 +16,4 @@ class AllPlayerPrompt extends UiPrompt {
     }
 }
 
-module.exports = AllPlayerPrompt;
+export default AllPlayerPrompt;

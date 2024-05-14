@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const { ChallengeTracker } = require('../../EventTrackers');
+import DrawCard from '../../drawcard.js';
+import { ChallengeTracker } from '../../EventTrackers/index.js';
 
 class BridgeOfSkulls extends DrawCard {
     setupCardAbilities() {
@@ -36,4 +36,4 @@ class BridgeOfSkulls extends DrawCard {
 
 BridgeOfSkulls.code = '05032';
 
-module.exports = BridgeOfSkulls;
+export default BridgeOfSkulls;

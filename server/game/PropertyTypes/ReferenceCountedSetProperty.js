@@ -62,4 +62,4 @@ class ReferenceCountedSetProperty {
     }
 }
 
-module.exports = ReferenceCountedSetProperty;
+export default ReferenceCountedSetProperty;

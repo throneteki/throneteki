@@ -1,6 +1,6 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
-const { Tokens } = require('../../Constants');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
+import { Tokens } from '../../Constants/index.js';
 
 class KingsLandingSmuggler extends DrawCard {
     setupCardAbilities() {
@@ -31,4 +31,4 @@ class KingsLandingSmuggler extends DrawCard {
 
 KingsLandingSmuggler.code = '19018';
 
-module.exports = KingsLandingSmuggler;
+export default KingsLandingSmuggler;

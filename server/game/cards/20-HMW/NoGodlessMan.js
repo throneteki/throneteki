@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const TextHelper = require('../../TextHelper');
+import DrawCard from '../../drawcard.js';
+import TextHelper from '../../TextHelper.js';
 
 class NoGodlessMan extends DrawCard {
     setupCardAbilities(ability) {
@@ -42,4 +42,4 @@ class NoGodlessMan extends DrawCard {
 
 NoGodlessMan.code = '20010';
 
-module.exports = NoGodlessMan;
+export default NoGodlessMan;

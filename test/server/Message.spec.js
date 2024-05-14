@@ -1,33 +1,45 @@
-const Message = require('../../server/game/Message');
-const DrawCard = require('../../server/game/drawcard');
-const Spectator = require('../../server/game/spectator');
+import Message from '../../server/game/Message.js';
+import DrawCard from '../../server/game/drawcard.js';
+import Spectator from '../../server/game/spectator.js';
 
-describe('Message', function() {
-    describe('#flatten', function() {
-        describe('when there are no args', function() {
-            beforeEach(function() {
+describe('Message', function () {
+    describe('#flatten', function () {
+        describe('when there are no args', function () {
+            beforeEach(function () {
                 this.message = new Message({ format: 'This is a message', args: {} });
             });
 
-            it('returns the format', function() {
+            it('returns the format', function () {
                 expect(this.message.flatten()).toEqual(['This is a message']);
             });
         });
 
-        describe('when there are positional arguments', function() {
-            it('returns the interpolated arguments', function() {
-                const message = new Message({ format: '{0} plays {1} to kill {2}', args: ['Player', 'Valar', 'everyone'] });
-                expect(message.flatten()).toEqual(['Player', ' plays ', 'Valar', ' to kill ', 'everyone']);
+        describe('when there are positional arguments', function () {
+            it('returns the interpolated arguments', function () {
+                const message = new Message({
+                    format: '{0} plays {1} to kill {2}',
+                    args: ['Player', 'Valar', 'everyone']
+                });
+                expect(message.flatten()).toEqual([
+                    'Player',
+                    ' plays ',
+                    'Valar',
+                    ' to kill ',
+                    'everyone'
+                ]);
             });
 
-            it('excludes out of index arguments', function() {
-                const message = new Message({ format: '{0} plays {1} to kill Walder', args: ['Player'] });
+            it('excludes out of index arguments', function () {
+                const message = new Message({
+                    format: '{0} plays {1} to kill Walder',
+                    args: ['Player']
+                });
                 expect(message.flatten()).toEqual(['Player', ' plays ', ' to kill Walder']);
             });
         });
 
-        describe('when there are named arguments', function() {
-            it('returns the interpolated arguments', function() {
+        describe('when there are named arguments', function () {
+            it('returns the interpolated arguments', function () {
                 const message = new Message({
                     format: '{player} plays {card} to kill {target}',
                     args: {
@@ -36,10 +48,16 @@ describe('Message', function() {
                         target: 'everyone'
                     }
                 });
-                expect(message.flatten()).toEqual(['Player', ' plays ', 'Valar', ' to kill ', 'everyone']);
+                expect(message.flatten()).toEqual([
+                    'Player',
+                    ' plays ',
+                    'Valar',
+                    ' to kill ',
+                    'everyone'
+                ]);
             });
 
-            it('excludes unknown arguments', function() {
+            it('excludes unknown arguments', function () {
                 const message = new Message({
                     format: '{player} plays {card} to kill Walder',
                     args: {
@@ -50,10 +68,10 @@ describe('Message', function() {
             });
         });
 
-        describe('argument formats', function() {
-            describe('arrays', function() {
-                describe('when there are no elements in the array', function() {
-                    beforeEach(function() {
+        describe('argument formats', function () {
+            describe('arrays', function () {
+                describe('when there are no elements in the array', function () {
+                    beforeEach(function () {
                         this.message = new Message({
                             format: 'Arya kills {targets}',
                             args: {
@@ -62,13 +80,13 @@ describe('Message', function() {
                         });
                     });
 
-                    it('returns the empty string for the argument', function() {
+                    it('returns the empty string for the argument', function () {
                         expect(this.message.flatten()).toEqual(['Arya kills ', '']);
                     });
                 });
 
-                describe('when there is a single element in the array', function() {
-                    beforeEach(function() {
+                describe('when there is a single element in the array', function () {
+                    beforeEach(function () {
                         this.message = new Message({
                             format: 'Arya kills {targets}',
                             args: {
@@ -77,13 +95,13 @@ describe('Message', function() {
                         });
                     });
 
-                    it('returns the interpolated argument', function() {
+                    it('returns the interpolated argument', function () {
                         expect(this.message.flatten()).toEqual(['Arya kills ', 'Walder Frey']);
                     });
                 });
 
-                describe('when there are two elements in the array', function() {
-                    beforeEach(function() {
+                describe('when there are two elements in the array', function () {
+                    beforeEach(function () {
                         this.message = new Message({
                             format: 'Arya kills {targets}',
                             args: {
@@ -92,13 +110,18 @@ describe('Message', function() {
                         });
                     });
 
-                    it('returns the interpolated arguments separated by an and', function() {
-                        expect(this.message.flatten()).toEqual(['Arya kills ', 'Polliver', ', and ', 'Walder Frey']);
+                    it('returns the interpolated arguments separated by an and', function () {
+                        expect(this.message.flatten()).toEqual([
+                            'Arya kills ',
+                            'Polliver',
+                            ', and ',
+                            'Walder Frey'
+                        ]);
                     });
                 });
 
-                describe('when there are many elements in the array', function() {
-                    beforeEach(function() {
+                describe('when there are many elements in the array', function () {
+                    beforeEach(function () {
                         this.message = new Message({
                             format: 'Arya kills {targets}',
                             args: {
@@ -107,32 +130,47 @@ describe('Message', function() {
                         });
                     });
 
-                    it('returns the interpolated arguments separated by commas and an and', function() {
-                        expect(this.message.flatten()).toEqual(['Arya kills ', 'Polliver', ', ', 'Walder Frey', ', ', 'House Frey', ', and ', 'The Night King']);
+                    it('returns the interpolated arguments separated by commas and an and', function () {
+                        expect(this.message.flatten()).toEqual([
+                            'Arya kills ',
+                            'Polliver',
+                            ', ',
+                            'Walder Frey',
+                            ', ',
+                            'House Frey',
+                            ', and ',
+                            'The Night King'
+                        ]);
                     });
                 });
             });
 
-            describe('card objects', function() {
-                beforeEach(function() {
-                    const card = new DrawCard({}, {
-                        code: '12345',
-                        name: 'Ser Pounce',
-                        type: 'character'
-                    });
+            describe('card objects', function () {
+                beforeEach(function () {
+                    const card = new DrawCard(
+                        {},
+                        {
+                            code: '12345',
+                            name: 'Ser Pounce',
+                            type: 'character'
+                        }
+                    );
                     this.message = new Message({
                         format: 'Player 1 plays {card}',
                         args: { card }
                     });
                 });
 
-                it('converts the card argument', function() {
-                    expect(this.message.flatten()).toEqual(['Player 1 plays ', { argType: 'card', code: '12345', label: 'Ser Pounce', type: 'character' }]);
+                it('converts the card argument', function () {
+                    expect(this.message.flatten()).toEqual([
+                        'Player 1 plays ',
+                        { argType: 'card', code: '12345', label: 'Ser Pounce', type: 'character' }
+                    ]);
                 });
             });
 
-            describe('player objects', function() {
-                beforeEach(function() {
+            describe('player objects', function () {
+                beforeEach(function () {
                     const player = new Spectator('1234', { username: 'Arya' });
                     this.message = new Message({
                         format: '{player} plays Ser Pounce',
@@ -140,13 +178,16 @@ describe('Message', function() {
                     });
                 });
 
-                it('converts the player argument', function() {
-                    expect(this.message.flatten()).toEqual([{ argType: 'nonAvatarPlayer', name: 'Arya' }, ' plays Ser Pounce']);
+                it('converts the player argument', function () {
+                    expect(this.message.flatten()).toEqual([
+                        { argType: 'nonAvatarPlayer', name: 'Arya' },
+                        ' plays Ser Pounce'
+                    ]);
                 });
             });
 
-            describe('nested messages', function() {
-                beforeEach(function() {
+            describe('nested messages', function () {
+                beforeEach(function () {
                     this.nestedMessage = new Message({
                         format: 'draw {amount} cards',
                         args: {
@@ -163,8 +204,16 @@ describe('Message', function() {
                     });
                 });
 
-                it('interpolates and flattens the two messages', function() {
-                    expect(this.parentMessage.flatten()).toEqual(['Player', ' plays ', 'Valar', ' to ', 'draw ', 3, ' cards']);
+                it('interpolates and flattens the two messages', function () {
+                    expect(this.parentMessage.flatten()).toEqual([
+                        'Player',
+                        ' plays ',
+                        'Valar',
+                        ' to ',
+                        'draw ',
+                        3,
+                        ' cards'
+                    ]);
                 });
             });
         });

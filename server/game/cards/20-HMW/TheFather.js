@@ -1,5 +1,5 @@
-const PlotCard = require('../../plotcard');
-const GameActions = require('../../GameActions');
+import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheFather extends PlotCard {
     setupCardAbilities() {
@@ -35,4 +35,4 @@ class TheFather extends PlotCard {
 
 TheFather.code = '20054';
 
-module.exports = TheFather;
+export default TheFather;

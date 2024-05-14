@@ -1,6 +1,5 @@
-const range = require('lodash.range');
-
-const DrawCard = require('../../drawcard.js');
+import range from 'lodash.range';
+import DrawCard from '../../drawcard.js';
 
 class TheHouseOfBlackAndWhite extends DrawCard {
     setupCardAbilities(ability) {
@@ -74,4 +73,4 @@ class TheHouseOfBlackAndWhite extends DrawCard {
 
 TheHouseOfBlackAndWhite.code = '08022';
 
-module.exports = TheHouseOfBlackAndWhite;
+export default TheHouseOfBlackAndWhite;

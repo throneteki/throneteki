@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const ChallengeTypes = require('../../ChallengeTypes');
+import DrawCard from '../../drawcard.js';
+import ChallengeTypes from '../../ChallengeTypes.js';
 
 class MaesterMullin extends DrawCard {
     setupCardAbilities(ability) {
@@ -47,4 +47,4 @@ class MaesterMullin extends DrawCard {
 
 MaesterMullin.code = '13045';
 
-module.exports = MaesterMullin;
+export default MaesterMullin;

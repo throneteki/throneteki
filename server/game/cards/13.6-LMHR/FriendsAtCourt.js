@@ -1,6 +1,6 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
-const Message = require('../../Message');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
+import Message from '../../Message.js';
 
 class FriendsAtCourt extends DrawCard {
     setupCardAbilities() {
@@ -77,4 +77,4 @@ class FriendsAtCourt extends DrawCard {
 
 FriendsAtCourt.code = '13115';
 
-module.exports = FriendsAtCourt;
+export default FriendsAtCourt;

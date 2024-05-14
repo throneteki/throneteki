@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const RevealPlots = require('../../gamesteps/revealplots');
+import DrawCard from '../../drawcard.js';
+import RevealPlots from '../../gamesteps/revealplots.js';
 
 class WheelsWithinWheels extends DrawCard {
     setupCardAbilities(ability) {
@@ -26,4 +26,4 @@ class WheelsWithinWheels extends DrawCard {
 
 WheelsWithinWheels.code = '16006';
 
-module.exports = WheelsWithinWheels;
+export default WheelsWithinWheels;

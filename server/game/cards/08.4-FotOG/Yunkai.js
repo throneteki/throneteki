@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const { Tokens } = require('../../Constants');
+import DrawCard from '../../drawcard.js';
+import { Tokens } from '../../Constants/index.js';
 
 class Yunkai extends DrawCard {
     setupCardAbilities(ability) {
@@ -70,4 +70,4 @@ class Yunkai extends DrawCard {
 
 Yunkai.code = '08074';
 
-module.exports = Yunkai;
+export default Yunkai;

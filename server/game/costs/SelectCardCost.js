@@ -1,4 +1,4 @@
-const CardSelector = require('../CardSelector.js');
+import CardSelector from '../CardSelector.js';
 
 class SelectCardCost {
     constructor(action, promptProperties) {
@@ -55,4 +55,4 @@ class SelectCardCost {
     }
 }
 
-module.exports = SelectCardCost;
+export default SelectCardCost;

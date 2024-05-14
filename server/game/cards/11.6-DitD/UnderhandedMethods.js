@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class UnderhandedMethods extends DrawCard {
     setupCardAbilities(ability) {
@@ -10,4 +10,4 @@ class UnderhandedMethods extends DrawCard {
 
 UnderhandedMethods.code = '11110';
 
-module.exports = UnderhandedMethods;
+export default UnderhandedMethods;

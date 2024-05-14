@@ -1,6 +1,6 @@
-const PlotCard = require('../../plotcard');
-const GameActions = require('../../GameActions');
-const Message = require('../../Message');
+import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
+import Message from '../../Message.js';
 
 class CityOfSecrets extends PlotCard {
     setupCardAbilities() {
@@ -51,4 +51,4 @@ class CityOfSecrets extends PlotCard {
 
 CityOfSecrets.code = '13019';
 
-module.exports = CityOfSecrets;
+export default CityOfSecrets;

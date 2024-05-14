@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Dalla extends DrawCard {
     setupCardAbilities(ability) {
@@ -21,4 +21,4 @@ class Dalla extends DrawCard {
 
 Dalla.code = '07040';
 
-module.exports = Dalla;
+export default Dalla;

@@ -1,7 +1,6 @@
-const range = require('lodash.range');
-
-const DrawCard = require('../../drawcard.js');
-const { Tokens } = require('../../Constants');
+import range from 'lodash.range';
+import DrawCard from '../../drawcard.js';
+import { Tokens } from '../../Constants/index.js';
 
 class LannisportTreasury extends DrawCard {
     setupCardAbilities(ability) {
@@ -57,4 +56,4 @@ class LannisportTreasury extends DrawCard {
 
 LannisportTreasury.code = '05019';
 
-module.exports = LannisportTreasury;
+export default LannisportTreasury;

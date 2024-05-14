@@ -1,7 +1,7 @@
-const GameAction = require('./GameAction');
-const AbilityChoicePrompt = require('../gamesteps/AbilityChoicePrompt');
-const AbilityMessage = require('../AbilityMessage');
-const HandlerGameActionWrapper = require('./HandlerGameActionWrapper');
+import GameAction from './GameAction.js';
+import AbilityChoicePrompt from '../gamesteps/AbilityChoicePrompt.js';
+import AbilityMessage from '../AbilityMessage.js';
+import HandlerGameActionWrapper from './HandlerGameActionWrapper.js';
 
 class ChooseGameAction extends GameAction {
     constructor({ player, title, message, choices, cancelText, cancelMessage }) {
@@ -105,4 +105,4 @@ class ChooseGameAction extends GameAction {
     }
 }
 
-module.exports = ChooseGameAction;
+export default ChooseGameAction;

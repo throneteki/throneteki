@@ -1,10 +1,9 @@
-const {
+import {
     validateDeck,
     formatDeckAsShortCards,
     formatDeckAsFullCards
-} = require('../../../../deck-helper');
-
-const AllPlayerPrompt = require('../allplayerprompt.js');
+} from '../../../../deck-helper/index.js';
+import AllPlayerPrompt from '../allplayerprompt.js';
 
 class RookerySetupPrompt extends AllPlayerPrompt {
     completionCondition(player) {
@@ -110,4 +109,4 @@ class RookerySetupPrompt extends AllPlayerPrompt {
     }
 }
 
-module.exports = RookerySetupPrompt;
+export default RookerySetupPrompt;

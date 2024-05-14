@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Silence extends DrawCard {
     setupCardAbilities(ability) {
@@ -25,4 +25,4 @@ class Silence extends DrawCard {
 
 Silence.code = '19004';
 
-module.exports = Silence;
+export default Silence;

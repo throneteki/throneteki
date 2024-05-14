@@ -1,5 +1,5 @@
-const AgendaCard = require('../../agendacard.js');
-const GameActions = require('../../GameActions');
+import AgendaCard from '../../agendacard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Greensight extends AgendaCard {
     setupCardAbilities() {
@@ -33,4 +33,4 @@ class Greensight extends AgendaCard {
 
 Greensight.code = '08079';
 
-module.exports = Greensight;
+export default Greensight;

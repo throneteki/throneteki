@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class QarlTheMaid extends DrawCard {
     setupCardAbilities() {
@@ -32,4 +32,4 @@ class QarlTheMaid extends DrawCard {
 
 QarlTheMaid.code = '12009';
 
-module.exports = QarlTheMaid;
+export default QarlTheMaid;

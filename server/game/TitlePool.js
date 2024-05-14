@@ -1,12 +1,12 @@
-const shuffle = require('lodash.shuffle');
+import shuffle from 'lodash.shuffle';
 
 const titles = [
-    require('./cards/titles/CrownRegent.js'),
-    require('./cards/titles/HandOfTheKing.js'),
-    require('./cards/titles/MasterOfCoin.js'),
-    require('./cards/titles/MasterOfLaws.js'),
-    require('./cards/titles/MasterOfShips.js'),
-    require('./cards/titles/MasterOfWhispers.js')
+    (await import('./cards/titles/CrownRegent.js')).default,
+    (await import('./cards/titles/HandOfTheKing.js')).default,
+    (await import('./cards/titles/MasterOfCoin.js')).default,
+    (await import('./cards/titles/MasterOfLaws.js')).default,
+    (await import('./cards/titles/MasterOfShips.js')).default,
+    (await import('./cards/titles/MasterOfWhispers.js')).default
 ];
 
 class TitlePool {
@@ -64,4 +64,4 @@ class TitlePool {
     }
 }
 
-module.exports = TitlePool;
+export default TitlePool;

@@ -1,6 +1,6 @@
-const GameActions = require('../../GameActions/index.js');
-const DrawCard = require('../../drawcard.js');
-const Message = require('../../Message.js');
+import GameActions from '../../GameActions/index.js';
+import DrawCard from '../../drawcard.js';
+import Message from '../../Message.js';
 
 class Greyscale extends DrawCard {
     setupCardAbilities(ability) {
@@ -114,4 +114,4 @@ class Greyscale extends DrawCard {
 
 Greyscale.code = '25059';
 
-module.exports = Greyscale;
+export default Greyscale;

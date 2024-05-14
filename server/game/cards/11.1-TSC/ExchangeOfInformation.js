@@ -1,5 +1,5 @@
-const GameActions = require('../../GameActions');
-const PlotCard = require('../../plotcard');
+import GameActions from '../../GameActions/index.js';
+import PlotCard from '../../plotcard.js';
 
 class ExchangeOfInformation extends PlotCard {
     setupCardAbilities() {
@@ -84,4 +84,4 @@ class ExchangeOfInformation extends PlotCard {
 
 ExchangeOfInformation.code = '11020';
 
-module.exports = ExchangeOfInformation;
+export default ExchangeOfInformation;

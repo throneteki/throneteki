@@ -1,5 +1,5 @@
-const GameActions = require('../../GameActions/index.js');
-const PlotCard = require('../../plotcard.js');
+import GameActions from '../../GameActions/index.js';
+import PlotCard from '../../plotcard.js';
 
 class DanceOfTheDragons extends PlotCard {
     setupCardAbilities(ability) {
@@ -39,4 +39,4 @@ class DanceOfTheDragons extends PlotCard {
 
 DanceOfTheDragons.code = '25014';
 
-module.exports = DanceOfTheDragons;
+export default DanceOfTheDragons;

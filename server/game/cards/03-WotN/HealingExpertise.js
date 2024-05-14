@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class HealingExpertise extends DrawCard {
     setupCardAbilities(ability) {
@@ -31,4 +31,4 @@ class HealingExpertise extends DrawCard {
 
 HealingExpertise.code = '03044';
 
-module.exports = HealingExpertise;
+export default HealingExpertise;

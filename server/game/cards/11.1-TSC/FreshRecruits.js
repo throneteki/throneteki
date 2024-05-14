@@ -1,6 +1,6 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
-const Array = require('../../../Array');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
+import { availableToPair } from '../../../Array.js';
 
 class FreshRecruits extends DrawCard {
     setupCardAbilities() {
@@ -18,7 +18,7 @@ class FreshRecruits extends DrawCard {
                     condition: (card, context) =>
                         context.selectedCards.includes(card) ||
                         (selectableTraits.some((trait) => card.hasTrait(trait)) &&
-                            Array.availableToPair(
+                            availableToPair(
                                 selectableTraits,
                                 context.selectedCards,
                                 (trait, card) => card.hasTrait(trait)
@@ -35,4 +35,4 @@ class FreshRecruits extends DrawCard {
 
 FreshRecruits.code = '11007';
 
-module.exports = FreshRecruits;
+export default FreshRecruits;

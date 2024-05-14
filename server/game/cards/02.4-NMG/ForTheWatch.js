@@ -1,5 +1,5 @@
-const PlotCard = require('../../plotcard');
-const { ChallengeTracker } = require('../../EventTrackers');
+import PlotCard from '../../plotcard.js';
+import { ChallengeTracker } from '../../EventTrackers/index.js';
 
 class ForTheWatch extends PlotCard {
     setupCardAbilities(ability) {
@@ -21,4 +21,4 @@ class ForTheWatch extends PlotCard {
 
 ForTheWatch.code = '02067';
 
-module.exports = ForTheWatch;
+export default ForTheWatch;

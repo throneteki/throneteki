@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Queenscrown extends DrawCard {
     setupCardAbilities(ability) {
@@ -81,4 +81,4 @@ class Queenscrown extends DrawCard {
 
 Queenscrown.code = '07019';
 
-module.exports = Queenscrown;
+export default Queenscrown;

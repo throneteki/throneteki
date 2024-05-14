@@ -1,6 +1,6 @@
-const Phase = require('./phase.js');
-const SimpleStep = require('./simplestep.js');
-const MarshalCardsPrompt = require('./marshaling/marshalcardsprompt.js');
+import Phase from './phase.js';
+import SimpleStep from './simplestep.js';
+import MarshalCardsPrompt from './marshaling/marshalcardsprompt.js';
 
 class MarshalingPhase extends Phase {
     constructor(game) {
@@ -39,4 +39,4 @@ class MarshalingPhase extends Phase {
     }
 }
 
-module.exports = MarshalingPhase;
+export default MarshalingPhase;

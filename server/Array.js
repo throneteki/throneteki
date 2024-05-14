@@ -1,4 +1,4 @@
-function flatten(array) {
+export function flatten(array) {
     return array.reduce((result, element) => {
         if (Array.isArray(element)) {
             return result.concat(flatten(element));
@@ -8,11 +8,11 @@ function flatten(array) {
     }, []);
 }
 
-function flatMap(array, mapFunc) {
+export function flatMap(array, mapFunc) {
     return flatten(array.map(mapFunc));
 }
 
-function partition(array, filterFunc) {
+export function partition(array, filterFunc) {
     let matches = [];
     let remaining = [];
 
@@ -27,7 +27,7 @@ function partition(array, filterFunc) {
     return [matches, remaining];
 }
 
-function sortByComparison(transform) {
+export function sortByComparison(transform) {
     return function (a, b) {
         let aValue = transform(a);
         let bValue = transform(b);
@@ -55,7 +55,7 @@ export function sortBy(array, transform) {
  * @param {any[]} array2 The array to compare to
  * @param {function(any, any)} canPair The function to compair elements from array1 & array2
  */
-function availableToPair(array1, array2, canPair) {
+export function availableToPair(array1, array2, canPair) {
     let a1indecies = array1.map((_a1element, index) => index);
     let available = [];
     // 'Permutation' results in a list of a1indecies in every possible ordered combination. Eg. [[0,1,2], [0,2,1], ... , [2,1,0]]
@@ -99,10 +99,3 @@ function permutate(permutations, current, array) {
     }
     return permutations;
 }
-
-export default {
-    flatten,
-    flatMap,
-    partition,
-    availableToPair
-};

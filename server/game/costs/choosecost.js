@@ -61,4 +61,4 @@ class ChooseCost {
     }
 }
 
-module.exports = ChooseCost;
+export default ChooseCost;

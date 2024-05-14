@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class DagmerCleftjaw extends DrawCard {
     setupCardAbilities() {
@@ -34,4 +34,4 @@ class DagmerCleftjaw extends DrawCard {
 
 DagmerCleftjaw.code = '02111';
 
-module.exports = DagmerCleftjaw;
+export default DagmerCleftjaw;

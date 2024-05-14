@@ -1,4 +1,4 @@
-const GameActions = require('../GameActions');
+import GameActions from '../GameActions/index.js';
 
 class DiscardFromDeckCost {
     canPay(context) {
@@ -29,4 +29,4 @@ class DiscardFromDeckCost {
     unpay() {}
 }
 
-module.exports = DiscardFromDeckCost;
+export default DiscardFromDeckCost;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TourneyGrounds extends DrawCard {
     setupCardAbilities(ability) {
@@ -28,4 +28,4 @@ class TourneyGrounds extends DrawCard {
 
 TourneyGrounds.code = '03042';
 
-module.exports = TourneyGrounds;
+export default TourneyGrounds;

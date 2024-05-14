@@ -1,6 +1,5 @@
-const pmx = require('pmx');
-
-const GameServer = require('./gameserver.js');
+import pmx from 'pmx';
+import GameServer from './gameserver.js';
 
 var server = new GameServer();
 

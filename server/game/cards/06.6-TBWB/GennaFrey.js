@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class GennaFrey extends DrawCard {
     setupCardAbilities() {
@@ -37,4 +37,4 @@ class GennaFrey extends DrawCard {
 
 GennaFrey.code = '06109';
 
-module.exports = GennaFrey;
+export default GennaFrey;

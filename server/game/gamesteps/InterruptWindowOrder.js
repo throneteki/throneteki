@@ -87,4 +87,4 @@ const InterruptWindowOrder = {
     }
 };
 
-module.exports = InterruptWindowOrder;
+export default InterruptWindowOrder;

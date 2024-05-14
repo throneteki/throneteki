@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class CotterPyke extends DrawCard {
     setupCardAbilities() {
@@ -32,4 +32,4 @@ class CotterPyke extends DrawCard {
 
 CotterPyke.code = '07004';
 
-module.exports = CotterPyke;
+export default CotterPyke;

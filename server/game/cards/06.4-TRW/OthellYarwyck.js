@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class OthellYarwyck extends DrawCard {
     setupCardAbilities(ability) {
@@ -37,4 +37,4 @@ class OthellYarwyck extends DrawCard {
 
 OthellYarwyck.code = '06065';
 
-module.exports = OthellYarwyck;
+export default OthellYarwyck;

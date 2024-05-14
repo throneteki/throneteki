@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class BeaconOfTheSouth extends DrawCard {
     setupCardAbilities() {
@@ -26,4 +26,4 @@ class BeaconOfTheSouth extends DrawCard {
 
 BeaconOfTheSouth.code = '10038';
 
-module.exports = BeaconOfTheSouth;
+export default BeaconOfTheSouth;

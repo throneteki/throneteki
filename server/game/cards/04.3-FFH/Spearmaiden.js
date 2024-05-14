@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Spearmaiden extends DrawCard {
     setupCardAbilities() {
@@ -50,4 +50,4 @@ class Spearmaiden extends DrawCard {
 
 Spearmaiden.code = '04055';
 
-module.exports = Spearmaiden;
+export default Spearmaiden;

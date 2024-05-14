@@ -1,4 +1,4 @@
-const ReferenceCountedSetProperty = require('./ReferenceCountedSetProperty');
+import ReferenceCountedSetProperty from './ReferenceCountedSetProperty.js';
 
 class KeywordsProperty {
     constructor() {
@@ -116,4 +116,4 @@ class KeywordsProperty {
     }
 }
 
-module.exports = KeywordsProperty;
+export default KeywordsProperty;

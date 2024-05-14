@@ -50,4 +50,4 @@ class AttachmentValidityCheck {
     }
 }
 
-module.exports = AttachmentValidityCheck;
+export default AttachmentValidityCheck;

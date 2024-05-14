@@ -1,7 +1,7 @@
-const SimultaneousAction = require('../../../server/game/GameActions/SimultaneousAction');
+import SimultaneousAction from '../../../server/game/GameActions/SimultaneousAction.js';
 
-describe('SimultaneousAction', function() {
-    beforeEach(function() {
+describe('SimultaneousAction', function () {
+    beforeEach(function () {
         this.actionSpy1 = jasmine.createSpyObj('action', ['allow', 'createEvent']);
         this.actionSpy1.createEvent.and.returnValue({ resolved: true });
         this.actionSpy2 = jasmine.createSpyObj('action', ['allow', 'createEvent']);
@@ -9,20 +9,20 @@ describe('SimultaneousAction', function() {
         this.context = { props: 'external' };
     });
 
-    describe('when passed an array of actions', function() {
-        beforeEach(function() {
+    describe('when passed an array of actions', function () {
+        beforeEach(function () {
             this.action = new SimultaneousAction([this.actionSpy1, this.actionSpy2]);
         });
 
-        describe('allow()', function() {
-            it('returns true if at least one action is allowed', function() {
+        describe('allow()', function () {
+            it('returns true if at least one action is allowed', function () {
                 this.actionSpy1.allow.and.returnValue(false);
                 this.actionSpy2.allow.and.returnValue(true);
 
                 expect(this.action.allow(this.context)).toBe(true);
             });
 
-            it('returns false if all actions are not allowed', function() {
+            it('returns false if all actions are not allowed', function () {
                 this.actionSpy1.allow.and.returnValue(false);
                 this.actionSpy2.allow.and.returnValue(false);
 
@@ -30,50 +30,50 @@ describe('SimultaneousAction', function() {
             });
         });
 
-        describe('createEvent()', function() {
-            beforeEach(function() {
+        describe('createEvent()', function () {
+            beforeEach(function () {
                 this.actionSpy1.allow.and.returnValue(false);
                 this.actionSpy2.allow.and.returnValue(true);
                 this.event = this.action.createEvent(this.context);
             });
 
-            it('does not create events for non-allowed actions', function() {
+            it('does not create events for non-allowed actions', function () {
                 expect(this.actionSpy1.createEvent).not.toHaveBeenCalled();
             });
 
-            it('creates events for allowed actions', function() {
+            it('creates events for allowed actions', function () {
                 expect(this.actionSpy2.createEvent).toHaveBeenCalledWith(this.context);
             });
 
-            it('creates null events for non-allowed actions', function() {
+            it('creates null events for non-allowed actions', function () {
                 expect(this.event.childEvents[0].constructor.name).toBe('NullEvent');
                 expect(this.event.resolved).toBe(false);
             });
         });
     });
 
-    describe('when passed a factory method', function() {
-        beforeEach(function() {
+    describe('when passed a factory method', function () {
+        beforeEach(function () {
             this.actionFactorySpy = jasmine.createSpy('factory');
             this.actionFactorySpy.and.returnValue([this.actionSpy1, this.actionSpy2]);
             this.action = new SimultaneousAction(this.actionFactorySpy);
         });
 
-        describe('allow()', function() {
-            it('creates the actions using the context', function() {
+        describe('allow()', function () {
+            it('creates the actions using the context', function () {
                 this.action.allow(this.context);
 
                 expect(this.actionFactorySpy).toHaveBeenCalledWith(this.context);
             });
 
-            it('returns true if at least one action is allowed', function() {
+            it('returns true if at least one action is allowed', function () {
                 this.actionSpy1.allow.and.returnValue(false);
                 this.actionSpy2.allow.and.returnValue(true);
 
                 expect(this.action.allow(this.context)).toBe(true);
             });
 
-            it('returns false if all actions are not allowed', function() {
+            it('returns false if all actions are not allowed', function () {
                 this.actionSpy1.allow.and.returnValue(false);
                 this.actionSpy2.allow.and.returnValue(false);
 
@@ -81,28 +81,28 @@ describe('SimultaneousAction', function() {
             });
         });
 
-        describe('createEvent()', function() {
-            beforeEach(function() {
+        describe('createEvent()', function () {
+            beforeEach(function () {
                 this.actionSpy1.allow.and.returnValue(false);
                 this.actionSpy2.allow.and.returnValue(true);
                 this.event = this.action.createEvent(this.context);
             });
 
-            it('creates the actions using the context', function() {
+            it('creates the actions using the context', function () {
                 this.action.allow(this.context);
 
                 expect(this.actionFactorySpy).toHaveBeenCalledWith(this.context);
             });
 
-            it('does not create events for non-allowed actions', function() {
+            it('does not create events for non-allowed actions', function () {
                 expect(this.actionSpy1.createEvent).not.toHaveBeenCalled();
             });
 
-            it('creates events for allowed actions', function() {
+            it('creates events for allowed actions', function () {
                 expect(this.actionSpy2.createEvent).toHaveBeenCalledWith(this.context);
             });
 
-            it('creates null events for non-allowed actions', function() {
+            it('creates null events for non-allowed actions', function () {
                 expect(this.event.childEvents[0].constructor.name).toBe('NullEvent');
                 expect(this.event.resolved).toBe(false);
             });

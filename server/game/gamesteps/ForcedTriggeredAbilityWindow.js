@@ -1,5 +1,5 @@
-const BaseAbilityWindow = require('./BaseAbilityWindow');
-const TriggeredAbilityWindowTitles = require('./TriggeredAbilityWindowTitles');
+import BaseAbilityWindow from './BaseAbilityWindow.js';
+import TriggeredAbilityWindowTitles from './TriggeredAbilityWindowTitles.js';
 
 class ForcedTriggeredAbilityWindow extends BaseAbilityWindow {
     continue() {
@@ -75,4 +75,4 @@ class ForcedTriggeredAbilityWindow extends BaseAbilityWindow {
     }
 }
 
-module.exports = ForcedTriggeredAbilityWindow;
+export default ForcedTriggeredAbilityWindow;

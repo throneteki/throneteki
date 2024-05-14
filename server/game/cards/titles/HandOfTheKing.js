@@ -1,5 +1,5 @@
-const TitleCard = require('../../TitleCard');
-const { ChallengeTracker } = require('../../EventTrackers');
+import TitleCard from '../../TitleCard.js';
+import { ChallengeTracker } from '../../EventTrackers/index.js';
 
 class HandOfTheKing extends TitleCard {
     setupCardAbilities(ability) {
@@ -51,4 +51,4 @@ class HandOfTheKing extends TitleCard {
 
 HandOfTheKing.code = '01208';
 
-module.exports = HandOfTheKing;
+export default HandOfTheKing;

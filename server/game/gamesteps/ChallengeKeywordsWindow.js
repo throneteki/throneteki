@@ -1,6 +1,6 @@
-const { sortBy } = require('underscore');
-const AbilityContext = require('../AbilityContext.js');
-const BaseStep = require('./basestep');
+import { sortBy } from 'underscore';
+import AbilityContext from '../AbilityContext.js';
+import BaseStep from './basestep.js';
 
 class ChallengeKeywordsWindow extends BaseStep {
     constructor(game, challenge) {
@@ -87,4 +87,4 @@ class ChallengeKeywordsWindow extends BaseStep {
     }
 }
 
-module.exports = ChallengeKeywordsWindow;
+export default ChallengeKeywordsWindow;

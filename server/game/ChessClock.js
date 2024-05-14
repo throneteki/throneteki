@@ -99,4 +99,4 @@ class ChessClock {
     }
 }
 
-module.exports = ChessClock;
+export default ChessClock;

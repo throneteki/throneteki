@@ -1,4 +1,4 @@
-const ThenClauseAbility = require('../ThenClauseAbility');
+import ThenClauseAbility from '../ThenClauseAbility.js';
 
 class ThenAbilityAction {
     constructor(preThenAction, abilityPropertiesFactory) {
@@ -42,4 +42,4 @@ class ThenAbilityAction {
     }
 }
 
-module.exports = ThenAbilityAction;
+export default ThenAbilityAction;

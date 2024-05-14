@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class TradingWithThePentoshi extends PlotCard {
     setupCardAbilities() {
@@ -20,4 +20,4 @@ class TradingWithThePentoshi extends PlotCard {
 
 TradingWithThePentoshi.code = '02039';
 
-module.exports = TradingWithThePentoshi;
+export default TradingWithThePentoshi;

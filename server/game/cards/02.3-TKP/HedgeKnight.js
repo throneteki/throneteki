@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class HedgeKnight extends DrawCard {
     setupCardAbilities(ability) {
@@ -18,4 +18,4 @@ class HedgeKnight extends DrawCard {
 
 HedgeKnight.code = '02057';
 
-module.exports = HedgeKnight;
+export default HedgeKnight;

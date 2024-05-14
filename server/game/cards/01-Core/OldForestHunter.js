@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class OldForestHunter extends DrawCard {
     setupCardAbilities(ability) {
@@ -22,4 +22,4 @@ class OldForestHunter extends DrawCard {
 
 OldForestHunter.code = '01131';
 
-module.exports = OldForestHunter;
+export default OldForestHunter;

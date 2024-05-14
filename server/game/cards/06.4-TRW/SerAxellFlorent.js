@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class SerAxellFlorent extends DrawCard {
     setupCardAbilities(ability) {
@@ -29,4 +29,4 @@ class SerAxellFlorent extends DrawCard {
 
 SerAxellFlorent.code = '06067';
 
-module.exports = SerAxellFlorent;
+export default SerAxellFlorent;

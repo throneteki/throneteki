@@ -1,5 +1,5 @@
-const PlotCard = require('../../plotcard');
-const GameActions = require('../../GameActions');
+import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class HeirToTheIronThrone extends PlotCard {
     setupCardAbilities() {
@@ -42,4 +42,4 @@ class HeirToTheIronThrone extends PlotCard {
 
 HeirToTheIronThrone.code = '12048';
 
-module.exports = HeirToTheIronThrone;
+export default HeirToTheIronThrone;

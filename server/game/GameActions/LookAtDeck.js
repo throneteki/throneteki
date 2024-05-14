@@ -1,4 +1,4 @@
-const GameAction = require('./GameAction');
+import GameAction from './GameAction.js';
 
 class LookAtDeck extends GameAction {
     constructor() {
@@ -32,4 +32,4 @@ class LookAtDeck extends GameAction {
     }
 }
 
-module.exports = new LookAtDeck();
+export default new LookAtDeck();

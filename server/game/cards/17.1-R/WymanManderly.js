@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class WymanManderly extends DrawCard {
     setupCardAbilities(ability) {
@@ -72,4 +72,4 @@ class WymanManderly extends DrawCard {
 
 WymanManderly.code = '17122';
 
-module.exports = WymanManderly;
+export default WymanManderly;

@@ -1,4 +1,4 @@
-const GameActions = require('../GameActions');
+import GameActions from '../GameActions/index.js';
 
 class KneelCost {
     constructor() {
@@ -18,4 +18,4 @@ class KneelCost {
     }
 }
 
-module.exports = KneelCost;
+export default KneelCost;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class RedKeepSpy extends DrawCard {
     setupCardAbilities() {
@@ -30,4 +30,4 @@ class RedKeepSpy extends DrawCard {
 
 RedKeepSpy.code = '05012';
 
-module.exports = RedKeepSpy;
+export default RedKeepSpy;

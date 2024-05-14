@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const ChallengeTypes = require('../../ChallengeTypes');
+import DrawCard from '../../drawcard.js';
+import ChallengeTypes from '../../ChallengeTypes.js';
 
 class OlennasInformant extends DrawCard {
     setupCardAbilities() {
@@ -39,4 +39,4 @@ class OlennasInformant extends DrawCard {
 
 OlennasInformant.code = '01189';
 
-module.exports = OlennasInformant;
+export default OlennasInformant;

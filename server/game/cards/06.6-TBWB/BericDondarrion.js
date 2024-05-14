@@ -1,6 +1,6 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
-const { Tokens } = require('../../Constants');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
+import { Tokens } from '../../Constants/index.js';
 
 class BericDondarrion extends DrawCard {
     setupCardAbilities(ability) {
@@ -44,4 +44,4 @@ class BericDondarrion extends DrawCard {
 
 BericDondarrion.code = '06117';
 
-module.exports = BericDondarrion;
+export default BericDondarrion;

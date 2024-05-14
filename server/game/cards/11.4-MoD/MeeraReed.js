@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class MeeraReed extends DrawCard {
     setupCardAbilities() {
@@ -48,4 +48,4 @@ class MeeraReed extends DrawCard {
 
 MeeraReed.code = '11061';
 
-module.exports = MeeraReed;
+export default MeeraReed;

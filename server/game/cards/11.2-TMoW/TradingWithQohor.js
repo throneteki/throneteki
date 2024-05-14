@@ -1,5 +1,5 @@
-const AgendaCard = require('../../agendacard.js');
-const GameActions = require('../../GameActions/index.js');
+import AgendaCard from '../../agendacard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TradingWithQohor extends AgendaCard {
     setupCardAbilities(ability) {
@@ -43,4 +43,4 @@ class TradingWithQohor extends AgendaCard {
 
 TradingWithQohor.code = '11039';
 
-module.exports = TradingWithQohor;
+export default TradingWithQohor;

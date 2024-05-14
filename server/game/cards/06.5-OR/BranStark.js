@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class BranStark extends DrawCard {
     setupCardAbilities(ability) {
@@ -36,4 +36,4 @@ class BranStark extends DrawCard {
 
 BranStark.code = '06081';
 
-module.exports = BranStark;
+export default BranStark;

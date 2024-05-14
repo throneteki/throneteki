@@ -1,13 +1,29 @@
-describe('Meereen', function() {
-    integration(function() {
-        describe('when used multiple time by the same player', function() {
-            beforeEach(function() {
+describe('Meereen', function () {
+    integration(function () {
+        describe('when used multiple time by the same player', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('targaryen', [
                     'A Noble Cause',
-                    'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)',
-                    'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)',
-                    'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)',
-                    'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)'
+                    'Meereen (TMoW)',
+                    'Meereen (TMoW)',
+                    'Meereen (TMoW)',
+                    'Meereen (TMoW)',
+                    'Meereen (TMoW)',
+                    'Meereen (TMoW)',
+                    'Meereen (TMoW)',
+                    'Meereen (TMoW)',
+                    'Meereen (TMoW)',
+                    'Meereen (TMoW)',
+                    'Meereen (TMoW)',
+                    'Meereen (TMoW)',
+                    'Meereen (TMoW)',
+                    'Meereen (TMoW)',
+                    'Meereen (TMoW)',
+                    'Meereen (TMoW)',
+                    'Meereen (TMoW)',
+                    'Meereen (TMoW)',
+                    'Meereen (TMoW)',
+                    'Meereen (TMoW)'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
@@ -29,13 +45,13 @@ describe('Meereen', function() {
                 this.player1.clickMenu(this.meereen, 'Place hand facedown and draw 3');
 
                 this.completeMarshalPhase();
-                
+
                 // Skip order of discarded cards (for both instances of the ability)
                 this.player1.clickPrompt('Done');
                 this.player1.clickPrompt('Done');
             });
 
-            it('should discard all of the cards placed under Meereen', function() {
+            it('should discard all of the cards placed under Meereen', function () {
                 // Ruling: http://www.cardgamedb.com/forums/index.php?/topic/39868-ruling-meereen/
                 // 12 cards are placed under Meereen - 9 from the initial
                 // hand, another 3 from the draw from the first instance of
@@ -47,23 +63,51 @@ describe('Meereen', function() {
             });
         });
 
-        describe('when used multiple times by multiple players', function() {
-            beforeEach(function() {
+        describe('when used multiple times by multiple players', function () {
+            beforeEach(function () {
                 const deck1 = this.buildDeck('targaryen', [
                     'A Noble Cause',
-                    'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)',
-                    'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)',
-                    'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)',
-                    'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)'
+                    'Meereen (TMoW)',
+                    'Meereen (TMoW)',
+                    'Meereen (TMoW)',
+                    'Meereen (TMoW)',
+                    'Meereen (TMoW)',
+                    'Meereen (TMoW)',
+                    'Meereen (TMoW)',
+                    'Meereen (TMoW)',
+                    'Meereen (TMoW)',
+                    'Meereen (TMoW)',
+                    'Meereen (TMoW)',
+                    'Meereen (TMoW)',
+                    'Meereen (TMoW)',
+                    'Meereen (TMoW)',
+                    'Meereen (TMoW)',
+                    'Meereen (TMoW)',
+                    'Meereen (TMoW)',
+                    'Meereen (TMoW)',
+                    'Meereen (TMoW)',
+                    'Meereen (TMoW)'
                 ]);
                 const deck2 = this.buildDeck('greyjoy', [
                     'A Noble Cause',
-                    'Dagmer Cleftjaw (TS)', 'Dagmer Cleftjaw (TS)', 'Dagmer Cleftjaw (TS)',
-                    'Dagmer Cleftjaw (TS)', 'Dagmer Cleftjaw (TS)', 'Dagmer Cleftjaw (TS)',
-                    'Dagmer Cleftjaw (TS)', 'Dagmer Cleftjaw (TS)', 'Dagmer Cleftjaw (TS)',
-                    'Dagmer Cleftjaw (TS)', 'Dagmer Cleftjaw (TS)', 'Dagmer Cleftjaw (TS)',
-                    'Dagmer Cleftjaw (TS)', 'Dagmer Cleftjaw (TS)', 'Dagmer Cleftjaw (TS)',
-                    'Dagmer Cleftjaw (TS)', 'Dagmer Cleftjaw (TS)', 'Dagmer Cleftjaw (TS)'
+                    'Dagmer Cleftjaw (TS)',
+                    'Dagmer Cleftjaw (TS)',
+                    'Dagmer Cleftjaw (TS)',
+                    'Dagmer Cleftjaw (TS)',
+                    'Dagmer Cleftjaw (TS)',
+                    'Dagmer Cleftjaw (TS)',
+                    'Dagmer Cleftjaw (TS)',
+                    'Dagmer Cleftjaw (TS)',
+                    'Dagmer Cleftjaw (TS)',
+                    'Dagmer Cleftjaw (TS)',
+                    'Dagmer Cleftjaw (TS)',
+                    'Dagmer Cleftjaw (TS)',
+                    'Dagmer Cleftjaw (TS)',
+                    'Dagmer Cleftjaw (TS)',
+                    'Dagmer Cleftjaw (TS)',
+                    'Dagmer Cleftjaw (TS)',
+                    'Dagmer Cleftjaw (TS)',
+                    'Dagmer Cleftjaw (TS)'
                 ]);
                 this.player1.selectDeck(deck1);
                 this.player2.selectDeck(deck2);
@@ -102,12 +146,12 @@ describe('Meereen', function() {
                 this.player2.clickPrompt('Done');
             });
 
-            it('should return the owners cards to hand', function() {
+            it('should return the owners cards to hand', function () {
                 expect(this.player1Object.hand.length).toBe(9);
                 expect(this.player1Object.discardPile.length).toBe(3);
             });
 
-            it('should return the other player\'s cards to hand', function() {
+            it("should return the other player's cards to hand", function () {
                 // Ruling: http://www.cardgamedb.com/forums/index.php?/topic/39868-ruling-meereen/
                 // Because the ability text refers to cards "you" placed under
                 // Meereen, only your own cards are returned to hand, so it

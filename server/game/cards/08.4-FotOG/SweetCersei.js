@@ -1,6 +1,6 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
-const { Tokens } = require('../../Constants');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
+import { Tokens } from '../../Constants/index.js';
 
 class SweetCersei extends DrawCard {
     setupCardAbilities(ability) {
@@ -30,4 +30,4 @@ class SweetCersei extends DrawCard {
 
 SweetCersei.code = '08070';
 
-module.exports = SweetCersei;
+export default SweetCersei;

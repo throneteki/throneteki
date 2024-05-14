@@ -1,5 +1,5 @@
-const RevealPlots = require('../../gamesteps/revealplots.js');
-const PlotCard = require('../../plotcard.js');
+import RevealPlots from '../../gamesteps/revealplots.js';
+import PlotCard from '../../plotcard.js';
 
 class AtPrinceDoransBehest extends PlotCard {
     setupCardAbilities() {
@@ -30,4 +30,4 @@ class AtPrinceDoransBehest extends PlotCard {
 
 AtPrinceDoransBehest.code = '10046';
 
-module.exports = AtPrinceDoransBehest;
+export default AtPrinceDoransBehest;

@@ -1,9 +1,9 @@
-const Phase = require('./phase.js');
-const SimpleStep = require('./simplestep.js');
-const SelectPlotPrompt = require('./plot/selectplotprompt.js');
-const RevealPlots = require('./revealplots.js');
-const ChooseTitlePrompt = require('./plot/ChooseTitlePrompt.js');
-const ActionWindow = require('./actionwindow.js');
+import Phase from './phase.js';
+import SimpleStep from './simplestep.js';
+import SelectPlotPrompt from './plot/selectplotprompt.js';
+import RevealPlots from './revealplots.js';
+import ChooseTitlePrompt from './plot/ChooseTitlePrompt.js';
+import ActionWindow from './actionwindow.js';
 
 class PlotPhase extends Phase {
     constructor(game) {
@@ -65,4 +65,4 @@ class PlotPhase extends Phase {
     }
 }
 
-module.exports = PlotPhase;
+export default PlotPhase;

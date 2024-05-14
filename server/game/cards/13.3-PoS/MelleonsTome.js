@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class MalleonsTome extends DrawCard {
     setupCardAbilities(ability) {
@@ -45,4 +45,4 @@ class MalleonsTome extends DrawCard {
 
 MalleonsTome.code = '13042';
 
-module.exports = MalleonsTome;
+export default MalleonsTome;

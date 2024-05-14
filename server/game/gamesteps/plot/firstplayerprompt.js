@@ -1,4 +1,4 @@
-const UIPrompt = require('../uiprompt.js');
+import UIPrompt from '../uiprompt.js';
 
 class FirstPlayerPrompt extends UIPrompt {
     constructor(game, player) {
@@ -63,4 +63,4 @@ class FirstPlayerPrompt extends UIPrompt {
     }
 }
 
-module.exports = FirstPlayerPrompt;
+export default FirstPlayerPrompt;

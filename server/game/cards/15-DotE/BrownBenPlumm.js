@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class BrownBenPlumm extends DrawCard {
     setupCardAbilities() {
@@ -18,4 +18,4 @@ class BrownBenPlumm extends DrawCard {
 
 BrownBenPlumm.code = '15016';
 
-module.exports = BrownBenPlumm;
+export default BrownBenPlumm;

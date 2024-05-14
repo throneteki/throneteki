@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TasteForFlesh extends DrawCard {
     setupCardAbilities() {
@@ -36,4 +36,4 @@ class TasteForFlesh extends DrawCard {
 
 TasteForFlesh.code = '10034';
 
-module.exports = TasteForFlesh;
+export default TasteForFlesh;

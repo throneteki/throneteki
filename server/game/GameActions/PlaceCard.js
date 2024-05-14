@@ -1,5 +1,5 @@
-const GameAction = require('./GameAction');
-const MoveCardEventGenerator = require('./MoveCardEventGenerator');
+import GameAction from './GameAction.js';
+import MoveCardEventGenerator from './MoveCardEventGenerator.js';
 
 class PlaceCard extends GameAction {
     constructor() {
@@ -29,4 +29,4 @@ class PlaceCard extends GameAction {
     }
 }
 
-module.exports = new PlaceCard();
+export default new PlaceCard();

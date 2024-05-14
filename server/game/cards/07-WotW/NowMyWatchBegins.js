@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class NowMyWatchBegins extends DrawCard {
     setupCardAbilities() {
@@ -27,4 +27,4 @@ class NowMyWatchBegins extends DrawCard {
 
 NowMyWatchBegins.code = '07023';
 
-module.exports = NowMyWatchBegins;
+export default NowMyWatchBegins;

@@ -1,9 +1,11 @@
-describe('The Red Wedding', function() {
-    integration(function() {
-        beforeEach(function() {
+describe('The Red Wedding', function () {
+    integration(function () {
+        beforeEach(function () {
             const deck = this.buildDeck('stark', [
-                'The Red Wedding', 'A Noble Cause',
-                'Catelyn Stark (WotN)', 'Robb Stark (Core)'
+                'The Red Wedding',
+                'A Noble Cause',
+                'Catelyn Stark (WotN)',
+                'Robb Stark (Core)'
             ]);
 
             this.player1.selectDeck(deck);
@@ -24,7 +26,7 @@ describe('The Red Wedding', function() {
             this.completeMarshalPhase();
         });
 
-        it('should kill an opponent Lord/Lady when winning challenge', function() {
+        it('should kill an opponent Lord/Lady when winning challenge', function () {
             this.unopposedChallenge(this.player1, 'Power', this.character);
             this.player1.triggerAbility('The Red Wedding');
             this.player1.clickCard(this.opponentCharacter);
@@ -32,7 +34,7 @@ describe('The Red Wedding', function() {
             expect(this.opponentCharacter.location).toBe('dead pile');
         });
 
-        it('should allow the opponent to kill a character when they win a challenge', function() {
+        it('should allow the opponent to kill a character when they win a challenge', function () {
             this.player1.clickPrompt('Done');
 
             this.unopposedChallenge(this.player2, 'Power', this.opponentCharacter);

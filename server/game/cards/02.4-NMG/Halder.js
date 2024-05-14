@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Halder extends DrawCard {
     setupCardAbilities(ability) {
@@ -35,4 +35,4 @@ class Halder extends DrawCard {
 
 Halder.code = '02065';
 
-module.exports = Halder;
+export default Halder;

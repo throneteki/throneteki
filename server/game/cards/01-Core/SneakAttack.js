@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class SneakAttack extends PlotCard {
     setupCardAbilities(ability) {
@@ -11,4 +11,4 @@ class SneakAttack extends PlotCard {
 
 SneakAttack.code = '01021';
 
-module.exports = SneakAttack;
+export default SneakAttack;

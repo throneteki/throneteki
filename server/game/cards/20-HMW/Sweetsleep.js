@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Sweetsleep extends DrawCard {
     setupCardAbilities(ability) {
@@ -14,4 +14,4 @@ class Sweetsleep extends DrawCard {
 
 Sweetsleep.code = '20047';
 
-module.exports = Sweetsleep;
+export default Sweetsleep;

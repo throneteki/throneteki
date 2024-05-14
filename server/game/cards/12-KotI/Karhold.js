@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class Karhold extends DrawCard {
     setupCardAbilities(ability) {
@@ -19,4 +19,4 @@ class Karhold extends DrawCard {
 
 Karhold.code = '12034';
 
-module.exports = Karhold;
+export default Karhold;

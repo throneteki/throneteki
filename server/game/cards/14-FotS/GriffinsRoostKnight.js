@@ -1,6 +1,6 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
-const { ChallengeTracker } = require('../../EventTrackers');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
+import { ChallengeTracker } from '../../EventTrackers/index.js';
 
 class GriffinsRoostKnight extends DrawCard {
     setupCardAbilities() {
@@ -23,4 +23,4 @@ class GriffinsRoostKnight extends DrawCard {
 
 GriffinsRoostKnight.code = '14009';
 
-module.exports = GriffinsRoostKnight;
+export default GriffinsRoostKnight;

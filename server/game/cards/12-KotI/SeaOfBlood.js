@@ -1,6 +1,6 @@
-const AgendaCard = require('../../agendacard');
-const GameActions = require('../../GameActions');
-const { Tokens } = require('../../Constants');
+import AgendaCard from '../../agendacard.js';
+import GameActions from '../../GameActions/index.js';
+import { Tokens } from '../../Constants/index.js';
 
 class SeaOfBlood extends AgendaCard {
     setupCardAbilities(ability) {
@@ -48,4 +48,4 @@ class SeaOfBlood extends AgendaCard {
 
 SeaOfBlood.code = '12045';
 
-module.exports = SeaOfBlood;
+export default SeaOfBlood;

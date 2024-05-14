@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class SeasonedWoodsman extends DrawCard {
     setupCardAbilities(ability) {
@@ -30,4 +30,4 @@ class SeasonedWoodsman extends DrawCard {
 
 SeasonedWoodsman.code = '07015';
 
-module.exports = SeasonedWoodsman;
+export default SeasonedWoodsman;

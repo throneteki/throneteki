@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class WeTakeWesteros extends PlotCard {
     setupCardAbilities() {
@@ -26,4 +26,4 @@ class WeTakeWesteros extends PlotCard {
 
 WeTakeWesteros.code = '12046';
 
-module.exports = WeTakeWesteros;
+export default WeTakeWesteros;

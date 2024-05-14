@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class OldBearMormont extends DrawCard {
     setupCardAbilities(ability) {
@@ -37,4 +37,4 @@ class OldBearMormont extends DrawCard {
 
 OldBearMormont.code = '16010';
 
-module.exports = OldBearMormont;
+export default OldBearMormont;

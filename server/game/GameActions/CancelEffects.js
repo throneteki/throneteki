@@ -1,4 +1,4 @@
-const GameAction = require('./GameAction');
+import GameAction from './GameAction.js';
 
 class CancelEffects extends GameAction {
     constructor() {
@@ -16,4 +16,4 @@ class CancelEffects extends GameAction {
     }
 }
 
-module.exports = new CancelEffects();
+export default new CancelEffects();

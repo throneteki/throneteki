@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class StrongBelwas extends DrawCard {
     setupCardAbilities(ability) {
@@ -30,4 +30,4 @@ class StrongBelwas extends DrawCard {
 
 StrongBelwas.code = '06073';
 
-module.exports = StrongBelwas;
+export default StrongBelwas;

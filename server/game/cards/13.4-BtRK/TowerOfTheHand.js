@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TowerOfTheHand extends DrawCard {
     setupCardAbilities(ability) {
@@ -26,4 +26,4 @@ class TowerOfTheHand extends DrawCard {
 
 TowerOfTheHand.code = '13062';
 
-module.exports = TowerOfTheHand;
+export default TowerOfTheHand;

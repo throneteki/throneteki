@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class MinaRedwyne extends DrawCard {
     setupCardAbilities(ability) {
@@ -28,4 +28,4 @@ class MinaRedwyne extends DrawCard {
 
 MinaRedwyne.code = '20036';
 
-module.exports = MinaRedwyne;
+export default MinaRedwyne;

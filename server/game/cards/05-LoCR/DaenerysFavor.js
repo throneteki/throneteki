@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class DaenerysFavor extends DrawCard {
     setupCardAbilities(ability) {
@@ -15,4 +15,4 @@ class DaenerysFavor extends DrawCard {
 
 DaenerysFavor.code = '05036';
 
-module.exports = DaenerysFavor;
+export default DaenerysFavor;

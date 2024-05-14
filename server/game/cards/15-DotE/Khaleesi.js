@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Khaleesi extends DrawCard {
     setupCardAbilities(ability) {
@@ -42,4 +42,4 @@ class Khaleesi extends DrawCard {
 
 Khaleesi.code = '15019';
 
-module.exports = Khaleesi;
+export default Khaleesi;

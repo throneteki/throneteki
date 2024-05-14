@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Missandei extends DrawCard {
     setupCardAbilities() {
@@ -26,4 +26,4 @@ class Missandei extends DrawCard {
 
 Missandei.code = '10035';
 
-module.exports = Missandei;
+export default Missandei;

@@ -1,4 +1,4 @@
-const BaseStep = require('../basestep');
+import BaseStep from '../basestep.js';
 
 class DiscardToReservePrompt extends BaseStep {
     constructor(game, source) {
@@ -60,4 +60,4 @@ class DiscardToReservePrompt extends BaseStep {
     }
 }
 
-module.exports = DiscardToReservePrompt;
+export default DiscardToReservePrompt;

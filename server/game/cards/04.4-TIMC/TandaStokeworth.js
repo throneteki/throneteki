@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TandaStokeworth extends DrawCard {
     setupCardAbilities() {
@@ -23,4 +23,4 @@ class TandaStokeworth extends DrawCard {
 
 TandaStokeworth.code = '04069';
 
-module.exports = TandaStokeworth;
+export default TandaStokeworth;

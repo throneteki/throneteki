@@ -1,5 +1,5 @@
-const GameActions = require('../../GameActions/index.js');
-const DrawCard = require('../../drawcard.js');
+import GameActions from '../../GameActions/index.js';
+import DrawCard from '../../drawcard.js';
 
 class ArstanWhitebeard extends DrawCard {
     constructor(owner, cardData) {
@@ -27,4 +27,4 @@ class ArstanWhitebeard extends DrawCard {
 
 ArstanWhitebeard.code = '25033';
 
-module.exports = ArstanWhitebeard;
+export default ArstanWhitebeard;

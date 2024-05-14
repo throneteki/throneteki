@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class ManceRayder extends DrawCard {
     setupCardAbilities(ability) {
@@ -20,4 +20,4 @@ class ManceRayder extends DrawCard {
 
 ManceRayder.code = '03039';
 
-module.exports = ManceRayder;
+export default ManceRayder;

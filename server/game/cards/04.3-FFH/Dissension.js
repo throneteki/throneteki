@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Dissension extends DrawCard {
     setupCardAbilities() {
@@ -26,4 +26,4 @@ class Dissension extends DrawCard {
 
 Dissension.code = '04059';
 
-module.exports = Dissension;
+export default Dissension;

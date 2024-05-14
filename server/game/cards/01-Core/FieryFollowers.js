@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class FieryFollowers extends DrawCard {
     setupCardAbilities() {
@@ -16,4 +16,4 @@ class FieryFollowers extends DrawCard {
 
 FieryFollowers.code = '01054';
 
-module.exports = FieryFollowers;
+export default FieryFollowers;

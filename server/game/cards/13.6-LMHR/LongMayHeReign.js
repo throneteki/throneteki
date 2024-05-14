@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class LongMayHeReign extends DrawCard {
     setupCardAbilities(ability) {
@@ -27,4 +27,4 @@ class LongMayHeReign extends DrawCard {
 
 LongMayHeReign.code = '13108';
 
-module.exports = LongMayHeReign;
+export default LongMayHeReign;

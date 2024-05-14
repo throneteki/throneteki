@@ -1,5 +1,5 @@
-const PlotCard = require('../../plotcard.js');
-const GameActions = require('../../GameActions');
+import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class BuildingOrders extends PlotCard {
     setupCardAbilities() {
@@ -21,4 +21,4 @@ class BuildingOrders extends PlotCard {
 
 BuildingOrders.code = '01006';
 
-module.exports = BuildingOrders;
+export default BuildingOrders;

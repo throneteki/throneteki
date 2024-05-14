@@ -1,4 +1,4 @@
-const AllPlayerPrompt = require('../allplayerprompt.js');
+import AllPlayerPrompt from '../allplayerprompt.js';
 
 class SetupCardsPrompt extends AllPlayerPrompt {
     completionCondition(player) {
@@ -22,4 +22,4 @@ class SetupCardsPrompt extends AllPlayerPrompt {
     }
 }
 
-module.exports = SetupCardsPrompt;
+export default SetupCardsPrompt;

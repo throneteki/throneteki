@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class GatesOfTheMoon extends DrawCard {
     setupCardAbilities(ability) {
@@ -16,4 +16,4 @@ class GatesOfTheMoon extends DrawCard {
 
 GatesOfTheMoon.code = '08038';
 
-module.exports = GatesOfTheMoon;
+export default GatesOfTheMoon;

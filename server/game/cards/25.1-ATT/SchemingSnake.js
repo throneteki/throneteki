@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class SchemingSnake extends DrawCard {
     setupCardAbilities() {
@@ -26,4 +26,4 @@ class SchemingSnake extends DrawCard {
 
 SchemingSnake.code = '25007';
 
-module.exports = SchemingSnake;
+export default SchemingSnake;

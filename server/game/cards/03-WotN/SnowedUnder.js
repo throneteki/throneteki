@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class SnowedUnder extends PlotCard {
     setupCardAbilities(ability) {
@@ -12,4 +12,4 @@ class SnowedUnder extends PlotCard {
 
 SnowedUnder.code = '03048';
 
-module.exports = SnowedUnder;
+export default SnowedUnder;

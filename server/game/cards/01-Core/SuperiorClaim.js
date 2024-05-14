@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class SuperiorClaim extends DrawCard {
     setupCardAbilities(ability) {
@@ -25,4 +25,4 @@ class SuperiorClaim extends DrawCard {
 
 SuperiorClaim.code = '01043';
 
-module.exports = SuperiorClaim;
+export default SuperiorClaim;

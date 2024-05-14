@@ -1,5 +1,5 @@
-const ChallengeKeywordsWindow = require('./ChallengeKeywordsWindow');
-const GameKeywords = require('../gamekeywords.js');
+import ChallengeKeywordsWindow from './ChallengeKeywordsWindow.js';
+import GameKeywords from '../gamekeywords.js';
 
 const initiatingKeywords = ['stealth', 'assault'];
 
@@ -28,4 +28,4 @@ class InitiatingKeywordsWindow extends ChallengeKeywordsWindow {
     }
 }
 
-module.exports = InitiatingKeywordsWindow;
+export default InitiatingKeywordsWindow;

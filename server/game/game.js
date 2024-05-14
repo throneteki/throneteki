@@ -1,46 +1,45 @@
-const EventEmitter = require('events');
-const moment = require('moment');
-
-const AttachmentValidityCheck = require('./AttachmentValidityCheck.js');
-const ChatCommands = require('./chatcommands.js');
-const GameChat = require('./gamechat.js');
-const DynamicKeywordsEffect = require('./DynamicKeywordsEffect');
-const EffectEngine = require('./effectengine.js');
-const Effect = require('./effect.js');
-const Effects = require('./effects');
-const Player = require('./player.js');
-const Spectator = require('./spectator.js');
-const AnonymousSpectator = require('./anonymousspectator.js');
-const GamePipeline = require('./gamepipeline.js');
-const Phases = require('./gamesteps/Phases');
-const SimpleStep = require('./gamesteps/simplestep.js');
-const ChoosePlayerPrompt = require('./gamesteps/ChoosePlayerPrompt');
-const CardNamePrompt = require('./gamesteps/CardNamePrompt');
-const DeckSearchPrompt = require('./gamesteps/DeckSearchPrompt');
-const MenuPrompt = require('./gamesteps/menuprompt.js');
-const IconPrompt = require('./gamesteps/iconprompt.js');
-const SelectCardPrompt = require('./gamesteps/selectcardprompt.js');
-const EventWindow = require('./gamesteps/eventwindow.js');
-const AbilityResolver = require('./gamesteps/abilityresolver.js');
-const ForcedTriggeredAbilityWindow = require('./gamesteps/ForcedTriggeredAbilityWindow.js');
-const TriggeredAbilityWindow = require('./gamesteps/TriggeredAbilityWindow.js');
-const InterruptWindow = require('./gamesteps/InterruptWindow');
-const KillCharacters = require('./gamesteps/killcharacters.js');
-const TitlePool = require('./TitlePool.js');
-const Event = require('./event.js');
-const NullEvent = require('./NullEvent');
-const AtomicEvent = require('./AtomicEvent.js');
-const GroupedCardEvent = require('./GroupedCardEvent.js');
-const SimultaneousEvents = require('./SimultaneousEvents');
-const ChooseGoldSourceAmounts = require('./gamesteps/ChooseGoldSourceAmounts.js');
-const DropCommand = require('./ServerCommands/DropCommand');
-const CardVisibility = require('./CardVisibility');
-const PlainTextGameChatFormatter = require('./PlainTextGameChatFormatter');
-const GameActions = require('./GameActions');
-const EndRound = require('./GameActions/EndRound');
-const TimeLimit = require('./timeLimit.js');
-const PrizedKeywordListener = require('./PrizedKeywordListener');
-const GameWonPrompt = require('./gamesteps/GameWonPrompt');
+import EventEmitter from 'events';
+import moment from 'moment';
+import AttachmentValidityCheck from './AttachmentValidityCheck.js';
+import ChatCommands from './chatcommands.js';
+import GameChat from './gamechat.js';
+import DynamicKeywordsEffect from './DynamicKeywordsEffect.js';
+import EffectEngine from './effectengine.js';
+import Effect from './effect.js';
+import Effects from './effects.js';
+import Player from './player.js';
+import Spectator from './spectator.js';
+import AnonymousSpectator from './anonymousspectator.js';
+import GamePipeline from './gamepipeline.js';
+import Phases from './gamesteps/Phases.js';
+import SimpleStep from './gamesteps/simplestep.js';
+import ChoosePlayerPrompt from './gamesteps/ChoosePlayerPrompt.js';
+import CardNamePrompt from './gamesteps/CardNamePrompt.js';
+import DeckSearchPrompt from './gamesteps/DeckSearchPrompt.js';
+import MenuPrompt from './gamesteps/menuprompt.js';
+import IconPrompt from './gamesteps/iconprompt.js';
+import SelectCardPrompt from './gamesteps/selectcardprompt.js';
+import EventWindow from './gamesteps/eventwindow.js';
+import AbilityResolver from './gamesteps/abilityresolver.js';
+import ForcedTriggeredAbilityWindow from './gamesteps/ForcedTriggeredAbilityWindow.js';
+import TriggeredAbilityWindow from './gamesteps/TriggeredAbilityWindow.js';
+import InterruptWindow from './gamesteps/InterruptWindow.js';
+import KillCharacters from './gamesteps/killcharacters.js';
+import TitlePool from './TitlePool.js';
+import Event from './event.js';
+import NullEvent from './NullEvent.js';
+import AtomicEvent from './AtomicEvent.js';
+import GroupedCardEvent from './GroupedCardEvent.js';
+import SimultaneousEvents from './SimultaneousEvents.js';
+import ChooseGoldSourceAmounts from './gamesteps/ChooseGoldSourceAmounts.js';
+import DropCommand from './ServerCommands/DropCommand.js';
+import CardVisibility from './CardVisibility.js';
+import PlainTextGameChatFormatter from './PlainTextGameChatFormatter.js';
+import GameActions from './GameActions/index.js';
+import EndRound from './GameActions/EndRound.js';
+import TimeLimit from './timeLimit.js';
+import PrizedKeywordListener from './PrizedKeywordListener.js';
+import GameWonPrompt from './gamesteps/GameWonPrompt.js';
 
 class Game extends EventEmitter {
     constructor(details, options = {}) {
@@ -1674,4 +1673,4 @@ class Game extends EventEmitter {
     }
 }
 
-module.exports = Game;
+export default Game;

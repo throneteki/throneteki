@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Polliver extends DrawCard {
     setupCardAbilities() {
@@ -26,4 +26,4 @@ class Polliver extends DrawCard {
 
 Polliver.code = '06029';
 
-module.exports = Polliver;
+export default Polliver;

@@ -1,9 +1,11 @@
-describe('Blessed by the Maiden', function() {
-    integration(function() {
-        beforeEach(function() {
+describe('Blessed by the Maiden', function () {
+    integration(function () {
+        beforeEach(function () {
             const deck = this.buildDeck('tyrell', [
                 'A Noble Cause',
-                'Hedge Knight', 'Milk of the Poppy', 'Blessed by the Maiden'
+                'Hedge Knight',
+                'Milk of the Poppy',
+                'Blessed by the Maiden'
             ]);
             this.player1.selectDeck(deck);
             this.player2.selectDeck(deck);
@@ -19,13 +21,13 @@ describe('Blessed by the Maiden', function() {
             this.selectFirstPlayer(this.player1);
         });
 
-        describe('when attached', function() {
-            beforeEach(function() {
+        describe('when attached', function () {
+            beforeEach(function () {
                 this.player1.clickCard('Blessed by the Maiden', 'hand');
                 this.player1.clickCard(this.character);
             });
 
-            it('should not allow non-blessing attachments', function() {
+            it('should not allow non-blessing attachments', function () {
                 this.player1.clickCard(this.attachment);
                 this.player1.clickCard(this.character);
 
@@ -33,13 +35,13 @@ describe('Blessed by the Maiden', function() {
             });
         });
 
-        describe('when a character already has attachments', function() {
-            beforeEach(function() {
+        describe('when a character already has attachments', function () {
+            beforeEach(function () {
                 this.player1.clickCard(this.attachment);
                 this.player1.clickCard(this.character);
             });
 
-            it('should discard existing attachments when attached', function() {
+            it('should discard existing attachments when attached', function () {
                 this.player1.clickCard('Blessed by the Maiden');
                 this.player1.clickCard(this.character);
 

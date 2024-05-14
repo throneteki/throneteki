@@ -1,6 +1,6 @@
-const GameAction = require('./GameAction');
-const Shuffle = require('./Shuffle');
-const ReturnCardToDeck = require('./ReturnCardToDeck');
+import GameAction from './GameAction.js';
+import Shuffle from './Shuffle.js';
+import ReturnCardToDeck from './ReturnCardToDeck.js';
 
 class ShuffleIntoDeck extends GameAction {
     constructor() {
@@ -34,4 +34,4 @@ class ShuffleIntoDeck extends GameAction {
     }
 }
 
-module.exports = new ShuffleIntoDeck();
+export default new ShuffleIntoDeck();

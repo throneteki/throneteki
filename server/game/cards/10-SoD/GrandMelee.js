@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class GrandMelee extends PlotCard {
     setupCardAbilities(ability) {
@@ -17,4 +17,4 @@ class GrandMelee extends PlotCard {
 
 GrandMelee.code = '10051';
 
-module.exports = GrandMelee;
+export default GrandMelee;

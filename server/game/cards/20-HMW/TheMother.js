@@ -1,5 +1,5 @@
-const PlotCard = require('../../plotcard');
-const CardEntersPlayTracker = require('../../EventTrackers/CardEntersPlayTracker');
+import PlotCard from '../../plotcard.js';
+import CardEntersPlayTracker from '../../EventTrackers/CardEntersPlayTracker.js';
 
 class TheMother extends PlotCard {
     setupCardAbilities(ability) {
@@ -33,4 +33,4 @@ class TheMother extends PlotCard {
 
 TheMother.code = '20057';
 
-module.exports = TheMother;
+export default TheMother;

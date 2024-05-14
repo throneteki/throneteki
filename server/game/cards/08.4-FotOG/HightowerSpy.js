@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class HightowerSpy extends DrawCard {
     setupCardAbilities() {
@@ -44,4 +44,4 @@ class HightowerSpy extends DrawCard {
 
 HightowerSpy.code = '08063';
 
-module.exports = HightowerSpy;
+export default HightowerSpy;

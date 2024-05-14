@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const TextHelper = require('../../TextHelper');
+import DrawCard from '../../drawcard.js';
+import TextHelper from '../../TextHelper.js';
 
 class BlackwaterBay extends DrawCard {
     setupCardAbilities(ability) {
@@ -32,4 +32,4 @@ class BlackwaterBay extends DrawCard {
 
 BlackwaterBay.code = '11048';
 
-module.exports = BlackwaterBay;
+export default BlackwaterBay;

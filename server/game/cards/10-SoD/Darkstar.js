@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions/index.js');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Darkstar extends DrawCard {
     setupCardAbilities(ability) {
@@ -22,4 +22,4 @@ class Darkstar extends DrawCard {
 
 Darkstar.code = '10004';
 
-module.exports = Darkstar;
+export default Darkstar;

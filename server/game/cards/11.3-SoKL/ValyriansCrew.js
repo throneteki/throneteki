@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class ValyriansCrew extends DrawCard {
     setupCardAbilities(ability) {
@@ -56,4 +56,4 @@ class ValyriansCrew extends DrawCard {
 
 ValyriansCrew.code = '11047';
 
-module.exports = ValyriansCrew;
+export default ValyriansCrew;

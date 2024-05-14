@@ -1,7 +1,6 @@
-const uuid = require('uuid');
-
-const BaseStep = require('./basestep');
-const Event = require('../event');
+import uuid from 'uuid';
+import BaseStep from './basestep.js';
+import Event from '../event.js';
 
 class BaseAbilityWindow extends BaseStep {
     constructor(game, properties) {
@@ -108,4 +107,4 @@ class BaseAbilityWindow extends BaseStep {
     }
 }
 
-module.exports = BaseAbilityWindow;
+export default BaseAbilityWindow;

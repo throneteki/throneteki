@@ -1,11 +1,11 @@
-const Phase = require('./phase.js');
-const SimpleStep = require('./simplestep.js');
-const KeepOrMulliganPrompt = require('./setup/keepormulliganprompt.js');
-const SetupCardsPrompt = require('./setup/setupcardsprompt.js');
-const CheckAttachmentsPrompt = require('./setup/checkattachmentsprompt.js');
-const RookerySetupPrompt = require('./setup/RookerySetupPrompt');
-const TextHelper = require('../TextHelper');
-const { StartingHandSize } = require('../Constants');
+import Phase from './phase.js';
+import SimpleStep from './simplestep.js';
+import KeepOrMulliganPrompt from './setup/keepormulliganprompt.js';
+import SetupCardsPrompt from './setup/setupcardsprompt.js';
+import CheckAttachmentsPrompt from './setup/checkattachmentsprompt.js';
+import RookerySetupPrompt from './setup/RookerySetupPrompt.js';
+import TextHelper from '../TextHelper.js';
+import { StartingHandSize } from '../Constants/index.js';
 
 class SetupPhase extends Phase {
     constructor(game) {
@@ -107,4 +107,4 @@ class SetupPhase extends Phase {
     }
 }
 
-module.exports = SetupPhase;
+export default SetupPhase;

@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class FortifiedPosition extends PlotCard {
     setupCardAbilities(ability) {
@@ -12,4 +12,4 @@ class FortifiedPosition extends PlotCard {
 
 FortifiedPosition.code = '01012';
 
-module.exports = FortifiedPosition;
+export default FortifiedPosition;

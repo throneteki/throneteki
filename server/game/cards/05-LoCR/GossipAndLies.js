@@ -1,5 +1,5 @@
-const PlotCard = require('../../plotcard');
-const { ChallengeTracker } = require('../../EventTrackers');
+import PlotCard from '../../plotcard.js';
+import { ChallengeTracker } from '../../EventTrackers/index.js';
 
 class GossipAndLies extends PlotCard {
     setupCardAbilities(ability) {
@@ -19,4 +19,4 @@ class GossipAndLies extends PlotCard {
 
 GossipAndLies.code = '05050';
 
-module.exports = GossipAndLies;
+export default GossipAndLies;

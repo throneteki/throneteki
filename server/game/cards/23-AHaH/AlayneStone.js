@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class AlayneStone extends DrawCard {
     constructor(owner, cardData) {
@@ -38,4 +38,4 @@ class AlayneStone extends DrawCard {
 
 AlayneStone.code = '23020';
 
-module.exports = AlayneStone;
+export default AlayneStone;

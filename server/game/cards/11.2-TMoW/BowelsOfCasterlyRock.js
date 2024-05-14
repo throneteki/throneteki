@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class BowelsOfCasterlyRock extends DrawCard {
     setupCardAbilities(ability) {
@@ -25,4 +25,4 @@ class BowelsOfCasterlyRock extends DrawCard {
 
 BowelsOfCasterlyRock.code = '11030';
 
-module.exports = BowelsOfCasterlyRock;
+export default BowelsOfCasterlyRock;

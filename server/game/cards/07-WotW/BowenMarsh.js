@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class BowenMarsh extends DrawCard {
     setupCardAbilities(ability) {
@@ -15,4 +15,4 @@ class BowenMarsh extends DrawCard {
 
 BowenMarsh.code = '07002';
 
-module.exports = BowenMarsh;
+export default BowenMarsh;

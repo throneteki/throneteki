@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Dywen extends DrawCard {
     setupCardAbilities(ability) {
@@ -21,4 +21,4 @@ class Dywen extends DrawCard {
 
 Dywen.code = '18009';
 
-module.exports = Dywen;
+export default Dywen;

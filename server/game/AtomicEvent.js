@@ -96,4 +96,4 @@ class AtomicEvent {
     }
 }
 
-module.exports = AtomicEvent;
+export default AtomicEvent;

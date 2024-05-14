@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class ShierakQiya extends DrawCard {
     setupCardAbilities(ability) {
@@ -29,4 +29,4 @@ class ShierakQiya extends DrawCard {
 
 ShierakQiya.code = '04015';
 
-module.exports = ShierakQiya;
+export default ShierakQiya;

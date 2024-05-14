@@ -1,5 +1,5 @@
-const PlotCard = require('../../plotcard.js');
-const ChallengeTypes = require('../../ChallengeTypes');
+import PlotCard from '../../plotcard.js';
+import ChallengeTypes from '../../ChallengeTypes.js';
 
 class CoordinatedAttack extends PlotCard {
     setupCardAbilities(ability) {
@@ -42,4 +42,4 @@ class CoordinatedAttack extends PlotCard {
 
 CoordinatedAttack.code = '12049';
 
-module.exports = CoordinatedAttack;
+export default CoordinatedAttack;

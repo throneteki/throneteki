@@ -1,6 +1,6 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
-const Messages = require('../../Messages');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
+import Messages from '../../Messages/index.js';
 
 class ShadowOfTheIsles extends DrawCard {
     setupCardAbilities() {
@@ -42,4 +42,4 @@ class ShadowOfTheIsles extends DrawCard {
 
 ShadowOfTheIsles.code = '13072';
 
-module.exports = ShadowOfTheIsles;
+export default ShadowOfTheIsles;

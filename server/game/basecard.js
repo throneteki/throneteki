@@ -1,18 +1,17 @@
-const uuid = require('uuid');
-
-const AbilityDsl = require('./abilitydsl');
-const CardAction = require('./cardaction');
-const CardForcedInterrupt = require('./cardforcedinterrupt');
-const CardForcedReaction = require('./cardforcedreaction');
-const CardInterrupt = require('./cardinterrupt');
-const CardMatcher = require('./CardMatcher');
-const CardReaction = require('./cardreaction');
-const CustomPlayAction = require('./PlayActions/CustomPlayAction');
-const EventRegistrar = require('./eventregistrar');
-const GameActions = require('./GameActions');
-const KeywordsProperty = require('./PropertyTypes/KeywordsProperty');
-const ReferenceCountedSetProperty = require('./PropertyTypes/ReferenceCountedSetProperty');
-const { Tokens } = require('./Constants');
+import uuid from 'uuid';
+import AbilityDsl from './abilitydsl.js';
+import CardAction from './cardaction.js';
+import CardForcedInterrupt from './cardforcedinterrupt.js';
+import CardForcedReaction from './cardforcedreaction.js';
+import CardInterrupt from './cardinterrupt.js';
+import CardMatcher from './CardMatcher.js';
+import CardReaction from './cardreaction.js';
+import CustomPlayAction from './PlayActions/CustomPlayAction.js';
+import EventRegistrar from './eventregistrar.js';
+import GameActions from './GameActions/index.js';
+import KeywordsProperty from './PropertyTypes/KeywordsProperty.js';
+import ReferenceCountedSetProperty from './PropertyTypes/ReferenceCountedSetProperty.js';
+import { Tokens } from './Constants/index.js';
 
 const ValidKeywords = [
     'ambush',
@@ -907,4 +906,4 @@ class BaseCard {
     }
 }
 
-module.exports = BaseCard;
+export default BaseCard;

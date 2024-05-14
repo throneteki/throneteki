@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class MutinyAtCrastersKeep extends DrawCard {
     setupCardAbilities(ability) {
@@ -40,4 +40,4 @@ class MutinyAtCrastersKeep extends DrawCard {
 
 MutinyAtCrastersKeep.code = '06086';
 
-module.exports = MutinyAtCrastersKeep;
+export default MutinyAtCrastersKeep;

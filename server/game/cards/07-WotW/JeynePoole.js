@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class JeynePoole extends DrawCard {
     setupCardAbilities(ability) {
@@ -28,4 +28,4 @@ class JeynePoole extends DrawCard {
 
 JeynePoole.code = '07033';
 
-module.exports = JeynePoole;
+export default JeynePoole;

@@ -14,4 +14,4 @@ class PlaceInDeadPileFromHandCost {
     }
 }
 
-module.exports = PlaceInDeadPileFromHandCost;
+export default PlaceInDeadPileFromHandCost;

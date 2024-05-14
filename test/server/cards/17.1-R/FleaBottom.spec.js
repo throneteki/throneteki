@@ -1,11 +1,14 @@
-const {Tokens} = require('../../../../server/game/Constants');
+import { Tokens } from '../../../../server/game/Constants/index.js';
 
-describe('Flea Bottom', function() {
-    integration(function() {
-        beforeEach(function() {
+describe('Flea Bottom', function () {
+    integration(function () {
+        beforeEach(function () {
             const deck = this.buildDeck('targaryen', [
                 'Trading with the Pentoshi',
-                'Flea Bottom (R)', 'Drogon (Core)', 'Drogon (Core)', 'Hedge Knight'
+                'Flea Bottom (R)',
+                'Drogon (Core)',
+                'Drogon (Core)',
+                'Hedge Knight'
             ]);
 
             this.player1.selectDeck(deck);
@@ -30,8 +33,8 @@ describe('Flea Bottom', function() {
             this.player1.dragCard(fillerCard, 'draw deck');
         });
 
-        describe('when putting out a character', function() {
-            beforeEach(function() {
+        describe('when putting out a character', function () {
+            beforeEach(function () {
                 this.player1.dragCard(this.character, 'discard pile');
 
                 this.completeMarshalPhase();
@@ -40,35 +43,35 @@ describe('Flea Bottom', function() {
                 this.player1.clickCard(this.character);
             });
 
-            it('should put the character into play', function() {
+            it('should put the character into play', function () {
                 expect(this.character.location).toBe('play area');
             });
 
-            describe('and the character is in play when the phase ends', function() {
-                beforeEach(function() {
+            describe('and the character is in play when the phase ends', function () {
+                beforeEach(function () {
                     this.completeChallengesPhase();
                 });
 
-                it('should return the character to the bottom of the deck', function() {
+                it('should return the character to the bottom of the deck', function () {
                     expect(this.character.location).toBe('draw deck');
                     expect(this.player1Object.drawDeck.slice(-1)[0]).toBe(this.character);
                 });
             });
 
-            describe('and the character leaves play before the phase ends', function() {
-                beforeEach(function() {
+            describe('and the character leaves play before the phase ends', function () {
+                beforeEach(function () {
                     this.game.killCharacter(this.character);
                     this.completeChallengesPhase();
                 });
 
-                it('should not return the character to the bottom of the deck', function() {
+                it('should not return the character to the bottom of the deck', function () {
                     expect(this.character.location).not.toBe('draw deck');
                 });
             });
         });
 
-        describe('when putting out a duplicate', function() {
-            beforeEach(function() {
+        describe('when putting out a duplicate', function () {
+            beforeEach(function () {
                 this.player1.dragCard(this.dupe, 'discard pile');
 
                 this.player1.clickCard(this.character);
@@ -79,33 +82,33 @@ describe('Flea Bottom', function() {
                 this.player1.clickCard(this.dupe);
             });
 
-            it('should duplicate the character', function() {
+            it('should duplicate the character', function () {
                 expect(this.character.dupes).toContain(this.dupe);
                 expect(this.dupe.location).toBe('duplicate');
             });
 
-            describe('and the dupe is in play when the phase ends', function() {
-                beforeEach(function() {
+            describe('and the dupe is in play when the phase ends', function () {
+                beforeEach(function () {
                     this.completeChallengesPhase();
                 });
 
-                it('should remove the dupe from the character', function() {
+                it('should remove the dupe from the character', function () {
                     expect(this.character.dupes).not.toContain(this.dupe);
                 });
 
-                it('should return the dupe to the bottom of the deck', function() {
+                it('should return the dupe to the bottom of the deck', function () {
                     expect(this.dupe.location).toBe('draw deck');
                     expect(this.player1Object.drawDeck.slice(-1)[0]).toBe(this.dupe);
                 });
             });
 
-            describe('and the dupe leaves play before the phase ends', function() {
-                beforeEach(function() {
+            describe('and the dupe leaves play before the phase ends', function () {
+                beforeEach(function () {
                     this.game.killCharacter(this.character);
                     this.completeChallengesPhase();
                 });
 
-                it('should not return the character to the bottom of the deck', function() {
+                it('should not return the character to the bottom of the deck', function () {
                     expect(this.dupe.location).not.toBe('draw deck');
                 });
             });

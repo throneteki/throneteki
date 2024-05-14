@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class GatesOfWinterfell extends DrawCard {
     setupCardAbilities(ability) {
@@ -24,4 +24,4 @@ class GatesOfWinterfell extends DrawCard {
 
 GatesOfWinterfell.code = '01154';
 
-module.exports = GatesOfWinterfell;
+export default GatesOfWinterfell;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class QuentynMartell extends DrawCard {
     setupCardAbilities(ability) {
@@ -33,4 +33,4 @@ class QuentynMartell extends DrawCard {
 
 QuentynMartell.code = '03031';
 
-module.exports = QuentynMartell;
+export default QuentynMartell;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class KingsLandingProselyte extends DrawCard {
     setupCardAbilities(ability) {
@@ -20,4 +20,4 @@ class KingsLandingProselyte extends DrawCard {
 
 KingsLandingProselyte.code = '13051';
 
-module.exports = KingsLandingProselyte;
+export default KingsLandingProselyte;

@@ -1,4 +1,4 @@
-const FactionCostReducer = require('../reducer.js').FactionCostReducer;
+import { FactionCostReducer } from '../reducer.js';
 
 class HeartTreeGrove extends FactionCostReducer {
     constructor(owner, cardData) {
@@ -8,4 +8,4 @@ class HeartTreeGrove extends FactionCostReducer {
 
 HeartTreeGrove.code = '01156';
 
-module.exports = HeartTreeGrove;
+export default HeartTreeGrove;

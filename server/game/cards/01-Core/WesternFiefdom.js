@@ -1,4 +1,4 @@
-const FactionCostReducer = require('../reducer.js').FactionCostReducer;
+import { FactionCostReducer } from '../reducer.js';
 
 class WesternFiefdom extends FactionCostReducer {
     constructor(owner, cardData) {
@@ -8,4 +8,4 @@ class WesternFiefdom extends FactionCostReducer {
 
 WesternFiefdom.code = '01099';
 
-module.exports = WesternFiefdom;
+export default WesternFiefdom;

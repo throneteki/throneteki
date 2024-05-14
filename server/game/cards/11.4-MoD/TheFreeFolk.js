@@ -1,6 +1,6 @@
-const AgendaCard = require('../../agendacard');
-const ApplyClaim = require('../../gamesteps/challenge/applyclaim');
-const ChallengeTypes = require('../../ChallengeTypes');
+import AgendaCard from '../../agendacard.js';
+import ApplyClaim from '../../gamesteps/challenge/applyclaim.js';
+import ChallengeTypes from '../../ChallengeTypes.js';
 
 class TheFreeFolk extends AgendaCard {
     setupCardAbilities(ability) {
@@ -49,4 +49,4 @@ class TheFreeFolk extends AgendaCard {
 
 TheFreeFolk.code = '11079';
 
-module.exports = TheFreeFolk;
+export default TheFreeFolk;

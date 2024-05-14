@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class KayceMerchant extends DrawCard {
     setupCardAbilities(ability) {
@@ -23,4 +23,4 @@ class KayceMerchant extends DrawCard {
 
 KayceMerchant.code = '06089';
 
-module.exports = KayceMerchant;
+export default KayceMerchant;

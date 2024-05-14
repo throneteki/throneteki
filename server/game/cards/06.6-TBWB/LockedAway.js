@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class LockedAway extends DrawCard {
     setupCardAbilities() {
@@ -22,4 +22,4 @@ class LockedAway extends DrawCard {
 
 LockedAway.code = '06116';
 
-module.exports = LockedAway;
+export default LockedAway;

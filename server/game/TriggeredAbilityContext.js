@@ -1,4 +1,4 @@
-const AbilityContext = require('./AbilityContext');
+import AbilityContext from './AbilityContext.js';
 
 class TriggeredAbilityContext extends AbilityContext {
     constructor(properties) {
@@ -16,4 +16,4 @@ class TriggeredAbilityContext extends AbilityContext {
     }
 }
 
-module.exports = TriggeredAbilityContext;
+export default TriggeredAbilityContext;

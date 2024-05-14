@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class NymeriasGuard extends DrawCard {
     setupCardAbilities(ability) {
@@ -28,4 +28,4 @@ class NymeriasGuard extends DrawCard {
 
 NymeriasGuard.code = '10009';
 
-module.exports = NymeriasGuard;
+export default NymeriasGuard;

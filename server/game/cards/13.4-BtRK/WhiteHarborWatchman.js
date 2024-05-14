@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class WhiteHarborWatchman extends DrawCard {
     setupCardAbilities(ability) {
@@ -22,4 +22,4 @@ class WhiteHarborWatchman extends DrawCard {
 
 WhiteHarborWatchman.code = '13061';
 
-module.exports = WhiteHarborWatchman;
+export default WhiteHarborWatchman;

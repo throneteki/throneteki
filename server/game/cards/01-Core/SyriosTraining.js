@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class SyriosTraining extends DrawCard {
     setupCardAbilities(ability) {
@@ -10,4 +10,4 @@ class SyriosTraining extends DrawCard {
 
 SyriosTraining.code = '01037';
 
-module.exports = SyriosTraining;
+export default SyriosTraining;

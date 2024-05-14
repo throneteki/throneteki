@@ -1,4 +1,4 @@
-const pluralize = require('pluralize');
+import pluralize from 'pluralize';
 
 const TextHelper = {
     /**
@@ -36,4 +36,4 @@ const TextHelper = {
     }
 };
 
-module.exports = TextHelper;
+export default TextHelper;

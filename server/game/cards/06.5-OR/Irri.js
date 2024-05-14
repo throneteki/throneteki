@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Irri extends DrawCard {
     setupCardAbilities(ability) {
@@ -29,4 +29,4 @@ class Irri extends DrawCard {
 
 Irri.code = '06093';
 
-module.exports = Irri;
+export default Irri;

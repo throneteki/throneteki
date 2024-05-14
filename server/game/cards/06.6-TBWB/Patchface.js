@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 const Icons = ['Military', 'Intrigue', 'Power'];
 
@@ -35,4 +35,4 @@ class Patchface extends DrawCard {
 
 Patchface.code = '06107';
 
-module.exports = Patchface;
+export default Patchface;

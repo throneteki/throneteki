@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Ygritte extends DrawCard {
     setupCardAbilities(ability) {
@@ -24,4 +24,4 @@ class Ygritte extends DrawCard {
 
 Ygritte.code = '06017';
 
-module.exports = Ygritte;
+export default Ygritte;

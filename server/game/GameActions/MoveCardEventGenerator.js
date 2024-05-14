@@ -1,6 +1,6 @@
-const AtomicEvent = require('../AtomicEvent');
-const BestowPrompt = require('../gamesteps/bestowprompt');
-const Event = require('../event');
+import AtomicEvent from '../AtomicEvent.js';
+import BestowPrompt from '../gamesteps/bestowprompt.js';
+import Event from '../event.js';
 const orderableLocatons = ['draw deck', 'shadows', 'discard pile', 'dead pile'];
 
 class MoveCardEventGenerator {
@@ -172,4 +172,4 @@ class MoveCardEventGenerator {
     }
 }
 
-module.exports = new MoveCardEventGenerator();
+export default new MoveCardEventGenerator();

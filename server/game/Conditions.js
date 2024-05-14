@@ -26,4 +26,4 @@ class Conditions {
     }
 }
 
-module.exports = Conditions;
+export default Conditions;

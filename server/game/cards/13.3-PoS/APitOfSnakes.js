@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class APitOfSnakes extends DrawCard {
     setupCardAbilities(ability) {
@@ -24,4 +24,4 @@ class APitOfSnakes extends DrawCard {
 
 APitOfSnakes.code = '13056';
 
-module.exports = APitOfSnakes;
+export default APitOfSnakes;

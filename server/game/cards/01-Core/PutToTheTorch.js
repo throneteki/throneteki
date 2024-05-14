@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class PutToTheTorch extends DrawCard {
     setupCardAbilities(ability) {
@@ -34,4 +34,4 @@ class PutToTheTorch extends DrawCard {
 
 PutToTheTorch.code = '01042';
 
-module.exports = PutToTheTorch;
+export default PutToTheTorch;

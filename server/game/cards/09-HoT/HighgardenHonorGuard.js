@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class HighgardenHonorGuard extends DrawCard {
     setupCardAbilities(ability) {
@@ -18,4 +18,4 @@ class HighgardenHonorGuard extends DrawCard {
 
 HighgardenHonorGuard.code = '09005';
 
-module.exports = HighgardenHonorGuard;
+export default HighgardenHonorGuard;

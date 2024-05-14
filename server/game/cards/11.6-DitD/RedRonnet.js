@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class RedRonnet extends DrawCard {
     setupCardAbilities(ability) {
@@ -16,4 +16,4 @@ class RedRonnet extends DrawCard {
 
 RedRonnet.code = '11107';
 
-module.exports = RedRonnet;
+export default RedRonnet;

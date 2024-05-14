@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class StormsEnd extends DrawCard {
     setupCardAbilities(ability) {
@@ -32,4 +32,4 @@ class StormsEnd extends DrawCard {
 
 StormsEnd.code = '06008';
 
-module.exports = StormsEnd;
+export default StormsEnd;

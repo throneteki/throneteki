@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class RenlysPavilion extends DrawCard {
     setupCardAbilities(ability) {
@@ -43,4 +43,4 @@ class RenlysPavilion extends DrawCard {
 
 RenlysPavilion.code = '04104';
 
-module.exports = RenlysPavilion;
+export default RenlysPavilion;

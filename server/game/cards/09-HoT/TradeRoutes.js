@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class TradeRoutes extends PlotCard {
     setupCardAbilities() {
@@ -29,4 +29,4 @@ class TradeRoutes extends PlotCard {
 
 TradeRoutes.code = '09051';
 
-module.exports = TradeRoutes;
+export default TradeRoutes;

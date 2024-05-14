@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class NaughtButAshes extends DrawCard {
     setupCardAbilities() {
@@ -32,4 +32,4 @@ class NaughtButAshes extends DrawCard {
 
 NaughtButAshes.code = '25054';
 
-module.exports = NaughtButAshes;
+export default NaughtButAshes;

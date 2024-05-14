@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GenericTracker = require('../../EventTrackers/GenericTracker');
+import DrawCard from '../../drawcard.js';
+import GenericTracker from '../../EventTrackers/GenericTracker.js';
 
 class KingsLanding extends DrawCard {
     setupCardAbilities(ability) {
@@ -49,4 +49,4 @@ class KingsLanding extends DrawCard {
 
 KingsLanding.code = '11058';
 
-module.exports = KingsLanding;
+export default KingsLanding;

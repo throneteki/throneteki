@@ -1,5 +1,5 @@
 const PublicLocations = new Set(['dead pile', 'discard pile', 'out of game', 'play area']);
-const DiscardCard = require('../GameActions/DiscardCard');
+import DiscardCard from '../GameActions/DiscardCard.js';
 
 class DropCommand {
     constructor(game, player, card, targetLocation) {
@@ -83,4 +83,4 @@ class DropCommand {
     }
 }
 
-module.exports = DropCommand;
+export default DropCommand;

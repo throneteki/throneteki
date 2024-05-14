@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class BrandonsGift extends DrawCard {
     setupCardAbilities(ability) {
@@ -32,4 +32,4 @@ class BrandonsGift extends DrawCard {
 
 BrandonsGift.code = '02026';
 
-module.exports = BrandonsGift;
+export default BrandonsGift;

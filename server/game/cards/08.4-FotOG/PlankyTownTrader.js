@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class PlankyTownTrader extends DrawCard {
     setupCardAbilities() {
@@ -49,4 +49,4 @@ class PlankyTownTrader extends DrawCard {
 
 PlankyTownTrader.code = '08075';
 
-module.exports = PlankyTownTrader;
+export default PlankyTownTrader;

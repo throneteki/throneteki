@@ -1,5 +1,5 @@
-const AgendaCard = require('../../agendacard');
-const GameActions = require('../../GameActions');
+import AgendaCard from '../../agendacard.js';
+import GameActions from '../../GameActions/index.js';
 
 class ThePrinceThatWasPromised extends AgendaCard {
     constructor(owner, cardData) {
@@ -97,4 +97,4 @@ class ThePrinceThatWasPromised extends AgendaCard {
 
 ThePrinceThatWasPromised.code = '14045';
 
-module.exports = ThePrinceThatWasPromised;
+export default ThePrinceThatWasPromised;

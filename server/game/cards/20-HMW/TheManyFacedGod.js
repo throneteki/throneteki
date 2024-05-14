@@ -1,5 +1,5 @@
-const AgendaCard = require('../../agendacard');
-const { flatten } = require('../../../Array');
+import AgendaCard from '../../agendacard.js';
+import { flatten } from '../../../Array.js';
 
 class TheManyFacedGod extends AgendaCard {
     setupCardAbilities(ability) {
@@ -51,4 +51,4 @@ class TheManyFacedGod extends AgendaCard {
 
 TheManyFacedGod.code = '20052';
 
-module.exports = TheManyFacedGod;
+export default TheManyFacedGod;

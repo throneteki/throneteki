@@ -1,5 +1,5 @@
-const PlotCard = require('../../plotcard.js');
-const ChallengeTypes = require('../../ChallengeTypes');
+import PlotCard from '../../plotcard.js';
+import ChallengeTypes from '../../ChallengeTypes.js';
 
 class CalmOverWesteros extends PlotCard {
     setupCardAbilities() {
@@ -47,4 +47,4 @@ class CalmOverWesteros extends PlotCard {
 
 CalmOverWesteros.code = '01008';
 
-module.exports = CalmOverWesteros;
+export default CalmOverWesteros;

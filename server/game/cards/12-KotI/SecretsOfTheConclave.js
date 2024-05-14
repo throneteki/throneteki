@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard');
+import PlotCard from '../../plotcard.js';
 
 class SecretsOfTheConclave extends PlotCard {
     setupCardAbilities() {
@@ -92,4 +92,4 @@ class SecretsOfTheConclave extends PlotCard {
 
 SecretsOfTheConclave.code = '12051';
 
-module.exports = SecretsOfTheConclave;
+export default SecretsOfTheConclave;

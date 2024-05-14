@@ -1,5 +1,5 @@
-const AgendaCard = require('../../agendacard');
-const { Tokens } = require('../../Constants');
+import AgendaCard from '../../agendacard.js';
+import { Tokens } from '../../Constants/index.js';
 
 class AssaultFromTheShadows extends AgendaCard {
     setupCardAbilities(ability) {
@@ -49,4 +49,4 @@ class AssaultFromTheShadows extends AgendaCard {
 
 AssaultFromTheShadows.code = '11118';
 
-module.exports = AssaultFromTheShadows;
+export default AssaultFromTheShadows;

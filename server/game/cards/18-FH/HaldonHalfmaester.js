@@ -1,6 +1,6 @@
-const DrawCard = require('../../drawcard.js');
-const { Tokens } = require('../../Constants');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import { Tokens } from '../../Constants/index.js';
+import GameActions from '../../GameActions/index.js';
 
 class HaldonHalfmaester extends DrawCard {
     setupCardAbilities() {
@@ -80,4 +80,4 @@ class HaldonHalfmaester extends DrawCard {
 
 HaldonHalfmaester.code = '18014';
 
-module.exports = HaldonHalfmaester;
+export default HaldonHalfmaester;

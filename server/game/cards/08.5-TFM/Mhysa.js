@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const { ChallengeTracker } = require('../../EventTrackers');
+import DrawCard from '../../drawcard.js';
+import { ChallengeTracker } from '../../EventTrackers/index.js';
 
 class Mhysa extends DrawCard {
     setupCardAbilities(ability) {
@@ -35,4 +35,4 @@ class Mhysa extends DrawCard {
 
 Mhysa.code = '08094';
 
-module.exports = Mhysa;
+export default Mhysa;

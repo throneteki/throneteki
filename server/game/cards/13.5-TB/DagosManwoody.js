@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class DagosManwoody extends DrawCard {
     setupCardAbilities(ability) {
@@ -17,4 +17,4 @@ class DagosManwoody extends DrawCard {
 
 DagosManwoody.code = '13095';
 
-module.exports = DagosManwoody;
+export default DagosManwoody;

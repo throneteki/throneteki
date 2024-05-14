@@ -1,7 +1,7 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions/index.js');
-const Array = require('../../../Array');
-const TextHelper = require('../../TextHelper');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
+import { availableToPair } from '../../../Array.js';
+import TextHelper from '../../TextHelper.js';
 
 class SteelRain extends DrawCard {
     setupCardAbilities(ability) {
@@ -26,7 +26,7 @@ class SteelRain extends DrawCard {
                     faction: 'greyjoy',
                     type: 'location',
                     condition: (card, context) =>
-                        Array.availableToPair(
+                        availableToPair(
                             context.costs.sacrifice || [],
                             context.selectedCards,
                             (sacrificed, card) => this.isSelectableLocationFor(sacrificed, card)
@@ -53,4 +53,4 @@ class SteelRain extends DrawCard {
 
 SteelRain.code = '11032';
 
-module.exports = SteelRain;
+export default SteelRain;

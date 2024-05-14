@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class SerMerynTrant extends DrawCard {
     setupCardAbilities() {
@@ -23,4 +23,4 @@ class SerMerynTrant extends DrawCard {
 
 SerMerynTrant.code = '15029';
 
-module.exports = SerMerynTrant;
+export default SerMerynTrant;

@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const Conditions = require('../../Conditions');
+import DrawCard from '../../drawcard.js';
+import Conditions from '../../Conditions.js';
 
 class AlysaneMormont extends DrawCard {
     setupCardAbilities(ability) {
@@ -18,4 +18,4 @@ class AlysaneMormont extends DrawCard {
 
 AlysaneMormont.code = '13001';
 
-module.exports = AlysaneMormont;
+export default AlysaneMormont;

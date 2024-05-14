@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class WiseMaster extends DrawCard {
     setupCardAbilities(ability) {
@@ -30,4 +30,4 @@ class WiseMaster extends DrawCard {
 
 WiseMaster.code = '08073';
 
-module.exports = WiseMaster;
+export default WiseMaster;

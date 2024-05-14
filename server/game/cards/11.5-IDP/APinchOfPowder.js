@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class APinchOfPowder extends DrawCard {
     setupCardAbilities() {
@@ -26,4 +26,4 @@ class APinchOfPowder extends DrawCard {
 
 APinchOfPowder.code = '11099';
 
-module.exports = APinchOfPowder;
+export default APinchOfPowder;

@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const TextHelper = require('../../TextHelper');
+import DrawCard from '../../drawcard.js';
+import TextHelper from '../../TextHelper.js';
 
 class IronGate extends DrawCard {
     setupCardAbilities(ability) {
@@ -26,4 +26,4 @@ class IronGate extends DrawCard {
 
 IronGate.code = '13012';
 
-module.exports = IronGate;
+export default IronGate;

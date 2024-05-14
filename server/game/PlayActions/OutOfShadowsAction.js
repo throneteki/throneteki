@@ -1,5 +1,5 @@
-const BaseAbility = require('../baseability');
-const Costs = require('../costs');
+import BaseAbility from '../baseability.js';
+import Costs from '../costs.js';
 
 class OutOfShadowsAction extends BaseAbility {
     constructor() {
@@ -45,4 +45,4 @@ class OutOfShadowsAction extends BaseAbility {
     }
 }
 
-module.exports = OutOfShadowsAction;
+export default OutOfShadowsAction;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class VindictiveRanger extends DrawCard {
     setupCardAbilities() {
@@ -34,4 +34,4 @@ class VindictiveRanger extends DrawCard {
 
 VindictiveRanger.code = '12031';
 
-module.exports = VindictiveRanger;
+export default VindictiveRanger;

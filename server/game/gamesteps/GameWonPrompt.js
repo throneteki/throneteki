@@ -1,5 +1,5 @@
-const AllPlayerPrompt = require('./allplayerprompt');
-const RematchPrompt = require('./RematchPrompt');
+import AllPlayerPrompt from './allplayerprompt.js';
+import RematchPrompt from './RematchPrompt.js';
 
 class GameWonPrompt extends AllPlayerPrompt {
     constructor(game, winner) {
@@ -55,4 +55,4 @@ class GameWonPrompt extends AllPlayerPrompt {
     }
 }
 
-module.exports = GameWonPrompt;
+export default GameWonPrompt;

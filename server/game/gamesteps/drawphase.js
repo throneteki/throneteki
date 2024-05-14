@@ -1,7 +1,7 @@
-const Phase = require('./phase.js');
-const SimpleStep = require('./simplestep.js');
-const ActionWindow = require('./actionwindow.js');
-const GameActions = require('../GameActions');
+import Phase from './phase.js';
+import SimpleStep from './simplestep.js';
+import ActionWindow from './actionwindow.js';
+import GameActions from '../GameActions/index.js';
 
 class DrawPhase extends Phase {
     constructor(game) {
@@ -30,4 +30,4 @@ class DrawPhase extends Phase {
     }
 }
 
-module.exports = DrawPhase;
+export default DrawPhase;

@@ -1,6 +1,6 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
-const Message = require('../../Message');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
+import Message from '../../Message.js';
 
 class SamwellTarly extends DrawCard {
     setupCardAbilities() {
@@ -79,4 +79,4 @@ class SamwellTarly extends DrawCard {
 
 SamwellTarly.code = '22013';
 
-module.exports = SamwellTarly;
+export default SamwellTarly;

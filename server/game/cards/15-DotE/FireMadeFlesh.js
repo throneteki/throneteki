@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class FireMadeFlesh extends DrawCard {
     setupCardAbilities(ability) {
@@ -30,4 +30,4 @@ class FireMadeFlesh extends DrawCard {
 
 FireMadeFlesh.code = '15023';
 
-module.exports = FireMadeFlesh;
+export default FireMadeFlesh;

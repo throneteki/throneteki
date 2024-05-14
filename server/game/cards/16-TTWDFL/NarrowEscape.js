@@ -1,6 +1,6 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
-const GenericTracker = require('../../EventTrackers/GenericTracker');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
+import GenericTracker from '../../EventTrackers/GenericTracker.js';
 
 class NarrowEscape extends DrawCard {
     setupCardAbilities(ability) {
@@ -91,4 +91,4 @@ class NarrowEscape extends DrawCard {
 
 NarrowEscape.code = '16024';
 
-module.exports = NarrowEscape;
+export default NarrowEscape;

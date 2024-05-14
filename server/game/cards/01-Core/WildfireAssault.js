@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard');
+import PlotCard from '../../plotcard.js';
 
 class WildfireAssault extends PlotCard {
     setupCardAbilities() {
@@ -46,4 +46,4 @@ class WildfireAssault extends PlotCard {
 
 WildfireAssault.code = '01026';
 
-module.exports = WildfireAssault;
+export default WildfireAssault;

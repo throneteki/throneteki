@@ -1,5 +1,5 @@
-const TextHelper = require('../TextHelper');
-const UiPrompt = require('./uiprompt');
+import TextHelper from '../TextHelper.js';
+import UiPrompt from './uiprompt.js';
 
 class AcknowledgeRevealCardsPrompt extends UiPrompt {
     constructor(game, cards, player, source) {
@@ -69,4 +69,4 @@ class AcknowledgeRevealCardsPrompt extends UiPrompt {
     }
 }
 
-module.exports = AcknowledgeRevealCardsPrompt;
+export default AcknowledgeRevealCardsPrompt;

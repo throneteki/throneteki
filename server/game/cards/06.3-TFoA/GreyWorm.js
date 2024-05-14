@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class GreyWorm extends DrawCard {
     setupCardAbilities(ability) {
@@ -31,4 +31,4 @@ class GreyWorm extends DrawCard {
 
 GreyWorm.code = '06053';
 
-module.exports = GreyWorm;
+export default GreyWorm;

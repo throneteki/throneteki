@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GenericTracker = require('../../EventTrackers/GenericTracker');
+import DrawCard from '../../drawcard.js';
+import GenericTracker from '../../EventTrackers/GenericTracker.js';
 
 class CastleGuard extends DrawCard {
     setupCardAbilities() {
@@ -26,4 +26,4 @@ class CastleGuard extends DrawCard {
 
 CastleGuard.code = '13067';
 
-module.exports = CastleGuard;
+export default CastleGuard;

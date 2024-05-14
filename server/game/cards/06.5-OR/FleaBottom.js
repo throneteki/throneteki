@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class FleaBottom extends DrawCard {
     setupCardAbilities(ability) {
@@ -37,4 +37,4 @@ class FleaBottom extends DrawCard {
 
 FleaBottom.code = '06098';
 
-module.exports = FleaBottom;
+export default FleaBottom;

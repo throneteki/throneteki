@@ -25,4 +25,4 @@ class GoldSource {
     }
 }
 
-module.exports = GoldSource;
+export default GoldSource;

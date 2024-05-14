@@ -1,10 +1,9 @@
-const { flatMap } = require('../Array');
-
-const AbilityChoosePlayerDefinition = require('./AbilityChoosePlayerDefinition');
-const AbilityMessage = require('./AbilityMessage');
-const AbilityTarget = require('./AbilityTarget.js');
-const ChooseGameAction = require('./GameActions/ChooseGameAction');
-const HandlerGameActionWrapper = require('./GameActions/HandlerGameActionWrapper');
+import { flatMap } from '../Array.js';
+import AbilityChoosePlayerDefinition from './AbilityChoosePlayerDefinition.js';
+import AbilityMessage from './AbilityMessage.js';
+import AbilityTarget from './AbilityTarget.js';
+import ChooseGameAction from './GameActions/ChooseGameAction.js';
+import HandlerGameActionWrapper from './GameActions/HandlerGameActionWrapper.js';
 
 /**
  * Base class representing an ability that can be done by the player. This
@@ -300,4 +299,4 @@ class BaseAbility {
     }
 }
 
-module.exports = BaseAbility;
+export default BaseAbility;

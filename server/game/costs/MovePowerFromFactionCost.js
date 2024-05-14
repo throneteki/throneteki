@@ -1,4 +1,4 @@
-const CardSelector = require('../CardSelector');
+import CardSelector from '../CardSelector.js';
 
 class MovePowerFromFactionCost {
     constructor({ amount = 1, condition = (card) => card.location === 'play area' }) {
@@ -43,4 +43,4 @@ class MovePowerFromFactionCost {
     }
 }
 
-module.exports = MovePowerFromFactionCost;
+export default MovePowerFromFactionCost;

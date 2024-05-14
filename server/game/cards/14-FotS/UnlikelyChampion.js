@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class UnlikelyChampion extends DrawCard {
     setupCardAbilities(ability) {
@@ -15,4 +15,4 @@ class UnlikelyChampion extends DrawCard {
 
 UnlikelyChampion.code = '14040';
 
-module.exports = UnlikelyChampion;
+export default UnlikelyChampion;

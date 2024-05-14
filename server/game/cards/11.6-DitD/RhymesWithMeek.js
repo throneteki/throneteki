@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const TextHelper = require('../../TextHelper');
+import DrawCard from '../../drawcard.js';
+import TextHelper from '../../TextHelper.js';
 
 class RhymesWithMeek extends DrawCard {
     setupCardAbilities() {
@@ -24,4 +24,4 @@ class RhymesWithMeek extends DrawCard {
 
 RhymesWithMeek.code = '11112';
 
-module.exports = RhymesWithMeek;
+export default RhymesWithMeek;

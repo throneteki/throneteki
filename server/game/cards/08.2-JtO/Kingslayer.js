@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Kingslayer extends DrawCard {
     setupCardAbilities(ability) {
@@ -50,4 +50,4 @@ class Kingslayer extends DrawCard {
 
 Kingslayer.code = '08030';
 
-module.exports = Kingslayer;
+export default Kingslayer;

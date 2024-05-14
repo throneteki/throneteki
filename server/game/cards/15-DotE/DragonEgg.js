@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class DragonEgg extends DrawCard {
     setupCardAbilities(ability) {
@@ -30,4 +30,4 @@ class DragonEgg extends DrawCard {
 
 DragonEgg.code = '15020';
 
-module.exports = DragonEgg;
+export default DragonEgg;

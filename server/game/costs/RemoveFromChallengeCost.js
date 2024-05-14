@@ -16,4 +16,4 @@ class RemoveFromChallengeCost {
     }
 }
 
-module.exports = RemoveFromChallengeCost;
+export default RemoveFromChallengeCost;

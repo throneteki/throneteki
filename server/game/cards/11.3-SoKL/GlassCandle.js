@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class GlassCandle extends DrawCard {
     setupCardAbilities(ability) {
@@ -70,4 +70,4 @@ class GlassCandle extends DrawCard {
 
 GlassCandle.code = '11059';
 
-module.exports = GlassCandle;
+export default GlassCandle;

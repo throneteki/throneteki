@@ -27,15 +27,6 @@ export default [
             react: {
                 version: 'detect'
             }
-        },
-        overrides: [
-            {
-                files: ['*.test.js'],
-                env: {
-                    jasmine: true
-                },
-                plugins: ['jest']
-            }
-        ]
+        }
     }
 ];

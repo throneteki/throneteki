@@ -14,4 +14,4 @@ class KillCost {
     }
 }
 
-module.exports = KillCost;
+export default KillCost;

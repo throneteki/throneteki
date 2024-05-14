@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class IronMines extends DrawCard {
     setupCardAbilities(ability) {
@@ -26,4 +26,4 @@ class IronMines extends DrawCard {
 
 IronMines.code = '02092';
 
-module.exports = IronMines;
+export default IronMines;

@@ -1,4 +1,4 @@
-const CardSelector = require('../CardSelector');
+import CardSelector from '../CardSelector.js';
 
 class MovePowerFromCardCost {
     constructor({
@@ -49,4 +49,4 @@ class MovePowerFromCardCost {
     }
 }
 
-module.exports = MovePowerFromCardCost;
+export default MovePowerFromCardCost;

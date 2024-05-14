@@ -1,4 +1,4 @@
-const AllowedChallenge = require('./AllowedChallenge');
+import AllowedChallenge from './AllowedChallenge.js';
 
 class AllowedChallenges {
     constructor(player) {
@@ -95,4 +95,4 @@ class AllowedChallenges {
     }
 }
 
-module.exports = AllowedChallenges;
+export default AllowedChallenges;

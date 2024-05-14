@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class AzorAhaiReborn extends DrawCard {
     setupCardAbilities(ability) {
@@ -23,4 +23,4 @@ class AzorAhaiReborn extends DrawCard {
 
 AzorAhaiReborn.code = '14020';
 
-module.exports = AzorAhaiReborn;
+export default AzorAhaiReborn;

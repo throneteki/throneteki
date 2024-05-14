@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class BrightwaterHost extends DrawCard {
     setupCardAbilities() {
@@ -44,4 +44,4 @@ class BrightwaterHost extends DrawCard {
 
 BrightwaterHost.code = '11083';
 
-module.exports = BrightwaterHost;
+export default BrightwaterHost;

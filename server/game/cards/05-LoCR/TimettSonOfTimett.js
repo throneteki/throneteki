@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TimettSonOfTimett extends DrawCard {
     setupCardAbilities() {
@@ -38,4 +38,4 @@ class TimettSonOfTimett extends DrawCard {
 
 TimettSonOfTimett.code = '05004';
 
-module.exports = TimettSonOfTimett;
+export default TimettSonOfTimett;

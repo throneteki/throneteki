@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class OrphanOfTheGreenblood extends DrawCard {
     setupCardAbilities(ability) {
@@ -27,4 +27,4 @@ class OrphanOfTheGreenblood extends DrawCard {
 
 OrphanOfTheGreenblood.code = '06035';
 
-module.exports = OrphanOfTheGreenblood;
+export default OrphanOfTheGreenblood;

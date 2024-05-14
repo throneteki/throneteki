@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const { Tokens } = require('../../Constants');
+import DrawCard from '../../drawcard.js';
+import { Tokens } from '../../Constants/index.js';
 
 class BlackWalder extends DrawCard {
     setupCardAbilities(ability) {
@@ -17,4 +17,4 @@ class BlackWalder extends DrawCard {
 
 BlackWalder.code = '06037';
 
-module.exports = BlackWalder;
+export default BlackWalder;

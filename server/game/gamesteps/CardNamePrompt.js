@@ -1,4 +1,4 @@
-const BaseStep = require('./basestep');
+import BaseStep from './basestep.js';
 
 class CardNamePrompt extends BaseStep {
     constructor(game, { player, source, title, match, onSelect, onCancel }) {
@@ -58,4 +58,4 @@ class CardNamePrompt extends BaseStep {
     }
 }
 
-module.exports = CardNamePrompt;
+export default CardNamePrompt;

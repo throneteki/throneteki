@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class MargaerysInfluence extends DrawCard {
     setupCardAbilities(ability) {
@@ -22,4 +22,4 @@ class MargaerysInfluence extends DrawCard {
 
 MargaerysInfluence.code = '11005';
 
-module.exports = MargaerysInfluence;
+export default MargaerysInfluence;

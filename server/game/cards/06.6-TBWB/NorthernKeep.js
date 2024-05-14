@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class NorthernKeep extends DrawCard {
     setupCardAbilities(ability) {
@@ -26,4 +26,4 @@ class NorthernKeep extends DrawCard {
 
 NorthernKeep.code = '06102';
 
-module.exports = NorthernKeep;
+export default NorthernKeep;

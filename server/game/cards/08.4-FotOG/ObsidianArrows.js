@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class ObsidianArrows extends DrawCard {
     setupCardAbilities(ability) {
@@ -30,4 +30,4 @@ class ObsidianArrows extends DrawCard {
 
 ObsidianArrows.code = '08066';
 
-module.exports = ObsidianArrows;
+export default ObsidianArrows;

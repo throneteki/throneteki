@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class RiseOfTheKraken extends PlotCard {
     setupCardAbilities() {
@@ -24,4 +24,4 @@ class RiseOfTheKraken extends PlotCard {
 
 RiseOfTheKraken.code = '02012';
 
-module.exports = RiseOfTheKraken;
+export default RiseOfTheKraken;

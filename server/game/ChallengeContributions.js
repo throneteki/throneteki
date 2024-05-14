@@ -1,4 +1,4 @@
-class ChallengeContributions {
+export class ChallengeContributions {
     constructor() {
         this.contributions = [];
     }
@@ -73,7 +73,7 @@ class ChallengeContributions {
     }
 }
 
-class ValueContribution {
+export class ValueContribution {
     constructor(towardsPlayer, card, value) {
         this.towardsPlayer = towardsPlayer;
         this.card = card;
@@ -91,7 +91,7 @@ class ValueContribution {
     }
 }
 
-class CharacterStrengthContribution {
+export class CharacterStrengthContribution {
     constructor(towardsPlayer, card, isParticipation = false) {
         this.towardsPlayer = towardsPlayer;
         this.card = card;
@@ -118,9 +118,3 @@ class CharacterStrengthContribution {
         return this.card.getStrength();
     }
 }
-
-module.exports = {
-    ChallengeContributions: ChallengeContributions,
-    ValueContribution: ValueContribution,
-    CharacterStrengthContribution: CharacterStrengthContribution
-};

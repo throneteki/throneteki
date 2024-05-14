@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Esgred extends DrawCard {
     constructor(owner, cardData) {
@@ -33,4 +33,4 @@ class Esgred extends DrawCard {
 
 Esgred.code = '04111';
 
-module.exports = Esgred;
+export default Esgred;

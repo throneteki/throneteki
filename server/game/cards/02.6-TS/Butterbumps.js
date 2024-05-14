@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Butterbumps extends DrawCard {
     setupCardAbilities() {
@@ -21,4 +21,4 @@ class Butterbumps extends DrawCard {
 
 Butterbumps.code = '02103';
 
-module.exports = Butterbumps;
+export default Butterbumps;

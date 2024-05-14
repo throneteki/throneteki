@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const KillTracker = require('../../EventTrackers/KillTracker');
+import DrawCard from '../../drawcard.js';
+import KillTracker from '../../EventTrackers/KillTracker.js';
 
 class Craster extends DrawCard {
     constructor(owner, cardData) {
@@ -35,4 +35,4 @@ class Craster extends DrawCard {
 
 Craster.code = '04085';
 
-module.exports = Craster;
+export default Craster;

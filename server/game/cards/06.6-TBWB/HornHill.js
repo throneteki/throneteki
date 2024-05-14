@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const { Tokens } = require('../../Constants');
+import DrawCard from '../../drawcard.js';
+import { Tokens } from '../../Constants/index.js';
 
 class HornHill extends DrawCard {
     setupCardAbilities(ability) {
@@ -35,4 +35,4 @@ class HornHill extends DrawCard {
 
 HornHill.code = '06104';
 
-module.exports = HornHill;
+export default HornHill;

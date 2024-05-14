@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class GoldMine extends DrawCard {
     setupCardAbilities(ability) {
@@ -25,4 +25,4 @@ class GoldMine extends DrawCard {
 
 GoldMine.code = '11050';
 
-module.exports = GoldMine;
+export default GoldMine;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class LyseniGalley extends DrawCard {
     setupCardAbilities(ability) {
@@ -38,4 +38,4 @@ class LyseniGalley extends DrawCard {
 
 LyseniGalley.code = '14019';
 
-module.exports = LyseniGalley;
+export default LyseniGalley;

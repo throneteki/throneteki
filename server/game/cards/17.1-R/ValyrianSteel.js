@@ -1,4 +1,4 @@
-const AgendaCard = require('../../agendacard');
+import AgendaCard from '../../agendacard.js';
 
 class ValyrianSteel extends AgendaCard {
     setupCardAbilities(ability) {
@@ -69,4 +69,4 @@ class ValyrianSteel extends AgendaCard {
 
 ValyrianSteel.code = '17152';
 
-module.exports = ValyrianSteel;
+export default ValyrianSteel;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Viserion extends DrawCard {
     setupCardAbilities(ability) {
@@ -26,4 +26,4 @@ class Viserion extends DrawCard {
 
 Viserion.code = '13013';
 
-module.exports = Viserion;
+export default Viserion;

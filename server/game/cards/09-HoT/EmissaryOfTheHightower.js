@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class EmissaryOfTheHightower extends DrawCard {
     setupCardAbilities() {
@@ -41,4 +41,4 @@ class EmissaryOfTheHightower extends DrawCard {
 
 EmissaryOfTheHightower.code = '09011';
 
-module.exports = EmissaryOfTheHightower;
+export default EmissaryOfTheHightower;

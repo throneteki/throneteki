@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class VaramyrSixskins extends DrawCard {
     setupCardAbilities() {
@@ -100,4 +100,4 @@ class VaramyrSixskins extends DrawCard {
 
 VaramyrSixskins.code = '11001';
 
-module.exports = VaramyrSixskins;
+export default VaramyrSixskins;

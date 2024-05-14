@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TheWatcherOnTheWalls extends DrawCard {
     setupCardAbilities(ability) {
@@ -24,4 +24,4 @@ class TheWatcherOnTheWalls extends DrawCard {
 
 TheWatcherOnTheWalls.code = '02066';
 
-module.exports = TheWatcherOnTheWalls;
+export default TheWatcherOnTheWalls;

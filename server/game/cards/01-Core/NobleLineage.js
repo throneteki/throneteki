@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class NobleLineage extends DrawCard {
     setupCardAbilities(ability) {
@@ -10,4 +10,4 @@ class NobleLineage extends DrawCard {
 
 NobleLineage.code = '01036';
 
-module.exports = NobleLineage;
+export default NobleLineage;

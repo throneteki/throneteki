@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Blackbird extends DrawCard {
     setupCardAbilities() {
@@ -29,4 +29,4 @@ class Blackbird extends DrawCard {
 
 Blackbird.code = '13066';
 
-module.exports = Blackbird;
+export default Blackbird;

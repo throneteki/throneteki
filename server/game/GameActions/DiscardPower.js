@@ -1,4 +1,4 @@
-const GameAction = require('./GameAction');
+import GameAction from './GameAction.js';
 
 class DiscardPower extends GameAction {
     constructor() {
@@ -18,4 +18,4 @@ class DiscardPower extends GameAction {
     }
 }
 
-module.exports = new DiscardPower();
+export default new DiscardPower();

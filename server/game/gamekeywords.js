@@ -1,9 +1,9 @@
-const AssaultKeyword = require('./assaultkeyword.js');
-const InsightKeyword = require('./insightkeyword.js');
-const IntimidateKeyword = require('./intimidatekeyword.js');
-const PillageKeyword = require('./pillagekeyword.js');
-const RenownKeyword = require('./renownkeyword.js');
-const StealthKeyword = require('./stealthkeyword.js');
+import AssaultKeyword from './assaultkeyword.js';
+import InsightKeyword from './insightkeyword.js';
+import IntimidateKeyword from './intimidatekeyword.js';
+import PillageKeyword from './pillagekeyword.js';
+import RenownKeyword from './renownkeyword.js';
+import StealthKeyword from './stealthkeyword.js';
 
 const GameKeywords = {
     assault: new AssaultKeyword(),
@@ -14,4 +14,4 @@ const GameKeywords = {
     stealth: new StealthKeyword()
 };
 
-module.exports = GameKeywords;
+export default GameKeywords;

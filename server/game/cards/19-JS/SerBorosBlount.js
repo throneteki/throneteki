@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SerBorosBlount extends DrawCard {
     setupCardAbilities() {
@@ -38,4 +38,4 @@ class SerBorosBlount extends DrawCard {
 
 SerBorosBlount.code = '19006';
 
-module.exports = SerBorosBlount;
+export default SerBorosBlount;

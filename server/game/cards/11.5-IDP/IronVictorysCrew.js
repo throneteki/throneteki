@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class IronVictorysCrew extends DrawCard {
     setupCardAbilities() {
@@ -28,4 +28,4 @@ class IronVictorysCrew extends DrawCard {
 
 IronVictorysCrew.code = '11091';
 
-module.exports = IronVictorysCrew;
+export default IronVictorysCrew;

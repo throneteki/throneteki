@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class WyllaManderly extends DrawCard {
     setupCardAbilities(ability) {
@@ -34,4 +34,4 @@ class WyllaManderly extends DrawCard {
 
 WyllaManderly.code = '15035';
 
-module.exports = WyllaManderly;
+export default WyllaManderly;

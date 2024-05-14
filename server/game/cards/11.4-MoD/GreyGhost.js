@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const CardEntersPlayTracker = require('../../EventTrackers/CardEntersPlayTracker');
+import DrawCard from '../../drawcard.js';
+import CardEntersPlayTracker from '../../EventTrackers/CardEntersPlayTracker.js';
 
 class GreyGhost extends DrawCard {
     setupCardAbilities(ability) {
@@ -49,4 +49,4 @@ class GreyGhost extends DrawCard {
 
 GreyGhost.code = '11072';
 
-module.exports = GreyGhost;
+export default GreyGhost;

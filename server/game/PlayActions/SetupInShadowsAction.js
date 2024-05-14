@@ -1,5 +1,5 @@
-const BaseAbility = require('../baseability');
-const Costs = require('../costs');
+import BaseAbility from '../baseability.js';
+import Costs from '../costs.js';
 
 class SetupInShadowsAction extends BaseAbility {
     constructor() {
@@ -24,4 +24,4 @@ class SetupInShadowsAction extends BaseAbility {
     }
 }
 
-module.exports = SetupInShadowsAction;
+export default SetupInShadowsAction;

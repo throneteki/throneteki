@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const TextHelper = require('../../TextHelper');
+import DrawCard from '../../drawcard.js';
+import TextHelper from '../../TextHelper.js';
 
 class WalkOfAtonement extends DrawCard {
     setupCardAbilities(ability) {
@@ -35,4 +35,4 @@ class WalkOfAtonement extends DrawCard {
 
 WalkOfAtonement.code = '11090';
 
-module.exports = WalkOfAtonement;
+export default WalkOfAtonement;

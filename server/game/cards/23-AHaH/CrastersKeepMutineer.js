@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class CrastersKeepMutineer extends DrawCard {
     setupCardAbilities() {
@@ -28,4 +28,4 @@ class CrastersKeepMutineer extends DrawCard {
 
 CrastersKeepMutineer.code = '23009';
 
-module.exports = CrastersKeepMutineer;
+export default CrastersKeepMutineer;

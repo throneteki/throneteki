@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class CommonCause extends PlotCard {
     setupCardAbilities(ability) {
@@ -29,4 +29,4 @@ class CommonCause extends PlotCard {
 
 CommonCause.code = '00021';
 
-module.exports = CommonCause;
+export default CommonCause;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class SealOfTheHand extends DrawCard {
     setupCardAbilities(ability) {
@@ -23,4 +23,4 @@ class SealOfTheHand extends DrawCard {
 
 SealOfTheHand.code = '01032';
 
-module.exports = SealOfTheHand;
+export default SealOfTheHand;

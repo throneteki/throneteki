@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class MellarioOfNorvos extends DrawCard {
     setupCardAbilities(ability) {
@@ -31,4 +31,4 @@ class MellarioOfNorvos extends DrawCard {
 
 MellarioOfNorvos.code = '18007';
 
-module.exports = MellarioOfNorvos;
+export default MellarioOfNorvos;

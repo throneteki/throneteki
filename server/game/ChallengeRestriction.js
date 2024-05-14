@@ -9,4 +9,4 @@ class ChallengeRestriction {
     }
 }
 
-module.exports = ChallengeRestriction;
+export default ChallengeRestriction;

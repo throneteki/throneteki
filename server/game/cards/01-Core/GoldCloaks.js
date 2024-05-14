@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const CardEntersPlayTracker = require('../../EventTrackers/CardEntersPlayTracker');
+import DrawCard from '../../drawcard.js';
+import CardEntersPlayTracker from '../../EventTrackers/CardEntersPlayTracker.js';
 
 class GoldCloaks extends DrawCard {
     setupCardAbilities() {
@@ -23,4 +23,4 @@ class GoldCloaks extends DrawCard {
 
 GoldCloaks.code = '01092';
 
-module.exports = GoldCloaks;
+export default GoldCloaks;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TheGodsEye extends DrawCard {
     setupCardAbilities(ability) {
@@ -16,4 +16,4 @@ class TheGodsEye extends DrawCard {
 
 TheGodsEye.code = '04058';
 
-module.exports = TheGodsEye;
+export default TheGodsEye;

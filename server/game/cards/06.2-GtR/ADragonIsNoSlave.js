@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class ADragonIsNoSlave extends DrawCard {
     setupCardAbilities(ability) {
@@ -62,4 +62,4 @@ class ADragonIsNoSlave extends DrawCard {
 
 ADragonIsNoSlave.code = '06034';
 
-module.exports = ADragonIsNoSlave;
+export default ADragonIsNoSlave;

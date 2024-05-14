@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class ATraitorsWhisper extends DrawCard {
     setupCardAbilities() {
@@ -38,4 +38,4 @@ class ATraitorsWhisper extends DrawCard {
 
 ATraitorsWhisper.code = '23008';
 
-module.exports = ATraitorsWhisper;
+export default ATraitorsWhisper;

@@ -1,5 +1,5 @@
-const PlotCard = require('../../plotcard');
-const GameActions = require('../../GameActions');
+import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class KingsLandingRiot extends PlotCard {
     setupCardAbilities() {
@@ -31,4 +31,4 @@ class KingsLandingRiot extends PlotCard {
 
 KingsLandingRiot.code = '13100';
 
-module.exports = KingsLandingRiot;
+export default KingsLandingRiot;

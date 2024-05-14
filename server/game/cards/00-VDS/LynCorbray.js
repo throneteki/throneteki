@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class LynCorbray extends DrawCard {
     setupCardAbilities(ability) {
@@ -14,4 +14,4 @@ class LynCorbray extends DrawCard {
 
 LynCorbray.code = '00017';
 
-module.exports = LynCorbray;
+export default LynCorbray;

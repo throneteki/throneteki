@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class DornishRevenge extends DrawCard {
     setupCardAbilities() {
@@ -67,4 +67,4 @@ class DornishRevenge extends DrawCard {
 
 DornishRevenge.code = '06096';
 
-module.exports = DornishRevenge;
+export default DornishRevenge;

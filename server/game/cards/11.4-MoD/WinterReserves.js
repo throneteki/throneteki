@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard');
+import PlotCard from '../../plotcard.js';
 
 class WinterReserves extends PlotCard {
     setupCardAbilities(ability) {
@@ -13,4 +13,4 @@ class WinterReserves extends PlotCard {
 
 WinterReserves.code = '11080';
 
-module.exports = WinterReserves;
+export default WinterReserves;

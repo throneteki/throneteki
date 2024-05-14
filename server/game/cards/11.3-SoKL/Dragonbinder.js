@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Dragonbinder extends DrawCard {
     setupCardAbilities(ability) {
@@ -84,4 +84,4 @@ class Dragonbinder extends DrawCard {
 
 Dragonbinder.code = '11052';
 
-module.exports = Dragonbinder;
+export default Dragonbinder;

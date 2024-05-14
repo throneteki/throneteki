@@ -1,6 +1,6 @@
-const DrawCard = require('../../drawcard');
-const GenericTracker = require('../../EventTrackers/GenericTracker');
-const CardEntersPlayTracker = require('../../EventTrackers/CardEntersPlayTracker');
+import DrawCard from '../../drawcard.js';
+import GenericTracker from '../../EventTrackers/GenericTracker.js';
+import CardEntersPlayTracker from '../../EventTrackers/CardEntersPlayTracker.js';
 
 class MaesterGormon extends DrawCard {
     setupCardAbilities(ability) {
@@ -52,4 +52,4 @@ class MaesterGormon extends DrawCard {
 
 MaesterGormon.code = '13043';
 
-module.exports = MaesterGormon;
+export default MaesterGormon;

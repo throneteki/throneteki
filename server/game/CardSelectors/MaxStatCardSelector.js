@@ -1,4 +1,4 @@
-const BaseCardSelector = require('./BaseCardSelector.js');
+import BaseCardSelector from './BaseCardSelector.js';
 
 class MaxStatCardSelector extends BaseCardSelector {
     constructor(properties) {
@@ -26,4 +26,4 @@ class MaxStatCardSelector extends BaseCardSelector {
     }
 }
 
-module.exports = MaxStatCardSelector;
+export default MaxStatCardSelector;

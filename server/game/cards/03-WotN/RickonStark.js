@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class RickonStark extends DrawCard {
     setupCardAbilities(ability) {
@@ -25,4 +25,4 @@ class RickonStark extends DrawCard {
 
 RickonStark.code = '03016';
 
-module.exports = RickonStark;
+export default RickonStark;

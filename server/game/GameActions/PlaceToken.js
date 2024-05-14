@@ -1,7 +1,7 @@
-const GameAction = require('./GameAction');
-const Message = require('../Message');
-const TextHelper = require('../TextHelper');
-const { Tokens } = require('../Constants');
+import GameAction from './GameAction.js';
+import Message from '../Message.js';
+import TextHelper from '../TextHelper.js';
+import { Tokens } from '../Constants/index.js';
 
 class PlaceToken extends GameAction {
     constructor() {
@@ -32,4 +32,4 @@ class PlaceToken extends GameAction {
     }
 }
 
-module.exports = new PlaceToken();
+export default new PlaceToken();

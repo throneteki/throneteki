@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class BlackEars extends DrawCard {
     setupCardAbilities(ability) {
@@ -22,4 +22,4 @@ class BlackEars extends DrawCard {
 
 BlackEars.code = '08029';
 
-module.exports = BlackEars;
+export default BlackEars;

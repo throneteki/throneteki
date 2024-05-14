@@ -1,5 +1,5 @@
-const BaseCard = require('./basecard.js');
-const CardWhenRevealed = require('./cardwhenrevealed.js');
+import BaseCard from './basecard.js';
+import CardWhenRevealed from './cardwhenrevealed.js';
 
 class PlotCard extends BaseCard {
     constructor(owner, cardData) {
@@ -82,4 +82,4 @@ class PlotCard extends BaseCard {
     }
 }
 
-module.exports = PlotCard;
+export default PlotCard;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class GreatHall extends DrawCard {
     setupCardAbilities(ability) {
@@ -29,4 +29,4 @@ class GreatHall extends DrawCard {
 
 GreatHall.code = '17144';
 
-module.exports = GreatHall;
+export default GreatHall;

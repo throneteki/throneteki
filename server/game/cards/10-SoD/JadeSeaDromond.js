@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class JadeSeaDromond extends DrawCard {
     setupCardAbilities(ability) {
@@ -34,4 +34,4 @@ class JadeSeaDromond extends DrawCard {
 
 JadeSeaDromond.code = '10042';
 
-module.exports = JadeSeaDromond;
+export default JadeSeaDromond;

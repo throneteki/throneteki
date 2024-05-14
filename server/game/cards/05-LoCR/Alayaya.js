@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Alayaya extends DrawCard {
     setupCardAbilities() {
@@ -26,4 +26,4 @@ class Alayaya extends DrawCard {
 
 Alayaya.code = '05013';
 
-module.exports = Alayaya;
+export default Alayaya;

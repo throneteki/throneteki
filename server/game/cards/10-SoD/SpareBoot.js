@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class SpareBoot extends DrawCard {
     setupCardAbilities(ability) {
@@ -50,4 +50,4 @@ class SpareBoot extends DrawCard {
 
 SpareBoot.code = '10031';
 
-module.exports = SpareBoot;
+export default SpareBoot;

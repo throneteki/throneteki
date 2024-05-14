@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions/index.js');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheShadowTower extends DrawCard {
     setupCardAbilities(ability) {
@@ -45,4 +45,4 @@ class TheShadowTower extends DrawCard {
 
 TheShadowTower.code = '24014';
 
-module.exports = TheShadowTower;
+export default TheShadowTower;

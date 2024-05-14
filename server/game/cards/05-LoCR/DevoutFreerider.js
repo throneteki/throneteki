@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class DevoutFreerider extends DrawCard {
     setupCardAbilities(ability) {
@@ -12,4 +12,4 @@ class DevoutFreerider extends DrawCard {
 
 DevoutFreerider.code = '05040';
 
-module.exports = DevoutFreerider;
+export default DevoutFreerider;

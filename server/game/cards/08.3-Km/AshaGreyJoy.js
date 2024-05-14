@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class AshaGreyjoy extends DrawCard {
     setupCardAbilities() {
@@ -32,4 +32,4 @@ class AshaGreyjoy extends DrawCard {
 
 AshaGreyjoy.code = '08051';
 
-module.exports = AshaGreyjoy;
+export default AshaGreyjoy;

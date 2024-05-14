@@ -1,6 +1,6 @@
-const DrawCard = require('../../drawcard.js');
-const GenericTracker = require('../../EventTrackers/GenericTracker');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GenericTracker from '../../EventTrackers/GenericTracker.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheGreatPyramid extends DrawCard {
     setupCardAbilities(ability) {
@@ -92,4 +92,4 @@ class TheGreatPyramid extends DrawCard {
 
 TheGreatPyramid.code = '22021';
 
-module.exports = TheGreatPyramid;
+export default TheGreatPyramid;

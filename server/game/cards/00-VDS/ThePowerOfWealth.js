@@ -1,4 +1,4 @@
-const AgendaCard = require('../../agendacard.js');
+import AgendaCard from '../../agendacard.js';
 
 class ThePowerOfWealth extends AgendaCard {
     constructor(owner, cardData) {
@@ -51,4 +51,4 @@ class ThePowerOfWealth extends AgendaCard {
 
 ThePowerOfWealth.code = '00001';
 
-module.exports = ThePowerOfWealth;
+export default ThePowerOfWealth;

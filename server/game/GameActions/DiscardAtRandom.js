@@ -1,6 +1,6 @@
-const GameAction = require('./GameAction');
-const DiscardCard = require('./DiscardCard');
-const SimultaneousEvents = require('../SimultaneousEvents');
+import GameAction from './GameAction.js';
+import DiscardCard from './DiscardCard.js';
+import SimultaneousEvents from '../SimultaneousEvents.js';
 
 class DiscardAtRandom extends GameAction {
     constructor() {
@@ -44,4 +44,4 @@ class DiscardAtRandom extends GameAction {
     }
 }
 
-module.exports = new DiscardAtRandom();
+export default new DiscardAtRandom();

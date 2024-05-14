@@ -1,6 +1,5 @@
-const AllPlayerPrompt = require('../allplayerprompt.js');
-
-const { StartingHandSize } = require('../../Constants');
+import AllPlayerPrompt from '../allplayerprompt.js';
+import { StartingHandSize } from '../../Constants/index.js';
 
 class KeepOrMulliganPrompt extends AllPlayerPrompt {
     constructor(game) {
@@ -50,4 +49,4 @@ class KeepOrMulliganPrompt extends AllPlayerPrompt {
     }
 }
 
-module.exports = KeepOrMulliganPrompt;
+export default KeepOrMulliganPrompt;

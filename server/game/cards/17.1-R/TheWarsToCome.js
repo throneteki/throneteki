@@ -1,4 +1,4 @@
-const AgendaCard = require('../../agendacard.js');
+import AgendaCard from '../../agendacard.js';
 
 class TheWarsToCome extends AgendaCard {
     setupCardAbilities(ability) {
@@ -12,4 +12,4 @@ class TheWarsToCome extends AgendaCard {
 
 TheWarsToCome.code = '17151';
 
-module.exports = TheWarsToCome;
+export default TheWarsToCome;

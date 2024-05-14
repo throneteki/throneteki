@@ -23,4 +23,4 @@ class DiscardPowerCost {
     }
 }
 
-module.exports = DiscardPowerCost;
+export default DiscardPowerCost;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class ObellaSand extends DrawCard {
     setupCardAbilities() {
@@ -41,4 +41,4 @@ class ObellaSand extends DrawCard {
 
 ObellaSand.code = '10010';
 
-module.exports = ObellaSand;
+export default ObellaSand;

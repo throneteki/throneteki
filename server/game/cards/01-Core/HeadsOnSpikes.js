@@ -1,5 +1,5 @@
-const PlotCard = require('../../plotcard');
-const GameActions = require('../../GameActions');
+import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class HeadsOnSpikes extends PlotCard {
     setupCardAbilities() {
@@ -57,4 +57,4 @@ class HeadsOnSpikes extends PlotCard {
 
 HeadsOnSpikes.code = '01013';
 
-module.exports = HeadsOnSpikes;
+export default HeadsOnSpikes;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class AcolyteOfTheShadow extends DrawCard {
     setupCardAbilities(ability) {
@@ -15,4 +15,4 @@ class AcolyteOfTheShadow extends DrawCard {
 
 AcolyteOfTheShadow.code = '25021';
 
-module.exports = AcolyteOfTheShadow;
+export default AcolyteOfTheShadow;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class SerArchibaldYronwood extends DrawCard {
     setupCardAbilities() {
@@ -40,4 +40,4 @@ class SerArchibaldYronwood extends DrawCard {
 
 SerArchibaldYronwood.code = '11055';
 
-module.exports = SerArchibaldYronwood;
+export default SerArchibaldYronwood;

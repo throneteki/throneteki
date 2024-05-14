@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class HonorBound extends DrawCard {
     setupCardAbilities(ability) {
@@ -18,4 +18,4 @@ class HonorBound extends DrawCard {
 
 HonorBound.code = '11022';
 
-module.exports = HonorBound;
+export default HonorBound;

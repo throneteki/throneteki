@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class FleetFromPyke extends DrawCard {
     setupCardAbilities() {
@@ -31,4 +31,4 @@ class FleetFromPyke extends DrawCard {
 
 FleetFromPyke.code = '10027';
 
-module.exports = FleetFromPyke;
+export default FleetFromPyke;

@@ -1,7 +1,7 @@
-const DrawCard = require('../../drawcard.js');
-const { Tokens } = require('../../Constants');
-const GameActions = require('../../GameActions');
-const Array = require('../../../Array');
+import DrawCard from '../../drawcard.js';
+import { Tokens } from '../../Constants/index.js';
+import GameActions from '../../GameActions/index.js';
+import { availableToPair } from '../../../Array.js';
 
 class BraveCompanions extends DrawCard {
     setupCardAbilities(ability) {
@@ -27,7 +27,7 @@ class BraveCompanions extends DrawCard {
                     condition: (card, context) =>
                         context.selectedCards.includes(card) ||
                         (selectableTraits.some((trait) => card.hasTrait(trait)) &&
-                            Array.availableToPair(
+                            availableToPair(
                                 selectableTraits,
                                 context.selectedCards,
                                 (trait, card) => card.hasTrait(trait)
@@ -52,4 +52,4 @@ class BraveCompanions extends DrawCard {
 
 BraveCompanions.code = '20042';
 
-module.exports = BraveCompanions;
+export default BraveCompanions;

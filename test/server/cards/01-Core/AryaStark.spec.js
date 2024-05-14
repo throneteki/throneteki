@@ -1,9 +1,12 @@
-describe('Arya Stark (Core)', function() {
-    integration(function() {
-        beforeEach(function() {
+describe('Arya Stark (Core)', function () {
+    integration(function () {
+        beforeEach(function () {
             const deck = this.buildDeck('stark', [
                 'Trading with the Pentoshi',
-                'Arya Stark (Core)', 'Arya Stark (Core)', 'Hedge Knight', 'Night Gathers...'
+                'Arya Stark (Core)',
+                'Arya Stark (Core)',
+                'Hedge Knight',
+                'Night Gathers...'
             ]);
             this.player1.selectDeck(deck);
             this.player2.selectDeck(deck);
@@ -19,40 +22,40 @@ describe('Arya Stark (Core)', function() {
             this.player1Object.moveCard(this.cardInDeck, 'draw deck');
         });
 
-        describe('when Arya enters play', function() {
-            beforeEach(function() {
+        describe('when Arya enters play', function () {
+            beforeEach(function () {
                 this.player1.clickCard(this.arya1);
             });
 
-            describe('when triggering her ability', function() {
-                beforeEach(function() {
+            describe('when triggering her ability', function () {
+                beforeEach(function () {
                     this.player1.triggerAbility('Arya Stark');
                 });
 
-                it('should use the facedown top of deck card as a dupe', function() {
+                it('should use the facedown top of deck card as a dupe', function () {
                     expect(this.arya1.dupes).toContain(this.cardInDeck);
                     expect(this.cardInDeck.facedown).toBe(true);
                 });
 
-                it('should give a military icon', function() {
+                it('should give a military icon', function () {
                     expect(this.arya1.hasIcon('military')).toBe(true);
                 });
             });
 
-            describe('when a dupe is played directly', function() {
-                beforeEach(function() {
+            describe('when a dupe is played directly', function () {
+                beforeEach(function () {
                     this.player1.clickPrompt('Pass');
                     this.player1.clickCard(this.arya2);
                 });
 
-                it('should give a military icon', function() {
+                it('should give a military icon', function () {
                     expect(this.arya1.hasIcon('military')).toBe(true);
                 });
             });
         });
 
-        describe('vs Night Gathers', function() {
-            beforeEach(function() {
+        describe('vs Night Gathers', function () {
+            beforeEach(function () {
                 this.player1Object.moveCard(this.arya1, 'discard pile');
 
                 // Complete marshalling
@@ -62,7 +65,7 @@ describe('Arya Stark (Core)', function() {
                 this.player2.clickCard(this.arya1);
             });
 
-            it('should not trigger her ability because she cannot be duped', function() {
+            it('should not trigger her ability because she cannot be duped', function () {
                 expect(this.player2).not.toAllowAbilityTrigger('Arya Stark');
             });
         });

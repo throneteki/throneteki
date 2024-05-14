@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const TextHelper = require('../../TextHelper');
+import DrawCard from '../../drawcard.js';
+import TextHelper from '../../TextHelper.js';
 
 class SixMaidsInAPool extends DrawCard {
     setupCardAbilities() {
@@ -25,4 +25,4 @@ class SixMaidsInAPool extends DrawCard {
 
 SixMaidsInAPool.code = '09023';
 
-module.exports = SixMaidsInAPool;
+export default SixMaidsInAPool;

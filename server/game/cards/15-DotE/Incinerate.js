@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Incinerate extends DrawCard {
     setupCardAbilities() {
@@ -49,4 +49,4 @@ class Incinerate extends DrawCard {
 
 Incinerate.code = '15024';
 
-module.exports = Incinerate;
+export default Incinerate;

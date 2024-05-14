@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class BloodOfTheDragon extends PlotCard {
     setupCardAbilities(ability) {
@@ -12,4 +12,4 @@ class BloodOfTheDragon extends PlotCard {
 
 BloodOfTheDragon.code = '02075';
 
-module.exports = BloodOfTheDragon;
+export default BloodOfTheDragon;

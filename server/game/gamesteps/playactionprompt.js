@@ -1,4 +1,4 @@
-const BaseStep = require('./basestep.js');
+import BaseStep from './basestep.js';
 
 class PlayActionPrompt extends BaseStep {
     constructor(game, player, playActions, context) {
@@ -33,4 +33,4 @@ class PlayActionPrompt extends BaseStep {
     }
 }
 
-module.exports = PlayActionPrompt;
+export default PlayActionPrompt;

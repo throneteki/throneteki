@@ -1,5 +1,5 @@
-const PlotCard = require('../../plotcard');
-const ChallengeTypes = require('../../ChallengeTypes');
+import PlotCard from '../../plotcard.js';
+import ChallengeTypes from '../../ChallengeTypes.js';
 
 class ParleyAtStormsEnd extends PlotCard {
     setupCardAbilities() {
@@ -34,4 +34,4 @@ class ParleyAtStormsEnd extends PlotCard {
 
 ParleyAtStormsEnd.code = '14046';
 
-module.exports = ParleyAtStormsEnd;
+export default ParleyAtStormsEnd;

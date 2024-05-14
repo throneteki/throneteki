@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Nightflyer extends DrawCard {
     setupCardAbilities(ability) {
@@ -51,4 +51,4 @@ class Nightflyer extends DrawCard {
 
 Nightflyer.code = '13032';
 
-module.exports = Nightflyer;
+export default Nightflyer;

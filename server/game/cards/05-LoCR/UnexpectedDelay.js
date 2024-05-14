@@ -1,5 +1,5 @@
-const PlotCard = require('../../plotcard');
-const GameActions = require('../../GameActions');
+import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class UnexpectedDelay extends PlotCard {
     setupCardAbilities() {
@@ -39,4 +39,4 @@ class UnexpectedDelay extends PlotCard {
 
 UnexpectedDelay.code = '05047';
 
-module.exports = UnexpectedDelay;
+export default UnexpectedDelay;

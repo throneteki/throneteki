@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class PaxterRedwyne extends DrawCard {
     setupCardAbilities(ability) {
@@ -17,4 +17,4 @@ class PaxterRedwyne extends DrawCard {
 
 PaxterRedwyne.code = '01182';
 
-module.exports = PaxterRedwyne;
+export default PaxterRedwyne;

@@ -1,6 +1,6 @@
-const PlotCard = require('../../plotcard');
-const Messages = require('../../Messages');
-const { flatMap } = require('../../../Array');
+import PlotCard from '../../plotcard.js';
+import Messages from '../../Messages/index.js';
+import { flatMap } from '../../../Array.js';
 
 class NothingBurnsLikeTheCold extends PlotCard {
     setupCardAbilities() {
@@ -43,4 +43,4 @@ class NothingBurnsLikeTheCold extends PlotCard {
 
 NothingBurnsLikeTheCold.code = '09052';
 
-module.exports = NothingBurnsLikeTheCold;
+export default NothingBurnsLikeTheCold;

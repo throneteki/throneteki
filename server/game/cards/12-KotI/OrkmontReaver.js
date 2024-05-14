@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class OrkmontReaver extends DrawCard {
     setupCardAbilities(ability) {
@@ -15,4 +15,4 @@ class OrkmontReaver extends DrawCard {
 
 OrkmontReaver.code = '12015';
 
-module.exports = OrkmontReaver;
+export default OrkmontReaver;

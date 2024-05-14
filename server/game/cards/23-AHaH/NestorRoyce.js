@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class NestorRoyce extends DrawCard {
     setupCardAbilities(ability) {
@@ -44,4 +44,4 @@ class NestorRoyce extends DrawCard {
 
 NestorRoyce.code = '23023';
 
-module.exports = NestorRoyce;
+export default NestorRoyce;

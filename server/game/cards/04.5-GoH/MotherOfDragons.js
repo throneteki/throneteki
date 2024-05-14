@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class MotherOfDragons extends DrawCard {
     setupCardAbilities(ability) {
@@ -32,4 +32,4 @@ class MotherOfDragons extends DrawCard {
 
 MotherOfDragons.code = '04094';
 
-module.exports = MotherOfDragons;
+export default MotherOfDragons;

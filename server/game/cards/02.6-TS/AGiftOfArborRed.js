@@ -1,7 +1,7 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
-const Message = require('../../Message');
-const { flatMap } = require('../../../Array');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
+import Message from '../../Message.js';
+import { flatMap } from '../../../Array.js';
 
 class AGiftOfArborRed extends DrawCard {
     setupCardAbilities(ability) {
@@ -59,4 +59,4 @@ class AGiftOfArborRed extends DrawCard {
 
 AGiftOfArborRed.code = '02104';
 
-module.exports = AGiftOfArborRed;
+export default AGiftOfArborRed;

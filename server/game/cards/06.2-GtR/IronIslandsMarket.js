@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class IronIslandsMarket extends DrawCard {
     setupCardAbilities(ability) {
@@ -23,4 +23,4 @@ class IronIslandsMarket extends DrawCard {
 
 IronIslandsMarket.code = '06032';
 
-module.exports = IronIslandsMarket;
+export default IronIslandsMarket;

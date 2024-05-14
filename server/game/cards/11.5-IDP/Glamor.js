@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const KillTracker = require('../../EventTrackers/KillTracker');
+import DrawCard from '../../drawcard.js';
+import KillTracker from '../../EventTrackers/KillTracker.js';
 
 class Glamor extends DrawCard {
     constructor(owner, cardData) {
@@ -41,4 +41,4 @@ class Glamor extends DrawCard {
 
 Glamor.code = '11088';
 
-module.exports = Glamor;
+export default Glamor;

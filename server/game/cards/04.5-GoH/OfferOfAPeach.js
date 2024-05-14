@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class OfferOfAPeach extends DrawCard {
     setupCardAbilities() {
@@ -33,4 +33,4 @@ class OfferOfAPeach extends DrawCard {
 
 OfferOfAPeach.code = '04084';
 
-module.exports = OfferOfAPeach;
+export default OfferOfAPeach;

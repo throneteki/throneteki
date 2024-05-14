@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TaenaMerryweather extends DrawCard {
     setupCardAbilities(ability) {
@@ -25,4 +25,4 @@ class TaenaMerryweather extends DrawCard {
 
 TaenaMerryweather.code = '05010';
 
-module.exports = TaenaMerryweather;
+export default TaenaMerryweather;

@@ -14,4 +14,4 @@ class PutIntoPlayCost {
     }
 }
 
-module.exports = PutIntoPlayCost;
+export default PutIntoPlayCost;

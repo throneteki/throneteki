@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class JojenReed extends DrawCard {
     setupCardAbilities() {
@@ -24,15 +24,13 @@ class JojenReed extends DrawCard {
                         'Each player draw 1 card': {
                             message: '{player} chooses to have each player draw 1 card',
                             gameAction: GameActions.simultaneously(
-                                this.game
-                                    .getPlayers()
-                                    .map((player) =>
-                                        GameActions.drawCards({
-                                            player: player,
-                                            amount: 1,
-                                            source: this
-                                        })
-                                    )
+                                this.game.getPlayers().map((player) =>
+                                    GameActions.drawCards({
+                                        player: player,
+                                        amount: 1,
+                                        source: this
+                                    })
+                                )
                             )
                         }
                     }
@@ -44,4 +42,4 @@ class JojenReed extends DrawCard {
 
 JojenReed.code = '04061';
 
-module.exports = JojenReed;
+export default JojenReed;

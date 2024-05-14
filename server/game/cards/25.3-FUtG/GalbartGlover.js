@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class GalbartGlover extends DrawCard {
     setupCardAbilities(ability) {
@@ -28,4 +28,4 @@ class GalbartGlover extends DrawCard {
 
 GalbartGlover.code = '25051';
 
-module.exports = GalbartGlover;
+export default GalbartGlover;

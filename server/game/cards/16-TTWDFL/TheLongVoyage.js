@@ -1,5 +1,5 @@
-const AgendaCard = require('../../agendacard');
-const GameActions = require('../../GameActions');
+import AgendaCard from '../../agendacard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheLongVoyage extends AgendaCard {
     setupCardAbilities(ability) {
@@ -20,4 +20,4 @@ class TheLongVoyage extends AgendaCard {
 
 TheLongVoyage.code = '16030';
 
-module.exports = TheLongVoyage;
+export default TheLongVoyage;

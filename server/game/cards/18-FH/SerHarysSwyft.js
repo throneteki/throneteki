@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const { Tokens } = require('../../Constants');
+import DrawCard from '../../drawcard.js';
+import { Tokens } from '../../Constants/index.js';
 
 class SerHarysSwyft extends DrawCard {
     setupCardAbilities(ability) {
@@ -30,4 +30,4 @@ class SerHarysSwyft extends DrawCard {
 
 SerHarysSwyft.code = '18006';
 
-module.exports = SerHarysSwyft;
+export default SerHarysSwyft;

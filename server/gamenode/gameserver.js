@@ -1,18 +1,17 @@
-const _ = require('underscore');
-const socketio = require('socket.io');
-const jwt = require('jsonwebtoken');
-const Sentry = require('@sentry/node');
-const http = require('http');
-const https = require('https');
-const fs = require('fs');
-
-const config = require('config');
-const { detectBinary } = require('../util');
-const logger = require('../log.js');
-const GameSocket = require('./gamesocket.js');
-const Game = require('../game/game.js');
-const Socket = require('../socket.js');
-const ConfigService = require('../services/ConfigService');
+import _ from 'underscore';
+import { Server as socketio } from 'socket.io';
+import jwt from 'jsonwebtoken';
+import Sentry from '@sentry/node';
+import http from 'http';
+import https from 'https';
+import fs from 'fs';
+import config from 'config';
+import { detectBinary } from '../util.js';
+import logger from '../log.js';
+import GameSocket from './gamesocket.js';
+import Game from '../game/game.js';
+import Socket from '../socket.js';
+import ConfigService from '../services/ConfigService.js';
 
 if (config.sentryDsn) {
     Sentry.init({
@@ -74,8 +73,7 @@ class GameServer {
             options.origins = corsOrigin;
         }
 
-        this.io = socketio(server, options);
-        this.io.set('heartbeat timeout', 30000);
+        this.io = new socketio(server, options);
         this.io.use(this.handshake.bind(this));
 
         this.io.on('connection', this.onConnection.bind(this));
@@ -462,4 +460,4 @@ class GameServer {
     }
 }
 
-module.exports = GameServer;
+export default GameServer;

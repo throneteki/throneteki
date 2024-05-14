@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Motley extends DrawCard {
     setupCardAbilities(ability) {
@@ -26,4 +26,4 @@ class Motley extends DrawCard {
 
 Motley.code = '03025';
 
-module.exports = Motley;
+export default Motley;

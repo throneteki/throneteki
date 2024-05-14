@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class AnguyTheArcher extends DrawCard {
     setupCardAbilities(ability) {
@@ -18,4 +18,4 @@ class AnguyTheArcher extends DrawCard {
 
 AnguyTheArcher.code = '14041';
 
-module.exports = AnguyTheArcher;
+export default AnguyTheArcher;

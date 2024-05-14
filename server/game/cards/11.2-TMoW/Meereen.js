@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const TextHelper = require('../../TextHelper');
+import DrawCard from '../../drawcard.js';
+import TextHelper from '../../TextHelper.js';
 
 class Meereen extends DrawCard {
     setupCardAbilities(ability) {
@@ -29,4 +29,4 @@ class Meereen extends DrawCard {
 
 Meereen.code = '11034';
 
-module.exports = Meereen;
+export default Meereen;

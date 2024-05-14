@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class LynCorbray extends DrawCard {
     setupCardAbilities() {
@@ -21,4 +21,4 @@ class LynCorbray extends DrawCard {
 
 LynCorbray.code = '14039';
 
-module.exports = LynCorbray;
+export default LynCorbray;

@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const { flatten } = require('../../../Array');
+import DrawCard from '../../drawcard.js';
+import { flatten } from '../../../Array.js';
 
 class TheThingsIDoForLove extends DrawCard {
     setupCardAbilities(ability) {
@@ -60,4 +60,4 @@ class TheThingsIDoForLove extends DrawCard {
 
 TheThingsIDoForLove.code = '01101';
 
-module.exports = TheThingsIDoForLove;
+export default TheThingsIDoForLove;

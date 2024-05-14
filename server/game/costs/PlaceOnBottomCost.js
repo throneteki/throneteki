@@ -1,4 +1,4 @@
-const GameActions = require('../GameActions');
+import GameActions from '../GameActions/index.js';
 
 class PlaceOnBottomCost {
     constructor() {
@@ -31,4 +31,4 @@ class PlaceOnBottomCost {
     }
 }
 
-module.exports = PlaceOnBottomCost;
+export default PlaceOnBottomCost;

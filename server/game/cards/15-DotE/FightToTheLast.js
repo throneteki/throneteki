@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class FightToTheLast extends DrawCard {
     setupCardAbilities() {
@@ -45,4 +45,4 @@ class FightToTheLast extends DrawCard {
 
 FightToTheLast.code = '15036';
 
-module.exports = FightToTheLast;
+export default FightToTheLast;

@@ -1,5 +1,5 @@
-const AgendaCard = require('../../agendacard');
-const RevealPlots = require('../../gamesteps/revealplots');
+import AgendaCard from '../../agendacard.js';
+import RevealPlots from '../../gamesteps/revealplots.js';
 
 class TheRainsOfCastamere extends AgendaCard {
     constructor(owner, cardData) {
@@ -74,4 +74,4 @@ class TheRainsOfCastamere extends AgendaCard {
 
 TheRainsOfCastamere.code = '05045';
 
-module.exports = TheRainsOfCastamere;
+export default TheRainsOfCastamere;

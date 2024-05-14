@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class EuronCrowsEye extends DrawCard {
     setupCardAbilities() {
@@ -25,4 +25,4 @@ class EuronCrowsEye extends DrawCard {
 
 EuronCrowsEye.code = '12002';
 
-module.exports = EuronCrowsEye;
+export default EuronCrowsEye;

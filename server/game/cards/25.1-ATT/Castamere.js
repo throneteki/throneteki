@@ -1,6 +1,6 @@
-const GameActions = require('../../GameActions/index.js');
-const ApplyClaim = require('../../gamesteps/challenge/applyclaim');
-const DrawCard = require('../../drawcard.js');
+import GameActions from '../../GameActions/index.js';
+import ApplyClaim from '../../gamesteps/challenge/applyclaim.js';
+import DrawCard from '../../drawcard.js';
 
 class Castamere extends DrawCard {
     setupCardAbilities(ability) {
@@ -27,4 +27,4 @@ class Castamere extends DrawCard {
 
 Castamere.code = '25006';
 
-module.exports = Castamere;
+export default Castamere;

@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class FrozenExpanse extends PlotCard {
     setupCardAbilities(ability) {
@@ -12,4 +12,4 @@ class FrozenExpanse extends PlotCard {
 
 FrozenExpanse.code = '07052';
 
-module.exports = FrozenExpanse;
+export default FrozenExpanse;

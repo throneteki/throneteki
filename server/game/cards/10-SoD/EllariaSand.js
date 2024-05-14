@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class EllariaSand extends DrawCard {
     setupCardAbilities() {
@@ -34,4 +34,4 @@ class EllariaSand extends DrawCard {
 
 EllariaSand.code = '10002';
 
-module.exports = EllariaSand;
+export default EllariaSand;

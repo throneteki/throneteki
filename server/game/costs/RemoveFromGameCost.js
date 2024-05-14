@@ -1,4 +1,4 @@
-const GameActions = require('../GameActions');
+import GameActions from '../GameActions/index.js';
 
 class RemoveFromGameCost {
     constructor() {
@@ -16,4 +16,4 @@ class RemoveFromGameCost {
     }
 }
 
-module.exports = RemoveFromGameCost;
+export default RemoveFromGameCost;

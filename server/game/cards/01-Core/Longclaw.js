@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Longclaw extends DrawCard {
     setupCardAbilities(ability) {
@@ -11,4 +11,4 @@ class Longclaw extends DrawCard {
 
 Longclaw.code = '01135';
 
-module.exports = Longclaw;
+export default Longclaw;

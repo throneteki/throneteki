@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Qotho extends DrawCard {
     setupCardAbilities(ability) {
@@ -26,4 +26,4 @@ class Qotho extends DrawCard {
 
 Qotho.code = '17131';
 
-module.exports = Qotho;
+export default Qotho;

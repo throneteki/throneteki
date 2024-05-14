@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class WildlingScout extends DrawCard {
     setupCardAbilities(ability) {
@@ -27,4 +27,4 @@ class WildlingScout extends DrawCard {
 
 WildlingScout.code = '02078';
 
-module.exports = WildlingScout;
+export default WildlingScout;

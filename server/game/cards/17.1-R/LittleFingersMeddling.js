@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class LittleFingersMeddling extends PlotCard {
     setupCardAbilities(ability) {
@@ -14,4 +14,4 @@ class LittleFingersMeddling extends PlotCard {
 
 LittleFingersMeddling.code = '17155';
 
-module.exports = LittleFingersMeddling;
+export default LittleFingersMeddling;

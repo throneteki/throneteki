@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class TheSpidersWeb extends PlotCard {
     setupCardAbilities(ability) {
@@ -31,4 +31,4 @@ class TheSpidersWeb extends PlotCard {
 
 TheSpidersWeb.code = '09049';
 
-module.exports = TheSpidersWeb;
+export default TheSpidersWeb;

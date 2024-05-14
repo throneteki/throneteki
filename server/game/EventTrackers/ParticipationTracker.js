@@ -23,4 +23,4 @@ class ParticipationTracker {
     }
 }
 
-module.exports = ParticipationTracker;
+export default ParticipationTracker;

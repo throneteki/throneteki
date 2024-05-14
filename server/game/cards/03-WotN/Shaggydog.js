@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Shaggydog extends DrawCard {
     setupCardAbilities(ability) {
@@ -11,4 +11,4 @@ class Shaggydog extends DrawCard {
 
 Shaggydog.code = '03014';
 
-module.exports = Shaggydog;
+export default Shaggydog;

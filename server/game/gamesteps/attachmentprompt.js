@@ -1,4 +1,4 @@
-const UiPrompt = require('./uiprompt.js');
+import UiPrompt from './uiprompt.js';
 
 class AttachmentPrompt extends UiPrompt {
     constructor(game, player, attachmentCard, playingType, targets) {
@@ -35,4 +35,4 @@ class AttachmentPrompt extends UiPrompt {
     }
 }
 
-module.exports = AttachmentPrompt;
+export default AttachmentPrompt;

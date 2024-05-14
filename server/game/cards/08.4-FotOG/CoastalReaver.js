@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class CoastalReaver extends DrawCard {
     setupCardAbilities() {
@@ -49,4 +49,4 @@ class CoastalReaver extends DrawCard {
 
 CoastalReaver.code = '08071';
 
-module.exports = CoastalReaver;
+export default CoastalReaver;

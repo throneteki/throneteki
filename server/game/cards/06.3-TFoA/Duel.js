@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class Duel extends PlotCard {
     setupCardAbilities() {
@@ -86,4 +86,4 @@ class Duel extends PlotCard {
 
 Duel.code = '06060';
 
-module.exports = Duel;
+export default Duel;

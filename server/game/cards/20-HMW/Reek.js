@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Reek extends DrawCard {
     constructor(owner, cardData) {
@@ -88,4 +88,4 @@ class Reek extends DrawCard {
 
 Reek.code = '20027';
 
-module.exports = Reek;
+export default Reek;

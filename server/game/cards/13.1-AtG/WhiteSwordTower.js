@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const EventPlayedTracker = require('../../EventTrackers/EventPlayedTracker');
+import DrawCard from '../../drawcard.js';
+import EventPlayedTracker from '../../EventTrackers/EventPlayedTracker.js';
 
 class WhiteSwordTower extends DrawCard {
     setupCardAbilities(ability) {
@@ -32,4 +32,4 @@ class WhiteSwordTower extends DrawCard {
 
 WhiteSwordTower.code = '13018';
 
-module.exports = WhiteSwordTower;
+export default WhiteSwordTower;

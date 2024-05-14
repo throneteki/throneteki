@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class GulltownCityGuard extends DrawCard {
     setupCardAbilities(ability) {
@@ -19,4 +19,4 @@ class GulltownCityGuard extends DrawCard {
 
 GulltownCityGuard.code = '19017';
 
-module.exports = GulltownCityGuard;
+export default GulltownCityGuard;

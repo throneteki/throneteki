@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class TheDragonpit extends DrawCard {
     setupCardAbilities(ability) {
@@ -28,4 +28,4 @@ class TheDragonpit extends DrawCard {
 
 TheDragonpit.code = '13054';
 
-module.exports = TheDragonpit;
+export default TheDragonpit;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Braavos extends DrawCard {
     setupCardAbilities(ability) {
@@ -40,4 +40,4 @@ class Braavos extends DrawCard {
 
 Braavos.code = '15042';
 
-module.exports = Braavos;
+export default Braavos;

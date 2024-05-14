@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class CrossroadsSellsword extends DrawCard {
     setupCardAbilities() {
@@ -20,4 +20,4 @@ class CrossroadsSellsword extends DrawCard {
 
 CrossroadsSellsword.code = '03029';
 
-module.exports = CrossroadsSellsword;
+export default CrossroadsSellsword;

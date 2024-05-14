@@ -1,7 +1,7 @@
-const ApplyClaim = require('../../gamesteps/challenge/applyclaim.js');
-const DrawCard = require('../../drawcard.js');
-const Claim = require('../../Claim');
-const { ChallengeTracker } = require('../../EventTrackers');
+import ApplyClaim from '../../gamesteps/challenge/applyclaim.js';
+import DrawCard from '../../drawcard.js';
+import Claim from '../../Claim.js';
+import { ChallengeTracker } from '../../EventTrackers/index.js';
 
 class CornCornCorn extends DrawCard {
     setupCardAbilities(ability) {
@@ -87,4 +87,4 @@ class CornCornCorn extends DrawCard {
 
 CornCornCorn.code = '20025';
 
-module.exports = CornCornCorn;
+export default CornCornCorn;

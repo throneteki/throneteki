@@ -1,5 +1,5 @@
-const GameAction = require('./GameAction');
-const AbilityMessage = require('../AbilityMessage');
+import GameAction from './GameAction.js';
+import AbilityMessage from '../AbilityMessage.js';
 
 class MayGameAction extends GameAction {
     constructor({ player, gameAction, message, title }) {
@@ -74,4 +74,4 @@ class MayPromptHandler {
     }
 }
 
-module.exports = MayGameAction;
+export default MayGameAction;

@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Rhaegal extends DrawCard {
     setupCardAbilities(ability) {
@@ -38,4 +38,4 @@ class Rhaegal extends DrawCard {
 
 Rhaegal.code = '15003';
 
-module.exports = Rhaegal;
+export default Rhaegal;

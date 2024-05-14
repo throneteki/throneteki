@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class MountainsMan extends DrawCard {
     setupCardAbilities(ability) {
@@ -27,4 +27,4 @@ class MountainsMan extends DrawCard {
 
 MountainsMan.code = '20013';
 
-module.exports = MountainsMan;
+export default MountainsMan;

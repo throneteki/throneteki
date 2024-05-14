@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class ForTheNorth extends DrawCard {
     setupCardAbilities() {
@@ -43,4 +43,4 @@ class ForTheNorth extends DrawCard {
 
 ForTheNorth.code = '01157';
 
-module.exports = ForTheNorth;
+export default ForTheNorth;

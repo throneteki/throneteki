@@ -1,5 +1,5 @@
-const GameAction = require('./GameAction');
-const KneelCard = require('./KneelCard');
+import GameAction from './GameAction.js';
+import KneelCard from './KneelCard.js';
 
 class TargetByAssault extends GameAction {
     constructor() {
@@ -49,4 +49,4 @@ class TargetByAssault extends GameAction {
     }
 }
 
-module.exports = new TargetByAssault();
+export default new TargetByAssault();

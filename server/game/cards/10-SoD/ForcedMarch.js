@@ -1,5 +1,5 @@
-const PlotCard = require('../../plotcard');
-const GameActions = require('../../GameActions');
+import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class ForcedMarch extends PlotCard {
     setupCardAbilities(ability) {
@@ -57,4 +57,4 @@ class ForcedMarch extends PlotCard {
 
 ForcedMarch.code = '10048';
 
-module.exports = ForcedMarch;
+export default ForcedMarch;

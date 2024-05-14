@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class RimeGate extends DrawCard {
     setupCardAbilities(ability) {
@@ -29,4 +29,4 @@ class RimeGate extends DrawCard {
 
 RimeGate.code = '13106';
 
-module.exports = RimeGate;
+export default RimeGate;

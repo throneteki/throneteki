@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class BrienneOfTarth extends DrawCard {
     setupCardAbilities(ability) {
@@ -15,4 +15,4 @@ class BrienneOfTarth extends DrawCard {
 
 BrienneOfTarth.code = '04083';
 
-module.exports = BrienneOfTarth;
+export default BrienneOfTarth;

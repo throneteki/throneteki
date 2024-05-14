@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SpidersWhisperer extends DrawCard {
     setupCardAbilities() {
@@ -25,4 +25,4 @@ class SpidersWhisperer extends DrawCard {
 
 SpidersWhisperer.code = '16005';
 
-module.exports = SpidersWhisperer;
+export default SpidersWhisperer;

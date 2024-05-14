@@ -1,5 +1,5 @@
-const PlotCard = require('../../plotcard');
-const GameActions = require('../../GameActions');
+import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class ValarDohaeris extends PlotCard {
     setupCardAbilities() {
@@ -61,4 +61,4 @@ class ValarDohaeris extends PlotCard {
 
 ValarDohaeris.code = '08020';
 
-module.exports = ValarDohaeris;
+export default ValarDohaeris;

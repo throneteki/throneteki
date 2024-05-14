@@ -1,6 +1,6 @@
-const AgendaCard = require('../../agendacard');
-const RevealPlots = require('../../gamesteps/revealplots');
-const SimpleStep = require('../../gamesteps/simplestep.js');
+import AgendaCard from '../../agendacard.js';
+import RevealPlots from '../../gamesteps/revealplots.js';
+import SimpleStep from '../../gamesteps/simplestep.js';
 
 class BattleoftheTrident extends AgendaCard {
     setupCardAbilities(ability) {
@@ -124,4 +124,4 @@ class BattleoftheTrident extends AgendaCard {
 
 BattleoftheTrident.code = '21030';
 
-module.exports = BattleoftheTrident;
+export default BattleoftheTrident;

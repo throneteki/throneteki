@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const TextHelper = require('../../TextHelper');
+import DrawCard from '../../drawcard.js';
+import TextHelper from '../../TextHelper.js';
 
 class TheInnAtTheCrossroads extends DrawCard {
     setupCardAbilities(ability) {
@@ -25,4 +25,4 @@ class TheInnAtTheCrossroads extends DrawCard {
 
 TheInnAtTheCrossroads.code = '11098';
 
-module.exports = TheInnAtTheCrossroads;
+export default TheInnAtTheCrossroads;

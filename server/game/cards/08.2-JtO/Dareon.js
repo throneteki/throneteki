@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Dareon extends DrawCard {
     setupCardAbilities(ability) {
@@ -24,4 +24,4 @@ class Dareon extends DrawCard {
 
 Dareon.code = '08025';
 
-module.exports = Dareon;
+export default Dareon;

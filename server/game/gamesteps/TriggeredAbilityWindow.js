@@ -1,8 +1,7 @@
-const uuid = require('uuid');
-
-const BaseAbilityWindow = require('./BaseAbilityWindow');
-const CancelTimer = require('./CancelTimer');
-const TriggeredAbilityWindowTitles = require('./TriggeredAbilityWindowTitles');
+import uuid from 'uuid';
+import BaseAbilityWindow from './BaseAbilityWindow.js';
+import CancelTimer from './CancelTimer.js';
+import TriggeredAbilityWindowTitles from './TriggeredAbilityWindowTitles.js';
 
 class TriggeredAbilityWindow extends BaseAbilityWindow {
     constructor(game, properties) {
@@ -208,4 +207,4 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
     }
 }
 
-module.exports = TriggeredAbilityWindow;
+export default TriggeredAbilityWindow;

@@ -25,4 +25,4 @@ class DiscardTokenCost {
     }
 }
 
-module.exports = DiscardTokenCost;
+export default DiscardTokenCost;

@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Farlen extends DrawCard {
     setupCardAbilities(ability) {
@@ -30,4 +30,4 @@ class Farlen extends DrawCard {
 
 Farlen.code = '20026';
 
-module.exports = Farlen;
+export default Farlen;

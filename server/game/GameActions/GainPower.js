@@ -1,5 +1,5 @@
-const GameAction = require('./GameAction');
-const Message = require('../Message');
+import GameAction from './GameAction.js';
+import Message from '../Message.js';
 
 class GainPower extends GameAction {
     constructor() {
@@ -28,4 +28,4 @@ class GainPower extends GameAction {
     }
 }
 
-module.exports = new GainPower();
+export default new GainPower();

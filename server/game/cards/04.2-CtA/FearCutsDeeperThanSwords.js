@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions/index.js');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class FearCutsDeeperThanSwords extends DrawCard {
     setupCardAbilities() {
@@ -30,4 +30,4 @@ class FearCutsDeeperThanSwords extends DrawCard {
 
 FearCutsDeeperThanSwords.code = '04022';
 
-module.exports = FearCutsDeeperThanSwords;
+export default FearCutsDeeperThanSwords;

@@ -1,4 +1,4 @@
-const ThenAbilityAction = require('./ThenAbilityAction');
+import ThenAbilityAction from './ThenAbilityAction.js';
 
 /**
  * Translates the methods of a standard game action to one that will take an
@@ -51,4 +51,4 @@ class AbilityAdapter {
     }
 }
 
-module.exports = AbilityAdapter;
+export default AbilityAdapter;

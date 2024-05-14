@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class TheLongPlan extends PlotCard {
     setupCardAbilities(ability) {
@@ -24,4 +24,4 @@ class TheLongPlan extends PlotCard {
 
 TheLongPlan.code = '02016';
 
-module.exports = TheLongPlan;
+export default TheLongPlan;

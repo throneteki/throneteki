@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class SeizeTheInitiative extends DrawCard {
     setupCardAbilities() {
@@ -21,4 +21,4 @@ class SeizeTheInitiative extends DrawCard {
 
 SeizeTheInitiative.code = '11013';
 
-module.exports = SeizeTheInitiative;
+export default SeizeTheInitiative;

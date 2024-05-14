@@ -1,4 +1,4 @@
-const AgendaCard = require('../../agendacard.js');
+import AgendaCard from '../../agendacard.js';
 
 class TheLordOfTheCrossing extends AgendaCard {
     constructor(owner, cardData) {
@@ -47,4 +47,4 @@ class TheLordOfTheCrossing extends AgendaCard {
 
 TheLordOfTheCrossing.code = '02060';
 
-module.exports = TheLordOfTheCrossing;
+export default TheLordOfTheCrossing;

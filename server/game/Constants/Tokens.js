@@ -1,4 +1,4 @@
-const Tokens = {
+export const Tokens = {
     bell: 'bell',
     betrayal: 'betrayal',
     blood: 'blood',
@@ -22,5 +22,3 @@ const Tokens = {
         return Object.values(Tokens).includes(token.toLowerCase());
     }
 };
-
-module.exports = Tokens;

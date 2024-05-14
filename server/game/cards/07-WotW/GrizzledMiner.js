@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class GrizzledMiner extends DrawCard {
     setupCardAbilities(ability) {
@@ -25,4 +25,4 @@ class GrizzledMiner extends DrawCard {
 
 GrizzledMiner.code = '07006';
 
-module.exports = GrizzledMiner;
+export default GrizzledMiner;

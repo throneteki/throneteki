@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TheVipersRage extends DrawCard {
     setupCardAbilities() {
@@ -39,4 +39,4 @@ class TheVipersRage extends DrawCard {
 
 TheVipersRage.code = '00012';
 
-module.exports = TheVipersRage;
+export default TheVipersRage;

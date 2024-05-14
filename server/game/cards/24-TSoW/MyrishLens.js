@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class MyrishLens extends DrawCard {
     setupCardAbilities(ability) {
@@ -47,4 +47,4 @@ class MyrishLens extends DrawCard {
 
 MyrishLens.code = '24006';
 
-module.exports = MyrishLens;
+export default MyrishLens;

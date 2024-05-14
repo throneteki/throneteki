@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Shandystone extends DrawCard {
     setupCardAbilities(ability) {
@@ -32,4 +32,4 @@ class Shandystone extends DrawCard {
 
 Shandystone.code = '08076';
 
-module.exports = Shandystone;
+export default Shandystone;

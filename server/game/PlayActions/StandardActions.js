@@ -1,12 +1,12 @@
-const AmbushCardAction = require('./AmbushCardAction');
-const MarshalCardAction = require('./MarshalCardAction');
-const MarshalDuplicateAction = require('./MarshalDuplicateAction');
-const MarshalIntoShadowsAction = require('./MarshalIntoShadowsAction');
-const OutOfShadowsAction = require('./OutOfShadowsAction');
-const SetupCardAction = require('./SetupCardAction');
-const SetupInShadowsAction = require('./SetupInShadowsAction');
+import AmbushCardAction from './AmbushCardAction.js';
+import MarshalCardAction from './MarshalCardAction.js';
+import MarshalDuplicateAction from './MarshalDuplicateAction.js';
+import MarshalIntoShadowsAction from './MarshalIntoShadowsAction.js';
+import OutOfShadowsAction from './OutOfShadowsAction.js';
+import SetupCardAction from './SetupCardAction.js';
+import SetupInShadowsAction from './SetupInShadowsAction.js';
 
-module.exports = [
+export default [
     new AmbushCardAction(),
     new MarshalCardAction(),
     new MarshalDuplicateAction(),

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class CaswellsKeep extends DrawCard {
     setupCardAbilities() {
@@ -52,4 +52,4 @@ class CaswellsKeep extends DrawCard {
 
 CaswellsKeep.code = '04064';
 
-module.exports = CaswellsKeep;
+export default CaswellsKeep;

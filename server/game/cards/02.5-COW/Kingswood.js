@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Kingswood extends DrawCard {
     setupCardAbilities(ability) {
@@ -29,4 +29,4 @@ class Kingswood extends DrawCard {
 
 Kingswood.code = '02087';
 
-module.exports = Kingswood;
+export default Kingswood;

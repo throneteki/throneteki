@@ -1,5 +1,5 @@
-const GameActions = require('../../GameActions/index.js');
-const DrawCard = require('../../drawcard.js');
+import GameActions from '../../GameActions/index.js';
+import DrawCard from '../../drawcard.js';
 
 class Summerhall extends DrawCard {
     setupCardAbilities(ability) {
@@ -20,4 +20,4 @@ class Summerhall extends DrawCard {
 
 Summerhall.code = '25034';
 
-module.exports = Summerhall;
+export default Summerhall;

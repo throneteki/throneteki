@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class EvenHandedJustice extends DrawCard {
     setupCardAbilities() {
@@ -29,4 +29,4 @@ class EvenHandedJustice extends DrawCard {
 
 EvenHandedJustice.code = '03026';
 
-module.exports = EvenHandedJustice;
+export default EvenHandedJustice;

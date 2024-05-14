@@ -1,4 +1,4 @@
-const CardSelector = require('../CardSelector.js');
+import CardSelector from '../CardSelector.js';
 
 class MoveTokenFromSelfCost {
     constructor(token, amount = 1, condition = (card) => card.location === 'play area') {
@@ -46,4 +46,4 @@ class MoveTokenFromSelfCost {
     }
 }
 
-module.exports = MoveTokenFromSelfCost;
+export default MoveTokenFromSelfCost;

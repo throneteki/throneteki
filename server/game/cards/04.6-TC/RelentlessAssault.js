@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class RelentlessAssault extends DrawCard {
     setupCardAbilities() {
@@ -34,4 +34,4 @@ class RelentlessAssault extends DrawCard {
 
 RelentlessAssault.code = '04118';
 
-module.exports = RelentlessAssault;
+export default RelentlessAssault;

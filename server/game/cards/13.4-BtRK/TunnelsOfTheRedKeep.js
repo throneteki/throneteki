@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TunnelsOfTheRedKeep extends DrawCard {
     setupCardAbilities(ability) {
@@ -31,4 +31,4 @@ class TunnelsOfTheRedKeep extends DrawCard {
 
 TunnelsOfTheRedKeep.code = '13070';
 
-module.exports = TunnelsOfTheRedKeep;
+export default TunnelsOfTheRedKeep;

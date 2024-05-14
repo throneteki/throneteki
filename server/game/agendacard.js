@@ -1,5 +1,5 @@
-const BaseCard = require('./basecard.js');
+import BaseCard from './basecard.js';
 
 class AgendaCard extends BaseCard {}
 
-module.exports = AgendaCard;
+export default AgendaCard;

@@ -1,7 +1,7 @@
-const GameAction = require('./GameAction');
-const SimultaneousEvents = require('../SimultaneousEvents');
-const ThenAbilityAction = require('./ThenAbilityAction');
-const NullEvent = require('../NullEvent');
+import GameAction from './GameAction.js';
+import SimultaneousEvents from '../SimultaneousEvents.js';
+import ThenAbilityAction from './ThenAbilityAction.js';
+import NullEvent from '../NullEvent.js';
 
 class SimultaneousAction extends GameAction {
     constructor(actionFactory) {
@@ -49,4 +49,4 @@ class SimultaneousAction extends GameAction {
     }
 }
 
-module.exports = SimultaneousAction;
+export default SimultaneousAction;

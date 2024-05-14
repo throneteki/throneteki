@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class OldWyk extends DrawCard {
     setupCardAbilities(ability) {
@@ -68,4 +68,4 @@ class OldWyk extends DrawCard {
 
 OldWyk.code = '05028';
 
-module.exports = OldWyk;
+export default OldWyk;

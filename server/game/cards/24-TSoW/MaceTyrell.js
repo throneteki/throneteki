@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions/index.js');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class MaceTyrell extends DrawCard {
     setupCardAbilities(ability) {
@@ -37,4 +37,4 @@ class MaceTyrell extends DrawCard {
 
 MaceTyrell.code = '24022';
 
-module.exports = MaceTyrell;
+export default MaceTyrell;

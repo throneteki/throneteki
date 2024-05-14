@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class BericDondarrion extends DrawCard {
     setupCardAbilities(ability) {
@@ -28,4 +28,4 @@ class BericDondarrion extends DrawCard {
 
 BericDondarrion.code = '25001';
 
-module.exports = BericDondarrion;
+export default BericDondarrion;

@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const TextHelper = require('../../TextHelper');
+import DrawCard from '../../drawcard.js';
+import TextHelper from '../../TextHelper.js';
 
 class LionGate extends DrawCard {
     setupCardAbilities(ability) {
@@ -26,4 +26,4 @@ class LionGate extends DrawCard {
 
 LionGate.code = '13010';
 
-module.exports = LionGate;
+export default LionGate;

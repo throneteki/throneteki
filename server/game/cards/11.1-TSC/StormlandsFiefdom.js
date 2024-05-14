@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class StormlandsFiefdom extends DrawCard {
     setupCardAbilities(ability) {
@@ -31,4 +31,4 @@ class StormlandsFiefdom extends DrawCard {
 
 StormlandsFiefdom.code = '11009';
 
-module.exports = StormlandsFiefdom;
+export default StormlandsFiefdom;

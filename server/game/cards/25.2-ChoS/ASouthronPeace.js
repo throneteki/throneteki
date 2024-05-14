@@ -1,5 +1,5 @@
-const GameActions = require('../../GameActions/index.js');
-const PlotCard = require('../../plotcard.js');
+import GameActions from '../../GameActions/index.js';
+import PlotCard from '../../plotcard.js';
 
 class ASouthronPeace extends PlotCard {
     setupCardAbilities() {
@@ -48,4 +48,4 @@ class ASouthronPeace extends PlotCard {
 
 ASouthronPeace.code = '25039';
 
-module.exports = ASouthronPeace;
+export default ASouthronPeace;

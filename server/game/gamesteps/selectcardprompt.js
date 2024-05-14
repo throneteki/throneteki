@@ -1,5 +1,5 @@
-const UiPrompt = require('./uiprompt.js');
-const CardSelector = require('../CardSelector.js');
+import UiPrompt from './uiprompt.js';
+import CardSelector from '../CardSelector.js';
 
 /**
  * General purpose prompt that asks the user to select 1 or more cards.
@@ -282,4 +282,4 @@ class SelectCardPrompt extends UiPrompt {
     }
 }
 
-module.exports = SelectCardPrompt;
+export default SelectCardPrompt;

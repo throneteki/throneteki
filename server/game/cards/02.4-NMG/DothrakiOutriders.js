@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class DothrakiOutriders extends DrawCard {
     setupCardAbilities(ability) {
@@ -18,4 +18,4 @@ class DothrakiOutriders extends DrawCard {
 
 DothrakiOutriders.code = '02074';
 
-module.exports = DothrakiOutriders;
+export default DothrakiOutriders;

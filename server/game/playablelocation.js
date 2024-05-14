@@ -9,4 +9,4 @@ class PlayableLocation {
     }
 }
 
-module.exports = PlayableLocation;
+export default PlayableLocation;

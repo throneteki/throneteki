@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const { Tokens } = require('../../Constants');
+import DrawCard from '../../drawcard.js';
+import { Tokens } from '../../Constants/index.js';
 
 class MilkSnakes extends DrawCard {
     setupCardAbilities(ability) {
@@ -36,4 +36,4 @@ class MilkSnakes extends DrawCard {
 
 MilkSnakes.code = '19005';
 
-module.exports = MilkSnakes;
+export default MilkSnakes;

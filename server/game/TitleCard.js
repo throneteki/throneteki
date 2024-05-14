@@ -1,4 +1,4 @@
-const BaseCard = require('./basecard.js');
+import BaseCard from './basecard.js';
 
 class TitleCard extends BaseCard {
     constructor(owner, cardData) {
@@ -42,4 +42,4 @@ class TitleCard extends BaseCard {
     }
 }
 
-module.exports = TitleCard;
+export default TitleCard;

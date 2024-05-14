@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class HotPie extends DrawCard {
     setupCardAbilities(ability) {
@@ -29,4 +29,4 @@ class HotPie extends DrawCard {
 
 HotPie.code = '04057';
 
-module.exports = HotPie;
+export default HotPie;

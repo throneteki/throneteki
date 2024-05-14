@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class EastwatchCarpenter extends DrawCard {
     setupCardAbilities() {
@@ -29,4 +29,4 @@ class EastwatchCarpenter extends DrawCard {
 
 EastwatchCarpenter.code = '06005';
 
-module.exports = EastwatchCarpenter;
+export default EastwatchCarpenter;

@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const TextHelper = require('../../TextHelper');
+import DrawCard from '../../drawcard.js';
+import TextHelper from '../../TextHelper.js';
 
 class InsidiousScheme extends DrawCard {
     setupCardAbilities() {
@@ -28,4 +28,4 @@ class InsidiousScheme extends DrawCard {
 
 InsidiousScheme.code = '05023';
 
-module.exports = InsidiousScheme;
+export default InsidiousScheme;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class IronFleetScout extends DrawCard {
     setupCardAbilities(ability) {
@@ -33,4 +33,4 @@ class IronFleetScout extends DrawCard {
 
 IronFleetScout.code = '01079';
 
-module.exports = IronFleetScout;
+export default IronFleetScout;

@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class TheArtOfSeduction extends PlotCard {
     setupCardAbilities() {
@@ -24,4 +24,4 @@ class TheArtOfSeduction extends PlotCard {
 
 TheArtOfSeduction.code = '16035';
 
-module.exports = TheArtOfSeduction;
+export default TheArtOfSeduction;

@@ -1,7 +1,7 @@
-const Message = require('../Message');
-const GameAction = require('./GameAction');
-const LeavePlay = require('./LeavePlay');
-const MoveCardEventGenerator = require('./MoveCardEventGenerator');
+import Message from '../Message.js';
+import GameAction from './GameAction.js';
+import LeavePlay from './LeavePlay.js';
+import MoveCardEventGenerator from './MoveCardEventGenerator.js';
 
 class ReturnCardToHand extends GameAction {
     constructor() {
@@ -54,4 +54,4 @@ class ReturnCardToHand extends GameAction {
     }
 }
 
-module.exports = new ReturnCardToHand();
+export default new ReturnCardToHand();

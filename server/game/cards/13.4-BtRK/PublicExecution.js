@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class PublicExecution extends DrawCard {
     setupCardAbilities() {
@@ -19,4 +19,4 @@ class PublicExecution extends DrawCard {
 
 PublicExecution.code = '13068';
 
-module.exports = PublicExecution;
+export default PublicExecution;

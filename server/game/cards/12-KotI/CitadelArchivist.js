@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class CitadelArchivist extends DrawCard {
     setupCardAbilities() {
@@ -26,4 +26,4 @@ class CitadelArchivist extends DrawCard {
 
 CitadelArchivist.code = '12041';
 
-module.exports = CitadelArchivist;
+export default CitadelArchivist;

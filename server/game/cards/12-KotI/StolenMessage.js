@@ -1,5 +1,5 @@
-const GameActions = require('../../GameActions');
-const PlotCard = require('../../plotcard');
+import GameActions from '../../GameActions/index.js';
+import PlotCard from '../../plotcard.js';
 
 class StolenMessage extends PlotCard {
     setupCardAbilities(ability) {
@@ -35,4 +35,4 @@ class StolenMessage extends PlotCard {
 
 StolenMessage.code = '12050';
 
-module.exports = StolenMessage;
+export default StolenMessage;

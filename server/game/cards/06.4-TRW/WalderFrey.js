@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class WalderFrey extends DrawCard {
     setupCardAbilities(ability) {
@@ -13,4 +13,4 @@ class WalderFrey extends DrawCard {
 
 WalderFrey.code = '06077';
 
-module.exports = WalderFrey;
+export default WalderFrey;

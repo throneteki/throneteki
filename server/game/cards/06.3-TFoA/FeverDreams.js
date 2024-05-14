@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const TextHelper = require('../../TextHelper');
+import DrawCard from '../../drawcard.js';
+import TextHelper from '../../TextHelper.js';
 
 class FeverDreams extends DrawCard {
     setupCardAbilities(ability) {
@@ -24,4 +24,4 @@ class FeverDreams extends DrawCard {
 
 FeverDreams.code = '06050';
 
-module.exports = FeverDreams;
+export default FeverDreams;

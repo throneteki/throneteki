@@ -1,5 +1,5 @@
-const PlotCard = require('../../plotcard');
-const GameActions = require('../../GameActions');
+import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SearchAndDetain extends PlotCard {
     setupCardAbilities() {
@@ -26,4 +26,4 @@ class SearchAndDetain extends PlotCard {
 
 SearchAndDetain.code = '16034';
 
-module.exports = SearchAndDetain;
+export default SearchAndDetain;

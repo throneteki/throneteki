@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class Foamdrinker extends DrawCard {
     setupCardAbilities(ability) {
@@ -39,4 +39,4 @@ class Foamdrinker extends DrawCard {
 
 Foamdrinker.code = '21005';
 
-module.exports = Foamdrinker;
+export default Foamdrinker;

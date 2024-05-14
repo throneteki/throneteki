@@ -12,4 +12,4 @@ class DiscardDuplicateCost {
     }
 }
 
-module.exports = DiscardDuplicateCost;
+export default DiscardDuplicateCost;

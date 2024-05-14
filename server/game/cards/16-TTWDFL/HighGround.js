@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class HighGround extends DrawCard {
     setupCardAbilities(ability) {
@@ -30,4 +30,4 @@ class HighGround extends DrawCard {
 
 HighGround.code = '16019';
 
-module.exports = HighGround;
+export default HighGround;

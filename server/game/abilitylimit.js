@@ -77,4 +77,4 @@ AbilityLimit.perGame = function (max) {
     return new RepeatableAbilityLimit(max, 'onGameEnded');
 };
 
-module.exports = AbilityLimit;
+export default AbilityLimit;

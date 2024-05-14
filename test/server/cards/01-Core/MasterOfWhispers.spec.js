@@ -1,10 +1,12 @@
-describe('Master of Whispers', function() {
-    integration({ isMelee: true }, function() {
-        describe('applying intrigue claim', function() {
-            beforeEach(function() {
+describe('Master of Whispers', function () {
+    integration({ isMelee: true }, function () {
+        describe('applying intrigue claim', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('stark', [
                     'A Noble Cause',
-                    'Sansa Stark (Core)', 'Sansa Stark (Core)', 'Sansa Stark (Core)'
+                    'Sansa Stark (Core)',
+                    'Sansa Stark (Core)',
+                    'Sansa Stark (Core)'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
@@ -38,17 +40,17 @@ describe('Master of Whispers', function() {
                 this.player1.clickPrompt('Apply Claim');
             });
 
-            it('should prompt to apply claim to additional players', function() {
+            it('should prompt to apply claim to additional players', function () {
                 expect(this.player1).toHavePromptButton('player3');
             });
 
-            it('should allow it to only be applied to the defending player', function() {
+            it('should allow it to only be applied to the defending player', function () {
                 this.player1.clickPrompt('Done');
 
                 expect(this.player3Object.discardPile.length).toBe(0);
             });
 
-            it('should apply it to selected players', function() {
+            it('should apply it to selected players', function () {
                 this.player1.clickPrompt('player3');
 
                 expect(this.player2Object.discardPile.length).toBe(1);
@@ -56,16 +58,14 @@ describe('Master of Whispers', function() {
             });
         });
 
-        describe('vs Trial by Combat', function() {
-            beforeEach(function() {
+        describe('vs Trial by Combat', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('stark', [
                     'A Noble Cause',
-                    'Ser Jaime Lannister (Core)', 'Trial by Combat'
+                    'Ser Jaime Lannister (Core)',
+                    'Trial by Combat'
                 ]);
-                const opponentDeck = this.buildDeck('stark', [
-                    'A Noble Cause',
-                    'Hedge Knight'
-                ]);
+                const opponentDeck = this.buildDeck('stark', ['A Noble Cause', 'Hedge Knight']);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(opponentDeck);
                 this.player3.selectDeck(opponentDeck);
@@ -105,7 +105,7 @@ describe('Master of Whispers', function() {
                 this.player1.triggerAbility('Trial by Combat');
             });
 
-            it('should require each chosen player to fulfill military claim', function() {
+            it('should require each chosen player to fulfill military claim', function () {
                 this.player2.clickCard('Hedge Knight', 'play area');
                 this.player3.clickCard('Hedge Knight', 'play area');
 
@@ -113,17 +113,19 @@ describe('Master of Whispers', function() {
                 expect(this.player3Object.deadPile.length).toBe(1);
             });
 
-            it('should not fulfill normal intrigue claim', function() {
+            it('should not fulfill normal intrigue claim', function () {
                 expect(this.player2Object.discardPile.length).toBe(0);
                 expect(this.player3Object.discardPile.length).toBe(0);
             });
         });
 
-        describe('vs Vengeance for Elia', function() {
-            beforeEach(function() {
+        describe('vs Vengeance for Elia', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('stark', [
                     'A Noble Cause',
-                    'Ser Jaime Lannister (Core)', 'Hedge Knight', 'Hedge Knight'
+                    'Ser Jaime Lannister (Core)',
+                    'Hedge Knight',
+                    'Hedge Knight'
                 ]);
                 const opponentDeck = this.buildDeck('stark', [
                     'A Noble Cause',
@@ -167,11 +169,11 @@ describe('Master of Whispers', function() {
                 this.player2.clickPrompt('player1');
             });
 
-            it('should apply claim to the additional opponents chosen', function() {
+            it('should apply claim to the additional opponents chosen', function () {
                 expect(this.player3Object.discardPile.length).toBe(1);
             });
 
-            it('should apply the normal effect for Vengeance for Elia', function() {
+            it('should apply the normal effect for Vengeance for Elia', function () {
                 expect(this.player1Object.discardPile.length).toBe(1);
             });
         });

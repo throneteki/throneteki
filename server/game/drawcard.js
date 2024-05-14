@@ -1,7 +1,7 @@
-const BaseCard = require('./basecard.js');
-const CardMatcher = require('./CardMatcher.js');
-const ReferenceCountedSetProperty = require('./PropertyTypes/ReferenceCountedSetProperty');
-const StandardPlayActions = require('./PlayActions/StandardActions');
+import BaseCard from './basecard.js';
+import CardMatcher from './CardMatcher.js';
+import ReferenceCountedSetProperty from './PropertyTypes/ReferenceCountedSetProperty.js';
+import StandardPlayActions from './PlayActions/StandardActions.js';
 
 const Icons = ['military', 'intrigue', 'power'];
 
@@ -539,4 +539,4 @@ class DrawCard extends BaseCard {
     }
 }
 
-module.exports = DrawCard;
+export default DrawCard;

@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class CloseCall extends PlotCard {
     setupCardAbilities() {
@@ -37,4 +37,4 @@ class CloseCall extends PlotCard {
 
 CloseCall.code = '02120';
 
-module.exports = CloseCall;
+export default CloseCall;

@@ -1,4 +1,4 @@
-const { flatten } = require('../Array');
+import { flatten } from '../Array.js';
 
 /**
  * Represents a card based effect applied to one or more targets.
@@ -310,4 +310,4 @@ class Effect {
     }
 }
 
-module.exports = Effect;
+export default Effect;

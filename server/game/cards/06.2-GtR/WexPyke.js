@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const { Tokens } = require('../../Constants');
+import DrawCard from '../../drawcard.js';
+import { Tokens } from '../../Constants/index.js';
 
 class WexPyke extends DrawCard {
     setupCardAbilities(ability) {
@@ -31,4 +31,4 @@ class WexPyke extends DrawCard {
 
 WexPyke.code = '06031';
 
-module.exports = WexPyke;
+export default WexPyke;

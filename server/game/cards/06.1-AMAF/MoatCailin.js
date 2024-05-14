@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class MoatCailin extends DrawCard {
     setupCardAbilities(ability) {
@@ -24,4 +24,4 @@ class MoatCailin extends DrawCard {
 
 MoatCailin.code = '06012';
 
-module.exports = MoatCailin;
+export default MoatCailin;

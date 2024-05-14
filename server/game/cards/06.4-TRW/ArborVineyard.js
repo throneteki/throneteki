@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class ArborVineyard extends DrawCard {
     setupCardAbilities(ability) {
@@ -25,4 +25,4 @@ class ArborVineyard extends DrawCard {
 
 ArborVineyard.code = '06064';
 
-module.exports = ArborVineyard;
+export default ArborVineyard;

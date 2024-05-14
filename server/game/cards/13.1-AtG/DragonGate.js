@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const TextHelper = require('../../TextHelper');
+import DrawCard from '../../drawcard.js';
+import TextHelper from '../../TextHelper.js';
 
 class DragonGate extends DrawCard {
     setupCardAbilities(ability) {
@@ -30,4 +30,4 @@ class DragonGate extends DrawCard {
 
 DragonGate.code = '13014';
 
-module.exports = DragonGate;
+export default DragonGate;

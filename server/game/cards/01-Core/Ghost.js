@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Ghost extends DrawCard {
     setupCardAbilities() {
@@ -25,4 +25,4 @@ class Ghost extends DrawCard {
 
 Ghost.code = '01123';
 
-module.exports = Ghost;
+export default Ghost;

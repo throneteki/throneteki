@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class FairIsle extends DrawCard {
     setupCardAbilities(ability) {
@@ -69,4 +69,4 @@ class FairIsle extends DrawCard {
 
 FairIsle.code = '21009';
 
-module.exports = FairIsle;
+export default FairIsle;
