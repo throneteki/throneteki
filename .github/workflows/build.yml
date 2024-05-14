@@ -3,35 +3,35 @@
 
 name: Build and test
 on:
-  push:
-    branches: ["master", "development-*"]
-    paths-ignore:
-      - ".github/workflows/**"
-  pull_request:
-    branches: ["master", "development-*"]
-    paths-ignore:
-      - ".github/workflows/**"
+    push:
+        branches: ['master', 'development-*']
+        paths-ignore:
+            - '.github/workflows/**'
+    pull_request:
+        branches: ['master', 'development-*']
+        paths-ignore:
+            - '.github/workflows/**'
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+    build:
+        runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [14.x, 16.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+        strategy:
+            matrix:
+                node-version: [18.x, 20.x]
+                # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
-    steps:
-      - name: Checkout source and submodules
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: "0"
-          submodules: recursive
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: "npm"
-      - run: npm ci
-      - run: npm run lint
-      - run: npm test
+        steps:
+            - name: Checkout source and submodules
+              uses: actions/checkout@v3
+              with:
+                  fetch-depth: '0'
+                  submodules: recursive
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v3
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: 'npm'
+            - run: npm ci
+            - run: npm run lint
+            - run: npm test
