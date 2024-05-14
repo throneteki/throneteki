@@ -1,7 +1,6 @@
-const passport = require('passport');
-
-const { wrapAsync } = require('../util');
-const ServiceFactory = require('../services/ServiceFactory.js');
+import passport from 'passport';
+import { wrapAsync } from '../util.js';
+import ServiceFactory from '../services/ServiceFactory.js';
 
 function validate(draftCube) {
     let errors = [];
@@ -33,7 +32,7 @@ function validatePackDefinition(packDefinition) {
     return errors;
 }
 
-module.exports.init = function(server, options) {
+export const init = function(server, options) {
     const draftCubesService = ServiceFactory.draftCubeService(options.db);
 
     server.get('/api/draft-cubes', wrapAsync(async function(req, res) {

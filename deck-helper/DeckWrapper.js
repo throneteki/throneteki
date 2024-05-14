@@ -65,4 +65,4 @@ class DeckWrapper {
     }
 }
 
-module.exports = DeckWrapper;
+export default DeckWrapper;

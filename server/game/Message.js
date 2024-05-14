@@ -1,4 +1,4 @@
-const {flatten} = require('../Array');
+import flatten from '../Array.js';
 class Message {
     static fragment(format, ...args) {
         if(args.length === 1 && !format.includes('{0}')) {
@@ -70,4 +70,4 @@ class Message {
     }
 }
 
-module.exports = Message;
+export default Message;

@@ -7,7 +7,7 @@
  * @param {object} data.cards - an index of card code to full card object
  * @param {object} data.factions - an index of faction code to full faction object
  */
-function formatDeckAsFullCards(deck, data) {
+export function formatDeckAsFullCards(deck, data) {
     let newDeck = {
         _id: deck._id,
         draftCubeId: deck.draftCubeId,
@@ -45,5 +45,3 @@ function processCardCounts(cardCounts, cardData) {
     // Filter out any cards that aren't available in the card data.
     return cardCountsWithData.filter(cardCount => !!cardCount.card);
 }
-
-module.exports = formatDeckAsFullCards;

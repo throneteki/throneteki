@@ -1,5 +1,5 @@
-const Spectator = require('./spectator.js');
-const Message = require('./Message');
+import Spectator from './spectator.js';
+import Message from './Message.js';
 
 class GameChat {
     constructor() {
@@ -52,4 +52,4 @@ class GameChat {
     }
 }
 
-module.exports = GameChat;
+export default GameChat;

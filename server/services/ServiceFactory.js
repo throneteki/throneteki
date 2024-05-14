@@ -1,14 +1,14 @@
-const MessageService = require('./MessageService');
-const PatreonService = require('./PatreonService');
-const ConfigService = require('./ConfigService');
-const UserService = require('./UserService');
-const BanlistService = require('./BanlistService');
-const EventService = require('./EventService');
-const DraftCubeService = require('./DraftCubeService');
+import MessageService from './MessageService.js';
+import PatreonService from './PatreonService.js';
+import ConfigService from './ConfigService.js';
+import UserService from './UserService.js';
+import BanlistService from './BanlistService.js';
+import EventService from './EventService.js';
+import DraftCubeService from './DraftCubeService.js';
 
 let services = {};
 
-module.exports = {
+export default {
     messageService: db => {
         if(!services.messageService) {
             services.messageService = new MessageService(db);

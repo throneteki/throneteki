@@ -1,8 +1,8 @@
-const Server = require('./server.js');
-const Lobby = require('./lobby.js');
-const pmx = require('pmx');
-const monk = require('monk');
-const ServiceFactory = require('./services/ServiceFactory.js');
+import Server from './server.js';
+import Lobby from './lobby.js';
+import pmx from 'pmx';
+import monk from 'monk';
+import ServiceFactory from './services/ServiceFactory.js';
 
 let configService = ServiceFactory.configService();
 
@@ -52,4 +52,4 @@ async function runServer() {
     server.run();
 }
 
-module.exports = runServer;
+export default runServer;

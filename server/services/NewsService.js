@@ -1,4 +1,4 @@
-const logger = require('../log.js');
+import logger from '../log.js';
 
 class NewsService {
     constructor(db) {
@@ -53,4 +53,4 @@ class NewsService {
     }
 }
 
-module.exports = NewsService;
+export default NewsService;

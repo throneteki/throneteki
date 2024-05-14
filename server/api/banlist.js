@@ -1,9 +1,8 @@
-const passport = require('passport');
+import passport from 'passport';
+import { wrapAsync } from '../util.js';
+import ServiceFactory from '../services/ServiceFactory.js';
 
-const { wrapAsync } = require('../util');
-const ServiceFactory = require('../services/ServiceFactory.js');
-
-module.exports.init = function(server, options) {
+export const init = function(server, options) {
     let banlistService = ServiceFactory.banlistService(options.db);
 
     server.get('/api/banlist', passport.authenticate('jwt', { session: false }), wrapAsync(async function(req, res) {

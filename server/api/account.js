@@ -1,16 +1,14 @@
-const bcrypt = require('bcrypt');
-const passport = require('passport');
-const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
-const moment = require('moment');
-const _ = require('underscore');
-const sendgrid = require('@sendgrid/mail');
-const fs = require('fs');
-
-const logger = require('../log');
-const util = require('../util');
-const { wrapAsync } = require('../util');
-const ServiceFactory = require('../services/ServiceFactory.js');
+import bcrypt from 'bcrypt';
+import passport from 'passport';
+import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
+import moment from 'moment';
+import _ from 'underscore';
+import sendgrid from '@sendgrid/mail';
+import fs from 'fs';
+import logger from '../log.js';
+import {wrapAsync} from '../util.js';
+import ServiceFactory from '../services/ServiceFactory.js';
 const configService = ServiceFactory.configService();
 const appName = configService.getValue('appName');
 
@@ -95,7 +93,7 @@ function writeFile(path, data, opts = 'utf8') {
 
 const DefaultEmailHash = crypto.createHash('md5').update('noreply@theironthrone.net').digest('hex');
 
-module.exports.init = function(server, options) {
+export const init = function(server, options) {
     userService = ServiceFactory.userService(options.db, configService);
     let banlistService = ServiceFactory.banlistService(options.db);
     let patreonService = ServiceFactory.patreonService(configService.getValue('patreonClientId'), configService.getValue('patreonSecret'), userService,
@@ -145,8 +143,8 @@ module.exports.init = function(server, options) {
         let emailBlockKey = configService.getValue('emailBlockKey');
         if(emailBlockKey) {
             try {
-                let response = await util.httpRequest(`http://check.block-disposable-email.com/easyapi/json/${emailBlockKey}/${domain}`);
-                let answer = JSON.parse(response);
+                let response = await fetch(`http://check.block-disposable-email.com/easyapi/json/${emailBlockKey}/${domain}`);
+                let answer = response.json();
 
                 if(answer.request_status !== 'success') {
                     logger.warn('Failed to check email address %s', answer);
@@ -496,8 +494,8 @@ module.exports.init = function(server, options) {
     server.post('/api/account/password-reset', wrapAsync(async (req, res) => {
         let resetToken;
 
-        let response = await util.httpRequest(`https://www.google.com/recaptcha/api/siteverify?secret=${configService.getValue('captchaKey')}&response=${req.body.captcha}`);
-        let answer = JSON.parse(response);
+        let response = await fetch(`https://www.google.com/recaptcha/api/siteverify?secret=${configService.getValue('captchaKey')}&response=${req.body.captcha}`);
+        let answer = response.json();
 
         if(!answer.success) {
             return res.send({ success: false, message: 'Please complete the captcha correctly' });
@@ -756,8 +754,8 @@ module.exports.init = function(server, options) {
 
 async function downloadAvatar(user) {
     let emailHash = user.enableGravatar ? crypto.createHash('md5').update(user.email).digest('hex') : DefaultEmailHash;
-    let avatar = await util.httpRequest(`https://www.gravatar.com/avatar/${emailHash}?d=identicon&s=24`, { encoding: null });
-    await writeFile(`public/img/avatar/${user.username}.png`, avatar, 'binary');
+    let avatar = await fetch(`https://www.gravatar.com/avatar/${emailHash}?d=identicon&s=24`);
+    await writeFile(`public/img/avatar/${user.username}.png`, avatar.body, 'binary');
 }
 
 async function checkAuth(req, res) {

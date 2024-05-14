@@ -1,7 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-
+import $ from 'jquery';
+window.jQuery = $;
+import 'bootstrap/dist/js/bootstrap';
 import Panel from '../../Components/Site/Panel';
 import * as actions from '../../actions';
 

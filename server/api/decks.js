@@ -1,9 +1,8 @@
-const passport = require('passport');
+import passport from 'passport';
+import DeckService from '../services/DeckService.js';
+import { wrapAsync } from '../util.js';
 
-const DeckService = require('../services/DeckService.js');
-const { wrapAsync } = require('../util.js');
-
-module.exports.init = function(server, options) {
+export const init = function(server, options) {
     let deckService = new DeckService(options.db);
 
     server.get('/api/decks/:id', passport.authenticate('jwt', { session: false }), wrapAsync(async function(req, res) {

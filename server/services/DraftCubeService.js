@@ -1,4 +1,4 @@
-const logger = require('../log.js');
+import logger from '../log.js';
 
 class DraftCubeService {
     constructor(db) {
@@ -52,5 +52,5 @@ class DraftCubeService {
     }
 }
 
-module.exports = DraftCubeService;
+export default DraftCubeService;
 

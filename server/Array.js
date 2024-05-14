@@ -44,7 +44,7 @@ function sortByComparison(transform) {
     };
 }
 
-function sortBy(array, transform) {
+export function sortBy(array, transform) {
     return [...array].sort(sortByComparison(transform));
 }
 /**
@@ -88,10 +88,9 @@ function permutate(permutations, current, array) {
     return permutations;
 }
 
-module.exports = {
+export default {
     flatten,
     flatMap,
     partition,
-    sortBy,
     availableToPair
 };

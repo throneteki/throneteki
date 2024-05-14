@@ -1,10 +1,9 @@
-const passport = require('passport');
+import passport from 'passport';
+import { wrapAsync } from '../util.js';
+import ServiceFactory from '../services/ServiceFactory.js';
+import logger from '../log.js';
 
-const { wrapAsync } = require('../util.js');
-const ServiceFactory = require('../services/ServiceFactory.js');
-const logger = require('../log.js');
-
-module.exports.init = function(server, options) {
+export const init = function(server, options) {
     let userService = ServiceFactory.userService(options.db, ServiceFactory.configService());
 
     server.get('/api/user/:username', passport.authenticate('jwt', { session: false }), wrapAsync(async (req, res) => {

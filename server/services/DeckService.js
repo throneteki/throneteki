@@ -1,4 +1,4 @@
-const logger = require('../log.js');
+import logger from '../log.js';
 
 class DeckService {
     constructor(db) {
@@ -148,5 +148,5 @@ class DeckService {
     }
 }
 
-module.exports = DeckService;
+export default DeckService;
 

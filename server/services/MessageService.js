@@ -1,5 +1,5 @@
-const EventEmitter = require('events');
-const logger = require('../log.js');
+import EventEmitter from 'events';
+import logger from '../log.js';
 
 class MessageService extends EventEmitter {
     constructor(db) {
@@ -44,4 +44,4 @@ class MessageService extends EventEmitter {
     }
 }
 
-module.exports = MessageService;
+export default MessageService;

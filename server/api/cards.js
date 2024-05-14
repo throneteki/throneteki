@@ -1,7 +1,7 @@
-const CardService = require('../services/CardService');
-const Factions = require('../game/Factions');
+import CardService from '../services/CardService.js';
+import Factions from '../game/Factions.js';
 
-module.exports.init = function(server, options) {
+export const init = function(server, options) {
     let cardService = new CardService(options.db);
 
     server.get('/api/cards', function(req, res, next) {

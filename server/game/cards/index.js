@@ -1,6 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
+const __dirname = import.meta.dirname;
+
 function getDirectories(srcpath) {
     let fullPath = path.join(__dirname, srcpath);
     return fs.readdirSync(fullPath).filter(function(file) {

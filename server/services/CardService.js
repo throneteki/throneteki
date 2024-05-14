@@ -1,8 +1,9 @@
-const fs = require('fs');
-const path = require('path');
-const moment = require('moment');
+import fs from 'fs';
+import path from 'path';
+import moment from 'moment';
+import logger from '../log.js';
 
-const logger = require('../log.js');
+const __dirname = import.meta.dirname;
 
 class CardService {
     constructor(db) {
@@ -112,5 +113,5 @@ class CardService {
     }
 }
 
-module.exports = CardService;
+export default CardService;
 

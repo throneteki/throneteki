@@ -293,4 +293,4 @@ const agendaRules = {
     }
 };
 
-module.exports = agendaRules;
+export default agendaRules;

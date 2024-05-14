@@ -1,10 +1,10 @@
 /*eslint no-console: 0*/
 
-const _ = require('underscore');
-const monk = require('monk');
+import _ from 'underscore';
 
-const GameService = require('./services/GameService.js');
-const ServiceFactory = require('./services/ServiceFactory.js');
+import monk from 'monk';
+import GameService from './services/GameService.js';
+import ServiceFactory from './services/ServiceFactory.js';
 
 let configService = ServiceFactory.configService();
 let db = monk(configService.getValue('dbPath'));

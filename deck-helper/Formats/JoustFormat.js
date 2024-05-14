@@ -14,4 +14,4 @@ const JoustFormat = {
     ]
 };
 
-module.exports = JoustFormat;
+export default JoustFormat;

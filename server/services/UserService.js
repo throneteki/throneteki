@@ -1,11 +1,10 @@
-const monk = require('monk');
-const moment = require('moment');
-const crypto = require('crypto');
-const EventEmitter = require('events');
-
-const escapeRegex = require('../util').escapeRegex;
-const logger = require('../log');
-const User = require('../models/User');
+import monk from 'monk';
+import moment from 'moment';
+import crypto from 'crypto';
+import EventEmitter from 'events';
+import { escapeRegex } from '../util.js';
+import logger from '../log.js';
+import User from '../models/User.js';
 
 class UserService extends EventEmitter {
     constructor(db, configService) {
@@ -237,4 +236,4 @@ class UserService extends EventEmitter {
     }
 }
 
-module.exports = UserService;
+export default UserService;

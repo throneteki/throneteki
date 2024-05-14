@@ -1,5 +1,5 @@
-const logger = require('../log');
-const DeckService = require('./DeckService.js');
+import logger from '../log.js';
+import DeckService from './DeckService.js';
 
 class EventService {
     constructor(db) {
@@ -51,4 +51,4 @@ class EventService {
     }
 }
 
-module.exports = EventService;
+export default EventService;

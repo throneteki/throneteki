@@ -1,9 +1,8 @@
-const uuid = require('uuid');
-const _ = require('underscore');
-const crypto = require('crypto');
-
-const logger = require('./log.js');
-const GameChat = require('./game/gamechat.js');
+import uuid from 'uuid';
+import _ from 'underscore';
+import crypto from 'crypto';
+import logger from './log.js';
+import GameChat from './game/gamechat.js';
 
 class PendingGame {
     constructor(owner, instance, details) {
@@ -445,4 +444,4 @@ class PendingGame {
     }
 }
 
-module.exports = PendingGame;
+export default PendingGame;

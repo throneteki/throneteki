@@ -1,4 +1,4 @@
-const Settings = require('../settings');
+import Settings from '../settings.js';
 
 class User {
     constructor(userData) {
@@ -162,4 +162,4 @@ class User {
     }
 }
 
-module.exports = User;
+export default User;

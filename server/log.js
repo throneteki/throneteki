@@ -1,6 +1,8 @@
-const { createLogger, format, transports } = require('winston');
-require('winston-daily-rotate-file');
-const fs = require('fs');
+import { createLogger, format, transports } from 'winston';
+import 'winston-daily-rotate-file';
+import fs from 'fs';
+
+const __dirname = import.meta.dirname;
 
 if (!fs.existsSync(__dirname + '/logs/')) {
     fs.mkdirSync(__dirname + '/logs/');
@@ -47,4 +49,4 @@ const logger = createLogger({
     ]
 });
 
-module.exports = logger;
+export default logger;

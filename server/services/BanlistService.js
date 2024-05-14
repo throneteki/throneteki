@@ -1,4 +1,4 @@
-const logger = require('../log');
+import logger from '../log.js';
 
 class BanlistService {
     constructor(db) {
@@ -42,4 +42,4 @@ class BanlistService {
     }
 }
 
-module.exports = BanlistService;
+export default BanlistService;

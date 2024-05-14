@@ -1,6 +1,5 @@
-const _ = require('underscore');
-
-const logger = require('../log.js');
+import _ from 'underscore';
+import logger from '../log.js';
 
 class GameService {
     constructor(db) {
@@ -45,5 +44,5 @@ class GameService {
     }
 }
 
-module.exports = GameService;
+export default GameService;
 

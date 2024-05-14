@@ -1,10 +1,9 @@
-const passport = require('passport');
+import passport from 'passport';
+import NewsService from '../services/NewsService.js';
+import logger from '../log.js';
+import { wrapAsync } from '../util.js';
 
-const NewsService = require('../services/NewsService.js');
-const logger = require('../log.js');
-const { wrapAsync } = require('../util.js');
-
-module.exports.init = function(server, options) {
+export const init = function(server, options) {
     let newsService = new NewsService(options.db);
 
     server.get('/api/news', function(req, res) {
