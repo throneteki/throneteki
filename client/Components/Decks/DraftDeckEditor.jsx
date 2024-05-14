@@ -454,8 +454,8 @@ class DraftDeckEditor extends React.Component {
                 </div>
                 <div className='row'>
                     <div className='col-sm-12' style={{ textAlign: 'center', marginBottom: '1em' }}>
-                        Click cards under the "Remaining Drafted Cards" to move them into your deck
-                        and vice-versa.
+                        Click cards under the &ldquo;Remaining Drafted Cards&rdquo; to move them
+                        into your deck and vice-versa.
                     </div>
                 </div>
                 <div className='row'>

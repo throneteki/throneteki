@@ -13,6 +13,7 @@ class HowToPlay extends React.Component {
                         className='btn btn-danger btn-lg pull-right'
                         target='_blank'
                         href='https://github.com/cryogen/throneteki/issues'
+                        rel='noreferrer'
                     >
                         Report Problems
                     </a>
@@ -20,18 +21,27 @@ class HowToPlay extends React.Component {
                         This guide is aimed at players familiar with the A Game of Thrones: The Card
                         Game 2nd Edition who want to start playing online using The Iron Throne
                         platform. If you are new to this cardgame in general, there is a{' '}
-                        <a href='https://www.youtube.com/watch?v=A1s54Wlgfyo' target='_blank'>
+                        <a
+                            href='https://www.youtube.com/watch?v=A1s54Wlgfyo'
+                            target='_blank'
+                            rel='noreferrer'
+                        >
                             helpful tutorial video
                         </a>
                         , a{' '}
                         <a
                             href='https://images-cdn.fantasyflightgames.com/filer_public/ba/2a/ba2a5ea6-a3cd-4772-a603-6f1906f63053/gt01_learn-to-play-web.pdf'
                             target='_blank'
+                            rel='noreferrer'
                         >
                             Learn To Play guide
                         </a>
                         , and a{' '}
-                        <a href='http://thronesdb.com/rulesreference' target='_blank'>
+                        <a
+                            href='http://thronesdb.com/rulesreference'
+                            target='_blank'
+                            rel='noreferrer'
+                        >
                             Rules Reference Guide
                         </a>{' '}
                         to help you out.
@@ -64,7 +74,7 @@ class HowToPlay extends React.Component {
                             </li>
                             <ul className='htp-sub-list'>
                                 <li>
-                                    <a href='#riddle'>Varys' Riddle vs Summer Harvest</a>
+                                    <a href='#riddle'>Varys&quot; Riddle vs Summer Harvest</a>
                                 </li>
                             </ul>
                             <li>
@@ -84,7 +94,7 @@ class HowToPlay extends React.Component {
                             must be logged in to add decks and spectate or play games. The Iron
                             Throne has a functional <Link href='/decks'>Deckbuilder</Link>, although
                             most people use the more fully featured{' '}
-                            <a target='_blank' href='http://www.thronesdb.com'>
+                            <a target='_blank' href='http://www.thronesdb.com' rel='noreferrer'>
                                 ThronesDB
                             </a>{' '}
                             deckbuilder to build their decks. After building your deck on ThronesDB
@@ -94,11 +104,19 @@ class HowToPlay extends React.Component {
                         </p>
                         <p>
                             If you are new to Thrones 2.0, you can find an introductory Stark deck{' '}
-                            <a target='_blank' href='http://thronesdb.com/deck/view/358860'>
+                            <a
+                                target='_blank'
+                                href='http://thronesdb.com/deck/view/358860'
+                                rel='noreferrer'
+                            >
                                 here
                             </a>
                             , and an introductory Lannister/Tyrell deck{' '}
-                            <a target='_blank' href='http://thronesdb.com/deck/view/358861'>
+                            <a
+                                target='_blank'
+                                href='http://thronesdb.com/deck/view/358861'
+                                rel='noreferrer'
+                            >
                                 here
                             </a>
                             . Both decks only feature cards from the Core Set. If you are new and
@@ -133,19 +151,35 @@ class HowToPlay extends React.Component {
                             </p>
                             <p>
                                 For example: if you play cards like{' '}
-                                <a target='_blank' href='https://thronesdb.com/card/01088'>
+                                <a
+                                    target='_blank'
+                                    href='https://thronesdb.com/card/01088'
+                                    rel='noreferrer'
+                                >
                                     The Tickler
                                 </a>
                                 ,{' '}
-                                <a target='_blank' href='https://thronesdb.com/card/06031'>
+                                <a
+                                    target='_blank'
+                                    href='https://thronesdb.com/card/06031'
+                                    rel='noreferrer'
+                                >
                                     Wex Pyke
                                 </a>
                                 ,{' '}
-                                <a target='_blank' href='https://thronesdb.com/card/01130'>
+                                <a
+                                    target='_blank'
+                                    href='https://thronesdb.com/card/01130'
+                                    rel='noreferrer'
+                                >
                                     Messenger Raven
                                 </a>{' '}
                                 or{' '}
-                                <a target='_blank' href='https://thronesdb.com/card/01139'>
+                                <a
+                                    target='_blank'
+                                    href='https://thronesdb.com/card/01139'
+                                    rel='noreferrer'
+                                >
                                     Take the Black
                                 </a>{' '}
                                 in your deck, be sure to check Dominance Actions in your profile.
@@ -166,15 +200,27 @@ class HowToPlay extends React.Component {
                                 resolves, you might guess correctly that was due to your opponent
                                 being prompted to use The Hand’s Judgment. The three most notable
                                 cards that would be leaked this way are{' '}
-                                <a target='_blank' href='https://thronesdb.com/card/01045'>
-                                    The Hand's Judgment
+                                <a
+                                    target='_blank'
+                                    href='https://thronesdb.com/card/01045'
+                                    rel='noreferrer'
+                                >
+                                    The Hand&apos;s Judgment
                                 </a>
                                 ,{' '}
-                                <a target='_blank' href='https://thronesdb.com/card/01102'>
+                                <a
+                                    target='_blank'
+                                    href='https://thronesdb.com/card/01102'
+                                    rel='noreferrer'
+                                >
                                     Treachery
                                 </a>{' '}
                                 and{' '}
-                                <a target='_blank' href='https://thronesdb.com/card/02096'>
+                                <a
+                                    target='_blank'
+                                    href='https://thronesdb.com/card/02096'
+                                    rel='noreferrer'
+                                >
                                     Vengeance for Elia
                                 </a>
                                 . To solve this issue, the Timed Interrupt Window was created.
@@ -222,13 +268,18 @@ class HowToPlay extends React.Component {
                             <a
                                 target='_blank'
                                 href='https://github.com/cryogen/throneteki/projects'
+                                rel='noreferrer'
                             >
                                 here
                             </a>
                             . If you happen upon a card that you believe is not working as it should
                             and it is not on that list, it would help immensely if you would submit
                             an issue on{' '}
-                            <a target='_blank' href='https://github.com/cryogen/throneteki/issues'>
+                            <a
+                                target='_blank'
+                                href='https://github.com/cryogen/throneteki/issues'
+                                rel='noreferrer'
+                            >
                                 GitHub
                             </a>
                             . Other comments and/or feedback can be left on GitHub as well.
@@ -241,11 +292,19 @@ class HowToPlay extends React.Component {
 
                         <div className='htp-subtopic'>
                             <h4 className='htp-subtitle' id='riddle'>
-                                <a href='https://thronesdb.com/card/04020' target='_blank'>
-                                    Varys' Riddle
+                                <a
+                                    href='https://thronesdb.com/card/04020'
+                                    target='_blank'
+                                    rel='noreferrer'
+                                >
+                                    Varys&apos; Riddle
                                 </a>{' '}
                                 vs{' '}
-                                <a href='https://thronesdb.com/card/04039' target='_blank'>
+                                <a
+                                    href='https://thronesdb.com/card/04039'
+                                    target='_blank'
+                                    rel='noreferrer'
+                                >
                                     Summer Harvest
                                 </a>
                             </h4>
@@ -254,6 +313,7 @@ class HowToPlay extends React.Component {
                                 <a
                                     href='http://www.cardgamedb.com/forums/index.php?/topic/32255-varys-riddle-vs-summer-harvest/'
                                     target='_blank'
+                                    rel='noreferrer'
                                 >
                                     1
                                 </a>
@@ -261,24 +321,25 @@ class HowToPlay extends React.Component {
                                 <a
                                     href='http://www.cardgamedb.com/forums/index.php?/topic/33283-timming-varys-riddle-summer-harvest/'
                                     target='_blank'
+                                    rel='noreferrer'
                                 >
                                     2
                                 </a>
                                 .
                             </p>
                             <p>
-                                These plots have a very specific interaction that's implemented a
-                                little differently from the official ruling. Officially, X will be
+                                These plots have a very specific interaction that&apos;s implemented
+                                a little differently from the official ruling. Officially, X will be
                                 defined by both plots and thus will be both 2 and 7. The first
                                 player will consequently decide what value X is whenever it gets
                                 referenced (a more thorough explanation is detailed in the above
                                 links). On The Iron Throne it is implemented a little differently.
-                                As the player who revealed Varys' Riddle, to make sure your
-                                opponent's value of X will be 2, you have to go first and trigger
-                                Summer Harvest first. As the player who revealed Summer Harvest, if
-                                the Varys' Riddle player has made you first player (or you won
-                                initiative somehow), you'd want to trigger Varys' Riddle first to
-                                make sure your X is 7.
+                                As the player who revealed Varys&aspos; Riddle, to make sure your
+                                opponent&aspos;s value of X will be 2, you have to go first and
+                                trigger Summer Harvest first. As the player who revealed Summer
+                                Harvest, if the Varys&aspos; Riddle player has made you first player
+                                (or you won initiative somehow), you&aspos;d want to trigger
+                                Varys&aspos; Riddle first to make sure your X is 7.
                             </p>
                         </div>
                     </div>
@@ -305,8 +366,8 @@ class HowToPlay extends React.Component {
                             </li>
                             <li>
                                 /cancel-prompt - Clears the current prompt and resume the game flow.
-                                Use with caution and only when the prompt is 'stuck' and you are
-                                unable to continue.
+                                Use with caution and only when the prompt is &apos;stuck&apos; and
+                                you are unable to continue.
                             </li>
                             <li>/discard x - Discards x cards randomly from your hand.</li>
                             <li>/draw x - Draws x cards from your deck to your hand.</li>
@@ -315,8 +376,9 @@ class HowToPlay extends React.Component {
                                 caution.
                             </li>
                             <li>
-                                /give-icon x - Gives a character an x icon; where 'x' is one of
-                                'military', 'intrigue', 'power'.
+                                /give-icon x - Gives a character an x icon; where &apos;x&apos; is
+                                one of &apos;military&apos;, &apos;intrigue&apos;,
+                                &apos;power&apos;.
                             </li>
                             <li>/kill - Kills a character. Use with caution.</li>
                             <li>/move-bottom - Moves a card to the bottom of your draw deck.</li>
@@ -328,14 +390,17 @@ class HowToPlay extends React.Component {
                             <li>/reveal-hand - Reveals your hand to the opponent.</li>
                             <li>/strength x - Sets the strength of a card to x.</li>
                             <li>
-                                /take-icon x - Takes an x icon from a character; where 'x' is as per
-                                '/give-icon'.
+                                /take-icon x - Takes an x icon from a character; where &apos;x&apos;
+                                is as per &apos;/give-icon&apos;.
                             </li>
                             <li>
-                                /token t x - Sets the token count of a card of type 't' to 'x'.
-                                Currently used token types are: 'bell', betrayal', 'ear', 'ghost',
-                                'gold', 'journey', 'kiss', 'poison', 'prayer', 'stand', 'tale',
-                                'valarmorghulis', 'vengeance' and 'venom'.
+                                /token t x - Sets the token count of a card of type &apos;t&apos; to
+                                &apos;x&apos;. Currently used token types are: &apos;bell&apos;,
+                                &apos;betrayal&apos;, &apos;ear&apos;, &apos;ghost&apos;,
+                                &apos;gold&apos;, &apos;journey&apos;, &apos;kiss&apos;,
+                                &apos;poison&apos;, &apos;prayer&apos; &apos;stand&apos;,
+                                &apos;tale&apos;, &apos;valarmorghulis&apos;, &apos;vengeance&apos;
+                                and &apos;venom&apos;.
                             </li>
                             <li>
                                 /mute-spectators - Mutes spectators so they can´t use the chat.
@@ -359,7 +424,7 @@ class HowToPlay extends React.Component {
                             The Iron Throne does not rank and/or match players by skill level in any
                             way. There are three categories (beginner, casual and competitive) to be
                             chosen when creating a game which gives an indication of what to expect,
-                            but it doesn't enforce anything. Even though personal stats are not
+                            but it doesn&apos;t enforce anything. Even though personal stats are not
                             being tracked, most players still very much appreciate a formal concede
                             by clicking the ‘Concede’ button and typing ‘gg’ before leaving a game.
                             The reality of quick and anonymous online games dictates this won’t

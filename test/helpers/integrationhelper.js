@@ -1,4 +1,4 @@
-/* global describe, beforeEach, jasmine */
+/* global jasmine, global */
 /* eslint no-invalid-this: 0 */
 
 import path from 'path';

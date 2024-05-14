@@ -310,7 +310,7 @@ class Profile extends React.Component {
                                     to cancel it, a timer will count down. At the end of that timer,
                                     the window will automatically pass. This option controls the
                                     duration of the timer. The timer can be configure to show when
-                                    events are played (useful if you play cards like The Hand's
+                                    events are played (useful if you play cards like The Hand&apos;s
                                     Judgement) and to show when card abilities are triggered (useful
                                     if you play a lot of Treachery).
                                 </p>

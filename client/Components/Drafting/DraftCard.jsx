@@ -87,12 +87,14 @@ class DraftCard extends React.Component {
 
     get statusClass() {
         if (!this.props.selected) {
-            return;
+            return undefined;
         }
 
         if (this.props.selected) {
             return 'selected';
         }
+
+        return 'undefined';
     }
 
     render() {

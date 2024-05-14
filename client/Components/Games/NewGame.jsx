@@ -419,8 +419,10 @@ class NewGame extends React.Component {
                                     value={`none:${rl._id}`}
                                 >{`${cardSetLabel(rl.cardSet)}`}</option>
                             ))}
-                        {allowedEvents.map((event) => (
-                            <option value={event._id}>Event - {event.name}</option>
+                        {allowedEvents.map((event, index) => (
+                            <option key={index} value={event._id}>
+                                Event - {event.name}
+                            </option>
                         ))}
                     </select>
                 </div>

@@ -82,7 +82,7 @@ class Security extends React.Component {
             : null;
         let table =
             this.props.sessions && this.props.sessions.length === 0 ? (
-                <div>You have no active sessions. This shouldn't really happen.</div>
+                <div>You have no active sessions. This shouldn&apos;t really happen.</div>
             ) : (
                 <table className='table table-striped'>
                     <thead>
@@ -106,9 +106,9 @@ class Security extends React.Component {
                     {successPanel}
                     <Panel title='Active Sessions'>
                         <p className='help-block'>
-                            Below you will see the active 'sessions' that you have on the website.
-                            If you see any unexpected activity on your account, remove the session
-                            and consider changing your password.
+                            Below you will see the active &lsquo;sessions&rsquo; that you have on
+                            the website. If you see any unexpected activity on your account, remove
+                            the session and consider changing your password.
                         </p>
                         {table}
                     </Panel>

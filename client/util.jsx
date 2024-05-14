@@ -29,7 +29,7 @@ export function getMessageWithLinks(message) {
     let parts = tokens.map((token) => {
         if (token.match(urlMatchingRegex)) {
             return (
-                <a key={`link-${i++}`} href={token} target='_blank'>
+                <a key={`link-${i++}`} href={token} target='_blank' rel='noreferrer'>
                     {token}
                 </a>
             );

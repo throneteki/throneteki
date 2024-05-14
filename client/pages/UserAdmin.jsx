@@ -198,9 +198,9 @@ class UserAdmin extends React.Component {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {this.props.currentUser.tokens.map((token) => {
+                                        {this.props.currentUser.tokens.map((token, index) => {
                                             return (
-                                                <tr>
+                                                <tr key={index}>
                                                     <td>{token.ip}</td>
                                                     <td>
                                                         {moment(token.lastUsed).format(

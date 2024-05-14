@@ -36,9 +36,9 @@ class NodeAdmin extends React.Component {
     }
 
     getNodesTable() {
-        const body = this.props.nodeStatus.map((node) => {
+        const body = this.props.nodeStatus.map((node, index) => {
             return (
-                <tr>
+                <tr key={index}>
                     <td>{node.name}</td>
                     <td>{node.numGames}</td>
                     <td>{node.status}</td>

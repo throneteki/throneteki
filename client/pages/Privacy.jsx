@@ -18,12 +18,13 @@ const Privacy = () => {
                 <p>
                     When you sign up for the site (which is required to play or spectate on games),
                     we collect a username, your email address, a password and the IP address of the
-                    computer you're using when you sign up.
+                    computer you&apos;re using when you sign up.
                 </p>
                 <p>
                     When you play games on the site, we collect information about the games you
-                    play(what faction/agenda you're using, the deck you are using to play with - but
-                    not its contents, who you are playing against and the outcome of the game).
+                    play(what faction/agenda you&apos;re using, the deck you are using to play with
+                    - but not its contents, who you are playing against and the outcome of the
+                    game).
                 </p>
                 <p>If you chat in the lobby, your messages are stored.</p>
 
@@ -37,7 +38,7 @@ const Privacy = () => {
                     <ul>
                         <li>
                             in order to verify that you are a real person and not an automated
-                            program(or 'bot').
+                            program(or &lsquo;bot&rsquo;).
                         </li>
                         <li>
                             to enchance the security and general environment of the site by allowing
@@ -46,8 +47,8 @@ const Privacy = () => {
                         </li>
                         <li>
                             to provide your avatar picture via a service called Gravatar. Your email
-                            address is cryptographically hashed and sent to Gravatar's servers for
-                            them to provide your profile image or a default placeholder.
+                            address is cryptographically hashed and sent to Gravatar&apos;s servers
+                            for them to provide your profile image or a default placeholder.
                         </li>
                         <li>to allow you to reset your password if you forget it</li>
                         <li>

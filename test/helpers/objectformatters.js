@@ -1,4 +1,3 @@
-/* global jasmine */
 /* eslint camelcase: 0, no-invalid-this: 0 */
 
 import BaseCard from '../../server/game/basecard.js';

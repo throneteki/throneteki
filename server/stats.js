@@ -16,7 +16,6 @@ if (_.size(args) < 2) {
     console.error('Must provide start and end date');
 
     db.close();
-    return;
 }
 
 console.info('Running stats between', args[0], 'and', args[1]);

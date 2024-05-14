@@ -47,8 +47,10 @@ class RestrictedListDropdown extends React.Component {
                     value={this.state.value}
                     onChange={this.handleChange.bind(this)}
                 >
-                    {this.props.restrictedLists.map((rl) => (
-                        <option value={rl.name}>{rl.name}</option>
+                    {this.props.restrictedLists.map((rl, index) => (
+                        <option key={index} value={rl.name}>
+                            {rl.name}
+                        </option>
                     ))}
                 </select>
             </React.Fragment>

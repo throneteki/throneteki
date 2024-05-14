@@ -431,7 +431,7 @@ class DeckEditor extends React.Component {
                     Either type the cards manually into the box below, add the cards one by one
                     using the card box and autocomplete or for best results, copy and paste a
                     decklist from{' '}
-                    <a href='http://thronesdb.com' target='_blank'>
+                    <a href='http://thronesdb.com' target='_blank' rel='noreferrer'>
                         Thrones DB
                     </a>{' '}
                     into the box below.

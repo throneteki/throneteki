@@ -13,8 +13,8 @@ class ApiStatus extends React.Component {
         if (typeof this.props.apiState.message === 'object') {
             error = (
                 <ul>
-                    {Object.values(this.props.apiState.message).map((message) => {
-                        return <li>{message}</li>;
+                    {Object.values(this.props.apiState.message).map((message, index) => {
+                        return <li key={index}>{message}</li>;
                     })}
                 </ul>
             );

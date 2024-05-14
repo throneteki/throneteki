@@ -1,8 +1,8 @@
-import react from 'eslint-plugin-react';
 import prettier from 'eslint-plugin-prettier';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRecommended from 'eslint-plugin-react/configs/recommended.js';
 import prettierRecommended from 'eslint-plugin-prettier/recommended';
+import globals from 'globals';
 import js from '@eslint/js';
 
 export default [
@@ -13,6 +13,11 @@ export default [
         files: ['client/**/*.jsx', 'server/**/*.js', 'test/server/**/*.js'],
         ignores: ['coverage'],
         languageOptions: {
+            ...reactRecommended.languageOptions,
+            globals: {
+                ...globals.browser,
+                ...globals.node
+            },
             ecmaVersion: 'latest',
             sourceType: 'module',
             parserOptions: {
@@ -21,8 +26,12 @@ export default [
                 }
             }
         },
-        plugins: { react: react, prettier: prettier, reactHooks: reactHooks },
-        rules: { 'react/prop-types': 'off' },
+        plugins: { prettier, reactHooks },
+        rules: {
+            'react/prop-types': 'off',
+            'react/no-deprecated': 'off',
+            'react/no-string-refs': 'off'
+        },
         settings: {
             react: {
                 version: 'detect'

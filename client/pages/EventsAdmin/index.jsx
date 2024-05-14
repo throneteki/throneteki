@@ -52,8 +52,8 @@ class EventsAdmin extends React.Component {
                             </tr>
                         </thead>
                         <tbody>
-                            {events.map((event) => (
-                                <tr>
+                            {events.map((event, index) => (
+                                <tr key={index}>
                                     <td>{event.name}</td>
                                     <td>
                                         <button

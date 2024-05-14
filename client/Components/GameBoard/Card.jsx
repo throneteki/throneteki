@@ -401,7 +401,7 @@ class InnerCard extends React.Component {
 
     get statusClass() {
         if (!this.props.card) {
-            return;
+            return undefined;
         }
 
         if (this.props.card.selected) {
@@ -425,6 +425,8 @@ class InnerCard extends React.Component {
         } else if (this.props.card.new) {
             return 'new';
         }
+
+        return undefined;
     }
 
     render() {
