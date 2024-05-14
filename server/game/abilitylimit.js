@@ -53,28 +53,28 @@ class RepeatableAbilityLimit extends FixedAbilityLimit {
 
 var AbilityLimit = {};
 
-AbilityLimit.fixed = function(max) {
+AbilityLimit.fixed = function (max) {
     return new FixedAbilityLimit(max);
 };
 
-AbilityLimit.repeatable = function(max, eventName) {
+AbilityLimit.repeatable = function (max, eventName) {
     return new RepeatableAbilityLimit(max, eventName);
 };
 
-AbilityLimit.perChallenge = function(max) {
+AbilityLimit.perChallenge = function (max) {
     return new RepeatableAbilityLimit(max, 'onChallengeFinished');
 };
 
-AbilityLimit.perPhase = function(max) {
+AbilityLimit.perPhase = function (max) {
     return new RepeatableAbilityLimit(max, 'onPhaseEnded');
 };
 
-AbilityLimit.perRound = function(max) {
+AbilityLimit.perRound = function (max) {
     return new RepeatableAbilityLimit(max, 'onRoundEnded');
 };
 
-AbilityLimit.perGame = function(max) {
+AbilityLimit.perGame = function (max) {
     return new RepeatableAbilityLimit(max, 'onGameEnded');
 };
 
-module.exports = AbilityLimit;
+export default AbilityLimit;

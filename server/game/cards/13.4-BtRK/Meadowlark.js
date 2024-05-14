@@ -1,12 +1,12 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
-const {Tokens} = require('../../Constants');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
+import { Tokens } from '../../Constants/index.js';
 
 class Meadowlark extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onPlotRevealed: event => event.plot.controller === this.controller
+                onPlotRevealed: (event) => event.plot.controller === this.controller
             },
             message: '{player} uses {source} to place 1 journey token on {source}',
             gameAction: GameActions.placeToken({
@@ -20,14 +20,18 @@ class Meadowlark extends DrawCard {
             cost: ability.costs.sacrificeSelf(),
             message: {
                 format: '{player} sacrifices {costs.sacrifice} to search their deck for a character with printed cost {tokens} or lower',
-                args: { tokens: context => this.numberOfJourneyTokens(context) }
+                args: { tokens: (context) => this.numberOfJourneyTokens(context) }
             },
             gameAction: GameActions.search({
                 title: 'Select a character',
-                match: { type: 'character', condition: (card, context) => card.getPrintedCost() <= this.numberOfJourneyTokens(context) },
+                match: {
+                    type: 'character',
+                    condition: (card, context) =>
+                        card.getPrintedCost() <= this.numberOfJourneyTokens(context)
+                },
                 reveal: false,
                 message: '{player} {gameAction}',
-                gameAction: GameActions.putIntoPlay(context => ({
+                gameAction: GameActions.putIntoPlay((context) => ({
                     card: context.searchTarget
                 }))
             })
@@ -41,4 +45,4 @@ class Meadowlark extends DrawCard {
 
 Meadowlark.code = '13076';
 
-module.exports = Meadowlark;
+export default Meadowlark;

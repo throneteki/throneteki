@@ -1,4 +1,4 @@
-const AgendaCard = require('../../agendacard.js');
+import AgendaCard from '../../agendacard.js';
 
 class UnitingTheSevenKingdoms extends AgendaCard {
     setupCardAbilities(ability) {
@@ -7,7 +7,7 @@ class UnitingTheSevenKingdoms extends AgendaCard {
             effect: ability.effects.increaseCost({
                 playingTypes: ['marshal', 'play'],
                 amount: 1,
-                match: card => card.isOutOfFaction()
+                match: (card) => card.isOutOfFaction()
             })
         });
     }
@@ -15,4 +15,4 @@ class UnitingTheSevenKingdoms extends AgendaCard {
 
 UnitingTheSevenKingdoms.code = '00004';
 
-module.exports = UnitingTheSevenKingdoms;
+export default UnitingTheSevenKingdoms;

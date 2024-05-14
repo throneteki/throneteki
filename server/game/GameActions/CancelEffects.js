@@ -1,4 +1,4 @@
-const GameAction = require('./GameAction');
+import GameAction from './GameAction.js';
 
 class CancelEffects extends GameAction {
     constructor() {
@@ -10,10 +10,10 @@ class CancelEffects extends GameAction {
     }
 
     createEvent({ event }) {
-        return this.event('onEffectsCanceled', { canceledEvent: event }, event => {
+        return this.event('onEffectsCanceled', { canceledEvent: event }, (event) => {
             event.canceledEvent.cancel();
         });
     }
 }
 
-module.exports = new CancelEffects();
+export default new CancelEffects();

@@ -1,7 +1,7 @@
-describe('doesNotKneelAsAttacker', function() {
-    integration(function() {
-        describe('when the character is declared as an attacker', function() {
-            beforeEach(function() {
+describe('doesNotKneelAsAttacker', function () {
+    integration(function () {
+        describe('when the character is declared as an attacker', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('stark', [
                     'A Noble Cause',
                     'Ser Jaime Lannister (Core)'
@@ -23,17 +23,18 @@ describe('doesNotKneelAsAttacker', function() {
                 this.player1.clickPrompt('Done');
             });
 
-            it('should not kneel the character', function() {
+            it('should not kneel the character', function () {
                 expect(this.game.currentChallenge.isAttacking(this.character));
                 expect(this.character.kneeled).toBe(false);
             });
         });
 
-        describe('when there are multiple does-not-kneel effects in play', function() {
-            beforeEach(function() {
+        describe('when there are multiple does-not-kneel effects in play', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('stark', [
                     'A Noble Cause',
-                    'The Blackfish (WotN)', 'The Wolf King'
+                    'The Blackfish (WotN)',
+                    'The Wolf King'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
@@ -67,7 +68,7 @@ describe('doesNotKneelAsAttacker', function() {
                 this.player1.clickPrompt('Done');
             });
 
-            it('should not reset the original effect', function() {
+            it('should not reset the original effect', function () {
                 // Blackfish should still be standing from his own effect
                 expect(this.character.kneeled).toBe(false);
             });

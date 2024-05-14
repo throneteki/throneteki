@@ -1,16 +1,22 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class PoorFellows extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.winner === this.controller && this.isAttacking() &&
-                                         this.canChangeGameState()
+                afterChallenge: (event) =>
+                    event.challenge.winner === this.controller &&
+                    this.isAttacking() &&
+                    this.canChangeGameState()
             },
-            handler: context => {
+            handler: (context) => {
                 let opponent = context.event.challenge.loser;
-                this.game.addMessage('{0} uses {1} to have {2} choose between drawing 1 card or gaining 1 power',
-                    context.player, this, opponent);
+                this.game.addMessage(
+                    '{0} uses {1} to have {2} choose between drawing 1 card or gaining 1 power',
+                    context.player,
+                    this,
+                    opponent
+                );
 
                 this.game.promptWithMenu(opponent, this, {
                     activePrompt: {
@@ -45,4 +51,4 @@ class PoorFellows extends DrawCard {
 
 PoorFellows.code = '11057';
 
-module.exports = PoorFellows;
+export default PoorFellows;

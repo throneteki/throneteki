@@ -1,13 +1,16 @@
-describe('WraithsInTheirMidst', function() {
-    integration(function() {
-        beforeEach(function() {
+describe('WraithsInTheirMidst', function () {
+    integration(function () {
+        beforeEach(function () {
             const deck1 = this.buildDeck('greyjoy', [
-                'Wraiths in Their Midst', 'A Noble Cause',
+                'Wraiths in Their Midst',
+                'A Noble Cause',
                 'Alannys Greyjoy (Core)'
             ]);
             const deck2 = this.buildDeck('lannister', [
                 '"The Rains of Castamere"',
-                'A Noble Cause', 'A Feast for Crows', 'Filthy Accusations',
+                'A Noble Cause',
+                'A Feast for Crows',
+                'Filthy Accusations',
                 'Tywin Lannister (Core)'
             ]);
             this.player = this.player1Object;
@@ -26,34 +29,34 @@ describe('WraithsInTheirMidst', function() {
             this.filthyAccusations = this.player2.findCardByName('Filthy Accusations');
         });
 
-        describe('when played against a plot that would not be reduced below 2', function() {
-            beforeEach(function() {
+        describe('when played against a plot that would not be reduced below 2', function () {
+            beforeEach(function () {
                 this.player1.selectPlot('Wraiths in Their Midst');
                 this.player2.selectPlot(this.nobleCause);
                 this.selectFirstPlayer(this.player1);
             });
 
-            it('should reduce the reserve by the full amount', function() {
+            it('should reduce the reserve by the full amount', function () {
                 // Reduce 6 reserve by 2 from plot, 1 by Alannys
                 expect(this.player2Object.getTotalReserve()).toBe(3);
             });
         });
 
-        describe('when played against a plot that would be reduced below 2', function() {
-            beforeEach(function() {
+        describe('when played against a plot that would be reduced below 2', function () {
+            beforeEach(function () {
                 this.player1.selectPlot('Wraiths in Their Midst');
                 this.player2.selectPlot(this.feastForCrows);
                 this.selectFirstPlayer(this.player1);
             });
 
-            it('should reduce the reserve and cap at the 2 minimum', function() {
+            it('should reduce the reserve and cap at the 2 minimum', function () {
                 // Reduce 4 reserve by 2 from plot, 1 by Alannys, min 2.
                 expect(this.player2Object.getTotalReserve()).toBe(2);
             });
         });
 
-        describe('when Rains brings out a new plot', function() {
-            beforeEach(function() {
+        describe('when Rains brings out a new plot', function () {
+            beforeEach(function () {
                 this.player1.selectPlot('Wraiths in Their Midst');
                 this.player2.selectPlot(this.feastForCrows);
                 this.selectFirstPlayer(this.player2);
@@ -66,14 +69,14 @@ describe('WraithsInTheirMidst', function() {
                 this.player2.clickCard(this.filthyAccusations);
             });
 
-            it('should reduce the new plot revealed', function() {
+            it('should reduce the new plot revealed', function () {
                 // Reduce 6 by 2 from plot, 0 from Alannys since not first player
                 expect(this.player2Object.getTotalReserve()).toBe(4);
             });
         });
 
-        describe('when a player reconnects after revealing Wraiths', function() {
-            beforeEach(function() {
+        describe('when a player reconnects after revealing Wraiths', function () {
+            beforeEach(function () {
                 this.player1.selectPlot('Wraiths in Their Midst');
                 this.player2.selectPlot('A Noble Cause');
                 this.selectFirstPlayer(this.player2);
@@ -90,7 +93,7 @@ describe('WraithsInTheirMidst', function() {
                 this.completeChallengesPhase();
             });
 
-            it('should not get a NaN reserve prompt', function() {
+            it('should not get a NaN reserve prompt', function () {
                 expect(this.player2Object.getTotalReserve()).toBe(4);
             });
         });

@@ -1,7 +1,7 @@
-const Phase = require('./phase.js');
-const SimpleStep = require('./simplestep.js');
-const ActionWindow = require('./actionwindow.js');
-const GameActions = require('../GameActions');
+import Phase from './phase.js';
+import SimpleStep from './simplestep.js';
+import ActionWindow from './actionwindow.js';
+import GameActions from '../GameActions/index.js';
 
 class DrawPhase extends Phase {
     constructor(game) {
@@ -14,11 +14,9 @@ class DrawPhase extends Phase {
 
     draw() {
         const players = this.game.getPlayers();
-        const actions = players.map(player => this.createAction(player));
+        const actions = players.map((player) => this.createAction(player));
 
-        this.game.resolveGameAction(
-            GameActions.simultaneously(actions)
-        );
+        this.game.resolveGameAction(GameActions.simultaneously(actions));
     }
 
     createAction(player) {
@@ -26,10 +24,10 @@ class DrawPhase extends Phase {
             amount: player.drawPhaseCards,
             player,
             reason: 'drawPhase'
-        }).thenExecute(event => {
+        }).thenExecute((event) => {
             this.game.addMessage('{0} draws {1} cards', event.player, event.amount);
         });
     }
 }
 
-module.exports = DrawPhase;
+export default DrawPhase;

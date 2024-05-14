@@ -1,12 +1,17 @@
-describe('Valyrian\'s Crew', function() {
-    beforeAll(function() {
-        this.setupTopCardUnderCrew = function(cardName) {
+describe("Valyrian's Crew", function () {
+    beforeAll(function () {
+        this.setupTopCardUnderCrew = function (cardName) {
             const deck1 = this.buildDeck('baratheon', [
-                'Trading with the Pentoshi', 'A Noble Cause', 'A Noble Cause',
-                'Valyrian\'s Crew', 'Dragonstone Faithful'
+                'Trading with the Pentoshi',
+                'A Noble Cause',
+                'A Noble Cause',
+                "Valyrian's Crew",
+                'Dragonstone Faithful'
             ]);
             const deck2 = this.buildDeck('stark', [
-                'Trading with the Pentoshi', 'A Noble Cause', 'Blood of the Dragon',
+                'Trading with the Pentoshi',
+                'A Noble Cause',
+                'Blood of the Dragon',
                 { name: cardName, count: 12 }
             ]);
             this.player1.selectDeck(deck1);
@@ -14,7 +19,7 @@ describe('Valyrian\'s Crew', function() {
             this.startGame();
             this.keepStartingHands();
 
-            this.crew = this.player1.findCardByName('Valyrian\'s Crew', 'hand');
+            this.crew = this.player1.findCardByName("Valyrian's Crew", 'hand');
 
             this.player1.clickCard(this.crew);
 
@@ -45,13 +50,13 @@ describe('Valyrian\'s Crew', function() {
         };
     });
 
-    integration(function() {
-        describe('when winning a challenge', function() {
-            beforeEach(function() {
+    integration(function () {
+        describe('when winning a challenge', function () {
+            beforeEach(function () {
                 this.setupTopCardUnderCrew('Arya Stark (Core)');
             });
 
-            it('should add the top card as a facedown attachment', function() {
+            it('should add the top card as a facedown attachment', function () {
                 expect(this.crew.attachments).toContain(this.topCard);
                 expect(this.topCard.facedown).toBe(true);
                 expect(this.topCard).toBeControlledBy(this.player1);
@@ -59,8 +64,8 @@ describe('Valyrian\'s Crew', function() {
                 expect(this.topCard.isTerminal()).toBe(true);
             });
 
-            describe('and the stealing player tries to marshal it', function() {
-                beforeEach(function() {
+            describe('and the stealing player tries to marshal it', function () {
+                beforeEach(function () {
                     // Skip claim from challenge
                     this.player1.clickPrompt('Continue');
                     this.completeChallengesPhase();
@@ -74,7 +79,7 @@ describe('Valyrian\'s Crew', function() {
                     this.selectFirstPlayer(this.player1);
                 });
 
-                it('should allow the character to be marshalled', function() {
+                it('should allow the character to be marshalled', function () {
                     this.player1.clickCard(this.topCard);
 
                     expect(this.player1Object.cardsInPlay).toContain(this.topCard);
@@ -83,7 +88,7 @@ describe('Valyrian\'s Crew', function() {
                     expect(this.topCard).toBeControlledBy(this.player1);
                 });
 
-                it('should apply effects to the newly marshalled card', function() {
+                it('should apply effects to the newly marshalled card', function () {
                     this.player1.clickCard(this.topCard);
 
                     // Printed 2 STR - 1 STR from Blood of the Dragon
@@ -91,8 +96,8 @@ describe('Valyrian\'s Crew', function() {
                 });
             });
 
-            describe('and the opponent tries to marshal a copy of that card', function() {
-                beforeEach(function() {
+            describe('and the opponent tries to marshal a copy of that card', function () {
+                beforeEach(function () {
                     // Skip claim from challenge
                     this.player1.clickPrompt('Continue');
                     this.completeChallengesPhase();
@@ -110,7 +115,7 @@ describe('Valyrian\'s Crew', function() {
                     this.player2.clickCard(this.character);
                 });
 
-                it('should allow the character to be marshalled', function() {
+                it('should allow the character to be marshalled', function () {
                     // A facedown character is not considered in play, so even
                     // though the opponent controls a copy of the card, because
                     // it isn't in play as that card, it should not prevent the
@@ -120,24 +125,24 @@ describe('Valyrian\'s Crew', function() {
             });
         });
 
-        describe('when attaching a facedown attachment', function() {
-            beforeEach(function() {
+        describe('when attaching a facedown attachment', function () {
+            beforeEach(function () {
                 this.setupTopCardUnderCrew('Longclaw');
             });
 
-            it('should allow it to be attached regardless of restrictions', function() {
+            it('should allow it to be attached regardless of restrictions', function () {
                 // Longclaw can normally only be attached to a Night's Watch
                 // character, but while facedown does not have such a restriction
                 expect(this.crew.attachments).toContain(this.topCard);
             });
 
-            it('should not grant effects that attachment normally grants', function() {
+            it('should not grant effects that attachment normally grants', function () {
                 expect(this.crew.getStrength()).toBe(this.crew.getPrintedStrength());
             });
         });
 
-        describe('when there\'s a valid facedown attachment', function() {
-            beforeEach(function() {
+        describe("when there's a valid facedown attachment", function () {
+            beforeEach(function () {
                 this.setupTopCardUnderCrew('Noble Lineage');
 
                 // Skip claim
@@ -153,7 +158,7 @@ describe('Valyrian\'s Crew', function() {
                 this.selectFirstPlayer(this.player1);
             });
 
-            it('should allow it to be marshalled', function() {
+            it('should allow it to be marshalled', function () {
                 this.player1.clickCard(this.topCard);
                 this.player1.clickCard(this.crew);
 
@@ -163,15 +168,15 @@ describe('Valyrian\'s Crew', function() {
             });
         });
 
-        describe('when there\'s an action-based event', function() {
-            beforeEach(function() {
+        describe("when there's an action-based event", function () {
+            beforeEach(function () {
                 this.setupTopCardUnderCrew('Nightmares');
 
                 // Skip claim
                 this.player1.clickPrompt('Continue');
             });
 
-            it('should allow it to be played', function() {
+            it('should allow it to be played', function () {
                 this.player1.clickCard(this.topCard);
                 this.player1.clickCard(this.crew);
 
@@ -179,12 +184,12 @@ describe('Valyrian\'s Crew', function() {
             });
         });
 
-        describe('when there\'s a triggered event', function() {
-            beforeEach(function() {
-                this.setupTopCardUnderCrew('Olenna\'s Cunning');
+        describe("when there's a triggered event", function () {
+            beforeEach(function () {
+                this.setupTopCardUnderCrew("Olenna's Cunning");
             });
 
-            it('should allow it to be played', function() {
+            it('should allow it to be played', function () {
                 expect(this.player1).toAllowAbilityTrigger(this.topCard);
             });
         });

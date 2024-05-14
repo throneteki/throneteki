@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class JonSnow extends DrawCard {
     setupCardAbilities(ability) {
@@ -10,13 +10,16 @@ class JonSnow extends DrawCard {
     }
 
     hasOtherAttackingNightsWatch() {
-        return this.controller.anyCardsInPlay(card => card.isAttacking() &&
-                                                      card.isFaction('thenightswatch') &&
-                                                      card.getType() === 'character' &&
-                                                      card !== this);
+        return this.controller.anyCardsInPlay(
+            (card) =>
+                card.isAttacking() &&
+                card.isFaction('thenightswatch') &&
+                card.getType() === 'character' &&
+                card !== this
+        );
     }
 }
 
 JonSnow.code = '01124';
 
-module.exports = JonSnow;
+export default JonSnow;

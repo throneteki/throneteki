@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const TextHelper = require('../../TextHelper');
+import DrawCard from '../../drawcard.js';
+import TextHelper from '../../TextHelper.js';
 
 class LionGate extends DrawCard {
     setupCardAbilities(ability) {
@@ -8,13 +8,17 @@ class LionGate extends DrawCard {
         });
         this.action({
             title: 'Sacrifice to draw 2 cards',
-            condition: context => context.player.shadows.length >= 2,
+            condition: (context) => context.player.shadows.length >= 2,
             phase: 'challenge',
             cost: ability.costs.sacrificeSelf(),
-            handler: context => {
+            handler: (context) => {
                 let cards = context.player.drawCardsToHand(2).length;
-                this.game.addMessage('{0} sacrifices {1} to draw {2}',
-                    context.player, this, TextHelper.count(cards, 'card'));
+                this.game.addMessage(
+                    '{0} sacrifices {1} to draw {2}',
+                    context.player,
+                    this,
+                    TextHelper.count(cards, 'card')
+                );
             }
         });
     }
@@ -22,4 +26,4 @@ class LionGate extends DrawCard {
 
 LionGate.code = '13010';
 
-module.exports = LionGate;
+export default LionGate;

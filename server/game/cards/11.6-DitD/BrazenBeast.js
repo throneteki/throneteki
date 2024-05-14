@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class BrazenBeast extends DrawCard {
     setupCardAbilities(ability) {
@@ -10,8 +10,12 @@ class BrazenBeast extends DrawCard {
             location: 'discard pile',
             phase: 'marshal',
             cost: ability.costs.payGold(3),
-            handler: context => {
-                this.game.addMessage('{0} pays 3 gold to put {1} into shadows', context.player, this);
+            handler: (context) => {
+                this.game.addMessage(
+                    '{0} pays 3 gold to put {1} into shadows',
+                    context.player,
+                    this
+                );
                 context.player.putIntoShadows(this);
             }
         });
@@ -20,4 +24,4 @@ class BrazenBeast extends DrawCard {
 
 BrazenBeast.code = '11113';
 
-module.exports = BrazenBeast;
+export default BrazenBeast;

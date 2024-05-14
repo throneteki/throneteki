@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class VenomousBlade extends DrawCard {
     setupCardAbilities(ability) {
@@ -8,14 +8,17 @@ class VenomousBlade extends DrawCard {
         });
         this.reaction({
             when: {
-                onCardEntersPlay: event => event.card === this
+                onCardEntersPlay: (event) => event.card === this
             },
             target: {
                 type: 'select',
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.getPrintedStrength() <= 2
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    card.getPrintedStrength() <= 2
             },
-            handler: context => {
-                this.atEndOfPhase(ability => ({
+            handler: (context) => {
+                this.atEndOfPhase((ability) => ({
                     match: context.target,
                     effect: ability.effects.poison
                 }));
@@ -26,4 +29,4 @@ class VenomousBlade extends DrawCard {
 
 VenomousBlade.code = '04036';
 
-module.exports = VenomousBlade;
+export default VenomousBlade;

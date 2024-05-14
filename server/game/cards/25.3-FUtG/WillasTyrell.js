@@ -1,9 +1,14 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
-class WillasTyrell extends DrawCard {    
+class WillasTyrell extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.controller.anyCardsInPlay(card => this.game.isDuringChallenge({ attackingAlone: card }) || this.game.isDuringChallenge({ defendingAlone: card })),
+            condition: () =>
+                this.controller.anyCardsInPlay(
+                    (card) =>
+                        this.game.isDuringChallenge({ attackingAlone: card }) ||
+                        this.game.isDuringChallenge({ defendingAlone: card })
+                ),
             effect: ability.effects.contributeCharacterStrength(this)
         });
     }
@@ -11,4 +16,4 @@ class WillasTyrell extends DrawCard {
 
 WillasTyrell.code = '25055';
 
-module.exports = WillasTyrell;
+export default WillasTyrell;

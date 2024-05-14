@@ -1,10 +1,14 @@
-describe('nested ability sequences', function() {
-    integration(function() {
-        describe('abilities already in play', function() {
-            beforeEach(function() {
+describe('nested ability sequences', function () {
+    integration(function () {
+        describe('abilities already in play', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('stark', [
                     'Trading with the Pentoshi',
-                    'Robb Stark (Core)', 'Arya Stark (WotN)', 'Catelyn Stark (WotN)', 'Winterfell Steward', 'Winterfell Steward'
+                    'Robb Stark (Core)',
+                    'Arya Stark (WotN)',
+                    'Catelyn Stark (WotN)',
+                    'Winterfell Steward',
+                    'Winterfell Steward'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
@@ -14,7 +18,10 @@ describe('nested ability sequences', function() {
                 this.robb = this.player1.findCardByName('Robb Stark (Core)', 'hand');
                 this.arya = this.player1.findCardByName('Arya Stark (WotN)', 'hand');
                 this.cat = this.player1.findCardByName('Catelyn Stark (WotN)', 'hand');
-                [this.steward1, this.steward2] = this.player1.filterCardsByName('Winterfell Steward', 'hand');
+                [this.steward1, this.steward2] = this.player1.filterCardsByName(
+                    'Winterfell Steward',
+                    'hand'
+                );
 
                 this.enemyRobb = this.player2.findCardByName('Robb Stark (Core)', 'hand');
 
@@ -54,25 +61,25 @@ describe('nested ability sequences', function() {
                 this.player1.clickCard(this.steward2);
             });
 
-            it('should prompt with all available reactions', function() {
+            it('should prompt with all available reactions', function () {
                 expect(this.player1).toAllowAbilityTrigger('Robb Stark');
                 expect(this.player1).toAllowAbilityTrigger('Arya Stark');
                 expect(this.player1).toAllowAbilityTrigger('Catelyn Stark');
             });
 
-            describe('when an ability triggers a new ability window', function() {
-                beforeEach(function() {
+            describe('when an ability triggers a new ability window', function () {
+                beforeEach(function () {
                     // Arya Stark sacrifices herself, prompt to trigger
                     this.player1.triggerAbility('Arya Stark');
                 });
 
-                it('should prompt again with eligible cards', function() {
+                it('should prompt again with eligible cards', function () {
                     expect(this.player1).toAllowAbilityTrigger('Robb Stark');
                     expect(this.player1).toAllowAbilityTrigger('Catelyn Stark');
                     expect(this.player1).not.toAllowAbilityTrigger('Arya Stark');
                 });
 
-                it('should resolve the current trigger before continuing', function() {
+                it('should resolve the current trigger before continuing', function () {
                     this.player1.triggerAbility('Catelyn Stark');
 
                     expect(this.cat.power).toBe(1);
@@ -81,7 +88,7 @@ describe('nested ability sequences', function() {
                     expect(this.player1).not.toAllowAbilityTrigger('Arya Stark');
                 });
 
-                it('should continue with the previous reaction window once the current trigger is resolved', function() {
+                it('should continue with the previous reaction window once the current trigger is resolved', function () {
                     this.player1.triggerAbility('Catelyn Stark');
                     this.player1.clickPrompt('Pass');
 
@@ -93,7 +100,7 @@ describe('nested ability sequences', function() {
                     expect(this.player1).not.toAllowAbilityTrigger('Arya Stark');
                 });
 
-                it('should not allow abilities to trigger past their limit upon rewinding', function() {
+                it('should not allow abilities to trigger past their limit upon rewinding', function () {
                     // Gain power for Catelyn from Arya sacrifice (1)
                     this.player1.triggerAbility('Catelyn Stark');
                     this.player1.clickPrompt('Pass');
@@ -119,11 +126,13 @@ describe('nested ability sequences', function() {
             });
         });
 
-        describe('when an eligible event is drawn mid-sequence', function() {
-            beforeEach(function() {
+        describe('when an eligible event is drawn mid-sequence', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('stark', [
                     'A Song of Summer',
-                    'The Blackfish (WotN)', 'Put to the Torch', 'Heart Tree Grove'
+                    'The Blackfish (WotN)',
+                    'Put to the Torch',
+                    'Heart Tree Grove'
                 ]);
 
                 this.player1.selectDeck(deck);
@@ -158,7 +167,7 @@ describe('nested ability sequences', function() {
                 this.player1.triggerAbility('The Blackfish');
             });
 
-            it('should prompt for the drawn card when eligible', function() {
+            it('should prompt for the drawn card when eligible', function () {
                 expect(this.eventCard.location).toBe('hand');
                 expect(this.player1).toAllowAbilityTrigger('Put to the Torch');
             });

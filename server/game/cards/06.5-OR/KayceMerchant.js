@@ -1,15 +1,21 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class KayceMerchant extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onIncomeCollected: event => event.player === this.controller && this.controller.canGainGold()
+                onIncomeCollected: (event) =>
+                    event.player === this.controller && this.controller.canGainGold()
             },
             cost: ability.costs.discardGold(),
             handler: () => {
                 let gold = this.game.addGold(this.controller, 2);
-                this.game.addMessage('{0} discards 1 gold from {1} to gain {2} gold', this.controller, this, gold);
+                this.game.addMessage(
+                    '{0} discards 1 gold from {1} to gain {2} gold',
+                    this.controller,
+                    this,
+                    gold
+                );
             }
         });
     }
@@ -17,4 +23,4 @@ class KayceMerchant extends DrawCard {
 
 KayceMerchant.code = '06089';
 
-module.exports = KayceMerchant;
+export default KayceMerchant;

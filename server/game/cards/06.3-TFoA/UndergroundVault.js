@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class UndergroundVault extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,7 +7,7 @@ class UndergroundVault extends DrawCard {
             phase: 'marshal',
             condition: () => this.controller.canGainGold(),
             cost: ability.costs.kneelSelf(),
-            handler: context => {
+            handler: (context) => {
                 let gold = this.opponentHasIncomeOf5() ? 2 : 1;
                 gold = this.game.addGold(context.player, gold);
 
@@ -18,10 +18,10 @@ class UndergroundVault extends DrawCard {
 
     opponentHasIncomeOf5() {
         let opponents = this.game.getOpponents(this.controller);
-        return opponents.some(opponent => opponent.activePlot.getIncome() >= 5);
+        return opponents.some((opponent) => opponent.activePlot.getIncome() >= 5);
     }
 }
 
 UndergroundVault.code = '06046';
 
-module.exports = UndergroundVault;
+export default UndergroundVault;

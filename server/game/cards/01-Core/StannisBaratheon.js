@@ -1,14 +1,14 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class StannisBaratheon extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetController: 'any',
-            effect: ability.effects.cannotStandMoreThan(2, card => card.getType() === 'character')
+            effect: ability.effects.cannotStandMoreThan(2, (card) => card.getType() === 'character')
         });
     }
 }
 
 StannisBaratheon.code = '01052';
 
-module.exports = StannisBaratheon;
+export default StannisBaratheon;

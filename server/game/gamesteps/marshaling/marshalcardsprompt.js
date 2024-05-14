@@ -1,4 +1,4 @@
-const UiPrompt = require('../uiprompt.js');
+import UiPrompt from '../uiprompt.js';
 
 class MarshalCardsPrompt extends UiPrompt {
     constructor(game, player) {
@@ -13,9 +13,7 @@ class MarshalCardsPrompt extends UiPrompt {
     activePrompt() {
         return {
             menuTitle: 'Marshal your cards',
-            buttons: [
-                { text: 'Done' }
-            ]
+            buttons: [{ text: 'Done' }]
         };
     }
 
@@ -24,7 +22,7 @@ class MarshalCardsPrompt extends UiPrompt {
     }
 
     onMenuCommand(player) {
-        if(this.player !== player) {
+        if (this.player !== player) {
             return false;
         }
 
@@ -37,4 +35,4 @@ class MarshalCardsPrompt extends UiPrompt {
     }
 }
 
-module.exports = MarshalCardsPrompt;
+export default MarshalCardsPrompt;

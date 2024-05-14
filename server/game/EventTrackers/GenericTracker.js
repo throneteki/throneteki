@@ -9,7 +9,7 @@ class GenericTracker {
     constructor(game, startingEvent, endingEvent) {
         this.events = [];
 
-        game.on(startingEvent, event => this.trackEvent(event));
+        game.on(startingEvent, (event) => this.trackEvent(event));
         game.on(endingEvent, () => this.clearEvents());
     }
 
@@ -30,4 +30,4 @@ class GenericTracker {
     }
 }
 
-module.exports = GenericTracker;
+export default GenericTracker;

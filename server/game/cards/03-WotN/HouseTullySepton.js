@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class HouseTullySepton extends DrawCard {
     setupCardAbilities(ability) {
@@ -6,17 +6,23 @@ class HouseTullySepton extends DrawCard {
             title: 'Reduce next marshalled character',
             phase: 'marshal',
             limit: ability.limit.perPhase(1),
-            cost: ability.costs.discardPower(1, card => card.getType() === 'character'),
-            handler: context => {
-                this.untilEndOfPhase(ability => ({
+            cost: ability.costs.discardPower(1, (card) => card.getType() === 'character'),
+            handler: (context) => {
+                this.untilEndOfPhase((ability) => ({
                     effect: ability.effects.reduceNextMarshalledCardCost(
                         2,
-                        card => (card.hasTrait('House Tully') || card.hasTrait('The Seven')) && card.getType() === 'character'
+                        (card) =>
+                            (card.hasTrait('House Tully') || card.hasTrait('The Seven')) &&
+                            card.getType() === 'character'
                     )
                 }));
 
-                this.game.addMessage('{0} uses {1} and discards a power from {2} to reduce the cost of the next House Tully or The Seven character they marshal this phase by 2',
-                    context.player, this, context.costs.discardPower);
+                this.game.addMessage(
+                    '{0} uses {1} and discards a power from {2} to reduce the cost of the next House Tully or The Seven character they marshal this phase by 2',
+                    context.player,
+                    this,
+                    context.costs.discardPower
+                );
             }
         });
     }
@@ -24,4 +30,4 @@ class HouseTullySepton extends DrawCard {
 
 HouseTullySepton.code = '03015';
 
-module.exports = HouseTullySepton;
+export default HouseTullySepton;

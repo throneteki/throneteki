@@ -1,9 +1,14 @@
-describe('intimidate', function() {
-    integration(function() {
-        beforeEach(function() {
+describe('intimidate', function () {
+    integration(function () {
+        beforeEach(function () {
             const deck = this.buildDeck('baratheon', [
                 'Trading with the Pentoshi',
-                'Robert Baratheon (Core)', 'Dragonstone Faithful', 'Bastard in Hiding', 'Maester Cressen', 'Gendry (NMG)', 'Grey Wind (Core)'
+                'Robert Baratheon (Core)',
+                'Dragonstone Faithful',
+                'Bastard in Hiding',
+                'Maester Cressen',
+                'Gendry (NMG)',
+                'Grey Wind (Core)'
             ]);
             this.player1.selectDeck(deck);
             this.player2.selectDeck(deck);
@@ -35,8 +40,8 @@ describe('intimidate', function() {
             this.player2.clickPrompt('Done');
         });
 
-        describe('when an attacker with intimidate wins', function() {
-            beforeEach(function() {
+        describe('when an attacker with intimidate wins', function () {
+            beforeEach(function () {
                 this.player1.clickPrompt('Power');
                 this.player1.clickCard('Robert Baratheon', 'play area');
                 this.player1.clickPrompt('Done');
@@ -51,25 +56,27 @@ describe('intimidate', function() {
                 this.player1.clickPrompt('Apply Claim');
             });
 
-            it('should prompt to kneel characters', function() {
-                expect(this.player1).toHavePrompt('Select a character to intimidate for Robert Baratheon');
+            it('should prompt to kneel characters', function () {
+                expect(this.player1).toHavePrompt(
+                    'Select a character to intimidate for Robert Baratheon'
+                );
             });
 
-            it('should allow a character with strengt up to the winning strength difference to be knelt', function() {
+            it('should allow a character with strengt up to the winning strength difference to be knelt', function () {
                 this.player1.clickCard(this.bastard);
 
                 expect(this.bastard.kneeled).toBe(true);
             });
 
-            it('should not allow character above the winning strength difference to be knelt', function() {
+            it('should not allow character above the winning strength difference to be knelt', function () {
                 this.player1.clickCard(this.gendry);
 
                 expect(this.gendry.kneeled).toBe(false);
             });
         });
 
-        describe('when an attacker with multiple intimidates wins', function() {
-            beforeEach(function() {
+        describe('when an attacker with multiple intimidates wins', function () {
+            beforeEach(function () {
                 this.player1.clickPrompt('Military');
                 this.player1.clickCard('Robert Baratheon', 'play area');
                 this.player1.clickCard('Grey Wind', 'play area');
@@ -87,19 +94,25 @@ describe('intimidate', function() {
                 this.player2.clickPrompt('Done');
             });
 
-            it('should prompt only once', function() {
-                expect(this.player1).toHavePrompt('Select a character to intimidate for Robert Baratheon');
+            it('should prompt only once', function () {
+                expect(this.player1).toHavePrompt(
+                    'Select a character to intimidate for Robert Baratheon'
+                );
 
                 this.player1.clickCard(this.gendry);
                 expect(this.gendry.kneeled).toBe(true);
 
-                expect(this.player1).not.toHavePrompt('Select a character to intimidate for Grey Wind');
-                expect(this.player1).not.toHavePrompt('Choose and kneel a character with 10 strength or less');
+                expect(this.player1).not.toHavePrompt(
+                    'Select a character to intimidate for Grey Wind'
+                );
+                expect(this.player1).not.toHavePrompt(
+                    'Choose and kneel a character with 10 strength or less'
+                );
             });
         });
 
-        describe('when an defender with intimidate wins', function() {
-            beforeEach(function() {
+        describe('when an defender with intimidate wins', function () {
+            beforeEach(function () {
                 this.player1.clickPrompt('Done');
 
                 this.player2.clickPrompt('Power');
@@ -114,8 +127,10 @@ describe('intimidate', function() {
                 this.skipActionWindow();
             });
 
-            it('should not prompt for intimidate', function() {
-                expect(this.player1).not.toHavePrompt('Choose and kneel a character with 5 strength or less');
+            it('should not prompt for intimidate', function () {
+                expect(this.player1).not.toHavePrompt(
+                    'Choose and kneel a character with 5 strength or less'
+                );
             });
         });
     });

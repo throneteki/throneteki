@@ -1,5 +1,5 @@
-const BaseAbility = require('../baseability');
-const Costs = require('../costs');
+import BaseAbility from '../baseability.js';
+import Costs from '../costs.js';
 
 class OutOfShadowsAction extends BaseAbility {
     constructor() {
@@ -24,13 +24,25 @@ class OutOfShadowsAction extends BaseAbility {
 
     executeHandler(context) {
         const position = context.source.getShadowPosition();
-        if(context.costs.isDupe) {
-            context.game.addMessage('{0} brings a duplicate of {1} out of shadows (card #{2}) costing {3} gold', context.player, context.source, position, context.costs.gold);
+        if (context.costs.isDupe) {
+            context.game.addMessage(
+                '{0} brings a duplicate of {1} out of shadows (card #{2}) costing {3} gold',
+                context.player,
+                context.source,
+                position,
+                context.costs.gold
+            );
         } else {
-            context.game.addMessage('{0} brings {1} out of shadows (card #{2}) costing {3} gold', context.player, context.source, position, context.costs.gold);
+            context.game.addMessage(
+                '{0} brings {1} out of shadows (card #{2}) costing {3} gold',
+                context.player,
+                context.source,
+                position,
+                context.costs.gold
+            );
         }
         context.player.putIntoPlay(context.source, 'outOfShadows');
     }
 }
 
-module.exports = OutOfShadowsAction;
+export default OutOfShadowsAction;

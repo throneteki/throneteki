@@ -1,22 +1,23 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class PyatPree extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.winner === this.controller && this.isParticipating()
+                afterChallenge: (event) =>
+                    event.challenge.winner === this.controller && this.isParticipating()
             },
             message: {
                 format: '{player} uses {source} to search the top {numCards} cards of their deck for a Targaryen attachment',
-                args: { numCards: context => context.game.currentChallenge.strengthDifference }
+                args: { numCards: (context) => context.game.currentChallenge.strengthDifference }
             },
             gameAction: GameActions.search({
                 title: 'Select a card',
                 match: { type: ['attachment', 'event'], faction: 'targaryen' },
-                topCards: context => context.event.challenge.strengthDifference,
+                topCards: (context) => context.event.challenge.strengthDifference,
                 message: '{player} {gameAction}',
-                gameAction: GameActions.addToHand(context => ({
+                gameAction: GameActions.addToHand((context) => ({
                     card: context.searchTarget
                 }))
             })
@@ -26,4 +27,4 @@ class PyatPree extends DrawCard {
 
 PyatPree.code = '04073';
 
-module.exports = PyatPree;
+export default PyatPree;

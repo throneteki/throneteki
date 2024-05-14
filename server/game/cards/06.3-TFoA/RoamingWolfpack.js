@@ -1,10 +1,11 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class RoamingWolfpack extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.isAttacking(),
-            match: card => card.isAttacking() && card.hasTrait('Direwolf') && card.getType() === 'character',
+            match: (card) =>
+                card.isAttacking() && card.hasTrait('Direwolf') && card.getType() === 'character',
             effect: ability.effects.modifyStrength(2)
         });
     }
@@ -12,4 +13,4 @@ class RoamingWolfpack extends DrawCard {
 
 RoamingWolfpack.code = '06041';
 
-module.exports = RoamingWolfpack;
+export default RoamingWolfpack;

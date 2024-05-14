@@ -1,24 +1,28 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class KnightOfTheReach extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: event => (
+                afterChallenge: (event) =>
                     event.challenge.isMatch({ winner: this.controller, attackingAlone: this }) ||
-                    event.challenge.isMatch({ winner: this.controller, defendingAlone: this }))
+                    event.challenge.isMatch({ winner: this.controller, defendingAlone: this })
             },
             target: {
-                cardCondition: card => (
+                cardCondition: (card) =>
                     card.location === 'play area' &&
                     card.hasTrait('Lady') &&
-                    card.getType() === 'character'),
+                    card.getType() === 'character',
                 gameAction: 'gainPower'
             },
-            handler: context => {
+            handler: (context) => {
                 context.target.modifyPower(1);
-                this.game.addMessage('{0} uses {1} to have {2} gain 1 power',
-                    this.controller, this, context.target);
+                this.game.addMessage(
+                    '{0} uses {1} to have {2} gain 1 power',
+                    this.controller,
+                    this,
+                    context.target
+                );
             }
         });
     }
@@ -26,4 +30,4 @@ class KnightOfTheReach extends DrawCard {
 
 KnightOfTheReach.code = '06023';
 
-module.exports = KnightOfTheReach;
+export default KnightOfTheReach;

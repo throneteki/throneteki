@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TyrionLannister extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,19 +7,29 @@ class TyrionLannister extends DrawCard {
             limit: ability.limit.perPhase(1),
             cost: ability.costs.discardGold(),
             target: {
-                cardCondition: (card, context) => card.location === 'discard pile' && card.getType() === 'character' && card.hasTrait('Mercenary') && context.player.canPutIntoPlay(card)
+                cardCondition: (card, context) =>
+                    card.location === 'discard pile' &&
+                    card.getType() === 'character' &&
+                    card.hasTrait('Mercenary') &&
+                    context.player.canPutIntoPlay(card)
             },
-            handler: context => {
+            handler: (context) => {
                 context.player.putIntoPlay(context.target);
 
-                this.atEndOfPhase(ability => ({
+                this.atEndOfPhase((ability) => ({
                     match: context.target,
                     condition: () => ['play area', 'duplicate'].includes(context.target.location),
                     targetLocation: 'any',
                     effect: ability.effects.moveToBottomOfDeckIfStillInPlay(true)
                 }));
 
-                this.game.addMessage('{0} discards 1 gold from {1} to put {2} into play from {3}\'s discard pile under their control', context.player, this, context.target, context.target.owner);
+                this.game.addMessage(
+                    "{0} discards 1 gold from {1} to put {2} into play from {3}'s discard pile under their control",
+                    context.player,
+                    this,
+                    context.target,
+                    context.target.owner
+                );
             }
         });
     }
@@ -27,4 +37,4 @@ class TyrionLannister extends DrawCard {
 
 TyrionLannister.code = '19014';
 
-module.exports = TyrionLannister;
+export default TyrionLannister;

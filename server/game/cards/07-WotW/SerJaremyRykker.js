@@ -1,9 +1,10 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class SerJaremyRykker extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: card => card !== this && card.hasTrait('Ranger') && card.getType() === 'character',
+            match: (card) =>
+                card !== this && card.hasTrait('Ranger') && card.getType() === 'character',
             effect: ability.effects.addIcon('power')
         });
     }
@@ -11,4 +12,4 @@ class SerJaremyRykker extends DrawCard {
 
 SerJaremyRykker.code = '07008';
 
-module.exports = SerJaremyRykker;
+export default SerJaremyRykker;

@@ -1,11 +1,13 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class BearIslandLoyalist extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.isParticipating(),
-            match: card => this.isOtherParticipatingStark(card),
-            effect: ability.effects.immuneTo(card => card.controller !== this.controller && card.getType() === 'event')
+            match: (card) => this.isOtherParticipatingStark(card),
+            effect: ability.effects.immuneTo(
+                (card) => card.controller !== this.controller && card.getType() === 'event'
+            )
         });
     }
 
@@ -21,4 +23,4 @@ class BearIslandLoyalist extends DrawCard {
 
 BearIslandLoyalist.code = '03012';
 
-module.exports = BearIslandLoyalist;
+export default BearIslandLoyalist;

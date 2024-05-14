@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class AzorAhaiReborn extends DrawCard {
     setupCardAbilities(ability) {
@@ -11,15 +11,16 @@ class AzorAhaiReborn extends DrawCard {
     }
 
     hasAttackingRhllor() {
-        return this.controller.anyCardsInPlay(card => (
-            card.isAttacking() &&
-            card.getType() === 'character' &&
-            card.hasTrait('R\'hllor') &&
-            card !== this.parent
-        ));
+        return this.controller.anyCardsInPlay(
+            (card) =>
+                card.isAttacking() &&
+                card.getType() === 'character' &&
+                card.hasTrait("R'hllor") &&
+                card !== this.parent
+        );
     }
 }
 
 AzorAhaiReborn.code = '14020';
 
-module.exports = AzorAhaiReborn;
+export default AzorAhaiReborn;

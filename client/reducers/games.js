@@ -1,5 +1,5 @@
 function games(state = {}, action) {
-    switch(action.type) {
+    switch (action.type) {
         case 'GAME_SOCKET_CONNECTED':
             return Object.assign({}, state, {
                 socket: action.socket,

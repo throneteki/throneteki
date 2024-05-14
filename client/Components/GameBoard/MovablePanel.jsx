@@ -47,7 +47,7 @@ class MovablePanel extends React.Component {
     }
 
     componentWillReceiveProps(props) {
-        if(props.isDragging) {
+        if (props.isDragging) {
             let style = {
                 position: 'fixed',
                 left: Math.max(props.dragOffset.x, 0),
@@ -56,11 +56,11 @@ class MovablePanel extends React.Component {
 
             const popup = $(this.refs.popup);
 
-            if(style.left + popup.width() > window.innerWidth) {
+            if (style.left + popup.width() > window.innerWidth) {
                 style.left = window.innerWidth - popup.width();
             }
 
-            if(style.top + popup.height() > window.innerHeight) {
+            if (style.top + popup.height() > window.innerHeight) {
                 style.top = window.innerHeight - popup.height();
             }
 
@@ -73,18 +73,22 @@ class MovablePanel extends React.Component {
     render() {
         let style = this.state.position;
 
-        let content = (<div ref='popup' className='popup' style={ style }>
-            {
-                this.props.connectDragSource(
-                    <div className='panel-title' onClick={ event => event.stopPropagation() }>
-                        <span className='text-center'>{ this.props.title }</span>
+        let content = (
+            <div ref='popup' className='popup' style={style}>
+                {this.props.connectDragSource(
+                    <div className='panel-title' onClick={(event) => event.stopPropagation()}>
+                        <span className='text-center'>{this.props.title}</span>
                         <span className='pull-right'>
-                            <a className='close-button glyphicon glyphicon-remove' onClick={ this.props.onCloseClick } />
+                            <a
+                                className='close-button glyphicon glyphicon-remove'
+                                onClick={this.props.onCloseClick}
+                            />
                         </span>
-                    </div>)
-            }
-            { this.props.children }
-        </div >);
+                    </div>
+                )}
+                {this.props.children}
+            </div>
+        );
 
         return content;
     }

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class NorthernRookery extends DrawCard {
     setupCardAbilities() {
@@ -7,7 +7,10 @@ class NorthernRookery extends DrawCard {
         });
         this.reaction({
             when: {
-                onCardEntersPlay: event => event.card === this && event.playingType === 'marshal' && this.controller.canDraw()
+                onCardEntersPlay: (event) =>
+                    event.card === this &&
+                    event.playingType === 'marshal' &&
+                    this.controller.canDraw()
             },
             handler: () => {
                 this.controller.drawCardsToHand(1);
@@ -19,4 +22,4 @@ class NorthernRookery extends DrawCard {
 
 NorthernRookery.code = '02086';
 
-module.exports = NorthernRookery;
+export default NorthernRookery;

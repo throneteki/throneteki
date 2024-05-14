@@ -1,38 +1,34 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheSilverSteed extends DrawCard {
     setupCardAbilities(ability) {
-        this.attachmentRestriction(
-            { trait: 'Dothraki' },
-            { name: 'Daenerys Targaryen' }
-        );
+        this.attachmentRestriction({ trait: 'Dothraki' }, { name: 'Daenerys Targaryen' });
         this.whileAttached({
-            condition: () => (
+            condition: () =>
                 this.game.isDuringChallenge({ challengeType: 'power' }) &&
-                this.parent.isParticipating()
-            ),
+                this.parent.isParticipating(),
             effect: ability.effects.addKeyword('Renown')
         });
         this.reaction({
             when: {
-                onCardPowerGained: event => event.card === this.parent && event.reason === 'renown'
+                onCardPowerGained: (event) =>
+                    event.card === this.parent && event.reason === 'renown'
             },
             message: '{player} sacrifices {source}',
-            handler: context => {
+            handler: (context) => {
                 this.game.resolveGameAction(
-                    GameActions.sacrificeCard({ card: this })
-                        .then(() => ({
-                            message: {
-                                format: 'Then {player} is able to initiate an additional power challenge this phase'
-                            },
-                            handler: () => {
-                                this.untilEndOfPhase(ability => ({
-                                    targetController: 'current',
-                                    effect: ability.effects.mayInitiateAdditionalChallenge('power')
-                                }));
-                            }
-                        })),
+                    GameActions.sacrificeCard({ card: this }).then(() => ({
+                        message: {
+                            format: 'Then {player} is able to initiate an additional power challenge this phase'
+                        },
+                        handler: () => {
+                            this.untilEndOfPhase((ability) => ({
+                                targetController: 'current',
+                                effect: ability.effects.mayInitiateAdditionalChallenge('power')
+                            }));
+                        }
+                    })),
                     context
                 );
             }
@@ -42,4 +38,4 @@ class TheSilverSteed extends DrawCard {
 
 TheSilverSteed.code = '02054';
 
-module.exports = TheSilverSteed;
+export default TheSilverSteed;

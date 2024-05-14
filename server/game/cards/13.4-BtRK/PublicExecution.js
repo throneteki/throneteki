@@ -1,15 +1,16 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class PublicExecution extends DrawCard {
     setupCardAbilities() {
         this.action({
             phase: 'marshal',
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.kneeled,
+                cardCondition: (card) =>
+                    card.location === 'play area' && card.getType() === 'character' && card.kneeled,
                 gameAction: 'kill'
             },
             message: '{player} plays {source} to kill {target}',
-            handler: context => {
+            handler: (context) => {
                 this.game.killCharacter(context.target);
             }
         });
@@ -18,4 +19,4 @@ class PublicExecution extends DrawCard {
 
 PublicExecution.code = '13068';
 
-module.exports = PublicExecution;
+export default PublicExecution;

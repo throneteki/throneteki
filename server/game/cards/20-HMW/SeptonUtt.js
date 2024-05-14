@@ -1,10 +1,11 @@
-const DrawCard = require('../../drawcard.js');
-const {Tokens} = require('../../Constants');
+import DrawCard from '../../drawcard.js';
+import { Tokens } from '../../Constants/index.js';
 
 class SeptonUtt extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: card => card.getType() === 'character' && card.isUnique() && card.tokens[Tokens.gold] >= 2,
+            match: (card) =>
+                card.getType() === 'character' && card.isUnique() && card.tokens[Tokens.gold] >= 2,
             effect: ability.effects.addKeyword('Insight')
         });
     }
@@ -12,4 +13,4 @@ class SeptonUtt extends DrawCard {
 
 SeptonUtt.code = '20043';
 
-module.exports = SeptonUtt;
+export default SeptonUtt;

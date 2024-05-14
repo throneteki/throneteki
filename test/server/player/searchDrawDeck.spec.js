@@ -1,15 +1,10 @@
-const Player = require('../../../server/game/player.js');
+import Player from '../../../server/game/player.js';
 
 describe('the Player', () => {
     var game = jasmine.createSpyObj('game', ['raiseEvent']);
 
-    var player = new Player('1', {username: 'Player 1', settings: {}}, true, game);
-    var drawDeck = [
-        { name: 'foo' },
-        { name: 'bar' },
-        { name: 'baz' },
-        { name: 'ball' }
-    ];
+    var player = new Player('1', { username: 'Player 1', settings: {} }, true, game);
+    var drawDeck = [{ name: 'foo' }, { name: 'bar' }, { name: 'baz' }, { name: 'ball' }];
 
     beforeEach(() => {
         player.deck = drawDeck;

@@ -21,23 +21,31 @@ class SideBar extends React.Component {
         let component = this.state.expanded ? (
             <div className='sidebar expanded' key='sidebar-expanded'>
                 <div>
-                    <a href='#' className='btn pull-right' onClick={ this.onBurgerClick }>
+                    <a href='#' className='btn pull-right' onClick={this.onBurgerClick}>
                         <span className='glyphicon glyphicon-remove' />
                     </a>
-                    { this.props.children }
+                    {this.props.children}
                 </div>
-            </div>) :
-            (<div className='sidebar collapsed' key='sidebar'>
+            </div>
+        ) : (
+            <div className='sidebar collapsed' key='sidebar'>
                 <div>
-                    <a href='#' className='btn' onClick={ this.onBurgerClick }>
+                    <a href='#' className='btn' onClick={this.onBurgerClick}>
                         <span className='glyphicon glyphicon-menu-hamburger' />
                     </a>
                 </div>
-            </div>);
+            </div>
+        );
 
-        return (<CSSTransitionGroup transitionName='sidebar' transitionEnterTimeout={ 500 } transitionLeaveTimeout={ 500 }>
-            { component }
-        </CSSTransitionGroup>);
+        return (
+            <CSSTransitionGroup
+                transitionName='sidebar'
+                transitionEnterTimeout={500}
+                transitionLeaveTimeout={500}
+            >
+                {component}
+            </CSSTransitionGroup>
+        );
     }
 }
 

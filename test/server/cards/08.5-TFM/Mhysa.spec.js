@@ -1,10 +1,11 @@
-describe('Mhysa', function() {
-    integration({ numOfPlayers: 1 }, function() {
-        describe('when attacking in a power challenge', function() {
-            beforeEach(function() {
+describe('Mhysa', function () {
+    integration({ numOfPlayers: 1 }, function () {
+        describe('when attacking in a power challenge', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('targaryen', [
                     'Sailing the Summer Sea',
-                    'Daenerys Targaryen (TFM)', 'Viserys Targaryen (Core)',
+                    'Daenerys Targaryen (TFM)',
+                    'Viserys Targaryen (Core)',
                     'Mhysa'
                 ]);
                 this.player1.selectDeck(deck);
@@ -35,13 +36,13 @@ describe('Mhysa', function() {
                 this.player1.clickPrompt('Done');
             });
 
-            it('increases the attached character\'s strength', function() {
+            it("increases the attached character's strength", function () {
                 // 3 base STR + 2 attacking chars
                 expect(this.mhysaChar.kneeled).toBe(false);
                 expect(this.mhysaChar.getStrength()).toBe(5);
             });
 
-            it('does not increase the attached character\'s strength for a second challenge', function() {
+            it("does not increase the attached character's strength for a second challenge", function () {
                 this.skipActionWindow();
                 this.skipActionWindow();
 
@@ -54,11 +55,12 @@ describe('Mhysa', function() {
             });
         });
 
-        describe('when attacking in a non-power challenge', function() {
-            beforeEach(function() {
+        describe('when attacking in a non-power challenge', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('targaryen', [
                     'A Noble Cause',
-                    'Daenerys Targaryen (TFM)', 'Viserys Targaryen (Core)',
+                    'Daenerys Targaryen (TFM)',
+                    'Viserys Targaryen (Core)',
                     'Mhysa'
                 ]);
                 this.player1.selectDeck(deck);
@@ -97,7 +99,7 @@ describe('Mhysa', function() {
                 this.player1.clickPrompt('Done');
             });
 
-            it('does not increase the attached character\'s strength', function() {
+            it("does not increase the attached character's strength", function () {
                 expect(this.mhysaChar.kneeled).toBe(true);
                 expect(this.mhysaChar.getStrength()).toBe(3);
             });

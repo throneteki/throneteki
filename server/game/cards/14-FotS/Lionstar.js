@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class Lionstar extends DrawCard {
     setupCardAbilities(ability) {
@@ -6,19 +6,18 @@ class Lionstar extends DrawCard {
             title: 'Put a character into play',
             cost: ability.costs.kneelSelf(),
             target: {
-                cardCondition: card => (
+                cardCondition: (card) =>
                     card.location === 'hand' &&
                     card.controller === this.controller &&
                     card.getType() === 'character' &&
                     card.isFaction('lannister') &&
                     this.controller.canPutIntoPlay(card) &&
                     card.getPrintedCost() <= 4
-                )
             },
             message: '{player} kneels {source} to put {target} into play',
-            handler: context => {
+            handler: (context) => {
                 context.player.putIntoPlay(context.target);
-                this.atEndOfPhase(ability => ({
+                this.atEndOfPhase((ability) => ({
                     match: context.target,
                     condition: () => ['play area', 'duplicate'].includes(context.target.location),
                     targetLocation: 'any',
@@ -31,4 +30,4 @@ class Lionstar extends DrawCard {
 
 Lionstar.code = '14028';
 
-module.exports = Lionstar;
+export default Lionstar;

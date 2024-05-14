@@ -1,5 +1,5 @@
-const GameActions = require('../../GameActions');
-const PlotCard = require('../../plotcard');
+import GameActions from '../../GameActions/index.js';
+import PlotCard from '../../plotcard.js';
 
 class StolenMessage extends PlotCard {
     setupCardAbilities(ability) {
@@ -13,10 +13,19 @@ class StolenMessage extends PlotCard {
             cost: ability.costs.payGold(1),
             chooseOpponent: true,
             limit: ability.limit.perRound(3),
-            handler: context => {
-                this.game.addMessage('{0} uses {1} to place the top card of {2}\'s deck on the bottom of their deck', context.player, this, context.opponent);
+            handler: (context) => {
+                this.game.addMessage(
+                    "{0} uses {1} to place the top card of {2}'s deck on the bottom of their deck",
+                    context.player,
+                    this,
+                    context.opponent
+                );
                 this.game.resolveGameAction(
-                    GameActions.placeCard(context => ({ card: context.opponent.drawDeck[0], location: 'draw deck', bottom: true })),
+                    GameActions.placeCard((context) => ({
+                        card: context.opponent.drawDeck[0],
+                        location: 'draw deck',
+                        bottom: true
+                    })),
                     context
                 );
             }
@@ -26,4 +35,4 @@ class StolenMessage extends PlotCard {
 
 StolenMessage.code = '12050';
 
-module.exports = StolenMessage;
+export default StolenMessage;

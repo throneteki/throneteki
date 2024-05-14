@@ -1,4 +1,4 @@
-const GameActions = require('../GameActions');
+import GameActions from '../GameActions/index.js';
 
 class RemoveFromGameCost {
     constructor() {
@@ -10,10 +10,10 @@ class RemoveFromGameCost {
     }
 
     pay(cards) {
-        for(let card of cards) {
+        for (let card of cards) {
             card.owner.moveCard(card, 'out of game');
         }
     }
 }
 
-module.exports = RemoveFromGameCost;
+export default RemoveFromGameCost;

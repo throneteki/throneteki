@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class GlassCandle extends DrawCard {
     setupCardAbilities(ability) {
@@ -11,10 +11,10 @@ class GlassCandle extends DrawCard {
             title: 'Look at top card',
             phase: 'challenge',
             cost: ability.costs.kneelSelf(),
-            handler: context => {
+            handler: (context) => {
                 let players = this.game.getPlayers();
 
-                let buttons = players.map(player => {
+                let buttons = players.map((player) => {
                     return { text: player.name, method: 'chooseToDiscard', arg: player.name };
                 });
 
@@ -32,7 +32,12 @@ class GlassCandle extends DrawCard {
     chooseToDiscard(player, playerName) {
         this.selectedPlayer = this.game.getPlayerByName(playerName);
         let topCard = this.selectedPlayer.drawDeck[0];
-        this.game.addMessage('{0} kneels {1} to look at the top card of {2}\'s deck', this.controller, this, this.selectedPlayer);
+        this.game.addMessage(
+            "{0} kneels {1} to look at the top card of {2}'s deck",
+            this.controller,
+            this,
+            this.selectedPlayer
+        );
 
         this.game.promptWithMenu(this.controller, this, {
             activePrompt: {
@@ -50,7 +55,11 @@ class GlassCandle extends DrawCard {
 
     discard() {
         this.selectedPlayer.discardFromDraw(1);
-        this.game.addMessage('{0} discards the top card of {1}\'s deck', this.controller, this.selectedPlayer);
+        this.game.addMessage(
+            "{0} discards the top card of {1}'s deck",
+            this.controller,
+            this.selectedPlayer
+        );
         return true;
     }
 
@@ -61,4 +70,4 @@ class GlassCandle extends DrawCard {
 
 GlassCandle.code = '11059';
 
-module.exports = GlassCandle;
+export default GlassCandle;

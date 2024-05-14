@@ -1,22 +1,28 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class Windblown extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event, context) => event.challenge.winner === context.player && this.isParticipating()
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.player && this.isParticipating()
             },
             cost: ability.costs.putSelfIntoShadows(),
             target: {
-                cardCondition: card => 
+                cardCondition: (card) =>
                     card.getType() === 'character' &&
                     card.location === 'play area' &&
                     (card.hasTrait('Army') || card.hasTrait('Mercenary')),
                 gameAction: 'stand'
             },
-            handler: context => {
+            handler: (context) => {
                 context.player.standCard(context.target);
-                this.game.addMessage('{0} returns {1} to shadows to stand {2}', context.player, this, context.target);
+                this.game.addMessage(
+                    '{0} returns {1} to shadows to stand {2}',
+                    context.player,
+                    this,
+                    context.target
+                );
             }
         });
     }
@@ -24,4 +30,4 @@ class Windblown extends DrawCard {
 
 Windblown.code = '21011';
 
-module.exports = Windblown;
+export default Windblown;

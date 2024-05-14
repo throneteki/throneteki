@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class GalbartGlover extends DrawCard {
     setupCardAbilities(ability) {
@@ -8,15 +8,19 @@ class GalbartGlover extends DrawCard {
             effect: ability.effects.increaseCost({
                 playingTypes: ['marshal', 'ambush'],
                 amount: 1,
-                match: card => card.getPrintedType() === 'character',
+                match: (card) => card.getPrintedType() === 'character',
                 limit: ability.limit.perPhase(1)
             })
         });
     }
 
     moreWinterThanSummerPlotsRevealed() {
-        let winterPlots = this.game.getPlayers().filter(player => player.activePlot && player.activePlot.hasTrait('Winter'));
-        let summerPlots = this.game.getPlayers().filter(player => player.activePlot && player.activePlot.hasTrait('Summer'));
+        let winterPlots = this.game
+            .getPlayers()
+            .filter((player) => player.activePlot && player.activePlot.hasTrait('Winter'));
+        let summerPlots = this.game
+            .getPlayers()
+            .filter((player) => player.activePlot && player.activePlot.hasTrait('Summer'));
 
         return winterPlots.length > summerPlots.length;
     }
@@ -24,4 +28,4 @@ class GalbartGlover extends DrawCard {
 
 GalbartGlover.code = '25051';
 
-module.exports = GalbartGlover;
+export default GalbartGlover;

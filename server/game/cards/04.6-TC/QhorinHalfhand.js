@@ -1,23 +1,31 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class QhorinHalfhand extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: event => (
+                afterChallenge: (event) =>
                     event.challenge.challengeType === 'military' &&
                     event.challenge.winner === this.controller &&
                     this.isParticipating()
-                )
             },
             target: {
-                cardCondition: card => card.location === 'play area' && card.controller === this.game.currentChallenge.loser && card.getType() === 'character' &&
-                                       !card.isUnique() && card.getStrength() < this.getStrength(),
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.controller === this.game.currentChallenge.loser &&
+                    card.getType() === 'character' &&
+                    !card.isUnique() &&
+                    card.getStrength() < this.getStrength(),
                 gameAction: 'kill'
             },
-            handler: context => {
+            handler: (context) => {
                 context.target.controller.killCharacter(context.target);
-                this.game.addMessage('{0} uses {1} to kill {2}', this.controller, this, context.target);
+                this.game.addMessage(
+                    '{0} uses {1} to kill {2}',
+                    this.controller,
+                    this,
+                    context.target
+                );
             }
         });
     }
@@ -25,4 +33,4 @@ class QhorinHalfhand extends DrawCard {
 
 QhorinHalfhand.code = '04105';
 
-module.exports = QhorinHalfhand;
+export default QhorinHalfhand;

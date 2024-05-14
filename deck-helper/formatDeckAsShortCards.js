@@ -2,7 +2,7 @@
  * Creates a clone of the existing deck with only card codes instead of full
  * card data.
  */
-function formatDeckAsShortCards(deck) {
+export function formatDeckAsShortCards(deck) {
     let newDeck = {
         _id: deck._id,
         draftCubeId: deck.draftCubeId,
@@ -32,5 +32,3 @@ function formatCards(cardCounts) {
         return { count: cardCount.count, card: cardCount.card.custom ? cardCount.card : { code: cardCount.card.code } };
     });
 }
-
-module.exports = formatDeckAsShortCards;

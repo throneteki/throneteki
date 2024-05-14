@@ -1,9 +1,11 @@
-describe('Ygritte', function() {
-    integration(function() {
-        beforeEach(function() {
+describe('Ygritte', function () {
+    integration(function () {
+        beforeEach(function () {
             const deck = this.buildDeck('baratheon', [
                 'Sneak Attack',
-                'Ygritte', 'Melisandre (Core)', 'Chataya\'s Brothel'
+                'Ygritte',
+                'Melisandre (Core)',
+                "Chataya's Brothel"
             ]);
             this.player1.selectDeck(deck);
             this.player2.selectDeck(deck);
@@ -11,7 +13,7 @@ describe('Ygritte', function() {
             this.keepStartingHands();
 
             this.ygritte = this.player1.findCardByName('Ygritte', 'hand');
-            this.brothel = this.player1.findCardByName('Chataya\'s Brothel', 'hand');
+            this.brothel = this.player1.findCardByName("Chataya's Brothel", 'hand');
             this.player1.clickCard(this.ygritte);
             this.player1.clickCard(this.brothel);
             this.completeSetup();
@@ -21,7 +23,7 @@ describe('Ygritte', function() {
             this.player1.clickPrompt('Done');
         });
 
-        it('should not be knelt by card effects', function() {
+        it('should not be knelt by card effects', function () {
             this.player2.clickCard('Melisandre', 'hand');
             this.player2.triggerAbility('Melisandre');
 
@@ -30,7 +32,7 @@ describe('Ygritte', function() {
             expect(this.ygritte.kneeled).toBe(false);
         });
 
-        it('should be knelt by framework effects', function() {
+        it('should be knelt by framework effects', function () {
             this.player2.clickPrompt('Done');
 
             this.player1.clickPrompt('Military');
@@ -40,7 +42,7 @@ describe('Ygritte', function() {
             expect(this.ygritte.kneeled).toBe(true);
         });
 
-        it('should be knelt as a cost', function() {
+        it('should be knelt as a cost', function () {
             this.player1.clickMenu(this.brothel, 'Gain gold');
             this.player1.clickCard(this.ygritte);
 
@@ -48,7 +50,7 @@ describe('Ygritte', function() {
             expect(this.ygritte.kneeled).toBe(true);
         });
 
-        it('should be knelt by player interaction', function() {
+        it('should be knelt by player interaction', function () {
             this.player1.clickCard(this.ygritte);
 
             expect(this.ygritte.kneeled).toBe(true);

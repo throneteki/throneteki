@@ -1,9 +1,10 @@
-describe('Harrenhal (GoH)', function() {
-    integration(function() {
-        beforeEach(function() {
+describe('Harrenhal (GoH)', function () {
+    integration(function () {
+        beforeEach(function () {
             const deck = this.buildDeck('stark', [
                 'Sneak Attack',
-                'Harrenhal (GoH)', 'Littlefinger (Core)'
+                'Harrenhal (GoH)',
+                'Littlefinger (Core)'
             ]);
             this.player1.selectDeck(deck);
             this.player2.selectDeck(deck);
@@ -18,14 +19,14 @@ describe('Harrenhal (GoH)', function() {
             this.selectFirstPlayer(this.player1);
         });
 
-        describe('when a character is put into play', function() {
-            beforeEach(function() {
+        describe('when a character is put into play', function () {
+            beforeEach(function () {
                 this.littlefinger = this.player2.findCardByName('Littlefinger', 'hand');
                 this.player1.clickPrompt('Done');
                 this.player2.clickCard(this.littlefinger);
             });
 
-            it('should prompt to kill the character', function() {
+            it('should prompt to kill the character', function () {
                 this.player1.triggerAbility('Harrenhal');
 
                 expect(this.harrenhal.location).toBe('discard pile');
@@ -33,7 +34,7 @@ describe('Harrenhal (GoH)', function() {
                 expect(this.littlefinger.location).toBe('dead pile');
             });
 
-            it('should not prompt to trigger the ability of the character that was killed', function() {
+            it('should not prompt to trigger the ability of the character that was killed', function () {
                 this.player1.triggerAbility('Harrenhal');
 
                 expect(this.player2).not.toAllowAbilityTrigger('Littlefinger');

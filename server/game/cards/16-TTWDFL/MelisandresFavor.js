@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class MelisandresFavor extends DrawCard {
     setupCardAbilities(ability) {
@@ -9,7 +9,7 @@ class MelisandresFavor extends DrawCard {
 
         this.forcedInterrupt({
             when: {
-                onPhaseEnded: event => event.phase === 'dominance'
+                onPhaseEnded: (event) => event.phase === 'dominance'
             },
             message: '{player} is forced to sacrifice {source}',
             gameAction: GameActions.sacrificeCard({
@@ -22,4 +22,4 @@ class MelisandresFavor extends DrawCard {
 
 MelisandresFavor.code = '16002';
 
-module.exports = MelisandresFavor;
+export default MelisandresFavor;

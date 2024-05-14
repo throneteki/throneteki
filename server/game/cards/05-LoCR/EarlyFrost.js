@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class EarlyFrost extends PlotCard {
     setupCardAbilities(ability) {
@@ -11,4 +11,4 @@ class EarlyFrost extends PlotCard {
 
 EarlyFrost.code = '05052';
 
-module.exports = EarlyFrost;
+export default EarlyFrost;

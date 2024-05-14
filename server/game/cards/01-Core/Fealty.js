@@ -1,4 +1,4 @@
-const AgendaCard = require('../../agendacard.js');
+import AgendaCard from '../../agendacard.js';
 
 class Fealty extends AgendaCard {
     setupCardAbilities(ability) {
@@ -6,10 +6,16 @@ class Fealty extends AgendaCard {
             title: 'Kneel your faction card',
             cost: ability.costs.kneelFactionCard(),
             handler: () => {
-                this.game.addMessage('{0} uses {1} to kneel their faction card and reduce the cost of the next loyal card by 1', this.controller, this);
-                this.untilEndOfPhase(ability => ({
+                this.game.addMessage(
+                    '{0} uses {1} to kneel their faction card and reduce the cost of the next loyal card by 1',
+                    this.controller,
+                    this
+                );
+                this.untilEndOfPhase((ability) => ({
                     targetController: 'current',
-                    effect: ability.effects.reduceNextMarshalledOrPlayedCardCost(1, card => card.isLoyal())
+                    effect: ability.effects.reduceNextMarshalledOrPlayedCardCost(1, (card) =>
+                        card.isLoyal()
+                    )
                 }));
             }
         });
@@ -18,4 +24,4 @@ class Fealty extends AgendaCard {
 
 Fealty.code = '01027';
 
-module.exports = Fealty;
+export default Fealty;

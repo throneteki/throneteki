@@ -1,6 +1,5 @@
-const AllPlayerPrompt = require('../allplayerprompt.js');
-
-const { StartingHandSize } = require('../../Constants');
+import AllPlayerPrompt from '../allplayerprompt.js';
+import { StartingHandSize } from '../../Constants/index.js';
 
 class KeepOrMulliganPrompt extends AllPlayerPrompt {
     constructor(game) {
@@ -28,15 +27,15 @@ class KeepOrMulliganPrompt extends AllPlayerPrompt {
     }
 
     onMenuCommand(player, arg) {
-        if(this.completedPlayers.has(player)) {
+        if (this.completedPlayers.has(player)) {
             return;
         }
 
         this.completedPlayers.add(player);
 
-        if(arg === 'keep') {
+        if (arg === 'keep') {
             this.game.addMessage('{0} has kept their hand', player);
-        } else if(arg === 'mulligan') {
+        } else if (arg === 'mulligan') {
             this.mulligan(player);
             this.game.addMessage('{0} has taken a mulligan', player);
         }
@@ -50,4 +49,4 @@ class KeepOrMulliganPrompt extends AllPlayerPrompt {
     }
 }
 
-module.exports = KeepOrMulliganPrompt;
+export default KeepOrMulliganPrompt;

@@ -1,6 +1,5 @@
-
-const DrawCard = require('../../drawcard.js');
-const {Tokens} = require('../../Constants');
+import DrawCard from '../../drawcard.js';
+import { Tokens } from '../../Constants/index.js';
 
 class GodryTheGiantslayer extends DrawCard {
     setupCardAbilities(ability) {
@@ -15,10 +14,13 @@ class GodryTheGiantslayer extends DrawCard {
         });
         this.reaction({
             when: {
-                onCardEntersPlay: event => event.playingType === 'marshal' && event.card !== this
-                    && event.card.controller === this.controller 
-                    && (event.card.hasTrait('R\'hllor') || event.card.hasTrait('Knight')),
-                onCardPlayed: event => event.card.controller === this.controller && event.card.hasTrait('R\'hllor')
+                onCardEntersPlay: (event) =>
+                    event.playingType === 'marshal' &&
+                    event.card !== this &&
+                    event.card.controller === this.controller &&
+                    (event.card.hasTrait("R'hllor") || event.card.hasTrait('Knight')),
+                onCardPlayed: (event) =>
+                    event.card.controller === this.controller && event.card.hasTrait("R'hllor")
             },
             limit: ability.limit.perPhase(1),
             handler: () => {
@@ -31,4 +33,4 @@ class GodryTheGiantslayer extends DrawCard {
 
 GodryTheGiantslayer.code = '18002';
 
-module.exports = GodryTheGiantslayer;
+export default GodryTheGiantslayer;

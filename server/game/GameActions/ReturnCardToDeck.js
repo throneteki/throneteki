@@ -1,7 +1,7 @@
-const Message = require('../Message');
-const GameAction = require('./GameAction');
-const LeavePlay = require('./LeavePlay');
-const PlaceCard = require('./PlaceCard');
+import Message from '../Message.js';
+import GameAction from './GameAction.js';
+import LeavePlay from './LeavePlay.js';
+import PlaceCard from './PlaceCard.js';
 
 class ReturnCardToDeck extends GameAction {
     constructor() {
@@ -9,11 +9,14 @@ class ReturnCardToDeck extends GameAction {
     }
 
     message({ card, bottom }) {
-        return Message.fragment('places {card} on {position} of their deck', { card, position: bottom ? 'the bottom' : 'top' });
+        return Message.fragment('places {card} on {position} of their deck', {
+            card,
+            position: bottom ? 'the bottom' : 'top'
+        });
     }
 
     canChangeGameState({ card }) {
-        if(card.location === 'play area' && !LeavePlay.allow({ card })) {
+        if (card.location === 'play area' && !LeavePlay.allow({ card })) {
             return false;
         }
 
@@ -27,11 +30,18 @@ class ReturnCardToDeck extends GameAction {
             bottom: bottom,
             snapshotName: 'cardStateWhenMoved'
         };
-        const returnEvent = this.event('onCardReturnedToDeck', params, event => {
-            event.thenAttachEvent(PlaceCard.createEvent({ card: event.card, location: 'draw deck', bottom, orderable }));
+        const returnEvent = this.event('onCardReturnedToDeck', params, (event) => {
+            event.thenAttachEvent(
+                PlaceCard.createEvent({
+                    card: event.card,
+                    location: 'draw deck',
+                    bottom,
+                    orderable
+                })
+            );
         });
 
-        if(card.location === 'play area') {
+        if (card.location === 'play area') {
             return this.atomic(returnEvent, LeavePlay.createEvent({ card, allowSave }));
         }
 
@@ -39,4 +49,4 @@ class ReturnCardToDeck extends GameAction {
     }
 }
 
-module.exports = new ReturnCardToDeck();
+export default new ReturnCardToDeck();

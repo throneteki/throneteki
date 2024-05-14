@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Aggo extends DrawCard {
     setupCardAbilities(ability) {
@@ -6,11 +6,19 @@ class Aggo extends DrawCard {
             title: 'Stand a Bloodrider (if a Summer plot is revealed)',
             condition: () => this.game.anyPlotHasTrait('Summer'),
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.hasTrait('Bloodrider')
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    card.hasTrait('Bloodrider')
             },
             limit: ability.limit.perRound(1),
-            handler: context => {
-                this.game.addMessage('{0} uses {1} to stand {2}', context.player, this, context.target);
+            handler: (context) => {
+                this.game.addMessage(
+                    '{0} uses {1} to stand {2}',
+                    context.player,
+                    this,
+                    context.target
+                );
                 this.controller.standCard(context.target);
             }
         });
@@ -19,4 +27,4 @@ class Aggo extends DrawCard {
 
 Aggo.code = '03035';
 
-module.exports = Aggo;
+export default Aggo;

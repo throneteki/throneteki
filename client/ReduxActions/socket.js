@@ -23,7 +23,7 @@ export function sendGameMessage(message, ...args) {
     return (dispatch, getState) => {
         var state = getState();
 
-        if(state.games.socket) {
+        if (state.games.socket) {
             state.games.socket.emit('game', message, ...args);
         }
 
@@ -69,7 +69,7 @@ export function authenticateSocket() {
     return (dispatch, getState) => {
         let state = getState();
 
-        if(state.lobby.socket && state.auth.token) {
+        if (state.lobby.socket && state.auth.token) {
             state.lobby.socket.emit('authenticate', state.auth.token);
         }
     };
@@ -90,13 +90,13 @@ export function handoffReceived(details) {
 
         dispatch(handoff(details));
 
-        if(details.port && !standardPorts.some(p => p === details.port)) {
+        if (details.port && !standardPorts.some((p) => p === details.port)) {
             url += ':' + details.port;
         }
 
         dispatch(actions.setAuthTokens(details.authToken, state.auth.refreshToken));
 
-        if(state.games.socket && state.games.gameId !== details.gameId) {
+        if (state.games.socket && state.games.gameId !== details.gameId) {
             dispatch(actions.closeGameSocket());
         }
 
@@ -115,7 +115,7 @@ export function connectLobby() {
     return (dispatch, getState) => {
         let state = getState();
         let queryString = state.auth.token ? 'token=' + state.auth.token + '&' : '';
-        queryString += 'version=' + process.env.VERSION || 'Local build';
+        queryString += 'version=' + (import.meta.env.VERSION || 'Local build');
 
         let socket = io.connect(window.location.origin, {
             reconnection: true,
@@ -139,68 +139,74 @@ export function connectLobby() {
             dispatch(lobbyReconnecting());
         });
 
-        socket.on('newgame', games => {
+        socket.on('newgame', (games) => {
             dispatch(lobbyMessageReceived('newgame', games));
         });
 
-        socket.on('removegame', games => {
+        socket.on('removegame', (games) => {
             dispatch(lobbyMessageReceived('removegame', games));
         });
 
-        socket.on('updategame', games => {
+        socket.on('updategame', (games) => {
             dispatch(lobbyMessageReceived('updategame', games));
         });
 
-        socket.on('games', games => {
+        socket.on('games', (games) => {
             dispatch(lobbyMessageReceived('games', games));
         });
 
-        socket.on('users', users => {
+        socket.on('users', (users) => {
             dispatch(lobbyMessageReceived('users', users));
         });
 
-        socket.on('newuser', user => {
+        socket.on('newuser', (user) => {
             dispatch(lobbyMessageReceived('newuser', user));
         });
 
-        socket.on('userleft', user => {
+        socket.on('userleft', (user) => {
             dispatch(lobbyMessageReceived('userleft', user));
         });
 
-        socket.on('passworderror', message => {
+        socket.on('passworderror', (message) => {
             dispatch(lobbyMessageReceived('passworderror', message));
         });
 
-        socket.on('lobbychat', message => {
+        socket.on('lobbychat', (message) => {
             dispatch(lobbyMessageReceived('lobbychat', message));
         });
 
-        socket.on('nochat', messages => {
+        socket.on('nochat', (messages) => {
             dispatch(lobbyMessageReceived('nochat', messages));
         });
 
-        socket.on('lobbymessages', messages => {
+        socket.on('lobbymessages', (messages) => {
             dispatch(lobbyMessageReceived('lobbymessages', messages));
         });
 
-        socket.on('banner', notice => {
+        socket.on('banner', (notice) => {
             dispatch(lobbyMessageReceived('banner', notice));
         });
 
-        socket.on('motd', motd => {
+        socket.on('motd', (motd) => {
             dispatch(lobbyMessageReceived('motd', motd));
         });
 
-        socket.on('gamestate', game => {
+        socket.on('gamestate', (game) => {
             state = getState();
-            dispatch(lobbyMessageReceived('gamestate', game, state.account.user ? state.account.user.username : undefined));
+            dispatch(
+                lobbyMessageReceived(
+                    'gamestate',
+                    game,
+                    state.account.user ? state.account.user.username : undefined
+                )
+            );
         });
 
         socket.on('cleargamestate', () => {
             dispatch(lobbyMessageReceived('cleargamestate'));
         });
 
-        socket.on('handoff', handoff => {
+        socket.on('handoff', (handoff) => {
             dispatch(handoffReceived(handoff));
         });
 
@@ -208,11 +214,11 @@ export function connectLobby() {
             dispatch(actions.authenticate());
         });
 
-        socket.on('nodestatus', status => {
+        socket.on('nodestatus', (status) => {
             dispatch(nodeStatusReceived(status));
         });
 
-        socket.on('removemessage', messageId => {
+        socket.on('removemessage', (messageId) => {
             dispatch(lobbyMessageReceived('removemessage', messageId));
         });
     };

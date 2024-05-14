@@ -1,10 +1,10 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class SeizeTheInitiative extends DrawCard {
     setupCardAbilities() {
         this.interrupt({
             when: {
-                onPhaseEnded: event => event.phase === 'marshal' && !this.controller.firstPlayer
+                onPhaseEnded: (event) => event.phase === 'marshal' && !this.controller.firstPlayer
             },
             handler: () => {
                 this.game.setFirstPlayer(this.controller);
@@ -21,4 +21,4 @@ class SeizeTheInitiative extends DrawCard {
 
 SeizeTheInitiative.code = '11013';
 
-module.exports = SeizeTheInitiative;
+export default SeizeTheInitiative;

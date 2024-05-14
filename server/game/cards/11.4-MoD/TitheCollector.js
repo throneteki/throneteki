@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TitheCollector extends DrawCard {
     setupCardAbilities(ability) {
@@ -8,13 +8,18 @@ class TitheCollector extends DrawCard {
 
         this.reaction({
             when: {
-                onIncomeCollected: event => event.player === this.controller && this.canGainPower()
+                onIncomeCollected: (event) =>
+                    event.player === this.controller && this.canGainPower()
             },
             cost: ability.costs.payGold(2),
             handler: () => {
                 this.modifyPower(1);
 
-                this.game.addMessage('{0} uses {1} to pay 2 gold and gain 1 power on {1}', this.controller, this);
+                this.game.addMessage(
+                    '{0} uses {1} to pay 2 gold and gain 1 power on {1}',
+                    this.controller,
+                    this
+                );
             }
         });
     }
@@ -22,4 +27,4 @@ class TitheCollector extends DrawCard {
 
 TitheCollector.code = '11069';
 
-module.exports = TitheCollector;
+export default TitheCollector;

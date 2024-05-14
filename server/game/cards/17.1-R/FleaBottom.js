@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class FleaBottom extends DrawCard {
     setupCardAbilities(ability) {
@@ -6,25 +6,30 @@ class FleaBottom extends DrawCard {
             title: 'Put character into play',
             phase: 'challenge',
             target: {
-                cardCondition: card => card.location === 'discard pile' && card.controller === this.controller &&
-                                       card.getType() === 'character' && card.getPrintedCost() <= 3 && this.controller.canPutIntoPlay(card)
+                cardCondition: (card) =>
+                    card.location === 'discard pile' &&
+                    card.controller === this.controller &&
+                    card.getType() === 'character' &&
+                    card.getPrintedCost() <= 3 &&
+                    this.controller.canPutIntoPlay(card)
             },
-            cost: [
-                ability.costs.discardGold(),
-                ability.costs.kneelSelf()
-            ],
-            handler: context => {
+            cost: [ability.costs.discardGold(), ability.costs.kneelSelf()],
+            handler: (context) => {
                 context.player.putIntoPlay(context.target);
 
-                this.atEndOfPhase(ability => ({
+                this.atEndOfPhase((ability) => ({
                     match: context.target,
                     condition: () => ['play area', 'duplicate'].includes(context.target.location),
                     targetLocation: 'any',
                     effect: ability.effects.moveToBottomOfDeckIfStillInPlay(true)
                 }));
 
-                this.game.addMessage('{0} discards 1 gold from {1} and kneels it to put {2} into play from their discard pile',
-                    context.player, this, context.target);
+                this.game.addMessage(
+                    '{0} discards 1 gold from {1} and kneels it to put {2} into play from their discard pile',
+                    context.player,
+                    this,
+                    context.target
+                );
             }
         });
     }
@@ -32,4 +37,4 @@ class FleaBottom extends DrawCard {
 
 FleaBottom.code = '17142';
 
-module.exports = FleaBottom;
+export default FleaBottom;

@@ -1,18 +1,15 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TheBloodroyal extends DrawCard {
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'martell' });
         this.whileAttached({
             condition: () => !this.controller.firstPlayer,
-            effect: [
-                ability.effects.addKeyword('stealth'),
-                ability.effects.addKeyword('renown')
-            ]
+            effect: [ability.effects.addKeyword('stealth'), ability.effects.addKeyword('renown')]
         });
     }
 }
 
 TheBloodroyal.code = '12030';
 
-module.exports = TheBloodroyal;
+export default TheBloodroyal;

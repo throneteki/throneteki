@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const {Tokens} = require('../../Constants');
+import DrawCard from '../../drawcard.js';
+import { Tokens } from '../../Constants/index.js';
 
 class RedCloaks extends DrawCard {
     setupCardAbilities(ability) {
@@ -9,7 +9,11 @@ class RedCloaks extends DrawCard {
             condition: () => this.controller.getSpendableGold() >= 1,
             handler: () => {
                 this.game.transferGold({ from: this.controller, to: this, amount: 1 });
-                this.game.addMessage('{0} moves 1 gold from their gold pool to {1}', this.controller, this);
+                this.game.addMessage(
+                    '{0} moves 1 gold from their gold pool to {1}',
+                    this.controller,
+                    this
+                );
             }
         });
         this.persistentEffect({
@@ -22,4 +26,4 @@ class RedCloaks extends DrawCard {
 
 RedCloaks.code = '02070';
 
-module.exports = RedCloaks;
+export default RedCloaks;

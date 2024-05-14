@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Dywen extends DrawCard {
     setupCardAbilities(ability) {
@@ -9,7 +9,11 @@ class Dywen extends DrawCard {
         this.persistentEffect({
             //the condition is somehow necessary to reapply the effect to cards entering play after Dywen
             condition: () => true,
-            match: (card) => card.controller === this.controller && card.isFaction('thenightswatch') && card.getType() === 'character' && card.hasKeyword('Stealth'),
+            match: (card) =>
+                card.controller === this.controller &&
+                card.isFaction('thenightswatch') &&
+                card.getType() === 'character' &&
+                card.hasKeyword('Stealth'),
             effect: ability.effects.doesNotKneelAsAttacker({ challengeType: 'military' })
         });
     }
@@ -17,4 +21,4 @@ class Dywen extends DrawCard {
 
 Dywen.code = '18009';
 
-module.exports = Dywen;
+export default Dywen;

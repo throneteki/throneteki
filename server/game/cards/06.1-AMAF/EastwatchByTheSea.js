@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class EastwatchByTheSea extends DrawCard {
     setupCardAbilities() {
@@ -8,7 +8,7 @@ class EastwatchByTheSea extends DrawCard {
 
         this.reaction({
             when: {
-                onPhaseStarted: event =>
+                onPhaseStarted: (event) =>
                     event.phase === 'dominance' &&
                     this.hasHigherReserveThanOpponent() &&
                     this.controller.canDraw()
@@ -22,10 +22,12 @@ class EastwatchByTheSea extends DrawCard {
 
     hasHigherReserveThanOpponent() {
         let opponents = this.game.getOpponents(this.controller);
-        return opponents.some(opponent => this.controller.getTotalReserve() > opponent.getTotalReserve());
+        return opponents.some(
+            (opponent) => this.controller.getTotalReserve() > opponent.getTotalReserve()
+        );
     }
 }
 
 EastwatchByTheSea.code = '06006';
 
-module.exports = EastwatchByTheSea;
+export default EastwatchByTheSea;

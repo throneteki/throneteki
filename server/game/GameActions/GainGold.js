@@ -1,5 +1,5 @@
-const GameAction = require('./GameAction');
-const Message = require('../Message');
+import GameAction from './GameAction.js';
+import Message from '../Message.js';
 
 class GainGold extends GameAction {
     constructor() {
@@ -17,13 +17,17 @@ class GainGold extends GameAction {
 
     createEvent({ player, amount }) {
         let actualAmount = player.getGoldToGain(amount);
-        const isFullyResolved = event => event.amount === event.desiredAmount;
-        return this.event('onGoldGained', { player, amount: actualAmount, desiredAmount: amount, isFullyResolved }, event => {
-            event.player.gainedGold += event.amount;
+        const isFullyResolved = (event) => event.amount === event.desiredAmount;
+        return this.event(
+            'onGoldGained',
+            { player, amount: actualAmount, desiredAmount: amount, isFullyResolved },
+            (event) => {
+                event.player.gainedGold += event.amount;
 
-            event.player.modifyGold(event.amount);
-        });
+                event.player.modifyGold(event.amount);
+            }
+        );
     }
 }
 
-module.exports = new GainGold();
+export default new GainGold();

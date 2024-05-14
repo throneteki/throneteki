@@ -1,4 +1,4 @@
-const PromptedTriggeredAbility = require('./promptedtriggeredability.js');
+import PromptedTriggeredAbility from './promptedtriggeredability.js';
 
 class CardReaction extends PromptedTriggeredAbility {
     constructor(game, card, properties) {
@@ -6,4 +6,4 @@ class CardReaction extends PromptedTriggeredAbility {
     }
 }
 
-module.exports = CardReaction;
+export default CardReaction;

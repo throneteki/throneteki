@@ -1,6 +1,6 @@
-const Phase = require('./phase.js');
-const SimpleStep = require('./simplestep.js');
-const MarshalCardsPrompt = require('./marshaling/marshalcardsprompt.js');
+import Phase from './phase.js';
+import SimpleStep from './simplestep.js';
+import MarshalCardsPrompt from './marshaling/marshalcardsprompt.js';
 
 class MarshalingPhase extends Phase {
     constructor(game) {
@@ -30,7 +30,7 @@ class MarshalingPhase extends Phase {
     }
 
     collectIncome(player) {
-        if(player.canGainGold()) {
+        if (player.canGainGold()) {
             let gold = this.game.addGold(player, player.getTotalIncome());
             this.game.addMessage('{0} collects {1} gold', player, gold);
         }
@@ -39,4 +39,4 @@ class MarshalingPhase extends Phase {
     }
 }
 
-module.exports = MarshalingPhase;
+export default MarshalingPhase;

@@ -1,12 +1,12 @@
-const PlotCard = require('../../plotcard.js');
-const GameActions = require('../../GameActions');
-const {Tokens} = require('../../Constants');
+import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
+import { Tokens } from '../../Constants/index.js';
 
 class PowerBehindTheThrone extends PlotCard {
     setupCardAbilities(ability) {
         this.whenRevealed({
             message: '{player} uses {source} to place 1 stand token on {source}',
-            handler: context => {
+            handler: (context) => {
                 this.game.resolveGameAction(
                     GameActions.placeToken(() => ({ card: this, token: Tokens.stand })),
                     context
@@ -18,10 +18,16 @@ class PowerBehindTheThrone extends PlotCard {
             title: 'Discard a stand token',
             cost: ability.costs.discardTokenFromSelf(Tokens.stand),
             target: {
-                cardCondition: card => card.location === 'play area' && card.kneeled && card.getType() === 'character'
+                cardCondition: (card) =>
+                    card.location === 'play area' && card.kneeled && card.getType() === 'character'
             },
-            handler: context => {
-                this.game.addMessage('{0} uses {1} to remove a stand token and stand {2}', context.player, this, context.target);
+            handler: (context) => {
+                this.game.addMessage(
+                    '{0} uses {1} to remove a stand token and stand {2}',
+                    context.player,
+                    this,
+                    context.target
+                );
 
                 context.player.standCard(context.target);
             }
@@ -31,4 +37,4 @@ class PowerBehindTheThrone extends PlotCard {
 
 PowerBehindTheThrone.code = '01018';
 
-module.exports = PowerBehindTheThrone;
+export default PowerBehindTheThrone;

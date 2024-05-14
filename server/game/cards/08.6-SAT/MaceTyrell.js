@@ -1,14 +1,14 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class MaceTyrell extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardKneeled: event => event.card === this
+                onCardKneeled: (event) => event.card === this
             },
             message: '{player} uses {source} to draw 2 cards',
-            gameAction: GameActions.drawCards(context => ({
+            gameAction: GameActions.drawCards((context) => ({
                 player: context.player,
                 amount: 2
             })).then({
@@ -17,9 +17,9 @@ class MaceTyrell extends DrawCard {
                     cardCondition: { location: 'hand', controller: 'current' }
                 },
                 message: 'Then {player} places a card on top of their deck',
-                handler: context => {
+                handler: (context) => {
                     this.game.resolveGameAction(
-                        GameActions.returnCardToDeck(context => ({
+                        GameActions.returnCardToDeck((context) => ({
                             card: context.target
                         })),
                         context
@@ -35,4 +35,4 @@ class MaceTyrell extends DrawCard {
 
 MaceTyrell.code = '08103';
 
-module.exports = MaceTyrell;
+export default MaceTyrell;

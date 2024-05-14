@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class RobbStark extends DrawCard {
     setupCardAbilities(ability) {
@@ -13,22 +13,24 @@ class RobbStark extends DrawCard {
             limit: ability.limit.perChallenge(1),
             condition: () => this.isParticipatingInMilitaryChallenge(),
             target: {
-                cardCondition: card => this.isParticipatingNonKing(card)
+                cardCondition: (card) => this.isParticipatingNonKing(card)
             },
-            handler: context => {
+            handler: (context) => {
                 context.target.controller.standCard(context.target);
                 this.game.currentChallenge.removeFromChallenge(context.target);
 
-                this.game.addMessage('{0} uses {1} to stand {2} and remove them from the challenge', this.controller, this, context.target);
+                this.game.addMessage(
+                    '{0} uses {1} to stand {2} and remove them from the challenge',
+                    this.controller,
+                    this,
+                    context.target
+                );
             }
         });
     }
 
     isParticipatingInMilitaryChallenge() {
-        return (
-            this.game.isDuringChallenge({ challengeType: 'military' }) &&
-            this.isParticipating()
-        );
+        return this.game.isDuringChallenge({ challengeType: 'military' }) && this.isParticipating();
     }
 
     isParticipatingNonKing(card) {
@@ -40,8 +42,8 @@ class RobbStark extends DrawCard {
         );
     }
 
-    numberOfLoyalChars () {
-        let cards = this.controller.filterCardsInPlay(card => {
+    numberOfLoyalChars() {
+        let cards = this.controller.filterCardsInPlay((card) => {
             return card.isLoyal() && card.getType() === 'character';
         });
 
@@ -51,4 +53,4 @@ class RobbStark extends DrawCard {
 
 RobbStark.code = '04002';
 
-module.exports = RobbStark;
+export default RobbStark;

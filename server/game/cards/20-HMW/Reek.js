@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Reek extends DrawCard {
     constructor(owner, cardData) {
@@ -10,44 +10,50 @@ class Reek extends DrawCard {
 
     onCardEntersPlay(event) {
         let card = event.card;
-        if(card !== this && card.name !== 'Theon Greyjoy') {
+        if (card !== this && card.name !== 'Theon Greyjoy') {
             return;
         }
 
-        let theon = this.controller.cardsInPlay.find(card => card.name === 'Theon Greyjoy');
+        let theon = this.controller.cardsInPlay.find((card) => card.name === 'Theon Greyjoy');
 
-        if(!theon) {
+        if (!theon) {
             return;
         }
 
         this.controller.sacrificeCard(this);
     }
-    
+
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: event =>
+                afterChallenge: (event) =>
                     event.challenge.winner === this.controller &&
                     event.challenge.isUnopposed() &&
                     this.hasAttackingBolton()
             },
-            handler: context => {
-                this.game.addMessage('{0} gives control of {1} to {2}', context.player, this, context.event.challenge.loser);
+            handler: (context) => {
+                this.game.addMessage(
+                    '{0} gives control of {1} to {2}',
+                    context.player,
+                    this,
+                    context.event.challenge.loser
+                );
                 this.game.resolveGameAction(
-                    GameActions.takeControl(context => ({
+                    GameActions.takeControl((context) => ({
                         player: context.event.challenge.loser,
                         card: this
-                    })).then(context => ({
+                    })).then((context) => ({
                         handler: () => {
                             this.game.promptForSelect(context.player, {
-                                cardCondition: card => (
+                                cardCondition: (card) =>
                                     card.location === 'play area' &&
                                     card.getType() === 'character' &&
                                     card.controller === context.event.challenge.loser &&
                                     !card.isLoyal() &&
-                                    context.player.canControl(card)),
+                                    context.player.canControl(card),
                                 source: this,
-                                onSelect: (player, card) => this.onCardSelected(player, card, context)
+                                onSelect: (player, card) =>
+                                    this.onCardSelected(player, card, context)
                             });
                         }
                     })),
@@ -69,14 +75,17 @@ class Reek extends DrawCard {
 
         return true;
     }
-    
+
     hasAttackingBolton() {
-        return this.controller.anyCardsInPlay(card => card.isAttacking() &&
-                                                      card.hasTrait('House Bolton') &&
-                                                      card.getType() === 'character');    
-    }    
+        return this.controller.anyCardsInPlay(
+            (card) =>
+                card.isAttacking() &&
+                card.hasTrait('House Bolton') &&
+                card.getType() === 'character'
+        );
+    }
 }
 
 Reek.code = '20027';
 
-module.exports = Reek;
+export default Reek;

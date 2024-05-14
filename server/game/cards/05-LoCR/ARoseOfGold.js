@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class ARoseOfGold extends DrawCard {
     setupCardAbilities() {
@@ -6,12 +6,17 @@ class ARoseOfGold extends DrawCard {
             title: 'Look at top 3 cards of deck',
             phase: 'challenge',
             handler: () => {
-                this.game.addMessage('{0} uses {1} to look at the top 3 cards of their deck', this.controller, this);
+                this.game.addMessage(
+                    '{0} uses {1} to look at the top 3 cards of their deck',
+                    this.controller,
+                    this
+                );
 
                 this.remainingCards = this.controller.searchDrawDeck(3);
 
-                let buttons = this.remainingCards.map(card => ({
-                    method: 'selectCardForHand', card: card
+                let buttons = this.remainingCards.map((card) => ({
+                    method: 'selectCardForHand',
+                    card: card
                 }));
 
                 this.game.promptWithMenu(this.controller, this, {
@@ -26,12 +31,12 @@ class ARoseOfGold extends DrawCard {
     }
 
     selectCardForHand(player, cardId) {
-        let card = this.remainingCards.find(card => card.uuid === cardId);
-        if(!card) {
+        let card = this.remainingCards.find((card) => card.uuid === cardId);
+        if (!card) {
             return false;
         }
 
-        this.remainingCards = this.remainingCards.filter(card => card.uuid !== cardId);
+        this.remainingCards = this.remainingCards.filter((card) => card.uuid !== cardId);
         this.controller.moveCard(card, 'hand');
         this.game.addMessage('{0} added a card to their hand', this.controller);
         this.promptToPlaceNextCard();
@@ -40,8 +45,9 @@ class ARoseOfGold extends DrawCard {
     }
 
     promptToPlaceNextCard() {
-        let buttons = this.remainingCards.map(card => ({
-            method: 'selectCardForBottom', card: card
+        let buttons = this.remainingCards.map((card) => ({
+            method: 'selectCardForBottom',
+            card: card
         }));
 
         this.game.promptWithMenu(this.controller, this, {
@@ -54,18 +60,21 @@ class ARoseOfGold extends DrawCard {
     }
 
     selectCardForBottom(player, cardId) {
-        let card = this.remainingCards.find(card => card.uuid === cardId);
-        if(!card) {
+        let card = this.remainingCards.find((card) => card.uuid === cardId);
+        if (!card) {
             return false;
         }
 
-        this.remainingCards = this.remainingCards.filter(card => card.uuid !== cardId);
+        this.remainingCards = this.remainingCards.filter((card) => card.uuid !== cardId);
         this.controller.moveCard(card, 'draw deck', { bottom: true });
 
-        if(this.remainingCards.length > 0) {
+        if (this.remainingCards.length > 0) {
             this.promptToPlaceNextCard();
         } else {
-            this.game.addMessage('{0} placed the remaining cards on the bottom of their deck', this.controller);
+            this.game.addMessage(
+                '{0} placed the remaining cards on the bottom of their deck',
+                this.controller
+            );
         }
 
         return true;
@@ -74,4 +83,4 @@ class ARoseOfGold extends DrawCard {
 
 ARoseOfGold.code = '05038';
 
-module.exports = ARoseOfGold;
+export default ARoseOfGold;

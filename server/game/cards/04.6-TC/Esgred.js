@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Esgred extends DrawCard {
     constructor(owner, cardData) {
@@ -16,13 +16,13 @@ class Esgred extends DrawCard {
 
     onCardEntersPlay(event) {
         let card = event.card;
-        if(card !== this && card.name !== 'Asha Greyjoy') {
+        if (card !== this && card.name !== 'Asha Greyjoy') {
             return;
         }
 
-        let asha = this.controller.cardsInPlay.find(card => card.name === 'Asha Greyjoy');
+        let asha = this.controller.cardsInPlay.find((card) => card.name === 'Asha Greyjoy');
 
-        if(!asha) {
+        if (!asha) {
             return;
         }
 
@@ -33,4 +33,4 @@ class Esgred extends DrawCard {
 
 Esgred.code = '04111';
 
-module.exports = Esgred;
+export default Esgred;

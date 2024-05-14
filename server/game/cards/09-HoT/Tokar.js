@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Tokar extends DrawCard {
     setupCardAbilities(ability) {
@@ -10,7 +10,7 @@ class Tokar extends DrawCard {
 
         this.persistentEffect({
             condition: () => this.parent && this.parent.isParticipating(),
-            match: card => card.getType() === 'character' && card.attachments.length === 0,
+            match: (card) => card.getType() === 'character' && card.attachments.length === 0,
             targetController: 'any',
             effect: ability.effects.cannotGainPower()
         });
@@ -19,4 +19,4 @@ class Tokar extends DrawCard {
 
 Tokar.code = '09038';
 
-module.exports = Tokar;
+export default Tokar;

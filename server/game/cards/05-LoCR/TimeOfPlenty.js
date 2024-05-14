@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class TimeOfPlenty extends PlotCard {
     setupCardAbilities(ability) {
@@ -11,4 +11,4 @@ class TimeOfPlenty extends PlotCard {
 
 TimeOfPlenty.code = '05051';
 
-module.exports = TimeOfPlenty;
+export default TimeOfPlenty;

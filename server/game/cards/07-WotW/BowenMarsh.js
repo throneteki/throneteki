@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class BowenMarsh extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,7 +7,7 @@ class BowenMarsh extends DrawCard {
         });
         this.persistentEffect({
             condition: () => this.game.isDuringChallenge({ challengeType: 'intrigue' }),
-            match: card => card.hasTrait('Steward') && card.getType() === 'character',
+            match: (card) => card.hasTrait('Steward') && card.getType() === 'character',
             effect: ability.effects.addKeyword('Insight')
         });
     }
@@ -15,4 +15,4 @@ class BowenMarsh extends DrawCard {
 
 BowenMarsh.code = '07002';
 
-module.exports = BowenMarsh;
+export default BowenMarsh;

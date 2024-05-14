@@ -1,5 +1,5 @@
-const Spectator = require('./spectator.js');
-const Message = require('./Message');
+import Spectator from './spectator.js';
+import Message from './Message.js';
 
 class GameChat {
     constructor() {
@@ -18,10 +18,10 @@ class GameChat {
 
     getFormattedMessage(message) {
         let args = Array.from(arguments).slice(1);
-        let argList = args.map(arg => {
-            if(arg instanceof Spectator) {
+        let argList = args.map((arg) => {
+            if (arg instanceof Spectator) {
                 return { name: arg.name, argType: 'nonAvatarPlayer', role: arg.role };
-            } else if(arg && arg.name && arg.argType === 'player') {
+            } else if (arg && arg.name && arg.argType === 'player') {
                 return { name: arg.name, argType: arg.argType, role: arg.role };
             }
 
@@ -40,11 +40,14 @@ class GameChat {
     addAlert(type, message, ...args) {
         let formattedMessage = this.getFormattedMessage(message, ...args);
 
-        this.messages.push({ date: new Date(), message: { alert: { type: type, message: formattedMessage } } });
+        this.messages.push({
+            date: new Date(),
+            message: { alert: { type: type, message: formattedMessage } }
+        });
     }
 
     formatMessage(format, args) {
-        if(!format || typeof (format) !== 'string') {
+        if (!format || typeof format !== 'string') {
             return '';
         }
 
@@ -52,4 +55,4 @@ class GameChat {
     }
 }
 
-module.exports = GameChat;
+export default GameChat;

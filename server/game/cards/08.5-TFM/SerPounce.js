@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class SerPounce extends DrawCard {
     setupCardAbilities(ability) {
@@ -14,4 +14,4 @@ class SerPounce extends DrawCard {
 
 SerPounce.code = '08090';
 
-module.exports = SerPounce;
+export default SerPounce;

@@ -1,10 +1,11 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class LionsOfTheRock extends PlotCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onPhaseStarted: event => event.phase === 'challenge' && this.controller.canGainGold()
+                onPhaseStarted: (event) =>
+                    event.phase === 'challenge' && this.controller.canGainGold()
             },
             handler: () => {
                 let gold = this.game.addGold(this.controller, 3);
@@ -16,4 +17,4 @@ class LionsOfTheRock extends PlotCard {
 
 LionsOfTheRock.code = '05046';
 
-module.exports = LionsOfTheRock;
+export default LionsOfTheRock;

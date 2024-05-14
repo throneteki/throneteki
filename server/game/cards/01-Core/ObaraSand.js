@@ -1,9 +1,13 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class ObaraSand extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.game.isDuringChallenge({ challengeType: 'power', defendingPlayer: this.controller }),
+            condition: () =>
+                this.game.isDuringChallenge({
+                    challengeType: 'power',
+                    defendingPlayer: this.controller
+                }),
             match: this,
             effect: [
                 // Add the icon as a UI hint, but Obara can be declared even if
@@ -18,4 +22,4 @@ class ObaraSand extends DrawCard {
 
 ObaraSand.code = '01108';
 
-module.exports = ObaraSand;
+export default ObaraSand;

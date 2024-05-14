@@ -1,10 +1,10 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class CorpseLake extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardDiscarded: event =>
+                onCardDiscarded: (event) =>
                     event.originalLocation === 'draw deck' &&
                     event.card.getType() === 'character' &&
                     event.card.controller !== this.controller &&
@@ -21,4 +21,4 @@ class CorpseLake extends DrawCard {
 
 CorpseLake.code = '09028';
 
-module.exports = CorpseLake;
+export default CorpseLake;

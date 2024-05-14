@@ -1,22 +1,29 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SerPrestonGreenfield extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.winner === this.controller && this.isParticipating() && this.opponentCanMovePower(event.challenge.loser)
+                afterChallenge: (event) =>
+                    event.challenge.winner === this.controller &&
+                    this.isParticipating() &&
+                    this.opponentCanMovePower(event.challenge.loser)
             },
             message: {
                 format: '{player} uses {source} to force {loser} to move power',
-                args: { loser: context => context.event.challenge.loser }
+                args: { loser: (context) => context.event.challenge.loser }
             },
-            handler: context => {
+            handler: (context) => {
                 const loser = context.event.challenge.loser;
                 this.game.promptForSelect(loser, {
-                    cardCondition: card => card.controller === loser && card.getType() === 'character' && card.location === 'play area' && !card.kneeled,
+                    cardCondition: (card) =>
+                        card.controller === loser &&
+                        card.getType() === 'character' &&
+                        card.location === 'play area' &&
+                        !card.kneeled,
                     onSelect: (opponent, card) => this.handleSelect(opponent, card),
-                    onCancel: opponent => this.handleCancel(opponent),
+                    onCancel: (opponent) => this.handleCancel(opponent),
                     source: this
                 });
             }
@@ -24,7 +31,10 @@ class SerPrestonGreenfield extends DrawCard {
     }
 
     opponentCanMovePower(opponent) {
-        return opponent.faction.power > 0 && opponent.anyCardsInPlay(card => card.getType() === 'character' && !card.kneeled);
+        return (
+            opponent.faction.power > 0 &&
+            opponent.anyCardsInPlay((card) => card.getType() === 'character' && !card.kneeled)
+        );
     }
 
     handleSelect(opponent, card) {
@@ -46,4 +56,4 @@ class SerPrestonGreenfield extends DrawCard {
 
 SerPrestonGreenfield.code = '13087';
 
-module.exports = SerPrestonGreenfield;
+export default SerPrestonGreenfield;

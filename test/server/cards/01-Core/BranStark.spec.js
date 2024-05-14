@@ -1,6 +1,6 @@
-describe('Bran Stark (Core)', function() {
-    integration(function() {
-        beforeEach(function() {
+describe('Bran Stark (Core)', function () {
+    integration(function () {
+        beforeEach(function () {
             const deck1 = this.buildDeck('stark', [
                 'Sneak Attack',
                 'Bran Stark (Core)',
@@ -26,24 +26,24 @@ describe('Bran Stark (Core)', function() {
             this.completeMarshalPhase();
         });
 
-        describe('when an event is played', function() {
-            beforeEach(function() {
+        describe('when an event is played', function () {
+            beforeEach(function () {
                 this.player2.clickCard('Seen In Flames', 'hand');
             });
 
-            it('should cancel the event', function() {
+            it('should cancel the event', function () {
                 this.player1.triggerAbility('Bran Stark');
 
                 expect(this.player2).toAllowAbilityTrigger('Melisandre');
             });
 
-            it('should sacrifice bran', function() {
+            it('should sacrifice bran', function () {
                 this.player1.triggerAbility('Bran Stark');
 
                 expect(this.bran.location).toBe('discard pile');
             });
 
-            it('should still discard the event', function() {
+            it('should still discard the event', function () {
                 this.player1.triggerAbility('Bran Stark');
 
                 expect(this.seenInFlames.location).toBe('discard pile');

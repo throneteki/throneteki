@@ -1,9 +1,13 @@
-describe('The King in the North', function() {
-    integration(function() {
-        beforeEach(function() {
+describe('The King in the North', function () {
+    integration(function () {
+        beforeEach(function () {
             const deck = this.buildDeck('lannister', [
                 'The King in the North (R)',
-                'Renly Baratheon (FotS)', 'Dornish Fiefdom', 'Hedge Knight', 'Tithe', 'Old Forest Hunter'
+                'Renly Baratheon (FotS)',
+                'Dornish Fiefdom',
+                'Hedge Knight',
+                'Tithe',
+                'Old Forest Hunter'
             ]);
             this.player1.selectDeck(deck);
             this.player2.selectDeck(deck);
@@ -24,46 +28,46 @@ describe('The King in the North', function() {
             this.selectFirstPlayer(this.player1);
         });
 
-        describe('when you trigger a location ability', function() {
-            beforeEach(function() {
+        describe('when you trigger a location ability', function () {
+            beforeEach(function () {
                 this.player1.clickMenu(this.location, 'Gain gold');
             });
 
-            it('should not resolve', function() {
+            it('should not resolve', function () {
                 expect(this.player1Object.gold).toBe(5);
             });
         });
 
-        describe('when you trigger an event ability', function() {
-            beforeEach(function() {
+        describe('when you trigger an event ability', function () {
+            beforeEach(function () {
                 this.player1.clickCard(this.event);
                 this.player1.clickCard(this.neutral);
             });
 
-            it('should resolve as usual', function() {
+            it('should resolve as usual', function () {
                 expect(this.player1Object.gold).toBe(7);
             });
         });
 
-        describe('when you trigger a non-king/queen character ability', function() {
-            beforeEach(function() {
+        describe('when you trigger a non-king/queen character ability', function () {
+            beforeEach(function () {
                 this.player1.clickCard(this.nonKing);
                 this.player1.clickMenu(this.nonKing, 'Discard a card to gain 1 gold');
             });
 
-            it('should not resolve', function() {
+            it('should not resolve', function () {
                 expect(this.player1).toHavePrompt('Marshal your cards');
                 expect(this.player1Object.gold).toBe(3);
             });
         });
 
-        describe('when you trigger a king ability', function() {
-            beforeEach(function() {
+        describe('when you trigger a king ability', function () {
+            beforeEach(function () {
                 this.player1.clickCard(this.king);
                 this.player1.clickMenu(this.king, 'Put character into play');
             });
 
-            it('should resolve as usual', function() {
+            it('should resolve as usual', function () {
                 this.player1.clickCard(this.nonKing);
                 expect(this.nonKing.location).toBe('play area');
             });

@@ -1,23 +1,28 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Gendry extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onDominanceDetermined: event => this.controller === event.winner && this.allowGameAction('gainPower')
+                onDominanceDetermined: (event) =>
+                    this.controller === event.winner && this.allowGameAction('gainPower')
             },
             handler: () => {
                 this.modifyPower(1),
-                this.game.addMessage('{0} uses {1} to gain a power on {1}', this.controller, this);
+                    this.game.addMessage(
+                        '{0} uses {1} to gain a power on {1}',
+                        this.controller,
+                        this
+                    );
             }
         });
 
         this.forcedReaction({
             when: {
-                onDominanceDetermined: event => event.winner && this.controller !== event.winner
+                onDominanceDetermined: (event) => event.winner && this.controller !== event.winner
             },
             handler: () => {
-                if(this.power < 1) {
+                if (this.power < 1) {
                     this.sacrificeBastard(this.controller);
                     return;
                 }
@@ -45,7 +50,11 @@ class Gendry extends DrawCard {
 
     sacrificeBastard(player) {
         this.game.promptForSelect(player, {
-            cardCondition: card => card.location === 'play area' && card.hasTrait('Bastard') && card.getType() === 'character' && card.controller === this.controller,
+            cardCondition: (card) =>
+                card.location === 'play area' &&
+                card.hasTrait('Bastard') &&
+                card.getType() === 'character' &&
+                card.controller === this.controller,
             source: this,
             onSelect: (player, card) => {
                 card.controller.sacrificeCard(card);
@@ -60,4 +69,4 @@ class Gendry extends DrawCard {
 
 Gendry.code = '02068';
 
-module.exports = Gendry;
+export default Gendry;

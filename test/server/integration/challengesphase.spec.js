@@ -1,10 +1,11 @@
-describe('challenges phase', function() {
-    integration(function() {
-        describe('when a character has stealth', function() {
-            beforeEach(function() {
+describe('challenges phase', function () {
+    integration(function () {
+        describe('when a character has stealth', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('lannister', [
                     'Sneak Attack',
-                    'Tyrion Lannister (Core)', 'Joffrey Baratheon (Core)'
+                    'Tyrion Lannister (Core)',
+                    'Joffrey Baratheon (Core)'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
@@ -23,7 +24,7 @@ describe('challenges phase', function() {
                 this.player1.clickPrompt('Done');
             });
 
-            it('should prompt for stealth targets before reactions', function() {
+            it('should prompt for stealth targets before reactions', function () {
                 let stealthTarget = this.player2.findCardByName('Joffrey Baratheon', 'play area');
 
                 expect(this.player1).toHavePrompt('Select stealth target for Tyrion Lannister');
@@ -35,11 +36,14 @@ describe('challenges phase', function() {
             });
         });
 
-        describe('when a side has higher strength but no participating characters', function() {
-            beforeEach(function() {
+        describe('when a side has higher strength but no participating characters', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('thenightswatch', [
                     'A Noble Cause',
-                    'Steward at the Wall', 'The Haunted Forest', 'The Haunted Forest', 'The Shadow Tower (WotN)'
+                    'Steward at the Wall',
+                    'The Haunted Forest',
+                    'The Haunted Forest',
+                    'The Shadow Tower (WotN)'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
@@ -68,22 +72,27 @@ describe('challenges phase', function() {
                 this.skipActionWindow();
             });
 
-            it('should not trigger any win reactions for the defender', function() {
+            it('should not trigger any win reactions for the defender', function () {
                 expect(this.player2).not.toAllowAbilityTrigger('The Shadow Tower');
             });
 
-            it('should complete the challenge', function() {
+            it('should complete the challenge', function () {
                 expect(this.player1).toHavePromptButton('Military');
                 expect(this.player1).toHaveDisabledPromptButton('Intrigue');
                 expect(this.player1).toHavePromptButton('Power');
             });
         });
 
-        describe('when initiating a challenge', function() {
-            beforeEach(function() {
+        describe('when initiating a challenge', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('lannister', [
                     'Trading with the Pentoshi',
-                    'Tyrion Lannister (Core)', 'Dornish Paramour', 'Marya Seaworth', 'Jojen Reed', 'Hedge Knight', 'Lannisport Merchant'
+                    'Tyrion Lannister (Core)',
+                    'Dornish Paramour',
+                    'Marya Seaworth',
+                    'Jojen Reed',
+                    'Hedge Knight',
+                    'Lannisport Merchant'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
@@ -119,7 +128,7 @@ describe('challenges phase', function() {
                 };
             });
 
-            it('should prompt for challenge initiated, attackers declared, and stealth simultaneously', function() {
+            it('should prompt for challenge initiated, attackers declared, and stealth simultaneously', function () {
                 this.initiateChallenge();
 
                 expect(this.player1).toAllowAbilityTrigger('Tyrion Lannister');
@@ -127,7 +136,7 @@ describe('challenges phase', function() {
                 expect(this.player1).toAllowAbilityTrigger('Marya Seaworth');
             });
 
-            it('should reactions in the same window to generate gold needed to pay costs', function() {
+            it('should reactions in the same window to generate gold needed to pay costs', function () {
                 this.player1Object.gold = 0;
                 this.initiateChallenge();
                 expect(this.player1).not.toAllowAbilityTrigger('Marya Seaworth');
@@ -137,7 +146,7 @@ describe('challenges phase', function() {
                 expect(this.player1).toAllowAbilityTrigger('Marya Seaworth');
             });
 
-            it('should allow multiple reactions from the same card to be triggered', function() {
+            it('should allow multiple reactions from the same card to be triggered', function () {
                 this.initiateChallenge();
 
                 this.player1.triggerAbility('Marya Seaworth');
@@ -150,11 +159,14 @@ describe('challenges phase', function() {
             });
         });
 
-        describe('when cards have keywords', function() {
-            beforeEach(function() {
+        describe('when cards have keywords', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('tyrell', [
                     'Sneak Attack',
-                    'Renly Baratheon (FFH)', 'Brienne of Tarth (GoH)', 'Ser Garlan Tyrell (OR)', 'Garden Caretaker'
+                    'Renly Baratheon (FFH)',
+                    'Brienne of Tarth (GoH)',
+                    'Ser Garlan Tyrell (OR)',
+                    'Garden Caretaker'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
@@ -196,12 +208,12 @@ describe('challenges phase', function() {
                 this.skipActionWindow();
             });
 
-            describe('when no settings are set', function() {
-                beforeEach(function() {
+            describe('when no settings are set', function () {
+                beforeEach(function () {
                     this.player1.clickPrompt('Apply Claim');
                 });
 
-                it('should apply all keywords automatically', function() {
+                it('should apply all keywords automatically', function () {
                     expect(this.chud.location).toBe('hand');
                     expect(this.renly.power).toBe(1);
                     expect(this.brienne.power).toBe(1);
@@ -209,14 +221,14 @@ describe('challenges phase', function() {
                 });
             });
 
-            describe('and the first player wants to choose keyword order', function() {
-                beforeEach(function() {
+            describe('and the first player wants to choose keyword order', function () {
+                beforeEach(function () {
                     this.player2.toggleKeywordSettings('chooseOrder', true);
 
                     this.player1.clickPrompt('Apply Claim');
                 });
 
-                it('should allow the first player to choose the order', function() {
+                it('should allow the first player to choose the order', function () {
                     this.player2.clickPrompt('Insight');
 
                     expect(this.chud.location).toBe('hand');
@@ -227,7 +239,7 @@ describe('challenges phase', function() {
                     expect(this.garlan.power).toBe(0);
                 });
 
-                it('should allow the first player to process all keywords automatically', function() {
+                it('should allow the first player to process all keywords automatically', function () {
                     this.player2.clickPrompt('Automatic');
 
                     expect(this.chud.location).toBe('hand');
@@ -237,14 +249,14 @@ describe('challenges phase', function() {
                 });
             });
 
-            describe('and the winner wants to choose which cards', function() {
-                beforeEach(function() {
+            describe('and the winner wants to choose which cards', function () {
+                beforeEach(function () {
                     this.player1.toggleKeywordSettings('chooseCards', true);
 
                     this.player1.clickPrompt('Apply Claim');
                 });
 
-                it('should allow the winner to choose cards', function() {
+                it('should allow the winner to choose cards', function () {
                     expect(this.player1).toHavePrompt('Select insight cards');
                     this.player1.clickPrompt('Done');
 
@@ -262,12 +274,9 @@ describe('challenges phase', function() {
             });
         });
 
-        describe('disabling challenge buttons', function() {
-            beforeEach(function() {
-                const deck = this.buildDeck('stark', [
-                    'A Noble Cause',
-                    'Winterfell Steward'
-                ]);
+        describe('disabling challenge buttons', function () {
+            beforeEach(function () {
+                const deck = this.buildDeck('stark', ['A Noble Cause', 'Winterfell Steward']);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
                 this.startGame();
@@ -289,11 +298,11 @@ describe('challenges phase', function() {
                 this.player1.clickPrompt('Apply Claim');
             });
 
-            it('should disable the used challenge for the current player', function() {
+            it('should disable the used challenge for the current player', function () {
                 expect(this.player1).toHaveDisabledPromptButton('Power');
             });
 
-            it('should not disable the used challenge for the next player', function() {
+            it('should not disable the used challenge for the next player', function () {
                 this.player1.clickPrompt('Done');
 
                 expect(this.player2).toHavePromptButton('Power');

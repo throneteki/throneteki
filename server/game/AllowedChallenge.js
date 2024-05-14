@@ -20,4 +20,4 @@ class AllowedChallenge {
     }
 }
 
-module.exports = AllowedChallenge;
+export default AllowedChallenge;

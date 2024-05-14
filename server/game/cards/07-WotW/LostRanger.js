@@ -1,20 +1,24 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class LostRanger extends DrawCard {
     setupCardAbilities() {
         this.forcedInterrupt({
             when: {
-                onPhaseEnded: event => event.phase === 'challenge' && this.hasNoOtherRanger()
+                onPhaseEnded: (event) => event.phase === 'challenge' && this.hasNoOtherRanger()
             },
             handler: () => {
                 this.controller.sacrificeCard(this);
-                this.game.addMessage('{0} is forced by {1} to sacrifice {1}', this.controller, this);
+                this.game.addMessage(
+                    '{0} is forced by {1} to sacrifice {1}',
+                    this.controller,
+                    this
+                );
             }
         });
     }
 
     hasNoOtherRanger() {
-        let rangers = this.controller.filterCardsInPlay(card => {
+        let rangers = this.controller.filterCardsInPlay((card) => {
             return card !== this && card.hasTrait('Ranger') && card.getType() === 'character';
         });
 
@@ -24,4 +28,4 @@ class LostRanger extends DrawCard {
 
 LostRanger.code = '07014';
 
-module.exports = LostRanger;
+export default LostRanger;

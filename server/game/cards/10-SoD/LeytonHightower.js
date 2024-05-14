@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class LeytonHightower extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,14 +7,22 @@ class LeytonHightower extends DrawCard {
             cost: ability.costs.kneelSelf(),
             target: {
                 activePromptTitle: 'Select a card',
-                cardCondition: card => card.location === 'hand' && card.controller === this.controller &&
-                                       !card.isLimited() && card.isFaction('tyrell') && card.getPrintedCost() <= 4 &&
-                                       this.controller.canPutIntoPlay(card)
+                cardCondition: (card) =>
+                    card.location === 'hand' &&
+                    card.controller === this.controller &&
+                    !card.isLimited() &&
+                    card.isFaction('tyrell') &&
+                    card.getPrintedCost() <= 4 &&
+                    this.controller.canPutIntoPlay(card)
             },
-            handler: context => {
+            handler: (context) => {
                 context.player.putIntoPlay(context.target, 'play', { kneeled: true });
-                this.game.addMessage('{0} kneels {1} to put {2} into play from their hand knelt',
-                    context.player, this, context.target);
+                this.game.addMessage(
+                    '{0} kneels {1} to put {2} into play from their hand knelt',
+                    context.player,
+                    this,
+                    context.target
+                );
             }
         });
     }
@@ -22,4 +30,4 @@ class LeytonHightower extends DrawCard {
 
 LeytonHightower.code = '10037';
 
-module.exports = LeytonHightower;
+export default LeytonHightower;

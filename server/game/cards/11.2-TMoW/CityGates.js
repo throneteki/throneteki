@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class CityGates extends DrawCard {
     setupCardAbilities(ability) {
@@ -8,15 +8,15 @@ class CityGates extends DrawCard {
         this.action({
             title: 'Draw 1 card',
             condition: () => this.controller.canDraw(),
-            cost: [
-                ability.costs.payGold(1),
-                ability.costs.discardSelfFromHand()
-            ],
+            cost: [ability.costs.payGold(1), ability.costs.discardSelfFromHand()],
             location: 'hand',
-            handler: context => {
+            handler: (context) => {
                 context.player.drawCardsToHand(1);
-                this.game.addMessage('{0} pays 1 gold and discards {1} from their hand to draw 1 card',
-                    context.player, this);
+                this.game.addMessage(
+                    '{0} pays 1 gold and discards {1} from their hand to draw 1 card',
+                    context.player,
+                    this
+                );
             }
         });
     }
@@ -24,4 +24,4 @@ class CityGates extends DrawCard {
 
 CityGates.code = '11038';
 
-module.exports = CityGates;
+export default CityGates;

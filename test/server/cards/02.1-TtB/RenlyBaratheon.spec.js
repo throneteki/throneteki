@@ -1,9 +1,13 @@
-describe('Renly Baratheon (TtB)', function() {
-    integration(function() {
-        beforeEach(function() {
+describe('Renly Baratheon (TtB)', function () {
+    integration(function () {
+        beforeEach(function () {
             const deck = this.buildDeck('baratheon', [
                 'Sneak Attack',
-                'Renly Baratheon (TtB)', 'Dragonstone Faithful', 'Castle Black (Core)', 'Steward at the Wall', 'Steward at the Wall'
+                'Renly Baratheon (TtB)',
+                'Dragonstone Faithful',
+                'Castle Black (Core)',
+                'Steward at the Wall',
+                'Steward at the Wall'
             ]);
             this.player1.selectDeck(deck);
             this.player2.selectDeck(deck);
@@ -15,7 +19,7 @@ describe('Renly Baratheon (TtB)', function() {
             this.selectFirstPlayer(this.player1);
         });
 
-        it('should reduce the first non Baratheon character marshalled.', function() {
+        it('should reduce the first non Baratheon character marshalled.', function () {
             // Does not reduce Baratheon characters
             this.player1.clickCard('Dragonstone Faithful', 'hand');
             expect(this.player1Object.gold).toBe(4);

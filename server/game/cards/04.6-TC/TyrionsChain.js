@@ -1,21 +1,22 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TyrionsChain extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event, context) => (
+                afterChallenge: (event, context) =>
                     event.challenge.winner === context.player &&
                     this.hasParticipatingUniqueLannister(context.player) &&
                     this.game.anyPlotHasTrait('War')
-                )
             },
             max: ability.limit.perPhase(1),
-            handler: context => {
+            handler: (context) => {
                 let warPlots = this.getRevealedWarPlots();
 
-                let buttons = warPlots.map(card => ({
-                    method: 'selectWarPlot', card: card, mapCard: true
+                let buttons = warPlots.map((card) => ({
+                    method: 'selectWarPlot',
+                    card: card,
+                    mapCard: true
                 }));
 
                 this.context = context;
@@ -32,13 +33,19 @@ class TyrionsChain extends DrawCard {
     }
 
     hasParticipatingUniqueLannister(player) {
-        return player.anyCardsInPlay(card => card.isParticipating() && card.isUnique() && card.isFaction('lannister') && card.getType() === 'character');
+        return player.anyCardsInPlay(
+            (card) =>
+                card.isParticipating() &&
+                card.isUnique() &&
+                card.isFaction('lannister') &&
+                card.getType() === 'character'
+        );
     }
 
     getRevealedWarPlots() {
         let revealedPlots = [];
-        for(let player of this.game.getPlayers()) {
-            if(player.activePlot && player.activePlot.hasTrait('War')) {
+        for (let player of this.game.getPlayers()) {
+            if (player.activePlot && player.activePlot.hasTrait('War')) {
                 revealedPlots = revealedPlots.concat(player.activePlot);
             }
         }
@@ -46,10 +53,15 @@ class TyrionsChain extends DrawCard {
     }
 
     selectWarPlot(player, warPlot) {
-        this.game.addMessage('{0} uses {1} to initiate the When Revealed ability of {2}', this.context.player, this, warPlot);
+        this.game.addMessage(
+            '{0} uses {1} to initiate the When Revealed ability of {2}',
+            this.context.player,
+            this,
+            warPlot
+        );
 
         let whenRevealed = warPlot.getWhenRevealedAbility();
-        if(whenRevealed) {
+        if (whenRevealed) {
             // Attach the current When Revealed event to the new context
             let context = whenRevealed.createContext(this.context.event);
             context.player = this.context.player;
@@ -61,4 +73,4 @@ class TyrionsChain extends DrawCard {
 
 TyrionsChain.code = '04110';
 
-module.exports = TyrionsChain;
+export default TyrionsChain;

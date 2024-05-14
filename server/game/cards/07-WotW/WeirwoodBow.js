@@ -1,29 +1,30 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class WeirwoodBow extends DrawCard {
     setupCardAbilities(ability) {
-        this.attachmentRestriction(
-            { faction: 'thenightswatch' },
-            { trait: 'Wildling' }
-        );
+        this.attachmentRestriction({ faction: 'thenightswatch' }, { trait: 'Wildling' });
         this.action({
             title: 'Give defending character -2 STR',
             cost: ability.costs.kneelSelf(),
             target: {
-                cardCondition: card => (
+                cardCondition: (card) =>
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
-                    card.isDefending()),
+                    card.isDefending(),
                 gameAction: 'decreaseStrength'
             },
-            handler: context => {
-                this.untilEndOfChallenge(ability => ({
+            handler: (context) => {
+                this.untilEndOfChallenge((ability) => ({
                     match: context.target,
                     effect: ability.effects.modifyStrength(-2)
                 }));
 
-                this.game.addMessage('{0} kneels {1} to give {2} -2 STR until the end of the challenge',
-                    context.player, this, context.target);
+                this.game.addMessage(
+                    '{0} kneels {1} to give {2} -2 STR until the end of the challenge',
+                    context.player,
+                    this,
+                    context.target
+                );
             }
         });
     }
@@ -31,4 +32,4 @@ class WeirwoodBow extends DrawCard {
 
 WeirwoodBow.code = '07043';
 
-module.exports = WeirwoodBow;
+export default WeirwoodBow;

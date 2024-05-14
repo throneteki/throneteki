@@ -1,14 +1,15 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class SmallCouncilChamber extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,
-            effect: ability.effects.immuneTo(card => card.getType() === 'event')
+            effect: ability.effects.immuneTo((card) => card.getType() === 'event')
         });
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.winner === this.controller &&
+                afterChallenge: (event) =>
+                    event.challenge.winner === this.controller &&
                     event.challenge.challengeType === 'intrigue' &&
                     this.allowGameAction('gainPower')
             },
@@ -22,4 +23,4 @@ class SmallCouncilChamber extends DrawCard {
 
 SmallCouncilChamber.code = '02110';
 
-module.exports = SmallCouncilChamber;
+export default SmallCouncilChamber;

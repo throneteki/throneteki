@@ -1,10 +1,7 @@
-describe('Viserys Targaryen', function() {
-    integration(function() {
-        beforeEach(function() {
-            const deck1 = this.buildDeck('targaryen', [
-                'Sneak Attack',
-                'Viserys Targaryen (Core)'
-            ]);
+describe('Viserys Targaryen', function () {
+    integration(function () {
+        beforeEach(function () {
+            const deck1 = this.buildDeck('targaryen', ['Sneak Attack', 'Viserys Targaryen (Core)']);
             const deck2 = this.buildDeck('stark', [
                 'A Feast for Crows',
                 'Tumblestone Knight',
@@ -29,15 +26,15 @@ describe('Viserys Targaryen', function() {
             this.completeMarshalPhase();
         });
 
-        describe('when Viserys is killed', function() {
-            beforeEach(function() {
+        describe('when Viserys is killed', function () {
+            beforeEach(function () {
                 this.unopposedChallenge(this.player2, 'military', 'Tumblestone Knight');
                 this.player2.clickPrompt('Apply Claim');
 
                 this.player1.clickCard(this.viserys);
             });
 
-            it('should allow the player to discard an attachment', function() {
+            it('should allow the player to discard an attachment', function () {
                 this.player1.triggerAbility('Viserys Targaryen');
                 this.player1.clickCard(this.lady);
 

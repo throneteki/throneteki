@@ -1,21 +1,28 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Shaggydog extends DrawCard {
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'stark', controller: 'current' });
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.winner === this.controller && event.challenge.isAttacking(this.parent) &&
-                                         this.game.anyCardsInPlay(card => card.isDefending())
+                afterChallenge: (event) =>
+                    event.challenge.winner === this.controller &&
+                    event.challenge.isAttacking(this.parent) &&
+                    this.game.anyCardsInPlay((card) => card.isDefending())
             },
-            handler: context => {
+            handler: (context) => {
                 let loser = context.event.challenge.loser;
-                this.game.addMessage('{0} uses {1} to have {2} choose and kill a defending character', context.player, this, loser);
+                this.game.addMessage(
+                    '{0} uses {1} to have {2} choose and kill a defending character',
+                    context.player,
+                    this,
+                    loser
+                );
                 this.game.promptForSelect(loser, {
-                    cardCondition: card => card.isDefending(),
+                    cardCondition: (card) => card.isDefending(),
                     source: this,
                     onSelect: (player, card) => this.onCardSelected(player, card),
-                    onCancel: player => this.cancelSelection(player)
+                    onCancel: (player) => this.cancelSelection(player)
                 });
             }
         });
@@ -24,12 +31,20 @@ class Shaggydog extends DrawCard {
             cost: ability.costs.payGold(1),
             target: {
                 type: 'select',
-                cardCondition: card => this.controller.canAttach(this, card) && card.location === 'play area' && card !== this.parent
+                cardCondition: (card) =>
+                    this.controller.canAttach(this, card) &&
+                    card.location === 'play area' &&
+                    card !== this.parent
             },
             limit: ability.limit.perPhase(1),
-            handler: context => {
+            handler: (context) => {
                 context.player.attach(this.controller, this, context.target);
-                this.game.addMessage('{0} pays 1 gold to attach {1} to {2}', context.player, this, context.target);
+                this.game.addMessage(
+                    '{0} pays 1 gold to attach {1} to {2}',
+                    context.player,
+                    this,
+                    context.target
+                );
             }
         });
     }
@@ -41,11 +56,16 @@ class Shaggydog extends DrawCard {
     }
 
     cancelSelection(player) {
-        this.game.addAlert('danger', '{0} does not select a character to kill for {1}', player, this);
+        this.game.addAlert(
+            'danger',
+            '{0} does not select a character to kill for {1}',
+            player,
+            this
+        );
         return true;
     }
 }
 
 Shaggydog.code = '11062';
 
-module.exports = Shaggydog;
+export default Shaggydog;

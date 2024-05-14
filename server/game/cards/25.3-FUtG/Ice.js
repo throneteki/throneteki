@@ -1,5 +1,5 @@
-const GameActions = require('../../GameActions/index.js');
-const DrawCard = require('../../drawcard.js');
+import GameActions from '../../GameActions/index.js';
+import DrawCard from '../../drawcard.js';
 
 class Ice extends DrawCard {
     setupCardAbilities(ability) {
@@ -9,14 +9,14 @@ class Ice extends DrawCard {
         });
         this.reaction({
             when: {
-                onCardSaved: event => event.card.getType() === 'character'
+                onCardSaved: (event) => event.card.getType() === 'character'
             },
             cost: ability.costs.kneelSelf(),
-            gameAction: GameActions.kill(context => ({ card: context.event.card }))
+            gameAction: GameActions.kill((context) => ({ card: context.event.card }))
         });
     }
 }
 
 Ice.code = '25052';
 
-module.exports = Ice;
+export default Ice;

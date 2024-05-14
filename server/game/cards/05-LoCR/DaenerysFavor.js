@@ -1,11 +1,12 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class DaenerysFavor extends DrawCard {
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'targaryen' });
         this.persistentEffect({
             condition: () => this.parent && this.parent.isParticipating(),
-            match: card => card.isParticipating() && card.getType() === 'character' && card !== this.parent,
+            match: (card) =>
+                card.isParticipating() && card.getType() === 'character' && card !== this.parent,
             targetController: 'any',
             effect: ability.effects.modifyStrength(-1)
         });
@@ -14,4 +15,4 @@ class DaenerysFavor extends DrawCard {
 
 DaenerysFavor.code = '05036';
 
-module.exports = DaenerysFavor;
+export default DaenerysFavor;

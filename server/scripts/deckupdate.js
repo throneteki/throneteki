@@ -13,29 +13,37 @@ const fixBanners = async () => {
     let chunkSize = 5000;
     let numberFound = 0;
 
-    while(numberProcessed < count) {
+    while (numberProcessed < count) {
         let decks = await dbDecks.find({}, { limit: chunkSize, skip: numberProcessed });
         console.info('loaded', _.size(decks), 'decks');
-        for(let deck of decks) {
-            if(deck.drawCards.some(card => card.card.text) || deck.plotCards.some(card => card.card.text) || (deck.agenda && deck.agenda.text) || deck.faction.name) {
+        for (let deck of decks) {
+            if (
+                deck.drawCards.some((card) => card.card.text) ||
+                deck.plotCards.some((card) => card.card.text) ||
+                (deck.agenda && deck.agenda.text) ||
+                deck.faction.name
+            ) {
                 numberFound++;
 
-                for(const drawCard of deck.drawCards) {
+                for (const drawCard of deck.drawCards) {
                     drawCard.card = { code: drawCard.card.code };
                 }
 
-                for(const plotCard of deck.plotCards) {
+                for (const plotCard of deck.plotCards) {
                     plotCard.card = { code: plotCard.card.code };
                 }
 
-                await dbDecks.update({ _id: deck._id }, {
-                    '$set': {
-                        plotCards: deck.plotCards,
-                        drawCards: deck.drawCards,
-                        agenda: deck.agenda ? { code: deck.agenda.code } : undefined,
-                        faction: { value: deck.faction.value }
+                await dbDecks.update(
+                    { _id: deck._id },
+                    {
+                        $set: {
+                            plotCards: deck.plotCards,
+                            drawCards: deck.drawCards,
+                            agenda: deck.agenda ? { code: deck.agenda.code } : undefined,
+                            faction: { value: deck.faction.value }
+                        }
                     }
-                });
+                );
             }
         }
 

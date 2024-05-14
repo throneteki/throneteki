@@ -1,15 +1,14 @@
-const PlotCard = require('../../plotcard');
-const {ChallengeTracker} = require('../../EventTrackers');
+import PlotCard from '../../plotcard.js';
+import { ChallengeTracker } from '../../EventTrackers/index.js';
 
 class ForTheWatch extends PlotCard {
     setupCardAbilities(ability) {
         this.tracker = ChallengeTracker.forPhase(this.game);
 
         this.persistentEffect({
-            condition: () => (
+            condition: () =>
                 this.game.isDuringChallenge({ defendingPlayer: this.controller }) &&
-                this.numOfChallengesInitiatedAgainst() <= 1
-            ),
+                this.numOfChallengesInitiatedAgainst() <= 1,
             targetController: 'opponent',
             effect: ability.effects.cannotWinChallenge()
         });
@@ -22,4 +21,4 @@ class ForTheWatch extends PlotCard {
 
 ForTheWatch.code = '02067';
 
-module.exports = ForTheWatch;
+export default ForTheWatch;

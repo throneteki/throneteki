@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class YoungSpearwife extends DrawCard {
     setupCardAbilities(ability) {
@@ -11,10 +11,10 @@ class YoungSpearwife extends DrawCard {
 
     hasLessFactionPower() {
         let opponents = this.game.getOpponents(this.controller);
-        return opponents.some(opponent => this.controller.faction.power < opponent.faction.power);
+        return opponents.some((opponent) => this.controller.faction.power < opponent.faction.power);
     }
 }
 
 YoungSpearwife.code = '03040';
 
-module.exports = YoungSpearwife;
+export default YoungSpearwife;

@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class WaterDancersSword extends DrawCard {
     setupCardAbilities(ability) {
@@ -9,12 +9,12 @@ class WaterDancersSword extends DrawCard {
         });
         this.forcedInterrupt({
             when: {
-                onPhaseEnded: event => event.phase === 'challenge'
+                onPhaseEnded: (event) => event.phase === 'challenge'
             },
             message: '{player} is forced to return {source} to their hand',
-            handler: context => {
+            handler: (context) => {
                 this.game.resolveGameAction(
-                    GameActions.returnCardToHand(context => ({ card: context.source })),
+                    GameActions.returnCardToHand((context) => ({ card: context.source })),
                     context
                 );
             }
@@ -24,4 +24,4 @@ class WaterDancersSword extends DrawCard {
 
 WaterDancersSword.code = '15043';
 
-module.exports = WaterDancersSword;
+export default WaterDancersSword;

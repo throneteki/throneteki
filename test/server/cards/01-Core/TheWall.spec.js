@@ -1,8 +1,12 @@
-describe('TheWall', function() {
-    integration(function() {
-        describe('when dupes are put out in the setup phase', function() {
-            beforeEach(function() {
-                const deck = this.buildDeck('thenightswatch', ['The Wall (Core)', 'The Wall (Core)', 'Steward at the Wall']);
+describe('TheWall', function () {
+    integration(function () {
+        describe('when dupes are put out in the setup phase', function () {
+            beforeEach(function () {
+                const deck = this.buildDeck('thenightswatch', [
+                    'The Wall (Core)',
+                    'The Wall (Core)',
+                    'Steward at the Wall'
+                ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
                 this.startGame();
@@ -12,7 +16,7 @@ describe('TheWall', function() {
                 this.character = this.player1.findCardByName('Steward at the Wall');
             });
 
-            it('should not count duplicates toward character strength', function() {
+            it('should not count duplicates toward character strength', function () {
                 this.player1.clickCard(this.wall1);
                 this.player1.clickCard(this.wall2);
                 this.player1.clickCard(this.character);

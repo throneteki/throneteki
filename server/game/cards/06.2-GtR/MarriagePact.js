@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class MarriagePact extends DrawCard {
     setupCardAbilities(ability) {
@@ -8,17 +8,22 @@ class MarriagePact extends DrawCard {
 
         this.forcedInterrupt({
             when: {
-                onCardLeftPlay: event => event.card === this.parent
+                onCardLeftPlay: (event) => event.card === this.parent
             },
             target: {
-                cardCondition: card => (
+                cardCondition: (card) =>
                     card.location === 'play area' &&
                     card.controller === this.controller &&
-                    card.getType() === 'character')
+                    card.getType() === 'character'
             },
-            handler: context => {
+            handler: (context) => {
                 context.target.controller.sacrificeCard(context.target);
-                this.game.addMessage('{0} is forced by {1} to sacrifice {2}', context.player, this, context.target);
+                this.game.addMessage(
+                    '{0} is forced by {1} to sacrifice {2}',
+                    context.player,
+                    this,
+                    context.target
+                );
             }
         });
     }
@@ -26,4 +31,4 @@ class MarriagePact extends DrawCard {
 
 MarriagePact.code = '06022';
 
-module.exports = MarriagePact;
+export default MarriagePact;

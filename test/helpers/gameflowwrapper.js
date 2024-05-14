@@ -1,17 +1,16 @@
 /* global jasmine */
 
-const range = require('lodash.range');
+import range from 'lodash.range';
 
-const Game = require('../../server/game/game.js');
-const PlayerInteractionWrapper = require('./playerinteractionwrapper.js');
-const Settings = require('../../server/settings.js');
-
-const corePack = require('../../throneteki-json-data/packs/Core.json');
+import Game from '../../server/game/game.js';
+import PlayerInteractionWrapper from './playerinteractionwrapper.js';
+import Settings from '../../server/settings.js';
+import corePack from '../../throneteki-json-data/packs/Core.json' with { type: 'json' };
 const titleCardData = createTitleCardLookup(corePack.cards);
 
 function createTitleCardLookup(cards) {
     return cards
-        .filter(card => card.type === 'title')
+        .filter((card) => card.type === 'title')
         .reduce((cardIndex, card) => {
             cardIndex[card.code] = card;
             return cardIndex;
@@ -20,12 +19,16 @@ function createTitleCardLookup(cards) {
 
 class GameFlowWrapper {
     constructor(options) {
-        let gameRouter = jasmine.createSpyObj('gameRouter', ['gameWon', 'handleError', 'playerLeft']);
+        let gameRouter = jasmine.createSpyObj('gameRouter', [
+            'gameWon',
+            'handleError',
+            'playerLeft'
+        ]);
         gameRouter.handleError.and.callFake((game, error) => {
             throw error;
         });
         let details = {
-            name: 'player1\'s game',
+            name: "player1's game",
             id: 12345,
             owner: { username: 'player1' },
             saveGameId: 12345,
@@ -38,24 +41,29 @@ class GameFlowWrapper {
         this.game.disableWonPrompt = true;
         this.game.disableRevealAcknowledgement = true;
 
-        this.allPlayers = this.game.getPlayers().map(player => new PlayerInteractionWrapper(this.game, player));
+        this.allPlayers = this.game
+            .getPlayers()
+            .map((player) => new PlayerInteractionWrapper(this.game, player));
         this.playerToPlayerWrapperIndex = this.allPlayers.reduce((index, playerWrapper) => {
-            index[playerWrapper.player] = playerWrapper;
+            index[playerWrapper.player.name] = playerWrapper;
             return index;
         }, {});
     }
 
     generatePlayerDetails(numOfPlayers) {
-        return range(1, numOfPlayers + 1).map(i => {
-            return { id: i.toString(), user: Settings.getUserWithDefaultsSet({ username: `player${i}` }) };
+        return range(1, numOfPlayers + 1).map((i) => {
+            return {
+                id: i.toString(),
+                user: Settings.getUserWithDefaultsSet({ username: `player${i}` })
+            };
         });
     }
 
     eachPlayerInFirstPlayerOrder(handler) {
         let players = this.game.getPlayersInFirstPlayerOrder();
-        let playersInOrder = players.map(player => this.playerToPlayerWrapperIndex[player]);
+        let playersInOrder = players.map((player) => this.playerToPlayerWrapperIndex[player.name]);
 
-        for(let player of playersInOrder) {
+        for (let player of playersInOrder) {
             handler(player);
         }
     }
@@ -65,67 +73,73 @@ class GameFlowWrapper {
     }
 
     keepStartingHands() {
-        for(let player of this.allPlayers) {
+        for (let player of this.allPlayers) {
             player.clickPrompt('Keep Hand');
         }
     }
 
     skipSetupPhase() {
         this.keepStartingHands();
-        for(let player of this.allPlayers) {
+        for (let player of this.allPlayers) {
             player.clickPrompt('Done');
         }
     }
 
     guardCurrentPhase(phase) {
-        if(this.game.currentPhase !== phase) {
-            throw new Error(`Expected to be in the ${phase} phase but actually was ${this.game.currentPhase}`);
+        if (this.game.currentPhase !== phase) {
+            throw new Error(
+                `Expected to be in the ${phase} phase but actually was ${this.game.currentPhase}`
+            );
         }
     }
 
     completeSetup() {
         this.guardCurrentPhase('setup');
-        for(let player of this.allPlayers) {
+        for (let player of this.allPlayers) {
             player.clickPrompt('Done');
         }
     }
 
     completeMarshalPhase() {
         this.guardCurrentPhase('marshal');
-        this.eachPlayerInFirstPlayerOrder(player => player.clickPrompt('Done'));
+        this.eachPlayerInFirstPlayerOrder((player) => player.clickPrompt('Done'));
     }
 
     completeChallengesPhase() {
         this.guardCurrentPhase('challenge');
         // Each player clicks 'Done' when challenge initiation prompt shows up.
-        this.eachPlayerInFirstPlayerOrder(player => player.clickPrompt('Done'));
+        this.eachPlayerInFirstPlayerOrder((player) => player.clickPrompt('Done'));
     }
 
     completeDominancePhase() {
         this.guardCurrentPhase('dominance');
-        this.eachPlayerInFirstPlayerOrder(player => player.clickPrompt('Done'));
+        this.eachPlayerInFirstPlayerOrder((player) => player.clickPrompt('Done'));
     }
 
     completeStandingPhase() {
         this.guardCurrentPhase('standing');
-        this.eachPlayerInFirstPlayerOrder(player => player.clickPrompt('Done'));
+        this.eachPlayerInFirstPlayerOrder((player) => player.clickPrompt('Done'));
     }
 
     completeTaxationPhase() {
         this.guardCurrentPhase('taxation');
-        this.eachPlayerInFirstPlayerOrder(player => player.clickPrompt('Done'));
+        this.eachPlayerInFirstPlayerOrder((player) => player.clickPrompt('Done'));
     }
 
     skipActionWindow() {
-        this.eachPlayerInFirstPlayerOrder(player => player.clickPrompt('Pass'));
+        this.eachPlayerInFirstPlayerOrder((player) => player.clickPrompt('Pass'));
     }
 
     getPromptedPlayer(title) {
-        var promptedPlayer = this.allPlayers.find(p => p.hasPrompt(title));
+        var promptedPlayer = this.allPlayers.find((p) => p.hasPrompt(title));
 
-        if(!promptedPlayer) {
-            var promptString = this.allPlayers.map(player => player.name + ': ' + player.formatPrompt()).join('\n\n');
-            throw new Error(`No players are being prompted with "${title}". Current prompts are:\n\n${promptString}`);
+        if (!promptedPlayer) {
+            var promptString = this.allPlayers
+                .map((player) => player.name + ': ' + player.formatPrompt())
+                .join('\n\n');
+            throw new Error(
+                `No players are being prompted with "${title}". Current prompts are:\n\n${promptString}`
+            );
         }
 
         return promptedPlayer;
@@ -143,7 +157,7 @@ class GameFlowWrapper {
     }
 
     unopposedChallenge(player, type, participant) {
-        var opponent = this.allPlayers.find(p => p !== player);
+        var opponent = this.allPlayers.find((p) => p !== player);
 
         player.clickPrompt(type);
         player.clickCard(participant, 'play area');
@@ -157,4 +171,4 @@ class GameFlowWrapper {
     }
 }
 
-module.exports = GameFlowWrapper;
+export default GameFlowWrapper;

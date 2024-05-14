@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class WinterfellArcheryRange extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,12 +7,19 @@ class WinterfellArcheryRange extends DrawCard {
             condition: () => this.game.isDuringChallenge({ challengeType: 'military' }),
             cost: ability.costs.kneelSelf(),
             target: {
-                cardCondition: card => card.isParticipating() && card.getType() === 'character' &&
-                                       card.getStrength() <= 3
+                cardCondition: (card) =>
+                    card.isParticipating() &&
+                    card.getType() === 'character' &&
+                    card.getStrength() <= 3
             },
-            handler: context => {
+            handler: (context) => {
                 this.game.currentChallenge.removeFromChallenge(context.target);
-                this.game.addMessage('{0} kneels {1} to remove {2} from the challenge', this.controller, this, context.target);
+                this.game.addMessage(
+                    '{0} kneels {1} to remove {2} from the challenge',
+                    this.controller,
+                    this,
+                    context.target
+                );
             }
         });
     }
@@ -20,4 +27,4 @@ class WinterfellArcheryRange extends DrawCard {
 
 WinterfellArcheryRange.code = '06062';
 
-module.exports = WinterfellArcheryRange;
+export default WinterfellArcheryRange;

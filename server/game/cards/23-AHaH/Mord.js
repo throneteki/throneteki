@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class Mord extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,14 +7,21 @@ class Mord extends DrawCard {
             cost: ability.costs.kneelSelf(),
             target: {
                 activePromptTitle: 'Select a character',
-                cardCondition: { location: 'play area', type: 'character', condition: (card, context) => card.controller.getTotalInitiative() >= context.player.getTotalInitiative() }
+                cardCondition: {
+                    location: 'play area',
+                    type: 'character',
+                    condition: (card, context) =>
+                        card.controller.getTotalInitiative() >= context.player.getTotalInitiative()
+                }
             },
-            message: '{player} kneels {source} to treat the text box of {target} as blank until {source} stands or leaves play',
-            handler: context => {
-                this.lastingEffect(ability => ({
+            message:
+                '{player} kneels {source} to treat the text box of {target} as blank until {source} stands or leaves play',
+            handler: (context) => {
+                this.lastingEffect((ability) => ({
                     until: {
-                        onCardStood: event => event.card === this,
-                        onCardLeftPlay: event => event.card === this || event.card === context.target
+                        onCardStood: (event) => event.card === this,
+                        onCardLeftPlay: (event) =>
+                            event.card === this || event.card === context.target
                     },
                     targetLocation: 'any',
                     match: context.target,
@@ -27,4 +34,4 @@ class Mord extends DrawCard {
 
 Mord.code = '23025';
 
-module.exports = Mord;
+export default Mord;

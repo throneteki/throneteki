@@ -1,18 +1,23 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class NaughtButAshes extends DrawCard {
     setupCardAbilities() {
         this.action({
             title: 'Give character -X STR',
             target: {
-                cardCondition: { location: 'play area', type: 'character', participating: true, hasAttachments: false }
+                cardCondition: {
+                    location: 'play area',
+                    type: 'character',
+                    participating: true,
+                    hasAttachments: false
+                }
             },
             message: {
                 format: '{player} plays {source} to give {target} {amount} STR until the end of the phase',
                 args: { amount: () => this.getAmount() }
             },
-            handler: context => {
-                this.untilEndOfPhase(ability => ({
+            handler: (context) => {
+                this.untilEndOfPhase((ability) => ({
                     match: context.target,
                     effect: ability.effects.modifyStrength(this.getAmount())
                 }));
@@ -27,4 +32,4 @@ class NaughtButAshes extends DrawCard {
 
 NaughtButAshes.code = '25054';
 
-module.exports = NaughtButAshes;
+export default NaughtButAshes;

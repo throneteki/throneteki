@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Heartsbane extends DrawCard {
     setupCardAbilities(ability) {
@@ -8,11 +8,16 @@ class Heartsbane extends DrawCard {
             condition: () => this.parent && this.parent.isParticipating(),
             cost: ability.costs.kneelSelf(),
             handler: () => {
-                this.untilEndOfChallenge(ability => ({
+                this.untilEndOfChallenge((ability) => ({
                     match: this.parent,
                     effect: ability.effects.modifyStrength(3)
                 }));
-                this.game.addMessage('{0} kneels {1} to give {2} +3 STR until the end of the challenge', this.controller, this, this.parent);
+                this.game.addMessage(
+                    '{0} kneels {1} to give {2} +3 STR until the end of the challenge',
+                    this.controller,
+                    this,
+                    this.parent
+                );
             }
         });
     }
@@ -20,4 +25,4 @@ class Heartsbane extends DrawCard {
 
 Heartsbane.code = '01191';
 
-module.exports = Heartsbane;
+export default Heartsbane;

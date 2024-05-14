@@ -1,17 +1,17 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class RenlyBaratheon extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetController: 'current',
-            effect: ability.effects.reduceFirstMarshalledCardCostEachRound(1, card => (
-                card.getType() === 'character' &&
-                !card.isFaction('baratheon')
-            ))
+            effect: ability.effects.reduceFirstMarshalledCardCostEachRound(
+                1,
+                (card) => card.getType() === 'character' && !card.isFaction('baratheon')
+            )
         });
     }
 }
 
 RenlyBaratheon.code = '02007';
 
-module.exports = RenlyBaratheon;
+export default RenlyBaratheon;

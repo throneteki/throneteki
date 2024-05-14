@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class SupportOfSaltcliffe extends DrawCard {
     setupCardAbilities(ability) {
@@ -10,12 +10,19 @@ class SupportOfSaltcliffe extends DrawCard {
 
         this.reaction({
             when: {
-                afterChallenge: event => this.controller === event.challenge.winner && event.challenge.isParticipating(this.parent) &&
-                                         event.challenge.isUnopposed()
+                afterChallenge: (event) =>
+                    this.controller === event.challenge.winner &&
+                    event.challenge.isParticipating(this.parent) &&
+                    event.challenge.isUnopposed()
             },
             handler: () => {
                 this.parent.controller.standCard(this.parent);
-                this.game.addMessage('{0} uses {1} to stand {2}', this.controller, this, this.parent);
+                this.game.addMessage(
+                    '{0} uses {1} to stand {2}',
+                    this.controller,
+                    this,
+                    this.parent
+                );
             }
         });
     }
@@ -23,4 +30,4 @@ class SupportOfSaltcliffe extends DrawCard {
 
 SupportOfSaltcliffe.code = '00010';
 
-module.exports = SupportOfSaltcliffe;
+export default SupportOfSaltcliffe;

@@ -1,6 +1,6 @@
-const GameActions = require('../../GameActions/index.js');
-const DrawCard = require('../../drawcard.js');
-const Message = require('../../Message.js');
+import GameActions from '../../GameActions/index.js';
+import DrawCard from '../../drawcard.js';
+import Message from '../../Message.js';
 
 class Greyscale extends DrawCard {
     setupCardAbilities(ability) {
@@ -8,31 +8,42 @@ class Greyscale extends DrawCard {
             title: 'Reveal from hand',
             phase: 'dominance',
             cost: ability.costs.kneelSelf(),
-            chooseOpponent: player => player.hand.length > 0,
-            message: '{player} kneels {source} to reveal a card at random from {opponent}\'s hand',
-            handler: context => {
+            chooseOpponent: (player) => player.hand.length > 0,
+            message: "{player} kneels {source} to reveal a card at random from {opponent}'s hand",
+            handler: (context) => {
                 this.game.resolveGameAction(
-                    GameActions.revealCards(context => ({
-                        cards: [context.opponent.hand[Math.floor(Math.random() * context.opponent.hand.length)]],
+                    GameActions.revealCards((context) => ({
+                        cards: [
+                            context.opponent.hand[
+                                Math.floor(Math.random() * context.opponent.hand.length)
+                            ]
+                        ],
                         player: context.opponent
                     })).then({
                         gameAction: GameActions.ifCondition({
-                            condition: context => context.parentContext.revealed[0].hasPrintedCost() && this.parent.hasPrintedCost() && context.parentContext.revealed[0].getPrintedCost() >= this.parent.getPrintedCost(),
+                            condition: (context) =>
+                                context.parentContext.revealed[0].hasPrintedCost() &&
+                                this.parent.hasPrintedCost() &&
+                                context.parentContext.revealed[0].getPrintedCost() >=
+                                    this.parent.getPrintedCost(),
                             thenAction: {
-                                gameAction: GameActions.genericHandler(context => {
+                                gameAction: GameActions.genericHandler((context) => {
                                     let bonuses = this.satisfiableBonuses(context);
-                                    if(bonuses.length > 0) {
-                                        if(bonuses.includes('attach')) {
+                                    if (bonuses.length > 0) {
+                                        if (bonuses.includes('attach')) {
                                             this.game.promptForSelect(context.player, {
                                                 activePromptTitle: 'Select a character',
-                                                cardCondition: card => this.canAttachToCharacter(context, card),
-                                                onSelect: (player, card) => this.activateBonuses(context, bonuses, card),
-                                                onCancel: () => this.activateBonuses(context, bonuses, null),
+                                                cardCondition: (card) =>
+                                                    this.canAttachToCharacter(context, card),
+                                                onSelect: (player, card) =>
+                                                    this.activateBonuses(context, bonuses, card),
+                                                onCancel: () =>
+                                                    this.activateBonuses(context, bonuses, null),
                                                 source: this
                                             });
                                             return;
                                         }
-                        
+
                                         this.activateBonuses(context, bonuses, null);
                                     }
                                 })
@@ -40,9 +51,9 @@ class Greyscale extends DrawCard {
                             elseAction: {
                                 message: {
                                     format: 'Then, {opponent} draws 1 card',
-                                    args: { opponent: context => context.parentContext.opponent }
+                                    args: { opponent: (context) => context.parentContext.opponent }
                                 },
-                                gameAction: GameActions.drawCards(context => ({
+                                gameAction: GameActions.drawCards((context) => ({
                                     player: context.parentContext.opponent,
                                     amount: 1
                                 }))
@@ -56,15 +67,19 @@ class Greyscale extends DrawCard {
     }
 
     canAttachToCharacter(context, card) {
-        return card.getType() === 'character' && card !== this.parent && context.player.canAttach(this, card);
+        return (
+            card.getType() === 'character' &&
+            card !== this.parent &&
+            context.player.canAttach(this, card)
+        );
     }
 
     satisfiableBonuses(context) {
         let satisfiable = [];
-        if(GameActions.kill({ card: this.parent }).allow()) {
+        if (GameActions.kill({ card: this.parent }).allow()) {
             satisfiable.push('kill');
         }
-        if(context.game.anyCardsInPlay(card => this.canAttachToCharacter(context, card))) {
+        if (context.game.anyCardsInPlay((card) => this.canAttachToCharacter(context, card))) {
             satisfiable.push('attach');
         }
         return satisfiable;
@@ -74,16 +89,20 @@ class Greyscale extends DrawCard {
         let bonusMessages = [];
         let gameActions = [];
 
-        if(bonuses.includes('kill')) {
+        if (bonuses.includes('kill')) {
             gameActions.push(GameActions.kill({ card: this.parent }));
             bonusMessages.push(Message.fragment('kill {parent}', { parent: this.parent }));
         }
 
-        if(bonuses.includes('attach') && attachTo) {
-            gameActions.push(GameActions.genericHandler(() => {
-                context.player.attach(context.player, this, attachTo);
-            }));
-            bonusMessages.push(Message.fragment('attach {source} to {attachTo}', { source: this, attachTo }));
+        if (bonuses.includes('attach') && attachTo) {
+            gameActions.push(
+                GameActions.genericHandler(() => {
+                    context.player.attach(context.player, this, attachTo);
+                })
+            );
+            bonusMessages.push(
+                Message.fragment('attach {source} to {attachTo}', { source: this, attachTo })
+            );
         }
 
         this.game.addMessage('Then, {0} uses {1} to {2}', context.player, this, bonusMessages);
@@ -95,4 +114,4 @@ class Greyscale extends DrawCard {
 
 Greyscale.code = '25059';
 
-module.exports = Greyscale;
+export default Greyscale;

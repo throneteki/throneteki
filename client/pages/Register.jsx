@@ -22,8 +22,11 @@ export class Register extends React.Component {
     }
 
     componentWillReceiveProps(props) {
-        if(props.accountRegistered) {
-            this.setState({ successMessage: 'Your account was successfully registered.  Please verify your account using the link in the email sent to the address you have provided.' });
+        if (props.accountRegistered) {
+            this.setState({
+                successMessage:
+                    'Your account was successfully registered.  Please verify your account using the link in the email sent to the address you have provided.'
+            });
 
             setTimeout(() => {
                 this.props.navigate('/');
@@ -32,7 +35,12 @@ export class Register extends React.Component {
     }
 
     onRegister(state) {
-        this.props.registerAccount({ username: state.username, password: state.password, email: state.email, enableGravatar: state.enableGravatar });
+        this.props.registerAccount({
+            username: state.username,
+            password: state.password,
+            email: state.email,
+            enableGravatar: state.enableGravatar
+        });
     }
 
     onEnableGravatarChanged(event) {
@@ -40,16 +48,30 @@ export class Register extends React.Component {
     }
 
     render() {
-
         return (
             <div className='col-sm-6 col-sm-offset-3'>
-                <ApiStatus apiState={ this.props.apiState } successMessage={ this.state.successMessage } />
+                <ApiStatus
+                    apiState={this.props.apiState}
+                    successMessage={this.state.successMessage}
+                />
                 <Panel title='Register an account'>
-                    <p>We require information from you in order to service your access to the site.  Please see the <Link href='/privacy'>privacy policy</Link> for details on why we need this information and what we do with it.  Please pay particular attention to the section on avatars.</p>
+                    <p>
+                        We require information from you in order to service your access to the site.
+                        Please see the <Link href='/privacy'>privacy policy</Link> for details on
+                        why we need this information and what we do with it. Please pay particular
+                        attention to the section on avatars.
+                    </p>
 
-                    <Form name='register' apiLoading={ this.props.apiState && this.props.apiState.loading } buttonClass='col-sm-offset-4 col-sm-3' buttonText='Register' onSubmit={ this.onRegister } />
+                    <Form
+                        name='register'
+                        apiLoading={this.props.apiState && this.props.apiState.loading}
+                        buttonClass='col-sm-offset-4 col-sm-3'
+                        buttonText='Register'
+                        onSubmit={this.onRegister}
+                    />
                 </Panel>
-            </div>);
+            </div>
+        );
     }
 }
 

@@ -1,17 +1,21 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class SchemingSnake extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: event => event.card === this
+                onCardEntersPlay: (event) => event.card === this
             },
             target: {
-                cardCondition: card => card.isParticipating() && card.getType() === 'character' && card.getNumberOfIcons() < 2
+                cardCondition: (card) =>
+                    card.isParticipating() &&
+                    card.getType() === 'character' &&
+                    card.getNumberOfIcons() < 2
             },
-            message: '{player} uses {source} to have {target} not contribute it\'s STR to this challenge',
-            handler: context => {
-                this.untilEndOfChallenge(ability => ({
+            message:
+                "{player} uses {source} to have {target} not contribute it's STR to this challenge",
+            handler: (context) => {
+                this.untilEndOfChallenge((ability) => ({
                     match: context.target,
                     effect: ability.effects.doesNotContributeStrength()
                 }));
@@ -22,4 +26,4 @@ class SchemingSnake extends DrawCard {
 
 SchemingSnake.code = '25007';
 
-module.exports = SchemingSnake;
+export default SchemingSnake;

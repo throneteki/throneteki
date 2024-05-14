@@ -1,15 +1,15 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class DrownedMen extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: card => card === this,
+            match: (card) => card === this,
             effect: ability.effects.dynamicStrength(() => this.calculateStrength())
         });
     }
 
     calculateStrength() {
-        let cards = this.controller.filterCardsInPlay(card => {
+        let cards = this.controller.filterCardsInPlay((card) => {
             return card.getType() === 'location' && card.hasTrait('Warship');
         });
 
@@ -19,4 +19,4 @@ class DrownedMen extends DrawCard {
 
 DrownedMen.code = '01073';
 
-module.exports = DrownedMen;
+export default DrownedMen;

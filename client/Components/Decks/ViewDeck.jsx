@@ -28,14 +28,26 @@ class ViewDeck extends React.Component {
 
         return (
             <div className='col-sm-7'>
-                <Panel title={ deck.name }>
+                <Panel title={deck.name}>
                     <div className='btn-group col-xs-12'>
-                        <button className='btn btn-primary' onClick={ this.handleEditClick } disabled={ this.props.deck.lockedForEditing }>Edit</button>
-                        <ConfirmedButton onClick={ this.handleDeleteClick } disabled={ this.props.deck.lockedForDeletion }>Delete</ConfirmedButton>
+                        <button
+                            className='btn btn-primary'
+                            onClick={this.handleEditClick}
+                            disabled={this.props.deck.lockedForEditing}
+                        >
+                            Edit
+                        </button>
+                        <ConfirmedButton
+                            onClick={this.handleDeleteClick}
+                            disabled={this.props.deck.lockedForDeletion}
+                        >
+                            Delete
+                        </ConfirmedButton>
                     </div>
-                    <DeckSummary deck={ deck } cards={ cards } />
+                    <DeckSummary deck={deck} cards={cards} />
                 </Panel>
-            </div>);
+            </div>
+        );
     }
 }
 

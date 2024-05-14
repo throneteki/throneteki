@@ -1,10 +1,11 @@
-const GameActions = require('../../GameActions/index.js');
-const PlotCard = require('../../plotcard.js');
+import GameActions from '../../GameActions/index.js';
+import PlotCard from '../../plotcard.js';
 
 class WheelsWithinWheels extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
-            message: '{player} uses {source} to search the top 10 cards of their deck for any number of events',
+            message:
+                '{player} uses {source} to search the top 10 cards of their deck for any number of events',
             gameAction: GameActions.search({
                 title: 'Select any number of events',
                 match: { type: 'event' },
@@ -15,9 +16,14 @@ class WheelsWithinWheels extends PlotCard {
                     title: 'Select event to draw',
                     message: {
                         format: '{choosingPlayer} adds {choice} to their hand, and places {notChosen} in their discard pile',
-                        args: { notChosen: context => context.searchTarget.filter(card => card !== context.selectedChoice.card) }
+                        args: {
+                            notChosen: (context) =>
+                                context.searchTarget.filter(
+                                    (card) => card !== context.selectedChoice.card
+                                )
+                        }
                     },
-                    choices: context => this.buildChoices(context.searchTarget)
+                    choices: (context) => this.buildChoices(context.searchTarget)
                 })
             })
         });
@@ -27,12 +33,14 @@ class WheelsWithinWheels extends PlotCard {
         return targets.reduce((choices, target) => {
             choices[target.name] = choices[target.name] || {
                 card: target,
-                gameAction: GameActions.simultaneously(
-                    [
-                        GameActions.addToHand({ card: target }),
-                        ...targets.filter(card => card !== target).map(card => GameActions.placeCard({ card: card, location: 'discard pile' }))
-                    ]
-                )
+                gameAction: GameActions.simultaneously([
+                    GameActions.addToHand({ card: target }),
+                    ...targets
+                        .filter((card) => card !== target)
+                        .map((card) =>
+                            GameActions.placeCard({ card: card, location: 'discard pile' })
+                        )
+                ])
             };
             return choices;
         }, {});
@@ -41,4 +49,4 @@ class WheelsWithinWheels extends PlotCard {
 
 WheelsWithinWheels.code = '06100';
 
-module.exports = WheelsWithinWheels;
+export default WheelsWithinWheels;

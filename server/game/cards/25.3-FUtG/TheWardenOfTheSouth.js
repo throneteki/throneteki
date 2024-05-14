@@ -1,20 +1,18 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions/index.js');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheWardenOfTheSouth extends DrawCard {
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'tyrell', trait: 'Lord' });
 
         this.whileAttached({
-            effect: [
-                ability.effects.addTrait('Commander'),
-                ability.effects.modifyStrength(1)
-            ]
+            effect: [ability.effects.addTrait('Commander'), ability.effects.modifyStrength(1)]
         });
 
         this.reaction({
             when: {
-                onCardStrengthChanged: event => this.parent && event.card === this.parent && event.amount > 0 && event.applying
+                onCardStrengthChanged: (event) =>
+                    this.parent && event.card === this.parent && event.amount > 0 && event.applying
             },
             cost: ability.costs.kneelSelf(),
             message: {
@@ -28,4 +26,4 @@ class TheWardenOfTheSouth extends DrawCard {
 
 TheWardenOfTheSouth.code = '25056';
 
-module.exports = TheWardenOfTheSouth;
+export default TheWardenOfTheSouth;

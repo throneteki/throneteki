@@ -13,19 +13,18 @@ class EditDeck extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = {
-        };
+        this.state = {};
 
         this.onEditDeck = this.onEditDeck.bind(this);
         this.onDeckUpdated = this.onDeckUpdated.bind(this);
 
-        if(props.deck) {
+        if (props.deck) {
             this.state.deck = props.deck;
         }
     }
 
     componentDidMount() {
-        if(this.props.deckId) {
+        if (this.props.deckId) {
             return this.props.loadDeck(this.props.deckId);
         }
     }
@@ -35,7 +34,7 @@ class EditDeck extends React.Component {
     }
 
     componentWillUpdate(props) {
-        if(props.deckSaved) {
+        if (props.deckSaved) {
             this.props.navigate('/decks');
 
             return;
@@ -53,19 +52,20 @@ class EditDeck extends React.Component {
     render() {
         let content;
 
-        if(this.props.apiLoading || !this.props.cards) {
+        if (this.props.apiLoading || !this.props.cards) {
             content = <div>Loading deck from the server...</div>;
-        } else if(this.props.apiSuccess === false) {
-            content = <AlertPanel type='error' message={ this.props.apiMessage } />;
-        } else if(!this.props.deck) {
+        } else if (this.props.apiSuccess === false) {
+            content = <AlertPanel type='error' message={this.props.apiMessage} />;
+        } else if (!this.props.deck) {
             content = <AlertPanel message='The specified deck was not found' type='error' />;
-        } else if(this.props.deck.format === 'draft') {
+        } else if (this.props.deck.format === 'draft') {
             content = (
                 <Panel title='Deck Editor'>
                     <DraftDeckEditor
-                        deck={ this.state.deck }
-                        onDeckSave={ this.onEditDeck }
-                        onDeckUpdated={ this.onDeckUpdated } />
+                        deck={this.state.deck}
+                        onDeckSave={this.onEditDeck}
+                        onDeckUpdated={this.onDeckUpdated}
+                    />
                 </Panel>
             );
         } else {
@@ -73,15 +73,24 @@ class EditDeck extends React.Component {
                 <div>
                     <div className='col-sm-6'>
                         <Panel title='Deck Editor'>
-                            <DeckEditor onDeckSave={ this.onEditDeck } deck={ this.state.deck } onDeckUpdated={ this.onDeckUpdated } />
+                            <DeckEditor
+                                onDeckSave={this.onEditDeck}
+                                deck={this.state.deck}
+                                onDeckUpdated={this.onDeckUpdated}
+                            />
                         </Panel>
                     </div>
                     <div className='col-sm-6'>
-                        <Panel title={ this.props.deck.name }>
-                            <DeckSummary cards={ this.props.cards } deck={ this.state.deck } currentRestrictedList={ this.props.currentRestrictedList } />
+                        <Panel title={this.props.deck.name}>
+                            <DeckSummary
+                                cards={this.props.cards}
+                                deck={this.state.deck}
+                                currentRestrictedList={this.props.currentRestrictedList}
+                            />
                         </Panel>
                     </div>
-                </div>);
+                </div>
+            );
         }
 
         return content;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class BuilderAtTheWall extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,15 +7,21 @@ class BuilderAtTheWall extends DrawCard {
             clickToActivate: true,
             phase: 'marshal',
             cost: ability.costs.kneelSelf(),
-            handler: context => {
-                this.game.addMessage('{0} kneels {1} to reduce the cost of the next {2} attachment or location by 1',
-                    this.controller, this, 'thenightswatch');
-                this.untilEndOfPhase(ability => ({
+            handler: (context) => {
+                this.game.addMessage(
+                    '{0} kneels {1} to reduce the cost of the next {2} attachment or location by 1',
+                    this.controller,
+                    this,
+                    'thenightswatch'
+                );
+                this.untilEndOfPhase((ability) => ({
                     condition: () => !context.abilityDeactivated,
                     targetController: 'current',
                     effect: ability.effects.reduceNextMarshalledCardCost(
                         1,
-                        card => card.isFaction('thenightswatch') && (card.getType() === 'attachment' || card.getType() === 'location')
+                        (card) =>
+                            card.isFaction('thenightswatch') &&
+                            (card.getType() === 'attachment' || card.getType() === 'location')
                     )
                 }));
             }
@@ -25,4 +31,4 @@ class BuilderAtTheWall extends DrawCard {
 
 BuilderAtTheWall.code = '07016';
 
-module.exports = BuilderAtTheWall;
+export default BuilderAtTheWall;

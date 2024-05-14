@@ -4,7 +4,9 @@ const menus = [
     { path: '/decks', title: 'Decks', showOnlyWhenLoggedIn: true, position: 'left' },
     { path: '/play', title: 'Play', position: 'left' },
     {
-        title: 'Help', position: 'left', childItems: [
+        title: 'Help',
+        position: 'left',
+        childItems: [
             { path: '/how-to-play', title: 'How To Play' },
             { path: '/about', title: 'About' },
             { path: '/privacy', title: 'Privacy Policy' }
@@ -32,7 +34,8 @@ const menus = [
             { path: '/admin/motd', title: 'Motd', permission: 'canManageMotd' },
             { path: '/banlist', title: 'Ban List', permission: 'canManageBanlist' },
             { path: '/events', title: 'Events', permission: 'canManageEvents' }
-        ], position: 'left'
+        ],
+        position: 'left'
     }
 ];
 

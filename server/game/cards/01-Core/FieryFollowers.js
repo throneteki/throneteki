@@ -1,10 +1,10 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class FieryFollowers extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onPhaseStarted: event => event.phase === 'dominance' && this.kneeled
+                onPhaseStarted: (event) => event.phase === 'dominance' && this.kneeled
             },
             handler: () => {
                 this.controller.standCard(this);
@@ -16,4 +16,4 @@ class FieryFollowers extends DrawCard {
 
 FieryFollowers.code = '01054';
 
-module.exports = FieryFollowers;
+export default FieryFollowers;

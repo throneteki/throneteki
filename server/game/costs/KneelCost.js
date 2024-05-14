@@ -1,4 +1,4 @@
-const GameActions = require('../GameActions');
+import GameActions from '../GameActions/index.js';
 
 class KneelCost {
     constructor() {
@@ -12,10 +12,10 @@ class KneelCost {
     pay(cards, context) {
         context.game.resolveGameAction(
             GameActions.simultaneously(
-                cards.map(card => GameActions.kneelCard({ card, reason: 'cost' }))
+                cards.map((card) => GameActions.kneelCard({ card, reason: 'cost' }))
             )
         );
     }
 }
 
-module.exports = KneelCost;
+export default KneelCost;

@@ -52,15 +52,8 @@ const validTargets = {
         'rookery',
         'shadows'
     ],
-    'plot deck': [
-        'revealed plots',
-        'out of game',
-        'rookery'
-    ],
-    'revealed plots': [
-        'plot deck',
-        'out of game'
-    ],
+    'plot deck': ['revealed plots', 'out of game', 'rookery'],
+    'revealed plots': ['plot deck', 'out of game'],
     'out of game': [
         'plot deck',
         'revealed plots',
@@ -71,7 +64,7 @@ const validTargets = {
         'dead pile',
         'shadows'
     ],
-    'conclave': [
+    conclave: [
         'hand',
         'play area',
         'draw deck',
@@ -80,32 +73,24 @@ const validTargets = {
         'out of game',
         'shadows'
     ],
-    'shadows': [
-        'dead pile',
-        'discard pile',
-        'draw deck',
-        'hand',
-        'out of game',
-        'play area'
-    ],
-    'full deck': [
-        'rookery'
-    ],
-    'rookery': [
-        'full deck'
-    ]
+    shadows: ['dead pile', 'discard pile', 'draw deck', 'hand', 'out of game', 'play area'],
+    'full deck': ['rookery'],
+    rookery: ['full deck']
 };
 
 const dropTarget = {
     canDrop(props, monitor) {
         let item = monitor.getItem();
 
-        return validTargets[item.source] && validTargets[item.source].some(target => target === props.source);
+        return (
+            validTargets[item.source] &&
+            validTargets[item.source].some((target) => target === props.source)
+        );
     },
     drop(props, monitor) {
         let item = monitor.getItem();
 
-        if(props.onDragDrop) {
+        if (props.onDragDrop) {
             props.onDragDrop(item.card, item.source, props.source);
         }
     }
@@ -126,15 +111,19 @@ class Droppable extends React.Component {
     render() {
         let className = classNames('overlay', {
             'drop-ok': this.props.isOver && this.props.canDrop,
-            'no-drop': this.props.isOver && !this.props.canDrop && this.props.source !== this.props.itemSource,
+            'no-drop':
+                this.props.isOver &&
+                !this.props.canDrop &&
+                this.props.source !== this.props.itemSource,
             'can-drop': !this.props.isOver && this.props.canDrop
         });
 
         return this.props.connectDropTarget(
             <div className='drop-target'>
-                <div className={ className } />
-                { this.props.children }
-            </div>);
+                <div className={className} />
+                {this.props.children}
+            </div>
+        );
     }
 }
 

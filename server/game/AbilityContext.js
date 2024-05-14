@@ -1,4 +1,4 @@
-const ResolvedTargets = require('./gamesteps/ResolvedTargets.js');
+import ResolvedTargets from './gamesteps/ResolvedTargets.js';
 
 class AbilityContext {
     constructor(properties) {
@@ -15,7 +15,7 @@ class AbilityContext {
     }
 
     addCost(name, value) {
-        if(!this.costValues[name]) {
+        if (!this.costValues[name]) {
             this.costValues[name] = [];
         }
 
@@ -29,4 +29,4 @@ class AbilityContext {
     }
 }
 
-module.exports = AbilityContext;
+export default AbilityContext;

@@ -1,4 +1,4 @@
-const TitleCard = require('../../TitleCard.js');
+import TitleCard from '../../TitleCard.js';
 
 class MasterOfLaws extends TitleCard {
     setupCardAbilities(ability) {
@@ -16,4 +16,4 @@ class MasterOfLaws extends TitleCard {
 
 MasterOfLaws.code = '01210';
 
-module.exports = MasterOfLaws;
+export default MasterOfLaws;

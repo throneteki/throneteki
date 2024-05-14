@@ -1,4 +1,4 @@
-const BaseStep = require('../basestep.js');
+import BaseStep from '../basestep.js';
 
 class FulfillMilitaryClaim extends BaseStep {
     constructor(game, player, claim) {
@@ -10,26 +10,36 @@ class FulfillMilitaryClaim extends BaseStep {
 
     continue() {
         // TODO: Add forced claim to fulfillmilitaryclaim.spec.js
-        this.forcedClaim = this.player.filterCardsInPlay(card => this.player.mustChooseAsClaim.some(cardFunc => cardFunc(card)));
+        this.forcedClaim = this.player.filterCardsInPlay((card) =>
+            this.player.mustChooseAsClaim.some((cardFunc) => cardFunc(card))
+        );
 
         let claimToSelect = this.claim;
 
-        if(this.forcedClaim.length >= 1 && this.forcedClaim.length < this.claim) {
+        if (this.forcedClaim.length >= 1 && this.forcedClaim.length < this.claim) {
             claimToSelect = this.claim - this.forcedClaim.length;
-            this.game.addMessage('{0} {1} automatically chosen for claim',
-                this.forcedClaim, this.forcedClaim.length > 1 ? 'are' : 'is');
+            this.game.addMessage(
+                '{0} {1} automatically chosen for claim',
+                this.forcedClaim,
+                this.forcedClaim.length > 1 ? 'are' : 'is'
+            );
         }
 
-        let promptMessage = 'Select ' + claimToSelect + ' ' + (claimToSelect > 1 ? 'characters' : 'character') + ' to fulfill military claim';
+        let promptMessage =
+            'Select ' +
+            claimToSelect +
+            ' ' +
+            (claimToSelect > 1 ? 'characters' : 'character') +
+            ' to fulfill military claim';
         this.game.promptForSelect(this.player, {
             numCards: claimToSelect,
             activePromptTitle: promptMessage,
             waitingPromptTitle: 'Waiting for opponent to fulfill military claim',
-            cardCondition: card =>
-                card.location === 'play area'
-                && card.controller === this.player
-                && card.getType() === 'character'
-                && this.mustChooseAsClaim(card),
+            cardCondition: (card) =>
+                card.location === 'play area' &&
+                card.controller === this.player &&
+                card.getType() === 'character' &&
+                this.mustChooseAsClaim(card),
             gameAction: 'kill',
             onSelect: (p, cards) => this.fulfillClaim(p, cards),
             onCancel: () => this.cancelClaim()
@@ -39,11 +49,11 @@ class FulfillMilitaryClaim extends BaseStep {
     }
 
     mustChooseAsClaim(card) {
-        if(this.forcedClaim.length === 0) {
+        if (this.forcedClaim.length === 0) {
             return true;
         }
 
-        if(this.forcedClaim.length < this.claim) {
+        if (this.forcedClaim.length < this.claim) {
             return !this.forcedClaim.includes(card);
         }
 
@@ -51,18 +61,20 @@ class FulfillMilitaryClaim extends BaseStep {
     }
 
     fulfillClaim(p, cards) {
-        if(!Array.isArray(cards)) {
+        if (!Array.isArray(cards)) {
             cards = [cards];
         }
 
-        if(this.forcedClaim.length < this.claim) {
+        if (this.forcedClaim.length < this.claim) {
             cards = cards.concat(this.forcedClaim);
         }
 
-        var charactersAvailable = this.player.getNumberOfCardsInPlay(c => c.getType() === 'character');
+        var charactersAvailable = this.player.getNumberOfCardsInPlay(
+            (c) => c.getType() === 'character'
+        );
         var maxAppliedClaim = Math.min(this.claim, charactersAvailable);
 
-        if(cards.length < maxAppliedClaim) {
+        if (cards.length < maxAppliedClaim) {
             return false;
         }
 
@@ -78,4 +90,4 @@ class FulfillMilitaryClaim extends BaseStep {
     }
 }
 
-module.exports = FulfillMilitaryClaim;
+export default FulfillMilitaryClaim;

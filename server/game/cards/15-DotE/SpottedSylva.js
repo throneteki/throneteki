@@ -1,11 +1,12 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SpottedSylva extends DrawCard {
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                afterChallenge: event => event.challenge.loser === this.controller && this.isAttacking()
+                afterChallenge: (event) =>
+                    event.challenge.loser === this.controller && this.isAttacking()
             },
             target: {
                 choosingPlayer: 'each',
@@ -16,14 +17,26 @@ class SpottedSylva extends DrawCard {
                     card.getType() === 'character' &&
                     card.isParticipating()
             },
-            handler: context => {
-                let selections = context.targets.selections.filter(selection => !!selection.value);
-                for(const selection of selections) {
-                    this.game.addMessage('{0} returns {1} to their hand for {2}', selection.choosingPlayer, selection.value, this);
+            handler: (context) => {
+                let selections = context.targets.selections.filter(
+                    (selection) => !!selection.value
+                );
+                for (const selection of selections) {
+                    this.game.addMessage(
+                        '{0} returns {1} to their hand for {2}',
+                        selection.choosingPlayer,
+                        selection.value,
+                        this
+                    );
                 }
                 this.game.resolveGameAction(
                     GameActions.simultaneously(
-                        selections.map(selection => GameActions.returnCardToHand({ player: selection.choosingPlayer, card: selection.value }))
+                        selections.map((selection) =>
+                            GameActions.returnCardToHand({
+                                player: selection.choosingPlayer,
+                                card: selection.value
+                            })
+                        )
                     )
                 );
             }
@@ -33,4 +46,4 @@ class SpottedSylva extends DrawCard {
 
 SpottedSylva.code = '15031';
 
-module.exports = SpottedSylva;
+export default SpottedSylva;

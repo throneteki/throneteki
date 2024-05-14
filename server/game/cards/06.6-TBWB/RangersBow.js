@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class RangersBow extends DrawCard {
     setupCardAbilities(ability) {
@@ -12,15 +12,23 @@ class RangersBow extends DrawCard {
             title: 'Give defending character +2 STR',
             cost: ability.costs.kneelSelf(),
             target: {
-                cardCondition: card => card.isFaction('thenightswatch') && card.getType() === 'character' && card.isDefending()
+                cardCondition: (card) =>
+                    card.isFaction('thenightswatch') &&
+                    card.getType() === 'character' &&
+                    card.isDefending()
             },
-            handler: context => {
-                this.untilEndOfChallenge(ability => ({
+            handler: (context) => {
+                this.untilEndOfChallenge((ability) => ({
                     match: context.target,
                     effect: ability.effects.modifyStrength(2)
                 }));
 
-                this.game.addMessage('{0} kneels {1} to give {2} +2 STR until the end of the challenge', this.controller, this, context.target);
+                this.game.addMessage(
+                    '{0} kneels {1} to give {2} +2 STR until the end of the challenge',
+                    this.controller,
+                    this,
+                    context.target
+                );
             }
         });
     }
@@ -28,4 +36,4 @@ class RangersBow extends DrawCard {
 
 RangersBow.code = '06106';
 
-module.exports = RangersBow;
+export default RangersBow;

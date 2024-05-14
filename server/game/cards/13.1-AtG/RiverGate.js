@@ -1,6 +1,6 @@
-const DrawCard = require('../../drawcard.js');
-const {ChallengeTracker} = require('../../EventTrackers');
-const TextHelper = require('../../TextHelper');
+import DrawCard from '../../drawcard.js';
+import { ChallengeTracker } from '../../EventTrackers/index.js';
+import TextHelper from '../../TextHelper.js';
 
 class RiverGate extends DrawCard {
     setupCardAbilities(ability) {
@@ -12,13 +12,17 @@ class RiverGate extends DrawCard {
 
         this.action({
             title: 'Sacrifice to draw 2 cards',
-            condition: context => this.hasLost2Challenges(context.player),
+            condition: (context) => this.hasLost2Challenges(context.player),
             phase: 'challenge',
             cost: ability.costs.sacrificeSelf(),
-            handler: context => {
+            handler: (context) => {
                 let cards = context.player.drawCardsToHand(2).length;
-                this.game.addMessage('{0} sacrifices {1} to draw {2}',
-                    context.player, this, TextHelper.count(cards, 'card'));
+                this.game.addMessage(
+                    '{0} sacrifices {1} to draw {2}',
+                    context.player,
+                    this,
+                    TextHelper.count(cards, 'card')
+                );
             }
         });
     }
@@ -30,4 +34,4 @@ class RiverGate extends DrawCard {
 
 RiverGate.code = '13016';
 
-module.exports = RiverGate;
+export default RiverGate;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class UnexpectedReturn extends DrawCard {
     setupCardAbilities() {
@@ -6,11 +6,19 @@ class UnexpectedReturn extends DrawCard {
             phase: 'challenge',
             title: 'Put character into play',
             target: {
-                cardCondition: card => card.getType() === 'character' && card.location === 'discard pile' && card.controller === this.controller
+                cardCondition: (card) =>
+                    card.getType() === 'character' &&
+                    card.location === 'discard pile' &&
+                    card.controller === this.controller
             },
-            handler: context => {
+            handler: (context) => {
                 this.controller.putIntoPlay(context.target);
-                this.game.addMessage('{0} uses {1} to put {2} into play', this.controller, this, context.target);
+                this.game.addMessage(
+                    '{0} uses {1} to put {2} into play',
+                    this.controller,
+                    this,
+                    context.target
+                );
             }
         });
     }
@@ -18,4 +26,4 @@ class UnexpectedReturn extends DrawCard {
 
 UnexpectedReturn.code = '11015';
 
-module.exports = UnexpectedReturn;
+export default UnexpectedReturn;

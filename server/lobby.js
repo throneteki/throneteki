@@ -1,18 +1,17 @@
-const socketio = require('socket.io');
-const Socket = require('./socket.js');
-const jwt = require('jsonwebtoken');
-const _ = require('underscore');
-const { validateDeck, formatDeckAsFullCards } = require('../deck-helper');
-
-const logger = require('./log.js');
-const PendingGame = require('./pendinggame.js');
-const GameRouter = require('./gamerouter.js');
-const ServiceFactory = require('./services/ServiceFactory');
-const DeckService = require('./services/DeckService.js');
-const CardService = require('./services/CardService.js');
-const EventService = require('./services/EventService.js');
-const User = require('./models/User');
-const { sortBy } = require('./Array');
+import { Server as socketio } from 'socket.io';
+import Socket from './socket.js';
+import jwt from 'jsonwebtoken';
+import _ from 'underscore';
+import { validateDeck, formatDeckAsFullCards } from '../deck-helper/index.js';
+import logger from './log.js';
+import PendingGame from './pendinggame.js';
+import GameRouter from './gamerouter.js';
+import ServiceFactory from './services/ServiceFactory.js';
+import DeckService from './services/DeckService.js';
+import CardService from './services/CardService.js';
+import EventService from './services/EventService.js';
+import User from './models/User.js';
+import { sortBy } from './Array.js';
 
 class Lobby {
     constructor(server, options = {}) {
@@ -39,8 +38,7 @@ class Lobby {
 
         this.userService.on('onBlocklistChanged', this.onBlocklistChanged.bind(this));
 
-        this.io = options.io || socketio(server, { perMessageDeflate: false });
-        this.io.set('heartbeat timeout', 30000);
+        this.io = options.io || new socketio(server, { perMessageDeflate: false });
         this.io.use(this.handshake.bind(this));
         this.io.on('connection', this.onConnection.bind(this));
 
@@ -1048,4 +1046,4 @@ class Lobby {
     }
 }
 
-module.exports = Lobby;
+export default Lobby;

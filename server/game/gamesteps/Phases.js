@@ -1,11 +1,11 @@
-const SetupPhase = require('./setupphase');
-const PlotPhase = require('./plotphase');
-const DrawPhase = require('./drawphase');
-const MarshalingPhase = require('./marshalingphase');
-const ChallengePhase = require('./challengephase');
-const DominancePhase = require('./dominancephase');
-const StandingPhase = require('./standingphase');
-const TaxationPhase = require('./taxationphase');
+import SetupPhase from './setupphase.js';
+import PlotPhase from './plotphase.js';
+import DrawPhase from './drawphase.js';
+import MarshalingPhase from './marshalingphase.js';
+import ChallengePhase from './challengephase.js';
+import DominancePhase from './dominancephase.js';
+import StandingPhase from './standingphase.js';
+import TaxationPhase from './taxationphase.js';
 
 class Phases {
     constructor() {
@@ -22,15 +22,7 @@ class Phases {
     }
 
     names() {
-        return [
-            'plot',
-            'draw',
-            'marshal',
-            'challenge',
-            'dominance',
-            'standing',
-            'taxation'
-        ];
+        return ['plot', 'draw', 'marshal', 'challenge', 'dominance', 'standing', 'taxation'];
     }
 
     createStep(name, game) {
@@ -40,4 +32,4 @@ class Phases {
     }
 }
 
-module.exports = new Phases();
+export default new Phases();

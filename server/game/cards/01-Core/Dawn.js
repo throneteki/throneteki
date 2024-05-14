@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Dawn extends DrawCard {
     setupCardAbilities(ability) {
@@ -6,7 +6,7 @@ class Dawn extends DrawCard {
             effect: ability.effects.dynamicStrength(() => this.controller.getNumberOfUsedPlots())
         });
         this.whileAttached({
-            match: card => card.hasTrait('House Dayne'),
+            match: (card) => card.hasTrait('House Dayne'),
             effect: ability.effects.addKeyword('Intimidate')
         });
     }
@@ -14,4 +14,4 @@ class Dawn extends DrawCard {
 
 Dawn.code = '01115';
 
-module.exports = Dawn;
+export default Dawn;

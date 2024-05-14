@@ -1,18 +1,24 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class ViserysTargaryen extends DrawCard {
     setupCardAbilities() {
         this.interrupt({
             when: {
-                onCardLeftPlay: event => event.card === this
+                onCardLeftPlay: (event) => event.card === this
             },
             target: {
                 activePromptTitle: 'Select an attachment',
-                cardCondition: card => card.location === 'play area' && card.getType() === 'attachment'
+                cardCondition: (card) =>
+                    card.location === 'play area' && card.getType() === 'attachment'
             },
-            handler: context => {
+            handler: (context) => {
                 context.target.owner.discardCard(context.target);
-                this.game.addMessage('{0} uses {1} to discard {2}', this.controller, this, context.target);
+                this.game.addMessage(
+                    '{0} uses {1} to discard {2}',
+                    this.controller,
+                    this,
+                    context.target
+                );
             }
         });
     }
@@ -20,4 +26,4 @@ class ViserysTargaryen extends DrawCard {
 
 ViserysTargaryen.code = '01167';
 
-module.exports = ViserysTargaryen;
+export default ViserysTargaryen;

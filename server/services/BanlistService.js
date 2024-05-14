@@ -1,4 +1,4 @@
-const logger = require('../log');
+import logger from '../log.js';
 
 class BanlistService {
     constructor(db) {
@@ -6,11 +6,12 @@ class BanlistService {
     }
 
     async getBanList() {
-        return this.banlist.find({})
-            .then(banlist => {
+        return this.banlist
+            .find({})
+            .then((banlist) => {
                 return banlist;
             })
-            .catch(err => {
+            .catch((err) => {
                 logger.error('Error fetching banlist %s', err);
 
                 throw new Error('Error occured fetching banlist');
@@ -18,11 +19,12 @@ class BanlistService {
     }
 
     async getEntryByIp(ip) {
-        return this.banlist.find({ ip: ip })
-            .then(banlist => {
+        return this.banlist
+            .find({ ip: ip })
+            .then((banlist) => {
                 return banlist[0];
             })
-            .catch(err => {
+            .catch((err) => {
                 logger.error('Error fetching banlist %s', err);
 
                 throw new Error('Error occured fetching banlist');
@@ -30,11 +32,12 @@ class BanlistService {
     }
 
     async addBanlistEntry(entry) {
-        return this.banlist.insert(entry)
+        return this.banlist
+            .insert(entry)
             .then(() => {
                 return entry;
             })
-            .catch(err => {
+            .catch((err) => {
                 logger.error('Error adding banlist entry %s %s', err, entry);
 
                 throw new Error('Error occured adding banlist entry');
@@ -42,4 +45,4 @@ class BanlistService {
     }
 }
 
-module.exports = BanlistService;
+export default BanlistService;

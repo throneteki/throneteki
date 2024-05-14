@@ -1,19 +1,23 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class BotleyCrew extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onIncomeCollected: event => event.player !== this.controller && event.player.gold > 0
+                onIncomeCollected: (event) =>
+                    event.player !== this.controller && event.player.gold > 0
             },
             message: {
-                format: '{player} uses {source} to return 1 gold from {incomeCollector}\'s gold pool to the treasury',
-                args: { incomeCollector: context => context.event.player }
+                format: "{player} uses {source} to return 1 gold from {incomeCollector}'s gold pool to the treasury",
+                args: { incomeCollector: (context) => context.event.player }
             },
-            handler: context => {
+            handler: (context) => {
                 this.game.resolveGameAction(
-                    GameActions.returnGoldToTreasury(context => ({ player: context.event.player, amount: 1 })),
+                    GameActions.returnGoldToTreasury((context) => ({
+                        player: context.event.player,
+                        amount: 1
+                    })),
                     context
                 );
             }
@@ -23,4 +27,4 @@ class BotleyCrew extends DrawCard {
 
 BotleyCrew.code = '14025';
 
-module.exports = BotleyCrew;
+export default BotleyCrew;

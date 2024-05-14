@@ -1,10 +1,13 @@
-describe('Varys (Core)', function() {
-    integration(function() {
-        describe('simultaneous discard', function() {
-            beforeEach(function() {
+describe('Varys (Core)', function () {
+    integration(function () {
+        describe('simultaneous discard', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('thenightswatch', [
                     'A Noble Cause',
-                    'Varys (Core)', 'Arya Stark (TFM)', 'Sansa Stark (Core)', 'Sansa Stark (Core)'
+                    'Varys (Core)',
+                    'Arya Stark (TFM)',
+                    'Sansa Stark (Core)',
+                    'Sansa Stark (Core)'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
@@ -34,7 +37,7 @@ describe('Varys (Core)', function() {
                 this.player2.clickPrompt('Done');
             });
 
-            it('should cause all cards to be discarded simultaneously', function() {
+            it('should cause all cards to be discarded simultaneously', function () {
                 expect(this.sansa.location).toBe('discard pile');
             });
         });

@@ -1,16 +1,24 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class StannissWrath extends DrawCard {
     setupCardAbilities() {
         this.action({
             title: 'Kneel character',
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && !card.hasIcon('power'),
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    !card.hasIcon('power'),
                 gameAction: 'kneel'
             },
-            handler: context => {
+            handler: (context) => {
                 context.target.controller.kneelCard(context.target);
-                this.game.addMessage('{0} plays {1} to kneel {2}', context.player, this, context.target);
+                this.game.addMessage(
+                    '{0} plays {1} to kneel {2}',
+                    context.player,
+                    this,
+                    context.target
+                );
             }
         });
     }
@@ -18,4 +26,4 @@ class StannissWrath extends DrawCard {
 
 StannissWrath.code = '08028';
 
-module.exports = StannissWrath;
+export default StannissWrath;

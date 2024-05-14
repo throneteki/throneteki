@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class SaltyNavigator extends DrawCard {
     setupCardAbilities() {
@@ -10,4 +10,4 @@ class SaltyNavigator extends DrawCard {
 
 SaltyNavigator.code = '01076';
 
-module.exports = SaltyNavigator;
+export default SaltyNavigator;

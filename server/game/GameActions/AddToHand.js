@@ -1,5 +1,5 @@
-const GameAction = require('./GameAction');
-const Message = require('../Message');
+import GameAction from './GameAction.js';
+import Message from '../Message.js';
 
 class AddToHand extends GameAction {
     constructor() {
@@ -7,12 +7,15 @@ class AddToHand extends GameAction {
     }
 
     message({ card, context }) {
-        return Message.fragment('adds {card}{from} to their hand', 
-            { 
-                card: context.revealed && context.revealed.includes(card) ? card : 'a card',
-                from: context.revealed && context.revealed.includes(card) ? '' : Message.fragment(' from their {originalLocation}', { originalLocation: card.location })
-            }
-        );
+        return Message.fragment('adds {card}{from} to their hand', {
+            card: context.revealed && context.revealed.includes(card) ? card : 'a card',
+            from:
+                context.revealed && context.revealed.includes(card)
+                    ? ''
+                    : Message.fragment(' from their {originalLocation}', {
+                          originalLocation: card.location
+                      })
+        });
     }
 
     canChangeGameState({ card }) {
@@ -20,10 +23,10 @@ class AddToHand extends GameAction {
     }
 
     createEvent({ card }) {
-        return this.event('onCardAddedToHand', { card }, event => {
+        return this.event('onCardAddedToHand', { card }, (event) => {
             event.card.owner.placeCardInPile({ card: event.card, location: 'hand' });
         });
     }
 }
 
-module.exports = new AddToHand();
+export default new AddToHand();

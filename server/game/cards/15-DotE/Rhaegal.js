@@ -1,14 +1,15 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Rhaegal extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: event => this.controller === event.challenge.winner && this.isAttacking()
+                afterChallenge: (event) =>
+                    this.controller === event.challenge.winner && this.isAttacking()
             },
             target: {
-                cardCondition: card =>
+                cardCondition: (card) =>
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
                     card.kneeled &&
@@ -18,14 +19,18 @@ class Rhaegal extends DrawCard {
             },
             message: '{player} uses {source} to stand {target}',
             limit: ability.limit.perPhase(1),
-            handler: context => {
-                this.game.resolveGameAction(GameActions.standCard({ card: context.target })
-                ).thenExecute(() => {
-                    if(context.target.hasTrait('Dragon') || context.target.hasTrait('Stormborn')) {
-                        this.game.resolveGameAction(GameActions.standCard({ card: this }));
-                        this.game.addMessage('Then {0} stands {1}', context.player, this);
-                    }
-                });
+            handler: (context) => {
+                this.game
+                    .resolveGameAction(GameActions.standCard({ card: context.target }))
+                    .thenExecute(() => {
+                        if (
+                            context.target.hasTrait('Dragon') ||
+                            context.target.hasTrait('Stormborn')
+                        ) {
+                            this.game.resolveGameAction(GameActions.standCard({ card: this }));
+                            this.game.addMessage('Then {0} stands {1}', context.player, this);
+                        }
+                    });
             }
         });
     }
@@ -33,4 +38,4 @@ class Rhaegal extends DrawCard {
 
 Rhaegal.code = '15003';
 
-module.exports = Rhaegal;
+export default Rhaegal;

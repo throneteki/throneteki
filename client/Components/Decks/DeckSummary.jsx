@@ -28,25 +28,30 @@ class DeckSummary extends React.Component {
     }
 
     render() {
-        if(!this.props.deck || !this.props.cards) {
+        if (!this.props.deck || !this.props.cards) {
             return <div>Waiting for selected deck...</div>;
         }
 
         return (
             <div className='deck-summary col-xs-12'>
-                { this.state.cardToShow && <CardHoverPreview card={ this.state.cardToShow } /> }
+                {this.state.cardToShow && <CardHoverPreview card={this.state.cardToShow} />}
                 <DeckSummaryHeader
-                    deck={ this.props.deck }
-                    onCardMouseOut={ this.onCardMouseOut }
-                    onCardMouseOver={ this.onCardMouseOver } />
+                    deck={this.props.deck}
+                    onCardMouseOut={this.onCardMouseOut}
+                    onCardMouseOver={this.onCardMouseOver}
+                />
                 <div className='col-xs-12 no-x-padding'>
                     <CardTypeGroups
-                        cards={ this.props.deck.plotCards.concat(this.props.deck.drawCards) }
-                        onCardMouseOut={ this.onCardMouseOut }
-                        onCardMouseOver={ this.onCardMouseOver }
-                        useSchemes={ this.props.deck.agenda && this.props.deck.agenda.code === '05045' } />
+                        cards={this.props.deck.plotCards.concat(this.props.deck.drawCards)}
+                        onCardMouseOut={this.onCardMouseOut}
+                        onCardMouseOver={this.onCardMouseOver}
+                        useSchemes={
+                            this.props.deck.agenda && this.props.deck.agenda.code === '05045'
+                        }
+                    />
                 </div>
-            </div>);
+            </div>
+        );
     }
 }
 

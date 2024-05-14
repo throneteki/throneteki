@@ -1,10 +1,15 @@
-describe('Forced March', function() {
-    integration(function() {
-        describe('when revealed', function() {
-            beforeEach(function() {
+describe('Forced March', function () {
+    integration(function () {
+        describe('when revealed', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('targaryen', [
-                    'Forced March (R)', 'A Noble Cause',
-                    'Hedge Knight', 'Hedge Knight', 'Hedge Knight', 'Winterfell Steward', 'Ygritte'
+                    'Forced March (R)',
+                    'A Noble Cause',
+                    'Hedge Knight',
+                    'Hedge Knight',
+                    'Hedge Knight',
+                    'Winterfell Steward',
+                    'Ygritte'
                 ]);
 
                 this.player1.selectDeck(deck);
@@ -12,10 +17,12 @@ describe('Forced March', function() {
                 this.startGame();
                 this.keepStartingHands();
 
-                [this.char1, this.char2, this.char3] = this.player1.filterCardsByName('Hedge Knight');
+                [this.char1, this.char2, this.char3] =
+                    this.player1.filterCardsByName('Hedge Knight');
                 [this.char4] = this.player1.filterCardsByName('Winterfell Steward');
                 [this.ygritte] = this.player1.filterCardsByName('Ygritte');
-                [this.opponentChar1, this.opponentChar2, this.opponentChar3] = this.player2.filterCardsByName('Hedge Knight');
+                [this.opponentChar1, this.opponentChar2, this.opponentChar3] =
+                    this.player2.filterCardsByName('Hedge Knight');
                 [this.opponentChar4] = this.player2.filterCardsByName('Winterfell Steward');
                 [this.opponentYgritte] = this.player2.filterCardsByName('Ygritte');
 
@@ -39,7 +46,7 @@ describe('Forced March', function() {
                 this.selectFirstPlayer(this.player1);
             });
 
-            it('lets you select characters you control with military icons to kneel', function() {
+            it('lets you select characters you control with military icons to kneel', function () {
                 expect(this.player1).toHavePrompt('Select characters');
                 this.player1.clickCard(this.char1);
                 this.player1.clickCard(this.char2);
@@ -51,7 +58,7 @@ describe('Forced March', function() {
                 expect(this.ygritte.kneeled).toBe(false);
             });
 
-            it('as many kneelable characters the opponent controls are knelt', function() {
+            it('as many kneelable characters the opponent controls are knelt', function () {
                 this.player1.clickCard(this.char1);
                 this.player1.clickCard(this.char2);
                 this.player1.clickPrompt('Done');

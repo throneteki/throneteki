@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class ArrogantContender extends DrawCard {
     setupCardAbilities(ability) {
@@ -10,7 +10,9 @@ class ArrogantContender extends DrawCard {
 
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.isMatch({ winner: this.controller, attackingAlone: this }) && this.canGainPower()
+                afterChallenge: (event) =>
+                    event.challenge.isMatch({ winner: this.controller, attackingAlone: this }) &&
+                    this.canGainPower()
             },
             message: {
                 format: '{player} uses {source} to have it gain {gainedPower}',
@@ -28,11 +30,13 @@ class ArrogantContender extends DrawCard {
 
     numOfOpponentParticipants() {
         let participants = this.game.currentChallenge.getParticipants();
-        let opponentParticipants = participants.filter(card => card.controller !== this.controller);
+        let opponentParticipants = participants.filter(
+            (card) => card.controller !== this.controller
+        );
         return opponentParticipants.length;
     }
 }
 
 ArrogantContender.code = '13023';
 
-module.exports = ArrogantContender;
+export default ArrogantContender;

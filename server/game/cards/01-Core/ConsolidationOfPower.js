@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class ConsolidationOfPower extends DrawCard {
     setupCardAbilities() {
@@ -8,25 +8,33 @@ class ConsolidationOfPower extends DrawCard {
             target: {
                 activePromptTitle: 'Select character(s)',
                 maxStat: () => 4,
-                cardStat: card => card.getStrength(),
+                cardStat: (card) => card.getStrength(),
                 singleController: true,
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && !card.kneeled,
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    !card.kneeled,
                 gameAction: 'kneel'
             },
-            handler: context => {
-                this.game.addMessage('{0} plays {1} to kneel {2}', context.player, this, context.target);
-                for(let card of context.target) {
+            handler: (context) => {
+                this.game.addMessage(
+                    '{0} plays {1} to kneel {2}',
+                    context.player,
+                    this,
+                    context.target
+                );
+                for (let card of context.target) {
                     card.controller.kneelCard(card);
                 }
 
-                if(!context.target.some(card => card.allowGameAction('gainPower'))) {
+                if (!context.target.some((card) => card.allowGameAction('gainPower'))) {
                     return;
                 }
 
                 this.game.promptForSelect(context.player, {
                     activePromptTitle: 'Select character to gain power',
                     source: this,
-                    cardCondition: card => context.target.includes(card),
+                    cardCondition: (card) => context.target.includes(card),
                     gameAction: 'gainPower',
                     onSelect: (player, card) => this.onPowerSelected(player, card),
                     onCancel: (player) => this.cancelSelection(player)
@@ -52,4 +60,4 @@ class ConsolidationOfPower extends DrawCard {
 
 ConsolidationOfPower.code = '01062';
 
-module.exports = ConsolidationOfPower;
+export default ConsolidationOfPower;

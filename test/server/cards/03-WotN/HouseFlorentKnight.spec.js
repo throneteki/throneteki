@@ -1,9 +1,10 @@
-describe('House Florent Knight', function() {
-    integration(function() {
-        beforeEach(function() {
+describe('House Florent Knight', function () {
+    integration(function () {
+        beforeEach(function () {
             const deck = this.buildDeck('tyrell', [
                 'Trading with the Pentoshi',
-                'House Florent Knight', 'Hedge Knight'
+                'House Florent Knight',
+                'Hedge Knight'
             ]);
             this.player1.selectDeck(deck);
             this.player2.selectDeck(deck);
@@ -14,8 +15,8 @@ describe('House Florent Knight', function() {
             this.florentKnight = this.player2.findCardByName('House Florent Knight', 'hand');
         });
 
-        describe('when there is a lower strength character out', function() {
-            beforeEach(function() {
+        describe('when there is a lower strength character out', function () {
+            beforeEach(function () {
                 this.selectFirstPlayer(this.player1);
                 this.selectPlotOrder(this.player1);
 
@@ -27,22 +28,22 @@ describe('House Florent Knight', function() {
                 this.player2.clickCard(this.florentKnight);
             });
 
-            it('should allow that character to be discarded', function() {
+            it('should allow that character to be discarded', function () {
                 this.player2.clickCard(this.hedgeKnight);
 
                 expect(this.hedgeKnight.location).toBe('discard pile');
             });
         });
 
-        describe('when House Florent Knight would be the lowest strength', function() {
-            beforeEach(function() {
+        describe('when House Florent Knight would be the lowest strength', function () {
+            beforeEach(function () {
                 this.selectFirstPlayer(this.player2);
                 this.selectPlotOrder(this.player2);
 
                 this.player2.clickCard(this.florentKnight);
             });
 
-            it('should require HFK to be discarded', function() {
+            it('should require HFK to be discarded', function () {
                 this.player2.clickCard(this.florentKnight);
                 expect(this.florentKnight.location).toBe('discard pile');
             });

@@ -1,21 +1,33 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class BoundForTheWall extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.isMatch({ winner: this.controller, attackingPlayer: this.controller })
+                afterChallenge: (event) =>
+                    event.challenge.isMatch({
+                        winner: this.controller,
+                        attackingPlayer: this.controller
+                    })
             },
-            handler: context => {
+            handler: (context) => {
                 let opponent = context.event.challenge.loser;
                 opponent.discardFromDraw(2);
-                 
-                this.game.addMessage('{0} plays {1} to discard the top 2 cards of {2}\'s deck and have {2} select a character from their discard pile to put into play', context.player, this, opponent);
+
+                this.game.addMessage(
+                    "{0} plays {1} to discard the top 2 cards of {2}'s deck and have {2} select a character from their discard pile to put into play",
+                    context.player,
+                    this,
+                    opponent
+                );
 
                 this.game.promptForSelect(opponent, {
                     source: this,
-                    cardCondition: card => card.location === 'discard pile' && card.controller === opponent &&
-                                           card.getType() === 'character' && context.player.canPutIntoPlay(card),
+                    cardCondition: (card) =>
+                        card.location === 'discard pile' &&
+                        card.controller === opponent &&
+                        card.getType() === 'character' &&
+                        context.player.canPutIntoPlay(card),
                     onSelect: (player, card) => this.onCardSelected(player, card),
                     onCancel: (player) => this.cancelSelection(player)
                 });
@@ -38,4 +50,4 @@ class BoundForTheWall extends DrawCard {
 
 BoundForTheWall.code = '17121';
 
-module.exports = BoundForTheWall;
+export default BoundForTheWall;

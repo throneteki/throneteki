@@ -1,5 +1,4 @@
-  
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class UnexpectedGuile extends DrawCard {
     setupCardAbilities(ability) {
@@ -10,14 +9,19 @@ class UnexpectedGuile extends DrawCard {
 
         this.reaction({
             when: {
-                afterChallenge: event => (
+                afterChallenge: (event) =>
                     event.challenge.winner === this.controller &&
-                    event.challenge.isParticipating(this.parent)) 
+                    event.challenge.isParticipating(this.parent)
             },
-            handler: context => {
+            handler: (context) => {
                 context.player.moveCard(this.parent, 'shadows');
 
-                this.game.addMessage('{0} uses {1} to return {2} to shadows', this.controller, this, this.parent);
+                this.game.addMessage(
+                    '{0} uses {1} to return {2} to shadows',
+                    this.controller,
+                    this,
+                    this.parent
+                );
             }
         });
     }
@@ -25,4 +29,4 @@ class UnexpectedGuile extends DrawCard {
 
 UnexpectedGuile.code = '17139';
 
-module.exports = UnexpectedGuile;
+export default UnexpectedGuile;

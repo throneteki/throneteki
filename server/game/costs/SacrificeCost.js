@@ -1,4 +1,4 @@
-const GameActions = require('../GameActions');
+import GameActions from '../GameActions/index.js';
 
 class SacrificeCost {
     constructor() {
@@ -10,10 +10,10 @@ class SacrificeCost {
     }
 
     pay(cards, context) {
-        for(let card of cards) {
+        for (let card of cards) {
             context.player.sacrificeCard(card);
         }
     }
 }
 
-module.exports = SacrificeCost;
+export default SacrificeCost;

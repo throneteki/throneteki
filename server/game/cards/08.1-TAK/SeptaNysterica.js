@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class SeptaNysterica extends DrawCard {
     setupCardAbilities(ability) {
@@ -6,14 +6,21 @@ class SeptaNysterica extends DrawCard {
             title: 'Remove character from challenge',
             cost: ability.costs.kneelSelf(),
             target: {
-                cardCondition: card => card.getType() === 'character' && card.location === 'play area' &&
-                                       card.isAttacking() && card.getStrength() <= 4
+                cardCondition: (card) =>
+                    card.getType() === 'character' &&
+                    card.location === 'play area' &&
+                    card.isAttacking() &&
+                    card.getStrength() <= 4
             },
-            handler: context => {
+            handler: (context) => {
                 context.target.controller.standCard(context.target);
                 this.game.currentChallenge.removeFromChallenge(context.target);
-                this.game.addMessage('{0} kneels {1} to stand and remove {2} from the challenge',
-                    this.controller, this, context.target);
+                this.game.addMessage(
+                    '{0} kneels {1} to stand and remove {2} from the challenge',
+                    this.controller,
+                    this,
+                    context.target
+                );
             }
         });
     }
@@ -21,4 +28,4 @@ class SeptaNysterica extends DrawCard {
 
 SeptaNysterica.code = '08004';
 
-module.exports = SeptaNysterica;
+export default SeptaNysterica;

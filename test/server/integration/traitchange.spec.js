@@ -1,10 +1,11 @@
-describe('trait change', function() {
-    integration(function() {
-        describe('effect recalculation', function() {
-            beforeEach(function() {
+describe('trait change', function () {
+    integration(function () {
+        describe('effect recalculation', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('martell', [
                     'A Tourney for the King',
-                    'Arianne Martell (Core)', 'Knighted'
+                    'Arianne Martell (Core)',
+                    'Knighted'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
@@ -15,8 +16,8 @@ describe('trait change', function() {
                 this.knighted = this.player1.findCardByName('Knighted', 'hand');
             });
 
-            describe('when gaining a trait after the effect has come into play', function() {
-                beforeEach(function() {
+            describe('when gaining a trait after the effect has come into play', function () {
+                beforeEach(function () {
                     this.player1.clickCard(this.character);
                     this.completeSetup();
 
@@ -32,14 +33,14 @@ describe('trait change', function() {
                     this.player1.clickPrompt('Apply Claim');
                 });
 
-                it('should apply the effect to the character', function() {
+                it('should apply the effect to the character', function () {
                     // Renown from A Tourney for the King
                     expect(this.character.power).toBe(1);
                 });
             });
 
-            describe('when losing a trait after the effect has come into play', function() {
-                beforeEach(function() {
+            describe('when losing a trait after the effect has come into play', function () {
+                beforeEach(function () {
                     this.player1.clickCard(this.character);
                     this.player1.clickCard(this.knighted);
                     this.completeSetup();
@@ -60,7 +61,7 @@ describe('trait change', function() {
                     this.player1.clickPrompt('Apply Claim');
                 });
 
-                it('should not apply the effect to the character', function() {
+                it('should not apply the effect to the character', function () {
                     // No renown from A Tourney for the King since no longer a Knight
                     expect(this.character.power).toBe(0);
                 });

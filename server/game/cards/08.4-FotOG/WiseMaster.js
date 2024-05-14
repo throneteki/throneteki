@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class WiseMaster extends DrawCard {
     setupCardAbilities(ability) {
@@ -9,13 +9,20 @@ class WiseMaster extends DrawCard {
             target: {
                 type: 'select',
                 activePromptTitle: 'Select an attachment or event',
-                cardCondition: card => card.location === 'discard pile' && card.controller === this.controller &&
-                                       ['attachment', 'event'].includes(card.getType()) && card.isOutOfFaction()
+                cardCondition: (card) =>
+                    card.location === 'discard pile' &&
+                    card.controller === this.controller &&
+                    ['attachment', 'event'].includes(card.getType()) &&
+                    card.isOutOfFaction()
             },
-            handler: context => {
+            handler: (context) => {
                 context.target.owner.returnCardToHand(context.target);
-                this.game.addMessage('{0} discards 1 gold from {1} to return {2} to their hand from their discard pile',
-                    context.player, this, context.target);
+                this.game.addMessage(
+                    '{0} discards 1 gold from {1} to return {2} to their hand from their discard pile',
+                    context.player,
+                    this,
+                    context.target
+                );
             }
         });
     }
@@ -23,4 +30,4 @@ class WiseMaster extends DrawCard {
 
 WiseMaster.code = '08073';
 
-module.exports = WiseMaster;
+export default WiseMaster;

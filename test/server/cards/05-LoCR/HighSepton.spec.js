@@ -1,13 +1,18 @@
-describe('High Septon', function() {
-    integration(function() {
-        beforeEach(function() {
+describe('High Septon', function () {
+    integration(function () {
+        beforeEach(function () {
             const deck1 = this.buildDeck('stark', [
                 'A Noble Cause',
-                'High Septon', 'House Tully Septon', 'Winterfell Steward'
+                'High Septon',
+                'House Tully Septon',
+                'Winterfell Steward'
             ]);
             const deck2 = this.buildDeck('targaryen', [
                 'A Noble Cause',
-                'Mirri Maz Duur', 'Tears of Lys', 'Even Handed Justice', 'His Viper Eyes'
+                'Mirri Maz Duur',
+                'Tears of Lys',
+                'Even Handed Justice',
+                'His Viper Eyes'
             ]);
 
             this.player1.selectDeck(deck1);
@@ -26,8 +31,8 @@ describe('High Septon', function() {
             this.completeSetup();
         });
 
-        describe('vs a single target ability', function() {
-            beforeEach(function() {
+        describe('vs a single target ability', function () {
+            beforeEach(function () {
                 this.selectFirstPlayer(this.player2);
 
                 this.completeMarshalPhase();
@@ -40,7 +45,7 @@ describe('High Septon', function() {
                 this.player2.clickCard(this.septon);
             });
 
-            it('should allow it be redirected to a The Seven character', function() {
+            it('should allow it be redirected to a The Seven character', function () {
                 this.player1.triggerAbility('High Septon');
                 this.player1.clickCard(this.sevenCharacter);
 
@@ -49,8 +54,8 @@ describe('High Septon', function() {
             });
         });
 
-        describe('when target resolution is cancelled', function() {
-            beforeEach(function() {
+        describe('when target resolution is cancelled', function () {
+            beforeEach(function () {
                 this.selectFirstPlayer(this.player2);
 
                 this.completeMarshalPhase();
@@ -62,7 +67,7 @@ describe('High Septon', function() {
                 this.player2.triggerAbility('Mirri Maz Duur');
             });
 
-            it('should not crash', function() {
+            it('should not crash', function () {
                 expect(() => {
                     // Cancel targeting for Mirri
                     this.player2.clickPrompt('Done');
@@ -70,8 +75,8 @@ describe('High Septon', function() {
             });
         });
 
-        describe('vs a non-targeting ability', function() {
-            beforeEach(function() {
+        describe('vs a non-targeting ability', function () {
+            beforeEach(function () {
                 this.selectFirstPlayer(this.player2);
 
                 this.player2.clickPrompt('Done');
@@ -83,13 +88,13 @@ describe('High Septon', function() {
                 this.player2.clickCard(this.nonSevenCharacter);
             });
 
-            it('should not allow it be redirected', function() {
+            it('should not allow it be redirected', function () {
                 expect(this.player1).not.toAllowAbilityTrigger('High Septon');
             });
         });
 
-        describe('vs a multi target ability', function() {
-            beforeEach(function() {
+        describe('vs a multi target ability', function () {
+            beforeEach(function () {
                 this.selectFirstPlayer(this.player2);
 
                 this.player2.clickCard('Even Handed Justice', 'hand');
@@ -97,7 +102,7 @@ describe('High Septon', function() {
                 this.player2.clickCard(this.septon);
             });
 
-            it('should not allow it be redirected', function() {
+            it('should not allow it be redirected', function () {
                 expect(this.player1).not.toAllowAbilityTrigger('High Septon');
             });
         });

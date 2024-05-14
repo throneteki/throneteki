@@ -1,5 +1,5 @@
-const Message = require('../Message');
-const GameAction = require('./GameAction');
+import Message from '../Message.js';
+import GameAction from './GameAction.js';
 
 class KneelCard extends GameAction {
     constructor() {
@@ -15,10 +15,10 @@ class KneelCard extends GameAction {
     }
 
     createEvent({ card, reason = 'ability', source }) {
-        return this.event('onCardKneeled', { card, source, reason }, event => {
+        return this.event('onCardKneeled', { card, source, reason }, (event) => {
             event.card.kneeled = true;
         });
     }
 }
 
-module.exports = new KneelCard();
+export default new KneelCard();

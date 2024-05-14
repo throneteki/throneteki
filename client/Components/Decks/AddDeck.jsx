@@ -27,7 +27,7 @@ export class AddDeck extends React.Component {
     }
 
     componentWillUpdate(props) {
-        if(props.deckSaved) {
+        if (props.deckSaved) {
             this.props.navigate('/decks');
 
             return;
@@ -45,24 +45,29 @@ export class AddDeck extends React.Component {
     render() {
         let content;
 
-        if(this.props.loading) {
+        if (this.props.loading) {
             content = <div>Loading decks from the server...</div>;
-        } else if(this.props.apiError) {
-            content = <AlertPanel type='error' message={ this.props.apiError } />;
+        } else if (this.props.apiError) {
+            content = <AlertPanel type='error' message={this.props.apiError} />;
         } else {
             content = (
                 <div>
                     <div className='col-sm-6'>
                         <Panel title='Deck Editor'>
-                            <DeckEditor onDeckSave={ this.onAddDeck } onDeckUpdated={ this.onDeckUpdated } deck={ this.state.deck } />
+                            <DeckEditor
+                                onDeckSave={this.onAddDeck}
+                                onDeckUpdated={this.onDeckUpdated}
+                                deck={this.state.deck}
+                            />
                         </Panel>
                     </div>
                     <div className='col-sm-6'>
-                        <Panel title={ this.state.deck ? this.state.deck.name : 'New Deck' }>
-                            <DeckSummary cards={ this.props.cards } deck={ this.state.deck } />
+                        <Panel title={this.state.deck ? this.state.deck.name : 'New Deck'}>
+                            <DeckSummary cards={this.props.cards} deck={this.state.deck} />
                         </Panel>
                     </div>
-                </div>);
+                </div>
+            );
         }
 
         return content;

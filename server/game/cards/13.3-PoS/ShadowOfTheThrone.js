@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class ShadowOfTheThrone extends DrawCard {
     setupCardAbilities() {
@@ -7,21 +7,23 @@ class ShadowOfTheThrone extends DrawCard {
             title: 'Kneel locations',
             target: {
                 maxStat: () => 3,
-                cardStat: card => card.getPrintedCost(),
-                cardCondition: card => card.location === 'play area' && card.getType() === 'location' && !card.kneeled,
+                cardStat: (card) => card.getPrintedCost(),
+                cardCondition: (card) =>
+                    card.location === 'play area' && card.getType() === 'location' && !card.kneeled,
                 gameAction: 'kneel'
             },
             message: '{player} plays {source} to kneel {target}',
-            handler: context => {
-                let actions = context.target.map(card => GameActions.kneelCard({ card }));
+            handler: (context) => {
+                let actions = context.target.map((card) => GameActions.kneelCard({ card }));
 
-                this.game.resolveGameAction(
-                    GameActions.simultaneously(actions),
-                    context
-                );
+                this.game.resolveGameAction(GameActions.simultaneously(actions), context);
 
-                if(this.game.anyPlotHasTrait('Kingdom')) {
-                    this.game.addMessage('{0} uses {1} to return {1} to their hand instead of their discard pile', context.player, this);
+                if (this.game.anyPlotHasTrait('Kingdom')) {
+                    this.game.addMessage(
+                        '{0} uses {1} to return {1} to their hand instead of their discard pile',
+                        context.player,
+                        this
+                    );
                     context.player.moveCard(this, 'hand');
                 }
             }
@@ -31,4 +33,4 @@ class ShadowOfTheThrone extends DrawCard {
 
 ShadowOfTheThrone.code = '13048';
 
-module.exports = ShadowOfTheThrone;
+export default ShadowOfTheThrone;

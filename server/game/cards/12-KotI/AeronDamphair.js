@@ -1,10 +1,11 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class AeronDamphair extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCharacterKilled: event => event.card.hasTrait('drowned god') && event.card.controller === this.controller
+                onCharacterKilled: (event) =>
+                    event.card.hasTrait('drowned god') && event.card.controller === this.controller
             },
             limit: ability.limit.perPhase(1),
             handler: () => {
@@ -17,4 +18,4 @@ class AeronDamphair extends DrawCard {
 
 AeronDamphair.code = '12005';
 
-module.exports = AeronDamphair;
+export default AeronDamphair;

@@ -5,11 +5,11 @@ class Matcher {
      * contained in that array.
      */
     static containsValue(expected, actualFunc) {
-        if(expected === undefined) {
+        if (expected === undefined) {
             return true;
         }
 
-        if(Array.isArray(expected)) {
+        if (Array.isArray(expected)) {
             return expected.includes(actualFunc());
         }
 
@@ -22,16 +22,16 @@ class Matcher {
      * at least one value in the array matches the passed predicate function.
      */
     static anyValue(expected, predicate) {
-        if(expected === undefined) {
+        if (expected === undefined) {
             return true;
         }
 
-        if(Array.isArray(expected)) {
-            return expected.some(value => predicate(value));
+        if (Array.isArray(expected)) {
+            return expected.some((value) => predicate(value));
         }
 
         return predicate(expected);
     }
 }
 
-module.exports = Matcher;
+export default Matcher;

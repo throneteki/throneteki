@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class WombOfTheWorld extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,17 +7,16 @@ class WombOfTheWorld extends DrawCard {
             title: 'Reveal top 5 cards',
             cost: ability.costs.kneelSelf(),
             message: '{player} kneels {source} to reveal the top 5 cards of their deck',
-            gameAction: GameActions.revealTopCards(context => ({
+            gameAction: GameActions.revealTopCards((context) => ({
                 player: context.player,
                 amount: 5,
-                whileRevealed: GameActions.genericHandler(context => {
+                whileRevealed: GameActions.genericHandler((context) => {
                     this.game.promptForSelect(context.player, {
                         activePromptTitle: 'Select a character',
-                        cardCondition: card => (
+                        cardCondition: (card) =>
                             context.revealed.includes(card) &&
                             card.isMatch({ trait: 'Dothraki', type: 'character' }) &&
-                            context.player.canPutIntoPlay(card)
-                        ),
+                            context.player.canPutIntoPlay(card),
                         onSelect: (player, card) => this.putCharacterIntoPlay(player, card),
                         onCancel: (player) => this.promptToCancel(player),
                         source: this
@@ -25,14 +24,14 @@ class WombOfTheWorld extends DrawCard {
                 })
             })).then({
                 message: '{player} shuffles their deck',
-                gameAction: GameActions.shuffle(context => ({ player: context.player }))
+                gameAction: GameActions.shuffle((context) => ({ player: context.player }))
             })
         });
     }
 
     putCharacterIntoPlay(player, card) {
         player.putIntoPlay(card);
-        this.atEndOfPhase(ability => ({
+        this.atEndOfPhase((ability) => ({
             match: card,
             condition: () => 'play area' === card.location,
             effect: ability.effects.returnToHandIfStillInPlay(true)
@@ -49,4 +48,4 @@ class WombOfTheWorld extends DrawCard {
 
 WombOfTheWorld.code = '15017';
 
-module.exports = WombOfTheWorld;
+export default WombOfTheWorld;

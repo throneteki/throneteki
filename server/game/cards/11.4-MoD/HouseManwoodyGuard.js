@@ -1,10 +1,10 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class HouseManwoodyGuard extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => !this.controller.firstPlayer,
-            match: card => card.getType() === 'character' && card.hasTrait('Guard'),
+            match: (card) => card.getType() === 'character' && card.hasTrait('Guard'),
             effect: ability.effects.doesNotKneelAsDefender()
         });
     }
@@ -12,4 +12,4 @@ class HouseManwoodyGuard extends DrawCard {
 
 HouseManwoodyGuard.code = '11075';
 
-module.exports = HouseManwoodyGuard;
+export default HouseManwoodyGuard;

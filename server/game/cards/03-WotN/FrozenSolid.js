@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class FrozenSolid extends DrawCard {
     setupCardAbilities(ability) {
@@ -11,4 +11,4 @@ class FrozenSolid extends DrawCard {
 
 FrozenSolid.code = '03021';
 
-module.exports = FrozenSolid;
+export default FrozenSolid;

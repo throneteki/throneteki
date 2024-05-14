@@ -1,5 +1,5 @@
-const GameAction = require('./GameAction');
-const DiscardToReservePrompt = require ('../gamesteps/taxation/DiscardToReservePrompt');
+import GameAction from './GameAction.js';
+import DiscardToReservePrompt from '../gamesteps/taxation/DiscardToReservePrompt.js';
 
 class CheckReserve extends GameAction {
     constructor() {
@@ -16,4 +16,4 @@ class CheckReserve extends GameAction {
     }
 }
 
-module.exports = new CheckReserve();
+export default new CheckReserve();

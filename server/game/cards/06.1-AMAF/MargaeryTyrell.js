@@ -1,15 +1,15 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions/index.js');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class MargaeryTyrell extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCharacterKilled: event => (
+                onCharacterKilled: (event) =>
                     event.card.isUnique() &&
-                    (event.cardStateWhenKilled.hasTrait('King') || event.cardStateWhenKilled.hasTrait('Lord')) &&
+                    (event.cardStateWhenKilled.hasTrait('King') ||
+                        event.cardStateWhenKilled.hasTrait('Lord')) &&
                     event.cardStateWhenKilled.controller === this.controller
-                )
             },
             limit: ability.limit.perRound(1),
             message: '{player} uses {source} to search their deck for a King or Lord character',
@@ -18,7 +18,7 @@ class MargaeryTyrell extends DrawCard {
                 match: { type: 'character', unique: true, trait: ['King', 'Lord'] },
                 reveal: false,
                 message: '{player} {gameAction}',
-                gameAction: GameActions.putIntoPlay(context => ({
+                gameAction: GameActions.putIntoPlay((context) => ({
                     card: context.searchTarget
                 }))
             })
@@ -28,4 +28,4 @@ class MargaeryTyrell extends DrawCard {
 
 MargaeryTyrell.code = '06003';
 
-module.exports = MargaeryTyrell;
+export default MargaeryTyrell;

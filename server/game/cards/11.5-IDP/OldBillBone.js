@@ -1,14 +1,18 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class OldBillBone extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardOutOfShadows: event => event.card === this
+                onCardOutOfShadows: (event) => event.card === this
             },
-            handler: context => {
-                this.game.addMessage('{0} uses {1} to kneel each opponent\'s faction card', context.player, this);
-                for(let opponent of this.game.getOpponents(context.player)) {
+            handler: (context) => {
+                this.game.addMessage(
+                    "{0} uses {1} to kneel each opponent's faction card",
+                    context.player,
+                    this
+                );
+                for (let opponent of this.game.getOpponents(context.player)) {
                     opponent.kneelCard(opponent.faction);
                 }
             }
@@ -18,4 +22,4 @@ class OldBillBone extends DrawCard {
 
 OldBillBone.code = '11097';
 
-module.exports = OldBillBone;
+export default OldBillBone;

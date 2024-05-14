@@ -1,9 +1,12 @@
-describe('Orton Merryweather', function() {
-    integration(function() {
-        beforeEach(function() {
+describe('Orton Merryweather', function () {
+    integration(function () {
+        beforeEach(function () {
             const deck1 = this.buildDeck('tyrell', [
                 'Marching Orders',
-                'Orton Merryweather', 'Hightower Spy', 'Hedge Knight', 'Growing Strong'
+                'Orton Merryweather',
+                'Hightower Spy',
+                'Hedge Knight',
+                'Growing Strong'
             ]);
             this.player1.selectDeck(deck1);
             this.player2.selectDeck(deck1);
@@ -21,14 +24,14 @@ describe('Orton Merryweather', function() {
             this.player1.dragCard(this.event, 'discard pile');
         });
 
-        describe('after a small council card enters play', function() {
-            beforeEach(function() {
+        describe('after a small council card enters play', function () {
+            beforeEach(function () {
                 expect(this.event.location).toBe('discard pile');
                 //marshal
                 this.player1.clickCard(this.orton);
             });
 
-            it('it should return an event from the discard pile to hand', function() {
+            it('it should return an event from the discard pile to hand', function () {
                 //trigger reaction
                 this.player1.clickCard(this.orton);
                 expect(this.player1).toHavePrompt('Select an event');
@@ -36,8 +39,8 @@ describe('Orton Merryweather', function() {
                 expect(this.event.location).toBe('hand');
             });
 
-            describe('after Orton Merryweather leaves play', function() {
-                beforeEach(function() {
+            describe('after Orton Merryweather leaves play', function () {
+                beforeEach(function () {
                     //marshal
                     this.player1.clickCard(this.orton);
                     //trigger reaction
@@ -45,7 +48,7 @@ describe('Orton Merryweather', function() {
                     this.player1.clickCard(this.event);
                 });
 
-                it('it should ask to put a Spy into play', function() {
+                it('it should ask to put a Spy into play', function () {
                     this.completeMarshalPhase();
                     expect(this.spy.location).toBe('hand');
                     expect(this.nonspy.location).toBe('hand');

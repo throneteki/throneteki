@@ -1,9 +1,9 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TheWall extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: card => card.getType() === 'character',
+            match: (card) => card.getType() === 'character',
             effect: [
                 ability.effects.loseFaction('stark'),
                 ability.effects.loseFaction('lannister'),
@@ -19,14 +19,24 @@ class TheWall extends DrawCard {
         this.action({
             title: 'Take control of character',
             cost: ability.costs.kneelSelf(),
-            chooseOpponent: opponent => opponent.discardPile.some(card => card.getType() === 'character' && this.controller.canPutIntoPlay(card)),
-            handler: context => {
-                this.game.addMessage('{0} kneels {1} to have {2} select a character from their discard pile to put into play',
-                    context.player, this, context.opponent);
+            chooseOpponent: (opponent) =>
+                opponent.discardPile.some(
+                    (card) => card.getType() === 'character' && this.controller.canPutIntoPlay(card)
+                ),
+            handler: (context) => {
+                this.game.addMessage(
+                    '{0} kneels {1} to have {2} select a character from their discard pile to put into play',
+                    context.player,
+                    this,
+                    context.opponent
+                );
                 this.game.promptForSelect(context.opponent, {
                     source: this,
-                    cardCondition: card => card.location === 'discard pile' && card.controller === context.opponent &&
-                                           card.getType() === 'character' && context.player.canPutIntoPlay(card),
+                    cardCondition: (card) =>
+                        card.location === 'discard pile' &&
+                        card.controller === context.opponent &&
+                        card.getType() === 'character' &&
+                        context.player.canPutIntoPlay(card),
                     onSelect: (player, cards) => this.onCardSelected(player, cards),
                     onCancel: (player) => this.cancelSelection(player)
                 });
@@ -48,4 +58,4 @@ class TheWall extends DrawCard {
 
 TheWall.code = '11026';
 
-module.exports = TheWall;
+export default TheWall;

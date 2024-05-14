@@ -1,9 +1,14 @@
-describe('A Mummer´s Farce', function() {
-    integration(function() {
-        beforeEach(function() {
+describe('A Mummer´s Farce', function () {
+    integration(function () {
+        beforeEach(function () {
             const deck1 = this.buildDeck('tyrell', [
-                'A Mummer\'s Farce',
-                'Late Summer Feast', 'Jinglebell', 'Green-Apple Knight', 'Green-Apple Knight', 'Warhammer', 'Blessed by the Maiden'
+                "A Mummer's Farce",
+                'Late Summer Feast',
+                'Jinglebell',
+                'Green-Apple Knight',
+                'Green-Apple Knight',
+                'Warhammer',
+                'Blessed by the Maiden'
             ]);
             this.player1.selectDeck(deck1);
             this.player2.selectDeck(deck1);
@@ -11,7 +16,10 @@ describe('A Mummer´s Farce', function() {
             this.keepStartingHands();
 
             this.jinglebell = this.player1.findCardByName('Jinglebell');
-            [this.knight1, this.knight2] = this.player1.filterCardsByName('Green-Apple Knight', 'hand');
+            [this.knight1, this.knight2] = this.player1.filterCardsByName(
+                'Green-Apple Knight',
+                'hand'
+            );
             this.blessed = this.player1.findCardByName('Blessed by the Maiden');
             this.warhammer = this.player1.findCardByName('Warhammer');
             this.completeSetup();
@@ -21,14 +29,14 @@ describe('A Mummer´s Farce', function() {
             this.player1Object.moveCard(this.knight2, 'draw deck');
         });
 
-        describe('when a card with a persistent effect under a fool gets marshalled', function() {
-            beforeEach(function() {
+        describe('when a card with a persistent effect under a fool gets marshalled', function () {
+            beforeEach(function () {
                 //put fool and another knight into play
                 this.player1.clickCard(this.jinglebell);
                 this.player1.clickCard(this.knight1);
             });
 
-            it('the persistent effect of that card should activate once the card enters play', function() {
+            it('the persistent effect of that card should activate once the card enters play', function () {
                 expect(this.jinglebell.location).toBe('play area');
                 expect(this.knight1.location).toBe('play area');
                 expect(this.knight1.getStrength()).toBe(1);
@@ -54,8 +62,8 @@ describe('A Mummer´s Farce', function() {
             });
         });
 
-        describe('when a fool has a weapon attachment and a facedown attachment attached and gains the no attachments keyword', function() {
-            beforeEach(function() {
+        describe('when a fool has a weapon attachment and a facedown attachment attached and gains the no attachments keyword', function () {
+            beforeEach(function () {
                 this.player1.clickCard(this.jinglebell);
                 this.player1.clickCard(this.warhammer);
                 this.player1.clickCard(this.jinglebell);
@@ -65,12 +73,12 @@ describe('A Mummer´s Farce', function() {
                 expect(this.jinglebell.getStrength()).toBe(4);
                 this.player1.clickCard(this.blessed);
                 this.player1.clickCard(this.jinglebell);
-                
+
                 // Skip order of discarded cards
                 this.player1.clickPrompt('Done');
             });
 
-            it('the weapon attachments should be discarded because they are invalidly attached', function() {
+            it('the weapon attachments should be discarded because they are invalidly attached', function () {
                 expect(this.jinglebell.location).toBe('play area');
                 expect(this.jinglebell.getStrength()).toBe(1);
                 expect(this.knight2.location).toBe('discard pile');

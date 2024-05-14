@@ -1,22 +1,25 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class OlennasCunning extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: event => ['intrigue', 'power'].includes(event.challenge.challengeType) && event.challenge.winner === this.controller
+                afterChallenge: (event) =>
+                    ['intrigue', 'power'].includes(event.challenge.challengeType) &&
+                    event.challenge.winner === this.controller
             },
-            message: '{player} plays {source} to have the losing opponent name a cardtype and search their deck',
+            message:
+                '{player} plays {source} to have the losing opponent name a cardtype and search their deck',
             gameAction: GameActions.choose({
                 player: () => this.game.currentChallenge.loser,
                 title: 'Select a card type',
                 message: '{choosingPlayer} names the {choice} cardtype',
                 choices: {
-                    'Character': this.searchGameActionForCardtype('Character'),
-                    'Location': this.searchGameActionForCardtype('Location'),
-                    'Attachment': this.searchGameActionForCardtype('Attachment'),
-                    'Event': this.searchGameActionForCardtype('Event')
+                    Character: this.searchGameActionForCardtype('Character'),
+                    Location: this.searchGameActionForCardtype('Location'),
+                    Attachment: this.searchGameActionForCardtype('Attachment'),
+                    Event: this.searchGameActionForCardtype('Event')
                 }
             })
         });
@@ -25,9 +28,9 @@ class OlennasCunning extends DrawCard {
     searchGameActionForCardtype(cardType) {
         return GameActions.search({
             title: `Select a non-${cardType}`,
-            match: { condition: card => card.getType() !== cardType.toLowerCase() },
+            match: { condition: (card) => card.getType() !== cardType.toLowerCase() },
             message: '{player} {gameAction}',
-            gameAction: GameActions.addToHand(context => ({
+            gameAction: GameActions.addToHand((context) => ({
                 card: context.searchTarget
             }))
         });
@@ -36,4 +39,4 @@ class OlennasCunning extends DrawCard {
 
 OlennasCunning.code = '01196';
 
-module.exports = OlennasCunning;
+export default OlennasCunning;

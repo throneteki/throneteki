@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Pyke extends DrawCard {
     setupCardAbilities(ability) {
@@ -6,13 +6,18 @@ class Pyke extends DrawCard {
             title: 'Give character stealth',
             cost: ability.costs.kneelSelf(),
             target: {
-                cardCondition: card => card.getType() === 'character' && card.location === 'play area'
+                cardCondition: (card) =>
+                    card.getType() === 'character' && card.location === 'play area'
             },
-            handler: context => {
-                this.game.addMessage('{0} kneels {1} to have {2} gain stealth until the end of the phase',
-                    this.controller, this, context.target);
+            handler: (context) => {
+                this.game.addMessage(
+                    '{0} kneels {1} to have {2} gain stealth until the end of the phase',
+                    this.controller,
+                    this,
+                    context.target
+                );
 
-                this.untilEndOfPhase(ability => ({
+                this.untilEndOfPhase((ability) => ({
                     match: context.target,
                     effect: ability.effects.addKeyword('Stealth')
                 }));
@@ -23,4 +28,4 @@ class Pyke extends DrawCard {
 
 Pyke.code = '04013';
 
-module.exports = Pyke;
+export default Pyke;

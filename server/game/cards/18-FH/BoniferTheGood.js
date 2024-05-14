@@ -1,9 +1,12 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class BoniferTheGood extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: card => !card.isFaction('neutral') && card.hasTrait('The Seven') && card.getType() === 'character',
+            match: (card) =>
+                !card.isFaction('neutral') &&
+                card.hasTrait('The Seven') &&
+                card.getType() === 'character',
             effect: ability.effects.addKeyword('insight')
         });
     }
@@ -11,4 +14,4 @@ class BoniferTheGood extends DrawCard {
 
 BoniferTheGood.code = '18001';
 
-module.exports = BoniferTheGood;
+export default BoniferTheGood;

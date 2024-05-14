@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TheGoldroad extends DrawCard {
     setupCardAbilities(ability) {
@@ -11,7 +11,7 @@ class TheGoldroad extends DrawCard {
             phase: 'challenge',
             condition: () => this.controller.canGainGold(),
             cost: ability.costs.kneelSelf(),
-            handler: context => {
+            handler: (context) => {
                 this.game.addGold(context.player, 1);
                 this.game.addMessage('{0} kneels {1} to gain 1 gold', context.player, this);
             }
@@ -21,4 +21,4 @@ class TheGoldroad extends DrawCard {
 
 TheGoldroad.code = '06110';
 
-module.exports = TheGoldroad;
+export default TheGoldroad;

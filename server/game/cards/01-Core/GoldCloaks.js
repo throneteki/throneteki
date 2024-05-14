@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const CardEntersPlayTracker = require('../../EventTrackers/CardEntersPlayTracker');
+import DrawCard from '../../drawcard.js';
+import CardEntersPlayTracker from '../../EventTrackers/CardEntersPlayTracker.js';
 
 class GoldCloaks extends DrawCard {
     setupCardAbilities() {
@@ -11,7 +11,11 @@ class GoldCloaks extends DrawCard {
             },
             handler: () => {
                 this.controller.discardCard(this, false);
-                this.game.addMessage('{0} is forced to discard {1} from play at the end of the phase', this.controller, this);
+                this.game.addMessage(
+                    '{0} is forced to discard {1} from play at the end of the phase',
+                    this.controller,
+                    this
+                );
             }
         });
     }
@@ -19,4 +23,4 @@ class GoldCloaks extends DrawCard {
 
 GoldCloaks.code = '01092';
 
-module.exports = GoldCloaks;
+export default GoldCloaks;

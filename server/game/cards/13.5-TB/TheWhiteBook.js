@@ -1,21 +1,25 @@
-const AgendaCard = require('../../agendacard');
-const GameActions = require('../../GameActions');
+import AgendaCard from '../../agendacard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheWhiteBook extends AgendaCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.winner === this.controller && this.eligibleKingsguard(this.controller).length > 0
+                afterChallenge: (event) =>
+                    event.challenge.winner === this.controller &&
+                    this.eligibleKingsguard(this.controller).length > 0
             },
             cost: ability.costs.kneelFactionCard(),
             message: {
                 format: '{player} uses {source} and kneels their faction card to stand {kingsguard}',
-                args: { kingsguard: context => this.eligibleKingsguard(context.player) }
+                args: { kingsguard: (context) => this.eligibleKingsguard(context.player) }
             },
-            handler: context => {
+            handler: (context) => {
                 this.game.resolveGameAction(
                     GameActions.simultaneously(
-                        this.eligibleKingsguard(context.player).map(card => GameActions.standCard({ card }))
+                        this.eligibleKingsguard(context.player).map((card) =>
+                            GameActions.standCard({ card })
+                        )
                     ),
                     context
                 );
@@ -28,14 +32,22 @@ class TheWhiteBook extends AgendaCard {
     }
 
     eligibleKingsguard(player) {
-        if(this.controlsKingOrQueen(player)) {
-            return player.filterCardsInPlay({ type: 'character', trait: 'Kingsguard', participating: true });
+        if (this.controlsKingOrQueen(player)) {
+            return player.filterCardsInPlay({
+                type: 'character',
+                trait: 'Kingsguard',
+                participating: true
+            });
         }
 
-        return player.filterCardsInPlay({ type: 'character', trait: 'Kingsguard', defending: true });
+        return player.filterCardsInPlay({
+            type: 'character',
+            trait: 'Kingsguard',
+            defending: true
+        });
     }
 }
 
 TheWhiteBook.code = '13099';
 
-module.exports = TheWhiteBook;
+export default TheWhiteBook;

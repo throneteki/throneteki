@@ -1,5 +1,5 @@
-export default function(state = {}, action) {
-    switch(action.type) {
+export default function (state = {}, action) {
+    switch (action.type) {
         case 'REGISTER_ACCOUNT':
             return Object.assign({}, state, {
                 registered: false
@@ -59,14 +59,14 @@ export default function(state = {}, action) {
         case 'ACCOUNT_UNLINKED':
             var user = state.user;
 
-            if(user) {
+            if (user) {
                 user.patreon = undefined;
             }
 
             return Object.assign({}, state, {
                 accountLinked: undefined,
                 user: user
-            });    
+            });
     }
 
     return state;

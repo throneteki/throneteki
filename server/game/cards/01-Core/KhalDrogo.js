@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class KhalDrogo extends DrawCard {
     setupCardAbilities(ability) {
@@ -11,4 +11,4 @@ class KhalDrogo extends DrawCard {
 
 KhalDrogo.code = '01162';
 
-module.exports = KhalDrogo;
+export default KhalDrogo;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class SeptaLemore extends DrawCard {
     setupCardAbilities(ability) {
@@ -6,16 +6,21 @@ class SeptaLemore extends DrawCard {
             match: (card) => card.name === 'Aegon Targaryen',
             effect: ability.effects.addKeyword('Insight')
         });
-        
+
         this.interrupt({
             when: {
-                onCardLeftPlay: event => event.card === this
+                onCardLeftPlay: (event) => event.card === this
             },
             target: {
-                cardCondition: (card, context) => card.location === 'play area' && card.getType() === 'character' && card.isShadow() && card.controller === context.player && card.isFaction('targaryen')
+                cardCondition: (card, context) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    card.isShadow() &&
+                    card.controller === context.player &&
+                    card.isFaction('targaryen')
             },
             message: '{player} uses {source} to return {target} to shadows',
-            handler: context => {
+            handler: (context) => {
                 context.player.moveCard(context.target, 'shadows');
             }
         });
@@ -24,4 +29,4 @@ class SeptaLemore extends DrawCard {
 
 SeptaLemore.code = '20032';
 
-module.exports = SeptaLemore;
+export default SeptaLemore;

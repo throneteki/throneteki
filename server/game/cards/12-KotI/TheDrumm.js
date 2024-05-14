@@ -1,10 +1,12 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class TheDrumm extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.game.isDuringChallenge({ challengeType: ['military', 'power'] }) && this.isAttacking(),
-            match: card => card.getType() === 'character' && card.hasIcon('intrigue'),
+            condition: () =>
+                this.game.isDuringChallenge({ challengeType: ['military', 'power'] }) &&
+                this.isAttacking(),
+            match: (card) => card.getType() === 'character' && card.hasIcon('intrigue'),
             targetController: 'any',
             effect: ability.effects.cannotBeDeclaredAsDefender()
         });
@@ -13,4 +15,4 @@ class TheDrumm extends DrawCard {
 
 TheDrumm.code = '12006';
 
-module.exports = TheDrumm;
+export default TheDrumm;

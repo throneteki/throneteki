@@ -1,16 +1,21 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class HagensDaughter extends DrawCard {
     setupCardAbilities() {
         this.interrupt({
             canCancel: true,
             when: {
-                onCharacterKilled: event => (event.allowSave || event.isBurn) && event.card === this && this.canBeSaved()
+                onCharacterKilled: (event) =>
+                    (event.allowSave || event.isBurn) && event.card === this && this.canBeSaved()
             },
-            handler: context => {
+            handler: (context) => {
                 context.event.saveCard();
                 context.player.moveCard(this, 'shadows');
-                this.game.addMessage('{0} saves {1} and returns her to shadows', context.player, this);
+                this.game.addMessage(
+                    '{0} saves {1} and returns her to shadows',
+                    context.player,
+                    this
+                );
             }
         });
     }
@@ -18,4 +23,4 @@ class HagensDaughter extends DrawCard {
 
 HagensDaughter.code = '11031';
 
-module.exports = HagensDaughter;
+export default HagensDaughter;

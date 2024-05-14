@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class MaryaSeaworth extends DrawCard {
     setupCardAbilities(ability) {
@@ -8,10 +8,15 @@ class MaryaSeaworth extends DrawCard {
             },
             cost: ability.costs.payGold(1),
             limit: ability.limit.perPhase(2),
-            handler: context => {
+            handler: (context) => {
                 let target = context.event.target;
                 target.controller.kneelCard(target);
-                this.game.addMessage('{0} uses {1} and pays 1 gold to kneel {2}', this.controller, this, target);
+                this.game.addMessage(
+                    '{0} uses {1} and pays 1 gold to kneel {2}',
+                    this.controller,
+                    this,
+                    target
+                );
             }
         });
     }
@@ -19,4 +24,4 @@ class MaryaSeaworth extends DrawCard {
 
 MaryaSeaworth.code = '07025';
 
-module.exports = MaryaSeaworth;
+export default MaryaSeaworth;

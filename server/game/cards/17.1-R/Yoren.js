@@ -1,34 +1,50 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Yoren extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: event => event.card === this
+                onCardEntersPlay: (event) => event.card === this
             },
-            chooseOpponent: opponent => opponent.anyCardsInPlay(card => card.getType() === 'character' && !card.kneeled && card.getPrintedCost() <= 5),
-            handler: context => {
-                this.game.addMessage('{0} uses {1} to choose {2}', context.player, this, context.opponent);
+            chooseOpponent: (opponent) =>
+                opponent.anyCardsInPlay(
+                    (card) =>
+                        card.getType() === 'character' &&
+                        !card.kneeled &&
+                        card.getPrintedCost() <= 5
+                ),
+            handler: (context) => {
+                this.game.addMessage(
+                    '{0} uses {1} to choose {2}',
+                    context.player,
+                    this,
+                    context.opponent
+                );
                 this.game.promptForSelect(context.opponent, {
                     acticePromptTitle: 'Select a character',
                     source: this,
-                    cardCondition: card => card.getType() === 'character' && card.controller === context.opponent && card.getPrintedCost() <= 5 && card.location === 'play area' && !card.kneeled,
+                    cardCondition: (card) =>
+                        card.getType() === 'character' &&
+                        card.controller === context.opponent &&
+                        card.getPrintedCost() <= 5 &&
+                        card.location === 'play area' &&
+                        !card.kneeled,
                     onSelect: (player, card) => this.onCardSelected(player, card),
                     onCancel: (player) => this.onCancel(player)
                 });
             }
         });
     }
-    
+
     onCardSelected(player, card) {
-        this.lastingEffect(ability => ({
+        this.lastingEffect((ability) => ({
             until: {
-                onCardLeftPlay: event => event.card === this || event.card === card 
+                onCardLeftPlay: (event) => event.card === this || event.card === card
             },
             match: card,
-            effect: ability.effects.takeControl(this.controller)})
-        );
-       
+            effect: ability.effects.takeControl(this.controller)
+        }));
+
         return true;
     }
 
@@ -41,4 +57,4 @@ class Yoren extends DrawCard {
 
 Yoren.code = '17116';
 
-module.exports = Yoren;
+export default Yoren;

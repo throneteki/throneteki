@@ -1,18 +1,26 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class RiverrunMinstrel extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: event => event.card === this
+                onCardEntersPlay: (event) => event.card === this
             },
             target: {
-                cardCondition: card => card.location === 'play area' && card.hasTrait('House Tully') && card.getType() === 'character',
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.hasTrait('House Tully') &&
+                    card.getType() === 'character',
                 gameAction: 'gainPower'
             },
-            handler: context => {
+            handler: (context) => {
                 context.target.modifyPower(1);
-                this.game.addMessage('{0} uses {1} to have {2} gain a power', this.controller, this, context.target);
+                this.game.addMessage(
+                    '{0} uses {1} to have {2} gain a power',
+                    this.controller,
+                    this,
+                    context.target
+                );
             }
         });
     }
@@ -20,4 +28,4 @@ class RiverrunMinstrel extends DrawCard {
 
 RiverrunMinstrel.code = '03009';
 
-module.exports = RiverrunMinstrel;
+export default RiverrunMinstrel;

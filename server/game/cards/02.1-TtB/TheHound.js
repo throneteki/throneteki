@@ -1,13 +1,14 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TheHound extends DrawCard {
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                afterChallenge: event => event.challenge.winner === this.controller && this.isParticipating()
+                afterChallenge: (event) =>
+                    event.challenge.winner === this.controller && this.isParticipating()
             },
             handler: () => {
-                if(this.controller.hand.length < 1) {
+                if (this.controller.hand.length < 1) {
                     this.returnToHand(this.controller);
                     return;
                 }
@@ -45,4 +46,4 @@ class TheHound extends DrawCard {
 
 TheHound.code = '02009';
 
-module.exports = TheHound;
+export default TheHound;

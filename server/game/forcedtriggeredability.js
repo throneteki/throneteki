@@ -1,4 +1,4 @@
-const TriggeredAbility = require('./triggeredability.js');
+import TriggeredAbility from './triggeredability.js';
 
 /**
  * Represents a forced reaction ability provided by card text.
@@ -27,4 +27,4 @@ class ForcedTriggeredAbility extends TriggeredAbility {
     }
 }
 
-module.exports = ForcedTriggeredAbility;
+export default ForcedTriggeredAbility;

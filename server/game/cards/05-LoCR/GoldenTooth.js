@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class GoldenTooth extends DrawCard {
     setupCardAbilities(ability) {
@@ -10,17 +10,22 @@ class GoldenTooth extends DrawCard {
                 let gold = this.opponentHasEmptyHand() ? 3 : 1;
                 gold = this.game.addGold(this.controller, gold);
 
-                this.game.addMessage('{0} kneels {1} to gain {2} gold', this.controller, this, gold);
+                this.game.addMessage(
+                    '{0} kneels {1} to gain {2} gold',
+                    this.controller,
+                    this,
+                    gold
+                );
             }
         });
     }
 
     opponentHasEmptyHand() {
         let opponents = this.game.getOpponents(this.controller);
-        return opponents.some(opponent => opponent.hand.length === 0);
+        return opponents.some((opponent) => opponent.hand.length === 0);
     }
 }
 
 GoldenTooth.code = '05017';
 
-module.exports = GoldenTooth;
+export default GoldenTooth;

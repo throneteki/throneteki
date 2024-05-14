@@ -1,10 +1,12 @@
 describe('Scouting Vessel', function () {
     integration(function () {
-        describe('normal usage', function() {
+        describe('normal usage', function () {
             beforeEach(function () {
                 const deck1 = this.buildDeck('greyjoy', [
                     'Sneak Attack',
-                    'Black Wind\'s Crew', 'Euron Crow\'s Eye (Core)', 'Scouting Vessel'
+                    "Black Wind's Crew",
+                    "Euron Crow's Eye (Core)",
+                    'Scouting Vessel'
                 ]);
                 const deck2 = this.buildDeck('tyrell', [
                     'Sneak Attack',
@@ -15,8 +17,8 @@ describe('Scouting Vessel', function () {
                 this.startGame();
                 this.keepStartingHands();
 
-                this.pillager = this.player1.findCardByName('Black Wind\'s Crew', 'hand');
-                this.euron = this.player1.findCardByName('Euron Crow\'s Eye', 'hand');
+                this.pillager = this.player1.findCardByName("Black Wind's Crew", 'hand');
+                this.euron = this.player1.findCardByName("Euron Crow's Eye", 'hand');
                 this.vessel = this.player1.findCardByName('Scouting Vessel', 'hand');
 
                 this.player1.dragCard(this.pillager, 'play area');
@@ -55,11 +57,14 @@ describe('Scouting Vessel', function () {
                 });
 
                 it('triggers for all 3 cards discarded', function () {
-                    let kingsroads = this.player2.filterCardsByName('The Kingsroad', 'discard pile');
+                    let kingsroads = this.player2.filterCardsByName(
+                        'The Kingsroad',
+                        'discard pile'
+                    );
 
                     expect(kingsroads.length).toBe(3);
 
-                    for(let card of kingsroads) {
+                    for (let card of kingsroads) {
                         this.player1.triggerAbility(this.euron);
                         // Choose card associated with the "discard" event we're triggering
                         this.player1.clickCard(card);
@@ -73,7 +78,7 @@ describe('Scouting Vessel', function () {
             });
         });
 
-        describe('chaining Scouting Vessels', function() {
+        describe('chaining Scouting Vessels', function () {
             // Ruling: http://www.cardgamedb.com/forums/index.php?/topic/40152-ruling-scouting-vessel/?p=332470
             // If you have two Scouting Vessels, you can use the first to cause
             // 3 cards to be discarded, then use a second Scouting Vessel to
@@ -82,7 +87,10 @@ describe('Scouting Vessel', function () {
             beforeEach(function () {
                 const deck1 = this.buildDeck('greyjoy', [
                     'Sneak Attack',
-                    'Black Wind\'s Crew', 'Scouting Vessel', 'Scouting Vessel', 'Scouting Vessel'
+                    "Black Wind's Crew",
+                    'Scouting Vessel',
+                    'Scouting Vessel',
+                    'Scouting Vessel'
                 ]);
                 const deck2 = this.buildDeck('tyrell', [
                     'Sneak Attack',
@@ -93,8 +101,11 @@ describe('Scouting Vessel', function () {
                 this.startGame();
                 this.keepStartingHands();
 
-                this.pillager = this.player1.findCardByName('Black Wind\'s Crew', 'hand');
-                [this.vessel1, this.vessel2, this.vessel3] = this.player1.filterCardsByName('Scouting Vessel', 'hand');
+                this.pillager = this.player1.findCardByName("Black Wind's Crew", 'hand');
+                [this.vessel1, this.vessel2, this.vessel3] = this.player1.filterCardsByName(
+                    'Scouting Vessel',
+                    'hand'
+                );
 
                 this.player1.clickCard(this.pillager);
                 this.player1.clickCard(this.vessel1);
@@ -114,12 +125,12 @@ describe('Scouting Vessel', function () {
                 this.player1.triggerAbility(this.vessel1);
             });
 
-            it('allows other Scouting Vessels to be triggered', function() {
+            it('allows other Scouting Vessels to be triggered', function () {
                 expect(this.player1).toAllowAbilityTrigger(this.vessel2);
                 expect(this.player1).toAllowAbilityTrigger(this.vessel3);
             });
 
-            it('discards the correct amount when triggering multiple vessels', function() {
+            it('discards the correct amount when triggering multiple vessels', function () {
                 this.player1.triggerAbility(this.vessel2);
                 this.player1.triggerAbility(this.vessel3);
 

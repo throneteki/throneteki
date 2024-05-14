@@ -25,7 +25,9 @@ class ExportStandaloneDecks {
                 releaseDate: null,
                 faction: deck.faction.value,
                 agenda: deck.agenda.code,
-                cards: deck.plotCards.map(c => ({ code: c.card.code, count: c.count })).concat(deck.drawCards.map(c => ({ code: c.card.code, count: c.count })))
+                cards: deck.plotCards
+                    .map((c) => ({ code: c.card.code, count: c.count }))
+                    .concat(deck.drawCards.map((c) => ({ code: c.card.code, count: c.count })))
             };
             console.log(JSON.stringify(exportedFormat));
         } finally {

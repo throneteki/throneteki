@@ -1,9 +1,12 @@
-describe('Winterfell Crypt', function() {
-    integration(function() {
-        beforeEach(function() {
+describe('Winterfell Crypt', function () {
+    integration(function () {
+        beforeEach(function () {
             const deck1 = this.buildDeck('stark', [
                 'A Noble Cause',
-                'Winterfell Crypt', 'Arya Stark (Core)', 'Bran Stark (Core)', 'Bran Stark (Core)'
+                'Winterfell Crypt',
+                'Arya Stark (Core)',
+                'Bran Stark (Core)',
+                'Bran Stark (Core)'
             ]);
 
             this.player1.selectDeck(deck1);
@@ -25,13 +28,13 @@ describe('Winterfell Crypt', function() {
             this.completeMarshalPhase();
         });
 
-        describe('when winterfell crypt is triggered', function() {
-            beforeEach(function() {
+        describe('when winterfell crypt is triggered', function () {
+            beforeEach(function () {
                 this.player1Object.killCharacter(this.arya);
                 this.player1.clickCard(this.crypt);
             });
 
-            it('should ask the player to choose a target and return it at the end of the phase', function() {
+            it('should ask the player to choose a target and return it at the end of the phase', function () {
                 expect(this.player1).toHavePrompt('Any reactions to Arya Stark being killed?');
                 this.player1.clickCard(this.crypt);
                 expect(this.player1).toHavePrompt('Select a character');
@@ -40,7 +43,7 @@ describe('Winterfell Crypt', function() {
                 expect(this.bran.location).toBe('draw deck');
             });
 
-            it('should use a dupe against the return to deck', function() {
+            it('should use a dupe against the return to deck', function () {
                 this.player2.dragCard(this.bran2, 'play area');
                 expect(this.player1).toHavePrompt('Any reactions to Arya Stark being killed?');
                 this.player1.clickCard(this.crypt);
@@ -53,7 +56,7 @@ describe('Winterfell Crypt', function() {
                 expect(this.bran.dupes.length).toBe(0);
             });
 
-            it('should allow a manually used dupe to save against the return to deck', function() {
+            it('should allow a manually used dupe to save against the return to deck', function () {
                 this.player2.toggleManualDupes(true);
                 this.player2.dragCard(this.bran2, 'play area');
                 expect(this.player1).toHavePrompt('Any reactions to Arya Stark being killed?');
@@ -69,7 +72,7 @@ describe('Winterfell Crypt', function() {
                 expect(this.bran.dupes.length).toBe(0);
             });
 
-            it('should prompt for manually saving with a dupe', function() {
+            it('should prompt for manually saving with a dupe', function () {
                 this.player2.toggleManualDupes(true);
                 this.player2.dragCard(this.bran2, 'play area');
                 expect(this.player1).toHavePrompt('Any reactions to Arya Stark being killed?');

@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const {Tokens} = require('../../Constants');
+import DrawCard from '../../drawcard.js';
+import { Tokens } from '../../Constants/index.js';
 
 class SeizedByTheGuard extends DrawCard {
     setupCardAbilities(ability) {
@@ -9,10 +9,10 @@ class SeizedByTheGuard extends DrawCard {
         });
         this.forcedReaction({
             when: {
-                onPhaseStarted: event => event.phase === 'marshal'
+                onPhaseStarted: (event) => event.phase === 'marshal'
             },
-            handler: context => {
-                if(!this.hasToken(Tokens.gold)) {
+            handler: (context) => {
+                if (!this.hasToken(Tokens.gold)) {
                     this.sacrifice();
                     return;
                 }
@@ -46,4 +46,4 @@ class SeizedByTheGuard extends DrawCard {
 
 SeizedByTheGuard.code = '08078';
 
-module.exports = SeizedByTheGuard;
+export default SeizedByTheGuard;

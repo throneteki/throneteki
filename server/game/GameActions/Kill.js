@@ -1,7 +1,7 @@
-const GameAction = require('./GameAction');
-const Message = require('../Message');
-const LeavePlay = require('./LeavePlay');
-const PlaceCard = require('./PlaceCard');
+import GameAction from './GameAction.js';
+import Message from '../Message.js';
+import LeavePlay from './LeavePlay.js';
+import PlaceCard from './PlaceCard.js';
 
 class Kill extends GameAction {
     constructor() {
@@ -24,8 +24,14 @@ class Kill extends GameAction {
             isBurn,
             snapshotName: 'cardStateWhenKilled'
         };
-        const event = this.event('onCharacterKilled', params, event => {
-            event.thenAttachEvent(PlaceCard.createEvent({ card: event.card, player: event.player, location: 'dead pile' }));
+        const event = this.event('onCharacterKilled', params, (event) => {
+            event.thenAttachEvent(
+                PlaceCard.createEvent({
+                    card: event.card,
+                    player: event.player,
+                    location: 'dead pile'
+                })
+            );
         });
 
         const leavePlayEvent = LeavePlay.createEvent({ card, allowSave });
@@ -34,4 +40,4 @@ class Kill extends GameAction {
     }
 }
 
-module.exports = new Kill();
+export default new Kill();

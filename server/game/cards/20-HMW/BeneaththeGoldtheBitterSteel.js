@@ -1,18 +1,16 @@
-const DrawCard = require('../../drawcard.js');
-const Tokens = require('../../Constants/Tokens.js');
+import DrawCard from '../../drawcard.js';
+import { Tokens } from '../../Constants/Tokens.js';
 
 class BeneaththeGoldtheBitterSteel extends DrawCard {
     setupCardAbilities() {
         this.action({
             target: {
                 activePromptTitle: 'Select a Mercenary with gold',
-                cardCondition: card =>
-                    card.hasTrait('Mercenary')
-                    && card.hasToken(Tokens.gold)
+                cardCondition: (card) => card.hasTrait('Mercenary') && card.hasToken(Tokens.gold)
             },
             phase: 'challenge',
-            handler: context => {
-                this.untilEndOfPhase(ability => ({
+            handler: (context) => {
+                this.untilEndOfPhase((ability) => ({
                     match: context.target,
                     effect: [
                         ability.effects.addKeyword('Renown'),
@@ -20,9 +18,9 @@ class BeneaththeGoldtheBitterSteel extends DrawCard {
                     ]
                 }));
                 let goldMessage = '';
-                
-                if(context.target.tokens[Tokens.gold] >= 3) {
-                    this.untilEndOfPhase(ability => ({
+
+                if (context.target.tokens[Tokens.gold] >= 3) {
+                    this.untilEndOfPhase((ability) => ({
                         match: context.target,
                         effect: [
                             ability.effects.addKeyword('Intimidate'),
@@ -31,8 +29,13 @@ class BeneaththeGoldtheBitterSteel extends DrawCard {
                     }));
                     goldMessage = ' and insight and intimidate';
                 }
-                this.game.addMessage('{0} plays {1} to have {2} gain No attachments except Item and renown{3} until the end of the phase',
-                    context.player, this, context.target, goldMessage);
+                this.game.addMessage(
+                    '{0} plays {1} to have {2} gain No attachments except Item and renown{3} until the end of the phase',
+                    context.player,
+                    this,
+                    context.target,
+                    goldMessage
+                );
             }
         });
     }
@@ -40,4 +43,4 @@ class BeneaththeGoldtheBitterSteel extends DrawCard {
 
 BeneaththeGoldtheBitterSteel.code = '20035';
 
-module.exports = BeneaththeGoldtheBitterSteel;
+export default BeneaththeGoldtheBitterSteel;

@@ -1,10 +1,13 @@
-describe('immunity', function() {
-    integration(function() {
-        describe('when a card has immunity', function() {
-            beforeEach(function() {
+describe('immunity', function () {
+    integration(function () {
+        describe('when a card has immunity', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('lannister', [
                     'Sneak Attack',
-                    'Small Council Chamber', 'Tywin Lannister (Core)', 'Nightmares', 'Put to the Torch'
+                    'Small Council Chamber',
+                    'Tywin Lannister (Core)',
+                    'Nightmares',
+                    'Put to the Torch'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
@@ -24,14 +27,14 @@ describe('immunity', function() {
                 this.completeMarshalPhase();
             });
 
-            it('should not allow lasting effects to be applied to it', function() {
+            it('should not allow lasting effects to be applied to it', function () {
                 this.player2.clickCard('Nightmares', 'hand');
                 this.player2.clickCard(this.chamber);
 
                 expect(this.chamber.isAnyBlank()).toBe(false);
             });
 
-            it('should not allow actions to be applied to it', function() {
+            it('should not allow actions to be applied to it', function () {
                 this.player2.clickPrompt('Military');
                 this.player2.clickCard(this.character);
                 this.player2.clickPrompt('Done');
@@ -49,14 +52,22 @@ describe('immunity', function() {
             });
         });
 
-        describe('triggering the ability of a card that has immunity', function() {
-            beforeEach(function() {
+        describe('triggering the ability of a card that has immunity', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('lannister', [
                     'Sneak Attack',
-                    'Pleasure Barge', 'Pleasure Barge', 'Pleasure Barge',
-                    'Pleasure Barge', 'Pleasure Barge', 'Pleasure Barge',
-                    'Pleasure Barge', 'Pleasure Barge', 'Pleasure Barge',
-                    'Pleasure Barge', 'Pleasure Barge', 'Pleasure Barge'
+                    'Pleasure Barge',
+                    'Pleasure Barge',
+                    'Pleasure Barge',
+                    'Pleasure Barge',
+                    'Pleasure Barge',
+                    'Pleasure Barge',
+                    'Pleasure Barge',
+                    'Pleasure Barge',
+                    'Pleasure Barge',
+                    'Pleasure Barge',
+                    'Pleasure Barge',
+                    'Pleasure Barge'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
@@ -70,13 +81,13 @@ describe('immunity', function() {
                 this.selectFirstPlayer(this.player1);
             });
 
-            describe('when a card is immune to all card effects can trigger an ability', function() {
-                beforeEach(function() {
+            describe('when a card is immune to all card effects can trigger an ability', function () {
+                beforeEach(function () {
                     // Marshal Pleasure Barge
                     this.player1.clickCard(this.pleasureBarge);
                 });
 
-                it('should allow the ability to be triggered', function() {
+                it('should allow the ability to be triggered', function () {
                     expect(this.player1).toAllowAbilityTrigger(this.pleasureBarge);
                 });
             });

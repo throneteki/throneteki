@@ -1,15 +1,23 @@
-describe('Valar Dohaeris', function() {
-    integration(function() {
-        describe('simultaneous placement with attachments', function() {
-            beforeEach(function() {
+describe('Valar Dohaeris', function () {
+    integration(function () {
+        describe('simultaneous placement with attachments', function () {
+            beforeEach(function () {
                 const deck1 = this.buildDeck('thenightswatch', [
-                    'A Mummer\'s Farce',
-                    'A Noble Cause', 'Valar Dohaeris',
-                    'Patchface', 'Hedge Knight', 'Milk of the Poppy', 'Citadel Archivist'
+                    "A Mummer's Farce",
+                    'A Noble Cause',
+                    'Valar Dohaeris',
+                    'Patchface',
+                    'Hedge Knight',
+                    'Milk of the Poppy',
+                    'Citadel Archivist'
                 ]);
                 const deck2 = this.buildDeck('greyjoy', [
-                    'A Noble Cause', 'A Noble Cause',
-                    'Hedge Knight', 'Hedge Knight', 'Milk of the Poppy', 'Milk of the Poppy'
+                    'A Noble Cause',
+                    'A Noble Cause',
+                    'Hedge Knight',
+                    'Hedge Knight',
+                    'Milk of the Poppy',
+                    'Milk of the Poppy'
                 ]);
 
                 this.player1.selectDeck(deck1);
@@ -17,8 +25,14 @@ describe('Valar Dohaeris', function() {
                 this.startGame();
                 this.keepStartingHands();
 
-                [this.character1, this.character2] = this.player2.filterCardsByName('Hedge Knight', 'hand');
-                [this.attachment1, this.attachment2] = this.player2.filterCardsByName('Milk of the Poppy', 'hand');
+                [this.character1, this.character2] = this.player2.filterCardsByName(
+                    'Hedge Knight',
+                    'hand'
+                );
+                [this.attachment1, this.attachment2] = this.player2.filterCardsByName(
+                    'Milk of the Poppy',
+                    'hand'
+                );
 
                 this.fool = this.player1.findCardByName('Patchface', 'hand');
                 this.character3 = this.player1.findCardByName('Hedge Knight', 'hand');
@@ -81,7 +95,7 @@ describe('Valar Dohaeris', function() {
                 this.player1.clickPrompt('Done');
             });
 
-            it('puts all attachments in discard before triggering archivist', function() {
+            it('puts all attachments in discard before triggering archivist', function () {
                 expect(this.player1).toAllowAbilityTrigger(this.archivist);
                 expect(this.character1.location).toBe('draw deck');
                 expect(this.character2.location).toBe('draw deck');

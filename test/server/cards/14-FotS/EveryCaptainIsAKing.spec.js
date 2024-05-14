@@ -1,10 +1,11 @@
-describe('Every Captain is a King', function() {
-    integration(function() {
-        describe('when declared in a power challenge', function() {
-            beforeEach(function() {
+describe('Every Captain is a King', function () {
+    integration(function () {
+        describe('when declared in a power challenge', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('greyjoy', [
                     'Sailing the Summer Sea',
-                    'The Drumm', 'Every Captain is a King'
+                    'The Drumm',
+                    'Every Captain is a King'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
@@ -35,11 +36,11 @@ describe('Every Captain is a King', function() {
                 this.player1.clickPrompt('Apply Claim');
             });
 
-            it('does not kneel the captin', function() {
+            it('does not kneel the captin', function () {
                 expect(this.captain.kneeled).toBe(false);
             });
 
-            it('does not kneel the captain for a second challenge', function() {
+            it('does not kneel the captain for a second challenge', function () {
                 this.player1.clickPrompt('Power');
                 this.player1.clickCard(this.captain);
                 this.player1.clickPrompt('Done');

@@ -9,11 +9,9 @@ class NullEvent {
         return false;
     }
 
-    addChildEvent() {
-    }
+    addChildEvent() {}
 
-    emitTo() {
-    }
+    emitTo() {}
 
     allowAutomaticSave() {
         return false;
@@ -23,18 +21,15 @@ class NullEvent {
         this.cancelled = true;
     }
 
-    replaceHandler() {
-    }
+    replaceHandler() {}
 
     checkExecuteValidity() {
         this.invalid = true;
     }
 
-    executeHandler() {
-    }
+    executeHandler() {}
 
-    executePostHandler() {
-    }
+    executePostHandler() {}
 
     getConcurrentEvents() {
         return [this];
@@ -44,15 +39,13 @@ class NullEvent {
         return [this];
     }
 
-    thenAttachEvent() {
-    }
+    thenAttachEvent() {}
 
     thenExecute() {
         return this;
     }
 
-    clearAttachedEvents() {
-    }
+    clearAttachedEvents() {}
 }
 
-module.exports = NullEvent;
+export default NullEvent;

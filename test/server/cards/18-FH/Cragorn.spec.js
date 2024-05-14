@@ -1,9 +1,11 @@
-describe('Cragorn', function() {
-    integration(function() {
-        beforeEach(function() {
+describe('Cragorn', function () {
+    integration(function () {
+        beforeEach(function () {
             const deck1 = this.buildDeck('greyjoy', [
                 'Marching Orders',
-                'Cragorn', 'Stony Shore Raider', 'Throwing Axe'
+                'Cragorn',
+                'Stony Shore Raider',
+                'Throwing Axe'
             ]);
             this.player1.selectDeck(deck1);
             this.player2.selectDeck(deck1);
@@ -18,8 +20,8 @@ describe('Cragorn', function() {
             this.selectFirstPlayer(this.player1);
         });
 
-        describe('after Cragorn´s action is used', function() {
-            beforeEach(function() {
+        describe('after Cragorn´s action is used', function () {
+            beforeEach(function () {
                 this.player1.dragCard(this.attachment, 'draw deck');
                 this.player1.clickCard(this.cragorn);
                 this.player1.clickPrompt('2');
@@ -29,7 +31,7 @@ describe('Cragorn', function() {
                 this.player1.clickMenu(this.cragorn, 'Search top 10 cards');
             });
 
-            it('it should search for an attachment', function() {
+            it('it should search for an attachment', function () {
                 expect(this.player1).toHavePrompt('Select card to discard 1 gold');
                 this.player1.clickCard(this.cragorn);
                 expect(this.player1).toHavePrompt('Select an attachment');

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class DragonglassDagger extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,7 +7,9 @@ class DragonglassDagger extends DrawCard {
             condition: () => this.parent.isParticipating(),
             effect: [
                 ability.effects.modifyStrength(2),
-                ability.effects.immuneTo(card => card.controller !== this.controller && card.getType() === 'character')
+                ability.effects.immuneTo(
+                    (card) => card.controller !== this.controller && card.getType() === 'character'
+                )
             ]
         });
     }
@@ -15,4 +17,4 @@ class DragonglassDagger extends DrawCard {
 
 DragonglassDagger.code = '04086';
 
-module.exports = DragonglassDagger;
+export default DragonglassDagger;

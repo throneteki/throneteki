@@ -1,6 +1,6 @@
-const GameAction = require('./GameAction');
-const NullableGameAction = require('./NullableGameAction');
-const AbilityMessage = require('../AbilityMessage');
+import GameAction from './GameAction.js';
+import NullableGameAction from './NullableGameAction.js';
+import AbilityMessage from '../AbilityMessage.js';
 
 class IfGameAction extends GameAction {
     constructor({ condition, thenAction, elseAction = NullableGameAction }) {
@@ -12,7 +12,7 @@ class IfGameAction extends GameAction {
     }
 
     buildAction(action) {
-        if(!action.gameAction) {
+        if (!action.gameAction) {
             return {
                 gameAction: action,
                 message: AbilityMessage.create(null)
@@ -45,4 +45,4 @@ class IfGameAction extends GameAction {
     }
 }
 
-module.exports = IfGameAction;
+export default IfGameAction;

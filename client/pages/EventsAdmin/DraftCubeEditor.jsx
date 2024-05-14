@@ -8,13 +8,14 @@ class DraftCubeEditor extends React.Component {
     constructor(props) {
         super(props);
 
-        let draftCube = Object.assign({
-            name: '',
-            packDefinitions: [
-                { rarities: [] }
-            ],
-            starterDeck: []
-        }, props.draftCube);
+        let draftCube = Object.assign(
+            {
+                name: '',
+                packDefinitions: [{ rarities: [] }],
+                starterDeck: []
+            },
+            props.draftCube
+        );
         const rarities = draftCube.packDefinitions[0].rarities;
         this.state = {
             draftCubeId: draftCube._id,
@@ -23,13 +24,16 @@ class DraftCubeEditor extends React.Component {
             rarities: rarities,
             raritiesText: this.formatRaritiesText({ rarities: rarities, cards: props.cards }),
             starterDeck: draftCube.starterDeck,
-            starterDeckText: this.formatStarterDeckText({ starterDeck: draftCube.starterDeck, cards: props.cards }),
+            starterDeckText: this.formatStarterDeckText({
+                starterDeck: draftCube.starterDeck,
+                cards: props.cards
+            }),
             totalPerPack: this.calculateTotalperPack(rarities)
         };
     }
 
     formatRaritiesText({ cards, rarities }) {
-        if(!cards || !rarities) {
+        if (!cards || !rarities) {
             return '';
         }
 
@@ -39,14 +43,19 @@ class DraftCubeEditor extends React.Component {
             return index;
         }, {});
 
-        return rarities.map(rarity => {
-            const cards = rarity.cards.map(cardQuantity => `${cardQuantity.count}x ${cardCodeToNameIndex[cardQuantity.cardCode]}`);
-            return `${rarity.name}: ${rarity.numPerPack}\n${cards.join('\n')}`;
-        }).join('\n\n');
+        return rarities
+            .map((rarity) => {
+                const cards = rarity.cards.map(
+                    (cardQuantity) =>
+                        `${cardQuantity.count}x ${cardCodeToNameIndex[cardQuantity.cardCode]}`
+                );
+                return `${rarity.name}: ${rarity.numPerPack}\n${cards.join('\n')}`;
+            })
+            .join('\n\n');
     }
 
     formatStarterDeckText({ cards, starterDeck }) {
-        if(!cards || !starterDeck) {
+        if (!cards || !starterDeck) {
             return '';
         }
 
@@ -56,7 +65,12 @@ class DraftCubeEditor extends React.Component {
             return index;
         }, {});
 
-        return starterDeck.map(cardQuantity => `${cardQuantity.count}x ${cardCodeToNameIndex[cardQuantity.cardCode]}`).join('\n');
+        return starterDeck
+            .map(
+                (cardQuantity) =>
+                    `${cardQuantity.count}x ${cardCodeToNameIndex[cardQuantity.cardCode]}`
+            )
+            .join('\n');
     }
 
     onChange(field, event) {
@@ -71,15 +85,15 @@ class DraftCubeEditor extends React.Component {
         const raritySections = event.target.value.trim().split(/\n\n+/);
         const rarities = [];
 
-        for(const raritySection of raritySections) {
+        for (const raritySection of raritySections) {
             const lines = raritySection.split('\n');
-            if(lines.length === 0) {
+            if (lines.length === 0) {
                 continue;
             }
 
             const rarityDefinition = lines[0];
 
-            if(!rarityDefinition.includes(':')) {
+            if (!rarityDefinition.includes(':')) {
                 continue;
             }
 
@@ -88,9 +102,9 @@ class DraftCubeEditor extends React.Component {
                 numPerPack: parseInt(rarityDefinition.split(':')[1].trim()) || 0,
                 cards: []
             };
-            for(const line of lines.slice(1)) {
+            for (const line of lines.slice(1)) {
                 const cardQuantity = this.parseCardQuantityLine(line);
-                if(cardQuantity.count > 0) {
+                if (cardQuantity.count > 0) {
                     rarity.cards.push(cardQuantity);
                 }
             }
@@ -111,12 +125,15 @@ class DraftCubeEditor extends React.Component {
     }
 
     calculateMaxPacks(rarities) {
-        const maxPacksPerRarity = rarities.map(rarity => {
-            if(rarity.numPerPack === 0) {
+        const maxPacksPerRarity = rarities.map((rarity) => {
+            if (rarity.numPerPack === 0) {
                 return 0;
             }
 
-            const totalCards = rarity.cards.reduce((total, cardQuantity) => total + cardQuantity.count, 0);
+            const totalCards = rarity.cards.reduce(
+                (total, cardQuantity) => total + cardQuantity.count,
+                0
+            );
 
             return Math.floor(totalCards / rarity.numPerPack);
         });
@@ -127,9 +144,9 @@ class DraftCubeEditor extends React.Component {
         const cardLines = event.target.value.split(/\n+/);
         const starterDeck = [];
 
-        for(const cardLine of cardLines) {
+        for (const cardLine of cardLines) {
             const cardQuantity = this.parseCardQuantityLine(cardLine);
-            if(cardQuantity.count > 0) {
+            if (cardQuantity.count > 0) {
                 starterDeck.push(cardQuantity);
             }
         }
@@ -144,14 +161,14 @@ class DraftCubeEditor extends React.Component {
         const pattern = /^(\d+)x?\s+(.+)$/;
 
         let match = line.trim().match(pattern);
-        if(!match) {
+        if (!match) {
             return { count: 0 };
         }
 
         let count = parseInt(match[1]);
         let card = this.parseCardLine(match[2]);
 
-        if(!card) {
+        if (!card) {
             return { count: 0 };
         }
 
@@ -162,17 +179,22 @@ class DraftCubeEditor extends React.Component {
         const pattern = /^([^()]+)(\s+\((.+)\))?$/;
 
         let match = line.trim().match(pattern);
-        if(!match) {
+        if (!match) {
             return null;
         }
 
         let cardName = match[1].trim().toLowerCase();
         let packName = match[3] && match[3].trim().toLowerCase();
-        let pack = packName && this.props.packs.find(pack => pack.code.toLowerCase() === packName || pack.name.toLowerCase() === packName);
+        let pack =
+            packName &&
+            this.props.packs.find(
+                (pack) =>
+                    pack.code.toLowerCase() === packName || pack.name.toLowerCase() === packName
+            );
         let cards = Object.values(this.props.cards);
 
-        let matchingCards = cards.filter(card => {
-            if(pack) {
+        let matchingCards = cards.filter((card) => {
+            if (pack) {
                 return pack.code === card.packCode && card.name.toLowerCase() === cardName;
             }
 
@@ -185,14 +207,14 @@ class DraftCubeEditor extends React.Component {
     }
 
     compareCardByReleaseDate(a, b) {
-        let packA = this.props.packs.find(pack => pack.code === a.packCode);
-        let packB = this.props.packs.find(pack => pack.code === b.packCode);
+        let packA = this.props.packs.find((pack) => pack.code === a.packCode);
+        let packB = this.props.packs.find((pack) => pack.code === b.packCode);
 
-        if(!packA.releaseDate && packB.releaseDate) {
+        if (!packA.releaseDate && packB.releaseDate) {
             return 1;
         }
 
-        if(!packB.releaseDate && packA.releaseDate) {
+        if (!packB.releaseDate && packA.releaseDate) {
             return -1;
         }
 
@@ -202,7 +224,7 @@ class DraftCubeEditor extends React.Component {
     handleSaveClick(event) {
         event.preventDefault();
 
-        if(this.props.onDraftCubeSave) {
+        if (this.props.onDraftCubeSave) {
             this.props.onDraftCubeSave(this.getDraftCubeFromState());
         }
     }
@@ -227,15 +249,26 @@ class DraftCubeEditor extends React.Component {
     render() {
         return (
             <div>
-                <ApiStatus apiState={ this.props.apiState } successMessage='Cube saved successfully.' />
+                <ApiStatus
+                    apiState={this.props.apiState}
+                    successMessage='Cube saved successfully.'
+                />
 
                 <form className='form form-horizontal'>
-                    <Input name='name' label='Cube Name' labelClass='col-sm-3' fieldClass='col-sm-9' placeholder='Cube Name'
-                        type='text' onChange={ this.onChange.bind(this, 'name') } value={ this.state.name } />
+                    <Input
+                        name='name'
+                        label='Cube Name'
+                        labelClass='col-sm-3'
+                        fieldClass='col-sm-9'
+                        placeholder='Cube Name'
+                        type='text'
+                        onChange={this.onChange.bind(this, 'name')}
+                        value={this.state.name}
+                    />
                     <div className='form-group'>
                         <div className='control-label col-sm-3' />
                         <div className='col-sm-9'>
-                            <strong>{ `Max ${this.state.maxPacks} packs of ${this.state.totalPerPack} cards` }</strong>
+                            <strong>{`Max ${this.state.maxPacks} packs of ${this.state.totalPerPack} cards`}</strong>
                         </div>
                     </div>
                     <TextArea
@@ -243,20 +276,39 @@ class DraftCubeEditor extends React.Component {
                         labelClass='col-sm-3'
                         fieldClass='col-sm-9'
                         rows='10'
-                        value={ this.state.raritiesText }
-                        onChange={ event => this.handleRarityListChange({ event }) } />
+                        value={this.state.raritiesText}
+                        onChange={(event) => this.handleRarityListChange({ event })}
+                    />
                     <TextArea
                         label='Starter Deck'
                         labelClass='col-sm-3'
                         fieldClass='col-sm-9'
                         rows='10'
-                        value={ this.state.starterDeckText }
-                        onChange={ event => this.handleStarterDeckChange({ event }) } />
+                        value={this.state.starterDeckText}
+                        onChange={(event) => this.handleStarterDeckChange({ event })}
+                    />
 
                     <div className='form-group'>
                         <div className='col-sm-offset-3 col-sm-8'>
-                            <button ref='submit' type='submit' className='btn btn-primary' onClick={ this.handleSaveClick.bind(this) }>Save { this.props.apiState && this.props.apiState.loading && <span className='spinner button-spinner' /> }</button>
-                            <button ref='submit' type='button' className='btn btn-primary' onClick={ this.handleCancelClick.bind(this) }>Cancel</button>
+                            <button
+                                ref='submit'
+                                type='submit'
+                                className='btn btn-primary'
+                                onClick={this.handleSaveClick.bind(this)}
+                            >
+                                Save{' '}
+                                {this.props.apiState && this.props.apiState.loading && (
+                                    <span className='spinner button-spinner' />
+                                )}
+                            </button>
+                            <button
+                                ref='submit'
+                                type='button'
+                                className='btn btn-primary'
+                                onClick={this.handleCancelClick.bind(this)}
+                            >
+                                Cancel
+                            </button>
                         </div>
                     </div>
                 </form>

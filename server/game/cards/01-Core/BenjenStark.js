@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class BenjenStark extends DrawCard {
     setupCardAbilities(ability) {
@@ -8,10 +8,15 @@ class BenjenStark extends DrawCard {
         });
         this.interrupt({
             when: {
-                onCharacterKilled: event => event.card === this && this.controller.canGainFactionPower()
+                onCharacterKilled: (event) =>
+                    event.card === this && this.controller.canGainFactionPower()
             },
             handler: (context) => {
-                this.game.addMessage('{0} uses {1} to gain 2 power for their faction and shuffles {1} back into their deck instead of placing it in their dead pile', this.controller, this);
+                this.game.addMessage(
+                    '{0} uses {1} to gain 2 power for their faction and shuffles {1} back into their deck instead of placing it in their dead pile',
+                    this.controller,
+                    this
+                );
 
                 this.game.addPower(this.controller, 2);
                 context.replaceHandler(() => {
@@ -27,4 +32,4 @@ class BenjenStark extends DrawCard {
 
 BenjenStark.code = '01122';
 
-module.exports = BenjenStark;
+export default BenjenStark;

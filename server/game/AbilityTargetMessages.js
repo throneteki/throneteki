@@ -1,4 +1,4 @@
-const AbilityMessage = require('./AbilityMessage');
+import AbilityMessage from './AbilityMessage.js';
 
 class AbilityTargetMessages {
     constructor(properties) {
@@ -26,4 +26,4 @@ class AbilityTargetMessages {
     }
 }
 
-module.exports = AbilityTargetMessages;
+export default AbilityTargetMessages;

@@ -1,14 +1,16 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class SmalljonUmber extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,
-            effect: ability.effects.dynamicDecreaseStrength(() => this.controller.getNumberOfUsedPlots())
+            effect: ability.effects.dynamicDecreaseStrength(() =>
+                this.controller.getNumberOfUsedPlots()
+            )
         });
     }
 }
 
 SmalljonUmber.code = '13021';
 
-module.exports = SmalljonUmber;
+export default SmalljonUmber;

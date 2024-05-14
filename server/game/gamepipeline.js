@@ -5,7 +5,7 @@ class GamePipeline {
     }
 
     initialise(steps) {
-        if(!Array.isArray(steps)) {
+        if (!Array.isArray(steps)) {
             steps = [steps];
         }
 
@@ -19,7 +19,7 @@ class GamePipeline {
     getCurrentStep() {
         var step = this.pipeline[0];
 
-        if(typeof (step) === 'function') {
+        if (typeof step === 'function') {
             var createdStep = step();
             this.pipeline[0] = createdStep;
             return createdStep;
@@ -29,11 +29,11 @@ class GamePipeline {
     }
 
     queueStep(step) {
-        if(this.pipeline.length === 0) {
+        if (this.pipeline.length === 0) {
             this.pipeline.unshift(step);
         } else {
             var currentStep = this.getCurrentStep();
-            if(currentStep.queueStep) {
+            if (currentStep.queueStep) {
                 currentStep.queueStep(step);
             } else {
                 this.queue.push(step);
@@ -48,15 +48,15 @@ class GamePipeline {
     }
 
     cancelStep() {
-        if(this.pipeline.length === 0) {
+        if (this.pipeline.length === 0) {
             return;
         }
 
         var step = this.getCurrentStep();
 
-        if(step.cancelStep && step.isComplete) {
+        if (step.cancelStep && step.isComplete) {
             step.cancelStep();
-            if(!step.isComplete()) {
+            if (!step.isComplete()) {
                 return;
             }
         }
@@ -65,9 +65,9 @@ class GamePipeline {
     }
 
     handleCardClicked(player, card) {
-        if(this.pipeline.length > 0) {
+        if (this.pipeline.length > 0) {
             var step = this.getCurrentStep();
-            if(step.onCardClicked(player, card) !== false) {
+            if (step.onCardClicked(player, card) !== false) {
                 return true;
             }
         }
@@ -76,14 +76,14 @@ class GamePipeline {
     }
 
     handleMenuCommand(player, arg, method, promptId) {
-        if(this.pipeline.length > 0) {
+        if (this.pipeline.length > 0) {
             var step = this.getCurrentStep();
 
-            if(!step.isCorrectPrompt(promptId)) {
+            if (!step.isCorrectPrompt(promptId)) {
                 return false;
             }
 
-            if(step.onMenuCommand(player, arg, method, promptId) !== false) {
+            if (step.onMenuCommand(player, arg, method, promptId) !== false) {
                 return true;
             }
         }
@@ -92,18 +92,18 @@ class GamePipeline {
     }
 
     continue() {
-        if(this.queue.length > 0) {
+        if (this.queue.length > 0) {
             this.pipeline = this.queue.concat(this.pipeline);
             this.queue = [];
         }
 
-        while(this.pipeline.length > 0) {
+        while (this.pipeline.length > 0) {
             var currentStep = this.getCurrentStep();
 
             // Explicitly check for a return of false - if no return values is
             // defined then just continue to the next step.
-            if(currentStep.continue() === false) {
-                if(this.queue.length === 0) {
+            if (currentStep.continue() === false) {
+                if (this.queue.length === 0) {
                     return false;
                 }
             } else {
@@ -117,24 +117,24 @@ class GamePipeline {
 
     getDebugInfo() {
         return {
-            pipeline: this.pipeline.map(step => this.getDebugInfoForStep(step)),
-            queue: this.queue.map(step => this.getDebugInfoForStep(step))
+            pipeline: this.pipeline.map((step) => this.getDebugInfoForStep(step)),
+            queue: this.queue.map((step) => this.getDebugInfoForStep(step))
         };
     }
 
     getDebugInfoForStep(step) {
         let name = step.constructor.name;
-        if(step.pipeline) {
+        if (step.pipeline) {
             let result = {};
             result[name] = step.pipeline.getDebugInfo();
             return result;
         }
 
-        if(step.getDebugInfo) {
+        if (step.getDebugInfo) {
             return step.getDebugInfo();
         }
 
-        if(typeof (step) === 'function') {
+        if (typeof step === 'function') {
             return step.toString();
         }
 
@@ -142,4 +142,4 @@ class GamePipeline {
     }
 }
 
-module.exports = GamePipeline;
+export default GamePipeline;

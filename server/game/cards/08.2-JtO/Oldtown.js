@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Oldtown extends DrawCard {
     setupCardAbilities(ability) {
@@ -11,28 +11,28 @@ class Oldtown extends DrawCard {
                 title: 'Select a card type',
                 message: '{choosingPlayer} names the {choice} cardtype',
                 choices: {
-                    'Character': this.revealGameActionForCardtype('Character'),
-                    'Location': this.revealGameActionForCardtype('Location'),
-                    'Attachment': this.revealGameActionForCardtype('Attachment'),
-                    'Event': this.revealGameActionForCardtype('Event')
+                    Character: this.revealGameActionForCardtype('Character'),
+                    Location: this.revealGameActionForCardtype('Location'),
+                    Attachment: this.revealGameActionForCardtype('Attachment'),
+                    Event: this.revealGameActionForCardtype('Event')
                 }
             })
         });
     }
 
     revealGameActionForCardtype(cardType) {
-        return GameActions.revealTopCards(context => ({
+        return GameActions.revealTopCards((context) => ({
             player: context.player
         })).then({
             message: '{player} {gameAction}',
             gameAction: GameActions.ifCondition({
-                condition: context => context.event.cards[0].getType() === cardType.toLowerCase(),
+                condition: (context) => context.event.cards[0].getType() === cardType.toLowerCase(),
                 thenAction: GameActions.simultaneously([
-                    GameActions.drawSpecific(context => ({
+                    GameActions.drawSpecific((context) => ({
                         player: context.player,
                         cards: context.event.revealed
                     })),
-                    GameActions.gainPower(context => ({
+                    GameActions.gainPower((context) => ({
                         card: context.player.faction,
                         amount: 1
                     }))
@@ -44,4 +44,4 @@ class Oldtown extends DrawCard {
 
 Oldtown.code = '08024';
 
-module.exports = Oldtown;
+export default Oldtown;

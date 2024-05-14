@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class DothrakiHonorGuard extends DrawCard {
     setupCardAbilities(ability) {
@@ -11,4 +11,4 @@ class DothrakiHonorGuard extends DrawCard {
 
 DothrakiHonorGuard.code = '07035';
 
-module.exports = DothrakiHonorGuard;
+export default DothrakiHonorGuard;

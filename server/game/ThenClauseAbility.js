@@ -1,5 +1,5 @@
-const BaseAbility = require('./baseability');
-const AbilityContext = require('./AbilityContext');
+import BaseAbility from './baseability.js';
+import AbilityContext from './AbilityContext.js';
 
 class ThenClauseAbility extends BaseAbility {
     constructor(properties) {
@@ -30,4 +30,4 @@ class ThenClauseAbility extends BaseAbility {
     }
 }
 
-module.exports = ThenClauseAbility;
+export default ThenClauseAbility;

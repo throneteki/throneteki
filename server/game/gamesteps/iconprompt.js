@@ -1,5 +1,5 @@
-const BaseStep = require('./basestep');
-const ChallengeTypes = require('../ChallengeTypes');
+import BaseStep from './basestep.js';
+import ChallengeTypes from '../ChallengeTypes.js';
 
 class IconPrompt extends BaseStep {
     constructor(game, player, card, callback) {
@@ -27,4 +27,4 @@ class IconPrompt extends BaseStep {
     }
 }
 
-module.exports = IconPrompt;
+export default IconPrompt;

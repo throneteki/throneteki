@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class GatesOfWinterfell extends DrawCard {
     setupCardAbilities(ability) {
@@ -8,12 +8,12 @@ class GatesOfWinterfell extends DrawCard {
             phase: 'challenge',
             cost: ability.costs.kneelSelf(),
             message: '{player} kneels {costs.kneel} to reveal the top card of their deck',
-            gameAction: GameActions.revealTopCards(context => ({
+            gameAction: GameActions.revealTopCards((context) => ({
                 player: context.player
             })).then({
-                condition: context => context.event.cards[0].isFaction('stark'),
+                condition: (context) => context.event.cards[0].isFaction('stark'),
                 message: '{player} {gameAction}',
-                gameAction: GameActions.drawSpecific(context => ({
+                gameAction: GameActions.drawSpecific((context) => ({
                     player: context.player,
                     cards: context.event.revealed
                 }))
@@ -24,4 +24,4 @@ class GatesOfWinterfell extends DrawCard {
 
 GatesOfWinterfell.code = '01154';
 
-module.exports = GatesOfWinterfell;
+export default GatesOfWinterfell;

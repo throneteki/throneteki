@@ -1,19 +1,23 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Riverrun extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardPowerGained: event => this.isTullyCharacter(event.card),
-                onCardPowerMoved: event => this.isTullyCharacter(event.target)
+                onCardPowerGained: (event) => this.isTullyCharacter(event.card),
+                onCardPowerMoved: (event) => this.isTullyCharacter(event.target)
             },
             cost: ability.costs.kneelSelf(),
-            handler: context => {
+            handler: (context) => {
                 let tullyCharacter = context.event.card || context.event.target;
                 tullyCharacter.modifyPower(1);
 
-                this.game.addMessage('{0} kneels {1} to have {2} gain 1 power',
-                    this.controller, this, tullyCharacter);
+                this.game.addMessage(
+                    '{0} kneels {1} to have {2} gain 1 power',
+                    this.controller,
+                    this,
+                    tullyCharacter
+                );
             }
         });
     }
@@ -25,4 +29,4 @@ class Riverrun extends DrawCard {
 
 Riverrun.code = '04003';
 
-module.exports = Riverrun;
+export default Riverrun;

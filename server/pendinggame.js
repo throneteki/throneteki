@@ -1,9 +1,8 @@
-const uuid = require('uuid');
-const _ = require('underscore');
-const crypto = require('crypto');
-
-const logger = require('./log.js');
-const GameChat = require('./game/gamechat.js');
+import uuid from 'uuid';
+import _ from 'underscore';
+import crypto from 'crypto';
+import logger from './log.js';
+import GameChat from './game/gamechat.js';
 
 class PendingGame {
     constructor(owner, instance, details) {
@@ -55,7 +54,7 @@ class PendingGame {
     }
 
     getSaveState() {
-        var players = _.map(this.getPlayers(), player => {
+        var players = _.map(this.getPlayers(), (player) => {
             return {
                 agenda: player.agenda ? player.agenda.cardData.name : undefined,
                 faction: player.faction.cardData.name,
@@ -81,7 +80,7 @@ class PendingGame {
     }
 
     setupAgenda(player, agenda) {
-        if(!agenda) {
+        if (!agenda) {
             return;
         }
 
@@ -95,7 +94,7 @@ class PendingGame {
     }
 
     addPlayer(id, user) {
-        if(!user) {
+        if (!user) {
             logger.error('Tried to add a player to a game that did not have a user object');
             return;
         }
@@ -117,11 +116,11 @@ class PendingGame {
     }
 
     newGame(id, user, password, join) {
-        if(password) {
+        if (password) {
             this.password = crypto.createHash('md5').update(password).digest('hex');
         }
 
-        if(join) {
+        if (join) {
             this.addPlayer(id, user);
         }
     }
@@ -131,16 +130,16 @@ class PendingGame {
     }
 
     join(id, user, password) {
-        if(_.size(this.players) === 2 || this.started) {
+        if (_.size(this.players) === 2 || this.started) {
             return 'Game full';
         }
 
-        if(this.isUserBlocked(user)) {
+        if (this.isUserBlocked(user)) {
             return 'Cannot join game';
         }
 
-        if(this.password) {
-            if(crypto.createHash('md5').update(password).digest('hex') !== this.password) {
+        if (this.password) {
+            if (crypto.createHash('md5').update(password).digest('hex') !== this.password) {
                 return 'Incorrect game password';
             }
         }
@@ -148,12 +147,12 @@ class PendingGame {
         this.addMessage('{0} has joined the game', user.username);
         this.addPlayer(id, user);
 
-        if(!this.isOwner(this.owner.username)) {
+        if (!this.isOwner(this.owner.username)) {
             let otherPlayer = Object.values(this.players).find(
                 (player) => player.name !== this.owner.username
             );
 
-            if(otherPlayer) {
+            if (otherPlayer) {
                 this.owner = otherPlayer.user;
                 otherPlayer.owner = true;
             }
@@ -161,30 +160,30 @@ class PendingGame {
     }
 
     watch(id, user, password) {
-        if(user && user.permissions && user.permissions.canManageGames) {
+        if (user && user.permissions && user.permissions.canManageGames) {
             this.addSpectator(id, user);
             this.addMessage('{0} has joined the game as a spectator', user.username);
 
             return;
         }
 
-        if(!this.allowSpectators) {
+        if (!this.allowSpectators) {
             return 'Join not permitted';
         }
 
-        if(this.isUserBlocked(user)) {
+        if (this.isUserBlocked(user)) {
             return 'Cannot join game';
         }
 
-        if(this.password) {
-            if(crypto.createHash('md5').update(password).digest('hex') !== this.password) {
+        if (this.password) {
+            if (crypto.createHash('md5').update(password).digest('hex') !== this.password) {
                 return 'Incorrect game password';
             }
         }
 
         //check if the game has an event selected that restricts spectators
-        if(this.event && this.event.restrictSpectators && this.event.validSpectators) {
-            if(!this.event.validSpectators.includes(user.username.toLowerCase())) {
+        if (this.event && this.event.restrictSpectators && this.event.validSpectators) {
+            if (!this.event.validSpectators.includes(user.username.toLowerCase())) {
                 return 'You are not a valid spectator for this event';
             }
         }
@@ -195,16 +194,16 @@ class PendingGame {
 
     leave(playerName) {
         let player = this.getPlayerOrSpectator(playerName);
-        if(!player) {
+        if (!player) {
             return;
         }
 
-        if(!this.started) {
+        if (!this.started) {
             this.addMessage('{0} has left the game', playerName);
         }
 
-        if(this.players[playerName]) {
-            if(this.started) {
+        if (this.players[playerName]) {
+            if (this.started) {
                 this.players[playerName].left = true;
             } else {
                 this.removeAndResetOwner(playerName);
@@ -213,23 +212,23 @@ class PendingGame {
             }
         }
 
-        if(this.spectators[playerName]) {
+        if (this.spectators[playerName]) {
             delete this.spectators[playerName];
         }
     }
 
     disconnect(playerName) {
         let player = this.getPlayerOrSpectator(playerName);
-        if(!player) {
+        if (!player) {
             return;
         }
 
-        if(!this.started) {
+        if (!this.started) {
             this.addMessage('{0} has disconnected', playerName);
         }
 
-        if(this.players[playerName]) {
-            if(!this.started) {
+        if (this.players[playerName]) {
+            if (!this.started) {
                 this.removeAndResetOwner(playerName);
 
                 delete this.players[playerName];
@@ -241,7 +240,7 @@ class PendingGame {
 
     chat(playerName, message) {
         let player = this.getPlayerOrSpectator(playerName);
-        if(!player) {
+        if (!player) {
             return;
         }
 
@@ -252,11 +251,11 @@ class PendingGame {
 
     selectDeck(playerName, deck) {
         var player = this.getPlayerByName(playerName);
-        if(!player) {
+        if (!player) {
             return;
         }
 
-        if(player.deck) {
+        if (player.deck) {
             player.deck.selected = false;
         }
 
@@ -277,7 +276,7 @@ class PendingGame {
     isOwner(playerName) {
         let player = this.players[playerName];
 
-        if(!player || !player.owner) {
+        if (!player || !player.owner) {
             return false;
         }
 
@@ -285,10 +284,10 @@ class PendingGame {
     }
 
     removeAndResetOwner(playerName) {
-        if(this.isOwner(playerName)) {
+        if (this.isOwner(playerName)) {
             let otherPlayer = _.find(this.players, (player) => player.name !== playerName);
 
-            if(otherPlayer) {
+            if (otherPlayer) {
                 this.owner = otherPlayer.user;
                 otherPlayer.owner = true;
             }
@@ -305,11 +304,11 @@ class PendingGame {
     }
 
     isVisibleFor(user) {
-        if(!user) {
+        if (!user) {
             return true;
         }
 
-        if(user.permissions && user.permissions.canManageGames) {
+        if (user.permissions && user.permissions.canManageGames) {
             return true;
         }
 
@@ -324,14 +323,18 @@ class PendingGame {
     // Summary
     getSummary(activePlayer) {
         var playerSummaries = {};
-        var playersInGame = _.filter(this.players, player => !player.left);
+        var playersInGame = _.filter(this.players, (player) => !player.left);
 
-        _.each(playersInGame, player => {
+        _.each(playersInGame, (player) => {
             var deck = undefined;
 
-            if(activePlayer === player.name && player.deck) {
-                deck = { name: player.deck.name, selected: player.deck.selected, status: player.deck.status };
-            } else if(player.deck) {
+            if (activePlayer === player.name && player.deck) {
+                deck = {
+                    name: player.deck.name,
+                    selected: player.deck.selected,
+                    status: player.deck.status
+                };
+            } else if (player.deck) {
                 deck = { selected: player.deck.selected, status: player.deck.status };
             } else {
                 deck = {};
@@ -341,12 +344,12 @@ class PendingGame {
             //1. the game is NOT private
             //2. the game hasn´t started yet
             //3. agenda and faction are actually not undefined
-            let agenda; 
-            if(!this.gamePrivate && this.started && player.agenda) {
+            let agenda;
+            if (!this.gamePrivate && this.started && player.agenda) {
                 agenda = player.agenda.cardData.code;
             }
             let faction;
-            if(!this.gamePrivate && this.started && player.faction) {
+            if (!this.gamePrivate && this.started && player.faction) {
                 faction = player.faction.cardData.code;
             }
 
@@ -380,7 +383,7 @@ class PendingGame {
             restrictedList: this.restrictedList,
             showHand: this.showHand,
             started: this.started,
-            spectators: _.map(this.spectators, spectator => {
+            spectators: _.map(this.spectators, (spectator) => {
                 return {
                     id: spectator.id,
                     name: spectator.name,
@@ -400,8 +403,8 @@ class PendingGame {
     getStartGameDetails() {
         const players = {};
 
-        for(let playerDetails of Object.values(this.players)) {
-            const {name, user, ...rest} = playerDetails;
+        for (let playerDetails of Object.values(this.players)) {
+            const { name, user, ...rest } = playerDetails;
             players[name] = {
                 name,
                 user: user.getDetails(),
@@ -410,8 +413,8 @@ class PendingGame {
         }
 
         const spectators = {};
-        for(let spectatorDetails of Object.values(this.spectators)) {
-            const {name, user, ...rest} = spectatorDetails;
+        for (let spectatorDetails of Object.values(this.spectators)) {
+            const { name, user, ...rest } = spectatorDetails;
             spectators[name] = {
                 name,
                 user: user.getDetails(),
@@ -445,4 +448,4 @@ class PendingGame {
     }
 }
 
-module.exports = PendingGame;
+export default PendingGame;

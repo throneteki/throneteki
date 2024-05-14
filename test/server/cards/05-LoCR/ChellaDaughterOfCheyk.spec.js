@@ -1,16 +1,13 @@
-const {Tokens} = require('../../../../server/game/Constants');
+import { Tokens } from '../../../../server/game/Constants/index.js';
 
-describe('Chella Daughter of Cheyk', function() {
-    integration(function() {
-        beforeEach(function() {
+describe('Chella Daughter of Cheyk', function () {
+    integration(function () {
+        beforeEach(function () {
             const deck1 = this.buildDeck('lannister', [
                 'A Clash of Kings',
                 'Chella Daughter of Cheyk'
             ]);
-            const deck2 = this.buildDeck('lannister', [
-                'A Clash of Kings',
-                'Hedge Knight'
-            ]);
+            const deck2 = this.buildDeck('lannister', ['A Clash of Kings', 'Hedge Knight']);
             this.player1.selectDeck(deck1);
             this.player2.selectDeck(deck2);
             this.startGame();
@@ -28,8 +25,8 @@ describe('Chella Daughter of Cheyk', function() {
             this.completeMarshalPhase();
         });
 
-        describe('when Chella gains the 3rd ear after military claim', function() {
-            beforeEach(function() {
+        describe('when Chella gains the 3rd ear after military claim', function () {
+            beforeEach(function () {
                 this.chella.modifyToken(Tokens.ear, 2);
 
                 this.unopposedChallenge(this.player1, 'military', this.chella);
@@ -40,7 +37,7 @@ describe('Chella Daughter of Cheyk', function() {
                 expect(this.chella.tokens.ear).toBe(3);
             });
 
-            it('should immediately give Chella renown + intimidate', function() {
+            it('should immediately give Chella renown + intimidate', function () {
                 expect(this.chella.power).toBe(1);
                 expect(this.chella.hasKeyword('renown')).toBe(true);
                 expect(this.chella.hasKeyword('intimidate')).toBe(true);

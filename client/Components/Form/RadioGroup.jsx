@@ -7,19 +7,19 @@ class RadioGroup extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = { selectedButton: undefined};
+        this.state = { selectedButton: undefined };
     }
 
     onRadioButtonClick(button) {
         this.setState({ selectedButton: button });
 
-        if(this.props.onValueSelected) {
+        if (this.props.onValueSelected) {
             this.props.onValueSelected(button.value);
         }
     }
 
     isButtonSelected(button) {
-        if(!button || !this.state.selectedButton) {
+        if (!button || !this.state.selectedButton) {
             return false;
         }
 
@@ -27,13 +27,19 @@ class RadioGroup extends React.Component {
     }
 
     render() {
-        let buttons = this.props.buttons.map(button => {
-            return <RadioButton key={ button.value } name={ button.value } label={ button.label } onClick={ this.onRadioButtonClick.bind(this, button) } selected={ this.isButtonSelected(button) } />;
+        let buttons = this.props.buttons.map((button) => {
+            return (
+                <RadioButton
+                    key={button.value}
+                    name={button.value}
+                    label={button.label}
+                    onClick={this.onRadioButtonClick.bind(this, button)}
+                    selected={this.isButtonSelected(button)}
+                />
+            );
         });
 
-        return (<div>
-            { buttons }
-        </div>);
+        return <div>{buttons}</div>;
     }
 }
 

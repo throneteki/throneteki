@@ -1,11 +1,11 @@
-const Phase = require('./phase.js');
-const SimpleStep = require('./simplestep.js');
-const KeepOrMulliganPrompt = require('./setup/keepormulliganprompt.js');
-const SetupCardsPrompt = require('./setup/setupcardsprompt.js');
-const CheckAttachmentsPrompt = require('./setup/checkattachmentsprompt.js');
-const RookerySetupPrompt = require('./setup/RookerySetupPrompt');
-const TextHelper = require('../TextHelper');
-const { StartingHandSize } = require('../Constants');
+import Phase from './phase.js';
+import SimpleStep from './simplestep.js';
+import KeepOrMulliganPrompt from './setup/keepormulliganprompt.js';
+import SetupCardsPrompt from './setup/setupcardsprompt.js';
+import CheckAttachmentsPrompt from './setup/checkattachmentsprompt.js';
+import RookerySetupPrompt from './setup/RookerySetupPrompt.js';
+import TextHelper from '../TextHelper.js';
+import { StartingHandSize } from '../Constants/index.js';
 
 class SetupPhase extends Phase {
     constructor(game) {
@@ -27,20 +27,25 @@ class SetupPhase extends Phase {
     }
 
     announceFactionAndAgenda() {
-        for(const player of this.game.getPlayers()) {
+        for (const player of this.game.getPlayers()) {
             player.createFactionAndAgenda();
-            this.game.addMessage('{0} announces they are playing as {1} with {2}', player, player.faction, player.agenda || 'no agenda');
+            this.game.addMessage(
+                '{0} announces they are playing as {1} with {2}',
+                player,
+                player.faction,
+                player.agenda || 'no agenda'
+            );
         }
     }
 
     promptForRookery() {
-        if(this.game.useRookery) {
+        if (this.game.useRookery) {
             this.game.queueStep(new RookerySetupPrompt(this.game));
         }
     }
 
     prepareDecks() {
-        for(const player of this.game.getPlayers()) {
+        for (const player of this.game.getPlayers()) {
             player.prepareDecks();
         }
         this.game.gatherAllCards();
@@ -48,39 +53,39 @@ class SetupPhase extends Phase {
     }
 
     turnOnEffects() {
-        for(const card of this.game.allCards) {
+        for (const card of this.game.allCards) {
             card.applyAnyLocationPersistentEffects();
 
-            if(card.getType() === 'agenda') {
+            if (card.getType() === 'agenda') {
                 card.applyPersistentEffects();
             }
         }
     }
 
     drawSetupHand() {
-        for(const player of this.game.getPlayers()) {
+        for (const player of this.game.getPlayers()) {
             player.drawCardsToHand(StartingHandSize);
         }
     }
 
     startGame() {
-        for(const player of this.game.getPlayers()) {
+        for (const player of this.game.getPlayers()) {
             player.readyToStart = true;
             this.game.addGold(player, player.setupGold);
         }
     }
 
     announceSetupCards() {
-        for(const player of this.game.getPlayers()) {
+        for (const player of this.game.getPlayers()) {
             let cardsInShadow = player.shadows.length;
             let cards = [...player.cardsInPlay];
             player.flipSetupCardsFaceUp();
 
-            if(cardsInShadow > 0) {
+            if (cardsInShadow > 0) {
                 cards.push(`${TextHelper.count(cardsInShadow, 'card')} into shadows`);
             }
 
-            if(cards.length === 0) {
+            if (cards.length === 0) {
                 this.game.addMessage('{0} does not set up any cards', player);
             } else {
                 this.game.addMessage('{0} sets up {1}', player, cards);
@@ -89,9 +94,9 @@ class SetupPhase extends Phase {
     }
 
     setupDone() {
-        for(const player of this.game.getPlayers()) {
+        for (const player of this.game.getPlayers()) {
             // Draw back up to starting hand size
-            if(player.hand.length < StartingHandSize) {
+            if (player.hand.length < StartingHandSize) {
                 player.drawCardsToHand(StartingHandSize - player.hand.length);
             }
 
@@ -102,4 +107,4 @@ class SetupPhase extends Phase {
     }
 }
 
-module.exports = SetupPhase;
+export default SetupPhase;

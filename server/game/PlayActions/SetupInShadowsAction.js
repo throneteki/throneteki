@@ -1,13 +1,11 @@
-const BaseAbility = require('../baseability');
-const Costs = require('../costs');
+import BaseAbility from '../baseability.js';
+import Costs from '../costs.js';
 
 class SetupInShadowsAction extends BaseAbility {
     constructor() {
         super({
             abilitySourceType: 'game',
-            cost: [
-                Costs.payGold(2)
-            ]
+            cost: [Costs.payGold(2)]
         });
         this.title = 'Setup in shadows';
     }
@@ -26,4 +24,4 @@ class SetupInShadowsAction extends BaseAbility {
     }
 }
 
-module.exports = SetupInShadowsAction;
+export default SetupInShadowsAction;

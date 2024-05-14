@@ -1,6 +1,6 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
-class SerArysOakheart extends DrawCard {    
+class SerArysOakheart extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.isAttacking(),
@@ -12,4 +12,4 @@ class SerArysOakheart extends DrawCard {
 
 SerArysOakheart.code = '25047';
 
-module.exports = SerArysOakheart;
+export default SerArysOakheart;

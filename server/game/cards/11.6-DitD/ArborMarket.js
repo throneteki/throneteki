@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class ArborMarket extends DrawCard {
     setupCardAbilities(ability) {
@@ -13,13 +13,17 @@ class ArborMarket extends DrawCard {
             phase: 'challenge',
 
             target: {
-                cardCondition: card => card.location === 'play area' && card.isParticipating()
+                cardCondition: (card) => card.location === 'play area' && card.isParticipating()
             },
-            handler: context => {
-                this.game.addMessage('{0} kneels {1} to give +1 STR to {2} until the end of the challenge',
-                    this.controller, this, context.target);
+            handler: (context) => {
+                this.game.addMessage(
+                    '{0} kneels {1} to give +1 STR to {2} until the end of the challenge',
+                    this.controller,
+                    this,
+                    context.target
+                );
 
-                this.untilEndOfChallenge(ability => ({
+                this.untilEndOfChallenge((ability) => ({
                     match: context.target,
                     effect: ability.effects.modifyStrength(1)
                 }));
@@ -30,4 +34,4 @@ class ArborMarket extends DrawCard {
 
 ArborMarket.code = '11104';
 
-module.exports = ArborMarket;
+export default ArborMarket;

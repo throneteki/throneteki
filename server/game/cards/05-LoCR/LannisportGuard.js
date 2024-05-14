@@ -1,19 +1,23 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class LannisportGuard extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: event => event.card === this && event.playingType === 'marshal'
+                onCardEntersPlay: (event) => event.card === this && event.playingType === 'marshal'
             },
             handler: () => {
-                for(let player of this.game.getPlayers()) {
-                    if(player.canDraw()) {
+                for (let player of this.game.getPlayers()) {
+                    if (player.canDraw()) {
                         player.drawCardsToHand(1);
                     }
                 }
 
-                this.game.addMessage('{0} uses {1} to have each player draw a card', this.controller, this);
+                this.game.addMessage(
+                    '{0} uses {1} to have each player draw a card',
+                    this.controller,
+                    this
+                );
             }
         });
     }
@@ -21,4 +25,4 @@ class LannisportGuard extends DrawCard {
 
 LannisportGuard.code = '05016';
 
-module.exports = LannisportGuard;
+export default LannisportGuard;

@@ -4,7 +4,8 @@ describe('end of phase timings / WUA', function () {
             beforeEach(function () {
                 const deck = this.buildDeck('baratheon', [
                     'A Game of Thrones',
-                    'Varys (Core)', 'Nightmares'
+                    'Varys (Core)',
+                    'Nightmares'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
@@ -43,7 +44,9 @@ describe('end of phase timings / WUA', function () {
                 ]);
                 const deck2 = this.buildDeck('martell', [
                     'A Game of Thrones',
-                    'Nightmares', 'Areo Hotah (Core)', 'Venomous Blade'
+                    'Nightmares',
+                    'Areo Hotah (Core)',
+                    'Venomous Blade'
                 ]);
                 this.player1.selectDeck(deck1);
                 this.player2.selectDeck(deck2);
@@ -84,11 +87,12 @@ describe('end of phase timings / WUA', function () {
             });
         });
 
-        describe('interrupts to when phase ends', function() {
-            beforeEach(function() {
+        describe('interrupts to when phase ends', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('stark', [
                     'Trading with the Pentoshi',
-                    'Delena Florent', 'In Daznak\'s Pit'
+                    'Delena Florent',
+                    "In Daznak's Pit"
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
@@ -96,7 +100,7 @@ describe('end of phase timings / WUA', function () {
                 this.keepStartingHands();
 
                 this.delena = this.player1.findCardByName('Delena Florent');
-                this.daznak = this.player1.findCardByName('In Daznak\'s Pit');
+                this.daznak = this.player1.findCardByName("In Daznak's Pit");
 
                 this.player1.clickCard(this.delena);
                 this.player1.clickCard(this.daznak);
@@ -118,7 +122,7 @@ describe('end of phase timings / WUA', function () {
                 this.player1.triggerAbility(this.daznak);
             });
 
-            it('is considered to still be during the phase', function() {
+            it('is considered to still be during the phase', function () {
                 // Delena should still be kneeling since we are still in the challenges phase
                 expect(this.delena.kneeled).toEqual(true);
             });

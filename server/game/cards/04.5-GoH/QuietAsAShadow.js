@@ -1,19 +1,27 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class QuietAsAShadow extends DrawCard {
     setupCardAbilities() {
         this.action({
             title: 'Give character stealth',
             target: {
-                cardCondition: card => card.isUnique() && card.getType() === 'character' && card.getPrintedCost() <= 3 && card.location === 'play area'
+                cardCondition: (card) =>
+                    card.isUnique() &&
+                    card.getType() === 'character' &&
+                    card.getPrintedCost() <= 3 &&
+                    card.location === 'play area'
             },
-            handler: context => {
-                this.untilEndOfPhase(ability => ({
+            handler: (context) => {
+                this.untilEndOfPhase((ability) => ({
                     match: context.target,
                     effect: ability.effects.addKeyword('stealth')
                 }));
-                this.game.addMessage('{0} plays {1} to give {2} stealth until the end of the phase',
-                    this.controller, this, context.target);
+                this.game.addMessage(
+                    '{0} plays {1} to give {2} stealth until the end of the phase',
+                    this.controller,
+                    this,
+                    context.target
+                );
             }
         });
     }
@@ -21,4 +29,4 @@ class QuietAsAShadow extends DrawCard {
 
 QuietAsAShadow.code = '04099';
 
-module.exports = QuietAsAShadow;
+export default QuietAsAShadow;

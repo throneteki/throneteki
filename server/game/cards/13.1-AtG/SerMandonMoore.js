@@ -1,20 +1,20 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class SerMandonMoore extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardOutOfShadows: event => event.card === this
+                onCardOutOfShadows: (event) => event.card === this
             },
-            chooseOpponent: player => this.hasKillableCharacter(player),
+            chooseOpponent: (player) => this.hasKillableCharacter(player),
             message: {
                 format: '{player} uses {source} to force {opponent} to discard 2 cards or kill a character',
-                args: { opponent: context => context.opponent }
+                args: { opponent: (context) => context.opponent }
             },
-            handler: context => {
+            handler: (context) => {
                 let opponent = context.opponent;
 
-                if(opponent.hand.length < 2) {
+                if (opponent.hand.length < 2) {
                     this.promptToKillCharacter(opponent);
                     return;
                 }
@@ -34,7 +34,9 @@ class SerMandonMoore extends DrawCard {
     }
 
     hasKillableCharacter(player) {
-        return player.anyCardsInPlay(card => card.getType() === 'character' && card.canBeKilled());
+        return player.anyCardsInPlay(
+            (card) => card.getType() === 'character' && card.canBeKilled()
+        );
     }
 
     promptToDiscard(opponent) {
@@ -42,7 +44,7 @@ class SerMandonMoore extends DrawCard {
             mode: 'exactly',
             numCards: 2,
             activePrompt: 'Select 2 cards',
-            cardCondition: card => card.controller === opponent && card.location === 'hand',
+            cardCondition: (card) => card.controller === opponent && card.location === 'hand',
             onSelect: (opponent, cards) => this.discardSelectedCards(opponent, cards),
             onCancel: (opponent) => this.promptToKillCharacter(opponent),
             source: this
@@ -59,7 +61,10 @@ class SerMandonMoore extends DrawCard {
     promptToKillCharacter(opponent) {
         this.game.promptForSelect(opponent, {
             activePromptTitle: 'Select character',
-            cardCondition: card => card.getType() === 'character' && card.location === 'play area' && card.controller === opponent,
+            cardCondition: (card) =>
+                card.getType() === 'character' &&
+                card.location === 'play area' &&
+                card.controller === opponent,
             gameAction: 'kill',
             onSelect: (opponent, card) => this.killSelectedCharacter(opponent, card),
             onCancel: (opponent) => this.cancelResolution(opponent),
@@ -82,4 +87,4 @@ class SerMandonMoore extends DrawCard {
 
 SerMandonMoore.code = '13009';
 
-module.exports = SerMandonMoore;
+export default SerMandonMoore;

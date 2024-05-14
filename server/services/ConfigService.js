@@ -1,9 +1,9 @@
-const config = require('config');
-const logger = require('../log');
+import config from 'config';
+import logger from '../log.js';
 
 class ConfigService {
     getValue(key) {
-        if(!config[key]) {
+        if (!config[key]) {
             logger.warn(`Asked for config value '${key}', but it was not configured`);
         }
 
@@ -11,4 +11,4 @@ class ConfigService {
     }
 }
 
-module.exports = ConfigService;
+export default ConfigService;

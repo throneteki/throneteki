@@ -1,25 +1,36 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TheNightfort extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Give character +STR',
-            condition: () => this.game.isDuringChallenge({ match: challenge => challenge.attackers.length >= 1 }),
+            condition: () =>
+                this.game.isDuringChallenge({
+                    match: (challenge) => challenge.attackers.length >= 1
+                }),
             phase: 'challenge',
             cost: ability.costs.kneelSelf(),
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' &&
-                                       card.isDefending() && card.isFaction('thenightswatch')
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    card.isDefending() &&
+                    card.isFaction('thenightswatch')
             },
-            handler: context => {
+            handler: (context) => {
                 let strBoost = this.game.currentChallenge.attackers.length;
-                this.untilEndOfChallenge(ability => ({
+                this.untilEndOfChallenge((ability) => ({
                     match: context.target,
                     effect: ability.effects.modifyStrength(strBoost)
                 }));
 
-                this.game.addMessage('{0} kneels {1} to give {2} +{3} STR until the end of the challenge',
-                    context.player, this, context.target, strBoost);
+                this.game.addMessage(
+                    '{0} kneels {1} to give {2} +{3} STR until the end of the challenge',
+                    context.player,
+                    this,
+                    context.target,
+                    strBoost
+                );
             }
         });
     }
@@ -27,4 +38,4 @@ class TheNightfort extends DrawCard {
 
 TheNightfort.code = '00013';
 
-module.exports = TheNightfort;
+export default TheNightfort;

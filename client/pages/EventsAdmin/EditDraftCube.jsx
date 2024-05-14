@@ -7,33 +7,36 @@ import DraftCubeEditor from './DraftCubeEditor';
 
 class EditDraftCube extends React.Component {
     componentWillMount() {
-        const {loadDraftCubeEditor, draftCubeId} = this.props;
+        const { loadDraftCubeEditor, draftCubeId } = this.props;
 
         loadDraftCubeEditor(draftCubeId);
     }
 
     componentWillReceiveProps(newProps) {
-        if(newProps.draftCubeSaved) {
+        if (newProps.draftCubeSaved) {
             newProps.navigate('/events');
         }
     }
 
     render() {
-        const { apiState, cards, draftCubeId, draftCubes, navigate, packs, saveDraftCube } = this.props;
+        const { apiState, cards, draftCubeId, draftCubes, navigate, packs, saveDraftCube } =
+            this.props;
 
-        if(!cards || !packs || !draftCubes) {
+        if (!cards || !packs || !draftCubes) {
             return <div>Please wait while loading from the server...</div>;
         }
 
         return (
-            <DraftCubeEditor { ...{
-                apiState,
-                cards,
-                draftCube: draftCubes.find(draftCube => draftCube._id === draftCubeId),
-                navigate,
-                packs,
-                onDraftCubeSave: saveDraftCube
-            } } />
+            <DraftCubeEditor
+                {...{
+                    apiState,
+                    cards,
+                    draftCube: draftCubes.find((draftCube) => draftCube._id === draftCubeId),
+                    navigate,
+                    packs,
+                    onDraftCubeSave: saveDraftCube
+                }}
+            />
         );
     }
 }

@@ -1,10 +1,11 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class WalderFrey extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.isAttacking(),
-            match: card => card !== this && card.hasTrait('House Frey') && card.getType() === 'character',
+            match: (card) =>
+                card !== this && card.hasTrait('House Frey') && card.getType() === 'character',
             effect: ability.effects.consideredToBeAttacking()
         });
     }
@@ -12,4 +13,4 @@ class WalderFrey extends DrawCard {
 
 WalderFrey.code = '06077';
 
-module.exports = WalderFrey;
+export default WalderFrey;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class ShadowCityBastard extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,11 +7,13 @@ class ShadowCityBastard extends DrawCard {
             phase: 'challenge',
             cost: ability.costs.sacrificeSelf(),
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' &&
-                                       card.getPrintedCost() <= 5
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    card.getPrintedCost() <= 5
             },
-            handler: context => {
-                this.untilEndOfPhase(ability => ({
+            handler: (context) => {
+                this.untilEndOfPhase((ability) => ({
                     match: context.target,
                     effect: [
                         ability.effects.removeIcon('military'),
@@ -20,8 +22,15 @@ class ShadowCityBastard extends DrawCard {
                     ]
                 }));
 
-                this.game.addMessage('{0} sacrifices {1} to remove a {2}, an {3}, and a {4} icon from {5} until the end of the phase',
-                    context.player, this, 'military', 'intrigue', 'power', context.target);
+                this.game.addMessage(
+                    '{0} sacrifices {1} to remove a {2}, an {3}, and a {4} icon from {5} until the end of the phase',
+                    context.player,
+                    this,
+                    'military',
+                    'intrigue',
+                    'power',
+                    context.target
+                );
             }
         });
     }
@@ -29,4 +38,4 @@ class ShadowCityBastard extends DrawCard {
 
 ShadowCityBastard.code = '10016';
 
-module.exports = ShadowCityBastard;
+export default ShadowCityBastard;

@@ -1,5 +1,5 @@
-const GameActions = require('../../GameActions/index.js');
-const PlotCard = require('../../plotcard.js');
+import GameActions from '../../GameActions/index.js';
+import PlotCard from '../../plotcard.js';
 
 class HereToServe extends PlotCard {
     setupCardAbilities() {
@@ -10,7 +10,7 @@ class HereToServe extends PlotCard {
                 match: { type: 'character', trait: 'Maester', printedCostOrLower: 3 },
                 reveal: false,
                 message: '{player} {gameAction}',
-                gameAction: GameActions.putIntoPlay(context => ({
+                gameAction: GameActions.putIntoPlay((context) => ({
                     card: context.searchTarget
                 }))
             })
@@ -20,4 +20,4 @@ class HereToServe extends PlotCard {
 
 HereToServe.code = '02020';
 
-module.exports = HereToServe;
+export default HereToServe;

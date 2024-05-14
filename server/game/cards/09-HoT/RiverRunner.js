@@ -1,11 +1,11 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class RiverRunner extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.isAttacking(),
             targetController: 'any',
-            match: card => card.getType() === 'character' && card.getPower() > 0,
+            match: (card) => card.getType() === 'character' && card.getPower() > 0,
             effect: ability.effects.cannotBeDeclaredAsDefender()
         });
     }
@@ -13,4 +13,4 @@ class RiverRunner extends DrawCard {
 
 RiverRunner.code = '09025';
 
-module.exports = RiverRunner;
+export default RiverRunner;

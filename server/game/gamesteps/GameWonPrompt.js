@@ -1,5 +1,5 @@
-const AllPlayerPrompt = require('./allplayerprompt');
-const RematchPrompt = require('./RematchPrompt');
+import AllPlayerPrompt from './allplayerprompt.js';
+import RematchPrompt from './RematchPrompt.js';
 
 class GameWonPrompt extends AllPlayerPrompt {
     constructor(game, winner) {
@@ -18,13 +18,19 @@ class GameWonPrompt extends AllPlayerPrompt {
             { arg: 'rematch', text: 'Rematch' }
         ];
 
-        if(this.game.isPlaytesting() && this.game.instance.reviewFormId) {
-            buttons.unshift({ arg: `googleForm:${this.game.instance.reviewFormId}`, text: 'Submit card review (external page)' });
+        if (this.game.isPlaytesting() && this.game.instance.reviewFormId) {
+            buttons.unshift({
+                arg: `googleForm:${this.game.instance.reviewFormId}`,
+                text: 'Submit card review (external page)'
+            });
         }
 
         return {
             promptTitle: 'Game Won',
-            menuTitle: this.winner === null ? 'Game ends in a draw' : this.winner.name + ' has won the game!',
+            menuTitle:
+                this.winner === null
+                    ? 'Game ends in a draw'
+                    : this.winner.name + ' has won the game!',
             buttons
         };
     }
@@ -39,7 +45,7 @@ class GameWonPrompt extends AllPlayerPrompt {
 
         this.clickedButton[player.name] = true;
 
-        if(arg === 'rematch') {
+        if (arg === 'rematch') {
             this.game.queueStep(new RematchPrompt(this.game, player));
 
             return true;
@@ -49,4 +55,4 @@ class GameWonPrompt extends AllPlayerPrompt {
     }
 }
 
-module.exports = GameWonPrompt;
+export default GameWonPrompt;

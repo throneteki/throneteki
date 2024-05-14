@@ -1,7 +1,7 @@
-const ApplyClaim = require('../../gamesteps/challenge/applyclaim.js');
-const DrawCard = require('../../drawcard.js');
-const Claim = require('../../Claim');
-const {ChallengeTracker} = require('../../EventTrackers');
+import ApplyClaim from '../../gamesteps/challenge/applyclaim.js';
+import DrawCard from '../../drawcard.js';
+import Claim from '../../Claim.js';
+import { ChallengeTracker } from '../../EventTrackers/index.js';
 
 class MaesterAemon extends DrawCard {
     setupCardAbilities() {
@@ -9,22 +9,23 @@ class MaesterAemon extends DrawCard {
 
         this.interrupt({
             when: {
-                onPhaseEnded: event => event.phase === 'challenge' && !this.allChallengesDefended()
+                onPhaseEnded: (event) =>
+                    event.phase === 'challenge' && !this.allChallengesDefended()
             },
             chooseOpponent: true,
-            handler: context => {
+            handler: (context) => {
                 this.chosenOpponent = context.opponent;
 
                 let buttons = [];
                 let challengeTypes = this.challengeTypesDefended();
 
-                if(!challengeTypes.includes('military')) {
+                if (!challengeTypes.includes('military')) {
                     buttons.push({ text: 'Military', method: 'satisfyClaim', arg: 'military' });
                 }
-                if(!challengeTypes.includes('intrigue')) {
+                if (!challengeTypes.includes('intrigue')) {
                     buttons.push({ text: 'Intrigue', method: 'satisfyClaim', arg: 'intrigue' });
                 }
-                if(!challengeTypes.includes('power')) {
+                if (!challengeTypes.includes('power')) {
                     buttons.push({ text: 'Power', method: 'satisfyClaim', arg: 'power' });
                 }
                 buttons.push({ text: 'Done', method: 'cancel' });
@@ -47,8 +48,13 @@ class MaesterAemon extends DrawCard {
         claim.value = player.getClaim();
         claim.winner = player;
 
-        this.game.addMessage('{0} uses {1} to have {2} satisfy {3} claim',
-            player, this, this.chosenOpponent, claimType);
+        this.game.addMessage(
+            '{0} uses {1} to have {2} satisfy {3} claim',
+            player,
+            this,
+            this.chosenOpponent,
+            claimType
+        );
 
         this.game.queueStep(new ApplyClaim(this.game, claim));
 
@@ -73,10 +79,10 @@ class MaesterAemon extends DrawCard {
 
     challengeTypesDefended() {
         let challengesDefended = this.tracker.filter({ defendingPlayer: this.controller });
-        return challengesDefended.map(challenge => challenge.challengeType);
+        return challengesDefended.map((challenge) => challenge.challengeType);
     }
 }
 
 MaesterAemon.code = '07005';
 
-module.exports = MaesterAemon;
+export default MaesterAemon;

@@ -1,9 +1,11 @@
-describe('The Prince\'s Plan', function() {
-    integration(function() {
-        beforeEach(function() {
+describe("The Prince's Plan", function () {
+    integration(function () {
+        beforeEach(function () {
             const deck = this.buildDeck('martell', [
                 'A Noble Cause',
-                'The Prince\'s Plan', 'Obara Sand (Core)', 'The Red Viper (Core)'
+                "The Prince's Plan",
+                'Obara Sand (Core)',
+                'The Red Viper (Core)'
             ]);
 
             this.player1.selectDeck(deck);
@@ -19,11 +21,11 @@ describe('The Prince\'s Plan', function() {
 
             this.completeMarshalPhase();
 
-            this.event = this.player1.findCardByName('The Prince\'s Plan');
+            this.event = this.player1.findCardByName("The Prince's Plan");
         });
 
-        describe('when in the discard pile and a challenge is lost', function() {
-            beforeEach(function() {
+        describe('when in the discard pile and a challenge is lost', function () {
+            beforeEach(function () {
                 this.player1Object.moveCard(this.event, 'discard pile');
 
                 this.player1.clickPrompt('Military');
@@ -38,12 +40,12 @@ describe('The Prince\'s Plan', function() {
                 this.skipActionWindow();
             });
 
-            it('should prompt to return the event back to hand', function() {
-                expect(this.player1).toAllowAbilityTrigger('The Prince\'s Plan');
+            it('should prompt to return the event back to hand', function () {
+                expect(this.player1).toAllowAbilityTrigger("The Prince's Plan");
             });
 
-            it('should allow the event to be returned to hand for 1 gold', function() {
-                this.player1.triggerAbility('The Prince\'s Plan');
+            it('should allow the event to be returned to hand for 1 gold', function () {
+                this.player1.triggerAbility("The Prince's Plan");
 
                 expect(this.event.location).toBe('hand');
                 expect(this.player1Object.gold).toBe(4);

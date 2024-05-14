@@ -1,9 +1,12 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class AnguyTheArcher extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => !this.controller.anyCardsInPlay(card => card.getType() === 'character' && card.isLoyal()),
+            condition: () =>
+                !this.controller.anyCardsInPlay(
+                    (card) => card.getType() === 'character' && card.isLoyal()
+                ),
             match: this,
             effect: [
                 ability.effects.doesNotKneelAsAttacker({ challengeType: 'military' }),
@@ -15,4 +18,4 @@ class AnguyTheArcher extends DrawCard {
 
 AnguyTheArcher.code = '14041';
 
-module.exports = AnguyTheArcher;
+export default AnguyTheArcher;

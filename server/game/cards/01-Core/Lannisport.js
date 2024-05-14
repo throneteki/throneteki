@@ -1,10 +1,10 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Lannisport extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: event =>
+                afterChallenge: (event) =>
                     event.challenge.challengeType === 'intrigue' &&
                     event.challenge.winner === this.controller &&
                     this.controller.canDraw()
@@ -19,4 +19,4 @@ class Lannisport extends DrawCard {
 
 Lannisport.code = '01098';
 
-module.exports = Lannisport;
+export default Lannisport;

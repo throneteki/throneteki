@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class PassingTheBlackGate extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,16 +7,20 @@ class PassingTheBlackGate extends DrawCard {
             phase: 'marshal',
             cost: ability.costs.kneelFactionCard(),
             handler: () => {
-                this.untilEndOfPhase(ability => ({
+                this.untilEndOfPhase((ability) => ({
                     effect: ability.effects.reduceCost({
                         playingTypes: 'marshal',
                         amount: 1,
-                        match: card => card.isFaction('stark') && card.getType() === 'character'
+                        match: (card) => card.isFaction('stark') && card.getType() === 'character'
                     })
                 }));
 
-                this.game.addMessage('{0} plays {1} and kneels their faction card to reduce the cost of each {2} character they marshal this phase by 1',
-                    this.controller, this, 'stark');
+                this.game.addMessage(
+                    '{0} plays {1} and kneels their faction card to reduce the cost of each {2} character they marshal this phase by 1',
+                    this.controller,
+                    this,
+                    'stark'
+                );
             }
         });
     }
@@ -24,4 +28,4 @@ class PassingTheBlackGate extends DrawCard {
 
 PassingTheBlackGate.code = '06082';
 
-module.exports = PassingTheBlackGate;
+export default PassingTheBlackGate;

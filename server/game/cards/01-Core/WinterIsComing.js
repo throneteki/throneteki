@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class WinterIsComing extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,13 +7,16 @@ class WinterIsComing extends DrawCard {
             max: ability.limit.perChallenge(1),
             condition: () => this.game.isDuringChallenge(),
             handler: () => {
-                this.untilEndOfChallenge(ability => ({
-                    match: card => card === this.controller.activePlot,
+                this.untilEndOfChallenge((ability) => ({
+                    match: (card) => card === this.controller.activePlot,
                     effect: ability.effects.modifyClaim(1)
                 }));
 
-                this.game.addMessage('{0} plays {1} to raise the claim value on their revealed plot card by 1 until the end of the challenge',
-                    this.controller, this);
+                this.game.addMessage(
+                    '{0} plays {1} to raise the claim value on their revealed plot card by 1 until the end of the challenge',
+                    this.controller,
+                    this
+                );
             }
         });
     }
@@ -21,4 +24,4 @@ class WinterIsComing extends DrawCard {
 
 WinterIsComing.code = '01159';
 
-module.exports = WinterIsComing;
+export default WinterIsComing;

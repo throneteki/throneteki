@@ -1,17 +1,24 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class BlackcrownKnights extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.winner === this.controller && event.challenge.challengeType === 'power' &&
-                    this.isParticipating() && this.allowGameAction('gainPower')
+                afterChallenge: (event) =>
+                    event.challenge.winner === this.controller &&
+                    event.challenge.challengeType === 'power' &&
+                    this.isParticipating() &&
+                    this.allowGameAction('gainPower')
             },
             cost: ability.costs.discardFromHand(),
-            handler: context => {
+            handler: (context) => {
                 this.modifyPower(2);
-                this.game.addMessage('{0} uses {1} and discards {2} from their hand to gain 2 power on {1}',
-                    this.controller, this, context.costs.discardFromHand);
+                this.game.addMessage(
+                    '{0} uses {1} and discards {2} from their hand to gain 2 power on {1}',
+                    this.controller,
+                    this,
+                    context.costs.discardFromHand
+                );
             }
         });
     }
@@ -19,4 +26,4 @@ class BlackcrownKnights extends DrawCard {
 
 BlackcrownKnights.code = '00016';
 
-module.exports = BlackcrownKnights;
+export default BlackcrownKnights;

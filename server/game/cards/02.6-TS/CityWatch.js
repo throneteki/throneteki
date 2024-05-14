@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class CityWatch extends DrawCard {
     setupCardAbilities(ability) {
@@ -12,10 +12,10 @@ class CityWatch extends DrawCard {
 
     hasMorePowerThanAnOpponent() {
         let opponents = this.game.getOpponents(this.controller);
-        return opponents.some(opponent => this.controller.faction.power > opponent.faction.power);
+        return opponents.some((opponent) => this.controller.faction.power > opponent.faction.power);
     }
 }
 
 CityWatch.code = '02108';
 
-module.exports = CityWatch;
+export default CityWatch;

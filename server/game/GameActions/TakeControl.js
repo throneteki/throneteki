@@ -1,5 +1,5 @@
-const GameAction = require('./GameAction');
-const Message = require('../Message');
+import GameAction from './GameAction.js';
+import Message from '../Message.js';
 
 class TakeControl extends GameAction {
     constructor() {
@@ -15,10 +15,10 @@ class TakeControl extends GameAction {
     }
 
     createEvent({ player, card, context }) {
-        return this.event('__PLACEHOLDER_EVENT__', { player, card }, event => {
+        return this.event('__PLACEHOLDER_EVENT__', { player, card }, (event) => {
             context.game.takeControl(event.player, event.card, context.source);
         });
     }
 }
 
-module.exports = new TakeControl();
+export default new TakeControl();

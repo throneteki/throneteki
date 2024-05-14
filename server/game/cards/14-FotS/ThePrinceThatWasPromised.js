@@ -1,5 +1,5 @@
-const AgendaCard = require('../../agendacard');
-const GameActions = require('../../GameActions');
+import AgendaCard from '../../agendacard.js';
+import GameActions from '../../GameActions/index.js';
 
 class ThePrinceThatWasPromised extends AgendaCard {
     constructor(owner, cardData) {
@@ -10,7 +10,7 @@ class ThePrinceThatWasPromised extends AgendaCard {
 
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: card =>
+            match: (card) =>
                 card.getType() === 'character' &&
                 card.controller === this.controller &&
                 card.name !== this.selectedCardName,
@@ -19,7 +19,7 @@ class ThePrinceThatWasPromised extends AgendaCard {
 
         this.reaction({
             when: {
-                afterChallenge: event => this.hasWonBy5(event)
+                afterChallenge: (event) => this.hasWonBy5(event)
             },
             cost: ability.costs.kneelFactionCard(),
             message: {
@@ -29,19 +29,34 @@ class ThePrinceThatWasPromised extends AgendaCard {
             choices: {
                 'Stand and draw': {
                     message: '{player} chooses, and {gameAction}',
-                    gameAction: GameActions.simultaneously(context => {
-                        let actions = this.getThePromised(context.player) ? [GameActions.standCard(context => ({ card: this.getThePromised(context.player) }))] : [];
-                        actions.push(GameActions.drawCards(context => ({ player: context.player, amount: 1 })));
+                    gameAction: GameActions.simultaneously((context) => {
+                        let actions = this.getThePromised(context.player)
+                            ? [
+                                  GameActions.standCard((context) => ({
+                                      card: this.getThePromised(context.player)
+                                  }))
+                              ]
+                            : [];
+                        actions.push(
+                            GameActions.drawCards((context) => ({
+                                player: context.player,
+                                amount: 1
+                            }))
+                        );
                         return actions;
                     })
                 },
-                'Search': {
+                Search: {
                     gameAction: GameActions.search({
                         title: 'Select a character',
-                        match: { type: 'character', condition: card => card.name === this.selectedCardName },
+                        match: {
+                            type: 'character',
+                            condition: (card) => card.name === this.selectedCardName
+                        },
                         location: ['draw deck', 'discard pile', 'dead pile'],
-                        message: '{player} chooses to search their deck, discard pile and dead pile, and {gameAction}',
-                        gameAction: GameActions.addToHand(context => ({
+                        message:
+                            '{player} chooses to search their deck, discard pile and dead pile, and {gameAction}',
+                        gameAction: GameActions.addToHand((context) => ({
                             card: context.searchTarget
                         }))
                     })
@@ -59,17 +74,16 @@ class ThePrinceThatWasPromised extends AgendaCard {
     }
 
     getThePromised(player) {
-        return player.filterCardsInPlay(card => (
-            card.getType() === 'character' &&
-            card.name === this.selectedCardName
-        ))[0];
+        return player.filterCardsInPlay(
+            (card) => card.getType() === 'character' && card.name === this.selectedCardName
+        )[0];
     }
 
     onDecksPrepared() {
         this.game.promptForCardName({
             title: 'Name a unique character',
             player: this.controller,
-            match: cardData => cardData.type === 'character' && cardData.unique,
+            match: (cardData) => cardData.type === 'character' && cardData.unique,
             onSelect: (player, cardName) => this.selectCardName(player, cardName),
             source: this
         });
@@ -83,4 +97,4 @@ class ThePrinceThatWasPromised extends AgendaCard {
 
 ThePrinceThatWasPromised.code = '14045';
 
-module.exports = ThePrinceThatWasPromised;
+export default ThePrinceThatWasPromised;

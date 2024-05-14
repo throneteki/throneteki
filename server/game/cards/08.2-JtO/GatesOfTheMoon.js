@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class GatesOfTheMoon extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,7 +7,7 @@ class GatesOfTheMoon extends DrawCard {
         });
 
         this.persistentEffect({
-            match: card => card === card.controller.activePlot,
+            match: (card) => card === card.controller.activePlot,
             targetController: 'opponent',
             effect: ability.effects.modifyGold(1)
         });
@@ -16,4 +16,4 @@ class GatesOfTheMoon extends DrawCard {
 
 GatesOfTheMoon.code = '08038';
 
-module.exports = GatesOfTheMoon;
+export default GatesOfTheMoon;

@@ -1,7 +1,7 @@
-const BaseStep = require('./basestep');
+import BaseStep from './basestep.js';
 
 class CardNamePrompt extends BaseStep {
-    constructor(game, {player, source, title, match, onSelect, onCancel}) {
+    constructor(game, { player, source, title, match, onSelect, onCancel }) {
         super(game);
 
         this.player = player;
@@ -26,12 +26,12 @@ class CardNamePrompt extends BaseStep {
     }
 
     handleSelectCardName(player, cardName) {
-        if(!cardName || cardName.length === 0) {
+        if (!cardName || cardName.length === 0) {
             this.handleCancel();
             return true;
         }
 
-        if(!this.isMatch(cardName)) {
+        if (!this.isMatch(cardName)) {
             return false;
         }
 
@@ -41,19 +41,21 @@ class CardNamePrompt extends BaseStep {
     }
 
     isMatch(cardName) {
-        return this.cards.some(cardData => (
-            cardData.name === cardName &&
-            this.match(cardData)
-        ));
+        return this.cards.some((cardData) => cardData.name === cardName && this.match(cardData));
     }
 
     handleCancel() {
-        if(this.onCancel) {
+        if (this.onCancel) {
             this.onCancel();
         } else {
-            this.game.addAlert('warning', '{0} does not name a card for {1}', this.player, this.source);
+            this.game.addAlert(
+                'warning',
+                '{0} does not name a card for {1}',
+                this.player,
+                this.source
+            );
         }
     }
 }
 
-module.exports = CardNamePrompt;
+export default CardNamePrompt;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class RedRain extends DrawCard {
     setupCardAbilities() {
@@ -7,11 +7,19 @@ class RedRain extends DrawCard {
             target: {
                 mode: 'upTo',
                 numCards: 3,
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && (card.hasKeyword('Pillage') || card.hasTrait('Raider'))
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    (card.hasKeyword('Pillage') || card.hasTrait('Raider'))
             },
-            handler: context => {
-                this.game.addMessage('{0} plays {1} to have {2} gain stealth until the end of the phase', context.player, this, context.target);
-                this.untilEndOfPhase(ability => ({
+            handler: (context) => {
+                this.game.addMessage(
+                    '{0} plays {1} to have {2} gain stealth until the end of the phase',
+                    context.player,
+                    this,
+                    context.target
+                );
+                this.untilEndOfPhase((ability) => ({
                     match: context.target,
                     effect: ability.effects.addKeyword('Stealth')
                 }));
@@ -22,4 +30,4 @@ class RedRain extends DrawCard {
 
 RedRain.code = '12024';
 
-module.exports = RedRain;
+export default RedRain;

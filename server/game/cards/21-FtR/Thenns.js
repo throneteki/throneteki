@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Thenns extends DrawCard {
     setupCardAbilities(ability) {
@@ -8,12 +8,14 @@ class Thenns extends DrawCard {
             effect: ability.effects.cannotTargetUsingAssault()
         });
     }
-  
+
     anyNonArmyOrWildlingInPlay() {
-        return this.game.anyCardsInPlay(card => card.isAttacking() && !card.hasTrait('Army') && !card.hasTrait('Wildling'));
+        return this.game.anyCardsInPlay(
+            (card) => card.isAttacking() && !card.hasTrait('Army') && !card.hasTrait('Wildling')
+        );
     }
 }
 
 Thenns.code = '21026';
 
-module.exports = Thenns;
+export default Thenns;

@@ -4,7 +4,9 @@ class KillCost {
     }
 
     isEligible(card) {
-        return card.location === 'play area' && card.getType() === 'character' && card.canBeKilled();
+        return (
+            card.location === 'play area' && card.getType() === 'character' && card.canBeKilled()
+        );
     }
 
     pay(cards, context) {
@@ -12,4 +14,4 @@ class KillCost {
     }
 }
 
-module.exports = KillCost;
+export default KillCost;

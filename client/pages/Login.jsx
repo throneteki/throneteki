@@ -16,7 +16,7 @@ class Login extends React.Component {
     }
 
     componentWillReceiveProps(props) {
-        if(props.loggedIn) {
+        if (props.loggedIn) {
             this.props.authenticateSocket();
 
             this.props.navigate('/');
@@ -28,13 +28,22 @@ class Login extends React.Component {
     }
 
     render() {
-        let errorBar = this.props.apiSuccess === false ? <AlertPanel type='error' message={ this.props.apiMessage } /> : null;
+        let errorBar =
+            this.props.apiSuccess === false ? (
+                <AlertPanel type='error' message={this.props.apiMessage} />
+            ) : null;
 
         return (
             <div className='col-sm-6 col-sm-offset-3'>
-                { errorBar }
+                {errorBar}
                 <Panel title='Login'>
-                    <Form name='login' apiLoading={ this.props.apiLoading } buttonClass='col-sm-offset-2 col-sm-3' buttonText='Log In' onSubmit={ this.onLogin }>
+                    <Form
+                        name='login'
+                        apiLoading={this.props.apiLoading}
+                        buttonClass='col-sm-offset-2 col-sm-3'
+                        buttonText='Log In'
+                        onSubmit={this.onLogin}
+                    >
                         <div className='form-group'>
                             <div className='col-sm-offset-2 col-sm-10'>
                                 <Link href='/forgot'>Forgot your password?</Link>
@@ -42,7 +51,8 @@ class Login extends React.Component {
                         </div>
                     </Form>
                 </Panel>
-            </div>);
+            </div>
+        );
     }
 }
 
@@ -64,8 +74,11 @@ Login.propTypes = {
 function mapStateToProps(state) {
     return {
         apiLoading: state.api.LOGIN_ACCOUNT ? state.api.LOGIN_ACCOUNT.loading : undefined,
-        apiMessage: state.api.LOGIN_ACCOUNT ?
-            state.api.LOGIN_ACCOUNT.status === 401 ? 'Invalid username or password.  Please check and try again' : state.api.LOGIN_ACCOUNT.message : undefined,
+        apiMessage: state.api.LOGIN_ACCOUNT
+            ? state.api.LOGIN_ACCOUNT.status === 401
+                ? 'Invalid username or password.  Please check and try again'
+                : state.api.LOGIN_ACCOUNT.message
+            : undefined,
         apiSuccess: state.api.LOGIN_ACCOUNT ? state.api.LOGIN_ACCOUNT.success : undefined,
         loggedIn: state.account.loggedIn,
         loggedInToken: state.auth.token,

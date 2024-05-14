@@ -1,4 +1,4 @@
-const AllPlayerPrompt = require('../allplayerprompt.js');
+import AllPlayerPrompt from '../allplayerprompt.js';
 
 class SetupCardsPrompt extends AllPlayerPrompt {
     completionCondition(player) {
@@ -8,9 +8,7 @@ class SetupCardsPrompt extends AllPlayerPrompt {
     activePrompt() {
         return {
             menuTitle: 'Select setup cards',
-            buttons: [
-                { arg: 'setupdone', text: 'Done' }
-            ]
+            buttons: [{ arg: 'setupdone', text: 'Done' }]
         };
     }
 
@@ -24,4 +22,4 @@ class SetupCardsPrompt extends AllPlayerPrompt {
     }
 }
 
-module.exports = SetupCardsPrompt;
+export default SetupCardsPrompt;

@@ -1,20 +1,30 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Shandystone extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.loser === this.controller && event.challenge.defendingPlayer === this.controller
+                afterChallenge: (event) =>
+                    event.challenge.loser === this.controller &&
+                    event.challenge.defendingPlayer === this.controller
             },
             cost: ability.costs.kneelSelf(),
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' &&
-                                       card.controller === this.controller && card.kneeled,
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    card.controller === this.controller &&
+                    card.kneeled,
                 gameAction: 'stand'
             },
-            handler: context => {
+            handler: (context) => {
                 context.player.standCard(context.target);
-                this.game.addMessage('{0} kneels {1} to stand {2}', context.player, this, context.target);
+                this.game.addMessage(
+                    '{0} kneels {1} to stand {2}',
+                    context.player,
+                    this,
+                    context.target
+                );
             }
         });
     }
@@ -22,4 +32,4 @@ class Shandystone extends DrawCard {
 
 Shandystone.code = '08076';
 
-module.exports = Shandystone;
+export default Shandystone;

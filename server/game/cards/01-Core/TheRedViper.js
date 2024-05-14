@@ -1,10 +1,11 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TheRedViper extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.winner === this.controller &&
+                afterChallenge: (event) =>
+                    event.challenge.winner === this.controller &&
                     this.isAttacking() &&
                     event.challenge.strengthDifference >= 5 &&
                     this.allowGameAction('gainPower')
@@ -21,4 +22,4 @@ class TheRedViper extends DrawCard {
 
 TheRedViper.code = '01109';
 
-module.exports = TheRedViper;
+export default TheRedViper;

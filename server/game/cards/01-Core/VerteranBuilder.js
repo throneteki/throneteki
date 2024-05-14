@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class VerteranBuilder extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,10 +7,16 @@ class VerteranBuilder extends DrawCard {
             cost: ability.costs.sacrificeSelf(),
             target: {
                 activePromptTitle: 'Select a location',
-                cardCondition: card => card.location === 'play area' && card.getType() === 'location'
+                cardCondition: (card) =>
+                    card.location === 'play area' && card.getType() === 'location'
             },
-            handler: context => {
-                this.game.addMessage('{0} sacrifices {1} to stand {2}', context.player, this, context.target);
+            handler: (context) => {
+                this.game.addMessage(
+                    '{0} sacrifices {1} to stand {2}',
+                    context.player,
+                    this,
+                    context.target
+                );
 
                 context.player.standCard(context.target);
             }
@@ -20,4 +26,4 @@ class VerteranBuilder extends DrawCard {
 
 VerteranBuilder.code = '01134';
 
-module.exports = VerteranBuilder;
+export default VerteranBuilder;

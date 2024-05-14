@@ -1,10 +1,13 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class WinterFestival extends PlotCard {
     setupCardAbilities() {
         this.interrupt({
             when: {
-                onPhaseEnded: event => event.phase === 'challenge' && !this.game.anyPlotHasTrait('Summer') && this.controller.canGainFactionPower()
+                onPhaseEnded: (event) =>
+                    event.phase === 'challenge' &&
+                    !this.game.anyPlotHasTrait('Summer') &&
+                    this.controller.canGainFactionPower()
             },
             handler: () => {
                 this.game.addPower(this.controller, 2);
@@ -17,4 +20,4 @@ class WinterFestival extends PlotCard {
 
 WinterFestival.code = '04040';
 
-module.exports = WinterFestival;
+export default WinterFestival;

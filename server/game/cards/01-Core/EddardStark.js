@@ -1,10 +1,11 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class EddardStark extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onChallengeInitiated: event => event.challenge.initiatedAgainstPlayer === this.controller && this.kneeled
+                onChallengeInitiated: (event) =>
+                    event.challenge.initiatedAgainstPlayer === this.controller && this.kneeled
             },
             handler: () => {
                 this.controller.standCard(this);
@@ -17,4 +18,4 @@ class EddardStark extends DrawCard {
 
 EddardStark.code = '01144';
 
-module.exports = EddardStark;
+export default EddardStark;

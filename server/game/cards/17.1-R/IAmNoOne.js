@@ -1,18 +1,19 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class IAmNoOne extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Give character insight',
             target: {
-                cardCondition: card => card.location === 'play area' &&
-                                       (
-                                           (card.name === 'Arya Stark')
-                                            ||
-                                           (card.getType() === 'character' && card.isUnique() && card.getPrintedCost() <= 3 && card.controller === this.controller)
-                                       )
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    (card.name === 'Arya Stark' ||
+                        (card.getType() === 'character' &&
+                            card.isUnique() &&
+                            card.getPrintedCost() <= 3 &&
+                            card.controller === this.controller))
             },
-            handler: context => {
+            handler: (context) => {
                 this.untilEndOfPhase(() => ({
                     match: context.target,
                     effect: [
@@ -23,8 +24,12 @@ class IAmNoOne extends DrawCard {
                     ]
                 }));
 
-                this.game.addMessage('{0} plays {1} and chooses {2} as its target',
-                    context.player, this, context.target);
+                this.game.addMessage(
+                    '{0} plays {1} and chooses {2} as its target',
+                    context.player,
+                    this,
+                    context.target
+                );
             }
         });
     }
@@ -32,4 +37,4 @@ class IAmNoOne extends DrawCard {
 
 IAmNoOne.code = '17127';
 
-module.exports = IAmNoOne;
+export default IAmNoOne;

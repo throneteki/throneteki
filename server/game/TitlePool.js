@@ -1,18 +1,18 @@
-const shuffle = require('lodash.shuffle');
+import shuffle from 'lodash.shuffle';
 
 const titles = [
-    require('./cards/titles/CrownRegent.js'),
-    require('./cards/titles/HandOfTheKing.js'),
-    require('./cards/titles/MasterOfCoin.js'),
-    require('./cards/titles/MasterOfLaws.js'),
-    require('./cards/titles/MasterOfShips.js'),
-    require('./cards/titles/MasterOfWhispers.js')
+    (await import('./cards/titles/CrownRegent.js')).default,
+    (await import('./cards/titles/HandOfTheKing.js')).default,
+    (await import('./cards/titles/MasterOfCoin.js')).default,
+    (await import('./cards/titles/MasterOfLaws.js')).default,
+    (await import('./cards/titles/MasterOfShips.js')).default,
+    (await import('./cards/titles/MasterOfWhispers.js')).default
 ];
 
 class TitlePool {
     constructor(game, cardData) {
         this.game = game;
-        this.cards = titles.map(titleClass => {
+        this.cards = titles.map((titleClass) => {
             let title = new titleClass({ game: game }, cardData[titleClass.code] || {});
             title.moveTo('title pool');
             return title;
@@ -27,15 +27,15 @@ class TitlePool {
     }
 
     amountToSetAside() {
-        if(this.game.noTitleSetAside) {
+        if (this.game.noTitleSetAside) {
             return 0;
         }
 
         let players = this.game.getPlayers();
 
-        if(players.length >= 6) {
+        if (players.length >= 6) {
             return 0;
-        } else if(players.length >= 4) {
+        } else if (players.length >= 4) {
             return 1;
         }
 
@@ -43,7 +43,7 @@ class TitlePool {
     }
 
     chooseFromPool(player, card) {
-        if(!this.cards.includes(card)) {
+        if (!this.cards.includes(card)) {
             return;
         }
 
@@ -54,7 +54,7 @@ class TitlePool {
     }
 
     returnToPool(player, card) {
-        if(!card || card.getType() !== 'title') {
+        if (!card || card.getType() !== 'title') {
             return;
         }
 
@@ -64,4 +64,4 @@ class TitlePool {
     }
 }
 
-module.exports = TitlePool;
+export default TitlePool;

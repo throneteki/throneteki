@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class FleetCaptain extends DrawCard {
     setupCardAbilities(ability) {
@@ -11,7 +11,7 @@ class FleetCaptain extends DrawCard {
     }
 
     calculateStrength() {
-        let cards = this.controller.filterCardsInPlay(card => {
+        let cards = this.controller.filterCardsInPlay((card) => {
             return card.getType() === 'location' && card.hasTrait('Warship');
         });
 
@@ -21,4 +21,4 @@ class FleetCaptain extends DrawCard {
 
 FleetCaptain.code = '12022';
 
-module.exports = FleetCaptain;
+export default FleetCaptain;

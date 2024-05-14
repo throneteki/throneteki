@@ -1,10 +1,13 @@
-describe('Forced March', function() {
-    integration(function() {
-        describe('when revealed', function() {
-            beforeEach(function() {
+describe('Forced March', function () {
+    integration(function () {
+        describe('when revealed', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('targaryen', [
-                    'Forced March (SoD)', 'A Noble Cause',
-                    'Hedge Knight', 'Hedge Knight', 'Hedge Knight'
+                    'Forced March (SoD)',
+                    'A Noble Cause',
+                    'Hedge Knight',
+                    'Hedge Knight',
+                    'Hedge Knight'
                 ]);
 
                 this.player1.selectDeck(deck);
@@ -12,8 +15,10 @@ describe('Forced March', function() {
                 this.startGame();
                 this.keepStartingHands();
 
-                [this.char1, this.char2, this.char3] = this.player1.filterCardsByName('Hedge Knight');
-                [this.opponentChar1, this.opponentChar2, this.opponentChar3] = this.player2.filterCardsByName('Hedge Knight');
+                [this.char1, this.char2, this.char3] =
+                    this.player1.filterCardsByName('Hedge Knight');
+                [this.opponentChar1, this.opponentChar2, this.opponentChar3] =
+                    this.player2.filterCardsByName('Hedge Knight');
 
                 this.player1.clickCard(this.char1);
                 this.player1.clickCard(this.char2);
@@ -30,33 +35,38 @@ describe('Forced March', function() {
                 this.player2.clickCard(this.opponentChar1);
             });
 
-            it('requires each opponent to kneel a military character', function() {
+            it('requires each opponent to kneel a military character', function () {
                 expect(this.opponentChar1.kneeled).toBe(true);
             });
 
-            it('prompts to re-initiate', function() {
+            it('prompts to re-initiate', function () {
                 expect(this.player1).toHavePrompt('Select card to kneel');
             });
 
-            describe('when there are no more valid targets to kneel', function() {
-                beforeEach(function() {
+            describe('when there are no more valid targets to kneel', function () {
+                beforeEach(function () {
                     // Kneel another to initiate again
                     this.player1.clickCard(this.char1);
 
                     this.player2.clickCard(this.opponentChar2);
                 });
 
-                it('does not prompt to re-initiate', function() {
+                it('does not prompt to re-initiate', function () {
                     expect(this.player1).toHavePrompt('Marshal your cards');
                 });
             });
         });
 
-        describe('vs cancels', function() {
-            beforeEach(function() {
+        describe('vs cancels', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('targaryen', [
-                    'Forced March (SoD)', 'A Noble Cause', 'Outwit',
-                    'Hedge Knight', 'Hedge Knight', 'Hedge Knight', 'Maester Wendamyr'
+                    'Forced March (SoD)',
+                    'A Noble Cause',
+                    'Outwit',
+                    'Hedge Knight',
+                    'Hedge Knight',
+                    'Hedge Knight',
+                    'Maester Wendamyr'
                 ]);
 
                 this.player1.selectDeck(deck);
@@ -64,8 +74,10 @@ describe('Forced March', function() {
                 this.startGame();
                 this.keepStartingHands();
 
-                [this.char1, this.char2, this.char3] = this.player1.filterCardsByName('Hedge Knight');
-                [this.opponentChar1, this.opponentChar2, this.opponentChar3] = this.player2.filterCardsByName('Hedge Knight');
+                [this.char1, this.char2, this.char3] =
+                    this.player1.filterCardsByName('Hedge Knight');
+                [this.opponentChar1, this.opponentChar2, this.opponentChar3] =
+                    this.player2.filterCardsByName('Hedge Knight');
                 this.maester = this.player2.findCardByName('Maester Wendamyr');
                 this.outwit = this.player2.findCardByName('Outwit');
 
@@ -94,7 +106,7 @@ describe('Forced March', function() {
                 this.player2.clickCard(this.opponentChar2);
             });
 
-            it('gives another chance to cancel', function() {
+            it('gives another chance to cancel', function () {
                 expect(this.player2).toAllowAbilityTrigger(this.outwit);
             });
         });

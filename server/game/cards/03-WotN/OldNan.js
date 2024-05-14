@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class OldNan extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,8 +7,8 @@ class OldNan extends DrawCard {
                 onPlotsRevealed: () => true
             },
             cost: ability.costs.kneelSelf(),
-            handler: context => {
-                let buttons = context.event.plots.map(plot => {
+            handler: (context) => {
+                let buttons = context.event.plots.map((plot) => {
                     return { method: 'plotSelected', card: plot, mapCard: true };
                 });
 
@@ -24,7 +24,7 @@ class OldNan extends DrawCard {
     }
 
     plotSelected(player, card) {
-        if(this.controller !== player) {
+        if (this.controller !== player) {
             return false;
         }
 
@@ -33,7 +33,7 @@ class OldNan extends DrawCard {
                 menuTitle: 'Select trait to add',
                 buttons: [
                     { text: 'Winter', method: 'traitSelected', arg: 'Winter' },
-                    { text: 'Summer', method: 'traitSelected', arg: 'Summer'}
+                    { text: 'Summer', method: 'traitSelected', arg: 'Summer' }
                 ]
             },
             source: this
@@ -46,21 +46,27 @@ class OldNan extends DrawCard {
 
     traitSelected(player, trait) {
         let plotCard = this.selectedCard;
-        if(!plotCard) {
+        if (!plotCard) {
             return false;
         }
 
         let lowerTrait = trait.toLowerCase();
-        if(lowerTrait !== 'summer' && lowerTrait !== 'winter') {
+        if (lowerTrait !== 'summer' && lowerTrait !== 'winter') {
             return false;
         }
 
-        this.untilEndOfRound(ability => ({
+        this.untilEndOfRound((ability) => ({
             match: plotCard,
             effect: ability.effects.addTrait(trait)
         }));
 
-        this.game.addMessage('{0} uses {1} to add the {2} trait to {3}', player, this, trait, plotCard);
+        this.game.addMessage(
+            '{0} uses {1} to add the {2} trait to {3}',
+            player,
+            this,
+            trait,
+            plotCard
+        );
 
         return true;
     }
@@ -68,4 +74,4 @@ class OldNan extends DrawCard {
 
 OldNan.code = '03010';
 
-module.exports = OldNan;
+export default OldNan;

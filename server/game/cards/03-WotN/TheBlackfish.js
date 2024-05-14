@@ -1,5 +1,5 @@
-const GameActions = require('../../GameActions/index.js');
-const DrawCard = require('../../drawcard.js');
+import GameActions from '../../GameActions/index.js';
+import DrawCard from '../../drawcard.js';
 
 class TheBlackfish extends DrawCard {
     setupCardAbilities(ability) {
@@ -11,18 +11,22 @@ class TheBlackfish extends DrawCard {
 
         this.reaction({
             when: {
-                afterChallenge: event =>
+                afterChallenge: (event) =>
                     event.challenge.winner === this.controller &&
                     event.challenge.challengeType === 'military' &&
                     event.challenge.isAttackerTheWinner()
             },
             limit: ability.limit.perPhase(1),
             message: '{player} uses {source} to draw 1 card',
-            gameAction: GameActions.drawCards(context => ({ player: context.player, amount: 1, source: this }))
+            gameAction: GameActions.drawCards((context) => ({
+                player: context.player,
+                amount: 1,
+                source: this
+            }))
         });
     }
 }
 
 TheBlackfish.code = '03004';
 
-module.exports = TheBlackfish;
+export default TheBlackfish;

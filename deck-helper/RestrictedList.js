@@ -72,4 +72,4 @@ class RestrictedList {
     }
 }
 
-module.exports = RestrictedList;
+export default RestrictedList;

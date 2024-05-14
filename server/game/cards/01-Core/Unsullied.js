@@ -1,10 +1,10 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Unsullied extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.isAttacking(),
-            match: card => card.isDefending(),
+            match: (card) => card.isDefending(),
             targetController: 'opponent',
             effect: ability.effects.modifyStrength(-1)
         });
@@ -13,4 +13,4 @@ class Unsullied extends DrawCard {
 
 Unsullied.code = '01171';
 
-module.exports = Unsullied;
+export default Unsullied;

@@ -1,21 +1,29 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class RedRain extends DrawCard {
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'greyjoy', unique: true });
 
         this.whileAttached({
-            match: card => card.name === 'The Drumm',
+            match: (card) => card.name === 'The Drumm',
             effect: ability.effects.addKeyword('Stealth')
         });
 
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.isMatch({ winner: this.controller, unopposed: true }) && this.parent.isAttacking() && this.parent.canGainPower()
+                afterChallenge: (event) =>
+                    event.challenge.isMatch({ winner: this.controller, unopposed: true }) &&
+                    this.parent.isAttacking() &&
+                    this.parent.canGainPower()
             },
             limit: ability.limit.perPhase(1),
-            handler: context => {
-                this.game.addMessage('{0} uses {1} to have {2} gain 2 power', context.player, this, this.parent);
+            handler: (context) => {
+                this.game.addMessage(
+                    '{0} uses {1} to have {2} gain 2 power',
+                    context.player,
+                    this,
+                    this.parent
+                );
                 this.parent.modifyPower(2);
             }
         });
@@ -24,4 +32,4 @@ class RedRain extends DrawCard {
 
 RedRain.code = '12021';
 
-module.exports = RedRain;
+export default RedRain;

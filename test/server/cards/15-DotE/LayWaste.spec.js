@@ -1,15 +1,12 @@
-describe('Lay Waste', function() {
-    integration(function() {
-        describe('when played', function() {
-            beforeEach(function() {
-                const deck1 = this.buildDeck('baratheon', [
-                    'Late Summer Feast',
-                    'Lay Waste'
-                ]);
+describe('Lay Waste', function () {
+    integration(function () {
+        describe('when played', function () {
+            beforeEach(function () {
+                const deck1 = this.buildDeck('baratheon', ['Late Summer Feast', 'Lay Waste']);
                 const deck2 = this.buildDeck('lannister', [
                     'Marching Orders',
                     'Burned Men',
-                    'Widow\'s Wail',
+                    "Widow's Wail",
                     'Western Fiefdom',
                     'The Iron Throne (Core)'
                 ]);
@@ -20,7 +17,7 @@ describe('Lay Waste', function() {
                 this.keepStartingHands();
 
                 this.burnedMen = this.player2.findCardByName('Burned Men', 'hand');
-                this.widowsWail = this.player2.findCardByName('Widow\'s Wail', 'hand');
+                this.widowsWail = this.player2.findCardByName("Widow's Wail", 'hand');
 
                 this.player2.clickCard(this.burnedMen);
                 this.player2.clickCard(this.widowsWail);
@@ -46,16 +43,16 @@ describe('Lay Waste', function() {
                 this.player1.clickCard(this.layWaste);
             });
 
-            it('opens a prompt to choose a target', function() {
+            it('opens a prompt to choose a target', function () {
                 expect(this.player1).toHavePrompt('Select a non-limited location or attachment');
             });
 
-            it('discards the chosen target', function() {
+            it('discards the chosen target', function () {
                 this.player1.clickCard(this.widowsWail);
                 expect(this.widowsWail.location).toBe('discard pile');
             });
 
-            it('after the discard it prompts the owner of the discarded card to search their deck', function() {
+            it('after the discard it prompts the owner of the discarded card to search their deck', function () {
                 this.player1.clickCard(this.widowsWail);
                 expect(this.widowsWail.location).toBe('discard pile');
                 expect(this.player2).toHavePrompt('Select a card');

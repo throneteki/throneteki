@@ -1,5 +1,5 @@
-const GameActions = require('../../GameActions/index.js');
-const DrawCard = require('../../drawcard.js');
+import GameActions from '../../GameActions/index.js';
+import DrawCard from '../../drawcard.js';
 
 class TheRedFork extends DrawCard {
     setupCardAbilities() {
@@ -8,7 +8,12 @@ class TheRedFork extends DrawCard {
         });
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.isMatch({ winner: this.controller, by5: true, challengeType: 'military' })
+                afterChallenge: (event) =>
+                    event.challenge.isMatch({
+                        winner: this.controller,
+                        by5: true,
+                        challengeType: 'military'
+                    })
             },
             location: 'discard pile',
             message: '{player} uses {source} to put {source} into play from their discard pile',
@@ -19,4 +24,4 @@ class TheRedFork extends DrawCard {
 
 TheRedFork.code = '25058';
 
-module.exports = TheRedFork;
+export default TheRedFork;

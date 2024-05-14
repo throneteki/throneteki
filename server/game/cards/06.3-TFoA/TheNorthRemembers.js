@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheNorthRemembers extends DrawCard {
     setupCardAbilities(ability) {
@@ -11,17 +11,24 @@ class TheNorthRemembers extends DrawCard {
                 choosingPlayer: 'each',
                 ifAble: true,
                 activePromptTitle: 'Select a character or location',
-                cardCondition: (card, context) => (
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.controller === context.choosingPlayer &&
-                    (card.getType() === 'character' || card.getType() === 'location'))
+                    (card.getType() === 'character' || card.getType() === 'location')
             },
-            handler: context => {
-                let selections = context.targets.selections.filter(selection => !!selection.value);
+            handler: (context) => {
+                let selections = context.targets.selections.filter(
+                    (selection) => !!selection.value
+                );
 
                 this.game.resolveGameAction(
                     GameActions.simultaneously(
-                        selections.map(selection => GameActions.sacrificeCard({ player: selection.choosingPlayer, card: selection.value }))
+                        selections.map((selection) =>
+                            GameActions.sacrificeCard({
+                                player: selection.choosingPlayer,
+                                card: selection.value
+                            })
+                        )
                     )
                 );
             }
@@ -30,12 +37,17 @@ class TheNorthRemembers extends DrawCard {
         this.reaction({
             location: 'discard pile',
             when: {
-                onCharacterKilled: event => event.cardStateWhenKilled.controller === this.controller
+                onCharacterKilled: (event) =>
+                    event.cardStateWhenKilled.controller === this.controller
             },
             ignoreEventCosts: true,
             cost: ability.costs.payGold(1),
             handler: () => {
-                this.game.addMessage('{0} pays 1 gold to move {1} to their hand', this.controller, this);
+                this.game.addMessage(
+                    '{0} pays 1 gold to move {1} to their hand',
+                    this.controller,
+                    this
+                );
                 this.controller.moveCard(this, 'hand');
             }
         });
@@ -44,4 +56,4 @@ class TheNorthRemembers extends DrawCard {
 
 TheNorthRemembers.code = '06042';
 
-module.exports = TheNorthRemembers;
+export default TheNorthRemembers;

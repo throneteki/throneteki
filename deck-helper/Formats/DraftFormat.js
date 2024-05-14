@@ -32,4 +32,4 @@ const DraftFormat = {
     ]
 };
 
-module.exports = DraftFormat;
+export default DraftFormat;

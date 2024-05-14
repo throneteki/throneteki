@@ -1,18 +1,27 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions/index.js');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SacrificedToTheRedGod extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Search for a character',
             phase: 'marshal',
-            cost: ability.costs.sacrifice(card => card.getType() === 'character'),
-            condition: () => this.controller.anyCardsInPlay(card => card.hasTrait('R\'hllor') && card.getType() === 'character'),
+            cost: ability.costs.sacrifice((card) => card.getType() === 'character'),
+            condition: () =>
+                this.controller.anyCardsInPlay(
+                    (card) => card.hasTrait("R'hllor") && card.getType() === 'character'
+                ),
             gameAction: GameActions.search({
                 title: 'Select a character',
-                match: { type: 'character', trait: 'R\'hllor', condition: (card, context) => card.hasPrintedCost() && card.getPrintedCost() <= context.costs.sacrifice.getPrintedCost() },
+                match: {
+                    type: 'character',
+                    trait: "R'hllor",
+                    condition: (card, context) =>
+                        card.hasPrintedCost() &&
+                        card.getPrintedCost() <= context.costs.sacrifice.getPrintedCost()
+                },
                 message: '{player} {gameAction}',
-                gameAction: GameActions.addToHand(context => ({
+                gameAction: GameActions.addToHand((context) => ({
                     card: context.searchTarget
                 }))
             })
@@ -22,4 +31,4 @@ class SacrificedToTheRedGod extends DrawCard {
 
 SacrificedToTheRedGod.code = '08088';
 
-module.exports = SacrificedToTheRedGod;
+export default SacrificedToTheRedGod;

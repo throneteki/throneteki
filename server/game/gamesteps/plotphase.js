@@ -1,9 +1,9 @@
-const Phase = require('./phase.js');
-const SimpleStep = require('./simplestep.js');
-const SelectPlotPrompt = require('./plot/selectplotprompt.js');
-const RevealPlots = require('./revealplots.js');
-const ChooseTitlePrompt = require('./plot/ChooseTitlePrompt.js');
-const ActionWindow = require('./actionwindow.js');
+import Phase from './phase.js';
+import SimpleStep from './simplestep.js';
+import SelectPlotPrompt from './plot/selectplotprompt.js';
+import RevealPlots from './revealplots.js';
+import ChooseTitlePrompt from './plot/ChooseTitlePrompt.js';
+import ActionWindow from './actionwindow.js';
 
 class PlotPhase extends Phase {
     constructor(game) {
@@ -21,44 +21,48 @@ class PlotPhase extends Phase {
     }
 
     clearNewCards() {
-        for(const card of this.game.allCards) {
+        for (const card of this.game.allCards) {
             card.new = false;
         }
     }
 
     startPlotPhase() {
-        for(const player of this.game.getPlayers()) {
+        for (const player of this.game.getPlayers()) {
             player.resetForStartOfRound();
         }
     }
 
     announceForcedPlotSelection() {
-        for(const player of this.game.getPlayers()) {
-            if(player.mustRevealPlot) {
+        for (const player of this.game.getPlayers()) {
+            if (player.mustRevealPlot) {
                 this.game.addMessage('{0} is forced to select a plot', player);
-            } else if(player.hasFlag('cannotRevealPlot')) {
+            } else if (player.hasFlag('cannotRevealPlot')) {
                 this.game.addMessage('{0} cannot reveal a new plot', player);
             }
         }
     }
 
     choosePlots() {
-        let choosingPlayers = this.game.getPlayers().filter(player => !player.mustRevealPlot && !player.hasFlag('cannotRevealPlot'));
+        let choosingPlayers = this.game
+            .getPlayers()
+            .filter((player) => !player.mustRevealPlot && !player.hasFlag('cannotRevealPlot'));
         this.game.raiseEvent('onChoosePlot', { players: choosingPlayers }, () => {
             this.game.queueStep(new SelectPlotPrompt(this.game));
         });
     }
 
     recyclePlots() {
-        for(const player of this.game.getPlayers()) {
+        for (const player of this.game.getPlayers()) {
             player.recyclePlots();
         }
     }
 
     getSelectedPlots() {
-        const revealingPlayers = this.game.getPlayers().filter(player => !!player.selectedPlot && !player.hasFlag('cannotRevealPlot'));
-        return revealingPlayers.map(player => player.selectedPlot);
+        const revealingPlayers = this.game
+            .getPlayers()
+            .filter((player) => !!player.selectedPlot && !player.hasFlag('cannotRevealPlot'));
+        return revealingPlayers.map((player) => player.selectedPlot);
     }
 }
 
-module.exports = PlotPhase;
+export default PlotPhase;

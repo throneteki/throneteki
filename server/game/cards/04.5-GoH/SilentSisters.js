@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class SilentSisters extends DrawCard {
     setupCardAbilities(ability) {
@@ -11,4 +11,4 @@ class SilentSisters extends DrawCard {
 
 SilentSisters.code = '04097';
 
-module.exports = SilentSisters;
+export default SilentSisters;

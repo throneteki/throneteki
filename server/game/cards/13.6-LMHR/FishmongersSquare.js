@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class FishmongersSquare extends DrawCard {
     setupCardAbilities(ability) {
@@ -6,14 +6,16 @@ class FishmongersSquare extends DrawCard {
             title: 'Draw card and gain gold',
             phase: 'marshal',
             cost: ability.costs.kneelSelf(),
-            condition: context => this.opponentDiscardPileHas10() && (context.player.canDraw() || context.player.canGainGold()),
-            handler: context => {
+            condition: (context) =>
+                this.opponentDiscardPileHas10() &&
+                (context.player.canDraw() || context.player.canGainGold()),
+            handler: (context) => {
                 let messageSegments = [];
-                if(context.player.canDraw()) {
+                if (context.player.canDraw()) {
                     context.player.drawCardsToHand(1);
                     messageSegments.push('draw 1 card');
                 }
-                if(context.player.canGainGold()) {
+                if (context.player.canGainGold()) {
                     this.game.addGold(context.player, 1);
                     messageSegments.push('gain 1 gold');
                 }
@@ -25,10 +27,10 @@ class FishmongersSquare extends DrawCard {
 
     opponentDiscardPileHas10() {
         let opponents = this.game.getOpponents(this.controller);
-        return opponents.some(opponent => opponent.discardPile.length >= 10);
+        return opponents.some((opponent) => opponent.discardPile.length >= 10);
     }
 }
 
 FishmongersSquare.code = '13112';
 
-module.exports = FishmongersSquare;
+export default FishmongersSquare;

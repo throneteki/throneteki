@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class DragonEgg extends DrawCard {
     setupCardAbilities(ability) {
@@ -9,7 +9,8 @@ class DragonEgg extends DrawCard {
 
         this.reaction({
             when: {
-                onPhaseStarted: event => event.phase === 'marshal' && this.parent.name === 'Daenerys Targaryen'
+                onPhaseStarted: (event) =>
+                    event.phase === 'marshal' && this.parent.name === 'Daenerys Targaryen'
             },
             cost: ability.costs.sacrificeSelf(),
             message: '{player} uses {source} to search their deck for a Hatchling character',
@@ -18,7 +19,7 @@ class DragonEgg extends DrawCard {
                 match: { type: 'character', trait: 'Hatchling' },
                 reveal: false,
                 message: '{player} {gameAction}',
-                gameAction: GameActions.putIntoPlay(context => ({
+                gameAction: GameActions.putIntoPlay((context) => ({
                     player: context.player,
                     card: context.searchTarget
                 }))
@@ -29,4 +30,4 @@ class DragonEgg extends DrawCard {
 
 DragonEgg.code = '15020';
 
-module.exports = DragonEgg;
+export default DragonEgg;

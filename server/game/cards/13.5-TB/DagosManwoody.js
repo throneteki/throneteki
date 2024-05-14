@@ -1,14 +1,11 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class DagosManwoody extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.numOfTraitsInUsedPile() >= 5,
             match: this,
-            effect: [
-                ability.effects.addKeyword('Stealth'),
-                ability.effects.addKeyword('Renown')
-            ]
+            effect: [ability.effects.addKeyword('Stealth'), ability.effects.addKeyword('Renown')]
         });
     }
 
@@ -20,4 +17,4 @@ class DagosManwoody extends DrawCard {
 
 DagosManwoody.code = '13095';
 
-module.exports = DagosManwoody;
+export default DagosManwoody;

@@ -1,9 +1,9 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class PriestOfTheDrownedGod extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: card => card.getType() === 'character' && card.hasTrait('Drowned God'),
+            match: (card) => card.getType() === 'character' && card.hasTrait('Drowned God'),
             effect: ability.effects.modifyStrength(1)
         });
     }
@@ -11,4 +11,4 @@ class PriestOfTheDrownedGod extends DrawCard {
 
 PriestOfTheDrownedGod.code = '02072';
 
-module.exports = PriestOfTheDrownedGod;
+export default PriestOfTheDrownedGod;

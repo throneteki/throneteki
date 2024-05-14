@@ -1,18 +1,26 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class ShadowPriestess extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardOutOfShadows: event => event.card === this
+                onCardOutOfShadows: (event) => event.card === this
             },
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.attachments.length === 0,
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    card.attachments.length === 0,
                 gameAction: 'kneel'
             },
-            handler: context => {
+            handler: (context) => {
                 this.controller.kneelCard(context.target);
-                this.game.addMessage('{0} uses {1} to kneel {2}', this.controller, this, context.target);
+                this.game.addMessage(
+                    '{0} uses {1} to kneel {2}',
+                    this.controller,
+                    this,
+                    context.target
+                );
             }
         });
     }
@@ -20,4 +28,4 @@ class ShadowPriestess extends DrawCard {
 
 ShadowPriestess.code = '11008';
 
-module.exports = ShadowPriestess;
+export default ShadowPriestess;

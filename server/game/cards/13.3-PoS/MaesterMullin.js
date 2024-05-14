@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const ChallengeTypes = require('../../ChallengeTypes');
+import DrawCard from '../../drawcard.js';
+import ChallengeTypes from '../../ChallengeTypes.js';
 
 class MaesterMullin extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,7 +7,8 @@ class MaesterMullin extends DrawCard {
             title: 'Kneel to choose a character',
             cost: ability.costs.kneelSelf(),
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character'
+                cardCondition: (card) =>
+                    card.location === 'play area' && card.getType() === 'character'
             },
             handler: (context) => {
                 this.selectedCharacter = context.target;
@@ -24,15 +25,19 @@ class MaesterMullin extends DrawCard {
     }
 
     selectChallengeType(player, challengeType) {
-        this.untilEndOfPhase(ability => ({
+        this.untilEndOfPhase((ability) => ({
             condition: () => this.game.isDuringChallenge({ challengeType }),
             match: this.selectedCharacter,
             effect: ability.effects.cannotBeDeclaredAsAttacker()
-
         }));
 
-        this.game.addMessage('{0} uses {1} to make {2} unable to be declared as an attacker in {3} challenges this phase',
-            player, this, this.selectedCharacter, challengeType);
+        this.game.addMessage(
+            '{0} uses {1} to make {2} unable to be declared as an attacker in {3} challenges this phase',
+            player,
+            this,
+            this.selectedCharacter,
+            challengeType
+        );
 
         this.selectedCharacter = null;
 
@@ -42,4 +47,4 @@ class MaesterMullin extends DrawCard {
 
 MaesterMullin.code = '13045';
 
-module.exports = MaesterMullin;
+export default MaesterMullin;

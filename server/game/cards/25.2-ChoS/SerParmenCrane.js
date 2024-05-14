@@ -1,9 +1,15 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class SerParmenCrane extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.controller.anyCardsInPlay(card => card !== this && card.getType() === 'character' && card.hasTrait('Rainbow Guard')),
+            condition: () =>
+                this.controller.anyCardsInPlay(
+                    (card) =>
+                        card !== this &&
+                        card.getType() === 'character' &&
+                        card.hasTrait('Rainbow Guard')
+                ),
             match: this,
             effect: ability.effects.addKeyword('renown')
         });
@@ -12,4 +18,4 @@ class SerParmenCrane extends DrawCard {
 
 SerParmenCrane.code = '25035';
 
-module.exports = SerParmenCrane;
+export default SerParmenCrane;

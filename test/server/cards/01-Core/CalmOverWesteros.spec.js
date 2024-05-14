@@ -1,8 +1,9 @@
-describe('Calm Over Westeros', function() {
-    integration(function() {
-        beforeEach(function() {
+describe('Calm Over Westeros', function () {
+    integration(function () {
+        beforeEach(function () {
             const deck = this.buildDeck('lannister', [
-                'Calm Over Westeros', 'A Noble Cause',
+                'Calm Over Westeros',
+                'A Noble Cause',
                 'The Tickler'
             ]);
             this.player1.selectDeck(deck);
@@ -23,8 +24,8 @@ describe('Calm Over Westeros', function() {
             this.completeMarshalPhase();
         });
 
-        describe('when applying claim to the reduced challenge type', function() {
-            beforeEach(function() {
+        describe('when applying claim to the reduced challenge type', function () {
+            beforeEach(function () {
                 this.player2.clickPrompt('Military');
                 this.player2.clickCard('The Tickler', 'play area');
                 this.player2.clickPrompt('Done');
@@ -38,13 +39,15 @@ describe('Calm Over Westeros', function() {
                 this.player2.clickPrompt('Apply Claim');
             });
 
-            it('should not apply that claim', function() {
-                expect(this.player1).not.toHavePrompt('Select 1 character to fulfill military claim');
+            it('should not apply that claim', function () {
+                expect(this.player1).not.toHavePrompt(
+                    'Select 1 character to fulfill military claim'
+                );
             });
         });
 
-        describe('when applying claim to another challenge type', function() {
-            beforeEach(function() {
+        describe('when applying claim to another challenge type', function () {
+            beforeEach(function () {
                 this.player2.clickPrompt('Intrigue');
                 this.player2.clickCard('The Tickler', 'play area');
                 this.player2.clickPrompt('Done');
@@ -58,7 +61,7 @@ describe('Calm Over Westeros', function() {
                 this.player2.clickPrompt('Apply Claim');
             });
 
-            it('should apply that claim as normal', function() {
+            it('should apply that claim as normal', function () {
                 expect(this.player1Object.discardPile.length).toBe(1);
             });
         });

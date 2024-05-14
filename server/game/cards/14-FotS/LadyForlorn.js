@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class LadyForlorn extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,16 +7,18 @@ class LadyForlorn extends DrawCard {
         });
 
         this.whileAttached({
-            match: card => card.name === 'Lyn Corbray',
+            match: (card) => card.name === 'Lyn Corbray',
             effect: ability.effects.addIcon('power')
         });
     }
 
     getSTR() {
-        return this.controller.getNumberOfCardsInPlay(card => card.getType() === 'location' && card.isFaction('neutral'));
+        return this.controller.getNumberOfCardsInPlay(
+            (card) => card.getType() === 'location' && card.isFaction('neutral')
+        );
     }
 }
 
 LadyForlorn.code = '14043';
 
-module.exports = LadyForlorn;
+export default LadyForlorn;

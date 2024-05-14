@@ -1,6 +1,6 @@
-const AbilityAdapter = require('../GameActions/AbilityAdapter');
-const BaseStep = require('./basestep');
-const RevealCards = require('../GameActions/RevealCards');
+import AbilityAdapter from '../GameActions/AbilityAdapter.js';
+import BaseStep from './basestep.js';
+import RevealCards from '../GameActions/RevealCards.js';
 
 /**
  * Prompt that will search the player's deck, present them with matching cards,
@@ -38,7 +38,7 @@ class DeckSearchPrompt extends BaseStep {
 
         this.choosingPlayer = choosingPlayer;
         this.properties = Object.assign({}, this.defaultProperties(), properties);
-        if(!Array.isArray(this.properties.cardType)) {
+        if (!Array.isArray(this.properties.cardType)) {
             this.properties.cardType = [this.properties.cardType];
         }
     }
@@ -58,36 +58,51 @@ class DeckSearchPrompt extends BaseStep {
         let context = { selectedCards: [], game: this.game, source: this.properties.source };
         let validCards = this.searchCards(context);
         let revealFunc = this.revealDrawDeckCards.bind(this);
-        let modeProps = this.properties.numToSelect ? { mode: 'upTo', numCards: this.properties.numToSelect } : {};
-        let revealGameAction = this.properties.reveal ? new AbilityAdapter(RevealCards, context => ({ cards: Array.isArray(context.result) ? context.result : [context.result], player: context.player })) : null;
+        let modeProps = this.properties.numToSelect
+            ? { mode: 'upTo', numCards: this.properties.numToSelect }
+            : {};
+        let revealGameAction = this.properties.reveal
+            ? new AbilityAdapter(RevealCards, (context) => ({
+                  cards: Array.isArray(context.result) ? context.result : [context.result],
+                  player: context.player
+              }))
+            : null;
 
         this.game.cardVisibility.addRule(revealFunc);
-        this.game.promptForSelect(this.choosingPlayer, Object.assign(modeProps, {
-            activePromptTitle: this.properties.activePromptTitle,
-            context: context,
-            cardCondition: (card, context) => (validCards.includes(card) || this.inAdditionalLocation(card)) && this.checkCardCondition(card, context),
-            onSelect: (player, result) => {
-                this.game.cardVisibility.removeRule(revealFunc);
-                if(revealGameAction) {
-                    context.result = result;
-                    context.player = this.choosingPlayer;
-                    this.game.resolveGameAction(revealGameAction, context)
-                        .thenExecute(revealEvent => this.evaluateOnSelect(player, result, revealEvent.revealed))
-                        .thenExecute(() => this.queueShuffle());
+        this.game.promptForSelect(
+            this.choosingPlayer,
+            Object.assign(modeProps, {
+                activePromptTitle: this.properties.activePromptTitle,
+                context: context,
+                cardCondition: (card, context) =>
+                    (validCards.includes(card) || this.inAdditionalLocation(card)) &&
+                    this.checkCardCondition(card, context),
+                onSelect: (player, result) => {
+                    this.game.cardVisibility.removeRule(revealFunc);
+                    if (revealGameAction) {
+                        context.result = result;
+                        context.player = this.choosingPlayer;
+                        this.game
+                            .resolveGameAction(revealGameAction, context)
+                            .thenExecute((revealEvent) =>
+                                this.evaluateOnSelect(player, result, revealEvent.revealed)
+                            )
+                            .thenExecute(() => this.queueShuffle());
+                        return true;
+                    }
+                    this.properties.onSelect(player, result, result);
+                    this.queueShuffle();
                     return true;
-                }
-                this.properties.onSelect(player, result, result);
-                this.queueShuffle();
-                return true;
-            },
-            onCancel: (player, result) => {
-                this.game.cardVisibility.removeRule(revealFunc);
-                this.properties.onCancel(player, result);
-                this.queueShuffle();
-                return true;
-            },
-            source: this.properties.source
-        }));
+                },
+                onCancel: (player, result) => {
+                    this.game.cardVisibility.removeRule(revealFunc);
+                    this.properties.onCancel(player, result);
+                    this.queueShuffle();
+                    return true;
+                },
+                source: this.properties.source
+            })
+        );
     }
 
     queueShuffle() {
@@ -99,19 +114,21 @@ class DeckSearchPrompt extends BaseStep {
 
     evaluateOnSelect(player, searched, revealed) {
         // Filtering valid cards to those which were successfully revealed & are still in search locations
-        let valid = revealed.filter(card => card.location === 'draw deck' || this.inAdditionalLocation(card));
+        let valid = revealed.filter(
+            (card) => card.location === 'draw deck' || this.inAdditionalLocation(card)
+        );
         // Converting valid to be same format as to what onSelect expects (Array or single object)
-        valid = this.properties.numToSelect ? valid : (valid.length > 0 ? valid[0] : null);
+        valid = this.properties.numToSelect ? valid : valid.length > 0 ? valid[0] : null;
 
         this.properties.onSelect(player, searched, valid);
     }
 
     revealDrawDeckCards(card, player) {
-        if(player !== this.choosingPlayer) {
+        if (player !== this.choosingPlayer) {
             return false;
         }
 
-        if(this.properties.numCards) {
+        if (this.properties.numCards) {
             let cards = this.choosingPlayer.searchDrawDeck(this.properties.numCards);
             return cards.includes(card);
         }
@@ -120,20 +137,28 @@ class DeckSearchPrompt extends BaseStep {
     }
 
     searchCards(context) {
-        if(this.properties.numCards) {
-            return this.choosingPlayer.searchDrawDeck(this.properties.numCards, card => this.checkCardCondition(card, context));
+        if (this.properties.numCards) {
+            return this.choosingPlayer.searchDrawDeck(this.properties.numCards, (card) =>
+                this.checkCardCondition(card, context)
+            );
         }
 
-        return this.choosingPlayer.searchDrawDeck(card => this.checkCardCondition(card, context));
+        return this.choosingPlayer.searchDrawDeck((card) => this.checkCardCondition(card, context));
     }
 
     inAdditionalLocation(card) {
-        return this.properties.additionalLocations.includes(card.location) && card.controller === this.choosingPlayer;
+        return (
+            this.properties.additionalLocations.includes(card.location) &&
+            card.controller === this.choosingPlayer
+        );
     }
 
     checkCardCondition(card, context) {
-        return this.properties.cardType.includes(card.getType()) && this.properties.cardCondition(card, context);
+        return (
+            this.properties.cardType.includes(card.getType()) &&
+            this.properties.cardCondition(card, context)
+        );
     }
 }
 
-module.exports = DeckSearchPrompt;
+export default DeckSearchPrompt;

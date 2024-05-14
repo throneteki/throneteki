@@ -1,17 +1,18 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class ScoutingVessel extends DrawCard {
     setupCardAbilities(ability) {
         this.interrupt({
             when: {
-                onTopCardsDiscarded: event => event.source.getType() === 'character' && event.source.controller === this.controller && event.isPillage
+                onTopCardsDiscarded: (event) =>
+                    event.source.getType() === 'character' &&
+                    event.source.controller === this.controller &&
+                    event.isPillage
             },
-            cost: [
-                ability.costs.kneelSelf(),
-                ability.costs.sacrificeSelf()
-            ],
-            message: '{player} kneels and sacrifices {source} to discard 3 cards with pillage instead of 1',
-            handler: context => {
+            cost: [ability.costs.kneelSelf(), ability.costs.sacrificeSelf()],
+            message:
+                '{player} kneels and sacrifices {source} to discard 3 cards with pillage instead of 1',
+            handler: (context) => {
                 context.event.amount += 2;
             }
         });
@@ -20,4 +21,4 @@ class ScoutingVessel extends DrawCard {
 
 ScoutingVessel.code = '12020';
 
-module.exports = ScoutingVessel;
+export default ScoutingVessel;

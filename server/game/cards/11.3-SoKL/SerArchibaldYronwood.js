@@ -1,16 +1,18 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class SerArchibaldYronwood extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onDominanceDetermined: event => event.winner && this.controller !== event.winner
+                onDominanceDetermined: (event) => event.winner && this.controller !== event.winner
             },
-            handler: context => {
+            handler: (context) => {
                 this.game.promptForSelect(context.event.winner, {
                     source: this,
-                    cardCondition: card => card.location === 'play area' && card.controller === context.event.winner &&
-                                           card.getType() === 'character',
+                    cardCondition: (card) =>
+                        card.location === 'play area' &&
+                        card.controller === context.event.winner &&
+                        card.getType() === 'character',
                     gameAction: 'kill',
                     onSelect: (player, card) => this.onCardSelected(player, card),
                     onCancel: (player) => this.cancelSelection(player)
@@ -20,7 +22,13 @@ class SerArchibaldYronwood extends DrawCard {
     }
     onCardSelected(player, card) {
         this.game.killCharacter(card);
-        this.game.addMessage('{0} uses {1} to have {2} choose and kill {3}', this.controller, this, player, card);
+        this.game.addMessage(
+            '{0} uses {1} to have {2} choose and kill {3}',
+            this.controller,
+            this,
+            player,
+            card
+        );
         return true;
     }
 
@@ -32,4 +40,4 @@ class SerArchibaldYronwood extends DrawCard {
 
 SerArchibaldYronwood.code = '11055';
 
-module.exports = SerArchibaldYronwood;
+export default SerArchibaldYronwood;

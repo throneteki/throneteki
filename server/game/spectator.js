@@ -17,4 +17,4 @@ class Spectator {
     }
 }
 
-module.exports = Spectator;
+export default Spectator;

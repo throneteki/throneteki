@@ -1,10 +1,13 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TheOldHawk extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.game.anyPlotHasTrait('Summer'),
-            match: card => card.getType() === 'character' && card.isFaction('martell') && card.getStrength() >= 6,
+            match: (card) =>
+                card.getType() === 'character' &&
+                card.isFaction('martell') &&
+                card.getStrength() >= 6,
             effect: ability.effects.addKeyword('renown')
         });
     }
@@ -12,4 +15,4 @@ class TheOldHawk extends DrawCard {
 
 TheOldHawk.code = '25027';
 
-module.exports = TheOldHawk;
+export default TheOldHawk;

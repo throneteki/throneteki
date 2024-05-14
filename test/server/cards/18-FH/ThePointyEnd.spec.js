@@ -1,9 +1,13 @@
-describe('The Pointy End', function() {
-    integration(function() {
-        beforeEach(function() {
+describe('The Pointy End', function () {
+    integration(function () {
+        beforeEach(function () {
             const deck1 = this.buildDeck('tyrell', [
                 'The Pointy End',
-                'Ygritte', 'Ygritte', 'Noble Lineage', 'Noble Lineage', 'Hedge Knight'
+                'Ygritte',
+                'Ygritte',
+                'Noble Lineage',
+                'Noble Lineage',
+                'Hedge Knight'
             ]);
             this.player1.selectDeck(deck1);
             this.player2.selectDeck(deck1);
@@ -11,7 +15,10 @@ describe('The Pointy End', function() {
             this.keepStartingHands();
 
             [this.ygritte1, this.ygritte2] = this.player1.filterCardsByName('Ygritte', 'hand');
-            [this.attachment1, this.attachment2] = this.player1.filterCardsByName('Noble Lineage', 'hand');
+            [this.attachment1, this.attachment2] = this.player1.filterCardsByName(
+                'Noble Lineage',
+                'hand'
+            );
             this.hedge = this.player1.findCardByName('Hedge Knight');
             this.player1.clickCard(this.ygritte1);
             this.player1.clickCard(this.ygritte2);
@@ -35,8 +42,8 @@ describe('The Pointy End', function() {
             this.player1.clickPrompt('player1 - The Pointy End');
         });
 
-        describe('after The Pointy End is revealed', function() {
-            it('it should ask the player to choose a character and discard each power and dupe from it', function() {
+        describe('after The Pointy End is revealed', function () {
+            it('it should ask the player to choose a character and discard each power and dupe from it', function () {
                 expect(this.player1).toHavePrompt('Select a character');
                 this.player1.clickCard(this.ygritte1);
                 expect(this.ygritte1.dupes.length).toBe(0);
@@ -44,7 +51,7 @@ describe('The Pointy End', function() {
                 expect(this.ygritte1.getPower()).toBe(0);
             });
 
-            it('it should ask the player to choose a character and discard each attachment from it', function() {
+            it('it should ask the player to choose a character and discard each attachment from it', function () {
                 expect(this.player1).toHavePrompt('Select a character');
                 this.player1.clickCard(this.hedge);
                 expect(this.hedge.attachments.length).toBe(0);

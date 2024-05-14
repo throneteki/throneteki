@@ -1,12 +1,13 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class KingBalonsSolar extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onInitiativeDetermined: event => event.winner === this.controller && this.controller.canGainGold()
+                onInitiativeDetermined: (event) =>
+                    event.winner === this.controller && this.controller.canGainGold()
             },
-            handler: context => {
+            handler: (context) => {
                 this.game.addGold(context.player, 1);
                 this.game.addMessage('{0} uses {1} to gain 1 gold', context.player, this);
             }
@@ -16,4 +17,4 @@ class KingBalonsSolar extends DrawCard {
 
 KingBalonsSolar.code = '04072';
 
-module.exports = KingBalonsSolar;
+export default KingBalonsSolar;

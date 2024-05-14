@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import moment from 'moment';
 
 import Form from '../Components/Form/Form';
@@ -28,22 +28,22 @@ class NewsAdmin extends React.Component {
 
     componentWillReceiveProps(props) {
         let clearStatus = false;
-        if(props.newsAdded) {
+        if (props.newsAdded) {
             clearStatus = true;
             this.setState({ successMessage: 'News item added successfully.' });
         }
 
-        if(props.newsDeleted) {
+        if (props.newsDeleted) {
             clearStatus = true;
             this.setState({ successMessage: 'News item deleted successfully.' });
         }
 
-        if(props.newsSaved) {
+        if (props.newsSaved) {
             clearStatus = true;
             this.setState({ successMessage: 'News item saved successfully.' });
         }
 
-        if(clearStatus) {
+        if (clearStatus) {
             setTimeout(() => {
                 this.props.clearNewsStatus();
                 this.setState({ successMessage: undefined });
@@ -79,52 +79,102 @@ class NewsAdmin extends React.Component {
     }
 
     render() {
-        if(this.props.apiState && this.props.apiState.loading) {
+        if (this.props.apiState && this.props.apiState.loading) {
             return 'Loading news, please wait...';
         }
 
         let statusBar;
 
-        switch(this.state.currentRequest) {
+        switch (this.state.currentRequest) {
             case 'REQUEST_NEWS':
-                statusBar = <ApiStatus apiState={ this.props.apiState } successMessage={ this.state.successMessage } />;
+                statusBar = (
+                    <ApiStatus
+                        apiState={this.props.apiState}
+                        successMessage={this.state.successMessage}
+                    />
+                );
                 break;
             case 'ADD_NEWS':
-                statusBar = <ApiStatus apiState={ this.props.apiAddState } successMessage={ this.state.successMessage } />;
+                statusBar = (
+                    <ApiStatus
+                        apiState={this.props.apiAddState}
+                        successMessage={this.state.successMessage}
+                    />
+                );
                 break;
             case 'DELETE_NEWS':
-                statusBar = <ApiStatus apiState={ this.props.apiDeleteState } successMessage={ this.state.successMessage } />;
+                statusBar = (
+                    <ApiStatus
+                        apiState={this.props.apiDeleteState}
+                        successMessage={this.state.successMessage}
+                    />
+                );
                 break;
             case 'SAVE_NEWS':
-                statusBar = <ApiStatus apiState={ this.props.apiSaveState } successMessage={ this.state.successMessage } />;
+                statusBar = (
+                    <ApiStatus
+                        apiState={this.props.apiSaveState}
+                        successMessage={this.state.successMessage}
+                    />
+                );
                 break;
         }
 
-        let renderedNews = this.props.news.map(newsItem => {
-            return (<tr key={ newsItem._id }>
-                <td>{ moment(newsItem.datePublished).format('YYYY-MM-DD') }</td>
-                <td>{ newsItem.poster }</td>
-                <td>
-                    { this.state.editItemId === newsItem._id ?
-                        <TextArea name='newsEditText' value={ this.state.editText } onChange={ this.onEditTextChange.bind(this) } rows='4' /> :
-                        newsItem.text }
-                </td>
-                <td>
-                    <div className='btn-group'>
-                        { this.state.editItemId === newsItem._id ?
-                            <button type='button' className='btn btn-primary' onClick={ this.onSaveClick }>Save</button> :
-                            <button type='button' className='btn btn-primary' onClick={ this.onEditClick.bind(this, newsItem) }>Edit</button>
-                        }
-                        <button type='button' className='btn btn-danger' onClick={ this.onDeleteClick.bind(this, newsItem._id) }>Delete { this.props.apiDeleteState &&
-                            this.props.apiDeleteState.loading && <span className='spinner button-spinner' /> }</button>
-                    </div>
-                </td>
-            </tr>);
+        let renderedNews = this.props.news.map((newsItem) => {
+            return (
+                <tr key={newsItem._id}>
+                    <td>{moment(newsItem.datePublished).format('YYYY-MM-DD')}</td>
+                    <td>{newsItem.poster}</td>
+                    <td>
+                        {this.state.editItemId === newsItem._id ? (
+                            <TextArea
+                                name='newsEditText'
+                                value={this.state.editText}
+                                onChange={this.onEditTextChange.bind(this)}
+                                rows='4'
+                            />
+                        ) : (
+                            newsItem.text
+                        )}
+                    </td>
+                    <td>
+                        <div className='btn-group'>
+                            {this.state.editItemId === newsItem._id ? (
+                                <button
+                                    type='button'
+                                    className='btn btn-primary'
+                                    onClick={this.onSaveClick}
+                                >
+                                    Save
+                                </button>
+                            ) : (
+                                <button
+                                    type='button'
+                                    className='btn btn-primary'
+                                    onClick={this.onEditClick.bind(this, newsItem)}
+                                >
+                                    Edit
+                                </button>
+                            )}
+                            <button
+                                type='button'
+                                className='btn btn-danger'
+                                onClick={this.onDeleteClick.bind(this, newsItem._id)}
+                            >
+                                Delete{' '}
+                                {this.props.apiDeleteState && this.props.apiDeleteState.loading && (
+                                    <span className='spinner button-spinner' />
+                                )}
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            );
         });
 
         return (
             <div className='col-xs-12'>
-                { statusBar }
+                {statusBar}
                 <Panel title='News administration'>
                     <table className='table table-striped'>
                         <thead>
@@ -135,16 +185,20 @@ class NewsAdmin extends React.Component {
                                 <th className='col-sm-2'>Action</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            { renderedNews }
-                        </tbody>
+                        <tbody>{renderedNews}</tbody>
                     </table>
                 </Panel>
                 <Panel title='Add new news item'>
-                    <Form name='newsAdmin' apiLoading={ this.props.apiAddState && this.props.apiAddState.loading } buttonClass='col-sm-offset-2 col-sm-4' buttonText='Add' onSubmit={ this.onAddNewsClick } />
+                    <Form
+                        name='newsAdmin'
+                        apiLoading={this.props.apiAddState && this.props.apiAddState.loading}
+                        buttonClass='col-sm-offset-2 col-sm-4'
+                        buttonText='Add'
+                        onSubmit={this.onAddNewsClick}
+                    />
                 </Panel>
-            </div>);
-
+            </div>
+        );
     }
 }
 

@@ -1,11 +1,11 @@
-const PlotCard = require('../../plotcard');
+import PlotCard from '../../plotcard.js';
 
 class LoanFromTheIronBank extends PlotCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             location: 'any',
             condition: () => this.location === 'revealed plots',
-            match: card => card === card.controller.activePlot,
+            match: (card) => card === card.controller.activePlot,
             targetController: 'current',
             effect: ability.effects.modifyGold(-1)
         });
@@ -14,4 +14,4 @@ class LoanFromTheIronBank extends PlotCard {
 
 LoanFromTheIronBank.code = '15051';
 
-module.exports = LoanFromTheIronBank;
+export default LoanFromTheIronBank;

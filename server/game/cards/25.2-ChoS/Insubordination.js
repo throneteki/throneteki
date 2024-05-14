@@ -1,11 +1,15 @@
-const GameActions = require('../../GameActions/index.js');
-const DrawCard = require('../../drawcard.js');
+import GameActions from '../../GameActions/index.js';
+import DrawCard from '../../drawcard.js';
 
 class Insubordination extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onChallengeInitiated: event => event.challenge.isMatch({ initiatedAgainstPlayer: this.controller, attackingAlone: this.parent })
+                onChallengeInitiated: (event) =>
+                    event.challenge.isMatch({
+                        initiatedAgainstPlayer: this.controller,
+                        attackingAlone: this.parent
+                    })
             },
             cost: ability.costs.kneelSelf(),
             message: {
@@ -19,4 +23,4 @@ class Insubordination extends DrawCard {
 
 Insubordination.code = '25030';
 
-module.exports = Insubordination;
+export default Insubordination;

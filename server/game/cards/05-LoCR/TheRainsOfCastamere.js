@@ -1,5 +1,5 @@
-const AgendaCard = require('../../agendacard');
-const RevealPlots = require('../../gamesteps/revealplots');
+import AgendaCard from '../../agendacard.js';
+import RevealPlots from '../../gamesteps/revealplots.js';
 
 class TheRainsOfCastamere extends AgendaCard {
     constructor(owner, cardData) {
@@ -11,7 +11,8 @@ class TheRainsOfCastamere extends AgendaCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.challengeType === 'intrigue' &&
+                afterChallenge: (event) =>
+                    event.challenge.challengeType === 'intrigue' &&
                     event.challenge.winner === this.owner &&
                     event.challenge.strengthDifference >= 5 &&
                     !this.owner.hasFlag('cannotRevealPlot')
@@ -20,10 +21,13 @@ class TheRainsOfCastamere extends AgendaCard {
             target: {
                 type: 'select',
                 activePromptTitle: 'Select a plot',
-                cardCondition: card => card.controller === this.controller && card.hasTrait('scheme') && card.location === 'plot deck',
+                cardCondition: (card) =>
+                    card.controller === this.controller &&
+                    card.hasTrait('scheme') &&
+                    card.location === 'plot deck',
                 cardType: 'plot'
             },
-            handler: context => this.trigger(context)
+            handler: (context) => this.trigger(context)
         });
 
         this.action({
@@ -33,15 +37,16 @@ class TheRainsOfCastamere extends AgendaCard {
             target: {
                 type: 'select',
                 activePromptTitle: 'Select a plot',
-                cardCondition: card => card.controller === this.controller && card.hasTrait('scheme'),
+                cardCondition: (card) =>
+                    card.controller === this.controller && card.hasTrait('scheme'),
                 cardType: 'plot'
             },
-            handler: context => this.trigger(context)
+            handler: (context) => this.trigger(context)
         });
 
         this.persistentEffect({
             condition: () => this.game.currentPhase === 'plot',
-            match: card => card.getType() === 'plot' && card.hasTrait('Scheme'),
+            match: (card) => card.getType() === 'plot' && card.hasTrait('Scheme'),
             targetController: 'current',
             targetLocation: 'plot deck',
             effect: ability.effects.notConsideredToBeInPlotDeck()
@@ -49,15 +54,19 @@ class TheRainsOfCastamere extends AgendaCard {
     }
 
     trigger(context) {
-        this.game.addMessage('{0} uses {1} and kneels their faction card to reveal {2}',
-            context.player, this, context.target);
+        this.game.addMessage(
+            '{0} uses {1} and kneels their faction card to reveal {2}',
+            context.player,
+            this,
+            context.target
+        );
 
         context.player.selectedPlot = context.target;
         this.game.queueStep(new RevealPlots(this.game, [context.target]));
     }
 
     onPlotDiscarded(event) {
-        if(event.card.controller === this.controller && event.card.hasTrait('Scheme')) {
+        if (event.card.controller === this.controller && event.card.hasTrait('Scheme')) {
             this.owner.moveCard(event.card, 'out of game');
         }
     }
@@ -65,4 +74,4 @@ class TheRainsOfCastamere extends AgendaCard {
 
 TheRainsOfCastamere.code = '05045';
 
-module.exports = TheRainsOfCastamere;
+export default TheRainsOfCastamere;

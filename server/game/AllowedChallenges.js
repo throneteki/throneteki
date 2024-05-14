@@ -1,4 +1,4 @@
-const AllowedChallenge = require('./AllowedChallenge');
+import AllowedChallenge from './AllowedChallenge.js';
 
 class AllowedChallenges {
     constructor(player) {
@@ -15,7 +15,7 @@ class AllowedChallenges {
 
     get numInitiated() {
         return this.allowedChallenges.reduce((count, allowance) => {
-            if(allowance.used) {
+            if (allowance.used) {
                 return count + 1;
             }
 
@@ -24,41 +24,47 @@ class AllowedChallenges {
     }
 
     track(challenge) {
-        if(challenge.attackingPlayer === this.player) {
+        if (challenge.attackingPlayer === this.player) {
             this.useAllowedChallenge(challenge);
         }
     }
 
     useAllowedChallenge(challenge) {
-        let allowedChallenge = this.allowedChallenges.find(allowedChallenge => allowedChallenge.isMatch(challenge.initiatedChallengeType, challenge.defendingPlayer));
-        if(allowedChallenge) {
+        let allowedChallenge = this.allowedChallenges.find((allowedChallenge) =>
+            allowedChallenge.isMatch(challenge.initiatedChallengeType, challenge.defendingPlayer)
+        );
+        if (allowedChallenge) {
             allowedChallenge.markUsed(challenge);
         }
     }
 
     untrack(challenge) {
-        let allowedChallenge = this.allowedChallenges.find(allowedChallenge => allowedChallenge.challenge === challenge && allowedChallenge.used);
-        if(allowedChallenge) {
+        let allowedChallenge = this.allowedChallenges.find(
+            (allowedChallenge) => allowedChallenge.challenge === challenge && allowedChallenge.used
+        );
+        if (allowedChallenge) {
             allowedChallenge.resetUsage();
         }
     }
 
     reset() {
-        for(let allowedChallenge of this.allowedChallenges) {
+        for (let allowedChallenge of this.allowedChallenges) {
             allowedChallenge.resetUsage();
         }
     }
 
     canInitiate(challengeType, opponent) {
-        if(!!this.maxTotal && this.numInitiated >= this.maxTotal) {
+        if (!!this.maxTotal && this.numInitiated >= this.maxTotal) {
             return false;
         }
 
-        if(this.restrictions.some(restriction => restriction.isMatch(challengeType, opponent))) {
+        if (this.restrictions.some((restriction) => restriction.isMatch(challengeType, opponent))) {
             return false;
         }
 
-        return this.allowedChallenges.some(allowedChallenge => allowedChallenge.isMatch(challengeType, opponent));
+        return this.allowedChallenges.some((allowedChallenge) =>
+            allowedChallenge.isMatch(challengeType, opponent)
+        );
     }
 
     setMax(max) {
@@ -74,7 +80,7 @@ class AllowedChallenges {
     }
 
     removeRestriction(restriction) {
-        this.restrictions = this.restrictions.filter(r => r !== restriction);
+        this.restrictions = this.restrictions.filter((r) => r !== restriction);
     }
 
     addAllowedChallenge(allowedChallenge) {
@@ -82,11 +88,11 @@ class AllowedChallenges {
     }
 
     removeAllowedChallenge(allowedChallenge) {
-        let index = this.allowedChallenges.findIndex(a => a === allowedChallenge);
-        if(index !== -1) {
+        let index = this.allowedChallenges.findIndex((a) => a === allowedChallenge);
+        if (index !== -1) {
             this.allowedChallenges.splice(index, 1);
         }
     }
 }
 
-module.exports = AllowedChallenges;
+export default AllowedChallenges;

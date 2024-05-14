@@ -1,24 +1,23 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class HiddenThorns extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             max: ability.limit.perChallenge(1),
             when: {
-                afterChallenge: event => (
+                afterChallenge: (event) =>
                     event.challenge.winner === this.controller &&
                     event.challenge.challengeType === 'intrigue' &&
                     event.challenge.strengthDifference >= 5
-                )
             },
-            handler: context => {
+            handler: (context) => {
                 let loser = context.event.challenge.loser;
                 this.game.promptForSelect(loser, {
                     numCards: 2,
                     activePromptTitle: 'Select 2 cards',
-                    cardCondition: card => card.controller === loser && card.location === 'hand',
+                    cardCondition: (card) => card.controller === loser && card.location === 'hand',
                     onSelect: (player, cards) => this.discardCards(player, cards),
-                    onCancel: player => this.cancelResolution(player)
+                    onCancel: (player) => this.cancelResolution(player)
                 });
             }
         });
@@ -26,12 +25,18 @@ class HiddenThorns extends DrawCard {
 
     discardCards(player, cards) {
         player.discardCards(cards);
-        this.game.addMessage('{0} uses {1} to make {2} choose and discard {3}', this.controller, this, player, cards);
+        this.game.addMessage(
+            '{0} uses {1} to make {2} choose and discard {3}',
+            this.controller,
+            this,
+            player,
+            cards
+        );
 
-        if(this.controller.anyCardsInPlay(card => card.name === 'The Queen of Thorns')) {
-            this.lastingEffect(ability => ({
+        if (this.controller.anyCardsInPlay((card) => card.name === 'The Queen of Thorns')) {
+            this.lastingEffect((ability) => ({
                 until: {
-                    onCardPlayed: event => event.card === this
+                    onCardPlayed: (event) => event.card === this
                 },
                 targetLocation: 'any',
                 match: this,
@@ -51,4 +56,4 @@ class HiddenThorns extends DrawCard {
 
 HiddenThorns.code = '09024';
 
-module.exports = HiddenThorns;
+export default HiddenThorns;

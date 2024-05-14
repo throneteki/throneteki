@@ -1,10 +1,10 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TheWolfswood extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetLocation: 'hand',
-            match: card => card.hasTrait('Direwolf'),
+            match: (card) => card.hasTrait('Direwolf'),
             effect: ability.effects.gainAmbush()
         });
     }
@@ -12,4 +12,4 @@ class TheWolfswood extends DrawCard {
 
 TheWolfswood.code = '01155';
 
-module.exports = TheWolfswood;
+export default TheWolfswood;

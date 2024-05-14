@@ -1,10 +1,13 @@
-describe('Dynamic keyword sources', function() {
-    integration(function() {
-        describe('handling loops between Shagwell and Patchface', function() {
-            beforeEach(function() {
+describe('Dynamic keyword sources', function () {
+    integration(function () {
+        describe('handling loops between Shagwell and Patchface', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('stark', [
                     'Trading with the Pentoshi',
-                    'Shagwell', 'Patchface', 'Moon Boy', 'Maester Wendamyr'
+                    'Shagwell',
+                    'Patchface',
+                    'Moon Boy',
+                    'Maester Wendamyr'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
@@ -34,30 +37,42 @@ describe('Dynamic keyword sources', function() {
                 this.player1.clickCard(this.stealthCharacter);
             });
 
-            it('spreads the keywords', function() {
-                expect(this.shagwell.getKeywords()).toEqual(jasmine.arrayWithExactContents(['bestow (1)', 'insight', 'stealth']));
-                expect(this.patchface.getKeywords()).toEqual(jasmine.arrayWithExactContents(['bestow (1)', 'insight', 'stealth']));
+            it('spreads the keywords', function () {
+                expect(this.shagwell.getKeywords()).toEqual(
+                    jasmine.arrayWithExactContents(['bestow (1)', 'insight', 'stealth'])
+                );
+                expect(this.patchface.getKeywords()).toEqual(
+                    jasmine.arrayWithExactContents(['bestow (1)', 'insight', 'stealth'])
+                );
             });
 
-            describe('when a keyword source leaves play', function() {
-                it('removes the keyword', function() {
+            describe('when a keyword source leaves play', function () {
+                it('removes the keyword', function () {
                     this.player1.dragCard(this.moonboy, 'discard pile');
                     this.player1.dragCard(this.stealthCharacter, 'discard pile');
 
-                    expect(this.shagwell.getKeywords()).toEqual(jasmine.arrayWithExactContents(['bestow (1)']));
-                    expect(this.patchface.getKeywords()).toEqual(jasmine.arrayWithExactContents(['bestow (1)']));
+                    expect(this.shagwell.getKeywords()).toEqual(
+                        jasmine.arrayWithExactContents(['bestow (1)'])
+                    );
+                    expect(this.patchface.getKeywords()).toEqual(
+                        jasmine.arrayWithExactContents(['bestow (1)'])
+                    );
                 });
             });
 
-            describe('when a keyword source is no longer valid', function() {
-                it('removes the keyword', function() {
+            describe('when a keyword source is no longer valid', function () {
+                it('removes the keyword', function () {
                     this.stealthCharacter.modifyGold(-1);
                     this.patchface.modifyGold(-1);
                     // Take some harmless action to ensure effects are recalculated after manually adding gold
                     this.player1.clickCard(this.stealthCharacter);
 
-                    expect(this.shagwell.getKeywords()).toEqual(jasmine.arrayWithExactContents(['bestow (1)']));
-                    expect(this.patchface.getKeywords()).toEqual(jasmine.arrayWithExactContents(['bestow (1)', 'insight']));
+                    expect(this.shagwell.getKeywords()).toEqual(
+                        jasmine.arrayWithExactContents(['bestow (1)'])
+                    );
+                    expect(this.patchface.getKeywords()).toEqual(
+                        jasmine.arrayWithExactContents(['bestow (1)', 'insight'])
+                    );
                 });
             });
         });

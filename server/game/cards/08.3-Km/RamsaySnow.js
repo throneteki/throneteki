@@ -1,22 +1,32 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class RamsaySnow extends DrawCard {
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                onCardEntersPlay: event => event.card === this
+                onCardEntersPlay: (event) => event.card === this
             },
             target: {
                 choosingPlayer: 'each',
                 ifAble: true,
-                cardCondition: (card, context) => card.location === 'play area' && card.controller === context.choosingPlayer && card.getType() === 'character'
+                cardCondition: (card, context) =>
+                    card.location === 'play area' &&
+                    card.controller === context.choosingPlayer &&
+                    card.getType() === 'character'
             },
-            handler: context => {
-                let selections = context.targets.selections.filter(selection => !!selection.value);
+            handler: (context) => {
+                let selections = context.targets.selections.filter(
+                    (selection) => !!selection.value
+                );
                 this.game.resolveGameAction(
                     GameActions.simultaneously(
-                        selections.map(selection => GameActions.sacrificeCard({ player: selection.choosingPlayer, card: selection.value }))
+                        selections.map((selection) =>
+                            GameActions.sacrificeCard({
+                                player: selection.choosingPlayer,
+                                card: selection.value
+                            })
+                        )
                     )
                 );
             }
@@ -26,4 +36,4 @@ class RamsaySnow extends DrawCard {
 
 RamsaySnow.code = '08041';
 
-module.exports = RamsaySnow;
+export default RamsaySnow;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class LadyInWaiting extends DrawCard {
     setupCardAbilities() {
@@ -7,10 +7,14 @@ class LadyInWaiting extends DrawCard {
             condition: () => this.canMarshalAsDupe(),
             cannotBeCanceled: true,
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.hasTrait('Lady') &&
-                card.controller === this.controller && card.owner === this.controller
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    card.hasTrait('Lady') &&
+                    card.controller === this.controller &&
+                    card.owner === this.controller
             },
-            handler: context => {
+            handler: (context) => {
                 this.marshalAsDupe(context.target);
             }
         });
@@ -21,7 +25,9 @@ class LadyInWaiting extends DrawCard {
             this.game.currentPhase === 'marshal' &&
             this.controller.canPutIntoPlay(this, 'marshal') &&
             this.controller.isCardInPlayableLocation(this, 'marshal') &&
-            this.controller.anyCardsInPlay(card => card.getType() === 'character' && card.hasTrait('Lady'))
+            this.controller.anyCardsInPlay(
+                (card) => card.getType() === 'character' && card.hasTrait('Lady')
+            )
         );
     }
 
@@ -35,4 +41,4 @@ class LadyInWaiting extends DrawCard {
 
 LadyInWaiting.code = '02023';
 
-module.exports = LadyInWaiting;
+export default LadyInWaiting;

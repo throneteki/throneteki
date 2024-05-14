@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class MaesterCressen extends DrawCard {
     setupCardAbilities(ability) {
@@ -8,12 +8,20 @@ class MaesterCressen extends DrawCard {
             cost: ability.costs.kneelSelf(),
             target: {
                 activePromptTitle: 'Select an attachment',
-                cardCondition: card => card.location === 'play area' && card.getType() === 'attachment' && card.hasTrait('condition')
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'attachment' &&
+                    card.hasTrait('condition')
             },
-            handler: context => {
+            handler: (context) => {
                 this.controller.discardCard(context.target);
 
-                this.game.addMessage('{0} uses {1} to discard {2}', this.controller, this, context.target);
+                this.game.addMessage(
+                    '{0} uses {1} to discard {2}',
+                    this.controller,
+                    this,
+                    context.target
+                );
             }
         });
     }
@@ -21,4 +29,4 @@ class MaesterCressen extends DrawCard {
 
 MaesterCressen.code = '01046';
 
-module.exports = MaesterCressen;
+export default MaesterCressen;

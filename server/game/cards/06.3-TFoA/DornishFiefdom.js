@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class DornishFiefdom extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,7 +7,7 @@ class DornishFiefdom extends DrawCard {
             phase: 'marshal',
             condition: () => this.controller.canGainGold(),
             cost: ability.costs.kneelSelf(),
-            handler: context => {
+            handler: (context) => {
                 let gold = !this.controller.firstPlayer ? 2 : 1;
                 gold = this.game.addGold(context.player, gold);
 
@@ -19,4 +19,4 @@ class DornishFiefdom extends DrawCard {
 
 DornishFiefdom.code = '06056';
 
-module.exports = DornishFiefdom;
+export default DornishFiefdom;

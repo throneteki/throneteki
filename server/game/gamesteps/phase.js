@@ -1,7 +1,7 @@
-const BaseStep = require('./basestep.js');
-const GamePipeline = require('../gamepipeline.js');
-const SimpleStep = require('./simplestep.js');
-const EndPhase = require('../GameActions/EndPhase');
+import BaseStep from './basestep.js';
+import GamePipeline from '../gamepipeline.js';
+import SimpleStep from './simplestep.js';
+import EndPhase from '../GameActions/EndPhase.js';
 
 class Phase extends BaseStep {
     constructor(game, name) {
@@ -52,4 +52,4 @@ class Phase extends BaseStep {
     }
 }
 
-module.exports = Phase;
+export default Phase;

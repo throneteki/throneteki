@@ -1,5 +1,5 @@
-const PlotCard = require('../../plotcard.js');
-const EventPlayedTracker = require('../../EventTrackers/EventPlayedTracker');
+import PlotCard from '../../plotcard.js';
+import EventPlayedTracker from '../../EventTrackers/EventPlayedTracker.js';
 
 class TheAnnalsOfCastleBlack extends PlotCard {
     setupCardAbilities(ability) {
@@ -7,19 +7,25 @@ class TheAnnalsOfCastleBlack extends PlotCard {
 
         this.persistentEffect({
             targetController: 'any',
-            match: player => this.tracker.getNumberOfPlayedEvents(player, 'discard pile') < 2,
+            match: (player) => this.tracker.getNumberOfPlayedEvents(player, 'discard pile') < 2,
             effect: ability.effects.canPlayFromOwn('discard pile')
         });
 
         this.forcedReaction({
             when: {
-                onCardPlaced: event => event.card.getType() === 'event' && event.location === 'discard pile'
+                onCardPlaced: (event) =>
+                    event.card.getType() === 'event' && event.location === 'discard pile'
             },
-            handler: context => {
+            handler: (context) => {
                 let eventCard = context.event.card;
                 let player = eventCard.controller;
 
-                this.game.addMessage('{0} is forced by {1} to remove {2} from the game', player, this, eventCard);
+                this.game.addMessage(
+                    '{0} is forced by {1} to remove {2} from the game',
+                    player,
+                    this,
+                    eventCard
+                );
                 player.moveCard(eventCard, 'out of game');
             }
         });
@@ -28,4 +34,4 @@ class TheAnnalsOfCastleBlack extends PlotCard {
 
 TheAnnalsOfCastleBlack.code = '17158';
 
-module.exports = TheAnnalsOfCastleBlack;
+export default TheAnnalsOfCastleBlack;

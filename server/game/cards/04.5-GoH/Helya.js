@@ -1,10 +1,10 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Helya extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetController: 'any',
-            match: card => card.getType() === 'attachment',
+            match: (card) => card.getType() === 'attachment',
             effect: ability.effects.addKeyword('Terminal')
         });
     }
@@ -12,4 +12,4 @@ class Helya extends DrawCard {
 
 Helya.code = '04091';
 
-module.exports = Helya;
+export default Helya;

@@ -1,14 +1,17 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class FilthyAccusations extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && !card.kneeled,
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    !card.kneeled,
                 gameAction: 'kneel'
             },
             message: '{player} uses {source} to kneel {target}',
-            handler: context => {
+            handler: (context) => {
                 context.player.kneelCard(context.target);
             }
         });
@@ -17,4 +20,4 @@ class FilthyAccusations extends PlotCard {
 
 FilthyAccusations.code = '01011';
 
-module.exports = FilthyAccusations;
+export default FilthyAccusations;
