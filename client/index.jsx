@@ -31,7 +31,7 @@ $.validator.setDefaults({
 import ErrorBoundary from './Components/Site/ErrorBoundary';
 
 const sentryOptions = {
-    dsn: 'https://f5286cd580bf46898e7180c7a46de2f6@o57348.ingest.us.sentry.io/123019',
+    dsn: import.meta.env.SENTRY_KEY,
     denyUrls: [
         // Facebook flakiness
         /graph\.facebook\.com/i,
@@ -69,7 +69,9 @@ const sentryOptions = {
     includeLocalVariables: true
 };
 
-Sentry.init(sentryOptions);
+if (import.meta.env.SENTRY_KEY) {
+    Sentry.init(sentryOptions);
+}
 
 const store = configureStore();
 
