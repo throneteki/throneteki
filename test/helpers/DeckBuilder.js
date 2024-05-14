@@ -3,9 +3,11 @@
 import fs from 'fs';
 
 import path from 'path';
-import url from 'url';
 
 import { matchCardByNameAndPack } from './cardutil.js';
+
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
 
 class DeckBuilder {
     async loadCards(directory) {
@@ -14,13 +16,11 @@ class DeckBuilder {
         let jsonPacks = fs.readdirSync(directory).filter((file) => file.endsWith('.json'));
 
         for (let file of jsonPacks) {
-            let pack = await import(url.pathToFileURL(path.join(directory, file)), {
-                assert: { type: 'json' }
-            });
+            let pack = require(path.join(directory, file));
 
-            for (let card of pack.default.cards) {
-                card.packCode = pack.default.code;
-                card.releaseDate = pack.default.releaseDate;
+            for (let card of pack.cards) {
+                card.packCode = pack.code;
+                card.releaseDate = pack.releaseDate;
                 cards[card.code] = card;
             }
         }
