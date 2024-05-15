@@ -1,10 +1,10 @@
 /*eslint no-console:0 */
 
-const fs = require('fs');
-const mkdirp = require('mkdirp');
-const path = require('path');
+import fs from 'fs';
 
-const CardService = require('../../services/CardService.js');
+import { mkdirp } from 'mkdirp';
+import path from 'path';
+import CardService from '../../services/CardService.js';
 
 class CardImport {
     constructor(db, dataSource, imageSource, imageDir) {
@@ -64,4 +64,4 @@ class CardImport {
     }
 }
 
-module.exports = CardImport;
+export default CardImport;

@@ -1,7 +1,8 @@
 /*eslint no-console:0 */
-const fs = require('fs');
-const path = require('path');
-const _ = require('underscore');
+import fs from 'fs';
+
+import path from 'path';
+import _ from 'underscore';
 
 class JsonCardSource {
     constructor(directory) {
@@ -60,4 +61,4 @@ class JsonCardSource {
     }
 }
 
-module.exports = JsonCardSource;
+export default JsonCardSource;

@@ -57,6 +57,7 @@
         "lodash.range": "^3.2.0",
         "lodash.sample": "^4.2.1",
         "lodash.shuffle": "^4.2.0",
+        "mkdirp": "^3.0.1",
         "moment": "^2.21.0",
         "mongodb": "^3.7.4",
         "monk": "^7.3.4",

@@ -1,7 +1,7 @@
 /*eslint no-console:0 */
-const fs = require('fs');
-const jimp = require('jimp');
-const request = require('request');
+import fs from 'fs';
+
+import jimp from 'jimp';
 
 class CardgameDbImageSource {
     constructor() {
@@ -15,7 +15,7 @@ class CardgameDbImageSource {
         );
     }
 
-    fetchImage(card, imagePath) {
+    async fetchImage(card, imagePath) {
         let pack = this.packs.find((pack) => pack.code === card.packCode);
         if (!pack) {
             console.log(
@@ -40,26 +40,20 @@ class CardgameDbImageSource {
             url = `http://lcg-cdn.fantasyflightgames.com/got2nd/GT${cgdbId}_${cardNumber}.jpg`;
         }
 
-        request({ url: url, encoding: null }, function (err, response, body) {
-            if (err || response.statusCode !== 200) {
-                console.log(`Unable to fetch image for ${card.code} from ${url}`);
-                return;
-            }
-            console.log(
-                'Downloading ' +
-                    (pack.workInProgress ? 'latest Work in Progress ' : '') +
-                    'image for ' +
-                    card.code
-            );
-            jimp.read(body)
-                .then((lenna) => {
-                    lenna.write(imagePath);
-                })
-                .catch((err) => {
-                    console.log(`Error converting image for ${card.code}: ${err}`);
-                });
-        });
+        console.log(
+            'Downloading ' +
+                (pack.workInProgress ? 'latest Work in Progress ' : '') +
+                'image for ' +
+                card.code
+        );
+        jimp.read(url)
+            .then((lenna) => {
+                lenna.write(imagePath);
+            })
+            .catch((err) => {
+                console.log(`Error converting image for ${card.code}: ${err}`);
+            });
     }
 }
 
-module.exports = CardgameDbImageSource;
+export default CardgameDbImageSource;
