@@ -1,0 +1,34 @@
+{
+	"name": "Throneteki - Dev Container",
+	"dockerComposeFile": ["../docker-compose.yml", "../docker-compose.dev.yml"],
+	"service": "throneteki",
+	"workspaceFolder": "/workspaces/throneteki",
+	"remoteUser": "root",
+	"postCreateCommand": {
+		"npm": "npm install",
+		"createConfig": "cp -n config/default.json5 config/local.json5"
+	},
+	// Git commands must be postStartCommand, as local .gitconfig not copied until after postCreateCommand
+	"postStartCommand": {
+		"submodule": "git submodule update --init",
+		"unixLineEndings": "git config --global core.autocrlf input", // Ensures Git expects Unix line endings (LF)
+		"fetchData": "node server/scripts/fetchdata.js && node server/scripts/importstandalonedecks.js"
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"mongodb.mongodb-vscode",
+				"dbaeumer.vscode-eslint",
+				"ms-azuretools.vscode-docker"
+			]
+		}
+	},
+	"portsAttributes": {
+		"4000": {
+			"label": "Client/Lobby"
+		},
+		"9500": {
+			"label": "Gamenode"
+		}
+	}
+}

@@ -1,0 +1,11 @@
+services:
+  throneteki:
+    image: "node:16"
+    user: "node"
+    volumes:
+      - .:/workspaces/throneteki:cached
+    command: sleep infinity
+    network_mode: service:mongo
+volumes:
+  mongodb:
+    name: throneteki_db
