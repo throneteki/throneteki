@@ -101,5 +101,5 @@ render(
             </ErrorBoundary>
         </div>
     </Provider>,
-    document.getElementById('container')
+    document.getElementById('component')
 );
