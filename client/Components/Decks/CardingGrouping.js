@@ -4,14 +4,14 @@ const CardGrouping = {
     type: {
         generateGroup: (card, { useSchemes = false }) => {
             let typeCode = card.type;
-            if(!typeCode) {
+            if (!typeCode) {
                 return null;
             }
 
             let type = typeCode[0].toUpperCase() + typeCode.slice(1);
 
-            if(useSchemes) {
-                if(card.traits.some(trait => trait.toLowerCase() === 'scheme')) {
+            if (useSchemes) {
+                if (card.traits.some((trait) => trait.toLowerCase() === 'scheme')) {
                     type = 'Scheme';
                 }
             }
@@ -29,7 +29,7 @@ const CardGrouping = {
         generateGroup: (card) => {
             const value = card.type === 'plot' ? card.plotStats.income : card.cost;
 
-            if(!value && value !== 0) {
+            if (!value && value !== 0) {
                 return 'None';
             }
 
@@ -39,11 +39,11 @@ const CardGrouping = {
             const numA = Number(a);
             const numB = Number(b);
 
-            if(isNaN(numA)) {
+            if (isNaN(numA)) {
                 return 1;
             }
 
-            if(isNaN(numB)) {
+            if (isNaN(numB)) {
                 return -1;
             }
 
@@ -55,15 +55,15 @@ const CardGrouping = {
 
 const CardSortOrder = {
     faction: (a, b) => {
-        if(a.faction === b.faction) {
+        if (a.faction === b.faction) {
             return a.name < b.name ? -1 : 1;
         }
 
-        if(a.faction === 'neutral') {
+        if (a.faction === 'neutral') {
             return 1;
         }
 
-        if(b.faction === 'neutral') {
+        if (b.faction === 'neutral') {
             return -1;
         }
 
@@ -78,13 +78,13 @@ export function groupCards({ cards, groupBy, sortCardsBy, useSchemes }) {
     const cardGrouping = CardGrouping[groupBy];
 
     let groupedCards = {};
-    for(const cardQuantity of cards) {
+    for (const cardQuantity of cards) {
         let group = cardGrouping.generateGroup(cardQuantity.card, { useSchemes });
-        if(!group) {
+        if (!group) {
             continue;
         }
 
-        if(!groupedCards[group]) {
+        if (!groupedCards[group]) {
             groupedCards[group] = [cardQuantity];
         } else {
             groupedCards[group].push(cardQuantity);
@@ -93,12 +93,12 @@ export function groupCards({ cards, groupBy, sortCardsBy, useSchemes }) {
 
     const compareCards = CardSortOrder[sortCardsBy];
 
-    for(const type in groupedCards) {
+    for (const type in groupedCards) {
         groupedCards[type].sort((a, b) => compareCards(a.card, b.card));
     }
 
     const groupsArray = [];
-    for(const [group, cardsForGroup] of Object.entries(groupedCards)) {
+    for (const [group, cardsForGroup] of Object.entries(groupedCards)) {
         groupsArray.push({ group, title: cardGrouping.title(group), cards: cardsForGroup });
     }
 

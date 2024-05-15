@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TheBountyOfHighgarden extends DrawCard {
     setupCardAbilities() {
@@ -6,7 +6,7 @@ class TheBountyOfHighgarden extends DrawCard {
             title: 'Gain 5 gold',
             condition: () => this.controller.canGainGold(),
             cannotBeCanceled: true,
-            handler: context => {
+            handler: (context) => {
                 let gold = this.game.addGold(context.player, 5);
                 this.game.addMessage('{0} plays {1} to gain {2} gold', context.player, this, gold);
             }
@@ -16,4 +16,4 @@ class TheBountyOfHighgarden extends DrawCard {
 
 TheBountyOfHighgarden.code = '08044';
 
-module.exports = TheBountyOfHighgarden;
+export default TheBountyOfHighgarden;

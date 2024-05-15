@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class GreyWind extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,23 +7,32 @@ class GreyWind extends DrawCard {
             cost: ability.costs.kneelSelf(),
             phase: 'challenge',
             target: {
-                cardCondition: card => this.cardCondition(card),
+                cardCondition: (card) => this.cardCondition(card),
                 gameAction: 'kill'
             },
-            handler: context => {
+            handler: (context) => {
                 context.target.controller.killCharacter(context.target);
-                this.game.addMessage('{0} kneels {1} to kill {2}', context.player, this, context.target);
+                this.game.addMessage(
+                    '{0} kneels {1} to kill {2}',
+                    context.player,
+                    this,
+                    context.target
+                );
             }
         });
     }
 
     cardCondition(card) {
-        let str = this.controller.anyCardsInPlay(card => card.name === 'Robb Stark') ? 2 : 1;
+        let str = this.controller.anyCardsInPlay((card) => card.name === 'Robb Stark') ? 2 : 1;
 
-        return card.getStrength() <= str && card.location === 'play area' && card.getType() === 'character';
+        return (
+            card.getStrength() <= str &&
+            card.location === 'play area' &&
+            card.getType() === 'character'
+        );
     }
 }
 
 GreyWind.code = '01145';
 
-module.exports = GreyWind;
+export default GreyWind;

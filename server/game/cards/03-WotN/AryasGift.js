@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class AryasGift extends DrawCard {
     setupCardAbilities() {
@@ -7,23 +7,27 @@ class AryasGift extends DrawCard {
             target: {
                 type: 'select',
                 activePromptTitle: 'Select an attachment',
-                cardCondition: card => card.location === 'play area' && card.getType() === 'attachment' && card.parent &&
-                                       card.parent.isFaction('stark') && card.parent.getType() === 'character' && 
-                                       card.parent.controller === this.controller
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'attachment' &&
+                    card.parent &&
+                    card.parent.isFaction('stark') &&
+                    card.parent.getType() === 'character' &&
+                    card.parent.controller === this.controller
             },
-            handler: context => {
+            handler: (context) => {
                 let attachment = context.target;
                 let oldParent = attachment.parent;
 
                 this.game.promptForSelect(context.player, {
-                    cardCondition: card => (
+                    cardCondition: (card) =>
                         card.getType() === 'character' &&
                         card.controller === context.player &&
                         card !== oldParent &&
                         attachment.controller.canAttach(attachment, card) &&
-                        card.location === 'play area'
-                    ),
-                    onSelect: (player, card) => this.moveAttachment(player, card, attachment, oldParent)
+                        card.location === 'play area',
+                    onSelect: (player, card) =>
+                        this.moveAttachment(player, card, attachment, oldParent)
                 });
             }
         });
@@ -31,11 +35,18 @@ class AryasGift extends DrawCard {
 
     moveAttachment(player, newParent, attachment, oldParent) {
         player.attach(attachment.controller, attachment, newParent);
-        this.game.addMessage('{0} plays {1} to move {2} from {3} to {4}', player, this, attachment, oldParent, newParent);
+        this.game.addMessage(
+            '{0} plays {1} to move {2} from {3} to {4}',
+            player,
+            this,
+            attachment,
+            oldParent,
+            newParent
+        );
         return true;
     }
 }
 
 AryasGift.code = '03024';
 
-module.exports = AryasGift;
+export default AryasGift;

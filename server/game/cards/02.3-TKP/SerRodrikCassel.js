@@ -1,13 +1,11 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class SerRodrikCassel extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => (
-                this.isAttacking() &&
-                this.game.isDuringChallenge({ challengeType: 'military' })
-            ),
-            match: card => card.isUnique() && card.isFaction('stark'),
+            condition: () =>
+                this.isAttacking() && this.game.isDuringChallenge({ challengeType: 'military' }),
+            match: (card) => card.isUnique() && card.isFaction('stark'),
             effect: ability.effects.addKeyword('Insight')
         });
     }
@@ -15,4 +13,4 @@ class SerRodrikCassel extends DrawCard {
 
 SerRodrikCassel.code = '02041';
 
-module.exports = SerRodrikCassel;
+export default SerRodrikCassel;

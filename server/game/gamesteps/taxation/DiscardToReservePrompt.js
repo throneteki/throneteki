@@ -1,4 +1,4 @@
-const BaseStep = require('../basestep');
+import BaseStep from '../basestep.js';
 
 class DiscardToReservePrompt extends BaseStep {
     constructor(game, source) {
@@ -8,10 +8,10 @@ class DiscardToReservePrompt extends BaseStep {
     }
 
     continue() {
-        while(this.remainingPlayers.length !== 0) {
+        while (this.remainingPlayers.length !== 0) {
             let currentPlayer = this.remainingPlayers.shift();
 
-            if(currentPlayer.isBelowReserve()) {
+            if (currentPlayer.isBelowReserve()) {
                 this.game.addMessage('{0} is already below their reserve value', currentPlayer);
             } else {
                 this.promptPlayerToDiscard(currentPlayer);
@@ -28,9 +28,10 @@ class DiscardToReservePrompt extends BaseStep {
             ordered: true,
             mode: 'exactly',
             numCards: overReserve,
-            activePromptTitle: 'Select ' + overReserve + ' cards to discard down to reserve (top first)',
+            activePromptTitle:
+                'Select ' + overReserve + ' cards to discard down to reserve (top first)',
             waitingPromptTitle: 'Waiting for opponent to discard down to reserve',
-            cardCondition: card => card.location === 'hand' && card.controller === currentPlayer,
+            cardCondition: (card) => card.location === 'hand' && card.controller === currentPlayer,
             onSelect: (player, cards) => this.discardCards(player, cards),
             onCancel: (player) => this.cancelSelection(player),
             source: this.source
@@ -41,9 +42,14 @@ class DiscardToReservePrompt extends BaseStep {
         // Reverse the order selection so that the first card selected ends up
         // on the top of the discard pile.
         cards = cards.reverse();
-        player.discardCards(cards, false, () => {
-            this.game.addMessage('{0} discards {1} to meet reserve', player, cards);
-        }, {source: 'reserve'});
+        player.discardCards(
+            cards,
+            false,
+            () => {
+                this.game.addMessage('{0} discards {1} to meet reserve', player, cards);
+            },
+            { source: 'reserve' }
+        );
         return true;
     }
 
@@ -54,4 +60,4 @@ class DiscardToReservePrompt extends BaseStep {
     }
 }
 
-module.exports = DiscardToReservePrompt;
+export default DiscardToReservePrompt;

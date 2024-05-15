@@ -1,11 +1,8 @@
-describe('Pleasure Barge', function() {
-    integration(function() {
-        describe('gold modifier', function() {
-            beforeEach(function() {
-                const deck = this.buildDeck('Tyrell', [
-                    'A Noble Cause',
-                    'Pleasure Barge'
-                ]);
+describe('Pleasure Barge', function () {
+    integration(function () {
+        describe('gold modifier', function () {
+            beforeEach(function () {
+                const deck = this.buildDeck('Tyrell', ['A Noble Cause', 'Pleasure Barge']);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
                 this.startGame();
@@ -18,17 +15,20 @@ describe('Pleasure Barge', function() {
                 this.selectFirstPlayer(this.player1);
             });
 
-            it('reduces gold properly', function() {
+            it('reduces gold properly', function () {
                 // 5 gold from plot - 1 gold from Pleasure Barge
                 expect(this.player1Object.gold).toBe(4);
             });
         });
 
-        describe('immunity vs card effects', function() {
-            beforeEach(function() {
+        describe('immunity vs card effects', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('Tyrell', [
-                    'A Noble Cause', 'Political Disaster',
-                    'Pleasure Barge', 'The Roseroad', 'Highgarden (Core)'
+                    'A Noble Cause',
+                    'Political Disaster',
+                    'Pleasure Barge',
+                    'The Roseroad',
+                    'Highgarden (Core)'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
@@ -54,7 +54,7 @@ describe('Pleasure Barge', function() {
                 this.player2.clickPrompt('Done');
             });
 
-            it('is not affected by card effects', function() {
+            it('is not affected by card effects', function () {
                 // Pleasure Barge is immune to all card effects, which means that
                 // even though it wasn't chosen to be kept for Political Disaster,
                 // it should not be discarded from play.

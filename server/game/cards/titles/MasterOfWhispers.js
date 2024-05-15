@@ -1,4 +1,4 @@
-const TitleCard = require('../../TitleCard.js');
+import TitleCard from '../../TitleCard.js';
 
 class MasterOfWhispers extends TitleCard {
     setupCardAbilities(ability) {
@@ -9,11 +9,12 @@ class MasterOfWhispers extends TitleCard {
             effect: ability.effects.applyClaimToMultipleOpponents('intrigue')
         });
         this.persistentEffect({
-            condition: () => (
+            condition: () =>
                 this.game.currentChallenge &&
                 this.game.currentChallenge.challengeType === 'intrigue' &&
-                this.game.currentChallenge.anyParticipants(card => card.controller === this.controller)
-            ),
+                this.game.currentChallenge.anyParticipants(
+                    (card) => card.controller === this.controller
+                ),
             targetController: 'current',
             effect: ability.effects.contributeStrength(this, 1)
         });
@@ -22,4 +23,4 @@ class MasterOfWhispers extends TitleCard {
 
 MasterOfWhispers.code = '01206';
 
-module.exports = MasterOfWhispers;
+export default MasterOfWhispers;

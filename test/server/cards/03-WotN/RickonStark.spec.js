@@ -1,12 +1,14 @@
-const {Tokens} = require('../../../../server/game/Constants');
+import { Tokens } from '../../../../server/game/Constants/index.js';
 
-describe('Rickon Stark', function() {
-    integration(function() {
-        describe('when a normal search would be triggered', function() {
-            beforeEach(function() {
+describe('Rickon Stark', function () {
+    integration(function () {
+        describe('when a normal search would be triggered', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('stark', [
-                    'A Noble Cause', 'Here to Serve',
-                    'Rickon Stark', 'Maester Aemon (Core)'
+                    'A Noble Cause',
+                    'Here to Serve',
+                    'Rickon Stark',
+                    'Maester Aemon (Core)'
                 ]);
 
                 this.player1.selectDeck(deck);
@@ -21,43 +23,40 @@ describe('Rickon Stark', function() {
                 this.player1.clickCard(this.rickon);
 
                 this.completeSetup();
-                
+
                 // Search effect requires card in deck to actually trigger
                 this.player1.dragCard(this.p1deckCard, 'draw deck');
                 this.player2.dragCard(this.p2deckCard, 'draw deck');
             });
 
-            describe('and the search is for the opponent', function() {
-                beforeEach(function() {
+            describe('and the search is for the opponent', function () {
+                beforeEach(function () {
                     this.player1.selectPlot('A Noble Cause');
                     this.player2.selectPlot('Here to Serve');
                     this.selectFirstPlayer(this.player1);
                 });
 
-                it('allows Rickon to cancel', function() {
+                it('allows Rickon to cancel', function () {
                     expect(this.player1).toAllowAbilityTrigger(this.rickon);
                 });
             });
 
-            describe('and the search is for the current player', function() {
-                beforeEach(function() {
+            describe('and the search is for the current player', function () {
+                beforeEach(function () {
                     this.player1.selectPlot('Here to Serve');
                     this.player2.selectPlot('A Noble Cause');
                     this.selectFirstPlayer(this.player1);
                 });
 
-                it('allows Rickon to cancel', function() {
+                it('allows Rickon to cancel', function () {
                     expect(this.player1).toAllowAbilityTrigger(this.rickon);
                 });
             });
         });
 
-        describe('when an ability has search under a choice or Then', function() {
-            beforeEach(function() {
-                const deck1 = this.buildDeck('stark', [
-                    'A Noble Cause',
-                    'Rickon Stark'
-                ]);
+        describe('when an ability has search under a choice or Then', function () {
+            beforeEach(function () {
+                const deck1 = this.buildDeck('stark', ['A Noble Cause', 'Rickon Stark']);
                 const deck2 = this.buildDeck('greyjoy', [
                     'Sea of Blood (KotI)',
                     'A Noble Cause',
@@ -91,11 +90,11 @@ describe('Rickon Stark', function() {
                 this.player2.triggerAbility('Sea of Blood');
             });
 
-            it('allows Rickon to cancel the ability', function() {
+            it('allows Rickon to cancel the ability', function () {
                 expect(this.player1).toAllowAbilityTrigger(this.rickon);
             });
 
-            it('cancels the full ability before the choice / Then', function() {
+            it('cancels the full ability before the choice / Then', function () {
                 this.player1.triggerAbility(this.rickon);
 
                 // Ensure costs were paid but the pre-then effect didn't resolve
@@ -104,11 +103,12 @@ describe('Rickon Stark', function() {
             });
         });
 
-        describe('when a keyword triggers and the card has the word search in it', function() {
-            beforeEach(function() {
+        describe('when a keyword triggers and the card has the word search in it', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('stark', [
                     'A Noble Cause',
-                    'Rickon Stark', 'Euron Crow\'s Eye (KotI)'
+                    'Rickon Stark',
+                    "Euron Crow's Eye (KotI)"
                 ]);
 
                 this.player1.selectDeck(deck);
@@ -117,7 +117,7 @@ describe('Rickon Stark', function() {
                 this.keepStartingHands();
 
                 this.rickon = this.player1.findCardByName('Rickon Stark', 'hand');
-                this.euron = this.player2.findCardByName('Euron Crow\'s Eye', 'hand');
+                this.euron = this.player2.findCardByName("Euron Crow's Eye", 'hand');
 
                 this.player1.clickCard(this.rickon);
                 this.player2.clickCard(this.euron);
@@ -143,7 +143,7 @@ describe('Rickon Stark', function() {
                 this.player2.clickCard(this.rickon);
             });
 
-            it('does not allow Rickon to cancel', function() {
+            it('does not allow Rickon to cancel', function () {
                 expect(this.player1).not.toAllowAbilityTrigger(this.rickon);
             });
         });

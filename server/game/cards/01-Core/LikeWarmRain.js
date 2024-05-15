@@ -1,20 +1,31 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class LikeWarmRain extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: event => this.controller === event.challenge.loser && event.challenge.challengeType === 'intrigue' && event.challenge.defendingPlayer === this.controller
+                afterChallenge: (event) =>
+                    this.controller === event.challenge.loser &&
+                    event.challenge.challengeType === 'intrigue' &&
+                    event.challenge.defendingPlayer === this.controller
             },
             max: ability.limit.perChallenge(1),
-            cost: ability.costs.kneel(card => card.getType() === 'character' && card.hasTrait('Direwolf')),
+            cost: ability.costs.kneel(
+                (card) => card.getType() === 'character' && card.hasTrait('Direwolf')
+            ),
             target: {
-                cardCondition: card => card.location === 'play area' && card.isAttacking(),
+                cardCondition: (card) => card.location === 'play area' && card.isAttacking(),
                 gameAction: 'kill'
             },
-            handler: context => {
+            handler: (context) => {
                 context.target.owner.killCharacter(context.target);
-                this.game.addMessage('{0} plays {1} and kneels {2} to kill {3}', context.player, context.source, context.costs.kneel, context.target);
+                this.game.addMessage(
+                    '{0} plays {1} and kneels {2} to kill {3}',
+                    context.player,
+                    context.source,
+                    context.costs.kneel,
+                    context.target
+                );
             }
         });
     }
@@ -22,4 +33,4 @@ class LikeWarmRain extends DrawCard {
 
 LikeWarmRain.code = '01158';
 
-module.exports = LikeWarmRain;
+export default LikeWarmRain;

@@ -1,28 +1,46 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class WeStandTogether extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.winner === this.controller
+                afterChallenge: (event) => event.challenge.winner === this.controller
             },
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.isAttacking() && card.kneeled && card.hasTrait('House Frey'),
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    card.isAttacking() &&
+                    card.kneeled &&
+                    card.hasTrait('House Frey'),
                 gameAction: 'stand'
             },
-            handler: context => {
-                if(context.event.challenge.number === 3) {
+            handler: (context) => {
+                if (context.event.challenge.number === 3) {
                     let affectedCharacters = [];
-                    affectedCharacters = context.player.filterCardsInPlay(card => card.isAttacking() &&
-                                                                                  card.hasTrait('House Frey') &&
-                                                                                  card.getType() === 'character');
-                    for(let card of affectedCharacters) {
+                    affectedCharacters = context.player.filterCardsInPlay(
+                        (card) =>
+                            card.isAttacking() &&
+                            card.hasTrait('House Frey') &&
+                            card.getType() === 'character'
+                    );
+                    for (let card of affectedCharacters) {
                         card.controller.standCard(card);
                     }
-                    this.game.addMessage('{0} uses {1} to stand {2}', context.player, this, affectedCharacters);
+                    this.game.addMessage(
+                        '{0} uses {1} to stand {2}',
+                        context.player,
+                        this,
+                        affectedCharacters
+                    );
                 } else {
                     context.player.standCard(context.target);
-                    this.game.addMessage('{0} uses {1} to stand {2}', context.player, this, context.target);
+                    this.game.addMessage(
+                        '{0} uses {1} to stand {2}',
+                        context.player,
+                        this,
+                        context.target
+                    );
                 }
             }
         });
@@ -31,4 +49,4 @@ class WeStandTogether extends DrawCard {
 
 WeStandTogether.code = '20050';
 
-module.exports = WeStandTogether;
+export default WeStandTogether;

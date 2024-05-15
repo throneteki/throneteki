@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class WintertimeMarauders extends DrawCard {
     setupCardAbilities(ability) {
@@ -14,21 +14,25 @@ class WintertimeMarauders extends DrawCard {
 
         this.reaction({
             when: {
-                afterChallenge: event => (
+                afterChallenge: (event) =>
                     event.challenge.winner === this.controller &&
                     this.isParticipating() &&
                     this.hasMorePlotsWithTraitThan('Winter', 'Summer')
-                )
             },
             target: {
                 activePromptTitle: 'Select a card',
-                cardCondition: card => card.isMatch({ location: 'play area', unique: false, type: ['attachment', 'character', 'location'] }),
+                cardCondition: (card) =>
+                    card.isMatch({
+                        location: 'play area',
+                        unique: false,
+                        type: ['attachment', 'character', 'location']
+                    }),
                 gameAction: 'discard'
             },
             message: '{player} uses {source} to discard {target} from play',
-            handler: context => {
+            handler: (context) => {
                 this.game.resolveGameAction(
-                    GameActions.discardCard(context => ({
+                    GameActions.discardCard((context) => ({
                         card: context.target
                     })),
                     context
@@ -38,10 +42,13 @@ class WintertimeMarauders extends DrawCard {
     }
 
     hasMorePlotsWithTraitThan(trait1, trait2) {
-        return this.game.getNumberOfPlotsWithTrait(trait1) > this.game.getNumberOfPlotsWithTrait(trait2);
+        return (
+            this.game.getNumberOfPlotsWithTrait(trait1) >
+            this.game.getNumberOfPlotsWithTrait(trait2)
+        );
     }
 }
 
 WintertimeMarauders.code = '16003';
 
-module.exports = WintertimeMarauders;
+export default WintertimeMarauders;

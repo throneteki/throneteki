@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Rakharo extends DrawCard {
     setupCardAbilities(ability) {
@@ -23,10 +23,12 @@ class Rakharo extends DrawCard {
     }
 
     hasAnotherBloodrider() {
-        return this.controller.anyCardsInPlay(card => card !== this && card.getType() === 'character' && card.hasTrait('Bloodrider'));
+        return this.controller.anyCardsInPlay(
+            (card) => card !== this && card.getType() === 'character' && card.hasTrait('Bloodrider')
+        );
     }
 }
 
 Rakharo.code = '02033';
 
-module.exports = Rakharo;
+export default Rakharo;

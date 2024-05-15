@@ -1,7 +1,7 @@
-describe('Valyrian Steel', function() {
-    integration(function() {
-        describe('when an attachment enters play', function() {
-            beforeEach(function() {
+describe('Valyrian Steel', function () {
+    integration(function () {
+        describe('when an attachment enters play', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('lannister', [
                     'Valyrian Steel (R)',
                     'Late Summer Feast',
@@ -26,17 +26,19 @@ describe('Valyrian Steel', function() {
                 this.player1.clickCard(this.character);
             });
 
-            it('allows it to trigger', function() {
+            it('allows it to trigger', function () {
                 expect(this.player1).toAllowAbilityTrigger('Valyrian Steel');
             });
         });
 
-        describe('vs Risen from the Sea', function() {
-            beforeEach(function() {
+        describe('vs Risen from the Sea', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('lannister', [
                     'Valyrian Steel (R)',
-                    'Valar Morghulis', 'A Noble Cause',
-                    'Theon Greyjoy (Core)', 'Risen from the Sea'
+                    'Valar Morghulis',
+                    'A Noble Cause',
+                    'Theon Greyjoy (Core)',
+                    'Risen from the Sea'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
@@ -56,7 +58,7 @@ describe('Valyrian Steel', function() {
                 this.player1.clickCard('Risen from the Sea', 'hand');
             });
 
-            it('allows it to trigger', function() {
+            it('allows it to trigger', function () {
                 expect(this.player1).toAllowAbilityTrigger('Valyrian Steel');
             });
         });

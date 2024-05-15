@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class DagmerCleftjaw extends DrawCard {
     setupCardAbilities(ability) {
@@ -6,11 +6,13 @@ class DagmerCleftjaw extends DrawCard {
             location: 'any',
             condition: () => this.game.anyPlotHasTrait('Winter'),
             targetController: 'current',
-            effect: ability.effects.canMarshalIntoShadows(card => card === this && card.location === 'dead pile')
+            effect: ability.effects.canMarshalIntoShadows(
+                (card) => card === this && card.location === 'dead pile'
+            )
         });
     }
 }
 
 DagmerCleftjaw.code = '24004';
 
-module.exports = DagmerCleftjaw;
+export default DagmerCleftjaw;

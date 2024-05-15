@@ -1,5 +1,5 @@
-export default function(state = {}, action) {
-    switch(action.type) {
+export default function (state = {}, action) {
+    switch (action.type) {
         case 'START_ABILITY_TIMER':
             return Object.assign({}, state, {
                 timerStartTime: action.startTime,
@@ -7,7 +7,7 @@ export default function(state = {}, action) {
                 timerHandle: action.handle
             });
         case 'STOP_ABILITY_TIMER':
-            if(state.timerHandle) {
+            if (state.timerHandle) {
                 clearTimeout(state.timerHandle);
             }
 

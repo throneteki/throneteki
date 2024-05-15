@@ -1,14 +1,15 @@
-describe('ability requirements', function() {
-    integration(function() {
-        describe('when an ability meets requirements after its triggering condition is fired', function() {
-            beforeEach(function() {
+describe('ability requirements', function () {
+    integration(function () {
+        describe('when an ability meets requirements after its triggering condition is fired', function () {
+            beforeEach(function () {
                 const deck1 = this.buildDeck('lannister', [
                     'A Noble Cause',
                     'Joffrey Baratheon (Core)'
                 ]);
                 const deck2 = this.buildDeck('martell', [
                     'A Noble Cause',
-                    'Ghaston Grey', 'His Viper Eyes'
+                    'Ghaston Grey',
+                    'His Viper Eyes'
                 ]);
                 this.player1.selectDeck(deck1);
                 this.player2.selectDeck(deck2);
@@ -40,23 +41,34 @@ describe('ability requirements', function() {
                 this.player2.clickCard(this.character);
             });
 
-            it('should prompt for the ability', function() {
+            it('should prompt for the ability', function () {
                 expect(this.player2).toAllowAbilityTrigger('His Viper Eyes');
             });
         });
 
-        describe('when an ability leaves a playable area and re-enters a playable area', function() {
-            beforeEach(function() {
+        describe('when an ability leaves a playable area and re-enters a playable area', function () {
+            beforeEach(function () {
                 const deck1 = this.buildDeck('lannister', [
                     'A Noble Cause',
-                    'Cersei Lannister (Core)', 'Lannisport', 'Maester at the Rock', 'Without His Beard'
+                    'Cersei Lannister (Core)',
+                    'Lannisport',
+                    'Maester at the Rock',
+                    'Without His Beard'
                 ]);
                 const deck2 = this.buildDeck('martell', [
                     'A Noble Cause',
-                    'Ghaston Grey', 'Ghaston Grey', 'Ghaston Grey',
-                    'His Viper Eyes', 'His Viper Eyes', 'His Viper Eyes',
-                    'Doran Martell (Core)', 'Doran Martell (Core)', 'Doran Martell (Core)',
-                    'Areo Hotah (Core)', 'Areo Hotah (Core)', 'Areo Hotah (Core)'
+                    'Ghaston Grey',
+                    'Ghaston Grey',
+                    'Ghaston Grey',
+                    'His Viper Eyes',
+                    'His Viper Eyes',
+                    'His Viper Eyes',
+                    'Doran Martell (Core)',
+                    'Doran Martell (Core)',
+                    'Doran Martell (Core)',
+                    'Areo Hotah (Core)',
+                    'Areo Hotah (Core)',
+                    'Areo Hotah (Core)'
                 ]);
                 this.player1.selectDeck(deck1);
                 this.player2.selectDeck(deck2);
@@ -95,7 +107,7 @@ describe('ability requirements', function() {
                 expect(event.location).toBe('hand');
             });
 
-            it('should prompt for the ability', function() {
+            it('should prompt for the ability', function () {
                 expect(this.player1).toAllowAbilityTrigger('Without His Beard');
             });
         });

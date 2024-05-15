@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class MountainsMan extends DrawCard {
     setupCardAbilities(ability) {
@@ -8,22 +8,23 @@ class MountainsMan extends DrawCard {
         });
         this.reaction({
             when: {
-                onCardDiscarded: event =>
-                    event.isPillage &&
-                    event.source === this.parent    
+                onCardDiscarded: (event) => event.isPillage && event.source === this.parent
             },
             target: {
-                cardCondition: (card, context) => card.location === 'play area' && card.getPrintedCost() < context.event.card.getPrintedCost() && !card.kneeled,
+                cardCondition: (card, context) =>
+                    card.location === 'play area' &&
+                    card.getPrintedCost() < context.event.card.getPrintedCost() &&
+                    !card.kneeled,
                 gameAction: 'kneel'
             },
             message: '{player} uses {source} to kneel {target}',
-            handler: context => {
+            handler: (context) => {
                 context.target.controller.kneelCard(context.target);
             }
         });
     }
 }
-                  
+
 MountainsMan.code = '20013';
 
-module.exports = MountainsMan;
+export default MountainsMan;

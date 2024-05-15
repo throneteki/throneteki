@@ -1,4 +1,4 @@
-const BaseStep = require('./basestep.js');
+import BaseStep from './basestep.js';
 
 /**
  * Prompt that asks the current player to select a player.
@@ -17,20 +17,25 @@ class ChoosePlayerPrompt extends BaseStep {
     }
 
     continue() {
-        let players = this.game.getPlayers().filter(player => this.condition(player));
+        let players = this.game.getPlayers().filter((player) => this.condition(player));
 
-        if(players.length === 0) {
+        if (players.length === 0) {
             this.onCancel();
             return;
         }
 
-        if(players.length === 1) {
+        if (players.length === 1) {
             this.onSelect(players[0]);
             return;
         }
 
-        let buttons = players.map(player => {
-            return { text: player.name, arg: player.name, method: 'selectPlayer', disabled: () => !this.enabled(player) };
+        let buttons = players.map((player) => {
+            return {
+                text: player.name,
+                arg: player.name,
+                method: 'selectPlayer',
+                disabled: () => !this.enabled(player)
+            };
         });
         buttons.push({ text: 'Cancel', method: 'cancel' });
         this.game.promptWithMenu(this.player, this, {
@@ -46,7 +51,7 @@ class ChoosePlayerPrompt extends BaseStep {
     selectPlayer(player, selectedPlayerName) {
         let selectedPlayer = this.game.getPlayerByName(selectedPlayerName);
 
-        if(!selectedPlayer) {
+        if (!selectedPlayer) {
             return false;
         }
 
@@ -60,4 +65,4 @@ class ChoosePlayerPrompt extends BaseStep {
     }
 }
 
-module.exports = ChoosePlayerPrompt;
+export default ChoosePlayerPrompt;

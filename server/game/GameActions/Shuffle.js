@@ -1,4 +1,4 @@
-const GameAction = require('./GameAction');
+import GameAction from './GameAction.js';
 
 class Shuffle extends GameAction {
     constructor() {
@@ -14,10 +14,10 @@ class Shuffle extends GameAction {
     }
 
     createEvent({ player }) {
-        return this.event('onDeckShuffled', { player }, event => {
+        return this.event('onDeckShuffled', { player }, (event) => {
             event.player.shuffleDrawDeck();
         });
     }
 }
 
-module.exports = new Shuffle();
+export default new Shuffle();

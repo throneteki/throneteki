@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Reckless extends DrawCard {
     setupCardAbilities(ability) {
@@ -13,4 +13,4 @@ class Reckless extends DrawCard {
 
 Reckless.code = '12043';
 
-module.exports = Reckless;
+export default Reckless;

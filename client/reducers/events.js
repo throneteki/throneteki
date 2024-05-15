@@ -1,6 +1,6 @@
-export default function(state = { events: [], draftCubes: [] }, action) {
+export default function (state = { events: [], draftCubes: [] }, action) {
     let newState;
-    switch(action.type) {
+    switch (action.type) {
         case 'RECEIVE_EVENTS':
             return Object.assign({}, state, {
                 events: action.response.events
@@ -21,7 +21,7 @@ export default function(state = { events: [], draftCubes: [] }, action) {
                 eventDeleted: true
             });
 
-            newState.events = newState.events.filter(event => {
+            newState.events = newState.events.filter((event) => {
                 return event._id !== action.response.eventId;
             });
 

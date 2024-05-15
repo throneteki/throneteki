@@ -1,28 +1,30 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class JonConnington extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardOutOfShadows: event => event.card === this
+                onCardOutOfShadows: (event) => event.card === this
             },
             target: {
-                cardCondition: (card, context) => card.controller === context.player && card.location === 'shadows'
+                cardCondition: (card, context) =>
+                    card.controller === context.player && card.location === 'shadows'
             },
             message: '{player} uses {source} to reveal a card from shadows',
-            handler: context => {
+            handler: (context) => {
                 this.game.resolveGameAction(
-                    GameActions.revealCards(context => ({
+                    GameActions.revealCards((context) => ({
                         player: context.player,
                         cards: [context.target]
                     })).then({
-                        condition: context => context.event.cards[0].isMatch({
-                            printedCostOrLower: 4,
-                            not: { type: 'event' }
-                        }) && context.event.revealed.length > 0,
+                        condition: (context) =>
+                            context.event.cards[0].isMatch({
+                                printedCostOrLower: 4,
+                                not: { type: 'event' }
+                            }) && context.event.revealed.length > 0,
                         message: '{player} {gameAction}',
-                        gameAction: GameActions.putIntoPlay(context => ({
+                        gameAction: GameActions.putIntoPlay((context) => ({
                             card: context.event.revealed[0]
                         }))
                     }),
@@ -35,4 +37,4 @@ class JonConnington extends DrawCard {
 
 JonConnington.code = '13053';
 
-module.exports = JonConnington;
+export default JonConnington;

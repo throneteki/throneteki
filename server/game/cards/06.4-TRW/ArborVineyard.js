@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class ArborVineyard extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,7 +7,7 @@ class ArborVineyard extends DrawCard {
             phase: 'marshal',
             condition: () => this.controller.canGainGold(),
             cost: ability.costs.kneelSelf(),
-            handler: context => {
+            handler: (context) => {
                 let gold = this.moreSummerThanWinterPlotsRevealed() ? 2 : 1;
                 this.game.addGold(context.player, gold);
                 this.game.addMessage('{0} kneels {1} to gain {2} gold', context.player, this, gold);
@@ -25,4 +25,4 @@ class ArborVineyard extends DrawCard {
 
 ArborVineyard.code = '06064';
 
-module.exports = ArborVineyard;
+export default ArborVineyard;

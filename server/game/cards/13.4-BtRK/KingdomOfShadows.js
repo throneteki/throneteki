@@ -1,4 +1,4 @@
-const AgendaCard = require('../../agendacard');
+import AgendaCard from '../../agendacard.js';
 
 class KingdomOfShadows extends AgendaCard {
     setupCardAbilities(ability) {
@@ -7,17 +7,20 @@ class KingdomOfShadows extends AgendaCard {
             effect: ability.effects.increaseCost({
                 playingTypes: ['marshal'],
                 amount: 1,
-                match: card => card.getType() === 'character'
+                match: (card) => card.getType() === 'character'
             })
         });
 
         this.persistentEffect({
             targetController: 'current',
-            effect: ability.effects.reduceFirstOutOfShadowsCardCostEachRound(2, card => card.getType() === 'character')
+            effect: ability.effects.reduceFirstOutOfShadowsCardCostEachRound(
+                2,
+                (card) => card.getType() === 'character'
+            )
         });
     }
 }
 
 KingdomOfShadows.code = '13079';
 
-module.exports = KingdomOfShadows;
+export default KingdomOfShadows;

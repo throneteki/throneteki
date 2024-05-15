@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Jhogo extends DrawCard {
     setupCardAbilities(ability) {
@@ -15,11 +15,13 @@ class Jhogo extends DrawCard {
     }
 
     getNumberOfBloodriders() {
-        return this.controller.getNumberOfCardsInPlay(card => card.hasTrait('Bloodrider') && card.getType() === 'character' && card !== this);
+        return this.controller.getNumberOfCardsInPlay(
+            (card) => card.hasTrait('Bloodrider') && card.getType() === 'character' && card !== this
+        );
     }
 
     getNumberOfDeadDefendingCharacters() {
-        if(!this.game.isDuringChallenge()) {
+        if (!this.game.isDuringChallenge()) {
             return 0;
         }
 
@@ -29,4 +31,4 @@ class Jhogo extends DrawCard {
 
 Jhogo.code = '02113';
 
-module.exports = Jhogo;
+export default Jhogo;

@@ -1,4 +1,4 @@
-const CardMatcher = require('../CardMatcher');
+import CardMatcher from '../CardMatcher.js';
 
 /**
  * Base class that represents card selection requirements and the behaviours of
@@ -23,7 +23,9 @@ class BaseCardSelector {
      */
     constructor(properties) {
         this.cardCondition = CardMatcher.createMatcher(properties.cardCondition);
-        this.isCardAttributeAccessed = CardMatcher.createCardAttributeAnalyzer(properties.cardCondition);
+        this.isCardAttributeAccessed = CardMatcher.createCardAttributeAnalyzer(
+            properties.cardCondition
+        );
         this.cardType = properties.cardType;
         this.gameAction = properties.gameAction;
         this.singleController = properties.singleController;
@@ -31,7 +33,7 @@ class BaseCardSelector {
         this.optional = !!properties.optional;
         this.ifAble = !!properties.ifAble;
 
-        if(!Array.isArray(properties.cardType)) {
+        if (!Array.isArray(properties.cardType)) {
             this.cardType = [properties.cardType];
         }
     }
@@ -44,7 +46,7 @@ class BaseCardSelector {
      * @returns {boolean}
      */
     canTarget(card, context, selectedCards) {
-        if(context) {
+        if (context) {
             context.selectedCards = selectedCards || [];
         }
 
@@ -56,7 +58,10 @@ class BaseCardSelector {
     }
 
     isAllowedForGameAction(card, context) {
-        return !this.isCardEffect || card.allowGameAction('target', context) && card.allowGameAction(this.gameAction);
+        return (
+            !this.isCardEffect ||
+            (card.allowGameAction('target', context) && card.allowGameAction(this.gameAction))
+        );
     }
 
     /**
@@ -65,7 +70,7 @@ class BaseCardSelector {
      * @returns {BaseCard[]}
      */
     getEligibleTargets(context) {
-        return context.game.allCards.filter(card => this.canTarget(card, context));
+        return context.game.allCards.filter((card) => this.canTarget(card, context));
     }
 
     /**
@@ -74,7 +79,9 @@ class BaseCardSelector {
      *  @returns {boolean}
      */
     requiresTargetValidation(context) {
-        return this.getEligibleTargets(context).some(card => this.isCardAttributeAccessed(card, context));
+        return this.getEligibleTargets(context).some((card) =>
+            this.isCardAttributeAccessed(card, context)
+        );
     }
 
     /**
@@ -99,7 +106,7 @@ class BaseCardSelector {
      * @returns {boolean}
      */
     hasEnoughTargets(context) {
-        return this.optional || context.game.allCards.some(card => this.canTarget(card, context));
+        return this.optional || context.game.allCards.some((card) => this.canTarget(card, context));
     }
 
     /**
@@ -162,7 +169,7 @@ class BaseCardSelector {
      * @returns {boolean}
      */
     checkForSingleController(selectedCards, card) {
-        if(!this.singleController || (selectedCards || []).length === 0) {
+        if (!this.singleController || (selectedCards || []).length === 0) {
             return true;
         }
 
@@ -170,7 +177,7 @@ class BaseCardSelector {
     }
 
     /**
-     * Returns whether this selection can be rejected when the choosing player decides 
+     * Returns whether this selection can be rejected when the choosing player decides
      * to cancel the selection entirely.
      * @param {AbilityContext} context
      * @returns {boolean}
@@ -180,4 +187,4 @@ class BaseCardSelector {
     }
 }
 
-module.exports = BaseCardSelector;
+export default BaseCardSelector;

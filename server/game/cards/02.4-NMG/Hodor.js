@@ -1,9 +1,9 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Hodor extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => !this.controller.anyCardsInPlay(card => card.name === 'Bran Stark'),
+            condition: () => !this.controller.anyCardsInPlay((card) => card.name === 'Bran Stark'),
             match: this,
             effect: ability.effects.cannotBeDeclaredAsAttacker()
         });
@@ -16,4 +16,4 @@ class Hodor extends DrawCard {
 
 Hodor.code = '02061';
 
-module.exports = Hodor;
+export default Hodor;

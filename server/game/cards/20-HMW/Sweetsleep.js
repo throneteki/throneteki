@@ -1,10 +1,11 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Sweetsleep extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => !!this.parent,
-            match: card => card.parent === this.parent && card.getType() === 'attachment' && card !== this,
+            match: (card) =>
+                card.parent === this.parent && card.getType() === 'attachment' && card !== this,
             targetController: 'any',
             effect: ability.effects.blankExcludingTraits
         });
@@ -13,4 +14,4 @@ class Sweetsleep extends DrawCard {
 
 Sweetsleep.code = '20047';
 
-module.exports = Sweetsleep;
+export default Sweetsleep;

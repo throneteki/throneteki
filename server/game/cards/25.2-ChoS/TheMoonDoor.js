@@ -1,5 +1,5 @@
-const GameActions = require('../../GameActions/index.js');
-const DrawCard = require('../../drawcard.js');
+import GameActions from '../../GameActions/index.js';
+import DrawCard from '../../drawcard.js';
 
 class TheMoonDoor extends DrawCard {
     setupCardAbilities(ability) {
@@ -14,13 +14,21 @@ class TheMoonDoor extends DrawCard {
         });
         this.reaction({
             when: {
-                onCardKneeled: event => event.card === this && this.game.isDuringChallenge()
+                onCardKneeled: (event) => event.card === this && this.game.isDuringChallenge()
             },
             target: {
-                cardCondition: { type: 'character', location: 'play area', participating: true, printedStrengthOrLower: 3 }
+                cardCondition: {
+                    type: 'character',
+                    location: 'play area',
+                    participating: true,
+                    printedStrengthOrLower: 3
+                }
             },
-            handler: context => {
-                this.game.resolveGameAction(GameActions.kill(context => ({ card: context.target })), context);
+            handler: (context) => {
+                this.game.resolveGameAction(
+                    GameActions.kill((context) => ({ card: context.target })),
+                    context
+                );
             }
         });
     }
@@ -28,4 +36,4 @@ class TheMoonDoor extends DrawCard {
 
 TheMoonDoor.code = '25038';
 
-module.exports = TheMoonDoor;
+export default TheMoonDoor;

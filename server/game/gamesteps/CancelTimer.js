@@ -14,7 +14,7 @@ class CancelTimer {
     }
 
     hasCancellableEvent(player) {
-        return this.event.getConcurrentEvents().some(event => {
+        return this.event.getConcurrentEvents().some((event) => {
             return (
                 !event.cancelled &&
                 event.player !== player &&
@@ -29,8 +29,8 @@ class CancelTimer {
         let eventsEnabled = player.timerSettings.events;
         let abilitiesEnabled = player.timerSettings.abilities;
 
-        if(event.name === 'onCardAbilityInitiated') {
-            if(event.source.getType() === 'event') {
+        if (event.name === 'onCardAbilityInitiated') {
+            if (event.source.getType() === 'event') {
                 return eventsEnabled;
             }
 
@@ -42,4 +42,4 @@ class CancelTimer {
     }
 }
 
-module.exports = CancelTimer;
+export default CancelTimer;

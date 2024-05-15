@@ -1,14 +1,11 @@
-const BaseAbility = require('../baseability');
-const Costs = require('../costs');
+import BaseAbility from '../baseability.js';
+import Costs from '../costs.js';
 
 class SetupCardAction extends BaseAbility {
     constructor() {
         super({
             abilitySourceType: 'game',
-            cost: [
-                Costs.payPrintedGoldCost(),
-                Costs.playLimited()
-            ]
+            cost: [Costs.payPrintedGoldCost(), Costs.playLimited()]
         });
         this.title = 'Setup';
     }
@@ -27,4 +24,4 @@ class SetupCardAction extends BaseAbility {
     }
 }
 
-module.exports = SetupCardAction;
+export default SetupCardAction;

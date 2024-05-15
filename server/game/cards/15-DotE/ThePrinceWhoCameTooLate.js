@@ -1,5 +1,5 @@
-const PlotCard = require('../../plotcard');
-const GameActions = require('../../GameActions');
+import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class ThePrinceWhoCameTooLate extends PlotCard {
     setupCardAbilities(ability) {
@@ -12,7 +12,7 @@ class ThePrinceWhoCameTooLate extends PlotCard {
                 title: 'Select a character',
                 match: { type: 'character' },
                 message: '{player} {gameAction}',
-                gameAction: GameActions.putIntoPlay(context => ({
+                gameAction: GameActions.putIntoPlay((context) => ({
                     card: context.searchTarget
                 }))
             })
@@ -22,4 +22,4 @@ class ThePrinceWhoCameTooLate extends PlotCard {
 
 ThePrinceWhoCameTooLate.code = '15052';
 
-module.exports = ThePrinceWhoCameTooLate;
+export default ThePrinceWhoCameTooLate;

@@ -1,4 +1,4 @@
-const ForcedTriggeredAbility = require('./forcedtriggeredability.js');
+import ForcedTriggeredAbility from './forcedtriggeredability.js';
 
 class CardForcedReaction extends ForcedTriggeredAbility {
     constructor(game, card, properties) {
@@ -6,4 +6,4 @@ class CardForcedReaction extends ForcedTriggeredAbility {
     }
 }
 
-module.exports = CardForcedReaction;
+export default CardForcedReaction;

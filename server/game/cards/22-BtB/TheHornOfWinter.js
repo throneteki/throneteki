@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TheHornOfWinter extends DrawCard {
     setupCardAbilities(ability) {
@@ -8,17 +8,20 @@ class TheHornOfWinter extends DrawCard {
         });
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.winner === this.controller
+                afterChallenge: (event) => event.challenge.winner === this.controller
             },
             target: {
                 activePromptTitle: 'Select a location',
-                cardCondition: card => card.location === 'play area' && card.getType() === 'location' && card.targetedByAssault
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'location' &&
+                    card.targetedByAssault
             },
             cost: ability.costs.sacrificeSelf(),
-            handler: context => {
+            handler: (context) => {
                 this.assaulted = context.target;
 
-                if(context.target.hasTrait('Stronghold') || context.target.name === 'The Wall') {
+                if (context.target.hasTrait('Stronghold') || context.target.name === 'The Wall') {
                     let buttons = [
                         { text: 'Treat as blank', method: 'treatAsBlank' },
                         { text: 'Discard from play', method: 'discardFromPlay' }
@@ -39,13 +42,17 @@ class TheHornOfWinter extends DrawCard {
     }
 
     treatAsBlank(player) {
-        this.untilEndOfRound(ability => ({
+        this.untilEndOfRound((ability) => ({
             match: this.assaulted,
             effect: ability.effects.blankExcludingTraits
         }));
 
-        this.game.addMessage('{0} sacrifices {1} to treat the text box of {2} as blank until the end of the round',
-            player, this, this.assaulted);
+        this.game.addMessage(
+            '{0} sacrifices {1} to treat the text box of {2} as blank until the end of the round',
+            player,
+            this,
+            this.assaulted
+        );
 
         return true;
     }
@@ -53,8 +60,12 @@ class TheHornOfWinter extends DrawCard {
     discardFromPlay(player) {
         this.assaulted.controller.discardCard(this.assaulted);
 
-        this.game.addMessage('{0} sacrifices {1} to discard {2} from play',
-            player, this, this.assaulted);
+        this.game.addMessage(
+            '{0} sacrifices {1} to discard {2} from play',
+            player,
+            this,
+            this.assaulted
+        );
 
         return true;
     }
@@ -62,4 +73,4 @@ class TheHornOfWinter extends DrawCard {
 
 TheHornOfWinter.code = '22027';
 
-module.exports = TheHornOfWinter;
+export default TheHornOfWinter;

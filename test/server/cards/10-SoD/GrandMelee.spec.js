@@ -1,10 +1,14 @@
-describe('Grand Melee', function() {
-    integration(function() {
-        describe('when removing a character from the challenge', function() {
-            beforeEach(function() {
+describe('Grand Melee', function () {
+    integration(function () {
+        describe('when removing a character from the challenge', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('tyrell', [
-                    'Grand Melee', 'A Noble Cause',
-                    'Garden Caretaker', 'Garden Caretaker', 'Renly Baratheon (FFH)', 'Highgarden (Core)'
+                    'Grand Melee',
+                    'A Noble Cause',
+                    'Garden Caretaker',
+                    'Garden Caretaker',
+                    'Renly Baratheon (FFH)',
+                    'Highgarden (Core)'
                 ]);
 
                 this.player1.selectDeck(deck);
@@ -19,7 +23,7 @@ describe('Grand Melee', function() {
                 this.player1.clickCard(this.smallAttacker);
                 this.player1.clickCard(this.largeAttacker);
 
-                for(let defender of this.defenders) {
+                for (let defender of this.defenders) {
                     this.player2.clickCard(defender);
                 }
                 this.player2.clickCard('Highgarden', 'hand');
@@ -39,7 +43,7 @@ describe('Grand Melee', function() {
 
                 this.skipActionWindow();
 
-                for(let defender of this.defenders) {
+                for (let defender of this.defenders) {
                     this.player2.clickCard(defender);
                 }
                 this.player2.clickPrompt('Done');
@@ -51,7 +55,7 @@ describe('Grand Melee', function() {
                 expect(this.game.currentChallenge.attackers).not.toContain(this.smallAttacker);
             });
 
-            it('should not count STR for characters participating alone', function() {
+            it('should not count STR for characters participating alone', function () {
                 expect(this.game.currentChallenge.attackerStrength).toBe(0);
                 expect(this.game.currentChallenge.defenderStrength).toBe(2);
             });

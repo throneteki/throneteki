@@ -1,35 +1,36 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheHornThatWakesTheSleepers extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onChallengeInitiated: event => event.challenge.isMatch({ initiatedAgainstPlayer: this.controller })
+                onChallengeInitiated: (event) =>
+                    event.challenge.isMatch({ initiatedAgainstPlayer: this.controller })
             },
             targets: {
                 builder: {
-                    cardCondition: card => this.isKneeledWithTrait(card, 'Builder'),
+                    cardCondition: (card) => this.isKneeledWithTrait(card, 'Builder'),
                     gameAction: 'stand'
                 },
                 ranger: {
-                    cardCondition: card => this.isKneeledWithTrait(card, 'Ranger'),
+                    cardCondition: (card) => this.isKneeledWithTrait(card, 'Ranger'),
                     gameAction: 'stand'
                 },
                 steward: {
-                    cardCondition: card => this.isKneeledWithTrait(card, 'Steward'),
+                    cardCondition: (card) => this.isKneeledWithTrait(card, 'Steward'),
                     gameAction: 'stand'
                 }
             },
             message: {
                 format: '{player} plays {source} to stand {targets}',
-                args: { targets: context => this.getCharactersToStand(context) }
+                args: { targets: (context) => this.getCharactersToStand(context) }
             },
-            handler: context => {
+            handler: (context) => {
                 let targets = this.getCharactersToStand(context);
                 this.game.resolveGameAction(
                     GameActions.simultaneously(
-                        targets.map(card => GameActions.standCard({ card }))
+                        targets.map((card) => GameActions.standCard({ card }))
                     )
                 );
             }
@@ -53,4 +54,4 @@ class TheHornThatWakesTheSleepers extends DrawCard {
 
 TheHornThatWakesTheSleepers.code = '14032';
 
-module.exports = TheHornThatWakesTheSleepers;
+export default TheHornThatWakesTheSleepers;

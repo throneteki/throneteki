@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Ice extends DrawCard {
     setupCardAbilities(ability) {
@@ -8,20 +8,27 @@ class Ice extends DrawCard {
         });
         this.reaction({
             when: {
-                afterChallenge: event => (
+                afterChallenge: (event) =>
                     event.challenge.winner === this.controller &&
                     event.challenge.challengeType === 'military' &&
                     event.challenge.isParticipating(this.parent)
-                )
             },
             cost: ability.costs.sacrificeSelf(),
             target: {
-                cardCondition: card => card.location === 'play area' && card.controller === this.game.currentChallenge.loser && card.getType() === 'character',
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.controller === this.game.currentChallenge.loser &&
+                    card.getType() === 'character',
                 gameAction: 'kill'
             },
-            handler: context => {
+            handler: (context) => {
                 context.target.owner.killCharacter(context.target);
-                this.game.addMessage('{0} sacrifices {1} to kill {2}', context.player, this, context.target);
+                this.game.addMessage(
+                    '{0} sacrifices {1} to kill {2}',
+                    context.player,
+                    this,
+                    context.target
+                );
             }
         });
     }
@@ -29,4 +36,4 @@ class Ice extends DrawCard {
 
 Ice.code = '01153';
 
-module.exports = Ice;
+export default Ice;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Dissension extends DrawCard {
     setupCardAbilities() {
@@ -6,12 +6,19 @@ class Dissension extends DrawCard {
             title: 'Discard Ally from play',
             phase: 'marshal',
             target: {
-                cardCondition: card => card.hasTrait('Ally') && card.getType() === 'character' && card.location === 'play area'
+                cardCondition: (card) =>
+                    card.hasTrait('Ally') &&
+                    card.getType() === 'character' &&
+                    card.location === 'play area'
             },
-            handler: context => {
+            handler: (context) => {
                 context.target.controller.discardCard(context.target);
-                this.game.addMessage('{0} plays {1} to discard {2}',
-                    this.controller, this, context.target);
+                this.game.addMessage(
+                    '{0} plays {1} to discard {2}',
+                    this.controller,
+                    this,
+                    context.target
+                );
             }
         });
     }
@@ -19,4 +26,4 @@ class Dissension extends DrawCard {
 
 Dissension.code = '04059';
 
-module.exports = Dissension;
+export default Dissension;

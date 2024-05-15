@@ -1,4 +1,4 @@
-const GameActions = require('../GameActions');
+import GameActions from '../GameActions/index.js';
 
 class DiscardFromDeckCost {
     canPay(context) {
@@ -17,7 +17,7 @@ class DiscardFromDeckCost {
 
     pay(context) {
         context.game.resolveGameAction(
-            GameActions.discardCard(context => ({ card: context.player.drawDeck[0] })),
+            GameActions.discardCard((context) => ({ card: context.player.drawDeck[0] })),
             context
         );
     }
@@ -26,8 +26,7 @@ class DiscardFromDeckCost {
         return false;
     }
 
-    unpay() {
-    }
+    unpay() {}
 }
 
-module.exports = DiscardFromDeckCost;
+export default DiscardFromDeckCost;

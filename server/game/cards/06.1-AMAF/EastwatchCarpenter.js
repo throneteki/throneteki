@@ -1,10 +1,10 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class EastwatchCarpenter extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onIncomeCollected: event =>
+                onIncomeCollected: (event) =>
                     event.player === this.controller &&
                     this.getGoldBonus() >= 1 &&
                     this.controller.canGainGold()
@@ -19,7 +19,7 @@ class EastwatchCarpenter extends DrawCard {
     }
 
     getGoldBonus() {
-        let numCards = this.controller.getNumberOfCardsInPlay(card => {
+        let numCards = this.controller.getNumberOfCardsInPlay((card) => {
             return card.isFaction('thenightswatch') && card.getType() === 'location';
         });
 
@@ -29,4 +29,4 @@ class EastwatchCarpenter extends DrawCard {
 
 EastwatchCarpenter.code = '06005';
 
-module.exports = EastwatchCarpenter;
+export default EastwatchCarpenter;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class ArianneMartell extends DrawCard {
     setupCardAbilities(ability) {
@@ -12,13 +12,20 @@ class ArianneMartell extends DrawCard {
             },
             cost: ability.costs.returnSelfToHand(),
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' &&
-                                       card.getStrength() < this.strengthWhenInitiated
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    card.getStrength() < this.strengthWhenInitiated
             },
-            handler: context => {
+            handler: (context) => {
                 context.target.owner.returnCardToHand(context.target);
-                this.game.addMessage('{0} returns {1} to their hand to return {2} to {3}\'s hand',
-                    context.player, this, context.target, context.target.owner);
+                this.game.addMessage(
+                    "{0} returns {1} to their hand to return {2} to {3}'s hand",
+                    context.player,
+                    this,
+                    context.target,
+                    context.target.owner
+                );
             }
         });
     }
@@ -26,4 +33,4 @@ class ArianneMartell extends DrawCard {
 
 ArianneMartell.code = '08035';
 
-module.exports = ArianneMartell;
+export default ArianneMartell;

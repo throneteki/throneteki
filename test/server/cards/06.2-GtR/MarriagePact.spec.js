@@ -1,9 +1,10 @@
-describe('Marriage Pact', function() {
-    integration(function() {
-        beforeEach(function() {
+describe('Marriage Pact', function () {
+    integration(function () {
+        beforeEach(function () {
             const deck = this.buildDeck('greyjoy', [
                 'A Noble Cause',
-                'Hedge Knight', 'Marriage Pact'
+                'Hedge Knight',
+                'Marriage Pact'
             ]);
 
             this.player1.selectDeck(deck);
@@ -28,21 +29,21 @@ describe('Marriage Pact', function() {
             this.completeMarshalPhase();
         });
 
-        describe('when the opponent is defender', function() {
-            beforeEach(function() {
+        describe('when the opponent is defender', function () {
+            beforeEach(function () {
                 this.player1.clickPrompt('Done');
 
                 this.player2.clickPrompt('Military');
             });
 
-            it('should not allow the attached character to attack in a challenge', function() {
+            it('should not allow the attached character to attack in a challenge', function () {
                 let selectState = this.player2Object.getCardSelectionState(this.opponentCharacter);
                 expect(selectState.selectable).toBe(false);
             });
         });
 
-        describe('when the opponent is defender', function() {
-            beforeEach(function() {
+        describe('when the opponent is defender', function () {
+            beforeEach(function () {
                 this.player1.clickPrompt('Military');
                 this.player1.clickCard(this.character);
                 this.player1.clickPrompt('Done');
@@ -50,20 +51,20 @@ describe('Marriage Pact', function() {
                 this.skipActionWindow();
             });
 
-            it('should not allow the attached character to defend in a challenge', function() {
+            it('should not allow the attached character to defend in a challenge', function () {
                 let selectState = this.player2Object.getCardSelectionState(this.opponentCharacter);
                 expect(selectState.selectable).toBe(false);
             });
         });
 
-        describe('when the attached character is killed', function() {
-            beforeEach(function() {
+        describe('when the attached character is killed', function () {
+            beforeEach(function () {
                 this.unopposedChallenge(this.player1, 'Military', this.character);
                 this.player1.clickPrompt('Apply Claim');
                 this.player2.clickCard(this.opponentCharacter);
             });
 
-            it('should prompt the player to sacrifice a character', function() {
+            it('should prompt the player to sacrifice a character', function () {
                 expect(this.player1).toHavePrompt('Select a character');
                 this.player1.clickCard(this.character);
                 expect(this.character.location).toBe('discard pile');

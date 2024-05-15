@@ -1,4 +1,4 @@
-const moment = require('moment');
+import moment from 'moment';
 
 class TimeLimit {
     constructor(game) {
@@ -13,14 +13,14 @@ class TimeLimit {
     initialiseTimeLimit(timeLimitStartType, timeLimitInMinutes) {
         this.timeLimitStartType = timeLimitStartType;
         this.timeLimitInSeconds = timeLimitInMinutes * 60;
-        if(timeLimitStartType === 'whenSetupFinished') {
+        if (timeLimitStartType === 'whenSetupFinished') {
             this.game.on('onSetupFinished', () => this.startTimer());
         }
-        //todo: implement more kinds of triggers to star the time limit   
+        //todo: implement more kinds of triggers to star the time limit
     }
 
     startTimer() {
-        if(!this.timeLimitStarted) {
+        if (!this.timeLimitStarted) {
             this.timeLimitStarted = true;
             this.timeLimitStartedAt = new Date();
 
@@ -32,14 +32,16 @@ class TimeLimit {
 
     togglePause() {
         //pause
-        if(this.timeLimitStarted) {
+        if (this.timeLimitStarted) {
             this.timeLimitStarted = false;
             clearInterval(this.timer);
             this.timer = undefined;
-            let differenceBetweenStartOfTimerAndNow = moment.duration(moment().diff(this.timeLimitStartedAt));
+            let differenceBetweenStartOfTimerAndNow = moment.duration(
+                moment().diff(this.timeLimitStartedAt)
+            );
             this.timeLimitInSeconds -= Math.floor(differenceBetweenStartOfTimerAndNow.asSeconds());
         } else {
-        //unpause
+            //unpause
             this.startTimer();
         }
     }
@@ -47,21 +49,26 @@ class TimeLimit {
     checkForTimeLimitReached() {
         //only check for the end of the game if the timelimit has not been reached yet
         //and the timer is currently active (not paused)
-        if(!this.isTimeLimitReached && this.timeLimitStarted) {
-            let differenceBetweenStartOfTimerAndNow = moment.duration(moment().diff(this.timeLimitStartedAt));
-            if(differenceBetweenStartOfTimerAndNow.asSeconds() >= this.timeLimitInSeconds) {
-                this.game.addAlert('warning', 'Time up.  The game will end after the current round has finished');
+        if (!this.isTimeLimitReached && this.timeLimitStarted) {
+            let differenceBetweenStartOfTimerAndNow = moment.duration(
+                moment().diff(this.timeLimitStartedAt)
+            );
+            if (differenceBetweenStartOfTimerAndNow.asSeconds() >= this.timeLimitInSeconds) {
+                this.game.addAlert(
+                    'warning',
+                    'Time up.  The game will end after the current round has finished'
+                );
                 this.isTimeLimitReached = true;
                 this.timeLimitStarted = false;
                 this.game.timeExpired();
             }
         }
         //clear the timer if the time is up
-        if(this.isTimeLimitReached && this.timer) {
+        if (this.isTimeLimitReached && this.timer) {
             clearInterval(this.timer);
             this.timer = undefined;
         }
     }
 }
 
-module.exports = TimeLimit;
+export default TimeLimit;

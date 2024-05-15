@@ -1,12 +1,17 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class UlfSonOfUmar extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardEntersPlay: event => {
+                onCardEntersPlay: (event) => {
                     let card = event.card;
-                    if(!card.hasTrait('Clansman') || card.getType() !== 'character' || card.controller !== this.controller || card.getPrintedStrength() === 0) {
+                    if (
+                        !card.hasTrait('Clansman') ||
+                        card.getType() !== 'character' ||
+                        card.controller !== this.controller ||
+                        card.getPrintedStrength() === 0
+                    ) {
                         return false;
                     }
 
@@ -16,13 +21,17 @@ class UlfSonOfUmar extends DrawCard {
             },
             limit: ability.limit.perPhase(3),
             handler: () => {
-                this.untilEndOfPhase(ability => ({
+                this.untilEndOfPhase((ability) => ({
                     match: this,
                     effect: ability.effects.modifyStrength(this.strBoost)
                 }));
 
-                this.game.addMessage('{0} uses {1} to give {1} +{2} STR until the end of the phase',
-                    this.controller, this, this.strBoost);
+                this.game.addMessage(
+                    '{0} uses {1} to give {1} +{2} STR until the end of the phase',
+                    this.controller,
+                    this,
+                    this.strBoost
+                );
             }
         });
     }
@@ -30,4 +39,4 @@ class UlfSonOfUmar extends DrawCard {
 
 UlfSonOfUmar.code = '07029';
 
-module.exports = UlfSonOfUmar;
+export default UlfSonOfUmar;

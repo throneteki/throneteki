@@ -1,5 +1,5 @@
-const UiPrompt = require('./uiprompt.js');
-const CardSelector = require('../CardSelector.js');
+import UiPrompt from './uiprompt.js';
+import CardSelector from '../CardSelector.js';
 
 /**
  * General purpose prompt that asks the user to select 1 or more cards.
@@ -52,7 +52,7 @@ class SelectCardPrompt extends UiPrompt {
 
         this.numPlayers = this.game.getNumberOfPlayers();
         this.choosingPlayer = choosingPlayer;
-        if(properties.source && !properties.waitingPromptTitle) {
+        if (properties.source && !properties.waitingPromptTitle) {
             properties.waitingPromptTitle = 'Waiting for opponent to use ' + properties.source.name;
         }
 
@@ -61,20 +61,26 @@ class SelectCardPrompt extends UiPrompt {
         this.selector = properties.selector || CardSelector.for(properties);
         this.selectedCards = [];
         this.mustSelect = properties.mustSelect || [];
-        if(this.mustSelect.length > 0) {
-            if(this.selector.hasReachedLimit(this.mustSelect, this.numPlayers) && this.mustSelect.length > this.selector.numCards) {
+        if (this.mustSelect.length > 0) {
+            if (
+                this.selector.hasReachedLimit(this.mustSelect, this.numPlayers) &&
+                this.mustSelect.length > this.selector.numCards
+            ) {
                 this.onlyMustSelectMayBeChosen = true;
             } else {
                 this.selectedCards = [...this.mustSelect];
                 this.cannotUnselectMustSelect = true;
             }
         }
-        this.activePromptTitleFunc = typeof(properties.activePromptTitle) === 'function' ? properties.activePromptTitle : () => properties.activePromptTitle;
+        this.activePromptTitleFunc =
+            typeof properties.activePromptTitle === 'function'
+                ? properties.activePromptTitle
+                : () => properties.activePromptTitle;
         this.revealTargets = properties.revealTargets;
         this.revealFunc = null;
         this.savePreviouslySelectedCards();
 
-        if(choosingPlayer.isFake) {
+        if (choosingPlayer.isFake) {
             this.complete();
         }
     }
@@ -96,7 +102,7 @@ class SelectCardPrompt extends UiPrompt {
     }
 
     continue() {
-        if(!this.isComplete()) {
+        if (!this.isComplete()) {
             this.highlightSelectableCards();
         }
 
@@ -104,14 +110,15 @@ class SelectCardPrompt extends UiPrompt {
     }
 
     highlightSelectableCards() {
-        let selectableCards = this.game.allCards.filter(card => {
+        let selectableCards = this.game.allCards.filter((card) => {
             return this.checkCardCondition(card);
         });
 
         this.choosingPlayer.setSelectableCards(selectableCards);
 
-        if(this.revealTargets && !this.revealFunc) {
-            this.revealFunc = (card, player) => player === this.choosingPlayer && player.getSelectableCards().includes(card);
+        if (this.revealTargets && !this.revealFunc) {
+            this.revealFunc = (card, player) =>
+                player === this.choosingPlayer && player.getSelectableCards().includes(card);
             this.game.cardVisibility.addRule(this.revealFunc);
         }
     }
@@ -124,7 +131,9 @@ class SelectCardPrompt extends UiPrompt {
         return {
             selectCard: true,
             selectOrder: this.properties.ordered,
-            menuTitle: this.activePromptTitleFunc(this.context) || this.selector.defaultActivePromptTitle(),
+            menuTitle:
+                this.activePromptTitleFunc(this.context) ||
+                this.selector.defaultActivePromptTitle(),
             buttons: this.properties.additionalButtons.concat([
                 { text: this.properties.doneButtonText || 'Done', arg: 'done' }
             ]),
@@ -138,29 +147,32 @@ class SelectCardPrompt extends UiPrompt {
     }
 
     onCardClicked(player, card) {
-        if(player !== this.choosingPlayer) {
+        if (player !== this.choosingPlayer) {
             return false;
         }
 
-        if(!this.checkCardCondition(card)) {
+        if (!this.checkCardCondition(card)) {
             return false;
         }
 
-        if(!this.selectCard(card)) {
+        if (!this.selectCard(card)) {
             return false;
         }
 
-        if(this.selector.automaticFireOnSelect() && this.selector.hasReachedLimit(this.selectedCards, this.numPlayers)) {
+        if (
+            this.selector.automaticFireOnSelect() &&
+            this.selector.hasReachedLimit(this.selectedCards, this.numPlayers)
+        ) {
             this.fireOnSelect();
         }
     }
 
     checkCardCondition(card) {
-        if(this.onlyMustSelectMayBeChosen && !this.mustSelect.includes(card)) {
+        if (this.onlyMustSelectMayBeChosen && !this.mustSelect.includes(card)) {
             return false;
         }
 
-        if(this.selectedCards.includes(card)) {
+        if (this.selectedCards.includes(card)) {
             return true;
         }
 
@@ -172,23 +184,26 @@ class SelectCardPrompt extends UiPrompt {
     }
 
     selectCard(card) {
-        if(this.selector.hasReachedLimit(this.selectedCards, this.numPlayers) && !this.selectedCards.includes(card)) {
+        if (
+            this.selector.hasReachedLimit(this.selectedCards, this.numPlayers) &&
+            !this.selectedCards.includes(card)
+        ) {
             return false;
         }
 
-        if(!this.selectedCards.includes(card)) {
+        if (!this.selectedCards.includes(card)) {
             this.selectedCards.push(card);
         } else {
             // Don't allow must-select cards to be unselected.
-            if(this.cannotUnselectMustSelect && this.mustSelect.includes(card)) {
+            if (this.cannotUnselectMustSelect && this.mustSelect.includes(card)) {
                 return false;
             }
 
-            this.selectedCards = this.selectedCards.filter(selectedCard => selectedCard !== card);
+            this.selectedCards = this.selectedCards.filter((selectedCard) => selectedCard !== card);
 
             // If unselecting this card makes other cards no longer selectable, then they need to be de-selected
-            for(const remainingCard of this.selectedCards) {
-                if(!this.selector.canTarget(remainingCard, this.context, this.selectedCards)) {
+            for (const remainingCard of this.selectedCards) {
+                if (!this.selector.canTarget(remainingCard, this.context, this.selectedCards)) {
                     // toggle it to unselected
                     this.selectCard(remainingCard);
                 }
@@ -197,7 +212,7 @@ class SelectCardPrompt extends UiPrompt {
 
         this.choosingPlayer.setSelectedCards(this.selectedCards);
 
-        if(this.properties.onCardToggle) {
+        if (this.properties.onCardToggle) {
             this.properties.onCardToggle(this.choosingPlayer, card);
         }
 
@@ -206,7 +221,7 @@ class SelectCardPrompt extends UiPrompt {
 
     fireOnSelect() {
         let cardParam = this.selector.formatSelectParam(this.selectedCards);
-        if(this.properties.onSelect(this.choosingPlayer, cardParam)) {
+        if (this.properties.onSelect(this.choosingPlayer, cardParam)) {
             this.complete();
         } else {
             this.clearSelection();
@@ -214,20 +229,20 @@ class SelectCardPrompt extends UiPrompt {
     }
 
     onMenuCommand(player, arg) {
-        if(player !== this.choosingPlayer) {
+        if (player !== this.choosingPlayer) {
             return false;
         }
 
-        if(arg !== 'done') {
-            if(this.properties.onMenuCommand(player, arg)) {
+        if (arg !== 'done') {
+            if (this.properties.onMenuCommand(player, arg)) {
                 this.complete();
             }
             return;
         }
 
-        if(this.selector.hasEnoughSelected(this.selectedCards, this.numPlayers, this.context)) {
+        if (this.selector.hasEnoughSelected(this.selectedCards, this.numPlayers, this.context)) {
             this.fireOnSelect();
-        } else if(this.selectedCards.length === 0) {
+        } else if (this.selectedCards.length === 0) {
             this.properties.onCancel(player);
             this.complete();
         }
@@ -240,7 +255,7 @@ class SelectCardPrompt extends UiPrompt {
 
     clearSelection() {
         this.selectedCards = [];
-        if(this.context) {
+        if (this.context) {
             this.context.selectedCards = [];
         }
 
@@ -250,7 +265,7 @@ class SelectCardPrompt extends UiPrompt {
         // Restore previous selections.
         this.choosingPlayer.setSelectedCards(this.previouslySelectedCards);
 
-        if(this.revealTargets && this.revealFunc) {
+        if (this.revealTargets && this.revealFunc) {
             this.game.cardVisibility.removeRule(this.revealFunc);
             this.revealFunc = null;
         }
@@ -267,4 +282,4 @@ class SelectCardPrompt extends UiPrompt {
     }
 }
 
-module.exports = SelectCardPrompt;
+export default SelectCardPrompt;

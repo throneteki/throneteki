@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class WestwatchByTheBridge extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,11 +7,21 @@ class WestwatchByTheBridge extends DrawCard {
             cost: ability.costs.kneelSelf(),
             target: {
                 activePromptTitle: 'Select a location',
-                cardCondition: card => card !== this && card.isFaction('thenightswatch') && card.getType() === 'location' && card.kneeled && card.getPrintedCost() <= this.getTargetPrintedCost(),
+                cardCondition: (card) =>
+                    card !== this &&
+                    card.isFaction('thenightswatch') &&
+                    card.getType() === 'location' &&
+                    card.kneeled &&
+                    card.getPrintedCost() <= this.getTargetPrintedCost(),
                 gameAction: 'stand'
             },
-            handler: context => {
-                this.game.addMessage('{0} kneels {1} to stand {2}', context.player, this, context.target);
+            handler: (context) => {
+                this.game.addMessage(
+                    '{0} kneels {1} to stand {2}',
+                    context.player,
+                    this,
+                    context.target
+                );
                 context.player.standCard(context.target);
             }
         });
@@ -20,7 +30,7 @@ class WestwatchByTheBridge extends DrawCard {
     getTargetPrintedCost() {
         const traits = ['Ranger', 'Steward', 'Builder'];
 
-        if(traits.every(trait => this.controlsCharacterWithTrait(trait))) {
+        if (traits.every((trait) => this.controlsCharacterWithTrait(trait))) {
             return 4;
         }
 
@@ -28,10 +38,12 @@ class WestwatchByTheBridge extends DrawCard {
     }
 
     controlsCharacterWithTrait(trait) {
-        return this.controller.anyCardsInPlay(card => card.getType() === 'character' && card.hasTrait(trait));
+        return this.controller.anyCardsInPlay(
+            (card) => card.getType() === 'character' && card.hasTrait(trait)
+        );
     }
 }
 
 WestwatchByTheBridge.code = '12032';
 
-module.exports = WestwatchByTheBridge;
+export default WestwatchByTheBridge;

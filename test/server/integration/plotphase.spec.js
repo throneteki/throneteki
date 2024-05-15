@@ -1,9 +1,10 @@
-describe('plot phase', function() {
-    integration(function() {
-        describe('when revealing two plots with persistent effects', function() {
-            beforeEach(function() {
+describe('plot phase', function () {
+    integration(function () {
+        describe('when revealing two plots with persistent effects', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('targaryen', [
-                    'Blood of the Dragon', 'A Song of Summer',
+                    'Blood of the Dragon',
+                    'A Song of Summer',
                     'Targaryen Loyalist'
                 ]);
                 this.player1.selectDeck(deck);
@@ -20,17 +21,19 @@ describe('plot phase', function() {
                 this.player2.selectPlot('A Song of Summer');
             });
 
-            it('should apply effects simultaneously', function() {
+            it('should apply effects simultaneously', function () {
                 // Since Blood of the Dragon and A Song of Summer are applied
                 // simultaneously, the chud should survive.
                 expect(this.chud.location).toBe('play area');
             });
         });
 
-        describe('when a new plot is revealed', function() {
-            beforeEach(function() {
+        describe('when a new plot is revealed', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('targaryen', [
-                    'A Song of Summer', 'A Noble Cause', 'A Noble Cause',
+                    'A Song of Summer',
+                    'A Noble Cause',
+                    'A Noble Cause',
                     'Targaryen Loyalist'
                 ]);
                 this.player1.selectDeck(deck);
@@ -57,7 +60,7 @@ describe('plot phase', function() {
                 this.selectFirstPlayer(this.player1);
             });
 
-            it('should unapply the effects of the plot', function() {
+            it('should unapply the effects of the plot', function () {
                 expect(this.character.getStrength()).toBe(1);
             });
         });

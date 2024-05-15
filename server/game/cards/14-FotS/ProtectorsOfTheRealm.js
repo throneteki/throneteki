@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class ProtectorsOfTheRealm extends DrawCard {
     setupCardAbilities(ability) {
@@ -15,4 +15,4 @@ class ProtectorsOfTheRealm extends DrawCard {
 
 ProtectorsOfTheRealm.code = '14031';
 
-module.exports = ProtectorsOfTheRealm;
+export default ProtectorsOfTheRealm;

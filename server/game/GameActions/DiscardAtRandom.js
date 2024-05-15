@@ -1,6 +1,6 @@
-const GameAction = require('./GameAction');
-const DiscardCard = require('./DiscardCard');
-const SimultaneousEvents = require('../SimultaneousEvents');
+import GameAction from './GameAction.js';
+import DiscardCard from './DiscardCard.js';
+import SimultaneousEvents from '../SimultaneousEvents.js';
 
 class DiscardAtRandom extends GameAction {
     constructor() {
@@ -11,21 +11,25 @@ class DiscardAtRandom extends GameAction {
         return amount >= 1 && player.hand.length >= 1;
     }
 
-    createEvent({ amount = 1, player, discardEvent = card => DiscardCard.createEvent({ card, allowSave: false }) }) {
+    createEvent({
+        amount = 1,
+        player,
+        discardEvent = (card) => DiscardCard.createEvent({ card, allowSave: false })
+    }) {
         const actualAmount = Math.min(amount, player.hand.length);
         const cards = [];
 
-        while(cards.length < actualAmount) {
+        while (cards.length < actualAmount) {
             let cardIndex = Math.floor(Math.random() * player.hand.length);
 
             let card = player.hand[cardIndex];
-            if(!cards.includes(card)) {
+            if (!cards.includes(card)) {
                 cards.push(card);
             }
         }
         const event = new SimultaneousEvents();
 
-        for(const card of cards) {
+        for (const card of cards) {
             let childEvent = discardEvent(card);
             childEvent.params.isRandom = true;
             event.addChildEvent(childEvent);
@@ -40,4 +44,4 @@ class DiscardAtRandom extends GameAction {
     }
 }
 
-module.exports = new DiscardAtRandom();
+export default new DiscardAtRandom();

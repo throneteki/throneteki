@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TheWinterMaid extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,8 +7,8 @@ class TheWinterMaid extends DrawCard {
                 onPlotsRevealed: () => true
             },
             max: ability.limit.perPhase(1),
-            handler: context => {
-                let buttons = context.event.plots.map(plot => {
+            handler: (context) => {
+                let buttons = context.event.plots.map((plot) => {
                     return { method: 'plotSelected', card: plot, mapCard: true };
                 });
 
@@ -24,19 +24,22 @@ class TheWinterMaid extends DrawCard {
     }
 
     plotSelected(player, card) {
-        if(this.controller !== player) {
+        if (this.controller !== player) {
             return false;
         }
 
-        this.untilEndOfRound(ability => ({
+        this.untilEndOfRound((ability) => ({
             match: card,
             effect: ability.effects.addTrait('Winter')
         }));
-        this.game.addMessage('{0} uses {1} to give the Winter trait to {2}',
-            player, this, card);
+        this.game.addMessage('{0} uses {1} to give the Winter trait to {2}', player, this, card);
 
-        if(!this.game.anyPlotHasTraitDuringPlotInterrupt('Summer')) {
-            this.game.addMessage('{0} uses {1} to return {1} to their hand instead of their discard pile', player, this);
+        if (!this.game.anyPlotHasTraitDuringPlotInterrupt('Summer')) {
+            this.game.addMessage(
+                '{0} uses {1} to return {1} to their hand instead of their discard pile',
+                player,
+                this
+            );
             player.moveCard(this, 'hand');
         }
 
@@ -46,5 +49,4 @@ class TheWinterMaid extends DrawCard {
 
 TheWinterMaid.code = '19012';
 
-module.exports = TheWinterMaid;
-
+export default TheWinterMaid;

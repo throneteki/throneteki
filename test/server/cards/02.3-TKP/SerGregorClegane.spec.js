@@ -7,7 +7,11 @@ describe('Ser Gregor Clegane (TKP)', function () {
             ]);
             const deck2 = this.buildDeck('baratheon', [
                 'Sneak Attack',
-                'Hedge Knight', 'Maester Cressen', 'Hedge Knight', 'Shireen Baratheon (Core)', 'The Roseroad'
+                'Hedge Knight',
+                'Maester Cressen',
+                'Hedge Knight',
+                'Shireen Baratheon (Core)',
+                'The Roseroad'
             ]);
             this.player1.selectDeck(deck1);
             this.player2.selectDeck(deck2);

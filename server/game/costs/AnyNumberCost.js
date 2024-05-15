@@ -1,6 +1,6 @@
-const XValuePrompt = require('./XValuePrompt');
+import XValuePrompt from './XValuePrompt.js';
 
-class AnyNumberCost {
+export default class AnyNumberCost {
     constructor(properties) {
         this.innerCost = properties.cost;
         this.maxFunc = properties.max;
@@ -23,5 +23,3 @@ class AnyNumberCost {
         this.innerCost.pay(context);
     }
 }
-
-module.exports = AnyNumberCost;

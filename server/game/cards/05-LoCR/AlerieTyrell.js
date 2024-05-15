@@ -1,19 +1,20 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class AlerieTyrell extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: event => event.card === this
+                onCardEntersPlay: (event) => event.card === this
             },
-            message: '{player} uses {source} to search the top 10 cards of their deck for a Tyrell character with printed cost 3 or lower',
+            message:
+                '{player} uses {source} to search the top 10 cards of their deck for a Tyrell character with printed cost 3 or lower',
             gameAction: GameActions.search({
                 title: 'Select a character',
                 topCards: 10,
                 match: { type: 'character', printedCostOrLower: 3, faction: 'tyrell' },
                 message: '{player} {gameAction}',
-                gameAction: GameActions.addToHand(context => ({
+                gameAction: GameActions.addToHand((context) => ({
                     card: context.searchTarget
                 }))
             })
@@ -23,4 +24,4 @@ class AlerieTyrell extends DrawCard {
 
 AlerieTyrell.code = '05037';
 
-module.exports = AlerieTyrell;
+export default AlerieTyrell;

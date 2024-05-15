@@ -1,4 +1,4 @@
-const FactionCharacterCostReducer = require('../reducer.js').FactionCharacterCostReducer;
+import { FactionCharacterCostReducer } from '../reducer.js';
 
 class DesertScavenger extends FactionCharacterCostReducer {
     constructor(owner, cardData) {
@@ -8,4 +8,4 @@ class DesertScavenger extends FactionCharacterCostReducer {
 
 DesertScavenger.code = '01110';
 
-module.exports = DesertScavenger;
+export default DesertScavenger;

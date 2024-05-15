@@ -1,11 +1,8 @@
-describe('Sansa Stark (Core)', function() {
-    integration(function() {
-        describe('when setup', function() {
-            beforeEach(function() {
-                const deck = this.buildDeck('baratheon', [
-                    'A Noble Cause',
-                    'Sansa Stark (Core)'
-                ]);
+describe('Sansa Stark (Core)', function () {
+    integration(function () {
+        describe('when setup', function () {
+            beforeEach(function () {
+                const deck = this.buildDeck('baratheon', ['A Noble Cause', 'Sansa Stark (Core)']);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
                 this.startGame();
@@ -17,18 +14,15 @@ describe('Sansa Stark (Core)', function() {
                 this.completeSetup();
             });
 
-            it('is setup standing', function() {
+            it('is setup standing', function () {
                 expect(this.sansa.location).toBe('play area');
                 expect(this.sansa.kneeled).toBe(false);
             });
         });
 
-        describe('when marshalling', function() {
-            beforeEach(function() {
-                const deck = this.buildDeck('baratheon', [
-                    'A Noble Cause',
-                    'Sansa Stark (Core)'
-                ]);
+        describe('when marshalling', function () {
+            beforeEach(function () {
+                const deck = this.buildDeck('baratheon', ['A Noble Cause', 'Sansa Stark (Core)']);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
                 this.startGame();
@@ -42,7 +36,7 @@ describe('Sansa Stark (Core)', function() {
                 this.player1.clickCard(this.sansa);
             });
 
-            it('enters play knelt', function() {
+            it('enters play knelt', function () {
                 expect(this.sansa.location).toBe('play area');
                 expect(this.sansa.kneeled).toBe(true);
             });

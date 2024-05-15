@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Patience extends DrawCard {
     setupCardAbilities() {
@@ -6,10 +6,15 @@ class Patience extends DrawCard {
         this.action({
             title: 'Return parent to hand',
             phase: 'challenge',
-            handler: context => {
+            handler: (context) => {
                 this.parent.owner.returnCardToHand(this.parent);
-                this.game.addMessage('{0} uses {1} to return {2} to {3}\'s hand',
-                    context.player, this, this.parent, this.parent.owner);
+                this.game.addMessage(
+                    "{0} uses {1} to return {2} to {3}'s hand",
+                    context.player,
+                    this,
+                    this.parent,
+                    this.parent.owner
+                );
             }
         });
     }
@@ -17,4 +22,4 @@ class Patience extends DrawCard {
 
 Patience.code = '10020';
 
-module.exports = Patience;
+export default Patience;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class SweetDonnelHill extends DrawCard {
     setupCardAbilities(ability) {
@@ -13,4 +13,4 @@ class SweetDonnelHill extends DrawCard {
 
 SweetDonnelHill.code = '05031';
 
-module.exports = SweetDonnelHill;
+export default SweetDonnelHill;

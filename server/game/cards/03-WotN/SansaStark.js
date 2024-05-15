@@ -1,21 +1,21 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class SansaStark extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: card => card === this,
+            match: (card) => card === this,
             effect: ability.effects.dynamicDecreaseStrength(() => this.calculateStrength())
         });
         this.persistentEffect({
             condition: () => this.getStrength() === 0,
-            match: card => card === this,
+            match: (card) => card === this,
             effect: ability.effects.addKeyword('Insight')
         });
     }
 
     calculateStrength() {
         return this.controller.deadPile.reduce((count, card) => {
-            if(card.isFaction('stark')) {
+            if (card.isFaction('stark')) {
                 return count + 1;
             }
 
@@ -26,4 +26,4 @@ class SansaStark extends DrawCard {
 
 SansaStark.code = '03013';
 
-module.exports = SansaStark;
+export default SansaStark;

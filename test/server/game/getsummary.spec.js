@@ -1,6 +1,6 @@
-const Game = require('../../../server/game/game.js');
-const Player = require('../../../server/game/player.js');
-const Spectator = require('../../../server/game/spectator.js');
+import Game from '../../../server/game/game.js';
+import Player from '../../../server/game/player.js';
+import Spectator from '../../../server/game/spectator.js';
 
 describe('the Game', () => {
     var game = {};

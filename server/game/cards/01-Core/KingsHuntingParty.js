@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class KingsHuntingParty extends DrawCard {
     setupCardAbilities(ability) {
@@ -10,14 +10,15 @@ class KingsHuntingParty extends DrawCard {
     }
 
     anyOpponentHasKing() {
-        return this.game.anyCardsInPlay(card => (
-            card.controller !== this.controller &&
-            card.getType() === 'character' &&
-            card.hasTrait('King')
-        ));
+        return this.game.anyCardsInPlay(
+            (card) =>
+                card.controller !== this.controller &&
+                card.getType() === 'character' &&
+                card.hasTrait('King')
+        );
     }
 }
 
 KingsHuntingParty.code = '01055';
 
-module.exports = KingsHuntingParty;
+export default KingsHuntingParty;

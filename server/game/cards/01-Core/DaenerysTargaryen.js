@@ -1,10 +1,10 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class DaenerysTargaryen extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => !this.kneeled,
-            match: card => card.isParticipating() && card.getType() === 'character',
+            match: (card) => card.isParticipating() && card.getType() === 'character',
             targetController: 'opponent',
             effect: ability.effects.modifyStrength(-1)
         });
@@ -13,4 +13,4 @@ class DaenerysTargaryen extends DrawCard {
 
 DaenerysTargaryen.code = '01160';
 
-module.exports = DaenerysTargaryen;
+export default DaenerysTargaryen;

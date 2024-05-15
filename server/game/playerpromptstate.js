@@ -32,12 +32,15 @@ class PlayerPromptState {
         this.selectOrder = prompt.selectOrder || false;
         this.menuTitle = prompt.menuTitle || '';
         this.promptTitle = prompt.promptTitle;
-        this.buttons = (prompt.buttons || []).map(button => {
-            if(button.card) {
+        this.buttons = (prompt.buttons || []).map((button) => {
+            if (button.card) {
                 let card = button.card;
                 let properties = Object.assign({}, button);
                 delete properties['card'];
-                return Object.assign({ text: card.name, arg: card.uuid, card: card.getShortSummary() }, properties);
+                return Object.assign(
+                    { text: card.name, arg: card.uuid, card: card.getShortSummary() },
+                    properties
+                );
             }
 
             return button;
@@ -58,12 +61,12 @@ class PlayerPromptState {
         let result = {
             // The `card.selected` property here is a hack for plot selection,
             // which we do differently from normal card selection.
-            selected: card.selected || (index !== -1),
+            selected: card.selected || index !== -1,
             selectable: selectable,
             unselectable: this.selectCard && !selectable
         };
 
-        if(index !== -1 && this.selectOrder) {
+        if (index !== -1 && this.selectOrder) {
             return Object.assign({ order: index + 1 }, result);
         }
 
@@ -76,14 +79,15 @@ class PlayerPromptState {
             selectOrder: this.selectOrder,
             menuTitle: this.menuTitle,
             promptTitle: this.promptTitle,
-            buttons: this.buttons.map(button => this.getButtonState(button)),
+            buttons: this.buttons.map((button) => this.getButtonState(button)),
             controls: this.controls
         };
     }
 
     getButtonState(button) {
-        if(button.disabled) {
-            let disabled = typeof button.disabled === 'function' ? button.disabled() : button.disabled;
+        if (button.disabled) {
+            let disabled =
+                typeof button.disabled === 'function' ? button.disabled() : button.disabled;
             return Object.assign({}, button, { disabled: !!disabled });
         }
 
@@ -91,4 +95,4 @@ class PlayerPromptState {
     }
 }
 
-module.exports = PlayerPromptState;
+export default PlayerPromptState;

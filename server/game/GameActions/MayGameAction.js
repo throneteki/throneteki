@@ -1,5 +1,5 @@
-const GameAction = require('./GameAction');
-const AbilityMessage = require('../AbilityMessage');
+import GameAction from './GameAction.js';
+import AbilityMessage from '../AbilityMessage.js';
 
 class MayGameAction extends GameAction {
     constructor({ player, gameAction, message, title }) {
@@ -22,11 +22,14 @@ class MayGameAction extends GameAction {
     createEvent(context) {
         const titleString = this.title instanceof Function ? this.title(context) : this.title;
 
-        return this.event('__PLACEHOLDER_EVENT__', {}, event => {
+        return this.event('__PLACEHOLDER_EVENT__', {}, (event) => {
             const handler = new MayPromptHandler({
                 yesHandler: () => {
-                    if(this.gameAction.allow(context)) {
-                        this.abilityMessage.output(context.game, { ...context, gameAction: this.gameAction });
+                    if (this.gameAction.allow(context)) {
+                        this.abilityMessage.output(context.game, {
+                            ...context,
+                            gameAction: this.gameAction
+                        });
                         event.thenAttachEvent(this.gameAction.createEvent(context));
                     }
                     return true;
@@ -43,7 +46,7 @@ class MayGameAction extends GameAction {
 }
 
 class MayPromptHandler {
-    constructor({ yesHandler, noHandler = (() => {}) }) {
+    constructor({ yesHandler, noHandler = () => {} }) {
         this.yesHandler = yesHandler;
         this.noHandler = noHandler;
     }
@@ -62,7 +65,7 @@ class MayPromptHandler {
     }
 
     handle(player, arg) {
-        if(arg) {
+        if (arg) {
             this.yesHandler();
         } else {
             this.noHandler();
@@ -71,4 +74,4 @@ class MayPromptHandler {
     }
 }
 
-module.exports = MayGameAction;
+export default MayGameAction;

@@ -1,4 +1,4 @@
-const ReferenceCountedSetProperty = require('./ReferenceCountedSetProperty');
+import ReferenceCountedSetProperty from './ReferenceCountedSetProperty.js';
 
 class KeywordsProperty {
     constructor() {
@@ -78,9 +78,9 @@ class KeywordsProperty {
 
     parseAttachmentTraits() {
         const pattern = /no attachments except <[bi]>(.*)<\/[bi]>/;
-        let values = this.getValues().filter(keyword => keyword.indexOf('no attachments') === 0);
+        let values = this.getValues().filter((keyword) => keyword.indexOf('no attachments') === 0);
 
-        return values.map(value => {
+        return values.map((value) => {
             let match = value.match(pattern);
             return match ? match[1] : 'none';
         });
@@ -88,13 +88,15 @@ class KeywordsProperty {
 
     parseNumericValues(keywordName) {
         let pattern = `${keywordName} \\(?(\\w+)\\)?`;
-        let matches = this.data.getValues().map(keyword => keyword.match(pattern));
+        let matches = this.data.getValues().map((keyword) => keyword.match(pattern));
 
-        return matches.filter(match => !!match).map(match => isNaN(match[1]) ? 0 : parseInt(match[1]));
+        return matches
+            .filter((match) => !!match)
+            .map((match) => (isNaN(match[1]) ? 0 : parseInt(match[1])));
     }
 
     safeReduce(values, func) {
-        if(values.length === 0) {
+        if (values.length === 0) {
             return;
         }
 
@@ -114,4 +116,4 @@ class KeywordsProperty {
     }
 }
 
-module.exports = KeywordsProperty;
+export default KeywordsProperty;

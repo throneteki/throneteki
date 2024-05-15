@@ -1,10 +1,13 @@
-describe('Sand Steed', function() {
-    integration(function() {
-        describe('when the character would leave play before reactions to placing a Summer plot in used pile', function() {
-            beforeEach(function() {
+describe('Sand Steed', function () {
+    integration(function () {
+        describe('when the character would leave play before reactions to placing a Summer plot in used pile', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('martell', [
-                    'A Song of Summer', 'A Noble Cause', 'Valar Morghulis',
-                    'Hedge Knight', 'Sand Steed'
+                    'A Song of Summer',
+                    'A Noble Cause',
+                    'Valar Morghulis',
+                    'Hedge Knight',
+                    'Sand Steed'
                 ]);
 
                 this.player1.selectDeck(deck);
@@ -35,7 +38,7 @@ describe('Sand Steed', function() {
                 this.player2.selectPlot('Valar Morghulis');
             });
 
-            it('does not allow Sand Steed to trigger', function() {
+            it('does not allow Sand Steed to trigger', function () {
                 expect(this.player1).not.toAllowAbilityTrigger(this.sandSteed);
                 this.selectFirstPlayer(this.player1);
                 expect(this.character.location).toBe('dead pile');

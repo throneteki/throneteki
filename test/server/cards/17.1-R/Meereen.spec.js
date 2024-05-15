@@ -1,13 +1,29 @@
-describe('Meereen', function() {
-    integration(function() {
-        describe('when used multiple time by the same player', function() {
-            beforeEach(function() {
+describe('Meereen', function () {
+    integration(function () {
+        describe('when used multiple time by the same player', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('targaryen', [
                     'A Noble Cause',
-                    'Meereen (R)', 'Meereen (R)', 'Meereen (R)', 'Meereen (R)', 'Meereen (R)',
-                    'Meereen (R)', 'Meereen (R)', 'Meereen (R)', 'Meereen (R)', 'Meereen (R)',
-                    'Meereen (R)', 'Meereen (R)', 'Meereen (R)', 'Meereen (R)', 'Meereen (R)',
-                    'Meereen (R)', 'Meereen (R)', 'Meereen (R)', 'Meereen (R)', 'Meereen (R)',
+                    'Meereen (R)',
+                    'Meereen (R)',
+                    'Meereen (R)',
+                    'Meereen (R)',
+                    'Meereen (R)',
+                    'Meereen (R)',
+                    'Meereen (R)',
+                    'Meereen (R)',
+                    'Meereen (R)',
+                    'Meereen (R)',
+                    'Meereen (R)',
+                    'Meereen (R)',
+                    'Meereen (R)',
+                    'Meereen (R)',
+                    'Meereen (R)',
+                    'Meereen (R)',
+                    'Meereen (R)',
+                    'Meereen (R)',
+                    'Meereen (R)',
+                    'Meereen (R)',
                     'Viserion (Core)'
                 ]);
                 this.player1.selectDeck(deck);
@@ -17,7 +33,7 @@ describe('Meereen', function() {
 
                 this.meereen = this.player1.findCardByName('Meereen', 'hand');
                 this.viserion = this.player1.findCardByName('Viserion');
-                if(this.viserion.location !== 'hand') {
+                if (this.viserion.location !== 'hand') {
                     this.player1Object.moveCard(this.viserion, 'hand');
                 }
 
@@ -39,13 +55,13 @@ describe('Meereen', function() {
                 expect(this.viserion.location).toBe('discard pile');
 
                 this.completeMarshalPhase();
-                
+
                 // Skip order of discarded cards (for both instances of the ability)
                 this.player1.clickPrompt('Done');
                 this.player1.clickPrompt('Done');
             });
 
-            it('should discard all of the cards placed under Meereen', function() {
+            it('should discard all of the cards placed under Meereen', function () {
                 // Ruling: http://www.cardgamedb.com/forums/index.php?/topic/39868-ruling-meereen/
                 // 12 cards are placed under Meereen - 9 from the initial
                 // hand, another 3 from the draw from the first instance of
@@ -57,24 +73,52 @@ describe('Meereen', function() {
             });
         });
 
-        describe('when used multiple times by multiple players', function() {
-            beforeEach(function() {
+        describe('when used multiple times by multiple players', function () {
+            beforeEach(function () {
                 const deck1 = this.buildDeck('targaryen', [
                     'A Noble Cause',
-                    'Meereen (R)', 'Meereen (R)', 'Meereen (R)', 'Meereen (R)', 'Meereen (R)',
-                    'Meereen (R)', 'Meereen (R)', 'Meereen (R)', 'Meereen (R)', 'Meereen (R)',
-                    'Meereen (R)', 'Meereen (R)', 'Meereen (R)', 'Meereen (R)', 'Meereen (R)',
-                    'Meereen (R)', 'Meereen (R)', 'Meereen (R)', 'Meereen (R)', 'Meereen (R)',
+                    'Meereen (R)',
+                    'Meereen (R)',
+                    'Meereen (R)',
+                    'Meereen (R)',
+                    'Meereen (R)',
+                    'Meereen (R)',
+                    'Meereen (R)',
+                    'Meereen (R)',
+                    'Meereen (R)',
+                    'Meereen (R)',
+                    'Meereen (R)',
+                    'Meereen (R)',
+                    'Meereen (R)',
+                    'Meereen (R)',
+                    'Meereen (R)',
+                    'Meereen (R)',
+                    'Meereen (R)',
+                    'Meereen (R)',
+                    'Meereen (R)',
+                    'Meereen (R)',
                     'Viserion (Core)'
                 ]);
                 const deck2 = this.buildDeck('greyjoy', [
                     'A Noble Cause',
-                    'Dagmer Cleftjaw (TS)', 'Dagmer Cleftjaw (TS)', 'Dagmer Cleftjaw (TS)',
-                    'Dagmer Cleftjaw (TS)', 'Dagmer Cleftjaw (TS)', 'Dagmer Cleftjaw (TS)',
-                    'Dagmer Cleftjaw (TS)', 'Dagmer Cleftjaw (TS)', 'Dagmer Cleftjaw (TS)',
-                    'Dagmer Cleftjaw (TS)', 'Dagmer Cleftjaw (TS)', 'Dagmer Cleftjaw (TS)',
-                    'Dagmer Cleftjaw (TS)', 'Dagmer Cleftjaw (TS)', 'Dagmer Cleftjaw (TS)',
-                    'Dagmer Cleftjaw (TS)', 'Dagmer Cleftjaw (TS)', 'Dagmer Cleftjaw (TS)',
+                    'Dagmer Cleftjaw (TS)',
+                    'Dagmer Cleftjaw (TS)',
+                    'Dagmer Cleftjaw (TS)',
+                    'Dagmer Cleftjaw (TS)',
+                    'Dagmer Cleftjaw (TS)',
+                    'Dagmer Cleftjaw (TS)',
+                    'Dagmer Cleftjaw (TS)',
+                    'Dagmer Cleftjaw (TS)',
+                    'Dagmer Cleftjaw (TS)',
+                    'Dagmer Cleftjaw (TS)',
+                    'Dagmer Cleftjaw (TS)',
+                    'Dagmer Cleftjaw (TS)',
+                    'Dagmer Cleftjaw (TS)',
+                    'Dagmer Cleftjaw (TS)',
+                    'Dagmer Cleftjaw (TS)',
+                    'Dagmer Cleftjaw (TS)',
+                    'Dagmer Cleftjaw (TS)',
+                    'Dagmer Cleftjaw (TS)',
                     'Viserion (Core)'
                 ]);
                 this.player1.selectDeck(deck1);
@@ -84,12 +128,12 @@ describe('Meereen', function() {
 
                 this.meereen = this.player1.findCardByName('Meereen', 'hand');
                 this.viserion1 = this.player1.findCardByName('Viserion');
-                if(this.viserion1.location !== 'hand') {
+                if (this.viserion1.location !== 'hand') {
                     this.player1Object.moveCard(this.viserion1, 'hand');
                 }
                 this.dagmer = this.player2.findCardByName('Dagmer Cleftjaw', 'hand');
                 this.viserion2 = this.player2.findCardByName('Viserion');
-                if(this.viserion2.location !== 'hand') {
+                if (this.viserion2.location !== 'hand') {
                     this.player2Object.moveCard(this.viserion2, 'hand');
                 }
 
@@ -124,12 +168,12 @@ describe('Meereen', function() {
                 this.player2.clickPrompt('Done');
             });
 
-            it('should return the owners cards to hand', function() {
+            it('should return the owners cards to hand', function () {
                 expect(this.player1Object.hand.length).toBe(8);
                 expect(this.player1Object.discardPile.length).toBe(4);
             });
 
-            it('should return the other player\'s cards to hand', function() {
+            it("should return the other player's cards to hand", function () {
                 // Ruling: http://www.cardgamedb.com/forums/index.php?/topic/39868-ruling-meereen/
                 // Because the ability text refers to cards "you" placed under
                 // Meereen, only your own cards are returned to hand, so it

@@ -1,16 +1,22 @@
-const DrawCard = require('../../drawcard.js');
-const TextHelper = require('../../TextHelper');
+import DrawCard from '../../drawcard.js';
+import TextHelper from '../../TextHelper.js';
 
 class ThreeFingerHobb extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onReserveChecked: () => this.controller.hand.length < this.controller.getTotalReserve() && this.controller.canDraw()
+                onReserveChecked: () =>
+                    this.controller.hand.length < this.controller.getTotalReserve() &&
+                    this.controller.canDraw()
             },
-            handler: context => {
+            handler: (context) => {
                 let numDrawn = context.player.drawCardsToHand(2).length;
-                this.game.addMessage('{0} uses {1} to draw {2}',
-                    context.player, this, TextHelper.count(numDrawn, 'card'));
+                this.game.addMessage(
+                    '{0} uses {1} to draw {2}',
+                    context.player,
+                    this,
+                    TextHelper.count(numDrawn, 'card')
+                );
             }
         });
     }
@@ -18,4 +24,4 @@ class ThreeFingerHobb extends DrawCard {
 
 ThreeFingerHobb.code = '11085';
 
-module.exports = ThreeFingerHobb;
+export default ThreeFingerHobb;

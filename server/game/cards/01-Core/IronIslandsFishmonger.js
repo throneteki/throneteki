@@ -1,4 +1,4 @@
-const FactionCharacterCostReducer = require('../reducer.js').FactionCharacterCostReducer;
+import { FactionCharacterCostReducer } from '../reducer.js';
 
 class IronIslandsFishmonger extends FactionCharacterCostReducer {
     constructor(owner, cardData) {
@@ -8,4 +8,4 @@ class IronIslandsFishmonger extends FactionCharacterCostReducer {
 
 IronIslandsFishmonger.code = '01074';
 
-module.exports = IronIslandsFishmonger;
+export default IronIslandsFishmonger;

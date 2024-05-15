@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class MessengerRaven extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,10 +7,14 @@ class MessengerRaven extends DrawCard {
             phase: 'dominance',
             condition: () => this.controller.canDraw(),
             cost: ability.costs.returnSelfToHand(),
-            handler: context => {
+            handler: (context) => {
                 context.player.drawCardsToHand(1);
 
-                this.game.addMessage('{0} returns {1} to their hand to draw 1 card', context.player, this);
+                this.game.addMessage(
+                    '{0} returns {1} to their hand to draw 1 card',
+                    context.player,
+                    this
+                );
             }
         });
     }
@@ -18,4 +22,4 @@ class MessengerRaven extends DrawCard {
 
 MessengerRaven.code = '01130';
 
-module.exports = MessengerRaven;
+export default MessengerRaven;

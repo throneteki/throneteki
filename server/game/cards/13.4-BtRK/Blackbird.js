@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Blackbird extends DrawCard {
     setupCardAbilities() {
@@ -8,18 +8,20 @@ class Blackbird extends DrawCard {
         });
         this.reaction({
             when: {
-                onCardOutOfShadows: event => event.card === this
+                onCardOutOfShadows: (event) => event.card === this
             },
             target: {
                 activePromptTitle: 'Select a location',
-                cardCondition: (card) => card.location === 'play area' && card !== this && card.getType() === 'location' && card.isFaction('thenightswatch'),
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card !== this &&
+                    card.getType() === 'location' &&
+                    card.isFaction('thenightswatch'),
                 gameAction: 'stand'
             },
             message: '{player} uses {source} to stand {target}',
-            handler: context => {
-                this.game.resolveGameAction(
-                    GameActions.standCard({ card: context.target })
-                );
+            handler: (context) => {
+                this.game.resolveGameAction(GameActions.standCard({ card: context.target }));
             }
         });
     }
@@ -27,4 +29,4 @@ class Blackbird extends DrawCard {
 
 Blackbird.code = '13066';
 
-module.exports = Blackbird;
+export default Blackbird;

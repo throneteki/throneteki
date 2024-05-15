@@ -1,5 +1,5 @@
-const DraftFormat = require('./DraftFormat');
-const JoustFormat = require('./JoustFormat');
-const RookeryFormat = require('./RookeryFormat');
+import DraftFormat from './DraftFormat.js';
+import JoustFormat from './JoustFormat.js';
+import RookeryFormat from './RookeryFormat.js';
 
-module.exports = [JoustFormat, DraftFormat, RookeryFormat];
+export default [JoustFormat, DraftFormat, RookeryFormat];

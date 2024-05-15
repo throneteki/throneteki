@@ -1,7 +1,7 @@
-describe('The Lost Message', function() {
-    integration(function() {
-        describe('when triggering the action', function() {
-            beforeEach(function() {
+describe('The Lost Message', function () {
+    integration(function () {
+        describe('when triggering the action', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('baratheon', [
                     'The Lost Message',
                     { name: 'The High Sparrow', count: 30 }
@@ -22,8 +22,8 @@ describe('The Lost Message', function() {
                 this.player2.dragCard(this.player2Object.hand[0], 'discard pile');
             });
 
-            describe('and all players have cards in hand', function() {
-                it('shuffles cards into the deck then adds equal amounts back to hand', function() {
+            describe('and all players have cards in hand', function () {
+                it('shuffles cards into the deck then adds equal amounts back to hand', function () {
                     const player1Hand = [...this.player1Object.hand];
                     const player2Hand = [...this.player2Object.hand];
 
@@ -36,12 +36,12 @@ describe('The Lost Message', function() {
                 });
             });
 
-            describe('and there is a limit on the number of cards drawn', function() {
-                beforeEach(function() {
+            describe('and there is a limit on the number of cards drawn', function () {
+                beforeEach(function () {
                     this.player1.clickCard('The High Sparrow', 'hand');
                 });
 
-                it('does not affect the cards added to hand', function() {
+                it('does not affect the cards added to hand', function () {
                     const player1HandLength = this.player1Object.hand.length;
 
                     this.player1.clickMenu(this.plot, 'Shuffle cards into deck');
@@ -50,14 +50,14 @@ describe('The Lost Message', function() {
                 });
             });
 
-            describe('and any player has no cards in hand', function() {
-                beforeEach(function() {
-                    for(const card of this.player1Object.hand) {
+            describe('and any player has no cards in hand', function () {
+                beforeEach(function () {
+                    for (const card of this.player1Object.hand) {
                         this.player1.dragCard(card, 'discard pile');
                     }
                 });
 
-                it('shuffles cards into the deck then adds equal amounts back to hand', function() {
+                it('shuffles cards into the deck then adds equal amounts back to hand', function () {
                     const player2Hand = [...this.player2Object.hand];
 
                     this.player1.clickMenu(this.plot, 'Shuffle cards into deck');

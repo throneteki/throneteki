@@ -1,28 +1,26 @@
-const shuffle = require('lodash.shuffle');
-
-const Spectator = require('./spectator.js');
-const CardMatcher = require('./CardMatcher');
-const DrawCard = require('./drawcard.js');
-const Deck = require('./Deck');
-const AtomicEvent = require('./AtomicEvent');
-const Event = require('./event');
-const AbilityContext = require('./AbilityContext.js');
-const AttachmentPrompt = require('./gamesteps/attachmentprompt.js');
-const BestowPrompt = require('./gamesteps/bestowprompt.js');
-const AllowedChallenges = require('./AllowedChallenges');
-const PlayableLocation = require('./playablelocation.js');
-const PlayActionPrompt = require('./gamesteps/playactionprompt.js');
-const PlayerPromptState = require('./playerpromptstate.js');
-const MinMaxProperty = require('./PropertyTypes/MinMaxProperty');
-const ReferenceCountedSetProperty = require('./PropertyTypes/ReferenceCountedSetProperty');
-const GoldSource = require('./GoldSource.js');
-const GameActions = require('./GameActions');
-const RemoveFromGame = require('./GameActions/RemoveFromGame');
-const SacrificeCard = require('./GameActions/SacrificeCard');
-const ChessClock = require('./ChessClock.js');
-
-const { DrawPhaseCards, MarshalIntoShadowsCost, SetupGold } = require('./Constants');
-const { flatten } = require('underscore');
+import shuffle from 'lodash.shuffle';
+import { flatten } from 'underscore';
+import Spectator from './spectator.js';
+import CardMatcher from './CardMatcher.js';
+import DrawCard from './drawcard.js';
+import Deck from './Deck.js';
+import AtomicEvent from './AtomicEvent.js';
+import Event from './event.js';
+import AbilityContext from './AbilityContext.js';
+import AttachmentPrompt from './gamesteps/attachmentprompt.js';
+import BestowPrompt from './gamesteps/bestowprompt.js';
+import AllowedChallenges from './AllowedChallenges.js';
+import PlayableLocation from './playablelocation.js';
+import PlayActionPrompt from './gamesteps/playactionprompt.js';
+import PlayerPromptState from './playerpromptstate.js';
+import MinMaxProperty from './PropertyTypes/MinMaxProperty.js';
+import ReferenceCountedSetProperty from './PropertyTypes/ReferenceCountedSetProperty.js';
+import GoldSource from './GoldSource.js';
+import GameActions from './GameActions/index.js';
+import RemoveFromGame from './GameActions/RemoveFromGame.js';
+import SacrificeCard from './GameActions/SacrificeCard.js';
+import ChessClock from './ChessClock.js';
+import { DrawPhaseCards, MarshalIntoShadowsCost, SetupGold } from './Constants/index.js';
 
 class Player extends Spectator {
     constructor(id, user, owner, game) {
@@ -91,8 +89,12 @@ class Player extends Spectator {
         this.shuffleArray = shuffle;
         this.role = user.role;
         this.flags = new ReferenceCountedSetProperty();
-        if(game.useChessClocks) {
-            this.chessClock = new ChessClock(this, game.chessClockTimeLimit, game.delayToStartClock);
+        if (game.useChessClocks) {
+            this.chessClock = new ChessClock(
+                this,
+                game.chessClockTimeLimit,
+                game.delayToStartClock
+            );
         } else {
             this.chessClock = undefined;
         }
@@ -102,8 +104,20 @@ class Player extends Spectator {
     }
 
     createDefaultPlayableLocations() {
-        let playFromHand = ['marshal', 'marshalIntoShadows', 'play', 'ambush'].map(playingType => new PlayableLocation(playingType, card => card.controller === this && card.location === 'hand'));
-        let playFromShadows = ['outOfShadows', 'play'].map(playingType => new PlayableLocation(playingType, card => card.controller === this && card.location === 'shadows'));
+        let playFromHand = ['marshal', 'marshalIntoShadows', 'play', 'ambush'].map(
+            (playingType) =>
+                new PlayableLocation(
+                    playingType,
+                    (card) => card.controller === this && card.location === 'hand'
+                )
+        );
+        let playFromShadows = ['outOfShadows', 'play'].map(
+            (playingType) =>
+                new PlayableLocation(
+                    playingType,
+                    (card) => card.controller === this && card.location === 'shadows'
+                )
+        );
         return playFromHand.concat(playFromShadows);
     }
 
@@ -112,25 +126,32 @@ class Player extends Spectator {
     }
 
     anyCardsInPlay(predicateOrMatcher) {
-        const predicate = typeof(predicateOrMatcher) === 'function'
-            ? predicateOrMatcher
-            : card => CardMatcher.isMatch(card, predicateOrMatcher);
-        return this.game.allCards.some(card => card.controller === this && card.location === 'play area' && predicate(card));
+        const predicate =
+            typeof predicateOrMatcher === 'function'
+                ? predicateOrMatcher
+                : (card) => CardMatcher.isMatch(card, predicateOrMatcher);
+        return this.game.allCards.some(
+            (card) => card.controller === this && card.location === 'play area' && predicate(card)
+        );
     }
 
     filterCardsInPlay(predicateOrMatcher) {
-        const predicate = typeof(predicateOrMatcher) === 'function'
-            ? predicateOrMatcher
-            : card => CardMatcher.isMatch(card, predicateOrMatcher);
-        return this.game.allCards.filter(card => card.controller === this && card.location === 'play area' && predicate(card));
+        const predicate =
+            typeof predicateOrMatcher === 'function'
+                ? predicateOrMatcher
+                : (card) => CardMatcher.isMatch(card, predicateOrMatcher);
+        return this.game.allCards.filter(
+            (card) => card.controller === this && card.location === 'play area' && predicate(card)
+        );
     }
 
     getNumberOfCardsInPlay(predicateOrMatcher) {
-        const predicate = typeof(predicateOrMatcher) === 'function'
-            ? predicateOrMatcher
-            : card => CardMatcher.isMatch(card, predicateOrMatcher);
+        const predicate =
+            typeof predicateOrMatcher === 'function'
+                ? predicateOrMatcher
+                : (card) => CardMatcher.isMatch(card, predicateOrMatcher);
         return this.game.allCards.reduce((num, card) => {
-            if(card.controller === this && card.location === 'play area' && predicate(card)) {
+            if (card.controller === this && card.location === 'play area' && predicate(card)) {
                 return num + 1;
             }
 
@@ -139,22 +160,25 @@ class Player extends Spectator {
     }
 
     isCardInPlayableLocation(card, playingType) {
-        return this.playableLocations.some(location => location.playingType === playingType && location.contains(card));
+        return this.playableLocations.some(
+            (location) => location.playingType === playingType && location.contains(card)
+        );
     }
 
     getDuplicateInPlay(card) {
-        if(!card.isUnique()) {
+        if (!card.isUnique()) {
             return undefined;
         }
 
-        return this.game.allCards.find(playCard => (
-            playCard.controller === this &&
-            playCard.location === 'play area' &&
-            (this.game.currentPhase === 'setup' || !playCard.facedown) &&
-            playCard !== card &&
-            (playCard.code === card.code || playCard.name === card.name) &&
-            playCard.owner === this
-        ));
+        return this.game.allCards.find(
+            (playCard) =>
+                playCard.controller === this &&
+                playCard.location === 'play area' &&
+                (this.game.currentPhase === 'setup' || !playCard.facedown) &&
+                playCard !== card &&
+                (playCard.code === card.code || playCard.name === card.name) &&
+                playCard.owner === this
+        );
     }
 
     getFaction() {
@@ -162,22 +186,37 @@ class Player extends Spectator {
     }
 
     getNumberOfUsedPlots() {
-        return Math.max(this.plotDiscard.length + this.usedPlotsModifier + this.usedPlotsModifierByTrait.getValues().reduce((sum, entry) => sum + this.usedPlotsModifierByTrait.getCountForReference(entry), 0), 0);
+        return Math.max(
+            this.plotDiscard.length +
+                this.usedPlotsModifier +
+                this.usedPlotsModifierByTrait
+                    .getValues()
+                    .reduce(
+                        (sum, entry) =>
+                            sum + this.usedPlotsModifierByTrait.getCountForReference(entry),
+                        0
+                    ),
+            0
+        );
     }
 
     getNumberOfUsedPlotsByTrait(trait) {
-        return Math.max(this.plotDiscard.filter(card => card.hasTrait(trait)).length + this.usedPlotsModifierByTrait.getCountForReference(trait), 0);
+        return Math.max(
+            this.plotDiscard.filter((card) => card.hasTrait(trait)).length +
+                this.usedPlotsModifierByTrait.getCountForReference(trait),
+            0
+        );
     }
 
     getTraitsOfUsedPlots() {
-        let traits = flatten(this.plotDiscard.map(card => card.getTraits()));
+        let traits = flatten(this.plotDiscard.map((card) => card.getTraits()));
         traits = traits.concat(this.usedPlotsModifierByTrait.getValues());
         const uniqueTraits = new Set(traits);
         return uniqueTraits;
     }
 
     getPlots() {
-        return this.plotDeck.filter(plot => !plot.notConsideredToBeInPlotDeck);
+        return this.plotDeck.filter((plot) => !plot.notConsideredToBeInPlotDeck);
     }
 
     addGoldSource(source) {
@@ -185,13 +224,19 @@ class Player extends Spectator {
     }
 
     removeGoldSource(source) {
-        this.goldSources = this.goldSources.filter(s => s !== source);
+        this.goldSources = this.goldSources.filter((s) => s !== source);
     }
 
     getSpendableGoldSources(spendParams) {
-        let activePlayer = spendParams.activePlayer || this.game.currentAbilityContext && this.game.currentAbilityContext.player || this;
-        let defaultedSpendParams = Object.assign({ activePlayer: activePlayer, playingType: 'ability' }, spendParams);
-        return this.goldSources.filter(source => source.allowSpendingFor(defaultedSpendParams));
+        let activePlayer =
+            spendParams.activePlayer ||
+            (this.game.currentAbilityContext && this.game.currentAbilityContext.player) ||
+            this;
+        let defaultedSpendParams = Object.assign(
+            { activePlayer: activePlayer, playingType: 'ability' },
+            spendParams
+        );
+        return this.goldSources.filter((source) => source.allowSpendingFor(defaultedSpendParams));
     }
 
     getSpendableGold(spendParams = {}) {
@@ -200,11 +245,11 @@ class Player extends Spectator {
     }
 
     getGoldToGain(amount) {
-        if(amount < 0) {
+        if (amount < 0) {
             return 0;
         }
 
-        if(this.maxGoldGain.getMax() !== undefined) {
+        if (this.maxGoldGain.getMax() !== undefined) {
             return Math.min(amount, this.maxGoldGain.getMax() - this.gainedGold);
         }
 
@@ -214,7 +259,7 @@ class Player extends Spectator {
     modifyGold(amount) {
         this.gold += amount;
 
-        if(this.gold < 0) {
+        if (this.gold < 0) {
             amount += -this.gold;
             this.gold = 0;
         }
@@ -227,12 +272,12 @@ class Player extends Spectator {
     }
 
     modifyUsedPlotsWithTrait(value, trait) {
-        if(value >= 0) {
-            for(let i = 0; i < value; i++) {
+        if (value >= 0) {
+            for (let i = 0; i < value; i++) {
                 this.usedPlotsModifierByTrait.add(trait);
             }
         } else {
-            for(let i = 0; i < value * -1; i++) {
+            for (let i = 0; i < value * -1; i++) {
                 this.usedPlotsModifierByTrait.remove(trait);
             }
         }
@@ -241,11 +286,11 @@ class Player extends Spectator {
     getNumCardsToDraw(amount) {
         let numCards = amount;
 
-        if(numCards > this.drawDeck.length) {
+        if (numCards > this.drawDeck.length) {
             numCards = this.drawDeck.length;
         }
 
-        if(this.maxCardDraw.getMax() !== undefined) {
+        if (this.maxCardDraw.getMax() !== undefined) {
             numCards = Math.min(numCards, this.maxCardDraw.getMax() - this.drawnCards);
         }
 
@@ -253,16 +298,18 @@ class Player extends Spectator {
     }
 
     drawCardsToHand(numCards) {
-        return this.game.resolveGameAction(GameActions.drawCards({ player: this, amount: numCards }));
+        return this.game.resolveGameAction(
+            GameActions.drawCards({ player: this, amount: numCards })
+        );
     }
 
     searchDrawDeck(limit, predicate = () => true) {
         let cards = this.drawDeck;
 
-        if(typeof(limit) === 'function') {
+        if (typeof limit === 'function') {
             predicate = limit;
         } else {
-            if(limit > 0) {
+            if (limit > 0) {
                 cards = this.drawDeck.slice(0, limit);
             } else {
                 cards = this.drawDeck.slice(limit);
@@ -280,13 +327,18 @@ class Player extends Spectator {
         number = Math.min(number, this.drawDeck.length);
 
         var cards = this.drawDeck.slice(0, number);
-        this.discardCards(cards, false, discarded => {
-            callback(discarded);
-        }, options);
+        this.discardCards(
+            cards,
+            false,
+            (discarded) => {
+                callback(discarded);
+            },
+            options
+        );
     }
 
     moveFromTopToBottomOfDrawDeck(number) {
-        while(number > 0) {
+        while (number > 0) {
             this.moveCard(this.drawDeck[0], 'draw deck', { bottom: true });
 
             number--;
@@ -297,23 +349,28 @@ class Player extends Spectator {
         var toDiscard = Math.min(number, this.hand.length);
         var cards = [];
 
-        while(cards.length < toDiscard) {
+        while (cards.length < toDiscard) {
             var cardIndex = Math.floor(Math.random() * this.hand.length);
 
             var card = this.hand[cardIndex];
-            if(!cards.includes(card)) {
+            if (!cards.includes(card)) {
                 cards.push(card);
             }
         }
 
-        this.discardCards(cards, false, discarded => {
-            this.game.addMessage('{0} discards {1} at random', this, discarded);
-            callback(discarded);
-        }, { isRandom: true });
+        this.discardCards(
+            cards,
+            false,
+            (discarded) => {
+                this.game.addMessage('{0} discards {1} at random', this, discarded);
+                callback(discarded);
+            },
+            { isRandom: true }
+        );
     }
 
     canInitiateChallenge(challengeType, opponent) {
-        if(this.isSupporter(opponent)) {
+        if (this.isSupporter(opponent)) {
             return false;
         }
 
@@ -321,15 +378,19 @@ class Player extends Spectator {
     }
 
     canGainGold() {
-        return (this.maxGoldGain.getMax() === undefined || this.gainedGold < this.maxGoldGain.getMax());
+        return (
+            this.maxGoldGain.getMax() === undefined || this.gainedGold < this.maxGoldGain.getMax()
+        );
     }
 
     canDraw() {
-        return (this.maxCardDraw.getMax() === undefined || this.drawnCards < this.maxCardDraw.getMax());
+        return (
+            this.maxCardDraw.getMax() === undefined || this.drawnCards < this.maxCardDraw.getMax()
+        );
     }
 
     canSelectAsFirstPlayer(player) {
-        if(this.firstPlayerSelectCondition) {
+        if (this.firstPlayerSelectCondition) {
             return this.firstPlayerSelectCondition(player);
         }
 
@@ -365,8 +426,8 @@ class Player extends Spectator {
     }
 
     resetCardPile(pile) {
-        for(const card of pile) {
-            if(pile !== this.cardsInPlay || !this.cardsInPlayBeforeSetup.includes(card)) {
+        for (const card of pile) {
+            if (pile !== this.cardsInPlay || !this.cardsInPlayBeforeSetup.includes(card)) {
                 card.moveTo('draw deck');
                 this.drawDeck.push(card);
             }
@@ -378,7 +439,9 @@ class Player extends Spectator {
         this.hand = [];
 
         this.resetCardPile(this.cardsInPlay);
-        this.cardsInPlay = this.cardsInPlay.filter(card => this.cardsInPlayBeforeSetup.includes(card));
+        this.cardsInPlay = this.cardsInPlay.filter((card) =>
+            this.cardsInPlayBeforeSetup.includes(card)
+        );
 
         this.resetCardPile(this.discardPile);
         this.discardPile = [];
@@ -425,15 +488,20 @@ class Player extends Spectator {
     }
 
     removeCostReducer(reducer) {
-        if(this.costReducers.includes(reducer)) {
+        if (this.costReducers.includes(reducer)) {
             reducer.unregisterEvents();
-            this.costReducers = this.costReducers.filter(r => r !== reducer);
+            this.costReducers = this.costReducers.filter((r) => r !== reducer);
         }
     }
 
     getCostReduction(playingType, card) {
-        let matchingReducers = this.costReducers.filter(reducer => reducer.canReduce(playingType, card));
-        let reduction = matchingReducers.reduce((memo, reducer) => reducer.getAmount(card) + memo, 0);
+        let matchingReducers = this.costReducers.filter((reducer) =>
+            reducer.canReduce(playingType, card)
+        );
+        let reduction = matchingReducers.reduce(
+            (memo, reducer) => reducer.getAmount(card) + memo,
+            0
+        );
         return reduction;
     }
 
@@ -444,15 +512,18 @@ class Player extends Spectator {
     }
 
     getBaseCost(playingType, card) {
-        if(playingType === 'marshalIntoShadows') {
+        if (playingType === 'marshalIntoShadows') {
             return MarshalIntoShadowsCost;
         }
 
-        if(playingType === 'outOfShadows' || playingType === 'play' && card.location === 'shadows') {
+        if (
+            playingType === 'outOfShadows' ||
+            (playingType === 'play' && card.location === 'shadows')
+        ) {
             return card.getShadowCost();
         }
 
-        if(playingType === 'ambush') {
+        if (playingType === 'ambush') {
             return card.getAmbushCost();
         }
 
@@ -460,17 +531,19 @@ class Player extends Spectator {
     }
 
     markUsedReducers(playingType, card) {
-        var matchingReducers = this.costReducers.filter(reducer => reducer.canReduce(playingType, card));
-        for(let reducer of matchingReducers) {
+        var matchingReducers = this.costReducers.filter((reducer) =>
+            reducer.canReduce(playingType, card)
+        );
+        for (let reducer of matchingReducers) {
             reducer.markUsed();
-            if(reducer.isExpired()) {
+            if (reducer.isExpired()) {
                 this.removeCostReducer(reducer);
             }
         }
     }
 
     registerAbilityMax(cardName, limit) {
-        if(this.abilityMaxByTitle[cardName]) {
+        if (this.abilityMaxByTitle[cardName]) {
             return;
         }
 
@@ -481,7 +554,7 @@ class Player extends Spectator {
     isAbilityAtMax(cardName) {
         let limit = this.abilityMaxByTitle[cardName];
 
-        if(!limit) {
+        if (!limit) {
             return false;
         }
 
@@ -491,17 +564,17 @@ class Player extends Spectator {
     incrementAbilityMax(cardName) {
         let limit = this.abilityMaxByTitle[cardName];
 
-        if(limit) {
+        if (limit) {
             limit.increment();
         }
     }
 
     isCharacterDead(card) {
-        return card.isUnique() && this.deadPile.some(c => c.name === card.name);
+        return card.isUnique() && this.deadPile.some((c) => c.name === card.name);
     }
 
     playCard(card) {
-        if(!card) {
+        if (!card) {
             return false;
         }
 
@@ -510,13 +583,20 @@ class Player extends Spectator {
             player: this,
             source: card
         });
-        var playActions = card.getPlayActions().filter(action => action.meetsRequirements(context) && action.canPayCosts(context) && action.canResolveTargets(context));
+        var playActions = card
+            .getPlayActions()
+            .filter(
+                (action) =>
+                    action.meetsRequirements(context) &&
+                    action.canPayCosts(context) &&
+                    action.canResolveTargets(context)
+            );
 
-        if(playActions.length === 0) {
+        if (playActions.length === 0) {
             return false;
         }
 
-        if(playActions.length === 1) {
+        if (playActions.length === 1) {
             this.game.resolveAbility(playActions[0], context);
         } else {
             this.game.queueStep(new PlayActionPrompt(this.game, this, playActions, context));
@@ -526,35 +606,42 @@ class Player extends Spectator {
     }
 
     canTrigger(card) {
-        return !this.triggerRestrictions.some(restriction => restriction(card));
+        return !this.triggerRestrictions.some((restriction) => restriction(card));
     }
 
     canDuplicate(duplicateCard) {
-        if(!duplicateCard.isUnique()) {
+        if (!duplicateCard.isUnique()) {
             return false;
         }
 
-        if(this.isCharacterDead(duplicateCard) && !this.canResurrect(duplicateCard)) {
+        if (this.isCharacterDead(duplicateCard) && !this.canResurrect(duplicateCard)) {
             return false;
         }
 
-        return this.anyCardsInPlay(card => duplicateCard.isCopyOf(card) && card.owner === duplicateCard.owner && !card.facedown);
+        return this.anyCardsInPlay(
+            (card) =>
+                duplicateCard.isCopyOf(card) && card.owner === duplicateCard.owner && !card.facedown
+        );
     }
 
     canPlay(card, playingType = 'play') {
-        return !this.playCardRestrictions.some(restriction => restriction(card, playingType));
+        return !this.playCardRestrictions.some((restriction) => restriction(card, playingType));
     }
 
     canPutIntoPlay(card, playingType = 'play', options = {}) {
-        if(card.getPrintedType() === 'event') {
+        if (card.getPrintedType() === 'event') {
             return false;
         }
 
-        if(card.getPrintedType() === 'attachment' && options.attachmentTargets && !this.anyCardsInPlay(options.attachmentTargets)) {
+        if (
+            card.getPrintedType() === 'attachment' &&
+            options.attachmentTargets &&
+            !this.anyCardsInPlay(options.attachmentTargets)
+        ) {
             return false;
         }
 
-        if(!options.isEffectExpiration && !this.canPlay(card, playingType)) {
+        if (!options.isEffectExpiration && !this.canPlay(card, playingType)) {
             return false;
         }
 
@@ -564,86 +651,113 @@ class Player extends Spectator {
     canControl(card) {
         let owner = card.owner;
 
-        if(!card.isUnique()) {
+        if (!card.isUnique()) {
             return true;
         }
 
-        if(this.isCharacterDead(card) && !this.canResurrect(card)) {
+        if (this.isCharacterDead(card) && !this.canResurrect(card)) {
             return false;
         }
 
-        if(owner === this) {
-            let controlsAnOpponentsCopy = this.anyCardsInPlay(c => c.name === card.name && c.owner !== this && !c.facedown);
-            let opponentControlsOurCopy = this.game.getPlayers().some(player => {
-                return player !== this && player.anyCardsInPlay(c => c.name === card.name && c.owner === this && c !== card && !c.facedown);
+        if (owner === this) {
+            let controlsAnOpponentsCopy = this.anyCardsInPlay(
+                (c) => c.name === card.name && c.owner !== this && !c.facedown
+            );
+            let opponentControlsOurCopy = this.game.getPlayers().some((player) => {
+                return (
+                    player !== this &&
+                    player.anyCardsInPlay(
+                        (c) => c.name === card.name && c.owner === this && c !== card && !c.facedown
+                    )
+                );
             });
 
             return !controlsAnOpponentsCopy && !opponentControlsOurCopy;
         }
 
-        if(owner.isCharacterDead(card) && !owner.canResurrect(card)) {
+        if (owner.isCharacterDead(card) && !owner.canResurrect(card)) {
             return false;
         }
 
-        let controlsACopy = this.anyCardsInPlay(c => c.name === card.name && !c.facedown);
-        let opponentControlsACopy = owner.anyCardsInPlay(c => c.name === card.name && c !== card && !c.facedown);
+        let controlsACopy = this.anyCardsInPlay((c) => c.name === card.name && !c.facedown);
+        let opponentControlsACopy = owner.anyCardsInPlay(
+            (c) => c.name === card.name && c !== card && !c.facedown
+        );
 
         return !controlsACopy && !opponentControlsACopy;
     }
 
     canResurrect(card) {
-        return this.deadPile.includes(card) && (!card.isUnique() || this.deadPile.filter(c => c.name === card.name).length === 1);
+        return (
+            this.deadPile.includes(card) &&
+            (!card.isUnique() || this.deadPile.filter((c) => c.name === card.name).length === 1)
+        );
     }
 
     putIntoPlay(card, playingType = 'play', options = {}) {
-        if(!options.force && !this.canPutIntoPlay(card, playingType, options)) {
+        if (!options.force && !this.canPutIntoPlay(card, playingType, options)) {
             return;
         }
 
         var dupeCard = this.getDuplicateInPlay(card);
 
-        if(card.getPrintedType() === 'attachment' && playingType !== 'setup' && !dupeCard) {
+        if (card.getPrintedType() === 'attachment' && playingType !== 'setup' && !dupeCard) {
             this.promptForAttachment(card, playingType, options.attachmentTargets);
             return;
         }
 
         let needsShadowEvent = card.location === 'shadows';
 
-        if(dupeCard && playingType !== 'setup') {
+        if (dupeCard && playingType !== 'setup') {
             this.removeCardFromPile(card);
             dupeCard.addDuplicate(card);
 
-            if(needsShadowEvent) {
-                this.game.raiseEvent('onCardOutOfShadows', { player: this, card: card, type: 'dupe' });
+            if (needsShadowEvent) {
+                this.game.raiseEvent('onCardOutOfShadows', {
+                    player: this,
+                    card: card,
+                    type: 'dupe'
+                });
             }
         } else {
             // Attachments placed in setup should not be considered to be 'played',
             // as it will cause then to double their effects when attached later.
-            let isSetupAttachment = playingType === 'setup' && card.getPrintedType() === 'attachment';
+            let isSetupAttachment =
+                playingType === 'setup' && card.getPrintedType() === 'attachment';
 
             let originalLocation = card.location;
 
             let originalFacedownState = card.facedown;
             card.facedown = this.game.currentPhase === 'setup';
             card.new = true;
-            this.moveCard(card, 'play area', { isDupe: !!dupeCard, wasFacedown: originalFacedownState });
+            this.moveCard(card, 'play area', {
+                isDupe: !!dupeCard,
+                wasFacedown: originalFacedownState
+            });
             card.takeControl(this);
-            card.kneeled = playingType !== 'setup' && !!card.entersPlayKneeled || !!options.kneeled;
+            card.kneeled =
+                (playingType !== 'setup' && !!card.entersPlayKneeled) || !!options.kneeled;
 
-            if(!dupeCard && !isSetupAttachment) {
+            if (!dupeCard && !isSetupAttachment) {
                 card.applyPersistentEffects();
             }
 
             this.game.queueSimpleStep(() => {
-                if(this.game.currentPhase !== 'setup' && card.isBestow()) {
+                if (this.game.currentPhase !== 'setup' && card.isBestow()) {
                     this.game.queueStep(new BestowPrompt(this.game, this, card));
                 }
             });
 
-            let event = new Event('onCardEntersPlay', { card: card, playingType: playingType, originalLocation: originalLocation });
+            let event = new Event('onCardEntersPlay', {
+                card: card,
+                playingType: playingType,
+                originalLocation: originalLocation
+            });
 
-            if(needsShadowEvent) {
-                event.addChildEvent(new Event('onCardOutOfShadows', { player: this, card: card, type: 'card' }));
+            if (needsShadowEvent) {
+                event.addChildEvent(
+                    new Event('onCardOutOfShadows', { player: this, card: card, type: 'card' })
+                );
             }
 
             this.game.resolveEvent(event);
@@ -651,7 +765,7 @@ class Player extends Spectator {
     }
 
     flipSetupCardsFaceUp() {
-        for(const card of this.cardsInPlay) {
+        for (const card of this.cardsInPlay) {
             card.facedown = false;
         }
     }
@@ -661,15 +775,15 @@ class Player extends Spectator {
 
         this.flipSetupCardsFaceUp();
 
-        for(const card of this.cardsInPlay) {
-            if(!card.isUnique()) {
+        for (const card of this.cardsInPlay) {
+            if (!card.isUnique()) {
                 processedCards.push(card);
                 continue;
             }
 
-            let duplicate = processedCards.find(c => c.name === card.name);
+            let duplicate = processedCards.find((c) => c.name === card.name);
 
-            if(duplicate) {
+            if (duplicate) {
                 duplicate.addDuplicate(card);
             } else {
                 processedCards.push(card);
@@ -683,7 +797,7 @@ class Player extends Spectator {
         this.firstPlayer = false;
         this.selectedPlot = undefined;
 
-        if(this.resetTimerAtEndOfRound) {
+        if (this.resetTimerAtEndOfRound) {
             this.noTimer = false;
         }
 
@@ -696,9 +810,9 @@ class Player extends Spectator {
     }
 
     recyclePlots() {
-        const plots = this.plotDeck.filter(plot => !plot.notConsideredToBeInPlotDeck);
-        if(plots.length === 0) {
-            for(const plot of this.plotDiscard) {
+        const plots = this.plotDeck.filter((plot) => !plot.notConsideredToBeInPlotDeck);
+        if (plots.length === 0) {
+            for (const plot of this.plotDiscard) {
                 this.moveCard(plot, 'plot deck');
             }
 
@@ -707,13 +821,13 @@ class Player extends Spectator {
     }
 
     hasUnmappedAttachments() {
-        return this.cardsInPlay.some(card => {
+        return this.cardsInPlay.some((card) => {
             return card.getType() === 'attachment';
         });
     }
 
     canAttach(attachment, card) {
-        if(!attachment || !card) {
+        if (!attachment || !card) {
             return false;
         }
 
@@ -726,7 +840,7 @@ class Player extends Spectator {
     }
 
     attach(controller, attachment, card, playingType, facedown = false) {
-        if(!card || !attachment) {
+        if (!card || !attachment) {
             return;
         }
 
@@ -734,12 +848,16 @@ class Player extends Spectator {
 
         attachment.owner.removeCardFromPile(attachment);
 
-        if(!facedown) {
+        if (!facedown) {
             let dupeCard = this.getDuplicateInPlay(attachment);
-            if(dupeCard && dupeCard.controller === attachment.controller) {
+            if (dupeCard && dupeCard.controller === attachment.controller) {
                 dupeCard.addDuplicate(attachment);
-                if(originalLocation === 'shadows') {
-                    this.game.raiseEvent('onCardOutOfShadows', { player: this, card: card, type: 'dupe' });
+                if (originalLocation === 'shadows') {
+                    this.game.raiseEvent('onCardOutOfShadows', {
+                        player: this,
+                        card: card,
+                        type: 'dupe'
+                    });
                 }
                 return;
             }
@@ -755,7 +873,7 @@ class Player extends Spectator {
         });
 
         this.game.queueSimpleStep(() => {
-            if(this.game.currentPhase !== 'setup' && attachment.isBestow()) {
+            if (this.game.currentPhase !== 'setup' && attachment.isBestow()) {
                 this.game.queueStep(new BestowPrompt(this.game, controller, attachment));
             }
         });
@@ -763,12 +881,20 @@ class Player extends Spectator {
         let event = new AtomicEvent();
         event.addChildEvent(new Event('onCardAttached', { attachment: attachment, target: card }));
 
-        if(originalLocation !== 'play area' && !attachment.facedown) {
-            event.addChildEvent(new Event('onCardEntersPlay', { card: attachment, playingType: playingType, originalLocation: originalLocation }));
+        if (originalLocation !== 'play area' && !attachment.facedown) {
+            event.addChildEvent(
+                new Event('onCardEntersPlay', {
+                    card: attachment,
+                    playingType: playingType,
+                    originalLocation: originalLocation
+                })
+            );
         }
 
-        if(originalLocation === 'shadows') {
-            event.addChildEvent(new Event('onCardOutOfShadows', { player: this, card: attachment, type: 'card' }));
+        if (originalLocation === 'shadows') {
+            event.addChildEvent(
+                new Event('onCardOutOfShadows', { player: this, card: attachment, type: 'card' })
+            );
         }
 
         this.game.resolveEvent(event);
@@ -780,7 +906,7 @@ class Player extends Spectator {
     }
 
     getSourceList(source) {
-        switch(source) {
+        switch (source) {
             case 'being played':
                 return this.beingPlayed;
             case 'hand':
@@ -810,7 +936,7 @@ class Player extends Spectator {
     }
 
     updateSourceList(source, targetList) {
-        switch(source) {
+        switch (source) {
             case 'being played':
                 this.beingPlayed = targetList;
                 return;
@@ -857,7 +983,7 @@ class Player extends Spectator {
     }
 
     beginChallenge() {
-        for(const card of this.cardsInPlay) {
+        for (const card of this.cardsInPlay) {
             card.resetForChallenge();
         }
     }
@@ -871,7 +997,7 @@ class Player extends Spectator {
     }
 
     resetForChallenge() {
-        for(const card of this.cardsInPlay) {
+        for (const card of this.cardsInPlay) {
             card.resetForChallenge();
         }
     }
@@ -886,18 +1012,20 @@ class Player extends Spectator {
 
     discardCards(cards, allowSave = true, callback = () => true, options = {}) {
         let action = GameActions.simultaneously(
-            cards.map(card => GameActions.discardCard({
-                card,
-                allowSave,
-                isPillage: options.isPillage,
-                isRandom: options.isRandom,
-                source: options.source,
-                force: options.force
-            }))
+            cards.map((card) =>
+                GameActions.discardCard({
+                    card,
+                    allowSave,
+                    isPillage: options.isPillage,
+                    isRandom: options.isRandom,
+                    source: options.source,
+                    force: options.force
+                })
+            )
         );
         let event = this.game.resolveGameAction(action);
         event.thenExecute(() => {
-            let cards = event.childEvents.map(childEvent => childEvent.card);
+            let cards = event.childEvents.map((childEvent) => childEvent.card);
             callback(cards);
         });
 
@@ -913,15 +1041,24 @@ class Player extends Spectator {
     }
 
     isRevealingTopOfDeck() {
-        return this.drawDeck.length > 0 && this.game.getPlayers().every(player => this.game.isCardVisible(this.drawDeck[0], player));
+        return (
+            this.drawDeck.length > 0 &&
+            this.game
+                .getPlayers()
+                .every((player) => this.game.isCardVisible(this.drawDeck[0], player))
+        );
     }
 
     canPutIntoShadows(card, playingType = 'put') {
-        return !this.putIntoShadowsRestrictions.some(restriction => restriction(card, playingType));
+        return !this.putIntoShadowsRestrictions.some((restriction) =>
+            restriction(card, playingType)
+        );
     }
 
     putIntoShadows(card, allowSave = true, callback = () => true) {
-        return this.game.resolveGameAction(GameActions.putIntoShadows({ card, allowSave })).thenExecute(callback);
+        return this.game
+            .resolveGameAction(GameActions.putIntoShadows({ card, allowSave }))
+            .thenExecute(callback);
     }
 
     /**
@@ -936,7 +1073,7 @@ class Player extends Spectator {
             return memo + card.getDominanceStrength();
         }, 0);
 
-        if(this.title) {
+        if (this.title) {
             cardStrength += this.title.getDominanceStrength();
         }
 
@@ -945,7 +1082,7 @@ class Player extends Spectator {
 
     getTotalPower() {
         return this.game.allCards.reduce((memo, card) => {
-            if(card.controller !== this) {
+            if (card.controller !== this) {
                 return memo;
             }
             let cardPower = card.powerOptions.contains('doesNotContribute') ? 0 : card.getPower();
@@ -955,7 +1092,7 @@ class Player extends Spectator {
 
     removeAttachment(attachment, allowSave = true) {
         attachment.isBeingRemoved = true;
-        if(attachment.isTerminal()) {
+        if (attachment.isTerminal()) {
             attachment.owner.moveCard(attachment, 'discard pile', { allowSave: allowSave }, () => {
                 attachment.isBeingRemoved = false;
             });
@@ -983,16 +1120,16 @@ class Player extends Spectator {
 
         options = Object.assign({ allowSave: false, bottom: false, isDupe: false }, options);
 
-        if(!targetPile) {
+        if (!targetPile) {
             return;
         }
 
-        if(card.owner !== this && targetLocation !== 'play area') {
+        if (card.owner !== this && targetLocation !== 'play area') {
             card.owner.moveCard(card, targetLocation, options, callback);
             return;
         }
 
-        if(card.location === 'play area' && targetLocation !== 'play area') {
+        if (card.location === 'play area' && targetLocation !== 'play area') {
             var params = {
                 player: this,
                 card: card,
@@ -1004,7 +1141,7 @@ class Player extends Spectator {
             this.game.raiseEvent('onCardLeftPlay', params, () => {
                 this.synchronousMoveCard(card, targetLocation, options);
 
-                if(callback) {
+                if (callback) {
                     callback();
                 }
             });
@@ -1012,35 +1149,53 @@ class Player extends Spectator {
         }
 
         this.synchronousMoveCard(card, targetLocation, options);
-        if(callback) {
+        if (callback) {
             callback();
         }
     }
 
     synchronousMoveCard(card, targetLocation, options = {}) {
-        if(card.location === 'play area') {
-            for(const attachment of card.attachments) {
+        if (card.location === 'play area') {
+            for (const attachment of card.attachments) {
                 this.removeAttachment(attachment, false);
             }
 
-            if(card.dupes.length !== 0) {
+            if (card.dupes.length !== 0) {
                 this.discardCards(card.dupes, false);
             }
         }
 
         //card doesn´t leave play when it moves from play area to play area
-        if(['play area', 'active plot'].includes(card.location) && targetLocation !== 'play area') {
+        if (
+            ['play area', 'active plot'].includes(card.location) &&
+            targetLocation !== 'play area'
+        ) {
             card.leavesPlay();
         }
 
-        if(card.location === 'active plot') {
-            this.game.raiseEvent('onCardLeftPlay', { player: this, card: card, cardStateWhenLeftPlay: card.createSnapshot() });
+        if (card.location === 'active plot') {
+            this.game.raiseEvent('onCardLeftPlay', {
+                player: this,
+                card: card,
+                cardStateWhenLeftPlay: card.createSnapshot()
+            });
         }
 
-        this.placeCardInPile({ card, location: targetLocation, bottom: options.bottom, wasFacedown: options.wasFacedown });
+        this.placeCardInPile({
+            card,
+            location: targetLocation,
+            bottom: options.bottom,
+            wasFacedown: options.wasFacedown
+        });
 
-        if(['dead pile', 'discard pile', 'revealed plots', 'out of game'].includes(targetLocation)) {
-            this.game.raiseEvent('onCardPlaced', { card: card, location: targetLocation, player: this });
+        if (
+            ['dead pile', 'discard pile', 'revealed plots', 'out of game'].includes(targetLocation)
+        ) {
+            this.game.raiseEvent('onCardPlaced', {
+                card: card,
+                location: targetLocation,
+                player: this
+            });
         }
     }
 
@@ -1049,15 +1204,15 @@ class Player extends Spectator {
 
         let targetPile = this.getSourceList(location);
 
-        if(!targetPile) {
+        if (!targetPile) {
             return;
         }
 
         card.moveTo(location, undefined, wasFacedown);
 
-        if(location === 'active plot') {
+        if (location === 'active plot') {
             this.activePlot = card;
-        } else if(location === 'draw deck' && !bottom) {
+        } else if (location === 'draw deck' && !bottom) {
             targetPile.unshift(card);
         } else {
             targetPile.push(card);
@@ -1073,7 +1228,7 @@ class Player extends Spectator {
     }
 
     removeCardFromPile(card) {
-        if(card.controller !== this) {
+        if (card.controller !== this) {
             card.controller.removeCardFromPile(card);
             card.takeControl(card.owner);
             return;
@@ -1082,13 +1237,16 @@ class Player extends Spectator {
         var originalLocation = card.location;
         var originalPile = this.getSourceList(originalLocation);
 
-        if(originalPile) {
-            this.updateSourceList(originalLocation, originalPile.filter(c => c.uuid !== card.uuid));
+        if (originalPile) {
+            this.updateSourceList(
+                originalLocation,
+                originalPile.filter((c) => c.uuid !== card.uuid)
+            );
         }
     }
 
     getTotalInitiative() {
-        if(!this.activePlot) {
+        if (!this.activePlot) {
             return 0;
         }
 
@@ -1096,7 +1254,7 @@ class Player extends Spectator {
     }
 
     getTotalIncome() {
-        if(!this.activePlot) {
+        if (!this.activePlot) {
             return 0;
         }
 
@@ -1104,7 +1262,7 @@ class Player extends Spectator {
     }
 
     getTotalReserve() {
-        if(!this.activePlot) {
+        if (!this.activePlot) {
             return 0;
         }
 
@@ -1120,7 +1278,7 @@ class Player extends Spectator {
     }
 
     isRival(opponent) {
-        if(!this.title) {
+        if (!this.title) {
             return false;
         }
 
@@ -1128,7 +1286,7 @@ class Player extends Spectator {
     }
 
     isSupporter(opponent) {
-        if(!this.title || !opponent.title) {
+        if (!this.title || !opponent.title) {
             return false;
         }
 
@@ -1140,7 +1298,11 @@ class Player extends Spectator {
     }
 
     canGainRivalBonus(opponent) {
-        return !this.cannotGainChallengeBonus && this.isRival(opponent) && !this.bonusesFromRivals.has(opponent);
+        return (
+            !this.cannotGainChallengeBonus &&
+            this.isRival(opponent) &&
+            !this.bonusesFromRivals.has(opponent)
+        );
     }
 
     markRivalBonusGained(opponent) {
@@ -1176,7 +1338,7 @@ class Player extends Spectator {
     }
 
     getSummaryForCardList(list, activePlayer) {
-        return list.map(card => {
+        return list.map((card) => {
             return card.getSummary(activePlayer);
         });
     }
@@ -1221,25 +1383,25 @@ class Player extends Spectator {
     }
 
     startClock() {
-        if(this.chessClock) {
+        if (this.chessClock) {
             this.chessClock.start();
         }
     }
 
     stopClock() {
-        if(this.chessClock) {
+        if (this.chessClock) {
             this.chessClock.stop();
         }
     }
 
     addSecondsToClock(seconds) {
-        if(this.chessClock && seconds) {
+        if (this.chessClock && seconds) {
             this.chessClock.modify(seconds);
         }
     }
 
     togglePauseChessClock() {
-        if(this.chessClock) {
+        if (this.chessClock) {
             this.chessClock.togglePause();
         }
     }
@@ -1252,10 +1414,10 @@ class Player extends Spectator {
         let plots = [];
 
         // Rains
-        if(this.agenda && this.agenda.code === '05045') {
-            for(const plot of this.plotDeck) {
+        if (this.agenda && this.agenda.code === '05045') {
+            for (const plot of this.plotDeck) {
                 let plotSummary = plot.getSummary(activePlayer);
-                if(plot.hasTrait('scheme')) {
+                if (plot.hasTrait('scheme')) {
                     plotSummary.group = 'Scheme';
                 } else {
                     plotSummary.group = 'Plot';
@@ -1269,7 +1431,7 @@ class Player extends Spectator {
 
         let chessClockState = undefined;
 
-        if(this.chessClock) {
+        if (this.chessClock) {
             chessClockState = this.chessClock.getState();
         }
 
@@ -1284,7 +1446,10 @@ class Player extends Spectator {
                 discardPile: this.getSummaryForCardList(fullDiscardPile, activePlayer).reverse(),
                 drawDeck: this.getSummaryForCardList(this.drawDeck, activePlayer),
                 hand: this.getSummaryForCardList(this.hand, activePlayer),
-                outOfGamePile: this.getSummaryForCardList(this.outOfGamePile, activePlayer).reverse(),
+                outOfGamePile: this.getSummaryForCardList(
+                    this.outOfGamePile,
+                    activePlayer
+                ).reverse(),
                 plotDeck: plots,
                 plotDiscard: this.getSummaryForCardList(this.plotDiscard, activePlayer),
                 shadows: this.getSummaryForCardList(this.shadows, activePlayer)
@@ -1299,7 +1464,9 @@ class Player extends Spectator {
             name: this.name,
             numPlotCards: this.plotDeck.length,
             phase: this.game.currentPhase,
-            selectedPlot: this.selectedPlot ? this.selectedPlot.getSummary(activePlayer) : undefined,
+            selectedPlot: this.selectedPlot
+                ? this.selectedPlot.getSummary(activePlayer)
+                : undefined,
             mustShowPlotSelection: this.mustShowPlotSelection.includes(activePlayer),
             promptedActionWindows: this.promptedActionWindows,
             promptDupes: this.promptDupes,
@@ -1311,11 +1478,11 @@ class Player extends Spectator {
             user: {
                 username: this.user.username
             },
-            chessClock : chessClockState
+            chessClock: chessClockState
         };
 
         return Object.assign(state, promptState);
     }
 }
 
-module.exports = Player;
+export default Player;

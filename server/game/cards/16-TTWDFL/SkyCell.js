@@ -1,15 +1,12 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SkyCell extends DrawCard {
     setupCardAbilities(ability) {
         this.forcedInterrupt({
             when: {
-                onCardsDrawn: event => (
-                    this.parent &&
-                    event.player === this.parent.controller &&
-                    event.amount > 0
-                )
+                onCardsDrawn: (event) =>
+                    this.parent && event.player === this.parent.controller && event.amount > 0
             },
             message: {
                 format: '{player} uses {source} to kneel {parent}',
@@ -22,7 +19,7 @@ class SkyCell extends DrawCard {
                     format: 'Then {parentController} draws 1 less card',
                     args: { parentController: () => this.parent.controller }
                 },
-                handler: thenContext => {
+                handler: (thenContext) => {
                     thenContext.parentContext.event.amount -= 1;
                 }
             })
@@ -30,7 +27,7 @@ class SkyCell extends DrawCard {
 
         // TODO: gain text "Kill character"
         this.whileAttached({
-            effect: ability.effects.gainText(text => {
+            effect: ability.effects.gainText((text) => {
                 text.action({
                     title: 'Kill character',
                     message: '{player} kills {source}',
@@ -45,4 +42,4 @@ class SkyCell extends DrawCard {
 
 SkyCell.code = '16022';
 
-module.exports = SkyCell;
+export default SkyCell;

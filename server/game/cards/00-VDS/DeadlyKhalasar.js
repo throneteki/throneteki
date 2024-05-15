@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class DeadlyKhalasar extends DrawCard {
     setupCardAbilities() {
@@ -7,13 +7,16 @@ class DeadlyKhalasar extends DrawCard {
             condition: () => this.game.isDuringChallenge(),
             phase: 'challenge',
             target: {
-                cardCondition: card => card.location === 'play area' && card.controller === this.controller &&
-                                       card.getType() === 'character' && card.isFaction('targaryen') &&
-                                       card.isAttacking()
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.controller === this.controller &&
+                    card.getType() === 'character' &&
+                    card.isFaction('targaryen') &&
+                    card.isAttacking()
             },
-            handler: context => {
+            handler: (context) => {
                 let strBoost = this.getNumberOfDothraki();
-                this.untilEndOfChallenge(ability => ({
+                this.untilEndOfChallenge((ability) => ({
                     match: context.target,
                     effect: [
                         ability.effects.modifyStrength(strBoost),
@@ -21,17 +24,24 @@ class DeadlyKhalasar extends DrawCard {
                     ]
                 }));
 
-                this.game.addMessage('{0} plays {1} to give {2} +{3} STR and intimidate until the end of the challenge',
-                    context.player, this, context.target, strBoost);
+                this.game.addMessage(
+                    '{0} plays {1} to give {2} +{3} STR and intimidate until the end of the challenge',
+                    context.player,
+                    this,
+                    context.target,
+                    strBoost
+                );
             }
         });
     }
 
     getNumberOfDothraki() {
-        return this.controller.getNumberOfCardsInPlay(card => card.getType() === 'character' && card.hasTrait('dothraki'));
+        return this.controller.getNumberOfCardsInPlay(
+            (card) => card.getType() === 'character' && card.hasTrait('dothraki')
+        );
     }
 }
 
 DeadlyKhalasar.code = '00015';
 
-module.exports = DeadlyKhalasar;
+export default DeadlyKhalasar;

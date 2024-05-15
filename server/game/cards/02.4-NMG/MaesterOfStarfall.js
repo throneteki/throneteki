@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class MaesterOfStarfall extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,14 +7,15 @@ class MaesterOfStarfall extends DrawCard {
             phase: 'challenge',
             cost: ability.costs.kneelSelf(),
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character'
+                cardCondition: (card) =>
+                    card.location === 'play area' && card.getType() === 'character'
             },
-            handler: context => {
+            handler: (context) => {
                 let keywords = ['Insight', 'Intimidate', 'Pillage', 'Renown'];
 
                 this.selectedCard = context.target;
 
-                let buttons = keywords.map(keyword => {
+                let buttons = keywords.map((keyword) => {
                     return { text: keyword, method: 'keywordSelected', arg: keyword.toLowerCase() };
                 });
 
@@ -30,12 +31,18 @@ class MaesterOfStarfall extends DrawCard {
     }
 
     keywordSelected(player, keyword) {
-        this.untilEndOfPhase(ability => ({
+        this.untilEndOfPhase((ability) => ({
             match: this.selectedCard,
             effect: ability.effects.removeKeyword(keyword)
         }));
 
-        this.game.addMessage('{0} kneels {1} to remove the {2} keyword from {3}', player, this, keyword, this.selectedCard);
+        this.game.addMessage(
+            '{0} kneels {1} to remove the {2} keyword from {3}',
+            player,
+            this,
+            keyword,
+            this.selectedCard
+        );
 
         return true;
     }
@@ -43,4 +50,4 @@ class MaesterOfStarfall extends DrawCard {
 
 MaesterOfStarfall.code = '02076';
 
-module.exports = MaesterOfStarfall;
+export default MaesterOfStarfall;

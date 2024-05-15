@@ -8,11 +8,7 @@ describe('#lookupCardName', () => {
     const originalVersionWithName = { code: '3', name: 'Duplicate Card', packCode: 'P1' };
 
     beforeEach(() => {
-        cards = [
-            uniqueCard,
-            newVersionWithName,
-            originalVersionWithName
-        ];
+        cards = [uniqueCard, newVersionWithName, originalVersionWithName];
         packs = [
             { name: 'Pack 2', code: 'P2', releaseDate: '2020-03-01' },
             { name: 'Pack 1', code: 'P1', releaseDate: '2020-01-01' }
@@ -36,8 +32,16 @@ describe('#lookupCardName', () => {
 
     test('strips out the bracket indicators from ThronesDB', () => {
         let cardWithIndicator = lookupCardByName({ cardName: 'Unique Card [B]', cards, packs });
-        let cardWithMultipleIndicators = lookupCardByName({ cardName: 'Unique Card [B] [M] [J] [P4]', cards, packs });
-        let cardWithPackAndIndicator = lookupCardByName({ cardName: 'Unique Card (Pack 1) [P8]', cards, packs });
+        let cardWithMultipleIndicators = lookupCardByName({
+            cardName: 'Unique Card [B] [M] [J] [P4]',
+            cards,
+            packs
+        });
+        let cardWithPackAndIndicator = lookupCardByName({
+            cardName: 'Unique Card (Pack 1) [P8]',
+            cards,
+            packs
+        });
 
         expect(cardWithIndicator).toBe(uniqueCard);
         expect(cardWithMultipleIndicators).toBe(uniqueCard);

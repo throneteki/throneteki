@@ -1,11 +1,11 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class AryaStark extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => !this.kneeled,
             targetController: 'any',
-            match: card => card.getType() === 'character',
+            match: (card) => card.getType() === 'character',
             effect: ability.effects.cannotBeSaved()
         });
     }
@@ -13,4 +13,4 @@ class AryaStark extends DrawCard {
 
 AryaStark.code = '08081';
 
-module.exports = AryaStark;
+export default AryaStark;

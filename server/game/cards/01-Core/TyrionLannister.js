@@ -1,10 +1,12 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TyrionLannister extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onChallengeInitiated: event => event.challenge.initiatedChallengeType === 'intrigue' && this.controller.canGainGold()
+                onChallengeInitiated: (event) =>
+                    event.challenge.initiatedChallengeType === 'intrigue' &&
+                    this.controller.canGainGold()
             },
             limit: ability.limit.perRound(2),
             handler: () => {
@@ -17,4 +19,4 @@ class TyrionLannister extends DrawCard {
 
 TyrionLannister.code = '01089';
 
-module.exports = TyrionLannister;
+export default TyrionLannister;

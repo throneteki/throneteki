@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class OlennasStudy extends DrawCard {
     setupCardAbilities(ability) {
@@ -9,7 +9,7 @@ class OlennasStudy extends DrawCard {
 
         this.persistentEffect({
             condition: () => this.game.isDuringChallenge({ challengeType: 'intrigue' }),
-            match: card => card.isMatch({ type: 'character', unique: false }),
+            match: (card) => card.isMatch({ type: 'character', unique: false }),
             targetController: 'any',
             effect: [
                 ability.effects.cannotBeDeclaredAsAttacker(),
@@ -21,4 +21,4 @@ class OlennasStudy extends DrawCard {
 
 OlennasStudy.code = '16016';
 
-module.exports = OlennasStudy;
+export default OlennasStudy;

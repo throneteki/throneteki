@@ -1,9 +1,12 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class DoranMartell extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: card => card.isFaction('martell') && card !== this && (card.hasTrait('Lord') || card.hasTrait('Lady')),
+            match: (card) =>
+                card.isFaction('martell') &&
+                card !== this &&
+                (card.hasTrait('Lord') || card.hasTrait('Lady')),
             effect: ability.effects.dynamicStrength(() => this.controller.getNumberOfUsedPlots())
         });
     }
@@ -11,4 +14,4 @@ class DoranMartell extends DrawCard {
 
 DoranMartell.code = '01105';
 
-module.exports = DoranMartell;
+export default DoranMartell;

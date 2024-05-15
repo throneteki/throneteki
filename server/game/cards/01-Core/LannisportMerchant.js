@@ -1,4 +1,4 @@
-const FactionCharacterCostReducer = require('../reducer.js').FactionCharacterCostReducer;
+import { FactionCharacterCostReducer } from '../reducer.js';
 
 class LannisportMerchant extends FactionCharacterCostReducer {
     constructor(owner, cardData) {
@@ -8,4 +8,4 @@ class LannisportMerchant extends FactionCharacterCostReducer {
 
 LannisportMerchant.code = '01094';
 
-module.exports = LannisportMerchant;
+export default LannisportMerchant;

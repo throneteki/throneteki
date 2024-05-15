@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Viserion extends DrawCard {
     setupCardAbilities(ability) {
@@ -9,12 +9,11 @@ class Viserion extends DrawCard {
 
         this.persistentEffect({
             condition: () => this.isAttacking(),
-            match: card => (
+            match: (card) =>
                 card.isParticipating() &&
                 card.getType() === 'character' &&
                 !card.hasTrait('Dragon') &&
-                !card.hasTrait('Stormborn')
-            ),
+                !card.hasTrait('Stormborn'),
             targetController: 'any',
             effect: ability.effects.modifyStrength(-2)
         });
@@ -23,4 +22,4 @@ class Viserion extends DrawCard {
 
 Viserion.code = '15004';
 
-module.exports = Viserion;
+export default Viserion;

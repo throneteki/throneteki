@@ -1,4 +1,4 @@
-const GameAction = require('./GameAction');
+import GameAction from './GameAction.js';
 
 class EndPhase extends GameAction {
     constructor() {
@@ -11,7 +11,7 @@ class EndPhase extends GameAction {
 
     createEvent({ game }) {
         const phase = game.currentPhase;
-        return this.event('onPhaseEnded', { phase }, event => {
+        return this.event('onPhaseEnded', { phase }, (event) => {
             game.currentPhase = '';
 
             event.thenAttachEvent(this.event('onAtEndOfPhase', { phase }));
@@ -19,4 +19,4 @@ class EndPhase extends GameAction {
     }
 }
 
-module.exports = new EndPhase();
+export default new EndPhase();

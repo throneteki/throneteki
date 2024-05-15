@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class LordsportShipright extends DrawCard {
     setupCardAbilities(ability) {
@@ -8,12 +8,17 @@ class LordsportShipright extends DrawCard {
             cost: ability.costs.kneelSelf(),
             target: {
                 activePromptTitle: 'Select a location',
-                cardCondition: card => this.cardCondition(card)
+                cardCondition: (card) => this.cardCondition(card)
             },
-            handler: context => {
+            handler: (context) => {
                 context.player.kneelCard(context.target);
 
-                this.game.addMessage('{0} uses {1} to kneel {2}', context.player, this, context.target);
+                this.game.addMessage(
+                    '{0} uses {1} to kneel {2}',
+                    context.player,
+                    this,
+                    context.target
+                );
             }
         });
     }
@@ -21,10 +26,15 @@ class LordsportShipright extends DrawCard {
     cardCondition(card) {
         let cost = this.controller.firstPlayer ? 3 : 2;
 
-        return !card.kneeled && card.getType() === 'location' && card.getPrintedCost() <= cost && card.location === 'play area';
+        return (
+            !card.kneeled &&
+            card.getType() === 'location' &&
+            card.getPrintedCost() <= cost &&
+            card.location === 'play area'
+        );
     }
 }
 
 LordsportShipright.code = '01075';
 
-module.exports = LordsportShipright;
+export default LordsportShipright;

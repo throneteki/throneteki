@@ -9,7 +9,7 @@ class ChessClock {
         this.running = false; //is the clock ticking for the player?
         this.stateId = 0;
         this.name = 'ChessClock';
-        this.activated = false; //indicates if the game has started/setup is finished 
+        this.activated = false; //indicates if the game has started/setup is finished
         this.delayToStartClock = delayToStartClock;
 
         this.player.game.on('onSetupFinished', () => this.activateChessClock());
@@ -20,11 +20,11 @@ class ChessClock {
     }
 
     togglePause() {
-        if(!this.activated) {
+        if (!this.activated) {
             return;
         }
         this.paused = !this.paused;
-        if(this.paused) {
+        if (this.paused) {
             this.stop();
         }
     }
@@ -38,10 +38,10 @@ class ChessClock {
     }
 
     start() {
-        if(!this.activated) {
+        if (!this.activated) {
             return;
         }
-        if(!this.paused && !this.running) {
+        if (!this.paused && !this.running) {
             this.mode = 'down';
             this.running = true;
             this.timerStart = Date.now();
@@ -50,12 +50,12 @@ class ChessClock {
     }
 
     stop() {
-        if(!this.activated) {
+        if (!this.activated) {
             return;
         }
-        if(this.timerStart > 0 && this.running) {
+        if (this.timerStart > 0 && this.running) {
             this.running = false;
-            this.updateTimeLeft(Math.floor(((Date.now() - this.timerStart) / 1000) + 0.5));
+            this.updateTimeLeft(Math.floor((Date.now() - this.timerStart) / 1000 + 0.5));
             this.timerStart = 0;
             this.updateStateId();
         }
@@ -63,24 +63,24 @@ class ChessClock {
     }
 
     timeRanOut() {
-        this.player.game.addAlert('warning', '{0}\'s clock has run out', this.player);
+        this.player.game.addAlert('warning', "{0}'s clock has run out", this.player);
         //TODO make this melee friendly
         this.player.game.recordWinner(this.player.game.getOpponents(this.player)[0], 'time');
         return;
     }
 
     updateTimeLeft(secs) {
-        if(this.timeLeft === 0 || secs < 0) {
+        if (this.timeLeft === 0 || secs < 0) {
             return;
         }
-        if(secs <= this.delayToStartClock) {
+        if (secs <= this.delayToStartClock) {
             return;
         }
-        
+
         secs = secs - this.delayToStartClock;
-        if(this.mode === 'down') {
+        if (this.mode === 'down') {
             this.modify(-secs);
-            if(this.timeLeft < 0) {
+            if (this.timeLeft < 0) {
                 this.timeLeft = 0;
                 this.timeRanOut();
             }
@@ -99,4 +99,4 @@ class ChessClock {
     }
 }
 
-module.exports = ChessClock;
+export default ChessClock;

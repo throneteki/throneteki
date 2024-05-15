@@ -1,13 +1,16 @@
-describe('Randyll Tarly', function() {
-    integration(function() {
-        beforeEach(function() {
+describe('Randyll Tarly', function () {
+    integration(function () {
+        beforeEach(function () {
             const deck1 = this.buildDeck('tyrell', [
-                'A Feast for Crows', 'A Song of Summer',
-                'Randyll Tarly (Core)', 'Margaery Tyrell (Core)'
+                'A Feast for Crows',
+                'A Song of Summer',
+                'Randyll Tarly (Core)',
+                'Margaery Tyrell (Core)'
             ]);
             const deck2 = this.buildDeck('stark', [
                 'A Feast for Crows',
-                'Dracarys!', 'Rhaegal (Core)'
+                'Dracarys!',
+                'Rhaegal (Core)'
             ]);
             this.player1.selectDeck(deck1);
             this.player2.selectDeck(deck2);
@@ -20,8 +23,8 @@ describe('Randyll Tarly', function() {
             this.randyll = this.player1.findCardByName('Randyll Tarly', 'play area');
         });
 
-        describe('when strength is increased by a character ability', function() {
-            beforeEach(function() {
+        describe('when strength is increased by a character ability', function () {
+            beforeEach(function () {
                 // Kneel Randyll manually
                 this.player1.clickCard(this.randyll);
 
@@ -41,14 +44,14 @@ describe('Randyll Tarly', function() {
                 this.player1.triggerAbility('Randyll Tarly');
             });
 
-            it('should stand Randyll', function() {
+            it('should stand Randyll', function () {
                 expect(this.randyll.kneeled).toBe(false);
                 expect(this.randyll.getStrength()).toBe(8);
             });
         });
 
-        describe('when strength is increased by a plot', function() {
-            beforeEach(function() {
+        describe('when strength is increased by a plot', function () {
+            beforeEach(function () {
                 // Kneel Randyll manually
                 this.player1.clickCard(this.randyll);
 
@@ -58,14 +61,14 @@ describe('Randyll Tarly', function() {
                 this.player1.triggerAbility('Randyll Tarly');
             });
 
-            it('should stand Randyll', function() {
+            it('should stand Randyll', function () {
                 expect(this.randyll.kneeled).toBe(false);
                 expect(this.randyll.getStrength()).toBe(6);
             });
         });
 
-        describe('when strength is decreased', function() {
-            beforeEach(function() {
+        describe('when strength is decreased', function () {
+            beforeEach(function () {
                 this.player1.selectPlot('A Feast for Crows');
                 this.selectFirstPlayer(this.player1);
 
@@ -99,13 +102,13 @@ describe('Randyll Tarly', function() {
                 this.player1.clickPrompt('Apply Claim');
             });
 
-            it('should not stand Randyll', function() {
+            it('should not stand Randyll', function () {
                 expect(this.player1).not.toAllowAbilityTrigger('Randyll Tarly');
                 expect(this.randyll.kneeled).toBe(true);
                 expect(this.randyll.getStrength()).toBe(1);
             });
 
-            it('should not stand Randyll when the decrease effect ends', function() {
+            it('should not stand Randyll when the decrease effect ends', function () {
                 // Finish challenges to end the phase.
                 this.player1.clickPrompt('Done');
                 this.player2.clickPrompt('Done');

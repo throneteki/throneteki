@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class APitOfSnakes extends DrawCard {
     setupCardAbilities(ability) {
@@ -6,10 +6,13 @@ class APitOfSnakes extends DrawCard {
             title: 'Place poison token',
             phase: 'challenge',
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.getNumberOfIcons() === 0
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    card.getNumberOfIcons() === 0
             },
-            handler: context => {
-                this.atEndOfPhase(ability => ({
+            handler: (context) => {
+                this.atEndOfPhase((ability) => ({
                     match: context.target,
                     effect: ability.effects.poison
                 }));
@@ -21,4 +24,4 @@ class APitOfSnakes extends DrawCard {
 
 APitOfSnakes.code = '13056';
 
-module.exports = APitOfSnakes;
+export default APitOfSnakes;

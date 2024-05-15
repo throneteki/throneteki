@@ -1,10 +1,10 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class BearIsland extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardEntersPlay: event =>
+                onCardEntersPlay: (event) =>
                     event.card.getType() !== 'plot' &&
                     event.card.controller === this.controller &&
                     event.card.isLoyal() &&
@@ -22,4 +22,4 @@ class BearIsland extends DrawCard {
 
 BearIsland.code = '04042';
 
-module.exports = BearIsland;
+export default BearIsland;

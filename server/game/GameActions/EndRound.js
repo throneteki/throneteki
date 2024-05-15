@@ -1,4 +1,4 @@
-const GameAction = require('./GameAction');
+import GameAction from './GameAction.js';
 
 class EndRound extends GameAction {
     constructor() {
@@ -10,10 +10,10 @@ class EndRound extends GameAction {
     }
 
     createEvent({ game }) {
-        return this.event('onRoundEnded', { game }, event => {
+        return this.event('onRoundEnded', { game }, (event) => {
             event.thenAttachEvent(this.event('onAtEndOfRound', { game }));
         });
     }
 }
 
-module.exports = new EndRound();
+export default new EndRound();

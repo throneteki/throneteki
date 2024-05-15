@@ -1,10 +1,13 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions/index.js');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheShadowTower extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: card => card.getType() === 'character' && card.controller === this.controller && card.owner !== this.controller,
+            match: (card) =>
+                card.getType() === 'character' &&
+                card.controller === this.controller &&
+                card.owner !== this.controller,
             effect: ability.effects.modifyStrength(1)
         });
         this.action({
@@ -13,21 +16,27 @@ class TheShadowTower extends DrawCard {
             cost: ability.costs.kneelSelf(),
             target: {
                 activePromptTitle: 'Select a card',
-                cardCondition: card => card.location === 'shadows' && card.controller !== this.controller,
+                cardCondition: (card) =>
+                    card.location === 'shadows' && card.controller !== this.controller,
                 gameAction: 'reveal'
             },
             message: '{source} kneels {costs.kneel} to reveal a card in shadows',
-            handler: context => {
+            handler: (context) => {
                 this.game.resolveGameAction(
-                    GameActions.revealCards(context => ({ 
-                        cards: [context.target], 
+                    GameActions.revealCards((context) => ({
+                        cards: [context.target],
                         player: context.player
                     })).then({
-                        condition: context => context.event.cards[0].isMatch({ type: 'character', unique: false }) && context.event.revealed.length > 0,
+                        condition: (context) =>
+                            context.event.cards[0].isMatch({ type: 'character', unique: false }) &&
+                            context.event.revealed.length > 0,
                         message: '{player} {gameAction}',
-                        gameAction: GameActions.putIntoPlay(context => ({ card: context.event.cards[0], player: context.player }))
-                    })
-                    , context
+                        gameAction: GameActions.putIntoPlay((context) => ({
+                            card: context.event.cards[0],
+                            player: context.player
+                        }))
+                    }),
+                    context
                 );
             }
         });
@@ -36,4 +45,4 @@ class TheShadowTower extends DrawCard {
 
 TheShadowTower.code = '24014';
 
-module.exports = TheShadowTower;
+export default TheShadowTower;

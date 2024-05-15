@@ -1,9 +1,12 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class BrienneOfTarth extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.controller.anyCardsInPlay(card => card.hasTrait('King') || card.name === 'Catelyn Stark'),
+            condition: () =>
+                this.controller.anyCardsInPlay(
+                    (card) => card.hasTrait('King') || card.name === 'Catelyn Stark'
+                ),
             match: this,
             effect: ability.effects.doesNotKneelAsDefender()
         });
@@ -12,4 +15,4 @@ class BrienneOfTarth extends DrawCard {
 
 BrienneOfTarth.code = '04083';
 
-module.exports = BrienneOfTarth;
+export default BrienneOfTarth;

@@ -1,9 +1,12 @@
-describe('Shield of Lannisport', function() {
-    integration(function() {
-        beforeEach(function() {
+describe('Shield of Lannisport', function () {
+    integration(function () {
+        beforeEach(function () {
             const deck = this.buildDeck('greyjoy', [
                 'A Noble Cause',
-                'Shield of Lannisport', 'Tyrion Lannister (Core)', 'Cersei Lannister (Core)', 'Ser Lancel Lannister (LoCR)'
+                'Shield of Lannisport',
+                'Tyrion Lannister (Core)',
+                'Cersei Lannister (Core)',
+                'Ser Lancel Lannister (LoCR)'
             ]);
 
             this.player1.selectDeck(deck);
@@ -23,29 +26,29 @@ describe('Shield of Lannisport', function() {
             this.player1.clickCard(this.tyrion);
         });
 
-        it('should grant +2 STR and renown', function() {
+        it('should grant +2 STR and renown', function () {
             expect(this.tyrion.getStrength()).toBe(6);
             expect(this.tyrion.hasKeyword('Renown')).toBe(true);
         });
 
-        describe('when another Lord or Lady is in play', function() {
-            describe('and they are of cost 4 or more', function() {
-                beforeEach(function() {
+        describe('when another Lord or Lady is in play', function () {
+            describe('and they are of cost 4 or more', function () {
+                beforeEach(function () {
                     this.player1.clickCard('Cersei Lannister', 'hand');
                 });
 
-                it('should remove the bonuses', function() {
+                it('should remove the bonuses', function () {
                     expect(this.tyrion.getStrength()).toBe(4);
                     expect(this.tyrion.hasKeyword('Renown')).toBe(false);
                 });
             });
 
-            describe('and they are below cost 4', function() {
-                beforeEach(function() {
+            describe('and they are below cost 4', function () {
+                beforeEach(function () {
                     this.player1.clickCard('Ser Lancel Lannister', 'hand');
                 });
 
-                it('should retain the bonuses', function() {
+                it('should retain the bonuses', function () {
                     expect(this.tyrion.getStrength()).toBe(6);
                     expect(this.tyrion.hasKeyword('Renown')).toBe(true);
                 });

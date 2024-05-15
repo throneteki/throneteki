@@ -1,9 +1,10 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class YourKingCommandsIt extends PlotCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: card => card.getType() === 'character' && !card.hasTrait('King') && !card.hasTrait('Queen'),
+            match: (card) =>
+                card.getType() === 'character' && !card.hasTrait('King') && !card.hasTrait('Queen'),
             targetController: 'any',
             effect: ability.effects.cannotGainPower()
         });
@@ -12,4 +13,4 @@ class YourKingCommandsIt extends PlotCard {
 
 YourKingCommandsIt.code = '09048';
 
-module.exports = YourKingCommandsIt;
+export default YourKingCommandsIt;

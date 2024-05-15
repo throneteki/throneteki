@@ -1,10 +1,9 @@
-const EventEmitter = require('events');
-const redis = require('redis');
-const config = require('config');
-const logger = require('../log.js');
-const { spawnSync } = require('child_process');
-
-const { detectBinary } = require('../util');
+import EventEmitter from 'events';
+import redis from 'redis';
+import config from 'config';
+import logger from '../log.js';
+import { spawnSync } from 'child_process';
+import { detectBinary } from '../util.js';
 
 class GameSocket extends EventEmitter {
     constructor(configService, listenAddress, protocol, version) {
@@ -39,9 +38,9 @@ class GameSocket extends EventEmitter {
                 arg: arg,
                 identity: this.nodeName
             });
-        } catch(err) {
+        } catch (err) {
             logger.error('Failed to stringify node data %s', err);
-            for(let obj of Object.values(detectBinary(arg))) {
+            for (let obj of Object.values(detectBinary(arg))) {
                 logger.error(`Path: ${obj.path}, Type: ${obj.type}`);
             }
 
@@ -56,7 +55,7 @@ class GameSocket extends EventEmitter {
     }
 
     onConnect(channel) {
-        if(channel === 'allnodes') {
+        if (channel === 'allnodes') {
             this.emit('onGameSync', this.onGameSync.bind(this));
         }
     }
@@ -66,14 +65,17 @@ class GameSocket extends EventEmitter {
             maxGames: config.maxGames,
             version: this.version,
             address: this.listenAddress,
-            port: process.env.NODE_ENV === 'production' ? 80 : (process.env.PORT || config.socketioPort),
+            port:
+                process.env.NODE_ENV === 'production'
+                    ? 80
+                    : process.env.PORT || config.socketioPort,
             protocol: this.protocol,
             games: games
         });
     }
 
     onMessage(channel, msg) {
-        if(channel !== 'allnodes' && channel !== this.nodeName) {
+        if (channel !== 'allnodes' && channel !== this.nodeName) {
             logger.warn(`Message '${msg}' received for unknown channel ${channel}`);
             return;
         }
@@ -81,7 +83,7 @@ class GameSocket extends EventEmitter {
         let message;
         try {
             message = JSON.parse(msg);
-        } catch(err) {
+        } catch (err) {
             logger.info(
                 `Error decoding redis message. Channel ${channel}, message '${msg}' %o`,
                 err
@@ -89,7 +91,7 @@ class GameSocket extends EventEmitter {
             return;
         }
 
-        switch(message.command) {
+        switch (message.command) {
             case 'PING':
                 this.send('PONG');
                 break;
@@ -119,4 +121,4 @@ class GameSocket extends EventEmitter {
     }
 }
 
-module.exports = GameSocket;
+export default GameSocket;

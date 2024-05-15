@@ -9,12 +9,12 @@ import * as actions from '../../actions';
 
 class GameList extends React.Component {
     joinGame(game) {
-        if(!this.props.user) {
+        if (!this.props.user) {
             toastr.error('Please login before trying to join a game');
             return;
         }
 
-        if(game.needsPassword) {
+        if (game.needsPassword) {
             this.props.joinPasswordGame(game, 'Join');
         } else {
             this.props.socket.emit('joingame', game.id);
@@ -26,12 +26,12 @@ class GameList extends React.Component {
     }
 
     watchGame(game) {
-        if(!this.props.user) {
+        if (!this.props.user) {
             toastr.error('Please login before trying to watch a game');
             return;
         }
 
-        if(game.needsPassword) {
+        if (game.needsPassword) {
             this.props.joinPasswordGame(game, 'Watch');
         } else {
             this.props.socket.emit('watchgame', game.id);
@@ -43,7 +43,7 @@ class GameList extends React.Component {
     }
 
     canJoin(game) {
-        if(this.props.currentGame || game.started || game.full) {
+        if (this.props.currentGame || game.started || game.full) {
             return false;
         }
 
@@ -55,50 +55,51 @@ class GameList extends React.Component {
 
         let isAdmin = this.props.user && this.props.user.permissions.canManageGames;
 
-        for(const game of games) {
-            if(this.props.gameFilter.showOnlyNewGames && game.started) {
+        for (const game of games) {
+            if (this.props.gameFilter.showOnlyNewGames && game.started) {
                 continue;
             }
 
-            if(!this.props.gameFilter[game.gameType]) {
+            if (!this.props.gameFilter[game.gameType]) {
                 continue;
             }
 
-            if(!game.started && game.gamePrivate && !isAdmin) {
+            if (!game.started && game.gamePrivate && !isAdmin) {
                 continue;
             }
 
-            gamesToReturn.push((
-                <Game key={ game.id }
-                    game={ game }
-                    showJoinButton={ this.canJoin(game) }
-                    showWatchButton={ this.canWatch(game) }
-                    onJoinGame={ this.joinGame.bind(this, game) }
-                    onRemoveGame={ this.removeGame.bind(this, game) }
-                    onWatchGame={ this.watchGame.bind(this, game) }
-                    isAdmin={ isAdmin } />
-            ));
+            gamesToReturn.push(
+                <Game
+                    key={game.id}
+                    game={game}
+                    showJoinButton={this.canJoin(game)}
+                    showWatchButton={this.canWatch(game)}
+                    onJoinGame={this.joinGame.bind(this, game)}
+                    onRemoveGame={this.removeGame.bind(this, game)}
+                    onWatchGame={this.watchGame.bind(this, game)}
+                    isAdmin={isAdmin}
+                />
+            );
         }
 
-        return (
-            <div>
-                { gamesToReturn }
-            </div>);
+        return <div>{gamesToReturn}</div>;
     }
 
     render() {
         let gameList = this.getGames(this.props.games);
 
-        if(gameList.length === 0) {
-            return (<div className='game-list col-xs-12'>
-                <AlertPanel type='info' message='There are no games matching the filters you have selected' />
-            </div>);
+        if (gameList.length === 0) {
+            return (
+                <div className='game-list col-xs-12'>
+                    <AlertPanel
+                        type='info'
+                        message='There are no games matching the filters you have selected'
+                    />
+                </div>
+            );
         }
 
-        return (
-            <div className='game-list col-xs-12'>
-                { gameList }
-            </div>);
+        return <div className='game-list col-xs-12'>{gameList}</div>;
     }
 }
 

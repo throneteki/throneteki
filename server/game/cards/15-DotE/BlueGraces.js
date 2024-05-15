@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class BlueGraces extends DrawCard {
     setupCardAbilities(ability) {
@@ -14,8 +14,9 @@ class BlueGraces extends DrawCard {
                     printedCostOrHigher: 6
                 }
             },
-            message: '{player} removes {source} from the game to shuffle {target} back into their deck',
-            handler: context => {
+            message:
+                '{player} removes {source} from the game to shuffle {target} back into their deck',
+            handler: (context) => {
                 context.target.owner.moveCard(context.target, 'draw deck');
                 context.target.owner.shuffleDrawDeck();
             }
@@ -25,4 +26,4 @@ class BlueGraces extends DrawCard {
 
 BlueGraces.code = '15013';
 
-module.exports = BlueGraces;
+export default BlueGraces;

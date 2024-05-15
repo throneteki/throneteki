@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class SlaversBayPort extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,7 +7,7 @@ class SlaversBayPort extends DrawCard {
             phase: 'marshal',
             condition: () => this.controller.canGainGold(),
             cost: ability.costs.kneelSelf(),
-            handler: context => {
+            handler: (context) => {
                 let gold = this.opponentDeadPileHas4() ? 2 : 1;
                 gold = this.game.addGold(context.player, gold);
 
@@ -18,10 +18,10 @@ class SlaversBayPort extends DrawCard {
 
     opponentDeadPileHas4() {
         let opponents = this.game.getOpponents(this.controller);
-        return opponents.some(opponent => opponent.deadPile.length >= 4);
+        return opponents.some((opponent) => opponent.deadPile.length >= 4);
     }
 }
 
 SlaversBayPort.code = '06014';
 
-module.exports = SlaversBayPort;
+export default SlaversBayPort;

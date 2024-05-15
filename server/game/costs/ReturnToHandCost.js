@@ -1,4 +1,4 @@
-const GameActions = require('../GameActions');
+import GameActions from '../GameActions/index.js';
 
 class ReturnToHandCost {
     constructor() {
@@ -10,10 +10,10 @@ class ReturnToHandCost {
     }
 
     pay(cards, context) {
-        for(let card of cards) {
+        for (let card of cards) {
             context.player.returnCardToHand(card, false);
         }
     }
 }
 
-module.exports = ReturnToHandCost;
+export default ReturnToHandCost;

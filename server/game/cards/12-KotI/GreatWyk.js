@@ -1,23 +1,22 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class GreatWyk extends DrawCard {
     setupCardAbilities(ability) {
-        this.reaction ({
+        this.reaction({
             when: {
-                onCardEntersPlay: event => (
+                onCardEntersPlay: (event) =>
                     event.card.getType() === 'character' &&
                     event.card.controller === this.controller &&
                     event.originalLocation === 'dead pile'
-                )
             },
             limit: ability.limit.perPhase(1),
             handler: () => {
-                for(let opponent of this.game.getOpponents(this.controller)) {
-                    if(opponent.hand.length > 0) {
+                for (let opponent of this.game.getOpponents(this.controller)) {
+                    if (opponent.hand.length > 0) {
                         this.game.promptForSelect(opponent, {
                             activePromptTitle: 'Select a card',
                             source: this,
-                            cardCondition: card => opponent.hand.includes(card),
+                            cardCondition: (card) => opponent.hand.includes(card),
                             gameAction: 'discard',
                             onSelect: (opponent, card) => this.onSelectCard(opponent, card),
                             onCancel: (opponent) => this.onSelectCard(opponent, null)
@@ -29,7 +28,7 @@ class GreatWyk extends DrawCard {
     }
 
     onSelectCard(player, card) {
-        if(card === null) {
+        if (card === null) {
             this.game.addAlert('danger', '{0} does not choose any card for {1}', player, this);
             return true;
         }
@@ -42,5 +41,4 @@ class GreatWyk extends DrawCard {
 
 GreatWyk.code = '12017';
 
-module.exports = GreatWyk;
-
+export default GreatWyk;

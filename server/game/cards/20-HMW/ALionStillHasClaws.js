@@ -1,6 +1,6 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
-const {flatten} = require('../../../Array');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
+import { flatten } from '../../../Array.js';
 
 class ALionStillHasClaws extends DrawCard {
     setupCardAbilities(ability) {
@@ -10,17 +10,21 @@ class ALionStillHasClaws extends DrawCard {
             targetController: 'current',
             effect: ability.effects.reduceSelfCost('play', () => this.numOfSchemePlotsRevealed())
         });
-        
+
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.isMatch({
-                    winner: this.controller,
-                    challengeType: 'intrigue',
-                    by5: true
-                })
+                afterChallenge: (event) =>
+                    event.challenge.isMatch({
+                        winner: this.controller,
+                        challengeType: 'intrigue',
+                        by5: true
+                    })
             },
-            cost: ability.costs.payXGold(() => 0, () => 99),
-            handler: context => {
+            cost: ability.costs.payXGold(
+                () => 0,
+                () => 99
+            ),
+            handler: (context) => {
                 this.context = context;
 
                 this.game.promptWithMenu(context.player, this, {
@@ -35,26 +39,39 @@ class ALionStillHasClaws extends DrawCard {
             }
         });
     }
-    
+
     numOfSchemePlotsRevealed() {
-        let plots = this.game.getPlayers().filter(player => player.activePlot && player.activePlot.hasTrait('Scheme'));
+        let plots = this.game
+            .getPlayers()
+            .filter((player) => player.activePlot && player.activePlot.hasTrait('Scheme'));
 
         return plots.length;
     }
 
     selectTraitName(player, traitName) {
         let cardsToReturn = [];
-        for(let player of this.game.getPlayers()) {
-            cardsToReturn.push(player.filterCardsInPlay(card => card.getType() === 'character' && card.hasTrait(traitName) && card.getPrintedCost() <= this.context.xValue));
+        for (let player of this.game.getPlayers()) {
+            cardsToReturn.push(
+                player.filterCardsInPlay(
+                    (card) =>
+                        card.getType() === 'character' &&
+                        card.hasTrait(traitName) &&
+                        card.getPrintedCost() <= this.context.xValue
+                )
+            );
         }
         this.game.resolveGameAction(
             GameActions.simultaneously(
-                flatten(cardsToReturn).map(card => GameActions.returnCardToHand({ card }))
+                flatten(cardsToReturn).map((card) => GameActions.returnCardToHand({ card }))
             )
         );
 
-        this.game.addMessage('{0} plays {1} to return each {2} character to its owner\'s hand',
-            player, this, traitName);
+        this.game.addMessage(
+            "{0} plays {1} to return each {2} character to its owner's hand",
+            player,
+            this,
+            traitName
+        );
 
         return true;
     }
@@ -62,4 +79,4 @@ class ALionStillHasClaws extends DrawCard {
 
 ALionStillHasClaws.code = '20014';
 
-module.exports = ALionStillHasClaws;
+export default ALionStillHasClaws;

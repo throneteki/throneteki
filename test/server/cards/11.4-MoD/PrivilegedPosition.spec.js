@@ -1,10 +1,13 @@
-describe('Privileged Position', function() {
-    integration(function() {
-        describe('after losing a power challenge the previous round', function() {
-            beforeEach(function() {
+describe('Privileged Position', function () {
+    integration(function () {
+        describe('after losing a power challenge the previous round', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('baratheon', [
-                    'A Noble Cause', 'A Noble Cause',
-                    'Privileged Position', 'Dragonstone Faithful', 'Dragonstone Port'
+                    'A Noble Cause',
+                    'A Noble Cause',
+                    'Privileged Position',
+                    'Dragonstone Faithful',
+                    'Dragonstone Port'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
@@ -41,7 +44,7 @@ describe('Privileged Position', function() {
                 this.player2.clickCard(this.location);
             });
 
-            it('prompts to cancel', function() {
+            it('prompts to cancel', function () {
                 expect(this.player1).toAllowAbilityTrigger(this.event);
             });
         });

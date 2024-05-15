@@ -1,9 +1,9 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class SerCletusYronwood extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: card => card === card.controller.activePlot,
+            match: (card) => card === card.controller.activePlot,
             effect: ability.effects.modifyInitiative(() => this.controller.getNumberOfUsedPlots())
         });
     }
@@ -11,4 +11,4 @@ class SerCletusYronwood extends DrawCard {
 
 SerCletusYronwood.code = '10012';
 
-module.exports = SerCletusYronwood;
+export default SerCletusYronwood;

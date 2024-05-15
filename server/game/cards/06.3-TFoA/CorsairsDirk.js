@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class CorsairsDirk extends DrawCard {
     setupCardAbilities(ability) {
@@ -10,16 +10,20 @@ class CorsairsDirk extends DrawCard {
 
         this.reaction({
             when: {
-                afterChallenge: event => (
+                afterChallenge: (event) =>
                     event.challenge.winner === this.controller &&
                     event.challenge.isAttacking(this.parent) &&
-                    event.challenge.defendingPlayer.gold >= 1)
+                    event.challenge.defendingPlayer.gold >= 1
             },
-            handler: context => {
+            handler: (context) => {
                 let opponent = context.event.challenge.defendingPlayer;
                 this.game.transferGold({ from: opponent, to: this.controller, amount: 1 });
-                this.game.addMessage('{0} uses {1} to move 1 gold from {2}\'s gold pool to their own',
-                    this.controller, this, opponent);
+                this.game.addMessage(
+                    "{0} uses {1} to move 1 gold from {2}'s gold pool to their own",
+                    this.controller,
+                    this,
+                    opponent
+                );
             }
         });
     }
@@ -27,4 +31,4 @@ class CorsairsDirk extends DrawCard {
 
 CorsairsDirk.code = '06052';
 
-module.exports = CorsairsDirk;
+export default CorsairsDirk;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class SecretPact extends DrawCard {
     setupCardAbilities(ability) {
@@ -15,4 +15,4 @@ class SecretPact extends DrawCard {
 
 SecretPact.code = '08096';
 
-module.exports = SecretPact;
+export default SecretPact;

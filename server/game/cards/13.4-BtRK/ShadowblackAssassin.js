@@ -1,16 +1,24 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class ShadowblackAssassin extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardOutOfShadows: event => event.card === this
+                onCardOutOfShadows: (event) => event.card === this
             },
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.getStrength() <= 1
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    card.getStrength() <= 1
             },
-            handler: context => {
-                this.game.addMessage('{0} uses {1} to kill {2}', context.player, this, context.target);
+            handler: (context) => {
+                this.game.addMessage(
+                    '{0} uses {1} to kill {2}',
+                    context.player,
+                    this,
+                    context.target
+                );
                 this.game.killCharacter(context.target);
             }
         });
@@ -19,4 +27,4 @@ class ShadowblackAssassin extends DrawCard {
 
 ShadowblackAssassin.code = '13073';
 
-module.exports = ShadowblackAssassin;
+export default ShadowblackAssassin;

@@ -1,4 +1,4 @@
-const GameAction = require('./GameAction');
+import GameAction from './GameAction.js';
 
 class DiscardPower extends GameAction {
     constructor() {
@@ -12,10 +12,10 @@ class DiscardPower extends GameAction {
     createEvent({ card, amount = 1 }) {
         let finalAmount = Math.min(card.power, amount);
 
-        return this.event('onCardPowerDiscarded', { card, power: finalAmount }, event => {
+        return this.event('onCardPowerDiscarded', { card, power: finalAmount }, (event) => {
             event.card.power -= event.power;
         });
     }
 }
 
-module.exports = new DiscardPower();
+export default new DiscardPower();

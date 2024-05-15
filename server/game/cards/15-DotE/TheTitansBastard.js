@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TheTitansBastard extends DrawCard {
     setupCardAbilities(ability) {
@@ -6,16 +6,20 @@ class TheTitansBastard extends DrawCard {
             title: 'Return a Mercenary',
             cost: ability.costs.kneelSelf(),
             target: {
-                cardCondition: (card, context) => (
+                cardCondition: (card, context) =>
                     card.location === 'discard pile' &&
                     card.controller === context.player &&
                     card.hasTrait('Mercenary') &&
-                    card.getType() === 'character')
+                    card.getType() === 'character'
             },
-            handler: context => {
+            handler: (context) => {
                 context.player.moveCard(context.target, 'hand');
-                this.game.addMessage('{0} kneels {1} to move {2} from their discard pile to their hand',
-                    context.player, this, context.target);
+                this.game.addMessage(
+                    '{0} kneels {1} to move {2} from their discard pile to their hand',
+                    context.player,
+                    this,
+                    context.target
+                );
             }
         });
     }
@@ -23,4 +27,4 @@ class TheTitansBastard extends DrawCard {
 
 TheTitansBastard.code = '15010';
 
-module.exports = TheTitansBastard;
+export default TheTitansBastard;

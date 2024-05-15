@@ -1,13 +1,17 @@
-const PlotCard = require('../../plotcard');
-const TextHelper = require('../../TextHelper');
+import PlotCard from '../../plotcard.js';
+import TextHelper from '../../TextHelper.js';
 
 class YouWinOrYouDie extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
-            handler: context => {
+            handler: (context) => {
                 let cards = context.player.drawCardsToHand(2).length;
-                this.game.addMessage('{0} uses {1} to draw {2}',
-                    context.player, this, TextHelper.count(cards, 'card'));
+                this.game.addMessage(
+                    '{0} uses {1} to draw {2}',
+                    context.player,
+                    this,
+                    TextHelper.count(cards, 'card')
+                );
             }
         });
     }
@@ -15,4 +19,4 @@ class YouWinOrYouDie extends PlotCard {
 
 YouWinOrYouDie.code = '08120';
 
-module.exports = YouWinOrYouDie;
+export default YouWinOrYouDie;

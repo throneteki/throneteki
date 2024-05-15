@@ -1,4 +1,4 @@
-const UiPrompt = require('./uiprompt.js');
+import UiPrompt from './uiprompt.js';
 
 /**
  * Represents a UI Prompt that prompts each player individually in first-player
@@ -13,14 +13,14 @@ class PlayerOrderPrompt extends UiPrompt {
     }
 
     lazyFetchPlayers() {
-        if(!this.players) {
+        if (!this.players) {
             this.players = this.game.getPlayersInFirstPlayerOrder();
         }
     }
 
     skipPlayers() {
         this.lazyFetchPlayers();
-        this.players = this.players.filter(p => !this.skipCondition(p));
+        this.players = this.players.filter((p) => !this.skipCondition(p));
     }
 
     skipCondition() {
@@ -51,4 +51,4 @@ class PlayerOrderPrompt extends UiPrompt {
     }
 }
 
-module.exports = PlayerOrderPrompt;
+export default PlayerOrderPrompt;

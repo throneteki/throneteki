@@ -1,10 +1,10 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TheFrozenShore extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: event =>
+                afterChallenge: (event) =>
                     event.challenge.winner === this.controller &&
                     this.getNumOfAttackingWildlings(event.challenge) > 0 &&
                     this.getNumOfWinterPlots() > 0
@@ -16,7 +16,7 @@ class TheFrozenShore extends DrawCard {
                     numCards: numWinterPlots,
                     multiSelect: true,
                     activePromptTitle: 'Select up to ' + numWinterPlots + ' Wildlings to stand',
-                    cardCondition: card => card.isAttacking() && card.hasTrait('Wildling'),
+                    cardCondition: (card) => card.isAttacking() && card.hasTrait('Wildling'),
                     onSelect: (player, cards) => this.standWildlings(player, cards),
                     source: this
                 });
@@ -25,7 +25,7 @@ class TheFrozenShore extends DrawCard {
     }
 
     standWildlings(player, cards) {
-        for(let card of cards) {
+        for (let card of cards) {
             player.standCard(card);
         }
         this.game.addMessage('{0} uses {1} to stand {2}', player, this, cards);
@@ -33,14 +33,16 @@ class TheFrozenShore extends DrawCard {
     }
 
     getNumOfAttackingWildlings(challenge) {
-        return challenge.attackers.filter(card => card.hasTrait('Wildling')).length;
+        return challenge.attackers.filter((card) => card.hasTrait('Wildling')).length;
     }
 
     getNumOfWinterPlots() {
-        return this.game.getPlayers().filter(player => player.activePlot && player.activePlot.hasTrait('Winter')).length;
+        return this.game
+            .getPlayers()
+            .filter((player) => player.activePlot && player.activePlot.hasTrait('Winter')).length;
     }
 }
 
 TheFrozenShore.code = '07042';
 
-module.exports = TheFrozenShore;
+export default TheFrozenShore;

@@ -1,9 +1,9 @@
-const CardMatcher = require('../CardMatcher');
-const FactionCardCost = require('./FactionCardCost.js');
-const ParentCost = require('./ParentCost.js');
-const SelectCardCost = require('./SelectCardCost.js');
-const SelfCost = require('./SelfCost.js');
-const SpecificCardCost = require('./SpecificCardCost.js');
+import CardMatcher from '../CardMatcher.js';
+import FactionCardCost from './FactionCardCost.js';
+import ParentCost from './ParentCost.js';
+import SelectCardCost from './SelectCardCost.js';
+import SelfCost from './SelfCost.js';
+import SpecificCardCost from './SpecificCardCost.js';
 
 class CostBuilder {
     constructor(action, titles = {}) {
@@ -86,7 +86,7 @@ class CostBuilder {
             activePromptTitle: this.titles.selectUpTo(number),
             cardCondition: CardMatcher.createMatcher(conditionOrMatcher)
         });
-    }    
+    }
 
     /**
      * Returns a cost that is applied to the parent card that the activating card is attached to.
@@ -96,4 +96,4 @@ class CostBuilder {
     }
 }
 
-module.exports = CostBuilder;
+export default CostBuilder;

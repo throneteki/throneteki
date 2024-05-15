@@ -1,15 +1,22 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class ThorenSmallwood extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.winner === this.controller && !event.challenge.isAttackerTheWinner() && this.controller.canGainFactionPower()
+                afterChallenge: (event) =>
+                    event.challenge.winner === this.controller &&
+                    !event.challenge.isAttackerTheWinner() &&
+                    this.controller.canGainFactionPower()
             },
             handler: () => {
                 this.game.addPower(this.controller, 1);
 
-                this.game.addMessage('{0} uses {1} to gain 1 power for their faction after winning a challenge as the defending player', this.controller, this);
+                this.game.addMessage(
+                    '{0} uses {1} to gain 1 power for their faction after winning a challenge as the defending player',
+                    this.controller,
+                    this
+                );
             }
         });
     }
@@ -17,4 +24,4 @@ class ThorenSmallwood extends DrawCard {
 
 ThorenSmallwood.code = '04045';
 
-module.exports = ThorenSmallwood;
+export default ThorenSmallwood;

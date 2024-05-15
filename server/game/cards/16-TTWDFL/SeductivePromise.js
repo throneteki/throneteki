@@ -1,19 +1,26 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SeductivePromise extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.isMatch({ winner: this.controller, challengeType: 'power', by5: true })
+                afterChallenge: (event) =>
+                    event.challenge.isMatch({
+                        winner: this.controller,
+                        challengeType: 'power',
+                        by5: true
+                    })
             },
             target: {
-                cardCondition: (card, context) => card.isMatch({ location: 'play area', type: 'character', unique: false }) && card.controller === context.event.challenge.loser
+                cardCondition: (card, context) =>
+                    card.isMatch({ location: 'play area', type: 'character', unique: false }) &&
+                    card.controller === context.event.challenge.loser
             },
             message: '{player} plays {source} to take control of {target}',
-            handler: context => {
+            handler: (context) => {
                 this.game.resolveGameAction(
-                    GameActions.takeControl(context => ({
+                    GameActions.takeControl((context) => ({
                         player: context.player,
                         card: context.target
                     })),
@@ -27,4 +34,4 @@ class SeductivePromise extends DrawCard {
 
 SeductivePromise.code = '16025';
 
-module.exports = SeductivePromise;
+export default SeductivePromise;

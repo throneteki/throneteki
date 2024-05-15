@@ -1,9 +1,12 @@
-describe('Melee at Bitterbridge', function() {
-    integration(function() {
-        beforeEach(function() {
+describe('Melee at Bitterbridge', function () {
+    integration(function () {
+        beforeEach(function () {
             const deck = this.buildDeck('tyrell', [
                 'Trading with the Pentoshi',
-                'Ser Jon Fossoway', 'Melee at Bitterbridge', 'Arbor Knight', 'Arbor Knight'
+                'Ser Jon Fossoway',
+                'Melee at Bitterbridge',
+                'Arbor Knight',
+                'Arbor Knight'
             ]);
 
             this.player1.selectDeck(deck);
@@ -31,8 +34,8 @@ describe('Melee at Bitterbridge', function() {
             this.player1.clickPrompt('Done');
         });
 
-        describe('when it\'s played with cost 1', function() {
-            beforeEach(function() {
+        describe("when it's played with cost 1", function () {
+            beforeEach(function () {
                 this.player1.clickCard(this.melee);
                 this.player1.selectValue('1');
                 this.player1.clickCard(this.fossoway);
@@ -49,13 +52,13 @@ describe('Melee at Bitterbridge', function() {
                 this.player1.clickPrompt('Continue');
             });
 
-            it('should give renown', function() {
+            it('should give renown', function () {
                 expect(this.fossoway.power).toBe(1);
             });
         });
 
-        describe('when it\'s played with cost higher than 1', function() {
-            beforeEach(function() {
+        describe("when it's played with cost higher than 1", function () {
+            beforeEach(function () {
                 this.skipActionWindow();
 
                 this.player2.clickCard(this.knight1);
@@ -76,7 +79,7 @@ describe('Melee at Bitterbridge', function() {
                 this.player1.clickPrompt('Continue');
             });
 
-            it('should give renown to the highest strength character(s) and have the others not contribute strength', function() {
+            it('should give renown to the highest strength character(s) and have the others not contribute strength', function () {
                 expect(this.player1Object.faction.power).toBe(1);
                 expect(this.fossoway.power).toBe(1);
             });

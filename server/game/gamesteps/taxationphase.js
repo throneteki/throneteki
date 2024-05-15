@@ -1,7 +1,7 @@
-const Phase = require('./phase.js');
-const SimpleStep = require('./simplestep.js');
-const DiscardToReservePrompt = require('./taxation/DiscardToReservePrompt');
-const ActionWindow = require('./actionwindow.js');
+import Phase from './phase.js';
+import SimpleStep from './simplestep.js';
+import DiscardToReservePrompt from './taxation/DiscardToReservePrompt.js';
+import ActionWindow from './actionwindow.js';
 
 class TaxationPhase extends Phase {
     constructor(game) {
@@ -16,19 +16,19 @@ class TaxationPhase extends Phase {
     }
 
     returnGold() {
-        for(let player of this.game.getPlayersInFirstPlayerOrder()) {
-            if(!player.doesNotReturnUnspentGold) {
+        for (let player of this.game.getPlayersInFirstPlayerOrder()) {
+            if (!player.doesNotReturnUnspentGold) {
                 this.game.returnGoldToTreasury({ player: player, amount: player.gold });
             }
         }
     }
 
     returnTitleCards() {
-        if(!this.game.isMelee) {
+        if (!this.game.isMelee) {
             return;
         }
 
-        for(let player of this.game.getPlayers()) {
+        for (let player of this.game.getPlayers()) {
             this.game.titlePool.returnToPool(player, player.title);
         }
     }
@@ -37,7 +37,9 @@ class TaxationPhase extends Phase {
         this.game.raiseEvent('onRoundEnded');
 
         let players = this.game.getPlayers();
-        let playerPower = players.map(player => `${player.name}: ${player.getTotalPower()}`).join(', ');
+        let playerPower = players
+            .map((player) => `${player.name}: ${player.getTotalPower()}`)
+            .join(', ');
 
         this.game.round++;
 
@@ -49,4 +51,4 @@ class TaxationPhase extends Phase {
     }
 }
 
-module.exports = TaxationPhase;
+export default TaxationPhase;

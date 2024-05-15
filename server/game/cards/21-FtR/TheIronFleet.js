@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheIronFleet extends DrawCard {
     setupCardAbilities(ability) {
@@ -8,22 +8,24 @@ class TheIronFleet extends DrawCard {
             effect: ability.effects.reduceCost({
                 playingTypes: 'marshal',
                 amount: 1,
-                match: card => card.hasTrait('Raider')
+                match: (card) => card.hasTrait('Raider')
             })
         });
-        
+
         this.reaction({
             when: {
-                onChallengeInitiated: (event, context) => event.challenge.attackingPlayer === context.player && this.hasAttackingRaider(context.player)
+                onChallengeInitiated: (event, context) =>
+                    event.challenge.attackingPlayer === context.player &&
+                    this.hasAttackingRaider(context.player)
             },
-            message: '{player} uses {source} to discard the top card from each opponent\'s deck',
-            gameAction: GameActions.simultaneously(context =>
-                this.game.getOpponents(context.player).map(opponent => 
-                    GameActions.discardTopCards({ 
+            message: "{player} uses {source} to discard the top card from each opponent's deck",
+            gameAction: GameActions.simultaneously((context) =>
+                this.game.getOpponents(context.player).map((opponent) =>
+                    GameActions.discardTopCards({
                         player: opponent,
                         amount: 1,
                         source: context.source
-                    }).thenExecute(event => {
+                    }).thenExecute((event) => {
                         this.game.addMessage('{player} discards {topCards}', event);
                     })
                 )
@@ -32,10 +34,13 @@ class TheIronFleet extends DrawCard {
     }
 
     hasAttackingRaider(player) {
-        return player.anyCardsInPlay(card => card.isAttacking() && card.hasTrait('Raider') && card.getType() === 'character');
+        return player.anyCardsInPlay(
+            (card) =>
+                card.isAttacking() && card.hasTrait('Raider') && card.getType() === 'character'
+        );
     }
 }
 
 TheIronFleet.code = '21004';
 
-module.exports = TheIronFleet;
+export default TheIronFleet;

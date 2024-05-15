@@ -1,14 +1,17 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class MothersMen extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCharacterKilled: (event, context) => !this.game.claim.isApplying && event.card.controller !== context.player && context.player.canPutIntoPlay(this)
+                onCharacterKilled: (event, context) =>
+                    !this.game.claim.isApplying &&
+                    event.card.controller !== context.player &&
+                    context.player.canPutIntoPlay(this)
             },
             location: 'discard pile',
-            gameAction: GameActions.putIntoPlay(context => ({
+            gameAction: GameActions.putIntoPlay((context) => ({
                 player: context.player,
                 card: this
             })),
@@ -19,4 +22,4 @@ class MothersMen extends DrawCard {
 
 MothersMen.code = '21020';
 
-module.exports = MothersMen;
+export default MothersMen;

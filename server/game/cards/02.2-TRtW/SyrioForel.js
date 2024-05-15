@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class SyrioForel extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,11 +7,18 @@ class SyrioForel extends DrawCard {
             limit: ability.limit.perPhase(1),
             phase: 'challenge',
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character'
+                cardCondition: (card) =>
+                    card.location === 'play area' && card.getType() === 'character'
             },
-            handler: context => {
-                this.game.addMessage('{0} uses {1} to give {2} a {3} icon and stealth until the end of the phase', this.controller, this, context.target, 'military');
-                this.untilEndOfPhase(ability => ({
+            handler: (context) => {
+                this.game.addMessage(
+                    '{0} uses {1} to give {2} a {3} icon and stealth until the end of the phase',
+                    this.controller,
+                    this,
+                    context.target,
+                    'military'
+                );
+                this.untilEndOfPhase((ability) => ({
                     match: context.target,
                     effect: [
                         ability.effects.addIcon('military'),
@@ -25,4 +32,4 @@ class SyrioForel extends DrawCard {
 
 SyrioForel.code = '02037';
 
-module.exports = SyrioForel;
+export default SyrioForel;

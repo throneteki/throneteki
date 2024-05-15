@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class CasterlyRock extends DrawCard {
     setupCardAbilities(ability) {
@@ -11,4 +11,4 @@ class CasterlyRock extends DrawCard {
 
 CasterlyRock.code = '01097';
 
-module.exports = CasterlyRock;
+export default CasterlyRock;

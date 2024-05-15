@@ -1,9 +1,9 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class FortifiedPosition extends PlotCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: card => card.getType() === 'character',
+            match: (card) => card.getType() === 'character',
             targetController: 'any',
             effect: ability.effects.blankExcludingTraits
         });
@@ -12,4 +12,4 @@ class FortifiedPosition extends PlotCard {
 
 FortifiedPosition.code = '01012';
 
-module.exports = FortifiedPosition;
+export default FortifiedPosition;

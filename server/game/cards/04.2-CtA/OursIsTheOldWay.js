@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class OursIsTheOldWay extends DrawCard {
     setupCardAbilities() {
@@ -21,28 +21,40 @@ class OursIsTheOldWay extends DrawCard {
     }
 
     gainStealth() {
-        let cards = this.controller.filterCardsInPlay(card => card.isFaction('greyjoy') && card.getType() === 'character');
-        this.untilEndOfPhase(ability => ({
+        let cards = this.controller.filterCardsInPlay(
+            (card) => card.isFaction('greyjoy') && card.getType() === 'character'
+        );
+        this.untilEndOfPhase((ability) => ({
             match: cards,
             effect: ability.effects.addKeyword('stealth')
         }));
 
-        this.game.addMessage('{0} plays {1} to have each {2} character they control gain stealth until the end of the phase',
-            this.controller, this, 'greyjoy');
+        this.game.addMessage(
+            '{0} plays {1} to have each {2} character they control gain stealth until the end of the phase',
+            this.controller,
+            this,
+            'greyjoy'
+        );
 
         return true;
     }
 
     loseStealth() {
-        let cards = this.game.filterCardsInPlay(card => !card.isFaction('greyjoy') && card.getType() === 'character');
-        this.untilEndOfPhase(ability => ({
+        let cards = this.game.filterCardsInPlay(
+            (card) => !card.isFaction('greyjoy') && card.getType() === 'character'
+        );
+        this.untilEndOfPhase((ability) => ({
             match: cards,
             targetController: 'any',
             effect: ability.effects.removeKeyword('stealth')
         }));
 
-        this.game.addMessage('{0} plays {1} to have each non-{2} character lose stealth until the end of the phase',
-            this.controller, this, 'greyjoy');
+        this.game.addMessage(
+            '{0} plays {1} to have each non-{2} character lose stealth until the end of the phase',
+            this.controller,
+            this,
+            'greyjoy'
+        );
 
         return true;
     }
@@ -50,4 +62,4 @@ class OursIsTheOldWay extends DrawCard {
 
 OursIsTheOldWay.code = '04032';
 
-module.exports = OursIsTheOldWay;
+export default OursIsTheOldWay;

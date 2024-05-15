@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const TextHelper = require('../../TextHelper');
+import DrawCard from '../../drawcard.js';
+import TextHelper from '../../TextHelper.js';
 
 class TheInnAtTheCrossroads extends DrawCard {
     setupCardAbilities(ability) {
@@ -8,10 +8,16 @@ class TheInnAtTheCrossroads extends DrawCard {
             phase: 'dominance',
             cost: ability.costs.kneelSelf(),
             chooseOpponent: true,
-            handler: context => {
+            handler: (context) => {
                 let numCardsDrawn = context.player.drawCardsToHand(3).length;
                 this.game.takeControl(context.opponent, this);
-                this.game.addMessage('{0} kneels {1} to draw {2} and give control of {1} to {3}', context.player, this, TextHelper.count(numCardsDrawn, 'card'), context.opponent);
+                this.game.addMessage(
+                    '{0} kneels {1} to draw {2} and give control of {1} to {3}',
+                    context.player,
+                    this,
+                    TextHelper.count(numCardsDrawn, 'card'),
+                    context.opponent
+                );
             }
         });
     }
@@ -19,4 +25,4 @@ class TheInnAtTheCrossroads extends DrawCard {
 
 TheInnAtTheCrossroads.code = '11098';
 
-module.exports = TheInnAtTheCrossroads;
+export default TheInnAtTheCrossroads;

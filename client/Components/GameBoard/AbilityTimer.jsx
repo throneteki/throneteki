@@ -28,9 +28,9 @@ class AbilityTimer extends React.Component {
         const timeOffset = 0.25;
         let now = new Date();
         let elapsed = (now - this.props.startTime) / 1000;
-        let remaining = (this.props.limit - elapsed) - timeOffset;
+        let remaining = this.props.limit - elapsed - timeOffset;
 
-        if(remaining < 0) {
+        if (remaining < 0) {
             remaining = 0;
         }
 
@@ -44,11 +44,16 @@ class AbilityTimer extends React.Component {
         let remainingPercent = ((this.state.remaining / this.props.limit) * 100).toFixed() + '%';
         return (
             <div>
-                <span>Auto passing in { this.state.remaining.toFixed() }...</span>
+                <span>Auto passing in {this.state.remaining.toFixed()}...</span>
                 <div className='progress'>
-                    <div className='progress-bar progress-bar-success' role='progressbar' style={ { width: remainingPercent } } />
+                    <div
+                        className='progress-bar progress-bar-success'
+                        role='progressbar'
+                        style={{ width: remainingPercent }}
+                    />
                 </div>
-            </div>);
+            </div>
+        );
     }
 }
 

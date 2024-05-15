@@ -1,15 +1,15 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions/index.js');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class GreatRanging extends DrawCard {
     setupCardAbilities() {
         this.plotModifiers({
             reserve: 1
         });
-        
+
         this.reaction({
             when: {
-                onCardEntersPlay: event => event.card === this && event.playingType === 'marshal'
+                onCardEntersPlay: (event) => event.card === this && event.playingType === 'marshal'
             },
             message: '{player} uses {source} to search their deck for First of the First Men',
             gameAction: GameActions.search({
@@ -18,7 +18,7 @@ class GreatRanging extends DrawCard {
                 reveal: false,
                 location: ['draw deck', 'hand', 'discard pile'],
                 message: '{player} {gameAction}',
-                gameAction: GameActions.putIntoPlay(context => ({
+                gameAction: GameActions.putIntoPlay((context) => ({
                     card: context.searchTarget
                 }))
             })
@@ -28,4 +28,4 @@ class GreatRanging extends DrawCard {
 
 GreatRanging.code = '21013';
 
-module.exports = GreatRanging;
+export default GreatRanging;

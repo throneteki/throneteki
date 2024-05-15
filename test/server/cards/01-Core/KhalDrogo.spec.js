@@ -1,8 +1,9 @@
-describe('Khal Drogo (Core)', function() {
-    integration(function() {
-        beforeEach(function() {
+describe('Khal Drogo (Core)', function () {
+    integration(function () {
+        beforeEach(function () {
             const deck = this.buildDeck('targaryen', [
-                'A Noble Cause', 'A Noble Cause',
+                'A Noble Cause',
+                'A Noble Cause',
                 'Khal Drogo (Core)'
             ]);
             this.player1.selectDeck(deck);
@@ -18,8 +19,8 @@ describe('Khal Drogo (Core)', function() {
             this.completeMarshalPhase();
         });
 
-        describe('after initiating a military challenge', function() {
-            beforeEach(function() {
+        describe('after initiating a military challenge', function () {
+            beforeEach(function () {
                 this.player1.clickPrompt('Military');
                 this.player1.clickCard('Khal Drogo', 'play area');
                 this.player1.clickPrompt('Done');
@@ -30,12 +31,12 @@ describe('Khal Drogo (Core)', function() {
                 this.player1.clickPrompt('Continue');
             });
 
-            it('should allow another military challenge to be initiated', function() {
+            it('should allow another military challenge to be initiated', function () {
                 expect(this.player1).toHavePromptButton('Military');
             });
 
-            describe('after using the second challenge', function() {
-                beforeEach(function() {
+            describe('after using the second challenge', function () {
+                beforeEach(function () {
                     // Restand Drogo
                     this.player1.clickCard('Khal Drogo', 'play area');
 
@@ -65,7 +66,7 @@ describe('Khal Drogo (Core)', function() {
                     this.player1.clickPrompt('Continue');
                 });
 
-                it('should still allow both military challenges in the next round', function() {
+                it('should still allow both military challenges in the next round', function () {
                     expect(this.player1).toHavePromptButton('Military');
                 });
             });

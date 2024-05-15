@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class NorthernKeep extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,7 +7,7 @@ class NorthernKeep extends DrawCard {
             phase: 'marshal',
             condition: () => this.controller.canGainGold(),
             cost: ability.costs.kneelSelf(),
-            handler: context => {
+            handler: (context) => {
                 let gold = this.moreWinterThanSummerPlotsRevealed() ? 2 : 1;
                 gold = this.game.addGold(context.player, gold);
 
@@ -26,4 +26,4 @@ class NorthernKeep extends DrawCard {
 
 NorthernKeep.code = '06102';
 
-module.exports = NorthernKeep;
+export default NorthernKeep;

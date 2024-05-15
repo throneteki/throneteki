@@ -1,20 +1,24 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
-const {Tokens} = require('../../Constants');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
+import { Tokens } from '../../Constants/index.js';
 
 class SerGuyardMorrigen extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: card => card.getType() === 'character' && card.hasToken(Tokens.gold) && card.hasTrait('Rainbow Guard') && card.controller === this.controller,
+            match: (card) =>
+                card.getType() === 'character' &&
+                card.hasToken(Tokens.gold) &&
+                card.hasTrait('Rainbow Guard') &&
+                card.controller === this.controller,
             effect: ability.effects.addIcon('intrigue')
         });
 
         this.reaction({
             when: {
-                onPlotsRevealed: event => event.plots.some(plot => plot.hasTrait('Summer'))
+                onPlotsRevealed: (event) => event.plots.some((plot) => plot.hasTrait('Summer'))
             },
             limit: ability.limit.perPhase(1),
-            handler: context => {
+            handler: (context) => {
                 this.context = context;
                 this.game.promptWithMenu(context.player, this, {
                     activePrompt: {
@@ -29,11 +33,11 @@ class SerGuyardMorrigen extends DrawCard {
             }
         });
     }
-    
+
     knight(player) {
         this.game.promptForSelect(player, {
             source: this,
-            cardCondition: card =>
+            cardCondition: (card) =>
                 card.location === 'play area' &&
                 card.getType() === 'character' &&
                 card.hasTrait('Knight'),
@@ -49,8 +53,7 @@ class SerGuyardMorrigen extends DrawCard {
             GameActions.placeToken(() => ({ card: card, token: Tokens.gold })),
             this.context
         );
-        this.game.addMessage('{0} uses {1} to have {2} gain 1 gold',
-            player, this, card);
+        this.game.addMessage('{0} uses {1} to have {2} gain 1 gold', player, this, card);
         return true;
     }
 
@@ -60,17 +63,18 @@ class SerGuyardMorrigen extends DrawCard {
     }
 
     rainbowguard(player) {
-        let rainbow = player.filterCardsInPlay(card => card.hasTrait('Rainbow Guard') && card.getType() === 'character');
+        let rainbow = player.filterCardsInPlay(
+            (card) => card.hasTrait('Rainbow Guard') && card.getType() === 'character'
+        );
 
-        for(let card of rainbow) {
+        for (let card of rainbow) {
             this.game.resolveGameAction(
                 GameActions.placeToken(() => ({ card: card, token: Tokens.gold })),
                 this.context
             );
         }
-            
-        this.game.addMessage('{0} uses {1} to have each Rainbow Guard gain 1 gold',
-            player, this);
+
+        this.game.addMessage('{0} uses {1} to have each Rainbow Guard gain 1 gold', player, this);
 
         return true;
     }
@@ -78,4 +82,4 @@ class SerGuyardMorrigen extends DrawCard {
 
 SerGuyardMorrigen.code = '20037';
 
-module.exports = SerGuyardMorrigen;
+export default SerGuyardMorrigen;

@@ -1,20 +1,23 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TowerOfTheHand extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardOutOfShadows: event => 
-                    event.card.controller === this.controller &&
-                    this.game.anyPlotHasTrait('Winter')
+                onCardOutOfShadows: (event) =>
+                    event.card.controller === this.controller && this.game.anyPlotHasTrait('Winter')
             },
             limit: ability.limit.perPhase(1),
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.isFaction('stark') && card.kneeled,
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    card.isFaction('stark') &&
+                    card.kneeled,
                 gameAction: 'stand'
             },
             message: '{player} kneels {source} to stand {target}',
-            handler: context => {
+            handler: (context) => {
                 context.player.standCard(context.target);
             }
         });
@@ -23,4 +26,4 @@ class TowerOfTheHand extends DrawCard {
 
 TowerOfTheHand.code = '13062';
 
-module.exports = TowerOfTheHand;
+export default TowerOfTheHand;

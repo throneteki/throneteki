@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class MathisRowan extends DrawCard {
     setupCardAbilities(ability) {
@@ -9,24 +9,26 @@ class MathisRowan extends DrawCard {
             chooseOpponent: () => true,
             target: {
                 activePromptTitle: 'Select a card',
-                cardCondition: (card, context) => (
-                    card.isMatch({ location: 'play area', type: ['character', 'attachment', 'location'] }) &&
+                cardCondition: (card, context) =>
+                    card.isMatch({
+                        location: 'play area',
+                        type: ['character', 'attachment', 'location']
+                    }) &&
                     card.controller === this.controller &&
                     (!context.opponent || context.opponent.canControl(card))
-                )
             },
             message: '{player} uses {source} to give {opponent} control of {target}',
-            handler: context => {
+            handler: (context) => {
                 this.game.resolveGameAction(
-                    GameActions.takeControl(context => ({
+                    GameActions.takeControl((context) => ({
                         player: context.opponent,
                         card: context.target
-                    })).then(context => ({
+                    })).then((context) => ({
                         condition: () => context.player.canGainGold(),
                         message: 'Then {player} gains 2 gold for {source}',
-                        handler: thenContext => {
+                        handler: (thenContext) => {
                             this.game.resolveGameAction(
-                                GameActions.gainGold(thenContext => ({
+                                GameActions.gainGold((thenContext) => ({
                                     player: thenContext.player,
                                     amount: 2
                                 })),
@@ -43,4 +45,4 @@ class MathisRowan extends DrawCard {
 
 MathisRowan.code = '15037';
 
-module.exports = MathisRowan;
+export default MathisRowan;

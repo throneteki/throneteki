@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class FormerChampion extends DrawCard {
     setupCardAbilities(ability) {
@@ -9,22 +9,16 @@ class FormerChampion extends DrawCard {
         this.persistentEffect({
             condition: () => this.getStrength() <= 3,
             match: this,
-            effect: [
-                ability.effects.addIcon('power'),
-                ability.effects.addKeyword('Stealth')
-            ]
+            effect: [ability.effects.addIcon('power'), ability.effects.addKeyword('Stealth')]
         });
         this.persistentEffect({
             condition: () => this.getStrength() <= 1,
             match: this,
-            effect: [
-                ability.effects.addIcon('intrigue'),
-                ability.effects.addKeyword('Intimidate')
-            ]
+            effect: [ability.effects.addIcon('intrigue'), ability.effects.addKeyword('Intimidate')]
         });
     }
 }
 
 FormerChampion.code = '24026';
 
-module.exports = FormerChampion;
+export default FormerChampion;

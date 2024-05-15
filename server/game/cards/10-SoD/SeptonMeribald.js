@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class SeptonMeribald extends DrawCard {
     setupCardAbilities(ability) {
@@ -8,13 +8,16 @@ class SeptonMeribald extends DrawCard {
             target: {
                 mode: 'upTo',
                 numCards: 3,
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' &&
-                                       card.getPrintedStrength() <= 1 && card.kneeled,
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    card.getPrintedStrength() <= 1 &&
+                    card.kneeled,
                 gameAction: 'stand'
             },
             message: '{player} kneels {source} to stand {target}',
-            handler: context => {
-                for(let card of context.target) {
+            handler: (context) => {
+                for (let card of context.target) {
                     card.controller.standCard(card);
                 }
             },
@@ -25,4 +28,4 @@ class SeptonMeribald extends DrawCard {
 
 SeptonMeribald.code = '10040';
 
-module.exports = SeptonMeribald;
+export default SeptonMeribald;

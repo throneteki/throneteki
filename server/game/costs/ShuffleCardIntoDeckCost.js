@@ -1,4 +1,4 @@
-const GameActions = require('../GameActions');
+import GameActions from '../GameActions/index.js';
 
 class ShuffleCardIntoDeckCost {
     constructor() {
@@ -6,7 +6,9 @@ class ShuffleCardIntoDeckCost {
     }
 
     isEligible(card) {
-        return card.location === 'play area' && GameActions.shuffleIntoDeck({ cards: [card] }).allow();
+        return (
+            card.location === 'play area' && GameActions.shuffleIntoDeck({ cards: [card] }).allow()
+        );
     }
 
     pay(cards, context) {
@@ -20,4 +22,4 @@ class ShuffleCardIntoDeckCost {
     }
 }
 
-module.exports = ShuffleCardIntoDeckCost;
+export default ShuffleCardIntoDeckCost;

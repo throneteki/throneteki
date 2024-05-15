@@ -1,4 +1,4 @@
-const BaseStep = require('./basestep.js');
+import BaseStep from './basestep.js';
 
 class PlayActionPrompt extends BaseStep {
     constructor(game, player, playActions, context) {
@@ -10,7 +10,7 @@ class PlayActionPrompt extends BaseStep {
 
     continue() {
         var index = 0;
-        var buttons = this.playActions.map(action => {
+        var buttons = this.playActions.map((action) => {
             var button = { text: action.title, method: 'selectAction', arg: index };
             index++;
             return button;
@@ -33,4 +33,4 @@ class PlayActionPrompt extends BaseStep {
     }
 }
 
-module.exports = PlayActionPrompt;
+export default PlayActionPrompt;

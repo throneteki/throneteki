@@ -62,34 +62,31 @@ class DraftingTable extends React.Component {
     }
 
     updateContextMenu(props) {
-        if(!props.currentGame || !props.user) {
+        if (!props.currentGame || !props.user) {
             return;
         }
 
         let thisPlayer = props.currentGame.players[props.user.username];
 
-        if(thisPlayer) {
+        if (thisPlayer) {
             this.setState({ spectating: false });
         } else {
             this.setState({ spectating: true });
         }
 
-        let menuOptions = [
-            { text: 'Leave Game', onClick: this.onLeaveClick }
-        ];
+        let menuOptions = [{ text: 'Leave Game', onClick: this.onLeaveClick }];
 
-        if(props.currentGame && props.currentGame.started) {
-            let spectators = props.currentGame.spectators.map(spectator => {
-                return <li key={ spectator.id }>{ spectator.name }</li>;
+        if (props.currentGame && props.currentGame.started) {
+            let spectators = props.currentGame.spectators.map((spectator) => {
+                return <li key={spectator.id}>{spectator.name}</li>;
             });
 
-            let spectatorPopup = (
-                <ul className='spectators-popup absolute-panel'>
-                    { spectators }
-                </ul>
-            );
+            let spectatorPopup = <ul className='spectators-popup absolute-panel'>{spectators}</ul>;
 
-            menuOptions.unshift({ text: 'Spectators: ' + props.currentGame.spectators.length, popup: spectatorPopup });
+            menuOptions.unshift({
+                text: 'Spectators: ' + props.currentGame.spectators.length,
+                popup: spectatorPopup
+            });
 
             this.setContextMenu(menuOptions);
         } else {
@@ -98,13 +95,13 @@ class DraftingTable extends React.Component {
     }
 
     setContextMenu(menu) {
-        if(this.props.setContextMenu) {
+        if (this.props.setContextMenu) {
             this.props.setContextMenu(menu);
         }
     }
 
     onLeaveClick() {
-        if(!this.state.spectating && this.isDraftActive()) {
+        if (!this.state.spectating && this.isDraftActive()) {
             toastr.confirm('Your draft is not finished, are you sure you want to leave?', {
                 onOk: () => {
                     this.props.sendGameMessage('leavegame');
@@ -120,28 +117,28 @@ class DraftingTable extends React.Component {
     }
 
     isDraftActive() {
-        if(!this.props.currentGame || !this.props.user) {
+        if (!this.props.currentGame || !this.props.user) {
             return false;
         }
 
-        if(this.props.currentGame.draftingTable.draftFinished) {
+        if (this.props.currentGame.draftingTable.draftFinished) {
             return false;
         }
 
         let thisPlayer = this.props.currentGame.players[this.props.user.username];
-        if(!thisPlayer) {
+        if (!thisPlayer) {
             thisPlayer = Object.values(this.props.currentGame.players)[0];
         }
 
-        let otherPlayers = Object.values(this.props.currentGame.players).filter(player => {
+        let otherPlayers = Object.values(this.props.currentGame.players).filter((player) => {
             return player.name !== thisPlayer.name;
         });
 
-        if(!otherPlayers) {
+        if (!otherPlayers) {
             return false;
         }
 
-        if(otherPlayers.every(player => player.disconnected || player.left)) {
+        if (otherPlayers.every((player) => player.disconnected || player.left)) {
             return false;
         }
 
@@ -149,26 +146,28 @@ class DraftingTable extends React.Component {
     }
 
     renderHand(hand, chosenCardIndex) {
-        if(hand) {
+        if (hand) {
             return hand.map((card, index) => (
-                <DraftCard key={ card.uuid }
-                    card={ this.props.cards[card] }
-                    onClick={ () => this.selectCard(card) }
-                    onMouseOut={ this.onMouseOut }
-                    onMouseOver={ this.onMouseOver }
-                    selected={ index === chosenCardIndex }
-                    size={ this.props.user.settings.cardSize }
-                    orientation={ this.props.cards[card].type === 'plot' ? 'horizontal' : 'vertical' } />)
-            );
+                <DraftCard
+                    key={card.uuid}
+                    card={this.props.cards[card]}
+                    onClick={() => this.selectCard(card)}
+                    onMouseOut={this.onMouseOut}
+                    onMouseOver={this.onMouseOver}
+                    selected={index === chosenCardIndex}
+                    size={this.props.user.settings.cardSize}
+                    orientation={this.props.cards[card].type === 'plot' ? 'horizontal' : 'vertical'}
+                />
+            ));
         }
     }
 
     render() {
-        if(!this.props.currentGame || !this.props.cards || !this.props.currentGame.started) {
+        if (!this.props.currentGame || !this.props.cards || !this.props.currentGame.started) {
             return <div>Waiting for server...</div>;
         }
 
-        if(!this.props.user) {
+        if (!this.props.user) {
             this.props.navigate('/');
             return <div>You are not logged in, redirecting...</div>;
         }
@@ -176,70 +175,98 @@ class DraftingTable extends React.Component {
         const activePlayer = this.props.currentGame.draftingTable.activePlayer;
         const { chosenCardIndex, deck, hand } = activePlayer;
 
-        const deckWithCards = deck.map(cardQuantity => ({
+        const deckWithCards = deck.map((cardQuantity) => ({
             count: cardQuantity.count,
             code: cardQuantity.code,
             card: this.props.cards[cardQuantity.code]
         }));
 
-        return (<div className='game-board'>
-            <div className='main-window'>
-                <CardZoom imageUrl={ this.props.cardToZoom ? '/img/cards/' + this.props.cardToZoom.code + '.png' : '' }
-                    orientation={ this.props.cardToZoom ? this.props.cardToZoom.type === 'plot' ? 'horizontal' : 'vertical' : 'vertical' }
-                    show={ !!this.props.cardToZoom } cardName={ this.props.cardToZoom ? this.props.cardToZoom.name : null }
-                    card={ this.props.cardToZoom ? this.props.cards[this.props.cardToZoom.code] : null } />
-                <div className='board-middle'>
-                    <div className='draft-current-cards'>
-                        <Panel title='Current Hand'>
-                            { this.renderHand(hand, chosenCardIndex) }
-                        </Panel>
-                    </div>
-                    <div className='draft-prompt-area'>
-                        <div className='draft-inset-pane'>
-                            <DraftPlayerPrompt
-                                cards={ this.props.cards }
-                                buttons={ activePlayer.buttons }
-                                promptText={ activePlayer.menuTitle }
-                                promptTitle={ activePlayer.promptTitle }
-                                onButtonClick={ this.onPromptButtonClick }
-                                onMouseOver={ this.onMouseOver }
-                                onMouseOut={ this.onMouseOut }
-                                user={ this.props.user } />
+        return (
+            <div className='game-board'>
+                <div className='main-window'>
+                    <CardZoom
+                        imageUrl={
+                            this.props.cardToZoom
+                                ? '/img/cards/' + this.props.cardToZoom.code + '.png'
+                                : ''
+                        }
+                        orientation={
+                            this.props.cardToZoom
+                                ? this.props.cardToZoom.type === 'plot'
+                                    ? 'horizontal'
+                                    : 'vertical'
+                                : 'vertical'
+                        }
+                        show={!!this.props.cardToZoom}
+                        cardName={this.props.cardToZoom ? this.props.cardToZoom.name : null}
+                        card={
+                            this.props.cardToZoom
+                                ? this.props.cards[this.props.cardToZoom.code]
+                                : null
+                        }
+                    />
+                    <div className='board-middle'>
+                        <div className='draft-current-cards'>
+                            <Panel title='Current Hand'>
+                                {this.renderHand(hand, chosenCardIndex)}
+                            </Panel>
+                        </div>
+                        <div className='draft-prompt-area'>
+                            <div className='draft-inset-pane'>
+                                <DraftPlayerPrompt
+                                    cards={this.props.cards}
+                                    buttons={activePlayer.buttons}
+                                    promptText={activePlayer.menuTitle}
+                                    promptTitle={activePlayer.promptTitle}
+                                    onButtonClick={this.onPromptButtonClick}
+                                    onMouseOver={this.onMouseOver}
+                                    onMouseOut={this.onMouseOut}
+                                    user={this.props.user}
+                                />
+                            </div>
+                        </div>
+                        <div className='draft-deck'>
+                            <Panel title='Drafted Cards'>
+                                <div style={{ textAlign: 'right' }}>
+                                    <label>
+                                        Group by:
+                                        <select
+                                            value={this.state.selectedGroupBy}
+                                            onChange={(event) =>
+                                                this.handleChangeGroupBy(event.target.value)
+                                            }
+                                        >
+                                            <option value='type'>Type</option>
+                                            <option value='cost'>Cost</option>
+                                        </select>
+                                    </label>
+                                </div>
+                                <CardTypeGroups
+                                    cards={deckWithCards}
+                                    displayFactionIcons
+                                    groupBy={this.state.selectedGroupBy}
+                                    onCardMouseOut={this.onMouseOut}
+                                    onCardMouseOver={this.onMouseOver}
+                                    sortCardsBy='faction'
+                                />
+                            </Panel>
                         </div>
                     </div>
-                    <div className='draft-deck'>
-                        <Panel title='Drafted Cards'>
-                            <div style={ { textAlign: 'right' } }>
-                                <label>
-                                    Group by:
-                                    <select value={ this.state.selectedGroupBy } onChange={ event => this.handleChangeGroupBy(event.target.value) }>
-                                        <option value='type'>Type</option>
-                                        <option value='cost'>Cost</option>
-                                    </select>
-                                </label>
-                            </div>
-                            <CardTypeGroups
-                                cards={ deckWithCards }
-                                displayFactionIcons
-                                groupBy={ this.state.selectedGroupBy }
-                                onCardMouseOut={ this.onMouseOut }
-                                onCardMouseOver={ this.onMouseOver }
-                                sortCardsBy='faction' />
-                        </Panel>
-                    </div>
-                </div>
-                <div className='right-side'>
-                    <div className='gamechat'>
-                        <GameChat key='gamechat'
-                            messages={ this.props.currentGame.messages }
-                            onCardMouseOut={ this.onMouseOut }
-                            onCardMouseOver={ this.onMouseOver }
-                            onSendChat={ this.sendChatMessage }
-                            muted={ this.props.currentGame.muteSpectators } />
+                    <div className='right-side'>
+                        <div className='gamechat'>
+                            <GameChat
+                                key='gamechat'
+                                messages={this.props.currentGame.messages}
+                                onCardMouseOut={this.onMouseOut}
+                                onCardMouseOver={this.onMouseOver}
+                                onSendChat={this.sendChatMessage}
+                                muted={this.props.currentGame.muteSpectators}
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>);
+        );
     }
 }
 
@@ -275,4 +302,3 @@ function mapDispatchToProps(dispatch) {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps, null, { withRef: true })(DraftingTable);
-

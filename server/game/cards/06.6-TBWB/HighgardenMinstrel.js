@@ -1,10 +1,10 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class HighgardenMinstrel extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardPlayed: event =>
+                onCardPlayed: (event) =>
                     event.card.hasTrait('Song') &&
                     event.card.controller === this.controller &&
                     this.controller.canGainGold()
@@ -20,4 +20,4 @@ class HighgardenMinstrel extends DrawCard {
 
 HighgardenMinstrel.code = '06103';
 
-module.exports = HighgardenMinstrel;
+export default HighgardenMinstrel;

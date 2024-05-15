@@ -1,58 +1,67 @@
-const ChatCommands = require('../../../server/game/chatcommands.js');
+import ChatCommands from '../../../server/game/chatcommands.js';
 
-describe('ChatCommands', function() {
-    beforeEach(function() {
+describe('ChatCommands', function () {
+    beforeEach(function () {
         this.gameSpy = jasmine.createSpyObj('game', ['addMessage', 'addAlert']);
 
-        this.playerSpy = jasmine.createSpyObj('player', ['drawCardsToHand', 'discardAtRandom', 'discardFromDraw']);
+        this.playerSpy = jasmine.createSpyObj('player', [
+            'drawCardsToHand',
+            'discardAtRandom',
+            'discardFromDraw'
+        ]);
         this.chatCommands = new ChatCommands(this.gameSpy);
     });
 
-    describe('getNumberOrDefault()', function() {
-        describe('with no arguments', function() {
+    describe('getNumberOrDefault()', function () {
+        describe('with no arguments', function () {
             it('should return the default', function () {
                 expect(this.chatCommands.getNumberOrDefault('', 1)).toBe(1);
             });
         });
 
-        describe('with a string argument', function() {
+        describe('with a string argument', function () {
             it('should return the default', function () {
                 expect(this.chatCommands.getNumberOrDefault('test', 1)).toBe(1);
             });
         });
 
-        describe('with a negative argument', function() {
+        describe('with a negative argument', function () {
             it('should return the default', function () {
                 expect(this.chatCommands.getNumberOrDefault('-1', 1)).toBe(1);
             });
         });
 
-        describe('with a valid argument', function() {
+        describe('with a valid argument', function () {
             it('should return the parsed value', function () {
                 expect(this.chatCommands.getNumberOrDefault('3', 1)).toBe(3);
             });
         });
     });
 
-    describe('executeCommand()', function() {
-        describe('with a non-existent command', function() {
-            it('should return false', function() {
-                let result = this.chatCommands.executeCommand(this.playerSpy, '/foo', ['/foo', 'bar']);
+    describe('executeCommand()', function () {
+        describe('with a non-existent command', function () {
+            it('should return false', function () {
+                let result = this.chatCommands.executeCommand(this.playerSpy, '/foo', [
+                    '/foo',
+                    'bar'
+                ]);
 
                 expect(result).toBe(false);
             });
         });
 
-        describe('with a valid command', function() {
-            it('should return true', function() {
-                let result = this.chatCommands.executeCommand(this.playerSpy, '/pillage', ['/pillage']);
+        describe('with a valid command', function () {
+            it('should return true', function () {
+                let result = this.chatCommands.executeCommand(this.playerSpy, '/pillage', [
+                    '/pillage'
+                ]);
 
                 expect(result).toBe(true);
             });
         });
 
-        describe('with a /draw command', function() {
-            describe('with no arguments', function() {
+        describe('with a /draw command', function () {
+            describe('with no arguments', function () {
                 it('should draw 1 card', function () {
                     this.chatCommands.executeCommand(this.playerSpy, '/draw', ['/draw']);
 
@@ -60,7 +69,7 @@ describe('ChatCommands', function() {
                 });
             });
 
-            describe('with a string argument', function() {
+            describe('with a string argument', function () {
                 it('should draw 1 card', function () {
                     this.chatCommands.executeCommand(this.playerSpy, '/draw', ['/draw', 'test']);
 
@@ -68,7 +77,7 @@ describe('ChatCommands', function() {
                 });
             });
 
-            describe('with a negative argument', function() {
+            describe('with a negative argument', function () {
                 it('should draw 1 card', function () {
                     this.chatCommands.executeCommand(this.playerSpy, '/draw', ['/draw', '-1']);
 
@@ -76,7 +85,7 @@ describe('ChatCommands', function() {
                 });
             });
 
-            describe('with a valid argument', function() {
+            describe('with a valid argument', function () {
                 it('should draw the passed amount of cards', function () {
                     this.chatCommands.executeCommand(this.playerSpy, '/draw', ['/draw', '4']);
 
@@ -85,8 +94,8 @@ describe('ChatCommands', function() {
             });
         });
 
-        describe('with a /discard command', function() {
-            describe('with no arguments', function() {
+        describe('with a /discard command', function () {
+            describe('with no arguments', function () {
                 it('should discard 1 card', function () {
                     this.chatCommands.executeCommand(this.playerSpy, '/discard', ['/discard']);
 
@@ -94,23 +103,29 @@ describe('ChatCommands', function() {
                 });
             });
 
-            describe('with a string argument', function() {
+            describe('with a string argument', function () {
                 it('should discard 1 card', function () {
-                    this.chatCommands.executeCommand(this.playerSpy, '/discard', ['/discard', 'test']);
+                    this.chatCommands.executeCommand(this.playerSpy, '/discard', [
+                        '/discard',
+                        'test'
+                    ]);
 
                     expect(this.playerSpy.discardAtRandom).toHaveBeenCalledWith(1);
                 });
             });
 
-            describe('with a negative argument', function() {
+            describe('with a negative argument', function () {
                 it('should discard 1 card', function () {
-                    this.chatCommands.executeCommand(this.playerSpy, '/discard', ['/discard', '-1']);
+                    this.chatCommands.executeCommand(this.playerSpy, '/discard', [
+                        '/discard',
+                        '-1'
+                    ]);
 
                     expect(this.playerSpy.discardAtRandom).toHaveBeenCalledWith(1);
                 });
             });
 
-            describe('with a valid argument', function() {
+            describe('with a valid argument', function () {
                 it('should discard the passed amount of cards', function () {
                     this.chatCommands.executeCommand(this.playerSpy, '/discard', ['/discard', '3']);
 
@@ -119,12 +134,15 @@ describe('ChatCommands', function() {
             });
         });
 
-        describe('with a /pillage command', function() {
-            describe('with no arguments', function() {
+        describe('with a /pillage command', function () {
+            describe('with no arguments', function () {
                 it('should discard 1 card', function () {
                     this.chatCommands.executeCommand(this.playerSpy, '/pillage', ['/pillage']);
 
-                    expect(this.playerSpy.discardFromDraw).toHaveBeenCalledWith(1, jasmine.any(Function));
+                    expect(this.playerSpy.discardFromDraw).toHaveBeenCalledWith(
+                        1,
+                        jasmine.any(Function)
+                    );
                 });
             });
         });

@@ -1,18 +1,17 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class KingsLanding extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardEntersPlay: event => (
+                onCardEntersPlay: (event) =>
                     event.card.controller === this.controller &&
                     event.card.getType() === 'location' &&
                     event.playingType === 'marshal'
-                )
             },
             message: '{player} uses {source} to draw 1 card',
-            gameAction: GameActions.drawCards(context => ({
+            gameAction: GameActions.drawCards((context) => ({
                 player: context.player,
                 amount: 1
             })),
@@ -23,4 +22,4 @@ class KingsLanding extends DrawCard {
 
 KingsLanding.code = '16020';
 
-module.exports = KingsLanding;
+export default KingsLanding;

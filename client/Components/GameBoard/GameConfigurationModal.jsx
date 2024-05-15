@@ -7,18 +7,24 @@ import Modal from '../Site/Modal';
 export class GameConfigurationModal extends React.Component {
     render() {
         return (
-            <Modal id={ this.props.id } className='settings-popup row' bodyClassName='col-xs-12' title='Game Configuration'>
+            <Modal
+                id={this.props.id}
+                className='settings-popup row'
+                bodyClassName='col-xs-12'
+                title='Game Configuration'
+            >
                 <GameConfiguration
-                    actionWindows={ this.props.promptedActionWindows }
-                    keywordSettings={ this.props.keywordSettings }
-                    promptDupes={ this.props.promptDupes }
-                    timerSettings={ this.props.timerSettings }
-                    onKeywordSettingToggle={ this.props.onKeywordSettingToggle }
-                    onTimerSettingToggle={ this.props.onTimerSettingToggle }
-                    onActionWindowToggle={ this.props.onPromptedActionWindowToggle }
-                    onPromptDupesToggle={ this.props.onPromptDupesToggle }
+                    actionWindows={this.props.promptedActionWindows}
+                    keywordSettings={this.props.keywordSettings}
+                    promptDupes={this.props.promptDupes}
+                    timerSettings={this.props.timerSettings}
+                    onKeywordSettingToggle={this.props.onKeywordSettingToggle}
+                    onTimerSettingToggle={this.props.onTimerSettingToggle}
+                    onActionWindowToggle={this.props.onPromptedActionWindowToggle}
+                    onPromptDupesToggle={this.props.onPromptDupesToggle}
                 />
-            </Modal>);
+            </Modal>
+        );
     }
 }
 

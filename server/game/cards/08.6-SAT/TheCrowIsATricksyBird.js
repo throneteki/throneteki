@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TheCrowIsATricksyBird extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,13 +7,17 @@ class TheCrowIsATricksyBird extends DrawCard {
             phase: 'plot',
             chooseOpponent: () => true,
             cost: ability.costs.kneelFactionCard(),
-            handler: context => {
+            handler: (context) => {
                 this.context = context;
-                this.game.addMessage('{0} plays {1} and kneels their faction card to look at {2}\'s plot deck',
-                    context.player, this, context.opponent);
+                this.game.addMessage(
+                    "{0} plays {1} and kneels their faction card to look at {2}'s plot deck",
+                    context.player,
+                    this,
+                    context.opponent
+                );
 
                 let validPlots = context.opponent.getPlots();
-                let buttons = validPlots.map(card => {
+                let buttons = validPlots.map((card) => {
                     return { method: 'cardSelected', card: card, mapCard: true };
                 });
 
@@ -29,9 +33,11 @@ class TheCrowIsATricksyBird extends DrawCard {
     }
 
     cardSelected(player, card) {
-        this.lastingEffect(ability => ({
+        this.lastingEffect((ability) => ({
             until: {
-                onCardEntersPlay: event => event.card.getType() === 'plot' && event.card.controller === this.context.opponent
+                onCardEntersPlay: (event) =>
+                    event.card.getType() === 'plot' &&
+                    event.card.controller === this.context.opponent
             },
             match: this.context.opponent,
             effect: ability.effects.mustRevealPlot(card)
@@ -39,8 +45,13 @@ class TheCrowIsATricksyBird extends DrawCard {
 
         //TODO Melee: The choice should not be revealed to anyone other than the chosen opponent,
         //so this message, as well as the announcement message in the plot phase will have to be whispered.
-        this.game.addMessage('{0} uses {1} to force {2} to reveal {3} the next time they reveal a plot, if able',
-            player, this, this.context.opponent, card);
+        this.game.addMessage(
+            '{0} uses {1} to force {2} to reveal {3} the next time they reveal a plot, if able',
+            player,
+            this,
+            this.context.opponent,
+            card
+        );
 
         return true;
     }
@@ -48,4 +59,4 @@ class TheCrowIsATricksyBird extends DrawCard {
 
 TheCrowIsATricksyBird.code = '08106';
 
-module.exports = TheCrowIsATricksyBird;
+export default TheCrowIsATricksyBird;

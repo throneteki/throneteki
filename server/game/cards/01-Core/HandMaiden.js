@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class HandMaiden extends DrawCard {
     setupCardAbilities(ability) {
@@ -6,11 +6,19 @@ class HandMaiden extends DrawCard {
             title: 'Stand a Lady',
             cost: ability.costs.sacrificeSelf(),
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.hasTrait('Lady')
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    card.hasTrait('Lady')
             },
-            handler: context => {
+            handler: (context) => {
                 context.target.controller.standCard(context.target);
-                this.game.addMessage('{0} sacrifices {1} to stand {2}', context.player, this, context.target);
+                this.game.addMessage(
+                    '{0} sacrifices {1} to stand {2}',
+                    context.player,
+                    this,
+                    context.target
+                );
             }
         });
     }
@@ -18,4 +26,4 @@ class HandMaiden extends DrawCard {
 
 HandMaiden.code = '01169';
 
-module.exports = HandMaiden;
+export default HandMaiden;

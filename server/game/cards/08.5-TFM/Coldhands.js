@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Coldhands extends DrawCard {
     setupCardAbilities(ability) {
@@ -9,17 +9,20 @@ class Coldhands extends DrawCard {
 
         this.reaction({
             when: {
-                onCardEntersPlay: event => event.card === this && event.playingType === 'marshal'
+                onCardEntersPlay: (event) => event.card === this && event.playingType === 'marshal'
             },
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' &&
-                                       !card.hasTrait('Army') && card !== this,
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    !card.hasTrait('Army') &&
+                    card !== this,
                 mode: 'eachPlayer'
             },
-            handler: context => {
-                this.lastingEffect(ability => ({
+            handler: (context) => {
+                this.lastingEffect((ability) => ({
                     until: {
-                        onCardLeftPlay: event => event.card === this
+                        onCardLeftPlay: (event) => event.card === this
                     },
                     targetController: 'any',
                     match: context.target,
@@ -27,8 +30,12 @@ class Coldhands extends DrawCard {
                     effect: ability.effects.removeFromGame()
                 }));
 
-                this.game.addMessage('{0} uses {1} to remove {2} from the game until {1} leaves play',
-                    context.player, this, context.target);
+                this.game.addMessage(
+                    '{0} uses {1} to remove {2} from the game until {1} leaves play',
+                    context.player,
+                    this,
+                    context.target
+                );
             }
         });
     }
@@ -36,4 +43,4 @@ class Coldhands extends DrawCard {
 
 Coldhands.code = '08085';
 
-module.exports = Coldhands;
+export default Coldhands;

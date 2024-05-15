@@ -1,10 +1,9 @@
-const redis = require('redis');
-const logger = require('./log.js');
-const EventEmitter = require('events');
-
-const GameService = require('./services/GameService.js');
-const ServiceFactory = require('./services/ServiceFactory.js');
-const { detectBinary } = require('./util');
+import redis from 'redis';
+import logger from './log.js';
+import EventEmitter from 'events';
+import GameService from './services/GameService.js';
+import ServiceFactory from './services/ServiceFactory.js';
+import { detectBinary } from './util.js';
 
 class GameRouter extends EventEmitter {
     constructor(db) {
@@ -83,8 +82,8 @@ class GameRouter extends EventEmitter {
                 status: worker.disconnected
                     ? 'disconnected'
                     : worker.disabled
-                    ? 'disabled'
-                    : 'active',
+                      ? 'disabled'
+                      : 'active',
                 version: worker.version
             };
         });
@@ -295,4 +294,4 @@ class GameRouter extends EventEmitter {
     }
 }
 
-module.exports = GameRouter;
+export default GameRouter;

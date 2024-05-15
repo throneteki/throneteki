@@ -1,11 +1,12 @@
-const {Tokens} = require('../../../../server/game/Constants');
+import { Tokens } from '../../../../server/game/Constants/index.js';
 
-describe('Left-Hand Lucas Codd', function() {
-    integration(function() {
-        beforeEach(function() {
+describe('Left-Hand Lucas Codd', function () {
+    integration(function () {
+        beforeEach(function () {
             const deck1 = this.buildDeck('tyrell', [
                 'Marching Orders',
-                'Left-Hand Lucas Codd', 'Hedge Knight'
+                'Left-Hand Lucas Codd',
+                'Hedge Knight'
             ]);
             this.player1.selectDeck(deck1);
             this.player2.selectDeck(deck1);
@@ -22,8 +23,8 @@ describe('Left-Hand Lucas Codd', function() {
             this.completeMarshalPhase();
         });
 
-        describe('after your opponent declares no defenders in a challenge with an attacking Raider', function() {
-            beforeEach(function() {
+        describe('after your opponent declares no defenders in a challenge with an attacking Raider', function () {
+            beforeEach(function () {
                 this.player1.clickPrompt('Military');
                 this.player1.clickCard(this.lucas);
                 this.player1.clickPrompt('Done');
@@ -32,7 +33,7 @@ describe('Left-Hand Lucas Codd', function() {
                 this.player2.clickPrompt('Done');
             });
 
-            it('it should place 1 gold on a character', function() {
+            it('it should place 1 gold on a character', function () {
                 expect(this.player1).toHavePrompt('Any reactions?');
                 this.player1.clickCard(this.lucas);
                 expect(this.player1).toHavePrompt('Select card to place 1 gold on');
@@ -42,8 +43,8 @@ describe('Left-Hand Lucas Codd', function() {
             });
         });
 
-        describe('after your opponent declares defenders in a challenge with an attacking Raider', function() {
-            beforeEach(function() {
+        describe('after your opponent declares defenders in a challenge with an attacking Raider', function () {
+            beforeEach(function () {
                 this.player1.clickPrompt('Military');
                 this.player1.clickCard(this.lucas);
                 this.player1.clickPrompt('Done');
@@ -54,7 +55,7 @@ describe('Left-Hand Lucas Codd', function() {
                 this.player2.clickPrompt('Done');
             });
 
-            it('it should NOT place 1 gold on a character', function() {
+            it('it should NOT place 1 gold on a character', function () {
                 expect(this.player1).toHavePrompt('Initiate an action');
             });
         });

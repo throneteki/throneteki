@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class PoliticalDisaster extends PlotCard {
     setupCardAbilities() {
@@ -10,22 +10,31 @@ class PoliticalDisaster extends PlotCard {
                 ifAble: true,
                 activePromptTitle: 'Select up to 2 locations',
                 cardCondition: (card, context) =>
-                    card.controller === context.choosingPlayer
-                    && card.getType() === 'location'
-                    && card.location === 'play area'
+                    card.controller === context.choosingPlayer &&
+                    card.getType() === 'location' &&
+                    card.location === 'play area'
             },
-            handler: context => {
+            handler: (context) => {
                 let toDiscard = [];
-                for(let selection of context.targets.selections) {
+                for (let selection of context.targets.selections) {
                     let player = selection.choosingPlayer;
-                    let locations = player.filterCardsInPlay(card => card.getType() === 'location');
+                    let locations = player.filterCardsInPlay(
+                        (card) => card.getType() === 'location'
+                    );
                     let selectedCards = selection.value || [];
-                    let remainingLocations = locations.filter(location => !selectedCards.includes(location));
+                    let remainingLocations = locations.filter(
+                        (location) => !selectedCards.includes(location)
+                    );
 
                     toDiscard = toDiscard.concat(remainingLocations);
 
-                    if(remainingLocations.length !== 0) {
-                        this.game.addMessage('{0} discards {1} for {2}', player, remainingLocations, this);
+                    if (remainingLocations.length !== 0) {
+                        this.game.addMessage(
+                            '{0} discards {1} for {2}',
+                            player,
+                            remainingLocations,
+                            this
+                        );
                     }
                 }
 
@@ -37,4 +46,4 @@ class PoliticalDisaster extends PlotCard {
 
 PoliticalDisaster.code = '02040';
 
-module.exports = PoliticalDisaster;
+export default PoliticalDisaster;

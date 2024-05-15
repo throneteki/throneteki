@@ -1,9 +1,12 @@
-describe('Prized keyword', function() {
-    integration(function() {
-        describe('when a Prized card leaves play', function() {
-            beforeEach(function() {
+describe('Prized keyword', function () {
+    integration(function () {
+        describe('when a Prized card leaves play', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('stark', [
-                    'Marched to the Wall', 'A Noble Cause', 'Aloof and Apart', 'Doran Martell (Core)'
+                    'Marched to the Wall',
+                    'A Noble Cause',
+                    'Aloof and Apart',
+                    'Doran Martell (Core)'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
@@ -27,18 +30,15 @@ describe('Prized keyword', function() {
                 this.player1.clickCard(this.prizedCharacter);
             });
 
-            it('has opponents gain the prized amount of power', function() {
+            it('has opponents gain the prized amount of power', function () {
                 expect(this.prizedCharacter.location).toBe('discard pile');
                 expect(this.player2Object.getTotalPower()).toBe(1);
             });
         });
 
-        describe('when a Prized event is played', function() {
-            beforeEach(function() {
-                const deck1 = this.buildDeck('stark', [
-                    'A Noble Cause',
-                    'Heads on Pikes'
-                ]);
+        describe('when a Prized event is played', function () {
+            beforeEach(function () {
+                const deck1 = this.buildDeck('stark', ['A Noble Cause', 'Heads on Pikes']);
                 const deck2 = this.buildDeck('stark', [
                     'A Noble Cause',
                     { name: 'Hedge Knight', count: 40 }
@@ -65,7 +65,7 @@ describe('Prized keyword', function() {
                 this.player1.clickCard('Heads on Pikes', 'hand');
             });
 
-            it('has opponents gain the prized amount of power', function() {
+            it('has opponents gain the prized amount of power', function () {
                 expect(this.prizedEvent.location).toBe('discard pile');
                 expect(this.player2Object.getTotalPower()).toBe(2);
             });

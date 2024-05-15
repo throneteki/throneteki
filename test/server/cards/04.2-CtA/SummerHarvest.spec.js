@@ -1,8 +1,11 @@
-describe('SummerHarvest', function() {
-    integration(function() {
-        beforeEach(function() {
-            const deck1 = this.buildDeck('lannister', ['Summer Harvest', 'Tyrion Lannister (Core)']);
-            const deck2 = this.buildDeck('lannister', ['A Noble Cause', 'Varys\'s Riddle']);
+describe('SummerHarvest', function () {
+    integration(function () {
+        beforeEach(function () {
+            const deck1 = this.buildDeck('lannister', [
+                'Summer Harvest',
+                'Tyrion Lannister (Core)'
+            ]);
+            const deck2 = this.buildDeck('lannister', ['A Noble Cause', "Varys's Riddle"]);
             this.player = this.player1Object;
             this.opponent = this.player2Object;
 
@@ -13,23 +16,23 @@ describe('SummerHarvest', function() {
 
             this.summerHarvest = this.player1.findCardByName('Summer Harvest');
             this.nobleCause = this.player2.findCardByName('A Noble Cause');
-            this.varysRiddle = this.player2.findCardByName('Varys\'s Riddle');
+            this.varysRiddle = this.player2.findCardByName("Varys's Riddle");
         });
 
-        describe('when played against a normal plot', function() {
-            beforeEach(function() {
+        describe('when played against a normal plot', function () {
+            beforeEach(function () {
                 this.player2.selectPlot(this.nobleCause);
 
                 this.selectFirstPlayer(this.player1);
             });
 
-            it('should calculate the gold amount properly', function() {
+            it('should calculate the gold amount properly', function () {
                 expect(this.summerHarvest.getIncome()).toBe(7);
             });
         });
 
-        describe('when played against Varys\'s Riddle', function() {
-            beforeEach(function() {
+        describe("when played against Varys's Riddle", function () {
+            beforeEach(function () {
                 this.player2.selectPlot(this.varysRiddle);
 
                 this.selectFirstPlayer(this.player1);
@@ -41,7 +44,7 @@ describe('SummerHarvest', function() {
                 this.selectPlotOrder(this.player1);
             });
 
-            it('should use the second value for Summer Harvest', function() {
+            it('should use the second value for Summer Harvest', function () {
                 expect(this.summerHarvest.getIncome()).toBe(2);
             });
         });

@@ -1,4 +1,4 @@
-const JoustFormat = require('./JoustFormat');
+import JoustFormat from './JoustFormat.js';
 
 const RookeryFormat = Object.assign({}, JoustFormat, {
     name: 'rookery',
@@ -18,4 +18,4 @@ const RookeryFormat = Object.assign({}, JoustFormat, {
     ]
 });
 
-module.exports = RookeryFormat;
+export default RookeryFormat;

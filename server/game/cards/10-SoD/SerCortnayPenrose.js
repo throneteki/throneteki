@@ -1,14 +1,15 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class SerCortnayPenrose extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.challengeType === 'power' &&
-                                         event.challenge.winner === this.controller &&
-                                         this.isParticipating()
+                afterChallenge: (event) =>
+                    event.challenge.challengeType === 'power' &&
+                    event.challenge.winner === this.controller &&
+                    this.isParticipating()
             },
-            handler: context => {
+            handler: (context) => {
                 context.player.standCard(this);
                 this.game.addMessage('{0} stands {1}', context.player, this);
             }
@@ -18,4 +19,4 @@ class SerCortnayPenrose extends DrawCard {
 
 SerCortnayPenrose.code = '10025';
 
-module.exports = SerCortnayPenrose;
+export default SerCortnayPenrose;

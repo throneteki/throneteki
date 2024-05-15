@@ -1,7 +1,7 @@
-const GameAction = require('./GameAction');
-const Message = require('../Message');
-const LeavePlay = require('./LeavePlay');
-const PlaceCard = require('./PlaceCard');
+import GameAction from './GameAction.js';
+import Message from '../Message.js';
+import LeavePlay from './LeavePlay.js';
+import PlaceCard from './PlaceCard.js';
 
 class SacrificeCard extends GameAction {
     constructor() {
@@ -23,7 +23,7 @@ class SacrificeCard extends GameAction {
             player,
             snapshotName: 'cardStateWhenSacrificed'
         };
-        const sacrificeEvent = this.event('onSacrificed', params, event => {
+        const sacrificeEvent = this.event('onSacrificed', params, (event) => {
             event.thenAttachEvent(PlaceCard.createEvent({ card: card, location: 'discard pile' }));
         });
         const leavePlayEvent = LeavePlay.createEvent({ card });
@@ -31,4 +31,4 @@ class SacrificeCard extends GameAction {
     }
 }
 
-module.exports = new SacrificeCard();
+export default new SacrificeCard();

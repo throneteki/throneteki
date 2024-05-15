@@ -1,21 +1,36 @@
-const GameActions = require('../../GameActions/index.js');
-const DrawCard = require('../../drawcard.js');
+import GameActions from '../../GameActions/index.js';
+import DrawCard from '../../drawcard.js';
 
 class KingRobertsLegacy extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.winner === this.controller && this.controller.anyCardsInPlay({ attacking: true, trait: 'King', type: 'character' })
+                afterChallenge: (event) =>
+                    event.challenge.winner === this.controller &&
+                    this.controller.anyCardsInPlay({
+                        attacking: true,
+                        trait: 'King',
+                        type: 'character'
+                    })
             },
             target: {
-                cardCondition: { participating: true, kneeled: true, type: 'character', controller: 'opponent' },
+                cardCondition: {
+                    participating: true,
+                    kneeled: true,
+                    type: 'character',
+                    controller: 'opponent'
+                },
                 gameAction: 'takeControl'
             },
             max: ability.limit.perRound(1),
             message: '{player} uses {source} to take control of {target}',
-            handler: context => {
+            handler: (context) => {
                 this.game.resolveGameAction(
-                    GameActions.takeControl(context => ({ player: this.controller, card: context.target, context })),
+                    GameActions.takeControl((context) => ({
+                        player: this.controller,
+                        card: context.target,
+                        context
+                    })),
                     context
                 );
             }
@@ -25,4 +40,4 @@ class KingRobertsLegacy extends DrawCard {
 
 KingRobertsLegacy.code = '25022';
 
-module.exports = KingRobertsLegacy;
+export default KingRobertsLegacy;

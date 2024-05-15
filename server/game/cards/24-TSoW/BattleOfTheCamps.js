@@ -1,42 +1,61 @@
-const GameActions = require('../../GameActions');
-const PlotCard = require('../../plotcard');
+import GameActions from '../../GameActions/index.js';
+import PlotCard from '../../plotcard.js';
 
 class BattleOfTheCamps extends PlotCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.isMatch({ challengeType: 'military', attackingPlayer: this.controller, winner: this.controller })
+                afterChallenge: (event) =>
+                    event.challenge.isMatch({
+                        challengeType: 'military',
+                        attackingPlayer: this.controller,
+                        winner: this.controller
+                    })
             },
             target: {
-                cardCondition: { type: 'character', location: 'play area', conditon: (card, context) => card.controller === context.event.challenge.loser }
+                cardCondition: {
+                    type: 'character',
+                    location: 'play area',
+                    conditon: (card, context) => card.controller === context.event.challenge.loser
+                }
             },
             message: {
                 format: '{player} uses {source} to {actions} {target}',
-                args: { actions: context => !context.target.hasTrait('Army') ? 'kneel' : 'either kneel or kill' }
+                args: {
+                    actions: (context) =>
+                        !context.target.hasTrait('Army') ? 'kneel' : 'either kneel or kill'
+                }
             },
             limit: ability.limit.perPhase(1),
-            handler: context => {
+            handler: (context) => {
                 this.game.resolveGameAction(
                     GameActions.ifCondition({
-                        condition: context => !context.target.hasTrait('Army'),
+                        condition: (context) => !context.target.hasTrait('Army'),
                         thenAction: {
-                            gameAction: GameActions.kneelCard(context => ({ card: context.target }))
+                            gameAction: GameActions.kneelCard((context) => ({
+                                card: context.target
+                            }))
                         },
                         elseAction: GameActions.choose({
-                            title: context => `Kill ${context.target.name} instead?`,
+                            title: (context) => `Kill ${context.target.name} instead?`,
                             choices: {
-                                'Kill': {
+                                Kill: {
                                     message: '{player} chooses to kill {target}',
-                                    gameAction: GameActions.kill(context => ({ card: context.target }))
+                                    gameAction: GameActions.kill((context) => ({
+                                        card: context.target
+                                    }))
                                 },
-                                'Kneel': {
+                                Kneel: {
                                     message: '{player} chooses to kneel {target}',
-                                    gameAction: GameActions.kneelCard(context => ({ card: context.target }))
+                                    gameAction: GameActions.kneelCard((context) => ({
+                                        card: context.target
+                                    }))
                                 }
                             }
                         })
-                    })
-                    , context);
+                    }),
+                    context
+                );
             }
         });
     }
@@ -44,4 +63,4 @@ class BattleOfTheCamps extends PlotCard {
 
 BattleOfTheCamps.code = '24030';
 
-module.exports = BattleOfTheCamps;
+export default BattleOfTheCamps;

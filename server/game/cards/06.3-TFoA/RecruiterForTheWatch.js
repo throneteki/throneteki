@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class RecruiterForTheWatch extends DrawCard {
     setupCardAbilities(ability) {
@@ -12,15 +12,23 @@ class RecruiterForTheWatch extends DrawCard {
             cost: ability.costs.kneelSelf(),
             target: {
                 activePromptTitle: 'Select character with printed cost 2 or less',
-                cardCondition: card => card.getType() === 'character' && card.location === 'play area' &&
+                cardCondition: (card) =>
+                    card.getType() === 'character' &&
+                    card.location === 'play area' &&
                     card.getPrintedCost() <= 2
             },
-            handler: context => {
-                this.game.addMessage('{0} kneels {1} to take control of {2}', this.controller, this, context.target);
-                this.lastingEffect(ability => ({
+            handler: (context) => {
+                this.game.addMessage(
+                    '{0} kneels {1} to take control of {2}',
+                    this.controller,
+                    this,
+                    context.target
+                );
+                this.lastingEffect((ability) => ({
                     until: {
-                        onCardStood: event => event.card === this,
-                        onCardLeftPlay: event => event.card === this || event.card === context.target
+                        onCardStood: (event) => event.card === this,
+                        onCardLeftPlay: (event) =>
+                            event.card === this || event.card === context.target
                     },
                     match: context.target,
                     effect: ability.effects.takeControl(this.controller)
@@ -32,4 +40,4 @@ class RecruiterForTheWatch extends DrawCard {
 
 RecruiterForTheWatch.code = '06045';
 
-module.exports = RecruiterForTheWatch;
+export default RecruiterForTheWatch;

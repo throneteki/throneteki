@@ -1,14 +1,14 @@
-const PlotCard = require('../../plotcard.js');
-
-const ApplyClaim = require('../../gamesteps/challenge/applyclaim.js');
+import PlotCard from '../../plotcard.js';
+import ApplyClaim from '../../gamesteps/challenge/applyclaim.js';
 
 class NowItComesToWar extends PlotCard {
     setupCardAbilities() {
         this.forcedInterrupt({
             when: {
-                onClaimApplied: event => ['intrigue', 'power'].includes(event.challenge.challengeType)
+                onClaimApplied: (event) =>
+                    ['intrigue', 'power'].includes(event.challenge.challengeType)
             },
-            handler: context => {
+            handler: (context) => {
                 this.currentContext = context;
                 this.game.promptWithMenu(context.event.challenge.attackingPlayer, this, {
                     activePrompt: {
@@ -25,7 +25,12 @@ class NowItComesToWar extends PlotCard {
     }
 
     applyMilitaryClaim(player) {
-        this.game.addMessage('{0} chooses to apply {2} claim instead using {1}', player, this, 'military');
+        this.game.addMessage(
+            '{0} chooses to apply {2} claim instead using {1}',
+            player,
+            this,
+            'military'
+        );
         this.currentContext.replaceHandler(() => {
             let replacementClaim = this.currentContext.event.claim.clone();
             replacementClaim.challengeType = 'military';
@@ -37,11 +42,16 @@ class NowItComesToWar extends PlotCard {
 
     applyNormalClaim(player) {
         let challenge = this.currentContext.event.challenge;
-        this.game.addMessage('{0} chooses to apply normal {2} claim using {1}', player, this, challenge.challengeType);
+        this.game.addMessage(
+            '{0} chooses to apply normal {2} claim using {1}',
+            player,
+            this,
+            challenge.challengeType
+        );
         return true;
     }
 }
 
 NowItComesToWar.code = '09050';
 
-module.exports = NowItComesToWar;
+export default NowItComesToWar;

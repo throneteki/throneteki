@@ -1,4 +1,4 @@
-const UiPrompt = require('./uiprompt.js');
+import UiPrompt from './uiprompt.js';
 
 class AttachmentPrompt extends UiPrompt {
     constructor(game, player, attachmentCard, playingType, targets) {
@@ -12,7 +12,10 @@ class AttachmentPrompt extends UiPrompt {
     continue() {
         this.game.promptForSelect(this.player, {
             activePromptTitle: 'Select target for attachment',
-            cardCondition: card => this.player.canAttach(this.attachmentCard, card) && this.setupRestriction(card) && this.targets(card),
+            cardCondition: (card) =>
+                this.player.canAttach(this.attachmentCard, card) &&
+                this.setupRestriction(card) &&
+                this.targets(card),
             onSelect: (player, card) => {
                 let targetPlayer = card.controller;
                 targetPlayer.attach(player, this.attachmentCard, card, this.playingType);
@@ -22,7 +25,9 @@ class AttachmentPrompt extends UiPrompt {
     }
 
     setupRestriction(card) {
-        return this.game.currentPhase === 'setup' ? card.controller === this.attachmentCard.controller : true;
+        return this.game.currentPhase === 'setup'
+            ? card.controller === this.attachmentCard.controller
+            : true;
     }
 
     getPlayer() {
@@ -30,4 +35,4 @@ class AttachmentPrompt extends UiPrompt {
     }
 }
 
-module.exports = AttachmentPrompt;
+export default AttachmentPrompt;

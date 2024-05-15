@@ -1,16 +1,17 @@
-const PlotCard = require('../../plotcard.js');
-const GameActions = require('../../GameActions');
+import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SummonedByTheConclave extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
-            message: '{player} uses {source} to search the top 10 cards of their deck for an in-faction card',
+            message:
+                '{player} uses {source} to search the top 10 cards of their deck for an in-faction card',
             gameAction: GameActions.search({
                 topCards: 10,
                 title: 'Select a card',
-                match: { condition: card => card.isFaction(this.controller.getFaction()) },
+                match: { condition: (card) => card.isFaction(this.controller.getFaction()) },
                 message: '{player} {gameAction}',
-                gameAction: GameActions.addToHand(context => ({
+                gameAction: GameActions.addToHand((context) => ({
                     card: context.searchTarget
                 }))
             })
@@ -20,4 +21,4 @@ class SummonedByTheConclave extends PlotCard {
 
 SummonedByTheConclave.code = '00007';
 
-module.exports = SummonedByTheConclave;
+export default SummonedByTheConclave;

@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions/index.js');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class OurWordIsGoodAsGold extends DrawCard {
     setupCardAbilities() {
@@ -11,10 +11,10 @@ class OurWordIsGoodAsGold extends DrawCard {
                 topCards: 10,
                 reveal: false,
                 message: '{player} {gameAction}',
-                gameAction: GameActions.putIntoPlay(context => ({
+                gameAction: GameActions.putIntoPlay((context) => ({
                     card: context.searchTarget
-                })).thenExecute(event => {
-                    this.atEndOfPhase(ability => ({
+                })).thenExecute((event) => {
+                    this.atEndOfPhase((ability) => ({
                         match: event.card,
                         condition: () => ['play area', 'duplicate'].includes(event.card.location),
                         targetLocation: 'any',
@@ -28,4 +28,4 @@ class OurWordIsGoodAsGold extends DrawCard {
 
 OurWordIsGoodAsGold.code = '20033';
 
-module.exports = OurWordIsGoodAsGold;
+export default OurWordIsGoodAsGold;

@@ -1,10 +1,11 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class HosterTully extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.isParticipating(),
-            match: card => card !== this && card.isParticipating() && card.hasTrait('House Tully'),
+            match: (card) =>
+                card !== this && card.isParticipating() && card.hasTrait('House Tully'),
             effect: ability.effects.addKeyword('Renown')
         });
     }
@@ -12,4 +13,4 @@ class HosterTully extends DrawCard {
 
 HosterTully.code = '06001';
 
-module.exports = HosterTully;
+export default HosterTully;

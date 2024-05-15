@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class AryaStark extends DrawCard {
     setupCardAbilities(ability) {
@@ -9,12 +9,12 @@ class AryaStark extends DrawCard {
         });
         this.reaction({
             when: {
-                onCardEntersPlay: event => event.card === this && event.card.canBeDuplicated()
+                onCardEntersPlay: (event) => event.card === this && event.card.canBeDuplicated()
             },
             handler: () => {
                 let dupe = this.controller.drawDeck[0];
 
-                if(!dupe) {
+                if (!dupe) {
                     return true;
                 }
 
@@ -24,7 +24,11 @@ class AryaStark extends DrawCard {
 
                 dupe.facedown = true;
 
-                this.game.addMessage('{0} places the top card of their deck on {1} as a duplicate', this.controller, this);
+                this.game.addMessage(
+                    '{0} places the top card of their deck on {1} as a duplicate',
+                    this.controller,
+                    this
+                );
             }
         });
     }
@@ -32,4 +36,4 @@ class AryaStark extends DrawCard {
 
 AryaStark.code = '01141';
 
-module.exports = AryaStark;
+export default AryaStark;

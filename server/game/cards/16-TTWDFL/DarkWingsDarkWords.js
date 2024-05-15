@@ -1,14 +1,14 @@
-const AgendaCard = require('../../agendacard');
-const GameActions = require('../../GameActions');
+import AgendaCard from '../../agendacard.js';
+import GameActions from '../../GameActions/index.js';
 
 class DarkWingsDarkWords extends AgendaCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardPlayed: event => event.player === this.controller
+                onCardPlayed: (event) => event.player === this.controller
             },
             message: '{player} uses {source} to draw 1 card',
-            gameAction: GameActions.drawCards(context => ({
+            gameAction: GameActions.drawCards((context) => ({
                 amount: 1,
                 player: context.player
             })),
@@ -19,4 +19,4 @@ class DarkWingsDarkWords extends AgendaCard {
 
 DarkWingsDarkWords.code = '16028';
 
-module.exports = DarkWingsDarkWords;
+export default DarkWingsDarkWords;

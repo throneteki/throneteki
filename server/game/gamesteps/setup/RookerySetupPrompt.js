@@ -1,21 +1,24 @@
-const { validateDeck, formatDeckAsShortCards, formatDeckAsFullCards } = require('../../../../deck-helper');
-
-const AllPlayerPrompt = require('../allplayerprompt.js');
+import {
+    validateDeck,
+    formatDeckAsShortCards,
+    formatDeckAsFullCards
+} from '../../../../deck-helper/index.js';
+import AllPlayerPrompt from '../allplayerprompt.js';
 
 class RookerySetupPrompt extends AllPlayerPrompt {
     completionCondition(player) {
-        return player.rookeryComplete || !player.deck.rookeryCards || player.deck.rookeryCards.length === 0;
+        return (
+            player.rookeryComplete ||
+            !player.deck.rookeryCards ||
+            player.deck.rookeryCards.length === 0
+        );
     }
 
     activePrompt(player) {
         return {
             menuTitle: 'Modify deck using rookery',
-            buttons: [
-                { text: 'Done' }
-            ],
-            controls: [
-                { type: 'rookery', deck: formatDeckAsShortCards(player.deck) }
-            ]
+            buttons: [{ text: 'Done' }],
+            controls: [{ type: 'rookery', deck: formatDeckAsShortCards(player.deck) }]
         };
     }
 
@@ -24,13 +27,13 @@ class RookerySetupPrompt extends AllPlayerPrompt {
     }
 
     onMenuCommand(player, deck) {
-        if(player.rookeryComplete) {
+        if (player.rookeryComplete) {
             return;
         }
 
         player.rookeryComplete = true;
 
-        if(!deck) {
+        if (!deck) {
             return;
         }
 
@@ -39,10 +42,20 @@ class RookerySetupPrompt extends AllPlayerPrompt {
         let newStatus = this.getStatus(formattedDeck);
 
         player.deck = formattedDeck;
-        if(!this.haveSameCards(player.deck, formattedDeck)) {
-            this.game.addMessage('danger', '{0} finishes modifying the deck using their rookery, but the deck now has cards that were not in their original deck', player);
-        } else if(currentStatus !== newStatus) {
-            this.game.addAlert('info', '{0} finishes modifying their deck using their rookery, but the deck is now {1} instead of {2}', player, newStatus, currentStatus);
+        if (!this.haveSameCards(player.deck, formattedDeck)) {
+            this.game.addMessage(
+                'danger',
+                '{0} finishes modifying the deck using their rookery, but the deck now has cards that were not in their original deck',
+                player
+            );
+        } else if (currentStatus !== newStatus) {
+            this.game.addAlert(
+                'info',
+                '{0} finishes modifying their deck using their rookery, but the deck is now {1} instead of {2}',
+                player,
+                newStatus,
+                currentStatus
+            );
         } else {
             this.game.addMessage('{0} finishes modifying their deck using their rookery', player);
         }
@@ -52,25 +65,28 @@ class RookerySetupPrompt extends AllPlayerPrompt {
         let deck1Cards = this.getUniqueCardCodes(deck1);
         let deck2Cards = this.getUniqueCardCodes(deck2);
 
-        return [...deck1Cards].every(code => deck2Cards.has(code)) && [...deck2Cards].every(code => deck1Cards.has(code));
+        return (
+            [...deck1Cards].every((code) => deck2Cards.has(code)) &&
+            [...deck2Cards].every((code) => deck1Cards.has(code))
+        );
     }
 
     getUniqueCardCodes(deck) {
         let set = new Set();
 
-        for(let cardQuantity of deck.drawCards) {
+        for (let cardQuantity of deck.drawCards) {
             set.add(cardQuantity.card.code);
         }
 
-        for(let cardQuantity of deck.plotCards) {
+        for (let cardQuantity of deck.plotCards) {
             set.add(cardQuantity.card.code);
         }
 
-        for(let cardQuantity of deck.rookeryCards) {
+        for (let cardQuantity of deck.rookeryCards) {
             set.add(cardQuantity.card.code);
         }
 
-        if(deck.agenda) {
+        if (deck.agenda) {
             set.add(deck.agenda.code);
         }
 
@@ -78,11 +94,14 @@ class RookerySetupPrompt extends AllPlayerPrompt {
     }
 
     getStatus(deck) {
-        let status = validateDeck(deck, { packs: this.game.packData, restrictedLists: this.game.restrictedListData });
+        let status = validateDeck(deck, {
+            packs: this.game.packData,
+            restrictedLists: this.game.restrictedListData
+        });
 
-        if(!status.basicRules) {
+        if (!status.basicRules) {
             return 'Invalid';
-        } else if(!status.faqJoustRules || !status.noUnreleasedCards) {
+        } else if (!status.faqJoustRules || !status.noUnreleasedCards) {
             return 'Casual Play';
         }
 
@@ -90,4 +109,4 @@ class RookerySetupPrompt extends AllPlayerPrompt {
     }
 }
 
-module.exports = RookerySetupPrompt;
+export default RookerySetupPrompt;

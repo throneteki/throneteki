@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class MaesterLuwin extends DrawCard {
     setupCardAbilities(ability) {
@@ -14,7 +14,9 @@ class MaesterLuwin extends DrawCard {
 
         this.persistentEffect({
             match: (card) => card.name === 'Bran Stark',
-            effect: ability.effects.immuneTo(card => card.controller !== this.controller && card.getType() === 'plot')
+            effect: ability.effects.immuneTo(
+                (card) => card.controller !== this.controller && card.getType() === 'plot'
+            )
         });
 
         this.persistentEffect({
@@ -26,4 +28,4 @@ class MaesterLuwin extends DrawCard {
 
 MaesterLuwin.code = '02003';
 
-module.exports = MaesterLuwin;
+export default MaesterLuwin;

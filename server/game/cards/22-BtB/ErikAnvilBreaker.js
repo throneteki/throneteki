@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class ErikAnvilBreaker extends DrawCard {
     setupCardAbilities(ability) {
@@ -12,4 +12,4 @@ class ErikAnvilBreaker extends DrawCard {
 
 ErikAnvilBreaker.code = '22004';
 
-module.exports = ErikAnvilBreaker;
+export default ErikAnvilBreaker;

@@ -1,20 +1,23 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class CatapultOnTheWall extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Kill attacking character',
-            cost: [
-                ability.costs.kneelSelf(),
-                ability.costs.kneelParent()
-            ],
+            cost: [ability.costs.kneelSelf(), ability.costs.kneelParent()],
             target: {
-                cardCondition: card => card.isAttacking() && card.getStrength() <= 4
+                cardCondition: (card) => card.isAttacking() && card.getStrength() <= 4
             },
-            handler: context => {
+            handler: (context) => {
                 this.game.killCharacter(context.target);
-                this.game.addMessage('{0} kneels {1} and {2} to kill {3}', context.player, this, this.parent, context.target);
-                this.untilEndOfRound(ability => ({
+                this.game.addMessage(
+                    '{0} kneels {1} and {2} to kill {3}',
+                    context.player,
+                    this,
+                    this.parent,
+                    context.target
+                );
+                this.untilEndOfRound((ability) => ({
                     condition: () => this.game.currentPhase === 'standing',
                     match: this.parent,
                     effect: ability.effects.cannotBeStood()
@@ -26,4 +29,4 @@ class CatapultOnTheWall extends DrawCard {
 
 CatapultOnTheWall.code = '07020';
 
-module.exports = CatapultOnTheWall;
+export default CatapultOnTheWall;

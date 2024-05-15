@@ -1,23 +1,23 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class ShyraErrol extends DrawCard {
     setupCardAbilities(ability) {
         this.interrupt({
             when: {
-                onCharacterKilled: event => event.card.power > 0
+                onCharacterKilled: (event) => event.card.power > 0
             },
             cost: ability.costs.sacrificeSelf(),
             message: {
-                format: '{player} sacrifices {source} to move power from {powerCard} to {powerController}\'s faction card',
+                format: "{player} sacrifices {source} to move power from {powerCard} to {powerController}'s faction card",
                 args: {
-                    powerCard: context => context.event.card,
-                    powerController: context => context.event.card.controller
+                    powerCard: (context) => context.event.card,
+                    powerController: (context) => context.event.card.controller
                 }
             },
-            handler: context => {
+            handler: (context) => {
                 this.game.resolveGameAction(
-                    GameActions.movePower(context => ({
+                    GameActions.movePower((context) => ({
                         from: context.event.card,
                         to: context.event.card.controller.faction,
                         amount: context.event.card.power
@@ -31,4 +31,4 @@ class ShyraErrol extends DrawCard {
 
 ShyraErrol.code = '14013';
 
-module.exports = ShyraErrol;
+export default ShyraErrol;

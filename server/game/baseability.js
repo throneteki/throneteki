@@ -1,10 +1,9 @@
-const {flatMap} = require('../Array');
-
-const AbilityChoosePlayerDefinition = require('./AbilityChoosePlayerDefinition');
-const AbilityMessage = require('./AbilityMessage');
-const AbilityTarget = require('./AbilityTarget.js');
-const ChooseGameAction = require('./GameActions/ChooseGameAction');
-const HandlerGameActionWrapper = require('./GameActions/HandlerGameActionWrapper');
+import { flatMap } from '../Array.js';
+import AbilityChoosePlayerDefinition from './AbilityChoosePlayerDefinition.js';
+import AbilityMessage from './AbilityMessage.js';
+import AbilityTarget from './AbilityTarget.js';
+import ChooseGameAction from './GameActions/ChooseGameAction.js';
+import HandlerGameActionWrapper from './GameActions/HandlerGameActionWrapper.js';
 
 /**
  * Base class representing an ability that can be done by the player. This
@@ -37,11 +36,11 @@ class BaseAbility {
     }
 
     buildCost(cost) {
-        if(!cost) {
+        if (!cost) {
             return [];
         }
 
-        if(!Array.isArray(cost)) {
+        if (!Array.isArray(cost)) {
             return [cost];
         }
 
@@ -49,11 +48,11 @@ class BaseAbility {
     }
 
     buildTargets(properties) {
-        if(properties.target) {
+        if (properties.target) {
             return [AbilityTarget.create('target', properties.target)];
         }
 
-        if(properties.targets) {
+        if (properties.targets) {
             let targetPairs = Object.entries(properties.targets);
             return targetPairs.map(([name, properties]) => AbilityTarget.create(name, properties));
         }
@@ -62,19 +61,24 @@ class BaseAbility {
     }
 
     buildGameAction(properties) {
-        if(properties.gameAction) {
-            if(properties.target || properties.targets || properties.chooseOpponent || properties.choosePlayer) {
+        if (properties.gameAction) {
+            if (
+                properties.target ||
+                properties.targets ||
+                properties.chooseOpponent ||
+                properties.choosePlayer
+            ) {
                 throw new Error('Cannot use gameAction with abilities with choices');
             }
 
             return properties.gameAction;
         }
 
-        if(properties.choices) {
+        if (properties.choices) {
             return new ChooseGameAction({ choices: properties.choices });
         }
 
-        if(properties.handler) {
+        if (properties.handler) {
             return new HandlerGameActionWrapper({ handler: properties.handler });
         }
 
@@ -101,7 +105,9 @@ class BaseAbility {
      * @returns {Boolean}
      */
     canPayCosts(context) {
-        return this.executeWithTemporaryContext(context, 'cost', () => this.cost.every(cost => cost.canPay(context)));
+        return this.executeWithTemporaryContext(context, 'cost', () =>
+            this.cost.every((cost) => cost.canPay(context))
+        );
     }
 
     /**
@@ -124,7 +130,9 @@ class BaseAbility {
         try {
             context.game.pushAbilityContext(context);
             context.resolutionStage = stage;
-            context.cardStateWhenInitiated = context.source ? context.source.createSnapshot() : undefined;
+            context.cardStateWhenInitiated = context.source
+                ? context.source.createSnapshot()
+                : undefined;
             return callback();
         } finally {
             context.resolutionStage = originalResolutionStage;
@@ -142,8 +150,8 @@ class BaseAbility {
      * @returns {Array} An array of cost resolution results.
      */
     resolveCosts(context) {
-        return this.cost.map(cost => {
-            if(cost.resolve) {
+        return this.cost.map((cost) => {
+            if (cost.resolve) {
                 return cost.resolve(context);
             }
 
@@ -155,7 +163,7 @@ class BaseAbility {
      * Pays all costs for the ability simultaneously.
      */
     payCosts(context) {
-        for(let cost of this.cost) {
+        for (let cost of this.cost) {
             cost.pay(context);
         }
     }
@@ -167,14 +175,14 @@ class BaseAbility {
      * @returns {boolean}
      */
     canUnpayCosts(context) {
-        return this.cost.every(cost => cost.unpay && cost.canUnpay(context));
+        return this.cost.every((cost) => cost.unpay && cost.canUnpay(context));
     }
 
     /**
      * Unpays each cost associated with the ability.
      */
     unpayCosts(context) {
-        for(let cost of this.cost) {
+        for (let cost of this.cost) {
             cost.unpay(context);
         }
     }
@@ -191,7 +199,7 @@ class BaseAbility {
      * requires that a player be chosen.
      */
     canResolvePlayer(context) {
-        if(!this.needsChoosePlayer()) {
+        if (!this.needsChoosePlayer()) {
             return true;
         }
 
@@ -202,7 +210,7 @@ class BaseAbility {
      * Prompts the current player to choose a player
      */
     resolvePlayer(context) {
-        if(!this.needsChoosePlayer()) {
+        if (!this.needsChoosePlayer()) {
             return;
         }
 
@@ -215,7 +223,9 @@ class BaseAbility {
      * @returns {Boolean}
      */
     canResolveTargets(context) {
-        return this.executeWithTemporaryContext(context, 'effect', () => this.targets.every(target => target.canResolve(context)));
+        return this.executeWithTemporaryContext(context, 'effect', () =>
+            this.targets.every((target) => target.canResolve(context))
+        );
     }
 
     /**
@@ -224,23 +234,25 @@ class BaseAbility {
      * @returns {Array} An array of target resolution objects.
      */
     resolveTargets(context) {
-        return flatMap(this.targets, target => target.resolve(context));
+        return flatMap(this.targets, (target) => target.resolve(context));
     }
 
     /**
      * Returns whether the gameAction for this ability is allowed to resolve.
-     * 
+     *
      * @returns {Boolean}
      */
     isGameActionAllowed(context) {
-        return this.executeWithTemporaryContext(context, 'effect', () => this.gameAction.allow(context));
+        return this.executeWithTemporaryContext(context, 'effect', () =>
+            this.gameAction.allow(context)
+        );
     }
 
     /**
      * Increments the usage of the ability toward its limit, if it has one.
      */
     incrementLimit() {
-        if(this.limit) {
+        if (this.limit) {
             this.limit.increment();
         }
     }
@@ -287,4 +299,4 @@ class BaseAbility {
     }
 }
 
-module.exports = BaseAbility;
+export default BaseAbility;

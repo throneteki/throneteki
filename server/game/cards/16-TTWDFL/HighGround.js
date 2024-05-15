@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class HighGround extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,13 +7,18 @@ class HighGround extends DrawCard {
             title: 'Stand character',
             cost: ability.costs.kneelSelf(),
             target: {
-                cardCondition: { location: 'play area', trait: 'Army', type: 'character', kneeled: true },
+                cardCondition: {
+                    location: 'play area',
+                    trait: 'Army',
+                    type: 'character',
+                    kneeled: true
+                },
                 gameAction: 'stand'
             },
             message: '{player} kneels {source} to stand {target}',
-            handler: context => {
+            handler: (context) => {
                 this.game.resolveGameAction(
-                    GameActions.standCard(context => ({
+                    GameActions.standCard((context) => ({
                         card: context.target
                     })),
                     context
@@ -25,4 +30,4 @@ class HighGround extends DrawCard {
 
 HighGround.code = '16019';
 
-module.exports = HighGround;
+export default HighGround;

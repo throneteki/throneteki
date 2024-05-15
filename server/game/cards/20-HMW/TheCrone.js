@@ -1,9 +1,12 @@
-const PlotCard = require('../../plotcard');
+import PlotCard from '../../plotcard.js';
 
 class TheCrone extends PlotCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: card => card.location === 'play area' && card.getType() === 'character' && card.getPrintedStrength() <= 1,
+            match: (card) =>
+                card.location === 'play area' &&
+                card.getType() === 'character' &&
+                card.getPrintedStrength() <= 1,
             targetController: 'any',
             effect: [
                 ability.effects.cannotBeKilled(),
@@ -20,4 +23,4 @@ class TheCrone extends PlotCard {
 
 TheCrone.code = '20053';
 
-module.exports = TheCrone;
+export default TheCrone;

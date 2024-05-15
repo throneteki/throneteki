@@ -1,7 +1,7 @@
-const BaseStep = require('./basestep.js');
-const GamePipeline = require('../gamepipeline.js');
-const SimpleStep = require('./simplestep.js');
-const InterruptWindow = require('./InterruptWindow');
+import BaseStep from './basestep.js';
+import GamePipeline from '../gamepipeline.js';
+import SimpleStep from './simplestep.js';
+import InterruptWindow from './InterruptWindow.js';
 
 class EventWindow extends BaseStep {
     constructor(game, event, postHandlerFunc = () => true) {
@@ -45,7 +45,7 @@ class EventWindow extends BaseStep {
     }
 
     openAbilityWindow(abilityType) {
-        if(this.event.cancelled) {
+        if (this.event.cancelled) {
             return;
         }
 
@@ -56,7 +56,7 @@ class EventWindow extends BaseStep {
     }
 
     emitBaseEvent() {
-        if(this.event.cancelled) {
+        if (this.event.cancelled) {
             return;
         }
 
@@ -64,14 +64,14 @@ class EventWindow extends BaseStep {
     }
 
     openWhenRevealedWindow() {
-        if(this.event.cancelled) {
+        if (this.event.cancelled) {
             return;
         }
 
-        if(this.event.getConcurrentEvents().some(event => event.name === 'onPlotRevealed')) {
+        if (this.event.getConcurrentEvents().some((event) => event.name === 'onPlotRevealed')) {
             this.openAbilityWindow('whenrevealed');
         }
     }
 }
 
-module.exports = EventWindow;
+export default EventWindow;

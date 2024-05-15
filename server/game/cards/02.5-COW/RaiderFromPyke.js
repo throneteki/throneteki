@@ -1,10 +1,10 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class RaiderFromPyke extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetLocation: 'hand',
-            match: card => card.hasTrait('Weapon'),
+            match: (card) => card.hasTrait('Weapon'),
             effect: ability.effects.gainAmbush()
         });
     }
@@ -12,4 +12,4 @@ class RaiderFromPyke extends DrawCard {
 
 RaiderFromPyke.code = '02091';
 
-module.exports = RaiderFromPyke;
+export default RaiderFromPyke;

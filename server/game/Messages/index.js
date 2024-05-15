@@ -1,4 +1,3 @@
-
 function createEachPlayerTargetingForCardType(cardType) {
     return {
         noneSelected: `{targetSelection.choosingPlayer} chooses no ${cardType} for {source}`,
@@ -24,4 +23,4 @@ const Messages = {
     eachPlayerSecretTargetingForCardType: createEachPlayerSecretTargetingForCardType
 };
 
-module.exports = Messages;
+export default Messages;

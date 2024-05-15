@@ -1,8 +1,14 @@
 class ChallengeTypes {
     static asButtons(propertiesOrFunc) {
-        return ChallengeTypes.all.map(type => {
-            let resolvedProperties = typeof propertiesOrFunc === 'function' ? propertiesOrFunc(type.value) : propertiesOrFunc;
-            return Object.assign({ text: type.text, arg: type.value, icon: type.icon }, resolvedProperties);
+        return ChallengeTypes.all.map((type) => {
+            let resolvedProperties =
+                typeof propertiesOrFunc === 'function'
+                    ? propertiesOrFunc(type.value)
+                    : propertiesOrFunc;
+            return Object.assign(
+                { text: type.text, arg: type.value, icon: type.icon },
+                resolvedProperties
+            );
         });
     }
 }
@@ -13,4 +19,4 @@ ChallengeTypes.all = [
     { text: 'Power', value: 'power', icon: 'power' }
 ];
 
-module.exports = ChallengeTypes;
+export default ChallengeTypes;

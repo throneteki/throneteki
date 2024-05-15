@@ -1,10 +1,11 @@
-describe('Seasoned Woodsman', function() {
-    integration(function() {
-        describe('when adding an attachment to Seasoned Woodsman', function() {
-            beforeEach(function() {
+describe('Seasoned Woodsman', function () {
+    integration(function () {
+        describe('when adding an attachment to Seasoned Woodsman', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('thenightswatch', [
                     'Sneak Attack',
-                    'Seasoned Woodsman', 'Little Bird'
+                    'Seasoned Woodsman',
+                    'Little Bird'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
@@ -22,7 +23,7 @@ describe('Seasoned Woodsman', function() {
                 this.player1.clickCard(this.character);
             });
 
-            it('should allow the ability trigger', function() {
+            it('should allow the ability trigger', function () {
                 expect(this.player1).toAllowAbilityTrigger(this.character);
             });
         });

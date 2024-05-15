@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class RenlyBaratheon extends DrawCard {
     setupCardAbilities(ability) {
@@ -11,14 +11,15 @@ class RenlyBaratheon extends DrawCard {
 
         this.reaction({
             when: {
-                onCardsDrawn: event =>
+                onCardsDrawn: (event) =>
                     event.reason === 'insight' &&
                     event.source.controller === this.controller &&
                     event.cards[0].isLoyal()
             },
-            cost: ability.costs.revealSpecific(context => context.event.cards[0]),
-            message: '{player} uses {source} and reveals {costs.reveal} from their hand to draw 1 card',
-            gameAction: GameActions.drawCards(context => ({
+            cost: ability.costs.revealSpecific((context) => context.event.cards[0]),
+            message:
+                '{player} uses {source} and reveals {costs.reveal} from their hand to draw 1 card',
+            gameAction: GameActions.drawCards((context) => ({
                 player: context.player,
                 amount: 1
             }))
@@ -26,16 +27,18 @@ class RenlyBaratheon extends DrawCard {
     }
 
     anyOpponentControlsKing() {
-        return this.game.getPlayers().some(player => {
-            if(player === this.controller) {
+        return this.game.getPlayers().some((player) => {
+            if (player === this.controller) {
                 return false;
             }
 
-            return player.anyCardsInPlay(card => card.getType() === 'character' && card.hasTrait('King'));
+            return player.anyCardsInPlay(
+                (card) => card.getType() === 'character' && card.hasTrait('King')
+            );
         });
     }
 }
 
 RenlyBaratheon.code = '04043';
 
-module.exports = RenlyBaratheon;
+export default RenlyBaratheon;

@@ -1,10 +1,10 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class XaroXhoanDaxos extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardEntersPlay: event =>
+                onCardEntersPlay: (event) =>
                     event.card.getType() === 'attachment' &&
                     event.card.isUnique() &&
                     event.playingType === 'marshal' &&
@@ -22,4 +22,4 @@ class XaroXhoanDaxos extends DrawCard {
 
 XaroXhoanDaxos.code = '04093';
 
-module.exports = XaroXhoanDaxos;
+export default XaroXhoanDaxos;

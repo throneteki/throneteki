@@ -2,7 +2,7 @@ class PaidGoldTracker {
     constructor(game) {
         this.payments = [];
 
-        game.on('onGoldTransferred', event => this.recordPayment(event));
+        game.on('onGoldTransferred', (event) => this.recordPayment(event));
         game.on('onPhaseStarted', () => this.clearPayments());
     }
 
@@ -15,8 +15,10 @@ class PaidGoldTracker {
     }
 
     hasPaid(payer, recipient) {
-        return this.payments.some(event => event.source === payer && event.target === recipient && event.amount > 0);
+        return this.payments.some(
+            (event) => event.source === payer && event.target === recipient && event.amount > 0
+        );
     }
 }
 
-module.exports = PaidGoldTracker;
+export default PaidGoldTracker;

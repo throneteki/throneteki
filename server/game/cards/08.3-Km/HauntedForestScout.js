@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class HauntedForestScout extends DrawCard {
     setupCardAbilities(ability) {
@@ -14,10 +14,12 @@ class HauntedForestScout extends DrawCard {
     }
 
     getNumberOfRangers() {
-        return this.controller.getNumberOfCardsInPlay(card => card.getType() === 'character' && card.hasTrait('Ranger'));
+        return this.controller.getNumberOfCardsInPlay(
+            (card) => card.getType() === 'character' && card.hasTrait('Ranger')
+        );
     }
 }
 
 HauntedForestScout.code = '08045';
 
-module.exports = HauntedForestScout;
+export default HauntedForestScout;

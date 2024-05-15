@@ -1,15 +1,13 @@
-describe('Dragonglass Dagger', function() {
-    integration(function() {
-        describe('vs Theon Greyjoy (TFoA)', function() {
-            beforeEach(function() {
+describe('Dragonglass Dagger', function () {
+    integration(function () {
+        describe('vs Theon Greyjoy (TFoA)', function () {
+            beforeEach(function () {
                 const deck1 = this.buildDeck('thenightswatch', [
                     'A Noble Cause',
-                    'Stonesnake', 'Dragonglass Dagger'
+                    'Stonesnake',
+                    'Dragonglass Dagger'
                 ]);
-                const deck2 = this.buildDeck('greyjoy', [
-                    'A Noble Cause',
-                    'Theon Greyjoy (TFoA)'
-                ]);
+                const deck2 = this.buildDeck('greyjoy', ['A Noble Cause', 'Theon Greyjoy (TFoA)']);
 
                 this.player1.selectDeck(deck1);
                 this.player2.selectDeck(deck2);
@@ -36,8 +34,8 @@ describe('Dragonglass Dagger', function() {
                 this.completeMarshalPhase();
             });
 
-            describe('when Theon is attacking alone', function() {
-                beforeEach(function() {
+            describe('when Theon is attacking alone', function () {
+                beforeEach(function () {
                     this.player2.clickPrompt('Military');
                     this.player2.clickCard(this.theon);
                     this.player2.clickPrompt('Done');
@@ -50,7 +48,7 @@ describe('Dragonglass Dagger', function() {
                     this.skipActionWindow();
                 });
 
-                it('should immunize the charcter with the dagger from Theon\'s effect', function() {
+                it("should immunize the charcter with the dagger from Theon's effect", function () {
                     expect(this.player2).not.toHavePromptButton('Apply Claim');
                     // Challenge completed, kicked back to challenge declaration
                     expect(this.player2).toHavePromptButton('Intrigue');

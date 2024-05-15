@@ -1,20 +1,27 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class InTheNameOfYourKing extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'End challenge',
-            condition: () => this.game.isDuringChallenge({ challengeType: 'military', defendingPlayer: this.controller }),
+            condition: () =>
+                this.game.isDuringChallenge({
+                    challengeType: 'military',
+                    defendingPlayer: this.controller
+                }),
             cost: ability.costs.kneelFactionCard(),
             handler: () => {
                 this.game.currentChallenge.cancelChallenge();
-                this.untilEndOfPhase(ability => ({
+                this.untilEndOfPhase((ability) => ({
                     targetController: 'current',
                     effect: ability.effects.cannotInitiateChallengeType('military')
                 }));
 
-                this.game.addMessage('{0} uses {1} to end this challenge with no winner or loser',
-                    this.controller, this);
+                this.game.addMessage(
+                    '{0} uses {1} to end this challenge with no winner or loser',
+                    this.controller,
+                    this
+                );
             }
         });
     }
@@ -22,4 +29,4 @@ class InTheNameOfYourKing extends DrawCard {
 
 InTheNameOfYourKing.code = '02028';
 
-module.exports = InTheNameOfYourKing;
+export default InTheNameOfYourKing;

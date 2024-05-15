@@ -1,10 +1,10 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TheHightower extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardEntersPlay: event =>
+                onCardEntersPlay: (event) =>
                     (this.controller.canDraw() || this.controller.canGainGold()) &&
                     event.card.isFaction('tyrell') &&
                     event.card.getType() === 'character' &&
@@ -14,15 +14,19 @@ class TheHightower extends DrawCard {
             handler: () => {
                 let bonusMessages = [];
 
-                if(this.controller.canGainGold()) {
+                if (this.controller.canGainGold()) {
                     this.game.addGold(this.controller, 1);
                     bonusMessages.push('gain 1 gold');
                 }
-                if(this.controller.canDraw()) {
+                if (this.controller.canDraw()) {
                     this.controller.drawCardsToHand(1);
                     bonusMessages.push('draw 1 card');
                 }
-                this.game.addMessage('{0} uses {1} to ' + bonusMessages.join(', '), this.controller, this);
+                this.game.addMessage(
+                    '{0} uses {1} to ' + bonusMessages.join(', '),
+                    this.controller,
+                    this
+                );
             }
         });
     }
@@ -30,4 +34,4 @@ class TheHightower extends DrawCard {
 
 TheHightower.code = '09017';
 
-module.exports = TheHightower;
+export default TheHightower;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class KingBeyondTheWall extends DrawCard {
     setupCardAbilities(ability) {
@@ -8,7 +8,10 @@ class KingBeyondTheWall extends DrawCard {
         });
 
         this.persistentEffect({
-            condition: () => this.game.currentChallenge && this.game.currentChallenge.isAttacking(this.parent) && this.hasLessTotalPower(this.game.currentChallenge.defendingPlayer),
+            condition: () =>
+                this.game.currentChallenge &&
+                this.game.currentChallenge.isAttacking(this.parent) &&
+                this.hasLessTotalPower(this.game.currentChallenge.defendingPlayer),
             match: (card) => card === this.controller.activePlot,
             effect: ability.effects.modifyClaim(1)
         });
@@ -21,4 +24,4 @@ class KingBeyondTheWall extends DrawCard {
 
 KingBeyondTheWall.code = '04079';
 
-module.exports = KingBeyondTheWall;
+export default KingBeyondTheWall;

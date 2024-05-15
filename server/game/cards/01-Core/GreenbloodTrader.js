@@ -1,15 +1,18 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class GreenbloodTrader extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: event => event.card === this
+                onCardEntersPlay: (event) => event.card === this
             },
             handler: () => {
-                this.top2Cards = this.controller.drawDeck.slice(0, Math.min(2, this.controller.drawDeck.length));
+                this.top2Cards = this.controller.drawDeck.slice(
+                    0,
+                    Math.min(2, this.controller.drawDeck.length)
+                );
 
-                let buttons = this.top2Cards.map(card => {
+                let buttons = this.top2Cards.map((card) => {
                     return { method: 'cardSelected', card: card, mapCard: true };
                 });
 
@@ -30,33 +33,41 @@ class GreenbloodTrader extends DrawCard {
         player.moveCard(card, 'hand');
         player.moveFromTopToBottomOfDrawDeck(1);
 
-        this.game.addMessage('{0} uses {1} to draw 2 cards, keep 1 and place the other on the bottom of their deck', player, this);
+        this.game.addMessage(
+            '{0} uses {1} to draw 2 cards, keep 1 and place the other on the bottom of their deck',
+            player,
+            this
+        );
 
         return true;
     }
 
     moveToBottom(player, card) {
-        let otherCard = this.top2Cards.find(c => {
+        let otherCard = this.top2Cards.find((c) => {
             return c.uuid !== card.uuid;
         });
 
-        if(otherCard) {
+        if (otherCard) {
             player.moveCard(otherCard, 'draw deck', { bottom: true });
         }
 
         player.moveCard(card, 'draw deck', { bottom: true });
 
-        this.game.addMessage('{0} uses {1} to draw 2 cards, and place them on the bottom of their deck', player, this);
+        this.game.addMessage(
+            '{0} uses {1} to draw 2 cards, and place them on the bottom of their deck',
+            player,
+            this
+        );
 
         return true;
     }
 
     continueWithoutSelecting(player) {
-        if(this.top2Cards.length === 1) {
+        if (this.top2Cards.length === 1) {
             return this.moveToBottom(player, this.top2Cards[0]);
         }
 
-        let buttons = this.top2Cards.map(card => {
+        let buttons = this.top2Cards.map((card) => {
             return { method: 'moveToBottom', card: card, mapCard: true };
         });
 
@@ -82,4 +93,4 @@ class GreenbloodTrader extends DrawCard {
 
 GreenbloodTrader.code = '01112';
 
-module.exports = GreenbloodTrader;
+export default GreenbloodTrader;

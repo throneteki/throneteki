@@ -1,10 +1,10 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TommenBaratheon extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetController: 'any',
-            match: player => player.hand.length === 0,
+            match: (player) => player.hand.length === 0,
             effect: ability.effects.cannotGainChallengeBonus()
         });
     }
@@ -12,4 +12,4 @@ class TommenBaratheon extends DrawCard {
 
 TommenBaratheon.code = '05015';
 
-module.exports = TommenBaratheon;
+export default TommenBaratheon;

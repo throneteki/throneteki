@@ -1,4 +1,4 @@
-const BaseCard = require('./basecard.js');
+import BaseCard from './basecard.js';
 
 class TitleCard extends BaseCard {
     constructor(owner, cardData) {
@@ -18,7 +18,7 @@ class TitleCard extends BaseCard {
     }
 
     isRival(card) {
-        if(!card || card.getType() !== 'title') {
+        if (!card || card.getType() !== 'title') {
             return false;
         }
 
@@ -26,7 +26,7 @@ class TitleCard extends BaseCard {
     }
 
     isSupporter(card) {
-        if(!card || card.getType() !== 'title') {
+        if (!card || card.getType() !== 'title') {
             return false;
         }
 
@@ -42,4 +42,4 @@ class TitleCard extends BaseCard {
     }
 }
 
-module.exports = TitleCard;
+export default TitleCard;

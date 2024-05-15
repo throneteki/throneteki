@@ -1,14 +1,16 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class DonellaHornwood extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetController: 'current',
-            effect: ability.effects.reduceFirstMarshalledOrPlayedCardCostEachRound(1, card => card.isLoyal())
+            effect: ability.effects.reduceFirstMarshalledOrPlayedCardCostEachRound(1, (card) =>
+                card.isLoyal()
+            )
         });
     }
 }
 
 DonellaHornwood.code = '04021';
 
-module.exports = DonellaHornwood;
+export default DonellaHornwood;

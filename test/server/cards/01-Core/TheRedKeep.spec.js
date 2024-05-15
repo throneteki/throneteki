@@ -1,9 +1,12 @@
-describe('The Red Keep (Core)', function() {
-    integration(function() {
-        beforeEach(function() {
+describe('The Red Keep (Core)', function () {
+    integration(function () {
+        beforeEach(function () {
             const deck = this.buildDeck('stark', [
                 'Trading with the Pentoshi',
-                'The Red Keep (Core)', 'Areo Hotah (Core)', 'Maester Caleotte', 'Nightmares'
+                'The Red Keep (Core)',
+                'Areo Hotah (Core)',
+                'Maester Caleotte',
+                'Nightmares'
             ]);
             this.player1.selectDeck(deck);
             this.player2.selectDeck(deck);
@@ -23,19 +26,19 @@ describe('The Red Keep (Core)', function() {
             this.completeMarshalPhase();
         });
 
-        describe('during a power challenge w/ at least one participating character', function() {
-            beforeEach(function() {
+        describe('during a power challenge w/ at least one participating character', function () {
+            beforeEach(function () {
                 this.player1.clickPrompt('Power');
                 this.player1.clickCard(this.character);
                 this.player1.clickPrompt('Done');
             });
 
-            it('should provide +2 strength', function() {
+            it('should provide +2 strength', function () {
                 // 2 from Caleotte, 2 from the Red Keep.
                 expect(this.game.currentChallenge.attackerStrength).toBe(4);
             });
 
-            it('should remove the strength bonus if blanked mid-challenge', function() {
+            it('should remove the strength bonus if blanked mid-challenge', function () {
                 this.player1.clickPrompt('Pass');
                 this.player2.clickCard('Nightmares', 'hand');
                 this.player2.clickCard(this.redKeep);
@@ -43,7 +46,7 @@ describe('The Red Keep (Core)', function() {
                 expect(this.game.currentChallenge.attackerStrength).toBe(2);
             });
 
-            it('should not keep the strength bonus if all characters removed from the challenge', function() {
+            it('should not keep the strength bonus if all characters removed from the challenge', function () {
                 this.player1.clickPrompt('Pass');
                 this.player2.clickCard('Areo Hotah', 'hand');
                 this.player2.triggerAbility('Areo Hotah');

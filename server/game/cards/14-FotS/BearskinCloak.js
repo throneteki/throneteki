@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class BearskinCloak extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,7 +7,7 @@ class BearskinCloak extends DrawCard {
         });
 
         this.whileAttached({
-            match: card => card.hasTrait('House Mormont'),
+            match: (card) => card.hasTrait('House Mormont'),
             effect: ability.effects.addKeyword('Stealth')
         });
     }
@@ -15,4 +15,4 @@ class BearskinCloak extends DrawCard {
 
 BearskinCloak.code = '14034';
 
-module.exports = BearskinCloak;
+export default BearskinCloak;

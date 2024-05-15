@@ -1,16 +1,20 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class NymeriaSand extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onDominanceDetermined: event => event.winner && this.controller !== event.winner
+                onDominanceDetermined: (event) => event.winner && this.controller !== event.winner
             },
-            handler: context => {
+            handler: (context) => {
                 context.event.winner.discardAtRandom(1);
                 context.player.drawCardsToHand(1);
-                this.game.addMessage('{0} uses {1} to discard 1 card at random from {2}\'s hand and draw 1 card',
-                    context.player, this, context.event.winner);
+                this.game.addMessage(
+                    "{0} uses {1} to discard 1 card at random from {2}'s hand and draw 1 card",
+                    context.player,
+                    this,
+                    context.event.winner
+                );
             }
         });
     }
@@ -18,4 +22,4 @@ class NymeriaSand extends DrawCard {
 
 NymeriaSand.code = '10007';
 
-module.exports = NymeriaSand;
+export default NymeriaSand;

@@ -1,12 +1,13 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class QuentynMartell extends DrawCard {
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                onPhaseStarted: event => event.phase === 'challenge' && this.controller.getNumberOfUsedPlots() < 3
+                onPhaseStarted: (event) =>
+                    event.phase === 'challenge' && this.controller.getNumberOfUsedPlots() < 3
             },
-            handler: context => {
+            handler: (context) => {
                 context.player.kneelCard(this);
                 this.game.addMessage('{0} is forced to kneel {1}', context.player, this);
             }
@@ -16,4 +17,4 @@ class QuentynMartell extends DrawCard {
 
 QuentynMartell.code = '10011';
 
-module.exports = QuentynMartell;
+export default QuentynMartell;

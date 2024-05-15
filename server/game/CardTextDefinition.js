@@ -9,10 +9,10 @@ class CardTextDefinition {
     }
 
     apply(card) {
-        const actions = this.actionDefinitions.map(definition => card.action(definition));
+        const actions = this.actionDefinitions.map((definition) => card.action(definition));
 
-        for(const action of actions) {
-            if(action.isEventListeningLocation(card.location)) {
+        for (const action of actions) {
+            if (action.isEventListeningLocation(card.location)) {
                 action.registerEvents();
             }
         }
@@ -21,14 +21,14 @@ class CardTextDefinition {
     }
 
     unapply(card) {
-        for(const action of this.actions) {
-            if(action.isEventListeningLocation(card.location)) {
+        for (const action of this.actions) {
+            if (action.isEventListeningLocation(card.location)) {
                 action.unregisterEvents();
             }
 
-            card.abilities.actions = card.abilities.actions.filter(a => a !== action);
+            card.abilities.actions = card.abilities.actions.filter((a) => a !== action);
         }
     }
 }
 
-module.exports = CardTextDefinition;
+export default CardTextDefinition;

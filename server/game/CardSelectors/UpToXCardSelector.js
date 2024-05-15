@@ -1,4 +1,4 @@
-const BaseCardSelector = require('./BaseCardSelector.js');
+import BaseCardSelector from './BaseCardSelector.js';
 
 class UpToXCardSelector extends BaseCardSelector {
     constructor(numCards, properties) {
@@ -16,4 +16,4 @@ class UpToXCardSelector extends BaseCardSelector {
     }
 }
 
-module.exports = UpToXCardSelector;
+export default UpToXCardSelector;

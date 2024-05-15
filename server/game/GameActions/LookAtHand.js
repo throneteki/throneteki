@@ -1,4 +1,4 @@
-const GameAction = require('./GameAction');
+import GameAction from './GameAction.js';
 
 class LookAtHand extends GameAction {
     constructor() {
@@ -10,16 +10,17 @@ class LookAtHand extends GameAction {
     }
 
     createEvent({ player, opponent, context }) {
-        return this.event('onLookAtHand', { player, opponent }, event => {
+        return this.event('onLookAtHand', { player, opponent }, (event) => {
             context.game.promptForSelect(event.player, {
                 activePromptTitle: `Look at ${event.opponent.name}'s hand`,
                 source: context.source,
                 revealTargets: true,
-                cardCondition: card => card.location === 'hand' && card.controller === event.opponent,
+                cardCondition: (card) =>
+                    card.location === 'hand' && card.controller === event.opponent,
                 onSelect: () => true
             });
         });
     }
 }
 
-module.exports = new LookAtHand();
+export default new LookAtHand();

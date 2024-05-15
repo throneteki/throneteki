@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class GrizzledMiner extends DrawCard {
     setupCardAbilities(ability) {
@@ -14,8 +14,10 @@ class GrizzledMiner extends DrawCard {
 
     getDiscount() {
         let cards = this.controller.filterCardsInPlay(
-            card => card.isFaction('thenightswatch')
-                && (card.getType() === 'attachment' || card.getType() === 'location'));
+            (card) =>
+                card.isFaction('thenightswatch') &&
+                (card.getType() === 'attachment' || card.getType() === 'location')
+        );
 
         return cards.length;
     }
@@ -23,4 +25,4 @@ class GrizzledMiner extends DrawCard {
 
 GrizzledMiner.code = '07006';
 
-module.exports = GrizzledMiner;
+export default GrizzledMiner;

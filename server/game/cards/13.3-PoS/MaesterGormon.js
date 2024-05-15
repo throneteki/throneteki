@@ -1,6 +1,6 @@
-const DrawCard = require('../../drawcard');
-const GenericTracker = require('../../EventTrackers/GenericTracker');
-const CardEntersPlayTracker = require('../../EventTrackers/CardEntersPlayTracker');
+import DrawCard from '../../drawcard.js';
+import GenericTracker from '../../EventTrackers/GenericTracker.js';
+import CardEntersPlayTracker from '../../EventTrackers/CardEntersPlayTracker.js';
 
 class MaesterGormon extends DrawCard {
     setupCardAbilities(ability) {
@@ -16,8 +16,8 @@ class MaesterGormon extends DrawCard {
             condition: () => !this.hasPlayedFromDeck() && !this.hasMarshalledFromDeck(),
             targetController: 'current',
             effect: [
-                ability.effects.canMarshal(card => this.isTopCard(card)),
-                ability.effects.canPlay(card => this.isTopCard(card))
+                ability.effects.canMarshal((card) => this.isTopCard(card)),
+                ability.effects.canPlay((card) => this.isTopCard(card))
             ]
         });
     }
@@ -32,22 +32,24 @@ class MaesterGormon extends DrawCard {
     }
 
     hasPlayedFromDeck() {
-        return this.playedTracker.events.some(event => (
-            event.originalLocation === 'draw deck' &&
-            event.player === this.controller &&
-            !event.card.isFaction('tyrell')
-        ));
+        return this.playedTracker.events.some(
+            (event) =>
+                event.originalLocation === 'draw deck' &&
+                event.player === this.controller &&
+                !event.card.isFaction('tyrell')
+        );
     }
 
     hasMarshalledFromDeck() {
-        return this.enterPlayTracker.events.some(event => (
-            event.originalLocation === 'draw deck' &&
-            event.card.controller === this.controller &&
-            !event.card.isFaction('tyrell')
-        ));
+        return this.enterPlayTracker.events.some(
+            (event) =>
+                event.originalLocation === 'draw deck' &&
+                event.card.controller === this.controller &&
+                !event.card.isFaction('tyrell')
+        );
     }
 }
 
 MaesterGormon.code = '13043';
 
-module.exports = MaesterGormon;
+export default MaesterGormon;

@@ -1,4 +1,4 @@
-const Settings = require('../settings');
+import Settings from '../settings.js';
 
 class User {
     constructor(userData) {
@@ -82,15 +82,15 @@ class User {
     }
 
     get role() {
-        if(this.isAdmin) {
+        if (this.isAdmin) {
             return 'admin';
         }
 
-        if(this.isContributor) {
+        if (this.isContributor) {
             return 'contributor';
         }
 
-        if(this.isSupporter) {
+        if (this.isSupporter) {
             return 'supporter';
         }
 
@@ -162,4 +162,4 @@ class User {
     }
 }
 
-module.exports = User;
+export default User;

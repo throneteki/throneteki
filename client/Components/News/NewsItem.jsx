@@ -10,9 +10,11 @@ class NewsItem extends React.Component {
 
         return (
             <div className='news-item'>
-                <span className={ `thronesicon thronesicon-${this.props.icon}` } />
-                &nbsp;{ moment(this.props.date).format('YYYY-MM-DD') + ' - ' }{ parts }
-            </div>);
+                <span className={`thronesicon thronesicon-${this.props.icon}`} />
+                &nbsp;{moment(this.props.date).format('YYYY-MM-DD') + ' - '}
+                {parts}
+            </div>
+        );
     }
 }
 

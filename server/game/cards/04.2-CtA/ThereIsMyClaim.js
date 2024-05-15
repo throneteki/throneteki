@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class ThereIsMyClaim extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,11 +7,18 @@ class ThereIsMyClaim extends DrawCard {
             max: ability.limit.perChallenge(1),
             phase: 'challenge',
             condition: () => this.game.isDuringChallenge(),
-            cost: ability.costs.revealCards(4, card => card.getType() === 'character' && card.isFaction('tyrell') && card.location === 'hand'),
-            message: '{player} plays {source} and reveals {costs.reveal} from their hand to raise their claim value by 1 until the end of the challenge',
+            cost: ability.costs.revealCards(
+                4,
+                (card) =>
+                    card.getType() === 'character' &&
+                    card.isFaction('tyrell') &&
+                    card.location === 'hand'
+            ),
+            message:
+                '{player} plays {source} and reveals {costs.reveal} from their hand to raise their claim value by 1 until the end of the challenge',
             handler: () => {
-                this.untilEndOfChallenge(ability => ({
-                    match: card => card === this.controller.activePlot,
+                this.untilEndOfChallenge((ability) => ({
+                    match: (card) => card === this.controller.activePlot,
                     effect: ability.effects.modifyClaim(1)
                 }));
             }
@@ -21,4 +28,4 @@ class ThereIsMyClaim extends DrawCard {
 
 ThereIsMyClaim.code = '04024';
 
-module.exports = ThereIsMyClaim;
+export default ThereIsMyClaim;

@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const Message = require('../../Message');
+import DrawCard from '../../drawcard.js';
+import Message from '../../Message.js';
 
 class TheHatchlingsFeast extends DrawCard {
     setupCardAbilities() {
@@ -10,7 +10,7 @@ class TheHatchlingsFeast extends DrawCard {
                 numCards: 3,
                 cardCondition: { location: 'play area', type: 'character', hasAttachments: false }
             },
-            handler: context => {
+            handler: (context) => {
                 this.chooseStrDebuff({
                     amount: 1,
                     choices: [],
@@ -24,13 +24,18 @@ class TheHatchlingsFeast extends DrawCard {
     chooseStrDebuff({ context, remainingCards, amount, choices }) {
         this.game.promptForSelect(context.player, {
             activePromptTitle: `Select -${amount} STR`,
-            cardCondition: card => remainingCards.includes(card),
+            cardCondition: (card) => remainingCards.includes(card),
             onSelect: (player, card) => {
                 this.handleStrDebuffSelected({ context, remainingCards, amount, choices, card });
                 return true;
             },
             onCancel: () => {
-                this.game.addAlert('danger', '{0} cancels the resolution of {1}', context.player, this);
+                this.game.addAlert(
+                    'danger',
+                    '{0} cancels the resolution of {1}',
+                    context.player,
+                    this
+                );
                 return true;
             },
             source: context.source
@@ -39,9 +44,9 @@ class TheHatchlingsFeast extends DrawCard {
 
     handleStrDebuffSelected({ context, remainingCards, amount, choices, card }) {
         choices.push({ card, amount });
-        remainingCards = remainingCards.filter(c => c !== card);
+        remainingCards = remainingCards.filter((c) => c !== card);
 
-        if(remainingCards.length > 0) {
+        if (remainingCards.length > 0) {
             this.chooseStrDebuff({ context, remainingCards, amount: amount + 1, choices });
         } else {
             this.applyStrDebuffs({ context, choices });
@@ -49,11 +54,17 @@ class TheHatchlingsFeast extends DrawCard {
     }
 
     applyStrDebuffs({ context, choices }) {
-        const fragments = choices.map(choice => Message.fragment('give {card} -{amount} STR', choice));
-        this.game.addMessage('{player} plays {source} to {fragments}', { player: context.player, source: this, fragments});
+        const fragments = choices.map((choice) =>
+            Message.fragment('give {card} -{amount} STR', choice)
+        );
+        this.game.addMessage('{player} plays {source} to {fragments}', {
+            player: context.player,
+            source: this,
+            fragments
+        });
 
-        for(const choice of choices) {
-            this.untilEndOfPhase(ability => ({
+        for (const choice of choices) {
+            this.untilEndOfPhase((ability) => ({
                 match: choice.card,
                 effect: ability.effects.modifyStrength(-choice.amount)
             }));
@@ -63,4 +74,4 @@ class TheHatchlingsFeast extends DrawCard {
 
 TheHatchlingsFeast.code = '16014';
 
-module.exports = TheHatchlingsFeast;
+export default TheHatchlingsFeast;

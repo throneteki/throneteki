@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Queensguard extends DrawCard {
     setupCardAbilities(ability) {
@@ -8,10 +8,15 @@ class Queensguard extends DrawCard {
             condition: () => this.parent.kneeled,
             cost: ability.costs.discardFromHand(),
             limit: ability.limit.perRound(3),
-            handler: context => {
+            handler: (context) => {
                 context.player.standCard(this.parent);
-                this.game.addMessage('{0} uses {1} and discards {2} from their hand to stand {3}',
-                    context.player, this, context.costs.discardFromHand, this.parent);
+                this.game.addMessage(
+                    '{0} uses {1} and discards {2} from their hand to stand {3}',
+                    context.player,
+                    this,
+                    context.costs.discardFromHand,
+                    this.parent
+                );
             }
         });
     }
@@ -19,4 +24,4 @@ class Queensguard extends DrawCard {
 
 Queensguard.code = '11054';
 
-module.exports = Queensguard;
+export default Queensguard;

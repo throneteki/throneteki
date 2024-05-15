@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class MoatCailin extends DrawCard {
     setupCardAbilities(ability) {
@@ -6,16 +6,17 @@ class MoatCailin extends DrawCard {
             condition: () => this.moreWinterThanSummerPlotsRevealed(),
             match: (card) => card === card.controller.activePlot,
             targetController: 'opponent',
-            effect: [
-                ability.effects.modifyInitiative(-3),
-                ability.effects.modifyReserve(-1)
-            ]
+            effect: [ability.effects.modifyInitiative(-3), ability.effects.modifyReserve(-1)]
         });
     }
 
     moreWinterThanSummerPlotsRevealed() {
-        let winterPlots = this.game.getPlayers().filter(player => player.activePlot && player.activePlot.hasTrait('Winter'));
-        let summerPlots = this.game.getPlayers().filter(player => player.activePlot && player.activePlot.hasTrait('Summer'));
+        let winterPlots = this.game
+            .getPlayers()
+            .filter((player) => player.activePlot && player.activePlot.hasTrait('Winter'));
+        let summerPlots = this.game
+            .getPlayers()
+            .filter((player) => player.activePlot && player.activePlot.hasTrait('Summer'));
 
         return winterPlots.length > summerPlots.length;
     }
@@ -23,4 +24,4 @@ class MoatCailin extends DrawCard {
 
 MoatCailin.code = '06012';
 
-module.exports = MoatCailin;
+export default MoatCailin;

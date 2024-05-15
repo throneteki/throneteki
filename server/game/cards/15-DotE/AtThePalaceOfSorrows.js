@@ -1,9 +1,9 @@
-const PlotCard = require('../../plotcard');
+import PlotCard from '../../plotcard.js';
 
 class AtThePalaceOfSorrows extends PlotCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: card => card.getType() === 'character',
+            match: (card) => card.getType() === 'character',
             targetController: 'any',
             effect: ability.effects.setStrength(3)
         });
@@ -12,4 +12,4 @@ class AtThePalaceOfSorrows extends PlotCard {
 
 AtThePalaceOfSorrows.code = '15050';
 
-module.exports = AtThePalaceOfSorrows;
+export default AtThePalaceOfSorrows;

@@ -1,4 +1,4 @@
-const CardMatcher = require('../CardMatcher');
+import CardMatcher from '../CardMatcher.js';
 
 class CardEntersPlayTracker {
     static forPhase(game) {
@@ -12,7 +12,7 @@ class CardEntersPlayTracker {
     constructor(game, endingEvent) {
         this.events = [];
 
-        game.on('onCardEntersPlay', event => this.trackEvent(event));
+        game.on('onCardEntersPlay', (event) => this.trackEvent(event));
         game.on(endingEvent, () => this.clearEvents());
         //always clear the events when the setup finishes as the first round wrongly also tracks the setup phase
         game.on('onSetupFinished', () => this.clearEvents());
@@ -27,26 +27,38 @@ class CardEntersPlayTracker {
     }
 
     hasAmbushed(card) {
-        return this.events.some(event => event.card === card && event.playingType === 'ambush');
+        return this.events.some((event) => event.card === card && event.playingType === 'ambush');
     }
 
     hasComeOutOfShadows(card) {
-        return this.events.some(event => event.card === card && event.playingType === 'outOfShadows');
+        return this.events.some(
+            (event) => event.card === card && event.playingType === 'outOfShadows'
+        );
     }
 
     hasPlayerAmbushedAnyCardWithPredicate(player, cardPredicateOrMatcher) {
-        const predicate = typeof(cardPredicateOrMatcher) === 'function'
-            ? cardPredicateOrMatcher
-            : card => CardMatcher.isMatch(card, cardPredicateOrMatcher);
-        return this.events.some(event => event.player === player && event.playingType === 'ambush' && predicate(event.source));
+        const predicate =
+            typeof cardPredicateOrMatcher === 'function'
+                ? cardPredicateOrMatcher
+                : (card) => CardMatcher.isMatch(card, cardPredicateOrMatcher);
+        return this.events.some(
+            (event) =>
+                event.player === player && event.playingType === 'ambush' && predicate(event.source)
+        );
     }
 
     hasPlayerBroughtOutOfShadowsAnyCardWithPredicate(player, cardPredicateOrMatcher) {
-        const predicate = typeof(cardPredicateOrMatcher) === 'function'
-            ? cardPredicateOrMatcher
-            : card => CardMatcher.isMatch(card, cardPredicateOrMatcher);
-        return this.events.some(event => event.player === player && event.playingType === 'outOfShadows' && predicate(event.source));
+        const predicate =
+            typeof cardPredicateOrMatcher === 'function'
+                ? cardPredicateOrMatcher
+                : (card) => CardMatcher.isMatch(card, cardPredicateOrMatcher);
+        return this.events.some(
+            (event) =>
+                event.player === player &&
+                event.playingType === 'outOfShadows' &&
+                predicate(event.source)
+        );
     }
 }
 
-module.exports = CardEntersPlayTracker;
+export default CardEntersPlayTracker;

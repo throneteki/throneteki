@@ -1,10 +1,14 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class SamwellTarly extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.isParticipating(),
-            match: card => card !== this && card.isParticipating() && !card.hasTrait('Steward') && card.getType() === 'character',
+            match: (card) =>
+                card !== this &&
+                card.isParticipating() &&
+                !card.hasTrait('Steward') &&
+                card.getType() === 'character',
             targetController: 'any',
             effect: ability.effects.blankExcludingTraits
         });
@@ -13,4 +17,4 @@ class SamwellTarly extends DrawCard {
 
 SamwellTarly.code = '07012';
 
-module.exports = SamwellTarly;
+export default SamwellTarly;

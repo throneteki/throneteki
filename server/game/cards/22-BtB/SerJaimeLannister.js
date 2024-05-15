@@ -1,16 +1,19 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SerJaimeLannister extends DrawCard {
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                onCardEntersPlay: event => this.kneeled && this.game.currentPhase === 'challenge' && event.card.getType() === 'character'
+                onCardEntersPlay: (event) =>
+                    this.kneeled &&
+                    this.game.currentPhase === 'challenge' &&
+                    event.card.getType() === 'character'
             },
             message: '{player} uses {source} to stand {source}',
-            gameAction: GameActions.standCard(context => ({
+            gameAction: GameActions.standCard((context) => ({
                 card: context.source
-            })).then(preThenContext => ({
+            })).then((preThenContext) => ({
                 message: {
                     format: 'Then {player} discards {enteredPlay} from play',
                     args: { enteredPlay: () => preThenContext.event.card }
@@ -25,4 +28,4 @@ class SerJaimeLannister extends DrawCard {
 
 SerJaimeLannister.code = '22007';
 
-module.exports = SerJaimeLannister;
+export default SerJaimeLannister;

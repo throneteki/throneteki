@@ -1,11 +1,8 @@
-describe('melee titles', function() {
-    integration({ isMelee: true }, function() {
-        describe('selecting titles', function() {
-            beforeEach(function() {
-                const deck = this.buildDeck('stark', [
-                    'Trading with the Pentoshi',
-                    'Hedge Knight'
-                ]);
+describe('melee titles', function () {
+    integration({ isMelee: true }, function () {
+        describe('selecting titles', function () {
+            beforeEach(function () {
+                const deck = this.buildDeck('stark', ['Trading with the Pentoshi', 'Hedge Knight']);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
                 this.player3.selectDeck(deck);
@@ -21,7 +18,7 @@ describe('melee titles', function() {
                 this.selectPlotOrder(this.player2);
             });
 
-            it('should prompt players to select titles in first player order', function() {
+            it('should prompt players to select titles in first player order', function () {
                 this.player2.selectTitle('Master of Coin');
                 this.player3.selectTitle('Master of Laws');
                 this.player1.selectTitle('Master of Ships');
@@ -31,7 +28,7 @@ describe('melee titles', function() {
                 expect(this.player3Object.title.name).toBe('Master of Laws');
             });
 
-            it('should remove previously chosen titles from the prompt', function() {
+            it('should remove previously chosen titles from the prompt', function () {
                 this.player2.selectTitle('Master of Coin');
                 this.player3.selectTitle('Master of Laws');
 
@@ -41,11 +38,12 @@ describe('melee titles', function() {
             });
         });
 
-        describe('rival bonuses', function() {
-            beforeEach(function() {
+        describe('rival bonuses', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('stark', [
                     'A Noble Cause',
-                    'Hedge Knight', 'Wildling Horde'
+                    'Hedge Knight',
+                    'Wildling Horde'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
@@ -69,8 +67,8 @@ describe('melee titles', function() {
                 this.completeMarshalPhase();
             });
 
-            describe('when the attacking player wins', function() {
-                beforeEach(function() {
+            describe('when the attacking player wins', function () {
+                beforeEach(function () {
                     this.player1.clickPrompt('Military');
                     this.player1.clickPrompt('player2');
                     this.player1.clickCard('Wildling Horde', 'play area');
@@ -81,13 +79,13 @@ describe('melee titles', function() {
                     this.skipActionWindow();
                 });
 
-                it('should give the attacking player the bonus', function() {
+                it('should give the attacking player the bonus', function () {
                     expect(this.player1Object.getTotalPower()).toBe(1);
                 });
             });
 
-            describe('when the defending player wins', function() {
-                beforeEach(function() {
+            describe('when the defending player wins', function () {
+                beforeEach(function () {
                     this.player1.clickPrompt('Military');
                     this.player1.clickPrompt('player2');
                     this.player1.clickCard('Hedge Knight', 'play area');
@@ -98,13 +96,13 @@ describe('melee titles', function() {
                     this.skipActionWindow();
                 });
 
-                it('should give the defending player the bonus', function() {
+                it('should give the defending player the bonus', function () {
                     expect(this.player2Object.getTotalPower()).toBe(1);
                 });
             });
 
-            describe('when winning against the same rival twice', function() {
-                beforeEach(function() {
+            describe('when winning against the same rival twice', function () {
+                beforeEach(function () {
                     // Challenge 1
                     this.player1.clickPrompt('Military');
                     this.player1.clickPrompt('player2');
@@ -129,17 +127,18 @@ describe('melee titles', function() {
                     this.player1.clickPrompt('Apply Claim');
                 });
 
-                it('should only give the bonus once per round per opponent', function() {
+                it('should only give the bonus once per round per opponent', function () {
                     expect(this.player1Object.getTotalPower()).toBe(1);
                 });
             });
         });
 
-        describe('supporters', function() {
-            beforeEach(function() {
+        describe('supporters', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('stark', [
                     'A Noble Cause',
-                    'Hedge Knight', 'Wildling Horde'
+                    'Hedge Knight',
+                    'Wildling Horde'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
@@ -165,11 +164,11 @@ describe('melee titles', function() {
                 this.player1.clickPrompt('Military');
             });
 
-            it('disallows challenges against titles you support', function() {
+            it('disallows challenges against titles you support', function () {
                 expect(this.player1).not.toHavePromptButton('player2');
             });
 
-            it('allows challenges against titles that support you', function() {
+            it('allows challenges against titles that support you', function () {
                 expect(this.player1).toHavePromptButton('player3');
             });
         });

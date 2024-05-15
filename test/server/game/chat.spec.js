@@ -1,7 +1,7 @@
-const Game = require('../../../server/game/game.js');
+import Game from '../../../server/game/game.js';
 
-describe('Game', function() {
-    beforeEach(function() {
+describe('Game', function () {
+    beforeEach(function () {
         this.gameService = jasmine.createSpyObj('gameService', ['save']);
         this.game = new Game({ owner: {} }, { gameService: this.gameService });
 
@@ -16,75 +16,91 @@ describe('Game', function() {
         spyOn(this.gameChat, 'addChatMessage');
     });
 
-    describe('chat()', function() {
-        describe('when called by a player not in the game', function() {
-            it('should not add any chat messages', function() {
+    describe('chat()', function () {
+        describe('when called by a player not in the game', function () {
+            it('should not add any chat messages', function () {
                 this.game.chat('notinthegame', 'Test Message');
 
                 expect(this.gameChat.addChatMessage).not.toHaveBeenCalled();
             });
         });
 
-        describe('when called by a player in the game', function() {
-            describe('and the message is a command', function() {
-                beforeEach(function() {
+        describe('when called by a player in the game', function () {
+            describe('and the message is a command', function () {
+                beforeEach(function () {
                     this.chatCommands.executeCommand.and.returnValue(true);
 
                     this.game.chat(this.player.name, '/this is a command');
                 });
 
-                it('should execute the command', function() {
-                    expect(this.chatCommands.executeCommand).toHaveBeenCalledWith(this.player, '/this', ['/this', 'is', 'a', 'command']);
+                it('should execute the command', function () {
+                    expect(this.chatCommands.executeCommand).toHaveBeenCalledWith(
+                        this.player,
+                        '/this',
+                        ['/this', 'is', 'a', 'command']
+                    );
                 });
 
-                it('should not add any chat messages', function() {
+                it('should not add any chat messages', function () {
                     expect(this.gameChat.addChatMessage).not.toHaveBeenCalled();
                 });
             });
 
-            describe('and the message is a not a valid command', function() {
-                beforeEach(function() {
+            describe('and the message is a not a valid command', function () {
+                beforeEach(function () {
                     this.chatCommands.executeCommand.and.returnValue(false);
 
                     this.game.chat(this.player.name, 'this is a message');
                 });
 
-                it('should add the chat messages', function() {
-                    expect(this.gameChat.addChatMessage).toHaveBeenCalledWith(jasmine.any(String), this.player, 'this is a message');
+                it('should add the chat messages', function () {
+                    expect(this.gameChat.addChatMessage).toHaveBeenCalledWith(
+                        jasmine.any(String),
+                        this.player,
+                        'this is a message'
+                    );
                 });
             });
         });
 
-        describe('when called by a spectator in the game', function() {
-            beforeEach(function() {
+        describe('when called by a spectator in the game', function () {
+            beforeEach(function () {
                 this.player.isSpectator.and.returnValue(true);
             });
 
-            describe('and the message is a command', function() {
-                beforeEach(function() {
+            describe('and the message is a command', function () {
+                beforeEach(function () {
                     this.chatCommands.executeCommand.and.returnValue(true);
 
                     this.game.chat(this.player.name, '/this is a command');
                 });
 
-                it('should not execute the command', function() {
+                it('should not execute the command', function () {
                     expect(this.chatCommands.executeCommand).not.toHaveBeenCalled();
                 });
 
-                it('should add it as a chat messages', function() {
-                    expect(this.gameChat.addChatMessage).toHaveBeenCalledWith(jasmine.any(String), this.player, '/this is a command');
+                it('should add it as a chat messages', function () {
+                    expect(this.gameChat.addChatMessage).toHaveBeenCalledWith(
+                        jasmine.any(String),
+                        this.player,
+                        '/this is a command'
+                    );
                 });
             });
 
-            describe('and the message is a not a valid command', function() {
-                beforeEach(function() {
+            describe('and the message is a not a valid command', function () {
+                beforeEach(function () {
                     this.chatCommands.executeCommand.and.returnValue(false);
 
                     this.game.chat(this.player.name, 'this is a message');
                 });
 
-                it('should add the chat messages', function() {
-                    expect(this.gameChat.addChatMessage).toHaveBeenCalledWith(jasmine.any(String), this.player, 'this is a message');
+                it('should add the chat messages', function () {
+                    expect(this.gameChat.addChatMessage).toHaveBeenCalledWith(
+                        jasmine.any(String),
+                        this.player,
+                        'this is a message'
+                    );
                 });
             });
         });

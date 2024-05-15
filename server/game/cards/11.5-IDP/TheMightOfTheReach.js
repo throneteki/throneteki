@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class TheMightOfTheReach extends DrawCard {
     setupCardAbilities() {
@@ -6,11 +6,16 @@ class TheMightOfTheReach extends DrawCard {
             title: 'Give +10 STR to participating character',
             phase: 'challenge',
             target: {
-                cardCondition: card => card.getType() === 'character' && card.isParticipating()
+                cardCondition: (card) => card.getType() === 'character' && card.isParticipating()
             },
-            handler: context => {
-                this.game.addMessage('{0} plays {1} to give +10 STR to {2} until the end of the challenge', context.player, this, context.target);
-                this.untilEndOfChallenge(ability => ({
+            handler: (context) => {
+                this.game.addMessage(
+                    '{0} plays {1} to give +10 STR to {2} until the end of the challenge',
+                    context.player,
+                    this,
+                    context.target
+                );
+                this.untilEndOfChallenge((ability) => ({
                     match: context.target,
                     effect: ability.effects.modifyStrength(10)
                 }));
@@ -21,4 +26,4 @@ class TheMightOfTheReach extends DrawCard {
 
 TheMightOfTheReach.code = '11084';
 
-module.exports = TheMightOfTheReach;
+export default TheMightOfTheReach;

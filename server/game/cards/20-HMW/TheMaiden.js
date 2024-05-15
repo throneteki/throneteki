@@ -1,18 +1,18 @@
-const PlotCard = require('../../plotcard');
+import PlotCard from '../../plotcard.js';
 
 class TheMaiden extends PlotCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             location: 'any',
             condition: () => this.location === 'revealed plots',
-            match: card => card === this.controller.activePlot,
+            match: (card) => card === this.controller.activePlot,
             effect: ability.effects.modifyInitiative(2)
         });
-        
+
         this.persistentEffect({
             location: 'any',
             condition: () => this.location === 'revealed plots',
-            match: card => card === this.controller.activePlot && card.hasTrait('The Seven'),
+            match: (card) => card === this.controller.activePlot && card.hasTrait('The Seven'),
             effect: ability.effects.modifyReserve(2)
         });
     }
@@ -20,4 +20,4 @@ class TheMaiden extends PlotCard {
 
 TheMaiden.code = '20056';
 
-module.exports = TheMaiden;
+export default TheMaiden;

@@ -1,5 +1,5 @@
-const GameAction = require('./GameAction');
-const RevealCards = require('./RevealCards');
+import GameAction from './GameAction.js';
+import RevealCards from './RevealCards.js';
 
 class RevealTopCards extends GameAction {
     constructor() {
@@ -8,7 +8,7 @@ class RevealTopCards extends GameAction {
     message({ amount = 1, player, context }) {
         player = player || context.player;
         const cards = player.drawDeck.slice(0, amount);
-        return RevealCards.message({ player, context: {...context, revealed: cards } });
+        return RevealCards.message({ player, context: { ...context, revealed: cards } });
     }
 
     canChangeGameState({ amount = 1, player, context }) {
@@ -16,11 +16,27 @@ class RevealTopCards extends GameAction {
         return amount > 0 && player.drawDeck.length >= amount;
     }
 
-    createEvent({ amount = 1, player, whileRevealed, revealWithMessage = true, highlight = true, source, context }) {
+    createEvent({
+        amount = 1,
+        player,
+        whileRevealed,
+        revealWithMessage = true,
+        highlight = true,
+        source,
+        context
+    }) {
         player = player || context.player;
         const cards = player.drawDeck.slice(0, amount);
-        return RevealCards.createEvent({ cards, player, whileRevealed, revealWithMessage, highlight, source, context });
+        return RevealCards.createEvent({
+            cards,
+            player,
+            whileRevealed,
+            revealWithMessage,
+            highlight,
+            source,
+            context
+        });
     }
 }
 
-module.exports = new RevealTopCards();
+export default new RevealTopCards();

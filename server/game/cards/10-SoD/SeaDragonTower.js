@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class SeaDragonTower extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,16 +7,22 @@ class SeaDragonTower extends DrawCard {
             phase: 'challenge',
             cost: ability.costs.kneelSelf(),
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character'
+                cardCondition: (card) =>
+                    card.location === 'play area' && card.getType() === 'character'
             },
-            handler: context => {
-                this.untilEndOfPhase(ability => ({
+            handler: (context) => {
+                this.untilEndOfPhase((ability) => ({
                     match: context.target,
                     effect: ability.effects.addIcon('power')
                 }));
 
-                this.game.addMessage('{0} kneels {1} to give a {2} icon to {3}',
-                    context.player, this, 'power', context.target);
+                this.game.addMessage(
+                    '{0} kneels {1} to give a {2} icon to {3}',
+                    context.player,
+                    this,
+                    'power',
+                    context.target
+                );
             }
         });
     }
@@ -24,4 +30,4 @@ class SeaDragonTower extends DrawCard {
 
 SeaDragonTower.code = '10026';
 
-module.exports = SeaDragonTower;
+export default SeaDragonTower;

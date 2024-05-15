@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class DriftwoodCudgel extends DrawCard {
     setupCardAbilities(ability) {
@@ -10,20 +10,26 @@ class DriftwoodCudgel extends DrawCard {
 
         this.interrupt({
             when: {
-                onCharacterKilled: event => event.card === this.parent
+                onCharacterKilled: (event) => event.card === this.parent
             },
             target: {
                 type: 'select',
-                cardCondition: card =>
-                    card.location === 'play area' && card.getType() === 'character' &&
-                    card !== this.parent && this.controller.canAttach(this, card)
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    card !== this.parent &&
+                    this.controller.canAttach(this, card)
             },
-            handler: context => {
+            handler: (context) => {
                 this.controller.attach(this.controller, this, context.target);
                 context.target.modifyPower(1);
 
-                this.game.addMessage('{0} uses {1} to attach {1} to {2} and have it gain 1 power',
-                    this.controller, this, context.target);
+                this.game.addMessage(
+                    '{0} uses {1} to attach {1} to {2} and have it gain 1 power',
+                    this.controller,
+                    this,
+                    context.target
+                );
             },
             limit: ability.limit.perPhase(1)
         });
@@ -32,4 +38,4 @@ class DriftwoodCudgel extends DrawCard {
 
 DriftwoodCudgel.code = '08112';
 
-module.exports = DriftwoodCudgel;
+export default DriftwoodCudgel;

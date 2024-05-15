@@ -3,7 +3,8 @@ describe('Fear Cuts Deeper Than Swords', function () {
         beforeEach(function () {
             const deck1 = this.buildDeck('tyrell', [
                 'A Noble Cause',
-                'Tumblestone Knight', 'Fear Cuts Deeper Than Swords'
+                'Tumblestone Knight',
+                'Fear Cuts Deeper Than Swords'
             ]);
 
             const deck2 = this.buildDeck('tyrell', [
@@ -85,7 +86,7 @@ describe('Fear Cuts Deeper Than Swords', function () {
                 this.player1.clickCard(this.knight);
 
                 this.completeMarshalPhase();
-                
+
                 this.player2.clickPrompt('power');
                 this.player2.clickCard(this.wendamyr, 'play area');
                 this.player2.clickPrompt('Done');

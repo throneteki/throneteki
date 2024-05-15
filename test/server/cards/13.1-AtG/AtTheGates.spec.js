@@ -1,9 +1,10 @@
-describe('At The Gates', function() {
-    integration(function() {
-        describe('vs Varys Riddle + Gates of the Moon', function() {
-            beforeEach(function() {
+describe('At The Gates', function () {
+    integration(function () {
+        describe('vs Varys Riddle + Gates of the Moon', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('targaryen', [
-                    'At the Gates', 'Varys\'s Riddle',
+                    'At the Gates',
+                    "Varys's Riddle",
                     'Gates of the Moon'
                 ]);
                 this.player1.selectDeck(deck);
@@ -21,7 +22,7 @@ describe('At The Gates', function() {
                 this.player2.dragCard(this.gates2, 'draw deck');
 
                 this.player1.selectPlot('At the Gates');
-                this.player2.selectPlot('Varys\'s Riddle');
+                this.player2.selectPlot("Varys's Riddle");
                 this.selectFirstPlayer(this.player1);
                 this.selectPlotOrder(this.player1);
 
@@ -30,16 +31,19 @@ describe('At The Gates', function() {
                 this.player2.clickCard(this.gates2);
             });
 
-            it('modifies income correctly', function() {
+            it('modifies income correctly', function () {
                 expect(this.player1Object.getTotalIncome()).toBe(7);
                 expect(this.player2Object.getTotalIncome()).toBe(8);
             });
         });
 
-        describe('w/ Pulling the Strings', function() {
-            beforeEach(function() {
+        describe('w/ Pulling the Strings', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('targaryen', [
-                    'At the Gates', 'Pulling the Strings', 'A Noble Cause', 'City of Spiders',
+                    'At the Gates',
+                    'Pulling the Strings',
+                    'A Noble Cause',
+                    'City of Spiders',
                     'Gates of the Moon'
                 ]);
                 this.player1.selectDeck(deck);
@@ -60,8 +64,8 @@ describe('At The Gates', function() {
                 this.player2.dragCard(this.atTheGates, 'revealed plots');
             });
 
-            describe('when there is no City plot in your used pile', function() {
-                beforeEach(function() {
+            describe('when there is no City plot in your used pile', function () {
+                beforeEach(function () {
                     this.player1.selectPlot('Pulling the Strings');
                     this.player2.selectPlot('A Noble Cause');
                     this.selectFirstPlayer(this.player1);
@@ -71,13 +75,13 @@ describe('At The Gates', function() {
                     this.player1.clickCard(this.limitedCard);
                 });
 
-                it('puts the card into play', function() {
+                it('puts the card into play', function () {
                     expect(this.limitedCard.location).toBe('play area');
                 });
             });
 
-            describe('when there is a City plot in your used pile', function() {
-                beforeEach(function() {
+            describe('when there is a City plot in your used pile', function () {
+                beforeEach(function () {
                     const ownCityPlot = this.player1.findCardByName('City of Spiders');
                     this.player1.dragCard(ownCityPlot, 'revealed plots');
 
@@ -90,7 +94,7 @@ describe('At The Gates', function() {
                     this.player1.clickCard(this.limitedCard);
                 });
 
-                it('puts the card into hand', function() {
+                it('puts the card into hand', function () {
                     expect(this.limitedCard.location).toBe('hand');
                 });
             });

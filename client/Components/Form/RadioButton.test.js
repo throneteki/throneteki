@@ -11,7 +11,6 @@ describe('The RadioButton component', () => {
     });
 
     describe('when the selected property is set', () => {
-
         beforeEach(() => {
             wrapper = shallow(<RadioButton selected />);
         });
@@ -35,7 +34,7 @@ describe('The RadioButton component', () => {
         const onClick = jest.fn();
 
         beforeEach(() => {
-            wrapper = shallow(<RadioButton onClick={ onClick }/>);
+            wrapper = shallow(<RadioButton onClick={onClick} />);
 
             wrapper.find('input').simulate('click');
         });

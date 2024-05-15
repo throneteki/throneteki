@@ -1,18 +1,24 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class ObellaSand extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCharacterKilled: event => event.card === this && this.isApplyingClaim('military'),
-                onCardDiscarded: event => event.card === this && this.isApplyingClaim('intrigue')
+                onCharacterKilled: (event) =>
+                    event.card === this && this.isApplyingClaim('military'),
+                onCardDiscarded: (event) => event.card === this && this.isApplyingClaim('intrigue')
             },
             location: ['dead pile', 'discard pile'],
-            handler: context => {
+            handler: (context) => {
                 let player = context.player;
                 let opponent = this.game.currentChallenge.winner;
-                if(opponent !== player && opponent.faction.power > 0) {
-                    this.game.addMessage('{0} uses {1} to move 1 power from {2}\'s faction card to their own', player, this, opponent);
+                if (opponent !== player && opponent.faction.power > 0) {
+                    this.game.addMessage(
+                        "{0} uses {1} to move 1 power from {2}'s faction card to their own",
+                        player,
+                        this,
+                        opponent
+                    );
                     this.game.movePower(opponent.faction, player.faction, 1);
                 }
 
@@ -35,4 +41,4 @@ class ObellaSand extends DrawCard {
 
 ObellaSand.code = '10010';
 
-module.exports = ObellaSand;
+export default ObellaSand;

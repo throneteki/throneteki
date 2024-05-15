@@ -1,21 +1,25 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class PoisonedCoin extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             max: ability.limit.perChallenge(1),
             when: {
-                afterChallenge: event => this.controller === event.challenge.winner &&
+                afterChallenge: (event) =>
+                    this.controller === event.challenge.winner &&
                     event.challenge.isUnopposed() &&
-                    event.challenge.attackers.some(card => card.isShadow() && card.isAttacking())
+                    event.challenge.attackers.some((card) => card.isShadow() && card.isAttacking())
             },
             target: {
                 type: 'select',
-                cardCondition: card => card.location === 'play area' && card.controller === this.game.currentChallenge.loser &&
-                    card.getType() === 'character' && !card.isShadow()
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.controller === this.game.currentChallenge.loser &&
+                    card.getType() === 'character' &&
+                    !card.isShadow()
             },
-            handler: context => {
-                this.atEndOfPhase(ability => ({
+            handler: (context) => {
+                this.atEndOfPhase((ability) => ({
                     match: context.target,
                     effect: ability.effects.poison
                 }));
@@ -26,4 +30,4 @@ class PoisonedCoin extends DrawCard {
 
 PoisonedCoin.code = '11078';
 
-module.exports = PoisonedCoin;
+export default PoisonedCoin;

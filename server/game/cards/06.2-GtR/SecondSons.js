@@ -1,14 +1,14 @@
-const DrawCard = require('../../drawcard.js');
-const {Tokens} = require('../../Constants');
+import DrawCard from '../../drawcard.js';
+import { Tokens } from '../../Constants/index.js';
 
 class SecondSons extends DrawCard {
     setupCardAbilities() {
         this.forcedInterrupt({
             when: {
-                onPhaseEnded: event => event.phase === 'challenge'
+                onPhaseEnded: (event) => event.phase === 'challenge'
             },
             handler: () => {
-                if(!this.hasToken(Tokens.gold)) {
+                if (!this.hasToken(Tokens.gold)) {
                     this.sacrifice();
                     return;
                 }
@@ -44,4 +44,4 @@ class SecondSons extends DrawCard {
 
 SecondSons.code = '06033';
 
-module.exports = SecondSons;
+export default SecondSons;

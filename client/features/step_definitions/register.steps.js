@@ -24,7 +24,9 @@ When('I enter the second password: {string}', async function (password) {
 });
 
 When('I enter valid registration data', async function () {
-    await this.driver.findElement(By.id('username')).sendKeys(faker.internet.userName().replace('.', '_'));
+    await this.driver
+        .findElement(By.id('username'))
+        .sendKeys(faker.internet.userName().replace('.', '_'));
     await this.driver.findElement(By.id('email')).sendKeys(faker.internet.email());
     let password = faker.internet.password();
     await this.driver.findElement(By.id('password')).sendKeys(password);
@@ -60,7 +62,10 @@ Then('the password 1 error {string} should display', async function (expectedMes
 });
 
 Then('I should see the {string} alert', async function (expectedMessage) {
-    let alert = await this.driver.wait(until.elementLocated(By.css('.alert span:nth-child(2)')), 5000);
+    let alert = await this.driver.wait(
+        until.elementLocated(By.css('.alert span:nth-child(2)')),
+        5000
+    );
     let message = await alert.getText();
 
     assert.equal(message.trim(), expectedMessage);

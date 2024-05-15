@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class CageOfRavens extends DrawCard {
     setupCardAbilities(ability) {
@@ -9,13 +9,21 @@ class CageOfRavens extends DrawCard {
             cost: ability.costs.kneelSelf(),
             target: {
                 type: 'select',
-                cardCondition: card => card.location === 'hand' && card.controller === this.controller &&
-                                       card.getPrintedCost() <= 1 && this.controller.canPutIntoPlay(card)
+                cardCondition: (card) =>
+                    card.location === 'hand' &&
+                    card.controller === this.controller &&
+                    card.getPrintedCost() <= 1 &&
+                    this.controller.canPutIntoPlay(card)
             },
-            handler: context => {
-                this.game.addMessage('{0} kneels {1} to put {2} into play', this.controller, this, context.target);
+            handler: (context) => {
+                this.game.addMessage(
+                    '{0} kneels {1} to put {2} into play',
+                    this.controller,
+                    this,
+                    context.target
+                );
                 this.game.resolveGameAction(
-                    GameActions.putIntoPlay(context => ({
+                    GameActions.putIntoPlay((context) => ({
                         player: context.player,
                         card: context.target
                     })),
@@ -28,4 +36,4 @@ class CageOfRavens extends DrawCard {
 
 CageOfRavens.code = '15034';
 
-module.exports = CageOfRavens;
+export default CageOfRavens;

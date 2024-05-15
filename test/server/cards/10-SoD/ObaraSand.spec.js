@@ -1,14 +1,14 @@
-describe('Obara Sand (SoD)', function() {
-    integration(function() {
-        beforeEach(function() {
+describe('Obara Sand (SoD)', function () {
+    integration(function () {
+        beforeEach(function () {
             const deck1 = this.buildDeck('martell', [
                 'A Noble Cause',
-                'Obara Sand (SoD)', 'Arianne Martell (Core)', 'Bastard Daughter', 'Southron Messenger'
+                'Obara Sand (SoD)',
+                'Arianne Martell (Core)',
+                'Bastard Daughter',
+                'Southron Messenger'
             ]);
-            const deck2 = this.buildDeck('martell', [
-                'A Noble Cause',
-                'House Dayne Knight'
-            ]);
+            const deck2 = this.buildDeck('martell', ['A Noble Cause', 'House Dayne Knight']);
 
             this.player1.selectDeck(deck1);
             this.player2.selectDeck(deck2);
@@ -30,8 +30,8 @@ describe('Obara Sand (SoD)', function() {
             this.completeMarshalPhase();
         });
 
-        describe('when Obara is used multiple times', function() {
-            beforeEach(function() {
+        describe('when Obara is used multiple times', function () {
+            beforeEach(function () {
                 // Return Obara to hand to bring in a character
                 this.player1.clickMenu(this.obara, 'Put character into play');
                 this.player1.clickCard(this.obara);
@@ -49,7 +49,7 @@ describe('Obara Sand (SoD)', function() {
                 this.player1.clickCard(this.character2);
             });
 
-            it('should put the second character into play', function() {
+            it('should put the second character into play', function () {
                 expect(this.character2.location).toBe('play area');
             });
         });

@@ -27,21 +27,28 @@ export function receiveGameState(game, username) {
         let user = state.account.user;
         let previousGameState = state.lobby.currentGame;
 
-        if(user && previousGameState) {
-            if(hasTimer(game, user.username) && !hasTimer(previousGameState, user.username) && user.settings.windowTimer !== 0) {
-                let timerProps = game.players[user.username].buttons.find(button => button.timer);
+        if (user && previousGameState) {
+            if (
+                hasTimer(game, user.username) &&
+                !hasTimer(previousGameState, user.username) &&
+                user.settings.windowTimer !== 0
+            ) {
+                let timerProps = game.players[user.username].buttons.find((button) => button.timer);
                 dispatch(actions.startAbilityTimer(user.settings.windowTimer, timerProps));
-            } else if(!hasTimer(game, user.username) && hasTimer(previousGameState, user.username)) {
+            } else if (
+                !hasTimer(game, user.username) &&
+                hasTimer(previousGameState, user.username)
+            ) {
                 dispatch(actions.stopAbilityTimer());
             }
         }
 
-        if(user) {
+        if (user) {
             let previousRookery = getRookeryPrompt(previousGameState, user.username);
             let currentRookery = getRookeryPrompt(game, user.username);
-            if(!previousRookery && currentRookery) {
+            if (!previousRookery && currentRookery) {
                 dispatch(actions.openRookeryPrompt(currentRookery));
-            } else if(previousRookery && !currentRookery) {
+            } else if (previousRookery && !currentRookery) {
                 dispatch(actions.closeRookeryPrompt());
             }
         }
@@ -56,14 +63,14 @@ export function receiveGameState(game, username) {
 
 function hasTimer(game, username) {
     let player = game.players[username];
-    let buttons = player && player.buttons || [];
-    return buttons.some(button => button.timer);
+    let buttons = (player && player.buttons) || [];
+    return buttons.some((button) => button.timer);
 }
 
 function getRookeryPrompt(game, username) {
-    let player = game && game.players[username] || {};
-    let controls = player && player.controls || [];
-    return controls.find(control => control.type === 'rookery');
+    let player = (game && game.players[username]) || {};
+    let controls = (player && player.controls) || [];
+    return controls.find((control) => control.type === 'rookery');
 }
 
 export function clearGameState() {
@@ -158,7 +165,7 @@ export function connectGameSocket(url, name) {
         });
 
         gameSocket.on('connect_error', (err) => {
-            if(state.lobby.socket) {
+            if (state.lobby.socket) {
                 state.lobby.socket.emit('connectfailed');
             }
 
@@ -181,8 +188,10 @@ export function connectGameSocket(url, name) {
             dispatch(gameSocketConnectFailed());
         });
 
-        gameSocket.on('gamestate', game => {
-            dispatch(receiveGameState(game, state.account.user ? state.account.user.username : undefined));
+        gameSocket.on('gamestate', (game) => {
+            dispatch(
+                receiveGameState(game, state.account.user ? state.account.user.username : undefined)
+            );
         });
 
         gameSocket.on('cleargamestate', () => {
@@ -208,7 +217,7 @@ export function closeGameSocket() {
     return (dispatch, getState) => {
         let state = getState();
 
-        if(state.games.socket) {
+        if (state.games.socket) {
             state.games.socket.gameClosing = true;
             state.games.socket.close();
         }
@@ -227,7 +236,7 @@ export function startGame(id) {
     return (dispatch, getState) => {
         let state = getState();
 
-        if(state.lobby.socket) {
+        if (state.lobby.socket) {
             state.lobby.socket.emit('startgame', id);
         }
 
@@ -239,7 +248,7 @@ export function leaveGame(id) {
     return (dispatch, getState) => {
         let state = getState();
 
-        if(state.lobby.socket) {
+        if (state.lobby.socket) {
             state.lobby.socket.emit('leavegame', id);
         }
 

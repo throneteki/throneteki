@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class TheShadowCity extends DrawCard {
     setupCardAbilities(ability) {
@@ -13,13 +13,16 @@ class TheShadowCity extends DrawCard {
             title: 'Draw 2 cards',
             phase: 'challenge',
             condition: () => this.controller.canDraw(),
-            cost: [
-                ability.costs.kneelSelf(),
-                ability.costs.discardFromShadows()
-            ],
-            handler: context => {
+            cost: [ability.costs.kneelSelf(), ability.costs.discardFromShadows()],
+            handler: (context) => {
                 let numOfCardsDrawn = this.controller.drawCardsToHand(2).length;
-                this.game.addMessage('{0} kneels {1} and discards {2} from shadows to draw {3} cards', this.controller, this, context.costs.discardFromShadows, numOfCardsDrawn);
+                this.game.addMessage(
+                    '{0} kneels {1} and discards {2} from shadows to draw {3} cards',
+                    this.controller,
+                    this,
+                    context.costs.discardFromShadows,
+                    numOfCardsDrawn
+                );
             }
         });
     }
@@ -27,4 +30,4 @@ class TheShadowCity extends DrawCard {
 
 TheShadowCity.code = '11017';
 
-module.exports = TheShadowCity;
+export default TheShadowCity;

@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard');
+import PlotCard from '../../plotcard.js';
 
 class ThePaleMare extends PlotCard {
     setupCardAbilities() {
@@ -9,23 +9,39 @@ class ThePaleMare extends PlotCard {
                 ifAble: true,
                 activePromptTitle: 'Select character(s)',
                 maxStat: () => 10,
-                cardStat: card => card.getPrintedCost(),
-                cardCondition: (card, context) => card.location === 'play area' && card.controller === context.choosingPlayer && card.getType() === 'character'
+                cardStat: (card) => card.getPrintedCost(),
+                cardCondition: (card, context) =>
+                    card.location === 'play area' &&
+                    card.controller === context.choosingPlayer &&
+                    card.getType() === 'character'
             },
-            handler: context => {
+            handler: (context) => {
                 let toKill = [];
 
-                for(let selection of context.targets.selections) {
+                for (let selection of context.targets.selections) {
                     let player = selection.choosingPlayer;
-                    let charactersInPlay = player.filterCardsInPlay(card => card.getType() === 'character');
+                    let charactersInPlay = player.filterCardsInPlay(
+                        (card) => card.getType() === 'character'
+                    );
                     let selectedCards = selection.value || [];
-                    let playerSpecificToKill = charactersInPlay.filter(card => !selectedCards.includes(card));
+                    let playerSpecificToKill = charactersInPlay.filter(
+                        (card) => !selectedCards.includes(card)
+                    );
                     toKill = toKill.concat(playerSpecificToKill);
 
-                    if(playerSpecificToKill.length === 0) {
-                        this.game.addMessage('{0} does not kill any characters for {1}', player, this);
+                    if (playerSpecificToKill.length === 0) {
+                        this.game.addMessage(
+                            '{0} does not kill any characters for {1}',
+                            player,
+                            this
+                        );
                     } else {
-                        this.game.addMessage('{0} kills {1} for {2}', player, playerSpecificToKill, this);
+                        this.game.addMessage(
+                            '{0} kills {1} for {2}',
+                            player,
+                            playerSpecificToKill,
+                            this
+                        );
                     }
                 }
 
@@ -37,4 +53,4 @@ class ThePaleMare extends PlotCard {
 
 ThePaleMare.code = '00008';
 
-module.exports = ThePaleMare;
+export default ThePaleMare;

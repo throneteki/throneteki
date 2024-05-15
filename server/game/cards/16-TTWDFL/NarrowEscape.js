@@ -1,6 +1,6 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
-const GenericTracker = require('../../EventTrackers/GenericTracker');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
+import GenericTracker from '../../EventTrackers/GenericTracker.js';
 
 class NarrowEscape extends DrawCard {
     setupCardAbilities(ability) {
@@ -13,9 +13,9 @@ class NarrowEscape extends DrawCard {
                 format: '{player} plays {source} to put {characters} into play',
                 args: { characters: () => this.getEligibleCharacters() }
             },
-            handler: context => {
+            handler: (context) => {
                 const opponents = this.game.getOpponentsInFirstPlayerOrder(context.player);
-                this.remainingOpponents = opponents.filter(opponent => opponent.hand.length > 1);
+                this.remainingOpponents = opponents.filter((opponent) => opponent.hand.length > 1);
                 this.context = context;
                 this.promptForCancel(context);
             },
@@ -24,7 +24,7 @@ class NarrowEscape extends DrawCard {
     }
 
     promptForCancel() {
-        if(this.remainingOpponents.length === 0) {
+        if (this.remainingOpponents.length === 0) {
             this.resolvePutIntoPlay();
             return true;
         }
@@ -45,11 +45,15 @@ class NarrowEscape extends DrawCard {
     }
 
     cancelResolution(opponent) {
-        this.game.addMessage('{0} discards their hand to cancel the effects of {1}', opponent, this);
+        this.game.addMessage(
+            '{0} discards their hand to cancel the effects of {1}',
+            opponent,
+            this
+        );
         this.game.resolveGameAction(
-            GameActions.simultaneously(() => opponent.hand.map(
-                card => GameActions.discardCard({ card })
-            )),
+            GameActions.simultaneously(() =>
+                opponent.hand.map((card) => GameActions.discardCard({ card }))
+            ),
             this.context
         );
         return true;
@@ -58,8 +62,8 @@ class NarrowEscape extends DrawCard {
     resolvePutIntoPlay() {
         this.game.resolveGameAction(
             GameActions.simultaneously(() => [
-                ...this.getEligibleCharacters().map(
-                    card => GameActions.putIntoPlay({
+                ...this.getEligibleCharacters().map((card) =>
+                    GameActions.putIntoPlay({
                         card,
                         player: card.owner
                     })
@@ -70,12 +74,21 @@ class NarrowEscape extends DrawCard {
     }
 
     getEligibleCharacters() {
-        const eligibleKilled = this.killTracker.events.map(event => event.card).filter(card => card.location === 'dead pile');
-        const eligibleDiscards = this.discardTracker.events.filter(event => event.originalLocation === 'play area' && event.card.location === 'discard pile').map(event => event.card);
-        return eligibleKilled.concat(eligibleDiscards).filter(card => card.owner.canPutIntoPlay(card));
+        const eligibleKilled = this.killTracker.events
+            .map((event) => event.card)
+            .filter((card) => card.location === 'dead pile');
+        const eligibleDiscards = this.discardTracker.events
+            .filter(
+                (event) =>
+                    event.originalLocation === 'play area' && event.card.location === 'discard pile'
+            )
+            .map((event) => event.card);
+        return eligibleKilled
+            .concat(eligibleDiscards)
+            .filter((card) => card.owner.canPutIntoPlay(card));
     }
 }
 
 NarrowEscape.code = '16024';
 
-module.exports = NarrowEscape;
+export default NarrowEscape;

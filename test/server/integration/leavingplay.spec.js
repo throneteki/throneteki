@@ -1,14 +1,15 @@
-describe('leaving play', function() {
-    integration(function() {
-        describe('when a lasting effect has been applied to the card', function() {
-            beforeEach(function() {
+describe('leaving play', function () {
+    integration(function () {
+        describe('when a lasting effect has been applied to the card', function () {
+            beforeEach(function () {
                 const deck1 = this.buildDeck('thenightswatch', [
                     'Trading with the Pentoshi',
                     'Old Bear Mormont (Core)'
                 ]);
                 const deck2 = this.buildDeck('baratheon', [
                     'Trading with the Pentoshi',
-                    'Drogon (Core)', 'Dracarys!'
+                    'Drogon (Core)',
+                    'Dracarys!'
                 ]);
                 this.player1.selectDeck(deck1);
                 this.player2.selectDeck(deck2);
@@ -42,16 +43,18 @@ describe('leaving play', function() {
                 this.player1.dragCard(this.character, 'play area');
             });
 
-            it('should reset the lasting effect', function() {
+            it('should reset the lasting effect', function () {
                 expect(this.character.getStrength()).toBe(6);
             });
         });
 
-        describe('when there is a cancel interrupt to the card leaving play', function() {
-            beforeEach(function() {
+        describe('when there is a cancel interrupt to the card leaving play', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('thenightswatch', [
-                    'A Game of Thrones', 'Political Disaster',
-                    'The Wall (Core)', 'Improved Fortifications'
+                    'A Game of Thrones',
+                    'Political Disaster',
+                    'The Wall (Core)',
+                    'Improved Fortifications'
                 ]);
 
                 this.player1.selectDeck(deck);
@@ -81,13 +84,13 @@ describe('leaving play', function() {
                 // Player 2 does not have any locations so no action is taken
             });
 
-            it('should prompt to use the interrupt and not have the card leave play immediately', function() {
+            it('should prompt to use the interrupt and not have the card leave play immediately', function () {
                 expect(this.player1).toAllowAbilityTrigger('Improved Fortifications');
                 expect(this.location.location).toBe('play area');
                 expect(this.player1Object.cardsInPlay).toContain(this.location);
             });
 
-            it('should stop the card from leaving play once the ability is triggered', function() {
+            it('should stop the card from leaving play once the ability is triggered', function () {
                 this.player1.triggerAbility('Improved Fortifications');
                 expect(this.location.location).toBe('play area');
                 expect(this.player1Object.cardsInPlay).toContain(this.location);
@@ -95,11 +98,13 @@ describe('leaving play', function() {
             });
         });
 
-        describe('when a card ability limit has been reached', function() {
-            beforeEach(function() {
+        describe('when a card ability limit has been reached', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('baratheon', [
                     'Trading with the Pentoshi',
-                    'Melisandre (Core)', 'Dragonstone Faithful', 'Dragonstone Faithful'
+                    'Melisandre (Core)',
+                    'Dragonstone Faithful',
+                    'Dragonstone Faithful'
                 ]);
 
                 this.player1.selectDeck(deck);
@@ -108,7 +113,10 @@ describe('leaving play', function() {
                 this.keepStartingHands();
 
                 this.character = this.player1.findCardByName('Melisandre', 'hand');
-                [this.chud1, this.chud2] = this.player2.filterCardsByName('Dragonstone Faithful', 'hand');
+                [this.chud1, this.chud2] = this.player2.filterCardsByName(
+                    'Dragonstone Faithful',
+                    'hand'
+                );
 
                 this.player2.clickCard(this.chud1);
                 this.player2.clickCard(this.chud2);
@@ -126,7 +134,7 @@ describe('leaving play', function() {
                 this.player1.clickCard(this.character);
             });
 
-            it('should reset after leaving play', function() {
+            it('should reset after leaving play', function () {
                 expect(this.player1).toAllowAbilityTrigger('Melisandre');
             });
         });

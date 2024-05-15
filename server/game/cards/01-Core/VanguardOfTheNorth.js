@@ -1,11 +1,12 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class VanguardOfTheNorth extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => (
-                this.game.getPlayers().some(player => player.activePlot && player.activePlot.hasTrait('War'))
-            ),
+            condition: () =>
+                this.game
+                    .getPlayers()
+                    .some((player) => player.activePlot && player.activePlot.hasTrait('War')),
             match: this,
             effect: ability.effects.doesNotKneelAsAttacker({ challengeType: 'military' })
         });
@@ -14,4 +15,4 @@ class VanguardOfTheNorth extends DrawCard {
 
 VanguardOfTheNorth.code = '01151';
 
-module.exports = VanguardOfTheNorth;
+export default VanguardOfTheNorth;

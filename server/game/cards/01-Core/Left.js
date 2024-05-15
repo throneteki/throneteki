@@ -1,9 +1,9 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Left extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.controller.anyCardsInPlay(card => card.name === 'Right'),
+            condition: () => this.controller.anyCardsInPlay((card) => card.name === 'Right'),
             match: this,
             effect: [
                 ability.effects.modifyStrength(1),
@@ -16,4 +16,4 @@ class Left extends DrawCard {
 
 Left.code = '01179';
 
-module.exports = Left;
+export default Left;

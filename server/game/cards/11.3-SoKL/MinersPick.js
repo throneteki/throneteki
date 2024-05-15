@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class MinersPick extends DrawCard {
     setupCardAbilities(ability) {
@@ -14,4 +14,4 @@ class MinersPick extends DrawCard {
 
 MinersPick.code = '11046';
 
-module.exports = MinersPick;
+export default MinersPick;

@@ -1,5 +1,5 @@
-const GameAction = require('./GameAction');
-const DiscardCard = require('./DiscardCard');
+import GameAction from './GameAction.js';
+import DiscardCard from './DiscardCard.js';
 
 class DiscardTopCards extends GameAction {
     constructor() {
@@ -15,18 +15,25 @@ class DiscardTopCards extends GameAction {
         let params = {
             amount: actualAmount,
             desiredAmount: amount,
-            isFullyResolved: event => event.amount === event.desiredAmount,
+            isFullyResolved: (event) => event.amount === event.desiredAmount,
             player,
             isPillage,
             source
         };
-        return this.event('onTopCardsDiscarded', params, event => {
+        return this.event('onTopCardsDiscarded', params, (event) => {
             event.topCards = event.player.drawDeck.slice(0, event.amount);
-            for(const card of event.topCards) {
-                event.thenAttachEvent(DiscardCard.createEvent({ card, isPillage: event.isPillage, source: event.source, orderable: false }));
+            for (const card of event.topCards) {
+                event.thenAttachEvent(
+                    DiscardCard.createEvent({
+                        card,
+                        isPillage: event.isPillage,
+                        source: event.source,
+                        orderable: false
+                    })
+                );
             }
         });
     }
 }
 
-module.exports = new DiscardTopCards();
+export default new DiscardTopCards();

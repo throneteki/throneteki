@@ -1,28 +1,37 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TheLastOfTheGiants extends DrawCard {
     setupCardAbilities() {
         this.action({
             title: 'Put character into play',
             target: {
-                cardCondition: card => card.location === 'hand' && card.controller === this.controller && card.getType() === 'character' &&
-                                       card.isFaction('neutral') && this.controller.canPutIntoPlay(card)
+                cardCondition: (card) =>
+                    card.location === 'hand' &&
+                    card.controller === this.controller &&
+                    card.getType() === 'character' &&
+                    card.isFaction('neutral') &&
+                    this.controller.canPutIntoPlay(card)
             },
-            handler: context => {
+            handler: (context) => {
                 context.player.putIntoPlay(context.target);
 
-                this.untilEndOfPhase(ability => ({
+                this.untilEndOfPhase((ability) => ({
                     match: context.target,
                     effect: ability.effects.addKeyword('Intimidate')
                 }));
 
-                this.atEndOfPhase(ability => ({
+                this.atEndOfPhase((ability) => ({
                     match: context.target,
                     condition: () => 'play area' === context.target.location,
                     effect: ability.effects.killIfStillInPlay(false)
                 }));
 
-                this.game.addMessage('{0} uses {1} to put {2} into play from their hand', context.player, this, context.target);
+                this.game.addMessage(
+                    '{0} uses {1} to put {2} into play from their hand',
+                    context.player,
+                    this,
+                    context.target
+                );
             }
         });
     }
@@ -30,4 +39,4 @@ class TheLastOfTheGiants extends DrawCard {
 
 TheLastOfTheGiants.code = '07045';
 
-module.exports = TheLastOfTheGiants;
+export default TheLastOfTheGiants;

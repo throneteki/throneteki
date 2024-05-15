@@ -1,17 +1,22 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TheonGreyjoy extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.winner === this.controller &&
+                afterChallenge: (event) =>
+                    event.challenge.winner === this.controller &&
                     this.isParticipating() &&
                     event.challenge.isUnopposed() &&
                     this.allowGameAction('gainPower')
             },
             handler: () => {
                 this.modifyPower(1);
-                this.game.addMessage('{0} gains 1 power on {1} after winning an unopposed challenge', this.controller, this);
+                this.game.addMessage(
+                    '{0} gains 1 power on {1} after winning an unopposed challenge',
+                    this.controller,
+                    this
+                );
             }
         });
     }
@@ -19,4 +24,4 @@ class TheonGreyjoy extends DrawCard {
 
 TheonGreyjoy.code = '01071';
 
-module.exports = TheonGreyjoy;
+export default TheonGreyjoy;

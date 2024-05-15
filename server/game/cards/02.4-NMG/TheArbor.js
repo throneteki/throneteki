@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TheArbor extends DrawCard {
     setupCardAbilities() {
@@ -10,4 +10,4 @@ class TheArbor extends DrawCard {
 
 TheArbor.code = '02064';
 
-module.exports = TheArbor;
+export default TheArbor;

@@ -29,29 +29,54 @@ class ForgotPassword extends React.Component {
     }
 
     render() {
-        let errorBar = this.props.apiSuccess === false ? <AlertPanel type='error' message={ this.props.apiMessage } /> : null;
-        let successBar = this.props.apiSuccess ? <AlertPanel type='success' message='Your request was submitted.  If the username you entered is registered with the site, an email will be sent to the address registered on the account, detailing what to do next.' /> : null;
+        let errorBar =
+            this.props.apiSuccess === false ? (
+                <AlertPanel type='error' message={this.props.apiMessage} />
+            ) : null;
+        let successBar = this.props.apiSuccess ? (
+            <AlertPanel
+                type='success'
+                message='Your request was submitted.  If the username you entered is registered with the site, an email will be sent to the address registered on the account, detailing what to do next.'
+            />
+        ) : null;
 
-        if(this.props.apiSuccess) {
-            return <div className='col-sm-6 col-sm-offset-3'>{ successBar }</div>;
+        if (this.props.apiSuccess) {
+            return <div className='col-sm-6 col-sm-offset-3'>{successBar}</div>;
         }
 
         return (
             <div>
                 <div className='col-sm-6 col-sm-offset-3'>
-                    { errorBar }
-                    { this.props.apiSuccess === false ? null : <AlertPanel type='info' message='To start the password recovery process, please enter your username and click the submit button.' /> }
+                    {errorBar}
+                    {this.props.apiSuccess === false ? null : (
+                        <AlertPanel
+                            type='info'
+                            message='To start the password recovery process, please enter your username and click the submit button.'
+                        />
+                    )}
                     <Panel title='Forgot password'>
-                        <Form name='forgotpassword' buttonClass='col-sm-offset-2 col-sm-3' buttonText='Submit' onSubmit={ this.onSubmit } apiLoading={ this.props.apiLoading }>
+                        <Form
+                            name='forgotpassword'
+                            buttonClass='col-sm-offset-2 col-sm-3'
+                            buttonText='Submit'
+                            onSubmit={this.onSubmit}
+                            apiLoading={this.props.apiLoading}
+                        >
                             <div className='form-group'>
                                 <div className='col-sm-offset-2 col-sm-3'>
-                                    <ReCAPTCHA ref='recaptcha' sitekey='6LfELhMUAAAAAKbD2kLd6OtbsBbrZJFs7grwOREZ' theme='dark' onChange={ this.onCaptchaChange.bind(this) } />
+                                    <ReCAPTCHA
+                                        ref='recaptcha'
+                                        sitekey='6LfELhMUAAAAAKbD2kLd6OtbsBbrZJFs7grwOREZ'
+                                        theme='dark'
+                                        onChange={this.onCaptchaChange.bind(this)}
+                                    />
                                 </div>
                             </div>
                         </Form>
                     </Panel>
                 </div>
-            </div>);
+            </div>
+        );
     }
 }
 
@@ -68,9 +93,15 @@ ForgotPassword.propTypes = {
 
 function mapStateToProps(state) {
     return {
-        apiLoading: state.api.FORGOTPASSWORD_ACCOUNT ? state.api.FORGOTPASSWORD_ACCOUNT.loading : undefined,
-        apiMessage: state.api.FORGOTPASSWORD_ACCOUNT ? state.api.FORGOTPASSWORD_ACCOUNT.message : undefined,
-        apiSuccess: state.api.FORGOTPASSWORD_ACCOUNT ? state.api.FORGOTPASSWORD_ACCOUNT.success : undefined,
+        apiLoading: state.api.FORGOTPASSWORD_ACCOUNT
+            ? state.api.FORGOTPASSWORD_ACCOUNT.loading
+            : undefined,
+        apiMessage: state.api.FORGOTPASSWORD_ACCOUNT
+            ? state.api.FORGOTPASSWORD_ACCOUNT.message
+            : undefined,
+        apiSuccess: state.api.FORGOTPASSWORD_ACCOUNT
+            ? state.api.FORGOTPASSWORD_ACCOUNT.success
+            : undefined,
         socket: state.lobby.socket
     };
 }

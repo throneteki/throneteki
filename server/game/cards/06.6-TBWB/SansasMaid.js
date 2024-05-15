@@ -1,10 +1,10 @@
-const DrawCard = require('../../drawcard.js');
-const {Tokens} = require('../../Constants');
+import DrawCard from '../../drawcard.js';
+import { Tokens } from '../../Constants/index.js';
 
 class SansasMaid extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: card => card.hasTrait('Lady') && card.getType() === 'character',
+            match: (card) => card.hasTrait('Lady') && card.getType() === 'character',
             effect: ability.effects.dynamicStrength(() => this.tokens[Tokens.gold])
         });
     }
@@ -12,4 +12,4 @@ class SansasMaid extends DrawCard {
 
 SansasMaid.code = '06101';
 
-module.exports = SansasMaid;
+export default SansasMaid;

@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class MalleonsTome extends DrawCard {
     setupCardAbilities(ability) {
@@ -9,20 +9,28 @@ class MalleonsTome extends DrawCard {
 
         this.reaction({
             when: {
-                afterChallenge: event =>
+                afterChallenge: (event) =>
                     event.challenge.attackingPlayer === this.controller &&
-                    event.challenge.winner === this.controller && this.parent &&
+                    event.challenge.winner === this.controller &&
+                    this.parent &&
                     this.parent.isAttacking()
             },
-            handler: context => {
-                let message = '{0} plays {1} to look at {2}\'s hand';
+            handler: (context) => {
+                let message = "{0} plays {1} to look at {2}'s hand";
                 let messageArgs = [context.player, this, context.event.challenge.loser];
 
                 this.game.resolveGameAction(
-                    GameActions.lookAtHand({ player: context.player, opponent: context.event.challenge.loser, context })
+                    GameActions.lookAtHand({
+                        player: context.player,
+                        opponent: context.event.challenge.loser,
+                        context
+                    })
                 );
 
-                if(this.parent && this.parent.name === 'Eddard Stark' || this.parent.hasTrait('Maester')) {
+                if (
+                    (this.parent && this.parent.name === 'Eddard Stark') ||
+                    this.parent.hasTrait('Maester')
+                ) {
                     this.parent.controller.standCard(this.parent);
                     message += ' and stand {3}';
                     messageArgs.push(this.parent);
@@ -37,4 +45,4 @@ class MalleonsTome extends DrawCard {
 
 MalleonsTome.code = '13042';
 
-module.exports = MalleonsTome;
+export default MalleonsTome;

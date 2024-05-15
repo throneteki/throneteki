@@ -1,4 +1,4 @@
-const UiPrompt = require('./uiprompt.js');
+import UiPrompt from './uiprompt.js';
 
 class AllPlayerPrompt extends UiPrompt {
     activeCondition(player) {
@@ -10,10 +10,10 @@ class AllPlayerPrompt extends UiPrompt {
     }
 
     isComplete() {
-        return this.game.getPlayers().every(player => {
+        return this.game.getPlayers().every((player) => {
             return this.completionCondition(player);
         });
     }
 }
 
-module.exports = AllPlayerPrompt;
+export default AllPlayerPrompt;

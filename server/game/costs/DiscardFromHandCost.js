@@ -12,4 +12,4 @@ class DiscardFromHandCost {
     }
 }
 
-module.exports = DiscardFromHandCost;
+export default DiscardFromHandCost;

@@ -1,14 +1,18 @@
-describe('Nightfire Visions', function() {
-    integration(function() {
-        describe('plot reveal delayed effect', function() {
-            beforeEach(function() {
+describe('Nightfire Visions', function () {
+    integration(function () {
+        describe('plot reveal delayed effect', function () {
+            beforeEach(function () {
                 const deck1 = this.buildDeck('baratheon', [
-                    'A Noble Cause', 'A Storm of Swords', 'A Game of Thrones',
+                    'A Noble Cause',
+                    'A Storm of Swords',
+                    'A Game of Thrones',
                     { name: 'Fiery Followers', count: 10 },
                     { name: 'Nightfire Visions', count: 10 }
                 ]);
                 const deck2 = this.buildDeck('lannister', [
-                    'A Noble Cause', 'A Storm of Swords', 'A Game of Thrones',
+                    'A Noble Cause',
+                    'A Storm of Swords',
+                    'A Game of Thrones',
                     'Burned Men'
                 ]);
 
@@ -48,27 +52,27 @@ describe('Nightfire Visions', function() {
                 expect(this.player1Object.hand.length).toBe(9);
             });
 
-            describe('when the opponent reveals a plot with that trait', function() {
-                beforeEach(function() {
+            describe('when the opponent reveals a plot with that trait', function () {
+                beforeEach(function () {
                     this.player1.selectPlot('A Storm of Swords');
                     this.player2.selectPlot('A Storm of Swords');
                     this.selectFirstPlayer(this.player1);
                 });
 
-                it('draws cards', function() {
+                it('draws cards', function () {
                     // 9 cards at start of the round + 3 from Vision + 2 from draw phase
                     expect(this.player1Object.hand.length).toBe(14);
                 });
             });
 
-            describe('when the opponent does not reveal a plot with that trait', function() {
-                beforeEach(function() {
+            describe('when the opponent does not reveal a plot with that trait', function () {
+                beforeEach(function () {
                     this.player1.selectPlot('A Storm of Swords');
                     this.player2.selectPlot('A Game of Thrones');
                     this.selectFirstPlayer(this.player1);
                 });
 
-                it('does not draw cards', function() {
+                it('does not draw cards', function () {
                     // 9 cards at start of the round + 2 from draw phase
                     expect(this.player1Object.hand.length).toBe(11);
                 });

@@ -15,7 +15,7 @@ export class PlayerStats extends React.Component {
     }
 
     getStatValueOrDefault(stat) {
-        if(!this.props.stats) {
+        if (!this.props.stats) {
             return 0;
         }
 
@@ -25,15 +25,32 @@ export class PlayerStats extends React.Component {
     getButton(stat, name, statToSet = stat) {
         return (
             <div className='state'>
-                <span><img src={ '/img/' + name + '.png' } title={ name } alt={ name } style={ { width: '27px', height: '27px' } } /></span>
-                { this.props.showControls ? <button className='btn btn-stat' onClick={ this.sendUpdate.bind(this, statToSet, 'down') }>
-                    <img src='/img/Minus.png' title='-' alt='-' />
-                </button> : null }
+                <span>
+                    <img
+                        src={'/img/' + name + '.png'}
+                        title={name}
+                        alt={name}
+                        style={{ width: '27px', height: '27px' }}
+                    />
+                </span>
+                {this.props.showControls ? (
+                    <button
+                        className='btn btn-stat'
+                        onClick={this.sendUpdate.bind(this, statToSet, 'down')}
+                    >
+                        <img src='/img/Minus.png' title='-' alt='-' />
+                    </button>
+                ) : null}
 
-                <span>{ this.getStatValueOrDefault(stat) }</span>
-                { this.props.showControls ? <button className='btn btn-stat' onClick={ this.sendUpdate.bind(this, statToSet, 'up') }>
-                    <img src='/img/Plus.png' title='+' alt='+' />
-                </button> : null }
+                <span>{this.getStatValueOrDefault(stat)}</span>
+                {this.props.showControls ? (
+                    <button
+                        className='btn btn-stat'
+                        onClick={this.sendUpdate.bind(this, statToSet, 'up')}
+                    >
+                        <img src='/img/Plus.png' title='+' alt='+' />
+                    </button>
+                ) : null}
             </div>
         );
     }
@@ -41,7 +58,7 @@ export class PlayerStats extends React.Component {
     onSettingsClick(event) {
         event.preventDefault();
 
-        if(this.props.onSettingsClick) {
+        if (this.props.onSettingsClick) {
             this.props.onSettingsClick();
         }
     }
@@ -49,43 +66,58 @@ export class PlayerStats extends React.Component {
     render() {
         var playerAvatar = (
             <div className='player-avatar'>
-                <Avatar username={ this.props.user ? this.props.user.username : undefined } />
-                <b>{ this.props.user ? this.props.user.username : 'Noone' }</b>
-            </div>);
+                <Avatar username={this.props.user ? this.props.user.username : undefined} />
+                <b>{this.props.user ? this.props.user.username : 'Noone'}</b>
+            </div>
+        );
 
         let muteClass = this.props.muteSpectators ? 'glyphicon-eye-close' : 'glyphicon-eye-open';
 
         return (
             <div className='panel player-stats'>
-                { playerAvatar }
+                {playerAvatar}
 
-                { this.getButton('gold', 'Gold') }
-                { this.getButton('totalPower', 'Power', 'power') }
-                { this.getButton('initiative', 'Initiative') }
-                { this.getButton('claim', 'Claim') }
-                { this.getButton('reserve', 'Reserve') }
+                {this.getButton('gold', 'Gold')}
+                {this.getButton('totalPower', 'Power', 'power')}
+                {this.getButton('initiative', 'Initiative')}
+                {this.getButton('claim', 'Claim')}
+                {this.getButton('reserve', 'Reserve')}
 
-                { this.props.firstPlayer ? <div className='state'><div className='first-player'>First player</div></div> : null }
+                {this.props.firstPlayer ? (
+                    <div className='state'>
+                        <div className='first-player'>First player</div>
+                    </div>
+                ) : null}
 
-                { this.props.showControls ? <div className='state'>
-                    <button className='btn btn-transparent' onClick={ this.onSettingsClick.bind(this) }><span className='glyphicon glyphicon-cog' />Settings</button>
-                </div> : null }
+                {this.props.showControls ? (
+                    <div className='state'>
+                        <button
+                            className='btn btn-transparent'
+                            onClick={this.onSettingsClick.bind(this)}
+                        >
+                            <span className='glyphicon glyphicon-cog' />
+                            Settings
+                        </button>
+                    </div>
+                ) : null}
 
-                { this.props.showMessages &&
+                {this.props.showMessages && (
                     <div className='state chat-status'>
-                        <div className='state' onClick={ this.props.onMuteClick }>
+                        <div className='state' onClick={this.props.onMuteClick}>
                             <button className='btn btn-transparent'>
-                                <span className={ `glyphicon ${muteClass}` } />
+                                <span className={`glyphicon ${muteClass}`} />
                             </button>
                         </div>
-                        <div className='state' onClick={ this.props.onMessagesClick }>
+                        <div className='state' onClick={this.props.onMessagesClick}>
                             <button className='btn btn-transparent'>
                                 <span className='glyphicon glyphicon-envelope' />
-                                <span className='chat-badge badge progress-bar-danger'>{ this.props.numMessages || null }</span>
+                                <span className='chat-badge badge progress-bar-danger'>
+                                    {this.props.numMessages || null}
+                                </span>
                             </button>
                         </div>
                     </div>
-                }
+                )}
             </div>
         );
     }

@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class LittleFingersMeddling extends PlotCard {
     setupCardAbilities(ability) {
@@ -7,7 +7,7 @@ class LittleFingersMeddling extends PlotCard {
             effect: ability.effects.reduceCost({
                 playingTypes: 'play',
                 amount: 2,
-                match: card => card.getType() === 'event'
+                match: (card) => card.getType() === 'event'
             })
         });
     }
@@ -15,4 +15,4 @@ class LittleFingersMeddling extends PlotCard {
 
 LittleFingersMeddling.code = '05049';
 
-module.exports = LittleFingersMeddling;
+export default LittleFingersMeddling;

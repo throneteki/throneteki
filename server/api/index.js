@@ -1,21 +1,21 @@
-const account = require('./account');
-const events = require('./events');
-const decks = require('./decks');
-const draftCubes = require('./draftCubes');
-const cards = require('./cards');
-const news = require('./news');
-const user = require('./user');
-const messages = require('./messages');
-const banlist = require('./banlist');
+import { init as AccountInit } from './account.js';
+import { init as EventsInit } from './events.js';
+import { init as DecksInit } from './decks.js';
+import { init as DraftCubesInit } from './draftCubes.js';
+import { init as CardsInit } from './cards.js';
+import { init as NewsInit } from './news.js';
+import { init as UserInit } from './user.js';
+import { init as MessagesInit } from './messages.js';
+import { init as BanlistInit } from './banlist.js';
 
-module.exports.init = function(server, options) {
-    account.init(server, options);
-    decks.init(server, options);
-    draftCubes.init(server, options);
-    cards.init(server, options);
-    news.init(server, options);
-    user.init(server, options);
-    messages.init(server, options);
-    banlist.init(server, options);
-    events.init(server, options);
+export const init = function (server, options) {
+    AccountInit(server, options);
+    DecksInit(server, options);
+    DraftCubesInit(server, options);
+    CardsInit(server, options);
+    NewsInit(server, options);
+    UserInit(server, options);
+    MessagesInit(server, options);
+    BanlistInit(server, options);
+    EventsInit(server, options);
 };

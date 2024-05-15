@@ -1,10 +1,12 @@
-describe('Gifts for the Widow', function() {
-    integration(function() {
-        describe('when the player has no gold', function() {
-            beforeEach(function() {
+describe('Gifts for the Widow', function () {
+    integration(function () {
+        describe('when the player has no gold', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('stark', [
                     'A Noble Cause',
-                    'Gifts for the Widow (DitD)', 'Eddard Stark (Core)', 'Noble Lineage'
+                    'Gifts for the Widow (DitD)',
+                    'Eddard Stark (Core)',
+                    'Noble Lineage'
                 ]);
 
                 this.player1.togglePromptedActionWindow('draw', true);
@@ -34,11 +36,11 @@ describe('Gifts for the Widow', function() {
                 this.player1.clickCard(this.character);
             });
 
-            it('works', function() {
+            it('works', function () {
                 expect(this.character.attachments).toContain(this.attachment);
             });
 
-            it('allows the player to collect income', function() {
+            it('allows the player to collect income', function () {
                 this.player2.clickPrompt('Pass');
                 this.player1.clickPrompt('Pass');
 

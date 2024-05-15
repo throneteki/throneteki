@@ -1,12 +1,14 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class CallingTheBanners extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
             chooseOpponent: true,
-            handler: context => {
-                let characterCount = context.opponent.getNumberOfCardsInPlay(card => card.getType() === 'character');
-                if(characterCount <= 0) {
+            handler: (context) => {
+                let characterCount = context.opponent.getNumberOfCardsInPlay(
+                    (card) => card.getType() === 'character'
+                );
+                if (characterCount <= 0) {
                     return;
                 }
 
@@ -19,4 +21,4 @@ class CallingTheBanners extends PlotCard {
 
 CallingTheBanners.code = '01007';
 
-module.exports = CallingTheBanners;
+export default CallingTheBanners;

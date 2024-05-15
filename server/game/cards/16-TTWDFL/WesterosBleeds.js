@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class WesterosBleeds extends DrawCard {
     setupCardAbilities() {
@@ -10,17 +10,17 @@ class WesterosBleeds extends DrawCard {
                 format: '{player} plays {source} to discard {characters}',
                 args: { characters: () => this.getCharactersInPlay() }
             },
-            gameAction: GameActions.simultaneously(() => this.getCharactersInPlay().map(
-                card => GameActions.discardCard({ card })
-            ))
+            gameAction: GameActions.simultaneously(() =>
+                this.getCharactersInPlay().map((card) => GameActions.discardCard({ card }))
+            )
         });
     }
 
     getCharactersInPlay() {
-        return this.game.filterCardsInPlay(card => card.getType() === 'character');
+        return this.game.filterCardsInPlay((card) => card.getType() === 'character');
     }
 }
 
 WesterosBleeds.code = '16026';
 
-module.exports = WesterosBleeds;
+export default WesterosBleeds;

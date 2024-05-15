@@ -56,7 +56,7 @@ class Profile extends React.Component {
             { name: 'taxation', label: 'Taxation phase', style: 'col-sm-4' }
         ];
 
-        if(!this.props.user) {
+        if (!this.props.user) {
             return;
         }
     }
@@ -66,18 +66,19 @@ class Profile extends React.Component {
     }
 
     componentWillReceiveProps(props) {
-        if(!props.user) {
+        if (!props.user) {
             return;
         }
 
         // If we haven't previously got any user details, then the api probably just returned now, so set the initial user details
-        if(!this.state.promptedActionWindows) {
+        if (!this.state.promptedActionWindows) {
             this.updateProfile(props);
         }
 
-        if(props.profileSaved) {
+        if (props.profileSaved) {
             this.setState({
-                successMessage: 'Profile saved successfully.  Please note settings changed here may only apply at the start of your next game.'
+                successMessage:
+                    'Profile saved successfully.  Please note settings changed here may only apply at the start of your next game.'
             });
 
             this.updateProfile(props);
@@ -89,7 +90,7 @@ class Profile extends React.Component {
     }
 
     updateProfile(props) {
-        if(!props.user) {
+        if (!props.user) {
             return;
         }
 
@@ -168,15 +169,15 @@ class Profile extends React.Component {
     onSlideStop(event) {
         let value = parseInt(event.target.value);
 
-        if(isNaN(value)) {
+        if (isNaN(value)) {
             return;
         }
 
-        if(value < 0) {
+        if (value < 0) {
             value = 0;
         }
 
-        if(value > 10) {
+        if (value > 10) {
             value = 10;
         }
 
@@ -206,99 +207,205 @@ class Profile extends React.Component {
     }
 
     render() {
-        if(!this.props.user || !this.state.promptedActionWindows) {
-            return <AlertPanel type='error' message='You must be logged in to update your profile' />;
+        if (!this.props.user || !this.state.promptedActionWindows) {
+            return (
+                <AlertPanel type='error' message='You must be logged in to update your profile' />
+            );
         }
 
-        let windows = this.windows.map(window => {
-            return (<Checkbox key={ window.name }
-                noGroup
-                name={ 'promptedActionWindows.' + window.name }
-                label={ window.label }
-                fieldClass={ window.style }
-                type='checkbox'
-                onChange={ (this.onWindowToggle.bind(this, window.name)) }
-                checked={ this.state.promptedActionWindows[window.name] } />);
+        let windows = this.windows.map((window) => {
+            return (
+                <Checkbox
+                    key={window.name}
+                    noGroup
+                    name={'promptedActionWindows.' + window.name}
+                    label={window.label}
+                    fieldClass={window.style}
+                    type='checkbox'
+                    onChange={this.onWindowToggle.bind(this, window.name)}
+                    checked={this.state.promptedActionWindows[window.name]}
+                />
+            );
         });
 
-        if(this.props.profileSaved) {
+        if (this.props.profileSaved) {
             setTimeout(() => {
                 this.props.clearProfileStatus();
             }, 5000);
         }
 
         let initialValues = { email: this.props.user.email };
-        let callbackUrl = process.env.NODE_ENV === 'production' ? 'https://theironthrone.net/patreon' : 'http://localhost:8080/patreon';
+        let callbackUrl =
+            import.meta.env.MODE === 'production'
+                ? 'https://theironthrone.net/patreon'
+                : 'http://localhost:8080/patreon';
 
         return (
             <div className='col-sm-8 col-sm-offset-2 profile full-height'>
                 <div className='about-container'>
-                    <ApiStatus apiState={ this.props.apiState } successMessage={ this.state.successMessage } />
+                    <ApiStatus
+                        apiState={this.props.apiState}
+                        successMessage={this.state.successMessage}
+                    />
 
-                    <Form panelTitle='Profile' name='profile' initialValues={ initialValues } apiLoading={ this.props.apiState && this.props.apiState.loading } buttonClass='col-sm-offset-10 col-sm-2' buttonText='Save' onSubmit={ this.onSaveClick }>
-                        <span className='col-sm-3 text-center'><Avatar username={ this.props.user.username } /></span>
-                        <Checkbox name='enableGravatar' label='Enable Gravatar integration' fieldClass='col-sm-offset-1 col-sm-7'
-                            onChange={ e => this.setState({ enableGravatar: e.target.checked }) } checked={ this.state.enableGravatar } />
+                    <Form
+                        panelTitle='Profile'
+                        name='profile'
+                        initialValues={initialValues}
+                        apiLoading={this.props.apiState && this.props.apiState.loading}
+                        buttonClass='col-sm-offset-10 col-sm-2'
+                        buttonText='Save'
+                        onSubmit={this.onSaveClick}
+                    >
+                        <span className='col-sm-3 text-center'>
+                            <Avatar username={this.props.user.username} />
+                        </span>
+                        <Checkbox
+                            name='enableGravatar'
+                            label='Enable Gravatar integration'
+                            fieldClass='col-sm-offset-1 col-sm-7'
+                            onChange={(e) => this.setState({ enableGravatar: e.target.checked })}
+                            checked={this.state.enableGravatar}
+                        />
                         <div className='col-sm-3 text-center'>Current profile picture</div>
-                        <button type='button' className='btn btn-default col-sm-offset-1 col-sm-3' onClick={ this.onUpdateAvatarClick }>Update avatar</button>
-                        { !this.isPatreonLinked() && <a className='btn btn-default col-sm-offset-1 col-sm-3' href={ `https://www.patreon.com/oauth2/authorize?response_type=code&client_id=317bxGpXD7sAOlyFKp6D-LOBRX731lLK-2YYQSFfBmJCrVSiJI77eUgRoLoN2KoI&redirect_uri=${callbackUrl}` }><img src='/img/Patreon_Mark_Coral.jpg' style={ {height:'21px'} } />&nbsp;Link Patreon account</a> }
-                        { this.isPatreonLinked() && <button type='button' className='btn btn-default col-sm-offset-1 col-sm-3' onClick={ this.onUnlinkClick }>Unlink Patreon account</button> }
+                        <button
+                            type='button'
+                            className='btn btn-default col-sm-offset-1 col-sm-3'
+                            onClick={this.onUpdateAvatarClick}
+                        >
+                            Update avatar
+                        </button>
+                        {!this.isPatreonLinked() && (
+                            <a
+                                className='btn btn-default col-sm-offset-1 col-sm-3'
+                                href={`https://www.patreon.com/oauth2/authorize?response_type=code&client_id=317bxGpXD7sAOlyFKp6D-LOBRX731lLK-2YYQSFfBmJCrVSiJI77eUgRoLoN2KoI&redirect_uri=${callbackUrl}`}
+                            >
+                                <img src='/img/Patreon_Mark_Coral.jpg' style={{ height: '21px' }} />
+                                &nbsp;Link Patreon account
+                            </a>
+                        )}
+                        {this.isPatreonLinked() && (
+                            <button
+                                type='button'
+                                className='btn btn-default col-sm-offset-1 col-sm-3'
+                                onClick={this.onUnlinkClick}
+                            >
+                                Unlink Patreon account
+                            </button>
+                        )}
                         <div className='col-sm-12 profile-inner'>
                             <Panel title='Action window defaults'>
-                                <p className='help-block small'>If an option is selected here, you will always be prompted if you want to take an action in that window.  If an option is not selected, you will receive no prompts for that window.  For some windows (e.g. dominance) this could mean the whole window is skipped.</p>
-                                <div className='form-group'>
-                                    { windows }
-                                </div>
+                                <p className='help-block small'>
+                                    If an option is selected here, you will always be prompted if
+                                    you want to take an action in that window. If an option is not
+                                    selected, you will receive no prompts for that window. For some
+                                    windows (e.g. dominance) this could mean the whole window is
+                                    skipped.
+                                </p>
+                                <div className='form-group'>{windows}</div>
                             </Panel>
                             <Panel title='Timed Interrupt Window'>
-                                <p className='help-block small'>Every time a game event occurs that you could possibly interrupt to cancel it, a timer will count down.  At the end of that timer, the window will automatically pass.
-                                This option controls the duration of the timer.  The timer can be configure to show when events are played (useful if you play cards like The Hand's Judgement) and to show when card abilities are triggered (useful if you play a lot of Treachery).</p>
+                                <p className='help-block small'>
+                                    Every time a game event occurs that you could possibly interrupt
+                                    to cancel it, a timer will count down. At the end of that timer,
+                                    the window will automatically pass. This option controls the
+                                    duration of the timer. The timer can be configure to show when
+                                    events are played (useful if you play cards like The Hand&apos;s
+                                    Judgement) and to show when card abilities are triggered (useful
+                                    if you play a lot of Treachery).
+                                </p>
                                 <div className='form-group'>
                                     <label className='col-xs-3 control-label'>Window timeout</label>
                                     <div className='col-xs-5 control-label'>
-                                        <Slider value={ this.state.windowTimer }
-                                            slideStop={ this.onSlideStop.bind(this) }
-                                            step={ 1 }
-                                            max={ 10 }
-                                            min={ 0 } />
+                                        <Slider
+                                            value={this.state.windowTimer}
+                                            slideStop={this.onSlideStop.bind(this)}
+                                            step={1}
+                                            max={10}
+                                            min={0}
+                                        />
                                     </div>
                                     <div className='col-xs-2'>
-                                        <input className='form-control text-center' name='timer' value={ this.state.windowTimer } onChange={ this.onSlideStop.bind(this) } />
+                                        <input
+                                            className='form-control text-center'
+                                            name='timer'
+                                            value={this.state.windowTimer}
+                                            onChange={this.onSlideStop.bind(this)}
+                                        />
                                     </div>
-                                    <label className='col-xs-2 control-label text-left no-padding'>seconds</label>
+                                    <label className='col-xs-2 control-label text-left no-padding'>
+                                        seconds
+                                    </label>
                                 </div>
                                 <div className='form-group'>
-                                    <Checkbox name='timerSettings.events' noGroup label={ 'Show timer for events' } fieldClass='col-sm-6'
-                                        onChange={ this.onTimerSettingToggle.bind(this, 'events') } checked={ this.state.timerSettings.events } />
-                                    <Checkbox name='timerSettings.abilities' noGroup label={ 'Show timer for card abilities' } fieldClass='col-sm-6'
-                                        onChange={ this.onTimerSettingToggle.bind(this, 'abilities') } checked={ this.state.timerSettings.abilities } />
+                                    <Checkbox
+                                        name='timerSettings.events'
+                                        noGroup
+                                        label={'Show timer for events'}
+                                        fieldClass='col-sm-6'
+                                        onChange={this.onTimerSettingToggle.bind(this, 'events')}
+                                        checked={this.state.timerSettings.events}
+                                    />
+                                    <Checkbox
+                                        name='timerSettings.abilities'
+                                        noGroup
+                                        label={'Show timer for card abilities'}
+                                        fieldClass='col-sm-6'
+                                        onChange={this.onTimerSettingToggle.bind(this, 'abilities')}
+                                        checked={this.state.timerSettings.abilities}
+                                    />
                                 </div>
                             </Panel>
                             <Panel title='Game Settings'>
                                 <div className='form-group'>
-                                    <Checkbox name='keywordSettings.chooseOrder' noGroup label={ 'Choose order of keywords' } fieldClass='col-sm-6'
-                                        onChange={ this.onKeywordSettingToggle.bind(this, 'chooseOrder') } checked={ this.state.keywordSettings.chooseOrder } />
-                                    <Checkbox name='keywordSettings.chooseCards' noGroup label={ 'Make keywords optional' } fieldClass='col-sm-6'
-                                        onChange={ this.onKeywordSettingToggle.bind(this, 'chooseCards') } checked={ this.state.keywordSettings.chooseCards } />
-                                    <Checkbox name='promptDupes' noGroup label={ 'Prompt before using dupes to save' } fieldClass='col-sm-6'
-                                        onChange={ this.onToggle.bind(this, 'promptDupes') } checked={ this.state.promptDupes } />
+                                    <Checkbox
+                                        name='keywordSettings.chooseOrder'
+                                        noGroup
+                                        label={'Choose order of keywords'}
+                                        fieldClass='col-sm-6'
+                                        onChange={this.onKeywordSettingToggle.bind(
+                                            this,
+                                            'chooseOrder'
+                                        )}
+                                        checked={this.state.keywordSettings.chooseOrder}
+                                    />
+                                    <Checkbox
+                                        name='keywordSettings.chooseCards'
+                                        noGroup
+                                        label={'Make keywords optional'}
+                                        fieldClass='col-sm-6'
+                                        onChange={this.onKeywordSettingToggle.bind(
+                                            this,
+                                            'chooseCards'
+                                        )}
+                                        checked={this.state.keywordSettings.chooseCards}
+                                    />
+                                    <Checkbox
+                                        name='promptDupes'
+                                        noGroup
+                                        label={'Prompt before using dupes to save'}
+                                        fieldClass='col-sm-6'
+                                        onChange={this.onToggle.bind(this, 'promptDupes')}
+                                        checked={this.state.promptDupes}
+                                    />
                                 </div>
                             </Panel>
                         </div>
                         <div className='col-sm-12'>
                             <Panel title='Game Board Background'>
                                 <div className='row'>
-                                    {
-                                        this.backgrounds.map(background => (
-                                            <GameBackgroundOption
-                                                imageUrl={ background.imageUrl }
-                                                key={ background.name }
-                                                label={ background.label }
-                                                name={ background.name }
-                                                onSelect={ this.handleSelectBackground }
-                                                selected={ this.state.selectedBackground === background.name } />
-                                        ))
-                                    }
+                                    {this.backgrounds.map((background) => (
+                                        <GameBackgroundOption
+                                            imageUrl={background.imageUrl}
+                                            key={background.name}
+                                            label={background.label}
+                                            name={background.name}
+                                            onSelect={this.handleSelectBackground}
+                                            selected={
+                                                this.state.selectedBackground === background.name
+                                            }
+                                        />
+                                    ))}
                                 </div>
                             </Panel>
                         </div>
@@ -306,23 +413,25 @@ class Profile extends React.Component {
                             <Panel title='Card Image Size'>
                                 <div className='row'>
                                     <div className='col-xs-12'>
-                                        {
-                                            this.cardSizes.map(cardSize => (
-                                                <CardSizeOption
-                                                    key={ cardSize.name }
-                                                    label={ cardSize.label }
-                                                    name={ cardSize.name }
-                                                    onSelect={ this.handleSelectCardSize }
-                                                    selected={ this.state.selectedCardSize === cardSize.name } />
-                                            ))
-                                        }
+                                        {this.cardSizes.map((cardSize) => (
+                                            <CardSizeOption
+                                                key={cardSize.name}
+                                                label={cardSize.label}
+                                                name={cardSize.name}
+                                                onSelect={this.handleSelectCardSize}
+                                                selected={
+                                                    this.state.selectedCardSize === cardSize.name
+                                                }
+                                            />
+                                        ))}
                                     </div>
                                 </div>
                             </Panel>
                         </div>
                     </Form>
                 </div>
-            </div>);
+            </div>
+        );
     }
 }
 

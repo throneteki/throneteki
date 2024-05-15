@@ -1,10 +1,11 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class SerGregorsMarauders extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardDiscarded: event => event.isPillage && event.source === this && event.card.getType() === 'event'
+                onCardDiscarded: (event) =>
+                    event.isPillage && event.source === this && event.card.getType() === 'event'
             },
             handler: () => {
                 this.controller.standCard(this);
@@ -16,4 +17,4 @@ class SerGregorsMarauders extends DrawCard {
 
 SerGregorsMarauders.code = '05008';
 
-module.exports = SerGregorsMarauders;
+export default SerGregorsMarauders;

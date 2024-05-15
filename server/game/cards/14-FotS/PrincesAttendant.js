@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class PrincesAttendant extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,12 +7,16 @@ class PrincesAttendant extends DrawCard {
             clickToActivate: true,
             phase: 'marshal',
             cost: ability.costs.kneelSelf(),
-            message: '{player} kneels {source} to reduce the cost of the next Martell Lord or Lady they marshal this phase by 2',
+            message:
+                '{player} kneels {source} to reduce the cost of the next Martell Lord or Lady they marshal this phase by 2',
             handler: () => {
-                this.untilEndOfPhase(ability => ({
+                this.untilEndOfPhase((ability) => ({
                     effect: ability.effects.reduceNextMarshalledCardCost(
                         2,
-                        card => (card.hasTrait('Lord') || card.hasTrait('Lady')) && card.getType() === 'character' && card.isFaction('martell')
+                        (card) =>
+                            (card.hasTrait('Lord') || card.hasTrait('Lady')) &&
+                            card.getType() === 'character' &&
+                            card.isFaction('martell')
                     )
                 }));
             }
@@ -22,4 +26,4 @@ class PrincesAttendant extends DrawCard {
 
 PrincesAttendant.code = '14029';
 
-module.exports = PrincesAttendant;
+export default PrincesAttendant;

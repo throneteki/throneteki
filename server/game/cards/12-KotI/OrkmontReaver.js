@@ -1,9 +1,12 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class OrkmontReaver extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.game.getOpponents(this.controller).some(opponent => opponent.discardPile.length >= 10),
+            condition: () =>
+                this.game
+                    .getOpponents(this.controller)
+                    .some((opponent) => opponent.discardPile.length >= 10),
             match: this,
             effect: ability.effects.addKeyword('stealth')
         });
@@ -12,4 +15,4 @@ class OrkmontReaver extends DrawCard {
 
 OrkmontReaver.code = '12015';
 
-module.exports = OrkmontReaver;
+export default OrkmontReaver;

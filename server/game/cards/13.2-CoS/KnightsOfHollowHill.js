@@ -1,4 +1,4 @@
-const AgendaCard = require('../../agendacard');
+import AgendaCard from '../../agendacard.js';
 
 class KnightsOfHollowHill extends AgendaCard {
     setupCardAbilities(ability) {
@@ -13,7 +13,7 @@ class KnightsOfHollowHill extends AgendaCard {
         });
 
         this.persistentEffect({
-            match: card => card !== this && card.getType() !== 'plot',
+            match: (card) => card !== this && card.getType() !== 'plot',
             targetController: 'current',
             effect: ability.effects.preventPlotModifier('gold')
         });
@@ -28,4 +28,4 @@ class KnightsOfHollowHill extends AgendaCard {
 
 KnightsOfHollowHill.code = '13039';
 
-module.exports = KnightsOfHollowHill;
+export default KnightsOfHollowHill;

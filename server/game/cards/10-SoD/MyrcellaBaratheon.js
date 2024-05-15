@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class MyrcellaBaratheon extends DrawCard {
     setupCardAbilities(ability) {
@@ -12,15 +12,17 @@ class MyrcellaBaratheon extends DrawCard {
     opponentHoldsLessCards() {
         let challenge = this.game.currentChallenge;
 
-        if(!challenge) {
+        if (!challenge) {
             return false;
         }
 
-        return challenge.attackingPlayer === this.controller &&
-               this.controller.hand.length > challenge.defendingPlayer.hand.length;
+        return (
+            challenge.attackingPlayer === this.controller &&
+            this.controller.hand.length > challenge.defendingPlayer.hand.length
+        );
     }
 }
 
 MyrcellaBaratheon.code = '10029';
 
-module.exports = MyrcellaBaratheon;
+export default MyrcellaBaratheon;

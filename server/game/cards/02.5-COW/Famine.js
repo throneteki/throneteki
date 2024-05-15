@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class Famine extends PlotCard {
     setupCardAbilities(ability) {
@@ -7,7 +7,7 @@ class Famine extends PlotCard {
             effect: ability.effects.increaseCost({
                 playingTypes: 'marshal',
                 amount: 1,
-                match: card => card.getPrintedType() === 'character'
+                match: (card) => card.getPrintedType() === 'character'
             })
         });
     }
@@ -15,4 +15,4 @@ class Famine extends PlotCard {
 
 Famine.code = '02100';
 
-module.exports = Famine;
+export default Famine;

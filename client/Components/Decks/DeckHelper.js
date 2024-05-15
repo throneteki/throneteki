@@ -1,13 +1,13 @@
 export function deckStatusLabel(status) {
-    if(!status.basicRules) {
+    if (!status.basicRules) {
         return 'Invalid';
     }
 
-    if(!status.noBannedCards) {
+    if (!status.noBannedCards) {
         return 'Banned';
     }
 
-    if(!status.faqJoustRules || !status.noUnreleasedCards) {
+    if (!status.faqJoustRules || !status.noUnreleasedCards) {
         return 'Casual';
     }
 
@@ -15,7 +15,7 @@ export function deckStatusLabel(status) {
 }
 
 export function cardSetLabel(cardSet) {
-    switch(cardSet) {
+    switch (cardSet) {
         case 'redesign':
             return 'Standard';
         case 'original':

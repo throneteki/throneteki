@@ -1,22 +1,39 @@
-const AbilityMessage = require('../AbilityMessage');
-const BaseStep = require('./basestep');
+import AbilityMessage from '../AbilityMessage.js';
+import BaseStep from './basestep.js';
 
 class AbilityChoicePrompt extends BaseStep {
-    constructor({ game, context, choosingPlayer, title, choices, cancelText, cancelMessage, gameActionResolver }) {
+    constructor({
+        game,
+        context,
+        choosingPlayer,
+        title,
+        choices,
+        cancelText,
+        cancelMessage,
+        gameActionResolver
+    }) {
         super(game);
         this.context = context;
         this.choosingPlayer = choosingPlayer || this.context.choosingPlayer;
         this.title = title;
         this.choices = choices;
         this.cancelText = cancelText || 'Done';
-        this.cancelMessage = AbilityMessage.create(cancelMessage || { format: '{choosingPlayer} cancels the resolution of {source} (costs were still paid)', type: 'danger' }, { choosingPlayer: context => context.choosingPlayer });
-        this.gameActionResolver = gameActionResolver || ((gameAction, context) => game.resolveGameAction(gameAction, context));
+        this.cancelMessage = AbilityMessage.create(
+            cancelMessage || {
+                format: '{choosingPlayer} cancels the resolution of {source} (costs were still paid)',
+                type: 'danger'
+            },
+            { choosingPlayer: (context) => context.choosingPlayer }
+        );
+        this.gameActionResolver =
+            gameActionResolver ||
+            ((gameAction, context) => game.resolveGameAction(gameAction, context));
     }
 
     continue() {
         this.context.choosingPlayer = this.choosingPlayer;
-        let buttons = this.choices.map(choice => {
-            if(choice.card) {
+        let buttons = this.choices.map((choice) => {
+            if (choice.card) {
                 return { card: choice.card, mapCard: true, method: 'chooseAbilityChoice' };
             }
             return { text: choice.text, arg: choice.text, method: 'chooseAbilityChoice' };
@@ -34,8 +51,10 @@ class AbilityChoicePrompt extends BaseStep {
     }
 
     chooseAbilityChoice(player, choiceArg) {
-        let choice = this.choices.find(choice => choiceArg === choice.card || choiceArg === choice.text);
-        if(choice) {
+        let choice = this.choices.find(
+            (choice) => choiceArg === choice.card || choiceArg === choice.text
+        );
+        if (choice) {
             this.context.selectedChoice = choice;
             choice.message.output(this.game, this.context);
             this.gameActionResolver(choice.gameAction, this.context);
@@ -50,4 +69,4 @@ class AbilityChoicePrompt extends BaseStep {
     }
 }
 
-module.exports = AbilityChoicePrompt;
+export default AbilityChoicePrompt;

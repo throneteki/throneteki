@@ -1,10 +1,11 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Hellholt extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.loser === this.controller &&
+                afterChallenge: (event) =>
+                    event.challenge.loser === this.controller &&
                     event.challenge.strengthDifference >= 5 &&
                     this.allowGameAction('gainPower')
             },
@@ -18,4 +19,4 @@ class Hellholt extends DrawCard {
 
 Hellholt.code = '09032';
 
-module.exports = Hellholt;
+export default Hellholt;

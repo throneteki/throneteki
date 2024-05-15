@@ -1,4 +1,4 @@
-const GameAction = require('./GameAction');
+import GameAction from './GameAction.js';
 
 class HandlerGameActionWrapper extends GameAction {
     constructor({ handler }) {
@@ -18,4 +18,4 @@ class HandlerGameActionWrapper extends GameAction {
     }
 }
 
-module.exports = HandlerGameActionWrapper;
+export default HandlerGameActionWrapper;

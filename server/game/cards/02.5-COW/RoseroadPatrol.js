@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class RoseroadPatrol extends DrawCard {
     setupCardAbilities(ability) {
@@ -10,14 +10,18 @@ class RoseroadPatrol extends DrawCard {
     }
 
     hasCharacterWithHighestSTR() {
-        let charactersInPlay = this.game.filterCardsInPlay(card => card.getType() === 'character');
-        let strengths = charactersInPlay.map(card => card.getStrength());
+        let charactersInPlay = this.game.filterCardsInPlay(
+            (card) => card.getType() === 'character'
+        );
+        let strengths = charactersInPlay.map((card) => card.getStrength());
         let highestStrength = Math.max(...strengths);
 
-        return this.controller.anyCardsInPlay(card => card.getType() === 'character' && card.getStrength() >= highestStrength);
+        return this.controller.anyCardsInPlay(
+            (card) => card.getType() === 'character' && card.getStrength() >= highestStrength
+        );
     }
 }
 
 RoseroadPatrol.code = '02083';
 
-module.exports = RoseroadPatrol;
+export default RoseroadPatrol;

@@ -1,10 +1,11 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TobhoMottsArmory extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onDominanceDetermined: event => this.controller === event.winner && this.controller.canDraw()
+                onDominanceDetermined: (event) =>
+                    this.controller === event.winner && this.controller.canDraw()
             },
             cost: ability.costs.kneelSelf(),
             handler: () => {
@@ -17,4 +18,4 @@ class TobhoMottsArmory extends DrawCard {
 
 TobhoMottsArmory.code = '02069';
 
-module.exports = TobhoMottsArmory;
+export default TobhoMottsArmory;

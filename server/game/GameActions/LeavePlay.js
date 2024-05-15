@@ -1,5 +1,5 @@
-const GameAction = require('./GameAction');
-const MoveCardEventGenerator = require('./MoveCardEventGenerator');
+import GameAction from './GameAction.js';
+import MoveCardEventGenerator from './MoveCardEventGenerator.js';
 
 class LeavePlay extends GameAction {
     constructor() {
@@ -15,4 +15,4 @@ class LeavePlay extends GameAction {
     }
 }
 
-module.exports = new LeavePlay();
+export default new LeavePlay();

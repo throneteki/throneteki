@@ -1,14 +1,18 @@
-describe('Valar Morghulis', function() {
-    integration(function() {
-        describe('when there are both interrupts and reactions to dying', function() {
-            beforeEach(function() {
+describe('Valar Morghulis', function () {
+    integration(function () {
+        describe('when there are both interrupts and reactions to dying', function () {
+            beforeEach(function () {
                 const deck1 = this.buildDeck('tyrell', [
                     'Valar Morghulis',
-                    'Margaery Tyrell (AMAF)', 'Margaery Tyrell (AMAF)', 'Rickon Stark', 'Eddard Stark (Core)'
+                    'Margaery Tyrell (AMAF)',
+                    'Margaery Tyrell (AMAF)',
+                    'Rickon Stark',
+                    'Eddard Stark (Core)'
                 ]);
                 const deck2 = this.buildDeck('thenightswatch', [
                     'A Noble Cause',
-                    'Samwell Tarly (Core)', 'Maester Aemon (Core)'
+                    'Samwell Tarly (Core)',
+                    'Maester Aemon (Core)'
                 ]);
 
                 this.player1.selectDeck(deck1);
@@ -16,7 +20,10 @@ describe('Valar Morghulis', function() {
                 this.startGame();
                 this.keepStartingHands();
 
-                [this.marg1, this.marg2] = this.player1.filterCardsByName('Margaery Tyrell', 'hand');
+                [this.marg1, this.marg2] = this.player1.filterCardsByName(
+                    'Margaery Tyrell',
+                    'hand'
+                );
                 this.rickon = this.player1.findCardByName('Rickon Stark', 'hand');
                 this.eddard = this.player1.findCardByName('Eddard Stark', 'hand');
 
@@ -37,7 +44,7 @@ describe('Valar Morghulis', function() {
                 this.selectFirstPlayer(this.player1);
             });
 
-            it('should prompt interrupts and reactions in the proper order', function() {
+            it('should prompt interrupts and reactions in the proper order', function () {
                 expect(this.player1).not.toAllowAbilityTrigger('Margaery Tyrell');
                 expect(this.player2).toAllowAbilityTrigger('Maester Aemon');
 
@@ -56,11 +63,15 @@ describe('Valar Morghulis', function() {
             });
         });
 
-        describe('when multiple characters die', function() {
-            beforeEach(function() {
+        describe('when multiple characters die', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('tyrell', [
-                    'Valar Morghulis', 'A Noble Cause',
-                    'Arya Stark (Core)', 'Arya Stark (Core)', 'Hedge Knight', 'House Maester'
+                    'Valar Morghulis',
+                    'A Noble Cause',
+                    'Arya Stark (Core)',
+                    'Arya Stark (Core)',
+                    'Hedge Knight',
+                    'House Maester'
                 ]);
 
                 this.player1.selectDeck(deck);
@@ -91,22 +102,30 @@ describe('Valar Morghulis', function() {
                 this.selectFirstPlayer(this.player1);
             });
 
-            it('should not prompt to choose dead pile order if only one character will die', function() {
-                expect(this.player1).not.toHavePrompt('Select order to place cards in your dead pile (top first)');
+            it('should not prompt to choose dead pile order if only one character will die', function () {
+                expect(this.player1).not.toHavePrompt(
+                    'Select order to place cards in your dead pile (top first)'
+                );
             });
 
-            it('should prompt to choose dead pile order for multiple characters', function() {
-                expect(this.player2).toHavePrompt('Select order to place cards in your dead pile (top first)');
+            it('should prompt to choose dead pile order for multiple characters', function () {
+                expect(this.player2).toHavePrompt(
+                    'Select order to place cards in your dead pile (top first)'
+                );
             });
 
-            it('should allow dead pile order to be chosen', function() {
+            it('should allow dead pile order to be chosen', function () {
                 // Top of dead pile to bottom of dead pile.
                 this.player2.clickCard(this.deadMaester);
                 this.player2.clickCard(this.deadArya);
                 this.player2.clickCard(this.deadKnight);
                 this.player2.clickPrompt('Done');
 
-                expect(this.player2Object.deadPile.map(card => card.name)).toEqual(['Hedge Knight', 'Arya Stark', 'House Maester']);
+                expect(this.player2Object.deadPile.map((card) => card.name)).toEqual([
+                    'Hedge Knight',
+                    'Arya Stark',
+                    'House Maester'
+                ]);
             });
         });
     });

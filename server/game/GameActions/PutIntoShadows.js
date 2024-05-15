@@ -1,7 +1,7 @@
-const GameAction = require('./GameAction');
-const Message = require('../Message');
-const LeavePlay = require('./LeavePlay');
-const PlaceCard = require('./PlaceCard');
+import GameAction from './GameAction.js';
+import Message from '../Message.js';
+import LeavePlay from './LeavePlay.js';
+import PlaceCard from './PlaceCard.js';
 
 class PutIntoShadows extends GameAction {
     constructor() {
@@ -14,7 +14,10 @@ class PutIntoShadows extends GameAction {
 
     canChangeGameState({ player, card }) {
         player = player || card.controller;
-        return card.location !== 'shadows' && player.canPutIntoShadows(card, card.game.currentPhase === 'setup' ? 'setup' : 'put');
+        return (
+            card.location !== 'shadows' &&
+            player.canPutIntoShadows(card, card.game.currentPhase === 'setup' ? 'setup' : 'put')
+        );
     }
 
     createEvent({ player, card, allowSave = true, reason = 'ability' }) {
@@ -26,16 +29,22 @@ class PutIntoShadows extends GameAction {
             reason
         };
 
-        const putIntoShadowsEvent = this.event('onCardPutIntoShadows', params, event => {
-            event.thenAttachEvent(PlaceCard.createEvent({ card: event.card, player: event.player, location: 'shadows' }));
+        const putIntoShadowsEvent = this.event('onCardPutIntoShadows', params, (event) => {
+            event.thenAttachEvent(
+                PlaceCard.createEvent({
+                    card: event.card,
+                    player: event.player,
+                    location: 'shadows'
+                })
+            );
         });
 
-        if(card.location === 'play area') {
+        if (card.location === 'play area') {
             return this.atomic(putIntoShadowsEvent, LeavePlay.createEvent({ card, allowSave }));
         }
-        
+
         return putIntoShadowsEvent;
     }
 }
 
-module.exports = new PutIntoShadows();
+export default new PutIntoShadows();

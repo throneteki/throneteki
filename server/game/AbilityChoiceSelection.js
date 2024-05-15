@@ -24,7 +24,7 @@ class AbilityChoiceSelection {
     }
 
     hasValue() {
-        if(Array.isArray(this.value)) {
+        if (Array.isArray(this.value)) {
             return this.value.length !== 0;
         }
 
@@ -49,4 +49,4 @@ class AbilityChoiceSelection {
     }
 }
 
-module.exports = AbilityChoiceSelection;
+export default AbilityChoiceSelection;

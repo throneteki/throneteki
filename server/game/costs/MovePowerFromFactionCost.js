@@ -1,15 +1,17 @@
-const CardSelector = require('../CardSelector');
+import CardSelector from '../CardSelector.js';
 
 class MovePowerFromFactionCost {
-    constructor({ amount = 1, condition = card => card.location === 'play area' }) {
+    constructor({ amount = 1, condition = (card) => card.location === 'play area' }) {
         this.name = 'movePowerFromFaction';
         this.amount = amount;
-        this.selector = CardSelector.for({cardCondition: condition});
+        this.selector = CardSelector.for({ cardCondition: condition });
         this.activePromptTitle = `Select card to move ${amount} power`;
     }
 
     canPay(context) {
-        return context.player.faction.power >= this.amount && this.selector.hasEnoughTargets(context);
+        return (
+            context.player.faction.power >= this.amount && this.selector.hasEnoughTargets(context)
+        );
     }
 
     resolve(context, result = { resolved: false }) {
@@ -41,4 +43,4 @@ class MovePowerFromFactionCost {
     }
 }
 
-module.exports = MovePowerFromFactionCost;
+export default MovePowerFromFactionCost;

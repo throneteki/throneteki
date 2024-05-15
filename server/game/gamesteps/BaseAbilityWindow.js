@@ -1,7 +1,6 @@
-const uuid = require('uuid');
-
-const BaseStep = require('./basestep');
-const Event = require('../event');
+import uuid from 'uuid';
+import BaseStep from './basestep.js';
+import Event from '../event.js';
 
 class BaseAbilityWindow extends BaseStep {
     constructor(game, properties) {
@@ -16,17 +15,15 @@ class BaseAbilityWindow extends BaseStep {
     canTriggerAbility(ability) {
         return (
             ability.eventType === this.abilityType &&
-            (
-                this.event.getConcurrentEvents().some(event => ability.isTriggeredByEvent(event)) ||
-                this.aggregateEvents.some(event => ability.isTriggeredByEvent(event))
-            )
+            (this.event.getConcurrentEvents().some((event) => ability.isTriggeredByEvent(event)) ||
+                this.aggregateEvents.some((event) => ability.isTriggeredByEvent(event)))
         );
     }
 
     gatherChoices() {
         this.abilityChoices = [];
         this.event.emitTo(this.game, this.abilityType);
-        for(let event of this.aggregateEvents) {
+        for (let event of this.aggregateEvents) {
             event.emitTo(this.game, this.abilityType);
         }
     }
@@ -35,15 +32,17 @@ class BaseAbilityWindow extends BaseStep {
         const needsAggregate = ['onCardDiscarded', 'onCharacterKilled', 'onSacrificed'];
 
         let aggregates = new Map();
-        let concurrentEvents = this.event.getConcurrentEvents().filter(event => needsAggregate.includes(event.name));
-        for(let event of concurrentEvents) {
+        let concurrentEvents = this.event
+            .getConcurrentEvents()
+            .filter((event) => needsAggregate.includes(event.name));
+        for (let event of concurrentEvents) {
             let eventsByName = aggregates.get(event.name) || [];
             eventsByName.push(event);
             aggregates.set(event.name, eventsByName);
         }
 
         let aggregateEvents = [];
-        for(let [eventName, events] of aggregates) {
+        for (let [eventName, events] of aggregates) {
             aggregateEvents.push(new Event(`${eventName}:aggregate`, { events }));
         }
 
@@ -51,13 +50,13 @@ class BaseAbilityWindow extends BaseStep {
     }
 
     registerAbility(ability, event) {
-        if(this.hasResolvedAbility(ability, event)) {
+        if (this.hasResolvedAbility(ability, event)) {
             return;
         }
 
         let context = ability.createContext(event);
 
-        if(!ability.canResolve(context)) {
+        if (!ability.canResolve(context)) {
             return;
         }
 
@@ -71,7 +70,9 @@ class BaseAbilityWindow extends BaseStep {
     }
 
     hasResolvedAbility(ability, event) {
-        return this.resolvedAbilities.some(resolved => resolved.ability === ability && resolved.event === event);
+        return this.resolvedAbilities.some(
+            (resolved) => resolved.ability === ability && resolved.event === event
+        );
     }
 
     resolveAbility(ability, context) {
@@ -84,19 +85,21 @@ class BaseAbilityWindow extends BaseStep {
     }
 
     clearAbilityResolution(ability) {
-        this.resolvedAbilities = this.resolvedAbilities.filter(resolvedAbility => resolvedAbility.ability !== ability);
+        this.resolvedAbilities = this.resolvedAbilities.filter(
+            (resolvedAbility) => resolvedAbility.ability !== ability
+        );
     }
 
     hasAttachedEvents() {
-        if(this.event.cancelled) {
+        if (this.event.cancelled) {
             return false;
         }
 
-        return this.event.getConcurrentEvents().some(event => event.attachedEvents.length !== 0);
+        return this.event.getConcurrentEvents().some((event) => event.attachedEvents.length !== 0);
     }
 
     openWindowForAttachedEvents() {
-        if(this.event.cancelled) {
+        if (this.event.cancelled) {
             return;
         }
 
@@ -104,4 +107,4 @@ class BaseAbilityWindow extends BaseStep {
     }
 }
 
-module.exports = BaseAbilityWindow;
+export default BaseAbilityWindow;

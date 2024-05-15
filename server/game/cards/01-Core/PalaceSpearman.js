@@ -1,9 +1,12 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class PalaceSpearman extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.game.currentPhase !== 'setup' && this.game.currentPhase !== 'plot' && !this.controller.firstPlayer,
+            condition: () =>
+                this.game.currentPhase !== 'setup' &&
+                this.game.currentPhase !== 'plot' &&
+                !this.controller.firstPlayer,
             match: this,
             effect: ability.effects.addIcon('intrigue')
         });
@@ -12,4 +15,4 @@ class PalaceSpearman extends DrawCard {
 
 PalaceSpearman.code = '01114';
 
-module.exports = PalaceSpearman;
+export default PalaceSpearman;

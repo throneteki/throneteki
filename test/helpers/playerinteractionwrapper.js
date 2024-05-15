@@ -1,7 +1,6 @@
-const uuid = require('uuid');
-
-const { matchCardByNameAndPack } = require('./cardutil.js');
-const { detectBinary } = require('../../server/util');
+import uuid from 'uuid';
+import { matchCardByNameAndPack } from './cardutil.js';
+import { detectBinary } from '../../server/util.js';
 
 class PlayerInteractionWrapper {
     constructor(game, player) {
@@ -33,11 +32,11 @@ class PlayerInteractionWrapper {
     formatPrompt() {
         let prompt = this.currentPrompt();
 
-        if(!prompt) {
+        if (!prompt) {
             return 'no prompt active';
         }
 
-        let buttons = prompt.buttons.map(button => {
+        let buttons = prompt.buttons.map((button) => {
             let text = button.disabled ? button.text + ' (Disabled)' : button.text;
             return `[${text}]`;
         });
@@ -51,11 +50,18 @@ class PlayerInteractionWrapper {
 
     filterCardsByName(name, location = 'any') {
         let matchFunc = matchCardByNameAndPack(name);
-        let cards = this.game.allCards.filter(card => card.controller === this.player && matchFunc(card.cardData) && (location === 'any' || card.location === location));
+        let cards = this.game.allCards.filter(
+            (card) =>
+                card.controller === this.player &&
+                matchFunc(card.cardData) &&
+                (location === 'any' || card.location === location)
+        );
 
-        if(cards.length === 0) {
+        if (cards.length === 0) {
             var locationString = location === 'any' ? 'any location' : location;
-            throw new Error(`Could not find any matching card "${name}" for ${this.player.name} in ${locationString}`);
+            throw new Error(
+                `Could not find any matching card "${name}" for ${this.player.name} in ${locationString}`
+            );
         }
 
         return cards;
@@ -66,9 +72,11 @@ class PlayerInteractionWrapper {
     }
 
     filterCards(condition) {
-        let cards = this.game.allCards.filter(card => card.controller === this.player && condition(card));
+        let cards = this.game.allCards.filter(
+            (card) => card.controller === this.player && condition(card)
+        );
 
-        if(cards.length === 0) {
+        if (cards.length === 0) {
             throw new Error(`Could not find any matching cards for ${this.player.name}`);
         }
 
@@ -85,7 +93,7 @@ class PlayerInteractionWrapper {
     }
 
     selectPlot(plot) {
-        if(typeof (plot) === 'string') {
+        if (typeof plot === 'string') {
             plot = this.findCardByName(plot, 'plot deck');
         }
 
@@ -94,18 +102,22 @@ class PlayerInteractionWrapper {
     }
 
     selectTitle(title) {
-        if(!this.hasPrompt('Select a title')) {
-            throw new Error(`Couldn't select a title for ${this.name}. Current prompt is:\n\n${this.formatPrompt()}`);
+        if (!this.hasPrompt('Select a title')) {
+            throw new Error(
+                `Couldn't select a title for ${this.name}. Current prompt is:\n\n${this.formatPrompt()}`
+            );
         }
         this.clickPrompt(title);
     }
 
     nameTrait(trait) {
         let currentPrompt = this.player.currentPrompt();
-        let traitControl = currentPrompt.controls.find(control => control.type === 'trait-name');
+        let traitControl = currentPrompt.controls.find((control) => control.type === 'trait-name');
 
-        if(!traitControl) {
-            throw new Error(`Couldn't name a trait for ${this.player.name}. Current prompt is:\n${this.formatPrompt()}`);
+        if (!traitControl) {
+            throw new Error(
+                `Couldn't name a trait for ${this.player.name}. Current prompt is:\n${this.formatPrompt()}`
+            );
         }
 
         this.game.menuButton(this.player.name, trait, traitControl.method, traitControl.promptId);
@@ -115,36 +127,56 @@ class PlayerInteractionWrapper {
 
     selectValue(value) {
         let currentPrompt = this.player.currentPrompt();
-        let selectValueControl = currentPrompt.controls.find(control => control.type === 'select-from-values');
+        let selectValueControl = currentPrompt.controls.find(
+            (control) => control.type === 'select-from-values'
+        );
 
-        if(!selectValueControl) {
-            throw new Error(`Couldn't select a value for ${this.player.name}. Current prompt is:\n${this.formatPrompt()}`);
+        if (!selectValueControl) {
+            throw new Error(
+                `Couldn't select a value for ${this.player.name}. Current prompt is:\n${this.formatPrompt()}`
+            );
         }
 
-        this.game.menuButton(this.player.name, value, selectValueControl.method, selectValueControl.promptId);
+        this.game.menuButton(
+            this.player.name,
+            value,
+            selectValueControl.method,
+            selectValueControl.promptId
+        );
         this.game.continue();
         this.checkUnserializableGameState();
     }
 
     clickPrompt(text) {
         let currentPrompt = this.player.currentPrompt();
-        let promptButton = currentPrompt.buttons.find(button => button.text.toLowerCase() === text.toLowerCase());
+        let promptButton = currentPrompt.buttons.find(
+            (button) => button.text.toLowerCase() === text.toLowerCase()
+        );
 
-        if(!promptButton) {
-            throw new Error(`Couldn't click on "${text}" for ${this.player.name}. Current prompt is:\n${this.formatPrompt()}`);
+        if (!promptButton) {
+            throw new Error(
+                `Couldn't click on "${text}" for ${this.player.name}. Current prompt is:\n${this.formatPrompt()}`
+            );
         }
 
-        if(promptButton.disabled) {
-            throw new Error(`Couldn't click on "${text}" for ${this.player.name} because it is disabled. Current prompt is:\n${this.formatPrompt()}`);
+        if (promptButton.disabled) {
+            throw new Error(
+                `Couldn't click on "${text}" for ${this.player.name} because it is disabled. Current prompt is:\n${this.formatPrompt()}`
+            );
         }
 
-        this.game.menuButton(this.player.name, promptButton.arg, promptButton.method, promptButton.promptId);
+        this.game.menuButton(
+            this.player.name,
+            promptButton.arg,
+            promptButton.method,
+            promptButton.promptId
+        );
         this.game.continue();
         this.checkUnserializableGameState();
     }
 
     clickCard(card, location = 'any') {
-        if(typeof (card) === 'string') {
+        if (typeof card === 'string') {
             card = this.findCardByName(card, location);
         }
 
@@ -154,13 +186,13 @@ class PlayerInteractionWrapper {
     }
 
     clickMenu(card, menuText) {
-        if(typeof (card) === 'string') {
+        if (typeof card === 'string') {
             card = this.findCardByName(card);
         }
 
-        var items = card.getMenu(this.player).filter(item => item.text === menuText);
+        var items = card.getMenu(this.player).filter((item) => item.text === menuText);
 
-        if(items.length === 0) {
+        if (items.length === 0) {
             throw new Error(`Card ${card.name} does not have a menu item "${menuText}"`);
         }
 
@@ -170,36 +202,40 @@ class PlayerInteractionWrapper {
     }
 
     hasEnabledMenu(card, menuText) {
-        if(typeof (card) === 'string') {
+        if (typeof card === 'string') {
             card = this.findCardByName(card);
         }
 
-        const items = card.getMenu(this.player).filter(item => item.text === menuText);
-        return items.some(item => !item.disabled);
+        const items = card.getMenu(this.player).filter((item) => item.text === menuText);
+        return items.some((item) => !item.disabled);
     }
 
     triggerAbility(cardOrCardName) {
-        if(!this.game.hasOpenInterruptOrReactionWindow()) {
-            throw new Error(`Couldn't trigger ability for ${this.name}. Not in an ability window. Current prompt is:\n${this.formatPrompt()}`);
+        if (!this.game.hasOpenInterruptOrReactionWindow()) {
+            throw new Error(
+                `Couldn't trigger ability for ${this.name}. Not in an ability window. Current prompt is:\n${this.formatPrompt()}`
+            );
         }
 
         let selectableCards = this.player.getSelectableCards();
         let card;
         let cardName;
 
-        if(typeof cardOrCardName === 'string') {
-            card = selectableCards.find(c => c.name === cardOrCardName);
+        if (typeof cardOrCardName === 'string') {
+            card = selectableCards.find((c) => c.name === cardOrCardName);
             cardName = cardOrCardName;
         } else {
             card = cardOrCardName;
             cardName = cardOrCardName.name;
         }
 
-        if(!card || !selectableCards.includes(card)) {
-            throw new Error(`Couldn't trigger ability ${cardName} for ${this.name}. Current available abilities: ${selectableCards.map(c => c.name).join(', ')}`);
+        if (!card || !selectableCards.includes(card)) {
+            throw new Error(
+                `Couldn't trigger ability ${cardName} for ${this.name}. Current available abilities: ${selectableCards.map((c) => c.name).join(', ')}`
+            );
         }
 
-        if(card.location === 'draw deck') {
+        if (card.location === 'draw deck') {
             // Abilities on cards that are still in the draw deck, e.g. Missandei,
             // are presented as buttons instead.
             this.clickPrompt(`${card.name} (${card.location})`);
@@ -222,7 +258,7 @@ class PlayerInteractionWrapper {
 
     discardToReserve() {
         let needsDiscard = this.player.hand.length - this.player.getTotalReserve();
-        for(let i = 0; i < needsDiscard; ++i) {
+        for (let i = 0; i < needsDiscard; ++i) {
             this.clickCard(this.player.hand[i]);
         }
         this.clickPrompt('Done');
@@ -253,10 +289,12 @@ class PlayerInteractionWrapper {
         let state = this.game.getState(this.player.name);
         let results = detectBinary(state);
 
-        if(results.length !== 0) {
-            throw new Error('Unable to serialize game state back to client:\n' + JSON.stringify(results));
+        if (results.length !== 0) {
+            throw new Error(
+                'Unable to serialize game state back to client:\n' + JSON.stringify(results)
+            );
         }
     }
 }
 
-module.exports = PlayerInteractionWrapper;
+export default PlayerInteractionWrapper;

@@ -1,4 +1,4 @@
-const BaseCardSelector = require('./BaseCardSelector.js');
+import BaseCardSelector from './BaseCardSelector.js';
 
 class MaxStatCardSelector extends BaseCardSelector {
     constructor(properties) {
@@ -9,7 +9,9 @@ class MaxStatCardSelector extends BaseCardSelector {
     }
 
     canTarget(card, context, selectedCards) {
-        return super.canTarget(card, context, selectedCards) && this.cardStat(card) <= this.maxStat();
+        return (
+            super.canTarget(card, context, selectedCards) && this.cardStat(card) <= this.maxStat()
+        );
     }
 
     wouldExceedLimit(selectedCards, card) {
@@ -24,4 +26,4 @@ class MaxStatCardSelector extends BaseCardSelector {
     }
 }
 
-module.exports = MaxStatCardSelector;
+export default MaxStatCardSelector;

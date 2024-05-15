@@ -1,10 +1,11 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class TheRedViper extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.isAttacking(),
-            match: card => card.isDefending() && card.getType() === 'character' && card.getNumberOfIcons() < 2,
+            match: (card) =>
+                card.isDefending() && card.getType() === 'character' && card.getNumberOfIcons() < 2,
             targetController: 'any',
             effect: ability.effects.doesNotContributeStrength()
         });
@@ -13,4 +14,4 @@ class TheRedViper extends DrawCard {
 
 TheRedViper.code = '06095';
 
-module.exports = TheRedViper;
+export default TheRedViper;

@@ -1,6 +1,6 @@
-const GameAction = require('./GameAction');
-const LeavePlay = require('./LeavePlay');
-const MoveCardEventGenerator = require('./MoveCardEventGenerator');
+import GameAction from './GameAction.js';
+import LeavePlay from './LeavePlay.js';
+import MoveCardEventGenerator from './MoveCardEventGenerator.js';
 
 class RemoveFromGame extends GameAction {
     constructor() {
@@ -19,11 +19,17 @@ class RemoveFromGame extends GameAction {
             player,
             snapshotName: 'cardStateWhenRemoved'
         };
-        const removeEvent = this.event('onCardRemovedFromGame', params, event => {
-            event.thenAttachEvent(MoveCardEventGenerator.createPlaceCardEvent({ card: event.card, player: event.player, location: 'out of game' }));
+        const removeEvent = this.event('onCardRemovedFromGame', params, (event) => {
+            event.thenAttachEvent(
+                MoveCardEventGenerator.createPlaceCardEvent({
+                    card: event.card,
+                    player: event.player,
+                    location: 'out of game'
+                })
+            );
         });
 
-        if(['play area', 'duplicate'].includes(card.location)) {
+        if (['play area', 'duplicate'].includes(card.location)) {
             return this.atomic(removeEvent, LeavePlay.createEvent({ card, allowSave }));
         }
 
@@ -31,4 +37,4 @@ class RemoveFromGame extends GameAction {
     }
 }
 
-module.exports = new RemoveFromGame();
+export default new RemoveFromGame();

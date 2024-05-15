@@ -1,9 +1,9 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class SnowedUnder extends PlotCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: card => card.controller.activePlot === card,
+            match: (card) => card.controller.activePlot === card,
             targetController: 'any',
             effect: ability.effects.preventPlotModifier('initiative')
         });
@@ -12,4 +12,4 @@ class SnowedUnder extends PlotCard {
 
 SnowedUnder.code = '03048';
 
-module.exports = SnowedUnder;
+export default SnowedUnder;

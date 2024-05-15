@@ -1,20 +1,25 @@
-const ChallengeKeywordsWindow = require('./ChallengeKeywordsWindow');
-const GameKeywords = require('../gamekeywords.js');
+import ChallengeKeywordsWindow from './ChallengeKeywordsWindow.js';
+import GameKeywords from '../gamekeywords.js';
 
 const initiatingKeywords = ['stealth', 'assault'];
 
 class InitiatingKeywordsWindow extends ChallengeKeywordsWindow {
     constructor(game, challenge) {
         super(game, challenge);
-        this.attackingCardsWithContext = this.buildContexts(challenge.declaredAttackers, this.challenge.attackingPlayer);
+        this.attackingCardsWithContext = this.buildContexts(
+            challenge.declaredAttackers,
+            this.challenge.attackingPlayer
+        );
     }
 
     continue() {
-        for(let keyword of initiatingKeywords) {
+        for (let keyword of initiatingKeywords) {
             let ability = GameKeywords[keyword];
-            let attackersWithKeyword = this.attackingCardsWithContext.filter(attacker => ability.canResolve(attacker.context));
+            let attackersWithKeyword = this.attackingCardsWithContext.filter((attacker) =>
+                ability.canResolve(attacker.context)
+            );
 
-            if(attackersWithKeyword.length > 0) {
+            if (attackersWithKeyword.length > 0) {
                 this.resolveAbility(ability, attackersWithKeyword);
             }
         }
@@ -23,4 +28,4 @@ class InitiatingKeywordsWindow extends ChallengeKeywordsWindow {
     }
 }
 
-module.exports = InitiatingKeywordsWindow;
+export default InitiatingKeywordsWindow;

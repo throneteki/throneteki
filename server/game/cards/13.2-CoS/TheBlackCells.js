@@ -1,23 +1,23 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class TheBlackCells extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardOutOfShadows: event => event.card.controller === this.controller
+                onCardOutOfShadows: (event) => event.card.controller === this.controller
             },
             cost: ability.costs.kneelSelf(),
             target: {
-                cardCondition: (card, context) => card.location === 'play area' && card.getType() === 'character' && card.controller !== context.player
+                cardCondition: (card, context) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    card.controller !== context.player
             },
             message: '{player} kneels {source} to prevent {target} from standing or kneeling',
-            handler: context => {
-                this.untilEndOfPhase(ability => ({
+            handler: (context) => {
+                this.untilEndOfPhase((ability) => ({
                     match: context.target,
-                    effect: [
-                        ability.effects.cannotBeStood(),
-                        ability.effects.cannotBeKneeled()
-                    ]
+                    effect: [ability.effects.cannotBeStood(), ability.effects.cannotBeKneeled()]
                 }));
             }
         });
@@ -26,5 +26,4 @@ class TheBlackCells extends DrawCard {
 
 TheBlackCells.code = '13028';
 
-module.exports = TheBlackCells;
-
+export default TheBlackCells;

@@ -1,6 +1,6 @@
-const GameAction = require('./GameAction');
-const DiscardPlot = require('./DiscardPlot');
-const PlaceCard = require('./PlaceCard');
+import GameAction from './GameAction.js';
+import DiscardPlot from './DiscardPlot.js';
+import PlaceCard from './PlaceCard.js';
 
 class RevealPlot extends GameAction {
     constructor() {
@@ -12,15 +12,19 @@ class RevealPlot extends GameAction {
     }
 
     createEvent({ card, player }) {
-        const event = this.event('__REVEAL_PLOT__', { card, player }, event => {
+        const event = this.event('__REVEAL_PLOT__', { card, player }, (event) => {
             event.player.selectedPlot = null;
             event.card.flipFaceup();
             event.thenAttachEvent(PlaceCard.createEvent({ card, player, location: 'active plot' }));
         });
-        const entersPlayEvent = this.event('onCardEntersPlay', { card, playingType: 'plot', originalLocation: card.location });
+        const entersPlayEvent = this.event('onCardEntersPlay', {
+            card,
+            playingType: 'plot',
+            originalLocation: card.location
+        });
         const events = [event, entersPlayEvent];
 
-        if(player.activePlot) {
+        if (player.activePlot) {
             events.push(DiscardPlot.createEvent({ card: player.activePlot, player }));
         }
 
@@ -28,4 +32,4 @@ class RevealPlot extends GameAction {
     }
 }
 
-module.exports = new RevealPlot();
+export default new RevealPlot();

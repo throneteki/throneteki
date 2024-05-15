@@ -1,9 +1,12 @@
-describe('Summoned to Court', function() {
-    integration(function() {
-        beforeEach(function() {
+describe('Summoned to Court', function () {
+    integration(function () {
+        beforeEach(function () {
             const deck = this.buildDeck('greyjoy', [
-                'Summoned to Court', 'A Noble Cause',
-                'Aeron Damphair (Core)', 'Balon Greyjoy (Core)', 'The Roseroad'
+                'Summoned to Court',
+                'A Noble Cause',
+                'Aeron Damphair (Core)',
+                'Balon Greyjoy (Core)',
+                'The Roseroad'
             ]);
 
             this.player1.selectDeck(deck);
@@ -12,8 +15,8 @@ describe('Summoned to Court', function() {
             this.skipSetupPhase();
         });
 
-        describe('when one player chooses a character card with lower cost', function() {
-            beforeEach(function() {
+        describe('when one player chooses a character card with lower cost', function () {
+            beforeEach(function () {
                 this.player1.selectPlot('Summoned to Court');
                 this.player2.selectPlot('A Noble Cause');
                 this.selectFirstPlayer(this.player2);
@@ -22,7 +25,7 @@ describe('Summoned to Court', function() {
                 this.player1.clickCard('Balon Greyjoy', 'hand');
             });
 
-            it('should prompt only that player to put it into play', function() {
+            it('should prompt only that player to put it into play', function () {
                 expect(this.player2).toHavePrompt('Put Aeron Damphair into play?');
 
                 this.player2.clickPrompt('Yes');
@@ -33,8 +36,8 @@ describe('Summoned to Court', function() {
             });
         });
 
-        describe('when both players choose a character card with the same cost', function() {
-            beforeEach(function() {
+        describe('when both players choose a character card with the same cost', function () {
+            beforeEach(function () {
                 this.player1.selectPlot('Summoned to Court');
                 this.player2.selectPlot('A Noble Cause');
                 this.selectFirstPlayer(this.player2);
@@ -43,7 +46,7 @@ describe('Summoned to Court', function() {
                 this.player1.clickCard('Balon Greyjoy', 'hand');
             });
 
-            it('should prompt both players to put it into play', function() {
+            it('should prompt both players to put it into play', function () {
                 expect(this.player2).toHavePrompt('Put Balon Greyjoy into play?');
                 this.player2.clickPrompt('Yes');
 
@@ -54,8 +57,8 @@ describe('Summoned to Court', function() {
             });
         });
 
-        describe('when one player chooses a character and another a non-character', function() {
-            beforeEach(function() {
+        describe('when one player chooses a character and another a non-character', function () {
+            beforeEach(function () {
                 this.player1.selectPlot('Summoned to Court');
                 this.player2.selectPlot('A Noble Cause');
                 this.selectFirstPlayer(this.player2);
@@ -64,16 +67,16 @@ describe('Summoned to Court', function() {
                 this.player1.clickCard('Balon Greyjoy', 'hand');
             });
 
-            it('should only prompt the player that revealed a character', function() {
+            it('should only prompt the player that revealed a character', function () {
                 expect(this.player1).toHavePrompt('Put Balon Greyjoy into play?');
                 this.player1.clickPrompt('Yes');
                 expect(this.player1.findCardByName('Balon Greyjoy').location).toBe('play area');
             });
         });
 
-        describe('when one player does not have any cards', function() {
-            beforeEach(function() {
-                for(const card of this.player2Object.hand) {
+        describe('when one player does not have any cards', function () {
+            beforeEach(function () {
+                for (const card of this.player2Object.hand) {
                     this.player2Object.moveCard(card, 'discard pile');
                 }
 
@@ -82,7 +85,7 @@ describe('Summoned to Court', function() {
                 this.selectFirstPlayer(this.player2);
             });
 
-            it('should only prompt the player with cards', function() {
+            it('should only prompt the player with cards', function () {
                 expect(this.player1).toHavePrompt('Choose a card to reveal');
                 expect(this.player2).not.toHavePrompt('Choose a card to reveal');
 
@@ -94,13 +97,13 @@ describe('Summoned to Court', function() {
             });
         });
 
-        describe('when neither player has cards', function() {
-            beforeEach(function() {
-                for(const card of this.player1Object.hand) {
+        describe('when neither player has cards', function () {
+            beforeEach(function () {
+                for (const card of this.player1Object.hand) {
                     this.player1Object.moveCard(card, 'discard pile');
                 }
 
-                for(const card of this.player2Object.hand) {
+                for (const card of this.player2Object.hand) {
                     this.player2Object.moveCard(card, 'discard pile');
                 }
 
@@ -109,7 +112,7 @@ describe('Summoned to Court', function() {
                 this.selectFirstPlayer(this.player2);
             });
 
-            it('should not prompt either player', function() {
+            it('should not prompt either player', function () {
                 expect(this.player1).not.toHavePrompt('Choose a card to reveal');
                 expect(this.player2).not.toHavePrompt('Choose a card to reveal');
             });

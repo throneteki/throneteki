@@ -1,13 +1,18 @@
-describe('Emissary of the Hightower', function() {
-    integration(function() {
-        beforeEach(function() {
+describe('Emissary of the Hightower', function () {
+    integration(function () {
+        beforeEach(function () {
             const deck1 = this.buildDeck('tyrell', [
                 'Trading with the Pentoshi',
-                'Margaery Tyrell (AMAF)', 'The Queen of Thorns (HoT)', 'Emissary of the Hightower', 'Growing Strong', 'Hidden Thorns'
+                'Margaery Tyrell (AMAF)',
+                'The Queen of Thorns (HoT)',
+                'Emissary of the Hightower',
+                'Growing Strong',
+                'Hidden Thorns'
             ]);
             const deck2 = this.buildDeck('stark', [
                 'A Noble Cause',
-                'Hedge Knight', 'Varys (Core)'
+                'Hedge Knight',
+                'Varys (Core)'
             ]);
 
             this.player1.selectDeck(deck1);
@@ -26,8 +31,8 @@ describe('Emissary of the Hightower', function() {
             this.selectFirstPlayer(this.player1);
         });
 
-        describe('when playing an event chosen by Emissary', function() {
-            beforeEach(function() {
+        describe('when playing an event chosen by Emissary', function () {
+            beforeEach(function () {
                 this.completeMarshalPhase();
 
                 // Ambush Emissary
@@ -43,13 +48,13 @@ describe('Emissary of the Hightower', function() {
                 expect(this.character.getStrength()).toBe(7);
             });
 
-            it('should remove the event from the game', function() {
+            it('should remove the event from the game', function () {
                 expect(this.event.location).toBe('out of game');
             });
         });
 
-        describe('vs Hidden Thorns', function() {
-            beforeEach(function() {
+        describe('vs Hidden Thorns', function () {
+            beforeEach(function () {
                 this.queenOfThorns = this.player1.findCardByName('The Queen of Thorns', 'hand');
                 this.hiddenThorns = this.player1.findCardByName('Hidden Thorns', 'hand');
 
@@ -77,11 +82,11 @@ describe('Emissary of the Hightower', function() {
                 this.completeChallengesPhase();
             });
 
-            it('should return the event to hand', function() {
+            it('should return the event to hand', function () {
                 expect(this.hiddenThorns.location).toBe('hand');
             });
 
-            it('should reset the event placement location for future rounds', function() {
+            it('should reset the event placement location for future rounds', function () {
                 expect(this.hiddenThorns.eventPlacementLocation).toBe('discard pile');
             });
         });

@@ -1,4 +1,4 @@
-const FactionCharacterCostReducer = require('../reducer.js').FactionCharacterCostReducer;
+import { FactionCharacterCostReducer } from '../reducer.js';
 
 class GardenCaretaker extends FactionCharacterCostReducer {
     constructor(owner, cardData) {
@@ -8,4 +8,4 @@ class GardenCaretaker extends FactionCharacterCostReducer {
 
 GardenCaretaker.code = '01188';
 
-module.exports = GardenCaretaker;
+export default GardenCaretaker;

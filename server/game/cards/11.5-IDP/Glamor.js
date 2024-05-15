@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard');
-const KillTracker = require('../../EventTrackers/KillTracker');
+import DrawCard from '../../drawcard.js';
+import KillTracker from '../../EventTrackers/KillTracker.js';
 
 class Glamor extends DrawCard {
     constructor(owner, cardData) {
@@ -18,17 +18,21 @@ class Glamor extends DrawCard {
             title: 'Resurrect character',
             cost: ability.costs.killParent(),
             target: {
-                cardCondition: (card, context) => (
+                cardCondition: (card, context) =>
                     card.controller === context.player &&
                     card.location === 'dead pile' &&
                     card !== context.costs.kill &&
                     this.tracker.wasKilledThisPhase(card) &&
                     context.player.canPutIntoPlay(card)
-                )
             },
-            handler: context => {
-                this.game.addMessage('{0} uses {1} and kills {2} to put {3} into play',
-                    context.player, this, context.costs.kill, context.target);
+            handler: (context) => {
+                this.game.addMessage(
+                    '{0} uses {1} and kills {2} to put {3} into play',
+                    context.player,
+                    this,
+                    context.costs.kill,
+                    context.target
+                );
                 context.player.putIntoPlay(context.target);
             }
         });
@@ -37,4 +41,4 @@ class Glamor extends DrawCard {
 
 Glamor.code = '11088';
 
-module.exports = Glamor;
+export default Glamor;

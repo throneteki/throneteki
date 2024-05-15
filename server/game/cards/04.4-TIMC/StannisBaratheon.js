@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class StannisBaratheon extends DrawCard {
     setupCardAbilities(ability) {
@@ -11,21 +11,27 @@ class StannisBaratheon extends DrawCard {
 
         this.reaction({
             when: {
-                onDominanceDetermined: event => this.controller === event.winner
+                onDominanceDetermined: (event) => this.controller === event.winner
             },
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' &&
-                                       !card.isLoyal()
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    !card.isLoyal()
             },
-            handler: context => {
-                this.untilEndOfRound(ability => ({
+            handler: (context) => {
+                this.untilEndOfRound((ability) => ({
                     condition: () => this.game.currentPhase === 'standing',
                     match: context.target,
                     effect: ability.effects.cannotBeStood()
                 }));
 
-                this.game.addMessage('{0} uses {1} to make {2} unable to stand during the standing phase this round',
-                    this.controller, this, context.target);
+                this.game.addMessage(
+                    '{0} uses {1} to make {2} unable to stand during the standing phase this round',
+                    this.controller,
+                    this,
+                    context.target
+                );
             }
         });
     }
@@ -33,4 +39,4 @@ class StannisBaratheon extends DrawCard {
 
 StannisBaratheon.code = '04067';
 
-module.exports = StannisBaratheon;
+export default StannisBaratheon;

@@ -5,8 +5,8 @@ class ParticipationTracker {
 
     constructor(game, endingEvent) {
         this.cards = [];
-        game.on('onDeclaredAsAttacker', event => this.trackCard(event.card));
-        game.on('onDeclaredAsDefender', event => this.trackCard(event.card));
+        game.on('onDeclaredAsAttacker', (event) => this.trackCard(event.card));
+        game.on('onDeclaredAsDefender', (event) => this.trackCard(event.card));
         game.on(endingEvent, () => this.clearCards());
     }
 
@@ -23,4 +23,4 @@ class ParticipationTracker {
     }
 }
 
-module.exports = ParticipationTracker;
+export default ParticipationTracker;

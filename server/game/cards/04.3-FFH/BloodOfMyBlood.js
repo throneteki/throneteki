@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class BloodOfMyBlood extends DrawCard {
     setupCardAbilities() {
@@ -12,10 +12,10 @@ class BloodOfMyBlood extends DrawCard {
                 match: { type: 'character', trait: 'Bloodrider' },
                 reveal: false,
                 message: '{player} {gameAction}',
-                gameAction: GameActions.putIntoPlay(context => ({
+                gameAction: GameActions.putIntoPlay((context) => ({
                     card: context.searchTarget
-                })).thenExecute(event => {
-                    this.atEndOfPhase(ability => ({
+                })).thenExecute((event) => {
+                    this.atEndOfPhase((ability) => ({
                         match: event.card,
                         condition: () => ['play area', 'duplicate'].includes(event.card.location),
                         targetLocation: 'any',
@@ -29,4 +29,4 @@ class BloodOfMyBlood extends DrawCard {
 
 BloodOfMyBlood.code = '04054';
 
-module.exports = BloodOfMyBlood;
+export default BloodOfMyBlood;

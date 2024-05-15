@@ -5,22 +5,25 @@ import Avatar from '../Site/Avatar';
 
 class UserList extends React.Component {
     render() {
-        if(!this.props.users) {
+        if (!this.props.users) {
             return <div>Userlist loading...</div>;
         }
 
-        const userList = this.props.users.map(user => {
+        const userList = this.props.users.map((user) => {
             return (
-                <div className='user-row' key={ user.name }>
-                    <Avatar username={ user.name } />
-                    <span>{ user.name }</span>
+                <div className='user-row' key={user.name}>
+                    <Avatar username={user.name} />
+                    <span>{user.name}</span>
                 </div>
             );
         });
 
-        return (<div className='userlist'>Online Users
-            { userList }
-        </div>);
+        return (
+            <div className='userlist'>
+                Online Users
+                {userList}
+            </div>
+        );
     }
 }
 

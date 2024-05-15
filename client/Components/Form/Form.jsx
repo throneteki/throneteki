@@ -17,7 +17,7 @@ class Form extends React.Component {
 
         this.onSubmit = this.onSubmit.bind(this);
 
-        for(let field of formFields[props.name]) {
+        for (let field of formFields[props.name]) {
             this.state[field.name] = '';
         }
     }
@@ -39,9 +39,9 @@ class Form extends React.Component {
     }
 
     setInitialValues(props) {
-        if(props.initialValues) {
-            for(let [key, value] of Object.entries(props.initialValues)) {
-                if(!this.state[key]) {
+        if (props.initialValues) {
+            for (let [key, value] of Object.entries(props.initialValues)) {
+                if (!this.state[key]) {
                     let state = this.state;
                     state[key] = value;
                     this.setState(state);
@@ -67,50 +67,85 @@ class Form extends React.Component {
     onSubmit(event) {
         event.preventDefault();
 
-        if(!$('form').valid()) {
+        if (!$('form').valid()) {
             return;
         }
 
-        if(this.props.onSubmit) {
+        if (this.props.onSubmit) {
             this.props.onSubmit(this.state);
         }
     }
 
     render() {
-        const fieldsToRender = formFields[this.props.name].map(field => {
-            switch(field.inputType) {
+        const fieldsToRender = formFields[this.props.name].map((field) => {
+            switch (field.inputType) {
                 case 'checkbox':
-                    return (<Checkbox key={ field.name } name={ field.name } label={ field.label } fieldClass={ field.fieldClass }
-                        onChange={ this.onCheckboxChange.bind(this, field.name) } checked={ this.state[field.name] } />);
+                    return (
+                        <Checkbox
+                            key={field.name}
+                            name={field.name}
+                            label={field.label}
+                            fieldClass={field.fieldClass}
+                            onChange={this.onCheckboxChange.bind(this, field.name)}
+                            checked={this.state[field.name]}
+                        />
+                    );
                 case 'textarea':
-                    return (<TextArea key={ field.name } name={ field.name } label={ field.label } placeholder={ field.placeholder }
-                        fieldClass={ field.fieldClass } labelClass={ field.labelClass } onChange={ this.onChange.bind(this, field.name) }
-                        value={ this.state[field.name] } validationAttributes={ field.validationProperties } />);
+                    return (
+                        <TextArea
+                            key={field.name}
+                            name={field.name}
+                            label={field.label}
+                            placeholder={field.placeholder}
+                            fieldClass={field.fieldClass}
+                            labelClass={field.labelClass}
+                            onChange={this.onChange.bind(this, field.name)}
+                            value={this.state[field.name]}
+                            validationAttributes={field.validationProperties}
+                        />
+                    );
                 default:
-                    return (<Input key={ field.name } name={ field.name } label={ field.label } placeholder={ field.placeholder }
-                        validationAttributes={ field.validationProperties } fieldClass={ field.fieldClass } labelClass={ field.labelClass }
-                        type={ field.inputType } onChange={ this.onChange.bind(this, field.name) } value={ this.state[field.name] } />);
+                    return (
+                        <Input
+                            key={field.name}
+                            name={field.name}
+                            label={field.label}
+                            placeholder={field.placeholder}
+                            validationAttributes={field.validationProperties}
+                            fieldClass={field.fieldClass}
+                            labelClass={field.labelClass}
+                            type={field.inputType}
+                            onChange={this.onChange.bind(this, field.name)}
+                            value={this.state[field.name]}
+                        />
+                    );
             }
         });
 
-        let content = (<form className='form form-horizontal' onSubmit={ this.onSubmit }>
-            { fieldsToRender }
-            { this.props.children }
-            <div className='form-group'>
-                <div className={ this.props.buttonClass }>
-                    <button ref='submit' type='submit' className='btn btn-primary' disabled={ this.props.apiLoading }>
-                        { this.props.buttonText || 'Submit' } { this.props.apiLoading ? <span className='spinner button-spinner' /> : null }
-                    </button>
+        let content = (
+            <form className='form form-horizontal' onSubmit={this.onSubmit}>
+                {fieldsToRender}
+                {this.props.children}
+                <div className='form-group'>
+                    <div className={this.props.buttonClass}>
+                        <button
+                            ref='submit'
+                            type='submit'
+                            className='btn btn-primary'
+                            disabled={this.props.apiLoading}
+                        >
+                            {this.props.buttonText || 'Submit'}{' '}
+                            {this.props.apiLoading ? (
+                                <span className='spinner button-spinner' />
+                            ) : null}
+                        </button>
+                    </div>
                 </div>
-            </div>
-        </form>);
+            </form>
+        );
 
-        if(this.props.panelTitle) {
-            return (
-                <Panel title={ this.props.panelTitle }>
-                    { content }
-                </Panel>
-            );
+        if (this.props.panelTitle) {
+            return <Panel title={this.props.panelTitle}>{content}</Panel>;
         }
 
         return content;

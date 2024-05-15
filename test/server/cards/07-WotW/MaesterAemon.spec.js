@@ -1,9 +1,11 @@
-describe('Maester Aemon (WotW)', function() {
-    integration(function() {
-        beforeEach(function() {
+describe('Maester Aemon (WotW)', function () {
+    integration(function () {
+        beforeEach(function () {
             const deck = this.buildDeck('thenightswatch', [
                 'Sneak Attack',
-                'Maester Aemon (WotW)', 'The Seastone Chair', 'Steward at the Wall'
+                'Maester Aemon (WotW)',
+                'The Seastone Chair',
+                'Steward at the Wall'
             ]);
             this.player1.selectDeck(deck);
             this.player2.selectDeck(deck);
@@ -29,18 +31,18 @@ describe('Maester Aemon (WotW)', function() {
             this.player1.clickPrompt('Done');
         });
 
-        describe('when the challenge phase ends', function() {
-            beforeEach(function() {
+        describe('when the challenge phase ends', function () {
+            beforeEach(function () {
                 this.player1.triggerAbility('Maester Aemon');
             });
 
-            it('should prompt to apply claim for challenges not initiated against the player', function() {
+            it('should prompt to apply claim for challenges not initiated against the player', function () {
                 expect(this.player1).toHavePromptButton('Military');
                 expect(this.player1).toHavePromptButton('Power');
                 expect(this.player1).not.toHavePromptButton('Intrigue');
             });
 
-            it('should allow claim of their choice to be applied', function() {
+            it('should allow claim of their choice to be applied', function () {
                 this.player1.clickPrompt('Military');
 
                 expect(this.player2).toHavePrompt('Select 2 characters to fulfill military claim');
@@ -51,7 +53,7 @@ describe('Maester Aemon (WotW)', function() {
                 expect(this.intrigueCharacter.location).toBe('dead pile');
             });
 
-            it('should not trigger cards that react to claim being applied for / during a challenge', function() {
+            it('should not trigger cards that react to claim being applied for / during a challenge', function () {
                 this.player1.clickPrompt('Military');
                 expect(this.player1).not.toAllowAbilityTrigger('The Seastone Chair');
             });

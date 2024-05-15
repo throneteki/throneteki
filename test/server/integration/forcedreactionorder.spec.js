@@ -1,13 +1,15 @@
-describe('forced reaction order', function() {
-    integration(function() {
-        beforeEach(function() {
+describe('forced reaction order', function () {
+    integration(function () {
+        beforeEach(function () {
             const deck1 = this.buildDeck('lannister', [
                 'Trading with the Pentoshi',
-                'The Hound (TtB)', 'The Hound (TtB)'
+                'The Hound (TtB)',
+                'The Hound (TtB)'
             ]);
             const deck2 = this.buildDeck('thenightswatch', [
                 'Trading with the Pentoshi',
-                'The Wall (Core)', 'Will'
+                'The Wall (Core)',
+                'Will'
             ]);
             this.player1.selectDeck(deck1);
             this.player2.selectDeck(deck2);
@@ -33,13 +35,13 @@ describe('forced reaction order', function() {
             this.skipActionWindow();
         });
 
-        it('should prompt the first player', function() {
+        it('should prompt the first player', function () {
             expect(this.player1).toHavePromptButton('player1 - The Hound');
             expect(this.player1).toHavePromptButton('player2 - The Wall');
             expect(this.player1).toHavePromptButton('player2 - Will');
         });
 
-        it('should allow the abilities to be triggered', function() {
+        it('should allow the abilities to be triggered', function () {
             let hound = this.player1.findCardByName('The Hound', 'play area');
             let wall = this.player2.findCardByName('The Wall', 'play area');
             let will = this.player2.findCardByName('Will', 'play area');

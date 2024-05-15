@@ -1,4 +1,4 @@
-const BaseCardSelector = require('./BaseCardSelector.js');
+import BaseCardSelector from './BaseCardSelector.js';
 
 class SingleCardSelector extends BaseCardSelector {
     constructor(properties) {
@@ -24,4 +24,4 @@ class SingleCardSelector extends BaseCardSelector {
     }
 }
 
-module.exports = SingleCardSelector;
+export default SingleCardSelector;

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class RobertBaratheon extends DrawCard {
     setupCardAbilities(ability) {
@@ -10,7 +10,12 @@ class RobertBaratheon extends DrawCard {
 
     calculateStrength() {
         return this.game.allCards.reduce((counter, card) => {
-            if(card === this || card.location !== 'play area' || card.getType() !== 'character' || !card.kneeled) {
+            if (
+                card === this ||
+                card.location !== 'play area' ||
+                card.getType() !== 'character' ||
+                !card.kneeled
+            ) {
                 return counter;
             }
 
@@ -21,4 +26,4 @@ class RobertBaratheon extends DrawCard {
 
 RobertBaratheon.code = '01048';
 
-module.exports = RobertBaratheon;
+export default RobertBaratheon;

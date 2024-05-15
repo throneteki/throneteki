@@ -1,5 +1,5 @@
-const GameAction = require('./GameAction');
-const Message = require('../Message');
+import GameAction from './GameAction.js';
+import Message from '../Message.js';
 
 class RemoveFromChallenge extends GameAction {
     constructor() {
@@ -23,18 +23,20 @@ class RemoveFromChallenge extends GameAction {
             isDeclared: challenge.isDeclared(card),
             isDefending: challenge.isDefending(card)
         };
-        return this.event('onRemovedFromChallenge', eventProps, event => {
-            event.challenge.attackers = event.challenge.attackers.filter(c => c !== event.card);
-            event.challenge.declaredAttackers = event.challenge.declaredAttackers.filter(c => c !== event.card);
-            event.challenge.defenders = event.challenge.defenders.filter(c => c !== event.card);
-    
+        return this.event('onRemovedFromChallenge', eventProps, (event) => {
+            event.challenge.attackers = event.challenge.attackers.filter((c) => c !== event.card);
+            event.challenge.declaredAttackers = event.challenge.declaredAttackers.filter(
+                (c) => c !== event.card
+            );
+            event.challenge.defenders = event.challenge.defenders.filter((c) => c !== event.card);
+
             event.card.inChallenge = false;
-    
+
             event.challenge.challengeContributions.removeParticipants([event.card]);
-    
+
             event.challenge.calculateStrength();
         });
     }
 }
 
-module.exports = new RemoveFromChallenge();
+export default new RemoveFromChallenge();

@@ -1,14 +1,13 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class BalonGreyjoy extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.isAttacking(),
-            match: card => (
+            match: (card) =>
                 card.isDefending() &&
                 card.getType() === 'character' &&
-                card.getStrength() < this.getStrength()
-            ),
+                card.getStrength() < this.getStrength(),
             targetController: 'opponent',
             effect: ability.effects.doesNotContributeStrength()
         });
@@ -17,4 +16,4 @@ class BalonGreyjoy extends DrawCard {
 
 BalonGreyjoy.code = '01068';
 
-module.exports = BalonGreyjoy;
+export default BalonGreyjoy;

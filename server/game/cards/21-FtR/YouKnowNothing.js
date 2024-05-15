@@ -1,15 +1,15 @@
-const DrawCard = require('../../drawcard');
+import DrawCard from '../../drawcard.js';
 
 class YouKnowNothing extends DrawCard {
     setupCardAbilities() {
         this.action({
             phase: 'challenge',
             message: {
-                format: '{player} plays {source} to have each opponent\'s non-Army character lose all keywords'
+                format: "{player} plays {source} to have each opponent's non-Army character lose all keywords"
             },
             handler: () => {
-                this.untilEndOfPhase(ability => ({
-                    match: card => !card.hasTrait('Army') && card.getType() === 'character',
+                this.untilEndOfPhase((ability) => ({
+                    match: (card) => !card.hasTrait('Army') && card.getType() === 'character',
                     targetController: 'opponent',
                     effect: ability.effects.losesAllKeywords()
                 }));
@@ -20,4 +20,4 @@ class YouKnowNothing extends DrawCard {
 
 YouKnowNothing.code = '21015';
 
-module.exports = YouKnowNothing;
+export default YouKnowNothing;

@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const GenericTracker = require('../../EventTrackers/GenericTracker');
+import DrawCard from '../../drawcard.js';
+import GenericTracker from '../../EventTrackers/GenericTracker.js';
 
 class KingsLanding extends DrawCard {
     setupCardAbilities(ability) {
@@ -8,7 +8,12 @@ class KingsLanding extends DrawCard {
         this.persistentEffect({
             condition: () => !this.hasMarshalledThisPhase(),
             targetController: 'current',
-            effect: ability.effects.canMarshal(card => card.controller === this.controller && card.location === 'discard pile' && card.getType() === 'location')
+            effect: ability.effects.canMarshal(
+                (card) =>
+                    card.controller === this.controller &&
+                    card.location === 'discard pile' &&
+                    card.getType() === 'location'
+            )
         });
 
         this.action({
@@ -17,26 +22,31 @@ class KingsLanding extends DrawCard {
             condition: () => this.controller.canDraw(),
             cost: [
                 ability.costs.kneelSelf(),
-                ability.costs.discardFromHand(card => card.getType() === 'location')
+                ability.costs.discardFromHand((card) => card.getType() === 'location')
             ],
-            handler: context => {
+            handler: (context) => {
                 context.player.drawCardsToHand(1);
-                this.game.addMessage('{0} kneels {1} and discards {2} from their hand to draw 1 card',
-                    context.player, this, context.costs.discardFromHand);
+                this.game.addMessage(
+                    '{0} kneels {1} and discards {2} from their hand to draw 1 card',
+                    context.player,
+                    this,
+                    context.costs.discardFromHand
+                );
             }
         });
     }
 
     hasMarshalledThisPhase() {
-        return this.tracker.events.some(event => (
-            event.player === this.controller &&
-            event.originalController === this.controller &&
-            event.originalLocation === 'discard pile' &&
-            event.card.getType() === 'location'
-        ));
+        return this.tracker.events.some(
+            (event) =>
+                event.player === this.controller &&
+                event.originalController === this.controller &&
+                event.originalLocation === 'discard pile' &&
+                event.card.getType() === 'location'
+        );
     }
 }
 
 KingsLanding.code = '11058';
 
-module.exports = KingsLanding;
+export default KingsLanding;

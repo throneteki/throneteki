@@ -1,6 +1,5 @@
-const range = require('lodash.range');
-
-const BaseStep = require('./basestep');
+import range from 'lodash.range';
+import BaseStep from './basestep.js';
 
 class BestowPrompt extends BaseStep {
     constructor(game, player, card) {
@@ -11,17 +10,20 @@ class BestowPrompt extends BaseStep {
     }
 
     continue() {
-        if(this.card.facedown) {
+        if (this.card.facedown) {
             return;
         }
-        let limit = Math.min(this.player.getSpendableGold({ activePlayer: this.player }), this.card.getBestowMax());
+        let limit = Math.min(
+            this.player.getSpendableGold({ activePlayer: this.player }),
+            this.card.getBestowMax()
+        );
         let rangeArray = range(1, limit + 1).reverse();
 
-        if(limit === 0) {
+        if (limit === 0) {
             return;
         }
 
-        let buttons = rangeArray.map(gold => {
+        let buttons = rangeArray.map((gold) => {
             return { text: gold.toString(), method: 'bestow', arg: gold };
         });
         buttons.push({ text: 'Done', method: 'bestow', arg: 0 });
@@ -36,19 +38,24 @@ class BestowPrompt extends BaseStep {
     }
 
     bestow(player, gold) {
-        if(gold === 0) {
+        if (gold === 0) {
             return true;
         }
 
-        if(gold > this.player.getSpendableGold({ activePlayer: this.player })) {
+        if (gold > this.player.getSpendableGold({ activePlayer: this.player })) {
             return false;
         }
 
-        this.game.transferGold({ from: player, to: this.card, amount: gold, activePlayer: this.player });
+        this.game.transferGold({
+            from: player,
+            to: this.card,
+            amount: gold,
+            activePlayer: this.player
+        });
         this.game.addMessage('{0} bestows {1} gold on {2}', this.player, gold, this.card);
 
         return true;
     }
 }
 
-module.exports = BestowPrompt;
+export default BestowPrompt;

@@ -1,9 +1,11 @@
-describe('reducer cards', function() {
-    integration(function() {
-        beforeEach(function() {
+describe('reducer cards', function () {
+    integration(function () {
+        beforeEach(function () {
             const deck = this.buildDeck('stark', [
                 'Power Behind the Throne',
-                'Winterfell Steward', 'Heart Tree Grove', 'Bran Stark (Core)'
+                'Winterfell Steward',
+                'Heart Tree Grove',
+                'Bran Stark (Core)'
             ]);
             this.player1.selectDeck(deck);
             this.player2.selectDeck(deck);
@@ -23,14 +25,14 @@ describe('reducer cards', function() {
             this.selectPlotOrder(this.player1);
         });
 
-        it('should allow reducers to activate', function() {
+        it('should allow reducers to activate', function () {
             this.player1.clickCard(this.grove);
             this.player1.clickCard('Bran Stark', 'hand');
 
             expect(this.player1Object.gold).toBe(2);
         });
 
-        it('should allow reducers to stack', function() {
+        it('should allow reducers to stack', function () {
             this.player1.clickCard(this.grove);
             this.player1.clickCard(this.steward);
             this.player1.clickCard('Bran Stark', 'hand');
@@ -38,7 +40,7 @@ describe('reducer cards', function() {
             expect(this.player1Object.gold).toBe(3);
         });
 
-        it('should allow reducers to be undone by clicking twice', function() {
+        it('should allow reducers to be undone by clicking twice', function () {
             // Activate
             this.player1.clickCard(this.grove);
             // Deactivate
@@ -48,7 +50,7 @@ describe('reducer cards', function() {
             expect(this.player1Object.gold).toBe(1);
         });
 
-        it('should allow reducers to be redone after being undone', function() {
+        it('should allow reducers to be redone after being undone', function () {
             // Activate
             this.player1.clickCard(this.grove);
             // Deactivate
@@ -62,7 +64,7 @@ describe('reducer cards', function() {
             expect(this.player1Object.gold).toBe(2);
         });
 
-        it('should allow the same reducer to activate twice if stood through other means', function() {
+        it('should allow the same reducer to activate twice if stood through other means', function () {
             this.player1.clickCard(this.steward);
 
             this.player1.clickMenu('Power Behind the Throne', 'Discard a stand token');

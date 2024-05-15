@@ -1,16 +1,17 @@
-const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class CaptainGroleo extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardEntersPlay: event => event.card.getType() === 'attachment' && this.controller.canGainGold()
+                onCardEntersPlay: (event) =>
+                    event.card.getType() === 'attachment' && this.controller.canGainGold()
             },
             message: '{player} uses {source} to gain 1 gold',
-            handler: context => {
+            handler: (context) => {
                 this.game.resolveGameAction(
-                    GameActions.gainGold(context => ({
+                    GameActions.gainGold((context) => ({
                         player: context.player,
                         amount: 1
                     })),
@@ -24,4 +25,4 @@ class CaptainGroleo extends DrawCard {
 
 CaptainGroleo.code = '15012';
 
-module.exports = CaptainGroleo;
+export default CaptainGroleo;

@@ -1,11 +1,9 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class PitFightersBlade extends DrawCard {
     setupCardAbilities(ability) {
         this.whileAttached({
-            condition: () => (
-                this.game.isDuringChallenge({ challengeType: 'military' })
-            ),
+            condition: () => this.game.isDuringChallenge({ challengeType: 'military' }),
             effect: ability.effects.addKeyword('Renown')
         });
     }
@@ -13,4 +11,4 @@ class PitFightersBlade extends DrawCard {
 
 PitFightersBlade.code = '15021';
 
-module.exports = PitFightersBlade;
+export default PitFightersBlade;

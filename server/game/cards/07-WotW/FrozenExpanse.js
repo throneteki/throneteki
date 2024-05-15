@@ -1,9 +1,9 @@
-const PlotCard = require('../../plotcard.js');
+import PlotCard from '../../plotcard.js';
 
 class FrozenExpanse extends PlotCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: card => card.getType() === 'character' && card.getStrength() <= 2,
+            match: (card) => card.getType() === 'character' && card.getStrength() <= 2,
             targetController: 'any',
             effect: ability.effects.cannotBeStood()
         });
@@ -12,4 +12,4 @@ class FrozenExpanse extends PlotCard {
 
 FrozenExpanse.code = '07052';
 
-module.exports = FrozenExpanse;
+export default FrozenExpanse;

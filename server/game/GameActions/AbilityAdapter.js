@@ -1,4 +1,4 @@
-const ThenAbilityAction = require('./ThenAbilityAction');
+import ThenAbilityAction from './ThenAbilityAction.js';
 
 /**
  * Translates the methods of a standard game action to one that will take an
@@ -25,7 +25,7 @@ class AbilityAdapter {
         const properties = this.resolveProperties(context);
         const event = this.action.createEvent(properties);
 
-        for(const handler of this.thenExecuteHandlers) {
+        for (const handler of this.thenExecuteHandlers) {
             event.thenExecute(handler);
         }
 
@@ -33,7 +33,10 @@ class AbilityAdapter {
     }
 
     resolveProperties(context) {
-        let baseProps = (typeof this.propertyFactory === 'function') ? this.propertyFactory(context) : this.propertyFactory;
+        let baseProps =
+            typeof this.propertyFactory === 'function'
+                ? this.propertyFactory(context)
+                : this.propertyFactory;
 
         return Object.assign({ context: context }, baseProps);
     }
@@ -48,4 +51,4 @@ class AbilityAdapter {
     }
 }
 
-module.exports = AbilityAdapter;
+export default AbilityAdapter;

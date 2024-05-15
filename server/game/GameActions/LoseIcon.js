@@ -1,4 +1,4 @@
-const GameAction = require('./GameAction');
+import GameAction from './GameAction.js';
 
 class LoseIcon extends GameAction {
     constructor() {
@@ -19,4 +19,4 @@ class LoseIcon extends GameAction {
     }
 }
 
-module.exports = new LoseIcon();
+export default new LoseIcon();

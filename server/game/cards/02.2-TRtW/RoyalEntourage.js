@@ -1,11 +1,12 @@
-
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class RoyalEntourage extends DrawCard {
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                afterChallenge: event => event.challenge.loser === this.controller && event.challenge.challengeType === 'intrigue'
+                afterChallenge: (event) =>
+                    event.challenge.loser === this.controller &&
+                    event.challenge.challengeType === 'intrigue'
             },
             handler: () => {
                 this.controller.kneelCard(this);
@@ -17,4 +18,4 @@ class RoyalEntourage extends DrawCard {
 
 RoyalEntourage.code = '02027';
 
-module.exports = RoyalEntourage;
+export default RoyalEntourage;

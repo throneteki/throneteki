@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class WinterfellHeartTree extends DrawCard {
     setupCardAbilities(ability) {
@@ -10,11 +10,14 @@ class WinterfellHeartTree extends DrawCard {
             target: {
                 cardCondition: { controller: 'current', faction: 'stark', location: 'play area' }
             },
-            message: '{player} sacrifices {source} to grant {target} from opponents\' plot effects until the end of the phase',
-            handler: context => {
-                this.untilEndOfPhase(ability => ({
+            message:
+                "{player} sacrifices {source} to grant {target} from opponents' plot effects until the end of the phase",
+            handler: (context) => {
+                this.untilEndOfPhase((ability) => ({
                     match: context.target,
-                    effect: ability.effects.immuneTo(card => card.controller !== context.player && card.getType() === 'plot')
+                    effect: ability.effects.immuneTo(
+                        (card) => card.controller !== context.player && card.getType() === 'plot'
+                    )
                 }));
             }
         });
@@ -23,4 +26,4 @@ class WinterfellHeartTree extends DrawCard {
 
 WinterfellHeartTree.code = '03018';
 
-module.exports = WinterfellHeartTree;
+export default WinterfellHeartTree;

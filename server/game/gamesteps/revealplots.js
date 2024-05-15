@@ -1,10 +1,10 @@
-const sample = require('lodash.sample');
-const BaseStep = require('./basestep.js');
-const SimpleStep = require('./simplestep.js');
-const FirstPlayerPrompt = require('./plot/firstplayerprompt.js');
-const ChoosePlayerPrompt = require('./ChoosePlayerPrompt.js');
-const Event = require('../event');
-const RevealPlot = require('../GameActions/RevealPlot');
+import sample from 'lodash.sample';
+import BaseStep from './basestep.js';
+import SimpleStep from './simplestep.js';
+import FirstPlayerPrompt from './plot/firstplayerprompt.js';
+import ChoosePlayerPrompt from './ChoosePlayerPrompt.js';
+import Event from '../event.js';
+import RevealPlot from '../GameActions/RevealPlot.js';
 
 class RevealPlots extends BaseStep {
     constructor(game, plots, parentEvent = null) {
@@ -16,11 +16,11 @@ class RevealPlots extends BaseStep {
     }
 
     continue() {
-        for(let plot of this.plots) {
+        for (let plot of this.plots) {
             this.game.addMessage('{0} reveals {1}', plot.controller, plot);
         }
         let event = this.generateEvent(this.plots);
-        if(this.parentEvent) {
+        if (this.parentEvent) {
             this.parentEvent.thenAttachEvent(event);
         } else {
             this.game.resolveEvent(event);
@@ -38,7 +38,7 @@ class RevealPlots extends BaseStep {
         // * "When revealed" abilities are resolved
         // * Reactions to plots being revealed, plots being discarded
         const event = new Event('_TOP_LEVEL_REVEAL_', {});
-        for(const plot of plots) {
+        for (const plot of plots) {
             event.addChildEvent(RevealPlot.createEvent({ card: plot, player: plot.controller }));
         }
 
@@ -53,14 +53,14 @@ class RevealPlots extends BaseStep {
     generateRevealEvent(plots) {
         let event = new Event('onPlotsRevealed', { plots: plots }, () => {
             this.game.addSimultaneousEffects(this.getPlotEffects(plots));
-            if(this.needsFirstPlayerChoice()) {
+            if (this.needsFirstPlayerChoice()) {
                 this.game.raiseEvent('onCompareInitiative', {});
                 this.game.queueStep(new SimpleStep(this.game, () => this.determineInitiative()));
                 this.game.queueStep(() => new FirstPlayerPrompt(this.game, this.initiativeWinner));
             }
         });
 
-        for(let plot of plots) {
+        for (let plot of plots) {
             event.addChildEvent(new Event('onPlotRevealed', { plot: plot }));
         }
 
@@ -68,41 +68,54 @@ class RevealPlots extends BaseStep {
     }
 
     getPlotEffects(plots) {
-        return plots
-            .reduce((memo, plot) => {
-                let effectProperties = plot.getPersistentEffects();
-                let results = effectProperties.map(properties => ({ source: plot, properties: properties }));
+        return plots.reduce((memo, plot) => {
+            let effectProperties = plot.getPersistentEffects();
+            let results = effectProperties.map((properties) => ({
+                source: plot,
+                properties: properties
+            }));
 
-                return memo.concat(results);
-            }, []);
+            return memo.concat(results);
+        }, []);
     }
 
     needsFirstPlayerChoice() {
-        return this.game.getPlayers().every(player => !player.firstPlayer);
+        return this.game.getPlayers().every((player) => !player.firstPlayer);
     }
 
     determineInitiative() {
         let result = { initiativeTied: false, powerTied: false, player: undefined };
-        let playerInitiatives = this.game.getPlayers().map(player => {
-            return { player: player, initiative: player.getTotalInitiative(), power: player.getTotalPower() };
+        let playerInitiatives = this.game.getPlayers().map((player) => {
+            return {
+                player: player,
+                initiative: player.getTotalInitiative(),
+                power: player.getTotalPower()
+            };
         });
-        let initiativeValues = playerInitiatives.map(p => p.initiative);
+        let initiativeValues = playerInitiatives.map((p) => p.initiative);
         let highestInitiative = Math.max(...initiativeValues);
-        result.potentialWinners = playerInitiatives.filter(p => p.initiative === highestInitiative);
+        result.potentialWinners = playerInitiatives.filter(
+            (p) => p.initiative === highestInitiative
+        );
 
         result.initiativeTied = result.potentialWinners.length > 1;
 
-        if(result.initiativeTied) {
-            let choosingPlayer = this.game.getPlayers().find(player => player.choosesWinnerForInitiativeTies);
-            if(choosingPlayer) {
+        if (result.initiativeTied) {
+            let choosingPlayer = this.game
+                .getPlayers()
+                .find((player) => player.choosesWinnerForInitiativeTies);
+            if (choosingPlayer) {
                 let prompt = new ChoosePlayerPrompt(this.game, choosingPlayer, {
-                    condition: player => result.potentialWinners.map(pw => pw.player).includes(player),
+                    condition: (player) =>
+                        result.potentialWinners.map((pw) => pw.player).includes(player),
                     activePromptTitle: 'Choose player to win initiative',
                     waitingPromptTitle: 'Waiting for opponent to choose initiative winner',
-                    onSelect: chosenPlayer => {
+                    onSelect: (chosenPlayer) => {
                         result.chosenBy = choosingPlayer;
                         result.player = chosenPlayer;
-                        result.potentialWinners = result.potentialWinners.filter(p => p.player === chosenPlayer);
+                        result.potentialWinners = result.potentialWinners.filter(
+                            (p) => p.player === chosenPlayer
+                        );
 
                         this.determineWinner(result);
                     },
@@ -110,7 +123,7 @@ class RevealPlots extends BaseStep {
                         this.determineTieWinner(result);
                     }
                 });
-        
+
                 this.game.queueStep(prompt);
             } else {
                 this.determineTieWinner(result);
@@ -121,9 +134,9 @@ class RevealPlots extends BaseStep {
     }
 
     determineTieWinner(result) {
-        let powerValues = result.potentialWinners.map(p => p.power);
+        let powerValues = result.potentialWinners.map((p) => p.power);
         let lowestPower = Math.min(...powerValues);
-        result.potentialWinners = result.potentialWinners.filter(p => p.power === lowestPower);
+        result.potentialWinners = result.potentialWinners.filter((p) => p.power === lowestPower);
 
         this.determineWinner(result);
     }
@@ -131,24 +144,34 @@ class RevealPlots extends BaseStep {
     determineWinner(result) {
         result.powerTied = result.potentialWinners.length > 1;
 
-        if(!result.player && result.potentialWinners.length > 0) {
+        if (!result.player && result.potentialWinners.length > 0) {
             result.player = this.sampleFunc(result.potentialWinners).player;
         }
         delete result.potentialWinners;
         this.initiativeResult = result;
 
-        if(!result.player) {
+        if (!result.player) {
             return false;
         }
 
-        this.game.raiseEvent('onInitiativeDetermined', { winner: result.player }, event => {
-            if(result.powerTied) {
-                this.game.addMessage('{0} was randomly selected to win initiative because both initiative values and power were tied', event.winner);
-            } else if(result.initiativeTied) {
-                if(result.chosenBy) {
-                    this.game.addMessage('{0} has chosen {1} to win initiative because initiative values were tied and they choose the winner', result.chosenBy, event.winner);
+        this.game.raiseEvent('onInitiativeDetermined', { winner: result.player }, (event) => {
+            if (result.powerTied) {
+                this.game.addMessage(
+                    '{0} was randomly selected to win initiative because both initiative values and power were tied',
+                    event.winner
+                );
+            } else if (result.initiativeTied) {
+                if (result.chosenBy) {
+                    this.game.addMessage(
+                        '{0} has chosen {1} to win initiative because initiative values were tied and they choose the winner',
+                        result.chosenBy,
+                        event.winner
+                    );
                 } else {
-                    this.game.addMessage('{0} won initiative because initiative values were tied but {0} had the lowest power', event.winner);
+                    this.game.addMessage(
+                        '{0} won initiative because initiative values were tied but {0} had the lowest power',
+                        event.winner
+                    );
                 }
             } else {
                 this.game.addMessage('{0} won initiative', event.winner);
@@ -159,4 +182,4 @@ class RevealPlots extends BaseStep {
     }
 }
 
-module.exports = RevealPlots;
+export default RevealPlots;

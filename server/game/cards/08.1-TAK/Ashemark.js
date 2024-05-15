@@ -1,6 +1,6 @@
-const DrawCard = require('../../drawcard.js');
-const {Tokens} = require('../../Constants');
-const GameActions = require('../../GameActions/index.js');
+import DrawCard from '../../drawcard.js';
+import { Tokens } from '../../Constants/index.js';
+import GameActions from '../../GameActions/index.js';
 
 class Ashemark extends DrawCard {
     setupCardAbilities(ability) {
@@ -8,17 +8,20 @@ class Ashemark extends DrawCard {
             when: {
                 onPhaseStarted: () => this.hasToken(Tokens.gold)
             },
-            cost: [
-                ability.costs.kneelSelf(),
-                ability.costs.sacrificeSelf()
-            ],
+            cost: [ability.costs.kneelSelf(), ability.costs.sacrificeSelf()],
             message: {
-                format: '{player} kneels and sacrifices {costs.kneel} to return each character with printed cost {gold} or less to its owner\'s hand',
-                args: { gold: context => context.cardStateWhenInitiated.tokens.gold }
+                format: "{player} kneels and sacrifices {costs.kneel} to return each character with printed cost {gold} or less to its owner's hand",
+                args: { gold: (context) => context.cardStateWhenInitiated.tokens.gold }
             },
-            gameAction: GameActions.simultaneously(context => 
-                context.game.filterCardsInPlay(card => card.isMatch({ type: 'character', printedCostOrLower: context.cardStateWhenInitiated.tokens.gold }))
-                    .map(card => GameActions.returnCardToHand({ card }))
+            gameAction: GameActions.simultaneously((context) =>
+                context.game
+                    .filterCardsInPlay((card) =>
+                        card.isMatch({
+                            type: 'character',
+                            printedCostOrLower: context.cardStateWhenInitiated.tokens.gold
+                        })
+                    )
+                    .map((card) => GameActions.returnCardToHand({ card }))
             )
         });
     }
@@ -26,4 +29,4 @@ class Ashemark extends DrawCard {
 
 Ashemark.code = '08011';
 
-module.exports = Ashemark;
+export default Ashemark;

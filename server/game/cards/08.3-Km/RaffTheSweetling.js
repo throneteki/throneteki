@@ -1,20 +1,28 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class RaffTheSweetling extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardDiscarded: event => event.isPillage && event.source === this && event.card.getType() === 'character'
+                onCardDiscarded: (event) =>
+                    event.isPillage && event.source === this && event.card.getType() === 'character'
             },
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' &&
-                                       card.getPrintedCost() <= 2,
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    card.getPrintedCost() <= 2,
                 gameAction: 'returnToHand'
             },
-            handler: context => {
+            handler: (context) => {
                 context.target.owner.returnCardToHand(context.target);
-                this.game.addMessage('{0} uses {1} to return {2} to {3}\'s hand',
-                    context.player, this, context.target, context.target.owner);
+                this.game.addMessage(
+                    "{0} uses {1} to return {2} to {3}'s hand",
+                    context.player,
+                    this,
+                    context.target,
+                    context.target.owner
+                );
             }
         });
     }
@@ -22,4 +30,4 @@ class RaffTheSweetling extends DrawCard {
 
 RaffTheSweetling.code = '08049';
 
-module.exports = RaffTheSweetling;
+export default RaffTheSweetling;

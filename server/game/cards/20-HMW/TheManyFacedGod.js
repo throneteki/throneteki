@@ -1,5 +1,5 @@
-const AgendaCard = require('../../agendacard');
-const {flatten} = require('../../../Array');
+import AgendaCard from '../../agendacard.js';
+import { flatten } from '../../../Array.js';
 
 class TheManyFacedGod extends AgendaCard {
     setupCardAbilities(ability) {
@@ -7,22 +7,29 @@ class TheManyFacedGod extends AgendaCard {
             targetController: 'current',
             effect: ability.effects.reduceFirstCardCostEachRound('ambush', 1)
         });
-      
+
         this.action({
             title: 'Give icons, affiliation, keywords and traits',
             cost: ability.costs.kneelFactionCard(),
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.controller === this.controller
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    card.controller === this.controller
             },
-            choosePlayer: player => player.deadPile.length > 0,
-            handler: context => {
+            choosePlayer: (player) => player.deadPile.length > 0,
+            handler: (context) => {
                 let chosenPlayer = context.chosenPlayer ? context.chosenPlayer : context.player;
                 let topDeadCharacter = chosenPlayer.deadPile.slice(-1)[0];
                 let effectArr = flatten([
-                    topDeadCharacter.getIcons().map(icon => ability.effects.addIcon(icon)),
-                    topDeadCharacter.getPrintedKeywords().map(keyword => ability.effects.addKeyword(keyword)),
-                    topDeadCharacter.getFactions().map(faction => ability.effects.addFaction(faction)),
-                    topDeadCharacter.getTraits().map(trait => ability.effects.addTrait(trait))
+                    topDeadCharacter.getIcons().map((icon) => ability.effects.addIcon(icon)),
+                    topDeadCharacter
+                        .getPrintedKeywords()
+                        .map((keyword) => ability.effects.addKeyword(keyword)),
+                    topDeadCharacter
+                        .getFactions()
+                        .map((faction) => ability.effects.addFaction(faction)),
+                    topDeadCharacter.getTraits().map((trait) => ability.effects.addTrait(trait))
                 ]);
 
                 this.untilEndOfPhase(() => ({
@@ -30,8 +37,13 @@ class TheManyFacedGod extends AgendaCard {
                     effect: effectArr
                 }));
 
-                this.game.addMessage('{0} uses {1} and kneels their faction card to have {2} gain each of {3}\'s printed challenge icons, keywords, faction affiliations and traits',
-                    context.player, this, context.target, topDeadCharacter);
+                this.game.addMessage(
+                    "{0} uses {1} and kneels their faction card to have {2} gain each of {3}'s printed challenge icons, keywords, faction affiliations and traits",
+                    context.player,
+                    this,
+                    context.target,
+                    topDeadCharacter
+                );
             }
         });
     }
@@ -39,4 +51,4 @@ class TheManyFacedGod extends AgendaCard {
 
 TheManyFacedGod.code = '20052';
 
-module.exports = TheManyFacedGod;
+export default TheManyFacedGod;

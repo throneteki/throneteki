@@ -1,5 +1,5 @@
-const GameActions = require('../GameActions');
-const RevealCards = require('../GameActions/RevealCards');
+import GameActions from '../GameActions/index.js';
+import RevealCards from '../GameActions/RevealCards.js';
 
 class RevealCost {
     constructor() {
@@ -11,8 +11,15 @@ class RevealCost {
     }
 
     pay(cards, context) {
-        context.game.resolveGameAction(GameActions.revealCards({ cards, player: context.player, revealWithMessage: false, context }));
+        context.game.resolveGameAction(
+            GameActions.revealCards({
+                cards,
+                player: context.player,
+                revealWithMessage: false,
+                context
+            })
+        );
     }
 }
 
-module.exports = RevealCost;
+export default RevealCost;

@@ -23,7 +23,7 @@ class CardVisibility {
     }
 
     isVisible(card, player) {
-        return this.rules.some(rule => rule(card, player));
+        return this.rules.some((rule) => rule(card, player));
     }
 
     addRule(rule) {
@@ -31,7 +31,7 @@ class CardVisibility {
     }
 
     removeRule(rule) {
-        this.rules = this.rules.filter(r => r !== rule);
+        this.rules = this.rules.filter((r) => r !== rule);
     }
 
     isPublicRule(card) {
@@ -43,10 +43,12 @@ class CardVisibility {
     }
 
     isSpectatorRule(card, player) {
-        return this.game.showHand &&
-               player.isSpectator() &&
-               ['hand', 'shadows'].includes(card.location);
+        return (
+            this.game.showHand &&
+            player.isSpectator() &&
+            ['hand', 'shadows'].includes(card.location)
+        );
     }
 }
 
-module.exports = CardVisibility;
+export default CardVisibility;

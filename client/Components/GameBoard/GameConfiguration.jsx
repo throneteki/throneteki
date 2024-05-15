@@ -25,11 +25,11 @@ class GameConfiguration extends React.Component {
     }
 
     onToggle(option, value) {
-        if(option === 'promptDupes') {
-            if(this.props.onPromptDupesToggle) {
+        if (option === 'promptDupes') {
+            if (this.props.onPromptDupesToggle) {
                 this.props.onPromptDupesToggle(!value);
             }
-        } else if(this.props.onActionWindowToggle) {
+        } else if (this.props.onActionWindowToggle) {
             this.props.onActionWindowToggle(option, !value);
         }
     }
@@ -37,15 +37,15 @@ class GameConfiguration extends React.Component {
     onSlideStop(event) {
         let value = parseInt(event.target.value);
 
-        if(isNaN(value)) {
+        if (isNaN(value)) {
             return;
         }
 
-        if(value < 0) {
+        if (value < 0) {
             value = 0;
         }
 
-        if(value > 10) {
+        if (value > 10) {
             value = 10;
         }
 
@@ -53,53 +53,93 @@ class GameConfiguration extends React.Component {
     }
 
     onTimerSettingToggle(option, event) {
-        if(this.props.onTimerSettingToggle) {
+        if (this.props.onTimerSettingToggle) {
             this.props.onTimerSettingToggle(option, event.target.checked);
         }
     }
 
     onKeywordSettingToggle(option, event) {
-        if(this.props.onKeywordSettingToggle) {
+        if (this.props.onKeywordSettingToggle) {
             this.props.onKeywordSettingToggle(option, event.target.checked);
         }
     }
 
     render() {
-        let windows = this.windows.map(window => {
-            return (<Checkbox key={ window.name }
-                noGroup
-                name={ 'promptedActionWindows.' + window.name }
-                label={ window.label }
-                fieldClass={ window.style }
-                type='checkbox'
-                onChange={ this.onToggle.bind(this, window.name, this.props.actionWindows[window.name]) }
-                checked={ this.props.actionWindows[window.name] } />);
+        let windows = this.windows.map((window) => {
+            return (
+                <Checkbox
+                    key={window.name}
+                    noGroup
+                    name={'promptedActionWindows.' + window.name}
+                    label={window.label}
+                    fieldClass={window.style}
+                    type='checkbox'
+                    onChange={this.onToggle.bind(
+                        this,
+                        window.name,
+                        this.props.actionWindows[window.name]
+                    )}
+                    checked={this.props.actionWindows[window.name]}
+                />
+            );
         });
 
         return (
             <div>
                 <form className='form form-horizontal'>
                     <Panel title='Action window defaults'>
-                        <div className='form-group'>
-                            { windows }
-                        </div>
+                        <div className='form-group'>{windows}</div>
                     </Panel>
                     <Panel title='Timed Interrupt Window'>
                         <div className='form-group'>
-                            <Checkbox name='timerSettings.events' noGroup label={ 'Show timer for events' } fieldClass='col-sm-6'
-                                onChange={ this.onTimerSettingToggle.bind(this, 'events') } checked={ this.props.timerSettings.events } />
-                            <Checkbox name='timerSettings.abilities' noGroup label={ 'Show timer for card abilities' } fieldClass='col-sm-6'
-                                onChange={ this.onTimerSettingToggle.bind(this, 'abilities') } checked={ this.props.timerSettings.abilities } />
+                            <Checkbox
+                                name='timerSettings.events'
+                                noGroup
+                                label={'Show timer for events'}
+                                fieldClass='col-sm-6'
+                                onChange={this.onTimerSettingToggle.bind(this, 'events')}
+                                checked={this.props.timerSettings.events}
+                            />
+                            <Checkbox
+                                name='timerSettings.abilities'
+                                noGroup
+                                label={'Show timer for card abilities'}
+                                fieldClass='col-sm-6'
+                                onChange={this.onTimerSettingToggle.bind(this, 'abilities')}
+                                checked={this.props.timerSettings.abilities}
+                            />
                         </div>
                     </Panel>
                     <Panel title='Other Settings'>
                         <div className='form-group'>
-                            <Checkbox name='keywordSettings.chooseOrder' noGroup label={ 'Choose order of keywords' } fieldClass='col-sm-6'
-                                onChange={ this.onKeywordSettingToggle.bind(this, 'chooseOrder') } checked={ this.props.keywordSettings.chooseOrder } />
-                            <Checkbox name='keywordSettings.chooseCards' noGroup label={ 'Make keywords optional' } fieldClass='col-sm-6'
-                                onChange={ this.onKeywordSettingToggle.bind(this, 'chooseCards') } checked={ this.props.keywordSettings.chooseCards } />
-                            <Checkbox name='promptDupes' noGroup label={ 'Prompt before using dupes to save' } fieldClass='col-sm-6'
-                                onChange={ this.onToggle.bind(this, 'promptDupes', this.props.promptDupes) } checked={ this.props.promptDupes } />
+                            <Checkbox
+                                name='keywordSettings.chooseOrder'
+                                noGroup
+                                label={'Choose order of keywords'}
+                                fieldClass='col-sm-6'
+                                onChange={this.onKeywordSettingToggle.bind(this, 'chooseOrder')}
+                                checked={this.props.keywordSettings.chooseOrder}
+                            />
+                            <Checkbox
+                                name='keywordSettings.chooseCards'
+                                noGroup
+                                label={'Make keywords optional'}
+                                fieldClass='col-sm-6'
+                                onChange={this.onKeywordSettingToggle.bind(this, 'chooseCards')}
+                                checked={this.props.keywordSettings.chooseCards}
+                            />
+                            <Checkbox
+                                name='promptDupes'
+                                noGroup
+                                label={'Prompt before using dupes to save'}
+                                fieldClass='col-sm-6'
+                                onChange={this.onToggle.bind(
+                                    this,
+                                    'promptDupes',
+                                    this.props.promptDupes
+                                )}
+                                checked={this.props.promptDupes}
+                            />
                         </div>
                     </Panel>
                 </form>

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class LeftHandLew extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,14 +7,19 @@ class LeftHandLew extends DrawCard {
             cost: ability.costs.kneelSelf(),
             target: {
                 cardCondition: (card, context) =>
-                    card.location === 'play area'
-                    && card.getType() === 'character'
-                    && card.kneeled
-                    && card.owner !== context.player
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    card.kneeled &&
+                    card.owner !== context.player
             },
-            handler: context => {
+            handler: (context) => {
                 context.target.controller.standCard(context.target);
-                this.game.addMessage('{0} kneels {1} to stand {2}', context.player, this, context.target);
+                this.game.addMessage(
+                    '{0} kneels {1} to stand {2}',
+                    context.player,
+                    this,
+                    context.target
+                );
             }
         });
     }
@@ -22,4 +27,4 @@ class LeftHandLew extends DrawCard {
 
 LeftHandLew.code = '19009';
 
-module.exports = LeftHandLew;
+export default LeftHandLew;

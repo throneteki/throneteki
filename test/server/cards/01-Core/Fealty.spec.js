@@ -1,10 +1,11 @@
-describe('Fealty', function() {
-    integration(function() {
-        beforeEach(function() {
+describe('Fealty', function () {
+    integration(function () {
+        beforeEach(function () {
             const deck = this.buildDeck('greyjoy', [
                 'Fealty',
                 'Sneak Attack',
-                'Balon Greyjoy (Core)', 'Theon Greyjoy (Core)'
+                'Balon Greyjoy (Core)',
+                'Theon Greyjoy (Core)'
             ]);
             this.player1.selectDeck(deck);
             this.player2.selectDeck(deck);
@@ -19,17 +20,17 @@ describe('Fealty', function() {
             this.player1.clickMenu('Fealty', 'Kneel your faction card');
         });
 
-        it('should kneel the faction card', function() {
+        it('should kneel the faction card', function () {
             expect(this.player1Object.faction.kneeled).toBe(true);
         });
 
-        it('should reduce the cost of loyal cards by 1', function() {
+        it('should reduce the cost of loyal cards by 1', function () {
             this.player1.clickCard(this.balon);
             expect(this.balon.location).toBe('play area');
             expect(this.player1Object.gold).toBe(0);
         });
 
-        it('should not reduce the cost of non-loyal cards', function() {
+        it('should not reduce the cost of non-loyal cards', function () {
             this.player1.clickCard(this.theon);
             expect(this.theon.location).toBe('play area');
             expect(this.player1Object.gold).toBe(1);

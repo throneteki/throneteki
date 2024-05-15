@@ -1,9 +1,12 @@
-describe('Someone Always Tells', function() {
-    integration(function() {
-        beforeEach(function() {
+describe('Someone Always Tells', function () {
+    integration(function () {
+        beforeEach(function () {
             const deck = this.buildDeck('baratheon', [
-                'A Noble Cause', 'Trading with the Pentoshi', 'Valar Morghulis',
-                'Tumblestone Knight', 'Someone Always Tells'
+                'A Noble Cause',
+                'Trading with the Pentoshi',
+                'Valar Morghulis',
+                'Tumblestone Knight',
+                'Someone Always Tells'
             ]);
 
             this.player1.selectDeck(deck);
@@ -21,33 +24,33 @@ describe('Someone Always Tells', function() {
             this.player1.selectPlot('A Noble Cause');
         });
 
-        describe('when an opponent reveals a non-cancelable plot when revealed', function() {
-            beforeEach(function() {
+        describe('when an opponent reveals a non-cancelable plot when revealed', function () {
+            beforeEach(function () {
                 this.player2.selectPlot('Trading with the Pentoshi');
                 this.selectFirstPlayer(this.player2);
             });
 
-            it('should not prompt to trigger someone always tells', function() {
+            it('should not prompt to trigger someone always tells', function () {
                 expect(this.player1).not.toAllowAbilityTrigger('Someone Always Tells');
             });
         });
 
-        describe('when an opponent reveals a cancelable plot when revealed', function() {
-            beforeEach(function() {
+        describe('when an opponent reveals a cancelable plot when revealed', function () {
+            beforeEach(function () {
                 this.player2.selectPlot('Valar Morghulis');
                 this.selectFirstPlayer(this.player2);
             });
 
-            it('should prompt to trigger someone always tells', function() {
+            it('should prompt to trigger someone always tells', function () {
                 expect(this.player1).toAllowAbilityTrigger('Someone Always Tells');
             });
 
-            describe('and when someone always tells is used to cancel', function() {
-                beforeEach(function() {
+            describe('and when someone always tells is used to cancel', function () {
+                beforeEach(function () {
                     this.player1.triggerAbility('Someone Always Tells');
                 });
 
-                it('should cancel the when revealed ability', function() {
+                it('should cancel the when revealed ability', function () {
                     expect(this.knight.location).toBe('play area');
                 });
             });

@@ -1,9 +1,12 @@
-describe('Recruiter for the Watch', function() {
-    integration(function() {
-        beforeEach(function() {
+describe('Recruiter for the Watch', function () {
+    integration(function () {
+        beforeEach(function () {
             const deck = this.buildDeck('thenightswatch', [
                 'Trading with the Pentoshi',
-                'Recruiter for the Watch', 'Dragonstone Faithful', 'Nightmares', 'Yoren (Core)'
+                'Recruiter for the Watch',
+                'Dragonstone Faithful',
+                'Nightmares',
+                'Yoren (Core)'
             ]);
             this.player1.selectDeck(deck);
             this.player2.selectDeck(deck);
@@ -25,16 +28,16 @@ describe('Recruiter for the Watch', function() {
             this.player1.clickCard(this.character);
         });
 
-        it('should kneel the Recruiter', function() {
+        it('should kneel the Recruiter', function () {
             expect(this.recruiter.kneeled).toBe(true);
         });
 
-        it('should take control of the selected character', function() {
+        it('should take control of the selected character', function () {
             expect(this.character.controller.name).toBe(this.player1Object.name);
         });
 
-        describe('when the Recruiter stands', function() {
-            beforeEach(function() {
+        describe('when the Recruiter stands', function () {
+            beforeEach(function () {
                 this.completeMarshalPhase();
                 this.completeChallengesPhase();
 
@@ -43,34 +46,34 @@ describe('Recruiter for the Watch', function() {
                 this.player1.clickPrompt('Done');
             });
 
-            it('should revert control of the selected character', function() {
+            it('should revert control of the selected character', function () {
                 expect(this.character.controller.name).toBe(this.player2Object.name);
             });
         });
 
-        describe('when the Recruiter leaves play', function() {
-            beforeEach(function() {
+        describe('when the Recruiter leaves play', function () {
+            beforeEach(function () {
                 this.player1.dragCard(this.recruiter, 'discard pile');
             });
 
-            it('should revert control of the selected character', function() {
+            it('should revert control of the selected character', function () {
                 expect(this.character.controller.name).toBe(this.player2Object.name);
             });
         });
 
-        describe('when the Recruiter is blanked', function() {
-            beforeEach(function() {
+        describe('when the Recruiter is blanked', function () {
+            beforeEach(function () {
                 this.player2.clickCard(this.nightmares);
                 this.player2.clickCard(this.recruiter);
             });
 
-            it('should not modify control of the character', function() {
+            it('should not modify control of the character', function () {
                 expect(this.character.controller.name).toBe(this.player1Object.name);
             });
         });
 
-        describe('when the card leaves play and is taken control of again', function() {
-            beforeEach(function() {
+        describe('when the card leaves play and is taken control of again', function () {
+            beforeEach(function () {
                 // Manually discard the controlled character
                 this.player1.dragCard(this.character, 'discard pile');
 
@@ -86,7 +89,7 @@ describe('Recruiter for the Watch', function() {
                 this.player1.clickCard(this.recruiter);
             });
 
-            it('should not return control', function() {
+            it('should not return control', function () {
                 expect(this.character.location).toBe('play area');
                 expect(this.character).toBeControlledBy(this.player1);
             });

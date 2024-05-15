@@ -1,4 +1,4 @@
-const AgendaCard = require('../../agendacard');
+import AgendaCard from '../../agendacard.js';
 
 class BannerOfTheFalcon extends AgendaCard {
     setupCardAbilities(ability) {
@@ -8,8 +8,13 @@ class BannerOfTheFalcon extends AgendaCard {
         });
 
         this.persistentEffect({
-            condition: () => this.controller.filterCardsInPlay(card => card.hasTrait('House Arryn')).length > this.controller.getTotalInitiative(),
-            match: card => card.controller === this.controller && card.getType() === 'character' && card.isLoyal(),
+            condition: () =>
+                this.controller.filterCardsInPlay((card) => card.hasTrait('House Arryn')).length >
+                this.controller.getTotalInitiative(),
+            match: (card) =>
+                card.controller === this.controller &&
+                card.getType() === 'character' &&
+                card.isLoyal(),
             effect: ability.effects.modifyStrength(1)
         });
     }
@@ -17,4 +22,4 @@ class BannerOfTheFalcon extends AgendaCard {
 
 BannerOfTheFalcon.code = '23040';
 
-module.exports = BannerOfTheFalcon;
+export default BannerOfTheFalcon;

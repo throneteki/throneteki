@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class Harlaw extends DrawCard {
     setupCardAbilities(ability) {
@@ -12,7 +12,7 @@ class Harlaw extends DrawCard {
             effect: ability.effects.reduceCost({
                 playingTypes: 'marshal',
                 amount: 1,
-                match: card => card.hasTrait('House Harlaw')
+                match: (card) => card.hasTrait('House Harlaw')
             })
         });
         this.plotModifiers({
@@ -23,4 +23,4 @@ class Harlaw extends DrawCard {
 
 Harlaw.code = '19003';
 
-module.exports = Harlaw;
+export default Harlaw;

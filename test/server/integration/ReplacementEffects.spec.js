@@ -1,11 +1,8 @@
-describe('replacement effects', function() {
-    integration(function() {
-        describe('when a replacement effect is applied', function() {
-            beforeEach(function() {
-                const deck1 = this.buildDeck('thenightswatch', [
-                    'A Noble Cause',
-                    'Benjen Stark'
-                ]);
+describe('replacement effects', function () {
+    integration(function () {
+        describe('when a replacement effect is applied', function () {
+            beforeEach(function () {
+                const deck1 = this.buildDeck('thenightswatch', ['A Noble Cause', 'Benjen Stark']);
                 const deck2 = this.buildDeck('lannister', [
                     'A Noble Cause',
                     'Chella Daughter of Cheyk'
@@ -35,11 +32,11 @@ describe('replacement effects', function() {
                 this.player1.triggerAbility('Benjen Stark');
             });
 
-            it('should replace the effect', function() {
+            it('should replace the effect', function () {
                 expect(this.benjen.location).toBe('draw deck');
             });
 
-            it('should still be considered to have happened', function() {
+            it('should still be considered to have happened', function () {
                 // Chella should gain an ear token from Benjen dying
                 this.player2.triggerAbility('Chella Daughter of Cheyk');
 
@@ -47,15 +44,18 @@ describe('replacement effects', function() {
             });
         });
 
-        describe('when a multiple replacement effects are applied', function() {
-            beforeEach(function() {
+        describe('when a multiple replacement effects are applied', function () {
+            beforeEach(function () {
                 const deck1 = this.buildDeck('thenightswatch', [
                     'A Noble Cause',
-                    'Mirri Maz Duur', 'Hedge Knight'
+                    'Mirri Maz Duur',
+                    'Hedge Knight'
                 ]);
                 const deck2 = this.buildDeck('lannister', [
                     'A Noble Cause',
-                    'Vengeance for Elia', 'Hedge Knight', 'Hedge Knight'
+                    'Vengeance for Elia',
+                    'Hedge Knight',
+                    'Hedge Knight'
                 ]);
                 this.player1.selectDeck(deck1);
                 this.player2.selectDeck(deck2);
@@ -85,18 +85,18 @@ describe('replacement effects', function() {
                 this.player2.triggerAbility('Vengeance for Elia');
             });
 
-            it('should replace the original effect', function() {
+            it('should replace the original effect', function () {
                 // Vengeance for Elia is in discard but no other card is discarded
                 expect(this.player2Object.hand.length).toBe(1);
                 expect(this.player2Object.discardPile.length).toBe(1);
             });
 
-            it('should not use the first replacement', function() {
+            it('should not use the first replacement', function () {
                 // The character chosen by Mirri is not killed
                 expect(this.character.location).toBe('play area');
             });
 
-            it('should use the final replacement', function() {
+            it('should use the final replacement', function () {
                 // Vengeance for Elia discards 1 card from player 1.
                 expect(this.player1Object.hand.length).toBe(0);
                 expect(this.player1Object.discardPile.length).toBe(1);

@@ -1,26 +1,25 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class JoryCassel extends DrawCard {
     setupCardAbilities(ability) {
         this.interrupt({
             canCancel: true,
             when: {
-                onCharacterKilled: event => (
+                onCharacterKilled: (event) =>
                     event.allowSave &&
                     event.card.canBeSaved() &&
                     event.card.controller === this.controller &&
                     event.card.isUnique() &&
                     event.card.isFaction('stark')
-                )
             },
             cost: ability.costs.sacrificeSelf(),
-            handler: context => {
+            handler: (context) => {
                 let message = '{0} uses {1} to save {2}';
                 let toKill = context.event.card;
 
                 context.event.saveCard();
 
-                if(toKill.canGainPower() && this.game.anyPlotHasTrait('Winter')) {
+                if (toKill.canGainPower() && this.game.anyPlotHasTrait('Winter')) {
                     toKill.modifyPower(1);
                     message += ' and have it gain 1 power';
                 }
@@ -33,4 +32,4 @@ class JoryCassel extends DrawCard {
 
 JoryCassel.code = '03008';
 
-module.exports = JoryCassel;
+export default JoryCassel;

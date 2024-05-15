@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class LaySiege extends DrawCard {
     setupCardAbilities() {
@@ -6,19 +6,25 @@ class LaySiege extends DrawCard {
             title: 'Kneel or discard location',
             target: {
                 activePromptTitle: 'Select a location',
-                cardCondition: card => card.location === 'play area' && card.getType() === 'location' && !card.kneeled,
+                cardCondition: (card) =>
+                    card.location === 'play area' && card.getType() === 'location' && !card.kneeled,
                 gameAction: 'kneel'
             },
-            handler: context => {
+            handler: (context) => {
                 this.controller.kneelCard(context.target);
                 let sacMessage = '';
 
-                if(context.target.hasTrait('Contested')) {
+                if (context.target.hasTrait('Contested')) {
                     context.target.controller.discardCard(context.target);
                     sacMessage = ' and then discard it from play';
                 }
-                this.game.addMessage('{0} uses {1} to kneel {2}{3}',
-                    this.controller, this, context.target, sacMessage);
+                this.game.addMessage(
+                    '{0} uses {1} to kneel {2}{3}',
+                    this.controller,
+                    this,
+                    context.target,
+                    sacMessage
+                );
             }
         });
     }
@@ -26,4 +32,4 @@ class LaySiege extends DrawCard {
 
 LaySiege.code = '06059';
 
-module.exports = LaySiege;
+export default LaySiege;

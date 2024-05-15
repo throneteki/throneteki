@@ -1,7 +1,7 @@
-const KingsOfWinter = require('../../../../server/game/cards/04.2-CtA/KingsOfWinter.js');
+import KingsOfWinter from '../../../../server/game/cards/04.2-CtA/KingsOfWinter.js';
 
-describe('Kings Of Winter', function() {
-    beforeEach(function() {
+describe('Kings Of Winter', function () {
+    beforeEach(function () {
         this.gameSpy = jasmine.createSpyObj('game', ['addMessage', 'getPlayers', 'on']);
 
         this.plot1 = jasmine.createSpyObj('plot1', ['hasTrait']);
@@ -14,7 +14,7 @@ describe('Kings Of Winter', function() {
         this.plot3.goldModifier = 0;
         this.plot3.reserveModifier = 0;
 
-        this.plot1.hasTrait.and.callFake(trait => {
+        this.plot1.hasTrait.and.callFake((trait) => {
             return trait === 'Summer';
         });
         this.plot2.hasTrait.and.returnValue(false);
@@ -41,76 +41,76 @@ describe('Kings Of Winter', function() {
         this.agenda = new KingsOfWinter(this.player1Fake, {});
     });
 
-    describe('reserve persistent effect', function() {
-        beforeEach(function() {
+    describe('reserve persistent effect', function () {
+        beforeEach(function () {
             this.reserveEffect = this.agenda.abilities.persistentEffects[0];
         });
 
-        it('should target all players', function() {
+        it('should target all players', function () {
             expect(this.reserveEffect.targetController).toBe('any');
         });
 
-        it('should match with active plots', function() {
+        it('should match with active plots', function () {
             expect(this.reserveEffect.match(this.plot1)).toBe(true);
             // Belongs to player 1 but is not active.
             expect(this.reserveEffect.match(this.plot3)).toBe(false);
         });
 
-        it('should reduce the plots reserve', function() {
+        it('should reduce the plots reserve', function () {
             this.reserveEffect.effect.apply(this.plot1, this.context);
             expect(this.plot1.reserveModifier).toBe(-1);
         });
     });
 
-    describe('gold persistent effect', function() {
-        beforeEach(function() {
+    describe('gold persistent effect', function () {
+        beforeEach(function () {
             this.goldEffect = this.agenda.abilities.persistentEffects[1];
         });
 
-        it('should reduce the gold on the plot', function() {
+        it('should reduce the gold on the plot', function () {
             this.goldEffect.effect.apply(this.plot1, this.context);
             expect(this.plot1.goldModifier).toBe(-1);
         });
 
-        describe('when the current player does not have a Winter', function() {
-            beforeEach(function() {
+        describe('when the current player does not have a Winter', function () {
+            beforeEach(function () {
                 this.plot1.hasTrait.and.returnValue(false);
             });
 
-            it('should not pass the activation condition', function() {
+            it('should not pass the activation condition', function () {
                 expect(this.goldEffect.condition()).toBe(false);
             });
         });
 
-        describe('when the current player has a Winter plot', function() {
-            beforeEach(function() {
-                this.plot1.hasTrait.and.callFake(trait => trait === 'Winter');
+        describe('when the current player has a Winter plot', function () {
+            beforeEach(function () {
+                this.plot1.hasTrait.and.callFake((trait) => trait === 'Winter');
             });
 
-            describe('and opponent has a Summer plot', function() {
-                beforeEach(function() {
-                    this.plot2.hasTrait.and.callFake(trait => trait === 'Summer');
+            describe('and opponent has a Summer plot', function () {
+                beforeEach(function () {
+                    this.plot2.hasTrait.and.callFake((trait) => trait === 'Summer');
                 });
 
-                it('should pass the activation condition', function() {
+                it('should pass the activation condition', function () {
                     expect(this.goldEffect.condition()).toBe(true);
                 });
 
-                it('should not match the plot', function() {
+                it('should not match the plot', function () {
                     expect(this.goldEffect.match(this.plot2)).toBe(false);
                 });
             });
 
-            describe('and opponent does not have a Summer plot', function() {
-                beforeEach(function() {
+            describe('and opponent does not have a Summer plot', function () {
+                beforeEach(function () {
                     this.plot2.hasTrait.and.returnValue(false);
                 });
 
-                it('should pass the activation condition', function() {
+                it('should pass the activation condition', function () {
                     expect(this.goldEffect.condition()).toBe(true);
                 });
 
-                it('should match the plot', function() {
+                it('should match the plot', function () {
                     expect(this.goldEffect.match(this.plot2)).toBe(true);
                 });
             });

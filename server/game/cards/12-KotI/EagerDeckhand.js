@@ -1,10 +1,13 @@
-const DrawCard = require('../../drawcard.js');
+import DrawCard from '../../drawcard.js';
 
 class EagerDeckhand extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: event => event.card.getType() === 'location' && event.card.controller === this.controller && event.card.hasTrait('warship')
+                onCardEntersPlay: (event) =>
+                    event.card.getType() === 'location' &&
+                    event.card.controller === this.controller &&
+                    event.card.hasTrait('warship')
             },
             location: 'hand',
             message: '{player} puts {source} into play from their hand',
@@ -17,4 +20,4 @@ class EagerDeckhand extends DrawCard {
 
 EagerDeckhand.code = '12014';
 
-module.exports = EagerDeckhand;
+export default EagerDeckhand;

@@ -1,4 +1,4 @@
-const FactionCostReducer = require('../reducer.js').FactionCostReducer;
+import { FactionCostReducer } from '../reducer.js';
 
 class SeaTower extends FactionCostReducer {
     constructor(owner, cardData) {
@@ -8,4 +8,4 @@ class SeaTower extends FactionCostReducer {
 
 SeaTower.code = '01080';
 
-module.exports = SeaTower;
+export default SeaTower;
