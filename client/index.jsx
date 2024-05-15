@@ -17,8 +17,6 @@ import configureStore from './configureStore';
 import { navigate } from './actions';
 import './less/site.less';
 
-window.jQuery = window.$ = $;
-
 $.validator.setDefaults({
     highlight: function (element) {
         $(element).closest('.form-group').addClass('has-error');
@@ -31,7 +29,7 @@ $.validator.setDefaults({
 import ErrorBoundary from './Components/Site/ErrorBoundary';
 
 const sentryOptions = {
-    dsn: import.meta.env.SENTRY_KEY,
+    dsn: import.meta.env.VITE_SENTRY_KEY,
     denyUrls: [
         // Facebook flakiness
         /graph\.facebook\.com/i,
@@ -65,11 +63,11 @@ const sentryOptions = {
 
         return event;
     },
-    release: import.meta.env.VERSION || 'Local build',
+    release: import.meta.env.VITE_VERSION || 'Local build',
     includeLocalVariables: true
 };
 
-if (import.meta.env.SENTRY_KEY) {
+if (import.meta.env.VITE_SENTRY_KEY) {
     Sentry.init(sentryOptions);
 }
 

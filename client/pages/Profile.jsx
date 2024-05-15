@@ -236,7 +236,7 @@ class Profile extends React.Component {
 
         let initialValues = { email: this.props.user.email };
         let callbackUrl =
-            import.meta.env.NODE_ENV === 'production'
+            import.meta.env.MODE === 'production'
                 ? 'https://theironthrone.net/patreon'
                 : 'http://localhost:8080/patreon';
 

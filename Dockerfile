@@ -8,7 +8,10 @@ COPY package-lock.json /usr/src/app
 RUN npm install
 
 ARG VERSION
+ARG SENTRY_KEY
 ENV VERSION ${VERSION}
+ENV VITE_VERSION ${VERSION}
+ENV VITE_SENTRY_KEY ${SENTRY_KEY}
 
 ENV NODE_ENV production
 

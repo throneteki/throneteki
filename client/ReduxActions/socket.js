@@ -115,7 +115,7 @@ export function connectLobby() {
     return (dispatch, getState) => {
         let state = getState();
         let queryString = state.auth.token ? 'token=' + state.auth.token + '&' : '';
-        queryString += 'version=' + (import.meta.env.VERSION || 'Local build');
+        queryString += 'version=' + (import.meta.env.VITE_VERSION || 'Local build');
 
         let socket = io.connect(window.location.origin, {
             reconnection: true,
