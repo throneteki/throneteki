@@ -101,5 +101,5 @@ render(
             </ErrorBoundary>
         </div>
     </Provider>,
-    document.getElementById('root')
+    document.getElementById('container')
 );
