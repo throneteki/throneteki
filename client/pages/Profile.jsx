@@ -1,8 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import Slider from 'react-bootstrap-slider';
-
+import RangeSlider from 'react-bootstrap-range-slider';
 import AlertPanel from '../Components/Site/AlertPanel';
 import ApiStatus from '../Components/Site/ApiStatus';
 import Panel from '../Components/Site/Panel';
@@ -317,7 +316,7 @@ class Profile extends React.Component {
                                 <div className='form-group'>
                                     <label className='col-xs-3 control-label'>Window timeout</label>
                                     <div className='col-xs-5 control-label'>
-                                        <Slider
+                                        <RangeSlider
                                             value={this.state.windowTimer}
                                             slideStop={this.onSlideStop.bind(this)}
                                             step={1}

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { CSSTransitionGroup } from 'react-transition-group';
+import { CSSTransition } from 'react-transition-group';
 
 class SideBar extends React.Component {
     constructor(props) {
@@ -38,13 +38,13 @@ class SideBar extends React.Component {
         );
 
         return (
-            <CSSTransitionGroup
+            <CSSTransition
                 transitionName='sidebar'
                 transitionEnterTimeout={500}
                 transitionLeaveTimeout={500}
             >
                 {component}
-            </CSSTransitionGroup>
+            </CSSTransition>
         );
     }
 }

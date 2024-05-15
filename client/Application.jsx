@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import $ from 'jquery';
 import { connect } from 'react-redux';
-import { CSSTransitionGroup } from 'react-transition-group';
+import { CSSTransition } from 'react-transition-group';
 
 import ErrorBoundary from './Components/Site/ErrorBoundary';
 import NavBar from './Components/Site/NavBar';
@@ -109,13 +109,13 @@ class Application extends React.Component {
                             errorPath={this.props.path}
                             message={"We're sorry - something's gone wrong."}
                         >
-                            <CSSTransitionGroup
+                            <CSSTransition
                                 transitionName='pages'
                                 transitionEnterTimeout={600}
                                 transitionLeaveTimeout={600}
                             >
                                 {component}
-                            </CSSTransitionGroup>
+                            </CSSTransition>
                         </ErrorBoundary>
                     </div>
                 </div>
