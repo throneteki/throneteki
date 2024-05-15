@@ -152,38 +152,6 @@ class About extends React.Component {
                         </a>{' '}
                         or post in the AGoT Facebook group. I&apos;ll likely find it.
                     </p>
-                    <h4>Donations</h4>I was always reluctant to accept donations but since I&apos;ve
-                    been asked a few times I thought I&apos;d put up a small section about it here.
-                    <form
-                        action='https://www.paypal.com/cgi-bin/webscr'
-                        method='post'
-                        target='_top'
-                    >
-                        <input type='hidden' name='cmd' value='_s-xclick' />
-                        <input type='hidden' name='hosted_button_id' value='5SB6UZEGFSD58' />
-                        <input
-                            type='image'
-                            src='https://www.paypalobjects.com/en_GB/i/btn/btn_donate_SM.gif'
-                            name='submit'
-                            alt='PayPal – The safer, easier way to pay online!'
-                        />
-                        <img
-                            alt=''
-                            src='https://www.paypalobjects.com/en_GB/i/scr/pixel.gif'
-                            width='1'
-                            height='1'
-                        />
-                    </form>
-                    Just to make things clear, I&apos;m not doing this for any personal gain
-                    whatsoever, I&apos;m happy to run the servers at my own expense, but any money
-                    raised via this link will be used towards paying the hosting fees for the server
-                    and related services (error tracking, load balancing etc). If, after the annnual
-                    bills for that are paid up, there is any money left over, I&apos;ll put it
-                    towards the following years expenses. Also, this is not required to continue to
-                    use and enjoy the site and will not give anything in return (other than my
-                    sincerce gratitude and potentially better hardware for the site to run on). I
-                    will also put a donation report in with the monthly reports that I&apos;m
-                    publishing so that you know where your donations are going.
                     <h2>Special Thanks</h2>
                     <p>
                         I&apos;d like to thank mtgred, and the whole of the jinteki.net development
