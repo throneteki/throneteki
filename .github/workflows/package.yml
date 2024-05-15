@@ -42,6 +42,7 @@ jobs:
               with:
                   build-args: |
                       "VERSION=${{ steps.determine_version.outputs.semVer }}"
+                      "SENTRY_KEY=${{ secrets.SENTRY_DSN }}"
                   push: true
                   tags: cryogen/throneteki-lobby:latest, cryogen/throneteki-lobby:${{ steps.determine_version.outputs.semVer }}
             - name: Build and push node
