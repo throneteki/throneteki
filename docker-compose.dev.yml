@@ -1,7 +1,6 @@
 services:
   throneteki:
     image: "node:20"
-    user: "node"
     volumes:
       - .:/workspaces/throneteki:cached
     command: sleep infinity
