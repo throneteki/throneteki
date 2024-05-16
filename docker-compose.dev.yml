@@ -1,6 +1,6 @@
 services:
   throneteki:
-    image: "node:16"
+    image: "node:20"
     user: "node"
     volumes:
       - .:/workspaces/throneteki:cached
