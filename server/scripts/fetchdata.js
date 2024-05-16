@@ -1,13 +1,15 @@
 /*eslint no-console:0 */
-const commandLineArgs = require('command-line-args');
-const monk = require('monk');
-const path = require('path');
-const ServiceFactory = require('../services/ServiceFactory.js');
+import commandLineArgs from 'command-line-args';
 
-const CardImport = require('./fetchdata/CardImport.js');
-const CardgameDbImageSource = require('./fetchdata/CardgameDbImageSource.js');
-const JsonCardSource = require('./fetchdata/JsonCardSource.js');
-const NoImageSource = require('./fetchdata/NoImageSource.js');
+import monk from 'monk';
+import path from 'path';
+import ServiceFactory from '../services/ServiceFactory.js';
+import CardImport from './fetchdata/CardImport.js';
+import CardgameDbImageSource from './fetchdata/CardgameDbImageSource.js';
+import JsonCardSource from './fetchdata/JsonCardSource.js';
+import NoImageSource from './fetchdata/NoImageSource.js';
+
+const __dirname = import.meta.dirname;
 
 const optionsDefinition = [
     { name: 'card-source', type: String, defaultValue: 'json' },

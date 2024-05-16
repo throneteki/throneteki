@@ -6,4 +6,4 @@ class NoImageSource {
     }
 }
 
-module.exports = NoImageSource;
+export default NoImageSource;

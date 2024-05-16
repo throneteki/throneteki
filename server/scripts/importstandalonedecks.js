@@ -1,12 +1,14 @@
 /*eslint no-console:0 */
 
-const fs = require('fs');
-const path = require('path');
-const monk = require('monk');
-const ServiceFactory = require('../services/ServiceFactory.js');
+import fs from 'fs';
 
-const CardService = require('../services/CardService');
-const DeckService = require('../services/DeckService');
+import path from 'path';
+import monk from 'monk';
+import ServiceFactory from '../services/ServiceFactory.js';
+import CardService from '../services/CardService.js';
+import DeckService from '../services/DeckService.js';
+
+const __dirname = import.meta.dirname;
 
 class ImportStandaloneDecks {
     constructor() {
