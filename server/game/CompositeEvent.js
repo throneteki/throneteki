@@ -227,4 +227,4 @@ class CompositeEvent {
     }
 }
 
-module.exports = CompositeEvent;
+export default CompositeEvent;
