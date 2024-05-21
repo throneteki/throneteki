@@ -6,20 +6,25 @@
 	"remoteUser": "root",
 	"postCreateCommand": {
 		"npm": "npm install",
-		"createConfig": "cp -n config/default.json5 config/local.json5"
+		"createConfig": "cp -n config/default.json5 config/local.json5",
+		"submodule": "git submodule init"
 	},
 	"postStartCommand": {
-		"submodule": "git submodule update --init",
 		"fetchData": "node server/scripts/fetchdata.js && node server/scripts/importstandalonedecks.js"
 	},
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"mongodb.mongodb-vscode",
-				"dbaeumer.vscode-eslint",
-				"ms-azuretools.vscode-docker",
-				"esbenp.prettier-vscode"
-			]
+				"dbaeumer.vscode-eslint"
+			],
+			"settings": {
+				"eslint.experimental.useFlatConfig": true,
+				"eslint.workingDirectories": [
+					{
+						"mode": "auto"
+					}
+				]
+			}
 		}
 	},
 	"portsAttributes": {
