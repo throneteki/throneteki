@@ -21,6 +21,10 @@ class NullEvent {
         this.cancelled = true;
     }
 
+    replace() {}
+
+    replaceChildEvent() {}
+
     replaceHandler() {}
 
     checkExecuteValidity() {

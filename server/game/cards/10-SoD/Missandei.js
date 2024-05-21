@@ -14,8 +14,7 @@ class Missandei extends DrawCard {
             message:
                 '{player} uses {source} to put {source} into play instead of placing her their discard pile',
             handler: (context) => {
-                context.replaceChildEvent(
-                    'placeCard',
+                context.event.childEvent.placeCard.replace(
                     GameActions.putIntoPlay({ card: this }).createEvent()
                 );
             }

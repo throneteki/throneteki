@@ -10,8 +10,7 @@ class SerDavosSeaworth extends DrawCard {
             message:
                 '{player} uses {source} to return {source} to their hand instead of placing him in their dead pile',
             handler: (context) => {
-                context.replaceChildEvent(
-                    'placeCard',
+                context.event.childEvent.placeCard.replace(
                     GameActions.returnCardToHand({ card: this }).createEvent()
                 );
             }

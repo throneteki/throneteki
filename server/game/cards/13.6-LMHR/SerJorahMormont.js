@@ -11,8 +11,7 @@ class SerJorahMormont extends DrawCard {
             message:
                 '{player} uses {source} to put {source} into shadows instead of placing him in their discard pile',
             handler: (context) => {
-                context.replaceChildEvent(
-                    'placeCard',
+                context.event.childEvent.placeCard.replace(
                     GameActions.putIntoShadows({ card: this }).createEvent()
                 );
             }

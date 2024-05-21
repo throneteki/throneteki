@@ -81,6 +81,10 @@ class CompositeEvent {
         return [...this.childEventsMap.values()];
     }
 
+    get childEvent() {
+        return Object.fromEntries(this.childEventsMap.entries());
+    }
+
     get resolved() {
         return (
             !this.cancelled &&
@@ -102,10 +106,21 @@ class CompositeEvent {
         this.childEventsMap.set(name, event);
     }
 
-    replaceChildEvent(name, event) {
-        if (this.childEventsMap.has(name)) {
-            this.childEventsMap.get(name).parent = null;
-            this.setChildEvent(name, event);
+    replace(newEvent) {
+        if (this.parent) {
+            this.parent.replaceChildEvent(this, newEvent);
+        } else {
+            throw new Error('Cannot replace an event without a parent!');
+        }
+    }
+
+    replaceChildEvent(childEvent, newEvent) {
+        for (const [name, event] of this.childEventsMap.entries()) {
+            if (event == childEvent) {
+                childEvent.parent = null;
+                this.setChildEvent(name, newEvent);
+                return;
+            }
         }
     }
 
@@ -184,6 +199,7 @@ class CompositeEvent {
             ([, value]) => value === event
         );
         if (childEventEntry) {
+            childEventEntry[1].parent = null;
             this.childEventsMap.delete(childEventEntry[0]);
         }
         this.cancel();

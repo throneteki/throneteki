@@ -85,6 +85,24 @@ class Event {
         }
     }
 
+    replace(newEvent) {
+        if (this.parent) {
+            this.parent.replaceChildEvent(this, newEvent);
+        } else {
+            throw new Error('Cannot replace an event without a parent!');
+        }
+    }
+
+    replaceChildEvent(childEvent, newEvent) {
+        const index = this.childEvents.findIndex((e) => e == childEvent);
+
+        if (index >= 0) {
+            childEvent.parent = null;
+            this.childEvents.splice(index, 1);
+            this.addChildEvent(newEvent);
+        }
+    }
+
     replaceHandler(handler) {
         this.handler = handler;
     }

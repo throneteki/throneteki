@@ -13,8 +13,7 @@ class SpearsOfTheMerlingKing extends DrawCard {
                 args: { card: (context) => context.event.card }
             },
             handler: (context) => {
-                context.replaceChildEvent(
-                    'placeCard',
+                context.event.childEvent.placeCard.replace(
                     GameActions.returnCardToHand({ card: context.event.card }).createEvent()
                 );
             }

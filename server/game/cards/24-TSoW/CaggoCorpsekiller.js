@@ -20,8 +20,7 @@ class CaggoCorpsekiller extends DrawCard {
                 }
             },
             handler: (context) => {
-                context.replaceChildEvent(
-                    'placeCard',
+                context.event.childEvent.placeCard.replace(
                     GameActions.placeCard({
                         card: context.event.card,
                         location: 'dead pile'
