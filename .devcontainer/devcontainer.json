@@ -1,5 +1,4 @@
 {
-	"name": "Throneteki - Dev Container",
 	"dockerComposeFile": ["../docker-compose.yml", "../docker-compose.dev.yml"],
 	"service": "throneteki",
 	"workspaceFolder": "/workspaces/throneteki",
