@@ -1,4 +1,4 @@
-const uuid = require('uuid');
+import uuid from 'uuid';
 const ReservedEventParamKeys = [
     'attachedEvents',
     'cancelled',
