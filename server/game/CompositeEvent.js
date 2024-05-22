@@ -1,85 +1,26 @@
 import uuid from 'uuid';
-const ReservedEventParamKeys = [
-    'attachedEvents',
-    'cancelled',
-    'childEvents',
-    'handler',
-    'name',
-    'params',
-    'parent',
-    'postHandlers',
-    'cardStateWhenEventCreated'
-];
+import Event from './event.js';
 
-class CompositeEvent {
+/**
+ * CompositeEvent is an event that is made up of other inner events, but is also an emittable event itself
+ * - Eg. onCharacterKilled -> onCardPlaced + onLeavePlay
+ * - Each inner child event is named, making replacement easier
+ * - Cancelling any child will cancel the whole composite event
+ * - Parameters of children are shared within composite event
+ */
+class CompositeEvent extends Event {
     constructor(name, params = {}, postHandler = () => true) {
-        const { isFullyResolved, ...otherParams } = params;
+        super(name, params, undefined, postHandler);
 
-        this.name = name;
-        this.cancelled = false;
-        this.invalid = false;
-        this.handler = () => true;
-        this.postHandlers = [postHandler];
         this.childEventsMap = new Map();
-        this.attachedEvents = [];
-        this.params = otherParams;
-        this.isFullyResolved = isFullyResolved || (() => true);
-        this.order = 0;
-
-        this.assignParamProperties(otherParams);
-
-        if (this.params.card && this.params.card.createSnapshot) {
-            this.cardStateWhenEventCreated = this.params.card.createSnapshot();
-        }
-
-        // ISSUE: Properties within primaryEvent & innerEvents need to be shared, rather than sharing all properties within here.
-        // eg. If innerEvent[0].automaticSaveWithDupe is being fetched, and is undefined, then it should search primaryEvent & the
-        //     other innerEvents for an automaticSaveWithDupe that isn't undefined. If none exist, it's actually undefined.
-
-        // Proxy allows property gets/sets to be obtained from & propogated to inner events
-        // return new Proxy(this, {
-        //     get: function(target, prop) {
-        //         const value = target[prop];
-        //         if(value) {
-        //             return value;
-        //         }
-        //         // Get the property, starting at the primary event, then looping through inner events
-        //         for(const event of target.childEvents) {
-        //             const property = event[prop];
-        //             if(property) {
-        //                 return property;
-        //             }
-        //         }
-        //         return undefined;
-        //     },
-        //     set: function(target, prop, value) {
-        //         // Find if the property exists already & set, starting at the primary event, then looping through inner events
-        //         for(const event of target.childEvents) {
-        //             const property = event[prop];
-        //             if(property) {
-        //                 event[prop] = value;
-        //                 return true;
-        //             }
-        //         }
-        //         // Otherwise, set property on composite event
-        //         return true;
-        //     }
-        // });
-    }
-
-    assignParamProperties(params) {
-        let reservedKeys = ReservedEventParamKeys.filter((key) => !!params[key]);
-        if (reservedKeys.length !== 0) {
-            throw new Error(
-                `Event '${this.name}' cannot have params with keys: ${reservedKeys.map((key) => `'${key}'`).join(', ')}`
-            );
-        }
-
-        Object.assign(this, params);
     }
 
     get childEvents() {
         return [...this.childEventsMap.values()];
+    }
+
+    set childEvents(val) {
+        return;
     }
 
     get childEvent() {
@@ -107,17 +48,9 @@ class CompositeEvent {
         this.childEventsMap.set(name, event);
     }
 
-    replace(newEvent) {
-        if (this.parent) {
-            this.parent.replaceChildEvent(this, newEvent);
-        } else {
-            throw new Error('Cannot replace an event without a parent!');
-        }
-    }
-
     replaceChildEvent(childEvent, newEvent) {
         for (const [name, event] of this.childEventsMap.entries()) {
-            if (event == childEvent) {
+            if (event === childEvent) {
                 childEvent.parent = null;
                 this.setChildEvent(name, newEvent);
                 return;
@@ -132,19 +65,6 @@ class CompositeEvent {
         for (let event of this.childEvents) {
             event.emitTo(emitter, suffix);
         }
-    }
-
-    allowAutomaticSave() {
-        return this.allowSave && this.automaticSaveWithDupe && !!this.card;
-    }
-
-    saveCard() {
-        if (!this.card || this.cancelled) {
-            return;
-        }
-
-        this.card.game.saveCard(this.card);
-        this.cancel();
     }
 
     cancel() {
@@ -164,62 +84,16 @@ class CompositeEvent {
         }
     }
 
-    checkExecuteValidity() {
-        // When the card in which the event affects is moved before the event can start resolving, it should not execute (but is also not cancelled)
-        if (
-            this.params.card &&
-            this.cardStateWhenEventCreated &&
-            this.params.card.location !== this.cardStateWhenEventCreated.location
-        ) {
-            this.invalid = true;
-        }
+    onChildCancelled(event) {
+        for (const [name, childEvent] of this.childEventsMap.entries()) {
+            if (event === childEvent) {
+                childEvent.parent = null;
+                this.childEventsMap.delete(name);
 
-        for (let event of this.childEvents) {
-            event.checkExecuteValidity();
-        }
-    }
-
-    createSnapshot() {
-        if (this.params.card && this.params.card.createSnapshot && this.params.snapshotName) {
-            this[this.params.snapshotName] = this.params.card.createSnapshot();
-        }
-    }
-
-    executeHandler() {
-        this.queue = this.getConcurrentEvents().sort((a, b) => a.order - b.order);
-
-        for (let event of this.queue) {
-            event.createSnapshot();
-            if (!event.invalid) {
-                event.handler(event);
+                this.cancel();
+                return;
             }
         }
-    }
-
-    executePostHandler() {
-        for (let postHandler of this.postHandlers) {
-            postHandler(this);
-        }
-    }
-
-    onChildCancelled(event) {
-        const childEventEntry = [...this.childEventsMap.entries()].find(
-            ([, value]) => value === event
-        );
-        if (childEventEntry) {
-            childEventEntry[1].parent = null;
-            this.childEventsMap.delete(childEventEntry[0]);
-        }
-        this.cancel();
-    }
-
-    getConcurrentEvents() {
-        return this.childEvents.reduce(
-            (concurrentEvents, event) => {
-                return concurrentEvents.concat(event.getConcurrentEvents());
-            },
-            [this]
-        );
     }
 
     getPrimaryEvents() {
