@@ -3,6 +3,7 @@ class SimultaneousEvents {
     constructor() {
         this.childEvents = [];
         this.postHandlers = [];
+        this.order = 0;
     }
 
     get activeChildEvents() {
@@ -45,8 +46,13 @@ class SimultaneousEvents {
     }
 
     executeHandler() {
-        for (let event of this.activeChildEvents.sort((a, b) => a.order - b.order)) {
-            event.executeHandler();
+        this.queue = this.getConcurrentEvents().sort((a, b) => a.order - b.order);
+
+        for (let event of this.queue) {
+            event.createSnapshot();
+            if (!event.invalid) {
+                event.handler(event);
+            }
         }
     }
 

@@ -3,6 +3,7 @@ class NullEvent {
         this.attachedEvents = [];
         this.cancelled = false;
         this.invalid = false;
+        this.order = 0;
     }
 
     get resolved() {
@@ -30,6 +31,8 @@ class NullEvent {
     checkExecuteValidity() {
         this.invalid = true;
     }
+
+    createSnapshot() {}
 
     executeHandler() {}
 

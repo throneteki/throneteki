@@ -5,14 +5,16 @@ describe('AtomicEvent', function () {
         this.childEventSpy1 = jasmine.createSpyObj('childEvent1', [
             'cancel',
             'emitTo',
-            'executeHandler',
-            'getConcurrentEvents'
+            'handler',
+            'getConcurrentEvents',
+            'createSnapshot'
         ]);
         this.childEventSpy2 = jasmine.createSpyObj('childEvent2', [
             'cancel',
             'emitTo',
-            'executeHandler',
-            'getConcurrentEvents'
+            'handler',
+            'getConcurrentEvents',
+            'createSnapshot'
         ]);
         this.event = new AtomicEvent();
         this.event.addChildEvent(this.childEventSpy1);
@@ -33,12 +35,14 @@ describe('AtomicEvent', function () {
 
     describe('executeHandler', function () {
         beforeEach(function () {
+            this.childEventSpy1.getConcurrentEvents.and.returnValue([this.childEventSpy1]);
+            this.childEventSpy2.getConcurrentEvents.and.returnValue([this.childEventSpy2]);
             this.event.executeHandler();
         });
 
-        it('should call executeHandler on all children', function () {
-            expect(this.childEventSpy1.executeHandler).toHaveBeenCalled();
-            expect(this.childEventSpy2.executeHandler).toHaveBeenCalled();
+        it('should call handler on all children', function () {
+            expect(this.childEventSpy1.handler).toHaveBeenCalled();
+            expect(this.childEventSpy2.handler).toHaveBeenCalled();
         });
     });
 

@@ -60,7 +60,7 @@ const OrderableEventFunc = {
                         const orderedCards = selectedCards.reverse();
                         for (let order in orderedCards) {
                             const event = cardsToEvents.get(orderedCards[order]);
-                            event.order = order;
+                            event.order = parseInt(order) + 1; // Start order index at 1
                         }
                         return true;
                     },

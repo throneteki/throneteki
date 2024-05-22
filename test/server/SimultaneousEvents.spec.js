@@ -35,16 +35,16 @@ describe('SimultaneousEvents', function () {
 
     describe('executeHandler', function () {
         beforeEach(function () {
-            spyOn(this.childEvent1, 'executeHandler');
-            spyOn(this.childEvent2, 'executeHandler');
-            spyOn(this.childEvent3, 'executeHandler');
+            spyOn(this.childEvent1, 'handler');
+            spyOn(this.childEvent2, 'handler');
+            spyOn(this.childEvent3, 'handler');
             this.event.executeHandler();
         });
 
-        it('should call executeHandler on all children', function () {
-            expect(this.childEvent1.executeHandler).toHaveBeenCalled();
-            expect(this.childEvent2.executeHandler).not.toHaveBeenCalled();
-            expect(this.childEvent3.executeHandler).toHaveBeenCalled();
+        it('should call handler on all children', function () {
+            expect(this.childEvent1.handler).toHaveBeenCalled();
+            expect(this.childEvent2.handler).not.toHaveBeenCalled();
+            expect(this.childEvent3.handler).toHaveBeenCalled();
         });
     });
 

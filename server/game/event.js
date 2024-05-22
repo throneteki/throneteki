@@ -23,6 +23,7 @@ class Event {
         this.attachedEvents = [];
         this.params = otherParams;
         this.isFullyResolved = isFullyResolved || (() => true);
+        this.order = 0;
 
         this.assignParamProperties(otherParams);
 
@@ -122,17 +123,20 @@ class Event {
         }
     }
 
-    executeHandler() {
+    createSnapshot() {
         if (this.params.card && this.params.card.createSnapshot && this.params.snapshotName) {
             this[this.params.snapshotName] = this.params.card.createSnapshot();
         }
+    }
 
-        if (!this.invalid) {
-            this.handler(this);
-        }
+    executeHandler() {
+        this.queue = this.getConcurrentEvents().sort((a, b) => a.order - b.order);
 
-        for (let event of this.childEvents) {
-            event.executeHandler();
+        for (let event of this.queue) {
+            event.createSnapshot();
+            if (!event.invalid) {
+                event.handler(event);
+            }
         }
     }
 

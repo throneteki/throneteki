@@ -5,6 +5,7 @@ class AtomicEvent {
         this.childEvents = [];
         this.attachedEvents = [];
         this.params = {};
+        this.order = 0;
     }
 
     get resolved() {
@@ -77,8 +78,13 @@ class AtomicEvent {
     }
 
     executeHandler() {
-        for (let event of this.childEvents.sort((a, b) => a.order - b.order)) {
-            event.executeHandler();
+        this.queue = this.getConcurrentEvents().sort((a, b) => a.order - b.order);
+
+        for (let event of this.queue) {
+            event.createSnapshot();
+            if (!event.invalid) {
+                event.handler(event);
+            }
         }
     }
 

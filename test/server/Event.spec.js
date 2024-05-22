@@ -5,8 +5,9 @@ describe('Event', function () {
         this.childEventSpy = jasmine.createSpyObj('childEvent', [
             'cancel',
             'emitTo',
-            'executeHandler',
-            'getConcurrentEvents'
+            'handler',
+            'getConcurrentEvents',
+            'createSnapshot'
         ]);
     });
 
@@ -94,11 +95,29 @@ describe('Event', function () {
         describe('when the event has children', function () {
             beforeEach(function () {
                 this.event.addChildEvent(this.childEventSpy);
+                this.childEventSpy.getConcurrentEvents.and.returnValue([this.childEventSpy]);
                 this.event.executeHandler();
             });
 
-            it('should call executeHandler on the children', function () {
-                expect(this.childEventSpy.executeHandler).toHaveBeenCalled();
+            it('should call handler on the children', function () {
+                expect(this.childEventSpy.handler).toHaveBeenCalled();
+            });
+        });
+
+        describe('when the event has children within children', function () {
+            beforeEach(function () {
+                this.childEvent = new Event('childEvent', { foo: 'bar' });
+                spyOn(this.childEvent, 'handler');
+                this.childEventSpy.getConcurrentEvents.and.returnValue([this.childEventSpy]);
+                this.childEvent.addChildEvent(this.childEventSpy);
+                this.event.addChildEvent(this.childEvent);
+
+                this.event.executeHandler();
+            });
+
+            it('should call handler on all historical children', function () {
+                expect(this.childEvent.handler).toHaveBeenCalled();
+                expect(this.childEventSpy.handler).toHaveBeenCalled();
             });
         });
     });

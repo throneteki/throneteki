@@ -24,6 +24,7 @@ class CompositeEvent {
         this.attachedEvents = [];
         this.params = otherParams;
         this.isFullyResolved = isFullyResolved || (() => true);
+        this.order = 0;
 
         this.assignParamProperties(otherParams);
 
@@ -178,13 +179,20 @@ class CompositeEvent {
         }
     }
 
-    executeHandler() {
+    createSnapshot() {
         if (this.params.card && this.params.card.createSnapshot && this.params.snapshotName) {
             this[this.params.snapshotName] = this.params.card.createSnapshot();
         }
+    }
 
-        for (let event of this.childEvents) {
-            event.executeHandler();
+    executeHandler() {
+        this.queue = this.getConcurrentEvents().sort((a, b) => a.order - b.order);
+
+        for (let event of this.queue) {
+            event.createSnapshot();
+            if (!event.invalid) {
+                event.handler(event);
+            }
         }
     }
 
