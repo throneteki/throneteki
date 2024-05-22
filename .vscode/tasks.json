@@ -3,12 +3,7 @@
     "tasks": [
       {
         "type": "shell",
-        "label": "Initialise Docker Volumes",
-        "command": "docker volume create throneteki_mongodb"
-      },
-      {
-        "type": "shell",
-        "label": "Fetch Data",
+        "label": "Fetch Card Data",
         "command": "node server${pathSeparator}scripts${pathSeparator}fetchdata.js && node server${pathSeparator}scripts${pathSeparator}importstandalonedecks.js",
         "problemMatcher": []
       },
