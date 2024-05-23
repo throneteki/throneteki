@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class SeaSong extends DrawCard {
@@ -9,27 +10,26 @@ class SeaSong extends DrawCard {
 
         this.reaction({
             when: {
-                'onCardDiscarded:aggregate': (event) =>
-                    event.events.some((discardEvent) => discardEvent.source === 'reserve') &&
-                    (this.controller.canDraw() || this.controller.canGainFactionPower())
+                onCardDiscarded: {
+                    aggregateBy: (event) => [event.cardStateWhenDiscarded.controller, event.source],
+                    condition: (aggregate) => aggregate[1] === 'reserve'
+                }
             },
             limit: ability.limit.perRound(2),
             choices: {
-                'Draw 1 card': (context) => {
-                    if (context.player.canDraw()) {
-                        context.player.drawCardsToHand(1);
-                        this.game.addMessage('{0} uses {1} to draw 1 card', context.player, this);
-                    }
+                'Draw 1 card': {
+                    message: '{player} uses {source} to draw 1 card',
+                    gameAction: GameActions.drawCards((context) => ({
+                        player: context.player,
+                        amount: 1
+                    }))
                 },
-                'Gain 1 power': (context) => {
-                    if (context.player.canGainFactionPower()) {
-                        this.game.addPower(context.player, 1);
-                        this.game.addMessage(
-                            '{0} uses {1} to gain 1 power for their faction',
-                            context.player,
-                            this
-                        );
-                    }
+                'Gain 1 power': {
+                    message: '{player} uses {source} to gain 1 power for their faction',
+                    gameAction: GameActions.gainPower((context) => ({
+                        card: context.player.faction,
+                        amount: 1
+                    }))
                 }
             }
         });

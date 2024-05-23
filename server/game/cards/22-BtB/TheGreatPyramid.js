@@ -18,35 +18,33 @@ class TheGreatPyramid extends DrawCard {
 
         this.reaction({
             when: {
-                'onCardDiscarded:aggregate': (event) =>
-                    event.events.some(
-                        (discardEvent) =>
-                            discardEvent.cardStateWhenDiscarded.controller === this.controller &&
-                            discardEvent.cardStateWhenDiscarded.location === 'hand' &&
-                            discardEvent.card.location === 'discard pile'
-                    )
+                onCardDiscarded: {
+                    aggregateBy: (event) => [
+                        event.cardStateWhenDiscarded.controller,
+                        event.cardStateWhenDiscarded.location,
+                        event.cardStateWhenDiscarded.location
+                    ],
+                    condition: (aggregate) =>
+                        aggregate[0] === this.controller &&
+                        aggregate[1] === 'hand' &&
+                        aggregate[2] === 'discard pile'
+                }
             },
             limit: ability.limit.perRound(2),
-            handler: (context) => {
-                let discardedCards = context.event.events
-                    .map((discardEvent) => discardEvent.card)
-                    .filter((card) => card.location === 'discard pile');
-                this.game.addMessage(
-                    '{0} places {1} under {2}',
-                    context.player,
-                    discardedCards,
-                    this
-                );
-
+            message: {
+                format: '{player} uses {source} to place {cards} under {source}',
+                args: { cards: (context) => context.aggregateEvents.map((e) => e.card) }
+            },
+            gameAction: GameActions.genericHandler((context) => {
                 this.lastingEffect((ability) => ({
                     until: {
                         onCardLeftPlay: (event) => event.card === this
                     },
                     targetLocation: 'any',
-                    match: discardedCards,
+                    match: context.aggregateEvents.map((e) => e.card),
                     effect: ability.effects.placeCardUnderneath(this.removeCardsUnderneathFromGame)
                 }));
-            }
+            })
         });
     }
 

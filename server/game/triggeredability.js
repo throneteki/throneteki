@@ -1,6 +1,7 @@
 import BaseAbility from './baseability.js';
 import Costs from './costs.js';
 import TriggeredAbilityContext from './TriggeredAbilityContext.js';
+import { equalElements } from '../Array.js';
 
 class TriggeredAbility extends BaseAbility {
     constructor(game, card, eventType, properties) {
@@ -53,13 +54,23 @@ class TriggeredAbility extends BaseAbility {
     }
 
     createContext(event) {
-        return new TriggeredAbilityContext({
+        const context = new TriggeredAbilityContext({
             ability: this,
             event: event,
             game: this.game,
             source: this.card,
             player: this.playerFunc()
         });
+        const listener = this.when[event.name];
+        if (typeof listener === 'function') {
+            return context;
+        } else {
+            const aggregates = this.buildAggregates(event, listener.aggregateBy).filter((a) =>
+                listener.condition(a.aggregate, a.events, context)
+            );
+            context.aggregateEvents = [...aggregates.map((a) => a.events)];
+            return context;
+        }
     }
 
     triggersFor(eventName) {
@@ -82,8 +93,27 @@ class TriggeredAbility extends BaseAbility {
         }
 
         const context = this.createContext(event);
+        if (typeof listener === 'function') {
+            return listener(event, context);
+        } else {
+            return context.aggregateEvents.length > 0;
+        }
+    }
 
-        return listener(event, context);
+    buildAggregates(event, aggregateBy) {
+        return event.getConcurrentEvents().reduce((groups, e) => {
+            if (event.name !== e.name) {
+                return groups;
+            }
+            const aggregate = aggregateBy(e);
+            const existing = groups.find((a) => equalElements(a.aggregate, aggregate));
+            if (existing) {
+                existing.events.push(e);
+            } else {
+                groups.push({ aggregate, events: [e] });
+            }
+            return groups;
+        }, []);
     }
 
     meetsRequirements(context) {
