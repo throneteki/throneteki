@@ -19,6 +19,7 @@ class CompositeEvent extends Event {
         return [...this.childEventsMap.values()];
     }
 
+    // Required for Event constructor
     set childEvents(val) {
         return;
     }
@@ -55,15 +56,6 @@ class CompositeEvent extends Event {
                 this.setChildEvent(name, newEvent);
                 return;
             }
-        }
-    }
-
-    emitTo(emitter, suffix) {
-        let fullName = suffix ? `${this.name}:${suffix}` : this.name;
-        emitter.emit(fullName, this);
-
-        for (let event of this.childEvents) {
-            event.emitTo(emitter, suffix);
         }
     }
 

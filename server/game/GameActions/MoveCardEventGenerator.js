@@ -68,10 +68,8 @@ class MoveCardEventGenerator {
             allowSave,
             orderable
         });
-        const discardEvent = this.compositeEvent('onCardDiscarded', params, {
-            name: 'placeCard',
-            event: placeCardEvent
-        });
+        const discardEvent = this.composite('onCardDiscarded', params);
+        discardEvent.setChildEvent('placeCard', placeCardEvent);
 
         return discardEvent;
     }
@@ -89,10 +87,8 @@ class MoveCardEventGenerator {
             location: 'dead pile',
             allowSave
         });
-        const killedEvent = this.compositeEvent('onCharacterKilled', params, {
-            name: 'placeCard',
-            event: placeCardEvent
-        });
+        const killedEvent = this.composite('onCharacterKilled', params);
+        killedEvent.setChildEvent('placeCard', placeCardEvent);
 
         return killedEvent;
     }
@@ -109,10 +105,8 @@ class MoveCardEventGenerator {
             player: card.controller,
             location: 'discard pile'
         });
-        const sacrificeEvent = this.compositeEvent('onSacrificed', params, {
-            name: 'placeCard',
-            event: placeCardEvent
-        });
+        const sacrificeEvent = this.composite('onSacrificed', params);
+        sacrificeEvent.setChildEvent('placeCard', placeCardEvent);
 
         return sacrificeEvent;
     }
@@ -130,10 +124,8 @@ class MoveCardEventGenerator {
             location: 'hand',
             allowSave
         });
-        const returnEvent = this.compositeEvent('onCardReturnedToHand', params, {
-            name: 'placeCard',
-            event: placeCardEvent
-        });
+        const returnEvent = this.composite('onCardReturnedToHand', params);
+        returnEvent.setChildEvent('placeCard', placeCardEvent);
 
         return returnEvent;
     }
@@ -154,10 +146,8 @@ class MoveCardEventGenerator {
             bottom,
             orderable
         });
-        const returnEvent = this.compositeEvent('onCardReturnedToDeck', params, {
-            name: 'placeCard',
-            event: placeCardEvent
-        });
+        const returnEvent = this.composite('onCardReturnedToDeck', params);
+        returnEvent.setChildEvent('placeCard', placeCardEvent);
 
         return returnEvent;
     }
@@ -176,10 +166,8 @@ class MoveCardEventGenerator {
             allowSave,
             location: 'shadows'
         });
-        const putEvent = this.compositeEvent('onCardPutIntoShadows', params, {
-            name: 'placeCard',
-            event: placeCardEvent
-        });
+        const putEvent = this.composite('onCardPutIntoShadows', params);
+        putEvent.setChildEvent('placeCard', placeCardEvent);
 
         return putEvent;
     }
@@ -259,14 +247,10 @@ class MoveCardEventGenerator {
         return new Event(name, params, handler);
     }
 
-    compositeEvent(name, params, ...events) {
+    composite(name, params, ...events) {
         const compositeEvent = new CompositeEvent(name, params);
         for (const event of events) {
-            if (event.name && event.event) {
-                compositeEvent.setChildEvent(event.name, event.event);
-            } else {
-                compositeEvent.addChildEvent(event);
-            }
+            compositeEvent.addChildEvent(event);
         }
         return compositeEvent;
     }
