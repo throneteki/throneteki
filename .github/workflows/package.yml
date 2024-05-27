@@ -2,13 +2,13 @@ name: Package
 on:
     workflow_run:
         workflows: ['Build and test']
-        branches: master
+        branches: [master, playtesting]
         types: completed
 jobs:
     package:
         # `if` required because a workflow run is triggered regardless of
         # the result of the previous workflow (see the documentation page)
-        if: ${{ github.repository == 'throneteki/throneteki' && github.event.workflow_run.conclusion == 'success' }}
+        if: ${{ github.repository == vars.PACKAGEABLE_REPOSITORY && github.event.workflow_run.conclusion == 'success' }}
         runs-on: ubuntu-latest
         steps:
             - name: Checkout source and submodules
@@ -44,7 +44,7 @@ jobs:
                       "VERSION=${{ steps.determine_version.outputs.semVer }}"
                       "SENTRY_KEY=${{ secrets.SENTRY_DSN }}"
                   push: true
-                  tags: cryogen/throneteki-lobby:latest, cryogen/throneteki-lobby:${{ steps.determine_version.outputs.semVer }}
+                  tags: ${{ secrets.DOCKERHUB_USERNAME }}/throneteki-lobby:latest, ${{ secrets.DOCKERHUB_USERNAME }}/throneteki-lobby:${{ steps.determine_version.outputs.semVer }}
             - name: Build and push node
               uses: docker/build-push-action@v3
               with:
@@ -52,4 +52,4 @@ jobs:
                       "VERSION=${{ steps.determine_version.outputs.semVer }}"
                   push: true
                   file: server/gamenode/Dockerfile
-                  tags: cryogen/throneteki-node:latest, cryogen/throneteki-node:${{ steps.determine_version.outputs.semVer }}
+                  tags: ${{ secrets.DOCKERHUB_USERNAME }}/throneteki-node:latest, ${{ secrets.DOCKERHUB_USERNAME }}/throneteki-node:${{ steps.determine_version.outputs.semVer }}
