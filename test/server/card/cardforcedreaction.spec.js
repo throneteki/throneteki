@@ -81,6 +81,34 @@ describe('CardForcedReaction', function () {
                 );
             });
         });
+
+        describe('when the when aggregate returns false', function () {
+            beforeEach(function () {
+                this.properties.when.onSomething = {
+                    aggregateBy: jasmine.createSpy().and.returnValue({}),
+                    condition: jasmine.createSpy().and.returnValue(false)
+                };
+                this.executeEventHandler();
+            });
+
+            it('should not register the ability', function () {
+                expect(this.gameSpy.registerAbility).not.toHaveBeenCalled();
+            });
+        });
+
+        describe('when the when aggregate returns true', function () {
+            beforeEach(function () {
+                this.properties.when.onSomething = {
+                    aggregateBy: jasmine.createSpy().and.returnValue({}),
+                    condition: jasmine.createSpy().and.returnValue(true)
+                };
+                this.executeEventHandler();
+            });
+
+            it('should register the ability', function () {
+                expect(this.gameSpy.registerAbility).toHaveBeenCalled();
+            });
+        });
     });
 
     describe('meetsRequirements()', function () {

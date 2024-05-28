@@ -184,6 +184,19 @@ describe('CardReaction', function () {
             });
         });
 
+        describe('when the when aggregate returns false', function () {
+            beforeEach(function () {
+                this.properties.when.onSomething = {
+                    aggregateBy: jasmine.createSpy().and.returnValue({}),
+                    condition: jasmine.createSpy().and.returnValue(false)
+                };
+            });
+
+            it('should return false', function () {
+                expect(this.meetsRequirements()).toBe(false);
+            });
+        });
+
         describe('when the event has already been cancelled', function () {
             beforeEach(function () {
                 this.event.cancel();
