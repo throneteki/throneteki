@@ -6,43 +6,6 @@ import Event from '../event.js';
 const orderableLocatons = ['draw deck', 'shadows', 'discard pile', 'dead pile'];
 
 class MoveCardEventGenerator {
-    createLeavePlayEvent({ card, allowSave = false }) {
-        const params = {
-            card,
-            allowSave,
-            automaticSaveWithDupe: true,
-            snapshotName: 'cardStateWhenLeftPlay'
-        };
-
-        const leavePlayEvent = this.event('onCardLeftPlay', params, (event) => {
-            event.card.leavesPlay();
-        });
-        for (const attachment of card.attachments || []) {
-            leavePlayEvent.addChildEvent(this.createRemoveAttachmentEvent(attachment));
-        }
-        for (const dupe of card.dupes || []) {
-            leavePlayEvent.addChildEvent(
-                this.createDiscardCardEvent({ card: dupe, allowSave: false })
-            );
-        }
-
-        return leavePlayEvent;
-    }
-
-    createRemoveAttachmentEvent(attachment) {
-        attachment.isBeingRemoved = true;
-
-        if (attachment.isTerminal()) {
-            return this.createDiscardCardEvent({ card: attachment }).thenExecute(() => {
-                attachment.isBeingRemoved = false;
-            });
-        }
-
-        return this.createReturnCardToHandEvent({ card: attachment }).thenExecute(() => {
-            attachment.isBeingRemoved = false;
-        });
-    }
-
     createDiscardCardEvent({
         card,
         allowSave = true,
@@ -181,15 +144,17 @@ class MoveCardEventGenerator {
         orderable = orderableLocatons.includes(location)
     }) {
         player = player || card.controller;
-        const onCardPlacedEvent = this.event(
-            'onCardPlaced',
-            { card, location, player, bottom, orderable },
-            (event) => {
-                const actualPlayer =
-                    event.location !== 'play area' ? event.card.owner : event.player;
-                actualPlayer.placeCardInPile({ card, location, bottom });
-            }
-        );
+        const params = {
+            card,
+            location,
+            player,
+            bottom,
+            orderable
+        };
+        const onCardPlacedEvent = this.event('onCardPlaced', params, (event) => {
+            const actualPlayer = event.location !== 'play area' ? event.card.owner : event.player;
+            actualPlayer.placeCardInPile({ card, location, bottom });
+        });
 
         if (
             ['play area', 'duplicate'].includes(card.location) &&
@@ -203,44 +168,84 @@ class MoveCardEventGenerator {
     }
 
     createEntersPlayEvent({ card, player, playingType = 'play', kneeled = false, isDupe = false }) {
-        const originalLocation = card.location;
-
         player = player || card.controller;
-        const game = player.game;
+        const originalLocation = card.location;
         const isFullyResolved = (event) => event.card.location === 'play area';
+        const params = {
+            card,
+            playingType,
+            player,
+            originalLocation,
+            isFullyResolved
+        };
 
-        return this.event(
-            'onCardEntersPlay',
-            { card, playingType, originalLocation, isFullyResolved },
-            (event) => {
-                // Attachments placed in setup should not be considered to be 'played',
-                // as it will cause then to double their effects when attached later.
-                let isSetupAttachment =
-                    playingType === 'setup' && event.card.getPrintedType() === 'attachment';
+        return this.event('onCardEntersPlay', params, (event) => {
+            const game = event.player.game;
 
-                let originalFacedownState = event.card.facedown;
-                event.card.facedown = game.currentPhase === 'setup';
-                event.card.new = true;
-                player.placeCardInPile({
-                    card: event.card,
-                    location: 'play area',
-                    wasFacedown: originalFacedownState
-                });
-                event.card.takeControl(player);
-                event.card.kneeled =
-                    (playingType !== 'setup' && !!event.card.entersPlayKneeled) || !!kneeled;
+            // Attachments placed in setup should not be considered to be 'played',
+            // as it will cause then to double their effects when attached later.
+            const isSetupAttachment =
+                playingType === 'setup' && event.card.getPrintedType() === 'attachment';
 
-                if (!isDupe && !isSetupAttachment) {
-                    event.card.applyPersistentEffects();
-                }
+            const originalFacedownState = event.card.facedown;
+            event.card.facedown = game.currentPhase === 'setup';
+            event.card.new = true;
+            event.player.placeCardInPile({
+                card: event.card,
+                location: 'play area',
+                wasFacedown: originalFacedownState
+            });
+            event.card.takeControl(event.player);
+            event.card.kneeled =
+                (playingType !== 'setup' && !!event.card.entersPlayKneeled) || !!kneeled;
 
-                game.queueSimpleStep(() => {
-                    if (game.currentPhase !== 'setup' && event.card.isBestow()) {
-                        game.queueStep(new BestowPrompt(game, player, event.card));
-                    }
-                });
+            if (!isDupe && !isSetupAttachment) {
+                event.card.applyPersistentEffects();
             }
-        );
+
+            game.queueSimpleStep(() => {
+                if (game.currentPhase !== 'setup' && event.card.isBestow()) {
+                    game.queueStep(new BestowPrompt(game, player, event.card));
+                }
+            });
+        });
+    }
+
+    createLeavePlayEvent({ card, allowSave = false }) {
+        const params = {
+            card,
+            allowSave,
+            automaticSaveWithDupe: true,
+            snapshotName: 'cardStateWhenLeftPlay'
+        };
+
+        const leavePlayEvent = this.event('onCardLeftPlay', params, (event) => {
+            event.card.leavesPlay();
+        });
+        for (const attachment of card.attachments || []) {
+            leavePlayEvent.addChildEvent(this.createRemoveAttachmentEvent(attachment));
+        }
+        for (const dupe of card.dupes || []) {
+            leavePlayEvent.addChildEvent(
+                this.createDiscardCardEvent({ card: dupe, allowSave: false })
+            );
+        }
+
+        return leavePlayEvent;
+    }
+
+    createRemoveAttachmentEvent(attachment) {
+        attachment.isBeingRemoved = true;
+
+        if (attachment.isTerminal()) {
+            return this.createDiscardCardEvent({ card: attachment }).thenExecute(() => {
+                attachment.isBeingRemoved = false;
+            });
+        }
+
+        return this.createReturnCardToHandEvent({ card: attachment }).thenExecute(() => {
+            attachment.isBeingRemoved = false;
+        });
     }
 
     event(name, params, handler) {
