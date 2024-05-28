@@ -1,7 +1,6 @@
 import BaseAbility from './baseability.js';
 import Costs from './costs.js';
 import TriggeredAbilityContext from './TriggeredAbilityContext.js';
-import { equalElements } from '../Array.js';
 
 class TriggeredAbility extends BaseAbility {
     constructor(game, card, eventType, properties) {
@@ -63,12 +62,13 @@ class TriggeredAbility extends BaseAbility {
         });
         const listener = this.when[event.name];
         if (typeof listener === 'function') {
+            context.isTriggered = listener(event, context);
             return context;
         } else {
-            const aggregates = this.buildAggregates(event, listener.aggregateBy).filter((a) =>
-                listener.condition(a.aggregate, a.events, context)
-            );
-            context.aggregateEvents = [...aggregates.map((a) => a.events)];
+            const aggregates = this.getAggregatedEvents(event, listener, context);
+            // Concat all aggregates which have passed the condition (there could be multiple)
+            context.events = [...aggregates.map((a) => a.events)];
+            context.isTriggered = context.events.length > 0;
             return context;
         }
     }
@@ -78,9 +78,7 @@ class TriggeredAbility extends BaseAbility {
     }
 
     isTriggeredByEvent(event) {
-        let listener = this.when[event.name];
-
-        if (!listener || event.cancelled) {
+        if (!this.when[event.name] || event.cancelled) {
             return false;
         }
 
@@ -93,27 +91,28 @@ class TriggeredAbility extends BaseAbility {
         }
 
         const context = this.createContext(event);
-        if (typeof listener === 'function') {
-            return listener(event, context);
-        } else {
-            return context.aggregateEvents.length > 0;
-        }
+        return context.isTriggered;
     }
 
-    buildAggregates(event, aggregateBy) {
-        return event.getConcurrentEvents().reduce((groups, e) => {
-            if (event.name !== e.name) {
-                return groups;
-            }
-            const aggregate = aggregateBy(e);
-            const existing = groups.find((a) => equalElements(a.aggregate, aggregate));
-            if (existing) {
-                existing.events.push(e);
-            } else {
-                groups.push({ aggregate, events: [e] });
-            }
-            return groups;
-        }, []);
+    getAggregatedEvents(event, listener, context) {
+        return event
+            .getConcurrentEvents()
+            .reduce((aggregates, e) => {
+                if (event.name === e.name) {
+                    const aggregate = listener.aggregateBy(e, context);
+                    const props = Object.keys(aggregate);
+                    const existing = aggregates.find((a) =>
+                        props.every((prop) => aggregate[prop] === a.aggregate[prop])
+                    );
+                    if (existing) {
+                        existing.events.push(e);
+                    } else {
+                        aggregates.push({ aggregate, events: [e] });
+                    }
+                }
+                return aggregates;
+            }, [])
+            .filter((a) => listener.condition(a.aggregate, a.events, context));
     }
 
     meetsRequirements(context) {

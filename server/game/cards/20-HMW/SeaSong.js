@@ -11,8 +11,11 @@ class SeaSong extends DrawCard {
         this.reaction({
             when: {
                 onCardDiscarded: {
-                    aggregateBy: (event) => [event.cardStateWhenDiscarded.controller, event.source],
-                    condition: (aggregate) => aggregate[1] === 'reserve'
+                    aggregateBy: (event) => ({
+                        controller: event.cardStateWhenDiscarded.controller,
+                        source: event.source
+                    }),
+                    condition: (aggregate) => aggregate.source === 'reserve'
                 }
             },
             limit: ability.limit.perRound(2),

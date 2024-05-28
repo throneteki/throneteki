@@ -19,21 +19,18 @@ class TheGreatPyramid extends DrawCard {
         this.reaction({
             when: {
                 onCardDiscarded: {
-                    aggregateBy: (event) => [
-                        event.cardStateWhenDiscarded.controller,
-                        event.cardStateWhenDiscarded.location,
-                        event.cardStateWhenDiscarded.location
-                    ],
+                    aggregateBy: (event) => ({
+                        controller: event.cardStateWhenDiscarded.controller,
+                        location: event.cardStateWhenDiscarded.location
+                    }),
                     condition: (aggregate) =>
-                        aggregate[0] === this.controller &&
-                        aggregate[1] === 'hand' &&
-                        aggregate[2] === 'discard pile'
+                        aggregate.controller === this.controller && aggregate.location === 'hand'
                 }
             },
             limit: ability.limit.perRound(2),
             message: {
                 format: '{player} uses {source} to place {cards} under {source}',
-                args: { cards: (context) => context.aggregateEvents.map((e) => e.card) }
+                args: { cards: (context) => context.events.map((e) => e.card) }
             },
             gameAction: GameActions.genericHandler((context) => {
                 this.lastingEffect((ability) => ({
@@ -41,7 +38,7 @@ class TheGreatPyramid extends DrawCard {
                         onCardLeftPlay: (event) => event.card === this
                     },
                     targetLocation: 'any',
-                    match: context.aggregateEvents.map((e) => e.card),
+                    match: context.events.map((e) => e.card),
                     effect: ability.effects.placeCardUnderneath(this.removeCardsUnderneathFromGame)
                 }));
             })

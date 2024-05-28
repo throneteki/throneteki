@@ -27,12 +27,12 @@ class WymanManderly extends DrawCard {
                 onSacrificed: {
                     aggregateBy: (event) => this.buildAggregate(event.cardStateWhenSacrificed),
                     condition: (aggregate) =>
-                        aggregate[0] === 'character' && aggregate[1] === this.controller
+                        aggregate.type === 'character' && aggregate.controller === this.controller
                 },
                 onCharacterKilled: {
                     aggregateBy: (event) => this.buildAggregate(event.cardStateWhenKilled),
                     condition: (aggregate) =>
-                        aggregate[0] === 'character' && aggregate[1] === this.controller
+                        aggregate.type === 'character' && aggregate.controller === this.controller
                 }
             },
             limit: ability.limit.perPhase(1),
@@ -42,6 +42,13 @@ class WymanManderly extends DrawCard {
                 GameActions.drawCards((context) => ({ player: context.player, amount: 1 }))
             ])
         });
+    }
+
+    buildAggregate(card) {
+        return {
+            type: card.getType(),
+            controller: card.controller
+        };
     }
 }
 

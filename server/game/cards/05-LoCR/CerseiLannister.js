@@ -10,12 +10,14 @@ class CerseiLannister extends DrawCard {
         this.reaction({
             when: {
                 onCardDiscarded: {
-                    aggregateBy: (event) => [
-                        event.cardStateWhenDiscarded.controller,
-                        event.cardStateWhenDiscarded.location
-                    ],
-                    condition: (aggregate) =>
-                        aggregate[0] !== this.controller && aggregate[1] === 'hand'
+                    aggregateBy: (event) => ({
+                        controller: event.cardStateWhenDiscarded.controller,
+                        location: event.cardStateWhenDiscarded.location
+                    }),
+                    condition: (aggregate, events, context) =>
+                        aggregate.controller !== this.controller &&
+                        aggregate.location === 'hand' &&
+                        !context.player.isSupporter(aggregate.controller)
                 }
             },
             limit: ability.limit.perRound(3),
