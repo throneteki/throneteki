@@ -17,7 +17,8 @@ export default [
             globals: {
                 ...globals.browser,
                 ...globals.node,
-                ...globals.jasmine
+                ...globals.jasmine,
+                integration: 'readable'
             },
             ecmaVersion: 'latest',
             sourceType: 'module',
