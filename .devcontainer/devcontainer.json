@@ -1,0 +1,37 @@
+{
+	"dockerComposeFile": ["../docker-compose.yml", "../docker-compose.dev.yml"],
+	"service": "throneteki",
+	"workspaceFolder": "/workspaces/throneteki",
+	"remoteUser": "root",
+	"postCreateCommand": {
+		"npm": "npm install",
+		"createConfig": "cp -n config/default.json5 config/local.json5",
+		"submodule": "git submodule init"
+	},
+	"postStartCommand": {
+		"fetchData": "node server/scripts/fetchdata.js && node server/scripts/importstandalonedecks.js"
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"dbaeumer.vscode-eslint"
+			],
+			"settings": {
+				"eslint.experimental.useFlatConfig": true,
+				"eslint.workingDirectories": [
+					{
+						"mode": "auto"
+					}
+				]
+			}
+		}
+	},
+	"portsAttributes": {
+		"4000": {
+			"label": "Client/Lobby"
+		},
+		"9500": {
+			"label": "Gamenode"
+		}
+	}
+}

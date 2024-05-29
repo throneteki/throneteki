@@ -1,0 +1,31 @@
+version: "3.3"
+services:
+  lobby:
+    restart: always
+    build:
+      context: .
+    image: throneteki:lobby
+    ports:
+      - "4000:4000"
+      - "9229:9229"
+    links:
+      - mongo
+    depends_on:
+      - mongo
+    command:
+      - node
+      - "--inspect=0.0.0.0"
+      - "."
+  node:
+    restart: always
+    build:
+      context: .
+      dockerfile: ./server/gamenode/Dockerfile
+    image: throneteki:node
+    ports:
+      - "9500:9500"
+      - "9339:9339"
+    command:
+      - node
+      - "--inspect=0.0.0.0:9339"
+      - "server/gamenode"

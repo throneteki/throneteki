@@ -1,7 +1,7 @@
 import patreon from 'patreon';
 const patreonAPI = patreon.patreon;
 const patreonOAuth = patreon.oauth;
-import pledge_schema from 'patreon/dist/schemas/pledge.js';
+import pledgeSchema from 'patreon/dist/schemas/pledge.js';
 import logger from '../log.js';
 
 class PatreonService {
@@ -20,9 +20,9 @@ class PatreonService {
             response = await patreonApiClient('/current_user', {
                 fields: {
                     pledge: [
-                        ...pledge_schema.default_attributes,
-                        pledge_schema.attributes.declined_since,
-                        pledge_schema.attributes.created_at
+                        ...pledgeSchema.default_attributes,
+                        pledgeSchema.attributes.declined_since,
+                        pledgeSchema.attributes.created_at
                     ]
                 }
             });
