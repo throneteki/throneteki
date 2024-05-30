@@ -149,7 +149,8 @@ class MoveCardEventGenerator {
             location,
             player,
             bottom,
-            orderable
+            orderable,
+            snapshotName: 'cardStateWhenPlaced'
         };
         const onCardPlacedEvent = this.event('onCardPlaced', params, (event) => {
             const actualPlayer = event.location !== 'play area' ? event.card.owner : event.player;
@@ -160,9 +161,10 @@ class MoveCardEventGenerator {
             ['play area', 'duplicate'].includes(card.location) &&
             !['play area', 'duplicate'].includes(location)
         ) {
-            return this.atomic(onCardPlacedEvent, this.createLeavePlayEvent({ card, allowSave }));
+            const onLeavePlayEvent = this.createLeavePlayEvent({ card, allowSave });
+            return this.atomic(onLeavePlayEvent, onCardPlacedEvent);
         }
-        // TODO: Handle entering play as well
+        // TODO: Handle entering play as well (requires larger edits)
 
         return onCardPlacedEvent;
     }
