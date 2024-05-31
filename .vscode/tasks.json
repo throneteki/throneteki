@@ -1,0 +1,17 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "type": "shell",
+        "label": "Fetch Card Data",
+        "command": "node server${pathSeparator}scripts${pathSeparator}fetchdata.js && node server${pathSeparator}scripts${pathSeparator}importstandalonedecks.js",
+        "problemMatcher": []
+      },
+      {
+        "type": "shell",
+        "label": "Run Client/Lobby",
+        "command": "node .",
+        "problemMatcher": []
+      }
+    ]
+  }
