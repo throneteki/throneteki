@@ -14,7 +14,7 @@ jobs:
             - name: Checkout source and submodules
               uses: actions/checkout@v4
               with:
-                  ref: ${{ vars.GITHUB_REF_NAME }}
+                  ref: ${{ github.event.workflow_run.head_branch }}
                   fetch-depth: '0'
                   submodules: recursive
             - name: Set up QEMU
