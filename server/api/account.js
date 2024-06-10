@@ -9,6 +9,8 @@ import fs from 'fs';
 import logger from '../log.js';
 import { wrapAsync } from '../util.js';
 import ServiceFactory from '../services/ServiceFactory.js';
+import { finished } from 'stream/promises';
+import { Readable } from 'stream';
 const configService = ServiceFactory.configService();
 const appName = configService.getValue('appName');
 
@@ -83,16 +85,9 @@ function validatePassword(password) {
     return undefined;
 }
 
-function writeFile(path, data, opts = 'utf8') {
-    return new Promise((resolve, reject) => {
-        fs.writeFile(path, data, opts, (err) => {
-            if (err) {
-                return reject(err);
-            }
-
-            resolve();
-        });
-    });
+async function writeFile(path, data) {
+    const writer = fs.createWriteStream(path, { flags: 'wx' });
+    await finished(Readable.fromWeb(data).pipe(writer));
 }
 
 const DefaultEmailHash = crypto.createHash('md5').update('noreply@theironthrone.net').digest('hex');
@@ -955,11 +950,11 @@ export const init = function (server, options) {
 };
 
 async function downloadAvatar(user) {
-    let emailHash = user.enableGravatar
+    const emailHash = user.enableGravatar
         ? crypto.createHash('md5').update(user.email).digest('hex')
         : DefaultEmailHash;
-    let avatar = await fetch(`https://www.gravatar.com/avatar/${emailHash}?d=identicon&s=24`);
-    await writeFile(`public/img/avatar/${user.username}.png`, avatar.body, 'binary');
+    const avatar = await fetch(`https://www.gravatar.com/avatar/${emailHash}?d=identicon&s=24`);
+    await writeFile(`public/img/avatar/${user.username}.png`, avatar.body);
 }
 
 async function checkAuth(req, res) {

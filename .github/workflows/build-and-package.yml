@@ -1,15 +1,43 @@
-name: Package
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: Build, test and package
 on:
-    workflow_run:
-        workflows: ['Build and test']
-        branches: [master, playtesting]
-        types: completed
+    push:
+        branches: ['master', 'development-*', 'playtesting']
+        paths-ignore:
+            - '.github/workflows/**'
+    pull_request:
+        branches: ['master', 'development-*', 'playtesting']
+        paths-ignore:
+            - '.github/workflows/**'
 jobs:
-    package:
-        # `if` required because a workflow run is triggered regardless of
-        # the result of the previous workflow (see the documentation page)
-        if: ${{ github.repository == vars.PACKAGEABLE_REPOSITORY && github.event.workflow_run.conclusion == 'success' }}
+    build:
+        name: Build & Test
         runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                node-version: [20.x, 22.x]
+                # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+        steps:
+            - name: Checkout source and submodules
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: '0'
+                  submodules: recursive
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v4
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: 'npm'
+            - run: npm ci
+            - run: npm run lint
+            - run: npm test
+    package:
+        name: Push Package
+        if: ${{ github.repository == vars.PACKAGEABLE_REPOSITORY && (github.ref_name == 'master' || github.ref_name == 'playtesting') && github.event_name == 'push' }}
+        runs-on: ubuntu-latest
+        needs: 'build'
         steps:
             - name: Checkout source and submodules
               uses: actions/checkout@v4
