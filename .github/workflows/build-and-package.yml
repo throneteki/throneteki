@@ -35,7 +35,7 @@ jobs:
             - run: npm test
     package:
         name: Push Package
-        if: github.repository == ${{ vars.PACKAGEABLE_REPOSITORY }} && (github.ref_name == 'master' || github.ref_name == 'playtesting') && github.event_name == 'push'
+        if: ${{ github.repository == vars.PACKAGEABLE_REPOSITORY && (github.ref_name == 'master' || github.ref_name == 'playtesting') && github.event_name == 'push' }}
         runs-on: ubuntu-latest
         needs: 'build'
         steps:
