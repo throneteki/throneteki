@@ -1,3 +1,5 @@
+import PlaceCardUnderneath from '../../../../server/game/GameActions/PlaceCardUnderneath.js';
+
 describe('Archmaester Marwyn', function () {
     integration(function () {
         describe('ability', function () {
@@ -22,11 +24,14 @@ describe('Archmaester Marwyn', function () {
                 this.event = this.player1.findCardByName('Tithe');
 
                 this.player1.clickCard(this.marwyn);
-                // Move the rest of cards under the agenda
-                this.player1Object.moveCard(this.dupe, 'conclave');
-                this.player1Object.moveCard(this.card, 'conclave');
-                this.player1Object.moveCard(this.shadowCard, 'conclave');
-                this.player1Object.moveCard(this.event, 'conclave');
+                // Properly place all cards facedown under agenda
+                for (const card of [this.dupe, this.card, this.shadowCard, this.event]) {
+                    PlaceCardUnderneath.createEvent({
+                        card,
+                        parentCard: this.player1Object.agenda,
+                        facedown: true
+                    }).executeHandler();
+                }
 
                 this.completeSetup();
 
@@ -45,7 +50,7 @@ describe('Archmaester Marwyn', function () {
                 it('counts toward the limit', function () {
                     this.player1.clickCard(this.dupe);
 
-                    expect(this.dupe.location).toEqual('conclave');
+                    expect(this.player1Object.agenda.underneath).toContain(this.dupe);
                 });
             });
 
@@ -62,7 +67,7 @@ describe('Archmaester Marwyn', function () {
                 it('counts toward the limit', function () {
                     this.player1.clickCard(this.card);
 
-                    expect(this.card.location).toEqual('conclave');
+                    expect(this.player1Object.agenda.underneath).toContain(this.card);
                 });
             });
 
@@ -78,7 +83,7 @@ describe('Archmaester Marwyn', function () {
                 it('counts toward the limit', function () {
                     this.player1.clickCard(this.card);
 
-                    expect(this.card.location).toEqual('conclave');
+                    expect(this.player1Object.agenda.underneath).toContain(this.card);
                 });
             });
 
@@ -95,7 +100,7 @@ describe('Archmaester Marwyn', function () {
                 it('counts toward the limit', function () {
                     this.player1.clickCard(this.card);
 
-                    expect(this.card.location).toEqual('conclave');
+                    expect(this.player1Object.agenda.underneath).toContain(this.card);
                 });
             });
         });

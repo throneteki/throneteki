@@ -26,7 +26,6 @@ const placeholderPlayer = {
     cardPiles: {
         bannerCards: [],
         cardsInPlay: [],
-        conclavePile: [],
         deadPile: [],
         discardPile: [],
         hand: [],
@@ -394,7 +393,6 @@ export class GameBoard extends React.Component {
                     <PlayerRow
                         agenda={otherPlayer.agenda}
                         bannerCards={otherPlayer.cardPiles.bannerCards}
-                        conclavePile={otherPlayer.cardPiles.conclavePile}
                         faction={otherPlayer.faction}
                         hand={otherPlayer.cardPiles.hand}
                         isMe={false}
@@ -464,7 +462,6 @@ export class GameBoard extends React.Component {
                         isMe={!this.state.spectating}
                         agenda={thisPlayer.agenda}
                         bannerCards={thisPlayer.cardPiles.bannerCards}
-                        conclavePile={thisPlayer.cardPiles.conclavePile}
                         faction={thisPlayer.faction}
                         hand={thisPlayer.cardPiles.hand}
                         isMelee={this.props.currentGame.isMelee}

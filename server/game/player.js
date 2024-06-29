@@ -42,7 +42,6 @@ class Player extends Spectator {
 
         // Agenda specific piles
         this.bannerCards = [];
-        this.conclavePile = [];
 
         this.faction = new DrawCard(this, {});
 
@@ -929,9 +928,8 @@ class Player extends Spectator {
                 return this.outOfGamePile;
             case 'shadows':
                 return this.shadows;
-            // Agenda specific piles
-            case 'conclave':
-                return this.conclavePile;
+            case 'agenda':
+                return this.agenda.childCards;
         }
     }
 
@@ -967,9 +965,8 @@ class Player extends Spectator {
             case 'shadows':
                 this.shadows = targetList;
                 break;
-            // Agenda specific piles
-            case 'conclave':
-                this.conclavePile = targetList;
+            case 'agenda':
+                this.agenda.childCards = targetList;
         }
     }
 
@@ -1441,7 +1438,6 @@ class Player extends Spectator {
             cardPiles: {
                 bannerCards: this.getSummaryForCardList(this.bannerCards, activePlayer),
                 cardsInPlay: this.getSummaryForCardList(this.cardsInPlay, activePlayer),
-                conclavePile: this.getSummaryForCardList(this.conclavePile, activePlayer),
                 deadPile: this.getSummaryForCardList(this.deadPile, activePlayer).reverse(),
                 discardPile: this.getSummaryForCardList(fullDiscardPile, activePlayer).reverse(),
                 drawDeck: this.getSummaryForCardList(this.drawDeck, activePlayer),

@@ -24,6 +24,7 @@ import LoseIcon from './LoseIcon.js';
 import MayGameAction from './MayGameAction.js';
 import MovePower from './MovePower.js';
 import PlaceCard from './PlaceCard.js';
+import PlaceCardUnderneath from './PlaceCardUnderneath.js';
 import PlaceToken from './PlaceToken.js';
 import PutIntoShadows from './PutIntoShadows.js';
 import PutIntoPlay from './PutIntoPlay.js';
@@ -68,6 +69,7 @@ const GameActions = {
     may: (props) => new MayGameAction(props),
     movePower: (props) => new AbilityAdapter(MovePower, props),
     placeCard: (props) => new AbilityAdapter(PlaceCard, props),
+    placeCardUnderneath: (props) => new AbilityAdapter(PlaceCardUnderneath, props),
     placeToken: (props) => new AbilityAdapter(PlaceToken, props),
     putIntoPlay: (props) => new AbilityAdapter(PutIntoPlay, props),
     putIntoShadows: (props) => new AbilityAdapter(PutIntoShadows, props),

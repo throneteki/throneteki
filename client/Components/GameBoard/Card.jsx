@@ -237,7 +237,7 @@ class InnerCard extends React.Component {
         // are being placed underneath the current card. In the future there may
         // be other types of cards in this array and it should be filtered.
         let underneathCards = this.props.card.childCards;
-        if (!underneathCards || underneathCards.length === 0) {
+        if (!underneathCards || underneathCards.length === 0 || this.props.card.type === 'agenda') {
             return;
         }
 
@@ -508,7 +508,6 @@ InnerCard.propTypes = {
         'agenda',
         'faction',
         'additional',
-        'conclave',
         'shadows',
         'full deck',
         'rookery',

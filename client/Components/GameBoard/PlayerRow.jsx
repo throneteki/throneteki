@@ -2,10 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
+import Card from './Card';
 import CardPile from './CardPile';
 import SquishableCardPanel from './SquishableCardPanel';
 import DrawDeck from './DrawDeck';
 import Droppable from './Droppable';
+import { getCardDimensions } from '../../util';
 
 class PlayerRow extends React.Component {
     getOutOfGamePile() {
@@ -45,59 +47,73 @@ class PlayerRow extends React.Component {
 
     getAgenda() {
         if (!this.props.agenda || this.props.agenda.code === '') {
-            let className = classNames('agenda', 'card-pile', 'vertical', 'panel', {
+            let className = classNames('agenda', 'card-pile', 'vertical', {
                 [this.props.cardSize]: this.props.cardSize !== 'normal'
             });
             return <div className={className} />;
         }
-
-        let cards = [];
-        let disablePopup = false;
-        let title;
+        let underneath = this.props.agenda.childCards || [];
+        let disablePopup = underneath.length === 0;
+        let title = !disablePopup ? 'Agenda' : null;
         let source = 'agenda';
-
-        // Alliance
-        if (this.props.agenda.code === '06018') {
-            cards = this.props.bannerCards;
-            title = 'Banners';
-        } else if (this.props.agenda.code === '09045') {
-            cards = this.props.conclavePile;
-            source = 'conclave';
-            title = 'Conclave';
-            disablePopup = !this.props.isMe;
-        }
-
-        disablePopup = disablePopup || !cards || cards.length === 0;
-
         let pileClass = classNames('agenda', `agenda-${this.props.agenda.code}`);
+        let cardWidth = getCardDimensions(this.props.cardSize);
+        let additionalWidth = cardWidth.width / 2;
 
-        let pile = (
-            <CardPile
-                className={pileClass}
-                cards={cards}
-                disablePopup={disablePopup}
-                onCardClick={this.props.onCardClick}
-                onDragDrop={this.props.onDragDrop}
-                onMenuItemClick={this.props.onMenuItemClick}
-                onMouseOut={this.props.onMouseOut}
-                onMouseOver={this.props.onMouseOver}
-                popupLocation={this.props.side}
-                source={source}
-                title={title}
-                topCard={this.props.agenda}
-                size={this.props.cardSize}
-            />
+        let agendas = [];
+        agendas.push(
+            this.renderDroppablePile(
+                source,
+                <CardPile
+                    key={this.props.agenda.uuid}
+                    className={pileClass}
+                    cards={underneath}
+                    disablePopup={disablePopup}
+                    onCardClick={this.props.onCardClick}
+                    onDragDrop={this.props.onDragDrop}
+                    onMenuItemClick={this.props.onMenuItemClick}
+                    onMouseOut={this.props.onMouseOut}
+                    onMouseOver={this.props.onMouseOver}
+                    popupLocation={this.props.side}
+                    source={source}
+                    title={title}
+                    topCard={this.props.agenda}
+                    size={this.props.cardSize}
+                />
+            )
         );
 
-        if (this.props.agenda.code === '09045') {
-            return (
-                <Droppable onDragDrop={this.props.onDragDrop} source='conclave'>
-                    {pile}
-                </Droppable>
-            );
+        if (this.props.bannerCards) {
+            for (let index = 0; index < this.props.bannerCards.length; index++) {
+                let banner = this.props.bannerCards[index];
+                let bannerClass = classNames('agenda', `agenda-${banner.code} banner`);
+                let offset = additionalWidth * (index + 1);
+                let style = { left: `${offset}px` };
+                agendas.push(
+                    <Card
+                        key={banner.uuid}
+                        className={bannerClass}
+                        card={banner}
+                        source={source}
+                        onMouseOver={this.props.onMouseOver}
+                        onMouseOut={this.props.onMouseOut}
+                        disableMouseOver={false}
+                        onClick={this.props.onCardClick}
+                        onMenuItemClick={this.props.onMenuItemClick}
+                        orientation={'vertical'}
+                        size={this.props.cardSize}
+                        style={style}
+                    />
+                );
+            }
         }
-
-        return pile;
+        let totalWidth = 6 + cardWidth.width + additionalWidth * this.props.bannerCards.length;
+        let totalStyle = { width: `${totalWidth}px` };
+        return (
+            <div className='agendas' style={totalStyle}>
+                {agendas.reverse()}
+            </div>
+        );
     }
 
     getTitleCard() {
@@ -234,7 +250,6 @@ PlayerRow.propTypes = {
     agenda: PropTypes.object,
     bannerCards: PropTypes.array,
     cardSize: PropTypes.string,
-    conclavePile: PropTypes.array,
     deadPile: PropTypes.array,
     discardPile: PropTypes.array,
     drawDeck: PropTypes.array,

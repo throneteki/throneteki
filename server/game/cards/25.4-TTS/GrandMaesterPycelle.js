@@ -12,10 +12,10 @@ class GrandMaesterPycelle extends DrawCard {
                 format: "{player} uses {source} to place a discarded card facedown under {controller}'s agenda instead of placing it in their discard pile",
                 args: { controller: (context) => context.event.card.controller }
             },
-            gameAction: GameActions.placeCard((context) => ({
+            gameAction: GameActions.placeCardUnderneath((context) => ({
                 card: context.event.card,
-                player: context.event.card.controller,
-                location: 'conclave'
+                parentCard: context.event.card.controller.agenda,
+                facedown: true
             }))
         });
     }

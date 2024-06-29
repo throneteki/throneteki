@@ -300,7 +300,7 @@ CardPile.propTypes = {
         'agenda',
         'faction',
         'additional',
-        'conclave',
+        'agenda',
         'shadows'
     ]).isRequired,
     title: PropTypes.string,

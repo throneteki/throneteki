@@ -12,6 +12,7 @@ class AltCard extends React.Component {
                 if (present) {
                     icons.push(
                         <div
+                            key={icon}
                             className={`challenge-icon thronesicon thronesicon-${icon} with-background`}
                         />
                     );

@@ -1,5 +1,6 @@
 import DrawCard from '../../drawcard.js';
 import GenericTracker from '../../EventTrackers/GenericTracker.js';
+import GameActions from '../../GameActions/index.js';
 
 class ArchmaesterMarwyn extends DrawCard {
     setupCardAbilities(ability) {
@@ -11,9 +12,9 @@ class ArchmaesterMarwyn extends DrawCard {
                 !this.hasPlayedFromUnderAgenda() && !this.hasMarshalledFromUnderAgenda(),
             targetController: 'current',
             effect: [
-                ability.effects.canMarshal((card) => card.location === 'conclave'),
-                ability.effects.canMarshalIntoShadows((card) => card.location === 'conclave'),
-                ability.effects.canPlay((card) => card.location === 'conclave')
+                ability.effects.canMarshal((card) => this.isUnderneathAgenda(card)),
+                ability.effects.canMarshalIntoShadows((card) => this.isUnderneathAgenda(card)),
+                ability.effects.canPlay((card) => this.isUnderneathAgenda(card))
             ]
         });
 
@@ -21,28 +22,40 @@ class ArchmaesterMarwyn extends DrawCard {
             when: {
                 onCardEntersPlay: (event) => event.card === this && this.controller.agenda
             },
-            message: '{player} uses {source} to put top 2 cards of their deck under their agenda',
-            handler: (context) => {
-                const topCards = context.player.drawDeck.slice(0, 2);
-                for (const card of topCards) {
-                    context.player.moveCard(card, 'conclave');
-                }
-            }
+            message:
+                '{player} uses {source} to place top 2 cards of their deck facedown under their agenda',
+            gameAction: GameActions.simultaneously((context) =>
+                context.player.drawDeck.slice(0, 2).map((card) =>
+                    GameActions.placeCardUnderneath({
+                        card,
+                        parentCard: context.player.agenda,
+                        facedown: false
+                    })
+                )
+            )
         });
     }
 
     hasPlayedFromUnderAgenda() {
         return this.playedTracker.events.some(
-            (event) => event.originalLocation === 'conclave' && event.player === this.controller
+            (event) =>
+                event.originalParent === this.controller.agenda &&
+                event.originalLocation === 'underneath' &&
+                event.player === this.controller
         );
     }
 
     hasMarshalledFromUnderAgenda() {
         return this.enterPlayTracker.events.some(
             (event) =>
-                event.originalLocation === 'conclave' &&
+                event.originalParent === this.controller.agenda &&
+                event.originalLocation === 'underneath' &&
                 event.originalController === this.controller
         );
+    }
+
+    isUnderneathAgenda(card) {
+        return this.controller.agenda.underneath.includes(card);
     }
 }
 

@@ -50,8 +50,7 @@ class DropCommand {
             'plot deck': PlotCardTypes,
             'revealed plots': PlotCardTypes,
             shadows: DrawDeckCardTypes,
-            // Agenda specific piles
-            conclave: DrawDeckCardTypes
+            agenda: DrawDeckCardTypes
         };
 
         let allowedTypes = AllowedTypesForPile[this.targetLocation];
