@@ -22,9 +22,8 @@ import ChessClock from './ChessClock';
 
 const placeholderPlayer = {
     activePlot: null,
-    agenda: null,
+    agendas: [],
     cardPiles: {
-        bannerCards: [],
         cardsInPlay: [],
         deadPile: [],
         discardPile: [],
@@ -290,7 +289,6 @@ export class GameBoard extends React.Component {
                 <PlayerPlots
                     {...commonProps}
                     activePlot={otherPlayer.activePlot}
-                    agenda={otherPlayer.agenda}
                     direction='reverse'
                     isMe={false}
                     plotDeck={otherPlayer.cardPiles.plotDeck}
@@ -302,7 +300,6 @@ export class GameBoard extends React.Component {
                 <PlayerPlots
                     {...commonProps}
                     activePlot={thisPlayer.activePlot}
-                    agenda={thisPlayer.agenda}
                     direction='default'
                     isMe
                     plotDeck={thisPlayer.cardPiles.plotDeck}
@@ -391,8 +388,7 @@ export class GameBoard extends React.Component {
             <div key='board-middle' className='board-middle'>
                 <div className='player-home-row'>
                     <PlayerRow
-                        agenda={otherPlayer.agenda}
-                        bannerCards={otherPlayer.cardPiles.bannerCards}
+                        agendas={otherPlayer.agendas}
                         faction={otherPlayer.faction}
                         hand={otherPlayer.cardPiles.hand}
                         isMe={false}
@@ -460,8 +456,7 @@ export class GameBoard extends React.Component {
                 <div className='player-home-row our-side'>
                     <PlayerRow
                         isMe={!this.state.spectating}
-                        agenda={thisPlayer.agenda}
-                        bannerCards={thisPlayer.cardPiles.bannerCards}
+                        agendas={thisPlayer.agendas}
                         faction={thisPlayer.faction}
                         hand={thisPlayer.cardPiles.hand}
                         isMelee={this.props.currentGame.isMelee}

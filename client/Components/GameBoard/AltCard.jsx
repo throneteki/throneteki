@@ -17,7 +17,7 @@ class AltCard extends React.Component {
                         />
                     );
                 } else {
-                    icons.push(<div className='challenge-icon' />);
+                    icons.push(<div key={icon} className='challenge-icon' />);
                 }
             }
         }

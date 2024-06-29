@@ -46,26 +46,31 @@ class PlayerRow extends React.Component {
     }
 
     getAgenda() {
-        if (!this.props.agenda || this.props.agenda.code === '') {
+        let agenda =
+            this.props.agendas && this.props.agendas.length > 0 ? this.props.agendas[0] : undefined;
+        if (!agenda || agenda.code === '') {
             let className = classNames('agenda', 'card-pile', 'vertical', {
                 [this.props.cardSize]: this.props.cardSize !== 'normal'
             });
             return <div className={className} />;
         }
-        let underneath = this.props.agenda.childCards || [];
+        let cardWidth = getCardDimensions(this.props.cardSize);
+
+        let underneath = agenda.childCards || [];
         let disablePopup = underneath.length === 0;
         let title = !disablePopup ? 'Agenda' : null;
         let source = 'agenda';
-        let pileClass = classNames('agenda', `agenda-${this.props.agenda.code}`);
-        let cardWidth = getCardDimensions(this.props.cardSize);
-        let additionalWidth = cardWidth.width / 2;
+        let pileClass = classNames('agenda', `agenda-${agenda.code}`);
+
+        let additionalAgendas = this.props.agendas.slice(1);
+        let spreadWidth = cardWidth.width / 2;
 
         let agendas = [];
         agendas.push(
             this.renderDroppablePile(
                 source,
                 <CardPile
-                    key={this.props.agenda.uuid}
+                    key={agenda.uuid}
                     className={pileClass}
                     cards={underneath}
                     disablePopup={disablePopup}
@@ -75,25 +80,26 @@ class PlayerRow extends React.Component {
                     onMouseOut={this.props.onMouseOut}
                     onMouseOver={this.props.onMouseOver}
                     popupLocation={this.props.side}
+                    showCards={true}
                     source={source}
                     title={title}
-                    topCard={this.props.agenda}
+                    topCard={agenda}
                     size={this.props.cardSize}
                 />
             )
         );
 
-        if (this.props.bannerCards) {
-            for (let index = 0; index < this.props.bannerCards.length; index++) {
-                let banner = this.props.bannerCards[index];
-                let bannerClass = classNames('agenda', `agenda-${banner.code} banner`);
-                let offset = additionalWidth * (index + 1);
+        if (additionalAgendas) {
+            for (let index = 0; index < additionalAgendas.length; index++) {
+                let additionalAgenda = additionalAgendas[index];
+                let className = classNames('agenda', `agenda-${additionalAgenda.code} banner`);
+                let offset = spreadWidth * (index + 1);
                 let style = { left: `${offset}px` };
                 agendas.push(
                     <Card
-                        key={banner.uuid}
-                        className={bannerClass}
-                        card={banner}
+                        key={additionalAgenda.uuid}
+                        className={className}
+                        card={additionalAgenda}
                         source={source}
                         onMouseOver={this.props.onMouseOver}
                         onMouseOut={this.props.onMouseOut}
@@ -107,7 +113,8 @@ class PlayerRow extends React.Component {
                 );
             }
         }
-        let totalWidth = 6 + cardWidth.width + additionalWidth * this.props.bannerCards.length;
+        // 6 is the left + right padding of main agenda
+        let totalWidth = 6 + cardWidth.width + spreadWidth * additionalAgendas.length;
         let totalStyle = { width: `${totalWidth}px` };
         return (
             <div className='agendas' style={totalStyle}>
@@ -247,8 +254,7 @@ class PlayerRow extends React.Component {
 
 PlayerRow.displayName = 'PlayerRow';
 PlayerRow.propTypes = {
-    agenda: PropTypes.object,
-    bannerCards: PropTypes.array,
+    agendas: PropTypes.array,
     cardSize: PropTypes.string,
     deadPile: PropTypes.array,
     discardPile: PropTypes.array,

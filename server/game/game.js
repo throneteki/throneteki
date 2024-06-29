@@ -1481,7 +1481,7 @@ class Game extends EventEmitter {
             return {
                 name: player.name,
                 faction: player.faction.name || player.faction.value,
-                agenda: player.agenda ? player.agenda.name : undefined,
+                agendas: player.agendas ? player.agendas.map((agenda) => agenda.name) : undefined,
                 power: player.getTotalPower(),
                 playtested: this.isPlaytesting()
                     ? player.preparedDeck.allCards
@@ -1562,7 +1562,7 @@ class Game extends EventEmitter {
             }
 
             playerSummaries[player.name] = {
-                agenda: player.agenda ? player.agenda.code : undefined,
+                agendas: player.agendas.map((agenda) => agenda.code),
                 deck: deck,
                 faction: player.faction.code,
                 id: player.id,

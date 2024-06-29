@@ -137,7 +137,11 @@ class CardPile extends React.Component {
             size: this.props.size,
             source: this.props.source
         };
-
+        if (this.props.showCards) {
+            for (const card of this.props.cards) {
+                card.facedown = false;
+            }
+        }
         if (this.props.cards && this.props.cards.some((card) => card.group)) {
             const cardGroup = this.props.cards.reduce((grouping, card) => {
                 (grouping[card.group] = grouping[card.group] || []).push(card);
@@ -286,6 +290,7 @@ CardPile.propTypes = {
     orientation: PropTypes.string,
     popupLocation: PropTypes.string,
     popupMenu: PropTypes.array,
+    showCards: PropTypes.bool,
     size: PropTypes.string,
     source: PropTypes.oneOf([
         'hand',

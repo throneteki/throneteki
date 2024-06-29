@@ -28,8 +28,12 @@ class DropCommand {
             DiscardCard.allow({ card: this.card, force: true })
         ) {
             this.player.discardCard(this.card, false, { force: true });
+        } else if (this.targetLocation === 'agenda') {
+            this.player.removeCardFromPile(this.card);
+            this.player.agenda.addChildCard(this.card, 'underneath');
+            this.card.facedown = 'true';
         } else {
-            this.player.moveCard(this.card, this.targetLocation);
+            this.player.moveCard(this.card, this.targetLocation, { facedown: true });
         }
 
         this.addGameMessage();
