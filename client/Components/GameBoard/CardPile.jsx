@@ -19,6 +19,7 @@ class CardPile extends React.Component {
         this.onCollectionClick = this.onCollectionClick.bind(this);
         this.onTopCardClick = this.onTopCardClick.bind(this);
         this.onCloseClick = this.onCloseClick.bind(this);
+        this.onMenuItemClick = this.onMenuItemClick.bind(this);
     }
 
     componentWillReceiveProps(props) {
@@ -65,6 +66,11 @@ class CardPile extends React.Component {
 
         if (menuItem.handler) {
             menuItem.handler();
+        }
+
+        if (this.props.onMenuItemClick) {
+            this.props.onMenuItemClick(this.props.topCard, menuItem);
+            this.setState({ showMenu: !this.state.showMenu });
         }
     }
 
@@ -207,24 +213,6 @@ class CardPile extends React.Component {
         return popup;
     }
 
-    getMenu() {
-        let menuIndex = 0;
-
-        let menu = this.props.menu.map((item) => {
-            return (
-                <div
-                    key={(menuIndex++).toString()}
-                    className='menu-item'
-                    onClick={this.onMenuItemClick.bind(this, item)}
-                >
-                    {item.text}
-                </div>
-            );
-        });
-
-        return <div className='panel menu'>{menu}</div>;
-    }
-
     render() {
         let className = classNames('panel', 'card-pile', this.props.className, {
             [this.props.size]: this.props.size !== 'normal',
@@ -245,6 +233,13 @@ class CardPile extends React.Component {
             topCard = { facedown: true };
         }
 
+        let menu;
+        // Note "Open/Close Popup" item will never be available for CardPiles in locations that use select in non-triggerable ways (eg. click to force stand or kneel)
+        // For example, if CardPile is ever used in play area, it will need to know when "clicking" on it is a valid option to do something
+        if(!this.props.disablePopup && this.props.topCard && this.props.topCard.selectable) {
+            menu = [{ showPopup: true, text: `${this.state.showPopup ? 'Close' : 'Open'} Popup` }];
+        }
+
         return (
             <div className={className} onClick={this.onCollectionClick}>
                 <div className='panel-header'>{headerText}</div>
@@ -255,6 +250,7 @@ class CardPile extends React.Component {
                         onMouseOver={this.props.onMouseOver}
                         onMouseOut={this.props.onMouseOut}
                         disableMouseOver={this.props.hiddenTopCard}
+                        menu={menu}
                         onClick={this.onTopCardClick}
                         onMenuItemClick={this.props.onMenuItemClick}
                         orientation={cardOrientation}
@@ -263,7 +259,6 @@ class CardPile extends React.Component {
                 ) : (
                     <div className='card-placeholder' />
                 )}
-                {this.state.showMenu ? this.getMenu() : null}
                 {this.getPopup()}
             </div>
         );
@@ -279,7 +274,6 @@ CardPile.propTypes = {
     disableMouseOver: PropTypes.bool,
     disablePopup: PropTypes.bool,
     hiddenTopCard: PropTypes.bool,
-    menu: PropTypes.array,
     onCardClick: PropTypes.func,
     onDragDrop: PropTypes.func,
     onMenuItemClick: PropTypes.func,

@@ -89,30 +89,28 @@ class PlayerRow extends React.Component {
             )
         );
 
-        if (additionalAgendas) {
-            for (let index = 0; index < additionalAgendas.length; index++) {
-                let additionalAgenda = additionalAgendas[index];
-                let className = classNames('agenda', `agenda-${additionalAgenda.code} banner`);
-                let offset = spreadWidth * (index + 1);
-                let style = { left: `${offset}px` };
-                agendas.push(
-                    <Card
-                        key={additionalAgenda.uuid}
-                        className={className}
-                        card={additionalAgenda}
-                        source={source}
-                        onMouseOver={this.props.onMouseOver}
-                        onMouseOut={this.props.onMouseOut}
-                        disableMouseOver={false}
-                        onClick={this.props.onCardClick}
-                        onMenuItemClick={this.props.onMenuItemClick}
-                        orientation={'vertical'}
-                        size={this.props.cardSize}
-                        style={style}
-                    />
-                );
-            }
-        }
+        // Add all additional agendas separately (not as a CardPile)
+        agendas = agendas.concat(additionalAgendas.map((agenda, index) => {
+            let className = classNames('agenda', `agenda-${agenda.code} additional`);
+            let style = { left: `${spreadWidth * (index + 1)}px` };
+            return (
+                <Card
+                    key={agenda.uuid}
+                    className={className}
+                    card={agenda}
+                    source={source}
+                    onMouseOver={this.props.onMouseOver}
+                    onMouseOut={this.props.onMouseOut}
+                    disableMouseOver={false}
+                    onClick={this.props.onCardClick}
+                    onMenuItemClick={this.props.onMenuItemClick}
+                    orientation={'vertical'}
+                    size={this.props.cardSize}
+                    style={style}
+                />
+            );
+        }))
+        
         // 6 is the left + right padding of main agenda
         let totalWidth = 6 + cardWidth.width + spreadWidth * additionalAgendas.length;
         let totalStyle = { width: `${totalWidth}px` };
