@@ -236,7 +236,7 @@ class CardPile extends React.Component {
         let menu;
         // Note "Open/Close Popup" item will never be available for CardPiles in locations that use select in non-triggerable ways (eg. click to force stand or kneel)
         // For example, if CardPile is ever used in play area, it will need to know when "clicking" on it is a valid option to do something
-        if(!this.props.disablePopup && this.props.topCard && this.props.topCard.selectable) {
+        if (!this.props.disablePopup && this.props.topCard && this.props.topCard.selectable) {
             menu = [{ showPopup: true, text: `${this.state.showPopup ? 'Close' : 'Open'} Popup` }];
         }
 
