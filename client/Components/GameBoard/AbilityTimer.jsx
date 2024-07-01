@@ -1,65 +1,43 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 
-class AbilityTimer extends React.Component {
-    constructor(props) {
-        super(props);
+const AbilityTimer = ({ limit, startTime }) => {
+    const [remaining, setRemaining] = useState(limit);
+    const requestRef = useRef();
 
-        this.tick = this.tick.bind(this);
-
-        this.state = {
-            remaining: props.limit
-        };
-    }
-
-    componentWillMount() {
-        this.setState({
-            request: requestAnimationFrame(this.tick)
-        });
-    }
-
-    componentWillUnmount() {
-        cancelAnimationFrame(this.state.request);
-    }
-
-    tick() {
+    const tick = useCallback(() => {
         // Subtract an offset factor to ensure timer reaches 0 before the
         // component is unmounted.
         const timeOffset = 0.25;
         let now = new Date();
-        let elapsed = (now - this.props.startTime) / 1000;
-        let remaining = this.props.limit - elapsed - timeOffset;
+        let elapsed = (now - startTime) / 1000;
+        let remainingTime = limit - elapsed - timeOffset;
 
-        if (remaining < 0) {
-            remaining = 0;
+        if (remainingTime < 0) {
+            remainingTime = 0;
         }
 
-        this.setState({
-            remaining: remaining,
-            request: requestAnimationFrame(this.tick)
-        });
-    }
+        setRemaining(remainingTime);
+        requestRef.current = requestAnimationFrame(tick);
+    }, [limit, startTime]);
 
-    render() {
-        let remainingPercent = ((this.state.remaining / this.props.limit) * 100).toFixed() + '%';
-        return (
-            <div>
-                <span>Auto passing in {this.state.remaining.toFixed()}...</span>
-                <div className='progress'>
-                    <div
-                        className='progress-bar progress-bar-success'
-                        role='progressbar'
-                        style={{ width: remainingPercent }}
-                    />
-                </div>
+    useEffect(() => {
+        requestRef.current = requestAnimationFrame(tick);
+        return () => cancelAnimationFrame(requestRef.current);
+    }, [tick]);
+
+    let remainingPercent = ((remaining / limit) * 100).toFixed() + '%';
+    return (
+        <div>
+            <span>Auto passing in {remaining.toFixed()}...</span>
+            <div className='progress'>
+                <div
+                    className='progress-bar progress-bar-success'
+                    role='progressbar'
+                    style={{ width: remainingPercent }}
+                />
             </div>
-        );
-    }
-}
-
-AbilityTimer.propTypes = {
-    limit: PropTypes.number,
-    startTime: PropTypes.instanceOf(Date)
+        </div>
+    );
 };
 
 export default AbilityTimer;

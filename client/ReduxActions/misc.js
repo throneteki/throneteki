@@ -1,11 +1,3 @@
-export function navigate(path, search) {
-    return {
-        type: 'NAVIGATE',
-        newPath: path,
-        search: search
-    };
-}
-
 export function setUrl(path) {
     return {
         type: 'SET_URL',
@@ -30,12 +22,5 @@ export function zoomCard(card) {
 export function clearZoom() {
     return {
         type: 'CLEAR_ZOOM'
-    };
-}
-
-export function receiveBannerNotice(notice) {
-    return {
-        type: 'RECEIVE_BANNER_NOTICE',
-        notice: notice
     };
 }

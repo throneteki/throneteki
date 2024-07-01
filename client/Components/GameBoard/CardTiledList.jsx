@@ -1,54 +1,48 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import Card from './Card';
 
-function CardTiledList(props) {
+const CardTiledList = ({
+    cards,
+    disableMouseOver,
+    onCardClick,
+    onCardMouseOut,
+    onCardMouseOver,
+    onTouchMove,
+    onMenuItemClick,
+    size,
+    source,
+    title,
+    titleCount
+}) => {
     let cardList =
-        props.cards &&
-        props.cards.map((card, index) => {
+        cards &&
+        cards.map((card, index) => {
             return (
                 <Card
                     card={card}
-                    disableMouseOver={props.disableMouseOver}
+                    disableMouseOver={disableMouseOver}
                     key={index}
-                    onClick={props.onCardClick}
-                    onMouseOut={props.onCardMouseOut}
-                    onMouseOver={props.onCardMouseOver}
-                    onTouchMove={props.onTouchMove}
-                    onMenuItemClick={props.onMenuItemClick}
+                    onClick={onCardClick}
+                    onMouseOut={onCardMouseOut}
+                    onMouseOver={onCardMouseOver}
+                    onTouchMove={onTouchMove}
+                    onMenuItemClick={onMenuItemClick}
                     orientation={card.type === 'plot' ? 'horizontal' : 'vertical'}
-                    size={props.size}
-                    source={props.source}
+                    size={size}
+                    source={source}
                 />
             );
         });
 
-    let title =
-        props.title && props.cards
-            ? `${props.title} (${props.titleCount || props.cards.length})`
-            : props.title;
+    let titleText = title && cards ? `${title} (${titleCount || cards.length})` : title;
 
     return (
         <div className='card-list'>
-            {title && <div className='card-list-title'>{title}</div>}
+            {titleText && <div className='card-list-title'>{titleText}</div>}
             <div className='card-list-cards'>{cardList}</div>
         </div>
     );
-}
-
-CardTiledList.propTypes = {
-    cards: PropTypes.array,
-    disableMouseOver: PropTypes.bool,
-    onCardClick: PropTypes.func,
-    onCardMouseOut: PropTypes.func,
-    onCardMouseOver: PropTypes.func,
-    onMenuItemClick: PropTypes.func,
-    onTouchMove: PropTypes.func,
-    size: PropTypes.string,
-    source: PropTypes.string,
-    title: PropTypes.string,
-    titleCount: PropTypes.number
 };
 
 export default CardTiledList;

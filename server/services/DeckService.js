@@ -1,21 +1,54 @@
+import { formatDeckAsFullCards } from '../../deck-helper/formatDeckAsFullCards.js';
+import { validateDeck } from '../../deck-helper/index.js';
 import logger from '../log.js';
 
 class DeckService {
-    constructor(db) {
+    constructor(db, cardService) {
         this.decks = db.get('decks');
+        this.cardService = cardService;
     }
 
-    getById(id) {
-        return this.decks
-            .findOne({ _id: id })
-            .then((deck) => {
-                deck.locked = deck.eventId ? true : false; // lock the deck from further changes if the eventId is set //TODO refactor this when draft is finished
-                return deck;
-            })
-            .catch((err) => {
-                logger.error('Unable to fetch deck %s', err);
-                throw new Error('Unable to fetch deck ' + id);
+    async init() {
+        this.packs = await this.cardService.getAllPacks();
+        this.restrictedLists = await this.cardService.getRestrictedList();
+        this.cards = await this.cardService.getAllCards();
+    }
+
+    processDeck = (deck) => {
+        let formattedDeck = formatDeckAsFullCards(deck, {
+            cards: this.cards,
+            factions: this.factions
+        });
+        //copy over the locked properties from the server deck object
+        formattedDeck.lockedForEditing = deck.lockedForEditing;
+        formattedDeck.lockedForDeletion = deck.lockedForDeletion;
+
+        formattedDeck.status = {};
+
+        for (const restrictedList of this.restrictedLists) {
+            formattedDeck.status[restrictedList._id] = validateDeck(formattedDeck, {
+                packs: this.packs,
+                restrictedLists: [restrictedList]
             });
+        }
+
+        return formattedDeck;
+    };
+
+    async getById(id) {
+        try {
+            const deck = await this.decks.findOne({ _id: id });
+            if (!deck) {
+                return null;
+            }
+
+            deck.locked = !!deck.eventId; // lock the deck from further changes if the eventId is set //TODO refactor this when draft is finished
+
+            return this.processDeck(deck);
+        } catch (err) {
+            logger.error('Unable to fetch deck %s', err);
+            throw new Error('Unable to fetch deck ' + id);
+        }
     }
 
     getByName(name) {
@@ -38,13 +71,16 @@ class DeckService {
         });
     }
 
-    findByUserName(username) {
-        return this.decks
-            .find({ username: username }, { sort: { lastUpdated: -1 } })
-            .then((decks) => {
-                decks.forEach((d) => (d.locked = d.eventId ? true : false));
-                return decks;
-            });
+    async findByUserName(username) {
+        const decks = await this.decks.find({ username: username }, { sort: { lastUpdated: -1 } });
+
+        return decks.map((deck) => {
+            deck.locked = !!deck.eventId;
+
+            deck = this.processDeck(deck);
+
+            return deck;
+        });
     }
 
     removeEventIdAndUnlockDecks(eventId) {
@@ -58,11 +94,13 @@ class DeckService {
         );
     }
 
-    getStandaloneDecks() {
-        return this.decks.find(
+    async getStandaloneDecks() {
+        const decks = await this.decks.find(
             { standaloneDeckId: { $exists: true } },
             { sort: { lastUpdated: -1 } }
         );
+
+        return decks.map((deck) => this.processDeck(deck));
     }
 
     async create(deck) {
@@ -78,7 +116,7 @@ class DeckService {
 
         let properties = {
             username: deck.username,
-            name: deck.deckName,
+            name: deck.name,
             plotCards: deck.plotCards,
             bannerCards: deck.bannerCards,
             drawCards: deck.drawCards,
@@ -126,7 +164,7 @@ class DeckService {
         }
 
         let properties = {
-            name: deck.deckName,
+            name: deck.name,
             plotCards: deck.plotCards,
             drawCards: deck.drawCards,
             bannerCards: deck.bannerCards,

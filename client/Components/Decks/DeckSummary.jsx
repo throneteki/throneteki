@@ -1,65 +1,45 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useCallback, useState } from 'react';
 
 import CardHoverPreview from './CardHoverPreview';
 import CardTypeGroups from './CardTypeGroups';
 import DeckSummaryHeader from './DeckSummaryHeader';
+import { useGetCardsQuery } from '../../redux/middleware/api';
 
-class DeckSummary extends React.Component {
-    constructor() {
-        super();
+const DeckSummary = ({ currentRestrictedList, deck }) => {
+    const [cardToShow, setCardToShow] = useState('');
+    const { data: cards, isLoading: isCardsLoading } = useGetCardsQuery();
 
-        this.onCardMouseOut = this.onCardMouseOut.bind(this);
-        this.onCardMouseOver = this.onCardMouseOver.bind(this);
+    const onCardMouseOver = useCallback(
+        (card) => {
+            let cardToDisplay = cards[card.code];
+            setCardToShow(cardToDisplay);
+        },
+        [cards]
+    );
 
-        this.state = {
-            cardToShow: ''
-        };
+    if (!deck || isCardsLoading || !currentRestrictedList) {
+        return <div>Waiting for selected deck...</div>;
     }
 
-    onCardMouseOver(card) {
-        let cardToDisplay = this.props.cards[card.code];
-
-        this.setState({ cardToShow: cardToDisplay });
-    }
-
-    onCardMouseOut() {
-        this.setState({ cardToShow: undefined });
-    }
-
-    render() {
-        if (!this.props.deck || !this.props.cards) {
-            return <div>Waiting for selected deck...</div>;
-        }
-
-        return (
-            <div className='deck-summary col-xs-12'>
-                {this.state.cardToShow && <CardHoverPreview card={this.state.cardToShow} />}
-                <DeckSummaryHeader
-                    deck={this.props.deck}
-                    onCardMouseOut={this.onCardMouseOut}
-                    onCardMouseOver={this.onCardMouseOver}
+    return (
+        <div className='deck-summary col-xs-12'>
+            {cardToShow && <CardHoverPreview card={cardToShow} />}
+            <DeckSummaryHeader
+                currentRestrictedList={currentRestrictedList}
+                deck={deck}
+                onCardMouseOut={() => setCardToShow(undefined)}
+                onCardMouseOver={onCardMouseOver}
+            />
+            <div className='col-xs-12 no-x-padding'>
+                <CardTypeGroups
+                    cards={deck.plotCards.concat(deck.drawCards)}
+                    onCardMouseOut={() => setCardToShow(undefined)}
+                    onCardMouseOver={onCardMouseOver}
+                    useSchemes={deck.agenda && deck.agenda.code === '05045'}
                 />
-                <div className='col-xs-12 no-x-padding'>
-                    <CardTypeGroups
-                        cards={this.props.deck.plotCards.concat(this.props.deck.drawCards)}
-                        onCardMouseOut={this.onCardMouseOut}
-                        onCardMouseOver={this.onCardMouseOver}
-                        useSchemes={
-                            this.props.deck.agenda && this.props.deck.agenda.code === '05045'
-                        }
-                    />
-                </div>
             </div>
-        );
-    }
-}
-
-DeckSummary.displayName = 'DeckSummary';
-DeckSummary.propTypes = {
-    cards: PropTypes.object,
-    currentRestrictedList: PropTypes.object,
-    deck: PropTypes.object
+        </div>
+    );
 };
 
 export default DeckSummary;

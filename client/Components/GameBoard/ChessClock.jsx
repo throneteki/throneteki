@@ -1,95 +1,86 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 
 const formattedSeconds = (sec) =>
-    (sec < 0 ? '-' : '') +
-    Math.floor(Math.abs(sec) / 60) +
-    ':' +
-    ('0' + (Math.abs(sec) % 60)).slice(-2);
+    `${sec < 0 ? '-' : ''}${Math.floor(Math.abs(sec) / 60)}:${('0' + (Math.abs(sec) % 60)).slice(-2)}`;
 
-class ChessClock extends React.Component {
-    constructor(props) {
-        super(props);
+const ChessClock = ({
+    stateId: propStateId,
+    mode: propMode,
+    secondsLeft: propSecondsLeft,
+    delayToStartClock: propDelayToStartClock
+}) => {
+    const [mode, setMode] = useState(undefined);
+    const [secondsLeft, setSecondsLeft] = useState(undefined);
+    const [delayToStartClock, setDelayToStartClock] = useState(undefined);
+    const [stateId, setStateId] = useState(undefined);
+    const timer = useRef(null);
 
-        this.state = {
-            mode: undefined,
-            secondsLeft: undefined,
-            delayToStartClock: undefined
-        };
-    }
+    useEffect(() => {
+        updateProps();
+    }, [propStateId, propMode, propSecondsLeft, propDelayToStartClock, updateProps]);
 
-    componentDidMount() {
-        this.updateProps(this.props);
-    }
-
-    componentWillReceiveProps(props) {
-        this.updateProps(props);
-    }
-
-    updateProps(props) {
-        if (this.stateId === props.stateId) {
+    const updateProps = useCallback(() => {
+        if (stateId === propStateId) {
             return;
         }
-        if (props.secondsLeft === 0) {
-            if (this.timer) {
-                clearInterval(this.timer);
+        if (propSecondsLeft === 0) {
+            if (timer.current) {
+                clearInterval(timer.current);
             }
-            this.setState({ secondsLeft: 0 });
+            setSecondsLeft(0);
             return;
         }
-        this.stateId = props.stateId;
-        this.setState({ mode: props.mode });
-        this.setState({ secondsLeft: props.secondsLeft });
-        this.setState({ delayToStartClock: props.delayToStartClock });
-        if (this.timer) {
-            clearInterval(this.timer);
+        setStateId(propStateId);
+        setMode(propMode);
+        setSecondsLeft(propSecondsLeft);
+        setDelayToStartClock(propDelayToStartClock);
+        if (timer.current) {
+            clearInterval(timer.current);
         }
 
-        if (props.mode !== 'stop') {
-            this.timer = setInterval(() => {
-                if (this.state.delayToStartClock > 0) {
-                    this.setState({ delayToStartClock: this.state.delayToStartClock - 1 });
-                } else if (this.state.delayToStartClock <= 0) {
-                    this.setState({ secondsLeft: this.state.secondsLeft - 1 });
+        if (propMode !== 'stop') {
+            timer.current = setInterval(() => {
+                if (delayToStartClock > 0) {
+                    setDelayToStartClock(delayToStartClock - 1);
+                } else if (delayToStartClock <= 0) {
+                    setSecondsLeft(secondsLeft - 1);
                 }
             }, 1000);
         }
-    }
+    }, [
+        delayToStartClock,
+        secondsLeft,
+        stateId,
+        propStateId,
+        propMode,
+        propSecondsLeft,
+        propDelayToStartClock
+    ]);
 
-    render() {
-        if (this.state.mode !== 'inactive') {
-            let timeLeftText = formattedSeconds(this.state.secondsLeft);
-            let stateInfo = null;
-            if (this.state.mode === 'down') {
-                stateInfo = (
-                    <h1 className='chessclock-item'>
-                        {this.state.delayToStartClock <= 0 ? (
-                            <img src='/img/chess-clock.png' className='chessclock-icon' />
-                        ) : (
-                            <span className='chessclock-delay'>
-                                +{formattedSeconds(this.state.delayToStartClock)}
-                            </span>
-                        )}
-                    </h1>
-                );
-            }
-            return (
-                <div className='chessclock-container'>
-                    <h1 className='chessclock-item'>{timeLeftText} </h1>
-                    {stateInfo}
-                </div>
+    if (mode !== 'inactive') {
+        let timeLeftText = formattedSeconds(secondsLeft);
+        let stateInfo = null;
+        if (mode === 'down') {
+            stateInfo = (
+                <h1 className='chessclock-item'>
+                    {delayToStartClock <= 0 ? (
+                        <img src='/img/chess-clock.png' className='chessclock-icon' />
+                    ) : (
+                        <span className='chessclock-delay'>
+                            +{formattedSeconds(delayToStartClock)}
+                        </span>
+                    )}
+                </h1>
             );
         }
-        return <div />;
+        return (
+            <div className='chessclock-container'>
+                <h1 className='chessclock-item'>{timeLeftText} </h1>
+                {stateInfo}
+            </div>
+        );
     }
-}
-
-ChessClock.displayName = 'ChessClock';
-ChessClock.propTypes = {
-    delayToStartClock: PropTypes.number,
-    mode: PropTypes.string,
-    secondsLeft: PropTypes.number,
-    stateId: PropTypes.number
+    return <div />;
 };
 
 export default ChessClock;

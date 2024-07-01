@@ -2,25 +2,6 @@ import io from 'socket.io-client';
 
 import * as actions from '../actions';
 
-export function receiveGames(games) {
-    return {
-        type: 'RECEIVE_GAMES',
-        games: games
-    };
-}
-
-export function startNewGame() {
-    return {
-        type: 'START_NEWGAME'
-    };
-}
-
-export function cancelNewGame() {
-    return {
-        type: 'CANCEL_NEWGAME'
-    };
-}
-
 export function receiveGameState(game, username) {
     return (dispatch, getState) => {
         let state = getState();
@@ -76,27 +57,6 @@ function getRookeryPrompt(game, username) {
 export function clearGameState() {
     return {
         type: 'CLEAR_GAMESTATE'
-    };
-}
-
-export function joinPasswordGame(game, type) {
-    return {
-        type: 'JOIN_PASSWORD_GAME',
-        game: game,
-        joinType: type
-    };
-}
-
-export function receivePasswordError(message) {
-    return {
-        type: 'RECEIVE_PASSWORD_ERROR',
-        message: message
-    };
-}
-
-export function cancelPasswordJoin() {
-    return {
-        type: 'CANCEL_PASSWORD_JOIN'
     };
 }
 
@@ -226,12 +186,6 @@ export function closeGameSocket() {
     };
 }
 
-export function gameStarting() {
-    return {
-        type: 'GAME_STARTING'
-    };
-}
-
 export function startGame(id) {
     return (dispatch, getState) => {
         let state = getState();
@@ -239,8 +193,6 @@ export function startGame(id) {
         if (state.lobby.socket) {
             state.lobby.socket.emit('startgame', id);
         }
-
-        return dispatch(gameStarting());
     };
 }
 

@@ -10,6 +10,15 @@ export default [
     reactRecommended,
     prettierRecommended,
     {
+        plugins: {
+            'react-hooks': reactHooks
+        },
+
+        rules: {
+            ...reactHooks.configs.recommended.rules
+        }
+    },
+    {
         files: ['client/**/*.jsx', 'server/**/*.js', 'test/server/**/*.js'],
         ignores: ['coverage'],
         languageOptions: {
@@ -26,11 +35,19 @@ export default [
                 }
             }
         },
-        plugins: { prettier, reactHooks },
+        plugins: { prettier },
         rules: {
             'react/prop-types': 'off',
             'react/no-deprecated': 'off',
-            'react/no-string-refs': 'off'
+            'react/no-string-refs': 'off',
+            'no-unused-vars': [
+                'warn',
+                {
+                    argsIgnorePattern: '^_',
+                    varsIgnorePattern: '^_',
+                    caughtErrorsIgnorePattern: '^_'
+                }
+            ]
         },
         settings: {
             react: {

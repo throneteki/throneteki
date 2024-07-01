@@ -1,217 +1,183 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Panel from '../Site/Panel';
-import * as actions from '../../actions';
 import AlertPanel from '../Site/AlertPanel';
-
 import { cardSetLabel } from '../Decks/DeckHelper';
+import { cancelNewGame, sendNewGameMessage } from '../../redux/reducers/lobby';
+import { useGetEventsQuery, useGetRestrictedListQuery } from '../../redux/middleware/api';
 
 const GameNameMaxLength = 64;
 
-class NewGame extends React.Component {
-    constructor(props) {
-        super(props);
+const NewGame = ({ defaultGameName, quickJoin }) => {
+    const [selectedMode, setSelectedMode] = useState('none:none');
+    const [eventId, setEventId] = useState('none');
+    const [restrictedListId, setRestrictedListId] = useState('none');
+    const [optionsLocked, setOptionsLocked] = useState(false);
+    const [spectators, setSpectators] = useState(true);
+    const [showHand, setShowHand] = useState(false);
+    const [selectedGameFormat, setSelectedGameFormat] = useState('joust');
+    const [selectedGameType, setSelectedGameType] = useState('casual');
+    const [password, setPassword] = useState('');
+    const [gamePrivate, setGamePrivate] = useState(false);
+    const [useGameTimeLimit, setUseGameTimeLimit] = useState(false);
+    const [gameTimeLimit, setGameTimeLimit] = useState(55);
+    const [muteSpectators, setMuteSpectators] = useState(false);
+    const [useChessClocks, setUseChessClocks] = useState(false);
+    const [chessClockTimeLimit, setChessClockTimeLimit] = useState(30);
+    const [delayToStartClock, setDelayToStartClock] = useState(5);
+    const [tableType, setTableType] = useState('game');
+    const [gameName, setGameName] = useState(defaultGameName);
+    const [error, setError] = useState();
 
-        this.onCancelClick = this.onCancelClick.bind(this);
-        this.onGamePrivateClick = this.onGamePrivateClick.bind(this);
-        this.onSubmitClick = this.onSubmitClick.bind(this);
-        this.onNameChange = this.onNameChange.bind(this);
-        this.onEventChange = this.onEventChange.bind(this);
-        this.onSpectatorsClick = this.onSpectatorsClick.bind(this);
-        this.onShowHandClick = this.onShowHandClick.bind(this);
-        this.onPasswordChange = this.onPasswordChange.bind(this);
-        this.onUseGameTimeLimitClick = this.onUseGameTimeLimitClick.bind(this);
-        this.onGameTimeLimitChange = this.onGameTimeLimitChange.bind(this);
-        this.onMuteSpectatorsClick = this.onMuteSpectatorsClick.bind(this);
-        this.onUseChessClocksClick = this.onUseChessClocksClick.bind(this);
-        this.onChessClockTimeLimitChange = this.onChessClockTimeLimitChange.bind(this);
-        this.onDelayToStartClockChange = this.onDelayToStartClockChange.bind(this);
+    const dispatch = useDispatch();
+    const user = useSelector((state) => state.auth.user);
+    const allowMelee = useSelector((state) =>
+        state.auth.user ? state.auth.user.permissions.allowMelee : false
+    );
+    const isLobbyConnected = useSelector((state) => state.lobby.connected);
 
-        this.state = {
-            selectedMode: 'none:none',
-            eventId: 'none',
-            restrictedListId: 'none',
-            optionsLocked: false,
-            spectators: true,
-            showHand: false,
-            selectedGameFormat: 'joust',
-            selectedGameType: 'casual',
-            password: '',
-            gamePrivate: false,
-            useGameTimeLimit: false,
-            gameTimeLimit: 55,
-            muteSpectators: false,
-            useChessClocks: false,
-            chessClockTimeLimit: 30,
-            delayToStartClock: 5,
-            tableType: 'game'
-        };
-    }
+    const { data: events, isLoading: isEventsLoading, error: eventsError } = useGetEventsQuery();
 
-    componentWillMount() {
-        this.props.loadEvents();
-        this.setState({ gameName: this.props.defaultGameName });
-    }
+    const {
+        data: restrictedLists,
+        isLoading: isRestrictedListLoading,
+        error: restrictedListError
+    } = useGetRestrictedListQuery();
 
-    onCancelClick(event) {
-        event.preventDefault();
+    const onCancelClick = useCallback(
+        (event) => {
+            event.preventDefault();
 
-        this.props.cancelNewGame();
-    }
+            dispatch(cancelNewGame());
+        },
+        [dispatch]
+    );
 
-    onNameChange(event) {
-        this.setState({ gameName: event.target.value });
-    }
+    const onEventChange = useCallback(
+        (event) => {
+            const selectedValues = event.target.value.split(':');
+            const eventId = selectedValues[0] || 'none';
+            const restrictedListId = selectedValues[1] || '';
 
-    onEventChange(event) {
-        const selectedValues = event.target.value.split(':');
-        const eventId = selectedValues[0] || 'none';
-        const restrictedListId = selectedValues[1] || '';
+            setEventId(eventId);
+            setRestrictedListId(restrictedListId);
+            setSelectedMode(event.target.value);
+            setTableType('game');
 
-        this.setState({
+            const selectedEvent = events.find((e) => e._id === event.target.value);
+            setOptionsLocked(false);
+            if (selectedEvent && selectedEvent.useEventGameOptions) {
+                setOptionsLocked(true);
+                if (selectedEvent.eventGameOptions.spectators !== undefined) {
+                    setSpectators(selectedEvent.eventGameOptions.spectators);
+                }
+                if (selectedEvent.eventGameOptions.muteSpectators !== undefined) {
+                    setMuteSpectators(selectedEvent.eventGameOptions.muteSpectators);
+                }
+                if (selectedEvent.eventGameOptions.showHand !== undefined) {
+                    setShowHand(selectedEvent.eventGameOptions.showHand);
+                }
+                if (selectedEvent.eventGameOptions.useGameTimeLimit !== undefined) {
+                    setUseGameTimeLimit(selectedEvent.eventGameOptions.useGameTimeLimit);
+                }
+                if (selectedEvent.eventGameOptions.gameTimeLimit !== undefined) {
+                    setGameTimeLimit(selectedEvent.eventGameOptions.gameTimeLimit);
+                }
+                if (selectedEvent.eventGameOptions.useChessClocks !== undefined) {
+                    setUseChessClocks(selectedEvent.eventGameOptions.useChessClocks);
+                }
+                if (selectedEvent.eventGameOptions.chessClockTimeLimit !== undefined) {
+                    setChessClockTimeLimit(selectedEvent.eventGameOptions.chessClockTimeLimit);
+                }
+                if (selectedEvent.eventGameOptions.delayToStartClock !== undefined) {
+                    setDelayToStartClock(selectedEvent.eventGameOptions.delayToStartClock);
+                }
+                if (selectedEvent.eventGameOptions.password !== undefined) {
+                    setPassword(selectedEvent.eventGameOptions.password);
+                }
+                setSelectedGameType('competitive');
+            }
+        },
+        [events]
+    );
+
+    const onUseChessClocksClick = useCallback((event) => {
+        setUseChessClocks(event.target.checked);
+        if (event.target.checked) {
+            setUseGameTimeLimit(false);
+        }
+    }, []);
+
+    const onSubmitClick = useCallback(
+        (event) => {
+            event.preventDefault();
+
+            dispatch(
+                sendNewGameMessage({
+                    name: gameName,
+                    eventId: eventId,
+                    restrictedListId: restrictedListId,
+                    spectators: spectators,
+                    showHand: showHand,
+                    gameType: selectedGameType,
+                    isMelee: selectedGameFormat === 'melee',
+                    password: password,
+                    gamePrivate: gamePrivate,
+                    quickJoin: quickJoin,
+                    useGameTimeLimit: useGameTimeLimit,
+                    gameTimeLimit: gameTimeLimit,
+                    muteSpectators: muteSpectators,
+                    useChessClocks: useChessClocks,
+                    chessClockTimeLimit: chessClockTimeLimit,
+                    delayToStartClock: delayToStartClock,
+                    tableType: tableType
+                })
+            );
+        },
+        [
+            chessClockTimeLimit,
+            delayToStartClock,
+            dispatch,
             eventId,
+            gameName,
+            gamePrivate,
+            gameTimeLimit,
+            muteSpectators,
+            password,
+            quickJoin,
             restrictedListId,
-            selectedMode: event.target.value,
-            tableType: 'game'
-        });
+            selectedGameFormat,
+            selectedGameType,
+            showHand,
+            spectators,
+            tableType,
+            useChessClocks,
+            useGameTimeLimit
+        ]
+    );
 
-        //set game options when the selected event uses event specific options
-        //find the corresponding event
-        const { events } = this.props;
-        let selectedEvent = events.find((e) => {
-            return e._id === event.target.value;
-        });
-        //unlock game options in case they were locked before
-        this.setState({ optionsLocked: false });
-        if (selectedEvent && selectedEvent.useEventGameOptions) {
-            //if the selectedEvent uses event game options, lock and set the options
-            this.setState({ optionsLocked: true });
-            if (selectedEvent.eventGameOptions.spectators !== undefined) {
-                this.setState({ spectators: selectedEvent.eventGameOptions.spectators });
-            }
-            if (selectedEvent.eventGameOptions.muteSpectators !== undefined) {
-                this.setState({ muteSpectators: selectedEvent.eventGameOptions.muteSpectators });
-            }
-            if (selectedEvent.eventGameOptions.showHand !== undefined) {
-                this.setState({ showHand: selectedEvent.eventGameOptions.showHand });
-            }
-            if (selectedEvent.eventGameOptions.useGameTimeLimit !== undefined) {
-                this.setState({
-                    useGameTimeLimit: selectedEvent.eventGameOptions.useGameTimeLimit
-                });
-            }
-            if (selectedEvent.eventGameOptions.gameTimeLimit !== undefined) {
-                this.setState({ gameTimeLimit: selectedEvent.eventGameOptions.gameTimeLimit });
-            }
-            if (selectedEvent.eventGameOptions.useChessClocks !== undefined) {
-                this.setState({ useChessClocks: selectedEvent.eventGameOptions.useChessClocks });
-            }
-            if (selectedEvent.eventGameOptions.chessClockTimeLimit !== undefined) {
-                this.setState({
-                    chessClockTimeLimit: selectedEvent.eventGameOptions.chessClockTimeLimit
-                });
-            }
-            if (selectedEvent.eventGameOptions.delayToStartClock !== undefined) {
-                this.setState({
-                    delayToStartClock: selectedEvent.eventGameOptions.delayToStartClock
-                });
-            }
-            if (selectedEvent.eventGameOptions.password !== undefined) {
-                this.setState({ password: selectedEvent.eventGameOptions.password });
-            }
-            this.setState({ selectedGameType: 'competitive' });
+    const onRadioChange = useCallback(({ key, value }) => {
+        switch (key) {
+            case 'selectedGameType':
+                setSelectedGameType(value);
+                break;
+            case 'tableType':
+                setTableType(value);
+                break;
         }
-    }
+    }, []);
 
-    onPasswordChange(event) {
-        this.setState({ password: event.target.value });
-    }
-
-    onSpectatorsClick(event) {
-        this.setState({ spectators: event.target.checked });
-    }
-
-    onGamePrivateClick(event) {
-        this.setState({ gamePrivate: event.target.checked });
-    }
-
-    onShowHandClick(event) {
-        this.setState({ showHand: event.target.checked });
-    }
-
-    onMuteSpectatorsClick(event) {
-        this.setState({ muteSpectators: event.target.checked });
-    }
-
-    onUseChessClocksClick(event) {
-        this.setState({ useChessClocks: event.target.checked });
-        //deactivate other timeLimit when chessClocks are used
+    const onUseGameTimeLimitClick = useCallback((event) => {
+        setUseGameTimeLimit(event.target.checked);
         if (event.target.checked) {
-            this.setState({ useGameTimeLimit: false });
+            setUseChessClocks(false);
         }
-    }
+    }, []);
 
-    onChessClockTimeLimitChange(event) {
-        this.setState({ chessClockTimeLimit: event.target.value });
-    }
-
-    onDelayToStartClockChange(event) {
-        this.setState({ delayToStartClock: event.target.value });
-    }
-
-    onSubmitClick(event) {
-        event.preventDefault();
-
-        this.props.socket.emit('newgame', {
-            name: this.state.gameName,
-            eventId: this.state.eventId,
-            restrictedListId: this.state.restrictedListId,
-            spectators: this.state.spectators,
-            showHand: this.state.showHand,
-            gameType: this.state.selectedGameType,
-            isMelee: this.state.selectedGameFormat === 'melee',
-            password: this.state.password,
-            gamePrivate: this.state.gamePrivate,
-            quickJoin: this.props.quickJoin,
-            useGameTimeLimit: this.state.useGameTimeLimit,
-            gameTimeLimit: this.state.gameTimeLimit,
-            muteSpectators: this.state.muteSpectators,
-            useChessClocks: this.state.useChessClocks,
-            chessClockTimeLimit: this.state.chessClockTimeLimit,
-            delayToStartClock: this.state.delayToStartClock,
-            tableType: this.state.tableType
-        });
-    }
-
-    onRadioChange({ key, value }) {
-        this.setState({ [key]: value });
-    }
-
-    onGameFormatChange(format) {
-        this.setState({ selectedGameFormat: format });
-    }
-
-    onUseGameTimeLimitClick(event) {
-        this.setState({ useGameTimeLimit: event.target.checked });
-        //deactivate other timeLimit when chessClocks are used
-        if (event.target.checked) {
-            this.setState({ useChessClocks: false });
-        }
-    }
-
-    onGameTimeLimitChange(event) {
-        this.setState({ gameTimeLimit: event.target.value });
-    }
-
-    isGameTypeSelected(gameType) {
-        return this.state.selectedGameType === gameType;
-    }
-
-    getOptions() {
-        if (this.state.tableType !== 'game') {
-            return;
+    const options = useMemo(() => {
+        if (tableType !== 'game') {
+            return undefined;
         }
 
         return (
@@ -220,21 +186,21 @@ class NewGame extends React.Component {
                     <label>
                         <input
                             type='checkbox'
-                            onChange={this.onSpectatorsClick}
-                            checked={this.state.spectators}
-                            disabled={this.state.optionsLocked}
+                            onChange={(event) => setSpectators(event.target.checked)}
+                            checked={spectators}
+                            disabled={optionsLocked}
                         />
                         Allow spectators
                     </label>
                 </div>
-                {this.state.spectators && (
+                {spectators && (
                     <div className='checkbox col-sm-8'>
                         <label>
                             <input
                                 type='checkbox'
-                                onChange={this.onMuteSpectatorsClick}
-                                checked={this.state.muteSpectators}
-                                disabled={this.state.optionsLocked}
+                                onChange={(event) => setMuteSpectators(event.target.checked)}
+                                checked={muteSpectators}
+                                disabled={optionsLocked}
                             />
                             Mute spectators
                         </label>
@@ -244,9 +210,9 @@ class NewGame extends React.Component {
                     <label>
                         <input
                             type='checkbox'
-                            onChange={this.onShowHandClick}
-                            checked={this.state.showHand}
-                            disabled={this.state.optionsLocked}
+                            onChange={(event) => setShowHand(event.target.checked)}
+                            checked={showHand}
+                            disabled={optionsLocked}
                         />
                         Show hands to spectators
                     </label>
@@ -255,21 +221,21 @@ class NewGame extends React.Component {
                     <label>
                         <input
                             type='checkbox'
-                            onChange={this.onUseGameTimeLimitClick}
-                            checked={this.state.useGameTimeLimit}
-                            disabled={this.state.optionsLocked}
+                            onChange={onUseGameTimeLimitClick}
+                            checked={useGameTimeLimit}
+                            disabled={optionsLocked}
                         />
                         Use a time limit (in minutes)
                     </label>
                 </div>
-                {this.state.useGameTimeLimit && (
+                {useGameTimeLimit && (
                     <div className='col-sm-4'>
                         <input
                             className='form-control'
                             type='number'
-                            onChange={this.onGameTimeLimitChange}
-                            value={this.state.gameTimeLimit}
-                            disabled={this.state.optionsLocked}
+                            onChange={(event) => setGameTimeLimit(event.target.value)}
+                            value={gameTimeLimit}
+                            disabled={optionsLocked}
                         />
                     </div>
                 )}
@@ -277,40 +243,53 @@ class NewGame extends React.Component {
                     <label>
                         <input
                             type='checkbox'
-                            onChange={this.onUseChessClocksClick}
-                            checked={this.state.useChessClocks}
-                            disabled={this.state.optionsLocked}
+                            onChange={onUseChessClocksClick}
+                            checked={useChessClocks}
+                            disabled={optionsLocked}
                         />
                         Use chess clocks
                     </label>
                 </div>
-                {this.state.useChessClocks && (
+                {useChessClocks && (
                     <div className='col-sm-6'>
                         <label>Time limit per player (in minutes)</label>
                         <input
                             className='form-control'
                             type='number'
-                            onChange={this.onChessClockTimeLimitChange}
-                            value={this.state.chessClockTimeLimit}
-                            disabled={this.state.optionsLocked}
+                            onChange={(event) => setChessClockTimeLimit(event.target.value)}
+                            value={chessClockTimeLimit}
+                            disabled={optionsLocked}
                         />
-                        <label>Delay to start the clock (in seconds)</label>
+                        <label>Delay to start the clock (in seconds)</label>#
                         <input
                             className='form-control'
                             type='number'
-                            onChange={this.onDelayToStartClockChange}
-                            value={this.state.delayToStartClock}
-                            disabled={this.state.optionsLocked}
+                            onChange={(event) => setDelayToStartClock(event.target.value)}
+                            value={delayToStartClock}
+                            disabled={optionsLocked}
                         />
                     </div>
                 )}
             </div>
         );
-    }
+    }, [
+        chessClockTimeLimit,
+        delayToStartClock,
+        gameTimeLimit,
+        muteSpectators,
+        onUseChessClocksClick,
+        onUseGameTimeLimitClick,
+        optionsLocked,
+        showHand,
+        spectators,
+        tableType,
+        useChessClocks,
+        useGameTimeLimit
+    ]);
 
-    getMeleeOptions() {
-        if (!this.props.allowMelee) {
-            return;
+    const meleeOptions = useMemo(() => {
+        if (!allowMelee) {
+            return undefined;
         }
 
         return (
@@ -322,27 +301,27 @@ class NewGame extends React.Component {
                     <label className='radio-inline'>
                         <input
                             type='radio'
-                            onChange={this.onGameFormatChange.bind(this, 'joust')}
-                            checked={this.state.selectedGameFormat === 'joust'}
+                            onChange={() => setSelectedGameFormat('joust')}
+                            checked={selectedGameFormat === 'joust'}
                         />
                         Joust
                     </label>
                     <label className='radio-inline'>
                         <input
                             type='radio'
-                            onChange={this.onGameFormatChange.bind(this, 'melee')}
-                            checked={this.state.selectedGameFormat === 'melee'}
+                            onChange={() => setSelectedGameFormat('melee')}
+                            checked={selectedGameFormat === 'melee'}
                         />
                         Melee
                     </label>
                 </div>
             </div>
         );
-    }
+    }, [allowMelee, selectedGameFormat]);
 
-    getGameTypeOptions() {
-        if (this.state.tableType !== 'game') {
-            return;
+    const gameTypeOptions = useMemo(() => {
+        if (tableType !== 'game') {
+            return undefined;
         }
 
         return (
@@ -354,46 +333,54 @@ class NewGame extends React.Component {
                     <label className='radio-inline'>
                         <input
                             type='radio'
-                            onChange={this.onRadioChange.bind(this, {
-                                key: 'selectedGameType',
-                                value: 'beginner'
-                            })}
-                            checked={this.isGameTypeSelected('beginner')}
-                            disabled={this.state.optionsLocked}
+                            onChange={() =>
+                                onRadioChange({
+                                    key: 'selectedGameType',
+                                    value: 'beginner'
+                                })
+                            }
+                            checked={selectedGameType === 'beginner'}
+                            disabled={optionsLocked}
                         />
                         Beginner
                     </label>
                     <label className='radio-inline'>
                         <input
                             type='radio'
-                            onChange={this.onRadioChange.bind(this, {
-                                key: 'selectedGameType',
-                                value: 'casual'
-                            })}
-                            checked={this.isGameTypeSelected('casual')}
-                            disabled={this.state.optionsLocked}
+                            onChange={() =>
+                                onRadioChange({
+                                    key: 'selectedGameType',
+                                    value: 'casual'
+                                })
+                            }
+                            checked={selectedGameType === 'casual'}
+                            disabled={optionsLocked}
                         />
                         Casual
                     </label>
                     <label className='radio-inline'>
                         <input
                             type='radio'
-                            onChange={this.onRadioChange.bind(this, {
-                                key: 'selectedGameType',
-                                value: 'competitive'
-                            })}
-                            checked={this.isGameTypeSelected('competitive')}
-                            disabled={this.state.optionsLocked}
+                            onChange={() =>
+                                onRadioChange({
+                                    key: 'selectedGameType',
+                                    value: 'competitive'
+                                })
+                            }
+                            checked={selectedGameType === 'competitive'}
+                            disabled={optionsLocked}
                         />
                         Competitive
                     </label>
                 </div>
             </div>
         );
-    }
+    }, [onRadioChange, optionsLocked, selectedGameType, tableType]);
 
-    getEventSelection() {
-        const { events, restrictedLists, user } = this.props;
+    const eventSelection = useMemo(() => {
+        if (!events || !restrictedLists) {
+            return undefined;
+        }
 
         const allowedEvents = events.filter(
             (event) =>
@@ -406,11 +393,7 @@ class NewGame extends React.Component {
             <div className='row'>
                 <div className='col-sm-8'>
                     <label htmlFor='gameName'>Mode</label>
-                    <select
-                        className='form-control'
-                        value={this.state.selectedMode}
-                        onChange={this.onEventChange}
-                    >
+                    <select className='form-control' value={selectedMode} onChange={onEventChange}>
                         {restrictedLists
                             .filter((rl) => rl.official)
                             .map((rl) => (
@@ -428,14 +411,24 @@ class NewGame extends React.Component {
                 </div>
             </div>
         );
-    }
+    }, [
+        events,
+        onEventChange,
+        restrictedLists,
+        selectedMode,
+        user.permissions.canManageGames,
+        user.username
+    ]);
 
-    getTableType() {
-        const { events } = this.props;
-        const selectedEvent = events.find((event) => event._id === this.state.eventId);
+    const tableTypeComp = useMemo(() => {
+        if (!events) {
+            return undefined;
+        }
+
+        const selectedEvent = events.find((event) => event._id === eventId);
 
         if (!selectedEvent || selectedEvent.format !== 'draft') {
-            return;
+            return undefined;
         }
 
         return (
@@ -447,152 +440,128 @@ class NewGame extends React.Component {
                     <label className='radio-inline'>
                         <input
                             type='radio'
-                            onChange={this.onRadioChange.bind(this, {
-                                key: 'tableType',
-                                value: 'game'
-                            })}
-                            checked={this.state.tableType === 'game'}
+                            onChange={() =>
+                                onRadioChange({
+                                    key: 'tableType',
+                                    value: 'game'
+                                })
+                            }
+                            checked={tableType === 'game'}
                         />
                         Game
                     </label>
                     <label className='radio-inline'>
                         <input
                             type='radio'
-                            onChange={this.onRadioChange.bind(this, {
-                                key: 'tableType',
-                                value: 'drafting-table'
-                            })}
-                            checked={this.state.tableType === 'drafting-table'}
+                            onChange={() =>
+                                onRadioChange({
+                                    key: 'tableType',
+                                    value: 'drafting-table'
+                                })
+                            }
+                            checked={tableType === 'drafting-table'}
                         />
                         Drafting Table
                     </label>
                 </div>
             </div>
         );
-    }
+    }, [eventId, events, onRadioChange, tableType]);
 
-    render() {
-        let charsLeft = GameNameMaxLength - this.state.gameName.length;
-        let content = [];
-
-        if (!this.props.events || !this.props.restrictedLists) {
-            return <div>Loading...</div>;
-        }
-
-        if (this.props.quickJoin) {
-            content = (
-                <div>
-                    <AlertPanel
-                        type='info'
-                        message="Select the type of game you'd like to play and either you'll join the next one available, or one will be created for you with default options."
-                    />
-                    {this.getMeleeOptions()}
-                    {this.getGameTypeOptions()}
-                </div>
+    useEffect(() => {
+        if (restrictedListError) {
+            setError(
+                restrictedListError.data?.message ||
+                    'An error occurred fetching data from the server. Please try again later.'
             );
-        } else {
-            content = (
-                <div>
-                    <div className='row'>
-                        <div className='col-sm-8'>
-                            <label htmlFor='gameName'>Name</label>
-                            <label className='game-name-char-limit'>
-                                {charsLeft >= 0 ? charsLeft : 0}
-                            </label>
-                            <input
-                                className='form-control'
-                                placeholder='Game Name'
-                                type='text'
-                                onChange={this.onNameChange}
-                                value={this.state.gameName}
-                                maxLength={GameNameMaxLength}
-                            />
-                        </div>
-                    </div>
-                    {this.getEventSelection()}
-                    {this.getTableType()}
-                    {this.getOptions()}
-                    {this.getMeleeOptions()}
-                    {this.getGameTypeOptions()}
-                    <div className='row'>
-                        <div className='checkbox col-sm-8'>
-                            <label>
-                                <input
-                                    type='checkbox'
-                                    onChange={this.onGamePrivateClick}
-                                    checked={this.state.gamePrivate}
-                                    disabled={this.state.optionsLocked}
-                                />
-                                Private (requires game link)
-                            </label>
-                        </div>
-                    </div>
-                    <div className='row game-password'>
-                        <div className='col-sm-8'>
-                            <label>Password</label>
-                            <input
-                                className='form-control'
-                                type='password'
-                                onChange={this.onPasswordChange}
-                                value={this.state.password}
-                                disabled={this.state.optionsLocked}
-                            />
-                        </div>
-                    </div>
-                </div>
+        } else if (eventsError) {
+            setError(
+                eventsError.data?.message ||
+                    'An error occurred fetching data from the server. Please try again later.'
             );
         }
+    }, [eventsError, restrictedListError]);
 
-        return this.props.socket ? (
-            <div>
-                <Panel
-                    title={this.props.quickJoin ? 'Join Existing or Start New Game' : 'New game'}
-                >
-                    <form className='form'>
-                        {content}
-                        <div className='button-row'>
-                            <button className='btn btn-primary' onClick={this.onSubmitClick}>
-                                Start
-                            </button>
-                            <button className='btn btn-primary' onClick={this.onCancelClick}>
-                                Cancel
-                            </button>
-                        </div>
-                    </form>
-                </Panel>
-            </div>
-        ) : (
-            <div>
-                <AlertPanel
-                    type='warning'
-                    message='Your connection to the lobby has been interrupted, if this message persists, refresh your browser'
-                />
-            </div>
+    const charsLeft = GameNameMaxLength - gameName.length;
+
+    if (!isLobbyConnected) {
+        return (
+            <AlertPanel
+                type='warning'
+                message='Your connection to the lobby has been interrupted, if this message persists, refresh your browser'
+            />
         );
     }
-}
 
-NewGame.displayName = 'NewGame';
-NewGame.propTypes = {
-    allowMelee: PropTypes.bool,
-    cancelNewGame: PropTypes.func,
-    defaultGameName: PropTypes.string,
-    events: PropTypes.array,
-    loadEvents: PropTypes.func,
-    quickJoin: PropTypes.bool,
-    restrictedLists: PropTypes.array,
-    socket: PropTypes.object,
-    user: PropTypes.object
+    if (isEventsLoading || isRestrictedListLoading) {
+        return <div>Loading data from server, please wait...</div>;
+    }
+
+    return (
+        <div>
+            <Panel title={quickJoin ? 'Join Existing or Start New Game' : 'New game'}>
+                {error && <AlertPanel type='error' message={error} />}
+                <form className='form'>
+                    <div>
+                        <div className='row'>
+                            <div className='col-sm-8'>
+                                <label htmlFor='gameName'>Name</label>
+                                <label className='game-name-char-limit'>
+                                    {charsLeft >= 0 ? charsLeft : 0}
+                                </label>
+                                <input
+                                    className='form-control'
+                                    placeholder='Game Name'
+                                    type='text'
+                                    onChange={(event) => setGameName(event.target.value)}
+                                    value={gameName}
+                                    maxLength={GameNameMaxLength}
+                                />
+                            </div>
+                        </div>
+                        {eventSelection}
+                        {tableTypeComp}
+                        {options}
+                        {meleeOptions}
+                        {gameTypeOptions}
+                        <div className='row'>
+                            <div className='checkbox col-sm-8'>
+                                <label>
+                                    <input
+                                        type='checkbox'
+                                        onChange={(event) => setGamePrivate(event.target.checked)}
+                                        checked={gamePrivate}
+                                        disabled={optionsLocked}
+                                    />
+                                    Private (requires game link)
+                                </label>
+                            </div>
+                        </div>
+                        <div className='row game-password'>
+                            <div className='col-sm-8'>
+                                <label>Password</label>
+                                <input
+                                    className='form-control'
+                                    type='password'
+                                    onChange={(event) => setPassword(event.target.value)}
+                                    value={password}
+                                    disabled={optionsLocked}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <div className='button-row'>
+                        <button className='btn btn-primary' onClick={onSubmitClick}>
+                            Start
+                        </button>
+                        <button className='btn btn-primary' onClick={onCancelClick}>
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </Panel>
+        </div>
+    );
 };
 
-function mapStateToProps(state) {
-    return {
-        allowMelee: state.account.user ? state.account.user.permissions.allowMelee : false,
-        events: state.events.events,
-        restrictedLists: state.cards.restrictedList,
-        socket: state.lobby.socket,
-        user: state.account.user
-    };
-}
-
-export default connect(mapStateToProps, actions)(NewGame);
+export default NewGame;

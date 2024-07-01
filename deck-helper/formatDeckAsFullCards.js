@@ -1,3 +1,5 @@
+import DeckWrapper from './DeckWrapper.js';
+
 /**
  * Creates a clone of the existing deck with full card data filled in instead of
  * just card codes.
@@ -20,28 +22,36 @@ export function formatDeckAsFullCards(deck, data) {
         faction: Object.assign({}, deck.faction)
     };
 
-    if(data.factions) {
+    if (data.factions) {
         newDeck.faction = data.factions[deck.faction.value];
     }
 
-    if(deck.agenda) {
+    if (deck.agenda) {
         newDeck.agenda = data.cards[deck.agenda.code];
     }
 
-    newDeck.bannerCards = (deck.bannerCards || []).map(card => data.cards[card.code]);
-    newDeck.draftedCards = (deck.draftedCards || []);
+    newDeck.bannerCards = (deck.bannerCards || []).map((card) => data.cards[card.code]);
+    newDeck.draftedCards = deck.draftedCards || [];
     newDeck.drawCards = processCardCounts(deck.drawCards || [], data.cards);
     newDeck.plotCards = processCardCounts(deck.plotCards || [], data.cards);
     newDeck.rookeryCards = processCardCounts(deck.rookeryCards || [], data.cards);
+
+    const wrappedDeck = new DeckWrapper(newDeck);
+
+    newDeck.plotCount = wrappedDeck.countPlotCards();
+    newDeck.drawCount = wrappedDeck.countDrawCards();
 
     return newDeck;
 }
 
 function processCardCounts(cardCounts, cardData) {
-    let cardCountsWithData = cardCounts.map(cardCount => {
-        return { count: cardCount.count, card: cardCount.card.custom ? cardCount.card : cardData[cardCount.card.code] };
+    let cardCountsWithData = cardCounts.map((cardCount) => {
+        return {
+            count: cardCount.count,
+            card: cardCount.card.custom ? cardCount.card : cardData[cardCount.card.code]
+        };
     });
 
     // Filter out any cards that aren't available in the card data.
-    return cardCountsWithData.filter(cardCount => !!cardCount.card);
+    return cardCountsWithData.filter((cardCount) => !!cardCount.card);
 }

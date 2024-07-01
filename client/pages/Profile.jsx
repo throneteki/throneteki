@@ -1,171 +1,188 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
 import RangeSlider from 'react-bootstrap-range-slider';
 import AlertPanel from '../Components/Site/AlertPanel';
-import ApiStatus from '../Components/Site/ApiStatus';
 import Panel from '../Components/Site/Panel';
 import Form from '../Components/Form/Form';
 import Checkbox from '../Components/Form/Checkbox';
 import CardSizeOption from '../Components/Profile/CardSizeOption';
 import GameBackgroundOption from '../Components/Profile/GameBackgroundOption';
-import * as actions from '../actions';
 import Avatar from '../Components/Site/Avatar';
+import {
+    useSaveProfileMutation,
+    useUnlinkPatreonMutation,
+    useUpdateAvatarMutation
+} from '../redux/middleware/api';
+import { toastr } from 'react-redux-toastr';
 
-class Profile extends React.Component {
-    constructor(props) {
-        super(props);
+const backgrounds = [
+    { name: 'none', label: 'None', imageUrl: 'img/blank.png' },
+    { name: 'BG1', label: 'Standard', imageUrl: 'img/background.png' },
+    { name: 'BG2', label: 'Winter', imageUrl: 'img/background3.png' }
+];
 
-        this.handleSelectBackground = this.handleSelectBackground.bind(this);
-        this.handleSelectCardSize = this.handleSelectCardSize.bind(this);
-        this.onUpdateAvatarClick = this.onUpdateAvatarClick.bind(this);
-        this.onSaveClick = this.onSaveClick.bind(this);
-        this.onUnlinkClick = this.onUnlinkClick.bind(this);
+const cardSizes = [
+    { name: 'small', label: 'Small' },
+    { name: 'normal', label: 'Normal' },
+    { name: 'large', label: 'Large' },
+    { name: 'x-large', label: 'Extra-Large' }
+];
 
-        this.state = {
-            newPassword: '',
-            newPasswordAgain: '',
-            successMessage: '',
-            promptDupes: false,
-            timerSettings: {},
-            keywordSettings: {}
-        };
+const windows = [
+    { name: 'plot', label: 'Plots revealed', style: 'col-sm-4' },
+    { name: 'draw', label: 'Draw phase', style: 'col-sm-4' },
+    { name: 'challengeBegin', label: 'Before challenge', style: 'col-sm-4' },
+    { name: 'attackersDeclared', label: 'Attackers declared', style: 'col-sm-4' },
+    { name: 'defendersDeclared', label: 'Defenders declared', style: 'col-sm-4' },
+    { name: 'dominance', label: 'Dominance phase', style: 'col-sm-4' },
+    { name: 'standing', label: 'Standing phase', style: 'col-sm-4' },
+    { name: 'taxation', label: 'Taxation phase', style: 'col-sm-4' }
+];
 
-        this.backgrounds = [
-            { name: 'none', label: 'None', imageUrl: 'img/blank.png' },
-            { name: 'BG1', label: 'Standard', imageUrl: 'img/background.png' },
-            { name: 'BG2', label: 'Winter', imageUrl: 'img/background3.png' }
-        ];
+const Profile = () => {
+    const user = useSelector((state) => state.auth.user);
 
-        this.cardSizes = [
-            { name: 'small', label: 'Small' },
-            { name: 'normal', label: 'Normal' },
-            { name: 'large', label: 'Large' },
-            { name: 'x-large', label: 'Extra-Large' }
-        ];
+    const [success, setSuccess] = useState();
+    const [error, setError] = useState();
+    const [promptDupes, setPromptDupes] = useState(false);
+    const [timerSettings, setTimerSettings] = useState(user?.timerSettings || {});
+    const [keywordSettings, setKeywordSettings] = useState(user?.keywordSettings || {});
+    const [windowTimer, setWindowTimer] = useState(user?.windowTimer || 5);
+    const [enableGravatar, setEnableGravatar] = useState(user?.enableGravatar || false);
+    const [selectedBackground, setSelectedBackground] = useState(
+        user?.settings.background || 'BG1'
+    );
+    const [selectedCardSize, setSelectedCardSize] = useState(user?.settings.cardSize || 'normal');
+    const [promptedActionWindows, setPromptedActionWindows] = useState(
+        user?.promptedActionWindows || {}
+    );
 
-        this.windows = [
-            { name: 'plot', label: 'Plots revealed', style: 'col-sm-4' },
-            { name: 'draw', label: 'Draw phase', style: 'col-sm-4' },
-            { name: 'challengeBegin', label: 'Before challenge', style: 'col-sm-4' },
-            { name: 'attackersDeclared', label: 'Attackers declared', style: 'col-sm-4' },
-            { name: 'defendersDeclared', label: 'Defenders declared', style: 'col-sm-4' },
-            { name: 'dominance', label: 'Dominance phase', style: 'col-sm-4' },
-            { name: 'standing', label: 'Standing phase', style: 'col-sm-4' },
-            { name: 'taxation', label: 'Taxation phase', style: 'col-sm-4' }
-        ];
+    const [saveProfile, { isLoading, error: profileError }] = useSaveProfileMutation();
+    const [updateAvatar, { isLoading: avatarLoading }] = useUpdateAvatarMutation();
+    const [unlinkPatreon, { isLoading: unlinkLoading }] = useUnlinkPatreonMutation();
 
-        if (!this.props.user) {
-            return;
+    useEffect(() => {
+        if (profileError) {
+            setError(
+                profileError.message ||
+                    'An error occured saving your profile. Please try again later.'
+            );
         }
-    }
+    }, [profileError]);
 
-    componentDidMount() {
-        this.updateProfile(this.props);
-    }
+    const onWindowToggle = useCallback(
+        (event, field) => {
+            var newPromptedActionWindows = { ...promptedActionWindows };
 
-    componentWillReceiveProps(props) {
-        if (!props.user) {
-            return;
-        }
+            newPromptedActionWindows[field] = event.target.checked;
 
-        // If we haven't previously got any user details, then the api probably just returned now, so set the initial user details
-        if (!this.state.promptedActionWindows) {
-            this.updateProfile(props);
-        }
+            setPromptedActionWindows(newPromptedActionWindows);
+        },
+        [promptedActionWindows]
+    );
 
-        if (props.profileSaved) {
-            this.setState({
-                successMessage:
-                    'Profile saved successfully.  Please note settings changed here may only apply at the start of your next game.'
-            });
+    const retWindows = useMemo(() => {
+        windows.map((window) => {
+            return (
+                <Checkbox
+                    key={window.name}
+                    noGroup
+                    name={'promptedActionWindows.' + window.name}
+                    label={window.label}
+                    fieldClass={window.style}
+                    type='checkbox'
+                    onChange={(e) => onWindowToggle(e, window.name)}
+                    checked={promptedActionWindows[window.name]}
+                />
+            );
+        });
+    }, [onWindowToggle, promptedActionWindows]);
 
-            this.updateProfile(props);
+    const onSaveClick = useCallback(
+        async (state) => {
+            setSuccess(undefined);
+
+            document.getElementsByClassName('wrapper')[0].scrollTop = 0;
+
+            try {
+                await saveProfile({
+                    username: user.username,
+                    profile: {
+                        email: state.email,
+                        password: state.newPassword,
+                        promptedActionWindows: promptedActionWindows,
+                        enableGravatar: enableGravatar,
+                        settings: {
+                            promptDupes: promptDupes,
+                            windowTimer: windowTimer,
+                            keywordSettings: keywordSettings,
+                            timerSettings: timerSettings,
+                            background: selectedBackground,
+                            cardSize: selectedCardSize
+                        }
+                    }
+                }).unwrap();
+                setSuccess('Profile saved successfully');
+
+                setTimeout(() => {
+                    setSuccess(undefined);
+                }, 5000);
+            } catch (err) {
+                setError(
+                    err.message || 'An error occured saving your profile. Please try again later.'
+                );
+            }
+        },
+        [
+            enableGravatar,
+            keywordSettings,
+            promptDupes,
+            promptedActionWindows,
+            saveProfile,
+            selectedBackground,
+            selectedCardSize,
+            timerSettings,
+            user,
+            windowTimer
+        ]
+    );
+
+    const onUpdateAvatarClick = useCallback(
+        async (event) => {
+            event.preventDefault();
+
+            try {
+                await updateAvatar(user.username).unwrap();
+                toastr.success('Avatar updated successfully');
+
+                setTimeout(() => {
+                    toastr.clean();
+                }, 5000);
+            } catch (err) {
+                toastr.error(
+                    err.message || 'An error occured updating your avatar Please try again later.'
+                );
+            }
+        },
+        [updateAvatar, user?.username]
+    );
+
+    const onUnlinkClick = useCallback(async () => {
+        try {
+            await unlinkPatreon().unwrap();
+            toastr.success('Patreon unlinked successfully');
 
             setTimeout(() => {
-                this.setState({ successMessage: undefined });
+                toastr.clean();
             }, 5000);
+        } catch (err) {
+            toastr.error(
+                err.message || 'An error occured unlinking from Patreon. Please try again later.'
+            );
         }
-    }
+    }, [unlinkPatreon]);
 
-    updateProfile(props) {
-        if (!props.user) {
-            return;
-        }
-
-        this.setState({
-            email: props.user.email,
-            enableGravatar: props.user.enableGravatar,
-            promptedActionWindows: props.user.promptedActionWindows,
-            promptDupes: props.user.settings.promptDupes,
-            windowTimer: props.user.settings.windowTimer,
-            timerSettings: props.user.settings.timerSettings,
-            keywordSettings: props.user.settings.keywordSettings,
-            selectedBackground: props.user.settings.background,
-            selectedCardSize: props.user.settings.cardSize
-        });
-    }
-
-    onChange(field, event) {
-        var newState = {};
-
-        newState[field] = event.target.value;
-        this.setState(newState);
-    }
-
-    onToggle(field, event) {
-        var newState = {};
-
-        newState[field] = event.target.checked;
-        this.setState(newState);
-    }
-
-    onWindowToggle(field, event) {
-        var newState = {};
-        newState.promptedActionWindows = this.state.promptedActionWindows;
-
-        newState.promptedActionWindows[field] = event.target.checked;
-        this.setState(newState);
-    }
-
-    onTimerSettingToggle(field, event) {
-        var newState = {};
-        newState.timerSettings = this.state.timerSettings;
-
-        newState.timerSettings[field] = event.target.checked;
-        this.setState(newState);
-    }
-
-    onKeywordSettingToggle(field, event) {
-        var newState = {};
-        newState.keywordSettings = this.state.keywordSettings;
-
-        newState.keywordSettings[field] = event.target.checked;
-        this.setState(newState);
-    }
-
-    onSaveClick() {
-        this.setState({ successMessage: undefined });
-
-        document.getElementsByClassName('wrapper')[0].scrollTop = 0;
-
-        this.props.saveProfile(this.props.user.username, {
-            email: this.state.email,
-            password: this.state.newPassword,
-            promptedActionWindows: this.state.promptedActionWindows,
-            enableGravatar: this.state.enableGravatar,
-            settings: {
-                promptDupes: this.state.promptDupes,
-                windowTimer: this.state.windowTimer,
-                keywordSettings: this.state.keywordSettings,
-                timerSettings: this.state.timerSettings,
-                background: this.state.selectedBackground,
-                cardSize: this.state.selectedCardSize
-            }
-        });
-    }
-
-    onSlideStop(event) {
+    const onSlideStop = (event) => {
         let value = parseInt(event.target.value);
 
         if (isNaN(value)) {
@@ -180,280 +197,226 @@ class Profile extends React.Component {
             value = 10;
         }
 
-        this.setState({ windowTimer: value });
+        setWindowTimer(value);
+    };
+
+    const onTimerSettingToggle = useCallback(
+        (event) => {
+            let newTimerSettings = { ...timerSettings };
+
+            newTimerSettings[event.target.id] = event.target.checked;
+
+            setTimerSettings(newTimerSettings);
+        },
+        [timerSettings]
+    );
+
+    const onKeywordSettingToggle = useCallback(
+        (field, event) => {
+            let newKeywordSettings = { ...keywordSettings };
+
+            newKeywordSettings[field] = event.target.checked;
+
+            setKeywordSettings(newKeywordSettings);
+        },
+        [keywordSettings]
+    );
+
+    const isPatreonLinked = useMemo(
+        () => user && ['linked', 'pledged'].includes(user.patreon),
+        [user]
+    );
+
+    if (!user) {
+        return <AlertPanel type='error' message='You must be logged in to update your profile' />;
     }
 
-    handleSelectBackground(background) {
-        this.setState({ selectedBackground: background });
-    }
+    let initialValues = { email: user.email };
+    let callbackUrl =
+        import.meta.env.MODE === 'production'
+            ? 'https://theironthrone.net/patreon'
+            : 'http://localhost:8080/patreon';
 
-    handleSelectCardSize(size) {
-        this.setState({ selectedCardSize: size });
-    }
+    return (
+        <div className='col-sm-8 col-sm-offset-2 profile full-height'>
+            <div className='about-container'>
+                {success && <AlertPanel type='success' message={success} />}
+                {error && <AlertPanel type='error' message={error} />}
 
-    onUpdateAvatarClick(event) {
-        event.preventDefault();
-
-        this.props.updateAvatar(this.props.user.username);
-    }
-
-    onUnlinkClick() {
-        this.props.unlinkPatreon();
-    }
-
-    isPatreonLinked() {
-        return ['linked', 'pledged'].includes(this.props.user.patreon);
-    }
-
-    render() {
-        if (!this.props.user || !this.state.promptedActionWindows) {
-            return (
-                <AlertPanel type='error' message='You must be logged in to update your profile' />
-            );
-        }
-
-        let windows = this.windows.map((window) => {
-            return (
-                <Checkbox
-                    key={window.name}
-                    noGroup
-                    name={'promptedActionWindows.' + window.name}
-                    label={window.label}
-                    fieldClass={window.style}
-                    type='checkbox'
-                    onChange={this.onWindowToggle.bind(this, window.name)}
-                    checked={this.state.promptedActionWindows[window.name]}
-                />
-            );
-        });
-
-        if (this.props.profileSaved) {
-            setTimeout(() => {
-                this.props.clearProfileStatus();
-            }, 5000);
-        }
-
-        let initialValues = { email: this.props.user.email };
-        let callbackUrl =
-            import.meta.env.MODE === 'production'
-                ? 'https://theironthrone.net/patreon'
-                : 'http://localhost:8080/patreon';
-
-        return (
-            <div className='col-sm-8 col-sm-offset-2 profile full-height'>
-                <div className='about-container'>
-                    <ApiStatus
-                        apiState={this.props.apiState}
-                        successMessage={this.state.successMessage}
+                <Form
+                    panelTitle='Profile'
+                    name='profile'
+                    initialValues={initialValues}
+                    apiLoading={isLoading}
+                    buttonClass='col-sm-offset-10 col-sm-2'
+                    buttonText='Save'
+                    onSubmit={onSaveClick}
+                >
+                    <span className='col-sm-3 text-center'>
+                        <Avatar username={user.username} />
+                    </span>
+                    <Checkbox
+                        name='enableGravatar'
+                        label='Enable Gravatar integration'
+                        fieldClass='col-sm-offset-1 col-sm-7'
+                        onChange={(e) => setEnableGravatar(e.target.checked)}
+                        checked={enableGravatar}
                     />
-
-                    <Form
-                        panelTitle='Profile'
-                        name='profile'
-                        initialValues={initialValues}
-                        apiLoading={this.props.apiState && this.props.apiState.loading}
-                        buttonClass='col-sm-offset-10 col-sm-2'
-                        buttonText='Save'
-                        onSubmit={this.onSaveClick}
+                    <div className='col-sm-3 text-center'>Current profile picture</div>
+                    <button
+                        type='button'
+                        className='btn btn-default col-sm-offset-1 col-sm-3'
+                        onClick={onUpdateAvatarClick}
                     >
-                        <span className='col-sm-3 text-center'>
-                            <Avatar username={this.props.user.username} />
-                        </span>
-                        <Checkbox
-                            name='enableGravatar'
-                            label='Enable Gravatar integration'
-                            fieldClass='col-sm-offset-1 col-sm-7'
-                            onChange={(e) => this.setState({ enableGravatar: e.target.checked })}
-                            checked={this.state.enableGravatar}
-                        />
-                        <div className='col-sm-3 text-center'>Current profile picture</div>
+                        Update avatar {avatarLoading && <span className='spinner button-spinner' />}
+                    </button>
+                    {!isPatreonLinked && (
+                        <a
+                            className='btn btn-default col-sm-offset-1 col-sm-3'
+                            href={`https://www.patreon.com/oauth2/authorize?response_type=code&client_id=317bxGpXD7sAOlyFKp6D-LOBRX731lLK-2YYQSFfBmJCrVSiJI77eUgRoLoN2KoI&redirect_uri=${callbackUrl}`}
+                        >
+                            <img src='/img/Patreon_Mark_Coral.jpg' style={{ height: '21px' }} />
+                            &nbsp;Link Patreon account
+                        </a>
+                    )}
+                    {isPatreonLinked && (
                         <button
                             type='button'
                             className='btn btn-default col-sm-offset-1 col-sm-3'
-                            onClick={this.onUpdateAvatarClick}
+                            onClick={onUnlinkClick}
                         >
-                            Update avatar
+                            Unlink Patreon account{' '}
+                            {unlinkLoading && <span className='spinner button-spinner' />}
                         </button>
-                        {!this.isPatreonLinked() && (
-                            <a
-                                className='btn btn-default col-sm-offset-1 col-sm-3'
-                                href={`https://www.patreon.com/oauth2/authorize?response_type=code&client_id=317bxGpXD7sAOlyFKp6D-LOBRX731lLK-2YYQSFfBmJCrVSiJI77eUgRoLoN2KoI&redirect_uri=${callbackUrl}`}
-                            >
-                                <img src='/img/Patreon_Mark_Coral.jpg' style={{ height: '21px' }} />
-                                &nbsp;Link Patreon account
-                            </a>
-                        )}
-                        {this.isPatreonLinked() && (
-                            <button
-                                type='button'
-                                className='btn btn-default col-sm-offset-1 col-sm-3'
-                                onClick={this.onUnlinkClick}
-                            >
-                                Unlink Patreon account
-                            </button>
-                        )}
-                        <div className='col-sm-12 profile-inner'>
-                            <Panel title='Action window defaults'>
-                                <p className='help-block small'>
-                                    If an option is selected here, you will always be prompted if
-                                    you want to take an action in that window. If an option is not
-                                    selected, you will receive no prompts for that window. For some
-                                    windows (e.g. dominance) this could mean the whole window is
-                                    skipped.
-                                </p>
-                                <div className='form-group'>{windows}</div>
-                            </Panel>
-                            <Panel title='Timed Interrupt Window'>
-                                <p className='help-block small'>
-                                    Every time a game event occurs that you could possibly interrupt
-                                    to cancel it, a timer will count down. At the end of that timer,
-                                    the window will automatically pass. This option controls the
-                                    duration of the timer. The timer can be configure to show when
-                                    events are played (useful if you play cards like The Hand&apos;s
-                                    Judgement) and to show when card abilities are triggered (useful
-                                    if you play a lot of Treachery).
-                                </p>
-                                <div className='form-group'>
-                                    <label className='col-xs-3 control-label'>Window timeout</label>
-                                    <div className='col-xs-5 control-label'>
-                                        <RangeSlider
-                                            value={this.state.windowTimer}
-                                            slideStop={this.onSlideStop.bind(this)}
-                                            step={1}
-                                            max={10}
-                                            min={0}
-                                        />
-                                    </div>
-                                    <div className='col-xs-2'>
-                                        <input
-                                            className='form-control text-center'
-                                            name='timer'
-                                            value={this.state.windowTimer}
-                                            onChange={this.onSlideStop.bind(this)}
-                                        />
-                                    </div>
-                                    <label className='col-xs-2 control-label text-left no-padding'>
-                                        seconds
-                                    </label>
-                                </div>
-                                <div className='form-group'>
-                                    <Checkbox
-                                        name='timerSettings.events'
-                                        noGroup
-                                        label={'Show timer for events'}
-                                        fieldClass='col-sm-6'
-                                        onChange={this.onTimerSettingToggle.bind(this, 'events')}
-                                        checked={this.state.timerSettings.events}
-                                    />
-                                    <Checkbox
-                                        name='timerSettings.abilities'
-                                        noGroup
-                                        label={'Show timer for card abilities'}
-                                        fieldClass='col-sm-6'
-                                        onChange={this.onTimerSettingToggle.bind(this, 'abilities')}
-                                        checked={this.state.timerSettings.abilities}
+                    )}
+                    <div className='col-sm-12 profile-inner'>
+                        <Panel title='Action window defaults'>
+                            <p className='help-block small'>
+                                If an option is selected here, you will always be prompted if you
+                                want to take an action in that window. If an option is not selected,
+                                you will receive no prompts for that window. For some windows (e.g.
+                                dominance) this could mean the whole window is skipped.
+                            </p>
+                            <div className='form-group'>{retWindows}</div>
+                        </Panel>
+                        <Panel title='Timed Interrupt Window'>
+                            <p className='help-block small'>
+                                Every time a game event occurs that you could possibly interrupt to
+                                cancel it, a timer will count down. At the end of that timer, the
+                                window will automatically pass. This option controls the duration of
+                                the timer. The timer can be configure to show when events are played
+                                (useful if you play cards like The Hand&apos;s Judgement) and to
+                                show when card abilities are triggered (useful if you play a lot of
+                                Treachery).
+                            </p>
+                            <div className='form-group'>
+                                <label className='col-xs-3 control-label'>Window timeout</label>
+                                <div className='col-xs-5 control-label'>
+                                    <RangeSlider
+                                        value={windowTimer}
+                                        onChange={onSlideStop}
+                                        step={1}
+                                        max={10}
+                                        min={0}
                                     />
                                 </div>
-                            </Panel>
-                            <Panel title='Game Settings'>
-                                <div className='form-group'>
-                                    <Checkbox
-                                        name='keywordSettings.chooseOrder'
-                                        noGroup
-                                        label={'Choose order of keywords'}
-                                        fieldClass='col-sm-6'
-                                        onChange={this.onKeywordSettingToggle.bind(
-                                            this,
-                                            'chooseOrder'
-                                        )}
-                                        checked={this.state.keywordSettings.chooseOrder}
-                                    />
-                                    <Checkbox
-                                        name='keywordSettings.chooseCards'
-                                        noGroup
-                                        label={'Make keywords optional'}
-                                        fieldClass='col-sm-6'
-                                        onChange={this.onKeywordSettingToggle.bind(
-                                            this,
-                                            'chooseCards'
-                                        )}
-                                        checked={this.state.keywordSettings.chooseCards}
-                                    />
-                                    <Checkbox
-                                        name='promptDupes'
-                                        noGroup
-                                        label={'Prompt before using dupes to save'}
-                                        fieldClass='col-sm-6'
-                                        onChange={this.onToggle.bind(this, 'promptDupes')}
-                                        checked={this.state.promptDupes}
+                                <div className='col-xs-2'>
+                                    <input
+                                        className='form-control text-center'
+                                        name='timer'
+                                        value={windowTimer}
+                                        onChange={onSlideStop}
                                     />
                                 </div>
-                            </Panel>
-                        </div>
-                        <div className='col-sm-12'>
-                            <Panel title='Game Board Background'>
-                                <div className='row'>
-                                    {this.backgrounds.map((background) => (
-                                        <GameBackgroundOption
-                                            imageUrl={background.imageUrl}
-                                            key={background.name}
-                                            label={background.label}
-                                            name={background.name}
-                                            onSelect={this.handleSelectBackground}
-                                            selected={
-                                                this.state.selectedBackground === background.name
-                                            }
+                                <label className='col-xs-2 control-label text-left no-padding'>
+                                    seconds
+                                </label>
+                            </div>
+                            <div className='form-group'>
+                                <Checkbox
+                                    name='timerSettings.events'
+                                    noGroup
+                                    label={'Show timer for events'}
+                                    fieldClass='col-sm-6'
+                                    onChange={onTimerSettingToggle.bind('events')}
+                                    checked={timerSettings.events}
+                                />
+                                <Checkbox
+                                    name='timerSettings.abilities'
+                                    noGroup
+                                    label={'Show timer for card abilities'}
+                                    fieldClass='col-sm-6'
+                                    onChange={onTimerSettingToggle.bind('abilities')}
+                                    checked={timerSettings.abilities}
+                                />
+                            </div>
+                        </Panel>
+                        <Panel title='Game Settings'>
+                            <div className='form-group'>
+                                <Checkbox
+                                    name='keywordSettings.chooseOrder'
+                                    noGroup
+                                    label={'Choose order of keywords'}
+                                    fieldClass='col-sm-6'
+                                    onChange={onKeywordSettingToggle.bind('chooseOrder')}
+                                    checked={keywordSettings.chooseOrder}
+                                />
+                                <Checkbox
+                                    name='keywordSettings.chooseCards'
+                                    noGroup
+                                    label={'Make keywords optional'}
+                                    fieldClass='col-sm-6'
+                                    onChange={onKeywordSettingToggle.bind('chooseCards')}
+                                    checked={keywordSettings.chooseCards}
+                                />
+                                <Checkbox
+                                    name='promptDupes'
+                                    noGroup
+                                    label={'Prompt before using dupes to save'}
+                                    fieldClass='col-sm-6'
+                                    onChange={(event) => setPromptDupes(event.target.checked)}
+                                    checked={promptDupes}
+                                />
+                            </div>
+                        </Panel>
+                    </div>
+                    <div className='col-sm-12'>
+                        <Panel title='Game Board Background'>
+                            <div className='row'>
+                                {backgrounds.map((background) => (
+                                    <GameBackgroundOption
+                                        imageUrl={background.imageUrl}
+                                        key={background.name}
+                                        label={background.label}
+                                        name={background.name}
+                                        onSelect={(background) => setSelectedBackground(background)}
+                                        selected={selectedBackground === background.name}
+                                    />
+                                ))}
+                            </div>
+                        </Panel>
+                    </div>
+                    <div className='col-sm-12'>
+                        <Panel title='Card Image Size'>
+                            <div className='row'>
+                                <div className='col-xs-12'>
+                                    {cardSizes.map((cardSize) => (
+                                        <CardSizeOption
+                                            key={cardSize.name}
+                                            label={cardSize.label}
+                                            name={cardSize.name}
+                                            onSelect={(cardSize) => setSelectedCardSize(cardSize)}
+                                            selected={selectedCardSize === cardSize.name}
                                         />
                                     ))}
                                 </div>
-                            </Panel>
-                        </div>
-                        <div className='col-sm-12'>
-                            <Panel title='Card Image Size'>
-                                <div className='row'>
-                                    <div className='col-xs-12'>
-                                        {this.cardSizes.map((cardSize) => (
-                                            <CardSizeOption
-                                                key={cardSize.name}
-                                                label={cardSize.label}
-                                                name={cardSize.name}
-                                                onSelect={this.handleSelectCardSize}
-                                                selected={
-                                                    this.state.selectedCardSize === cardSize.name
-                                                }
-                                            />
-                                        ))}
-                                    </div>
-                                </div>
-                            </Panel>
-                        </div>
-                    </Form>
-                </div>
+                            </div>
+                        </Panel>
+                    </div>
+                </Form>
             </div>
-        );
-    }
-}
-
-Profile.displayName = 'Profile';
-Profile.propTypes = {
-    apiState: PropTypes.object,
-    clearProfileStatus: PropTypes.func,
-    profileSaved: PropTypes.bool,
-    refreshUser: PropTypes.func,
-    saveProfile: PropTypes.func,
-    socket: PropTypes.object,
-    unlinkPatreon: PropTypes.func,
-    updateAvatar: PropTypes.func,
-    user: PropTypes.object
+        </div>
+    );
 };
 
-function mapStateToProps(state) {
-    return {
-        apiState: state.api.SAVE_PROFILE,
-        profileSaved: state.user.profileSaved,
-        socket: state.lobby.socket,
-        user: state.account.user
-    };
-}
-
-export default connect(mapStateToProps, actions)(Profile);
+export default Profile;

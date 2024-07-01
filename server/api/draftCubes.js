@@ -44,7 +44,7 @@ export const init = function (server, options) {
         wrapAsync(async function (req, res) {
             const draftCubes = await draftCubesService.getAll();
 
-            return res.send({ success: true, draftCubes });
+            return res.send({ success: true, data: draftCubes });
         })
     );
 

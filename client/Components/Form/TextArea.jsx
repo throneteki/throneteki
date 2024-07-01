@@ -1,56 +1,63 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useCallback } from 'react';
 
-class TextArea extends React.Component {
-    render() {
-        let labelClass = 'control-label';
-        if (this.props.labelClass) {
-            labelClass += ` ${this.props.labelClass}`;
-        }
-
-        return (
-            <div className='form-group'>
-                <label htmlFor={this.props.name} className={labelClass}>
-                    {this.props.label}
-                </label>
-                <div className={this.props.fieldClass}>
-                    <textarea
-                        id={this.props.name}
-                        name={this.props.name}
-                        ref={this.props.name}
-                        rows={this.props.rows}
-                        className='form-control'
-                        placeholder={this.props.placeholder}
-                        value={this.props.value}
-                        onChange={this.props.onChange}
-                        onBlur={this.props.onBlur}
-                        {...this.props.validationAttributes}
-                    />
-                    <span
-                        className='text-danger'
-                        data-valmsg-replace='true'
-                        data-valmsg-for={this.props.name}
-                    />
-                </div>
-                {this.props.children}
-            </div>
-        );
+const TextArea = ({
+    labelClass: labelClassProp,
+    name,
+    fieldClass,
+    rows,
+    placeholder,
+    value,
+    onChange: onChangeProp,
+    onBlur: onBlurProp,
+    validationAttributes,
+    label,
+    children
+}) => {
+    let labelClass = 'control-label';
+    if (labelClassProp) {
+        labelClass += ` ${labelClassProp}`;
     }
-}
 
-TextArea.displayName = 'TextArea';
-TextArea.propTypes = {
-    children: PropTypes.object,
-    fieldClass: PropTypes.string,
-    label: PropTypes.string,
-    labelClass: PropTypes.string,
-    name: PropTypes.string,
-    onBlur: PropTypes.func,
-    onChange: PropTypes.func,
-    placeholder: PropTypes.string,
-    rows: PropTypes.string,
-    validationAttributes: PropTypes.object,
-    value: PropTypes.string
+    const onChange = useCallback(
+        (event) => {
+            if (onChangeProp) {
+                onChangeProp(event);
+            }
+        },
+        [onChangeProp]
+    );
+
+    const onBlur = useCallback(
+        (event) => {
+            if (onBlurProp) {
+                onBlurProp(event);
+            }
+        },
+        [onBlurProp]
+    );
+
+    return (
+        <div className='form-group'>
+            <label htmlFor={name} className={labelClass}>
+                {label}
+            </label>
+            <div className={fieldClass}>
+                <textarea
+                    id={name}
+                    name={name}
+                    rows={rows}
+                    className='form-control'
+                    placeholder={placeholder}
+                    value={value}
+                    onChange={onChange}
+                    onBlur={onBlur}
+                    {...validationAttributes}
+                />
+                <span className='text-danger' data-valmsg-replace='true' data-valmsg-for={name} />
+            </div>
+            {children}
+        </div>
+    );
 };
 
 export default TextArea;

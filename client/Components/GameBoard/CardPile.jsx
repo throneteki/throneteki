@@ -1,5 +1,4 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import classNames from 'classnames';
 
 import Card from './Card';
@@ -7,139 +6,158 @@ import CardTiledList from './CardTiledList';
 import Droppable from './Droppable';
 import MovablePanel from './MovablePanel';
 
-class CardPile extends React.Component {
-    constructor(props) {
-        super(props);
+const CardPile = ({
+    cards,
+    menu,
+    disablePopup,
+    onPopupChange,
+    source,
+    onCardClick: propsOnCardClick,
+    topCard,
+    closeOnClick,
+    disableMouseOver,
+    onMouseOut,
+    onMouseOver,
+    onTouchMove,
+    onMenuItemClick,
+    size,
+    popupMenu,
+    onDragDrop,
+    title,
+    popupLocation = 'bottom',
+    className,
+    cardCount,
+    orientation = 'vertical',
+    hiddenTopCard
+}) => {
+    const [showPopup, setShowPopup] = useState(cards && cards.some((card) => card.selectable));
+    const [showMenu, setShowMenu] = useState(false);
 
-        this.state = {
-            showPopup: !!props.cards && props.cards.some((card) => card.selectable),
-            showMenu: false
-        };
+    const isTopCardSelectable = useMemo(
+        () =>
+            !topCard
+                ? false
+                : topCard.selectable && (!cards || cards.every((card) => card.unselectable)),
+        [cards, topCard]
+    );
 
-        this.onCollectionClick = this.onCollectionClick.bind(this);
-        this.onTopCardClick = this.onTopCardClick.bind(this);
-        this.onCloseClick = this.onCloseClick.bind(this);
-    }
+    const updatePopupVisibility = useCallback(
+        (value) => {
+            setShowPopup(value);
 
-    componentWillReceiveProps(props) {
-        let hasNewSelectableCard = props.cards && props.cards.some((card) => card.selectable);
-        let didHaveSelectableCard =
-            this.props.cards && this.props.cards.some((card) => card.selectable);
+            if (onPopupChange) {
+                onPopupChange({ source: source, visible: value });
+            }
+        },
+        [onPopupChange, source]
+    );
 
-        if (!didHaveSelectableCard && hasNewSelectableCard) {
-            this.updatePopupVisibility(true);
-        } else if (didHaveSelectableCard && !hasNewSelectableCard) {
-            this.updatePopupVisibility(false);
-        }
-    }
+    const onCollectionClick = useCallback(
+        (event) => {
+            event.preventDefault();
 
-    togglePopup() {
-        this.updatePopupVisibility(!this.state.showPopup);
-    }
+            if (menu) {
+                setShowMenu(!showMenu);
+                return;
+            }
 
-    updatePopupVisibility(value) {
-        this.setState({ showPopup: value });
+            if (!disablePopup) {
+                updatePopupVisibility(!showPopup);
+            }
+        },
+        [menu, showMenu, showPopup, updatePopupVisibility, disablePopup]
+    );
 
-        if (this.props.onPopupChange) {
-            this.props.onPopupChange({ source: this.props.source, visible: value });
-        }
-    }
-
-    onCollectionClick(event) {
-        event.preventDefault();
-
-        if (this.props.menu) {
-            this.setState({ showMenu: !this.state.showMenu });
+    const onTopCardClick = useCallback(() => {
+        if (menu) {
+            setShowMenu(!showMenu);
             return;
         }
 
-        if (!this.props.disablePopup) {
-            this.togglePopup();
-        }
-    }
-
-    onMenuItemClick(menuItem) {
-        if (menuItem.showPopup) {
-            this.togglePopup();
-        }
-
-        if (menuItem.handler) {
-            menuItem.handler();
-        }
-    }
-
-    onCloseClick(event) {
-        event.preventDefault();
-        event.stopPropagation();
-
-        this.togglePopup();
-    }
-
-    onPopupMenuItemClick(menuItem) {
-        if (menuItem.handler) {
-            menuItem.handler();
-        }
-
-        if (menuItem.close) {
-            this.togglePopup();
-        }
-    }
-
-    onTopCardClick() {
-        if (this.props.menu) {
-            this.setState({ showMenu: !this.state.showMenu });
-            return;
-        }
-
-        if (this.props.disablePopup || this.isTopCardSelectable) {
-            if (this.props.onCardClick && this.props.topCard) {
-                this.props.onCardClick(this.props.topCard);
+        if (disablePopup || isTopCardSelectable) {
+            if (propsOnCardClick && topCard) {
+                propsOnCardClick(topCard);
             }
 
             return;
         }
 
-        this.togglePopup();
-    }
+        updatePopupVisibility(!showPopup);
+    }, [
+        menu,
+        showMenu,
+        showPopup,
+        disablePopup,
+        isTopCardSelectable,
+        propsOnCardClick,
+        topCard,
+        updatePopupVisibility
+    ]);
 
-    get isTopCardSelectable() {
-        if (!this.props.topCard) {
-            return false;
+    const onCloseClick = useCallback(
+        (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            updatePopupVisibility(!showPopup);
+        },
+        [showPopup, updatePopupVisibility]
+    );
+
+    const onCardClick = useCallback(
+        (card) => {
+            if (closeOnClick) {
+                updatePopupVisibility(false);
+            }
+
+            if (propsOnCardClick) {
+                propsOnCardClick(card);
+            }
+        },
+        [closeOnClick, propsOnCardClick, updatePopupVisibility]
+    );
+
+    const onPopupMenuItemClick = useCallback(
+        (menuItem) => {
+            if (menuItem.handler) {
+                menuItem.handler();
+            }
+
+            if (menuItem.close) {
+                updatePopupVisibility(!showPopup);
+            }
+        },
+        [showPopup, updatePopupVisibility]
+    );
+
+    useEffect(() => {
+        let hasNewSelectableCard = cards && cards.some((card) => card.selectable);
+        let didHaveSelectableCard = cards && cards.some((card) => card.selectable);
+
+        if (!didHaveSelectableCard && hasNewSelectableCard) {
+            updatePopupVisibility(true);
+        } else if (didHaveSelectableCard && !hasNewSelectableCard) {
+            updatePopupVisibility(false);
         }
+    }, [cards, updatePopupVisibility]);
 
-        return (
-            this.props.topCard.selectable &&
-            (!this.props.cards || this.props.cards.every((card) => card.unselectable))
-        );
-    }
-
-    onCardClick(card) {
-        if (this.props.closeOnClick) {
-            this.updatePopupVisibility(false);
-        }
-
-        if (this.props.onCardClick) {
-            this.props.onCardClick(card);
-        }
-    }
-
-    getPopup() {
+    const getPopup = useCallback(() => {
         let popup = null;
         let cardList = [];
 
         let listProps = {
-            disableMouseOver: this.props.disableMouseOver,
-            onCardClick: this.onCardClick.bind(this),
-            onCardMouseOut: this.props.onMouseOut,
-            onCardMouseOver: this.props.onMouseOver,
-            onTouchMove: this.props.onTouchMove,
-            onMenuItemClick: this.props.onMenuItemClick,
-            size: this.props.size,
-            source: this.props.source
+            disableMouseOver: disableMouseOver,
+            onCardClick: onCardClick,
+            onCardMouseOut: onMouseOut,
+            onCardMouseOver: onMouseOver,
+            onTouchMove: onTouchMove,
+            onMenuItemClick: onMenuItemClick,
+            size: size,
+            source: source
         };
 
-        if (this.props.cards && this.props.cards.some((card) => card.group)) {
-            const cardGroup = this.props.cards.reduce((grouping, card) => {
+        if (cards && cards.some((card) => card.group)) {
+            const cardGroup = cards.reduce((grouping, card) => {
                 (grouping[card.group] = grouping[card.group] || []).push(card);
 
                 return grouping;
@@ -151,28 +169,28 @@ class CardPile extends React.Component {
                 );
             }
         } else {
-            cardList = <CardTiledList cards={this.props.cards} {...listProps} />;
+            cardList = <CardTiledList cards={cards} {...listProps} />;
         }
 
-        if (this.props.disablePopup || !this.state.showPopup) {
+        if (disablePopup || !showPopup) {
             return null;
         }
 
         let popupClass = classNames('panel', {
-            'our-side': this.props.popupLocation === 'bottom'
+            'our-side': popupLocation === 'bottom'
         });
 
-        let innerClass = classNames('inner', this.props.size);
+        let innerClass = classNames('inner', size);
         let linkIndex = 0;
 
-        let popupMenu = this.props.popupMenu && (
+        let retPopupMenu = popupMenu && (
             <div className='card-pile-buttons'>
-                {this.props.popupMenu.map((menuItem) => {
+                {popupMenu.map((menuItem) => {
                     return (
                         <a
                             className='btn btn-default'
                             key={linkIndex++}
-                            onClick={() => this.onPopupMenuItemClick(menuItem)}
+                            onClick={() => onPopupMenuItemClick(menuItem)}
                         >
                             {menuItem.icon && (
                                 <span className={`glyphicon glyphicon-${menuItem.icon}`} />
@@ -186,14 +204,14 @@ class CardPile extends React.Component {
 
         popup = (
             <MovablePanel
-                title={this.props.title}
-                name={this.props.source}
-                onCloseClick={this.onCloseClick}
-                side={this.props.popupLocation}
+                title={title}
+                name={source}
+                onCloseClick={onCloseClick}
+                side={popupLocation}
             >
-                <Droppable onDragDrop={this.props.onDragDrop} source={this.props.source}>
+                <Droppable onDragDrop={onDragDrop} source={source}>
                     <div className={popupClass} onClick={(event) => event.stopPropagation()}>
-                        {popupMenu}
+                        {retPopupMenu}
                         <div className={innerClass}>{cardList}</div>
                     </div>
                 </Droppable>
@@ -201,17 +219,35 @@ class CardPile extends React.Component {
         );
 
         return popup;
-    }
+    }, [
+        cards,
+        disableMouseOver,
+        onCloseClick,
+        onDragDrop,
+        onMenuItemClick,
+        onCardClick,
+        onMouseOut,
+        onMouseOver,
+        onTouchMove,
+        popupLocation,
+        popupMenu,
+        showPopup,
+        size,
+        source,
+        title,
+        disablePopup,
+        onPopupMenuItemClick
+    ]);
 
-    getMenu() {
+    const getMenu = () => {
         let menuIndex = 0;
 
-        let menu = this.props.menu.map((item) => {
+        let menu = menu.map((item) => {
             return (
                 <div
                     key={(menuIndex++).toString()}
                     className='menu-item'
-                    onClick={this.onMenuItemClick.bind(this, item)}
+                    onClick={() => onMenuItemClick(item)}
                 >
                     {item.text}
                 </div>
@@ -219,96 +255,46 @@ class CardPile extends React.Component {
         });
 
         return <div className='panel menu'>{menu}</div>;
+    };
+
+    let retClassName = classNames('panel', 'card-pile', className, {
+        [size]: size !== 'normal',
+        horizontal: orientation === 'horizontal' || orientation === 'kneeled',
+        vertical: orientation === 'vertical'
+    });
+
+    let retCardCount = cardCount || (cards ? cards.length : '0');
+    let headerText = title ? title + ' (' + retCardCount + ')' : '';
+    let retTopCard = topCard || (cards ? cards[0] : null);
+    let cardOrientation =
+        orientation === 'horizontal' && retTopCard && retTopCard.facedown ? 'kneeled' : orientation;
+
+    if (hiddenTopCard && !topCard) {
+        retTopCard = { facedown: true };
     }
 
-    render() {
-        let className = classNames('panel', 'card-pile', this.props.className, {
-            [this.props.size]: this.props.size !== 'normal',
-            horizontal:
-                this.props.orientation === 'horizontal' || this.props.orientation === 'kneeled',
-            vertical: this.props.orientation === 'vertical'
-        });
-
-        let cardCount = this.props.cardCount || (this.props.cards ? this.props.cards.length : '0');
-        let headerText = this.props.title ? this.props.title + ' (' + cardCount + ')' : '';
-        let topCard = this.props.topCard || (this.props.cards ? this.props.cards[0] : null);
-        let cardOrientation =
-            this.props.orientation === 'horizontal' && topCard && topCard.facedown
-                ? 'kneeled'
-                : this.props.orientation;
-
-        if (this.props.hiddenTopCard && !this.props.topCard) {
-            topCard = { facedown: true };
-        }
-
-        return (
-            <div className={className} onClick={this.onCollectionClick}>
-                <div className='panel-header'>{headerText}</div>
-                {topCard ? (
-                    <Card
-                        card={topCard}
-                        source={this.props.source}
-                        onMouseOver={this.props.onMouseOver}
-                        onMouseOut={this.props.onMouseOut}
-                        disableMouseOver={this.props.hiddenTopCard}
-                        onClick={this.onTopCardClick}
-                        onMenuItemClick={this.props.onMenuItemClick}
-                        orientation={cardOrientation}
-                        size={this.props.size}
-                    />
-                ) : (
-                    <div className='card-placeholder' />
-                )}
-                {this.state.showMenu ? this.getMenu() : null}
-                {this.getPopup()}
-            </div>
-        );
-    }
-}
-
-CardPile.displayName = 'CardPile';
-CardPile.propTypes = {
-    cardCount: PropTypes.number,
-    cards: PropTypes.array,
-    className: PropTypes.string,
-    closeOnClick: PropTypes.bool,
-    disableMouseOver: PropTypes.bool,
-    disablePopup: PropTypes.bool,
-    hiddenTopCard: PropTypes.bool,
-    menu: PropTypes.array,
-    onCardClick: PropTypes.func,
-    onDragDrop: PropTypes.func,
-    onMenuItemClick: PropTypes.func,
-    onMouseOut: PropTypes.func,
-    onMouseOver: PropTypes.func,
-    onPopupChange: PropTypes.func,
-    onTouchMove: PropTypes.func,
-    orientation: PropTypes.string,
-    popupLocation: PropTypes.string,
-    popupMenu: PropTypes.array,
-    size: PropTypes.string,
-    source: PropTypes.oneOf([
-        'hand',
-        'discard pile',
-        'play area',
-        'dead pile',
-        'draw deck',
-        'plot deck',
-        'revealed plots',
-        'selected plot',
-        'attachment',
-        'agenda',
-        'faction',
-        'additional',
-        'conclave',
-        'shadows'
-    ]).isRequired,
-    title: PropTypes.string,
-    topCard: PropTypes.object
-};
-CardPile.defaultProps = {
-    popupLocation: 'bottom',
-    orientation: 'vertical'
+    return (
+        <div className={retClassName} onClick={onCollectionClick}>
+            <div className='panel-header'>{headerText}</div>
+            {retTopCard ? (
+                <Card
+                    card={retTopCard}
+                    source={source}
+                    onMouseOver={onMouseOver}
+                    onMouseOut={onMouseOut}
+                    disableMouseOver={hiddenTopCard}
+                    onClick={onTopCardClick}
+                    onMenuItemClick={onMenuItemClick}
+                    orientation={cardOrientation}
+                    size={size}
+                />
+            ) : (
+                <div className='card-placeholder' />
+            )}
+            {showMenu && getMenu()}
+            {getPopup()}
+        </div>
+    );
 };
 
 export default CardPile;

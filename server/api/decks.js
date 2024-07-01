@@ -2,8 +2,10 @@ import passport from 'passport';
 import DeckService from '../services/DeckService.js';
 import { wrapAsync } from '../util.js';
 
-export const init = function (server, options) {
-    let deckService = new DeckService(options.db);
+export const init = async function (server, options) {
+    let deckService = new DeckService(options.db, options.cardService);
+
+    await deckService.init();
 
     server.get(
         '/api/decks/:id',
@@ -23,7 +25,7 @@ export const init = function (server, options) {
                 return res.status(401).send({ message: 'Unauthorized' });
             }
 
-            res.send({ success: true, deck: deck });
+            res.send({ success: true, data: deck });
         })
     );
 
@@ -32,7 +34,7 @@ export const init = function (server, options) {
         passport.authenticate('jwt', { session: false }),
         wrapAsync(async function (req, res) {
             let decks = await deckService.findByUserName(req.user.username);
-            res.send({ success: true, decks: decks });
+            res.send({ success: true, data: decks });
         })
     );
 
@@ -50,11 +52,11 @@ export const init = function (server, options) {
                 return res.status(401).send({ message: 'Unauthorized' });
             }
 
-            let data = Object.assign({ id: req.params.id }, req.body.deck);
+            let data = Object.assign({ id: req.params.id }, req.body);
 
             deckService.update(data);
 
-            res.send({ success: true, message: 'Saved' });
+            res.send({ success: true });
         })
     );
 
@@ -62,7 +64,7 @@ export const init = function (server, options) {
         '/api/decks',
         passport.authenticate('jwt', { session: false }),
         wrapAsync(async function (req, res) {
-            let deck = Object.assign(req.body.deck, { username: req.user.username });
+            let deck = Object.assign(req.body, { username: req.user.username });
             await deckService.create(deck);
             res.send({ success: true });
         })
@@ -85,7 +87,7 @@ export const init = function (server, options) {
             }
 
             await deckService.delete(id);
-            res.send({ success: true, message: 'Deck deleted successfully', deckId: id });
+            res.send({ success: true, data: id });
         })
     );
 
@@ -93,7 +95,7 @@ export const init = function (server, options) {
         deckService
             .getStandaloneDecks()
             .then((decks) => {
-                res.send({ success: true, decks: decks });
+                res.send({ success: true, data: decks });
             })
             .catch((err) => {
                 next(err);

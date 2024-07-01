@@ -1,66 +1,86 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import React, { useCallback, useMemo } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { toastr } from 'react-redux-toastr';
 
 import AlertPanel from '../Site/AlertPanel';
 import Game from './Game';
-import * as actions from '../../actions';
+import { joinPasswordGame } from '../../redux/reducers/lobby';
 
-class GameList extends React.Component {
-    joinGame(game) {
-        if (!this.props.user) {
-            toastr.error('Please login before trying to join a game');
-            return;
-        }
+const GameList = ({ gameFilter }) => {
+    const dispatch = useDispatch();
+    const currentGame = useSelector((state) => state.lobby.currentGame);
+    const socket = useSelector((state) => state.lobby.socket);
+    const user = useSelector((state) => state.auth.user);
+    const games = useSelector((state) => state.lobby.games);
 
-        if (game.needsPassword) {
-            this.props.joinPasswordGame(game, 'Join');
-        } else {
-            this.props.socket.emit('joingame', game.id);
-        }
-    }
+    const joinGame = useCallback(
+        (game) => {
+            if (!user) {
+                toastr.error('Please login before trying to join a game');
+                return;
+            }
 
-    canWatch(game) {
-        return !this.props.currentGame && game.allowSpectators;
-    }
+            if (game.needsPassword) {
+                dispatch(joinPasswordGame(game, 'Join'));
+            } else {
+                socket.emit('joingame', game.id);
+            }
+        },
+        [user, socket, dispatch]
+    );
 
-    watchGame(game) {
-        if (!this.props.user) {
-            toastr.error('Please login before trying to watch a game');
-            return;
-        }
+    const canWatch = useCallback(
+        (game) => {
+            return !currentGame && game.allowSpectators;
+        },
+        [currentGame]
+    );
 
-        if (game.needsPassword) {
-            this.props.joinPasswordGame(game, 'Watch');
-        } else {
-            this.props.socket.emit('watchgame', game.id);
-        }
-    }
+    const watchGame = useCallback(
+        (game) => {
+            if (!user) {
+                toastr.error('Please login before trying to watch a game');
+                return;
+            }
 
-    removeGame(game) {
-        this.props.socket.emit('removegame', game.id);
-    }
+            if (game.needsPassword) {
+                dispatch(joinPasswordGame(game, 'Watch'));
+            } else {
+                socket.emit('watchgame', game.id);
+            }
+        },
+        [user, socket, dispatch]
+    );
 
-    canJoin(game) {
-        if (this.props.currentGame || game.started || game.full) {
-            return false;
-        }
+    const removeGame = useCallback(
+        (game) => {
+            socket.emit('removegame', game.id);
+        },
+        [socket]
+    );
 
-        return true;
-    }
+    const canJoin = useCallback(
+        (game) => {
+            if (currentGame || game.started || game.full) {
+                return false;
+            }
 
-    getGames(games) {
+            return true;
+        },
+        [currentGame]
+    );
+
+    const gameList = useMemo(() => {
         let gamesToReturn = [];
 
-        let isAdmin = this.props.user && this.props.user.permissions.canManageGames;
+        let isAdmin = user && user.permissions.canManageGames;
 
         for (const game of games) {
-            if (this.props.gameFilter.showOnlyNewGames && game.started) {
+            if (gameFilter.showOnlyNewGames && game.started) {
                 continue;
             }
 
-            if (!this.props.gameFilter[game.gameType]) {
+            if (!gameFilter[game.gameType]) {
                 continue;
             }
 
@@ -72,54 +92,31 @@ class GameList extends React.Component {
                 <Game
                     key={game.id}
                     game={game}
-                    showJoinButton={this.canJoin(game)}
-                    showWatchButton={this.canWatch(game)}
-                    onJoinGame={this.joinGame.bind(this, game)}
-                    onRemoveGame={this.removeGame.bind(this, game)}
-                    onWatchGame={this.watchGame.bind(this, game)}
+                    showJoinButton={canJoin(game)}
+                    showWatchButton={canWatch(game)}
+                    onJoinGame={() => joinGame(game)}
+                    onRemoveGame={() => removeGame(game)}
+                    onWatchGame={() => watchGame(game)}
                     isAdmin={isAdmin}
                 />
             );
         }
 
         return <div>{gamesToReturn}</div>;
+    }, [user, games, gameFilter, canJoin, canWatch, joinGame, removeGame, watchGame]);
+
+    if (gameList.length === 0) {
+        return (
+            <div className='game-list col-xs-12'>
+                <AlertPanel
+                    type='info'
+                    message='There are no games matching the filters you have selected'
+                />
+            </div>
+        );
     }
 
-    render() {
-        let gameList = this.getGames(this.props.games);
-
-        if (gameList.length === 0) {
-            return (
-                <div className='game-list col-xs-12'>
-                    <AlertPanel
-                        type='info'
-                        message='There are no games matching the filters you have selected'
-                    />
-                </div>
-            );
-        }
-
-        return <div className='game-list col-xs-12'>{gameList}</div>;
-    }
-}
-
-GameList.displayName = 'GameList';
-GameList.propTypes = {
-    currentGame: PropTypes.object,
-    gameFilter: PropTypes.object,
-    games: PropTypes.array,
-    joinPasswordGame: PropTypes.func,
-    showNodes: PropTypes.bool,
-    socket: PropTypes.object,
-    user: PropTypes.object
+    return <div className='game-list col-xs-12'>{gameList}</div>;
 };
 
-function mapStateToProps(state) {
-    return {
-        currentGame: state.lobby.currentGame,
-        socket: state.lobby.socket,
-        user: state.account.user
-    };
-}
-
-export default connect(mapStateToProps, actions)(GameList);
+export default GameList;

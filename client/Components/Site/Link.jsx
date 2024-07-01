@@ -1,42 +1,23 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import React, { useCallback } from 'react';
+import { useDispatch } from 'react-redux';
+import { navigate } from '../../redux/reducers/navigation';
 
-import * as actions from '../../actions';
+const Link = ({ href, className, children }) => {
+    const dispatch = useDispatch();
 
-const mapStateToProps = (state, ownProps) => {
-    return {
-        href: ownProps.href
-    };
+    const onClick = useCallback(
+        (event) => {
+            event.preventDefault();
+            dispatch(navigate(href));
+        },
+        [dispatch, href]
+    );
+
+    return (
+        <a className={className} href={href} onClick={onClick}>
+            {children}
+        </a>
+    );
 };
 
-class Link extends React.Component {
-    constructor() {
-        super();
-
-        this.onClick = this.onClick.bind(this);
-    }
-
-    onClick(event) {
-        event.preventDefault();
-        this.props.navigate(this.props.href);
-    }
-
-    render() {
-        return (
-            <a className={this.props.className} href={this.props.href} onClick={this.onClick}>
-                {this.props.children}
-            </a>
-        );
-    }
-}
-
-Link.displayName = 'Link';
-Link.propTypes = {
-    children: PropTypes.string,
-    className: PropTypes.string,
-    href: PropTypes.string,
-    navigate: PropTypes.func
-};
-
-export default connect(mapStateToProps, actions)(Link);
+export default Link;

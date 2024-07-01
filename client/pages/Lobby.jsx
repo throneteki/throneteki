@@ -1,6 +1,5 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { toastr } from 'react-redux-toastr';
 
 import News from '../Components/News/News';
@@ -13,193 +12,177 @@ import LobbyChat from '../Components/Lobby/LobbyChat';
 import { getMessageWithLinks } from '../util';
 
 import * as actions from '../actions';
+import { createSelector } from '@reduxjs/toolkit';
+import { useGetNewsQuery } from '../redux/middleware/api';
 
-class Lobby extends React.Component {
-    constructor() {
-        super();
+const Lobby = () => {
+    const [message, setMessage] = useState('');
+    const {
+        data: news,
+        isLoading: newsLoading,
+        isError: newsError,
+        isSuccess: newsSuccess
+    } = useGetNewsQuery();
+    const messageRef = useRef();
 
-        this.onChange = this.onChange.bind(this);
-        this.onKeyPress = this.onKeyPress.bind(this);
-        this.onSendClick = this.onSendClick.bind(this);
-        this.onRemoveMessageClick = this.onRemoveMessageClick.bind(this);
+    const getLobbyState = (state) => state.lobby;
 
-        this.state = {
-            message: ''
-        };
-    }
+    // Define a memoized selector to get messages
+    const getMessages = createSelector([getLobbyState], (lobby) => lobby.messages);
+    const getSocket = createSelector([getLobbyState], (lobby) => lobby.socket);
+    const getUsers = createSelector([getLobbyState], (lobby) => lobby.users);
+    const getUser = createSelector([getLobbyState], (lobby) => lobby.user);
+    const getBannerNotice = createSelector([getLobbyState], (lobby) => lobby.notice);
 
-    componentDidMount() {
-        this.props.loadNews({ limit: 3 });
+    const getLobbyError = createSelector([getLobbyState], (lobby) => lobby.lobbyError);
+    const getMotd = createSelector([getLobbyState], (lobby) => lobby.motd);
 
-        this.checkChatError(this.props);
-    }
+    const messages = useSelector(getMessages);
+    const socket = useSelector(getSocket);
+    const users = useSelector(getUsers);
+    const user = useSelector(getUser);
+    const bannerNotice = useSelector(getBannerNotice);
+    const lobbyError = useSelector(getLobbyError);
 
-    componentWillReceiveProps(props) {
-        this.checkChatError(props);
-    }
+    const motd = useSelector(getMotd);
 
-    checkChatError(props) {
-        if (props.lobbyError) {
+    const dispatch = useDispatch();
+
+    const checkChatError = useCallback(() => {
+        if (lobbyError) {
             toastr.error('New users are limited from chatting in the lobby, try again later');
 
             setTimeout(() => {
-                this.props.clearChatStatus();
+                dispatch(actions.clearChatStatus());
             }, 5000);
         }
-    }
+    }, [lobbyError, dispatch]);
 
-    sendMessage() {
-        if (this.state.message === '') {
+    const sendMessage = useCallback(() => {
+        if (message === '') {
             return;
         }
 
-        this.props.socket.emit('lobbychat', this.state.message);
+        socket.emit('lobbychat', message);
 
-        this.setState({ message: '' });
-    }
+        setMessage('');
+    }, [message, socket]);
 
-    onKeyPress(event) {
-        if (event.key === 'Enter') {
-            this.sendMessage();
+    const onKeyPress = useCallback(
+        (event) => {
+            if (event.key === 'Enter') {
+                sendMessage();
 
-            this.refs.message.clear();
+                messageRef.current.clear();
 
+                event.preventDefault();
+            }
+        },
+        [sendMessage]
+    );
+
+    const onSendClick = useCallback(
+        (event) => {
             event.preventDefault();
-        }
+
+            sendMessage();
+        },
+        [sendMessage]
+    );
+
+    const onChange = useCallback((value) => {
+        setMessage(value);
+    }, []);
+
+    const onRemoveMessageClick = useCallback(
+        (messageId) => {
+            dispatch(actions.removeLobbyMessage(messageId));
+        },
+        [dispatch]
+    );
+
+    useEffect(() => {
+        checkChatError();
+    }, [checkChatError, dispatch]);
+
+    useEffect(() => {
+        checkChatError();
+    }, [checkChatError, lobbyError]);
+
+    let isLoggedIn = !!user;
+    let placeholder = isLoggedIn
+        ? 'Enter a message...'
+        : 'You must be logged in to send lobby chat messages';
+    let newsStatus = null;
+    if (newsLoading) {
+        newsStatus = <div>News loading...</div>;
+    } else if (newsError) {
+        newsStatus = <div>Site news failed to load.</div>;
     }
 
-    onSendClick(event) {
-        event.preventDefault();
-
-        this.sendMessage();
-    }
-
-    onChange(value) {
-        this.setState({ message: value });
-    }
-
-    onRemoveMessageClick(messageId) {
-        this.props.removeLobbyMessage(messageId);
-    }
-
-    render() {
-        let isLoggedIn = !!this.props.user;
-        let placeholder = isLoggedIn
-            ? 'Enter a message...'
-            : 'You must be logged in to send lobby chat messages';
-
-        let newsStatus = null;
-
-        if (this.props.newsLoading) {
-            newsStatus = <div>News loading...</div>;
-        } else if (!this.props.newsSuccess) {
-            newsStatus = <div>Site news failed to load.</div>;
-        }
-
-        return (
-            <div className='flex-container'>
-                <SideBar>
-                    <UserList users={this.props.users} />
-                </SideBar>
-                <div className='col-sm-offset-1 col-sm-10'>
-                    <div className='main-header'>
-                        <span className='text-center'>
-                            <h1>A # LCG second edition</h1>
-                        </span>
-                    </div>
-                </div>
-                {this.props.motd && this.props.motd.message && (
-                    <div className='col-sm-offset-1 col-sm-10 banner'>
-                        <AlertPanel type={this.props.motd.motdType}>
-                            {getMessageWithLinks(this.props.motd.message)}
-                        </AlertPanel>
-                    </div>
-                )}
-                {this.props.bannerNotice ? (
-                    <div className='col-sm-offset-1 col-sm-10 announcement'>
-                        <AlertPanel message={this.props.bannerNotice} type='error' />
-                    </div>
-                ) : null}
-                <div className='col-sm-offset-1 col-sm-10'>
-                    <Panel title='Latest site news'>
-                        {newsStatus}
-                        {this.props.newsSuccess && <News news={this.props.news} />}
-                    </Panel>
-                </div>
-                <div className='col-sm-offset-1 col-sm-10 chat-container'>
-                    <Panel title={`Lobby Chat (${this.props.users.length} online)`}>
-                        <div>
-                            <LobbyChat
-                                messages={this.props.messages}
-                                isModerator={
-                                    this.props.user && this.props.user.permissions.canModerateChat
-                                }
-                                onRemoveMessageClick={this.onRemoveMessageClick}
-                            />
-                        </div>
-                    </Panel>
-                    <form
-                        className='form form-hozitontal chat-box-container'
-                        onSubmit={(event) => this.onSendClick(event)}
-                    >
-                        <div className='form-group'>
-                            <div className='chat-box'>
-                                <Typeahead
-                                    disabled={!isLoggedIn}
-                                    ref='message'
-                                    value={this.state.message}
-                                    placeholder={placeholder}
-                                    labelKey={'name'}
-                                    onKeyDown={this.onKeyPress}
-                                    options={this.props.users}
-                                    onInputChange={this.onChange}
-                                    autoFocus
-                                    dropup
-                                    emptyLabel={''}
-                                    minLength={2}
-                                />
-                            </div>
-                        </div>
-                    </form>
+    return (
+        <div className='flex-container'>
+            <SideBar>
+                <UserList users={users} />
+            </SideBar>
+            <div className='col-sm-offset-1 col-sm-10'>
+                <div className='main-header'>
+                    <span className='text-center'>
+                        <h1>A # LCG second edition</h1>
+                    </span>
                 </div>
             </div>
-        );
-    }
-}
-
-Lobby.displayName = 'Lobby';
-Lobby.propTypes = {
-    bannerNotice: PropTypes.string,
-    clearChatStatus: PropTypes.func,
-    fetchNews: PropTypes.func,
-    loadNews: PropTypes.func,
-    loading: PropTypes.bool,
-    lobbyError: PropTypes.string,
-    messages: PropTypes.array,
-    motd: PropTypes.object,
-    news: PropTypes.array,
-    newsLoading: PropTypes.bool,
-    newsSuccess: PropTypes.bool,
-    removeLobbyMessage: PropTypes.func,
-    socket: PropTypes.object,
-    user: PropTypes.object,
-    users: PropTypes.array
+            {motd && motd.message && (
+                <div className='col-sm-offset-1 col-sm-10 banner'>
+                    <AlertPanel type={motd.motdType}>
+                        {getMessageWithLinks(motd.message)}
+                    </AlertPanel>
+                </div>
+            )}
+            {bannerNotice ? (
+                <div className='col-sm-offset-1 col-sm-10 announcement'>
+                    <AlertPanel message={bannerNotice} type='error' />
+                </div>
+            ) : null}
+            <div className='col-sm-offset-1 col-sm-10'>
+                <Panel title='Latest site news'>
+                    {newsStatus}
+                    {newsSuccess && <News news={news} />}
+                </Panel>
+            </div>
+            <div className='col-sm-offset-1 col-sm-10 chat-container'>
+                <Panel title={`Lobby Chat (${users.length} online)`}>
+                    <div>
+                        <LobbyChat
+                            messages={messages}
+                            isModerator={user && user.permissions.canModerateChat}
+                            onRemoveMessageClick={onRemoveMessageClick}
+                        />
+                    </div>
+                </Panel>
+                <form className='form form-hozitontal chat-box-container' onSubmit={onSendClick}>
+                    <div className='form-group'>
+                        <div className='chat-box'>
+                            <Typeahead
+                                disabled={!isLoggedIn}
+                                ref={messageRef}
+                                value={message}
+                                placeholder={placeholder}
+                                labelKey={'name'}
+                                onKeyDown={onKeyPress}
+                                options={users}
+                                onInputChange={onChange}
+                                autoFocus
+                                dropup
+                                emptyLabel={''}
+                                minLength={2}
+                            />
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
 };
 
-function mapStateToProps(state) {
-    return {
-        bannerNotice: state.lobby.notice,
-        loading: state.api.loading,
-        lobbyError: state.lobby.lobbyError,
-        messages: state.lobby.messages,
-        motd: state.lobby.motd,
-        news: state.news.news,
-        newsLoading: state.api.REQUEST_NEWS && state.api.REQUEST_NEWS.loading,
-        newsSuccess: state.api.REQUEST_NEWS && state.api.REQUEST_NEWS.success,
-        socket: state.lobby.socket,
-        user: state.account.user,
-        users: state.lobby.users
-    };
-}
-
-export default connect(mapStateToProps, actions, null)(Lobby);
+export default Lobby;

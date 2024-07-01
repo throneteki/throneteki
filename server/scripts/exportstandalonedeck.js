@@ -11,11 +11,12 @@ class ExportStandaloneDecks {
         let configService = ServiceFactory.configService();
         this.db = monk(configService.getValue('dbPath'));
         this.cardService = new CardService(this.db);
-        this.deckService = new DeckService(this.db);
+        this.deckService = new DeckService(this.db, this.cardService);
     }
 
     async export(name) {
         try {
+            await this.deckService.init();
             this.cards = await this.cardService.getAllCards();
 
             const deck = await this.deckService.getByName(name);

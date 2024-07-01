@@ -22,8 +22,8 @@ class Lobby {
         this.games = {};
         this.configService = options.configService || ServiceFactory.configService();
         this.messageService = options.messageService || ServiceFactory.messageService(options.db);
-        this.deckService = options.deckService || new DeckService(options.db);
         this.cardService = options.cardService || new CardService(options.db);
+        this.deckService = options.deckService || new DeckService(options.db, this.cardService);
         this.eventService = options.eventService || new EventService(options.db);
         this.userService =
             options.userService || ServiceFactory.userService(options.db, this.configService);
@@ -47,6 +47,11 @@ class Lobby {
         });
 
         setInterval(() => this.clearStalePendingGames(), 60 * 1000);
+    }
+
+    async init() {
+        await this.deckService.init();
+        await this.eventService.init();
     }
 
     // External methods
@@ -131,9 +136,9 @@ class Lobby {
     }
 
     handshake(ioSocket, next) {
-        if (ioSocket.handshake.query.token && ioSocket.handshake.query.token !== 'undefined') {
+        if (ioSocket.handshake.auth.token && ioSocket.handshake.auth.token !== 'undefined') {
             jwt.verify(
-                ioSocket.handshake.query.token,
+                ioSocket.handshake.auth.token,
                 this.configService.getValue('secret'),
                 (err, user) => {
                     if (err) {

@@ -1,102 +1,75 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import DeckSummary from './DeckSummary';
 import DeckEditor from './DeckEditor';
 import AlertPanel from '../Site/AlertPanel';
 import Panel from '../Site/Panel';
-import * as actions from '../../actions';
+import { useAddDeckMutation } from '../../redux/middleware/api';
+import { navigate } from '../../redux/reducers/navigation';
 
-export class AddDeck extends React.Component {
-    constructor() {
-        super();
+const AddDeck = () => {
+    const dispatch = useDispatch();
+    const [deck, setDeck] = useState({
+        status: {},
+        name: 'New Deck',
+        drawCards: [],
+        plotCards: []
+    });
+    const [error, setError] = useState(undefined);
+    const [success, setSuccess] = useState(undefined);
+    const [currentRestrictedList, setCurrentRestrictedList] = useState(undefined);
 
-        this.state = {
-            error: '',
-            faction: {},
-            deck: undefined
-        };
+    const [addDeck, { isLoading: isAddLoading }] = useAddDeckMutation();
 
-        this.onAddDeck = this.onAddDeck.bind(this);
-        this.onDeckUpdated = this.onDeckUpdated.bind(this);
-    }
+    const onDeckUpdated = (deck) => {
+        setDeck(deck);
+    };
 
-    componentWillMount() {
-        this.props.addDeck();
-    }
+    return (
+        <div>
+            <div className='col-sm-6'>
+                <Panel title='Deck Editor'>
+                    {error && <AlertPanel type='error' message={error} />}
+                    {success && <AlertPanel type='success' message={success} />}
+                    <DeckEditor
+                        onDeckSave={async (deck) => {
+                            try {
+                                await addDeck(deck).unwrap();
+                                setSuccess('Deck added successfully');
 
-    componentWillUpdate(props) {
-        if (props.deckSaved) {
-            this.props.navigate('/decks');
-
-            return;
-        }
-    }
-
-    onAddDeck(deck) {
-        this.props.saveDeck(deck);
-    }
-
-    onDeckUpdated(deck) {
-        this.setState({ deck: deck });
-    }
-
-    render() {
-        let content;
-
-        if (this.props.loading) {
-            content = <div>Loading decks from the server...</div>;
-        } else if (this.props.apiError) {
-            content = <AlertPanel type='error' message={this.props.apiError} />;
-        } else {
-            content = (
-                <div>
-                    <div className='col-sm-6'>
-                        <Panel title='Deck Editor'>
-                            <DeckEditor
-                                onDeckSave={this.onAddDeck}
-                                onDeckUpdated={this.onDeckUpdated}
-                                deck={this.state.deck}
-                            />
-                        </Panel>
-                    </div>
-                    <div className='col-sm-6'>
-                        <Panel title={this.state.deck ? this.state.deck.name : 'New Deck'}>
-                            <DeckSummary cards={this.props.cards} deck={this.state.deck} />
-                        </Panel>
-                    </div>
-                </div>
-            );
-        }
-
-        return content;
-    }
-}
-
-AddDeck.displayName = 'AddDeck';
-AddDeck.propTypes = {
-    addDeck: PropTypes.func,
-    agendas: PropTypes.object,
-    apiError: PropTypes.string,
-    cards: PropTypes.object,
-    deckSaved: PropTypes.bool,
-    factions: PropTypes.object,
-    loading: PropTypes.bool,
-    navigate: PropTypes.func,
-    saveDeck: PropTypes.func
+                                setTimeout(() => {
+                                    setSuccess(undefined);
+                                    dispatch(navigate('/decks'));
+                                }, 5000);
+                            } catch (err) {
+                                setError(
+                                    err.message ||
+                                        'An error occured adding the deck. Please try again later.'
+                                );
+                            }
+                        }}
+                        onDeckUpdated={onDeckUpdated}
+                        onRestrictedListChange={(restrictedList) =>
+                            setCurrentRestrictedList(restrictedList)
+                        }
+                        deck={deck}
+                        isSaveLoading={isAddLoading}
+                    />
+                </Panel>
+            </div>
+            <div className='col-sm-6'>
+                <Panel title={deck ? deck.name : 'New Deck'}>
+                    {currentRestrictedList && deck ? (
+                        <DeckSummary currentRestrictedList={currentRestrictedList} deck={deck} />
+                    ) : (
+                        <div>Please wait...</div>
+                    )}
+                </Panel>
+            </div>
+        </div>
+    );
 };
 
-function mapStateToProps(state) {
-    return {
-        agendas: state.cards.agendas,
-        apiError: state.api.message,
-        cards: state.cards.cards,
-        deckSaved: state.cards.deckSaved,
-        factions: state.cards.factions,
-        loading: state.api.loading,
-        socket: state.lobby.socket
-    };
-}
+AddDeck.displayName = 'AddDeck';
 
-export default connect(mapStateToProps, actions)(AddDeck);
+export default AddDeck;

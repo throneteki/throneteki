@@ -1,6 +1,6 @@
 import DeckValidator from './DeckValidator.js';
-export {formatDeckAsFullCards} from './formatDeckAsFullCards.js';
-export {formatDeckAsShortCards} from './formatDeckAsShortCards.js';
+export { formatDeckAsFullCards } from './formatDeckAsFullCards.js';
+export { formatDeckAsShortCards } from './formatDeckAsShortCards.js';
 
 export const validateDeck = (deck, options) => {
     options = Object.assign({ includeExtendedStatus: true }, options);
@@ -8,7 +8,7 @@ export const validateDeck = (deck, options) => {
     let validator = new DeckValidator(options.packs, options.restrictedLists, options.customRules);
     let result = validator.validateDeck(deck);
 
-    if(!options.includeExtendedStatus) {
+    if (!options.includeExtendedStatus) {
         delete result.extendedStatus;
     }
 

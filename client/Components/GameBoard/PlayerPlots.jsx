@@ -1,109 +1,112 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useCallback } from 'react';
 import classNames from 'classnames';
 
 import CardPile from './CardPile';
 import Droppable from './Droppable';
 
-class PlayerPlots extends React.Component {
-    renderPlotPiles() {
+const PlayerPlots = ({
+    plotDiscard,
+    onCardClick,
+    onDragDrop,
+    onMenuItemClick,
+    onCardMouseOut,
+    onCardMouseOver,
+    cardSize,
+    isMe,
+    activePlot,
+    plotDeck,
+    selectedPlot,
+    mustShowPlotSelection,
+    direction
+}) => {
+    const renderPlotPiles = useCallback(() => {
         let revealedPlots = (
             <CardPile
                 key='activeplot'
-                cards={this.props.plotDiscard}
+                cards={plotDiscard}
                 className='plot'
-                onCardClick={this.props.onCardClick}
-                onDragDrop={this.props.onDragDrop}
-                onMenuItemClick={this.props.onMenuItemClick}
-                onMouseOut={this.props.onCardMouseOut}
-                onMouseOver={this.props.onCardMouseOver}
+                onCardClick={onCardClick}
+                onDragDrop={onDragDrop}
+                onMenuItemClick={onMenuItemClick}
+                onMouseOut={onCardMouseOut}
+                onMouseOver={onCardMouseOver}
                 orientation='horizontal'
-                size={this.props.cardSize}
+                size={cardSize}
                 source='revealed plots'
-                popupLocation={this.props.isMe ? 'bottom' : 'top'}
+                popupLocation={isMe ? 'bottom' : 'top'}
                 title='Used Plots'
-                topCard={this.props.activePlot}
+                topCard={activePlot}
             />
         );
 
-        let plotDeck = (
+        let plotDeckElement = (
             <CardPile
                 key='plots'
-                cards={this.props.plotDeck}
-                className={this.props.selectedPlot ? 'plot plot-selected' : 'plot'}
-                closeOnClick={this.props.isMe}
-                hiddenTopCard={!this.props.mustShowPlotSelection}
-                disablePopup={!this.props.isMe}
-                onDragDrop={this.props.onDragDrop}
-                onCardClick={this.props.onCardClick}
-                onMouseOut={this.props.onCardMouseOut}
-                onMouseOver={this.props.onCardMouseOver}
+                cards={plotDeck}
+                className={selectedPlot ? 'plot plot-selected' : 'plot'}
+                closeOnClick={isMe}
+                hiddenTopCard={!mustShowPlotSelection}
+                disablePopup={!isMe}
+                onDragDrop={onDragDrop}
+                onCardClick={onCardClick}
+                onMouseOut={onCardMouseOut}
+                onMouseOver={onCardMouseOver}
                 orientation='horizontal'
                 source='plot deck'
                 title='Plots'
-                popupLocation={this.props.isMe ? 'bottom' : 'top'}
+                popupLocation={isMe ? 'bottom' : 'top'}
                 topCard={
-                    this.props.mustShowPlotSelection && !!this.props.selectedPlot
-                        ? this.props.selectedPlot
+                    mustShowPlotSelection && !!selectedPlot
+                        ? selectedPlot
                         : { facedown: true, kneeled: true }
                 }
-                size={this.props.cardSize}
+                size={cardSize}
             />
         );
 
         let piles = [
-            this.props.isMe ? (
-                <Droppable
-                    key='usedplots'
-                    onDragDrop={this.props.onDragDrop}
-                    source='revealed plots'
-                >
+            isMe ? (
+                <Droppable key='usedplots' onDragDrop={onDragDrop} source='revealed plots'>
                     {revealedPlots}
                 </Droppable>
             ) : (
                 revealedPlots
             ),
-            this.props.isMe ? (
-                <Droppable key='plotdeck' onDragDrop={this.props.onDragDrop} source='plot deck'>
-                    {plotDeck}
+            isMe ? (
+                <Droppable key='plotdeck' onDragDrop={onDragDrop} source='plot deck'>
+                    {plotDeckElement}
                 </Droppable>
             ) : (
-                plotDeck
+                plotDeckElement
             )
         ];
 
-        if (this.props.direction === 'reverse') {
+        if (direction === 'reverse') {
             piles.reverse();
         }
 
         return piles;
-    }
+    }, [
+        plotDiscard,
+        onCardClick,
+        onDragDrop,
+        onMenuItemClick,
+        onCardMouseOut,
+        onCardMouseOver,
+        cardSize,
+        isMe,
+        activePlot,
+        plotDeck,
+        selectedPlot,
+        mustShowPlotSelection,
+        direction
+    ]);
 
-    render() {
-        let className = classNames('plot-group', {
-            'our-side': this.props.direction === 'default'
-        });
+    let className = classNames('plot-group', {
+        'our-side': direction === 'default'
+    });
 
-        return <div className={className}>{this.renderPlotPiles()}</div>;
-    }
-}
-
-PlayerPlots.displayName = 'PlayerPlots';
-PlayerPlots.propTypes = {
-    activePlot: PropTypes.object,
-    agenda: PropTypes.object,
-    cardSize: PropTypes.string,
-    direction: PropTypes.oneOf(['default', 'reverse']),
-    isMe: PropTypes.bool,
-    mustShowPlotSelection: PropTypes.bool,
-    onCardClick: PropTypes.func,
-    onCardMouseOut: PropTypes.func,
-    onCardMouseOver: PropTypes.func,
-    onDragDrop: PropTypes.func,
-    onMenuItemClick: PropTypes.func,
-    plotDeck: PropTypes.array,
-    plotDiscard: PropTypes.array,
-    selectedPlot: PropTypes.object
+    return <div className={className}>{renderPlotPiles()}</div>;
 };
 
 export default PlayerPlots;

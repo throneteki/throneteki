@@ -1,57 +1,36 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { CSSTransition } from 'react-transition-group';
+import React, { useState, useCallback } from 'react';
 
-class SideBar extends React.Component {
-    constructor(props) {
-        super(props);
+const SideBar = ({ children }) => {
+    const [expanded, setExpanded] = useState(false);
 
-        this.state = {
-            expanded: false
-        };
+    const onBurgerClick = useCallback(
+        (event) => {
+            event.preventDefault();
+            setExpanded(!expanded);
+        },
+        [expanded]
+    );
 
-        this.onBurgerClick = this.onBurgerClick.bind(this);
-    }
-
-    onBurgerClick() {
-        this.setState({ expanded: !this.state.expanded });
-    }
-
-    render() {
-        let component = this.state.expanded ? (
-            <div className='sidebar expanded' key='sidebar-expanded'>
-                <div>
-                    <a href='#' className='btn pull-right' onClick={this.onBurgerClick}>
-                        <span className='glyphicon glyphicon-remove' />
-                    </a>
-                    {this.props.children}
-                </div>
+    let component = expanded ? (
+        <div className='sidebar expanded' key='sidebar-expanded'>
+            <div>
+                <a href='#' className='btn pull-right' onClick={onBurgerClick}>
+                    <span className='glyphicon glyphicon-remove' />
+                </a>
+                {children}
             </div>
-        ) : (
-            <div className='sidebar collapsed' key='sidebar'>
-                <div>
-                    <a href='#' className='btn' onClick={this.onBurgerClick}>
-                        <span className='glyphicon glyphicon-menu-hamburger' />
-                    </a>
-                </div>
+        </div>
+    ) : (
+        <div className='sidebar collapsed' key='sidebar'>
+            <div>
+                <a href='#' className='btn' onClick={onBurgerClick}>
+                    <span className='glyphicon glyphicon-menu-hamburger' />
+                </a>
             </div>
-        );
+        </div>
+    );
 
-        return (
-            <CSSTransition
-                transitionName='sidebar'
-                transitionEnterTimeout={500}
-                transitionLeaveTimeout={500}
-            >
-                {component}
-            </CSSTransition>
-        );
-    }
-}
-
-SideBar.displayName = 'SideBar';
-SideBar.propTypes = {
-    children: PropTypes.node
+    return component;
 };
 
 export default SideBar;

@@ -1,138 +1,103 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 
 import DeckSummary from './DeckSummary';
 import DeckEditor from './DeckEditor';
 import DraftDeckEditor from './DraftDeckEditor';
 import AlertPanel from '../Site/AlertPanel';
 import Panel from '../Site/Panel';
-import * as actions from '../../actions';
+import { useGetDeckQuery, useSaveDeckMutation } from '../../redux/middleware/api';
+import { navigate } from '../../redux/reducers/navigation';
 
-class EditDeck extends React.Component {
-    constructor(props) {
-        super(props);
+const EditDeck = ({ deckId }) => {
+    const dispatch = useDispatch();
+    const [currentRestrictedList, setCurrentRestrictedList] = useState(undefined);
+    const [deck, setDeck] = useState(undefined);
+    const [error, setError] = useState(undefined);
+    const [success, setSuccess] = useState(undefined);
 
-        this.state = {};
+    const { data, isLoading, error: deckError } = useGetDeckQuery(deckId);
+    const [saveDeck, { isLoading: isSaveLoading }] = useSaveDeckMutation();
 
-        this.onEditDeck = this.onEditDeck.bind(this);
-        this.onDeckUpdated = this.onDeckUpdated.bind(this);
+    const onEditDeck = useCallback(
+        async (deck) => {
+            try {
+                await saveDeck(deck).unwrap();
+                setSuccess('Deck saved successfully');
 
-        if (props.deck) {
-            this.state.deck = props.deck;
+                setTimeout(() => {
+                    setSuccess(undefined);
+                    dispatch(navigate('/decks'));
+                }, 5000);
+            } catch (err) {
+                setError(
+                    err.message || 'An error occured saving the deck. Please try again later.'
+                );
+            }
+        },
+        [dispatch, saveDeck]
+    );
+
+    const onDeckUpdated = useCallback((deck) => {
+        setDeck(deck);
+    }, []);
+
+    useEffect(() => {
+        if (data) {
+            setDeck(data);
         }
-    }
+    }, [data]);
 
-    componentDidMount() {
-        if (this.props.deckId) {
-            return this.props.loadDeck(this.props.deckId);
+    useEffect(() => {
+        if (deckError) {
+            setError(deckError.data.message);
         }
-    }
+    }, [deckError]);
 
-    componentWillReceiveProps(props) {
-        this.setState({ deck: props.deck });
-    }
+    let content;
 
-    componentWillUpdate(props) {
-        if (props.deckSaved) {
-            this.props.navigate('/decks');
-
-            return;
-        }
-    }
-
-    onEditDeck(deck) {
-        this.props.saveDeck(deck);
-    }
-
-    onDeckUpdated(deck) {
-        this.setState({ deck: deck });
-    }
-
-    render() {
-        let content;
-
-        if (this.props.apiLoading || !this.props.cards) {
-            content = <div>Loading deck from the server...</div>;
-        } else if (this.props.apiSuccess === false) {
-            content = <AlertPanel type='error' message={this.props.apiMessage} />;
-        } else if (!this.props.deck) {
-            content = <AlertPanel message='The specified deck was not found' type='error' />;
-        } else if (this.props.deck.format === 'draft') {
-            content = (
-                <Panel title='Deck Editor'>
-                    <DraftDeckEditor
-                        deck={this.state.deck}
-                        onDeckSave={this.onEditDeck}
-                        onDeckUpdated={this.onDeckUpdated}
-                    />
-                </Panel>
-            );
-        } else {
-            content = (
-                <div>
-                    <div className='col-sm-6'>
-                        <Panel title='Deck Editor'>
-                            <DeckEditor
-                                onDeckSave={this.onEditDeck}
-                                deck={this.state.deck}
-                                onDeckUpdated={this.onDeckUpdated}
-                            />
-                        </Panel>
-                    </div>
-                    <div className='col-sm-6'>
-                        <Panel title={this.props.deck.name}>
-                            <DeckSummary
-                                cards={this.props.cards}
-                                deck={this.state.deck}
-                                currentRestrictedList={this.props.currentRestrictedList}
-                            />
-                        </Panel>
-                    </div>
+    if (isLoading || !data) {
+        content = <div>Loading deck from the server...</div>;
+    } else if (!deck) {
+        content = <AlertPanel message='The specified deck was not found' type='error' />;
+    } else if (deck.format === 'draft') {
+        content = (
+            <Panel title='Deck Editor'>
+                <DraftDeckEditor
+                    deck={deck}
+                    onDeckSave={onEditDeck}
+                    onDeckUpdated={onDeckUpdated}
+                />
+            </Panel>
+        );
+    } else {
+        content = (
+            <div>
+                <div className='col-sm-6'>
+                    <Panel title='Deck Editor'>
+                        {error && <AlertPanel type='error' message={error} />}
+                        {success && <AlertPanel type='success' message={success} />}
+                        <DeckEditor
+                            onDeckSave={onEditDeck}
+                            isSaveLoading={isSaveLoading}
+                            deck={deck}
+                            onDeckUpdated={onDeckUpdated}
+                            onRestrictedListChange={(restrictedList) =>
+                                setCurrentRestrictedList(restrictedList)
+                            }
+                        />
+                    </Panel>
                 </div>
-            );
-        }
-
-        return content;
+                <div className='col-sm-6'>
+                    <Panel title={deck.name}>
+                        <DeckSummary deck={deck} currentRestrictedList={currentRestrictedList} />
+                    </Panel>
+                </div>
+            </div>
+        );
     }
-}
 
-EditDeck.displayName = 'EditDeck';
-EditDeck.propTypes = {
-    agendas: PropTypes.object,
-    apiLoading: PropTypes.bool,
-    apiMessage: PropTypes.string,
-    apiSuccess: PropTypes.bool,
-    banners: PropTypes.array,
-    cards: PropTypes.object,
-    currentRestrictedList: PropTypes.object,
-    deck: PropTypes.object,
-    deckId: PropTypes.string,
-    deckSaved: PropTypes.bool,
-    factions: PropTypes.object,
-    loadDeck: PropTypes.func,
-    navigate: PropTypes.func,
-    packs: PropTypes.array,
-    saveDeck: PropTypes.func,
-    setUrl: PropTypes.func
+    return content;
 };
 
-function mapStateToProps(state) {
-    return {
-        apiLoading: state.api.REQUEST_DECK ? state.api.REQUEST_DECK.loading : undefined,
-        apiMessage: state.api.REQUEST_DECK ? state.api.REQUEST_DECK.message : undefined,
-        apiSuccess: state.api.REQUEST_DECK ? state.api.REQUEST_DECK.success : undefined,
-        agendas: state.cards.agendas,
-        apiError: state.api.message,
-        banners: state.cards.banners,
-        cards: state.cards.cards,
-        currentRestrictedList: state.cards.currentRestrictedList,
-        deck: state.cards.selectedDeck,
-        deckSaved: state.cards.deckSaved,
-        factions: state.cards.factions,
-        loading: state.api.loading,
-        socket: state.lobby.socket
-    };
-}
-
-export default connect(mapStateToProps, actions)(EditDeck);
+export default EditDeck;

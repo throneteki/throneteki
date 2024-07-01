@@ -17,7 +17,7 @@ function extractEventFromRequest(req) {
         useEventGameOptions,
         validSpectators,
         lockDecks
-    } = req.body.event;
+    } = req.body;
     return {
         id: req.params.id,
         banned,
@@ -36,15 +36,17 @@ function extractEventFromRequest(req) {
     };
 }
 
-export const init = function (server, options) {
+export const init = async function (server, options) {
     const eventService = ServiceFactory.eventService(options.db);
+
+    await eventService.init();
 
     server.get(
         '/api/events',
         wrapAsync(async function (req, res) {
             const events = await eventService.getEvents();
 
-            return res.send({ success: true, events });
+            return res.send({ success: true, data: events });
         })
     );
 
@@ -61,7 +63,7 @@ export const init = function (server, options) {
             eventService
                 .create(event)
                 .then((e) => {
-                    res.send({ success: true, event: e });
+                    res.send({ success: true, data: e });
                 })
                 .catch(() => {
                     return res.send({
@@ -69,6 +71,32 @@ export const init = function (server, options) {
                         message: 'An error occured adding the event'
                     });
                 });
+        })
+    );
+
+    server.get(
+        '/api/events/:id',
+        passport.authenticate('jwt', { session: false }),
+        wrapAsync(async function (req, res) {
+            if (!req.user.permissions || !req.user.permissions.canManageEvents) {
+                return res.status(403).send({ message: 'Forbidden' });
+            }
+            const eventId = req.params.id;
+
+            try {
+                const event = await eventService.getEventById(eventId);
+
+                if (!event) {
+                    return res.status(404).send({ message: 'Event not found' });
+                }
+
+                return res.send({ success: true, data: event });
+            } catch (err) {
+                return res.send({
+                    success: false,
+                    message: 'An error occured fetching the event'
+                });
+            }
         })
     );
 
@@ -85,7 +113,7 @@ export const init = function (server, options) {
             eventService
                 .update(event)
                 .then((e) => {
-                    res.send({ success: true, event: e });
+                    res.send({ success: true, data: e });
                 })
                 .catch(() => {
                     return res.send({

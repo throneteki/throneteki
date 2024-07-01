@@ -1,10 +1,9 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 import Avatar from '../Site/Avatar';
 
-function GamePlayer(props) {
+const GamePlayer = (props) => {
     let classes = classNames('game-player-row', {
         'first-player': props.firstPlayer,
         'other-player': !props.firstPlayer
@@ -73,12 +72,6 @@ function GamePlayer(props) {
             <div>{playerAndFactionAgenda}</div>
         </div>
     );
-}
-
-GamePlayer.displayName = 'GamePlayer';
-GamePlayer.propTypes = {
-    firstPlayer: PropTypes.bool,
-    player: PropTypes.object
 };
 
 export default GamePlayer;
