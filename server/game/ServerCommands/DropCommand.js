@@ -33,7 +33,7 @@ class DropCommand {
             this.player.agenda.addChildCard(this.card, 'underneath');
             this.card.facedown = 'true';
         } else {
-            this.player.moveCard(this.card, this.targetLocation, { facedown: true });
+            this.player.moveCard(this.card, this.targetLocation);
         }
 
         this.addGameMessage();

@@ -1562,7 +1562,7 @@ class Game extends EventEmitter {
             }
 
             playerSummaries[player.name] = {
-                agendas: player.agendas.map((agenda) => agenda.code),
+                agendas: player.agendas?.map((agenda) => agenda.code),
                 deck: deck,
                 faction: player.faction.code,
                 id: player.id,
