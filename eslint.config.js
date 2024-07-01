@@ -25,7 +25,9 @@ export default [
             ...reactRecommended.languageOptions,
             globals: {
                 ...globals.browser,
-                ...globals.node
+                ...globals.node,
+                ...globals.jasmine,
+                integration: 'readable'
             },
             ecmaVersion: 'latest',
             sourceType: 'module',

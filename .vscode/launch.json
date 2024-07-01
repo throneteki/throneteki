@@ -2,14 +2,23 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch (Lobby Server)",
+            "name": "Launch (Client)",
+            "type": "msedge",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "url": "http://localhost:4000",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Launch (Lobby)",
             "type": "node",
             "request": "launch",
             "program": "${workspaceRoot}/index.js",
             "stopOnEntry": false,
             "args": [],
             "cwd": "${workspaceRoot}",
-            "preLaunchTask": null,
             "runtimeExecutable": null,
             "runtimeArgs": [
                 "--nolazy"
@@ -21,14 +30,13 @@
             "sourceMaps": false
         },
         {
-            "name": "Launch (Game Server)",
+            "name": "Launch (Game)",
             "type": "node",
             "request": "launch",
             "program": "${workspaceRoot}/server/gamenode/index.js",
             "stopOnEntry": false,
             "args": [],
             "cwd": "${workspaceRoot}",
-            "preLaunchTask": null,
             "runtimeExecutable": null,
             "runtimeArgs": [
                 "--nolazy"
@@ -38,12 +46,6 @@
             },
             "console": "internalConsole",
             "sourceMaps": false
-        },
-        {
-            "type": "node",
-            "request": "attach",
-            "name": "Attach",
-            "port": 9229
         },
         {
             "type": "node",
