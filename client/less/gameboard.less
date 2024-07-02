@@ -410,13 +410,12 @@
 .agendas {
     position: relative;
     display: flex;
+    > .agenda {
+        > .card-wrapper {
+            position: absolute;
+            margin: 6px;
+        }
 
-    > .card-wrapper {
-        position: absolute;
-        margin: 6px;
-    }
-
-    .agenda {
         .popup {
             .inner {
                 .calculate-tiled-card-prop(width, 5, width);
