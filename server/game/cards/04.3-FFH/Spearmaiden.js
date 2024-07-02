@@ -14,14 +14,8 @@ class Spearmaiden extends DrawCard {
                     card.controller === this.game.currentChallenge.defendingPlayer &&
                     card.getType() === 'character'
             },
+            message: '{player} chooses {target} for {source}',
             handler: (context) => {
-                this.game.addMessage(
-                    '{0} chooses {1} as the target for {2}',
-                    this.controller,
-                    context.target,
-                    this
-                );
-
                 this.game.once('afterChallenge', (event) =>
                     this.resolveIfWinBy5(event.challenge, context)
                 );
@@ -43,7 +37,8 @@ class Spearmaiden extends DrawCard {
 
         this.untilEndOfChallenge((ability) => ({
             targetController: 'opponent',
-            effect: ability.effects.mustChooseAsClaim((card) => card === context.target)
+            match: context.target,
+            effect: ability.effects.mustChooseAsClaim()
         }));
     }
 }

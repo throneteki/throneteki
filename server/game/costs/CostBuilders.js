@@ -2,6 +2,7 @@ import CostBuilder from './CostBuilder.js';
 import DiscardDuplicateCost from './DiscardDuplicateCost.js';
 import DiscardFromHandCost from './DiscardFromHandCost.js';
 import DiscardFromShadowsCost from './DiscardFromShadowsCost.js';
+import DiscardFromPlayCost from './DiscardFromPlayCost.js';
 import DiscardPowerCost from './DiscardPowerCost.js';
 import DiscardTokenCost from './DiscardTokenCost.js';
 import KillCost from './KillCost.js';
@@ -30,6 +31,10 @@ const CostBuilders = {
     discardFromShadows: new CostBuilder(new DiscardFromShadowsCost(), {
         select: 'Select card to discard from shadows',
         selectMultiple: (number) => `Select ${number} cards to discard from shadows`
+    }),
+    discardFromPlay: new CostBuilder(new DiscardFromPlayCost(), {
+        select: 'Select card to discard',
+        selectMultiple: (number) => `Select ${number} cards to discard`
     }),
     discardPower: function (amount = 1) {
         return new CostBuilder(new DiscardPowerCost(amount), {

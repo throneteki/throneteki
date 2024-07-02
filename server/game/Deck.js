@@ -24,12 +24,14 @@ class Deck {
         return new DrawCard(player, { type: 'faction' });
     }
 
-    createAgendaCard(player) {
-        if (this.data.agenda) {
-            return this.createCardForType(AgendaCard, player, this.data.agenda);
+    createAgendaCards(player) {
+        if (!this.data.agenda) {
+            return;
         }
 
-        return;
+        // Conditionally collect all possible additional agendas
+        const agendas = [this.data.agenda, ...(this.data.bannerCards ? this.data.bannerCards : [])];
+        return agendas.map((agenda) => this.createCardForType(AgendaCard, player, agenda));
     }
 
     isPlotCard(cardData) {
@@ -67,19 +69,12 @@ class Deck {
 
         result.allCards = [result.faction].concat(result.drawCards).concat(result.plotCards);
 
-        result.agenda = this.createAgendaCard(player);
-        if (result.agenda) {
-            result.agenda.moveTo('agenda');
-            result.allCards.push(result.agenda);
-        }
-
-        result.bannerCards = (this.data.bannerCards || []).map((card) =>
-            this.createCardForType(AgendaCard, player, card)
-        );
-
-        for (let card of result.bannerCards) {
-            card.moveTo('agenda');
-            result.allCards.push(card);
+        result.agendas = this.createAgendaCards(player);
+        if (result.agendas) {
+            for (const agenda of result.agendas) {
+                agenda.moveTo('agenda');
+                result.allCards.push(agenda);
+            }
         }
 
         return result;

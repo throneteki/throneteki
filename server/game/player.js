@@ -40,10 +40,6 @@ class Player extends Spectator {
         this.outOfGamePile = [];
         this.shadows = [];
 
-        // Agenda specific piles
-        this.bannerCards = [];
-        this.conclavePile = [];
-
         this.faction = new DrawCard(this, {});
 
         this.owner = owner;
@@ -183,6 +179,13 @@ class Player extends Spectator {
 
     getFaction() {
         return this.faction.getPrintedFaction();
+    }
+
+    /**
+     * The primary agenda for this player
+     */
+    get agenda() {
+        return this.agendas && this.agendas.length > 0 ? this.agendas[0] : undefined;
     }
 
     getNumberOfUsedPlots() {
@@ -454,17 +457,16 @@ class Player extends Spectator {
         var deck = new Deck(this.deck);
         var preparedDeck = deck.prepare(this);
         this.plotDeck = preparedDeck.plotCards;
-        this.agenda = preparedDeck.agenda;
+        this.agendas = preparedDeck.agendas;
         this.faction = preparedDeck.faction;
         this.drawDeck = preparedDeck.drawCards;
-        this.bannerCards = preparedDeck.bannerCards;
         this.preparedDeck = preparedDeck;
 
         this.shuffleDrawDeck();
     }
 
     initialise() {
-        this.createFactionAndAgenda();
+        this.createFactionAndAgendas();
 
         this.gold = 0;
         this.readyToStart = false;
@@ -473,10 +475,10 @@ class Player extends Spectator {
         this.activePlot = undefined;
     }
 
-    createFactionAndAgenda() {
+    createFactionAndAgendas() {
         let deck = new Deck(this.deck);
         this.faction = deck.createFactionCard(this);
-        this.agenda = deck.createAgendaCard(this);
+        this.agendas = deck.createAgendaCards(this);
     }
 
     hasFlag(flagName) {
@@ -929,9 +931,8 @@ class Player extends Spectator {
                 return this.outOfGamePile;
             case 'shadows':
                 return this.shadows;
-            // Agenda specific piles
-            case 'conclave':
-                return this.conclavePile;
+            case 'agenda':
+                return this.agenda.childCards;
         }
     }
 
@@ -967,9 +968,8 @@ class Player extends Spectator {
             case 'shadows':
                 this.shadows = targetList;
                 break;
-            // Agenda specific piles
-            case 'conclave':
-                this.conclavePile = targetList;
+            case 'agenda':
+                this.agenda.childCards = targetList;
         }
     }
 
@@ -1438,11 +1438,11 @@ class Player extends Spectator {
 
         let state = {
             activePlot: this.activePlot ? this.activePlot.getSummary(activePlayer) : undefined,
-            agenda: this.agenda ? this.agenda.getSummary(activePlayer) : undefined,
+            agendas: this.agendas
+                ? this.agendas.map((agenda) => agenda.getSummary(activePlayer))
+                : undefined,
             cardPiles: {
-                bannerCards: this.getSummaryForCardList(this.bannerCards, activePlayer),
                 cardsInPlay: this.getSummaryForCardList(this.cardsInPlay, activePlayer),
-                conclavePile: this.getSummaryForCardList(this.conclavePile, activePlayer),
                 deadPile: this.getSummaryForCardList(this.deadPile, activePlayer).reverse(),
                 discardPile: this.getSummaryForCardList(fullDiscardPile, activePlayer).reverse(),
                 drawDeck: this.getSummaryForCardList(this.drawDeck, activePlayer),

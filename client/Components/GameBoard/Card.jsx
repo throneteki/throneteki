@@ -73,12 +73,6 @@ class InnerCard extends React.Component {
     }
 
     isAllowedMenuSource() {
-        // Explicitly disable menus on agendas when they're selectable during a
-        // card select prompt.
-        if (this.props.source === 'agenda' && this.props.card.selectable) {
-            return false;
-        }
-
         return (
             this.props.source === 'play area' ||
             this.props.source === 'agenda' ||
@@ -90,11 +84,7 @@ class InnerCard extends React.Component {
         event.preventDefault();
         event.stopPropagation();
 
-        if (
-            this.isAllowedMenuSource() &&
-            this.props.card.menu &&
-            this.props.card.menu.length !== 0
-        ) {
+        if (this.showMenu()) {
             this.setState({ showMenu: !this.state.showMenu });
 
             return;
@@ -237,7 +227,7 @@ class InnerCard extends React.Component {
         // are being placed underneath the current card. In the future there may
         // be other types of cards in this array and it should be filtered.
         let underneathCards = this.props.card.childCards;
-        if (!underneathCards || underneathCards.length === 0) {
+        if (!underneathCards || underneathCards.length === 0 || this.props.card.type === 'agenda') {
             return;
         }
 
@@ -279,15 +269,19 @@ class InnerCard extends React.Component {
     }
 
     showMenu() {
-        if (!this.isAllowedMenuSource()) {
-            return false;
+        return (
+            this.getMenu().some((item) => item.command !== 'click') && this.isAllowedMenuSource()
+        );
+    }
+
+    getMenu() {
+        let menu = this.props.menu || [];
+
+        if (this.props.card.menu) {
+            menu = menu.concat(this.props.card.menu);
         }
 
-        if (!this.props.card.menu || !this.state.showMenu) {
-            return false;
-        }
-
-        return true;
+        return menu;
     }
 
     isFacedown() {
@@ -372,8 +366,8 @@ class InnerCard extends React.Component {
                     ) : null}
                     {!this.isFacedown() ? this.getAlertStatus() : null}
                 </div>
-                {this.showMenu() ? (
-                    <CardMenu menu={this.props.card.menu} onMenuItemClick={this.onMenuItemClick} />
+                {this.state.showMenu ? (
+                    <CardMenu menu={this.getMenu()} onMenuItemClick={this.onMenuItemClick} />
                 ) : null}
             </div>
         );
@@ -489,6 +483,7 @@ InnerCard.propTypes = {
     dragOffset: PropTypes.object,
     hideTokens: PropTypes.bool,
     isDragging: PropTypes.bool,
+    menu: PropTypes.array,
     onClick: PropTypes.func,
     onMenuItemClick: PropTypes.func,
     onMouseOut: PropTypes.func,
@@ -508,7 +503,6 @@ InnerCard.propTypes = {
         'agenda',
         'faction',
         'additional',
-        'conclave',
         'shadows',
         'full deck',
         'rookery',

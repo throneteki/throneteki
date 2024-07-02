@@ -39,8 +39,5 @@ export default {
     },
     'agenda-top': {
         top: '185px'
-    },
-    'conclave-bottom': {
-        bottom: '155px'
     }
 };

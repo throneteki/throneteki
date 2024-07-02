@@ -56,7 +56,9 @@ class PendingGame {
     getSaveState() {
         var players = _.map(this.getPlayers(), (player) => {
             return {
-                agenda: player.agenda ? player.agenda.cardData.name : undefined,
+                agendas: player.agendas
+                    ? player.agendas.map((agenda) => agenda.cardData.name)
+                    : undefined,
                 faction: player.faction.cardData.name,
                 name: player.name
             };
@@ -79,13 +81,12 @@ class PendingGame {
         player.faction.cardData.strength = 0;
     }
 
-    setupAgenda(player, agenda) {
+    setupAgendas(player, agenda, ...additional) {
         if (!agenda) {
             return;
         }
 
-        player.agenda = {};
-        player.agenda.cardData = agenda;
+        player.agendas = [agenda, ...additional].map((agenda) => ({ cardData: agenda }));
     }
 
     // Actions
@@ -263,7 +264,7 @@ class PendingGame {
         player.deck.selected = true;
 
         this.setupFaction(player, deck.faction);
-        this.setupAgenda(player, deck.agenda);
+        this.setupAgendas(player, deck.agenda, ...deck.bannerCards);
     }
 
     // interrogators
@@ -344,9 +345,9 @@ class PendingGame {
             //1. the game is NOT private
             //2. the game hasn´t started yet
             //3. agenda and faction are actually not undefined
-            let agenda;
-            if (!this.gamePrivate && this.started && player.agenda) {
-                agenda = player.agenda.cardData.code;
+            let agendas = [undefined];
+            if (!this.gamePrivate && this.started && player.agendas) {
+                agendas = player.agendas.map((card) => card.cardData.code);
             }
             let faction;
             if (!this.gamePrivate && this.started && player.faction) {
@@ -354,7 +355,7 @@ class PendingGame {
             }
 
             playerSummaries[player.name] = {
-                agenda: agenda,
+                agendas: agendas,
                 deck: activePlayer ? deck : {},
                 faction: faction,
                 id: player.id,

@@ -152,10 +152,9 @@ class TriggeredAbility extends BaseAbility {
         // inappropriate locations when requirements are checked for the ability.
         //
         // Also apparently the draw deck because of Maester Gormon.
-        // Also also apparently under conclave due to Archmaester Marwyn.
+        // Also also apparently under cards due to Archmaester Marwyn.
         if (this.isPlayableEventAbility()) {
             return [
-                'conclave',
                 'discard pile',
                 'draw deck',
                 'hand',
