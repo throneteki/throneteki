@@ -1,22 +1,25 @@
 function hasKeyword(card, keywordRegex) {
     let lines = card.text.split('\n');
     let keywordLine = lines[0] || '';
-    let keywords = keywordLine.split('.').map(keyword => keyword.trim()).filter(keyword => keyword.length !== 0);
+    let keywords = keywordLine
+        .split('.')
+        .map((keyword) => keyword.trim())
+        .filter((keyword) => keyword.length !== 0);
 
-    return keywords.some(keyword => keywordRegex.test(keyword));
+    return keywords.some((keyword) => keywordRegex.test(keyword));
 }
 
 function hasTrait(card, trait) {
-    return card.traits.some(t => t.toLowerCase() === trait.toLowerCase());
+    return card.traits.some((t) => t.toLowerCase() === trait.toLowerCase());
 }
 
 function rulesForBanner(faction, factionName) {
     return {
-        mayInclude: card => card.faction === faction && !card.loyal && card.type !== 'plot',
+        mayInclude: (card) => card.faction === faction && !card.loyal && card.type !== 'plot',
         rules: [
             {
                 message: 'Must contain 12 or more ' + factionName + ' cards',
-                condition: deck => deck.countDrawCards(card => card.faction === faction) >= 12
+                condition: (deck) => deck.countDrawCards((card) => card.faction === faction) >= 12
             }
         ]
     };
@@ -42,7 +45,7 @@ const agendaRules = {
     // Banner of the sun
     '01201': rulesForBanner('martell', 'Martell'),
     // Banner of the watch
-    '01202': rulesForBanner('thenightswatch', 'Night\'s Watch'),
+    '01202': rulesForBanner('thenightswatch', "Night's Watch"),
     // Banner of the wolf
     '01203': rulesForBanner('stark', 'Stark'),
     // Banner of the dragon
@@ -54,27 +57,29 @@ const agendaRules = {
         rules: [
             {
                 message: 'You cannot include more than 15 neutral cards in a deck with Fealty',
-                condition: deck => deck.countDrawCards(card => card.faction === 'neutral') <= 15
+                condition: (deck) => deck.countDrawCards((card) => card.faction === 'neutral') <= 15
             }
         ]
     },
     // Kings of Summer
     '04037': {
-        cannotInclude: card => card.type === 'plot' && hasTrait(card, 'Winter'),
+        cannotInclude: (card) => card.type === 'plot' && hasTrait(card, 'Winter'),
         rules: [
             {
                 message: 'Kings of Summer cannot include Winter plot cards',
-                condition: deck => !(deck.plotCards.some(cardQuantity => hasTrait(cardQuantity.card, 'Winter')))
+                condition: (deck) =>
+                    !deck.plotCards.some((cardQuantity) => hasTrait(cardQuantity.card, 'Winter'))
             }
         ]
     },
     // Kings of Winter
     '04038': {
-        cannotInclude: card => card.type === 'plot' && hasTrait(card, 'Summer'),
+        cannotInclude: (card) => card.type === 'plot' && hasTrait(card, 'Summer'),
         rules: [
             {
                 message: 'Kings of Winter cannot include Summer plot cards',
-                condition: deck => !(deck.plotCards.some(cardQuantity => hasTrait(cardQuantity.card, 'Summer')))
+                condition: (deck) =>
+                    !deck.plotCards.some((cardQuantity) => hasTrait(cardQuantity.card, 'Summer'))
             }
         ]
     },
@@ -84,9 +89,11 @@ const agendaRules = {
         rules: [
             {
                 message: 'Rains of Castamere must contain exactly 5 different Scheme plots',
-                condition: deck => {
-                    const isScheme = card => hasTrait(card, 'Scheme');
-                    let schemePlots = deck.plotCards.filter(cardQuantity => isScheme(cardQuantity.card));
+                condition: (deck) => {
+                    const isScheme = (card) => hasTrait(card, 'Scheme');
+                    let schemePlots = deck.plotCards.filter((cardQuantity) =>
+                        isScheme(cardQuantity.card)
+                    );
                     return schemePlots.length === 5 && deck.countPlotCards(isScheme) === 5;
                 }
             }
@@ -98,161 +105,204 @@ const agendaRules = {
         rules: [
             {
                 message: 'Alliance cannot have more than 2 Banner agendas',
-                condition: deck => !deck.bannerCards || deck.bannerCards.length <= 2
+                condition: (deck) => !deck.bannerCards || deck.bannerCards.length <= 2
             }
         ]
     },
     // The Brotherhood Without Banners
     '06119': {
-        cannotInclude: card => card.type === 'character' && card.loyal,
+        cannotInclude: (card) => card.type === 'character' && card.loyal,
         rules: [
             {
                 message: 'The Brotherhood Without Banners cannot include loyal characters',
-                condition: deck => !(deck.drawCards.some(cardQuantity => cardQuantity.card.type === 'character' && cardQuantity.card.loyal))
+                condition: (deck) =>
+                    !deck.drawCards.some(
+                        (cardQuantity) =>
+                            cardQuantity.card.type === 'character' && cardQuantity.card.loyal
+                    )
             }
         ]
     },
     // The Conclave
     '09045': {
-        mayInclude: card => card.type === 'character' && hasTrait(card, 'Maester') && !card.loyal,
+        mayInclude: (card) => card.type === 'character' && hasTrait(card, 'Maester') && !card.loyal,
         rules: [
             {
                 message: 'Must contain 12 or more Maester characters',
-                condition: deck => deck.countDrawCards(card => card.type === 'character' && hasTrait(card, 'Maester')) >= 12
+                condition: (deck) =>
+                    deck.countDrawCards(
+                        (card) => card.type === 'character' && hasTrait(card, 'Maester')
+                    ) >= 12
             }
         ]
     },
     // The Wars To Come
-    '10045': {
+    10045: {
         requiredPlots: 10,
         maxDoubledPlots: 2
     },
     // The Free Folk
-    '11079': {
-        cannotInclude: card => card.faction !== 'neutral'
+    11079: {
+        cannotInclude: (card) => card.faction !== 'neutral'
     },
     // Kingdom of Shadows
-    '13079': {
-        mayInclude: card => !card.loyal && hasKeyword(card, /Shadow \(\d+\)/)
+    13079: {
+        mayInclude: (card) => !card.loyal && hasKeyword(card, /Shadow \(\d+\)/)
     },
     // The White Book
-    '13099': {
-        mayInclude: card => card.type === 'character' && hasTrait(card, 'Kingsguard') && !card.loyal,
+    13099: {
+        mayInclude: (card) =>
+            card.type === 'character' && hasTrait(card, 'Kingsguard') && !card.loyal,
         rules: [
             {
                 message: 'Must contain 7 or more different Kingsguard characters',
-                condition: deck => {
-                    const kingsguardChars = deck.drawCards.filter(cardQuantity => cardQuantity.card.type === 'character' && hasTrait(cardQuantity.card, 'Kingsguard'));
+                condition: (deck) => {
+                    const kingsguardChars = deck.drawCards.filter(
+                        (cardQuantity) =>
+                            cardQuantity.card.type === 'character' &&
+                            hasTrait(cardQuantity.card, 'Kingsguard')
+                    );
                     return kingsguardChars.length >= 7;
                 }
             }
         ]
     },
     // Valyrian Steel
-    '13118': {
+    13118: {
         requiredDraw: 75,
         rules: [
             {
                 message: 'Cannot include more than 1 copy of each attachment (by title)',
-                condition: deck => {
+                condition: (deck) => {
                     const allCards = deck.drawCards.concat(deck.plotCards);
-                    const attachmentNames = allCards.filter(cardQuantity => cardQuantity.card.type === 'attachment').map(cardQuantity => cardQuantity.card.name);
-                    return attachmentNames.every(attachmentName => {
-                        return deck.countCards(card => card.name === attachmentName) <= 1;
+                    const attachmentNames = allCards
+                        .filter((cardQuantity) => cardQuantity.card.type === 'attachment')
+                        .map((cardQuantity) => cardQuantity.card.name);
+                    return attachmentNames.every((attachmentName) => {
+                        return deck.countCards((card) => card.name === attachmentName) <= 1;
                     });
                 }
             }
         ]
     },
     // Dark Wings, Dark Words
-    '16028': {
+    16028: {
         requiredDraw: 75,
         rules: [
             {
                 message: 'Cannot include more than 1 copy of each event (by title)',
-                condition: deck => {
+                condition: (deck) => {
                     const allCards = deck.drawCards.concat(deck.plotCards);
-                    const eventNames = allCards.filter(cardQuantity => cardQuantity.card.type === 'event').map(cardQuantity => cardQuantity.card.name);
-                    return eventNames.every(eventName => {
-                        return deck.countCards(card => card.name === eventName) <= 1;
+                    const eventNames = allCards
+                        .filter((cardQuantity) => cardQuantity.card.type === 'event')
+                        .map((cardQuantity) => cardQuantity.card.name);
+                    return eventNames.every((eventName) => {
+                        return deck.countCards((card) => card.name === eventName) <= 1;
                     });
                 }
             }
         ]
     },
     // The Long Voyage
-    '16030': {
+    16030: {
         requiredDraw: 100
     },
     // Kingdom of Shadows (Redesign)
-    '17148': {
-        mayInclude: card => !card.loyal && hasKeyword(card, /Shadow \(\d+\)/)
+    17148: {
+        mayInclude: (card) => !card.loyal && hasKeyword(card, /Shadow \(\d+\)/)
     },
     // Sea of Blood (Redesign)
-    '17149': {
-        cannotInclude: card => card.faction === 'neutral' && card.type === 'event'
+    17149: {
+        cannotInclude: (card) => card.faction === 'neutral' && card.type === 'event'
     },
     // The Free Folk (Redesign)
-    '17150': {
-        mayInclude: card => card.faction !== 'neutral' && card.type === 'character' && !card.loyal && hasTrait(card, 'Wildling'),
-        rules: [{
-            message: 'Must only contain neutral cards or Non-loyal Wildling characters',
-            condition: function condition(deck) {
-                let drawDeckValid = !deck.drawCards.some(function (cardQuantity) {
-                    return cardQuantity.card.faction !== 'neutral' && !(cardQuantity.card.type === 'character' && !cardQuantity.card.loyal && hasTrait(cardQuantity.card, 'Wildling'));
-                });
-                let plotDeckValid = !deck.plotCards.some(function (cardQuantity) {
-                    return cardQuantity.card.faction !== 'neutral';
-                });
-                return drawDeckValid && plotDeckValid;
+    17150: {
+        mayInclude: (card) =>
+            card.faction !== 'neutral' &&
+            card.type === 'character' &&
+            !card.loyal &&
+            hasTrait(card, 'Wildling'),
+        rules: [
+            {
+                message: 'Must only contain neutral cards or Non-loyal Wildling characters',
+                condition: function condition(deck) {
+                    let drawDeckValid = !deck.drawCards.some(function (cardQuantity) {
+                        return (
+                            cardQuantity.card.faction !== 'neutral' &&
+                            !(
+                                cardQuantity.card.type === 'character' &&
+                                !cardQuantity.card.loyal &&
+                                hasTrait(cardQuantity.card, 'Wildling')
+                            )
+                        );
+                    });
+                    let plotDeckValid = !deck.plotCards.some(function (cardQuantity) {
+                        return cardQuantity.card.faction !== 'neutral';
+                    });
+                    return drawDeckValid && plotDeckValid;
+                }
             }
-        }]
+        ]
     },
     // The Wars To Come (Redesign)
-    '17151': {
+    17151: {
         requiredPlots: 10,
         maxDoubledPlots: 2
     },
     // Valyrian Steel (Redesign)
-    '17152': {
+    17152: {
         requiredDraw: 75,
         rules: [
             {
                 message: 'Cannot include more than 1 copy of each attachment',
-                condition: deck => {
+                condition: (deck) => {
                     const allCards = deck.drawCards.concat(deck.plotCards);
-                    const attachments = allCards.filter(cardQuantity => cardQuantity.card.type === 'attachment');
-                    return attachments.every(attachment => attachment.count <= 1);
+                    const attachments = allCards.filter(
+                        (cardQuantity) => cardQuantity.card.type === 'attachment'
+                    );
+                    return attachments.every((attachment) => attachment.count <= 1);
                 }
             }
         ]
     },
     // A Mummer's Farce
-    '20051': {
-        mayInclude: card => card.type === 'character' && hasTrait(card, 'Fool') && !card.loyal
+    20051: {
+        mayInclude: (card) => card.type === 'character' && hasTrait(card, 'Fool') && !card.loyal
     },
     // The Many-Faced God
-    '20052': {
-        cannotInclude: card => card.type === 'plot' && hasTrait(card, 'Kingdom')
+    20052: {
+        cannotInclude: (card) => card.type === 'plot' && hasTrait(card, 'Kingdom')
     },
     // Battle of the Trident
-    '21030': {
+    21030: {
         requiredPlots: 10,
-        rules: [{
-            message: 'Battle of the Trident must contain exactly 10 Edict, Siege or War plots',
-            condition: deck => {
-                return deck.plotCards.every(cardQuantity => hasTrait(cardQuantity.card, 'Edict') || hasTrait(cardQuantity.card, 'Siege') || hasTrait(cardQuantity.card, 'War'));
+        rules: [
+            {
+                message: 'Battle of the Trident must contain exactly 10 Edict, Siege or War plots',
+                condition: (deck) => {
+                    return deck.plotCards.every(
+                        (cardQuantity) =>
+                            hasTrait(cardQuantity.card, 'Edict') ||
+                            hasTrait(cardQuantity.card, 'Siege') ||
+                            hasTrait(cardQuantity.card, 'War')
+                    );
+                }
             }
-        }]
+        ]
     },
     // Banner of the Falcon
-    '23040': {
+    23040: {
         rules: [
             {
                 message: 'Must contain 12 or more House Arryn cards',
-                condition: deck => deck.countDrawCards(card => hasTrait(card, 'House Arryn')) >= 12
+                condition: (deck) =>
+                    deck.countDrawCards((card) => hasTrait(card, 'House Arryn')) >= 12
             }
         ]
+    },
+    // The Gift of Mercy
+    25080: {
+        cannotInclude: (card) => card.type === 'plot' && hasTrait(card, 'Omen')
     },
     // Draft Agendas
     // The Power of Wealth
@@ -261,9 +311,17 @@ const agendaRules = {
         rules: [
             {
                 message: 'Cannot include cards from more than 1 outside faction',
-                condition: deck => {
-                    let outOfFactionCards = deck.drawCards.concat(deck.plotCards).filter(cardQuantity => cardQuantity.card.faction !== deck.faction.value && cardQuantity.card.faction !== 'neutral');
-                    let factions = new Set(outOfFactionCards.map(cardQuantity => cardQuantity.card.faction));
+                condition: (deck) => {
+                    let outOfFactionCards = deck.drawCards
+                        .concat(deck.plotCards)
+                        .filter(
+                            (cardQuantity) =>
+                                cardQuantity.card.faction !== deck.faction.value &&
+                                cardQuantity.card.faction !== 'neutral'
+                        );
+                    let factions = new Set(
+                        outOfFactionCards.map((cardQuantity) => cardQuantity.card.faction)
+                    );
                     return factions.size <= 1;
                 }
             }
@@ -271,7 +329,8 @@ const agendaRules = {
     },
     // Protectors of the Realm
     '00002': {
-        mayInclude: card => card.type === 'character' && (hasTrait(card, 'Knight') || hasTrait(card, 'Army'))
+        mayInclude: (card) =>
+            card.type === 'character' && (hasTrait(card, 'Knight') || hasTrait(card, 'Army'))
     },
     // Treaty
     '00003': {
@@ -279,9 +338,17 @@ const agendaRules = {
         rules: [
             {
                 message: 'Cannot include cards from more than 2 outside factions',
-                condition: deck => {
-                    let outOfFactionCards = deck.drawCards.concat(deck.plotCards).filter(cardQuantity => cardQuantity.card.faction !== deck.faction.value && cardQuantity.card.faction !== 'neutral');
-                    let factions = new Set(outOfFactionCards.map(cardQuantity => cardQuantity.card.faction));
+                condition: (deck) => {
+                    let outOfFactionCards = deck.drawCards
+                        .concat(deck.plotCards)
+                        .filter(
+                            (cardQuantity) =>
+                                cardQuantity.card.faction !== deck.faction.value &&
+                                cardQuantity.card.faction !== 'neutral'
+                        );
+                    let factions = new Set(
+                        outOfFactionCards.map((cardQuantity) => cardQuantity.card.faction)
+                    );
                     return factions.size <= 2;
                 }
             }
@@ -289,7 +356,7 @@ const agendaRules = {
     },
     // Uniting the Seven Kingdoms
     '00004': {
-        mayInclude: card => card.type !== 'plot'
+        mayInclude: (card) => card.type !== 'plot'
     }
 };
 

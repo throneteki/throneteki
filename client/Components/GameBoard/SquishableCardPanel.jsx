@@ -1,13 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { getCardDimensions } from '../../util';
 
 import Card from './Card';
 
 class SquishableCardPanel extends React.Component {
     getCards(needsSquish) {
         let overallDimensions = this.getOverallDimensions();
-        let dimensions = this.getCardDimensions();
+        let dimensions = getCardDimensions(this.props.cardSize);
 
         let cards = this.props.cards;
         let cardIndex = 0;
@@ -57,29 +58,8 @@ class SquishableCardPanel extends React.Component {
         );
     }
 
-    getCardDimensions() {
-        let multiplier = this.getCardSizeMultiplier();
-        return {
-            width: 65 * multiplier,
-            height: 91 * multiplier
-        };
-    }
-
-    getCardSizeMultiplier() {
-        switch (this.props.cardSize) {
-            case 'small':
-                return 0.8;
-            case 'large':
-                return 1.4;
-            case 'x-large':
-                return 2;
-        }
-
-        return 1;
-    }
-
     getOverallDimensions() {
-        let cardDimensions = this.getCardDimensions();
+        let cardDimensions = getCardDimensions(this.props.cardSize);
         return {
             width: (cardDimensions.width + 5) * this.props.maxCards,
             height: cardDimensions.height

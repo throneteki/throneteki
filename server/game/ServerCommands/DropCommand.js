@@ -28,6 +28,10 @@ class DropCommand {
             DiscardCard.allow({ card: this.card, force: true })
         ) {
             this.player.discardCard(this.card, false, { force: true });
+        } else if (this.targetLocation === 'agenda') {
+            this.player.removeCardFromPile(this.card);
+            this.player.agenda.addChildCard(this.card, 'underneath');
+            this.card.facedown = 'true';
         } else {
             this.player.moveCard(this.card, this.targetLocation);
         }
@@ -50,8 +54,7 @@ class DropCommand {
             'plot deck': PlotCardTypes,
             'revealed plots': PlotCardTypes,
             shadows: DrawDeckCardTypes,
-            // Agenda specific piles
-            conclave: DrawDeckCardTypes
+            agenda: DrawDeckCardTypes
         };
 
         let allowedTypes = AllowedTypesForPile[this.targetLocation];

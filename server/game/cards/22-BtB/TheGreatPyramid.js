@@ -3,6 +3,11 @@ import GenericTracker from '../../EventTrackers/GenericTracker.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheGreatPyramid extends DrawCard {
+    constructor(owner, cardData) {
+        super(owner, cardData);
+
+        this.registerEvents([{ 'onCardLeftPlay:forcedinterrupt': 'onCardLeftPlay' }]);
+    }
     setupCardAbilities(ability) {
         this.marshalledTracker = GenericTracker.forRound(this.game, 'onCardMarshalled');
         this.playedTracker = GenericTracker.forRound(this.game, 'onCardPlayed');
@@ -29,19 +34,18 @@ class TheGreatPyramid extends DrawCard {
             },
             limit: ability.limit.perRound(2),
             message: {
-                format: '{player} uses {source} to place {cards} under {source}',
-                args: { cards: (context) => context.events.map((e) => e.card) }
+                format: '{player} uses {source} to place {cards} facedown under {source}',
+                args: { cards: (context) => context.events.map((event) => event.card) }
             },
-            gameAction: GameActions.genericHandler((context) => {
-                this.lastingEffect((ability) => ({
-                    until: {
-                        onCardLeftPlay: (event) => event.card === this
-                    },
-                    targetLocation: 'any',
-                    match: context.events.map((e) => e.card),
-                    effect: ability.effects.placeCardUnderneath(this.removeCardsUnderneathFromGame)
-                }));
-            })
+            gameAction: GameActions.simultaneously((context) =>
+                context.events.map((event) =>
+                    GameActions.placeCardUnderneath({
+                        card: event.card,
+                        parentCard: this,
+                        facedown: true
+                    })
+                )
+            )
         });
     }
 
@@ -68,20 +72,23 @@ class TheGreatPyramid extends DrawCard {
         return marshalledCount + playedCount >= 2;
     }
 
-    removeCardsUnderneathFromGame(card, context) {
-        if (
-            card.location === 'underneath' &&
-            context.source.childCards.some((childCard) => childCard === card)
-        ) {
-            context.game.resolveGameAction(GameActions.removeFromGame({ card, player: this }));
-
-            context.game.addMessage(
-                '{0} removes {1} from the game from under {2}',
-                context.source.controller,
-                card,
-                context.source
-            );
+    onCardLeftPlay(event) {
+        if (event.card !== this || this.underneath.length === 0) {
+            return;
         }
+
+        this.game.resolveGameAction(
+            GameActions.simultaneously(
+                ...this.underneath.map((card) => GameActions.removeFromGame({ card }))
+            )
+        );
+
+        this.game.addMessage(
+            '{0} removes {1} from the game due to {2} leaving play',
+            this.controller,
+            this.underneath,
+            this
+        );
     }
 }
 

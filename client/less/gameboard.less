@@ -407,17 +407,21 @@
     }
 }
 
-// Alliance agenda
-.agenda-06018 {
-    .inner {
-        .calculate-tiled-card-prop(width, 2, width);
-    }
-}
+.agendas {
+    position: relative;
+    display: flex;
 
-// Conclave agenda
-.agenda-09045 {
-    .inner {
-        .calculate-tiled-card-prop(width, 7, width);
+    > .card-wrapper {
+        position: absolute;
+        margin: 6px;
+    }
+
+    .agenda {
+        .popup {
+            .inner {
+                .calculate-tiled-card-prop(width, 5, width);
+            }
+        }
     }
 }
 
