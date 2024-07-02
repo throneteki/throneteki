@@ -8,25 +8,31 @@ class JonSnow extends DrawCard {
                 onClaimApplied: (event) => event.challenge.isMatch({ challengeType: 'military' })
             },
             message:
-                '{player} uses {source} to have either standing or kneeling characters satisfied for claim',
+                '{player} uses {source} to have either standing or kneeling characters satisfied for claim, if able',
             choices: {
                 'Standing Characters': {
-                    message: '{player} chooses to have standing characters satisfied for claim',
-                    gameAction: this.mustChooseClaimGameAction((card) => !card.kneeled)
+                    message:
+                        '{player} chooses standing characters to be satisfied for claim, if able',
+                    gameAction: this.mustChooseClaimGameAction(false)
                 },
                 'Kneeling Characters': {
-                    message: '{player} chooses to have kneeling characters satisfied for claim',
-                    gameAction: this.mustChooseClaimGameAction((card) => card.kneeled)
+                    message:
+                        '{player} chooses kneeling characters to be satisfied for claim, if able',
+                    gameAction: this.mustChooseClaimGameAction(true)
                 }
             }
         });
     }
 
-    mustChooseClaimGameAction(cardFunc) {
+    mustChooseClaimGameAction(kneeled) {
         return GameActions.genericHandler(() => {
+            const affectedChars = this.game.allCards.filter(
+                (card) => card.getType() === 'character' && card.kneeled === kneeled
+            );
             this.untilEndOfChallenge((ability) => ({
                 targetController: 'any',
-                effect: ability.effects.mustChooseAsClaim(cardFunc)
+                match: affectedChars,
+                effect: ability.effects.mustChooseAsClaim()
             }));
         });
     }

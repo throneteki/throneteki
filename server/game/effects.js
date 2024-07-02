@@ -1516,14 +1516,15 @@ const Effects = {
             isStateDependent: true
         };
     },
-    mustChooseAsClaim: function (cardFunc) {
+    mustChooseAsClaim: function () {
         return {
-            targetType: 'player',
-            apply: function (player) {
-                player.mustChooseAsClaim.push(cardFunc);
+            apply: function (card) {
+                card.controller.mustChooseAsClaim.push(card);
             },
-            unapply: function (player) {
-                player.mustChooseAsClaim = player.mustChooseAsClaim.filter((c) => c !== cardFunc);
+            unapply: function (card) {
+                card.controller.mustChooseAsClaim = card.controller.mustChooseAsClaim.filter(
+                    (c) => c !== card
+                );
             }
         };
     },
