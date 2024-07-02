@@ -401,6 +401,10 @@ class DrawCard extends BaseCard {
         this.childCards = this.childCards.filter((a) => a !== card);
     }
 
+    get underneath() {
+        return this.childCards.filter((childCard) => childCard.location === 'underneath');
+    }
+
     getPlayActions() {
         return StandardPlayActions.concat(this.abilities.playActions).concat(
             this.abilities.actions.filter((action) => !action.allowMenu())

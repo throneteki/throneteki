@@ -91,7 +91,6 @@ class PlayerPlots extends React.Component {
 PlayerPlots.displayName = 'PlayerPlots';
 PlayerPlots.propTypes = {
     activePlot: PropTypes.object,
-    agenda: PropTypes.object,
     cardSize: PropTypes.string,
     direction: PropTypes.oneOf(['default', 'reverse']),
     isMe: PropTypes.bool,

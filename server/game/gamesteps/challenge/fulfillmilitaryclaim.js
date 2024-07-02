@@ -11,7 +11,7 @@ class FulfillMilitaryClaim extends BaseStep {
     continue() {
         // TODO: Add forced claim to fulfillmilitaryclaim.spec.js
         this.forcedClaim = this.player.filterCardsInPlay((card) =>
-            this.player.mustChooseAsClaim.some((cardFunc) => cardFunc(card))
+            this.player.mustChooseAsClaim.includes(card)
         );
 
         let claimToSelect = this.claim;

@@ -1516,14 +1516,15 @@ const Effects = {
             isStateDependent: true
         };
     },
-    mustChooseAsClaim: function (cardFunc) {
+    mustChooseAsClaim: function () {
         return {
-            targetType: 'player',
-            apply: function (player) {
-                player.mustChooseAsClaim.push(cardFunc);
+            apply: function (card) {
+                card.controller.mustChooseAsClaim.push(card);
             },
-            unapply: function (player) {
-                player.mustChooseAsClaim = player.mustChooseAsClaim.filter((c) => c !== cardFunc);
+            unapply: function (card) {
+                card.controller.mustChooseAsClaim = card.controller.mustChooseAsClaim.filter(
+                    (c) => c !== card
+                );
             }
         };
     },
@@ -1772,17 +1773,22 @@ const Effects = {
         return {
             targetType: 'player',
             apply: function (player, context) {
-                for (let card of player.hand) {
-                    player.removeCardFromPile(card);
-                    context.source.addChildCard(card, 'underneath');
-                    card.facedown = true;
-                }
+                context.game.resolveGameAction(
+                    GameActions.simultaneously(
+                        player.hand.map((card) =>
+                            GameActions.placeCardUnderneath({
+                                card,
+                                player,
+                                parentCard: context.source,
+                                facedown: true
+                            })
+                        )
+                    )
+                );
             },
             unapply: function (player, context) {
                 player.discardCards(player.hand);
-                for (let card of context.source.childCards.filter(
-                    (card) => card.controller === player && card.location === 'underneath'
-                )) {
+                for (const card of context.source.underneath) {
                     player.moveCard(card, 'hand');
                 }
                 context.game.addMessage(
