@@ -21,7 +21,7 @@ function GamePlayer(props) {
                     </span>
                     <span className='bold'>{props.player.name}</span>
                 </div>
-                {props.player.agendas.reverse().map((agenda) => (
+                {props.player.agendas?.reverse().map((agenda) => (
                     <div key={agenda} className='agenda-mini'>
                         {
                             <img
@@ -52,7 +52,7 @@ function GamePlayer(props) {
                         />
                     }
                 </div>
-                {props.player.agendas.map((agenda) => (
+                {props.player.agendas?.map((agenda) => (
                     <div key={agenda} className='agenda-mini'>
                         {
                             <img
