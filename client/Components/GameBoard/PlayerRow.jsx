@@ -67,26 +67,26 @@ class PlayerRow extends React.Component {
 
         let agendas = [];
         agendas.push(
-            this.renderDroppablePile(
-                source,
-                <CardPile
-                    key={agenda.uuid}
-                    className={pileClass}
-                    cards={underneath}
-                    disablePopup={disablePopup}
-                    onCardClick={this.props.onCardClick}
-                    onDragDrop={this.props.onDragDrop}
-                    onMenuItemClick={this.props.onMenuItemClick}
-                    onMouseOut={this.props.onMouseOut}
-                    onMouseOver={this.props.onMouseOver}
-                    popupLocation={this.props.side}
-                    showCards={true}
-                    source={source}
-                    title={title}
-                    topCard={agenda}
-                    size={this.props.cardSize}
-                />
-            )
+            <div key={agenda.uuid} className={pileClass}>
+                {this.renderDroppablePile(
+                    source,
+                    <CardPile
+                        cards={underneath}
+                        disablePopup={disablePopup}
+                        onCardClick={this.props.onCardClick}
+                        onDragDrop={this.props.onDragDrop}
+                        onMenuItemClick={this.props.onMenuItemClick}
+                        onMouseOut={this.props.onMouseOut}
+                        onMouseOver={this.props.onMouseOver}
+                        popupLocation={this.props.side}
+                        showCards={true}
+                        source={source}
+                        title={title}
+                        topCard={agenda}
+                        size={this.props.cardSize}
+                    />
+                )}
+            </div>
         );
 
         // Add all additional agendas separately (not as a CardPile)
@@ -95,26 +95,26 @@ class PlayerRow extends React.Component {
                 let className = classNames('agenda', `agenda-${agenda.code} additional`);
                 let style = { left: `${spreadWidth * (index + 1)}px` };
                 return (
-                    <Card
-                        key={agenda.uuid}
-                        className={className}
-                        card={agenda}
-                        source={source}
-                        onMouseOver={this.props.onMouseOver}
-                        onMouseOut={this.props.onMouseOut}
-                        disableMouseOver={false}
-                        onClick={this.props.onCardClick}
-                        onMenuItemClick={this.props.onMenuItemClick}
-                        orientation={'vertical'}
-                        size={this.props.cardSize}
-                        style={style}
-                    />
+                    <div key={agenda.uuid} className={className}>
+                        <Card
+                            card={agenda}
+                            source={source}
+                            onMouseOver={this.props.onMouseOver}
+                            onMouseOut={this.props.onMouseOut}
+                            disableMouseOver={false}
+                            onClick={this.props.onCardClick}
+                            onMenuItemClick={this.props.onMenuItemClick}
+                            orientation={'vertical'}
+                            size={this.props.cardSize}
+                            style={style}
+                        />
+                    </div>
                 );
             })
         );
 
-        // 6 is the left + right padding of main agenda
-        let totalWidth = 6 + cardWidth.width + spreadWidth * additionalAgendas.length;
+        // 10 is the left + right padding of main agenda; ensures gap on right is equal to gap on left
+        let totalWidth = 10 + cardWidth.width + spreadWidth * additionalAgendas.length;
         let totalStyle = { width: `${totalWidth}px` };
         return (
             <div className='agendas' style={totalStyle}>
