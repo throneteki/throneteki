@@ -16,6 +16,14 @@ class Varys extends DrawCard {
                 });
             }
         });
+
+        this.reaction({
+            when: {
+                onPlotRevealed: (event) => event.plot.hasTrait('Scheme')
+            },
+            message: '{player} uses {source} to place 1 gold on {source}',
+            gameAction: GameActions.placeToken({ card: this, token: Tokens.gold })
+        });
     }
 
     selectCardName(cardName) {
@@ -37,14 +45,6 @@ class Varys extends DrawCard {
                 )
             ]
         }));
-
-        this.reaction({
-            when: {
-                onPlotRevealed: (event) => event.plot.hasTrait('Scheme')
-            },
-            message: '{player} uses {source} to place 1 gold on {source}',
-            gameAction: GameActions.placeToken({ card: this, token: Tokens.gold })
-        });
     }
 }
 
