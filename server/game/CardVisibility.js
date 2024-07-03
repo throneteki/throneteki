@@ -1,4 +1,4 @@
-const OpenInformationLocations = [
+export const OpenInformationLocations = [
     'active plot',
     'agenda',
     'being played',
