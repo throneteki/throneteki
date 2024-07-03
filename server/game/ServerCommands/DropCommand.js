@@ -1,5 +1,5 @@
-const PublicLocations = new Set(['dead pile', 'discard pile', 'out of game', 'play area']);
 import DiscardCard from '../GameActions/DiscardCard.js';
+import { OpenInformationLocations } from '../CardVisibility.js';
 
 class DropCommand {
     constructor(game, player, card, targetLocation) {
@@ -81,7 +81,8 @@ class DropCommand {
     isPublicMove() {
         return (
             this.game.currentPhase !== 'setup' &&
-            (PublicLocations.has(this.originalLocation) || PublicLocations.has(this.targetLocation))
+            (OpenInformationLocations.includes(this.originalLocation) ||
+                OpenInformationLocations.includes(this.targetLocation))
         );
     }
 }
