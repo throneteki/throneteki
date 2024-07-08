@@ -16,34 +16,14 @@ const SquishableCardPanel = ({
     className,
     groupVisibleCards
 }) => {
-    const getCardSizeMultiplier = useCallback(() => {
-        switch (cardSize) {
-            case 'small':
-                return 0.8;
-            case 'large':
-                return 1.4;
-            case 'x-large':
-                return 2;
-            default:
-                return 1;
-        }
-    }, [cardSize]);
-
-    const getCardDimensions = useCallback(() => {
-        let multiplier = getCardSizeMultiplier();
-        return {
-            width: 65 * multiplier,
-            height: 91 * multiplier
-        };
-    }, [getCardSizeMultiplier]);
-
     const getOverallDimensions = useCallback(() => {
-        let cardDimensions = getCardDimensions();
+        let cardDimensions = getCardDimensions(cardSize);
+
         return {
             width: (cardDimensions.width + 5) * maxCards,
             height: cardDimensions.height
         };
-    }, [getCardDimensions, maxCards]);
+    }, [cardSize, maxCards]);
 
     const hasMixOfVisibleCards = useCallback(() => {
         return cards.some((card) => !!card.code) && cards.some((card) => !card.code);
@@ -52,8 +32,7 @@ const SquishableCardPanel = ({
     const getCards = useCallback(
         (needsSquish) => {
             let overallDimensions = getOverallDimensions();
-            let dimensions = getCardDimensions();
-
+            let dimensions = getCardDimensions(cardSize);
             let cardIndex = 0;
             let handLength = cards ? cards.length : 0;
             let cardWidth = dimensions.width;

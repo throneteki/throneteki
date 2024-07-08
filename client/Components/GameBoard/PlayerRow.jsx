@@ -18,9 +18,6 @@ const PlayerRow = ({
     side,
     cardSize,
     isMe,
-    agenda,
-    bannerCards,
-    conclavePile,
     title,
     isMelee,
     username,
@@ -35,7 +32,8 @@ const PlayerRow = ({
     discardPile,
     deadPile,
     shadows,
-    faction
+    faction,
+    agendas
 }) => {
     const getOutOfGamePile = useCallback(() => {
         if (outOfGamePile.length === 0) {
@@ -80,14 +78,33 @@ const PlayerRow = ({
         isMe
     ]);
 
+    const renderDroppablePile = useCallback(
+        (source, cards) => {
+            let onDragDropCb = isMe ? onDragDrop : null;
+
+            if (isMe) {
+                return (
+                    <Droppable onDragDrop={onDragDropCb} source={source}>
+                        {cards}
+                    </Droppable>
+                );
+            }
+
+            return cards;
+        },
+        [isMe, onDragDrop]
+    );
+
     const getAgenda = useCallback(() => {
+        console.info(agendas);
+        let agenda = agendas?.length > 0 ? agendas[0] : undefined;
         if (!agenda || agenda.code === '') {
             let className = classNames('agenda', 'card-pile', 'vertical', 'panel', {
                 [cardSize]: cardSize !== 'normal'
             });
             return <div className={className} />;
         }
-        let cardWidth = getCardDimensions(this.props.cardSize);
+        let cardWidth = getCardDimensions(cardSize);
 
         let underneath = agenda.childCards || [];
         let disablePopup = underneath.length === 0;
@@ -95,60 +112,74 @@ const PlayerRow = ({
         let source = 'agenda';
         let pileClass = classNames('agenda', `agenda-${agenda.code}`);
 
-        // Alliance
-        if (agenda.code === '06018') {
-            cards = bannerCards;
-            title = 'Banners';
-        } else if (agenda.code === '09045') {
-            cards = conclavePile;
-            source = 'conclave';
-            title = 'Conclave';
-            disablePopup = !isMe;
-        }
+        let additionalAgendas = agendas.slice(1);
+        let spreadWidth = cardWidth.width / 2;
 
-        disablePopup = disablePopup || !cards || cards.length === 0;
-
-        let pileClass = classNames('agenda', `agenda-${agenda.code}`);
-
-        let pile = (
-            <CardPile
-                className={pileClass}
-                cards={cards}
-                disablePopup={disablePopup}
-                onCardClick={onCardClick}
-                onDragDrop={onDragDrop}
-                onMenuItemClick={onMenuItemClick}
-                onMouseOut={onMouseOut}
-                onMouseOver={onMouseOver}
-                popupLocation={side}
-                source={source}
-                title={title}
-                topCard={agenda}
-                size={cardSize}
-            />
+        let retAgendas = [];
+        retAgendas.push(
+            <div key={agenda.uuid} className={pileClass}>
+                {renderDroppablePile(
+                    source,
+                    <CardPile
+                        cards={underneath}
+                        disablePopup={disablePopup}
+                        onCardClick={onCardClick}
+                        onDragDrop={onDragDrop}
+                        onMenuItemClick={onMenuItemClick}
+                        onMouseOut={onMouseOut}
+                        onMouseOver={onMouseOver}
+                        popupLocation={side}
+                        showCards={true}
+                        source={source}
+                        title={title}
+                        topCard={agenda}
+                        size={cardSize}
+                    />
+                )}
+            </div>
         );
 
-        if (agenda.code === '09045') {
-            return (
-                <Droppable onDragDrop={onDragDrop} source='conclave'>
-                    {pile}
-                </Droppable>
-            );
-        }
+        retAgendas = retAgendas.concat(
+            additionalAgendas.map((agenda, index) => {
+                let className = classNames('agenda', `agenda-${agenda.code} additional`);
+                let style = { left: `${spreadWidth * (index + 1)}px` };
+                return (
+                    <div key={agenda.uuid} className={className}>
+                        <Card
+                            card={agenda}
+                            source={source}
+                            onMouseOver={onMouseOver}
+                            onMouseOut={onMouseOut}
+                            disableMouseOver={false}
+                            onClick={onCardClick}
+                            onMenuItemClick={onMenuItemClick}
+                            orientation={'vertical'}
+                            size={cardSize}
+                            style={style}
+                        />
+                    </div>
+                );
+            })
+        );
 
-        return pile;
+        // 10 is the left + right padding of main agenda; ensures gap on right is equal to gap on left
+        let totalWidth = 10 + cardWidth.width + spreadWidth * additionalAgendas.length;
+        let totalStyle = { width: `${totalWidth}px` };
+        return (
+            <div className='agendas' style={totalStyle}>
+                {retAgendas.reverse()}
+            </div>
+        );
     }, [
-        agenda,
-        bannerCards,
-        conclavePile,
-        cardSize,
-        isMe,
+        agendas,
+        renderDroppablePile,
         onCardClick,
         onDragDrop,
         onMenuItemClick,
         onMouseOut,
         onMouseOver,
-        side
+        side,
+        cardSize
     ]);
 
     const getTitleCard = useCallback(() => {
@@ -194,23 +225,6 @@ const PlayerRow = ({
         cardSize,
         isMe
     ]);
-
-    const renderDroppablePile = useCallback(
-        (source, cards) => {
-            let onDragDropCb = isMe ? onDragDrop : null;
-
-            if (isMe) {
-                return (
-                    <Droppable onDragDrop={onDragDropCb} source={source}>
-                        {cards}
-                    </Droppable>
-                );
-            }
-
-            return cards;
-        },
-        [isMe, onDragDrop]
-    );
 
     let cardPileProps = {
         onCardClick: onCardClick,

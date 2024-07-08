@@ -30,9 +30,7 @@ const GameBoardLayout = ({ thisPlayer, otherPlayer, onCardClick, onMouseOver, on
             <div key='board-middle' className='board-middle'>
                 <div className='player-home-row'>
                     <PlayerRow
-                        agenda={otherPlayer.agenda}
-                        bannerCards={otherPlayer.cardPiles.bannerCards}
-                        conclavePile={otherPlayer.cardPiles.conclavePile}
+                        agendas={otherPlayer.agendas}
                         faction={otherPlayer.faction}
                         hand={otherPlayer.cardPiles.hand}
                         isMe={false}
@@ -117,9 +115,7 @@ const GameBoardLayout = ({ thisPlayer, otherPlayer, onCardClick, onMouseOver, on
                 <div className='player-home-row our-side'>
                     <PlayerRow
                         isMe={!!thisPlayer}
-                        agenda={thisPlayer.agenda}
-                        bannerCards={thisPlayer.cardPiles.bannerCards}
-                        conclavePile={thisPlayer.cardPiles.conclavePile}
+                        agendas={thisPlayer.agendas}
                         faction={thisPlayer.faction}
                         hand={thisPlayer.cardPiles.hand}
                         isMelee={currentGame.isMelee}

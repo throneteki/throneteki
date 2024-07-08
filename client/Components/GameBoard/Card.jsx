@@ -12,6 +12,7 @@ const Card = ({
     className,
     disableMouseOver,
     hideTokens,
+    menu,
     onClick,
     onMenuItemClick,
     onMouseOut,
@@ -54,11 +55,7 @@ const Card = ({
     }));
 
     const isAllowedMenuSource = useCallback(() => {
-        return (
-            source === 'play area' ||
-            source === 'agenda' ||
-            source === 'revealed plots'
-        );
+        return source === 'play area' || source === 'agenda' || source === 'revealed plots';
     }, [source]);
 
     const handleMouseOver = useCallback(() => {
@@ -73,44 +70,64 @@ const Card = ({
         (menuItem) => {
             if (onMenuItemClick) {
                 onMenuItemClick(card, menuItem);
-                setShowMenu((prevShowMenu) => !prevShowMenu);
+                setShowMenu(!showMenu);
             }
         },
-        [card, onMenuItemClick]
+        [card, onMenuItemClick, showMenu]
     );
+
+    const getMenu = useCallback(() => {
+        let retMenu = menu || [];
+
+        if (card.menu) {
+            retMenu = retMenu.concat(card.menu);
+        }
+
+        return retMenu;
+    }, [card.menu, menu]);
+
+    const shouldShowMenu = useCallback(() => {
+        return getMenu().some((item) => item.command !== 'click') && isAllowedMenuSource();
+    }, [getMenu, isAllowedMenuSource]);
 
     const handleClick = useCallback(
         (event) => {
             event.preventDefault();
             event.stopPropagation();
 
-            if (showMenu) {
-                setShowMenu((prevShowMenu) => !prevShowMenu);
+            if (shouldShowMenu()) {
+                setShowMenu(!showMenu);
                 return;
             }
 
-            if (onClick) onClick(card);
+            onClick && onClick(card);
         },
-        [card, isAllowedMenuSource, onClick]
+        [card, onClick, shouldShowMenu, showMenu]
     );
 
     const getCountersForCard = (card) => {
         let counters = [];
-        if (card.power) counters.push({ name: 'card-power', count: card.power, shortName: 'P' });
+        if (card.power) {
+            counters.push({ name: 'card-power', count: card.power, shortName: 'P' });
+        }
 
         if (!card.facedown && source === 'play area') {
             if (card.type === 'character' && card.baseStrength !== card.strength) {
                 counters.push({ name: 'strength', count: card.strength, shortName: 'S' });
             }
+
             if (card.dupes && card.dupes.length > 0) {
                 counters.push({ name: 'dupe', count: card.dupes.length, shortName: 'D' });
             }
+
             for (const icon of card.iconsAdded || []) {
                 counters.push({ name: 'challenge-icon', icon, count: 0, cancel: false });
             }
+
             for (const icon of card.iconsRemoved || []) {
                 counters.push({ name: 'challenge-icon', icon, count: 0, cancel: true });
             }
+
             for (const item of card.factionStatus || []) {
                 counters.push({
                     name: 'faction',
@@ -136,8 +153,12 @@ const Card = ({
     };
 
     const getAttachments = () => {
-        if (!['rookery', 'full deck', 'play area'].includes(source)) return null;
+        if (!['rookery', 'full deck', 'play area'].includes(source)) {
+            return null;
+        }
+
         let index = 1;
+
         return card.attachments.map((attachment) => (
             <Card
                 key={attachment.uuid}
@@ -156,10 +177,17 @@ const Card = ({
     };
 
     const getDupes = () => {
-        if (source !== 'play area') return null;
+        if (source !== 'play area') {
+            return null;
+        }
+
         let index = 1;
+
         return card.dupes.map((dupe) => {
-            if (card.facedown) dupe.facedown = true;
+            if (card.facedown) {
+                dupe.facedown = true;
+            }
+
             return (
                 <Card
                     key={dupe.uuid}
@@ -182,8 +210,8 @@ const Card = ({
         // TODO: Right now it is assumed that all cards in the childCards array
         // are being placed underneath the current card. In the future there may
         // be other types of cards in this array and it should be filtered.
-        let underneathCards = this.props.card.childCards;
-        if (!underneathCards || underneathCards.length === 0 || this.props.card.type === 'agenda') {
+        let underneathCards = card.childCards;
+        if (!underneathCards || underneathCards.length === 0 || card.type === 'agenda') {
             return;
         }
 
@@ -203,12 +231,18 @@ const Card = ({
     };
 
     const getCardOrder = () => {
-        if (!card.order) return null;
+        if (!card.order) {
+            return null;
+        }
+
         return <div className='card-order'>{card.order}</div>;
     };
 
     const getAlertStatus = () => {
-        if (!card.alertStatus) return null;
+        if (!card.alertStatus) {
+            return null;
+        }
+
         return (
             <div className={'status-container ' + card.alertStatus.type}>
                 <div className='status-icon glyphicon glyphicon-exclamation-sign' />
@@ -216,22 +250,6 @@ const Card = ({
             </div>
         );
     };
-
-    const getMenu = useCallback(() => {
-        let menu = menu || [];
-
-        if (card.menu) {
-            menu = menu.concat(card.menu);
-        }
-
-        return menu;
-    }, []);
-
-    const shouldShowMenu = useCallback(() => {
-        return (
-            getMenu().some((item) => item.command !== 'click') && isAllowedMenuSource()
-        );
-    }, []);
 
     const isFacedown = () => {
         return card.facedown || !card.code;
@@ -259,7 +277,10 @@ const Card = ({
     );
 
     const getCard = () => {
-        if (!card) return <div />;
+        if (!card) {
+            return <div />;
+        }
+
         let cardClass = classNames(
             'card',
             `card-type-${card.type}`,
@@ -301,7 +322,7 @@ const Card = ({
                     {!hideTokens ? <CardCounters counters={getCountersForCard(card)} /> : null}
                     {!isFacedown() ? getAlertStatus() : null}
                 </div>
-                {shouldShowMenu() ? (
+                {showMenu ? (
                     <CardMenu menu={getMenu()} onMenuItemClick={handleMenuItemClick} />
                 ) : null}
             </div>

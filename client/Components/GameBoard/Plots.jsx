@@ -24,7 +24,6 @@ const Plots = ({ thisPlayer, otherPlayer, onCardClick, onMouseOut, onMouseOver }
             <PlayerPlots
                 {...commonProps}
                 activePlot={otherPlayer.activePlot}
-                agenda={otherPlayer.agenda}
                 direction='reverse'
                 isMe={false}
                 plotDeck={otherPlayer.cardPiles.plotDeck}
@@ -36,7 +35,6 @@ const Plots = ({ thisPlayer, otherPlayer, onCardClick, onMouseOut, onMouseOver }
             <PlayerPlots
                 {...commonProps}
                 activePlot={thisPlayer.activePlot}
-                agenda={thisPlayer.agenda}
                 direction='default'
                 isMe
                 plotDeck={thisPlayer.cardPiles.plotDeck}

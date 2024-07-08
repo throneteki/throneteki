@@ -8,7 +8,6 @@ import MovablePanel from './MovablePanel';
 
 const CardPile = ({
     cards,
-    menu,
     disablePopup,
     onPopupChange,
     source,
@@ -28,7 +27,8 @@ const CardPile = ({
     className,
     cardCount,
     orientation = 'vertical',
-    hiddenTopCard
+    hiddenTopCard,
+    showCards
 }) => {
     const [showPopup, setShowPopup] = useState(cards && cards.some((card) => card.selectable));
     const [showMenu, setShowMenu] = useState(false);
@@ -56,24 +56,14 @@ const CardPile = ({
         (event) => {
             event.preventDefault();
 
-            if (menu) {
-                setShowMenu(!showMenu);
-                return;
-            }
-
             if (!disablePopup) {
                 updatePopupVisibility(!showPopup);
             }
         },
-        [menu, showMenu, showPopup, updatePopupVisibility, disablePopup]
+        [showPopup, updatePopupVisibility, disablePopup]
     );
 
     const onTopCardClick = useCallback(() => {
-        if (menu) {
-            setShowMenu(!showMenu);
-            return;
-        }
-
         if (disablePopup || isTopCardSelectable) {
             if (propsOnCardClick && topCard) {
                 propsOnCardClick(topCard);
@@ -84,8 +74,6 @@ const CardPile = ({
 
         updatePopupVisibility(!showPopup);
     }, [
-        menu,
-        showMenu,
         showPopup,
         disablePopup,
         isTopCardSelectable,
@@ -226,42 +214,25 @@ const CardPile = ({
 
         return popup;
     }, [
-        cards,
         disableMouseOver,
-        onCloseClick,
-        onDragDrop,
-        onMenuItemClick,
         onCardClick,
         onMouseOut,
         onMouseOver,
         onTouchMove,
-        popupLocation,
-        popupMenu,
-        showPopup,
+        onMenuItemClick,
         size,
         source,
-        title,
+        showCards,
+        cards,
         disablePopup,
+        showPopup,
+        popupLocation,
+        popupMenu,
+        title,
+        onCloseClick,
+        onDragDrop,
         onPopupMenuItemClick
     ]);
-
-    const getMenu = () => {
-        let menuIndex = 0;
-
-        let menu = menu.map((item) => {
-            return (
-                <div
-                    key={(menuIndex++).toString()}
-                    className='menu-item'
-                    onClick={() => onMenuItemClick(item)}
-                >
-                    {item.text}
-                </div>
-            );
-        });
-
-        return <div className='panel menu'>{menu}</div>;
-    };
 
     let retClassName = classNames('panel', 'card-pile', className, {
         [size]: size !== 'normal',
@@ -279,6 +250,13 @@ const CardPile = ({
         retTopCard = { facedown: true };
     }
 
+    let menu;
+    // Note "Open/Close Popup" item will never be available for CardPiles in locations that use select in non-triggerable ways (eg. click to force stand or kneel)
+    // For example, if CardPile is ever used in play area, it will need to know when "clicking" on it is a valid option to do something
+    if (!disablePopup && topCard?.selectable) {
+        menu = [{ showPopup: true, text: `${showPopup ? 'Close' : 'Open'} Popup` }];
+    }
+
     return (
         <div className={retClassName} onClick={onCollectionClick}>
             <div className='panel-header'>{headerText}</div>
@@ -289,6 +267,7 @@ const CardPile = ({
                     onMouseOver={onMouseOver}
                     onMouseOut={onMouseOut}
                     disableMouseOver={hiddenTopCard}
+                    menu={menu}
                     onClick={onTopCardClick}
                     onMenuItemClick={onMenuItemClick}
                     orientation={cardOrientation}
@@ -297,7 +276,6 @@ const CardPile = ({
             ) : (
                 <div className='card-placeholder' />
             )}
-            {showMenu && getMenu()}
             {getPopup()}
         </div>
     );
