@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 
 const formattedSeconds = (sec) =>
     `${sec < 0 ? '-' : ''}${Math.floor(Math.abs(sec) / 60)}:${('0' + (Math.abs(sec) % 60)).slice(-2)}`;
@@ -13,52 +13,53 @@ const ChessClock = ({
     const [secondsLeft, setSecondsLeft] = useState(undefined);
     const [delayToStartClock, setDelayToStartClock] = useState(undefined);
     const [stateId, setStateId] = useState(undefined);
+    const [endTime, setEndTime] = useState(undefined);
+    const [delayEndTime, setDelayEndTime] = useState(undefined);
     const timer = useRef(null);
 
     useEffect(() => {
-        updateProps();
-    }, [propStateId, propMode, propSecondsLeft, propDelayToStartClock, updateProps]);
-
-    const updateProps = useCallback(() => {
-        if (stateId === propStateId) {
-            return;
-        }
-        if (propSecondsLeft === 0) {
+        if (propMode !== 'stop' && delayEndTime) {
             if (timer.current) {
                 clearInterval(timer.current);
             }
-            setSecondsLeft(0);
-            return;
-        }
-        setStateId(propStateId);
-        setMode(propMode);
-        setSecondsLeft(propSecondsLeft);
-        setDelayToStartClock(propDelayToStartClock);
-        if (timer.current) {
-            clearInterval(timer.current);
-        }
-
-        if (propMode !== 'stop') {
             timer.current = setInterval(() => {
-                if (delayToStartClock > 0) {
-                    setDelayToStartClock(delayToStartClock - 1);
-                } else if (delayToStartClock <= 0) {
-                    setSecondsLeft(secondsLeft - 1);
+                const delta = Math.round((delayEndTime.getTime() - Date.now()) / 1000);
+                if (delta >= 0) {
+                    setDelayToStartClock(delta);
+                } else if (delta < 0) {
+                    const endDelta = Math.round((endTime.getTime() - Date.now()) / 1000);
+                    setSecondsLeft(endDelta);
                 }
             }, 1000);
         }
-    }, [
-        delayToStartClock,
-        secondsLeft,
-        stateId,
-        propStateId,
-        propMode,
-        propSecondsLeft,
-        propDelayToStartClock
-    ]);
+
+        return () => clearInterval(timer);
+    }, [propMode, delayEndTime, endTime]);
+
+    useEffect(() => {
+        if (propStateId !== stateId) {
+            if (propSecondsLeft === 0) {
+                setSecondsLeft(0);
+                return;
+            }
+            setStateId(propStateId);
+            setMode(propMode);
+            setSecondsLeft(propSecondsLeft);
+            setDelayEndTime(new Date(Date.now() + propDelayToStartClock * 1000));
+            setEndTime(new Date(Date.now() + (propDelayToStartClock + propSecondsLeft) * 1000));
+            setDelayToStartClock(propDelayToStartClock);
+        }
+    }, [propDelayToStartClock, propMode, propSecondsLeft, propStateId, stateId]);
+
+    const timeLeftText = useMemo(() => {
+        return formattedSeconds(secondsLeft);
+    }, [secondsLeft]);
+
+    const delayText = useMemo(() => {
+        return formattedSeconds(delayToStartClock);
+    }, [delayToStartClock]);
 
     if (mode !== 'inactive') {
-        let timeLeftText = formattedSeconds(secondsLeft);
         let stateInfo = null;
         if (mode === 'down') {
             stateInfo = (
@@ -66,9 +67,7 @@ const ChessClock = ({
                     {delayToStartClock <= 0 ? (
                         <img src='/img/chess-clock.png' className='chessclock-icon' />
                     ) : (
-                        <span className='chessclock-delay'>
-                            +{formattedSeconds(delayToStartClock)}
-                        </span>
+                        <span className='chessclock-delay'>+{delayText}</span>
                     )}
                 </h1>
             );

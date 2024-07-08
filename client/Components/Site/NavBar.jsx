@@ -1,12 +1,13 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
 import Link from './Link';
 import Avatar from './Avatar';
 import menus from '../../menus';
+import ContextMenu from './ContextMenu';
 
 const NavBar = ({ title }) => {
-    const { context, path } = useSelector((state) => state.navigation);
+    const { path } = useSelector((state) => state.navigation);
     const { user } = useSelector((state) => state.auth);
     const {
         connected: lobbySocketConnected,
@@ -17,20 +18,6 @@ const NavBar = ({ title }) => {
     const { connected: gameConnected, connecting: gameConnecting } = useSelector(
         (state) => state.game
     );
-
-    const [showPopup, setShowPopup] = useState(undefined);
-
-    const onMenuItemMouseOver = useCallback((menuItem) => {
-        setShowPopup(menuItem);
-
-        if (menuItem.onMouseOver) {
-            menuItem.onMouseOver();
-        }
-    }, []);
-
-    const onMenuItemMouseOut = useCallback(() => {
-        setShowPopup(undefined);
-    }, []);
 
     const renderMenuItem = useCallback(
         (menuItem) => {
@@ -125,33 +112,6 @@ const NavBar = ({ title }) => {
         </li>
     ) : null;
 
-    let contextMenu =
-        context &&
-        context.map((menuItem) => {
-            return (
-                <li key={menuItem.text}>
-                    <a
-                        href='javascript:void(0)'
-                        onMouseOver={() => onMenuItemMouseOver(menuItem)}
-                        onMouseOut={() => onMenuItemMouseOut()}
-                        onClick={
-                            menuItem.onClick
-                                ? (event) => {
-                                      event.preventDefault();
-                                      menuItem.onClick();
-                                  }
-                                : null
-                        }
-                    >
-                        {' '}
-                        {menuItem.displayWarning ? <span className='warning-icon' /> : null}{' '}
-                        {menuItem.text}
-                    </a>
-                    {showPopup === menuItem ? showPopup.popup : null}
-                </li>
-            );
-        });
-
     let className = 'glyphicon glyphicon-signal';
     let toolTip = 'Lobby is';
 
@@ -219,7 +179,7 @@ const NavBar = ({ title }) => {
                 <div id='navbar' className='collapse navbar-collapse'>
                     <ul className='nav navbar-nav'>{leftMenuToRender}</ul>
                     <ul className='nav navbar-nav navbar-right'>
-                        {contextMenu}
+                        <ContextMenu />
                         {numGames}
                         {lobbyStatus}
                         {gameStatus}

@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { useDrop } from 'react-dnd';
 import classNames from 'classnames';
 
@@ -23,42 +23,96 @@ const validTargets = {
         'conclave',
         'shadows'
     ],
-    'discard pile': ['dead pile', 'hand', 'draw deck', 'play area', 'out of game']
+    'discard pile': [
+        'dead pile',
+        'hand',
+        'draw deck',
+        'play area',
+        'out of game',
+        'conclave',
+        'shadows'
+    ],
+    'dead pile': [
+        'hand',
+        'draw deck',
+        'play area',
+        'discard pile',
+        'out of game',
+        'conclave',
+        'shadows'
+    ],
+    'draw deck': [
+        'hand',
+        'discard pile',
+        'dead pile',
+        'play area',
+        'out of game',
+        'conclave',
+        'rookery',
+        'shadows'
+    ],
+    'plot deck': ['revealed plots', 'out of game', 'rookery'],
+    'revealed plots': ['plot deck', 'out of game'],
+    'out of game': [
+        'plot deck',
+        'revealed plots',
+        'draw deck',
+        'play area',
+        'discard pile',
+        'hand',
+        'dead pile',
+        'shadows'
+    ],
+    conclave: [
+        'hand',
+        'play area',
+        'draw deck',
+        'discard pile',
+        'dead pile',
+        'out of game',
+        'shadows'
+    ],
+    shadows: ['dead pile', 'discard pile', 'draw deck', 'hand', 'out of game', 'play area'],
+    'full deck': ['rookery'],
+    rookery: ['full deck']
 };
 
 const Droppable = ({ children, onDragDrop, source }) => {
-    const handleDrop = useCallback(
-        (props, monitor) => {
+    const [{ canDrop, isOver, itemSource }, drop] = useDrop({
+        accept: ItemTypes.CARD,
+        drop: (_, monitor) => {
             let item = monitor.getItem();
 
-            if (onDragDrop) {
-                onDragDrop(item.card, source);
-            }
+            onDragDrop && onDragDrop(item.card, item.source, source);
         },
-        [onDragDrop, source]
-    );
+        canDrop: (item) =>
+            validTargets[item.source] &&
+            validTargets[item.source].some((target) => target === source),
+        collect: (monitor) => {
+            let item = monitor.getItem();
 
-    const [{ isOver, canDrop }, drop] = useDrop({
-        accept: ItemTypes.CARD,
-        drop: handleDrop,
-        canDrop: (item) => validTargets[item.source].includes(source),
-        collect: (monitor) => ({
-            isOver: !!monitor.isOver(),
-            canDrop: !!monitor.canDrop()
-        })
+            return {
+                isOver: monitor.isOver(),
+                canDrop: monitor.canDrop(),
+                itemSource: item && item.source
+            };
+        }
     });
 
-    console.info(canDrop, isOver);
-
-    let className = classNames('droppable', {
-        'drop-valid': canDrop,
-        'drop-target': isOver
+    let className = classNames('overlay', {
+        'drop-ok': isOver && canDrop,
+        'no-drop': isOver && !canDrop && source !== itemSource,
+        'can-drop': !isOver && canDrop,
+        [source]: true
     });
 
-    console.info(className);
+    let dropClass = classNames('drop-target', {
+        [source]: source !== 'play area'
+    });
 
     return (
-        <div ref={drop} className={className}>
+        <div className={dropClass} ref={drop}>
+            <div className={className} />
             {children}
         </div>
     );

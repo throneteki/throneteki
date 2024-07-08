@@ -63,7 +63,9 @@ const gameSlice = createSlice({
         sendChangeStatMessage: create.preparedReducer(
             (type, amount) => ({ payload: { type, amount } }),
             () => {}
-        )
+        ),
+        sendLeaveGameMessage: () => {},
+        sendConcedeMessage: () => {}
     })
 });
 
@@ -85,7 +87,9 @@ export const {
     sendDragDropMessage,
     sendGameChatMessage,
     sendToggleMuteSpectatorsMessage,
-    sendChangeStatMessage
+    sendChangeStatMessage,
+    sendLeaveGameMessage,
+    sendConcedeMessage
 } = gameSlice.actions;
 
 export default gameSlice.reducer;

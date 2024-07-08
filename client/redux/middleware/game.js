@@ -9,8 +9,10 @@ import {
     sendCardClickedMessage,
     sendCardMenuItemClickedMessage,
     sendChangeStatMessage,
+    sendConcedeMessage,
     sendDragDropMessage,
     sendGameChatMessage,
+    sendLeaveGameMessage,
     sendShowDrawDeckMessage,
     sendShuffleDeckMessage,
     sendToggleDupesMessage,
@@ -20,7 +22,7 @@ import {
     sendToggleTimerSetting,
     startGameConnecting
 } from '../reducers/game';
-import { receiveGameState } from '../reducers/lobby';
+import { receiveClearGameState, receiveGameState } from '../reducers/lobby';
 
 const GameEvent = Object.freeze({
     Connected: 'connect',
@@ -42,7 +44,10 @@ const GameMessage = Object.freeze({
     DragDrop: 'drop',
     Chat: 'chat',
     ToggleMuteSpectators: 'toggleMuteSpectators',
-    ChangeStat: 'changeStat'
+    ChangeStat: 'changeStat',
+    LeaveGame: 'leavegame',
+    Concede: 'concede',
+    ClearGameState: 'cleargamestate'
 });
 
 const gameMiddleware = (store) => {
@@ -83,6 +88,10 @@ const gameMiddleware = (store) => {
 
             socket.io.on(GameEvent.Error, () => {
                 dispatch(gameConnectionFailed());
+            });
+
+            socket.on(GameMessage.ClearGameState, () => {
+                dispatch(receiveClearGameState());
             });
 
             socket.on(GameMessage.GameState, (game) => {
@@ -159,6 +168,12 @@ const gameMiddleware = (store) => {
             socket.emit('game', GameMessage.ToggleMuteSpectators);
         } else if (sendChangeStatMessage.match(action)) {
             socket.emit('game', GameMessage.ChangeStat, action.payload.type, action.payload.amount);
+        } else if (sendLeaveGameMessage.match(action)) {
+            socket.emit('game', GameMessage.LeaveGame);
+
+            dispatch(gameDisconnected());
+        } else if (sendConcedeMessage.match(action)) {
+            socket.emit('game', GameMessage.Concede);
         }
 
         next(action);

@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import classNames from 'classnames';
-import { useDrag, DragPreviewImage } from 'react-dnd';
+import { useDrag } from 'react-dnd';
 
 import CardMenu from './CardMenu';
 import CardCounters from './CardCounters';
@@ -233,12 +233,12 @@ const Card = ({
                 style = { left: x, top: y };
             }
             return (
-                <div className='drag-preview' style={style}>
+                <div className='drag-preview' style={style} ref={preview}>
                     {image}
                 </div>
             );
         },
-        [dragOffset, isDragging]
+        [dragOffset, isDragging, preview]
     );
 
     const getCard = () => {
@@ -290,7 +290,7 @@ const Card = ({
             </div>
         );
 
-        return (<DragPreviewImage connect={preview} src={imageUrl} />), content;
+        return content;
     };
 
     const imageUrl = !isFacedown()
