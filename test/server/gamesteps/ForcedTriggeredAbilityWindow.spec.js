@@ -35,15 +35,11 @@ describe('ForcedTriggeredAbilityWindow', function () {
         }
 
         function createAbility(card, context) {
-            let ability = jasmine.createSpyObj('ability', [
-                'createContext',
-                'getChoices',
-                'canResolve'
-            ]);
+            let ability = jasmine.createSpyObj('ability', ['getChoices', 'canResolve']);
             ability.card = card;
-            ability.createContext.and.returnValue(context);
             ability.getChoices.and.returnValue([{ choice: 'default' }]);
             ability.canResolve.and.returnValue(true);
+            // TODO: ADD ABILITYTRIGGERS
             return ability;
         }
 
@@ -89,7 +85,7 @@ describe('ForcedTriggeredAbilityWindow', function () {
         describe('when there is only 1 choice', function () {
             beforeEach(function () {
                 this.window.gatherChoices.and.callFake(() => {
-                    this.window.registerAbility(this.ability1Spy, this.eventSpy);
+                    this.window.registerAbility(this.ability1Spy, this.context1);
                 });
 
                 this.result = this.window.continue();
@@ -120,9 +116,9 @@ describe('ForcedTriggeredAbilityWindow', function () {
         describe('when there are multiple choices', function () {
             beforeEach(function () {
                 this.window.gatherChoices.and.callFake(() => {
-                    this.window.registerAbility(this.ability1Spy, this.eventSpy);
-                    this.window.registerAbility(this.ability2Spy, this.eventSpy);
-                    this.window.registerAbility(this.ability3Spy, this.eventSpy);
+                    this.window.registerAbility(this.ability1Spy, this.context1);
+                    this.window.registerAbility(this.ability2Spy, this.context2);
+                    this.window.registerAbility(this.ability3Spy, this.context3);
                 });
                 this.result = this.window.continue();
             });
@@ -164,7 +160,7 @@ describe('ForcedTriggeredAbilityWindow', function () {
 
     describe('chooseAbility()', function () {
         beforeEach(function () {
-            this.window.registerAbility(this.ability1Spy, this.eventSpy);
+            this.window.registerAbility(this.ability1Spy, this.context1);
             this.choiceId = this.window.abilityChoices[0].id;
         });
 

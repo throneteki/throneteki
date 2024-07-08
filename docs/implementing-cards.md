@@ -625,7 +625,7 @@ this.forcedInterrupt({
 
 #### Cancelling or replacing events with interrupts
 
-Some cards (primarily saving cards) allow the player to cancel an effect. The `handler` method is always passed a `context` object that allows the handler to cancel the event. Such abilities must also be passed `canCancel: true` in the declaration.
+Some cards (primarily saving cards) allow the player to cancel an effect. The `handler` method is always passed a `context` object that allows the handler to cancel the `event` within it. Such abilities must also be passed `canCancel: true` in the declaration.
 
 ```javascript
 this.interrupt({
@@ -634,7 +634,7 @@ this.interrupt({
     },
     canCancel: true,
     handler: (context) => {
-        context.cancel();
+        context.event.cancel();
         // sacrifice the Bodyguard
     }
 });

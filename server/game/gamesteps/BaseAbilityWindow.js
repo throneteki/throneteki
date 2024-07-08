@@ -10,24 +10,20 @@ class BaseAbilityWindow extends BaseStep {
         this.resolvedAbilities = [];
     }
 
-    canTriggerAbility(ability) {
-        return (
-            ability.eventType === this.abilityType &&
-            this.event.getConcurrentEvents().some((event) => ability.isTriggeredByEvent(event))
-        );
+    canTriggerAbility(ability, context) {
+        return ability.eventType === this.abilityType && ability.isTriggeredByContext(context);
     }
 
     gatherChoices() {
         this.abilityChoices = [];
+        this.game.emit(this.abilityType, this.event);
         this.event.emitTo(this.game, this.abilityType);
     }
 
-    registerAbility(ability, event) {
-        if (this.hasResolvedAbility(ability, event)) {
+    registerAbility(ability, context) {
+        if (this.hasResolvedAbility(ability, context.event)) {
             return;
         }
-
-        let context = ability.createContext(event);
 
         if (!ability.canResolve(context)) {
             return;
@@ -54,7 +50,7 @@ class BaseAbilityWindow extends BaseStep {
     }
 
     markAbilityAsResolved(ability, event) {
-        this.resolvedAbilities.push({ ability: ability, event: event });
+        this.resolvedAbilities.push({ ability, event });
     }
 
     clearAbilityResolution(ability) {

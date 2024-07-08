@@ -45,7 +45,7 @@ describe('CardForcedReaction', function () {
             this.executeEventHandler = (args = {}) => {
                 this.event = new Event('onSomething', args);
                 this.reaction = new CardForcedReaction(this.gameSpy, this.cardSpy, this.properties);
-                this.reaction.eventHandler(this.event);
+                this.reaction.abilityTriggers[0].eventHandler(this.event);
             };
         });
 
@@ -77,7 +77,12 @@ describe('CardForcedReaction', function () {
             it('should register the ability', function () {
                 expect(this.gameSpy.registerAbility).toHaveBeenCalledWith(
                     this.reaction,
-                    this.event
+                    jasmine.objectContaining({
+                        ability: this.reaction,
+                        event: this.event,
+                        game: this.gameSpy,
+                        source: this.cardSpy
+                    })
                 );
             });
         });

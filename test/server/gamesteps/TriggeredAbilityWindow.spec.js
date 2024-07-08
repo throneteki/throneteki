@@ -53,16 +53,11 @@ describe('TriggeredAbilityWindow', function () {
         }
 
         function createAbility(card, context) {
-            let ability = jasmine.createSpyObj('ability', [
-                'createContext',
-                'getTitle',
-                'hasMax',
-                'canResolve'
-            ]);
+            let ability = jasmine.createSpyObj('ability', ['getTitle', 'hasMax', 'canResolve']);
             ability.card = card;
-            ability.createContext.and.returnValue(context);
             ability.location = ['play area'];
             ability.canResolve.and.returnValue(true);
+            // TODO: ADD ABILITYTRIGGERS
             return ability;
         }
 
@@ -96,9 +91,9 @@ describe('TriggeredAbilityWindow', function () {
             beforeEach(function () {
                 // There are remaining choices, but both players have passed
                 this.window.gatherChoices.and.callFake(() => {
-                    this.window.registerAbility(this.ability1Spy, this.eventSpy);
-                    this.window.registerAbility(this.ability2Spy, this.eventSpy);
-                    this.window.registerAbility(this.ability3Spy, this.eventSpy);
+                    this.window.registerAbility(this.ability1Spy, this.context1);
+                    this.window.registerAbility(this.ability2Spy, this.context2);
+                    this.window.registerAbility(this.ability3Spy, this.context3);
                 });
                 this.window.players = [];
                 this.result = this.window.continue();
@@ -131,9 +126,9 @@ describe('TriggeredAbilityWindow', function () {
         describe('when there are choices', function () {
             beforeEach(function () {
                 this.window.gatherChoices.and.callFake(() => {
-                    this.window.registerAbility(this.ability1Spy, this.eventSpy);
-                    this.window.registerAbility(this.ability2Spy, this.eventSpy);
-                    this.window.registerAbility(this.ability3Spy, this.eventSpy);
+                    this.window.registerAbility(this.ability1Spy, this.context1);
+                    this.window.registerAbility(this.ability2Spy, this.context2);
+                    this.window.registerAbility(this.ability3Spy, this.context3);
                 });
             });
 
@@ -158,9 +153,9 @@ describe('TriggeredAbilityWindow', function () {
 
     describe('chooseAbility()', function () {
         beforeEach(function () {
-            this.window.registerAbility(this.ability1Spy, this.eventSpy);
-            this.window.registerAbility(this.ability2Spy, this.eventSpy);
-            this.window.registerAbility(this.ability3Spy, this.eventSpy);
+            this.window.registerAbility(this.ability1Spy, this.context1);
+            this.window.registerAbility(this.ability2Spy, this.context2);
+            this.window.registerAbility(this.ability3Spy, this.context3);
         });
 
         describe('when the player select a non-existent choice', function () {
