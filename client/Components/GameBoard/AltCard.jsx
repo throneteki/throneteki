@@ -16,7 +16,7 @@ const AltCard = ({ card }) => {
                         />
                     );
                 } else {
-                    icons.push(<div className='challenge-icon' />);
+                    icons.push(<div key={icon} className='challenge-icon' />);
                 }
             }
         }

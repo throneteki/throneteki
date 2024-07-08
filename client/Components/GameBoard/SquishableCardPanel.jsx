@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import classNames from 'classnames';
+import { getCardDimensions } from '../../util';
 
 import Card from './Card';
 

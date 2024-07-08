@@ -1,6 +1,7 @@
 import PutIntoShadows from '../GameActions/PutIntoShadows.js';
 import BaseAbility from '../baseability.js';
 import Costs from '../costs.js';
+import { OpenInformationLocations } from '../CardVisibility.js';
 
 class MarshalIntoShadowsAction extends BaseAbility {
     constructor() {
@@ -38,24 +39,31 @@ class MarshalIntoShadowsAction extends BaseAbility {
             type: 'shadows'
         };
         context.game.raiseEvent('onCardMarshalled', params, (event) => {
-            event.thenAttachEvent(
-                PutIntoShadows.createEvent({ card: context.source, reason: 'marshal' })
-            );
+            const card = this.shouldHideSourceInMessage(context) ? 'a card' : context.source;
             context.game.addMessage(
                 this.getMessageFormat(params),
                 context.player,
+                card,
+                params.originalController,
                 params.originalLocation,
                 params.originalParent,
                 context.costs.gold
+            );
+            event.thenAttachEvent(
+                PutIntoShadows.createEvent({ card: context.source, reason: 'marshal' })
             );
         });
     }
 
     getMessageFormat(params) {
         const messages = {
-            hand: '{0} marshals a card into shadows costing {3} gold',
-            underneath: '{0} marshals a card from underneath {2} into shadows costing {3} gold',
-            other: '{0} marshals a card from their {1} into shadows costing {3} gold'
+            'hand.current': '{0} marshals {1} into shadows costing {5} gold',
+            'other.current': '{0} marshals {1} into shadows from their {3} costing {5} gold',
+            'other.opponent': "{0} marshals {1} into shadows from {2}'s {3} costing {5} gold",
+            'underneath.current':
+                '{0} marshals {1} into shadows from underneath {4} costing {5} gold',
+            'underneath.opponent':
+                "{0} marshals {1} into shadows from underneath {2}'s {4} costing {5} gold"
         };
         let marshalLocation =
             params.originalLocation === 'hand'
@@ -63,11 +71,12 @@ class MarshalIntoShadowsAction extends BaseAbility {
                 : params.originalLocation === 'underneath' || params.wasFacedownAttachment
                   ? 'underneath'
                   : 'other';
-        return messages[marshalLocation] || messages['hand'];
+        let current = params.originalController === params.player ? 'current' : 'opponent';
+        return messages[`${marshalLocation}.${current}`] || messages['hand.current'];
     }
 
-    shouldHideSourceInMessage() {
-        return true;
+    shouldHideSourceInMessage(context) {
+        return !(context.source && OpenInformationLocations.includes(context.source.location));
     }
 }
 

@@ -156,6 +156,12 @@ const CardPile = ({
             source: source
         };
 
+        if (showCards) {
+            for (const card of cards) {
+                card.facedown = false;
+            }
+        }
+
         if (cards && cards.some((card) => card.group)) {
             const cardGroup = cards.reduce((grouping, card) => {
                 (grouping[card.group] = grouping[card.group] || []).push(card);

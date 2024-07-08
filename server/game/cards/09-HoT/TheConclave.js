@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import AgendaCard from '../../agendacard.js';
 
 class TheConclave extends AgendaCard {
@@ -16,16 +17,23 @@ class TheConclave extends AgendaCard {
             target: {
                 type: 'select',
                 activePromptTitle: 'Choose Conclave card to swap with top of deck',
-                cardCondition: (card) => card.location === 'conclave'
+                cardCondition: (card, context) => context.player.agenda.underneath.includes(card)
             },
+            message:
+                '{player} uses {source} to swap the top card of their deck with a facedown card under their agenda',
             handler: (context) => {
-                let topCard = this.controller.drawDeck[0];
-                this.controller.moveCard(context.target, 'draw deck');
-                this.controller.moveCard(topCard, 'conclave');
-                this.game.addMessage(
-                    '{0} uses {1} to swap the top card of their deck with one under their agenda',
-                    this.controller,
-                    this
+                context.game.resolveGameAction(
+                    GameActions.simultaneously([
+                        GameActions.placeCard({
+                            card: context.target,
+                            player: context.player,
+                            location: 'draw deck'
+                        }),
+                        GameActions.placeCardUnderneath({
+                            card: this.controller.drawDeck[0],
+                            parentCard: this
+                        })
+                    ])
                 );
             }
         });
@@ -43,12 +51,16 @@ class TheConclave extends AgendaCard {
             return;
         }
 
-        let top7Cards = this.controller.drawDeck.slice(0, 7);
-        for (let card of top7Cards) {
-            this.controller.moveCard(card, 'conclave');
-        }
+        const top7Cards = this.controller.drawDeck.slice(0, 7);
+        this.game.resolveGameAction(
+            GameActions.simultaneously(
+                top7Cards.map((card) =>
+                    GameActions.placeCardUnderneath({ card, parentCard: this, facedown: true })
+                )
+            )
+        );
         this.game.addMessage(
-            '{0} moves the top 7 cards of their deck under {1}',
+            '{0} places the top 7 cards of their deck facedown under {1}',
             this.controller,
             this
         );

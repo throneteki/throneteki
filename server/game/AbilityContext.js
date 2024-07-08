@@ -9,6 +9,7 @@ class AbilityContext {
         this.source = properties.source;
         this.player = properties.player;
         this.costs = {};
+        this.costStatesWhenInitiated = {};
         this.costValues = {};
         this.targets = new ResolvedTargets();
         this.resolutionStage = 'effect';
@@ -22,6 +23,9 @@ class AbilityContext {
         let valueAsArray = Array.isArray(value) ? value : [value];
         this.costValues[name] = this.costValues[name].concat(valueAsArray);
         this.costs[name] = value;
+        this.costStatesWhenInitiated[name] = Array.isArray(value)
+            ? value.map((v) => v.createSnapshot())
+            : value.createSnapshot();
     }
 
     getCostValuesFor(name) {

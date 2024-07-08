@@ -22,11 +22,9 @@ import GameBoardLayout from './GameBoardLayout';
 
 const placeholderPlayer = {
     activePlot: null,
-    agenda: null,
+    agendas: [],
     cardPiles: {
-        bannerCards: [],
         cardsInPlay: [],
-        conclavePile: [],
         deadPile: [],
         discardPile: [],
         hand: [],

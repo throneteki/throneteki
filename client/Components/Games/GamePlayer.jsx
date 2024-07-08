@@ -20,14 +20,16 @@ const GamePlayer = (props) => {
                     </span>
                     <span className='bold'>{props.player.name}</span>
                 </div>
-                <div className='agenda-mini'>
-                    {
-                        <img
-                            className='img-responsive'
-                            src={`/img/cards/${props.player.agenda || 'cardback'}.png`}
-                        />
-                    }
-                </div>
+                {props.player.agendas?.reverse().map((agenda) => (
+                    <div key={agenda} className='agenda-mini'>
+                        {
+                            <img
+                                className='img-responsive'
+                                src={`/img/cards/${agenda || 'cardback'}.png`}
+                            />
+                        }
+                    </div>
+                ))}
                 <div className='faction-mini'>
                     {
                         <img
@@ -49,14 +51,16 @@ const GamePlayer = (props) => {
                         />
                     }
                 </div>
-                <div className='agenda-mini'>
-                    {
-                        <img
-                            className='img-responsive'
-                            src={`/img/cards/${props.player.agenda || 'cardback'}.png`}
-                        />
-                    }
-                </div>
+                {props.player.agendas?.map((agenda) => (
+                    <div key={agenda} className='agenda-mini'>
+                        {
+                            <img
+                                className='img-responsive'
+                                src={`/img/cards/${agenda || 'cardback'}.png`}
+                            />
+                        }
+                    </div>
+                ))}
                 <div className='game-player-name'>
                     <span className='bold'>{props.player.name}</span>
                     <span className='gamelist-avatar'>

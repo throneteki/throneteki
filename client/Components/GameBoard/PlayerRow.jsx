@@ -1,10 +1,12 @@
 import React, { useCallback } from 'react';
 import classNames from 'classnames';
 
+import Card from './Card';
 import CardPile from './CardPile';
 import SquishableCardPanel from './SquishableCardPanel';
 import DrawDeck from './DrawDeck';
 import Droppable from './Droppable';
+import { getCardDimensions } from '../../util';
 
 const PlayerRow = ({
     outOfGamePile,
@@ -85,11 +87,13 @@ const PlayerRow = ({
             });
             return <div className={className} />;
         }
+        let cardWidth = getCardDimensions(this.props.cardSize);
 
-        let cards = [];
-        let disablePopup = false;
-        let title;
+        let underneath = agenda.childCards || [];
+        let disablePopup = underneath.length === 0;
+        let title = !disablePopup ? 'Agenda' : null;
         let source = 'agenda';
+        let pileClass = classNames('agenda', `agenda-${agenda.code}`);
 
         // Alliance
         if (agenda.code === '06018') {

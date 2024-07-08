@@ -1017,7 +1017,7 @@ class Lobby {
                     name: player.name,
                     owner: game.owner === player.name,
                     faction: { cardData: { code: player.faction } },
-                    agenda: { cardData: { code: player.agenda } },
+                    agendas: player.agendas?.map((code) => ({ cardData: { code } })),
                     user: new User(player.user)
                 };
             }

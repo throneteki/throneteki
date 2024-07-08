@@ -40,3 +40,24 @@ export function getMessageWithLinks(message) {
 
     return parts;
 }
+
+export function getCardDimensions(cardSize) {
+    let multiplier = getCardSizeMultiplier(cardSize);
+    return {
+        width: 65 * multiplier,
+        height: 91 * multiplier
+    };
+}
+
+function getCardSizeMultiplier(cardSize) {
+    switch (cardSize) {
+        case 'small':
+            return 0.8;
+        case 'large':
+            return 1.4;
+        case 'x-large':
+            return 2;
+    }
+
+    return 1;
+}

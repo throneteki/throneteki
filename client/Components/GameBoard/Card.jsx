@@ -54,11 +54,12 @@ const Card = ({
     }));
 
     const isAllowedMenuSource = useCallback(() => {
-        if (source === 'agenda' && card?.selectable) {
-            return false;
-        }
-        return ['play area', 'agenda', 'revealed plots'].includes(source);
-    }, [card?.selectable, source]);
+        return (
+            source === 'play area' ||
+            source === 'agenda' ||
+            source === 'revealed plots'
+        );
+    }, [source]);
 
     const handleMouseOver = useCallback(() => {
         if (onMouseOver) onMouseOver(card);
@@ -83,7 +84,7 @@ const Card = ({
             event.preventDefault();
             event.stopPropagation();
 
-            if (isAllowedMenuSource() && card.menu && card.menu.length !== 0) {
+            if (showMenu) {
                 setShowMenu((prevShowMenu) => !prevShowMenu);
                 return;
             }
@@ -178,8 +179,14 @@ const Card = ({
     };
 
     const renderUnderneathCards = () => {
-        let underneathCards = card.childCards;
-        if (!underneathCards || underneathCards.length === 0) return;
+        // TODO: Right now it is assumed that all cards in the childCards array
+        // are being placed underneath the current card. In the future there may
+        // be other types of cards in this array and it should be filtered.
+        let underneathCards = this.props.card.childCards;
+        if (!underneathCards || underneathCards.length === 0 || this.props.card.type === 'agenda') {
+            return;
+        }
+
         let maxCards = 1 + (underneathCards.length - 1) / 6;
         return (
             <SquishableCardPanel
@@ -210,11 +217,21 @@ const Card = ({
         );
     };
 
-    const shouldShowMenu = () => {
-        if (!isAllowedMenuSource()) return false;
-        if (!card.menu || !showMenu) return false;
-        return true;
-    };
+    const getMenu = useCallback(() => {
+        let menu = menu || [];
+
+        if (card.menu) {
+            menu = menu.concat(card.menu);
+        }
+
+        return menu;
+    }, []);
+
+    const shouldShowMenu = useCallback(() => {
+        return (
+            getMenu().some((item) => item.command !== 'click') && isAllowedMenuSource()
+        );
+    }, []);
 
     const isFacedown = () => {
         return card.facedown || !card.code;
@@ -285,7 +302,7 @@ const Card = ({
                     {!isFacedown() ? getAlertStatus() : null}
                 </div>
                 {shouldShowMenu() ? (
-                    <CardMenu menu={card.menu} onMenuItemClick={handleMenuItemClick} />
+                    <CardMenu menu={getMenu()} onMenuItemClick={handleMenuItemClick} />
                 ) : null}
             </div>
         );

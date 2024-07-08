@@ -11,7 +11,7 @@ const validTargets = {
         'draw deck',
         'dead pile',
         'out of game',
-        'conclave',
+        'agenda',
         'shadows'
     ],
     'play area': [
@@ -20,7 +20,7 @@ const validTargets = {
         'draw deck',
         'dead pile',
         'out of game',
-        'conclave',
+        'agenda',
         'shadows'
     ],
     'discard pile': [
@@ -29,7 +29,7 @@ const validTargets = {
         'draw deck',
         'play area',
         'out of game',
-        'conclave',
+        'agenda',
         'shadows'
     ],
     'dead pile': [
@@ -38,7 +38,7 @@ const validTargets = {
         'play area',
         'discard pile',
         'out of game',
-        'conclave',
+        'agenda',
         'shadows'
     ],
     'draw deck': [
@@ -47,7 +47,7 @@ const validTargets = {
         'dead pile',
         'play area',
         'out of game',
-        'conclave',
+        'agenda',
         'rookery',
         'shadows'
     ],
@@ -63,7 +63,7 @@ const validTargets = {
         'dead pile',
         'shadows'
     ],
-    conclave: [
+    agenda: [
         'hand',
         'play area',
         'draw deck',
