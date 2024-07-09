@@ -96,7 +96,6 @@ const PlayerRow = ({
     );
 
     const getAgenda = useCallback(() => {
-        console.info(agendas);
         let agenda = agendas?.length > 0 ? agendas[0] : undefined;
         if (!agenda || agenda.code === '') {
             let className = classNames('agenda', 'card-pile', 'vertical', 'panel', {
@@ -139,6 +138,7 @@ const PlayerRow = ({
             </div>
         );
 
+        // Add all additional agendas separately (not as a CardPile)
         retAgendas = retAgendas.concat(
             additionalAgendas.map((agenda, index) => {
                 let className = classNames('agenda', `agenda-${agenda.code} additional`);

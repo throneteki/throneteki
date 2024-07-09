@@ -130,6 +130,15 @@ const DeckEditor = ({ deck, onDeckUpdated, onDeckSave, isSaveLoading, onRestrict
         [cards]
     );
 
+    const banners = useMemo(
+        () =>
+            cards &&
+            Object.values(cards).filter((card) => {
+                return card.traits.some((t) => t.toLowerCase() === 'banner');
+            }),
+        [cards]
+    );
+
     useEffect(() => {
         if (!packs || !currentRestrictedList || !restrictedLists) {
             return;
@@ -265,13 +274,13 @@ const DeckEditor = ({ deck, onDeckUpdated, onDeckSave, isSaveLoading, onRestrict
                     setDeckName(header[0]);
 
                     let newFaction = Object.values(factions).find(
-                        (faction) => faction.name === header[2].trim()
+                        (faction) => faction.name === header[1].trim()
                     );
                     if (newFaction) {
                         setFaction(newFaction);
                     }
 
-                    header = header.slice(3);
+                    header = header.slice(2);
                     if (header.length >= 1) {
                         let rawAgenda, rawBanners;
 
@@ -296,7 +305,7 @@ const DeckEditor = ({ deck, onDeckUpdated, onDeckSave, isSaveLoading, onRestrict
                         }
 
                         if (rawBanners) {
-                            let banners = [];
+                            let newBanners = [];
                             for (let rawBanner of rawBanners) {
                                 let banner = lookupCardByName({
                                     cardName: rawBanner,
@@ -305,11 +314,11 @@ const DeckEditor = ({ deck, onDeckUpdated, onDeckSave, isSaveLoading, onRestrict
                                 });
 
                                 if (banner) {
-                                    banners.push(banner);
+                                    newBanners.push(banner);
                                 }
                             }
 
-                            setBannerCards(banners);
+                            setBannerCards(newBanners);
                         }
                     }
                 }
@@ -354,7 +363,7 @@ const DeckEditor = ({ deck, onDeckUpdated, onDeckSave, isSaveLoading, onRestrict
         }
     }, [faction, factions]);
 
-    let banners = useMemo(() => {
+    let bannersToRender = useMemo(() => {
         if (bannerCards.length === 0) {
             return null;
         }
@@ -480,7 +489,9 @@ const DeckEditor = ({ deck, onDeckUpdated, onDeckSave, isSaveLoading, onRestrict
                             blankOption={{ label: '- Select -', code: '' }}
                             button={{ text: 'Add', onClick: onAddBanner }}
                         />
-                        <div className='col-sm-9 col-sm-offset-3 banner-list'>{banners}</div>
+                        <div className='col-sm-9 col-sm-offset-3 banner-list'>
+                            {bannersToRender}
+                        </div>
                     </div>
                 )}
                 <Typeahead

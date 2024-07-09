@@ -38,7 +38,6 @@ import {
 } from '../reducers/lobby';
 import { receiveNodeStatus } from '../reducers/admin';
 import { setAuthTokens } from '../reducers/auth';
-import { closeGameSocket } from '../../actions';
 import { startGameConnecting } from '../reducers/game';
 
 const LobbyMessage = Object.freeze({
@@ -211,7 +210,7 @@ const lobbyMiddleware = (store) => {
                 dispatch(setAuthTokens(details.authToken, state.auth.refreshToken));
 
                 if (state.game.connected && state.game.gameId !== details.gameId) {
-                    dispatch(closeGameSocket());
+                    //dispatch(closeGameSocket());
                 }
 
                 dispatch(startGameConnecting(url, details.name));

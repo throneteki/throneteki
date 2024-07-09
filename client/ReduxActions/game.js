@@ -173,19 +173,6 @@ export function gameSocketClose() {
     };
 }
 
-export function closeGameSocket() {
-    return (dispatch, getState) => {
-        let state = getState();
-
-        if (state.games.socket) {
-            state.games.socket.gameClosing = true;
-            state.games.socket.close();
-        }
-
-        return dispatch(gameSocketClosed());
-    };
-}
-
 export function startGame(id) {
     return (dispatch, getState) => {
         let state = getState();

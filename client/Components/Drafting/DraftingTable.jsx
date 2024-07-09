@@ -10,6 +10,7 @@ import DraftCard from './DraftCard';
 import Panel from '../Site/Panel';
 import DraftPlayerPrompt from './DraftPlayerPrompt';
 import { navigate } from '../../redux/reducers/navigation';
+import { sendLeaveGameMessage } from '../../redux/reducers/game';
 
 const DraftingTable = () => {
     const [selectedGroupBy, setSelectedGroupBy] = useState('type');
@@ -144,16 +145,14 @@ const DraftingTable = () => {
         if (!spectating && isDraftActive()) {
             toastr.confirm('Your draft is not finished, are you sure you want to leave?', {
                 onOk: () => {
-                    dispatch(sendGameMessage('leavegame'));
-                    dispatch(closeGameSocket());
+                    dispatch(sendLeaveGameMessage());
                 }
             });
 
             return;
         }
 
-        dispatch(sendGameMessage('leavegame'));
-        dispatch(closeGameSocket());
+        dispatch(sendLeaveGameMessage());
     }, [dispatch, isDraftActive, spectating]);
 
     if (!currentGame || !cards || !currentGame.started) {

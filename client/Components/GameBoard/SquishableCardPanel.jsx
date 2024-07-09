@@ -73,7 +73,6 @@ const SquishableCardPanel = ({
         },
         [
             getOverallDimensions,
-            getCardDimensions,
             cards,
             groupVisibleCards,
             hasMixOfVisibleCards,

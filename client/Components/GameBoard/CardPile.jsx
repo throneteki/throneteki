@@ -31,15 +31,14 @@ const CardPile = ({
     showCards
 }) => {
     const [showPopup, setShowPopup] = useState(cards && cards.some((card) => card.selectable));
-    const [showMenu, setShowMenu] = useState(false);
 
-    const isTopCardSelectable = useMemo(
-        () =>
-            !topCard
-                ? false
-                : topCard.selectable && (!cards || cards.every((card) => card.unselectable)),
-        [cards, topCard]
-    );
+    const isTopCardSelectable = useMemo(() => {
+        if (!topCard) {
+            return false;
+        }
+
+        return topCard.selectable && (!cards || cards.every((card) => card.unselectable));
+    }, [cards, topCard]);
 
     const updatePopupVisibility = useCallback(
         (value) => {
