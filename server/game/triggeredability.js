@@ -235,10 +235,9 @@ export class SingularTrigger {
 
     eventHandler(event) {
         const context = this.ability.createContext(event);
-        if (!this.isTriggeredByEvent(event, context)) {
-            return;
+        if (this.isTriggeredByEvent(event, context)) {
+            this.ability.game.registerAbility(this.ability, context);
         }
-        this.ability.game.registerAbility(this.ability, context);
     }
 
     createEvent(eventType) {

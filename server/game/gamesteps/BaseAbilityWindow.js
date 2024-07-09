@@ -16,6 +16,7 @@ class BaseAbilityWindow extends BaseStep {
 
     gatherChoices() {
         this.abilityChoices = [];
+        // Emit base abilityType for aggregate capturing
         this.game.emit(this.abilityType, this.event);
         this.event.emitTo(this.game, this.abilityType);
     }
