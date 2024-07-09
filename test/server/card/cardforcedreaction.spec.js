@@ -47,6 +47,18 @@ describe('CardForcedReaction', function () {
                 this.reaction = new CardForcedReaction(this.gameSpy, this.cardSpy, this.properties);
                 this.reaction.abilityTriggers[0].eventHandler(this.event);
             };
+            this.executeAggregateEventHandler = () => {
+                this.event = new Event('onSimultaneous');
+                this.childEvent1 = new Event('onSomething', { arg1: 'val1', arg2: 'val2' });
+                this.childEvent2 = new Event('onSomething', { arg1: 'val1', arg2: 'val3' });
+                this.childEvent3 = new Event('onSomething', { arg1: 'val1', arg2: 'val3' });
+                this.event.addChildEvent(this.childEvent1);
+                this.event.addChildEvent(this.childEvent2);
+                this.event.addChildEvent(this.childEvent3);
+                this.reaction = new CardForcedReaction(this.gameSpy, this.cardSpy, this.properties);
+
+                this.reaction.abilityTriggers[0].eventHandler(this.event);
+            };
         });
 
         it('should call the when handler with the appropriate arguments', function () {
@@ -57,7 +69,7 @@ describe('CardForcedReaction', function () {
             );
         });
 
-        describe('when the when condition returns false', function () {
+        describe('when the singular condition returns false', function () {
             beforeEach(function () {
                 this.properties.when.onSomething.and.returnValue(false);
                 this.executeEventHandler();
@@ -68,7 +80,21 @@ describe('CardForcedReaction', function () {
             });
         });
 
-        describe('when the when condition returns true', function () {
+        describe('when the aggregate condition returns false', function () {
+            beforeEach(function () {
+                this.properties.when.onSomething = {
+                    aggregateBy: () => ({}),
+                    condition: () => false
+                };
+                this.executeAggregateEventHandler();
+            });
+
+            it('should not register any abilities', function () {
+                expect(this.gameSpy.registerAbility).not.toHaveBeenCalled();
+            });
+        });
+
+        describe('when the singular condition returns true', function () {
             beforeEach(function () {
                 this.properties.when.onSomething.and.returnValue(true);
                 this.executeEventHandler();
@@ -87,31 +113,57 @@ describe('CardForcedReaction', function () {
             });
         });
 
-        describe('when the when aggregate returns false', function () {
+        describe('when the aggregate condition returns one true', function () {
             beforeEach(function () {
                 this.properties.when.onSomething = {
-                    aggregateBy: jasmine.createSpy().and.returnValue({}),
-                    condition: jasmine.createSpy().and.returnValue(false)
+                    aggregateBy: (event) => ({
+                        arg1: event.arg1,
+                        arg2: event.arg2
+                    }),
+                    condition: (aggregate) => aggregate.arg2 === 'val2'
                 };
-                this.executeEventHandler();
+                this.executeAggregateEventHandler();
             });
 
-            it('should not register the ability', function () {
-                expect(this.gameSpy.registerAbility).not.toHaveBeenCalled();
+            it('should only register the one ability', function () {
+                expect(this.gameSpy.registerAbility).toHaveBeenCalledWith(
+                    this.reaction,
+                    jasmine.objectContaining({
+                        events: jasmine.arrayContaining([this.childEvent1])
+                    })
+                );
+                expect(this.gameSpy.registerAbility.calls.count()).toBe(1);
             });
         });
 
-        describe('when the when aggregate returns true', function () {
+        describe('when the aggregate condition returns multiple true', function () {
             beforeEach(function () {
                 this.properties.when.onSomething = {
-                    aggregateBy: jasmine.createSpy().and.returnValue({}),
-                    condition: jasmine.createSpy().and.returnValue(true)
+                    aggregateBy: (event) => ({
+                        arg1: event.arg1,
+                        arg2: event.arg2
+                    }),
+                    condition: (aggregate) => aggregate.arg1 === 'val1'
                 };
-                this.executeEventHandler();
+                this.executeAggregateEventHandler();
             });
 
-            it('should register the ability', function () {
-                expect(this.gameSpy.registerAbility).toHaveBeenCalled();
+            it('should register each ability grouped by aggregate', function () {
+                expect(this.gameSpy.registerAbility).toHaveBeenCalledWith(
+                    this.reaction,
+                    jasmine.objectContaining({
+                        aggregate: jasmine.objectContaining({ arg1: 'val1', arg2: 'val2' }),
+                        events: jasmine.arrayContaining([this.childEvent1])
+                    })
+                );
+                expect(this.gameSpy.registerAbility).toHaveBeenCalledWith(
+                    this.reaction,
+                    jasmine.objectContaining({
+                        aggregate: jasmine.objectContaining({ arg1: 'val1', arg2: 'val3' }),
+                        events: jasmine.arrayContaining([this.childEvent2, this.childEvent3])
+                    })
+                );
+                expect(this.gameSpy.registerAbility.calls.count()).toBe(2);
             });
         });
     });
@@ -154,9 +206,22 @@ describe('CardForcedReaction', function () {
             });
         });
 
-        describe('when the when condition returns false', function () {
+        describe('when the singular condition returns false', function () {
             beforeEach(function () {
                 this.properties.when.onSomething.and.returnValue(false);
+            });
+
+            it('should return false', function () {
+                expect(this.meetsRequirements()).toBe(false);
+            });
+        });
+
+        describe('when the aggregate condition returns false', function () {
+            beforeEach(function () {
+                this.properties.when.onSomething = {
+                    aggregateBy: jasmine.createSpy().and.returnValue({}),
+                    condition: jasmine.createSpy().and.returnValue(false)
+                };
             });
 
             it('should return false', function () {
@@ -221,7 +286,11 @@ describe('CardForcedReaction', function () {
             this.properties = {
                 when: {
                     onFoo: () => true,
-                    onBar: () => true
+                    onBar: () => true,
+                    onAgg: {
+                        aggregateBy: {},
+                        condition: () => true
+                    }
                 },
                 handler: () => true
             };
@@ -240,10 +309,14 @@ describe('CardForcedReaction', function () {
             );
         });
 
+        it('should register a singular event with no suffix for aggregates', function () {
+            expect(this.gameSpy.on).toHaveBeenCalledWith('forcedreaction', jasmine.any(Function));
+        });
+
         it('should not reregister events already registered', function () {
-            expect(this.gameSpy.on.calls.count()).toBe(2);
+            expect(this.gameSpy.on.calls.count()).toBe(3);
             this.reaction.registerEvents();
-            expect(this.gameSpy.on.calls.count()).toBe(2);
+            expect(this.gameSpy.on.calls.count()).toBe(3);
         });
     });
 
@@ -252,7 +325,11 @@ describe('CardForcedReaction', function () {
             this.properties = {
                 when: {
                     onFoo: () => true,
-                    onBar: () => true
+                    onBar: () => true,
+                    onAgg: {
+                        aggregateBy: {},
+                        condition: () => true
+                    }
                 },
                 handler: () => true
             };
@@ -270,6 +347,10 @@ describe('CardForcedReaction', function () {
                 'onBar:forcedreaction',
                 jasmine.any(Function)
             );
+            expect(this.gameSpy.removeListener).toHaveBeenCalledWith(
+                'forcedreaction',
+                jasmine.any(Function)
+            );
         });
 
         it('should not remove listeners when they have not been registered', function () {
@@ -280,9 +361,9 @@ describe('CardForcedReaction', function () {
         it('should not unregister events already unregistered', function () {
             this.reaction.registerEvents();
             this.reaction.unregisterEvents();
-            expect(this.gameSpy.removeListener.calls.count()).toBe(2);
+            expect(this.gameSpy.removeListener.calls.count()).toBe(3);
             this.reaction.unregisterEvents();
-            expect(this.gameSpy.removeListener.calls.count()).toBe(2);
+            expect(this.gameSpy.removeListener.calls.count()).toBe(3);
         });
     });
 });
