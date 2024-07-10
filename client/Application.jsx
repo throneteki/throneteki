@@ -6,7 +6,6 @@ import NavBar from './Components/Site/NavBar';
 import Router from './Router';
 import { tryParseJSON } from './util';
 import AlertPanel from './Components/Site/AlertPanel';
-import { setContextMenu } from './actions';
 import { useVerifyAuthenticationQuery } from './redux/middleware/api';
 import { setAuthTokens, setUser } from './redux/reducers/auth';
 import { startConnecting } from './redux/reducers/lobby';
@@ -53,11 +52,6 @@ const Application = () => {
         dispatch(startConnecting());
     }, [dispatch]);
 
-    useEffect(() => {
-        if (!currentGame) {
-            dispatch(setContextMenu([]));
-        }
-    }, [currentGame, dispatch]);
     useEffect(() => {
         if (data) {
             dispatch(setUser(data));

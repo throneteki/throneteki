@@ -9,8 +9,13 @@ import PasswordGame from './PasswordGame';
 import AlertPanel from '../Site/AlertPanel';
 import Panel from '../Site/Panel';
 import Checkbox from '../Form/Checkbox';
-import { setContextMenu, setUrl } from '../../actions';
-import { joinPasswordGame, startNewGame } from '../../redux/reducers/lobby';
+import {
+    joinPasswordGame,
+    sendJoinGameMessage,
+    sendWatchGameMessage,
+    startNewGame
+} from '../../redux/reducers/lobby';
+import { setUrl } from '../../redux/reducers/navigation';
 
 const GameState = Object.freeze({
     None: 0,
@@ -130,10 +135,6 @@ const GameLobby = ({ gameId }) => {
     }, []);
 
     useEffect(() => {
-        if (!currentGame) {
-            dispatch(setContextMenu([]));
-        }
-
         if (user) {
             setErrorMessage(undefined);
         }
@@ -158,13 +159,13 @@ const GameLobby = ({ gameId }) => {
                         if (game.needsPassword) {
                             dispatch(joinPasswordGame(game, 'Join'));
                         } else {
-                            dispatch(sendSocketMessage('joingame', gameId));
+                            dispatch(sendJoinGameMessage(gameId));
                         }
                     } else {
                         if (game.needsPassword) {
                             dispatch(joinPasswordGame(game, 'Watch'));
                         } else {
-                            dispatch(sendSocketMessage('watchgame', game.id));
+                            dispatch(sendWatchGameMessage(game.id));
                         }
                     }
                 }

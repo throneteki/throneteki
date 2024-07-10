@@ -105,7 +105,7 @@ const PlayerRow = ({
         }
         let cardWidth = getCardDimensions(cardSize);
 
-        let underneath = agenda.childCards || [];
+        let underneath = agenda.childCards ? [...agenda.childCards] : [];
         let disablePopup = underneath.length === 0;
         let title = !disablePopup ? 'Agenda' : null;
         let source = 'agenda';

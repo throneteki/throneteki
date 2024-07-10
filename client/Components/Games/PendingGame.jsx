@@ -10,7 +10,6 @@ import DeckStatus from '../Decks/DeckStatus';
 import { cardSetLabel } from '../Decks/DeckHelper';
 import { createGameTitle } from './GameHelper';
 import { useDispatch, useSelector } from 'react-redux';
-import { zoomCard } from '../../actions';
 import { useGetDecksQuery, useGetEventsQuery } from '../../redux/middleware/api';
 import {
     sendChatMessage,
@@ -31,6 +30,7 @@ const PendingGame = () => {
     const user = useSelector((state) => state.auth.user);
 
     const notification = useRef(null);
+    const messageRef = useRef(null);
 
     const { data: events, isLoading: isEventsLoading, error: eventsError } = useGetEventsQuery();
     const { data: decks, isLoading: isDecksLoading, error: decksError } = useGetDecksQuery();
@@ -201,13 +201,6 @@ const PendingGame = () => {
         setMessage(event.target.value);
     }, []);
 
-    const onMouseOver = useCallback(
-        (card) => {
-            dispatch(zoomCard(card));
-        },
-        [dispatch]
-    );
-
     const isCurrentEventALockedDeckEvent = useCallback(() => {
         return currentGame.event && currentGame.event._id !== 'none' && currentGame.event.lockDecks;
     }, [currentGame.event]);
@@ -262,7 +255,7 @@ const PendingGame = () => {
     }, [user, playerCount, currentGame, connecting, gameError]);
 
     useEffect(() => {
-        //  $(messagePanel.current).scrollTop(999999);
+        $(messageRef.current).scrollTop(999999);
     }, [currentGame]);
 
     if (currentGame && currentGame.started) {
@@ -345,12 +338,8 @@ const PendingGame = () => {
                 })}
             </Panel>
             <Panel title='Chat'>
-                <div className='message-list'>
-                    <Messages
-                        messages={currentGame.messages}
-                        onCardMouseOver={onMouseOver}
-                        onCardMouseOut={() => dispatch(zoomCard(null))}
-                    />
+                <div className='message-list' ref={messageRef}>
+                    <Messages messages={currentGame.messages} />
                 </div>
                 <form className='form form-hozitontal'>
                     <div className='form-group'>

@@ -34,7 +34,9 @@ import {
     sendToggleNodeMessage,
     sendRestartNodeMessage,
     sendMotdMessage,
-    receiveHandoff
+    receiveHandoff,
+    sendJoinGameMessage,
+    sendWatchGameMessage
 } from '../reducers/lobby';
 import { receiveNodeStatus } from '../reducers/admin';
 import { setAuthTokens } from '../reducers/auth';
@@ -71,7 +73,8 @@ const LobbyMessage = Object.freeze({
     ToggleNode: 'togglenode',
     RestartNode: 'restartnode',
     NodeStatus: 'nodestatus',
-    Motd: 'motd'
+    Motd: 'motd',
+    WatchGame: 'watchgame'
 });
 
 const LobbyEvent = Object.freeze({
@@ -243,6 +246,10 @@ const lobbyMiddleware = (store) => {
             socket.emit(LobbyMessage.RestartNode, action.payload);
         } else if (sendMotdMessage.match(action)) {
             socket.emit(LobbyMessage.Motd, action.payload);
+        } else if (sendJoinGameMessage.match(action)) {
+            socket.emit(LobbyMessage.JoinGame, action.payload);
+        } else if (sendWatchGameMessage.match(action)) {
+            socket.emit(LobbyMessage.WatchGame, action.payload);
         }
 
         next(action);

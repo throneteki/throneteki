@@ -151,7 +151,7 @@ const gameMiddleware = (store) => {
                 action.payload.menuItem
             );
         } else if (sendShowDrawDeckMessage.match(action)) {
-            socket.emit('game', GameMessage.ShowDrawDeck, action.payload);
+            socket.emit('game', GameMessage.ShowDrawDeck, action.payload.visible);
         } else if (sendShuffleDeckMessage.match(action)) {
             socket.emit('game', GameMessage.ShuffleDeck, action.payload);
         } else if (sendDragDropMessage.match(action)) {

@@ -183,7 +183,9 @@ const lobbySlice = createSlice({
         sendGetNodeStausMessage: () => {},
         sendToggleNodeMessage: () => {},
         sendRestartNodeMessage: () => {},
-        sendMotdMessage: () => {}
+        sendMotdMessage: () => {},
+        sendJoinGameMessage: () => {},
+        sendWatchGameMessage: () => {}
     })
 });
 
@@ -226,7 +228,9 @@ export const {
     sendGetNodeStausMessage,
     sendToggleNodeMessage,
     sendRestartNodeMessage,
-    sendMotdMessage
+    sendMotdMessage,
+    sendJoinGameMessage,
+    sendWatchGameMessage
 } = lobbySlice.actions;
 
 export default lobbySlice.reducer;

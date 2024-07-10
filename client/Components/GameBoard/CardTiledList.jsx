@@ -13,7 +13,8 @@ const CardTiledList = ({
     size,
     source,
     title,
-    titleCount
+    titleCount,
+    showCards
 }) => {
     let cardList =
         cards &&
@@ -21,6 +22,7 @@ const CardTiledList = ({
             return (
                 <Card
                     card={card}
+                    forceFaceup={showCards}
                     disableMouseOver={disableMouseOver}
                     key={index}
                     onClick={onCardClick}

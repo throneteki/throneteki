@@ -143,12 +143,6 @@ const CardPile = ({
             source: source
         };
 
-        if (showCards) {
-            for (const card of cards) {
-                card.facedown = false;
-            }
-        }
-
         if (cards && cards.some((card) => card.group)) {
             const cardGroup = cards.reduce((grouping, card) => {
                 (grouping[card.group] = grouping[card.group] || []).push(card);
@@ -158,11 +152,17 @@ const CardPile = ({
             const sortedKeys = Object.keys(cardGroup).sort();
             for (const key of sortedKeys) {
                 cardList.push(
-                    <CardTiledList cards={cardGroup[key]} key={key} title={key} {...listProps} />
+                    <CardTiledList
+                        cards={cardGroup[key]}
+                        key={key}
+                        title={key}
+                        {...listProps}
+                        showCards={showCards}
+                    />
                 );
             }
         } else {
-            cardList = <CardTiledList cards={cards} {...listProps} />;
+            cardList = <CardTiledList cards={cards} {...listProps} showCards={showCards} />;
         }
 
         if (disablePopup || !showPopup) {
@@ -221,7 +221,6 @@ const CardPile = ({
         onMenuItemClick,
         size,
         source,
-        showCards,
         cards,
         disablePopup,
         showPopup,

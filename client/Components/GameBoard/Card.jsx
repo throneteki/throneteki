@@ -21,7 +21,8 @@ const Card = ({
     size,
     source,
     style,
-    wrapped = true
+    wrapped = true,
+    forceFaceup = false
 }) => {
     const [showMenu, setShowMenu] = useState(false);
 
@@ -200,7 +201,7 @@ const Card = ({
                     onClick={onClick}
                     onMenuItemClick={onMenuItemClick}
                     size={size}
-                    facedown={card.facedown}
+                    facedown={forceFaceup ? false : card.facedown}
                 />
             );
         });
@@ -252,7 +253,7 @@ const Card = ({
     };
 
     const isFacedown = () => {
-        return card.facedown || !card.code;
+        return forceFaceup ? false : card.facedown || !card.code;
     };
 
     const getDragFrame = useCallback(

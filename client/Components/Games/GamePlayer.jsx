@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import classNames from 'classnames';
 
 import Avatar from '../Site/Avatar';
@@ -11,6 +11,14 @@ const GamePlayer = (props) => {
 
     let playerAndFactionAgenda;
 
+    const agendaImages = useMemo(() => {
+        return props.player.agendas?.map((agenda) => (
+            <div key={agenda} className='agenda-mini'>
+                {<img className='img-responsive' src={`/img/cards/${agenda || 'cardback'}.png`} />}
+            </div>
+        ));
+    }, [props.player.agendas]);
+
     if (props.firstPlayer) {
         playerAndFactionAgenda = (
             <div className='game-faction-row first-player'>
@@ -20,16 +28,7 @@ const GamePlayer = (props) => {
                     </span>
                     <span className='bold'>{props.player.name}</span>
                 </div>
-                {props.player.agendas?.reverse().map((agenda) => (
-                    <div key={agenda} className='agenda-mini'>
-                        {
-                            <img
-                                className='img-responsive'
-                                src={`/img/cards/${agenda || 'cardback'}.png`}
-                            />
-                        }
-                    </div>
-                ))}
+                {agendaImages}
                 <div className='faction-mini'>
                     {
                         <img
