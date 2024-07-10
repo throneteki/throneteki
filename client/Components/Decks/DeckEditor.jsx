@@ -70,6 +70,12 @@ const DeckEditor = ({ deck, onDeckUpdated, onDeckSave, isSaveLoading, onRestrict
     );
 
     useEffect(() => {
+        if (!faction && factions) {
+            setFaction(factions['baratheon']);
+        }
+    }, [faction, factions]);
+
+    useEffect(() => {
         onRestrictedListChange && onRestrictedListChange(currentRestrictedList);
     }, [currentRestrictedList, onRestrictedListChange]);
 
@@ -85,6 +91,10 @@ const DeckEditor = ({ deck, onDeckUpdated, onDeckSave, isSaveLoading, onRestrict
             eventId: eventId,
             status: {}
         };
+
+        if (!faction) {
+            return retDeck;
+        }
 
         const wrappedDeck = new DeckWrapper(retDeck);
 

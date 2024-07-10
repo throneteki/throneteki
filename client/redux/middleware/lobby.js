@@ -36,7 +36,8 @@ import {
     sendMotdMessage,
     receiveHandoff,
     sendJoinGameMessage,
-    sendWatchGameMessage
+    sendWatchGameMessage,
+    sendRemoveGameMessage
 } from '../reducers/lobby';
 import { receiveNodeStatus } from '../reducers/admin';
 import { setAuthTokens } from '../reducers/auth';
@@ -250,6 +251,8 @@ const lobbyMiddleware = (store) => {
             socket.emit(LobbyMessage.JoinGame, action.payload);
         } else if (sendWatchGameMessage.match(action)) {
             socket.emit(LobbyMessage.WatchGame, action.payload);
+        } else if (sendRemoveGameMessage.match(action)) {
+            socket.emit('game', LobbyMessage.RemoveGame, action.payload);
         }
 
         next(action);

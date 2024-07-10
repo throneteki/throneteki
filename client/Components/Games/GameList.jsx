@@ -4,12 +4,16 @@ import { toastr } from 'react-redux-toastr';
 
 import AlertPanel from '../Site/AlertPanel';
 import Game from './Game';
-import { joinPasswordGame } from '../../redux/reducers/lobby';
+import {
+    joinPasswordGame,
+    sendJoinGameMessage,
+    sendRemoveGameMessage,
+    sendWatchGameMessage
+} from '../../redux/reducers/lobby';
 
 const GameList = ({ gameFilter }) => {
     const dispatch = useDispatch();
     const currentGame = useSelector((state) => state.lobby.currentGame);
-    const socket = useSelector((state) => state.lobby.socket);
     const user = useSelector((state) => state.auth.user);
     const games = useSelector((state) => state.lobby.games);
 
@@ -23,10 +27,10 @@ const GameList = ({ gameFilter }) => {
             if (game.needsPassword) {
                 dispatch(joinPasswordGame(game, 'Join'));
             } else {
-                socket.emit('joingame', game.id);
+                dispatch(sendJoinGameMessage(game.id));
             }
         },
-        [user, socket, dispatch]
+        [user, dispatch]
     );
 
     const canWatch = useCallback(
@@ -46,17 +50,17 @@ const GameList = ({ gameFilter }) => {
             if (game.needsPassword) {
                 dispatch(joinPasswordGame(game, 'Watch'));
             } else {
-                socket.emit('watchgame', game.id);
+                dispatch(sendWatchGameMessage(game.id));
             }
         },
-        [user, socket, dispatch]
+        [user, dispatch]
     );
 
     const removeGame = useCallback(
         (game) => {
-            socket.emit('removegame', game.id);
+            dispatch(sendRemoveGameMessage(game.id));
         },
-        [socket]
+        [dispatch]
     );
 
     const canJoin = useCallback(
