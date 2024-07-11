@@ -36,7 +36,7 @@ const GameMessage = Object.freeze({
     ToggleKeywordSetting: 'toggleKeywordSetting',
     ToggleDupes: 'toggleDupes',
     TogglePromptedActionWindow: 'togglePromptedActionWindow',
-    ToggleTimerSettiing: 'toggleTimerSetting',
+    ToggleTimerSetting: 'toggleTimerSetting',
     CardClicked: 'cardClicked',
     MenuItemClick: 'menuItemClick',
     ShowDrawDeck: 'showDrawDeck',
