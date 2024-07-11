@@ -8,6 +8,7 @@ import Link from '../Components/Site/Link';
 import { useLoginAccountMutation } from '../redux/middleware/api';
 import { accountLoggedIn } from '../redux/reducers/auth';
 import { navigate } from '../redux/reducers/navigation';
+import { sendAuthenticateMessage } from '../redux/reducers/lobby';
 
 const Login = () => {
     const dispatch = useDispatch();
@@ -26,6 +27,7 @@ const Login = () => {
                 }).unwrap();
 
                 dispatch(accountLoggedIn(response.user, response.token, response.refreshToken));
+                dispatch(sendAuthenticateMessage(response.token));
 
                 setSuccess('You have successfully logged in. Redirecting you to the home page...');
 
