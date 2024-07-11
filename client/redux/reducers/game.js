@@ -10,8 +10,9 @@ const gameSlice = createSlice({
     reducers: (create) => ({
         startGameConnecting: create.preparedReducer(
             (url, name) => ({ payload: { url, name } }),
-            (state) => {
+            (state, action) => {
                 state.connecting = true;
+                state.host = action.payload.url;
             }
         ),
         gameConnected: (state) => {
