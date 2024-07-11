@@ -175,12 +175,7 @@ const UserAdmin = () => {
                                 {data.linkedAccounts.map((name) => {
                                     return (
                                         <li key={name}>
-                                            <a
-                                                href='javascript:void(0)'
-                                                onClick={() => onLinkedUserClick(name)}
-                                            >
-                                                {name}
-                                            </a>
+                                            <a onClick={() => onLinkedUserClick(name)}>{name}</a>
                                         </li>
                                     );
                                 })}
