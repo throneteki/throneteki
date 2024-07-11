@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import DeckSummary from './DeckSummary';
 import DeckEditor from './DeckEditor';
@@ -21,9 +21,15 @@ const AddDeck = () => {
 
     const [addDeck, { isLoading: isAddLoading }] = useAddDeckMutation();
 
+    const timer = useRef(null);
+
     const onDeckUpdated = (deck) => {
         setDeck(deck);
     };
+
+    useEffect(() => {
+        return () => clearInterval(timer.current);
+    }, []);
 
     return (
         <div>
@@ -37,7 +43,7 @@ const AddDeck = () => {
                                 await addDeck(deck).unwrap();
                                 setSuccess('Deck added successfully');
 
-                                setTimeout(() => {
+                                timer.current = setTimeout(() => {
                                     setSuccess(undefined);
                                     dispatch(navigate('/decks'));
                                 }, 5000);

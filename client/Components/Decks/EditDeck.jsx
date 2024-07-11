@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import DeckSummary from './DeckSummary';
@@ -18,6 +18,7 @@ const EditDeck = ({ deckId }) => {
 
     const { data, isLoading, error: deckError } = useGetDeckQuery(deckId);
     const [saveDeck, { isLoading: isSaveLoading }] = useSaveDeckMutation();
+    const timer = useRef(null);
 
     const onEditDeck = useCallback(
         async (deck) => {
@@ -25,7 +26,7 @@ const EditDeck = ({ deckId }) => {
                 await saveDeck(deck).unwrap();
                 setSuccess('Deck saved successfully');
 
-                setTimeout(() => {
+                timer.current = setTimeout(() => {
                     setSuccess(undefined);
                     dispatch(navigate('/decks'));
                 }, 5000);
@@ -37,6 +38,10 @@ const EditDeck = ({ deckId }) => {
         },
         [dispatch, saveDeck]
     );
+
+    useEffect(() => {
+        return () => clearInterval(timer.current);
+    }, []);
 
     const onDeckUpdated = useCallback((deck) => {
         setDeck(deck);
