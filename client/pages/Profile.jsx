@@ -82,7 +82,7 @@ const Profile = () => {
     );
 
     const retWindows = useMemo(() => {
-        windows.map((window) => {
+        return windows.map((window) => {
             return (
                 <Checkbox
                     key={window.name}
