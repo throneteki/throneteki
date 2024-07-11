@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import classNames from 'classnames';
 
 import Card from './Card';
@@ -31,6 +31,7 @@ const CardPile = ({
     showCards
 }) => {
     const [showPopup, setShowPopup] = useState(cards && cards.some((card) => card.selectable));
+    const prevCards = useRef(cards);
 
     const isTopCardSelectable = useMemo(() => {
         if (!topCard) {
@@ -119,13 +120,16 @@ const CardPile = ({
 
     useEffect(() => {
         let hasNewSelectableCard = cards && cards.some((card) => card.selectable);
-        let didHaveSelectableCard = cards && cards.some((card) => card.selectable);
+        let didHaveSelectableCard =
+            prevCards.current && prevCards.current.some((card) => card.selectable);
 
         if (!didHaveSelectableCard && hasNewSelectableCard) {
             updatePopupVisibility(true);
         } else if (didHaveSelectableCard && !hasNewSelectableCard) {
             updatePopupVisibility(false);
         }
+
+        prevCards.current = cards;
     }, [cards, updatePopupVisibility]);
 
     const getPopup = useCallback(() => {
