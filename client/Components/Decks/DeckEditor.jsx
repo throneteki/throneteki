@@ -365,7 +365,8 @@ const DeckEditor = ({ deck, onDeckUpdated, onDeckSave, isSaveLoading, onRestrict
 
             setCardList(cardList);
         }
-    }, [deck]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [JSON.stringify(deck)]);
 
     useEffect(() => {
         if (factions && !faction) {
