@@ -107,7 +107,7 @@ const Droppable = ({ children, onDragDrop, source }) => {
     });
 
     let dropClass = classNames('drop-target', {
-        [source]: source !== 'play area'
+        [source.replace(' ', '-')]: source !== 'play area'
     });
 
     return (
