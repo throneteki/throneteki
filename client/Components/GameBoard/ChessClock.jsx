@@ -33,7 +33,7 @@ const ChessClock = ({
             }, 1000);
         }
 
-        return () => clearInterval(timer);
+        return () => clearInterval(timer.current);
     }, [propMode, delayEndTime, endTime]);
 
     useEffect(() => {
