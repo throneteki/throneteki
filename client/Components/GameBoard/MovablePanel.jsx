@@ -1,5 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
-import PropTypes from 'prop-types';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { useDrag } from 'react-dnd';
 import $ from 'jquery';
 
@@ -14,7 +13,7 @@ const MovablePanel = ({ name, side, title, onCloseClick, children }) => {
     const [position, setPosition] = useState(Object.assign({}, initialStyle));
     const popupRef = useRef(null);
 
-    const [{ isDragging, dragOffset }, drag, preview] = useDrag({
+    const [{ isDragging, dragOffset }, drag] = useDrag({
         type: ItemTypes.PANEL,
         item: { name: `${name}-${side}` },
         end: (item, monitor) => {
@@ -57,6 +56,12 @@ const MovablePanel = ({ name, side, title, onCloseClick, children }) => {
         },
         [setPosition]
     );
+
+    useEffect(() => {
+        if (isDragging) {
+            updatePosition(dragOffset);
+        }
+    }, [dragOffset, isDragging, updatePosition]);
 
     return (
         <div ref={popupRef} className='popup' style={position}>

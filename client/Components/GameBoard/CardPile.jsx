@@ -229,6 +229,7 @@ const CardPile = ({
         title,
         onCloseClick,
         onDragDrop,
+        showCards,
         onPopupMenuItemClick
     ]);
 
