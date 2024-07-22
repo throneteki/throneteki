@@ -10,7 +10,7 @@ import ServerStatus from './ServerStatus';
 import SmallHeaderIcon from '../../assets/img/header_icon.png';
 import HeaderIcon from '../../assets/img/main_header_logo.png';
 
-const NavBar = ({ title }) => {
+const NavBar = () => {
     const { path } = useSelector((state) => state.navigation);
     const { user } = useSelector((state) => state.auth);
     const {
@@ -28,7 +28,9 @@ const NavBar = ({ title }) => {
 
     const renderMenuItem = useCallback(
         (menuItem) => {
-            let active = menuItem.path === path ? 'active' : '';
+            let navClass = 'navbar-item';
+
+            navClass += menuItem.path === path ? ' active' : '';
 
             if (menuItem.showOnlyWhenLoggedOut && user) {
                 return null;
@@ -43,7 +45,7 @@ const NavBar = ({ title }) => {
             }
 
             if (menuItem.childItems) {
-                let className = 'dropdown';
+                let className = 'navbar-item dropdown';
 
                 if (
                     menuItem.childItems.some((item) => {
@@ -54,12 +56,18 @@ const NavBar = ({ title }) => {
                 }
 
                 var childItems = menuItem.childItems.reduce((items, item) => {
+                    let dropDownClass = 'navbar-item';
+
                     if (item.permission && (!user || !user.permissions[item.permission])) {
                         return items;
                     }
 
+                    if (item.path === path) {
+                        dropDownClass += ' active';
+                    }
+
                     return items.concat(
-                        <li key={item.title}>
+                        <li key={item.title} className={dropDownClass}>
                             <Link href={item.path}>{item.title}</Link>
                         </li>
                     );
@@ -91,7 +99,7 @@ const NavBar = ({ title }) => {
             }
 
             return (
-                <li key={menuItem.title} className={active}>
+                <li key={menuItem.title} className={navClass}>
                     <Link href={menuItem.path}>{menuItem.title}</Link>
                 </li>
             );
@@ -114,7 +122,7 @@ const NavBar = ({ title }) => {
     let rightMenuToRender = rightMenu.map(renderMenuItem);
 
     let numGames = games ? (
-        <li>
+        <li className='navbar-item text-white'>
             <span>{`${games.length} Games`}</span>
         </li>
     ) : null;

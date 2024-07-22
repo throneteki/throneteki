@@ -29,7 +29,7 @@ const ServerStatus = (props) => {
     }`;
 
     return (
-        <li>
+        <li className='navbar-item'>
             <span className={pingLevel}>
                 {pingText2} <span className={className} title={toolTip} />
             </span>

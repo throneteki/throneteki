@@ -16,6 +16,13 @@
     src: url('/fonts/agot.ttf');
 }
 
+@font-face {
+    font-family: 'PoppinsMedium';
+    src: url('/fonts/Poppins-Medium.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
 *,
 *:before,
 *:after {
@@ -180,6 +187,30 @@ h4 {
 
 .dropdown-toggle {
     white-space: nowrap;
+}
+
+.navbar-item {
+    width: auto;
+    font-family: 'PoppinsMedium', serif;
+    font-size: 16px;
+    transition: all 0.4s ease-in-out;
+    text-decoration: none;
+
+    &.active > a {
+        color: white !important;
+    }
+
+    a {
+        color: @brand-secondary !important;
+    }
+}
+
+.dropdown-menu {
+    background-color: @background-color;
+}
+
+.text-white {
+    color: white;
 }
 
 a {
