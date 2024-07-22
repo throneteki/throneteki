@@ -125,13 +125,6 @@ const Lobby = () => {
             <SideBar>
                 <UserList users={users} />
             </SideBar>
-            <div className='col-sm-offset-1 col-sm-10'>
-                <div className='main-header'>
-                    <span className='text-center'>
-                        <h1>A # LCG second edition</h1>
-                    </span>
-                </div>
-            </div>
             {motd && motd.message && (
                 <div className='col-sm-offset-1 col-sm-10 banner'>
                     <AlertPanel type={motd.motdType}>
