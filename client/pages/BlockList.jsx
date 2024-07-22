@@ -1,93 +1,98 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-
+import React, { useState, useCallback, useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import AlertPanel from '../Components/Site/AlertPanel';
 import Panel from '../Components/Site/Panel';
 import Input from '../Components/Form/Input';
-import * as actions from '../actions';
+import {
+    useAddBlockListEntryMutation,
+    useGetBlockListQuery,
+    useRemoveBlockListEntryMutation
+} from '../redux/middleware/api';
+import { toastr } from 'react-redux-toastr';
 
-class BlockList extends React.Component {
-    constructor(props) {
-        super(props);
+const BlockList = () => {
+    const user = useSelector((state) => state.auth.user);
 
-        this.state = {
-            username: '',
-            detailsLoaded: false
-        };
-    }
+    const [username, setUsername] = useState('');
+    const {
+        data: blockList,
+        isLoading,
+        error
+    } = useGetBlockListQuery(user?.username, { skip: !user });
+    const [addBlockListEntry, { isLoading: isAddLoading }] = useAddBlockListEntryMutation();
+    const [removeBlockListEntry, { isLoading: isRemoving }] = useRemoveBlockListEntryMutation();
 
-    componentWillMount() {
-        if (this.props.user) {
-            this.props.loadBlockList(this.props.user);
+    const onUsernameChange = useCallback((event) => {
+        setUsername(event.target.value);
+    }, []);
 
-            this.setState({ detailsLoaded: true });
-        }
-    }
+    const onAddClick = useCallback(
+        async (event) => {
+            try {
+                event.preventDefault();
+                await addBlockListEntry({
+                    username: user.username,
+                    blockedUsername: username
+                }).unwrap();
+                toastr.success('Blocklist entry added successfully');
 
-    componentWillReceiveProps(props) {
-        if (!this.state.detailsLoaded && props.user) {
-            this.props.loadBlockList(props.user);
+                setTimeout(() => {
+                    toastr.clean();
+                }, 5000);
+            } catch (err) {
+                toastr.error(
+                    err.message ||
+                        'An error occured adding the blocklist entry. Please try again later.'
+                );
+            }
+        },
+        [addBlockListEntry, user?.username, username]
+    );
 
-            this.setState({ detailsLoaded: true });
-        }
-    }
+    const onRemoveClick = useCallback(
+        async (username) => {
+            try {
+                await removeBlockListEntry({
+                    username: user.username,
+                    blockedUsername: username
+                }).unwrap();
+                toastr.success('Blocklist entry removed successfully');
 
-    onUsernameChange(event) {
-        this.setState({ username: event.target.value });
-    }
+                setTimeout(() => {
+                    toastr.clean();
+                }, 5000);
+            } catch (err) {
+                toastr.error(
+                    err.message ||
+                        'An error occured removing the blocklist entry. Please try again later.'
+                );
+            }
+        },
+        [removeBlockListEntry, user?.username]
+    );
 
-    onAddClick(event) {
-        event.preventDefault();
+    const retBlocklist = useMemo(
+        () =>
+            blockList
+                ? blockList.map((user) => {
+                      return (
+                          <tr key={user}>
+                              <td>{user}</td>
+                              <td>
+                                  <a href='#' className='btn' onClick={() => onRemoveClick(user)}>
+                                      <span className='glyphicon glyphicon-remove' />
+                                  </a>
+                              </td>
+                          </tr>
+                      );
+                  })
+                : null,
+        [blockList, onRemoveClick]
+    );
 
-        this.props.addBlockListEntry(this.props.user, this.state.username);
-    }
-
-    onRemoveClick(username, event) {
-        event.preventDefault();
-
-        this.props.removeBlockListEntry(this.props.user, username);
-    }
-
-    render() {
-        let successPanel;
-
-        if (this.props.blockListAdded) {
-            setTimeout(() => {
-                this.props.clearBlockListStatus();
-            }, 5000);
-            successPanel = (
-                <AlertPanel message='Block list entry added successfully' type={'success'} />
-            );
-            this.props.socket.emit('authenticate', this.props.token);
-        }
-
-        if (this.props.blockListDeleted) {
-            setTimeout(() => {
-                this.props.clearBlockListStatus();
-            }, 5000);
-            successPanel = (
-                <AlertPanel message='Block list entry removed successfully' type={'success'} />
-            );
-            this.props.socket.emit('authenticate', this.props.token);
-        }
-
-        let content;
-        let blockList = this.props.blockList.map((user) => {
-            return (
-                <tr key={user}>
-                    <td>{user}</td>
-                    <td>
-                        <a href='#' className='btn' onClick={this.onRemoveClick.bind(this, user)}>
-                            <span className='glyphicon glyphicon-remove' />
-                        </a>
-                    </td>
-                </tr>
-            );
-        });
-
-        let table =
-            this.props.blockList && this.props.blockList.length === 0 ? (
+    const table = useMemo(
+        () =>
+            blockList && blockList.length === 0 ? (
                 <div>No users currently blocked</div>
             ) : (
                 <table className='table table-striped blocklist'>
@@ -97,108 +102,61 @@ class BlockList extends React.Component {
                             <th>Remove</th>
                         </tr>
                     </thead>
-                    <tbody>{blockList}</tbody>
+                    <tbody>{retBlocklist}</tbody>
                 </table>
-            );
+            ),
+        [blockList, retBlocklist]
+    );
 
-        let errorBar =
-            this.props.apiRequestSuccess === false ? (
-                <AlertPanel
-                    type='error'
-                    message={'An error occurred loading the block list.  Please try again later.'}
-                />
-            ) : null;
-        errorBar =
-            errorBar ||
-            (this.props.apiSuccess === false ? (
-                <AlertPanel type='error' message={this.props.apiMessage} />
-            ) : null);
-
-        if (this.props.apiLoading) {
-            content = <div>Loading block list from the server...</div>;
-        } else {
-            content = (
-                <div className='col-sm-8 col-sm-offset-2 full-height'>
-                    <div className='about-container'>
-                        {successPanel}
-                        {errorBar}
-
-                        <form className='form form-horizontal'>
-                            <Panel title='Block list'>
-                                <p>
-                                    It can sometimes become necessary to prevent someone joining
-                                    your games, or stop seeing their messages, or both. Users on
-                                    this list will not be able to join your games, and you will not
-                                    see their chat messages or their games.
-                                </p>
-
-                                <div className='form-group'>
-                                    <Input
-                                        name='blockee'
-                                        label='Username'
-                                        labelClass='col-sm-4'
-                                        fieldClass='col-sm-4'
-                                        placeholder='Enter username to block'
-                                        type='text'
-                                        onChange={this.onUsernameChange.bind(this)}
-                                        value={this.state.username}
-                                        noGroup
-                                    />
-                                    <button
-                                        className='btn btn-primary col-sm-1'
-                                        onClick={this.onAddClick.bind(this)}
-                                    >
-                                        Add
-                                    </button>
-                                </div>
-
-                                <h3>Users Blocked</h3>
-                                {table}
-                            </Panel>
-                        </form>
-                    </div>
-                </div>
-            );
-        }
-
-        return content;
+    if (isLoading) {
+        return <div>Loading block list from the server...</div>;
     }
-}
 
-BlockList.displayName = 'BlockList';
-BlockList.propTypes = {
-    addBlockListEntry: PropTypes.func,
-    apiLoading: PropTypes.bool,
-    apiMessage: PropTypes.string,
-    apiRequestSuccess: PropTypes.bool,
-    apiSuccess: PropTypes.bool,
-    blockList: PropTypes.array,
-    blockListAdded: PropTypes.bool,
-    blockListDeleted: PropTypes.bool,
-    clearBlockListStatus: PropTypes.func,
-    loadBlockList: PropTypes.func,
-    loading: PropTypes.bool,
-    removeBlockListEntry: PropTypes.func,
-    socket: PropTypes.object,
-    token: PropTypes.string,
-    user: PropTypes.object
+    if (error) {
+        return (
+            <AlertPanel
+                type='error'
+                message={error.message || 'An error occured loading the block list'}
+            />
+        );
+    }
+
+    return (
+        <div className='col-sm-8 col-sm-offset-2 full-height'>
+            <div className='about-container'>
+                <form className='form form-horizontal'>
+                    <Panel title='Block list'>
+                        <p>
+                            It can sometimes become necessary to prevent someone joining your games,
+                            or stop seeing their messages, or both. Users on this list will not be
+                            able to join your games, and you will not see their chat messages or
+                            their games.
+                        </p>
+
+                        <div className='form-group'>
+                            <Input
+                                name='blockee'
+                                label='Username'
+                                labelClass='col-sm-4'
+                                fieldClass='col-sm-4'
+                                placeholder='Enter username to block'
+                                type='text'
+                                onChange={onUsernameChange}
+                                value={username}
+                                noGroup
+                            />
+                            <button className='btn btn-primary col-sm-1' onClick={onAddClick}>
+                                Add {isAddLoading && <span className='spinner button-spinner' />}
+                            </button>
+                        </div>
+
+                        <h3>Users Blocked</h3>
+                        {table}
+                    </Panel>
+                </form>
+            </div>
+        </div>
+    );
 };
 
-function mapStateToProps(state) {
-    return {
-        apiLoading: state.api.REQUEST_BLOCKLIST ? state.api.REQUEST_BLOCKLIST.loading : undefined,
-        apiMessage: state.api.ADD_BLOCKLIST ? state.api.ADD_BLOCKLIST.message : undefined,
-        apiSuccess: state.api.ADD_BLOCKLIST ? state.api.ADD_BLOCKLIST.success : undefined,
-        apiRequestSuccess: state.api.REQUEST_BLOCKLIST
-            ? state.api.REQUEST_BLOCKLIST.success
-            : undefined,
-        blockList: state.user.blockList,
-        blockListAdded: state.user.blockListAdded,
-        blockListDeleted: state.user.blockListDeleted,
-        socket: state.lobby.socket,
-        token: state.account.token,
-        user: state.account.user
-    };
-}
-
-export default connect(mapStateToProps, actions)(BlockList);
+export default BlockList;

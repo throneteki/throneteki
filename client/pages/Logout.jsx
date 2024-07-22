@@ -1,63 +1,54 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
-import ApiStatus from '../Components/Site/ApiStatus';
+import { useLogoutAccountMutation } from '../redux/middleware/api';
+import AlertPanel from '../Components/Site/AlertPanel';
+import { startConnecting } from '../redux/reducers/lobby';
+import { accountLoggedOut } from '../redux/reducers/auth';
+import { navigate } from '../redux/reducers/navigation';
 
-import * as actions from '../actions';
+const Logout = () => {
+    const [logout, { isLoading }] = useLogoutAccountMutation();
+    const refreshToken = useSelector((state) => state.auth.refreshToken);
+    const [error, setError] = useState();
+    const [success, setSuccess] = useState();
+    const dispatch = useDispatch();
 
-class Logout extends React.Component {
-    constructor(props) {
-        super(props);
+    useEffect(() => {
+        async function doLogout() {
+            try {
+                await logout(refreshToken.id).unwrap();
+            } catch (err) {
+                setError(err || 'An error occurred logging you out. Please try again later.');
 
-        this.state = {};
-    }
+                return;
+            }
 
-    componentWillMount() {
-        this.props.logout();
-    }
+            dispatch(accountLoggedOut());
 
-    componentWillReceiveProps(props) {
-        if (props.loggedOut) {
-            this.setState({
-                successMessage: 'You were successfully logged out, redirecting you shortly.'
-            });
+            dispatch(startConnecting());
 
+            setSuccess('You were successfully logged out, redirecting you shortly.');
             setTimeout(() => {
-                this.props.navigate('/');
-            }, 2000);
+                dispatch(navigate('/'));
+            }, 3000);
         }
-    }
 
-    render() {
-        return (
-            <div className='col-sm-6 col-sm-offset-3'>
-                <ApiStatus
-                    apiState={this.props.apiState}
-                    successMessage={this.state.successMessage}
-                />
+        if (!refreshToken) {
+            return;
+        }
 
-                {this.props.apiState && this.props.apiState.loading && (
-                    <span>Logging you out of your account, please wait...</span>
-                )}
-            </div>
-        );
-    }
-}
+        doLogout();
+    }, [dispatch, logout, refreshToken]);
 
-Logout.displayName = 'Logout';
-Logout.propTypes = {
-    apiState: PropTypes.bool,
-    loggedOut: PropTypes.bool,
-    logout: PropTypes.func,
-    navigate: PropTypes.func
+    return (
+        <div className='col-sm-6 col-sm-offset-3'>
+            {success && <AlertPanel type='success' message={success} />}
+            {error && <AlertPanel type='error' message={error} />}
+
+            {isLoading && <span>Logging you out of your account, please wait...</span>}
+        </div>
+    );
 };
 
-function mapStateToProps(state) {
-    return {
-        apiState: state.api.LOGOUT_ACCOUNT,
-        loggedOut: state.account.loggedOut
-    };
-}
-
-export default connect(mapStateToProps, actions)(Logout);
+export default Logout;

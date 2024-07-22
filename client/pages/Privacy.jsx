@@ -71,6 +71,4 @@ const Privacy = () => {
     );
 };
 
-Privacy.displayName = 'Privacy';
-
 export default Privacy;

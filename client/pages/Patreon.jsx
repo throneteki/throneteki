@@ -1,79 +1,60 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
-import * as actions from '../actions';
 import AlertPanel from '../Components/Site/AlertPanel';
-import ApiStatus from '../Components/Site/ApiStatus';
+import { navigate } from '../redux/reducers/navigation';
+import { useLinkPatreonMutation } from '../redux/middleware/api';
 
-class Patreon extends React.Component {
-    constructor(props) {
-        super(props);
+const Patreon = ({ code }) => {
+    const dispatch = useDispatch();
 
-        this.state = {};
-    }
+    const [successMessage, setSuccessMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
-    componentDidMount() {
-        if (!this.props.code) {
+    const [linkPatreon, { isLoading }] = useLinkPatreonMutation();
+
+    useEffect(() => {
+        if (!code) {
             return;
         }
 
-        this.props.linkPatreon(this.props.code);
-    }
-
-    componentWillReceiveProps(props) {
-        if (props.accountLinked) {
-            this.setState({
-                successMessage:
-                    'Your account was linked successfully.  Sending you back to the profile page.'
-            });
+        const doLink = async () => {
+            setSuccessMessage();
+            setErrorMessage();
+            try {
+                await linkPatreon(code).unwrap();
+            } catch (err) {
+                setErrorMessage(err || 'An error occurred linking your account');
+            }
 
             setTimeout(() => {
-                this.props.clearLinkStatus();
-                this.props.navigate('/profile');
-            }, 5000);
-        }
-    }
+                dispatch(navigate('/profile'));
+            }, 3000);
 
-    render() {
-        if (!this.props.code) {
-            return (
-                <AlertPanel
-                    type='error'
-                    message='This page is not intended to be viewed directly.  Please click on one of the links at the top of the page or your browser back button to return to the site.'
-                />
+            setSuccessMessage(
+                'Your account was linked successfully.  Sending you back to the profile page.'
             );
-        }
+        };
 
+        doLink();
+    }, [code, dispatch, linkPatreon]);
+
+    if (!code) {
         return (
-            <div>
-                <ApiStatus
-                    apiState={this.props.apiState}
-                    successMessage={this.state.successMessage}
-                />
-                {this.props.apiState.loading && (
-                    <div>Please wait while we verify your details..</div>
-                )}
-            </div>
+            <AlertPanel
+                type='error'
+                message='This page is not intended to be viewed directly.  Please click on one of the links at the top of the page or your browser back button to return to the site.'
+            />
         );
     }
-}
 
-Patreon.propTypes = {
-    accountLinked: PropTypes.bool,
-    apiState: PropTypes.object,
-    clearLinkStatus: PropTypes.func,
-    code: PropTypes.string.isRequired,
-    linkPatreon: PropTypes.func,
-    navigate: PropTypes.func
+    return (
+        <div>
+            {successMessage && <AlertPanel type='success' message={successMessage} />}
+            {errorMessage && <AlertPanel type='error' message={errorMessage} />}
+            {isLoading && <div>Please wait while we verify your details..</div>}
+        </div>
+    );
 };
-Patreon.displayName = 'Patreon';
 
-function mapStateToProps(state) {
-    return {
-        accountLinked: state.account.accountLinked,
-        apiState: state.api.ACCOUNT_LINK_REQUEST || {}
-    };
-}
-
-export default connect(mapStateToProps, actions)(Patreon);
+export default Patreon;

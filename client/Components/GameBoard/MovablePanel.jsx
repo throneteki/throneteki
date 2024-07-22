@@ -1,60 +1,48 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { DragSource } from 'react-dnd';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
+import { useDrag } from 'react-dnd';
 import $ from 'jquery';
 
 import { ItemTypes } from '../../constants';
 import PopupDefaults from './PopupDefaults';
 
-const panelSource = {
-    beginDrag(props) {
-        return {
-            name: `${props.name}-${props.side}`
-        };
-    },
-    endDrag(props, monitor) {
-        const offset = monitor.getSourceClientOffset();
-        const style = {
-            left: offset.x,
-            top: offset.y,
-            position: 'fixed'
-        };
+const MovablePanel = ({ name, side, title, onCloseClick, children }) => {
+    const key = `${name}-${side}`;
+    const savedStyle = localStorage.getItem(key);
+    const initialStyle = (savedStyle && JSON.parse(savedStyle)) || PopupDefaults[key];
 
-        localStorage.setItem(`${props.name}-${props.side}`, JSON.stringify(style));
-    }
-};
+    const [position, setPosition] = useState(Object.assign({}, initialStyle));
+    const popupRef = useRef(null);
 
-function collect(connect, monitor) {
-    return {
-        connectDragPreview: connect.dragPreview(),
-        connectDragSource: connect.dragSource(),
-        isDragging: monitor.isDragging(),
-        dragOffset: monitor.getSourceClientOffset()
-    };
-}
+    const [{ isDragging, dragOffset }, drag] = useDrag({
+        type: ItemTypes.PANEL,
+        item: { name: `${name}-${side}` },
+        end: (item, monitor) => {
+            const offset = monitor.getSourceClientOffset();
+            updatePosition(offset);
 
-class MovablePanel extends React.Component {
-    constructor(props) {
-        super(props);
-
-        const key = `${props.name}-${props.side}`;
-        const savedStyle = localStorage.getItem(key);
-        const style = (savedStyle && JSON.parse(savedStyle)) || PopupDefaults[key];
-
-        this.state = {
-            position: Object.assign({}, style)
-        };
-    }
-
-    componentWillReceiveProps(props) {
-        if (props.isDragging) {
-            let style = {
-                position: 'fixed',
-                left: Math.max(props.dragOffset.x, 0),
-                top: Math.max(props.dragOffset.y, 50)
+            const style = {
+                left: offset.x,
+                top: offset.y,
+                position: 'fixed'
             };
 
-            const popup = $(this.refs.popup);
+            localStorage.setItem(`${name}-${side}`, JSON.stringify(style));
+        },
+        collect: (monitor) => ({
+            isDragging: monitor.isDragging(),
+            dragOffset: monitor.getSourceClientOffset()
+        })
+    });
+
+    const updatePosition = useCallback(
+        (dragOffset) => {
+            let style = {
+                position: 'fixed',
+                left: Math.max(dragOffset.x, 0),
+                top: Math.max(dragOffset.y, 50)
+            };
+
+            const popup = $(popupRef.current);
 
             if (style.left + popup.width() > window.innerWidth) {
                 style.left = window.innerWidth - popup.width();
@@ -64,47 +52,28 @@ class MovablePanel extends React.Component {
                 style.top = window.innerHeight - popup.height();
             }
 
-            this.setState({
-                position: style
-            });
+            setPosition(style);
+        },
+        [setPosition]
+    );
+
+    useEffect(() => {
+        if (isDragging) {
+            updatePosition(dragOffset);
         }
-    }
+    }, [dragOffset, isDragging, updatePosition]);
 
-    render() {
-        let style = this.state.position;
-
-        let content = (
-            <div ref='popup' className='popup' style={style}>
-                {this.props.connectDragSource(
-                    <div className='panel-title' onClick={(event) => event.stopPropagation()}>
-                        <span className='text-center'>{this.props.title}</span>
-                        <span className='pull-right'>
-                            <a
-                                className='close-button glyphicon glyphicon-remove'
-                                onClick={this.props.onCloseClick}
-                            />
-                        </span>
-                    </div>
-                )}
-                {this.props.children}
+    return (
+        <div ref={popupRef} className='popup' style={position}>
+            <div ref={drag} className='panel-title' onClick={(event) => event.stopPropagation()}>
+                <span className='text-center'>{title}</span>
+                <span className='pull-right'>
+                    <a className='close-button glyphicon glyphicon-remove' onClick={onCloseClick} />
+                </span>
             </div>
-        );
-
-        return content;
-    }
-}
-
-MovablePanel.displayName = 'MovablePanel';
-MovablePanel.propTypes = {
-    children: PropTypes.node,
-    connectDragPreview: PropTypes.func,
-    connectDragSource: PropTypes.func,
-    dragOffset: PropTypes.object,
-    isDragging: PropTypes.bool,
-    name: PropTypes.string.isRequired,
-    onCloseClick: PropTypes.func,
-    side: PropTypes.oneOf(['top', 'bottom']),
-    title: PropTypes.string
+            {children}
+        </div>
+    );
 };
 
-export default DragSource(ItemTypes.PANEL, panelSource, collect)(MovablePanel);
+export default MovablePanel;

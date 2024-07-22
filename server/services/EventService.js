@@ -1,10 +1,15 @@
 import logger from '../log.js';
 import DeckService from './DeckService.js';
-
+import CardService from './CardService.js';
 class EventService {
     constructor(db) {
         this.events = db.get('events');
-        this.deckService = new DeckService(db);
+        this.cardService = new CardService(db);
+        this.deckService = new DeckService(db, this.cardService);
+    }
+
+    async init() {
+        await this.deckService.init();
     }
 
     async getEvents() {

@@ -1,44 +1,31 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useCallback } from 'react';
 import classNames from 'classnames';
 
-class Counter extends React.Component {
-    render() {
-        let className = classNames('counter', `${this.props.name}-token`, {
-            cancel: this.props.cancel,
-            'fade-out': this.props.fade
+const Counter = ({ name, cancel, fade, icon, shortName, value }) => {
+    const getClassName = useCallback(() => {
+        return classNames('counter', `${name}-token`, {
+            cancel: cancel,
+            'fade-out': fade
         });
+    }, [name, cancel, fade]);
 
-        if (this.props.icon) {
-            return (
-                <div
-                    key={this.props.icon}
-                    className={classNames(
-                        className,
-                        'thronesicon',
-                        `thronesicon-${this.props.icon}`
-                    )}
-                />
-            );
-        }
+    const className = getClassName();
 
+    if (icon) {
         return (
-            <div key={this.props.name} className={className}>
-                {this.props.shortName ? <span>{this.props.shortName}</span> : null}
-                <span>{this.props.value}</span>
-            </div>
+            <div
+                key={icon}
+                className={classNames(className, 'thronesicon', `thronesicon-${icon}`)}
+            />
         );
     }
-}
 
-Counter.displayName = 'Counter';
-Counter.propTypes = {
-    cancel: PropTypes.bool,
-    fade: PropTypes.bool,
-    icon: PropTypes.string,
-    name: PropTypes.string.isRequired,
-    shortName: PropTypes.string,
-    value: PropTypes.number
+    return (
+        <div key={name} className={className}>
+            {shortName ? <span>{shortName}</span> : null}
+            <span>{value}</span>
+        </div>
+    );
 };
 
 export default Counter;

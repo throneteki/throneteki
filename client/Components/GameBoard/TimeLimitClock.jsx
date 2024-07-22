@@ -1,61 +1,39 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 
-class TimeLimitClock extends React.Component {
-    constructor(props) {
-        super(props);
+const TimeLimitClock = ({ timeLimitStarted, timeLimitStartedAt, timeLimit }) => {
+    const [timer, setTimer] = useState(null);
+    const [timeLeft, setTimeLeft] = useState(undefined);
 
-        this.state = {
-            timer: undefined,
-            timeLeft: undefined
-        };
-    }
-
-    componentDidMount() {
-        this.updateProps(this.props);
-    }
-
-    componentWillReceiveProps(props) {
-        this.updateProps(props);
-    }
-
-    updateProps(props) {
-        if (props.timeLimitStarted && !this.state.timer) {
-            let timer = setInterval(() => {
-                let endTime = moment(props.timeLimitStartedAt).add(props.timeLimit, 'seconds');
+    useEffect(() => {
+        if (timeLimitStarted && !timer) {
+            let timerId = setInterval(() => {
+                let endTime = moment(timeLimitStartedAt).add(timeLimit, 'seconds');
                 let time = moment.utc(endTime.diff(moment()));
-                let timeDisplay = undefined;
-                if (time.hours() > 0) {
-                    timeDisplay = time.format('HH:mm:ss');
-                } else {
-                    timeDisplay = time.format('mm:ss');
-                }
-                this.setState({ timeLeft: timeDisplay });
+                let timeDisplay = time.hours() > 0 ? time.format('HH:mm:ss') : time.format('mm:ss');
+                setTimeLeft(timeDisplay);
             }, 1000);
 
-            this.setState({ timer: timer });
+            setTimer(timerId);
         }
-        if (!props.timeLimitStarted && this.state.timer) {
-            clearInterval(this.state.timer);
-            this.setState({ timer: undefined });
+
+        if (!timeLimitStarted && timer) {
+            clearInterval(timer);
+            setTimer(null);
         }
-    }
 
-    render() {
-        return (
-            <div>
-                <h1>{this.state.timeLeft}</h1>
-            </div>
-        );
-    }
-}
+        return () => {
+            if (timer) {
+                clearInterval(timer);
+            }
+        };
+    }, [timeLimitStarted, timeLimitStartedAt, timeLimit, timer]);
 
-TimeLimitClock.displayName = 'TimeLimitClock';
-TimeLimitClock.propTypes = {
-    timeLimit: PropTypes.number,
-    timeLimitStarted: PropTypes.bool,
-    timeLimitStartedAt: PropTypes.instanceOf(Date)
+    return (
+        <div>
+            <h1>{timeLeft}</h1>
+        </div>
+    );
 };
 
 export default TimeLimitClock;

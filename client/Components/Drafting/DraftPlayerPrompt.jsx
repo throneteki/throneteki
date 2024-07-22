@@ -1,37 +1,42 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
-class DraftPlayerPrompt extends React.Component {
-    onButtonClick(event, button) {
+const DraftPlayerPrompt = ({
+    buttons,
+    onButtonClick,
+    onMouseOver,
+    onMouseOut,
+    promptText,
+    promptTitle
+}) => {
+    const handleButtonClick = (event, button) => {
         event.preventDefault();
 
-        if (this.props.onButtonClick) {
-            this.props.onButtonClick(button);
+        if (onButtonClick) {
+            onButtonClick(button);
         }
-    }
+    };
 
-    onMouseOver(event, card) {
-        if (card && this.props.onMouseOver) {
-            this.props.onMouseOver(card);
+    const handleMouseOver = (event, card) => {
+        if (card && onMouseOver) {
+            onMouseOver(card);
         }
-    }
+    };
 
-    onMouseOut(event, card) {
-        if (card && this.props.onMouseOut) {
-            this.props.onMouseOut(card);
+    const handleMouseOut = (event, card) => {
+        if (card && onMouseOut) {
+            onMouseOut(card);
         }
-    }
+    };
 
-    getButtons() {
+    const getButtons = () => {
         let buttonIndex = 0;
+        let retButtons = [];
 
-        let buttons = [];
-
-        if (!this.props.buttons) {
+        if (!buttons) {
             return null;
         }
 
-        for (const button of this.props.buttons) {
+        for (const button of buttons) {
             if (button.timer) {
                 continue;
             }
@@ -40,9 +45,9 @@ class DraftPlayerPrompt extends React.Component {
                 <button
                     key={button.command + buttonIndex.toString()}
                     className='btn btn-default prompt-button'
-                    onClick={(event) => this.onButtonClick(event, button)}
-                    onMouseOver={(event) => this.onMouseOver(event, button.card)}
-                    onMouseOut={(event) => this.onMouseOut(event, button.card)}
+                    onClick={(event) => handleButtonClick(event, button)}
+                    onMouseOver={(event) => handleMouseOver(event, button.card)}
+                    onMouseOut={(event) => handleMouseOut(event, button.card)}
                     disabled={button.disabled}
                 >
                     {' '}
@@ -55,55 +60,39 @@ class DraftPlayerPrompt extends React.Component {
 
             buttonIndex++;
 
-            buttons.push(option);
+            retButtons.push(option);
         }
 
-        return buttons;
+        return retButtons;
+    };
+
+    let promptTitleElement;
+    if (promptTitle) {
+        promptTitleElement = <div className='menu-pane-source'>{promptTitle}</div>;
     }
 
-    render() {
-        let promptTitle;
-
-        if (this.props.promptTitle) {
-            promptTitle = <div className='menu-pane-source'>{this.props.promptTitle}</div>;
+    let promptTextElements = [];
+    if (promptText && promptText.includes('\n')) {
+        let split = promptText.split('\n');
+        for (let token of split) {
+            promptTextElements.push(token);
+            promptTextElements.push(<br />);
         }
+    } else {
+        promptTextElements.push(promptText);
+    }
 
-        let promptText = [];
-        if (this.props.promptText && this.props.promptText.includes('\n')) {
-            let split = this.props.promptText.split('\n');
-            for (let token of split) {
-                promptText.push(token);
-                promptText.push(<br />);
-            }
-        } else {
-            promptText.push(this.props.promptText);
-        }
-
-        return (
-            <div>
-                {promptTitle}
-                <div className='menu-pane'>
-                    <div className='panel'>
-                        <h4>{promptText}</h4>
-                        {this.getButtons()}
-                    </div>
+    return (
+        <div>
+            {promptTitleElement}
+            <div className='menu-pane'>
+                <div className='panel'>
+                    <h4>{promptTextElements}</h4>
+                    {getButtons()}
                 </div>
             </div>
-        );
-    }
-}
-
-DraftPlayerPrompt.displayName = 'DraftPlayerPrompt';
-DraftPlayerPrompt.propTypes = {
-    buttons: PropTypes.array,
-    onButtonClick: PropTypes.func,
-    onMouseOut: PropTypes.func,
-    onMouseOver: PropTypes.func,
-    onTitleClick: PropTypes.func,
-    promptText: PropTypes.string,
-    promptTitle: PropTypes.string,
-    socket: PropTypes.object,
-    user: PropTypes.object
+        </div>
+    );
 };
 
 export default DraftPlayerPrompt;

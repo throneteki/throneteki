@@ -1,136 +1,145 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-
+import React, { useCallback, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import AlertPanel from '../Components/Site/AlertPanel';
 import Panel from '../Components/Site/Panel';
 import Link from '../Components/Site/Link';
 import DeckList from '../Components/Decks/DeckList';
 import RestrictedListDropdown from '../Components/Decks/RestrictedListDropdown';
 import ViewDeck from '../Components/Decks/ViewDeck';
-import * as actions from '../actions';
+import {
+    useDeleteDeckMutation,
+    useGetDecksQuery,
+    useGetEventsQuery,
+    useGetRestrictedListQuery
+} from '../redux/middleware/api';
+import { navigate } from '../redux/reducers/navigation';
 
-class Decks extends React.Component {
-    constructor() {
-        super();
+const Decks = () => {
+    const dispatch = useDispatch();
 
-        this.handleEditDeck = this.handleEditDeck.bind(this);
-        this.handleDeleteDeck = this.handleDeleteDeck.bind(this);
-    }
+    const {
+        data: restrictedLists,
+        isLoading: isRestrictedListLoading,
+        error: restrictedListError
+    } = useGetRestrictedListQuery();
+    const { data: events, isLoading: isEventsLoading, error: eventsError } = useGetEventsQuery();
+    const {
+        data: decks,
+        isLoading: isDecksLoading,
+        error: decksError
+    } = useGetDecksQuery('', {
+        skip: !restrictedLists || !events
+    });
+    const [deleteDeck, { isLoading: isDeleteLoading }] = useDeleteDeckMutation();
 
-    componentWillMount() {
-        this.props.loadEvents();
-        this.props.loadDecks();
-    }
+    const [currentRestrictedList, setCurrentRestrictedList] = useState(
+        restrictedLists && restrictedLists[0]
+    );
+    const [selectedDeck, setSelectedDeck] = useState();
+    const [error, setError] = useState();
+    const [success, setSuccess] = useState();
 
-    handleEditDeck(deck) {
-        this.props.navigate(`/decks/edit/${deck._id}`);
-    }
+    const handleEditDeck = useCallback(
+        (deck) => {
+            dispatch(navigate(`/decks/edit/${deck._id}`));
+        },
+        [dispatch]
+    );
 
-    handleDeleteDeck(deck) {
-        this.props.deleteDeck(deck);
-    }
+    const handleDeleteDeck = useCallback(
+        async (deck) => {
+            try {
+                await deleteDeck(deck._id).unwrap();
+                setSuccess('Deck deleted successfully');
 
-    render() {
-        let content = null;
+                setTimeout(() => {
+                    setSuccess(undefined);
+                }, 5000);
 
-        let successPanel = null;
+                setSelectedDeck(undefined);
+            } catch (err) {
+                setError(
+                    err.message || 'An error occured deleting the deck. Please try again later.'
+                );
+            }
+        },
+        [deleteDeck]
+    );
 
-        if (this.props.deckDeleted) {
-            setTimeout(() => {
-                this.props.clearDeckStatus();
-            }, 5000);
-            successPanel = <AlertPanel message='Deck deleted successfully' type={'success'} />;
-        }
-
-        if (
-            this.props.apiLoading ||
-            !this.props.cards ||
-            !this.props.decks ||
-            !this.props.restrictedLists
-        ) {
-            content = <div>Loading decks from the server...</div>;
-        } else if (!this.props.apiSuccess) {
-            content = <AlertPanel type='error' message={this.props.apiMessage} />;
-        } else {
-            content = (
-                <div className='full-height'>
-                    <div className='col-xs-12'>{successPanel}</div>
-                    <div className='col-sm-5 full-height'>
-                        <Panel title='Your decks'>
-                            <div className='form-group'>
-                                <Link className='btn btn-primary' href='/decks/add'>
-                                    New Deck
-                                </Link>
-                            </div>
-                            <div>
-                                <RestrictedListDropdown
-                                    currentRestrictedList={this.props.currentRestrictedList}
-                                    restrictedLists={this.props.restrictedLists}
-                                    setCurrentRestrictedList={this.props.setCurrentRestrictedList}
-                                />
-                            </div>
-                            <DeckList
-                                className='deck-list'
-                                activeDeck={this.props.selectedDeck}
-                                decks={this.props.decks}
-                                onSelectDeck={this.props.selectDeck}
-                                events={this.props.events}
-                            />
-                        </Panel>
-                    </div>
-                    {!!this.props.selectedDeck && (
-                        <ViewDeck
-                            deck={this.props.selectedDeck}
-                            cards={this.props.cards}
-                            onEditDeck={this.handleEditDeck}
-                            onDeleteDeck={this.handleDeleteDeck}
-                        />
-                    )}
-                </div>
+    useEffect(() => {
+        if (decksError) {
+            setError();
+        } else if (restrictedListError) {
+            setError(
+                restrictedListError.data?.message || 'An error occured loading the restricted lists'
             );
+        } else if (eventsError) {
+            setError(eventsError.data?.message || 'An error occured loading the events');
         }
+    }, [decksError, eventsError, restrictedListError]);
 
-        return content;
+    let content = null;
+
+    if (decksError) {
+        return (
+            <AlertPanel
+                type='error'
+                message={decksError.data?.message || 'An error occured loading the decks'}
+            />
+        );
     }
-}
 
-Decks.displayName = 'Decks';
-Decks.propTypes = {
-    apiLoading: PropTypes.bool,
-    apiMessage: PropTypes.string,
-    apiSuccess: PropTypes.bool,
-    cards: PropTypes.object,
-    clearDeckStatus: PropTypes.func,
-    currentRestrictedList: PropTypes.object,
-    deckDeleted: PropTypes.bool,
-    decks: PropTypes.array,
-    deleteDeck: PropTypes.func,
-    events: PropTypes.array,
-    loadDecks: PropTypes.func,
-    loadEvents: PropTypes.func,
-    loading: PropTypes.bool,
-    navigate: PropTypes.func,
-    restrictedLists: PropTypes.array,
-    selectDeck: PropTypes.func,
-    selectedDeck: PropTypes.object,
-    setCurrentRestrictedList: PropTypes.func
+    if (
+        isDecksLoading ||
+        isRestrictedListLoading ||
+        isEventsLoading ||
+        !decks ||
+        !restrictedLists
+    ) {
+        content = <div>Loading decks from the server...</div>;
+    } else {
+        content = (
+            <div className='full-height'>
+                <div className='col-sm-5 full-height'>
+                    <Panel title='Your decks'>
+                        {error && <AlertPanel type='error' message={error} />}
+                        {success && <AlertPanel type='success' message={success} />}
+                        <div className='form-group'>
+                            <Link className='btn btn-primary' href='/decks/add'>
+                                New Deck
+                            </Link>
+                        </div>
+                        <div>
+                            <RestrictedListDropdown
+                                currentRestrictedList={currentRestrictedList}
+                                restrictedLists={restrictedLists}
+                                setCurrentRestrictedList={(list) => setCurrentRestrictedList(list)}
+                            />
+                        </div>
+                        <DeckList
+                            currentRestrictedList={currentRestrictedList}
+                            className='deck-list'
+                            activeDeck={selectedDeck}
+                            decks={decks}
+                            onSelectDeck={(deck) => setSelectedDeck(deck)}
+                            events={events}
+                        />
+                    </Panel>
+                </div>
+                {!!selectedDeck && (
+                    <ViewDeck
+                        currentRestrictedList={currentRestrictedList}
+                        deck={selectedDeck}
+                        onEditDeck={handleEditDeck}
+                        onDeleteDeck={handleDeleteDeck}
+                        isDeleteLoading={isDeleteLoading}
+                    />
+                )}
+            </div>
+        );
+    }
+
+    return content;
 };
 
-function mapStateToProps(state) {
-    return {
-        apiLoading: state.api.REQUEST_DECKS ? state.api.REQUEST_DECKS.loading : undefined,
-        apiMessage: state.api.REQUEST_DECKS ? state.api.REQUEST_DECKS.message : undefined,
-        apiSuccess: state.api.REQUEST_DECKS ? state.api.REQUEST_DECKS.success : undefined,
-        cards: state.cards.cards,
-        currentRestrictedList: state.cards.currentRestrictedList,
-        deckDeleted: state.cards.deckDeleted,
-        decks: state.cards.decks,
-        events: state.events.events,
-        loading: state.api.loading,
-        restrictedLists: state.cards.restrictedList,
-        selectedDeck: state.cards.selectedDeck
-    };
-}
-
-export default connect(mapStateToProps, actions)(Decks);
+export default Decks;

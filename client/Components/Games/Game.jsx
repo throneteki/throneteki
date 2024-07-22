@@ -1,20 +1,25 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import moment from 'moment';
 
 import GamePlayer from './GamePlayer';
 import { createGameTitle } from './GameHelper';
 
-function Game(props) {
-    let game = props.game;
-
+const Game = ({
+    game,
+    isAdmin,
+    onJoinGame,
+    onRemoveGame,
+    onWatchGame,
+    showJoinButton,
+    showWatchButton
+}) => {
     let getPlayers = function (game) {
         let players = Object.values(game.players).map((player, i) => {
             return <GamePlayer key={player.name} player={player} firstPlayer={i % 2 === 0} />;
         });
 
-        if (props.showJoinButton) {
+        if (showJoinButton) {
             players.push(
                 <div
                     key={`game-${game.id}-join`}
@@ -26,7 +31,7 @@ function Game(props) {
                     <div className='game-faction-row other-player'>
                         <button
                             className='btn btn-primary gamelist-button img-responsive'
-                            onClick={props.onJoinGame}
+                            onClick={onJoinGame}
                         >
                             Join
                         </button>
@@ -56,7 +61,7 @@ function Game(props) {
     }
 
     let rowClass = classNames('game-row', {
-        [game.node]: game.node && props.isAdmin
+        [game.node]: game.node && isAdmin
     });
 
     let timeDifference = moment().diff(moment(game.createdAt));
@@ -111,18 +116,18 @@ function Game(props) {
                 </div>
                 {gameMiddles}
                 <div className='game-row-buttons'>
-                    {props.showWatchButton && (
+                    {showWatchButton && (
                         <button
                             className='btn btn-primary gamelist-lower-button'
-                            onClick={props.onWatchGame}
+                            onClick={onWatchGame}
                         >
                             Watch
                         </button>
                     )}
-                    {props.isAdmin && (
+                    {isAdmin && (
                         <button
                             className='btn btn-primary gamelist-lower-button'
-                            onClick={props.onRemoveGame}
+                            onClick={onRemoveGame}
                         >
                             Remove
                         </button>
@@ -131,17 +136,6 @@ function Game(props) {
             </div>
         </div>
     );
-}
-
-Game.displayName = 'Game';
-Game.propTypes = {
-    game: PropTypes.object,
-    isAdmin: PropTypes.bool,
-    onJoinGame: PropTypes.func,
-    onRemoveGame: PropTypes.func,
-    onWatchGame: PropTypes.func,
-    showJoinButton: PropTypes.bool,
-    showWatchButton: PropTypes.bool
 };
 
 export default Game;

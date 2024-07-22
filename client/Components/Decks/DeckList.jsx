@@ -1,36 +1,30 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-
 import DeckRow from './DeckRow';
 
-class DeckList extends React.Component {
-    render() {
-        let { activeDeck, className, decks, onSelectDeck, events } = this.props;
-
-        return (
-            <div className={className}>
-                {!decks || decks.length === 0
-                    ? 'You have no decks, try adding one'
-                    : decks.map((deck, index) => (
-                          <DeckRow
-                              active={activeDeck && activeDeck._id === deck._id}
-                              deck={deck}
-                              key={index}
-                              onSelect={onSelectDeck}
-                              events={events}
-                          />
-                      ))}
-            </div>
-        );
-    }
-}
-
-DeckList.propTypes = {
-    activeDeck: PropTypes.object,
-    className: PropTypes.string,
-    decks: PropTypes.array,
-    events: PropTypes.array,
-    onSelectDeck: PropTypes.func
+const DeckList = ({
+    activeDeck,
+    className,
+    currentRestrictedList,
+    decks,
+    onSelectDeck,
+    events
+}) => {
+    return (
+        <div className={className}>
+            {!decks || decks.length === 0
+                ? 'You have no decks, try adding one'
+                : decks.map((deck, index) => (
+                      <DeckRow
+                          currentRestrictedList={currentRestrictedList}
+                          active={activeDeck && activeDeck._id === deck._id}
+                          deck={deck}
+                          key={index}
+                          onSelect={onSelectDeck}
+                          events={events}
+                      />
+                  ))}
+        </div>
+    );
 };
 
 export default DeckList;

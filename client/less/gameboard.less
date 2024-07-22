@@ -10,7 +10,7 @@
     flex-direction: column;
 
     &.select-cursor {
-        cursor: url(../../public/img/crosshairs.cur), default;
+        cursor: url(/img/crosshairs.cur), default;
     }
 
     .panel {
@@ -37,6 +37,7 @@
         border-bottom: none;
         text-align: center;
         position: relative;
+        user-select: none;
     }
 }
 
@@ -591,10 +592,6 @@ span.down-arrow {
 
 .player-board {
     margin: 10px;
-
-    &.our-side {
-        margin: 0;
-    }
 }
 
 .player-home-row {
@@ -835,7 +832,7 @@ span.down-arrow {
         overflow-y: auto;
     }
 
-    .drop-target {
+    .droppable {
         display: block;
     }
 

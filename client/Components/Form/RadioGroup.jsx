@@ -1,52 +1,48 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-
+import React, { useCallback, useEffect, useState } from 'react';
 import RadioButton from './RadioButton';
 
-class RadioGroup extends React.Component {
-    constructor(props) {
-        super(props);
+const RadioGroup = ({ buttons, onValueSelected, value }) => {
+    const [selectedButton, setSelectedButton] = useState(value);
 
-        this.state = { selectedButton: undefined };
-    }
+    useEffect(() => {
+        setSelectedButton(value);
+    }, [value]);
 
-    onRadioButtonClick(button) {
-        this.setState({ selectedButton: button });
+    const onRadioButtonClick = useCallback(
+        (button) => {
+            setSelectedButton(button.value);
 
-        if (this.props.onValueSelected) {
-            this.props.onValueSelected(button.value);
-        }
-    }
+            if (onValueSelected) {
+                onValueSelected(button.value);
+            }
+        },
+        [onValueSelected]
+    );
 
-    isButtonSelected(button) {
-        if (!button || !this.state.selectedButton) {
-            return false;
-        }
+    const isButtonSelected = useCallback(
+        (button) => {
+            if (!button || !selectedButton) {
+                return false;
+            }
 
-        return this.state.selectedButton.value === button.value;
-    }
+            return selectedButton === button.value;
+        },
+        [selectedButton]
+    );
 
-    render() {
-        let buttons = this.props.buttons.map((button) => {
-            return (
-                <RadioButton
-                    key={button.value}
-                    name={button.value}
-                    label={button.label}
-                    onClick={this.onRadioButtonClick.bind(this, button)}
-                    selected={this.isButtonSelected(button)}
-                />
-            );
-        });
+    let buttonsRender = buttons.map((button) => {
+        return (
+            <RadioButton
+                key={button.value}
+                name={button.value}
+                label={button.label}
+                onClick={() => onRadioButtonClick(button)}
+                selected={isButtonSelected(button)}
+            />
+        );
+    });
 
-        return <div>{buttons}</div>;
-    }
-}
-
-RadioGroup.displayName = 'RadioGroup';
-RadioGroup.propTypes = {
-    buttons: PropTypes.array.isRequired,
-    onValueSelected: PropTypes.func
+    return <div>{buttonsRender}</div>;
 };
 
 export default RadioGroup;

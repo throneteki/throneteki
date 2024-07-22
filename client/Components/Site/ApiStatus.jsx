@@ -1,46 +1,34 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-
 import AlertPanel from './AlertPanel';
 
-class ApiStatus extends React.Component {
-    render() {
-        if (!this.props.apiState || this.props.apiState.loading) {
-            return null;
-        }
-
-        let error;
-        if (typeof this.props.apiState.message === 'object') {
-            error = (
-                <ul>
-                    {Object.values(this.props.apiState.message).map((message, index) => {
-                        return <li key={index}>{message}</li>;
-                    })}
-                </ul>
-            );
-        } else {
-            error = this.props.apiState.message;
-        }
-
-        return (
-            <div>
-                {this.props.apiState.success || (
-                    <AlertPanel type='error' multiLine>
-                        {error}
-                    </AlertPanel>
-                )}
-                {this.props.successMessage && (
-                    <AlertPanel type='success' message={this.props.successMessage} />
-                )}
-            </div>
-        );
+const ApiStatus = ({ apiState, successMessage }) => {
+    if (!apiState || apiState.loading) {
+        return null;
     }
-}
 
-ApiStatus.displayName = 'ApiStatus';
-ApiStatus.propTypes = {
-    apiState: PropTypes.object,
-    successMessage: PropTypes.string
+    let error;
+    if (typeof apiState.message === 'object') {
+        error = (
+            <ul>
+                {Object.values(apiState.message).map((message, index) => (
+                    <li key={index}>{message}</li>
+                ))}
+            </ul>
+        );
+    } else {
+        error = apiState.message;
+    }
+
+    return (
+        <div>
+            {apiState.success || (
+                <AlertPanel type='error' multiLine>
+                    {error}
+                </AlertPanel>
+            )}
+            {successMessage && <AlertPanel type='success' message={successMessage} />}
+        </div>
+    );
 };
 
 export default ApiStatus;

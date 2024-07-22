@@ -10,7 +10,7 @@ export const init = function (server, options) {
         newsService
             .getRecentNewsItems({ limit: req.query.limit })
             .then((news) => {
-                res.send({ success: true, news: news });
+                res.send({ success: true, data: news });
             })
             .catch((err) => {
                 logger.error(err);
@@ -32,7 +32,7 @@ export const init = function (server, options) {
                 text: req.body.text,
                 datePublished: new Date()
             });
-            res.send({ success: true, newsItem: newsItem });
+            res.send({ success: true, data: newsItem });
         })
     );
 
@@ -45,7 +45,7 @@ export const init = function (server, options) {
             }
 
             await newsService.editNews(req.params.id, req.body.text);
-            res.send({ success: true, id: req.params.id, text: req.body.text });
+            res.send({ success: true, data: { id: req.params.id, text: req.body.text } });
         })
     );
 

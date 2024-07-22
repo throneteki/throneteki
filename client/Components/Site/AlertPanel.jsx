@@ -1,53 +1,42 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
-class AlertPanel extends React.Component {
-    render() {
-        var icon = 'glyphicon';
-        var alertClass = 'alert fade in';
+const AlertPanel = ({ type, multiLine, noIcon, title, message, children }) => {
+    let icon = 'glyphicon';
+    let alertClass = 'alert fade in';
 
-        switch (this.props.type) {
-            case 'warning':
-                icon += ' glyphicon-warning-sign';
-                alertClass += ' alert-warning';
-                break;
-            case 'error':
-                icon += ' glyphicon-exclamation-sign';
-                alertClass += ' alert-danger';
-                break;
-            case 'info':
-                icon += ' glyphicon-info-sign';
-                alertClass += ' alert-info';
-                break;
-            case 'success':
-                icon += ' glyphicon-ok-sign';
-                alertClass += ' alert-success';
-                break;
-        }
-
-        if (this.props.multiLine) {
-            alertClass += ' multiline';
-        }
-
-        return (
-            <div ref='alertPanel' className={alertClass} role='alert'>
-                {this.props.noIcon ? null : <span className={icon} aria-hidden='true' />}
-                {this.props.title ? <span className='sr-only'>{this.props.title}</span> : null}
-                {this.props.message ? <span>&nbsp;{this.props.message}</span> : null}
-                &nbsp;{this.props.children}
-            </div>
-        );
+    switch (type) {
+        case 'warning':
+            icon += ' glyphicon-warning-sign';
+            alertClass += ' alert-warning';
+            break;
+        case 'error':
+            icon += ' glyphicon-exclamation-sign';
+            alertClass += ' alert-danger';
+            break;
+        case 'info':
+            icon += ' glyphicon-info-sign';
+            alertClass += ' alert-info';
+            break;
+        case 'success':
+            icon += ' glyphicon-ok-sign';
+            alertClass += ' alert-success';
+            break;
+        default:
+            break;
     }
-}
 
-AlertPanel.displayName = 'AlertPanel';
-AlertPanel.propTypes = {
-    children: PropTypes.any,
-    message: PropTypes.string,
-    multiLine: PropTypes.bool,
-    noIcon: PropTypes.bool,
-    title: PropTypes.string,
-    type: PropTypes.oneOf(['warning', 'info', 'success', 'error'])
+    if (multiLine) {
+        alertClass += ' multiline';
+    }
+
+    return (
+        <div className={alertClass} role='alert'>
+            {noIcon ? null : <span className={icon} aria-hidden='true' />}
+            {title ? <span className='sr-only'>{title}</span> : null}
+            {message ? <span>&nbsp;{message}</span> : null}
+            &nbsp;{children}
+        </div>
+    );
 };
 
 export default AlertPanel;

@@ -1,83 +1,60 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-
-import { connect } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import AlertPanel from '../Components/Site/AlertPanel';
+import { navigate } from '../redux/reducers/navigation';
+import { useActivateAccountMutation } from '../redux/middleware/api';
 
-import * as actions from '../actions';
+const Activation = ({ id, token }) => {
+    const dispatch = useDispatch();
 
-class Activation extends React.Component {
-    constructor() {
-        super();
+    const [successMessage, setSuccessMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
-        this.state = {};
-    }
+    const [activateAccount, { isLoading }] = useActivateAccountMutation();
 
-    componentWillMount() {
-        this.props.activateAccount({ id: this.props.id, token: this.props.token });
-    }
-
-    componentWillReceiveProps(props) {
-        if (props.accountActivated) {
-            this.setState({
-                successMessage:
-                    'Your account has been activated.  You will shortly be redirected to the login page.'
-            });
+    useEffect(() => {
+        const doActivate = async () => {
+            setSuccessMessage();
+            setErrorMessage();
+            try {
+                await activateAccount({ id, token }).unwrap();
+            } catch (err) {
+                setErrorMessage(err || 'An error occurred activating your account');
+            }
 
             setTimeout(() => {
-                this.props.navigate('/login');
+                dispatch(navigate('/login'));
             }, 3000);
-        }
-    }
 
-    render() {
-        if (!this.props.id || !this.props.token) {
-            return (
-                <AlertPanel
-                    type='error'
-                    message='This page is not intended to be viewed directly.  Please click on the link in your email to activate your account'
-                />
+            setSuccessMessage(
+                'Your account has been activated.  You will shortly be redirected to the login page.'
             );
-        }
+        };
 
-        let errorBar =
-            this.props.apiSuccess === false ? (
-                <AlertPanel type='error' message={this.props.apiMessage} />
-            ) : null;
-        let successBar = this.state.successMessage ? (
-            <AlertPanel type='success' message={this.state.successMessage} />
-        ) : null;
+        doActivate();
+    }, [activateAccount, dispatch, id, token]);
 
+    if (!id || !token) {
         return (
-            <div>
-                <div className='col-sm-6 col-sm-offset-3'>
-                    {errorBar}
-                    {successBar}
-                </div>
-            </div>
+            <AlertPanel
+                type='error'
+                message='This page is not intended to be viewed directly.  Please click on the link in your email to activate your account'
+            />
         );
     }
-}
 
-Activation.propTypes = {
-    accountActivated: PropTypes.bool,
-    activateAccount: PropTypes.func,
-    apiLoading: PropTypes.bool,
-    apiMessage: PropTypes.string,
-    apiSuccess: PropTypes.bool,
-    id: PropTypes.string,
-    navigate: PropTypes.func,
-    token: PropTypes.string
+    if (isLoading) {
+        return <span>Activating your account, please wait...</span>;
+    }
+
+    return (
+        <div>
+            <div className='col-sm-6 col-sm-offset-3'>
+                {errorMessage && <AlertPanel type='error' message={errorMessage} />}
+                {successMessage && <AlertPanel type='success' message={successMessage} />}
+            </div>
+        </div>
+    );
 };
-Activation.displayName = 'Activation';
 
-function mapStateToProps(state) {
-    return {
-        accountActivated: state.account.activated,
-        apiLoading: state.api.ACTIVATE_ACCOUNT ? state.api.ACTIVATE_ACCOUNT.loading : undefined,
-        apiMessage: state.api.ACTIVATE_ACCOUNT ? state.api.ACTIVATE_ACCOUNT.message : undefined,
-        apiSuccess: state.api.ACTIVATE_ACCOUNT ? state.api.ACTIVATE_ACCOUNT.success : undefined
-    };
-}
-
-export default connect(mapStateToProps, actions)(Activation);
+export default Activation;
