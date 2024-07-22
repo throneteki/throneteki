@@ -323,6 +323,10 @@ class Lobby {
 
     // Events
     onConnection(ioSocket) {
+        ioSocket.on('ping', (cb) => {
+            if (typeof cb === 'function') cb();
+        });
+
         let socket = new Socket(ioSocket, { configService: this.configService });
 
         socket.registerEvent('lobbychat', this.onLobbyChat.bind(this));

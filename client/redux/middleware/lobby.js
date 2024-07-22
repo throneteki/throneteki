@@ -38,7 +38,8 @@ import {
     sendJoinGameMessage,
     sendWatchGameMessage,
     sendRemoveGameMessage,
-    sendAuthenticateMessage
+    sendAuthenticateMessage,
+    receiveResponseTime
 } from '../reducers/lobby';
 import { receiveNodeStatus } from '../reducers/admin';
 import { setAuthTokens } from '../reducers/auth';
@@ -77,7 +78,8 @@ const LobbyMessage = Object.freeze({
     NodeStatus: 'nodestatus',
     Motd: 'motd',
     WatchGame: 'watchgame',
-    Authenticate: 'authenticate'
+    Authenticate: 'authenticate',
+    Ping: 'ping'
 });
 
 const LobbyEvent = Object.freeze({
@@ -201,6 +203,15 @@ const lobbyMiddleware = (store) => {
             socket.on(LobbyMessage.Motd, (message) => {
                 dispatch(receiveMotd(message));
             });
+
+            setInterval(() => {
+                const start = Date.now();
+
+                socket.volatile.emit(LobbyMessage.Ping, () => {
+                    const latency = Date.now() - start;
+                    dispatch(receiveResponseTime(latency));
+                });
+            }, 5000);
 
             socket.on(LobbyMessage.HandOff, (details) => {
                 let url = '//' + details.address;

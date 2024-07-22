@@ -343,6 +343,10 @@ class GameServer {
             return;
         }
 
+        ioSocket.on('ping', (cb) => {
+            if (typeof cb === 'function') cb();
+        });
+
         var game = this.findGameForUser(ioSocket.request.user.username);
         if (!game) {
             logger.info('No game for %s, disconnecting', ioSocket.request.user.username);

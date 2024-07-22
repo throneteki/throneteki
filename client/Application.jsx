@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import $ from 'jquery';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Sentry from '@sentry/react';
-import NavBar from './Components/Site/NavBar';
+import NavBar from './Components/Navigation/NavBar';
 import Router from './Router';
 import { tryParseJSON } from './util';
 import AlertPanel from './Components/Site/AlertPanel';

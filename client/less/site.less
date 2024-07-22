@@ -94,15 +94,21 @@ h4 {
     height: 100%;
 }
 
+.navbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+}
+
 .navbar-sm {
     min-height: @navbar-height;
     height: @navbar-height;
 }
 
 .navbar-sm .navbar-brand {
-    padding: 0px 12px;
+    padding: 4px 12px;
     font-size: 18px;
-    line-height: @navbar-height;
 }
 
 .navbar-sm .navbar-nav > li > a {
@@ -115,6 +121,65 @@ h4 {
     padding-top: 0px;
     padding-bottom: 0px;
     line-height: @navbar-height;
+}
+
+.small-navbar-wrapper {
+    display: flex;
+    justify-content: space-between;
+    flex-grow: 1;
+}
+
+.small-navbar-spacer {
+    flex-basis: 0;
+    flex-grow: 1;
+}
+
+.small-navbar-right {
+    display: flex;
+    justify-content: flex-end;
+    flex-grow: 1;
+    flex-basis: 0;
+}
+
+.collapse-menu {
+    flex-grow: 1;
+    flex-basis: 100%;
+    background-color: @navbar-inverse-bg;
+}
+
+@media (min-width: @screen-md-min) {
+    #navbar {
+        display: flex !important;
+    }
+}
+
+.left-menu {
+    //flex-direction: row;
+    flex-grow: 1;
+    flex-basis: 0;
+}
+
+.navbar-nav {
+    display: flex;
+    flex-direction: column;
+}
+
+@media (min-width: 992px) {
+    .navbar-nav {
+        flex-direction: row;
+    }
+}
+
+.navbar-right {
+    flex-basis: 0;
+    justify-content: flex-end;
+    flex-grow: 1;
+    display: flex;
+    white-space: nowrap;
+}
+
+.dropdown-toggle {
+    white-space: nowrap;
 }
 
 a {

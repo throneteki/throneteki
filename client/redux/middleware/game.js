@@ -5,6 +5,7 @@ import {
     gameConnectionFailed,
     gameDisconnected,
     gameReconnecting,
+    receiveResponseTime,
     sendButtonClickedMessage,
     sendCardClickedMessage,
     sendCardMenuItemClickedMessage,
@@ -47,7 +48,8 @@ const GameMessage = Object.freeze({
     ChangeStat: 'changeStat',
     LeaveGame: 'leavegame',
     Concede: 'concede',
-    ClearGameState: 'cleargamestate'
+    ClearGameState: 'cleargamestate',
+    Ping: 'ping'
 });
 
 const gameMiddleware = (store) => {
@@ -102,6 +104,15 @@ const gameMiddleware = (store) => {
                     )
                 );
             });
+
+            setInterval(() => {
+                const start = Date.now();
+
+                socket.volatile.emit(GameMessage.Ping, () => {
+                    const latency = Date.now() - start;
+                    dispatch(receiveResponseTime(latency));
+                });
+            }, 5000);
         }
 
         if (!isConnectionEstablished || !socket) {

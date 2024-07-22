@@ -169,6 +169,9 @@ const lobbySlice = createSlice({
                 }
             }
         ),
+        receiveResponseTime: (state, action) => {
+            state.responseTime = action.payload;
+        },
         sendNewGameMessage: () => {},
         sendSelectDeckMessage: create.preparedReducer(
             (gameId, deckId) => {
@@ -215,6 +218,7 @@ export const {
     receiveGameState,
     receiveGameError,
     receiveHandoff,
+    receiveResponseTime,
     joinPasswordGame,
     cancelPasswordJoin,
     startNewGame,

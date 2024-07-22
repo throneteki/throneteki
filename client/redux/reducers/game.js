@@ -31,6 +31,9 @@ const gameSlice = createSlice({
             state.connecting = false;
             state.connected = false;
         },
+        receiveResponseTime: (state, action) => {
+            state.responseTime = action.payload;
+        },
         sendToggleKeywordSettingMessage: create.preparedReducer(
             (option, value) => ({ payload: { option, value } }),
             () => {}
@@ -76,6 +79,7 @@ export const {
     gameDisconnected,
     gameReconnecting,
     gameConnectionFailed,
+    receiveResponseTime,
     sendToggleKeywordSettingMessage,
     sendToggleDupesMessage,
     sendTogglePromptedActionWindowMessage,

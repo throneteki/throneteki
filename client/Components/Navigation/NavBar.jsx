@@ -1,10 +1,14 @@
 import React, { useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
-import Link from './Link';
-import Avatar from './Avatar';
+import Link from '../Site/Link';
+import Avatar from '../Site/Avatar';
 import menus from '../../menus';
 import ContextMenu from './ContextMenu';
+import ServerStatus from './ServerStatus';
+
+import SmallHeaderIcon from '../../assets/img/header_icon.png';
+import HeaderIcon from '../../assets/img/main_header_logo.png';
 
 const NavBar = ({ title }) => {
     const { path } = useSelector((state) => state.navigation);
@@ -13,11 +17,14 @@ const NavBar = ({ title }) => {
         connected: lobbySocketConnected,
         connecting: lobbySocketConnecting,
         currentGame,
-        games
+        games,
+        responseTime: lobbyResponse
     } = useSelector((state) => state.lobby);
-    const { connected: gameConnected, connecting: gameConnecting } = useSelector(
-        (state) => state.game
-    );
+    const {
+        connected: gameConnected,
+        connecting: gameConnecting,
+        responseTime: gameResponse
+    } = useSelector((state) => state.game);
 
     const renderMenuItem = useCallback(
         (menuItem) => {
@@ -112,53 +119,19 @@ const NavBar = ({ title }) => {
         </li>
     ) : null;
 
-    let className = 'glyphicon glyphicon-signal';
-    let toolTip = 'Lobby is';
-
-    if (lobbySocketConnected) {
-        className += ' text-success';
-        toolTip += ' connected';
-    } else if (lobbySocketConnecting) {
-        className += ' text-primary';
-        toolTip += ' connecting';
-    } else {
-        className += ' text-danger';
-        toolTip += ' disconnected';
-    }
-
-    let lobbyStatus = (
-        <li>
-            <span className={className} title={toolTip} />
-        </li>
-    );
-
-    className = 'glyphicon glyphicon-signal';
-    toolTip = 'Game server is';
-    if (currentGame) {
-        if (gameConnected) {
-            className += ' text-success';
-            toolTip += ' connected';
-        } else if (gameConnecting) {
-            className += ' text-primary';
-            toolTip += ' connecting';
-        } else {
-            className += ' text-danger';
-            toolTip += ' disconnected';
-        }
-    } else {
-        toolTip += ' not needed at this time';
-    }
-
-    let gameStatus = (
-        <li>
-            <span className={className} title={toolTip} />
-        </li>
-    );
-
     return (
         <nav className='navbar navbar-inverse navbar-fixed-top navbar-sm'>
-            <div className='container'>
-                <div className='navbar-header'>
+            <div className='small-navbar-wrapper hidden-md hidden-lg'>
+                <div className='small-navbar-spacer'></div>
+                <Link href='/' className='navbar-brand'>
+                    <img
+                        src={SmallHeaderIcon}
+                        height='32'
+                        className='d-inline-block align-top'
+                        alt='The Iron Throne Logo'
+                    />
+                </Link>
+                <div className='small-navbar-right'>
                     <button
                         className='navbar-toggle collapsed'
                         type='button'
@@ -172,20 +145,38 @@ const NavBar = ({ title }) => {
                         <span className='icon-bar' />
                         <span className='icon-bar' />
                     </button>
-                    <Link href='/' className='navbar-brand'>
-                        {title}
-                    </Link>
                 </div>
-                <div id='navbar' className='collapse navbar-collapse'>
-                    <ul className='nav navbar-nav'>{leftMenuToRender}</ul>
-                    <ul className='nav navbar-nav navbar-right'>
-                        <ContextMenu />
-                        {numGames}
-                        {lobbyStatus}
-                        {gameStatus}
-                        {rightMenuToRender}
-                    </ul>
-                </div>
+            </div>
+            <div id='navbar' className='collapse-menu collapse navbar-collapse'>
+                <ul className='nav navbar-nav left-menu'>{leftMenuToRender}</ul>
+                <Link href='/' className='navbar-brand visible-md-block visible-lg-block'>
+                    <img
+                        src={currentGame?.started ? SmallHeaderIcon : HeaderIcon}
+                        height='32'
+                        className='d-inline-block align-top'
+                        alt='The Iron Throne Logo'
+                    />
+                </Link>
+                <ul className='nav navbar-right navbar-nav'>
+                    <ContextMenu />
+                    {numGames}
+                    {currentGame?.started ? (
+                        <ServerStatus
+                            connected={gameConnected}
+                            connecting={gameConnecting}
+                            serverType='Game server'
+                            responseTime={gameResponse}
+                        />
+                    ) : (
+                        <ServerStatus
+                            connected={lobbySocketConnected}
+                            connecting={lobbySocketConnecting}
+                            serverType='Lobby'
+                            responseTime={lobbyResponse}
+                        />
+                    )}
+                    {rightMenuToRender}
+                </ul>
             </div>
         </nav>
     );
