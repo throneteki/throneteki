@@ -235,7 +235,7 @@ export const init = function (server, options) {
                 await sendEmail(user.email, `${appName} - Account activation`, emailText);
             }
 
-            res.send({ success: true, requireActivation: requireActivation });
+            res.send({ success: true, data: requireActivation });
 
             await downloadAvatar(user);
         })
@@ -317,7 +317,7 @@ export const init = function (server, options) {
             if (user) {
                 return res.send({
                     success: true,
-                    message: 'An account with that name already exists, please choose another'
+                    data: 'An account with that name already exists, please choose another'
                 });
             }
 
@@ -355,7 +355,7 @@ export const init = function (server, options) {
             let userDetails = user.getWireSafeDetails();
 
             if (!user.patreon || !user.patreon.refresh_token) {
-                return res.send({ success: true, user: userDetails });
+                return res.send({ success: true, data: userDetails });
             }
 
             userDetails.patreon = await patreonService.getPatreonStatusForUser(user);
@@ -365,13 +365,13 @@ export const init = function (server, options) {
 
                 let ret = await patreonService.refreshTokenForUser(user);
                 if (!ret) {
-                    return res.send({ success: true, user: userDetails });
+                    return res.send({ success: true, data: userDetails });
                 }
 
                 userDetails.patreon = await patreonService.getPatreonStatusForUser(user);
 
                 if (userDetails.patreon === 'none') {
-                    return res.send({ success: true, user: userDetails });
+                    return res.send({ success: true, data: userDetails });
                 }
             }
 
@@ -385,7 +385,7 @@ export const init = function (server, options) {
                 userDetails.permissions.isSupporter = req.user.permissions.isSupporter = false;
             }
 
-            res.send({ success: true, user: userDetails });
+            res.send({ success: true, data: userDetails });
         })
     );
 
@@ -458,9 +458,11 @@ export const init = function (server, options) {
 
             res.send({
                 success: true,
-                user: userObj,
-                token: authToken,
-                refreshToken: refreshToken
+                data: {
+                    user: userObj,
+                    token: authToken,
+                    refreshToken: refreshToken
+                }
             });
         })
     );
@@ -526,7 +528,7 @@ export const init = function (server, options) {
 
             await userService.updateRefreshTokenUsage(refreshToken.id, ip);
 
-            res.send({ success: true, user: userObj, token: authToken });
+            res.send({ success: true, data: { user: userObj, token: authToken } });
         })
     );
 
@@ -649,7 +651,7 @@ export const init = function (server, options) {
         '/api/account/:username',
         passport.authenticate('jwt', { session: false }),
         wrapAsync(async (req, res) => {
-            let userToSet = req.body.data;
+            let userToSet = req.body;
 
             if (req.user.username !== req.params.username) {
                 return res.status(403).send({ message: 'Unauthorized' });
@@ -709,7 +711,7 @@ export const init = function (server, options) {
 
             res.send({
                 success: true,
-                tokens: tokens
+                data: tokens
                     .sort((a, b) => {
                         return a.lastUsed < b.lastUsed;
                     })
@@ -751,8 +753,7 @@ export const init = function (server, options) {
 
             res.send({
                 success: true,
-                message: 'Session deleted successfully',
-                tokenId: req.params.id
+                data: { message: 'Session deleted successfully', tokenId: req.params.id }
             });
         })
     );
@@ -768,7 +769,7 @@ export const init = function (server, options) {
             }
 
             let blockList = user.blockList || [];
-            res.send({ success: true, blockList: blockList.sort() });
+            res.send({ success: true, data: blockList.sort() });
         })
     );
 
@@ -803,9 +804,11 @@ export const init = function (server, options) {
 
             res.send({
                 success: true,
-                message: 'Block list entry added successfully',
-                username: lowerCaseUser,
-                user: updatedUser.getWireSafeDetails()
+                data: {
+                    message: 'Block list entry added successfully',
+                    username: lowerCaseUser,
+                    user: updatedUser.getWireSafeDetails()
+                }
             });
         })
     );
@@ -849,9 +852,11 @@ export const init = function (server, options) {
 
             res.send({
                 success: true,
-                message: 'Block list entry removed successfully',
-                username: lowerCaseUser,
-                user: updatedUser.getWireSafeDetails()
+                data: {
+                    message: 'Block list entry removed successfully',
+                    username: lowerCaseUser,
+                    user: updatedUser.getWireSafeDetails()
+                }
             });
         })
     );

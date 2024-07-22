@@ -58,7 +58,16 @@ class GameServer {
             server = https.createServer({ key: privateKey, cert: certificate });
         }
 
-        server.listen(process.env.PORT || config.socketioPort);
+        const that = this;
+        server.listen(process.env.PORT || config.socketioPort, function onStart(err) {
+            if (err) {
+                logger.error(err);
+            }
+
+            logger.info(
+                `==> Listening on ${that.protocol}://${that.host}:${process.env.PORT || config.socketioPort}/.`
+            );
+        });
 
         var options = {
             perMessageDeflate: false
@@ -70,7 +79,7 @@ class GameServer {
 
         const corsOrigin = config.origin;
         if (corsOrigin) {
-            options.origins = corsOrigin;
+            options.cors = { origin: corsOrigin };
         }
 
         this.io = new socketio(server, options);
@@ -203,8 +212,8 @@ class GameServer {
     }
 
     handshake(socket, next) {
-        if (socket.handshake.query.token && socket.handshake.query.token !== 'undefined') {
-            jwt.verify(socket.handshake.query.token, config.secret, function (err, user) {
+        if (socket.handshake.auth.token && socket.handshake.auth.token !== 'undefined') {
+            jwt.verify(socket.handshake.auth.token, config.secret, function (err, user) {
                 if (err) {
                     return;
                 }
@@ -333,6 +342,10 @@ class GameServer {
             ioSocket.disconnect();
             return;
         }
+
+        ioSocket.on('ping', (cb) => {
+            if (typeof cb === 'function') cb();
+        });
 
         var game = this.findGameForUser(ioSocket.request.user.username);
         if (!game) {

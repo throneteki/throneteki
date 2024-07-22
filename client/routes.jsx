@@ -18,7 +18,7 @@ import NewsAdmin from './pages/NewsAdmin';
 import AddDeck from './Components/Decks/AddDeck';
 import EditDeck from './Components/Decks/EditDeck';
 import GameLobby from './Components/Games/GameLobby';
-import GameBoard from './Components/GameBoard/GameBoard';
+import GameBoardOld from './Components/GameBoard/GameBoard';
 import BlockList from './pages/BlockList';
 import NodesAdmin from './pages/NodesAdmin';
 import MotdAdmin from './pages/MotdAdmin';
@@ -59,7 +59,7 @@ const routes = [
                     return <DraftingTable key='drafting-table' />;
                 }
 
-                return <GameBoard key='gameboard' />;
+                return <GameBoardOld key='gameboard' />;
             }
 
             return <GameLobby key='gamelobby' gameId={context.params.gameId} />;

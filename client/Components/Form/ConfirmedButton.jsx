@@ -1,52 +1,33 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useCallback, useState } from 'react';
 
-class ConfirmedButton extends React.Component {
-    constructor() {
-        super();
+const ConfirmedButton = ({ children, disabled, onClick }) => {
+    const [showConfirm, setShowConfirm] = useState(false);
 
-        this.state = {
-            showConfirm: false
-        };
-
-        this.handleInitialClick = this.handleInitialClick.bind(this);
-        this.handleConfirmClick = this.handleConfirmClick.bind(this);
-    }
-
-    handleInitialClick(event) {
+    const handleInitialClick = useCallback((event) => {
         event.preventDefault();
-        this.setState({ showConfirm: true });
-    }
+        setShowConfirm(true);
+    }, []);
 
-    handleConfirmClick(event) {
-        this.props.onClick(event);
-        this.setState({ showConfirm: false });
-    }
+    const handleConfirmClick = useCallback(
+        (event) => {
+            onClick(event);
+            setShowConfirm(false);
+        },
+        [onClick]
+    );
 
-    render() {
-        return (
-            <span>
-                <button
-                    className='btn btn-primary'
-                    onClick={this.handleInitialClick}
-                    disabled={this.props.disabled}
-                >
-                    {this.props.children}
+    return (
+        <span>
+            <button className='btn btn-primary' onClick={handleInitialClick} disabled={disabled}>
+                {children}
+            </button>
+            {showConfirm && (
+                <button className='btn btn-danger' onClick={handleConfirmClick}>
+                    Confirm
                 </button>
-                {this.state.showConfirm && (
-                    <button className='btn btn-danger' onClick={this.handleConfirmClick}>
-                        Confirm
-                    </button>
-                )}
-            </span>
-        );
-    }
-}
-
-ConfirmedButton.propTypes = {
-    children: PropTypes.node,
-    disabled: PropTypes.bool,
-    onClick: PropTypes.func
+            )}
+        </span>
+    );
 };
 
 export default ConfirmedButton;

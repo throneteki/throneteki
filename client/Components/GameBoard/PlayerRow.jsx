@@ -1,5 +1,4 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useCallback } from 'react';
 import classNames from 'classnames';
 
 import Card from './Card';
@@ -9,88 +8,138 @@ import DrawDeck from './DrawDeck';
 import Droppable from './Droppable';
 import { getCardDimensions } from '../../util';
 
-class PlayerRow extends React.Component {
-    getOutOfGamePile() {
-        let pile = this.props.outOfGamePile;
-
-        if (pile.length === 0) {
+const PlayerRow = ({
+    outOfGamePile,
+    onCardClick,
+    onDragDrop,
+    onMenuItemClick,
+    onMouseOut,
+    onMouseOver,
+    side,
+    cardSize,
+    isMe,
+    title,
+    isMelee,
+    username,
+    hand,
+    numDrawCards,
+    drawDeck,
+    onDrawPopupChange,
+    onShuffleClick,
+    revealTopCard,
+    showDeck,
+    spectating,
+    discardPile,
+    deadPile,
+    shadows,
+    faction,
+    agendas
+}) => {
+    const getOutOfGamePile = useCallback(() => {
+        if (outOfGamePile.length === 0) {
             return;
         }
 
-        let outOfGamePile = (
+        let outOfGamePileElement = (
             <CardPile
-                cards={pile}
+                cards={outOfGamePile}
                 className='additional-cards'
-                onCardClick={this.props.onCardClick}
-                onDragDrop={this.props.onDragDrop}
-                onMenuItemClick={this.props.onMenuItemClick}
-                onMouseOut={this.props.onMouseOut}
-                onMouseOver={this.props.onMouseOver}
+                onCardClick={onCardClick}
+                onDragDrop={onDragDrop}
+                onMenuItemClick={onMenuItemClick}
+                onMouseOut={onMouseOut}
+                onMouseOver={onMouseOver}
                 orientation='kneeled'
-                popupLocation={this.props.side}
+                popupLocation={side}
                 source='out of game'
                 title='Out of Game'
-                size={this.props.cardSize}
+                size={cardSize}
             />
         );
 
-        if (this.props.isMe) {
+        if (isMe) {
             return (
-                <Droppable onDragDrop={this.props.onDragDrop} source='out of game'>
-                    {outOfGamePile}
+                <Droppable onDragDrop={onDragDrop} source='out of game'>
+                    {outOfGamePileElement}
                 </Droppable>
             );
         }
 
-        return outOfGamePile;
-    }
+        return outOfGamePileElement;
+    }, [
+        outOfGamePile,
+        onCardClick,
+        onDragDrop,
+        onMenuItemClick,
+        onMouseOut,
+        onMouseOver,
+        side,
+        cardSize,
+        isMe
+    ]);
 
-    getAgenda() {
-        let agenda =
-            this.props.agendas && this.props.agendas.length > 0 ? this.props.agendas[0] : undefined;
+    const renderDroppablePile = useCallback(
+        (source, cards) => {
+            let onDragDropCb = isMe ? onDragDrop : null;
+
+            if (isMe) {
+                return (
+                    <Droppable onDragDrop={onDragDropCb} source={source}>
+                        {cards}
+                    </Droppable>
+                );
+            }
+
+            return cards;
+        },
+        [isMe, onDragDrop]
+    );
+
+    const getAgenda = useCallback(() => {
+        let agenda = agendas?.length > 0 ? agendas[0] : undefined;
         if (!agenda || agenda.code === '') {
-            let className = classNames('agenda', 'card-pile', 'vertical', {
-                [this.props.cardSize]: this.props.cardSize !== 'normal'
+            let className = classNames('agenda', 'card-pile', 'vertical', 'panel', {
+                [cardSize]: cardSize !== 'normal'
             });
             return <div className={className} />;
         }
-        let cardWidth = getCardDimensions(this.props.cardSize);
+        let cardWidth = getCardDimensions(cardSize);
 
-        let underneath = agenda.childCards || [];
+        let underneath = agenda.childCards ? [...agenda.childCards] : [];
         let disablePopup = underneath.length === 0;
         let title = !disablePopup ? 'Agenda' : null;
         let source = 'agenda';
         let pileClass = classNames('agenda', `agenda-${agenda.code}`);
 
-        let additionalAgendas = this.props.agendas.slice(1);
+        let additionalAgendas = agendas.slice(1);
         let spreadWidth = cardWidth.width / 2;
 
-        let agendas = [];
-        agendas.push(
+        let retAgendas = [];
+        retAgendas.push(
             <div key={agenda.uuid} className={pileClass}>
-                {this.renderDroppablePile(
+                {renderDroppablePile(
                     source,
                     <CardPile
                         cards={underneath}
                         disablePopup={disablePopup}
-                        onCardClick={this.props.onCardClick}
-                        onDragDrop={this.props.onDragDrop}
-                        onMenuItemClick={this.props.onMenuItemClick}
-                        onMouseOut={this.props.onMouseOut}
-                        onMouseOver={this.props.onMouseOver}
-                        popupLocation={this.props.side}
+                        onCardClick={onCardClick}
+                        onDragDrop={onDragDrop}
+                        onMenuItemClick={onMenuItemClick}
+                        onMouseOut={onMouseOut}
+                        onMouseOver={onMouseOver}
+                        popupLocation={side}
                         showCards={true}
                         source={source}
                         title={title}
                         topCard={agenda}
-                        size={this.props.cardSize}
+                        size={cardSize}
                     />
                 )}
             </div>
         );
 
         // Add all additional agendas separately (not as a CardPile)
-        agendas = agendas.concat(
+        retAgendas = retAgendas.concat(
             additionalAgendas.map((agenda, index) => {
                 let className = classNames('agenda', `agenda-${agenda.code} additional`);
                 let style = { left: `${spreadWidth * (index + 1)}px` };
@@ -99,13 +148,13 @@ class PlayerRow extends React.Component {
                         <Card
                             card={agenda}
                             source={source}
-                            onMouseOver={this.props.onMouseOver}
-                            onMouseOut={this.props.onMouseOut}
+                            onMouseOver={onMouseOver}
+                            onMouseOut={onMouseOut}
                             disableMouseOver={false}
-                            onClick={this.props.onCardClick}
-                            onMenuItemClick={this.props.onMenuItemClick}
+                            onClick={onCardClick}
+                            onMenuItemClick={onMenuItemClick}
                             orientation={'vertical'}
-                            size={this.props.cardSize}
+                            size={cardSize}
                             style={style}
                         />
                     </div>
@@ -118,169 +167,160 @@ class PlayerRow extends React.Component {
         let totalStyle = { width: `${totalWidth}px` };
         return (
             <div className='agendas' style={totalStyle}>
-                {agendas.reverse()}
+                {retAgendas.reverse()}
             </div>
         );
-    }
+    }, [
+        agendas,
+        renderDroppablePile,
+        onCardClick,
+        onDragDrop,
+        onMenuItemClick,
+        onMouseOut,
+        onMouseOver,
+        side,
+        cardSize
+    ]);
 
-    getTitleCard() {
-        if (!this.props.isMelee) {
-            return;
+    const getTitleCard = useCallback(() => {
+        if (!title || !isMelee) {
+            return null;
         }
 
-        return (
+        let titleCardElement = (
             <CardPile
-                className='title'
                 cards={[]}
-                disablePopup
-                onMouseOut={this.props.onMouseOut}
-                onMouseOver={this.props.onMouseOver}
+                className='title'
+                onCardClick={onCardClick}
+                onDragDrop={onDragDrop}
+                onMenuItemClick={onMenuItemClick}
+                onMouseOut={onMouseOut}
+                onMouseOver={onMouseOver}
+                popupLocation={side}
                 source='title'
-                topCard={this.props.title}
-                size={this.props.cardSize}
+                title={title.name}
+                topCard={title}
+                size={cardSize}
             />
         );
-    }
 
-    renderDroppablePile(source, child) {
-        return this.props.isMe ? (
-            <Droppable onDragDrop={this.props.onDragDrop} source={source}>
-                {child}
-            </Droppable>
-        ) : (
-            child
-        );
-    }
+        if (isMe) {
+            return (
+                <Droppable onDragDrop={onDragDrop} source='title'>
+                    {titleCardElement}
+                </Droppable>
+            );
+        }
 
-    render() {
-        let cardPileProps = {
-            onCardClick: this.props.onCardClick,
-            onDragDrop: this.props.onDragDrop,
-            onMouseOut: this.props.onMouseOut,
-            onMouseOver: this.props.onMouseOver,
-            popupLocation: this.props.side,
-            size: this.props.cardSize
-        };
+        return titleCardElement;
+    }, [
+        title,
+        isMelee,
+        onCardClick,
+        onDragDrop,
+        onMenuItemClick,
+        onMouseOut,
+        onMouseOver,
+        side,
+        cardSize,
+        isMe
+    ]);
 
-        let hand = (
-            <SquishableCardPanel
-                cards={this.props.hand}
-                className='panel hand'
-                groupVisibleCards
-                username={this.props.username}
-                maxCards={5}
-                onCardClick={this.props.onCardClick}
-                onMouseOut={this.props.onMouseOut}
-                onMouseOver={this.props.onMouseOver}
-                source='hand'
-                title='Hand'
-                cardSize={this.props.cardSize}
-            />
-        );
-        let drawDeck = (
-            <DrawDeck
-                cardCount={this.props.numDrawCards}
-                cards={this.props.drawDeck}
-                isMe={this.props.isMe}
-                numDrawCards={this.props.numDrawCards}
-                onPopupChange={this.props.onDrawPopupChange}
-                onShuffleClick={this.props.onShuffleClick}
-                revealTopCard={this.props.revealTopCard}
-                showDeck={this.props.showDeck}
-                spectating={this.props.spectating}
-                {...cardPileProps}
-            />
-        );
-        let discardPile = (
+    let cardPileProps = {
+        onCardClick: onCardClick,
+        onDragDrop: onDragDrop,
+        onMouseOut: onMouseOut,
+        onMouseOver: onMouseOver,
+        popupLocation: side,
+        size: cardSize
+    };
+
+    let retHand = (
+        <SquishableCardPanel
+            cards={hand}
+            className='panel hand'
+            groupVisibleCards
+            username={username}
+            maxCards={5}
+            onCardClick={onCardClick}
+            onMouseOut={onMouseOut}
+            onMouseOver={onMouseOver}
+            source='hand'
+            title='Hand'
+            cardSize={cardSize}
+        />
+    );
+    let retDrawDeck = (
+        <DrawDeck
+            cardCount={numDrawCards}
+            cards={drawDeck}
+            isMe={isMe}
+            numDrawCards={numDrawCards}
+            onPopupChange={onDrawPopupChange}
+            onShuffleClick={onShuffleClick}
+            revealTopCard={revealTopCard}
+            showDeck={showDeck}
+            spectating={spectating}
+            {...cardPileProps}
+        />
+    );
+    let retDiscardPile = (
+        <CardPile
+            className='discard'
+            title='Discard'
+            source='discard pile'
+            cards={discardPile}
+            {...cardPileProps}
+        />
+    );
+    let retDeadPile = (
+        <CardPile
+            className='dead'
+            title='Dead'
+            source='dead pile'
+            cards={deadPile}
+            orientation='kneeled'
+            {...cardPileProps}
+        />
+    );
+    let retShadows = (
+        <SquishableCardPanel
+            cards={shadows}
+            cardSize={cardSize}
+            className='panel shadows'
+            maxCards={2}
+            onCardClick={onCardClick}
+            onMouseOut={onMouseOut}
+            onMouseOver={onMouseOver}
+            source='shadows'
+            title='Shadows'
+            username={username}
+        />
+    );
+
+    return (
+        <div className='player-home-row-container'>
             <CardPile
-                className='discard'
-                title='Discard'
-                source='discard pile'
-                cards={this.props.discardPile}
-                {...cardPileProps}
+                className='faction'
+                source='faction'
+                cards={[]}
+                topCard={faction}
+                onMouseOver={onMouseOver}
+                onMouseOut={onMouseOut}
+                disablePopup
+                onCardClick={onCardClick}
+                size={cardSize}
             />
-        );
-        let deadPile = (
-            <CardPile
-                className='dead'
-                title='Dead'
-                source='dead pile'
-                cards={this.props.deadPile}
-                orientation='kneeled'
-                {...cardPileProps}
-            />
-        );
-        let shadows = (
-            <SquishableCardPanel
-                cards={this.props.shadows}
-                cardSize={this.props.cardSize}
-                className='panel shadows'
-                maxCards={2}
-                onCardClick={this.props.onCardClick}
-                onMouseOut={this.props.onMouseOut}
-                onMouseOver={this.props.onMouseOver}
-                source='shadows'
-                title='Shadows'
-                username={this.props.username}
-            />
-        );
-
-        return (
-            <div className='player-home-row-container'>
-                <CardPile
-                    className='faction'
-                    source='faction'
-                    cards={[]}
-                    topCard={this.props.faction}
-                    onMouseOver={this.onMouseOver}
-                    onMouseOut={this.onMouseOut}
-                    disablePopup
-                    onCardClick={this.props.onCardClick}
-                    size={this.props.cardSize}
-                />
-                {this.getAgenda()}
-                {this.getTitleCard()}
-                {this.renderDroppablePile('hand', hand)}
-                {this.props.shadows.length !== 0 && this.renderDroppablePile('shadows', shadows)}
-                {this.renderDroppablePile('draw deck', drawDeck)}
-                {this.renderDroppablePile('discard pile', discardPile)}
-                {this.renderDroppablePile('dead pile', deadPile)}
-
-                {this.getOutOfGamePile()}
-            </div>
-        );
-    }
-}
-
-PlayerRow.displayName = 'PlayerRow';
-PlayerRow.propTypes = {
-    agendas: PropTypes.array,
-    cardSize: PropTypes.string,
-    deadPile: PropTypes.array,
-    discardPile: PropTypes.array,
-    drawDeck: PropTypes.array,
-    faction: PropTypes.object,
-    hand: PropTypes.array,
-    isMe: PropTypes.bool,
-    isMelee: PropTypes.bool,
-    numDrawCards: PropTypes.number,
-    onCardClick: PropTypes.func,
-    onDragDrop: PropTypes.func,
-    onDrawPopupChange: PropTypes.func,
-    onMenuItemClick: PropTypes.func,
-    onMouseOut: PropTypes.func,
-    onMouseOver: PropTypes.func,
-    onShuffleClick: PropTypes.func,
-    outOfGamePile: PropTypes.array,
-    plotDeck: PropTypes.array,
-    power: PropTypes.number,
-    revealTopCard: PropTypes.bool,
-    shadows: PropTypes.array,
-    showDeck: PropTypes.bool,
-    side: PropTypes.oneOf(['top', 'bottom']),
-    spectating: PropTypes.bool,
-    title: PropTypes.object,
-    username: PropTypes.string
+            {getAgenda()}
+            {getTitleCard()}
+            {renderDroppablePile('hand', retHand)}
+            {shadows.length !== 0 && renderDroppablePile('shadows', retShadows)}
+            {renderDroppablePile('draw deck', retDrawDeck)}
+            {renderDroppablePile('discard pile', retDiscardPile)}
+            {renderDroppablePile('dead pile', retDeadPile)}
+            {getOutOfGamePile()}
+        </div>
+    );
 };
 
 export default PlayerRow;

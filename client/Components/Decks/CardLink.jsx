@@ -1,7 +1,6 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
-function CardLink({ card, onClick, onMouseOut, onMouseOver }) {
+const CardLink = ({ card, onClick, onMouseOut, onMouseOver }) => {
     return (
         <span
             className='card-link'
@@ -12,13 +11,6 @@ function CardLink({ card, onClick, onMouseOut, onMouseOver }) {
             {card.label}
         </span>
     );
-}
-
-CardLink.propTypes = {
-    card: PropTypes.object,
-    onClick: PropTypes.func,
-    onMouseOut: PropTypes.func,
-    onMouseOver: PropTypes.func
 };
 
 export default CardLink;

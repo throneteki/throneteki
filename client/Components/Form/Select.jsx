@@ -1,102 +1,92 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useCallback } from 'react';
 
-class Select extends React.Component {
-    onChange(event) {
-        let selectedValue = this.props.options.find((option) => {
-            return option[this.props.valueKey || 'value'] === event.target.value;
-        });
+const Select = ({
+    options,
+    onChange,
+    blankOption,
+    valueKey,
+    nameKey,
+    button,
+    name,
+    labelClass,
+    label,
+    fieldClass,
+    value,
+    onBlur,
+    validationMessage
+}) => {
+    const handleChange = useCallback(
+        (event) => {
+            let selectedValue = options.find((option) => {
+                return option[valueKey || 'value'] === event.target.value;
+            });
 
-        this.props.onChange(selectedValue);
+            onChange(selectedValue);
+        },
+        [onChange, options, valueKey]
+    );
+
+    let selectOptions = [];
+
+    if (blankOption) {
+        let value = blankOption[valueKey || 'value'];
+        let name = blankOption[nameKey || 'name'];
+
+        selectOptions.push(
+            <option key='default' value={value}>
+                {name}
+            </option>
+        );
     }
 
-    render() {
-        var options = [];
+    if (options) {
+        options.forEach((option) => {
+            let value = option[valueKey || 'value'];
+            let name = option[nameKey || 'name'];
 
-        if (this.props.blankOption) {
-            var value = this.props.blankOption[this.props.valueKey || 'value'];
-            var name = this.props.blankOption[this.props.nameKey || 'name'];
-
-            options.push(
-                <option key='default' value={value}>
+            selectOptions.push(
+                <option key={value} value={value}>
                     {name}
                 </option>
             );
-        }
-
-        if (this.props.options) {
-            this.props.options.forEach((option) => {
-                var value = option[this.props.valueKey || 'value'];
-                var name = option[this.props.nameKey || 'name'];
-
-                options.push(
-                    <option key={value} value={value}>
-                        {name}
-                    </option>
-                );
-            });
-        }
-
-        var selectStyle = {};
-        if (this.props.button) {
-            selectStyle = {
-                display: 'inline-block',
-                width: '67%'
-            };
-        }
-
-        return (
-            <div className='form-group'>
-                <label
-                    htmlFor={this.props.name}
-                    className={this.props.labelClass + ' control-label'}
-                >
-                    {this.props.label}
-                </label>
-                <div className={this.props.fieldClass}>
-                    <select
-                        ref={this.props.name}
-                        style={selectStyle}
-                        className='form-control'
-                        id={this.props.name}
-                        value={this.props.value}
-                        onChange={this.onChange.bind(this)}
-                        onBlur={this.props.onBlur}
-                    >
-                        {options}
-                    </select>
-                    {this.props.validationMessage ? (
-                        <span className='help-block'>{this.props.validationMessage} </span>
-                    ) : null}
-                    {this.props.button ? (
-                        <button
-                            className='btn btn-default select-button'
-                            onClick={this.props.button.onClick}
-                        >
-                            {this.props.button.text}
-                        </button>
-                    ) : null}
-                </div>
-            </div>
-        );
+        });
     }
-}
 
-Select.displayName = 'Select';
-Select.propTypes = {
-    blankOption: PropTypes.object,
-    button: PropTypes.object,
-    fieldClass: PropTypes.string,
-    label: PropTypes.string,
-    labelClass: PropTypes.string,
-    name: PropTypes.string,
-    nameKey: PropTypes.string,
-    onBlur: PropTypes.func,
-    onChange: PropTypes.func,
-    options: PropTypes.array,
-    validationMessage: PropTypes.string,
-    value: PropTypes.string,
-    valueKey: PropTypes.string
+    let selectStyle = {};
+    if (button) {
+        selectStyle = {
+            display: 'inline-block',
+            width: '67%'
+        };
+    }
+
+    return (
+        <div className='form-group'>
+            <label htmlFor={name} className={`${labelClass} control-label`}>
+                {label}
+            </label>
+            <div className={fieldClass}>
+                <select
+                    style={selectStyle}
+                    className='form-control'
+                    id={name}
+                    value={value}
+                    onChange={handleChange}
+                    onBlur={onBlur}
+                >
+                    {selectOptions}
+                </select>
+                {validationMessage ? (
+                    <span className='help-block'>{validationMessage} </span>
+                ) : null}
+                {button ? (
+                    <button className='btn btn-default select-button' onClick={button.onClick}>
+                        {button.text}
+                    </button>
+                ) : null}
+            </div>
+        </div>
+    );
 };
 
 export default Select;

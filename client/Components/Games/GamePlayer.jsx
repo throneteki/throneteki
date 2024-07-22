@@ -1,16 +1,23 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useMemo } from 'react';
 import classNames from 'classnames';
 
 import Avatar from '../Site/Avatar';
 
-function GamePlayer(props) {
+const GamePlayer = (props) => {
     let classes = classNames('game-player-row', {
         'first-player': props.firstPlayer,
         'other-player': !props.firstPlayer
     });
 
     let playerAndFactionAgenda;
+
+    const agendaImages = useMemo(() => {
+        return props.player.agendas?.map((agenda) => (
+            <div key={agenda} className='agenda-mini'>
+                {<img className='img-responsive' src={`/img/cards/${agenda || 'cardback'}.png`} />}
+            </div>
+        ));
+    }, [props.player.agendas]);
 
     if (props.firstPlayer) {
         playerAndFactionAgenda = (
@@ -21,16 +28,7 @@ function GamePlayer(props) {
                     </span>
                     <span className='bold'>{props.player.name}</span>
                 </div>
-                {props.player.agendas?.reverse().map((agenda) => (
-                    <div key={agenda} className='agenda-mini'>
-                        {
-                            <img
-                                className='img-responsive'
-                                src={`/img/cards/${agenda || 'cardback'}.png`}
-                            />
-                        }
-                    </div>
-                ))}
+                {agendaImages}
                 <div className='faction-mini'>
                     {
                         <img
@@ -77,12 +75,6 @@ function GamePlayer(props) {
             <div>{playerAndFactionAgenda}</div>
         </div>
     );
-}
-
-GamePlayer.displayName = 'GamePlayer';
-GamePlayer.propTypes = {
-    firstPlayer: PropTypes.bool,
-    player: PropTypes.object
 };
 
 export default GamePlayer;

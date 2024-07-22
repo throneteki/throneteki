@@ -1,6 +1,5 @@
 import React from 'react';
 import $ from 'jquery';
-import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import Application from './Application';
 import 'jquery-validation';
@@ -9,12 +8,17 @@ import 'react-redux-toastr/src/styles/index.scss';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import ReduxToastr from 'react-redux-toastr';
 import * as Sentry from '@sentry/browser';
+import * as SentryReact from '@sentry/react';
+import 'bootstrap/dist/js/bootstrap';
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
-import { DragDropContext } from 'react-dnd';
-import { default as TouchBackend } from 'react-dnd-touch-backend';
-import configureStore from './configureStore';
-import { navigate } from './actions';
+import { DndProvider } from 'react-dnd';
+import { TouchBackend } from 'react-dnd-touch-backend';
+import { createRoot } from 'react-dom/client';
+
+import { store } from './configureStore';
+import { navigate } from './redux/reducers/navigation';
+
 import './less/site.less';
 
 $.validator.setDefaults({
@@ -25,8 +29,6 @@ $.validator.setDefaults({
         $(element).closest('.form-group').removeClass('has-error');
     }
 });
-
-import ErrorBoundary from './Components/Site/ErrorBoundary';
 
 const sentryOptions = {
     dsn: import.meta.env.VITE_SENTRY_KEY,
@@ -71,35 +73,31 @@ if (import.meta.env.VITE_SENTRY_KEY) {
     Sentry.init(sentryOptions);
 }
 
-const store = configureStore();
-
 store.dispatch(navigate(window.location.pathname, window.location.search));
 
 window.onpopstate = function (e) {
     store.dispatch(navigate(e.target.location.pathname));
 };
 
-const DnDContainer = DragDropContext(TouchBackend({ enableMouseEvents: true }))(Application);
+const container = document.getElementById('component');
+const root = createRoot(container);
 
-render(
+root.render(
     <Provider store={store}>
-        <div className='body'>
-            <ReduxToastr
-                timeOut={4000}
-                newestOnTop
-                preventDuplicates
-                position='top-right'
-                transitionIn='fadeIn'
-                transitionOut='fadeOut'
-            />
-            <ErrorBoundary
-                message={
-                    "We're sorry, a critical error has occured in the client and we're unable to show you anything.  Please try refreshing your browser after filling out a report."
-                }
-            >
-                <DnDContainer />
-            </ErrorBoundary>
-        </div>
-    </Provider>,
-    document.getElementById('component')
+        <DndProvider backend={TouchBackend} options={{ enableMouseEvents: true }}>
+            <div className='body'>
+                <ReduxToastr
+                    timeOut={4000}
+                    newestOnTop
+                    preventDuplicates
+                    position='top-right'
+                    transitionIn='fadeIn'
+                    transitionOut='fadeOut'
+                />
+                <SentryReact.ErrorBoundary fallback={<p>An error has occurred</p>}>
+                    <Application />
+                </SentryReact.ErrorBoundary>
+            </div>
+        </DndProvider>
+    </Provider>
 );

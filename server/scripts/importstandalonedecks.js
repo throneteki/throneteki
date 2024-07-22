@@ -15,11 +15,12 @@ class ImportStandaloneDecks {
         let configService = ServiceFactory.configService();
         this.db = monk(configService.getValue('dbPath'));
         this.cardService = new CardService(this.db);
-        this.deckService = new DeckService(this.db);
+        this.deckService = new DeckService(this.db, this.cardService);
     }
 
     async import() {
         try {
+            await this.deckService.init();
             this.cards = await this.cardService.getAllCards();
 
             for (let deck of this.loadDecks()) {

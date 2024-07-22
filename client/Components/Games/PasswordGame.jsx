@@ -1,102 +1,79 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import React, { useState, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import AlertPanel from '../Site/AlertPanel';
 import Panel from '../Site/Panel';
-import * as actions from '../../actions';
+import { cancelPasswordJoin } from '../../redux/reducers/lobby';
 
-class PasswordGame extends React.Component {
-    constructor() {
-        super();
+const PasswordGame = () => {
+    const [password, setPassword] = useState('');
+    const dispatch = useDispatch();
+    const { passwordJoinType, passwordGame, socket, passwordError } = useSelector(
+        (state) => state.lobby
+    );
 
-        this.state = {
-            password: ''
-        };
+    const onJoinClick = useCallback(
+        (event) => {
+            event.preventDefault();
+
+            if (passwordJoinType === 'Join') {
+                socket.emit('joingame', passwordGame.id, password);
+            } else if (passwordJoinType === 'Watch') {
+                socket.emit('watchgame', passwordGame.id, password);
+            }
+        },
+        [passwordJoinType, socket, passwordGame, password]
+    );
+
+    const onCancelClick = useCallback(
+        (event) => {
+            dispatch(cancelPasswordJoin());
+
+            event.preventDefault();
+        },
+        [dispatch]
+    );
+
+    const onPasswordChange = useCallback((event) => {
+        setPassword(event.target.value);
+    }, []);
+
+    if (!passwordGame) {
+        return null;
     }
 
-    onJoinClick(event) {
-        event.preventDefault();
-
-        if (this.props.passwordJoinType === 'Join') {
-            this.props.socket.emit('joingame', this.props.passwordGame.id, this.state.password);
-        } else if (this.props.passwordJoinType === 'Watch') {
-            this.props.socket.emit('watchgame', this.props.passwordGame.id, this.state.password);
-        }
-    }
-
-    onCancelClick(event) {
-        this.props.cancelPasswordJoin();
-
-        event.preventDefault();
-    }
-
-    onPasswordChange(event) {
-        this.setState({ password: event.target.value });
-    }
-
-    render() {
-        if (!this.props.passwordGame) {
-            return null;
-        }
-
-        return (
-            <div>
-                <Panel title={this.props.passwordGame.name}>
+    return (
+        <div>
+            <Panel title={passwordGame.name}>
+                <div>
+                    <h3>Enter the password</h3>
+                </div>
+                <div className='game-password'>
+                    <input
+                        className='form-control'
+                        type='password'
+                        onChange={onPasswordChange}
+                        value={password}
+                    />
+                </div>
+                {passwordError ? (
                     <div>
-                        <h3>Enter the password</h3>
+                        <AlertPanel type='error' message={passwordError} />
                     </div>
-                    <div className='game-password'>
-                        <input
-                            className='form-control'
-                            type='password'
-                            onChange={this.onPasswordChange.bind(this)}
-                            value={this.state.password}
-                        />
+                ) : null}
+                <div>
+                    <div className='btn-group'>
+                        <button className='btn btn-primary' onClick={onJoinClick}>
+                            {passwordJoinType}
+                        </button>
+                        <button className='btn btn-primary' onClick={onCancelClick}>
+                            Cancel
+                        </button>
                     </div>
-                    {this.props.passwordError ? (
-                        <div>
-                            <AlertPanel type='error' message={this.props.passwordError} />
-                        </div>
-                    ) : null}
-                    <div>
-                        <div className='btn-group'>
-                            <button
-                                className='btn btn-primary'
-                                onClick={this.onJoinClick.bind(this)}
-                            >
-                                {this.props.passwordJoinType}
-                            </button>
-                            <button
-                                className='btn btn-primary'
-                                onClick={this.onCancelClick.bind(this)}
-                            >
-                                Cancel
-                            </button>
-                        </div>
-                    </div>
-                </Panel>
-            </div>
-        );
-    }
-}
-
-PasswordGame.displayName = 'PasswordGame';
-PasswordGame.propTypes = {
-    cancelPasswordJoin: PropTypes.func,
-    passwordError: PropTypes.string,
-    passwordGame: PropTypes.object,
-    passwordJoinType: PropTypes.string,
-    socket: PropTypes.object
+                </div>
+            </Panel>
+        </div>
+    );
 };
 
-function mapStateToProps(state) {
-    return {
-        passwordError: state.lobby.passwordError,
-        passwordGame: state.lobby.passwordGame,
-        passwordJoinType: state.lobby.passwordJoinType,
-        socket: state.lobby.socket
-    };
-}
-
-export default connect(mapStateToProps, actions)(PasswordGame);
+export default PasswordGame;

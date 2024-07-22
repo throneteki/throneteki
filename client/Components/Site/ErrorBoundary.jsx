@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import * as Sentry from '@sentry/browser';
 
 class ErrorBoundary extends React.Component {
@@ -14,7 +13,7 @@ class ErrorBoundary extends React.Component {
         this.onReturnClick = this.onReturnClick.bind(this);
     }
 
-    componentWillReceiveProps(props) {
+    componentDidUpdate(props) {
         if (props.errorPath !== this.state.errorPath) {
             this.setState({ error: null, errorPath: props.errorPath });
         }
@@ -67,13 +66,5 @@ class ErrorBoundary extends React.Component {
         return this.props.children;
     }
 }
-
-ErrorBoundary.displayName = 'ErrorBoundary';
-ErrorBoundary.propTypes = {
-    children: PropTypes.node,
-    errorPath: PropTypes.string,
-    message: PropTypes.string,
-    navigate: PropTypes.func
-};
 
 export default ErrorBoundary;

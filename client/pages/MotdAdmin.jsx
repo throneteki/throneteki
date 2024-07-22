@@ -1,98 +1,83 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import React, { useState, useCallback, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
 import Panel from '../Components/Site/Panel';
 import TextArea from '../Components/Form/TextArea';
 import RadioGroup from '../Components/Form/RadioGroup';
-import * as actions from '../actions';
+import { sendMotdMessage } from '../redux/reducers/lobby';
 
-class MotdAdmin extends React.Component {
-    constructor(props) {
-        super(props);
+const MotdAdmin = () => {
+    const motd = useSelector((state) => state.lobby.motd);
+    const dispatch = useDispatch();
 
-        this.state = {
-            motdText: props.motd && props.motd.message,
-            selectedMotdType: props.motd ? props.motd.motdType : 'info'
-        };
+    const [motdText, setMotdText] = useState(motd?.message);
+    const [selectedMotdType, setSelectedMotdType] = useState(motd ? motd.motdType : 'info');
 
-        this.motdTypes = [
-            { value: 'error', label: 'Error (red)' },
-            { value: 'warning', label: 'Warning (yellow)' },
-            { value: 'info', label: 'Info (blue)' },
-            { value: 'success', label: 'Success (green)' }
-        ];
+    const motdTypes = [
+        { value: 'error', label: 'Error (red)' },
+        { value: 'warning', label: 'Warning (yellow)' },
+        { value: 'info', label: 'Info (blue)' },
+        { value: 'success', label: 'Success (green)' }
+    ];
 
-        this.onMotdTextChange = this.onMotdTextChange.bind(this);
-        this.onSaveClick = this.onSaveClick.bind(this);
-    }
+    useEffect(() => {
+        setMotdText(motd?.message);
+        setSelectedMotdType(motd ? motd.motdType : 'info');
+    }, [motd]);
 
-    componentWillReceiveProps(props) {
-        this.setState({
-            motdText: props.motd && props.motd.message,
-            selectedMotdType: props.motd ? props.motd.motdType : 'info'
-        });
-    }
+    console.info(motd, motd?.motdType, selectedMotdType);
 
-    onMotdTextChange(event) {
-        this.setState({ motdText: event.target.value });
-    }
+    const onMotdTextChange = useCallback((event) => {
+        setMotdText(event.target.value);
+    }, []);
 
-    onMotdTypeChange(value) {
-        this.setState({ selectedMotdType: value });
-    }
+    const onMotdTypeChange = useCallback((value) => {
+        setSelectedMotdType(value);
+    }, []);
 
-    onSaveClick(event) {
-        event.preventDefault();
+    const onSaveClick = useCallback(
+        (event) => {
+            event.preventDefault();
 
-        this.props.sendSocketMessage('motd', {
-            message: this.state.motdText,
-            motdType: this.state.selectedMotdType
-        });
-    }
+            dispatch(
+                sendMotdMessage({
+                    message: motdText,
+                    motdType: selectedMotdType
+                })
+            );
+        },
+        [dispatch, motdText, selectedMotdType]
+    );
 
-    render() {
-        return (
-            <div className='col-sm-offset-2 col-sm-8'>
-                <Panel title='Motd administration'>
-                    <TextArea
-                        fieldClass='col-xs-12'
-                        name='motd'
-                        value={this.state.motdText}
-                        onChange={this.onMotdTextChange}
-                        rows='4'
-                        placeholder='Enter a motd message'
+    return (
+        <div className='col-sm-offset-2 col-sm-8'>
+            <Panel title='Motd administration'>
+                <TextArea
+                    fieldClass='col-xs-12'
+                    name='motd'
+                    value={motdText}
+                    onChange={onMotdTextChange}
+                    rows='4'
+                    placeholder='Enter a motd message'
+                />
+                <div className='col-xs-12'>
+                    <RadioGroup
+                        buttons={motdTypes}
+                        onValueSelected={onMotdTypeChange}
+                        value={selectedMotdType}
                     />
-                    <div className='col-xs-12'>
-                        <RadioGroup
-                            buttons={this.motdTypes}
-                            onValueSelected={this.onMotdTypeChange.bind(this)}
-                        />
-                    </div>
+                </div>
 
-                    <button
-                        className='btn btn-primary col-xs-2 motd-button'
-                        type='button'
-                        onClick={this.onSaveClick}
-                    >
-                        Save
-                    </button>
-                </Panel>
-            </div>
-        );
-    }
-}
-
-MotdAdmin.displayName = 'MotdAdmin';
-MotdAdmin.propTypes = {
-    motd: PropTypes.object,
-    sendSocketMessage: PropTypes.func
+                <button
+                    className='btn btn-primary col-xs-2 motd-button'
+                    type='button'
+                    onClick={onSaveClick}
+                >
+                    Save
+                </button>
+            </Panel>
+        </div>
+    );
 };
 
-function mapStateToProps(state) {
-    return {
-        motd: state.lobby.motd
-    };
-}
-
-export default connect(mapStateToProps, actions)(MotdAdmin);
+export default MotdAdmin;

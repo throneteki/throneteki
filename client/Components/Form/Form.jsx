@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import $ from 'jquery';
-import PropTypes from 'prop-types';
 
 import Input from './Input';
 import Checkbox from './Checkbox';
@@ -9,159 +8,122 @@ import Panel from '../Site/Panel';
 
 import formFields from './formFields.json';
 
-class Form extends React.Component {
-    constructor(props) {
-        super(props);
+const Form = (props) => {
+    const [state, setState] = useState({});
+    const formRef = useRef(null);
 
-        this.state = {};
-
-        this.onSubmit = this.onSubmit.bind(this);
-
-        for (let field of formFields[props.name]) {
-            this.state[field.name] = '';
-        }
-    }
-
-    componentDidMount() {
-        $.validator.unobtrusive.parse('form');
-
-        this.validator = $('form').validate();
-
-        this.setInitialValues(this.props);
-    }
-
-    componentWillReceiveProps(props) {
-        this.setInitialValues(props);
-    }
-
-    componentWillUnmount() {
-        this.validator.destroy();
-    }
-
-    setInitialValues(props) {
-        if (props.initialValues) {
-            for (let [key, value] of Object.entries(props.initialValues)) {
-                if (!this.state[key]) {
-                    let state = this.state;
-                    state[key] = value;
-                    this.setState(state);
+    const setInitialValues = useCallback(
+        (props) => {
+            if (props.initialValues) {
+                for (let [key, value] of Object.entries(props.initialValues)) {
+                    if (!state[key]) {
+                        setState((prevState) => ({ ...prevState, [key]: value }));
+                    }
                 }
             }
-        }
-    }
+        },
+        [state]
+    );
 
-    onChange(field, event) {
-        var newState = {};
+    useEffect(() => {
+        $.validator.unobtrusive.parse('form');
+        const validator = $(formRef.current).validate();
 
-        newState[field] = event.target.value;
-        this.setState(newState);
-    }
+        setInitialValues(props);
 
-    onCheckboxChange(field, event) {
-        var newState = {};
+        return () => {
+            validator.destroy();
+        };
+    }, [props, setInitialValues]);
 
-        newState[field] = event.target.checked;
-        this.setState(newState);
-    }
+    const onChange = useCallback((field, event) => {
+        setState((prevState) => ({ ...prevState, [field]: event.target.value }));
+    }, []);
 
-    onSubmit(event) {
-        event.preventDefault();
+    const onCheckboxChange = useCallback((field, event) => {
+        setState((prevState) => ({ ...prevState, [field]: event.target.checked }));
+    }, []);
 
-        if (!$('form').valid()) {
-            return;
-        }
+    const onSubmit = useCallback(
+        (event) => {
+            event.preventDefault();
 
-        if (this.props.onSubmit) {
-            this.props.onSubmit(this.state);
-        }
-    }
-
-    render() {
-        const fieldsToRender = formFields[this.props.name].map((field) => {
-            switch (field.inputType) {
-                case 'checkbox':
-                    return (
-                        <Checkbox
-                            key={field.name}
-                            name={field.name}
-                            label={field.label}
-                            fieldClass={field.fieldClass}
-                            onChange={this.onCheckboxChange.bind(this, field.name)}
-                            checked={this.state[field.name]}
-                        />
-                    );
-                case 'textarea':
-                    return (
-                        <TextArea
-                            key={field.name}
-                            name={field.name}
-                            label={field.label}
-                            placeholder={field.placeholder}
-                            fieldClass={field.fieldClass}
-                            labelClass={field.labelClass}
-                            onChange={this.onChange.bind(this, field.name)}
-                            value={this.state[field.name]}
-                            validationAttributes={field.validationProperties}
-                        />
-                    );
-                default:
-                    return (
-                        <Input
-                            key={field.name}
-                            name={field.name}
-                            label={field.label}
-                            placeholder={field.placeholder}
-                            validationAttributes={field.validationProperties}
-                            fieldClass={field.fieldClass}
-                            labelClass={field.labelClass}
-                            type={field.inputType}
-                            onChange={this.onChange.bind(this, field.name)}
-                            value={this.state[field.name]}
-                        />
-                    );
+            if (!$(formRef.current).valid()) {
+                return;
             }
-        });
 
-        let content = (
-            <form className='form form-horizontal' onSubmit={this.onSubmit}>
-                {fieldsToRender}
-                {this.props.children}
-                <div className='form-group'>
-                    <div className={this.props.buttonClass}>
-                        <button
-                            ref='submit'
-                            type='submit'
-                            className='btn btn-primary'
-                            disabled={this.props.apiLoading}
-                        >
-                            {this.props.buttonText || 'Submit'}{' '}
-                            {this.props.apiLoading ? (
-                                <span className='spinner button-spinner' />
-                            ) : null}
-                        </button>
-                    </div>
-                </div>
-            </form>
-        );
+            if (props.onSubmit) {
+                props.onSubmit(state);
+            }
+        },
+        [props, state]
+    );
 
-        if (this.props.panelTitle) {
-            return <Panel title={this.props.panelTitle}>{content}</Panel>;
+    const fieldsToRender = formFields[props.name].map((field) => {
+        switch (field.inputType) {
+            case 'checkbox':
+                return (
+                    <Checkbox
+                        key={field.name}
+                        name={field.name}
+                        label={field.label}
+                        fieldClass={field.fieldClass}
+                        onChange={(event) => onCheckboxChange(field.name, event)}
+                        checked={state[field.name]}
+                    />
+                );
+            case 'textarea':
+                return (
+                    <TextArea
+                        key={field.name}
+                        name={field.name}
+                        label={field.label}
+                        placeholder={field.placeholder}
+                        fieldClass={field.fieldClass}
+                        labelClass={field.labelClass}
+                        onChange={(event) => onChange(field.name, event)}
+                        value={state[field.name]}
+                        validationAttributes={field.validationProperties}
+                    />
+                );
+            default:
+                return (
+                    <Input
+                        key={field.name}
+                        name={field.name}
+                        label={field.label}
+                        placeholder={field.placeholder}
+                        validationAttributes={field.validationProperties}
+                        fieldClass={field.fieldClass}
+                        labelClass={field.labelClass}
+                        type={field.inputType}
+                        onChange={(event) => onChange(field.name, event)}
+                        value={state[field.name]}
+                    />
+                );
         }
+    });
 
-        return content;
+    let content = (
+        <form className='form form-horizontal' onSubmit={onSubmit} ref={formRef}>
+            {fieldsToRender}
+            {props.children}
+            <div className='form-group'>
+                <div className={props.buttonClass}>
+                    <button type='submit' className='btn btn-primary' disabled={props.apiLoading}>
+                        {props.buttonText || 'Submit'}{' '}
+                        {props.apiLoading ? <span className='spinner button-spinner' /> : null}
+                    </button>
+                </div>
+            </div>
+        </form>
+    );
+
+    if (props.panelTitle) {
+        return <Panel title={props.panelTitle}>{content}</Panel>;
     }
-}
 
-Form.displayName = 'Form';
-Form.propTypes = {
-    apiLoading: PropTypes.bool,
-    buttonClass: PropTypes.string,
-    buttonText: PropTypes.string,
-    children: PropTypes.node,
-    initialValues: PropTypes.object,
-    name: PropTypes.string.isRequired,
-    onSubmit: PropTypes.func,
-    panelTitle: PropTypes.string
+    return content;
 };
 
 export default Form;

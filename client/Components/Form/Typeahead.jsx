@@ -1,75 +1,101 @@
+import React, { useCallback, forwardRef } from 'react';
 import { Typeahead } from 'react-bootstrap-typeahead';
-import React from 'react';
-import PropTypes from 'prop-types';
+import uuid from 'uuid';
 
-class Input extends React.Component {
-    clear() {
-        this.refs.typeahead.getInstance().clear();
-    }
+const TypeaheadComponent = forwardRef(
+    (
+        {
+            label: labelProp,
+            name,
+            labelClass: labelClassProp,
+            fieldClass,
+            options,
+            labelKey,
+            emptyLabel,
+            onChange: onChangeProp,
+            placeholder,
+            autoFocus,
+            dropup,
+            minLength,
+            onInputChange: onInputChangeProp,
+            submitFormOnEnter,
+            onKeyDown: onKeyDownProp,
+            disabled,
+            validationMessage,
+            children,
+            noGroup
+        },
+        ref
+    ) => {
+        const onChange = useCallback(
+            (selected) => {
+                if (onChangeProp) {
+                    onChangeProp(selected);
+                }
+            },
+            [onChangeProp]
+        );
 
-    render() {
-        const label = this.props.label ? (
-            <label htmlFor={this.props.name} className={this.props.labelClass + ' control-label'}>
-                {this.props.label}
+        const onInputChange = useCallback(
+            (text, event) => {
+                if (onInputChangeProp) {
+                    onInputChangeProp(text, event);
+                }
+            },
+            [onInputChangeProp]
+        );
+
+        const onKeyDown = useCallback(
+            (event) => {
+                if (onKeyDownProp) {
+                    onKeyDownProp(event);
+                }
+            },
+            [onKeyDownProp]
+        );
+
+        const label = labelProp ? (
+            <label htmlFor={name} className={`${labelClassProp} control-label`}>
+                {labelProp}
             </label>
         ) : null;
+
         const control = (
             <div>
                 {label}
-                <div className={this.props.fieldClass}>
+                <div className={fieldClass}>
                     <Typeahead
-                        ref='typeahead'
-                        options={this.props.options}
-                        labelKey={this.props.labelKey}
-                        emptyLabel={this.props.emptyLabel}
-                        onChange={this.props.onChange}
-                        placeholder={this.props.placeholder}
-                        autoFocus={this.props.autoFocus}
-                        dropup={this.props.dropup}
-                        minLength={this.props.minLength}
-                        onInputChange={this.props.onInputChange}
-                        submitFormOnEnter={this.props.submitFormOnEnter}
-                        onKeyDown={this.props.onKeyDown}
-                        disabled={this.props.disabled}
+                        id={name || uuid.v1()}
+                        ref={ref}
+                        options={options}
+                        labelKey={labelKey}
+                        emptyLabel={emptyLabel}
+                        onChange={onChange}
+                        placeholder={placeholder}
+                        autoFocus={autoFocus}
+                        dropup={dropup}
+                        minLength={minLength}
+                        onInputChange={onInputChange}
+                        submitFormOnEnter={submitFormOnEnter}
+                        onKeyDown={onKeyDown}
+                        disabled={disabled}
                     />
-                    {this.props.validationMessage ? (
-                        <span className='help-block'>{this.props.validationMessage} </span>
+                    {validationMessage ? (
+                        <span className='help-block'>{validationMessage} </span>
                     ) : null}
                 </div>
-                {this.props.children}
+                {children}
             </div>
         );
 
-        if (this.props.noGroup) {
+        if (noGroup) {
             return control;
         }
 
         return <div className='form-group'>{control}</div>;
     }
-}
+);
 
-Input.displayName = 'TypeAhead';
-Input.propTypes = {
-    autoFocus: PropTypes.bool,
-    children: PropTypes.object,
-    disabled: PropTypes.bool,
-    dropup: PropTypes.bool,
-    emptyLabel: PropTypes.string,
-    fieldClass: PropTypes.string,
-    label: PropTypes.string,
-    labelClass: PropTypes.string,
-    labelKey: PropTypes.string,
-    minLength: PropTypes.number,
-    name: PropTypes.string,
-    noGroup: PropTypes.bool,
-    onChange: PropTypes.func,
-    onInputChange: PropTypes.func,
-    onKeyDown: PropTypes.func,
-    options: PropTypes.array,
-    placeholder: PropTypes.string,
-    submitFormOnEnter: PropTypes.bool,
-    validationMessage: PropTypes.string,
-    value: PropTypes.string
-};
+TypeaheadComponent.displayName = 'Typeahead';
 
-export default Input;
+export default TypeaheadComponent;

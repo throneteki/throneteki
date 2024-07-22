@@ -8,7 +8,7 @@ export const init = function (server, options) {
         cardService
             .getAllCards()
             .then((cards) => {
-                res.send({ success: true, cards: cards });
+                res.send({ success: true, data: cards });
             })
             .catch((err) => {
                 return next(err);
@@ -19,7 +19,7 @@ export const init = function (server, options) {
         cardService
             .getAllPacks()
             .then((packs) => {
-                res.send({ success: true, packs: packs });
+                res.send({ success: true, data: packs });
             })
             .catch((err) => {
                 return next(err);
@@ -27,14 +27,14 @@ export const init = function (server, options) {
     });
 
     server.get('/api/factions', function (req, res) {
-        res.send({ success: true, factions: Factions });
+        res.send({ success: true, data: Factions });
     });
 
     server.get('/api/restricted-list', function (req, res, next) {
         cardService
             .getRestrictedList()
             .then((restrictedList) => {
-                res.send({ success: true, restrictedList: restrictedList });
+                res.send({ success: true, data: restrictedList });
             })
             .catch((err) => {
                 next(err);
