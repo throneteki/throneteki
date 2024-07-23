@@ -125,7 +125,7 @@ const ContextMenu = () => {
                         {menuItem.displayWarning ? <span className='warning-icon' /> : null}{' '}
                         {menuItem.text}
                     </a>
-                    {showPopup === menuItem ? showPopup.popup : null}
+                    {showPopup?.text === menuItem.text ? showPopup.popup : null}
                 </li>
             );
         });
