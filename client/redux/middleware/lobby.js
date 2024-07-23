@@ -39,7 +39,8 @@ import {
     sendWatchGameMessage,
     sendRemoveGameMessage,
     sendAuthenticateMessage,
-    receiveResponseTime
+    receiveResponseTime,
+    sendLobbyChatMessage
 } from '../reducers/lobby';
 import { receiveNodeStatus } from '../reducers/admin';
 import { setAuthTokens } from '../reducers/auth';
@@ -268,6 +269,8 @@ const lobbyMiddleware = (store) => {
             socket.emit(LobbyMessage.RemoveGame, action.payload);
         } else if (sendAuthenticateMessage.match(action)) {
             socket.emit(LobbyMessage.Authenticate, action.payload);
+        } else if (sendLobbyChatMessage.match(action)) {
+            socket.emit(LobbyMessage.LobbyChat, action.payload);
         }
 
         next(action);
