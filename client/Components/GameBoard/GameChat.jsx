@@ -44,7 +44,6 @@ const GameChat = ({ messages, onCardMouseOver, onCardMouseOut, onSendChat, muted
 
     useEffect(() => {
         if (canScroll) {
-            console.info('scrolling', $(messagePanel.current));
             $(messagePanel.current).scrollTop(999999);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
