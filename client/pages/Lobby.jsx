@@ -30,7 +30,6 @@ const Lobby = () => {
 
     // Define a memoized selector to get messages
     const getMessages = createSelector([getLobbyState], (lobby) => lobby.messages);
-    const getSocket = createSelector([getLobbyState], (lobby) => lobby.socket);
     const getUsers = createSelector([getLobbyState], (lobby) => lobby.users);
     const getBannerNotice = createSelector([getLobbyState], (lobby) => lobby.notice);
 
@@ -38,7 +37,6 @@ const Lobby = () => {
     const getMotd = createSelector([getLobbyState], (lobby) => lobby.motd);
 
     const messages = useSelector(getMessages);
-    const socket = useSelector(getSocket);
     const users = useSelector(getUsers);
     const { user } = useSelector((state) => state.auth);
     const bannerNotice = useSelector(getBannerNotice);
