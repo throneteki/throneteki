@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import moment from 'moment';
 import { toastr } from 'react-redux-toastr';
 
