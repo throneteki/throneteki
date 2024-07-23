@@ -11,7 +11,7 @@ import {
 import { toastr } from 'react-redux-toastr';
 
 const BanlistAdmin = () => {
-    const { data: banList, isLoading, error } = useGetBanListQuery();
+    const { data: banList, isLoading } = useGetBanListQuery();
     const [addBanListEntry, { isLoading: isAddLoading }] = useAddBanListEntryMutation();
     const [removeBanListEntry, { isLoading: isRemoveLoading }] = useRemoveBanListEntryMutation();
 
