@@ -14,6 +14,7 @@ import { getMessageWithLinks } from '../util';
 import * as actions from '../actions';
 import { createSelector } from '@reduxjs/toolkit';
 import { useGetNewsQuery } from '../redux/middleware/api';
+import { sendLobbyChatMessage } from '../redux/reducers/lobby';
 
 const Lobby = () => {
     const [message, setMessage] = useState('');
@@ -31,7 +32,6 @@ const Lobby = () => {
     const getMessages = createSelector([getLobbyState], (lobby) => lobby.messages);
     const getSocket = createSelector([getLobbyState], (lobby) => lobby.socket);
     const getUsers = createSelector([getLobbyState], (lobby) => lobby.users);
-    const getUser = createSelector([getLobbyState], (lobby) => lobby.user);
     const getBannerNotice = createSelector([getLobbyState], (lobby) => lobby.notice);
 
     const getLobbyError = createSelector([getLobbyState], (lobby) => lobby.lobbyError);
@@ -40,7 +40,7 @@ const Lobby = () => {
     const messages = useSelector(getMessages);
     const socket = useSelector(getSocket);
     const users = useSelector(getUsers);
-    const user = useSelector(getUser);
+    const { user } = useSelector((state) => state.auth);
     const bannerNotice = useSelector(getBannerNotice);
     const lobbyError = useSelector(getLobbyError);
 
@@ -63,10 +63,10 @@ const Lobby = () => {
             return;
         }
 
-        socket.emit('lobbychat', message);
+        dispatch(sendLobbyChatMessage(message));
 
         setMessage('');
-    }, [message, socket]);
+    }, [dispatch, message]);
 
     const onKeyPress = useCallback(
         (event) => {

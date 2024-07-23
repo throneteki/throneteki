@@ -190,7 +190,8 @@ const lobbySlice = createSlice({
         sendJoinGameMessage: () => {},
         sendWatchGameMessage: () => {},
         sendRemoveGameMessage: () => {},
-        sendAuthenticateMessage: () => {}
+        sendAuthenticateMessage: () => {},
+        sendLobbyChatMessage: () => {}
     })
 });
 
@@ -238,7 +239,8 @@ export const {
     sendJoinGameMessage,
     sendWatchGameMessage,
     sendRemoveGameMessage,
-    sendAuthenticateMessage
+    sendAuthenticateMessage,
+    sendLobbyChatMessage
 } = lobbySlice.actions;
 
 export default lobbySlice.reducer;
