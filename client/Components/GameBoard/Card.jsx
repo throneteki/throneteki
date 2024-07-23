@@ -59,12 +59,19 @@ const Card = ({
         return source === 'play area' || source === 'agenda' || source === 'revealed plots';
     }, [source]);
 
-    const handleMouseOver = useCallback(() => {
-        if (onMouseOver) onMouseOver(card);
-    }, [card, onMouseOver]);
+    const handleMouseOver = useCallback(
+        (c) => {
+            if (onMouseOver) {
+                onMouseOver(c);
+            }
+        },
+        [onMouseOver]
+    );
 
     const handleMouseOut = useCallback(() => {
-        if (onMouseOut) onMouseOut();
+        if (onMouseOut) {
+            onMouseOut();
+        }
     }, [onMouseOut]);
 
     const handleMenuItemClick = useCallback(
@@ -168,7 +175,7 @@ const Card = ({
                 className={classNames('attachment', `attachment-${index++}`)}
                 wrapped={false}
                 hideTokens
-                onMouseOver={disableMouseOver ? null : handleMouseOver}
+                onMouseOver={disableMouseOver ? null : () => handleMouseOver(attachment)}
                 onMouseOut={disableMouseOver ? null : handleMouseOut}
                 onClick={onClick}
                 onMenuItemClick={onMenuItemClick}
@@ -196,7 +203,7 @@ const Card = ({
                     source={source}
                     card={dupe}
                     wrapped={false}
-                    onMouseOver={disableMouseOver ? null : handleMouseOver}
+                    onMouseOver={disableMouseOver ? null : () => handleMouseOver(dupe)}
                     onMouseOut={disableMouseOver ? null : handleMouseOut}
                     onClick={onClick}
                     onMenuItemClick={onMenuItemClick}
@@ -312,7 +319,7 @@ const Card = ({
                 {getCardOrder()}
                 <div
                     className={cardClass}
-                    onMouseOver={disableMouseOver ? null : handleMouseOver}
+                    onMouseOver={disableMouseOver ? null : () => handleMouseOver(card)}
                     onMouseOut={disableMouseOver ? null : handleMouseOut}
                     onClick={handleClick}
                 >
