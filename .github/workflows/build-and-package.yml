@@ -69,8 +69,8 @@ jobs:
               uses: docker/build-push-action@v3
               with:
                   build-args: |
-                      "VITE_VERSION=${{ steps.determine_version.outputs.semVer }}"
-                      "VITE_SENTRY_KEY=${{ secrets.SENTRY_DSN }}"
+                      "VERSION=${{ steps.determine_version.outputs.semVer }}"
+                      "SENTRY_KEY=${{ secrets.SENTRY_DSN }}"
                   push: true
                   tags: ${{ secrets.DOCKERHUB_USERNAME }}/throneteki-lobby:latest, ${{ secrets.DOCKERHUB_USERNAME }}/throneteki-lobby:${{ steps.determine_version.outputs.semVer }}
             - name: Build and push node
