@@ -3,26 +3,32 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import AlertPanel from '../Site/AlertPanel';
 import Panel from '../Site/Panel';
-import { cancelPasswordJoin } from '../../redux/reducers/lobby';
+import {
+    cancelPasswordJoin,
+    sendJoinGameMessage,
+    sendWatchGameMessage
+} from '../../redux/reducers/lobby';
 
 const PasswordGame = () => {
     const [password, setPassword] = useState('');
     const dispatch = useDispatch();
-    const { passwordJoinType, passwordGame, socket, passwordError } = useSelector(
-        (state) => state.lobby
-    );
+    const { passwordJoinType, passwordGame, passwordError } = useSelector((state) => state.lobby);
 
     const onJoinClick = useCallback(
         (event) => {
             event.preventDefault();
 
+            if (!passwordGame?.id) {
+                return;
+            }
+
             if (passwordJoinType === 'Join') {
-                socket.emit('joingame', passwordGame.id, password);
+                dispatch(sendJoinGameMessage(passwordGame.id, password));
             } else if (passwordJoinType === 'Watch') {
-                socket.emit('watchgame', passwordGame.id, password);
+                sendWatchGameMessage(passwordGame.id, password);
             }
         },
-        [passwordJoinType, socket, passwordGame, password]
+        [passwordJoinType, dispatch, passwordGame?.id, password]
     );
 
     const onCancelClick = useCallback(
