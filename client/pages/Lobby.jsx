@@ -13,7 +13,7 @@ import { getMessageWithLinks } from '../util';
 
 import * as actions from '../actions';
 import { createSelector } from '@reduxjs/toolkit';
-import { useGetNewsQuery } from '../redux/middleware/api';
+import { useGetNewsQuery, useRemoveMessageMutation } from '../redux/middleware/api';
 import { sendLobbyChatMessage } from '../redux/reducers/lobby';
 
 const Lobby = () => {
@@ -45,6 +45,8 @@ const Lobby = () => {
     const motd = useSelector(getMotd);
 
     const dispatch = useDispatch();
+
+    const [removeMessage, { isLoading }] = useRemoveMessageMutation();
 
     const checkChatError = useCallback(() => {
         if (lobbyError) {
@@ -93,10 +95,14 @@ const Lobby = () => {
     }, []);
 
     const onRemoveMessageClick = useCallback(
-        (messageId) => {
-            dispatch(actions.removeLobbyMessage(messageId));
+        async (messageId) => {
+            try {
+                await removeMessage(messageId).unwrap();
+            } catch (err) {
+                console.info(err);
+            }
         },
-        [dispatch]
+        [removeMessage]
     );
 
     useEffect(() => {

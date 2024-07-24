@@ -418,6 +418,12 @@ export const apiSlice = createApi({
                 method: 'POST',
                 body: { code }
             })
+        }),
+        removeMessage: builder.mutation({
+            query: (messageId) => ({
+                url: `/messages/${messageId}`,
+                method: 'DELETE'
+            })
         })
     })
 });
@@ -465,5 +471,6 @@ export const {
     useForgotPasswordMutation,
     useResetPasswordMutation,
     useLinkPatreonMutation,
-    useDeleteDraftCubeMutation
+    useDeleteDraftCubeMutation,
+    useRemoveMessageMutation
 } = apiSlice;
