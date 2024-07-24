@@ -262,7 +262,7 @@ const lobbyMiddleware = (store) => {
         } else if (sendMotdMessage.match(action)) {
             socket.emit(LobbyMessage.Motd, action.payload);
         } else if (sendJoinGameMessage.match(action)) {
-            socket.emit(LobbyMessage.JoinGame, action.payload);
+            socket.emit(LobbyMessage.JoinGame, action.payload.gameId, action.payload.password);
         } else if (sendWatchGameMessage.match(action)) {
             socket.emit(LobbyMessage.WatchGame, action.payload);
         } else if (sendRemoveGameMessage.match(action)) {

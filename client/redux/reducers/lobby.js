@@ -187,7 +187,12 @@ const lobbySlice = createSlice({
         sendToggleNodeMessage: () => {},
         sendRestartNodeMessage: () => {},
         sendMotdMessage: () => {},
-        sendJoinGameMessage: () => {},
+        sendJoinGameMessage: create.preparedReducer(
+            (gameId, password = undefined) => {
+                return { payload: { gameId, password } };
+            },
+            () => {}
+        ),
         sendWatchGameMessage: () => {},
         sendRemoveGameMessage: () => {},
         sendAuthenticateMessage: () => {},
