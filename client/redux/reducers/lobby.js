@@ -86,7 +86,7 @@ const lobbySlice = createSlice({
             state.games = state.games.filter((game) => !gameIdsToRemove.has(game.id));
         },
         receiveUpdateGame: (state, action) => {
-            const game = action.payload;
+            const game = action.payload[0];
             const index = state.games.findIndex((g) => g.id === game.id);
             if (index !== -1) {
                 state.games[index] = game;
