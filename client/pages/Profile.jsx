@@ -44,10 +44,10 @@ const Profile = () => {
 
     const [success, setSuccess] = useState();
     const [error, setError] = useState();
-    const [promptDupes, setPromptDupes] = useState(false);
+    const [promptDupes, setPromptDupes] = useState(user?.settings?.promptDupes || false);
     const [timerSettings, setTimerSettings] = useState(user?.timerSettings || {});
-    const [keywordSettings, setKeywordSettings] = useState(user?.keywordSettings || {});
-    const [windowTimer, setWindowTimer] = useState(user?.windowTimer || 5);
+    const [keywordSettings, setKeywordSettings] = useState(user?.settings?.keywordSettings || {});
+    const [windowTimer, setWindowTimer] = useState(user?.settings?.windowTimer || 5);
     const [enableGravatar, setEnableGravatar] = useState(user?.enableGravatar || false);
     const [selectedBackground, setSelectedBackground] = useState(
         user?.settings.background || 'BG1'
@@ -69,6 +69,26 @@ const Profile = () => {
             );
         }
     }, [profileError]);
+
+    useEffect(() => {
+        setKeywordSettings(user?.settings?.keywordSettings || {});
+        setPromptDupes(user?.settings?.promptDupes || false);
+        setTimerSettings(user?.settings?.timerSettings || {});
+        setWindowTimer(user?.settings?.windowTimer || 5);
+        setSelectedCardSize(user?.settings?.cardSize || 'normal');
+        setSelectedBackground(user?.settings?.background || 'BG1');
+    }, [
+        user?.settings?.background,
+        user?.settings?.cardSize,
+        user?.settings?.keywordSettings,
+        user?.settings?.promptDupes,
+        user?.settings?.timerSettings,
+        user?.settings?.windowTimer
+    ]);
+
+    useEffect(() => {
+        setPromptedActionWindows(user?.promptedActionWindows || {});
+    }, [user?.promptedActionWindows]);
 
     const onWindowToggle = useCallback(
         (event, field) => {
@@ -201,10 +221,10 @@ const Profile = () => {
     };
 
     const onTimerSettingToggle = useCallback(
-        (event) => {
+        (field, event) => {
             let newTimerSettings = { ...timerSettings };
 
-            newTimerSettings[event.target.id] = event.target.checked;
+            newTimerSettings[field] = event.target.checked;
 
             setTimerSettings(newTimerSettings);
         },
@@ -338,7 +358,7 @@ const Profile = () => {
                                     noGroup
                                     label={'Show timer for events'}
                                     fieldClass='col-sm-6'
-                                    onChange={onTimerSettingToggle.bind('events')}
+                                    onChange={(event) => onTimerSettingToggle('events', event)}
                                     checked={timerSettings.events}
                                 />
                                 <Checkbox
@@ -346,7 +366,7 @@ const Profile = () => {
                                     noGroup
                                     label={'Show timer for card abilities'}
                                     fieldClass='col-sm-6'
-                                    onChange={onTimerSettingToggle.bind('abilities')}
+                                    onChange={(event) => onTimerSettingToggle('abilities', event)}
                                     checked={timerSettings.abilities}
                                 />
                             </div>
@@ -358,7 +378,9 @@ const Profile = () => {
                                     noGroup
                                     label={'Choose order of keywords'}
                                     fieldClass='col-sm-6'
-                                    onChange={onKeywordSettingToggle.bind('chooseOrder')}
+                                    onChange={(event) =>
+                                        onKeywordSettingToggle('chooseOrder', event)
+                                    }
                                     checked={keywordSettings.chooseOrder}
                                 />
                                 <Checkbox
@@ -366,7 +388,9 @@ const Profile = () => {
                                     noGroup
                                     label={'Make keywords optional'}
                                     fieldClass='col-sm-6'
-                                    onChange={onKeywordSettingToggle.bind('chooseCards')}
+                                    onChange={(event) =>
+                                        onKeywordSettingToggle('chooseCards', event)
+                                    }
                                     checked={keywordSettings.chooseCards}
                                 />
                                 <Checkbox
