@@ -43,10 +43,6 @@ describe("The Mad King's Command", function () {
                 this.player2.clickPrompt('Done');
                 // P2 Choosing cards in hand/shadow
                 this.player2.clickPrompt('Done');
-
-                // Skip placement order
-                this.player1.clickPrompt('Done');
-                this.player2.clickPrompt('Done');
             });
 
             it("should return that attachment to it's owners hand", function () {
@@ -73,10 +69,6 @@ describe("The Mad King's Command", function () {
                 // Trigger Lemore on Aegon
                 this.player1.clickCard(this.lemore);
                 this.player1.clickCard(this.aegon);
-
-                // Skip placement order
-                this.player1.clickPrompt('Done');
-                this.player2.clickPrompt('Done');
             });
 
             it('should not be moved to deck', function () {

@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TywinLannister extends DrawCard {
     setupCardAbilities() {
@@ -11,10 +12,8 @@ class TywinLannister extends DrawCard {
                 args: { discardingPlayer: (context) => context.event.card.controller }
             },
             handler: (context) => {
-                this.eventObj = context.event;
-                this.discardingPlayer = this.eventObj.card.controller;
-
-                let top2Cards = this.discardingPlayer.drawDeck.slice(0, 2);
+                this.context = context;
+                let top2Cards = this.context.event.card.controller.drawDeck.slice(0, 2);
                 let buttons = top2Cards.map((card) => {
                     return { method: 'cardSelected', card: card, mapCard: true };
                 });
@@ -49,8 +48,18 @@ class TywinLannister extends DrawCard {
         );
     }
 
-    cardSelected(player, card) {
-        this.eventObj.card = card;
+    cardSelected(p, card) {
+        const currentEvent = this.context.event.childEvent.placeCard;
+        const { player, location, bottom, orderable } = currentEvent;
+        currentEvent.replace(
+            GameActions.placeCard({
+                card,
+                player,
+                location,
+                bottom,
+                orderable
+            }).createEvent()
+        );
         this.game.addMessage('{0} chooses to discard {1}', this.controller, card);
 
         return true;

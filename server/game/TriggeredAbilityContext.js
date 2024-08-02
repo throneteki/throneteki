@@ -11,6 +11,10 @@ class TriggeredAbilityContext extends AbilityContext {
         this.event.cancel();
     }
 
+    replaceEvent(newEvent) {
+        this.event.replace(newEvent);
+    }
+
     replaceHandler(handler) {
         this.event.replaceHandler(handler);
     }
