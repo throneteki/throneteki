@@ -1088,15 +1088,15 @@ class Game extends EventEmitter {
         this.queueStep(new InterruptWindow(this, groupedEvent, () => this.postEventCalculations()));
     }
 
-    registerAbility(ability, event) {
+    registerAbility(ability, context) {
         let reverseStack = [...this.abilityWindowStack].reverse();
-        let window = reverseStack.find((window) => window.canTriggerAbility(ability));
+        let window = reverseStack.find((window) => window.canTriggerAbility(ability, context));
 
         if (!window) {
             return;
         }
 
-        window.registerAbility(ability, event);
+        window.registerAbility(ability, context);
     }
 
     clearAbilityResolution(ability) {

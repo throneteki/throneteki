@@ -23,13 +23,14 @@ class TheGreatPyramid extends DrawCard {
 
         this.reaction({
             when: {
-                'onCardDiscarded:aggregate': (event) =>
-                    event.events.some(
-                        (discardEvent) =>
-                            discardEvent.cardStateWhenDiscarded.controller === this.controller &&
-                            discardEvent.cardStateWhenDiscarded.location === 'hand' &&
-                            discardEvent.card.location === 'discard pile'
-                    )
+                onCardDiscarded: {
+                    aggregateBy: (event) => ({
+                        controller: event.cardStateWhenDiscarded.controller,
+                        location: event.cardStateWhenDiscarded.location
+                    }),
+                    condition: (aggregate) =>
+                        aggregate.controller === this.controller && aggregate.location === 'hand'
+                }
             },
             limit: ability.limit.perRound(2),
             message: {

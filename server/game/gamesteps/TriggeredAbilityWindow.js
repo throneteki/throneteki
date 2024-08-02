@@ -151,25 +151,21 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
             return false;
         }
 
-        let availableTargets = choices
-            .map((choice) => choice.context.event.card || choice.context.event.target)
-            .filter((card) => !!card);
+        // Map all selectable cards to the ability that selection will choose
+        const choiceCardsMap = this.mapToCards(choices);
 
-        if (choices.length === 1 || availableTargets.length <= 1) {
+        if (choices.length === 1 || choiceCardsMap.size <= 1) {
             this.chooseAbility(choices[0]);
             return true;
         }
 
+        const availableTargets = [...choiceCardsMap.keys()];
         this.game.promptForSelect(player, {
             activePromptTitle: `Choose triggering card for ${card.name}`,
             isCardEffect: false,
             cardCondition: (card) => availableTargets.includes(card),
             onSelect: (player, selectedCard) => {
-                let choice = choices.find(
-                    (choice) =>
-                        choice.context.event.card === selectedCard ||
-                        choice.context.event.target === selectedCard
-                );
+                const choice = choiceCardsMap.get(selectedCard);
 
                 if (!choice || choice.player !== player) {
                     return false;
@@ -182,6 +178,21 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
         });
 
         return true;
+    }
+
+    mapToCards(choices) {
+        const getCardFromEvent = (event) => event.card || event.target;
+        return choices.reduce((map, choice) => {
+            const cards = choice.context.aggregate
+                ? choice.context.events.map(getCardFromEvent)
+                : [getCardFromEvent(choice.context.event)];
+
+            // Map each selectable card to it's relevant choice
+            for (const card of cards.filter((card) => !!card)) {
+                map.set(card, choice);
+            }
+            return map;
+        }, new Map());
     }
 
     chooseAbility(choice) {

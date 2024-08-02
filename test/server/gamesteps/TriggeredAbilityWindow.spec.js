@@ -52,15 +52,9 @@ describe('TriggeredAbilityWindow', function () {
             return cardSpy;
         }
 
-        function createAbility(card, context) {
-            let ability = jasmine.createSpyObj('ability', [
-                'createContext',
-                'getTitle',
-                'hasMax',
-                'canResolve'
-            ]);
+        function createAbility(card) {
+            let ability = jasmine.createSpyObj('ability', ['getTitle', 'hasMax', 'canResolve']);
             ability.card = card;
-            ability.createContext.and.returnValue(context);
             ability.location = ['play area'];
             ability.canResolve.and.returnValue(true);
             return ability;
@@ -72,7 +66,7 @@ describe('TriggeredAbilityWindow', function () {
             name: 'The Card',
             controller: this.player1Spy
         });
-        this.ability1Spy = createAbility(this.abilityCard1, this.context1);
+        this.ability1Spy = createAbility(this.abilityCard1);
 
         this.context2 = { context: 2, player: this.player1Spy, event: this.eventSpy };
         this.abilityCard2 = createCard({
@@ -80,7 +74,7 @@ describe('TriggeredAbilityWindow', function () {
             name: 'The Card 2',
             controller: this.player1Spy
         });
-        this.ability2Spy = createAbility(this.abilityCard2, this.context2);
+        this.ability2Spy = createAbility(this.abilityCard2);
 
         this.context3 = { context: 3, player: this.player2Spy, event: this.eventSpy };
         this.abilityCard3 = createCard({
@@ -88,7 +82,7 @@ describe('TriggeredAbilityWindow', function () {
             name: 'Their Card',
             controller: this.player2Spy
         });
-        this.ability3Spy = createAbility(this.abilityCard3, this.context3);
+        this.ability3Spy = createAbility(this.abilityCard3);
     });
 
     describe('continue()', function () {
@@ -96,9 +90,9 @@ describe('TriggeredAbilityWindow', function () {
             beforeEach(function () {
                 // There are remaining choices, but both players have passed
                 this.window.gatherChoices.and.callFake(() => {
-                    this.window.registerAbility(this.ability1Spy, this.eventSpy);
-                    this.window.registerAbility(this.ability2Spy, this.eventSpy);
-                    this.window.registerAbility(this.ability3Spy, this.eventSpy);
+                    this.window.registerAbility(this.ability1Spy, this.context1);
+                    this.window.registerAbility(this.ability2Spy, this.context2);
+                    this.window.registerAbility(this.ability3Spy, this.context3);
                 });
                 this.window.players = [];
                 this.result = this.window.continue();
@@ -131,9 +125,9 @@ describe('TriggeredAbilityWindow', function () {
         describe('when there are choices', function () {
             beforeEach(function () {
                 this.window.gatherChoices.and.callFake(() => {
-                    this.window.registerAbility(this.ability1Spy, this.eventSpy);
-                    this.window.registerAbility(this.ability2Spy, this.eventSpy);
-                    this.window.registerAbility(this.ability3Spy, this.eventSpy);
+                    this.window.registerAbility(this.ability1Spy, this.context1);
+                    this.window.registerAbility(this.ability2Spy, this.context2);
+                    this.window.registerAbility(this.ability3Spy, this.context3);
                 });
             });
 
@@ -158,9 +152,9 @@ describe('TriggeredAbilityWindow', function () {
 
     describe('chooseAbility()', function () {
         beforeEach(function () {
-            this.window.registerAbility(this.ability1Spy, this.eventSpy);
-            this.window.registerAbility(this.ability2Spy, this.eventSpy);
-            this.window.registerAbility(this.ability3Spy, this.eventSpy);
+            this.window.registerAbility(this.ability1Spy, this.context1);
+            this.window.registerAbility(this.ability2Spy, this.context2);
+            this.window.registerAbility(this.ability3Spy, this.context3);
         });
 
         describe('when the player select a non-existent choice', function () {

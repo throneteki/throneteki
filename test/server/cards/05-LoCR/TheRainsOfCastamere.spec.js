@@ -1,4 +1,5 @@
 import TheRainsOfCastamere from '../../../../server/game/cards/05-LoCR/TheRainsOfCastamere.js';
+import Event from '../../../../server/game/event.js';
 
 describe('The Rains of Castamere', function () {
     function createPlotSpy(uuid, hasTrait) {
@@ -95,7 +96,7 @@ describe('The Rains of Castamere', function () {
             });
 
             it('should not trigger', function () {
-                expect(this.reaction.when.afterChallenge(this.event)).toBe(false);
+                expect(this.reaction.abilityTriggers[0].condition(this.event)).toBe(false);
             });
         });
 
@@ -105,7 +106,7 @@ describe('The Rains of Castamere', function () {
             });
 
             it('should not trigger', function () {
-                expect(this.reaction.when.afterChallenge(this.event)).toBe(false);
+                expect(this.reaction.abilityTriggers[0].condition(this.event)).toBe(false);
             });
         });
 
@@ -115,19 +116,27 @@ describe('The Rains of Castamere', function () {
             });
 
             it('should not trigger', function () {
-                expect(this.reaction.when.afterChallenge(this.event)).toBe(false);
+                expect(this.reaction.abilityTriggers[0].condition(this.event)).toBe(false);
             });
         });
 
         describe('when all triggering criteria are met', function () {
             it('should trigger', function () {
-                expect(this.reaction.when.afterChallenge(this.event)).toBe(true);
+                expect(this.reaction.abilityTriggers[0].condition(this.event)).toBe(true);
             });
 
             it('should register the ability', function () {
-                let event = { name: 'afterChallenge', challenge: this.challenge };
-                this.reaction.eventHandler(event);
-                expect(this.gameSpy.registerAbility).toHaveBeenCalledWith(this.reaction, event);
+                const event = new Event('afterChallenge', { challenge: this.challenge });
+                this.reaction.abilityTriggers[0].eventHandler(event);
+                expect(this.gameSpy.registerAbility).toHaveBeenCalledWith(
+                    this.reaction,
+                    jasmine.objectContaining({
+                        ability: this.reaction,
+                        event: event,
+                        game: this.gameSpy,
+                        source: this.agenda
+                    })
+                );
             });
         });
     });
