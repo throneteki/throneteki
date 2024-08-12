@@ -1,60 +1,30 @@
 import uuid from 'uuid';
 import BaseStep from './basestep.js';
-import Event from '../event.js';
 
 class BaseAbilityWindow extends BaseStep {
     constructor(game, properties) {
         super(game);
         this.abilityChoices = [];
         this.event = properties.event;
-        this.aggregateEvents = this.createAggregateEvents();
         this.abilityType = properties.abilityType;
         this.resolvedAbilities = [];
     }
 
-    canTriggerAbility(ability) {
-        return (
-            ability.eventType === this.abilityType &&
-            (this.event.getConcurrentEvents().some((event) => ability.isTriggeredByEvent(event)) ||
-                this.aggregateEvents.some((event) => ability.isTriggeredByEvent(event)))
-        );
+    canTriggerAbility(ability, context) {
+        return ability.eventType === this.abilityType && ability.isTriggeredByContext(context);
     }
 
     gatherChoices() {
         this.abilityChoices = [];
+        // Emit base abilityType for aggregate capturing
+        this.game.emit(this.abilityType, this.event);
         this.event.emitTo(this.game, this.abilityType);
-        for (let event of this.aggregateEvents) {
-            event.emitTo(this.game, this.abilityType);
-        }
     }
 
-    createAggregateEvents() {
-        const needsAggregate = ['onCardDiscarded', 'onCharacterKilled', 'onSacrificed'];
-
-        let aggregates = new Map();
-        let concurrentEvents = this.event
-            .getConcurrentEvents()
-            .filter((event) => needsAggregate.includes(event.name));
-        for (let event of concurrentEvents) {
-            let eventsByName = aggregates.get(event.name) || [];
-            eventsByName.push(event);
-            aggregates.set(event.name, eventsByName);
-        }
-
-        let aggregateEvents = [];
-        for (let [eventName, events] of aggregates) {
-            aggregateEvents.push(new Event(`${eventName}:aggregate`, { events }));
-        }
-
-        return aggregateEvents;
-    }
-
-    registerAbility(ability, event) {
-        if (this.hasResolvedAbility(ability, event)) {
+    registerAbility(ability, context) {
+        if (this.hasResolvedAbility(ability, context.event)) {
             return;
         }
-
-        let context = ability.createContext(event);
 
         if (!ability.canResolve(context)) {
             return;
@@ -81,7 +51,7 @@ class BaseAbilityWindow extends BaseStep {
     }
 
     markAbilityAsResolved(ability, event) {
-        this.resolvedAbilities.push({ ability: ability, event: event });
+        this.resolvedAbilities.push({ ability, event });
     }
 
     clearAbilityResolution(ability) {

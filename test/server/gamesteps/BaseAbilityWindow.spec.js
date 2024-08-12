@@ -2,7 +2,7 @@ import BaseAbilityWindow from '../../../server/game/gamesteps/BaseAbilityWindow.
 
 describe('BaseAbilityWindow', function () {
     beforeEach(function () {
-        this.gameSpy = jasmine.createSpyObj('game', ['queueStep', 'resolveAbility']);
+        this.gameSpy = jasmine.createSpyObj('game', ['queueStep', 'emit', 'resolveAbility']);
 
         this.eventSpy = jasmine.createSpyObj('event', [
             'clearAttachedEvents',
@@ -11,11 +11,7 @@ describe('BaseAbilityWindow', function () {
         ]);
         this.eventSpy.getConcurrentEvents.and.returnValue([this.eventSpy]);
 
-        this.abilitySpy = jasmine.createSpyObj('ability', [
-            'createContext',
-            'isTriggeredByEvent',
-            'canResolve'
-        ]);
+        this.abilitySpy = jasmine.createSpyObj('ability', ['isTriggeredByContext', 'canResolve']);
 
         this.window = new BaseAbilityWindow(this.gameSpy, {
             event: this.eventSpy,
@@ -32,6 +28,12 @@ describe('BaseAbilityWindow', function () {
             this.window.gatherChoices();
 
             expect(this.window.abilityChoices.length).toBe(0);
+        });
+
+        it('should emit the ability type event for aggregates to trigger', function () {
+            this.window.gatherChoices();
+
+            expect(this.gameSpy.emit).toHaveBeenCalledWith(this.window.abilityType, this.eventSpy);
         });
 
         it('should emit the associated event to trigger associated abilities', function () {
@@ -73,20 +75,14 @@ describe('BaseAbilityWindow', function () {
         beforeEach(function () {
             this.player = { player: 1 };
             this.card = { card: 1 };
-            this.context = { context: 1, player: this.player };
+            this.context = { event: this.eventSpy, player: this.player };
             this.abilitySpy.card = this.card;
-            this.abilitySpy.createContext.and.returnValue(this.context);
             this.abilitySpy.canResolve.and.returnValue(true);
         });
 
         describe('when the ability can be registerd', function () {
             beforeEach(function () {
-                this.window.registerAbility(this.abilitySpy, this.eventSpy);
-            });
-
-            it('should create a context', function () {
-                expect(this.abilitySpy.createContext).toHaveBeenCalledWith(this.eventSpy);
-                expect(this.abilitySpy.createContext).toHaveBeenCalledTimes(1);
+                this.window.registerAbility(this.abilitySpy, this.context);
             });
 
             it('should register the ability', function () {
@@ -105,7 +101,7 @@ describe('BaseAbilityWindow', function () {
             beforeEach(function () {
                 this.abilitySpy.canResolve.and.returnValue(false);
 
-                this.window.registerAbility(this.abilitySpy, this.eventSpy);
+                this.window.registerAbility(this.abilitySpy, this.context);
             });
 
             it('should not register choices', function () {
@@ -117,7 +113,7 @@ describe('BaseAbilityWindow', function () {
             beforeEach(function () {
                 this.window.markAbilityAsResolved(this.abilitySpy, this.eventSpy);
 
-                this.window.registerAbility(this.abilitySpy, this.eventSpy);
+                this.window.registerAbility(this.abilitySpy, this.context);
             });
 
             it('should not register choices', function () {

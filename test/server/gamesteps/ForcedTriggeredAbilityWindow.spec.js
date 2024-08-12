@@ -34,14 +34,9 @@ describe('ForcedTriggeredAbilityWindow', function () {
             return cardSpy;
         }
 
-        function createAbility(card, context) {
-            let ability = jasmine.createSpyObj('ability', [
-                'createContext',
-                'getChoices',
-                'canResolve'
-            ]);
+        function createAbility(card) {
+            let ability = jasmine.createSpyObj('ability', ['getChoices', 'canResolve']);
             ability.card = card;
-            ability.createContext.and.returnValue(context);
             ability.getChoices.and.returnValue([{ choice: 'default' }]);
             ability.canResolve.and.returnValue(true);
             return ability;
@@ -49,7 +44,7 @@ describe('ForcedTriggeredAbilityWindow', function () {
 
         this.context1 = { context: 1, player: this.player1Spy, event: this.eventSpy };
         this.abilityCard1 = createCard({ card: 1, name: 'The Card', controller: this.player1Spy });
-        this.ability1Spy = createAbility(this.abilityCard1, this.context1);
+        this.ability1Spy = createAbility(this.abilityCard1);
 
         this.context2 = { context: 2, player: this.player1Spy, event: this.eventSpy };
         this.abilityCard2 = createCard({
@@ -57,7 +52,7 @@ describe('ForcedTriggeredAbilityWindow', function () {
             name: 'The Card 2',
             controller: this.player1Spy
         });
-        this.ability2Spy = createAbility(this.abilityCard2, this.context2);
+        this.ability2Spy = createAbility(this.abilityCard2);
 
         this.context3 = { context: 3, player: this.player2Spy, event: this.eventSpy };
         this.abilityCard3 = createCard({
@@ -65,7 +60,7 @@ describe('ForcedTriggeredAbilityWindow', function () {
             name: 'Their Card',
             controller: this.player2Spy
         });
-        this.ability3Spy = createAbility(this.abilityCard3, this.context3);
+        this.ability3Spy = createAbility(this.abilityCard3);
 
         spyOn(this.window, 'gatherChoices');
         spyOn(this.window, 'resolveAbility');
@@ -89,7 +84,7 @@ describe('ForcedTriggeredAbilityWindow', function () {
         describe('when there is only 1 choice', function () {
             beforeEach(function () {
                 this.window.gatherChoices.and.callFake(() => {
-                    this.window.registerAbility(this.ability1Spy, this.eventSpy);
+                    this.window.registerAbility(this.ability1Spy, this.context1);
                 });
 
                 this.result = this.window.continue();
@@ -120,9 +115,9 @@ describe('ForcedTriggeredAbilityWindow', function () {
         describe('when there are multiple choices', function () {
             beforeEach(function () {
                 this.window.gatherChoices.and.callFake(() => {
-                    this.window.registerAbility(this.ability1Spy, this.eventSpy);
-                    this.window.registerAbility(this.ability2Spy, this.eventSpy);
-                    this.window.registerAbility(this.ability3Spy, this.eventSpy);
+                    this.window.registerAbility(this.ability1Spy, this.context1);
+                    this.window.registerAbility(this.ability2Spy, this.context2);
+                    this.window.registerAbility(this.ability3Spy, this.context3);
                 });
                 this.result = this.window.continue();
             });
@@ -164,7 +159,7 @@ describe('ForcedTriggeredAbilityWindow', function () {
 
     describe('chooseAbility()', function () {
         beforeEach(function () {
-            this.window.registerAbility(this.ability1Spy, this.eventSpy);
+            this.window.registerAbility(this.ability1Spy, this.context1);
             this.choiceId = this.window.abilityChoices[0].id;
         });
 
