@@ -1,8 +1,8 @@
-import uuid from 'uuid';
+import AggregateTrigger from './AggregateTrigger.js';
 import BaseAbility from './baseability.js';
 import Costs from './costs.js';
+import SingularTrigger from './SingularTrigger.js';
 import TriggeredAbilityContext from './TriggeredAbilityContext.js';
-import Event from './event.js';
 
 class TriggeredAbility extends BaseAbility {
     constructor(game, card, eventType, properties) {
@@ -201,139 +201,6 @@ class TriggeredAbility extends BaseAbility {
             }
             this.events = null;
         }
-    }
-}
-
-export class SingularTrigger {
-    constructor(ability, eventName, listener) {
-        this.ability = ability;
-        this.eventName = eventName;
-        this.condition = listener;
-    }
-
-    isTriggeredByContext(context) {
-        return context.event.getConcurrentEvents().some((event) => {
-            const context = this.ability.createContext(event);
-            return this.isTriggeredByEvent(event, context);
-        });
-    }
-
-    isTriggeredByEvent(event, context) {
-        if (this.eventName !== event.name || event.cancelled) {
-            return false;
-        }
-
-        if (
-            event.ability &&
-            !!event.ability.cannotBeCanceled &&
-            this.ability.eventType === 'cancelinterrupt'
-        ) {
-            return false;
-        }
-        return this.condition(event, context);
-    }
-
-    eventHandler(event) {
-        const context = this.ability.createContext(event);
-        if (this.isTriggeredByEvent(event, context)) {
-            this.ability.game.registerAbility(this.ability, context);
-        }
-    }
-
-    createEvent(eventType) {
-        return {
-            name: `${this.eventName}:${eventType}`,
-            handler: (event) => this.eventHandler(event)
-        };
-    }
-}
-
-export class AggregateTrigger {
-    constructor(ability, eventName, listener) {
-        this.uuid = uuid.v1();
-        this.ability = ability;
-        this.eventName = eventName;
-        this.aggregateBy = listener.aggregateBy;
-        this.condition = listener.condition;
-    }
-
-    createAggregateGroups(event) {
-        return event.getConcurrentEvents().reduce((aggregateGroups, event) => {
-            if (event.name === this.eventName && !event.cancelled) {
-                const tempContext = this.ability.createContext(event);
-                const aggregate = this.aggregateBy(event, tempContext);
-
-                const keys = Object.keys(aggregate);
-                const existingGroup = aggregateGroups.find((a) =>
-                    keys.every((k) => aggregate[k] === a.aggregate[k])
-                );
-                if (existingGroup) {
-                    existingGroup.events.push(event);
-                } else {
-                    aggregateGroups.push({ aggregate, events: [event] });
-                }
-            }
-            return aggregateGroups;
-        }, []);
-    }
-
-    isTriggeredByContext(context) {
-        const event = context.event;
-        if (!event.name.includes(':aggregate') || event.cancelled) {
-            return false;
-        }
-
-        if (
-            event.ability &&
-            !!event.ability.cannotBeCanceled &&
-            this.ability.eventType === 'cancelinterrupt'
-        ) {
-            return false;
-        }
-
-        return this.condition(event.aggregate, event.events, context);
-    }
-
-    createContext(event) {
-        const context = this.ability.createContext(event);
-        context.aggregate = event.aggregate;
-        context.events = event.events;
-        return context;
-    }
-
-    eventHandler(event) {
-        const groups = this.createAggregateGroups(event);
-        if (groups.length === 0) {
-            return;
-        }
-        event.aggregates = event.aggregates || new Map();
-        // Only add aggregates once (when event is first fired)
-        if (!event.aggregates.has(this.uuid)) {
-            const aggregateEvents = groups.map(
-                (group) =>
-                    new Event(`${this.eventName}:aggregate`, {
-                        aggregate: group.aggregate,
-                        events: group.events
-                    })
-            );
-
-            event.aggregates.set(this.uuid, aggregateEvents);
-        }
-
-        // Register (or re-register) all aggregate abilities
-        for (const aggregateEvent of event.aggregates.get(this.uuid)) {
-            const context = this.createContext(aggregateEvent);
-            if (this.isTriggeredByContext(context)) {
-                this.ability.game.registerAbility(this.ability, context);
-            }
-        }
-    }
-
-    createEvent(eventType) {
-        return {
-            name: eventType, // Simply capture the event type (eg. Reaction)
-            handler: (event) => this.eventHandler(event)
-        };
     }
 }
 
