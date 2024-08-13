@@ -41,7 +41,7 @@ const routes = [
     },
     { path: '/blocklist', action: () => <BlockList key='blocklist' /> },
     { path: '/decks', action: () => <Decks key='decks' /> },
-    { path: '/decks/add', action: () => <AddDeck key='adddecks' /> },
+    { path: '/decks/new', action: () => <AddDeck key='adddecks' /> },
     {
         path: '/decks/edit/:id([a-f\\d]{24})',
         action: (context) => <EditDeck key='editdeck' deckId={context.params.id} />

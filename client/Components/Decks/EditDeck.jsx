@@ -1,108 +1,39 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import React from 'react';
 
-import DeckSummary from './DeckSummary';
 import DeckEditor from './DeckEditor';
-import DraftDeckEditor from './DraftDeckEditor';
 import AlertPanel from '../Site/AlertPanel';
 import Panel from '../Site/Panel';
-import { useGetDeckQuery, useSaveDeckMutation } from '../../redux/middleware/api';
+import { useDispatch } from 'react-redux';
 import { navigate } from '../../redux/reducers/navigation';
+import { useGetDeckQuery } from '../../redux/middleware/api';
+import LoadingSpinner from '../Site/LoadingSpinner';
 
-const EditDeck = ({ deckId }) => {
+const EditDeckPage = ({ deckId }) => {
     const dispatch = useDispatch();
-    const [currentRestrictedList, setCurrentRestrictedList] = useState(undefined);
-    const [deck, setDeck] = useState(undefined);
-    const [error, setError] = useState(undefined);
-    const [success, setSuccess] = useState(undefined);
 
-    const { data, isLoading, error: deckError } = useGetDeckQuery(deckId);
-    const [saveDeck, { isLoading: isSaveLoading }] = useSaveDeckMutation();
-    const timer = useRef(null);
-
-    const onEditDeck = useCallback(
-        async (deck) => {
-            try {
-                await saveDeck(deck).unwrap();
-                setSuccess('Deck saved successfully');
-
-                timer.current = setTimeout(() => {
-                    setSuccess(undefined);
-                    dispatch(navigate('/decks'));
-                }, 5000);
-            } catch (err) {
-                setError(
-                    err.message || 'An error occured saving the deck. Please try again later.'
-                );
-            }
-        },
-        [dispatch, saveDeck]
-    );
-
-    useEffect(() => {
-        return () => clearInterval(timer.current);
-    }, []);
-
-    const onDeckUpdated = useCallback((deck) => {
-        setDeck(deck);
-    }, []);
-
-    useEffect(() => {
-        if (data) {
-            setDeck(data);
-        }
-    }, [data]);
-
-    useEffect(() => {
-        if (deckError) {
-            setError(deckError.data.message);
-        }
-    }, [deckError]);
+    const { data, isLoading, isError, isSuccess } = useGetDeckQuery(deckId);
 
     let content;
 
-    if (isLoading || !data) {
-        content = <div>Loading deck from the server...</div>;
-    } else if (!deck) {
-        content = <AlertPanel message='The specified deck was not found' type='error' />;
-    } else if (deck.format === 'draft') {
+    console.info(data);
+
+    if (isLoading) {
+        content = <LoadingSpinner text='Loading deck, please wait...' />;
+    } else if (isError) {
         content = (
-            <Panel title='Deck Editor'>
-                <DraftDeckEditor
-                    deck={deck}
-                    onDeckSave={onEditDeck}
-                    onDeckUpdated={onDeckUpdated}
-                />
-            </Panel>
+            <AlertPanel variant='danger'>
+                {'An error occured loading your deck. Please try again later.'}
+            </AlertPanel>
         );
-    } else {
-        content = (
-            <div>
-                <div className='col-sm-6'>
-                    <Panel title='Deck Editor'>
-                        {error && <AlertPanel type='error' message={error} />}
-                        {success && <AlertPanel type='success' message={success} />}
-                        <DeckEditor
-                            onDeckSave={onEditDeck}
-                            isSaveLoading={isSaveLoading}
-                            deck={deck}
-                            onDeckUpdated={onDeckUpdated}
-                            onRestrictedListChange={(restrictedList) =>
-                                setCurrentRestrictedList(restrictedList)
-                            }
-                        />
-                    </Panel>
-                </div>
-                <div className='col-sm-6'>
-                    <Panel title={deck.name}>
-                        <DeckSummary deck={deck} currentRestrictedList={currentRestrictedList} />
-                    </Panel>
-                </div>
-            </div>
-        );
+    } else if (isSuccess) {
+        content = <DeckEditor deck={data} onBackClick={() => dispatch(navigate('/decks'))} />;
     }
 
-    return content;
+    return (
+        <div className='w-full'>
+            <Panel title={data?.name}>{content}</Panel>
+        </div>
+    );
 };
 
-export default EditDeck;
+export default EditDeckPage;

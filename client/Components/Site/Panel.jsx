@@ -1,30 +1,37 @@
+import { Card, CardBody, CardHeader } from '@nextui-org/react';
 import React from 'react';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
 
-const Panel = ({ children, className, title, type = 'primary' }) => {
+const PanelType = Object.freeze({
+    Default: 'default',
+    Primary: 'primary',
+    Info: 'info',
+    Warning: 'warning',
+    Danger: 'danger'
+});
+
+const Panel = ({
+    className,
+    type = PanelType.Primary,
+    title,
+    titleClass,
+    children,
+    fullHeight = true
+}) => {
     return (
-        <div className={classNames('panel', `panel-${type}`, className)}>
-            {title && <div className='panel-heading'>{title}</div>}
-            <div className='panel-body'>{children}</div>
-        </div>
+        <Card
+            className={`${className} border-2 bg-opacity-70 border-${type} ${
+                fullHeight ? 'h-full' : ''
+            } shadow-lg`}
+            classNames={{ body: 'h-full overflow-y-auto' }}
+        >
+            {title && (
+                <CardHeader className={`${titleClass} justify-center bg-${type} rounded-none`}>
+                    {title}
+                </CardHeader>
+            )}
+            <CardBody>{children}</CardBody>
+        </Card>
     );
-};
-
-Panel.displayName = 'Panel';
-Panel.propTypes = {
-    children: PropTypes.node,
-    className: PropTypes.string,
-    title: PropTypes.string,
-    type: PropTypes.oneOf([
-        'danger',
-        'success',
-        'warning',
-        'info',
-        'default',
-        'primary',
-        'tertiary'
-    ])
 };
 
 export default Panel;

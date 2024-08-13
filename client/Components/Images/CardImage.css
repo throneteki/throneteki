@@ -1,0 +1,15 @@
+.game-card-image {
+    min-height: 45px;
+
+    .sm {
+        width: 32px;
+    }
+
+    .md {
+        width: 64px;
+    }
+
+    .lg {
+        width: 300px;
+    }
+}

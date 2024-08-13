@@ -87,8 +87,12 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
         }
     } else if (!result.error && !result.data.success) {
         return {
-            error: result.data.message || 'An unknwon error occured. Please try again later.'
+            error: result.data.message || 'An unknown error occured. Please try again later.'
         };
+    }
+
+    if (api.endpoint === 'getDecks') {
+        return result;
     }
 
     if (result.data) {
@@ -130,10 +134,21 @@ export const apiSlice = createApi({
             ]
         }),
         getDecks: builder.query({
-            query: () => '/decks',
+            query: (loadOptions) => {
+                return {
+                    url: '/decks',
+                    params: {
+                        pageSize: loadOptions.pageSize,
+                        pageNumber: loadOptions.pageIndex,
+                        sorting: loadOptions.sorting,
+                        filters: loadOptions.columnFilters,
+                        restrictedList: loadOptions.restrictedList
+                    }
+                };
+            },
             providesTags: (result = { data: [] }) => [
                 TagTypes.Deck,
-                ...(result.data || [].map(({ _id }) => ({ type: TagTypes.Deck, _id })))
+                ...result.data.map(({ _id }) => ({ type: TagTypes.Deck, _id }))
             ]
         }),
         getCards: builder.query({
@@ -190,6 +205,16 @@ export const apiSlice = createApi({
             query: (deckId) => ({
                 url: `/decks/${deckId}`,
                 method: 'DELETE'
+            }),
+            invalidatesTags: [TagTypes.Deck]
+        }),
+        deleteDecks: builder.mutation({
+            query: (deckIds) => ({
+                url: '/decks',
+                method: 'DELETE',
+                body: {
+                    deckIds: deckIds
+                }
             }),
             invalidatesTags: [TagTypes.Deck]
         }),
@@ -472,5 +497,6 @@ export const {
     useResetPasswordMutation,
     useLinkPatreonMutation,
     useDeleteDraftCubeMutation,
-    useRemoveMessageMutation
+    useRemoveMessageMutation,
+    useDeleteDecksMutation
 } = apiSlice;

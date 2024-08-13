@@ -18,7 +18,6 @@ const BanlistAdmin = () => {
     const onAddBanlistClick = useCallback(
         async (state) => {
             try {
-                console.info(state, state.ip);
                 await addBanListEntry(state.ip).unwrap();
 
                 toastr.success('Ban list entry added successfully.');

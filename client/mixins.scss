@@ -1,0 +1,29 @@
+@mixin calculate-tiled-card-prop($property, $numCards, $cardMeasurement, $additionalOffset: 0px) {
+    #{$property}: calc(
+        $numCards * (var(--throneteki-card-#{$cardMeasurement}) + 10px) + $additionalOffset
+    );
+
+    &.small {
+        #{$property}: calc(
+            $numCards * (var(--throneteki-card-sm-#{$cardMeasurement}) + 10px) + $additionalOffset
+        );
+    }
+
+    &.normal {
+        #{$property}: calc(
+            $numCards * (var(--throneteki-card-#{$cardMeasurement}) + 10px) + $additionalOffset
+        );
+    }
+
+    &.large {
+        #{$property}: calc(
+            $numCards * (var(--throneteki-card-lg-#{$cardMeasurement}) + 10px) + $additionalOffset
+        );
+    }
+
+    &.x-large {
+        #{$property}: calc(
+            $numCards * (var(--throneteki-card-xl-#{$cardMeasurement}) + 10px) + $additionalOffset
+        );
+    }
+}

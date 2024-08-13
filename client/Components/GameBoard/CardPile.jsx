@@ -6,6 +6,8 @@ import CardTiledList from './CardTiledList';
 import Droppable from './Droppable';
 import MovablePanel from './MovablePanel';
 
+import './CardPileLink.scss';
+
 const CardPile = ({
     cards,
     disablePopup,
@@ -173,11 +175,15 @@ const CardPile = ({
             return null;
         }
 
-        let popupClass = classNames('panel', {
-            'our-side': popupLocation === 'bottom'
-        });
+        const popupClass = classNames(
+            'relative margin-2 border-1 border-default-200 bg-black bg-opacity-65 rounded-b-md h-full',
+            {
+                'our-side': popupLocation === 'bottom',
+                [size]: true
+            }
+        );
 
-        let innerClass = classNames('inner', size);
+        let innerClass = classNames('inner h-auto', size);
         let linkIndex = 0;
 
         let retPopupMenu = popupMenu && (
@@ -205,8 +211,9 @@ const CardPile = ({
                 name={source}
                 onCloseClick={onCloseClick}
                 side={popupLocation}
+                size={size}
             >
-                <Droppable onDragDrop={onDragDrop} source={source}>
+                <Droppable onDragDrop={onDragDrop} source={source} size={size}>
                     <div className={popupClass} onClick={(event) => event.stopPropagation()}>
                         {retPopupMenu}
                         <div className={innerClass}>{cardList}</div>

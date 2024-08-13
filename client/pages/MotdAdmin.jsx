@@ -25,8 +25,6 @@ const MotdAdmin = () => {
         setSelectedMotdType(motd ? motd.motdType : 'info');
     }, [motd]);
 
-    console.info(motd, motd?.motdType, selectedMotdType);
-
     const onMotdTextChange = useCallback((event) => {
         setMotdText(event.target.value);
     }, []);

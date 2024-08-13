@@ -1,16 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import ReactClipboard from 'react-clipboardjs-copy';
 import $ from 'jquery';
 
 import Panel from '../Site/Panel';
 import Messages from '../GameBoard/Messages';
-import Avatar from '../Site/Avatar';
 import SelectDeckModal from './SelectDeckModal';
-import DeckStatus from '../Decks/DeckStatus';
 import { cardSetLabel } from '../Decks/DeckHelper';
 import { createGameTitle } from './GameHelper';
 import { useDispatch, useSelector } from 'react-redux';
-import { useGetDecksQuery, useGetEventsQuery } from '../../redux/middleware/api';
 import {
     sendChatMessage,
     sendLeaveGameMessage,
@@ -19,93 +15,27 @@ import {
 } from '../../redux/reducers/lobby';
 import { navigate } from '../../redux/reducers/navigation';
 
+import ChargeMp3 from '../../assets/sound/charge.mp3';
+import ChargeOgg from '../../assets/sound/charge.ogg';
+import { Button, Input, Link, Snippet } from '@nextui-org/react';
+import GameTypeInfo from './GameTypeInfo';
+import AlertPanel, { AlertType } from '../Site/AlertPanel';
+import PendingGamePlayers from './PendingGamePlayers';
+
 const PendingGame = () => {
     const dispatch = useDispatch();
     const [playerCount, setPlayerCount] = useState(1);
     const [message, setMessage] = useState('');
     const [waiting, setWaiting] = useState(false);
+    const [showModal, setShowModal] = useState(false);
+    const [canScroll, setCanScroll] = useState(true);
 
     const { connecting, host } = useSelector((state) => state.game);
     const { currentGame, gameError } = useSelector((state) => state.lobby);
     const user = useSelector((state) => state.auth.user);
 
-    const notification = useRef(null);
+    const notificationRef = useRef(null);
     const messageRef = useRef(null);
-
-    const { data: events, isLoading: isEventsLoading, error: eventsError } = useGetEventsQuery();
-    const { data: decks, isLoading: isDecksLoading, error: decksError } = useGetDecksQuery();
-
-    const onSelectDeckClick = useCallback(() => {
-        $('#decks-modal').modal('show');
-    }, []);
-
-    const isGameReady = useCallback(() => {
-        if (!user) {
-            return false;
-        }
-
-        if (currentGame.tableType !== 'drafting-table') {
-            if (
-                !Object.values(currentGame.players).every((player) => {
-                    return !!player.deck.selected;
-                })
-            ) {
-                return false;
-            }
-
-            return currentGame.owner === user.username;
-        }
-
-        return true;
-    }, [currentGame.owner, currentGame.players, currentGame.tableType, user]);
-
-    const getPlayerStatus = useCallback(
-        (player, username) => {
-            if (currentGame.tableType === 'drafting-table') {
-                return (
-                    <div className='player-row' key={player.name}>
-                        <Avatar username={player.name} />
-                        <span>{player.name}</span>
-                    </div>
-                );
-            }
-
-            let playerIsMe = player && player.name === username;
-
-            let deck = null;
-            let selectLink = null;
-            let status = null;
-
-            if (player && player.deck && player.deck.selected) {
-                if (playerIsMe) {
-                    deck = (
-                        <span className='deck-selection clickable' onClick={onSelectDeckClick}>
-                            {player.deck.name}
-                        </span>
-                    );
-                } else {
-                    deck = <span className='deck-selection'>Deck Selected</span>;
-                }
-
-                status = <DeckStatus status={player.deck.status} />;
-            } else if (player && playerIsMe) {
-                selectLink = (
-                    <span className='card-link' onClick={onSelectDeckClick}>
-                        Select deck...
-                    </span>
-                );
-            }
-
-            return (
-                <div className='player-row' key={player.name}>
-                    <Avatar username={player.name} />
-                    <span>{player.name}</span>
-                    {deck} {status} {selectLink}
-                </div>
-            );
-        },
-        [currentGame.tableType, onSelectDeckClick]
-    );
 
     const getGameStatus = useCallback(() => {
         if (gameError) {
@@ -147,25 +77,6 @@ const PendingGame = () => {
         waiting
     ]);
 
-    const selectDeck = useCallback(
-        (deck) => {
-            $('#decks-modal').modal('hide');
-
-            dispatch(sendSelectDeckMessage(currentGame.id, deck._id));
-        },
-        [currentGame.id, dispatch]
-    );
-
-    const onStartClick = useCallback(
-        (event) => {
-            event.preventDefault();
-
-            setWaiting(true);
-            dispatch(sendStartGameMessage(currentGame.id));
-        },
-        [currentGame.id, dispatch]
-    );
-
     const onLeaveClick = useCallback(
         (event) => {
             event.preventDefault();
@@ -187,7 +98,6 @@ const PendingGame = () => {
 
     const onKeyPress = useCallback(
         (event) => {
-            console.info(event);
             if (event.key === 'Enter') {
                 sendMessage();
 
@@ -197,23 +107,6 @@ const PendingGame = () => {
         [sendMessage]
     );
 
-    const onChange = useCallback((event) => {
-        setMessage(event.target.value);
-    }, []);
-
-    const isCurrentEventALockedDeckEvent = useCallback(() => {
-        return currentGame.event && currentGame.event._id !== 'none' && currentGame.event.lockDecks;
-    }, [currentGame.event]);
-
-    const filterDecksForCurrentEvent = useCallback(() => {
-        if (isCurrentEventALockedDeckEvent()) {
-            let filteredDecks = decks.filter((d) => d.eventId === currentGame.event._id);
-            return filteredDecks;
-        }
-
-        return decks;
-    }, [currentGame.event._id, decks, isCurrentEventALockedDeckEvent]);
-
     useEffect(() => {
         if (!user) {
             return;
@@ -222,12 +115,12 @@ const PendingGame = () => {
         let players = Object.values(currentGame.players).length;
 
         if (
-            notification.current &&
+            notificationRef.current &&
             playerCount === 1 &&
             players === 2 &&
             currentGame.owner === user.username
         ) {
-            let promise = notification.current.play();
+            let promise = notificationRef.current.play();
 
             if (promise !== undefined) {
                 promise.catch(() => {}).then(() => {});
@@ -250,20 +143,36 @@ const PendingGame = () => {
                 setWaiting(false);
             }
 
+            if (canScroll && messageRef.current) {
+                messageRef.current.scrollTop = 999999;
+            }
+
             setPlayerCount(players);
         }
-    }, [user, playerCount, currentGame, connecting, gameError]);
+    }, [user, playerCount, currentGame, connecting, gameError, canScroll]);
 
-    useEffect(() => {
-        $(messageRef.current).scrollTop(999999);
-    }, [currentGame]);
+    const canStartGame = () => {
+        if (!user || !currentGame || currentGame.owner !== user.username || connecting) {
+            return false;
+        }
+
+        if (
+            !Object.values(currentGame.players).every((player) => {
+                return !!player.deck?.selected;
+            })
+        ) {
+            return false;
+        }
+
+        if (waiting && !gameError) {
+            return false;
+        }
+
+        return true;
+    };
 
     if (currentGame && currentGame.started) {
         return <div>Loading game in progress, please wait...</div>;
-    }
-
-    if (!decks) {
-        return <div>Loading decks, please wait...</div>;
     }
 
     if (!user) {
@@ -272,19 +181,11 @@ const PendingGame = () => {
         return <div>You must be logged in to play, redirecting...</div>;
     }
 
-    let allowStandaloneDecks = true;
-    let filterDecks;
-
-    if (currentGame.event.format === 'draft') {
-        allowStandaloneDecks = false;
-        filterDecks = (deck) => deck.eventId === currentGame.event._id;
-    }
-
     return (
-        <div>
-            <audio ref={notification}>
-                <source src='/sound/charge.mp3' type='audio/mpeg' />
-                <source src='/sound/charge.ogg' type='audio/ogg' />
+        <>
+            <audio ref={notificationRef}>
+                <source src={ChargeMp3} type='audio/mpeg' />
+                <source src={ChargeOgg} type='audio/ogg' />
             </audio>
             <Panel
                 title={createGameTitle(
@@ -306,64 +207,110 @@ const PendingGame = () => {
                         <strong>Cards:</strong> {cardSetLabel(currentGame.restrictedList.cardSet)}
                     </p>
                 )}
-                <div className='btn-group'>
-                    <button
-                        className='btn btn-primary'
-                        disabled={!isGameReady() || connecting || waiting}
-                        onClick={onStartClick}
+                <div className='flex content-between'>
+                    <div>
+                        <Button
+                            className='me-2'
+                            color='success'
+                            disabled={!canStartGame()}
+                            onClick={() => {
+                                setWaiting(true);
+                                dispatch(sendStartGameMessage());
+                            }}
+                        >
+                            Start
+                        </Button>
+                        <Button
+                            color='primary'
+                            onClick={() => {
+                                dispatch(sendLeaveGameMessage());
+                            }}
+                        >
+                            Leave
+                        </Button>
+                    </div>
+                    <Snippet
+                        className='ml-2'
+                        classNames={{ base: 'py-1' }}
+                        codeString={`${window.location.protocol}//${window.location.host}/play?gameId=${currentGame.id}`}
+                        hideSymbol
                     >
-                        Start
-                    </button>
-                    <button className='btn btn-primary' onClick={onLeaveClick}>
-                        Leave
-                    </button>
+                        <Link href={`/play?gameId=${currentGame.id}`} isExternal>
+                            Game Link
+                        </Link>
+                    </Snippet>
                 </div>
-                <div className='pull-right'>
-                    <ReactClipboard
-                        text={`${window.location.protocol}//${window.location.host}/play?gameId=${currentGame.id}`}
-                    >
-                        <button className='btn btn-primary'>Copy Game Link</button>
-                    </ReactClipboard>
+                <div className='mt-3'>
+                    <GameTypeInfo gameType={currentGame.gameType} />
                 </div>
-                <div className='game-status'>{getGameStatus()}</div>
+                <div className='mt-4'>
+                    {gameError ? (
+                        <AlertPanel variant={AlertType.Danger}>{getGameStatus()}</AlertPanel>
+                    ) : (
+                        getGameStatus()
+                    )}
+                </div>
             </Panel>
-            <Panel title='Players'>
-                {Object.values(currentGame.players).map((player) => {
-                    return getPlayerStatus(player, user.username);
-                })}
-            </Panel>
-            <Panel title={`Spectators(${currentGame.spectators.length})`}>
+            <div className='mt-2'>
+                <PendingGamePlayers
+                    currentGame={currentGame}
+                    user={user}
+                    onSelectDeck={() => setShowModal(true)}
+                />
+            </div>
+            <Panel className='mt-2' title={`Spectators(${currentGame.spectators.length})`}>
                 {currentGame.spectators.map((spectator) => {
                     return <div key={spectator.name}>{spectator.name}</div>;
                 })}
             </Panel>
-            <Panel title='Chat'>
-                <div className='message-list' ref={messageRef}>
+            <Panel className='mt-2' title={'Chat'}>
+                <div
+                    className='message-list'
+                    ref={messageRef}
+                    onScroll={() => {
+                        setTimeout(() => {
+                            if (
+                                messageRef.current &&
+                                messageRef.current.scrollTop >=
+                                    messageRef.current.scrollHeight -
+                                        messageRef.current.offsetHeight -
+                                        20
+                            ) {
+                                setCanScroll(true);
+                            } else {
+                                setCanScroll(false);
+                            }
+                        }, 500);
+                    }}
+                >
                     <Messages messages={currentGame.messages} />
                 </div>
-                <form className='form form-hozitontal'>
-                    <div className='form-group'>
-                        <input
-                            className='form-control'
-                            type='text'
-                            placeholder='Enter a message...'
-                            value={message}
-                            onKeyPress={onKeyPress}
-                            onChange={onChange}
-                        />
-                    </div>
+                <form>
+                    <Input
+                        type='text'
+                        placeholder={'Enter a message...'}
+                        value={message}
+                        onKeyPress={(event) => {
+                            if (event.key === 'Enter') {
+                                sendMessage();
+                                event.preventDefault();
+                            }
+                        }}
+                        onChange={(event) => setMessage(event.target.value)}
+                    ></Input>
                 </form>
             </Panel>
-            <SelectDeckModal
-                currentRestrictedList={currentGame.restrictedList}
-                allowStandaloneDecks={allowStandaloneDecks}
-                decks={isCurrentEventALockedDeckEvent() ? filterDecksForCurrentEvent() : decks}
-                events={events}
-                filterDecks={filterDecks}
-                id='decks-modal'
-                onDeckSelected={selectDeck}
-            />
-        </div>
+            {showModal && (
+                <SelectDeckModal
+                    onClose={() => setShowModal(false)}
+                    onDeckSelected={(deck) => {
+                        setShowModal(false);
+                        dispatch(sendSelectDeckMessage(deck._id));
+                    }}
+                    restrictedList={currentGame.restrictedList?._id}
+                />
+            )}
+        </>
     );
 };
 

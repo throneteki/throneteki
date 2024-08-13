@@ -33,8 +33,8 @@ export const init = async function (server, options) {
         '/api/decks',
         passport.authenticate('jwt', { session: false }),
         wrapAsync(async function (req, res) {
-            let decks = await deckService.findByUserName(req.user.username);
-            res.send({ success: true, data: decks });
+            let decks = await deckService.findByUserName(req.user.username, req.query);
+            res.send(decks);
         })
     );
 

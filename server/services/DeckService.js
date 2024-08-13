@@ -71,16 +71,40 @@ class DeckService {
         });
     }
 
-    async findByUserName(username) {
-        const decks = await this.decks.find({ username: username }, { sort: { lastUpdated: -1 } });
+    async findByUserName(username, options = {}) {
+        const sort = options.sorting || ['lastUpdated', 'true'];
+        const page = parseInt(options.pageNumber, 10) || 1;
+        const pageSize = parseInt(options.pageSize, 10) || 10;
 
-        return decks.map((deck) => {
-            deck.locked = !!deck.eventId;
+        const dbDecks = await this.decks.aggregate([
+            {
+                $facet: {
+                    metadata: [{ $match: { username: username } }, { $count: 'totalCount' }],
+                    data: [
+                        { $match: { username: username } },
+                        { $skip: (page - 1) * pageSize },
+                        { $limit: pageSize },
+                        { $sort: { [sort[0]]: sort[1] === 'true' ? -1 : 1 } }
+                    ]
+                }
+            }
+        ]);
 
-            deck = this.processDeck(deck);
+        const decks = Object.assign(
+            { totalCount: dbDecks[0].metadata[0].totalCount, page, pageSize },
+            {
+                success: true,
+                data: dbDecks[0].data.map((deck) => {
+                    deck.locked = !!deck.eventId;
 
-            return deck;
-        });
+                    deck = this.processDeck(deck);
+
+                    return deck;
+                })
+            }
+        );
+
+        return decks;
     }
 
     removeEventIdAndUnlockDecks(eventId) {

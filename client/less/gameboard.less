@@ -41,13 +41,6 @@
     }
 }
 
-.main-window {
-    display: flex;
-    flex-direction: row;
-    flex: 1;
-    overflow: hidden;
-}
-
 .card-pile {
     padding: 0px;
     position: relative;
@@ -129,7 +122,7 @@
         text-decoration: none;
 
         &:hover {
-            color: @brand-info;
+            //  color: @brand-info;
             cursor: pointer;
         }
     }
@@ -175,28 +168,6 @@
     align-items: center;
 }
 
-.state {
-    height: 27px;
-    padding-left: 5px;
-    padding-right: 5px;
-    border-right: solid 2px;
-    display: flex;
-    align-items: center;
-
-    span {
-        padding-right: 3px;
-        padding-left: 3px;
-    }
-
-    &:last-of-type {
-        border-right: none;
-    }
-
-    .glyphicon {
-        color: @brand-primary;
-    }
-}
-
 .btn-stat {
     padding: 0;
     font-size: 12px;
@@ -207,8 +178,8 @@
 }
 
 .btn-stat:hover {
-    background-color: @brand-info;
-    border-color: @brand-info;
+    //background-color: @brand-info;
+    //border-color: @brand-info;
 }
 
 .btn-stat:focus {
@@ -235,7 +206,7 @@
         margin: 0px 5px;
         padding: 5px;
         text-align: center;
-        background: @brand-tertiary;
+        //background: @brand-tertiary;
         border-radius: 0.25rem;
         border: 1px solid rgba(128, 128, 128, 0.53);
     }
@@ -343,7 +314,7 @@
 }
 
 .card-list-title {
-    background-color: @brand-primary;
+    //background-color: @brand-primary;
     color: white;
     margin-bottom: 5px;
     text-align: center;
@@ -454,15 +425,15 @@
     flex-direction: column;
 }
 
-.menu-pane-source {
-    background: rgba(0, 0, 0, 0.65);
-    border: 1px solid @header-border;
-    font-size: 14px;
-    font-weight: normal;
-    margin: 0 5px;
-    padding: 4px;
-    text-align: center;
-}
+// .menu-pane-source {
+//     background: rgba(0, 0, 0, 0.65);
+//     border: 1px solid @header-border;
+//     font-size: 14px;
+//     font-weight: normal;
+//     margin: 0 5px;
+//     padding: 4px;
+//     text-align: center;
+// }
 
 .menu-pane {
     text-align: center;
@@ -517,20 +488,20 @@
     right: 5%;
 }
 
-.phase-indicator {
-    margin: 5px;
-    margin-bottom: 0;
-    padding: 5px 0;
-    border: 1px solid @header-border;
-    border-radius: 4px 4px 0 0;
-    border-bottom: none;
-    background: @header-background;
-    text-align: center;
-    text-transform: uppercase;
-    width: 200px !important;
-    position: relative;
-    font-weight: bold;
-}
+// .phase-indicator {
+//     margin: 5px;
+//     margin-bottom: 0;
+//     padding: 5px 0;
+//     border: 1px solid @header-border;
+//     border-radius: 4px 4px 0 0;
+//     border-bottom: none;
+//     background: @header-background;
+//     text-align: center;
+//     text-transform: uppercase;
+//     width: 200px !important;
+//     position: relative;
+//     font-weight: bold;
+// }
 
 span.up-arrow {
     content: '';
@@ -541,7 +512,7 @@ span.up-arrow {
 
     border-right: 8px solid transparent;
     border-left: 8px solid transparent;
-    border-bottom: 8px solid @brand-primary;
+    //border-bottom: 8px solid @brand-primary;
     left: 90px;
 
     top: -9px;
@@ -556,7 +527,7 @@ span.down-arrow {
 
     border-right: 8px solid transparent;
     border-left: 8px solid transparent;
-    border-top: 8px solid @brand-primary;
+    //border-top: 8px solid @brand-primary;
     left: 90px;
 
     top: -9px;
@@ -670,21 +641,6 @@ span.down-arrow {
     padding-right: 10px;
 }
 
-.board-middle {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    overflow-x: hidden;
-    width: 100%;
-}
-
-.board-inner {
-    flex: 1;
-    display: flex;
-    min-height: 0;
-    overflow-x: hidden;
-}
-
 .close-button {
     color: @foreground-color;
     margin-bottom: 0 !important;
@@ -695,7 +651,7 @@ span.down-arrow {
     background: @background-color;
 
     .modal-header {
-        background: @brand-tertiary;
+        //background: @brand-tertiary;
     }
 }
 
@@ -703,7 +659,7 @@ span.down-arrow {
     color: @foreground-color;
 
     :hover {
-        color: @brand-info;
+        //color: @brand-info;
     }
 }
 
@@ -719,31 +675,30 @@ span.down-arrow {
 
     .alert-danger {
         .username {
-            color: darken(@brand-danger, 20%);
+            //color: darken(@brand-danger, 20%);
         }
     }
 
     .alert-info {
         .username {
-            color: darken(@brand-info, 20%);
+            //color: darken(@brand-info, 20%);
         }
     }
 
     .alert-success {
         .username {
-            color: darken(@brand-success, 20%);
+            //color: darken(@brand-success, 20%);
         }
     }
 
     .alert-warning {
         .username {
-            color: darken(@brand-warning, 20%);
+            //color: darken(@brand-warning, 20%);
         }
     }
 }
 
 .message-chat {
-    margin-bottom: 3px;
     b {
         color: white;
     }

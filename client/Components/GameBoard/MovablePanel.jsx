@@ -3,9 +3,57 @@ import { useDrag } from 'react-dnd';
 import $ from 'jquery';
 
 import { ItemTypes } from '../../constants';
-import PopupDefaults from './PopupDefaults';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
-const MovablePanel = ({ name, side, title, onCloseClick, children }) => {
+const PopupDefaults = {
+    'plot deck-bottom': {
+        left: '100px',
+        bottom: '155px'
+    },
+    'revealed plots-bottom': {
+        left: '100px',
+        bottom: '230px'
+    },
+    'revealed plots-top': {
+        left: '100px',
+        top: '155px'
+    },
+    'draw deck-top': {
+        top: '185px;'
+    },
+    'draw deck-bottom': {
+        bottom: '140px'
+    },
+    'discard pile-bottom': {
+        bottom: '155px'
+    },
+    'discard pile-top': {
+        top: '185px'
+    },
+    'dead pile-bottom': {
+        bottom: '140px'
+    },
+    'dead pile-top': {
+        top: '165px'
+    },
+    'out of game-top': {
+        top: '155px',
+        left: '20px'
+    },
+    'out of game-bottom': {
+        bottom: '155px',
+        right: '0'
+    },
+    'agenda-bottom': {
+        bottom: '155px'
+    },
+    'agenda-top': {
+        top: '185px'
+    }
+};
+
+const MovablePanel = ({ name, side, title, onCloseClick, children, size }) => {
     const key = `${name}-${side}`;
     const savedStyle = localStorage.getItem(key);
     const initialStyle = (savedStyle && JSON.parse(savedStyle)) || PopupDefaults[key];
@@ -64,11 +112,21 @@ const MovablePanel = ({ name, side, title, onCloseClick, children }) => {
     }, [dragOffset, isDragging, updatePosition]);
 
     return (
-        <div ref={popupRef} className='popup' style={position}>
-            <div ref={drag} className='panel-title' onClick={(event) => event.stopPropagation()}>
-                <span className='text-center'>{title}</span>
-                <span className='pull-right'>
-                    <a className='close-button glyphicon glyphicon-remove' onClick={onCloseClick} />
+        <div
+            ref={popupRef}
+            className={`panel border-primary bg-black opacity-70 ${size} rounded-b-md fixed z-50`}
+            style={position}
+        >
+            <div
+                ref={drag}
+                className='rounded-t-md flex justify-end border-b-1 border-foreground border-transparent bg-primary px-3 py-4 text-center font-bold text-white opacity-100'
+                onClick={(event) => event.stopPropagation()}
+            >
+                <span className='flex-1 text-center'>{title}</span>
+                <span className=''>
+                    <a onClick={onCloseClick}>
+                        <FontAwesomeIcon icon={faTimes} />
+                    </a>
                 </span>
             </div>
             {children}

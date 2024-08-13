@@ -57,6 +57,7 @@ const GameBoard = () => {
     const [cardToZoom, setCardToZoom] = useState(undefined);
     const [showMessages, setShowMessages] = useState(true);
     const [newMessages, setNewMessages] = useState(0);
+    const [showModal, setShowModal] = useState(false);
     const [lastMessageCount, setLastMessageCount] = useState(0);
 
     const onMessagesClick = useCallback(() => {
@@ -101,37 +102,43 @@ const GameBoard = () => {
         return <div>Waiting for game to have players or close...</div>;
     }
 
-    let boardClass = classNames('game-board', {
-        'select-cursor': thisPlayer && thisPlayer.selectCard
-    });
+    const boardClass = classNames(
+        'absolute top-0 bottom-0 right-0 left-0 flex justify-between flex-col',
+        {
+            'select-cursor': thisPlayer && thisPlayer.selectCard
+        }
+    );
 
     return (
         <div className={boardClass}>
-            <GameConfigurationModal
-                id='settings-modal'
-                keywordSettings={thisPlayer.keywordSettings}
-                onKeywordSettingToggle={(option, value) =>
-                    dispatch(sendToggleKeywordSettingMessage(option, value))
-                }
-                onPromptDupesToggle={(value) => dispatch(sendToggleDupesMessage(value))}
-                onPromptedActionWindowToggle={(option, value) =>
-                    dispatch(sendTogglePromptedActionWindowMessage(option, value))
-                }
-                onTimerSettingToggle={(option, value) =>
-                    dispatch(sendToggleTimerSetting(option, value))
-                }
-                promptDupes={thisPlayer.promptDupes}
-                promptedActionWindows={thisPlayer.promptedActionWindows}
-                timerSettings={thisPlayer.timerSettings}
-            />
-            <div className='player-stats-row'>
+            {showModal && (
+                <GameConfigurationModal
+                    onClose={() => setShowModal(false)}
+                    keywordSettings={thisPlayer.keywordSettings}
+                    onKeywordSettingToggle={(option, value) =>
+                        dispatch(sendToggleKeywordSettingMessage(option, value))
+                    }
+                    onPromptDupesToggle={(value) => dispatch(sendToggleDupesMessage(value))}
+                    onPromptedActionWindowToggle={(option, value) =>
+                        dispatch(sendTogglePromptedActionWindowMessage(option, value))
+                    }
+                    onTimerSettingToggle={(option, value) =>
+                        dispatch(sendToggleTimerSetting(option, value))
+                    }
+                    promptDupes={thisPlayer.promptDupes}
+                    promptedActionWindows={thisPlayer.promptedActionWindows}
+                    timerSettings={thisPlayer.timerSettings}
+                />
+            )}
+            <div>
                 <PlayerStats
+                    showControls={false}
                     stats={otherPlayer.stats}
                     user={otherPlayer.user}
                     firstPlayer={otherPlayer.firstPlayer}
                 />
             </div>
-            <div className='main-window'>
+            <div className='flex flex-shrink flex-grow basis-0 overflow-hidden'>
                 <GameBoardLayout
                     thisPlayer={thisPlayer}
                     otherPlayer={otherPlayer}
@@ -167,14 +174,14 @@ const GameBoard = () => {
                     </div>
                 )}
             </div>
-            <div className='player-stats-row'>
+            <div>
                 <PlayerStats
                     stats={thisPlayer.stats}
                     showControls={!!thisPlayer}
+                    showMessages
                     user={thisPlayer.user}
                     firstPlayer={thisPlayer.firstPlayer}
-                    onSettingsClick={() => $('#settings-modal').modal('show')}
-                    showMessages
+                    onSettingsClick={() => setShowModal(!showModal)}
                     onMessagesClick={onMessagesClick}
                     numMessages={newMessages}
                     muteSpectators={currentGame.muteSpectators}

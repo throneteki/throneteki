@@ -77,7 +77,7 @@ const validTargets = {
     rookery: ['full deck']
 };
 
-const Droppable = ({ children, onDragDrop, source }) => {
+const Droppable = ({ children, onDragDrop, source, size }) => {
     const [{ canDrop, isOver, itemSource }, drop] = useDrop({
         accept: ItemTypes.CARD,
         drop: (_, monitor) => {
@@ -103,10 +103,10 @@ const Droppable = ({ children, onDragDrop, source }) => {
         'drop-ok': isOver && canDrop,
         'no-drop': isOver && !canDrop && source !== itemSource,
         'can-drop': !isOver && canDrop,
-        [source]: true
+        [source.replace(' ', '-')]: true
     });
 
-    let dropClass = classNames('drop-target', {
+    let dropClass = classNames('drop-target', size, {
         [source.replace(' ', '-')]: source !== 'play area'
     });
 

@@ -27,8 +27,8 @@ const GameBoardLayout = ({ thisPlayer, otherPlayer, onCardClick, onMouseOver, on
                 onMouseOut={onMouseOut}
                 onMouseOver={onMouseOver}
             />
-            <div key='board-middle' className='board-middle'>
-                <div className='player-home-row'>
+            <div className='flex w-full flex-shrink flex-grow flex-col overflow-x-hidden'>
+                <div className='flex overflow-hidden'>
                     <PlayerRow
                         agendas={otherPlayer.agendas}
                         faction={otherPlayer.faction}
@@ -52,9 +52,9 @@ const GameBoardLayout = ({ thisPlayer, otherPlayer, onCardClick, onMouseOver, on
                         cardSize={user.settings.cardSize}
                     />
                 </div>
-                <div className='board-inner'>
-                    <div className='prompt-area'>
-                        <div className='inset-pane'>
+                <div className='flex flex-grow flex-shrink min-h-0 overflow-x-hidden'>
+                    <div className='flex flex-col justify-end'>
+                        <div className='flex flex-col w-52 justify-between'>
                             <ActivePlayerPrompt
                                 buttons={thisPlayer.buttons}
                                 controls={thisPlayer.controls}
