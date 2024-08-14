@@ -61,7 +61,6 @@ const ForgotPassword = () => {
                         <div className='form-group'>
                             <div className='col-sm-offset-2 col-sm-3'>
                                 <ReCAPTCHA
-                                    ref='recaptcha'
                                     sitekey='6LfELhMUAAAAAKbD2kLd6OtbsBbrZJFs7grwOREZ'
                                     theme='dark'
                                     onChange={onCaptchaChange}
