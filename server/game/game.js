@@ -1550,7 +1550,7 @@ class Game extends EventEmitter {
         for (let player of this.getAllPlayers()) {
             var deck = undefined;
             if (player.left) {
-                return;
+                continue;
             }
 
             if (activePlayerName === player.name && player.deck) {
