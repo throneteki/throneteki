@@ -193,7 +193,12 @@ const lobbySlice = createSlice({
             },
             () => {}
         ),
-        sendWatchGameMessage: () => {},
+        sendWatchGameMessage: create.preparedReducer(
+            (gameId, password = undefined) => {
+                return { payload: { gameId, password } };
+            },
+            () => {}
+        ),
         sendRemoveGameMessage: () => {},
         sendAuthenticateMessage: () => {},
         sendLobbyChatMessage: () => {}
