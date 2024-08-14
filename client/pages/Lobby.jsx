@@ -46,7 +46,7 @@ const Lobby = () => {
 
     const dispatch = useDispatch();
 
-    const [removeMessage, { isLoading }] = useRemoveMessageMutation();
+    const [removeMessage] = useRemoveMessageMutation();
 
     const checkChatError = useCallback(() => {
         if (lobbyError) {
