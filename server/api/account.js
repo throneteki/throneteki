@@ -245,7 +245,7 @@ export const init = function (server, options) {
         '/api/account/activate',
         wrapAsync(async (req, res, next) => {
             if (!req.body.id || !req.body.token) {
-                return res.send({ success: false, message: 'Invalid parameters' });
+                return res.status(400).send({ success: false, message: 'Invalid parameters' });
             }
 
             if (!req.body.id.match(/^[a-f\d]{24}$/i)) {
