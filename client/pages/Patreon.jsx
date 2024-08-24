@@ -25,6 +25,8 @@ const Patreon = ({ code }) => {
                 await linkPatreon(code).unwrap();
             } catch (err) {
                 setErrorMessage(err || 'An error occurred linking your account');
+
+                return;
             }
 
             setTimeout(() => {

@@ -895,8 +895,8 @@ export const init = function (server, options) {
                 return res.send({ success: false, message: 'Code is required' });
             }
 
-            let ret = await patreonService.linkAccount(req.params.username, req.body.code);
-            if (!ret) {
+            user = await patreonService.linkAccount(req.params.username, req.body.code);
+            if (!user) {
                 return res.send({
                     success: false,
                     message:
@@ -904,7 +904,6 @@ export const init = function (server, options) {
                 });
             }
 
-            user.patreon = ret;
             let status = await patreonService.getPatreonStatusForUser(user);
 
             if (status === 'pledged' && !user.permissions.isSupporter) {
