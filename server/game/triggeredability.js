@@ -1,5 +1,7 @@
+import AggregateTrigger from './AggregateTrigger.js';
 import BaseAbility from './baseability.js';
 import Costs from './costs.js';
+import SingularTrigger from './SingularTrigger.js';
 import TriggeredAbilityContext from './TriggeredAbilityContext.js';
 
 class TriggeredAbility extends BaseAbility {
@@ -9,7 +11,7 @@ class TriggeredAbility extends BaseAbility {
         this.game = game;
         this.card = card;
         this.max = properties.max;
-        this.when = properties.when;
+        this.abilityTriggers = this.buildAbilityTriggers(properties.when);
         this.playerFunc = properties.player || (() => this.card.controller);
         this.eventType = eventType;
         this.location = this.buildLocation(card, properties.location);
@@ -25,6 +27,19 @@ class TriggeredAbility extends BaseAbility {
 
     isTriggeredAbility() {
         return true;
+    }
+
+    buildAbilityTriggers(when) {
+        const abilityTriggers = [];
+        for (const eventName in when) {
+            const listener = when[eventName];
+            const trigger =
+                typeof listener === 'function'
+                    ? new SingularTrigger(this, eventName, listener)
+                    : new AggregateTrigger(this, eventName, listener);
+            abilityTriggers.push(trigger);
+        }
+        return abilityTriggers;
     }
 
     buildLocation(card, location) {
@@ -44,14 +59,6 @@ class TriggeredAbility extends BaseAbility {
         return defaultedLocation;
     }
 
-    eventHandler(event) {
-        if (!this.isTriggeredByEvent(event)) {
-            return;
-        }
-
-        this.game.registerAbility(this, event);
-    }
-
     createContext(event) {
         return new TriggeredAbilityContext({
             ability: this,
@@ -63,27 +70,11 @@ class TriggeredAbility extends BaseAbility {
     }
 
     triggersFor(eventName) {
-        return !!this.when[eventName];
+        return this.abilityTriggers.some((t) => t.eventName === eventName);
     }
 
-    isTriggeredByEvent(event) {
-        let listener = this.when[event.name];
-
-        if (!listener || event.cancelled) {
-            return false;
-        }
-
-        if (
-            event.ability &&
-            !!event.ability.cannotBeCanceled &&
-            this.eventType === 'cancelinterrupt'
-        ) {
-            return;
-        }
-
-        const context = this.createContext(event);
-
-        return listener(event, context);
+    isTriggeredByContext(context) {
+        return this.abilityTriggers.some((t) => t.isTriggeredByContext(context));
     }
 
     meetsRequirements(context) {
@@ -114,7 +105,7 @@ class TriggeredAbility extends BaseAbility {
             return false;
         }
 
-        if (!this.isTriggeredByEvent(context.event)) {
+        if (!this.isTriggeredByContext(context)) {
             return false;
         }
 
@@ -188,14 +179,9 @@ class TriggeredAbility extends BaseAbility {
             return;
         }
 
-        var eventNames = Object.keys(this.when);
-
         this.events = [];
-        for (let eventName of eventNames) {
-            var event = {
-                name: eventName + ':' + this.eventType,
-                handler: (event) => this.eventHandler(event)
-            };
+        for (const abilityTrigger of this.abilityTriggers) {
+            const event = abilityTrigger.createEvent(this.eventType);
             this.game.on(event.name, event.handler);
             this.events.push(event);
         }
@@ -207,7 +193,7 @@ class TriggeredAbility extends BaseAbility {
 
     unregisterEvents() {
         if (this.events) {
-            for (let event of this.events) {
+            for (const event of this.events) {
                 this.game.removeListener(event.name, event.handler);
             }
             if (this.limit) {

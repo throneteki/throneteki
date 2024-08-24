@@ -255,7 +255,7 @@ const Profile = () => {
     let callbackUrl =
         import.meta.env.MODE === 'production'
             ? 'https://theironthrone.net/patreon'
-            : 'http://localhost:8080/patreon';
+            : 'http://localhost:4000/patreon';
 
     return (
         <div className='col-sm-8 col-sm-offset-2 profile full-height'>

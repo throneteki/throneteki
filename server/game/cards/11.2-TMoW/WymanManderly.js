@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class WymanManderly extends DrawCard {
@@ -9,62 +10,44 @@ class WymanManderly extends DrawCard {
                 cardCondition: (card) =>
                     card.location === 'play area' &&
                     card.controller === this.controller &&
-                    card.getType() === 'character'
+                    card.getType() === 'character' &&
+                    GameActions.sacrificeCard({ card }).allow()
             },
+            message: '{player} uses {source} to sacrifice {target}',
             handler: (context) => {
-                context.player.sacrificeCard(context.target);
-                this.game.addMessage(
-                    '{0} uses {1} to sacrifice {2}',
-                    context.player,
-                    this,
-                    context.target
+                this.game.resolveGameAction(
+                    GameActions.sacrificeCard((context) => ({ card: context.target })),
+                    context
                 );
             }
         });
         this.reaction({
             when: {
-                'onSacrificed:aggregate': (event) =>
-                    this.hasCharacterYouControlled(event, 'cardStateWhenSacrificed'),
-                'onCharacterKilled:aggregate': (event) =>
-                    this.hasCharacterYouControlled(event, 'cardStateWhenKilled')
+                onSacrificed: {
+                    aggregateBy: (event) => this.buildAggregate(event.cardStateWhenSacrificed),
+                    condition: (aggregate) =>
+                        aggregate.type === 'character' && aggregate.controller === this.controller
+                },
+                onCharacterKilled: {
+                    aggregateBy: (event) => this.buildAggregate(event.cardStateWhenKilled),
+                    condition: (aggregate) =>
+                        aggregate.type === 'character' && aggregate.controller === this.controller
+                }
             },
             limit: ability.limit.perRound(3),
-            handler: (context) => {
-                let bonusMessages = [];
-
-                if (this.kneeled) {
-                    context.player.standCard(this);
-                    bonusMessages.push('stand {1}');
-                }
-
-                if (this.controller.canDraw()) {
-                    context.player.drawCardsToHand(1).length;
-                    bonusMessages.push('draw 1 card');
-                }
-
-                this.game.addMessage(
-                    '{0} uses {1} to ' + bonusMessages.join(' and '),
-                    context.player,
-                    this
-                );
-            }
+            message: '{player} uses {source} to {gameAction}',
+            gameAction: GameActions.simultaneously([
+                GameActions.standCard({ card: this }),
+                GameActions.drawCards((context) => ({ player: context.player, amount: 1 }))
+            ])
         });
     }
 
-    hasCharacterYouControlled(event, cardStateKey) {
-        return (
-            this.canChangeGameState() &&
-            event.events.some((subEvent) => {
-                let cardState = subEvent[cardStateKey];
-                return (
-                    cardState.controller === this.controller && cardState.getType() === 'character'
-                );
-            })
-        );
-    }
-
-    canChangeGameState() {
-        return this.controller.canDraw() || this.kneeled;
+    buildAggregate(card) {
+        return {
+            type: card.getType(),
+            controller: card.controller
+        };
     }
 }
 

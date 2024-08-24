@@ -1,12 +1,12 @@
 import React, { useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
-import ApiStatus from '../Components/Site/ApiStatus';
 import Panel from '../Components/Site/Panel';
 import Form from '../Components/Form/Form';
 import Link from '../Components/Site/Link';
 import { navigate } from '../redux/reducers/navigation';
 import { useRegisterAccountMutation } from '../redux/middleware/api';
+import AlertPanel from '../Components/Site/AlertPanel';
 
 const Register = () => {
     const dispatch = useDispatch();
@@ -38,7 +38,8 @@ const Register = () => {
                 }, 2000);
             } catch (err) {
                 setErrorMessage(
-                    err || 'An error occurred registering your account. Please try again later.'
+                    err?.data?.message ||
+                        'An error occurred registering your account. Please try again later.'
                 );
             }
         },
@@ -47,8 +48,8 @@ const Register = () => {
 
     return (
         <div className='col-sm-6 col-sm-offset-3'>
-            {successMessage && <ApiStatus type='success' message={successMessage} />}
-            {errorMessage && <ApiStatus type='error' message={errorMessage} />}
+            {successMessage && <AlertPanel type='success' message={successMessage} />}
+            {errorMessage && <AlertPanel type='error' message={errorMessage} />}
             <Panel title='Register an account'>
                 <p>
                     We require information from you in order to service your access to the site.

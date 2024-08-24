@@ -58,7 +58,7 @@ const Login = () => {
                 >
                     <div className='form-group'>
                         <div className='col-sm-offset-2 col-sm-10'>
-                            <Link to='/forgot'>Forgot your password?</Link>
+                            <Link href='/forgot'>Forgot your password?</Link>
                         </div>
                     </div>
                 </Form>

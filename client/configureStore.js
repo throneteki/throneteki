@@ -13,7 +13,6 @@ import game from './redux/reducers/game.js';
 import gameMiddleware from './redux/middleware/game.js';
 
 const sentryReduxEnhancer = Sentry.createReduxEnhancer({
-    attachReduxState: true,
     actionTransformer: (action) => {
         return action;
     }

@@ -65,10 +65,6 @@ class Server {
         app.use(express.static(__dirname + '/../public'));
         app.use(express.static(__dirname + '/../dist'));
 
-        // app.get('*', (req, res) => {
-        //     res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'));
-        // });
-
         // Define error middleware last
         app.use(function (err, req, res, next) {
             logger.error(err);

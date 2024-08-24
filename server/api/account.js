@@ -105,26 +105,26 @@ export const init = function (server, options) {
         wrapAsync(async (req, res, next) => {
             let message = validateUserName(req.body.username);
             if (message) {
-                res.send({ success: false, message: message });
+                res.status(400).send({ success: false, message: message });
 
                 return next();
             }
 
             message = validateEmail(req.body.email);
             if (message) {
-                res.send({ success: false, message: message });
+                res.status(400).send({ success: false, message: message });
                 return next();
             }
 
             message = validatePassword(req.body.password);
             if (message) {
-                res.send({ success: false, message: message });
+                res.status(400).send({ success: false, message: message });
                 return next();
             }
 
             let user = await userService.getUserByEmail(req.body.email);
             if (user) {
-                res.send({
+                res.status(400).send({
                     success: false,
                     message: 'An account with that email already exists, please use another'
                 });
@@ -134,7 +134,7 @@ export const init = function (server, options) {
 
             user = await userService.getUserByUsername(req.body.username);
             if (user) {
-                res.send({
+                res.status(400).send({
                     success: false,
                     message: 'An account with that name already exists, please choose another'
                 });
@@ -162,7 +162,7 @@ export const init = function (server, options) {
                             domain,
                             req.body.username
                         );
-                        res.send({
+                        res.status(400).send({
                             success: false,
                             message:
                                 'One time use email services are not permitted on this site.  Please use a real email address'
@@ -198,7 +198,7 @@ export const init = function (server, options) {
             try {
                 let lookup = await banlistService.getEntryByIp(ip);
                 if (lookup) {
-                    return res.send({
+                    return res.status(400).send({
                         success: false,
                         message:
                             'An error occurred registering your account, please try again later.'
@@ -207,7 +207,7 @@ export const init = function (server, options) {
             } catch (err) {
                 logger.error(err);
 
-                return res.send({
+                return res.status(400).send({
                     success: false,
                     message: 'An error occurred registering your account, please try again later.'
                 });
@@ -245,7 +245,7 @@ export const init = function (server, options) {
         '/api/account/activate',
         wrapAsync(async (req, res, next) => {
             if (!req.body.id || !req.body.token) {
-                return res.send({ success: false, message: 'Invalid parameters' });
+                return res.status(400).send({ success: false, message: 'Invalid parameters' });
             }
 
             if (!req.body.id.match(/^[a-f\d]{24}$/i)) {
@@ -315,8 +315,8 @@ export const init = function (server, options) {
         wrapAsync(async (req, res) => {
             let user = await userService.getUserByUsername(req.body.username);
             if (user) {
-                return res.send({
-                    success: true,
+                return res.status(400).send({
+                    success: false,
                     data: 'An account with that name already exists, please choose another'
                 });
             }
@@ -895,8 +895,8 @@ export const init = function (server, options) {
                 return res.send({ success: false, message: 'Code is required' });
             }
 
-            let ret = await patreonService.linkAccount(req.params.username, req.body.code);
-            if (!ret) {
+            user = await patreonService.linkAccount(req.params.username, req.body.code);
+            if (!user) {
                 return res.send({
                     success: false,
                     message:
@@ -904,7 +904,6 @@ export const init = function (server, options) {
                 });
             }
 
-            user.patreon = ret;
             let status = await patreonService.getPatreonStatusForUser(user);
 
             if (status === 'pledged' && !user.permissions.isSupporter) {

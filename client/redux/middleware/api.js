@@ -85,7 +85,7 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
         } else {
             api.dispatch(navigate('/login'));
         }
-    } else if (!result.error && !result.data.success) {
+    } else if (!result.error && !result?.data.success) {
         return {
             error: result.data.message || 'An unknown error occured. Please try again later.'
         };
@@ -96,7 +96,7 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
     }
 
     if (result.data) {
-        return { data: result.data.data };
+        return { data: result.data.data, success: result.data.success };
     }
 
     return result;

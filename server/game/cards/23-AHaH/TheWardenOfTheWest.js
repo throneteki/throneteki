@@ -11,28 +11,26 @@ class TheWardenOfTheWest extends DrawCard {
 
         this.reaction({
             when: {
-                // TODO: Implement player-aggregate so it only looks at cards being discarded from an individuals hands rather than aggregating all cards being discarded at once
-                'onCardDiscarded:aggregate': (event) =>
-                    this.getNumberToDraw(event) > 0 && this.parent.isParticipating()
+                onCardDiscarded: {
+                    aggregateBy: (event) => ({
+                        controller: event.cardStateWhenDiscarded.controller,
+                        location: event.cardStateWhenDiscarded.location
+                    }),
+                    condition: (aggregate) =>
+                        aggregate.controller !== this.controller &&
+                        ['hand', 'draw deck'].includes(aggregate.location)
+                }
             },
             limit: ability.limit.perRound(1),
             message: {
                 format: '{player} uses {source} to draw {amount} cards',
-                args: { amount: (context) => this.getNumberToDraw(context.event) }
+                args: { amount: (context) => context.events.length }
             },
             gameAction: GameActions.drawCards((context) => ({
                 player: context.player,
-                amount: this.getNumberToDraw(context.event)
+                amount: context.events.length
             }))
         });
-    }
-
-    getNumberToDraw(event) {
-        return event.events.filter(
-            (discardEvent) =>
-                discardEvent.cardStateWhenDiscarded.controller !== this.controller &&
-                ['hand', 'draw deck'].includes(discardEvent.cardStateWhenDiscarded.location)
-        ).length;
     }
 }
 

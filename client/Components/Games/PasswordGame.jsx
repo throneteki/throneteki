@@ -21,11 +21,11 @@ const PasswordGame = () => {
             if (!passwordGame?.id) {
                 return;
             }
-
+            console.info(passwordJoinType, passwordGame.id, password);
             if (passwordJoinType === 'Join') {
                 dispatch(sendJoinGameMessage(passwordGame.id, password));
             } else if (passwordJoinType === 'Watch') {
-                sendWatchGameMessage(passwordGame.id, password);
+                dispatch(sendWatchGameMessage(passwordGame.id, password));
             }
         },
         [passwordJoinType, dispatch, passwordGame?.id, password]

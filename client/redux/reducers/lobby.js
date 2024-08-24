@@ -87,7 +87,16 @@ const lobbySlice = createSlice({
         },
         receiveUpdateGame: (state, action) => {
             const game = action.payload[0];
-            const index = state.games.findIndex((g) => g.id === game.id);
+
+            if (!game?.id) {
+                throw new Error(`Game or id is null ${action.payload}`);
+            }
+            const index = state.games.findIndex((g) => {
+                if (!g?.id) {
+                    throw new Error(`inner game or id is null ${g}`);
+                }
+                return g.id === game.id;
+            });
             if (index !== -1) {
                 state.games[index] = game;
             }
@@ -188,7 +197,12 @@ const lobbySlice = createSlice({
             },
             () => {}
         ),
-        sendWatchGameMessage: () => {},
+        sendWatchGameMessage: create.preparedReducer(
+            (gameId, password = undefined) => {
+                return { payload: { gameId, password } };
+            },
+            () => {}
+        ),
         sendRemoveGameMessage: () => {},
         sendAuthenticateMessage: () => {},
         sendLobbyChatMessage: () => {}
