@@ -16,16 +16,6 @@ export default function (state = {}, action) {
                 timerLimit: null,
                 timerHandle: null
             });
-        case 'OPEN_ROOKERY_PROMPT':
-            return Object.assign({}, state, {
-                rookeryDeck: action.deck,
-                rookeryPromptId: action.promptId
-            });
-        case 'CLOSE_ROOKERY_PROMPT':
-            return Object.assign({}, state, {
-                rookeryDeck: null,
-                rookeryPromptId: null
-            });
     }
 
     return state;

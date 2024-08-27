@@ -33,27 +33,3 @@ export function expireAbilityTimer(timerProps) {
         );
     };
 }
-
-export function openRookeryPrompt(rookery) {
-    return (dispatch, getState) => {
-        let state = getState();
-        let formattedDeck = formatDeckAsFullCards(rookery.deck, state.cards);
-        dispatch({
-            type: 'OPEN_ROOKERY_PROMPT',
-            deck: formattedDeck,
-            promptId: rookery.promptId
-        });
-    };
-}
-
-export function submitRookeryPrompt(deck, promptId) {
-    return (dispatch) => {
-        dispatch(sendGameMessage('menuButton', deck, null, promptId));
-    };
-}
-
-export function closeRookeryPrompt() {
-    return {
-        type: 'CLOSE_ROOKERY_PROMPT'
-    };
-}

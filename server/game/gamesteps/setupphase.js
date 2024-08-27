@@ -3,7 +3,6 @@ import SimpleStep from './simplestep.js';
 import KeepOrMulliganPrompt from './setup/keepormulliganprompt.js';
 import SetupCardsPrompt from './setup/setupcardsprompt.js';
 import CheckAttachmentsPrompt from './setup/checkattachmentsprompt.js';
-import RookerySetupPrompt from './setup/RookerySetupPrompt.js';
 import TextHelper from '../TextHelper.js';
 import { StartingHandSize } from '../Constants/index.js';
 
@@ -12,7 +11,6 @@ class SetupPhase extends Phase {
         super(game, 'setup');
         this.initialise([
             new SimpleStep(game, () => this.announceFactionAndAgenda()),
-            new SimpleStep(game, () => this.promptForRookery()),
             new SimpleStep(game, () => this.prepareDecks()),
             new SimpleStep(game, () => this.turnOnEffects()),
             new SimpleStep(game, () => this.drawSetupHand()),
@@ -35,12 +33,6 @@ class SetupPhase extends Phase {
                 player.faction,
                 player.agendas || 'no agenda'
             );
-        }
-    }
-
-    promptForRookery() {
-        if (this.game.useRookery) {
-            this.game.queueStep(new RookerySetupPrompt(this.game));
         }
     }
 

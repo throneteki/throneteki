@@ -22,7 +22,6 @@ export function formatDeckAsShortCards(deck) {
     newDeck.bannerCards = (deck.bannerCards || []).map(card => ({ code: card.code }));
     newDeck.drawCards = formatCards(deck.drawCards || []);
     newDeck.plotCards = formatCards(deck.plotCards || []);
-    newDeck.rookeryCards = formatCards(deck.rookeryCards || []);
 
     return newDeck;
 }

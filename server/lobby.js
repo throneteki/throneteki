@@ -843,7 +843,6 @@ class Lobby {
             gameType: game.gameType,
             gamePrivate: game.gamePrivate,
             isMelee: game.isMelee,
-            useRookery: game.useRookery,
             useGameTimeLimit: game.useGameTimeLimit,
             gameTimeLimit: game.gameTimeLimit,
             useChessClocks: game.useChessClocks,
