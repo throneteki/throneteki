@@ -1,4 +1,3 @@
-import moment from 'moment';
 import AgendaRules from './AgendaRules.js';
 import DeckWrapper from './DeckWrapper.js';
 import Formats from './Formats/index.js';
@@ -6,10 +5,10 @@ import RestrictedList from './RestrictedList.js';
 
 class DeckValidator {
     constructor(packs, restrictedListRules, customRules = {}) {
-        const now = moment();
+        const now = Date.now();
         this.releasedPackCodes = new Set(
             packs
-                .filter((pack) => pack.releaseDate && moment(pack.releaseDate, 'YYYY-MM-DD') <= now)
+                .filter((pack) => pack.releaseDate && Date.parse(pack.releaseDate) <= now)
                 .map((pack) => pack.code)
         );
 
