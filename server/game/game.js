@@ -62,7 +62,6 @@ class Game extends EventEmitter {
         this.name = details.name;
         this.allowSpectators = details.allowSpectators;
         this.showHand = details.showHand;
-        this.useRookery = details.useRookery;
         this.owner = details.owner.username;
         this.started = false;
         this.playStarted = false;
