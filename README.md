@@ -25,6 +25,16 @@ If you have any major changes you'd like to implement, we would recommend mentio
 
 ## Development
 
+### Installation
+Fork the main repository onto your GitHub account. Next, clone your forked repository.
+Then run the following commands in your repo folder:
+```
+git submodule update --init
+npm install
+```
+This installs the `throneteki-json-data` submodule within your project, which stores all of the
+card data.
+
 ### Docker (Dev Container)
 #### Required Software:
 - Docker
@@ -32,7 +42,7 @@ If you have any major changes you'd like to implement, we would recommend mentio
 
 If you have docker installed & use VS Code, you can utilize [Dev Containers](https://code.visualstudio.com/docs/devcontainers/containers) for development.
 
-Clone the repository, open in VS Code, [install the Dev Containers extension](vscode:extension/ms-vscode-remote.remote-containers) and click the "Remote Status" icon in the bottom left. Choosing to **Reopen in Container** will initialise & open your dev container, and you should be able to jump straight into debugging after initialisation completes.
+Open the repository in VS Code, [install the Dev Containers extension](vscode:extension/ms-vscode-remote.remote-containers) and click the "Remote Status" icon in the bottom left. Choosing to **Reopen in Container** will initialise & open your dev container, and you should be able to jump straight into debugging after initialisation completes.
 
 If you need to re-compile your container (eg. after an update involving dev-containers), simply choose **Rebuild Container** on the Remote Status menu whilst in your dev-container.
 
@@ -45,11 +55,6 @@ Run and Debug configurations are available to debug the client, lobby & game nod
 - MongoDB 4.0 or higher
 - Redis 7.2.x or higher
 
-Clone the repository, then run the following commands in your repo folder:
-```
-git submodule update --init
-npm install
-```
 Create `config/local.json5` by copying `config/default.json5` and change the following values to match your configured mongodb & redis ports:
 ```
 dbPath: 'mongodb://localhost:{MONGODB_PORT}/throneteki',
@@ -62,17 +67,18 @@ Run the following commands to fetch data:
 node server\scripts\fetchdata.js
 node server\scripts\importstandalonedecks.js
 ```
-Run the following command to start the lobby & client *:
+
+### Running
+Run the following command in a terminal window to start the lobby & client *:
 ```
 NODE_ENV=development PORT=4000 node .
 ```
-Run the following command to start a gamenode *:
+Run the following command in another terminal window to start a gamenode *:
 ```
-PORT=5000 SERVER=node1 node server\gamenode
+PORT=4050 SERVER=node1 node server/gamenode
 ```
-*_Note that non-linux operating systems will need to set the environmental variables (such as `PORT`) differently._
 
-### Running
+*_Note that non-linux operating systems will need to set the environmental variables (such as `PORT`) differently._
 Once the lobby is running, it should be accessible by browsing to [localhost:4000](http://localhost:4000/).
 
 On first start, you will need to create yourself an account, and a second one if you need to test against an opponent. Any emails in development can be fake, and in order to test against yourself, you will need to open at least one browser incognito.
