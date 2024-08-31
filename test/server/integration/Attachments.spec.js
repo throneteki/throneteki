@@ -169,7 +169,7 @@ describe('attachments', function () {
                 const deck1 = this.buildDeck('stark', [
                     'A Noble Cause',
                     'Winterfell Steward',
-                    'Little Bird'
+                    'Little Bird (Core)'
                 ]);
                 const deck2 = this.buildDeck('stark', ['A Noble Cause', 'Milk of the Poppy']);
                 this.player1.selectDeck(deck1);

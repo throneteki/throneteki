@@ -373,11 +373,11 @@ class Player extends Spectator {
     }
 
     canInitiateChallenge(challengeType, opponent) {
-        if (this.isSupporter(opponent)) {
-            return false;
-        }
-
         return this.challenges.canInitiate(challengeType, opponent);
+    }
+
+    mustInitiateChallenge(challengeType, opponent) {
+        return this.challenges.mustInitiate(challengeType, opponent);
     }
 
     canGainGold() {
@@ -410,6 +410,14 @@ class Player extends Spectator {
 
     removeAllowedChallenge(allowedChallenge) {
         this.challenges.removeAllowedChallenge(allowedChallenge);
+    }
+
+    addForcedChallenge(forcedChallenge) {
+        this.challenges.addForcedChallenge(forcedChallenge);
+    }
+
+    removeForcedChallenge(forcedChallenge) {
+        this.challenges.removeForcedChallenge(forcedChallenge);
     }
 
     setMaxChallenge(number) {

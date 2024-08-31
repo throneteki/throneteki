@@ -44,13 +44,10 @@ class ChooseParticipantsPrompt extends BaseStep {
     canParticipate(card) {
         return (
             card.controller === this.choosingPlayer &&
-            card.getType() === 'character' &&
-            card.canDeclareAsParticipant({
+            card.canParticipate({
                 attacking: this.attacking,
                 challengeType: this.challenge.challengeType
-            }) &&
-            card.allowGameAction(this.properties.gameAction) &&
-            !card.isParticipating()
+            })
         );
     }
 

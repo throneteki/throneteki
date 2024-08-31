@@ -5,7 +5,7 @@ class SnowedUnder extends PlotCard {
         this.persistentEffect({
             match: (card) => card.controller.activePlot === card,
             targetController: 'any',
-            effect: ability.effects.preventPlotModifier('initiative')
+            effect: ability.effects.setBaseInitiative(0)
         });
     }
 }
