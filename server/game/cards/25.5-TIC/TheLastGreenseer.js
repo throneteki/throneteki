@@ -12,6 +12,7 @@ class TheLastGreenseer extends PlotCard {
 
         this.whenRevealed({
             target: {
+                activePromptTitle: 'Select a plot',
                 type: 'select',
                 cardType: ['plot'],
                 cardCondition: {
@@ -34,9 +35,9 @@ class TheLastGreenseer extends PlotCard {
                     match: context.target,
                     targetController: 'any',
                     effect: [
-                        ability.effects.setBaseIncome(sourceStats.income),
-                        ability.effects.setBaseInitiative(sourceStats.initiative),
-                        ability.effects.setBaseClaim(sourceStats.claim)
+                        ability.effects.setBaseGold(sourceStats.income),
+                        ability.effects.setBaseClaim(sourceStats.claim),
+                        ability.effects.setBaseReserve(sourceStats.reserve)
                     ]
                 }));
                 this.lastingEffect((ability) => ({
@@ -47,9 +48,9 @@ class TheLastGreenseer extends PlotCard {
                     match: context.source,
                     targetController: 'any',
                     effect: [
-                        ability.effects.setBaseIncome(targetStats.income),
-                        ability.effects.setBaseInitiative(targetStats.initiative),
-                        ability.effects.setBaseClaim(targetStats.claim)
+                        ability.effects.setBaseGold(targetStats.income),
+                        ability.effects.setBaseClaim(targetStats.claim),
+                        ability.effects.setBaseReserve(targetStats.reserve)
                     ]
                 }));
             }
