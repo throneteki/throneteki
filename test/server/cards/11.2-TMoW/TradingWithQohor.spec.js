@@ -9,7 +9,7 @@ describe('Trading With Qohor', function () {
                         'Trading With Qohor',
                         'A Noble Cause',
                         'Hedge Knight',
-                        'Little Bird',
+                        'Little Bird (Core)',
                         'Noble Lineage'
                     ]);
                     this.player1.selectDeck(deck);

@@ -13,7 +13,7 @@ class TradingWithQohor extends AgendaCard {
 
         this.reaction({
             when: {
-                onClaimApplied: (event) => event.player === this.controller
+                onClaimApplied: (event) => event.challenge && event.player === this.controller
             },
             cost: ability.costs.sacrifice(
                 (card) => card.getType() === 'attachment' && card.hasPrintedCost()

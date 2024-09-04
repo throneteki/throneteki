@@ -6,7 +6,9 @@ class TheSpidersWeb extends PlotCard {
             limit: ability.limit.perPhase(1),
             when: {
                 onClaimApplied: (event) =>
-                    event.player === this.controller && event.challenge.challengeType === 'intrigue'
+                    event.challenge &&
+                    event.player === this.controller &&
+                    event.challenge.challengeType === 'intrigue'
             },
             handler: () => {
                 this.game.addMessage(

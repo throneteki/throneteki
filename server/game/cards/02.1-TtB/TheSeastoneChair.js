@@ -5,6 +5,7 @@ class TheSeastoneChair extends DrawCard {
         this.interrupt({
             when: {
                 onClaimApplied: (event) =>
+                    event.challenge &&
                     event.challenge.isUnopposed() &&
                     event.challenge.challengeType === 'military' &&
                     event.challenge.attackingPlayer === this.controller

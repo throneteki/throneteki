@@ -1,6 +1,7 @@
 import AbilityAdapter from './AbilityAdapter.js';
 import AddToChallenge from './AddToChallenge.js';
 import AddToHand from './AddToHand.js';
+import ApplyClaim from './ApplyClaim.js';
 import CancelEffects from './CancelEffects.js';
 import CheckReserve from './CheckReserve.js';
 import ChooseGameAction from './ChooseGameAction.js';
@@ -46,6 +47,7 @@ import TakeControl from './TakeControl.js';
 const GameActions = {
     addToChallenge: (props) => new AbilityAdapter(AddToChallenge, props),
     addToHand: (props) => new AbilityAdapter(AddToHand, props),
+    applyClaim: (props) => new AbilityAdapter(ApplyClaim, props),
     cancelEffects: (props) => new AbilityAdapter(CancelEffects, props),
     checkReserve: (props) => new AbilityAdapter(CheckReserve, props),
     choose: (props) => new ChooseGameAction(props),

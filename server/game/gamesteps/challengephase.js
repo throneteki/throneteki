@@ -32,8 +32,8 @@ class ChallengePhase extends Phase {
 
         this.game.queueStep(new ActionWindow(this.game, 'Before challenge', 'challengeBegin'));
 
-        let currentPlayer = this.remainingPlayers[0];
-        let buttons = ChallengeTypes.asButtons((challengeType) => ({
+        const currentPlayer = this.remainingPlayers[0];
+        const buttons = ChallengeTypes.asButtons((challengeType) => ({
             method: 'chooseChallengeType',
             disabled: () => !this.allowChallengeType(currentPlayer, challengeType)
         }));
@@ -41,20 +41,40 @@ class ChallengePhase extends Phase {
         this.game.promptWithMenu(currentPlayer, this, {
             activePrompt: {
                 menuTitle: '',
-                buttons: buttons.concat([{ text: 'Done', method: 'completeChallenges' }])
+                buttons: buttons.concat([
+                    {
+                        text: 'Done',
+                        method: 'completeChallenges',
+                        disabled: () => this.mustInitiateChallenge(currentPlayer)
+                    }
+                ])
             },
             waitingPromptTitle: 'Waiting for opponent to initiate challenge'
         });
     }
 
     allowChallengeType(player, challengeType) {
-        let opponents = this.game.getOpponents(player);
+        const opponents = this.game.getOpponents(player);
 
         if (opponents.length === 0) {
             return player.canInitiateChallenge(challengeType, null);
         }
 
         return opponents.some((opponent) => player.canInitiateChallenge(challengeType, opponent));
+    }
+
+    mustInitiateChallenge(player) {
+        const opponents = this.game.getOpponents(player);
+
+        if (opponents.length === 0) {
+            opponents.push(null);
+        }
+
+        return ChallengeTypes.all.some((challengeType) =>
+            opponents.some((opponent) =>
+                player.mustInitiateChallenge(challengeType.value, opponent)
+            )
+        );
     }
 
     chooseChallengeType(attackingPlayer, challengeType) {

@@ -9,7 +9,7 @@ describe('Pay The Iron Price', function () {
             const deck2 = this.buildDeck('greyjoy', [
                 'A Noble Cause',
                 'Iron Islands Fishmonger',
-                'Little Bird',
+                'Little Bird (Core)',
                 'Fishing Net',
                 'Milk of the Poppy',
                 'Ward (TS)'
