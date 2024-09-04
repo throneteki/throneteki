@@ -144,12 +144,11 @@ function setBaseCardModifier(propName) {
         return {
             apply: function (card, context) {
                 context[propName] = context[propName] || {};
-                context[propName][card.uuid] = calculate(card, context) || 0;
-                card[propName].baseValue = context[propName][card.uuid];
+                context[propName][card.uuid] = card[propName].baseValue;
+                card[propName].baseValue = calculate(card, context) || 0;
             },
             reapply: function (card, context) {
                 const newValue = calculate(card, context) || 0;
-                context[propName][card.uuid] = newValue;
                 card[propName].baseValue = newValue;
             },
             unapply: function (card, context) {
