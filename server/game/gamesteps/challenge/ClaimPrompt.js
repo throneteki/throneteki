@@ -1,6 +1,6 @@
 import BaseStep from '../basestep.js';
-import ApplyClaim from './applyclaim.js';
 import Claim from '../../Claim.js';
+import GameActions from '../../GameActions/index.js';
 
 class ClaimPrompt extends BaseStep {
     constructor(game, challenge) {
@@ -10,6 +10,7 @@ class ClaimPrompt extends BaseStep {
     }
 
     continue() {
+        // TODO: Remove this prompt completely
         this.game.promptWithMenu(this.challenge.winner, this, {
             activePrompt: {
                 menuTitle: 'Perform before claim actions',
@@ -76,12 +77,13 @@ class ClaimPrompt extends BaseStep {
     }
 
     processClaim() {
-        this.game.raiseEvent(
-            'onClaimApplied',
-            { player: this.challenge.winner, challenge: this.challenge, claim: this.claim },
-            () => {
-                this.game.queueStep(new ApplyClaim(this.game, this.claim));
-            }
+        this.game.resolveGameAction(
+            GameActions.applyClaim({
+                player: this.challenge.winner,
+                challenge: this.challenge,
+                claim: this.claim,
+                game: this.game
+            })
         );
 
         return true;

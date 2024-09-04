@@ -1,12 +1,12 @@
+import SatisfyClaim from '../../gamesteps/challenge/SatisfyClaim.js';
 import PlotCard from '../../plotcard.js';
-import ApplyClaim from '../../gamesteps/challenge/applyclaim.js';
 
 class NowItComesToWar extends PlotCard {
     setupCardAbilities() {
         this.forcedInterrupt({
             when: {
                 onClaimApplied: (event) =>
-                    ['intrigue', 'power'].includes(event.challenge.challengeType)
+                    event.challenge && ['intrigue', 'power'].includes(event.challenge.challengeType)
             },
             handler: (context) => {
                 this.currentContext = context;
@@ -31,11 +31,11 @@ class NowItComesToWar extends PlotCard {
             this,
             'military'
         );
-        this.currentContext.replaceHandler(() => {
-            let replacementClaim = this.currentContext.event.claim.clone();
-            replacementClaim.challengeType = 'military';
 
-            this.game.queueStep(new ApplyClaim(this.game, replacementClaim));
+        this.currentContext.replaceHandler((event) => {
+            event.claim.challengeType = 'military';
+
+            this.game.queueStep(new SatisfyClaim(this.game, event.claim));
         });
         return true;
     }

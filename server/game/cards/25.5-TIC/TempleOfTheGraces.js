@@ -1,11 +1,12 @@
 import DrawCard from '../../drawcard.js';
-import ApplyClaim from '../../gamesteps/challenge/applyclaim.js';
+import SatisfyClaim from '../../gamesteps/challenge/SatisfyClaim.js';
 
 class TempleOfTheGraces extends DrawCard {
     setupCardAbilities(ability) {
         this.interrupt({
             when: {
                 onClaimApplied: (event) =>
+                    event.challenge &&
                     event.challenge.challengeType === 'military' &&
                     event.challenge.attackingPlayer === this.controller
             },
@@ -13,11 +14,10 @@ class TempleOfTheGraces extends DrawCard {
             message:
                 '{player} uses {source} and kneels {costs.kneel} to apply intrigue claim instead of military claim',
             handler: (context) => {
-                context.replaceHandler(() => {
-                    let replacementClaim = context.event.claim.clone();
-                    replacementClaim.challengeType = 'intrigue';
+                context.replaceHandler((event) => {
+                    event.claim.challengeType = 'intrigue';
 
-                    this.game.queueStep(new ApplyClaim(this.game, replacementClaim));
+                    this.game.queueStep(new SatisfyClaim(this.game, event.claim));
                 });
             }
         });
