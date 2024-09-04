@@ -196,8 +196,8 @@ class EffectEngine {
         }
 
         let eventNames = Object.keys(effect.until);
-        let handler = this.createCustomDurationHandler(effect);
         for (let eventName of eventNames) {
+            let handler = this.createCustomDurationHandler(eventName, effect);
             this.customDurationEvents.push({
                 name: eventName,
                 handler: handler,
@@ -220,10 +220,9 @@ class EffectEngine {
         this.customDurationEvents = remainingEvents;
     }
 
-    createCustomDurationHandler(customDurationEffect) {
+    createCustomDurationHandler(eventName, customDurationEffect) {
         return (...args) => {
-            let event = args[0];
-            let listener = customDurationEffect.until[event.name];
+            let listener = customDurationEffect.until[eventName];
             if (listener && listener(...args)) {
                 customDurationEffect.cancel();
                 this.unregisterCustomDurationEvents(customDurationEffect);

@@ -27,9 +27,11 @@ class TheLastGreenseer extends PlotCard {
                 const targetStats = getBaseStats(context.target);
                 const sourceStats = getBaseStats(context.source);
 
+                // TODO: These should not be listening on the reaction variant, however there is a problem
+                // with base events being raised under `thenAttachEvent` scenarios.
                 this.lastingEffect((ability) => ({
                     until: {
-                        onCardLeftPlay: (event) =>
+                        'onCardLeftPlay:reaction': (event) =>
                             [context.target, context.source].includes(event.card)
                     },
                     match: context.target,
@@ -42,7 +44,7 @@ class TheLastGreenseer extends PlotCard {
                 }));
                 this.lastingEffect((ability) => ({
                     until: {
-                        onCardLeftPlay: (event) =>
+                        'onCardLeftPlay:reaction': (event) =>
                             [context.target, context.source].includes(event.card)
                     },
                     match: context.source,
