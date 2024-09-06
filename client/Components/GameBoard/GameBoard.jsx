@@ -160,10 +160,9 @@ const GameBoard = () => {
                     card={cardToZoom ? cards[cardToZoom.code] : null}
                 />
                 {showMessages && (
-                    <div className='right-side'>
-                        <div className='gamechat'>
+                    <div className='relative flex flex-col items-end overflow-hidden min-w-72 max-w-72'>
+                        <div className='relative w-full flex-1 flex flex-col overflow-y-hidden'>
                             <GameChat
-                                key='gamechat'
                                 messages={currentGame.messages}
                                 onCardMouseOut={() => setCardToZoom(undefined)}
                                 onCardMouseOver={setCardToZoom}

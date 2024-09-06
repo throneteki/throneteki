@@ -114,16 +114,16 @@ const MovablePanel = ({ name, side, title, onCloseClick, children, size }) => {
     return (
         <div
             ref={popupRef}
-            className={`panel border-primary bg-black opacity-70 ${size} rounded-b-md fixed z-50`}
+            className={`panel border-primary bg-black bg-opacity-65 ${size} rounded-b-md fixed z-50`}
             style={position}
         >
             <div
                 ref={drag}
-                className='rounded-t-md flex justify-end border-b-1 border-foreground border-transparent bg-primary px-3 py-4 text-center font-bold text-white opacity-100'
+                className='rounded-t-md flex justify-end border-b-1 border-foreground border-transparent bg-primary p-1.5 text-center font-bold text-white opacity-100'
                 onClick={(event) => event.stopPropagation()}
             >
                 <span className='flex-1 text-center'>{title}</span>
-                <span className=''>
+                <span className='cursor-pointer'>
                     <a onClick={onCloseClick}>
                         <FontAwesomeIcon icon={faTimes} />
                     </a>

@@ -77,15 +77,6 @@ const PendingGame = () => {
         waiting
     ]);
 
-    const onLeaveClick = useCallback(
-        (event) => {
-            event.preventDefault();
-
-            dispatch(sendLeaveGameMessage(currentGame.id));
-        },
-        [currentGame.id, dispatch]
-    );
-
     const sendMessage = useCallback(() => {
         if (message === '') {
             return;
@@ -95,17 +86,6 @@ const PendingGame = () => {
 
         setMessage('');
     }, [dispatch, message]);
-
-    const onKeyPress = useCallback(
-        (event) => {
-            if (event.key === 'Enter') {
-                sendMessage();
-
-                event.preventDefault();
-            }
-        },
-        [sendMessage]
-    );
 
     useEffect(() => {
         if (!user) {
@@ -207,7 +187,7 @@ const PendingGame = () => {
                         <strong>Cards:</strong> {cardSetLabel(currentGame.restrictedList.cardSet)}
                     </p>
                 )}
-                <div className='flex content-between'>
+                <div className='flex content-between mt-2'>
                     <div>
                         <Button
                             className='me-2'
@@ -265,7 +245,7 @@ const PendingGame = () => {
             </Panel>
             <Panel className='mt-2' title={'Chat'}>
                 <div
-                    className='message-list'
+                    className='h-48 w-full border-1 border-primary-500 rounded-lg overflow-auto py-1 px-2'
                     ref={messageRef}
                     onScroll={() => {
                         setTimeout(() => {
@@ -285,20 +265,22 @@ const PendingGame = () => {
                 >
                     <Messages messages={currentGame.messages} />
                 </div>
-                <form>
-                    <Input
-                        type='text'
-                        placeholder={'Enter a message...'}
-                        value={message}
-                        onKeyPress={(event) => {
-                            if (event.key === 'Enter') {
-                                sendMessage();
-                                event.preventDefault();
-                            }
-                        }}
-                        onChange={(event) => setMessage(event.target.value)}
-                    ></Input>
-                </form>
+                <div className='mt-2'>
+                    <form>
+                        <Input
+                            type='text'
+                            placeholder={'Enter a message...'}
+                            value={message}
+                            onKeyPress={(event) => {
+                                if (event.key === 'Enter') {
+                                    sendMessage();
+                                    event.preventDefault();
+                                }
+                            }}
+                            onChange={(event) => setMessage(event.target.value)}
+                        ></Input>
+                    </form>
+                </div>
             </Panel>
             {showModal && (
                 <SelectDeckModal

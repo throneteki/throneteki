@@ -7,6 +7,9 @@ import Droppable from './Droppable';
 import MovablePanel from './MovablePanel';
 
 import './CardPileLink.scss';
+import './CardPile.css';
+import { Button } from '@nextui-org/react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const CardPile = ({
     cards,
@@ -176,30 +179,31 @@ const CardPile = ({
         }
 
         const popupClass = classNames(
-            'relative margin-2 border-1 border-default-200 bg-black bg-opacity-65 rounded-b-md h-full',
+            'card-list-popup relative margin-2 border-1 border-default-200 bg-black bg-opacity-75 rounded-b-md h-full',
             {
                 'our-side': popupLocation === 'bottom',
                 [size]: true
             }
         );
 
-        let innerClass = classNames('inner h-auto', size);
+        let innerClass = classNames('inner overflow-y-auto px-2 pb-2 mt-2', size);
         let linkIndex = 0;
 
         let retPopupMenu = popupMenu && (
-            <div className='card-pile-buttons'>
+            <div className='flex'>
                 {popupMenu.map((menuItem) => {
                     return (
-                        <a
-                            className='btn btn-default'
+                        <Button
+                            color='primary'
+                            className='flex-1 mx-2 mt-2'
                             key={linkIndex++}
                             onClick={() => onPopupMenuItemClick(menuItem)}
                         >
-                            {menuItem.icon && (
-                                <span className={`glyphicon glyphicon-${menuItem.icon}`} />
-                            )}{' '}
-                            {menuItem.text}
-                        </a>
+                            <span>
+                                {menuItem.icon && <FontAwesomeIcon icon={menuItem.icon} />}{' '}
+                                {menuItem.text}
+                            </span>
+                        </Button>
                     );
                 })}
             </div>
@@ -244,11 +248,16 @@ const CardPile = ({
         onPopupMenuItemClick
     ]);
 
-    let retClassName = classNames('panel', 'card-pile', className, {
-        [size]: size !== 'normal',
-        horizontal: orientation === 'horizontal' || orientation === 'kneeled',
-        vertical: orientation === 'vertical'
-    });
+    let retClassName = classNames(
+        'relative m-1 border-1 border-default-100 bg-opacity-65',
+        'card-pile',
+        className,
+        {
+            [size]: size !== 'normal',
+            horizontal: orientation === 'horizontal' || orientation === 'kneeled',
+            vertical: orientation === 'vertical'
+        }
+    );
 
     let retCardCount = cardCount || (cards ? cards.length : '0');
     let headerText = title ? title + ' (' + retCardCount + ')' : '';
@@ -269,7 +278,9 @@ const CardPile = ({
 
     return (
         <div className={retClassName} onClick={onCollectionClick}>
-            <div className='panel-header'>{headerText}</div>
+            <div className='absolute top-0 left-0 p-1 text-xs bg-black bg-opacity-60 rounded-md z-20'>
+                {headerText}
+            </div>
             {retTopCard ? (
                 <Card
                     card={retTopCard}

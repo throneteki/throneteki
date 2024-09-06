@@ -81,11 +81,13 @@ const NewGame = ({
                         }}
                     >
                         {quickJoin && (
-                            <AlertPanel variant={AlertType.Info}>
-                                Select the type of game you&apos;d like to play and either
-                                you&apos;ll join the next one available, or one will be created for
-                                you with default options.
-                            </AlertPanel>
+                            <div className='mb-2'>
+                                <AlertPanel variant={AlertType.Info}>
+                                    Select the type of game you&apos;d like to play and either
+                                    you&apos;ll join the next one available, or one will be created
+                                    for you with default options.
+                                </AlertPanel>
+                            </div>
                         )}
                         {!quickJoin && (
                             <>

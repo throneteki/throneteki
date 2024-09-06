@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import moment from 'moment';
 
 import Panel from '../Components/Site/Panel';
@@ -9,35 +9,45 @@ import {
     useRemoveBanListEntryMutation
 } from '../redux/middleware/api';
 import { toastr } from 'react-redux-toastr';
+import {
+    Button,
+    Input,
+    Spinner,
+    Table,
+    TableBody,
+    TableCell,
+    TableColumn,
+    TableHeader,
+    TableRow
+} from '@nextui-org/react';
 
 const BanlistAdmin = () => {
     const { data: banList, isLoading } = useGetBanListQuery();
     const [addBanListEntry, { isLoading: isAddLoading }] = useAddBanListEntryMutation();
     const [removeBanListEntry, { isLoading: isRemoveLoading }] = useRemoveBanListEntryMutation();
+    const [banListText, setBanListText] = useState('');
 
-    const onAddBanlistClick = useCallback(
-        async (state) => {
-            try {
-                await addBanListEntry(state.ip).unwrap();
+    const onAddBanlistClick = useCallback(async () => {
+        try {
+            await addBanListEntry(banListText).unwrap();
 
-                toastr.success('Ban list entry added successfully.');
+            toastr.success('Ban list entry added successfully.');
 
-                setTimeout(() => {
-                    toastr.clean();
-                }, 5000);
-            } catch (err) {
-                toastr.error(
-                    err.data?.message ||
-                        'An error occured adding the ban list entry. Please try again later.'
-                );
-            }
-        },
-        [addBanListEntry]
-    );
+            setTimeout(() => {
+                toastr.clean();
+            }, 5000);
+        } catch (err) {
+            toastr.error(
+                err.data?.message ||
+                    'An error occured adding the ban list entry. Please try again later.'
+            );
+        }
+    }, [addBanListEntry, banListText]);
 
     const onDeleteBanlistClick = useCallback(
         async (id) => {
             try {
+                console.info(id);
                 await removeBanListEntry(id).unwrap();
 
                 toastr.success('Ban list entry deleted successfully.');
@@ -60,20 +70,16 @@ const BanlistAdmin = () => {
             banList &&
             banList.map((ban) => {
                 return (
-                    <tr key={ban._id}>
-                        <td>{ban.ip}</td>
-                        <td>{moment(ban.added).format('YYYY-MM-DD')}</td>
-                        <td>{ban.addedBy}</td>
-                        <td>
-                            <button
-                                className='btn btn-danger'
-                                onClick={() => onDeleteBanlistClick(ban._id)}
-                            >
-                                Delete{' '}
-                                {isRemoveLoading && <span className='spinner button-spinner' />}
-                            </button>
-                        </td>
-                    </tr>
+                    <TableRow key={ban._id}>
+                        <TableCell>{ban.ip}</TableCell>
+                        <TableCell>{moment(ban.added).format('YYYY-MM-DD')}</TableCell>
+                        <TableCell>{ban.addedBy}</TableCell>
+                        <TableCell>
+                            <Button color='danger' onClick={() => onDeleteBanlistClick(ban._id)}>
+                                Delete {isRemoveLoading && <Spinner />}
+                            </Button>
+                        </TableCell>
+                    </TableRow>
                 );
             }),
         [banList, isRemoveLoading, onDeleteBanlistClick]
@@ -84,29 +90,34 @@ const BanlistAdmin = () => {
     }
 
     return (
-        <div className='col-xs-12'>
+        <div className='w-2/3 mx-auto'>
             <Panel title='Banlist administration'>
-                <table className='table table-striped'>
-                    <thead>
-                        <tr>
-                            <th className='col-sm-2'>Ip</th>
-                            <th className='col-sm-2'>Added</th>
-                            <th className='col-sm-3'>Added By</th>
-                            <th className='col-sm-2'>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>{renderedBanlist}</tbody>
-                </table>
+                <Table isStriped>
+                    <TableHeader>
+                        <TableColumn className='col-sm-2'>Ip</TableColumn>
+                        <TableColumn className='col-sm-2'>Added</TableColumn>
+                        <TableColumn className='col-sm-3'>Added By</TableColumn>
+                        <TableColumn className='col-sm-2'>Action</TableColumn>
+                    </TableHeader>
+                    <TableBody>{renderedBanlist}</TableBody>
+                </Table>
             </Panel>
-            <Panel title='Add new ip'>
-                <Form
-                    name='banlistAdmin'
-                    apiLoading={isAddLoading}
-                    buttonClass='col-sm-offset-2 col-sm-4'
-                    buttonText='Add'
-                    onSubmit={onAddBanlistClick}
-                />
-            </Panel>
+            <div className='mt-2'>
+                <Panel title='Add new ip'>
+                    <div>
+                        <Input
+                            label='Add ip address'
+                            value={banListText}
+                            onValueChange={setBanListText}
+                        />
+                        <div className='mt-2'>
+                            <Button color='primary' onClick={onAddBanlistClick}>
+                                Add
+                            </Button>
+                        </div>
+                    </div>
+                </Panel>
+            </div>
         </div>
     );
 };

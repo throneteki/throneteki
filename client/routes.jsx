@@ -18,7 +18,7 @@ import NewsAdmin from './pages/NewsAdmin';
 import AddDeck from './Components/Decks/AddDeck';
 import EditDeck from './Components/Decks/EditDeck';
 import GameLobby from './Components/Games/GameLobby';
-import GameBoardOld from './Components/GameBoard/GameBoard';
+import GameBoard from './Components/GameBoard/GameBoard';
 import BlockList from './pages/BlockList';
 import NodesAdmin from './pages/NodesAdmin';
 import MotdAdmin from './pages/MotdAdmin';
@@ -54,12 +54,13 @@ const routes = [
     {
         path: '/play',
         action: (context) => {
+            console.info(context?.currentGame?.started);
             if (context.currentGame && context.currentGame.started) {
                 if (context.currentGame.tableType === 'drafting-session') {
                     return <DraftingTable key='drafting-table' />;
                 }
 
-                return <GameBoardOld key='gameboard' />;
+                return <GameBoard key='gameboard' />;
             }
 
             return <GameLobby key='gamelobby' gameId={context.params.gameId} />;

@@ -7,6 +7,8 @@ import CardCounters from './CardCounters';
 import { ItemTypes } from '../../constants';
 import SquishableCardPanel from './SquishableCardPanel';
 
+import './Card.scss';
+
 const Card = ({
     card,
     className,
@@ -209,6 +211,7 @@ const Card = ({
                     onMenuItemClick={onMenuItemClick}
                     size={size}
                     facedown={forceFaceup ? false : card.facedown}
+                    hideTokens
                 />
             );
         });
@@ -276,7 +279,11 @@ const Card = ({
                 style = { left: x, top: y };
             }
             return (
-                <div className='drag-preview' style={style} ref={preview}>
+                <div
+                    className='pointer-events-none fixed opacity-50 z-50'
+                    style={style}
+                    ref={preview}
+                >
                     {image}
                 </div>
             );
@@ -290,31 +297,38 @@ const Card = ({
         }
 
         let cardClass = classNames(
-            'card',
-            `card-type-${card.type}`,
+            'card overflow-hidden rounded-md',
             className,
             sizeClass,
             statusClass,
             {
+                absolute: !!style?.left,
+                relative: !style?.left,
+                [`card-type-${card.type}`]: card.type,
                 'custom-card': card.code && card.code.startsWith('custom'),
                 horizontal: orientation !== 'vertical' || card.kneeled,
                 vertical: orientation === 'vertical' && !card.kneeled,
                 unselectable: card.unselectable,
-                dragging: isDragging
+                dragging: isDragging,
+                'z-10': !hideTokens
             }
         );
-        let imageClass = classNames('card-image', sizeClass, {
-            horizontal: card.type === 'plot',
-            vertical: card.type !== 'plot',
-            kneeled:
-                card.type !== 'plot' &&
-                (orientation === 'kneeled' || card.kneeled || orientation === 'horizontal')
-        });
+        let imageClass = classNames(
+            'card-image absolute left-0 top-0 points-events-none',
+            sizeClass,
+            {
+                horizontal: card.type === 'plot',
+                vertical: card.type !== 'plot',
+                kneeled:
+                    card.type !== 'plot' &&
+                    (orientation === 'kneeled' || card.kneeled || orientation === 'horizontal')
+            }
+        );
 
         let image = <img className={imageClass} src={imageUrl} />;
 
         let content = (
-            <div className='card-frame' ref={drag}>
+            <div className='relative' ref={drag}>
                 {getDragFrame(image)}
                 {getCardOrder()}
                 <div
@@ -370,8 +384,13 @@ const Card = ({
                               : undefined
         : undefined;
 
+    const wrapperClass = classNames('m-0 inline-block user-select-none', {
+        absolute: !!style?.left,
+        relative: !style?.left
+    });
+
     return wrapped ? (
-        <div className='card-wrapper' style={style}>
+        <div className={wrapperClass} style={style}>
             {getCard()}
             {getDupes()}
             {getAttachments()}

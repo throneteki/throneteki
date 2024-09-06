@@ -7,6 +7,7 @@ import TraitNameLookup from './TraitNameLookup';
 import SelectFromValuesLookup from './SelectFromValuesLookup';
 import { useGetCardsQuery } from '../../redux/middleware/api';
 import { Button } from '@nextui-org/react';
+import ThronesIcon from './ThronesIcon';
 
 const ActivePlayerPrompt = ({
     stopAbilityTimer,
@@ -97,16 +98,13 @@ const ActivePlayerPrompt = ({
                 <Button
                     color='primary'
                     key={button.command + buttonIndex.toString()}
-                    className='btn btn-default prompt-button btn-stretch mb-1 w-full'
+                    className='mb-1 mx-2'
                     onClick={clickCallback}
                     onMouseOver={(event) => onMouseOver(event, button.card)}
                     onMouseOut={(event) => onMouseOut(event, button.card)}
                     disabled={button.disabled}
                 >
-                    {button.icon && (
-                        <div className={`with-background thronesicon thronesicon-${button.icon}`} />
-                    )}{' '}
-                    {button.text}
+                    {button.icon && <ThronesIcon icon={button.icon} withBackground />} {button.text}
                 </Button>
             );
 
@@ -214,7 +212,7 @@ const ActivePlayerPrompt = ({
             {timer}
             <div
                 className={
-                    'relative font-bold text-center uppercase border-1 border-default-200 bg-secondary-200 py-1 rounded-t-md ' +
+                    'relative font-bold text-center uppercase border-1 border-default-200 bg-secondary-200 py-1 rounded-t-md mx-0 mb-0 ' +
                     phase
                 }
                 onClick={onTitleClick}
@@ -222,11 +220,11 @@ const ActivePlayerPrompt = ({
                 {phase} phase
             </div>
             {promptTitleElement}
-            <div className='menu-pane'>
-                <div className='relative margin-2 border-1 border-default-200 bg-black bg-opacity-65 rounded-b-md'>
-                    <h4 className='mt-1'>{promptTextElement}</h4>
+            <div className='text-center'>
+                <div className='relative mb-2 border-1 border-default-200 bg-black bg-opacity-65 rounded-b-md'>
+                    <h4 className='my-1'>{promptTextElement}</h4>
                     {getControls()}
-                    {getButtons()}
+                    <div className='flex flex-col'>{getButtons()}</div>
                 </div>
             </div>
         </div>

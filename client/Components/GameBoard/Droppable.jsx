@@ -99,14 +99,17 @@ const Droppable = ({ children, onDragDrop, source, size }) => {
         }
     });
 
-    let className = classNames('overlay', {
-        'drop-ok': isOver && canDrop,
-        'no-drop': isOver && !canDrop && source !== itemSource,
-        'can-drop': !isOver && canDrop,
-        [source.replace(' ', '-')]: true
-    });
+    let className = classNames(
+        'pointer-events-none absolute top-0 left-0 h-full w-full opacity-50 z-50',
+        {
+            'bg-success-500': isOver && canDrop,
+            'bg-danger-500': isOver && !canDrop && source !== itemSource,
+            'bg-warning-500': !isOver && canDrop,
+            [source.replace(' ', '-')]: true
+        }
+    );
 
-    let dropClass = classNames('drop-target', size, {
+    let dropClass = classNames('relative', size, {
         [source.replace(' ', '-')]: source !== 'play area'
     });
 

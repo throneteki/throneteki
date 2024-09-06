@@ -135,7 +135,7 @@ const NavBar = () => {
     }, [renderMenuItems]);
 
     let numGames = games ? (
-        <li className='navbar-item text-white'>
+        <li className='font-[PoppinsMedium] text-white'>
             <span>{`${games.length} Games`}</span>
         </li>
     ) : null;

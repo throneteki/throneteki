@@ -27,7 +27,7 @@ const GameBoardLayout = ({ thisPlayer, otherPlayer, onCardClick, onMouseOver, on
                 onMouseOut={onMouseOut}
                 onMouseOver={onMouseOver}
             />
-            <div className='flex w-full flex-shrink flex-grow flex-col overflow-x-hidden'>
+            <div className='flex w-full flex-shrink flex-grow flex-col overflow-hidden'>
                 <div className='flex overflow-hidden'>
                     <PlayerRow
                         agendas={otherPlayer.agendas}
@@ -80,7 +80,7 @@ const GameBoardLayout = ({ thisPlayer, otherPlayer, onCardClick, onMouseOver, on
                             />
                         </div>
                     </div>
-                    <div className='play-area'>
+                    <div className='flex flex-1 flex-col justify-between m-2'>
                         <PlayerBoard
                             cardsInPlay={otherPlayer.cardPiles.cardsInPlay}
                             onCardClick={onCardClick}

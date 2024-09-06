@@ -102,8 +102,8 @@ const PlayerPlots = ({
         direction
     ]);
 
-    let className = classNames('plot-group', {
-        'our-side': direction === 'default'
+    let className = classNames('flex flex-1 justify-start flex-col', {
+        'justify-end': direction === 'default'
     });
 
     return <div className={className}>{renderPlotPiles()}</div>;

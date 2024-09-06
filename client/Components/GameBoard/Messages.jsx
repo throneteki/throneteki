@@ -174,7 +174,7 @@ const Messages = ({ messages, onCardMouseOut, onCardMouseOver }) => {
 
     const renderMessages = () => {
         return messages.map((message, index) => {
-            const className = classNames('break-words leading-3 pt-0 pl-2 pb-2 pr-2 max-w-xs', '', {
+            const className = classNames('break-words leading-4', '', {
                 'this-player': message.activePlayer && message.activePlayer == owner.name,
                 'other-player': message.activePlayer && message.activePlayer !== owner.name,
                 'chat-bubble': Object.values(message.message).some(
@@ -189,7 +189,7 @@ const Messages = ({ messages, onCardMouseOut, onCardMouseOver }) => {
         });
     };
 
-    return <div>{renderMessages()} </div>;
+    return <>{renderMessages()} </>;
 };
 
 export default Messages;

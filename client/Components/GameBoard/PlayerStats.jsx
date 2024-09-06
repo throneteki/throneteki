@@ -71,9 +71,13 @@ const PlayerStats = ({
     }, []);
 
     return (
-        <div className='relative margin-2 border-1 border-default-200 bg-black bg-opacity-65 player-stats'>
-            <div className={`pr-1 py-1 flex items-center`}>
-                <Avatar src={`/img/avatar/${user?.username}.png`} showFallback size='sm' />
+        <div className='relative margin-2 border-1 border-default-100 bg-black bg-opacity-65 flex items-center border-x-0'>
+            <div className='pr-1 py-1 flex items-center'>
+                <Avatar
+                    src={`/img/avatar/${user?.username}.png`}
+                    showFallback
+                    className='w-7 h-7 text-tiny'
+                />
 
                 <span className='pl-2 font-bold'>{user?.username || 'Noone'}</span>
             </div>

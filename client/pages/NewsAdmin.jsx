@@ -1,8 +1,6 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import moment from 'moment';
 
-import Form from '../Components/Form/Form';
-import TextArea from '../Components/Form/TextArea';
 import Panel from '../Components/Site/Panel';
 import {
     useDeleteNewsMutation,
@@ -12,6 +10,17 @@ import {
 } from '../redux/middleware/api';
 import { toastr } from 'react-redux-toastr';
 import AlertPanel from '../Components/Site/AlertPanel';
+import {
+    Button,
+    Spinner,
+    Table,
+    TableBody,
+    TableCell,
+    TableColumn,
+    TableHeader,
+    TableRow,
+    Textarea
+} from '@nextui-org/react';
 
 const NewsAdmin = () => {
     const [editText, setEditText] = useState('');
@@ -21,25 +30,21 @@ const NewsAdmin = () => {
     const [addNews, { isLoading: isAddLoading }] = useAddNewsMutation();
     const [deleteNews, { isLoading: isDeleteLoading }] = useDeleteNewsMutation();
     const [saveNews, { isLoading: isSaveLoading }] = useSaveNewsMutation();
+    const [newsText, setNewsText] = useState('');
 
-    const onAddNewsClick = useCallback(
-        async (state) => {
-            try {
-                await addNews(state.newsText).unwrap();
+    const onAddNewsClick = useCallback(async () => {
+        try {
+            await addNews(newsText).unwrap();
 
-                toastr.success('News added successfully.');
+            toastr.success('News added successfully.');
 
-                setTimeout(() => {
-                    toastr.clean();
-                }, 5000);
-            } catch (err) {
-                toastr.error(
-                    err || 'An error occured adding the news item. Please try again later.'
-                );
-            }
-        },
-        [addNews]
-    );
+            setTimeout(() => {
+                toastr.clean();
+            }, 5000);
+        } catch (err) {
+            toastr.error(err || 'An error occured adding the news item. Please try again later.');
+        }
+    }, [addNews, newsText]);
 
     const onDeleteClick = useCallback(
         async (id) => {
@@ -86,27 +91,26 @@ const NewsAdmin = () => {
             news &&
             news.map((newsItem) => {
                 return (
-                    <tr key={newsItem._id}>
-                        <td>{moment(newsItem.datePublished).format('YYYY-MM-DD')}</td>
-                        <td>{newsItem.poster}</td>
-                        <td>
+                    <TableRow key={newsItem._id}>
+                        <TableCell>{moment(newsItem.datePublished).format('YYYY-MM-DD')}</TableCell>
+                        <TableCell>{newsItem.poster}</TableCell>
+                        <TableCell>
                             {editItemId === newsItem._id ? (
-                                <TextArea
-                                    name='newsEditText'
+                                <Textarea
+                                    label='Edit news item'
                                     value={editText}
-                                    onChange={(event) => setEditText(event.target.value)}
+                                    onValueChange={setEditText}
                                     rows='4'
                                 />
                             ) : (
                                 newsItem.text
                             )}
-                        </td>
-                        <td>
-                            <div className='btn-group'>
+                        </TableCell>
+                        <TableCell>
+                            <div className='flex gap-2'>
                                 {editItemId === newsItem._id ? (
-                                    <button
-                                        type='button'
-                                        className='btn btn-primary'
+                                    <Button
+                                        color='primary'
                                         disabled={isAddLoading}
                                         onClick={onSaveClick}
                                     >
@@ -114,11 +118,10 @@ const NewsAdmin = () => {
                                         {isAddLoading && (
                                             <span className='spinner button-spinner' />
                                         )}
-                                    </button>
+                                    </Button>
                                 ) : (
-                                    <button
-                                        type='button'
-                                        className='btn btn-primary'
+                                    <Button
+                                        color='primary'
                                         onClick={() => onEditClick(newsItem)}
                                         disabled={isSaveLoading}
                                     >
@@ -126,20 +129,18 @@ const NewsAdmin = () => {
                                         {isSaveLoading && (
                                             <span className='spinner button-spinner' />
                                         )}
-                                    </button>
+                                    </Button>
                                 )}
-                                <button
-                                    type='button'
-                                    className='btn btn-danger'
+                                <Button
+                                    color='danger'
                                     onClick={() => onDeleteClick(newsItem._id)}
                                     disabled={isDeleteLoading}
                                 >
-                                    Delete{' '}
-                                    {isDeleteLoading && <span className='spinner button-spinner' />}
-                                </button>
+                                    Delete {isDeleteLoading && <Spinner />}
+                                </Button>
                             </div>
-                        </td>
-                    </tr>
+                        </TableCell>
+                    </TableRow>
                 );
             }),
         [
@@ -160,30 +161,34 @@ const NewsAdmin = () => {
     }
 
     return (
-        <div className='col-xs-12'>
+        <div className='w-2/3 mx-auto'>
             {error && <AlertPanel type='error' message={error} />}
             <Panel title='News administration'>
-                <table className='table table-striped'>
-                    <thead>
-                        <tr>
-                            <th className='col-sm-1'>Date</th>
-                            <th className='col-sm-1'>Poster</th>
-                            <th className='col-sm-8'>Text</th>
-                            <th className='col-sm-2'>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>{renderedNews}</tbody>
-                </table>
+                <Table isStriped>
+                    <TableHeader>
+                        <TableColumn className='w-1/5'>Date</TableColumn>
+                        <TableColumn className='w-1/5'>Poster</TableColumn>
+                        <TableColumn className='w-2/4'>Text</TableColumn>
+                        <TableColumn className='w-1/4'>Action</TableColumn>
+                    </TableHeader>
+                    <TableBody>{renderedNews}</TableBody>
+                </Table>
             </Panel>
-            <Panel title='Add new news item'>
-                <Form
-                    name='newsAdmin'
-                    apiLoading={isAddLoading}
-                    buttonClass='col-sm-offset-2 col-sm-4'
-                    buttonText='Add'
-                    onSubmit={onAddNewsClick}
-                />
-            </Panel>
+            <div className='mt-2'>
+                <Panel title='Add new news item'>
+                    <Textarea label='Add news item' onValueChange={setNewsText} value={newsText} />
+                    <div>
+                        <Button
+                            className='mt-2'
+                            color='primary'
+                            onClick={onAddNewsClick}
+                            disabled={isAddLoading}
+                        >
+                            Add {isAddLoading && <Spinner />}
+                        </Button>
+                    </div>
+                </Panel>
+            </div>
         </div>
     );
 };

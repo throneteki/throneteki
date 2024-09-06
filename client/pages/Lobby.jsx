@@ -5,7 +5,6 @@ import { toastr } from 'react-redux-toastr';
 import News from '../Components/News/News';
 import AlertPanel from '../Components/Site/AlertPanel';
 import Panel from '../Components/Site/Panel';
-import Typeahead from '../Components/Form/Typeahead';
 import LobbyChat from '../Components/Lobby/LobbyChat';
 import { getMessageWithLinks } from '../util';
 

@@ -350,7 +350,7 @@ export const apiSlice = createApi({
             invalidatesTags: [TagTypes.BanList]
         }),
         removeBanListEntry: builder.mutation({
-            query: ({ id }) => ({
+            query: (id) => ({
                 url: `/banlist/${id}`,
                 method: 'DELETE'
             }),

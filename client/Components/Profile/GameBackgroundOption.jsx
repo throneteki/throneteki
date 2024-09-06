@@ -9,9 +9,12 @@ const GameBackgroundOption = ({ name, label, imageUrl, selected, onSelect }) => 
     }, [name, onSelect]);
 
     return (
-        <div className='col-sm-4' onClick={handleClick}>
-            <img className={classNames('img-responsive', { selected: selected })} src={imageUrl} />
-            <span className='bg-label'>{label}</span>
+        <div onClick={handleClick}>
+            <img
+                className={classNames('img-responsive', { 'border-2 border-green-600': selected })}
+                src={imageUrl}
+            />
+            <span className='inline-block w-full text-center'>{label}</span>
         </div>
     );
 };

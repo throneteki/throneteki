@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import CardPile from './CardPile';
 import Droppable from './Droppable';
+import { faEye, faShuffle } from '@fortawesome/free-solid-svg-icons';
 
 const DrawDeck = ({
     isMe,
@@ -58,13 +59,13 @@ const DrawDeck = ({
         if (!showDeck) {
             drawDeckPopupMenu.push({
                 text: 'View Hidden',
-                icon: 'eye-open',
+                icon: faEye,
                 handler: handleShowDeckClick
             });
         }
         drawDeckPopupMenu.push({
             text: 'Close and Shuffle',
-            icon: 'random',
+            icon: faShuffle,
             handler: handleShuffleClick,
             close: true
         });

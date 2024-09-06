@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from '@nextui-org/react';
 import { useSelector } from 'react-redux';
 
-const GameButtons = ({ onNewGame }) => {
+const GameButtons = ({ onNewGame, onQuickJoin }) => {
     const user = useSelector((state) => state.auth.user);
 
     return (
@@ -15,8 +15,7 @@ const GameButtons = ({ onNewGame }) => {
                 disabled={!user}
                 color='primary'
                 onClick={() => {
-                    // setQuickJoin(true);
-                    // dispatch(startNewGame());
+                    onQuickJoin && onQuickJoin();
                 }}
             >
                 Quick Join

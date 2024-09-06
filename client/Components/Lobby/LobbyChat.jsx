@@ -128,7 +128,10 @@ const LobbyChat = ({ messages, isModerator, onRemoveMessageClick }) => {
                     className='mb-2 flex'
                 >
                     <div className='mr-2'>
-                        <Avatar src={`/img/avatar/${firstMessage.user.username}.png`} />
+                        <Avatar
+                            src={`/img/avatar/${firstMessage.user.username}.png`}
+                            showFallback
+                        />
                     </div>
                     <div className='overflow-x-hidden'>
                         <div className='flex'>

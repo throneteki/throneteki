@@ -20,7 +20,7 @@ const Plots = ({ thisPlayer, otherPlayer, onCardClick, onMouseOut, onMouseOver }
     };
 
     return (
-        <div key='plots-pane' className='plots-pane'>
+        <div className='flex flex-col justify-center items-center'>
             <PlayerPlots
                 {...commonProps}
                 activePlot={otherPlayer.activePlot}

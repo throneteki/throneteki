@@ -61,6 +61,10 @@ const GameLobby = () => {
                                 setQuickJoin(false);
                                 setNewGame(true);
                             }}
+                            onQuickJoin={() => {
+                                setQuickJoin(true);
+                                setNewGame(true);
+                            }}
                         />
                     </div>
                     <div className='col-span-10'>

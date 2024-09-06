@@ -6,8 +6,6 @@ import Plus from '../../assets/img/Plus.png';
 import { Constants } from '../../constants';
 import StatButton from './StatButton';
 
-console.info(Constants);
-
 const StatDisplay = ({
     showControls = true,
     statCode,
@@ -19,7 +17,7 @@ const StatDisplay = ({
     return (
         <>
             {showControls && <StatButton image={Minus} onClick={onMinusClick} />}
-            <div className='font-[Bombardier] text-medium'>{statValue}</div>
+            <div className='font-[Bombardier] text-medium mr-1'>{statValue}</div>
             <div className={`flex h-6 w-6 items-center justify-center ${statName}`}>
                 <Image src={Constants.StatIconImagePaths[statCode]} />
             </div>

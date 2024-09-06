@@ -3,7 +3,6 @@ import React, { useCallback, useMemo, useState } from 'react';
 import Input from '../../Components/Form/Input';
 import Checkbox from '../../Components/Form/Checkbox';
 import Select from '../../Components/Form/Select';
-import Typeahead from '../../Components/Form/Typeahead';
 import TextArea from '../../Components/Form/TextArea';
 import { useDispatch } from 'react-redux';
 import {
@@ -563,7 +562,7 @@ const EventEditor = ({ eventId }) => {
                     {format === 'custom-joust' && (
                         <div>
                             <Panel title='Custom Restricted/Banned List'>
-                                <Typeahead
+                                {/* <Typeahead
                                     label='Card'
                                     labelClass={'col-sm-3 col-xs-2'}
                                     fieldClass='col-sm-4 col-xs-5'
@@ -617,7 +616,7 @@ const EventEditor = ({ eventId }) => {
                                             </ul>
                                         </div>
                                     </div>
-                                </Typeahead>
+                                </Typeahead> */}
                                 <TextArea
                                     label='Restricted List'
                                     labelClass='col-sm-3'

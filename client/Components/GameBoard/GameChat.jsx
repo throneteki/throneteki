@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import $ from 'jquery';
 import Messages from './Messages';
+import { Input } from '@nextui-org/react';
 
 const GameChat = ({ messages, onCardMouseOver, onCardMouseOut, onSendChat, muted }) => {
     const [canScroll, setCanScroll] = useState(true);
@@ -52,8 +53,12 @@ const GameChat = ({ messages, onCardMouseOver, onCardMouseOut, onSendChat, muted
     let placeholder = muted ? 'Spectators cannot chat in this game' : 'Chat...';
 
     return (
-        <div className='chat'>
-            <div className='messages panel' ref={messagePanel} onScroll={onScroll}>
+        <div className='h-full flex flex-col overflow-hidden flex-1'>
+            <div
+                className='h-full overflow-auto m-0 flex-1 flex panel mx-1 my-2 flex-col gap-1.5'
+                ref={messagePanel}
+                onScroll={onScroll}
+            >
                 <Messages
                     messages={messages}
                     onCardMouseOver={onCardMouseOver}
@@ -61,8 +66,8 @@ const GameChat = ({ messages, onCardMouseOver, onCardMouseOut, onSendChat, muted
                 />
             </div>
             <form className='form chat-form'>
-                <input
-                    className='form-control'
+                <Input
+                    classNames={{ inputWrapper: 'rounded-none' }}
                     placeholder={placeholder}
                     onKeyPress={onKeyPress}
                     onChange={onChange}

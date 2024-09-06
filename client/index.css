@@ -64,6 +64,12 @@ body {
     --throneteki-card-sm-height: calc(var(--throneteki-card-height) * 0.6);
 
     --scrollbar-width: 20px;
+
+    --attachment-offset: 10px;
+    --attachment-offset-lg: calc(var(--attachment-offset) * 1.4);
+    --attachment-offset-xl: calc(var(--attachment-offset) * 2);
+
+    --layer-cards: 10;
 }
 
 .rrt-message {

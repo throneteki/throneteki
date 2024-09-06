@@ -1,0 +1,195 @@
+@import '../../mixins';
+
+.card {
+    box-shadow:
+        0 0 12px rgba(0, 0, 0, 0.4),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+
+    &.small {
+        &.vertical {
+            height: var(--throneteki-card-sm-height);
+            width: var(--throneteki-card-sm-width);
+        }
+
+        &.horizontal {
+            height: var(--throneteki-card-sm-width);
+            width: var(--throneteki-card-sm-height);
+        }
+    }
+
+    &.large {
+        &.vertical {
+            height: var(--throneteki-card-lg-height);
+            width: var(--throneteki-card-lg-width);
+        }
+
+        &.horizontal {
+            height: var(--throneteki-card-lg-width);
+            width: var(--throneteki-card-lg-height);
+        }
+    }
+
+    &.x-large {
+        &.vertical {
+            height: var(--throneteki-card-xl-height);
+            width: var(--throneteki-card-xl-width);
+        }
+
+        &.horizontal {
+            height: var(--throneteki-card-xl-width);
+            width: var(--throneteki-card-xl-height);
+        }
+    }
+
+    &.vertical {
+        height: var(--throneteki-card-height);
+        width: var(--throneteki-card-width);
+    }
+
+    &.horizontal {
+        height: var(--throneteki-card-width);
+        width: var(--throneteki-card-height);
+    }
+
+    &.selectable {
+        //box-shadow: 0 0 10px 1px fadeout(lighten(@brand-primary, 60%), 10%);
+    }
+
+    &.unselectable {
+        filter: grayscale(100%) brightness(60%);
+    }
+
+    &.in-danger {
+        box-shadow: 0 0 1px 2px red;
+    }
+
+    &.saved {
+        box-shadow: 0 0 1px 2px green;
+    }
+
+    &.selected {
+        //box-shadow: 0 0 1px 4px @brand-secondary;
+    }
+
+    &.new {
+        //box-shadow: 0 0 1px 2px @brand-info;
+    }
+
+    &.controlled {
+        //box-shadow: 0 0 1px 2px @brand-warning;
+    }
+
+    &.challenge {
+        //box-shadow: 0 0 1px 2px @brand-danger;
+    }
+
+    &.contributing {
+        box-shadow: 0 0 1px 2px #d9904f;
+    }
+
+    &.stealth,
+    &.assault {
+        box-shadow: 0 0 1px 2px #c14e15;
+    }
+}
+
+.card-image {
+    &.small {
+        &.vertical {
+            height: var(--throneteki-card-sm-height);
+            width: var(--throneteki-card-sm-width);
+        }
+
+        &.horizontal {
+            height: var(--throneteki-card-sm-width);
+            width: var(--throneteki-card-sm-height);
+        }
+    }
+
+    &.large {
+        &.vertical {
+            height: var(--throneteki-card-lg-height);
+            width: var(--throneteki-card-lg-width);
+        }
+
+        &.horizontal {
+            height: var(--throneteki-card-lg-width);
+            width: var(--throneteki-card-lg-height);
+        }
+
+        &.kneeled {
+            left: 19px;
+            top: -20px;
+        }
+    }
+
+    &.x-large {
+        &.vertical {
+            height: var(--throneteki-card-xl-height);
+            width: var(--throneteki-card-xl-width);
+        }
+
+        &.horizontal {
+            height: var(--throneteki-card-xl-width);
+            width: var(--throneteki-card-xl-height);
+        }
+
+        &.kneeled {
+            left: 24px;
+            top: -26px;
+        }
+    }
+
+    &.vertical {
+        height: var(--throneteki-card-height);
+        width: var(--throneteki-card-width);
+    }
+
+    &.horizontal {
+        height: var(--throneteki-card-width);
+        width: var(--throneteki-card-height);
+    }
+
+    &.kneeled {
+        left: 11px;
+        top: -14px;
+        transform: rotate(90deg);
+    }
+}
+
+.card-dupe {
+    margin-bottom: var(--attachment-offset);
+    margin-top: calc(-1 * (var(--attachment-offset) + var(--throneteki-card-height)));
+
+    &.small {
+        margin-top: calc(-1 * (var(--attachment-offset) + var(--throneteki-card-sm-height)));
+    }
+
+    &.large {
+        margin-top: calc(-1 * (var(--attachment-offset)-lg + var(--throneteki-card-lg-height)));
+    }
+
+    &.x-large {
+        margin-top: calc(-1 * (var(--attachment-offset)-xl + var(--throneteki-card-xl-height)));
+    }
+}
+
+@include generate-card-dupes(5, 1);
+
+.attachment {
+    margin-top: calc(var(--attachment-offset) - var(--throneteki-card-height));
+
+    &.small {
+        margin-top: calc(var(--attachment-offset) - var(--throneteki-card-sm-height));
+    }
+
+    &.large {
+        margin-top: calc(var(--attachment-offset-lg) - var(--throneteki-card-lg-height));
+    }
+
+    &.x-large {
+        margin-top: calc(var(--attachment-offset-xl) - var(--throneteki-card-xl-height));
+    }
+}
+
+@include generate-attachments(10, 1);
