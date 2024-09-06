@@ -18,7 +18,7 @@ jobs:
             - name: Checkout source and submodules
               uses: actions/checkout@v4
               with:
-                  path: ${{ inputs.manual_branch }}
+                  #path: ${{ inputs.manual_branch }}
                   fetch-depth: '0'
                   submodules: recursive
             - name: Set up QEMU
