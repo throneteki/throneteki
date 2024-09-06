@@ -58,7 +58,6 @@ class ImportStandaloneDecks {
             faction: { value: deck.faction },
             drawCards: drawCards.map((card) => ({ count: card.count, card: { code: card.code } })),
             plotCards: plotCards.map((card) => ({ count: card.count, card: { code: card.code } })),
-            rookeryCards: [],
             lastUpdated: new Date(deck.releaseDate)
         };
 

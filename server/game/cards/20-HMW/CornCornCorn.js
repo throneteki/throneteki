@@ -1,7 +1,7 @@
-import ApplyClaim from '../../gamesteps/challenge/applyclaim.js';
 import DrawCard from '../../drawcard.js';
 import Claim from '../../Claim.js';
 import { ChallengeTracker } from '../../EventTrackers/index.js';
+import GameActions from '../../GameActions/index.js';
 
 class CornCornCorn extends DrawCard {
     setupCardAbilities(ability) {
@@ -58,7 +58,13 @@ class CornCornCorn extends DrawCard {
             claimType
         );
 
-        this.game.queueStep(new ApplyClaim(this.game, claim));
+        this.game.resolveGameAction(
+            GameActions.applyClaim({
+                player,
+                claim,
+                game: this.game
+            })
+        );
 
         return true;
     }

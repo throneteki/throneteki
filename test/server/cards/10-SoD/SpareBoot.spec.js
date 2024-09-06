@@ -7,7 +7,7 @@ describe('Spare Boot', function () {
                 'Bran Stark (Core)',
                 'Seal of the Hand',
                 "Syrio's Training",
-                'Little Bird'
+                'Little Bird (Core)'
             ]);
 
             this.player1.selectDeck(deck);

@@ -19,7 +19,6 @@ class PendingGame {
         this.gamePrivate = details.gamePrivate;
         this.gameType = details.gameType;
         this.isMelee = details.isMelee;
-        this.useRookery = details.useRookery;
         this.createdAt = new Date();
         this.gameChat = new GameChat();
         this.useGameTimeLimit = details.useGameTimeLimit;
@@ -391,7 +390,6 @@ class PendingGame {
                     settings: spectator.settings
                 };
             }),
-            useRookery: this.useRookery,
             useGameTimeLimit: this.useGameTimeLimit,
             gameTimeLimit: this.gameTimeLimit,
             muteSpectators: this.muteSpectators,
@@ -438,7 +436,6 @@ class PendingGame {
             restrictedList: this.restrictedList,
             showHand: this.showHand,
             spectators,
-            useRookery: this.useRookery,
             useGameTimeLimit: this.useGameTimeLimit,
             gameTimeLimit: this.gameTimeLimit,
             muteSpectators: this.muteSpectators,

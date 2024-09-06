@@ -2,7 +2,7 @@ import BaseStep from '../basestep.js';
 import FulfillMilitaryClaim from './fulfillmilitaryclaim.js';
 import TextHelper from '../../TextHelper.js';
 
-class ApplyClaim extends BaseStep {
+class SatisfyClaim extends BaseStep {
     constructor(game, claim) {
         super(game);
         this.claim = claim;
@@ -76,4 +76,4 @@ class ApplyClaim extends BaseStep {
     }
 }
 
-export default ApplyClaim;
+export default SatisfyClaim;

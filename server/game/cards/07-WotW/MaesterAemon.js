@@ -1,7 +1,7 @@
-import ApplyClaim from '../../gamesteps/challenge/applyclaim.js';
 import DrawCard from '../../drawcard.js';
 import Claim from '../../Claim.js';
 import { ChallengeTracker } from '../../EventTrackers/index.js';
+import GameActions from '../../GameActions/index.js';
 
 class MaesterAemon extends DrawCard {
     setupCardAbilities() {
@@ -56,7 +56,13 @@ class MaesterAemon extends DrawCard {
             claimType
         );
 
-        this.game.queueStep(new ApplyClaim(this.game, claim));
+        this.game.resolveGameAction(
+            GameActions.applyClaim({
+                player,
+                claim,
+                game: this.game
+            })
+        );
 
         return true;
     }

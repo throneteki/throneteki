@@ -34,7 +34,6 @@ export function formatDeckAsFullCards(deck, data) {
     newDeck.draftedCards = deck.draftedCards || [];
     newDeck.drawCards = processCardCounts(deck.drawCards || [], data.cards);
     newDeck.plotCards = processCardCounts(deck.plotCards || [], data.cards);
-    newDeck.rookeryCards = processCardCounts(deck.rookeryCards || [], data.cards);
 
     const wrappedDeck = new DeckWrapper(newDeck);
 

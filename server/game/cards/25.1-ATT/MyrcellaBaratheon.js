@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class MyrcellaBaratheon extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,21 +8,23 @@ class MyrcellaBaratheon extends DrawCard {
                 afterChallenge: (event) =>
                     event.challenge.winner === this.controller && this.isParticipating()
             },
-            cost: ability.costs.returnSelfToHand(),
             max: ability.limit.perPhase(1),
-            message: {
-                format: '{player} returns {source} to their hand to initiate an additional intrigue challenge this phase against {opponent}',
-                args: { opponent: (context) => context.event.challenge.loser }
-            },
-            handler: (context) => {
-                this.untilEndOfPhase((ability) => ({
-                    targetController: 'current',
-                    effect: ability.effects.mayInitiateAdditionalChallenge(
-                        'intrigue',
-                        (opponent) => opponent === context.event.challenge.loser
-                    )
-                }));
-            }
+            message: '{player} returns {source} to their hand',
+            gameAction: GameActions.returnCardToHand({ card: this }).then({
+                message: {
+                    format: 'Then, {player} may initiate an additional intrigue challenge this phase against {opponent}',
+                    args: { opponent: (context) => context.parentContext.event.challenge.loser }
+                },
+                gameAction: GameActions.genericHandler((context) => {
+                    this.untilEndOfPhase((ability) => ({
+                        targetController: 'current',
+                        effect: ability.effects.mayInitiateAdditionalChallenge(
+                            'intrigue',
+                            (opponent) => opponent === context.parentContext.event.challenge.loser
+                        )
+                    }));
+                })
+            })
         });
     }
 }

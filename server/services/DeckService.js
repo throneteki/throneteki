@@ -147,7 +147,6 @@ class DeckService {
             eventId: deck.eventId,
             faction: deck.faction,
             agenda: deck.agenda,
-            rookeryCards: deck.rookeryCards || [],
             lastUpdated: new Date()
         };
 
@@ -162,7 +161,6 @@ class DeckService {
             drawCards: deck.drawCards,
             faction: deck.faction,
             agenda: deck.agenda,
-            rookeryCards: deck.rookeryCards || [],
             lastUpdated: deck.lastUpdated,
             standaloneDeckId: deck.standaloneDeckId
         };
@@ -195,7 +193,6 @@ class DeckService {
             faction: deck.faction,
             eventId: deck.eventId,
             agenda: deck.agenda,
-            rookeryCards: deck.rookeryCards || [],
             lastUpdated: new Date()
         };
 

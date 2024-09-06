@@ -6,7 +6,7 @@ describe('Valyrian Steel', function () {
                     'Valyrian Steel (R)',
                     'Late Summer Feast',
                     'Hedge Knight',
-                    'Little Bird'
+                    'Little Bird (Core)'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);

@@ -48,10 +48,9 @@ const validTargets = {
         'play area',
         'out of game',
         'agenda',
-        'rookery',
         'shadows'
     ],
-    'plot deck': ['revealed plots', 'out of game', 'rookery'],
+    'plot deck': ['revealed plots', 'out of game'],
     'revealed plots': ['plot deck', 'out of game'],
     'out of game': [
         'plot deck',
@@ -72,9 +71,7 @@ const validTargets = {
         'out of game',
         'shadows'
     ],
-    shadows: ['dead pile', 'discard pile', 'draw deck', 'hand', 'out of game', 'play area'],
-    'full deck': ['rookery'],
-    rookery: ['full deck']
+    shadows: ['dead pile', 'discard pile', 'draw deck', 'hand', 'out of game', 'play area']
 };
 
 const Droppable = ({ children, onDragDrop, source, size }) => {

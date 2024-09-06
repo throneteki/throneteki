@@ -1,11 +1,12 @@
 import DrawCard from '../../drawcard.js';
-import ApplyClaim from '../../gamesteps/challenge/applyclaim.js';
+import SatisfyClaim from '../../gamesteps/challenge/SatisfyClaim.js';
 
 class MyaStone extends DrawCard {
     setupCardAbilities(ability) {
         this.interrupt({
             when: {
                 onClaimApplied: (event) =>
+                    event.challenge &&
                     ['military', 'intrigue'].includes(event.challenge.challengeType) &&
                     event.challenge.defendingPlayer === this.controller
             },
@@ -19,11 +20,10 @@ class MyaStone extends DrawCard {
                     context.event.challenge.challengeType
                 );
 
-                context.replaceHandler(() => {
-                    let replacementClaim = context.event.claim.clone();
-                    replacementClaim.challengeType = 'power';
+                context.replaceHandler((event) => {
+                    event.claim.challengeType = 'power';
 
-                    this.game.queueStep(new ApplyClaim(this.game, replacementClaim));
+                    this.game.queueStep(new SatisfyClaim(this.game, event.claim));
                 });
             }
         });

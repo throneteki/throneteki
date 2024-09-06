@@ -63,11 +63,7 @@ class BaseCard {
 
         this.power = 0;
         this.tokens = {};
-        this.plotModifierValues = {
-            gold: 0,
-            initiative: 0,
-            reserve: 0
-        };
+        this.printedPlotModifiers = {};
 
         this.canProvidePlotModifier = {
             gold: true,
@@ -126,39 +122,25 @@ class BaseCard {
     setupCardAbilities() {}
 
     plotModifiers(modifiers) {
-        this.plotModifierValues = Object.assign(this.plotModifierValues, modifiers);
-        if (modifiers.gold) {
-            this.persistentEffect({
-                condition: () => this.canProvidePlotModifier['gold'],
-                match: (card) => card.controller.activePlot === card,
-                targetController: 'current',
-                effect: AbilityDsl.effects.modifyGold(modifiers.gold)
-            });
-        }
-        if (modifiers.initiative) {
-            this.persistentEffect({
-                condition: () => this.canProvidePlotModifier['initiative'],
-                match: (card) => card.controller.activePlot === card,
-                targetController: 'current',
-                effect: AbilityDsl.effects.modifyInitiative(modifiers.initiative)
-            });
-        }
-        if (modifiers.reserve) {
-            this.persistentEffect({
-                condition: () => this.canProvidePlotModifier['reserve'],
-                match: (card) => card.controller.activePlot === card,
-                targetController: 'current',
-                effect: AbilityDsl.effects.modifyReserve(modifiers.reserve)
-            });
-        }
-        if (modifiers.claim) {
-            this.persistentEffect({
-                condition: () => this.canProvidePlotModifier['claim'],
-                match: (card) => card.controller.activePlot === card,
-                targetController: 'current',
-                effect: AbilityDsl.effects.modifyClaim(modifiers.claim)
-            });
-        }
+        const plotStatEffects = {
+            gold: AbilityDsl.effects.modifyGold,
+            initiative: AbilityDsl.effects.modifyInitiative,
+            claim: AbilityDsl.effects.modifyClaim,
+            reserve: AbilityDsl.effects.modifyReserve
+        };
+        this.printedPlotModifiers = Object.keys(modifiers).reduce((printed, statName) => {
+            const value = modifiers[statName];
+            if (value) {
+                printed[statName] = value;
+                this.persistentEffect({
+                    condition: () => this.canProvidePlotModifier[statName],
+                    match: (card) => card.controller.activePlot === card,
+                    targetController: 'current',
+                    effect: plotStatEffects[statName](value)
+                });
+            }
+            return printed;
+        }, this.printedPlotModifiers);
     }
 
     action(properties) {

@@ -403,7 +403,7 @@ describe('EffectEngine', function () {
             this.engine.add(this.effectSpy);
             this.engine.add(this.effectSpy2);
 
-            this.handler = this.engine.createCustomDurationHandler(this.effectSpy);
+            this.handler = this.engine.createCustomDurationHandler('foo', this.effectSpy);
         });
 
         describe('when called for an unregistered event', function () {

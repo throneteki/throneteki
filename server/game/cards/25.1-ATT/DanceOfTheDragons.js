@@ -6,10 +6,12 @@ class DanceOfTheDragons extends PlotCard {
         this.interrupt({
             when: {
                 onClaimApplied: (event) =>
+                    event.challenge &&
                     event.challenge.isMatch({
                         attackingPlayer: this.controller,
                         challengeType: ['military', 'intrigue']
-                    }) && event.challenge.loser.faction.power > 0
+                    }) &&
+                    event.challenge.loser.faction.power > 0
             },
             cost: ability.costs.kneel(
                 (card) => card.getType() === 'character' && card.hasTrait('Dragon')

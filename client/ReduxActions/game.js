@@ -24,16 +24,6 @@ export function receiveGameState(game, username) {
             }
         }
 
-        if (user) {
-            let previousRookery = getRookeryPrompt(previousGameState, user.username);
-            let currentRookery = getRookeryPrompt(game, user.username);
-            if (!previousRookery && currentRookery) {
-                dispatch(actions.openRookeryPrompt(currentRookery));
-            } else if (previousRookery && !currentRookery) {
-                dispatch(actions.closeRookeryPrompt());
-            }
-        }
-
         dispatch({
             type: 'LOBBY_MESSAGE_RECEIVED',
             message: 'gamestate',
@@ -46,12 +36,6 @@ function hasTimer(game, username) {
     let player = game.players[username];
     let buttons = (player && player.buttons) || [];
     return buttons.some((button) => button.timer);
-}
-
-function getRookeryPrompt(game, username) {
-    let player = (game && game.players[username]) || {};
-    let controls = (player && player.controls) || [];
-    return controls.find((control) => control.type === 'rookery');
 }
 
 export function clearGameState() {

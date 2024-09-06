@@ -7,6 +7,7 @@ class BattleoftheTrident extends AgendaCard {
         this.reaction({
             when: {
                 onClaimApplied: (event) =>
+                    event.challenge &&
                     event.challenge.winner === this.owner &&
                     event.challenge.attackingPlayer === this.owner &&
                     event.challenge.attackers.some(

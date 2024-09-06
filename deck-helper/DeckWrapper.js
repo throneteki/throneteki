@@ -8,7 +8,6 @@ class DeckWrapper {
         this.faction = rawDeck.faction;
         this.format = rawDeck.format || 'joust';
         this.plotCards = rawDeck.plotCards;
-        this.rookeryCards = rawDeck.rookeryCards || [];
         this.cardCoount = rawDeck.cardCount;
         this.plotCount = rawDeck.plotCount;
 
@@ -30,7 +29,7 @@ class DeckWrapper {
     }
 
     getCardsIncludedInDeck() {
-        return [...this.drawCards, ...this.plotCards, ...this.rookeryCards].map(
+        return [...this.drawCards, ...this.plotCards].map(
             (cardQuantity) => cardQuantity.card
         );
     }
@@ -56,12 +55,6 @@ class DeckWrapper {
     countPlotCards(predicate = () => true) {
         return this.getDeckCount(
             this.plotCards.filter((cardQuantity) => predicate(cardQuantity.card))
-        );
-    }
-
-    countRookeryCards(predicate = () => true) {
-        return this.getDeckCount(
-            this.rookeryCards.filter((cardQuantity) => predicate(cardQuantity.card))
         );
     }
 

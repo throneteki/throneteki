@@ -163,7 +163,7 @@ const Card = ({
     };
 
     const getAttachments = () => {
-        if (!['rookery', 'full deck', 'play area'].includes(source)) {
+        if (!['full deck', 'play area'].includes(source)) {
             return null;
         }
 
