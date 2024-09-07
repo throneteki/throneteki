@@ -64,7 +64,7 @@ const PasswordGame = () => {
                 </div>
                 {passwordError ? (
                     <div>
-                        <AlertPanel type='error' message={passwordError} />
+                        <AlertPanel variant='danger' message={passwordError} />
                     </div>
                 ) : null}
                 <div>

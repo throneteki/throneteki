@@ -125,7 +125,7 @@ const BlockList = () => {
     if (error) {
         return (
             <AlertPanel
-                type='error'
+                variant='danger'
                 message={error.message || 'An error occured loading the block list'}
             />
         );

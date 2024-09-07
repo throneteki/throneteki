@@ -24,7 +24,7 @@ const ServerStatus = ({ connecting, connected, responseTime, serverType }) => {
     }`;
 
     return (
-        <div className='font-[PoppinsMedium] text-large'>
+        <div className='font-[PoppinsMedium] text-large text-nowrap'>
             <span className={pingLevel}>
                 {pingText2} <FontAwesomeIcon icon={connectionIcon} title={toolTip} />
             </span>

@@ -162,7 +162,7 @@ const NewsAdmin = () => {
 
     return (
         <div className='w-2/3 mx-auto'>
-            {error && <AlertPanel type='error' message={error} />}
+            {error && <AlertPanel variant='danger' message={error} />}
             <Panel title='News administration'>
                 <Table isStriped>
                     <TableHeader>

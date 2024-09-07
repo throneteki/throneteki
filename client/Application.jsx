@@ -80,14 +80,14 @@ const Application = () => {
     if (incompatibleBrowser) {
         component = (
             <AlertPanel
-                type='error'
+                variant='danger'
                 message='Your browser does not provide the required functionality for this site to work.  Please upgrade your browser.  The site works best with a recet version of Chrome, Safari or Firefox'
             />
         );
     } else if (cannotLoad) {
         component = (
             <AlertPanel
-                type='error'
+                variant='danger'
                 message='This site requires the ability to store cookies and local site data to function.  Please enable these features to use the site.'
             />
         );

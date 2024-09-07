@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import { BannersForFaction, Constants } from '../../constants';
 import ReactTable from '../Table/ReactTable';

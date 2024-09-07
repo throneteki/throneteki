@@ -3,12 +3,14 @@ import { useDispatch } from 'react-redux';
 
 import AlertPanel from '../Components/Site/AlertPanel';
 import Panel from '../Components/Site/Panel';
-import Form from '../Components/Form/Form';
 import Link from '../Components/Site/Link';
 import { useLoginAccountMutation } from '../redux/middleware/api';
 import { accountLoggedIn } from '../redux/reducers/auth';
 import { navigate } from '../redux/reducers/navigation';
 import { sendAuthenticateMessage } from '../redux/reducers/lobby';
+import * as yup from 'yup';
+import { Button, Input } from '@nextui-org/react';
+import { Formik } from 'formik';
 
 const Login = () => {
     const dispatch = useDispatch();
@@ -41,27 +43,49 @@ const Login = () => {
         [dispatch, loginAccount]
     );
 
-    const errorBar = error ? <AlertPanel type='error' message={error} /> : null;
-    const successBar = success ? <AlertPanel type='success' message={success} /> : null;
+    const errorBar = error ? <AlertPanel variant='danger' message={error} /> : null;
+    const successBar = success ? <AlertPanel variant='success' message={success} /> : null;
+
+    const schema = yup.object({
+        username: yup.string().required('You must specify a username'),
+        password: yup.string().required('You must specify a password')
+    });
 
     return (
-        <div className='col-sm-6 col-sm-offset-3'>
+        <div className='mx-auto w-2/5'>
             {errorBar}
             {successBar}
-            <Panel title='Login'>
-                <Form
-                    name='login'
-                    apiLoading={isLoading}
-                    buttonClass='col-sm-offset-2 col-sm-3'
-                    buttonText='Log In'
+            <Panel className='mt-1' title='Login'>
+                <Formik
+                    initialValues={{ username: '', password: '' }}
+                    validationSchema={schema}
                     onSubmit={onLogin}
                 >
-                    <div className='form-group'>
-                        <div className='col-sm-offset-2 col-sm-10'>
+                    {(formProps) => (
+                        <form onSubmit={formProps.handleSubmit}>
+                            <Input
+                                label='Username'
+                                {...formProps.getFieldProps('username')}
+                                isInvalid={formProps.errors.username && formProps.touched.username}
+                                errorMessage={formProps.errors.username}
+                            />
+                            <Input
+                                className='mt-2'
+                                label='Password'
+                                type='password'
+                                isInvalid={formProps.errors.password && formProps.touched.password}
+                                errorMessage={formProps.errors.password}
+                                {...formProps.getFieldProps('password')}
+                            />
                             <Link href='/forgot'>Forgot your password?</Link>
-                        </div>
-                    </div>
-                </Form>
+                            <div className='mt-2'>
+                                <Button isLoading={isLoading} type='submit' color='primary'>
+                                    Login
+                                </Button>
+                            </div>
+                        </form>
+                    )}
+                </Formik>
             </Panel>
         </div>
     );

@@ -2,7 +2,6 @@ import React, { useCallback, useMemo, useState } from 'react';
 import moment from 'moment';
 
 import Panel from '../Components/Site/Panel';
-import Form from '../Components/Form/Form';
 import {
     useAddBanListEntryMutation,
     useGetBanListQuery,

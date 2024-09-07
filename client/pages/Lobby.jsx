@@ -11,7 +11,7 @@ import { getMessageWithLinks } from '../util';
 import * as actions from '../actions';
 import { createSelector } from '@reduxjs/toolkit';
 import { useGetNewsQuery, useRemoveMessageMutation } from '../redux/middleware/api';
-import { sendLobbyChatMessage } from '../redux/reducers/lobby';
+import { clearChatStatus, sendLobbyChatMessage } from '../redux/reducers/lobby';
 import { Input } from '@nextui-org/react';
 
 const Lobby = () => {
@@ -51,7 +51,7 @@ const Lobby = () => {
             toastr.error('New users are limited from chatting in the lobby, try again later');
 
             setTimeout(() => {
-                dispatch(actions.clearChatStatus());
+                dispatch(clearChatStatus());
             }, 5000);
         }
     }, [lobbyError, dispatch]);
@@ -126,9 +126,9 @@ const Lobby = () => {
         <div className='mx-auto flex h-[91vh] w-2/3 flex-col'>
             <div></div>
             {motd && motd.message && (
-                <AlertPanel type={motd.motdType}>{getMessageWithLinks(motd.message)}</AlertPanel>
+                <AlertPanel variant={motd.motdType}>{getMessageWithLinks(motd.message)}</AlertPanel>
             )}
-            {bannerNotice ? <AlertPanel message={bannerNotice} type='error' /> : null}
+            {bannerNotice ? <AlertPanel message={bannerNotice} variant='danger' /> : null}
             <div>
                 <Panel title='Latest site news' className='mt-2'>
                     {newsStatus}

@@ -90,6 +90,10 @@ class DeckService {
             }
         ]);
 
+        if (dbDecks.length === 0 || dbDecks[0].metadata.length === 0) {
+            return { success: true, data: [], totalCount: 0, page, pageSize };
+        }
+
         const decks = Object.assign(
             { totalCount: dbDecks[0].metadata[0].totalCount, page, pageSize },
             {
