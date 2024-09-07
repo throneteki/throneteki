@@ -107,9 +107,17 @@ export const apiSlice = createApi({
     tagTypes: Object.values(TagTypes),
     endpoints: (builder) => ({
         getNews: builder.query({
-            query: (limit) => ({
-                url: '/news',
-                params: { limit }
+            query: () => ({
+                url: '/news'
+            }),
+            providesTags: (result = { data: [] }) => [
+                TagTypes.News,
+                ...(result.data || []).map(({ id }) => ({ type: TagTypes.News, id }))
+            ]
+        }),
+        getAllNews: builder.query({
+            query: () => ({
+                url: '/news/all'
             }),
             providesTags: (result = { data: [] }) => [
                 TagTypes.News,
@@ -455,6 +463,7 @@ export const apiSlice = createApi({
 
 export const {
     useGetNewsQuery,
+    useGetAllNewsQuery,
     useGetDecksQuery,
     useGetCardsQuery,
     useGetRestrictedListQuery,

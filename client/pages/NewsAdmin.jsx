@@ -4,7 +4,7 @@ import moment from 'moment';
 import Panel from '../Components/Site/Panel';
 import {
     useDeleteNewsMutation,
-    useGetNewsQuery,
+    useGetAllNewsQuery,
     useSaveNewsMutation,
     useAddNewsMutation
 } from '../redux/middleware/api';
@@ -26,7 +26,7 @@ const NewsAdmin = () => {
     const [editText, setEditText] = useState('');
     const [editItemId, setEditItemId] = useState(undefined);
 
-    const { data: news, isLoading, error } = useGetNewsQuery(5);
+    const { data: news, isLoading, error } = useGetAllNewsQuery();
     const [addNews, { isLoading: isAddLoading }] = useAddNewsMutation();
     const [deleteNews, { isLoading: isDeleteLoading }] = useDeleteNewsMutation();
     const [saveNews, { isLoading: isSaveLoading }] = useSaveNewsMutation();
