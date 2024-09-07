@@ -74,7 +74,7 @@ const DeckSummary = ({ deck }) => {
     }
 
     return (
-        <div className='mt-3 grid grid-cols-3 gap-4'>
+        <div className='mt-3 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4'>
             {zoomCard && (
                 <div
                     className='decklist-card-zoom fixed left-0 top-0 z-50'

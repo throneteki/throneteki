@@ -15,8 +15,6 @@ const EditDeckPage = ({ deckId }) => {
 
     let content;
 
-    console.info(data);
-
     if (isLoading) {
         content = <LoadingSpinner text='Loading deck, please wait...' />;
     } else if (isError) {

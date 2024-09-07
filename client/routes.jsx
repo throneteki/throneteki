@@ -29,6 +29,7 @@ import EventsAdmin from './pages/EventsAdmin';
 import EditEvent from './pages/EventsAdmin/EditEvent';
 import EditDraftCube from './pages/EventsAdmin/EditDraftCube';
 import DraftingTable from './Components/Drafting/DraftingTable';
+import ImportDeck from './Components/Decks/ImportDeck';
 
 const routes = [
     { path: '/', action: () => <Lobby key='lobby' /> },
@@ -46,6 +47,7 @@ const routes = [
         path: '/decks/edit/:id([a-f\\d]{24})',
         action: (context) => <EditDeck key='editdeck' deckId={context.params.id} />
     },
+    { path: '/decks/import', action: () => <ImportDeck key='importdeck' /> },
     { path: '/forgot', action: () => <ForgotPassword key='forgotpassword' /> },
     { path: '/how-to-play', action: () => <HowToPlay key='howtoplay' /> },
     { path: '/login', action: () => <Login key='login' /> },
@@ -54,7 +56,6 @@ const routes = [
     {
         path: '/play',
         action: (context) => {
-            console.info(context?.currentGame?.started);
             if (context.currentGame && context.currentGame.started) {
                 if (context.currentGame.tableType === 'drafting-session') {
                     return <DraftingTable key='drafting-table' />;

@@ -189,33 +189,33 @@ function ReactTable({
     const totalCount = remote ? response?.totalCount : response[dataProperty]?.length || 0;
 
     const tableFooter = (
-        <div className='mt-3 flex justify-between'>
-            <div className='flex justify-center'>
-                <Select
-                    className='mr-2 w-20'
-                    labelPlacement='outside'
-                    onChange={(e) => {
-                        table.setPageSize(parseInt(e.target.value));
-                    }}
-                    disallowEmptySelection
-                    selectedKeys={new Set([table.getState().pagination.pageSize.toString()])}
-                >
-                    {[10, 25, 50].map((pageSize) => (
-                        <SelectItem key={pageSize.toString()} value={pageSize}>
-                            {pageSize.toString()}
-                        </SelectItem>
-                    ))}
-                </Select>
+        <div className='mt-3 flex flex-col'>
+            <div className='flex'>
+                <div className='flex justify-start'>
+                    <Select
+                        className='mr-2 w-20'
+                        labelPlacement='outside'
+                        onChange={(e) => {
+                            table.setPageSize(parseInt(e.target.value));
+                        }}
+                        disallowEmptySelection
+                        selectedKeys={new Set([table.getState().pagination.pageSize.toString()])}
+                    >
+                        {[10, 25, 50].map((pageSize) => (
+                            <SelectItem key={pageSize.toString()} value={pageSize}>
+                                {pageSize.toString()}
+                            </SelectItem>
+                        ))}
+                    </Select>
+                </div>
                 <TablePagination
                     currentPage={table.getState().pagination.pageIndex + 1}
                     pageCount={table.getPageCount()}
                     setCurrentPage={(page) => table.setPageIndex(page - 1)}
                 />
             </div>
-            <div className='flex items-center'>
-                <span className='mr-1'>
-                    Page {currPage} of {pageCount} ({totalCount} items)
-                </span>
+            <div className='flex justify-start mt-2'>
+                Page {currPage} of {pageCount} ({totalCount} items)
             </div>
         </div>
     );

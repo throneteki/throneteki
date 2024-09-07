@@ -21,7 +21,7 @@ import DeckStatusLabel from './DeckStatusLabel';
 
 import './DeckList.css';
 
-const DeckList = ({ activeDeck, className, restrictedList, onDeckSelected, events, readOnly }) => {
+const DeckList = ({ restrictedList, onDeckSelected, readOnly }) => {
     const dispatch = useDispatch();
 
     const [selectedIds, setSelectedIds] = useState([]);
@@ -239,7 +239,7 @@ const DeckList = ({ activeDeck, className, restrictedList, onDeckSelected, event
                   color: 'default',
                   icon: <FontAwesomeIcon icon={faDownload} />,
                   label: 'Import',
-                  onClick: () => navigate('/decks/import')
+                  onClick: () => dispatch(navigate('/decks/import'))
               },
               {
                   color: 'danger',

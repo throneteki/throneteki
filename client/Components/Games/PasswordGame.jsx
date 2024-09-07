@@ -21,7 +21,6 @@ const PasswordGame = () => {
             if (!passwordGame?.id) {
                 return;
             }
-            console.info(passwordJoinType, passwordGame.id, password);
             if (passwordJoinType === 'Join') {
                 dispatch(sendJoinGameMessage(passwordGame.id, password));
             } else if (passwordJoinType === 'Watch') {

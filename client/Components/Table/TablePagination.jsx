@@ -6,7 +6,7 @@ const TablePagination = ({ currentPage, pageCount, setCurrentPage }) => {
         <>
             <Pagination
                 classNames={{ base: 'p-3' }}
-                total={Math.min(pageCount, 5)}
+                total={pageCount}
                 showControls
                 initialPage={currentPage}
                 onChange={setCurrentPage}

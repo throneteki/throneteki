@@ -46,7 +46,6 @@ const BanlistAdmin = () => {
     const onDeleteBanlistClick = useCallback(
         async (id) => {
             try {
-                console.info(id);
                 await removeBanListEntry(id).unwrap();
 
                 toastr.success('Ban list entry deleted successfully.');

@@ -238,10 +238,8 @@ const DeckEditor = ({ deck, onBackClick }) => {
         );
     }
 
-    console.info(deckCards);
-
     return (
-        <div className='grid grid-cols-2 gap-4'>
+        <div className='grid lg:grid-cols-2 gap-4'>
             <div>
                 <div className='mb-2'>
                     <Button color='default' className='mr-2' onClick={() => onBackClick()}>
