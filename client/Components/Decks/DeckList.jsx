@@ -35,7 +35,7 @@ const DeckList = ({ restrictedList, onDeckSelected, readOnly }) => {
                 accessorKey: 'name',
                 header: 'Name',
                 cell: (info) => {
-                    return info.getValue();
+                    return <span className='cursor-pointer'>{info.getValue()}</span>;
                 },
                 meta: {
                     colWidth: '55%'

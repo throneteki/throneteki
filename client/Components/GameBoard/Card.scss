@@ -166,11 +166,11 @@
     }
 
     &.large {
-        margin-top: calc(-1 * (var(--attachment-offset)-lg + var(--throneteki-card-lg-height)));
+        margin-top: calc(-1 * (var(--attachment-offset-lg) + var(--throneteki-card-lg-height)));
     }
 
     &.x-large {
-        margin-top: calc(-1 * (var(--attachment-offset)-xl + var(--throneteki-card-xl-height)));
+        margin-top: calc(-1 * (var(--attachment-offset-xl) + var(--throneteki-card-xl-height)));
     }
 }
 

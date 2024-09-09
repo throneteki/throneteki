@@ -82,9 +82,9 @@ class DeckService {
                     metadata: [{ $match: { username: username } }, { $count: 'totalCount' }],
                     data: [
                         { $match: { username: username } },
+                        { $sort: { [sort[0]]: sort[1] === 'true' ? -1 : 1 } },
                         { $skip: (page - 1) * pageSize },
-                        { $limit: pageSize },
-                        { $sort: { [sort[0]]: sort[1] === 'true' ? -1 : 1 } }
+                        { $limit: pageSize }
                     ]
                 }
             }

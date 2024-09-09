@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Formik } from 'formik';
+import { Button } from '@nextui-org/react';
 import * as yup from 'yup';
 import AlertPanel from '../Components/Site/AlertPanel';
 import Panel from '../Components/Site/Panel';
@@ -11,12 +12,14 @@ import ProfileMain from '../Components/Profile/ProfileMain';
 import ActionWindowOptions from '../Components/Profile/ActionWindowOptions';
 import TimerSettings from '../Components/Profile/TimerSettings';
 import GameSettings from '../Components/Profile/GameSettings';
-import { Button } from '@nextui-org/react';
+import BlankBg from '../assets/img/bgs/blank.png';
+import Background1 from '../assets/img/bgs/background.png';
+import Background2 from '../assets/img/bgs/background2.png';
 
 const backgrounds = [
-    { name: 'none', label: 'None', imageUrl: 'img/blank.png' },
-    { name: 'BG1', label: 'Standard', imageUrl: 'img/background.png' },
-    { name: 'BG2', label: 'Winter', imageUrl: 'img/background3.png' }
+    { name: 'none', label: 'None', imageUrl: BlankBg },
+    { name: 'BG1', label: 'Standard', imageUrl: Background1 },
+    { name: 'BG2', label: 'Winter', imageUrl: Background2 }
 ];
 
 const cardSizes = [

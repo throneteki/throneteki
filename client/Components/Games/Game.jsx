@@ -129,12 +129,14 @@ const Game = ({
                 {gameMiddles}
                 <div className='game-row-buttons'>
                     {showWatchButton && (
-                        <button
+                        <Button
+                            color='primary'
+                            size='sm'
                             className='btn btn-primary gamelist-lower-button'
                             onClick={onWatchGame}
                         >
                             Watch
-                        </button>
+                        </Button>
                     )}
                     {isAdmin && (
                         <Button
