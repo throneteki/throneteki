@@ -32,8 +32,7 @@ Then run the following commands in your repo folder:
 git submodule update --init
 npm install
 ```
-This installs the `throneteki-json-data` submodule within your project, which stores all of the
-card data.
+This installs the `throneteki-json-data` submodule within your project, which stores all of the card data.
 
 ### Docker (Dev Container)
 #### Required Software:
