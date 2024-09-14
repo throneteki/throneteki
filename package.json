@@ -96,7 +96,7 @@
         "less": "^4.2.0",
         "moment": "^2.22.1",
         "node-noop": "^1.0.0",
-        "path-to-regexp": "^2.2.1",
+        "path-to-regexp": "^8.1.0",
         "prettier": "^3.2.5",
         "query-string": "^5.1.1",
         "react": "^18.3.1",
