@@ -17,8 +17,8 @@ import WinterBg from './assets/img/bgs/background2.png';
 
 const backgrounds = {
     none: BlankBg,
-    standard: StandardBg,
-    winter: WinterBg
+    BG1: StandardBg,
+    BG2: WinterBg
 };
 
 const Application = () => {
@@ -97,6 +97,8 @@ const Application = () => {
         if (gameBoardVisible && user) {
             const settings = user.settings;
             const background = settings.background;
+
+            console.info(background, backgrounds);
 
             if (bgRef.current && background === 'custom' && settings.customBackgroundUrl) {
                 bgRef.current.style.backgroundImage = `url('/img/bgs/${settings.customBackgroundUrl}')`;

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Formik } from 'formik';
 import { Button } from '@nextui-org/react';
 import * as yup from 'yup';
@@ -15,6 +15,7 @@ import GameSettings from '../Components/Profile/GameSettings';
 import BlankBg from '../assets/img/bgs/blank.png';
 import Background1 from '../assets/img/bgs/background.png';
 import Background2 from '../assets/img/bgs/background2.png';
+import { setUser } from '../redux/reducers/auth';
 
 const backgrounds = [
     { name: 'none', label: 'None', imageUrl: BlankBg },
@@ -41,8 +42,8 @@ const defaultActionWindows = {
 };
 
 const Profile = () => {
+    const dispatch = useDispatch();
     const user = useSelector((state) => state.auth.user);
-
     const [success, setSuccess] = useState();
     const [error, setError] = useState();
     const [selectedBackground, setSelectedBackground] = useState(
@@ -133,7 +134,7 @@ const Profile = () => {
                     setSuccess(undefined);
 
                     try {
-                        await saveProfile({
+                        const ret = await saveProfile({
                             username: user.username,
                             profile: {
                                 email: values.email,
@@ -157,6 +158,9 @@ const Profile = () => {
                             }
                         }).unwrap();
                         setSuccess('Profile saved successfully');
+
+                        console.info(ret);
+                        dispatch(setUser(ret.user));
 
                         setTimeout(() => {
                             setSuccess(undefined);

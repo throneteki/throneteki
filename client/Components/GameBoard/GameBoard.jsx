@@ -146,19 +146,21 @@ const GameBoard = () => {
                     onMouseOver={setCardToZoom}
                     onMouseOut={() => setCardToZoom(undefined)}
                 />
-                <CardZoom
-                    imageUrl={cardToZoom ? '/img/cards/' + cardToZoom.code + '.png' : ''}
-                    orientation={
-                        cardToZoom
-                            ? cardToZoom.type === 'plot'
-                                ? 'horizontal'
+                {cardToZoom && (
+                    <CardZoom
+                        imageUrl={'/img/cards/' + cardToZoom.code + '.png'}
+                        orientation={
+                            cardToZoom
+                                ? cardToZoom.type === 'plot'
+                                    ? 'horizontal'
+                                    : 'vertical'
                                 : 'vertical'
-                            : 'vertical'
-                    }
-                    show={!!cardToZoom}
-                    cardName={cardToZoom ? cardToZoom.name : null}
-                    card={cardToZoom ? cards[cardToZoom.code] : null}
-                />
+                        }
+                        show={!!cardToZoom}
+                        cardName={cardToZoom ? cardToZoom.name : null}
+                        card={cardToZoom ? cards[cardToZoom.code] : null}
+                    />
+                )}
                 {showMessages && (
                     <div className='relative flex flex-col items-end overflow-hidden min-w-72 max-w-72'>
                         <div className='relative w-full flex-1 flex flex-col overflow-y-hidden'>

@@ -91,7 +91,7 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
         };
     }
 
-    if (api.endpoint === 'getDecks') {
+    if (api.endpoint === 'getDecks' || api.endpoint === 'getAllNews') {
         return result;
     }
 

@@ -10,27 +10,19 @@ import {
 } from '../redux/middleware/api';
 import { toastr } from 'react-redux-toastr';
 import AlertPanel from '../Components/Site/AlertPanel';
-import {
-    Button,
-    Spinner,
-    Table,
-    TableBody,
-    TableCell,
-    TableColumn,
-    TableHeader,
-    TableRow,
-    Textarea
-} from '@nextui-org/react';
+import { Button, Textarea } from '@nextui-org/react';
+import ReactTable from '../Components/Table/ReactTable';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 
 const NewsAdmin = () => {
-    const [editText, setEditText] = useState('');
-    const [editItemId, setEditItemId] = useState(undefined);
-
     const { data: news, isLoading, error } = useGetAllNewsQuery();
     const [addNews, { isLoading: isAddLoading }] = useAddNewsMutation();
     const [deleteNews, { isLoading: isDeleteLoading }] = useDeleteNewsMutation();
     const [saveNews, { isLoading: isSaveLoading }] = useSaveNewsMutation();
     const [newsText, setNewsText] = useState('');
+    const [selectedItem, setSelectedItem] = useState(null);
+    const [selectedIds, setSelectedIds] = useState([]);
 
     const onAddNewsClick = useCallback(async () => {
         try {
@@ -46,33 +38,9 @@ const NewsAdmin = () => {
         }
     }, [addNews, newsText]);
 
-    const onDeleteClick = useCallback(
-        async (id) => {
-            try {
-                await deleteNews(id).unwrap();
-
-                toastr.success('News deleted successfully.');
-
-                setTimeout(() => {
-                    toastr.clean();
-                }, 5000);
-            } catch (err) {
-                toastr.error(
-                    err || 'An error occured deleting the news item. Please try again later.'
-                );
-            }
-        },
-        [deleteNews]
-    );
-
-    const onEditClick = useCallback((item) => {
-        setEditItemId(item._id);
-        setEditText(item.text);
-    }, []);
-
     const onSaveClick = useCallback(async () => {
         try {
-            await saveNews({ id: editItemId, text: editText }).unwrap();
+            await saveNews({ id: selectedItem._id, text: newsText }).unwrap();
 
             toastr.success('News edited successfully.');
 
@@ -82,110 +50,145 @@ const NewsAdmin = () => {
         } catch (err) {
             toastr.error(err || 'An error occured editing the news item. Please try again later.');
         }
-        setEditItemId(undefined);
-        setEditText(undefined);
-    }, [editItemId, editText, saveNews]);
+    }, [newsText, saveNews, selectedItem?._id]);
 
-    const renderedNews = useMemo(
-        () =>
-            news &&
-            news.map((newsItem) => {
-                return (
-                    <TableRow key={newsItem._id}>
-                        <TableCell>{moment(newsItem.datePublished).format('YYYY-MM-DD')}</TableCell>
-                        <TableCell>{newsItem.poster}</TableCell>
-                        <TableCell>
-                            {editItemId === newsItem._id ? (
-                                <Textarea
-                                    label='Edit news item'
-                                    value={editText}
-                                    onValueChange={setEditText}
-                                    rows='4'
-                                />
-                            ) : (
-                                newsItem.text
-                            )}
-                        </TableCell>
-                        <TableCell>
-                            <div className='flex gap-2'>
-                                {editItemId === newsItem._id ? (
-                                    <Button
-                                        color='primary'
-                                        disabled={isAddLoading}
-                                        onClick={onSaveClick}
-                                    >
-                                        Save{' '}
-                                        {isAddLoading && (
-                                            <span className='spinner button-spinner' />
-                                        )}
-                                    </Button>
-                                ) : (
-                                    <Button
-                                        color='primary'
-                                        onClick={() => onEditClick(newsItem)}
-                                        disabled={isSaveLoading}
-                                    >
-                                        Edit{' '}
-                                        {isSaveLoading && (
-                                            <span className='spinner button-spinner' />
-                                        )}
-                                    </Button>
-                                )}
-                                <Button
-                                    color='danger'
-                                    onClick={() => onDeleteClick(newsItem._id)}
-                                    disabled={isDeleteLoading}
-                                >
-                                    Delete {isDeleteLoading && <Spinner />}
-                                </Button>
-                            </div>
-                        </TableCell>
-                    </TableRow>
-                );
-            }),
-        [
-            editItemId,
-            editText,
-            isAddLoading,
-            isDeleteLoading,
-            isSaveLoading,
-            news,
-            onDeleteClick,
-            onEditClick,
-            onSaveClick
-        ]
+    const columns = useMemo(
+        () => [
+            {
+                accessorKey: 'datePublished',
+                header: 'Published At',
+                cell: (info) => moment(info.getValue()).local().format('YYYY-MM-DD HH:mm'),
+                meta: {
+                    colWidth: '25%'
+                },
+                sortingFn: 'datetime'
+            },
+            {
+                accessorKey: 'poster',
+                header: 'Poster',
+                cell: (info) => {
+                    return info.getValue();
+                },
+                meta: {
+                    colWidth: '25%'
+                }
+            },
+            {
+                accessorKey: 'text',
+                header: 'Text',
+                cell: (info) => {
+                    return info.getValue();
+                },
+                meta: {
+                    colWidth: '55%'
+                }
+            }
+        ],
+        []
     );
+
+    const buttons = [
+        {
+            color: 'danger',
+            icon: <FontAwesomeIcon icon={faTrashAlt} />,
+            label: 'Delete',
+            disabled: selectedIds.length === 0,
+            isLoading: isDeleteLoading,
+            onClick: () => {
+                toastr.confirm(
+                    `Are you sure you want to delete ${
+                        selectedIds.length === 1 ? 'this news entry' : 'these news entries'
+                    }?`,
+                    {
+                        okText: 'Yes',
+                        cancelText: 'Cancel',
+                        onOk: async () => {
+                            try {
+                                await deleteNews(selectedIds[0]).unwrap();
+
+                                toastr.success('News deleted successfully.');
+
+                                setTimeout(() => {
+                                    toastr.clean();
+                                }, 5000);
+                            } catch (err) {
+                                toastr.error(
+                                    err ||
+                                        'An error occured deleting the news item(s). Please try again later.'
+                                );
+                            }
+                        }
+                    }
+                );
+            }
+        }
+    ];
 
     if (isLoading) {
         return 'Loading news, please wait...';
     }
-
     return (
-        <div className='w-2/3 mx-auto'>
+        <div className='lg:w-5/6 mx-auto'>
             {error && <AlertPanel variant='danger' message={error} />}
             <Panel title='News administration'>
-                <Table isStriped>
-                    <TableHeader>
-                        <TableColumn className='w-1/5'>Date</TableColumn>
-                        <TableColumn className='w-1/5'>Poster</TableColumn>
-                        <TableColumn className='w-2/4'>Text</TableColumn>
-                        <TableColumn className='w-1/4'>Action</TableColumn>
-                    </TableHeader>
-                    <TableBody>{renderedNews}</TableBody>
-                </Table>
+                <div className='h-[400px]'>
+                    <ReactTable
+                        buttons={buttons}
+                        columns={columns}
+                        dataLoadFn={() => ({
+                            data: news,
+                            isLoading: isLoading,
+                            isError: false
+                        })}
+                        onRowClick={(row) => {
+                            setSelectedItem(row.original);
+                            setNewsText(row.original.text);
+                        }}
+                        onRowSelectionChange={(ids) =>
+                            setSelectedIds(ids.map((r) => r.original._id))
+                        }
+                    />
+                </div>
             </Panel>
             <div className='mt-2'>
                 <Panel title='Add new news item'>
-                    <Textarea label='Add news item' onValueChange={setNewsText} value={newsText} />
+                    <Textarea
+                        label={selectedItem ? 'News text' : 'Enter new news item'}
+                        onValueChange={setNewsText}
+                        value={newsText}
+                    />
                     <div>
-                        <Button
-                            className='mt-2'
-                            color='primary'
-                            onClick={onAddNewsClick}
-                            disabled={isAddLoading}
-                        >
-                            Add {isAddLoading && <Spinner />}
-                        </Button>
+                        {selectedItem ? (
+                            <div>
+                                <Button
+                                    className='mr-2 mt-2'
+                                    color='primary'
+                                    isLoading={isSaveLoading}
+                                    onClick={onSaveClick}
+                                >
+                                    Save
+                                </Button>
+                                <Button
+                                    className='mt-2'
+                                    color='default'
+                                    onClick={() => {
+                                        setSelectedItem(null);
+                                        setNewsText('');
+                                    }}
+                                >
+                                    Cancel
+                                </Button>
+                            </div>
+                        ) : (
+                            <Button
+                                className='mt-2'
+                                color='primary'
+                                isLoading={isAddLoading}
+                                onClick={() => onAddNewsClick(newsText)}
+                            >
+                                Add
+                            </Button>
+                        )}
                     </div>
                 </Panel>
             </div>

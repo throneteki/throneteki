@@ -55,6 +55,7 @@ const GameChat = ({ messages, onCardMouseOver, onCardMouseOut, onSendChat, muted
     return (
         <div className='h-full flex flex-col overflow-hidden flex-1'>
             <div
+                id='messages-panel'
                 className='h-full overflow-auto m-0 flex-1 flex panel mx-1 my-2 flex-col gap-1.5'
                 ref={messagePanel}
                 onScroll={onScroll}

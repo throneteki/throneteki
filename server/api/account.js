@@ -691,7 +691,7 @@ export const init = function (server, options) {
             res.send(
                 Object.assign(
                     { success: true },
-                    { user: updatedUser.getWireSafeDetails(), token: authToken }
+                    { data: { user: updatedUser.getWireSafeDetails(), token: authToken } }
                 )
             );
         })

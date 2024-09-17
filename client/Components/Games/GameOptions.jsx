@@ -17,7 +17,7 @@ const GameOptions = ({ formProps }) => {
     return (
         <>
             <div>
-                <div className='text-foreground-500'>Options</div>
+                <div className='font-bold'>Options</div>
                 <div className='mt-2 grid md:grid-cols-2 lg:grid-cols-3'>
                     {options.map((option) => (
                         <div key={option.name}>

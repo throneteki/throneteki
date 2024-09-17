@@ -61,7 +61,8 @@ const PlayerStats = ({
 
     const writeChatToClipboard = useCallback((event) => {
         event.preventDefault();
-        const messagePanel = document.getElementsByClassName('messages panel')[0];
+        const messagePanel = document.getElementById('messages-panel');
+
         if (messagePanel) {
             navigator.clipboard
                 .writeText(messagePanel.innerText)

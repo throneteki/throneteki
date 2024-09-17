@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import { Formik } from 'formik';
 import { Button, Input, Select, SelectItem } from '@nextui-org/react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -25,6 +25,14 @@ const NewGame = ({
 
     const connected = useSelector((state) => state.lobby.connected);
     const user = useSelector((state) => state.auth.user);
+    const [restrictedList, setRestrictedList] = useState(restrictedLists?.[0]._id);
+
+    const restrictedListsById = useMemo(() => {
+        return restrictedLists?.reduce((acc, rl) => {
+            acc[rl._id] = rl;
+            return acc;
+        }, {});
+    }, [restrictedLists]);
 
     const schema = yup.object({
         name: yup
@@ -50,8 +58,7 @@ const NewGame = ({
         gameTimeLimit: defaultTimeLimit || 55,
         gamePrivate: defaultPrivate,
         useChessBlocks: false,
-        gameChessClockLimit: 30,
-        dt: true
+        gameChessClockLimit: 30
     };
 
     if (!connected) {
@@ -68,7 +75,11 @@ const NewGame = ({
             <Formik
                 validationSchema={schema}
                 onSubmit={(values) => {
-                    dispatch(sendNewGameMessage(values));
+                    const newGame = Object.assign({}, values, {
+                        restrictedList: restrictedListsById[restrictedList]
+                    });
+
+                    dispatch(sendNewGameMessage(newGame));
                 }}
                 initialValues={initialValues}
             >
@@ -92,52 +103,56 @@ const NewGame = ({
                         {!quickJoin && (
                             <>
                                 {
-                                    <>
-                                        <div className='mb-2 w-1/2'>
+                                    <div className='flex gap-2'>
+                                        <div className='w-1/2'>
+                                            <div className='mb-2'>
+                                                <Input
+                                                    label={'Name'}
+                                                    endContent={
+                                                        <span>
+                                                            {GameNameMaxLength -
+                                                                formProps.values.name.length}
+                                                        </span>
+                                                    }
+                                                    type='text'
+                                                    placeholder={'Game Name'}
+                                                    maxLength={GameNameMaxLength}
+                                                    {...formProps.getFieldProps('name')}
+                                                    errorMessage={formProps.errors.name}
+                                                />
+                                            </div>
+                                            <div className='mb-2'>
+                                                <Select
+                                                    label={'Mode'}
+                                                    selectedKeys={new Set([restrictedList])}
+                                                    onChange={(e) =>
+                                                        setRestrictedList(e.target.value)
+                                                    }
+                                                >
+                                                    {restrictedLists?.map((rl) => (
+                                                        <SelectItem key={rl._id} value={rl._id}>
+                                                            {rl.name}
+                                                        </SelectItem>
+                                                    ))}
+                                                </Select>
+                                            </div>
+                                        </div>
+                                        <div className='lg:w-1/2'>
                                             <Input
-                                                label={'Name'}
-                                                endContent={
-                                                    <span>
-                                                        {GameNameMaxLength -
-                                                            formProps.values.name.length}
-                                                    </span>
-                                                }
-                                                type='text'
-                                                placeholder={'Game Name'}
-                                                maxLength={GameNameMaxLength}
-                                                {...formProps.getFieldProps('name')}
-                                                errorMessage={formProps.errors.name}
+                                                autocomplete='new-password'
+                                                label={'Password'}
+                                                type='password'
+                                                placeholder={'Enter a password'}
+                                                {...formProps.getFieldProps('password')}
                                             />
                                         </div>
-                                        <div className='mb-2 w-1/2'>
-                                            <Select
-                                                label={'Mode'}
-                                                {...formProps.getFieldProps('restrictedListId')}
-                                            >
-                                                {restrictedLists?.map((rl) => (
-                                                    <SelectItem key={rl.name} value={rl.id}>
-                                                        {rl.name}
-                                                    </SelectItem>
-                                                ))}
-                                            </Select>
-                                        </div>
-                                    </>
+                                    </div>
                                 }
+
                                 <GameOptions formProps={formProps} />
                             </>
                         )}
                         {<GameTypes formProps={formProps} />}
-                        {!quickJoin && (
-                            <div className='mt-4 lg:w-1/2'>
-                                <Input
-                                    autocomplete='new-password'
-                                    label={'Password'}
-                                    type='password'
-                                    placeholder={'Enter a password'}
-                                    {...formProps.getFieldProps('password')}
-                                />
-                            </div>
-                        )}
                         <div className='mt-4'>
                             <Button color='success' type='submit'>
                                 Start

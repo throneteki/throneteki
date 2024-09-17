@@ -100,14 +100,13 @@ const ActivePlayerPrompt = ({
                     key={button.command + buttonIndex.toString()}
                     className='mb-1 mx-2'
                     onClick={clickCallback}
-                    onMouseOver={(event) => onMouseOver(event, button.card)}
-                    onMouseOut={(event) => onMouseOut(event, button.card)}
+                    onMouseOver={button.card ? (event) => onMouseOver(event, button.card) : null}
+                    onMouseOut={button.card ? (event) => onMouseOut(event, button.card) : null}
                     disabled={button.disabled}
                 >
                     {button.icon && <ThronesIcon icon={button.icon} withBackground />} {button.text}
                 </Button>
             );
-
             buttonIndex++;
 
             retButtons.push(option);

@@ -65,7 +65,6 @@ function ReactTable({
         [pageIndex, pageSize]
     );
     const [rowSelection, setRowSelection] = useState(new Set([]));
-    const [autoSorting, setAutoSorting] = useState([]);
     const [isFilterPopOverOpen, setFilterPopOverOpen] = useState({});
 
     const fetchDataOptions = {
@@ -85,6 +84,17 @@ function ReactTable({
     } = dataLoadFn(dataLoadArg ? Object.assign(fetchDataOptions, dataLoadArg) : fetchDataOptions);
 
     let tableOptions;
+
+    const tableSort = useMemo(() => {
+        return sorting
+            ? [
+                  {
+                      id: sorting.column,
+                      desc: sorting.direction === 'descending'
+                  }
+              ]
+            : [];
+    }, [sorting]);
 
     if (remote) {
         tableOptions = {
@@ -118,13 +128,12 @@ function ReactTable({
             getFilteredRowModel: getFilteredRowModel(),
             getPaginationRowModel: getPaginationRowModel(),
             getSortedRowModel: getSortedRowModel(),
-            onSortingChange: setAutoSorting,
             state: {
+                sorting: tableSort,
                 rowSelection: [...rowSelection].reduce((keys, v) => {
                     keys[v] = true;
                     return keys;
-                }, {}),
-                sorting: autoSorting
+                }, {})
             }
         };
     }
