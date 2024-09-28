@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Formik } from 'formik';
 import { Button, Input, Select, SelectItem } from '@nextui-org/react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -26,6 +26,12 @@ const NewGame = ({
     const connected = useSelector((state) => state.lobby.connected);
     const user = useSelector((state) => state.auth.user);
     const [restrictedList, setRestrictedList] = useState(restrictedLists?.[0]._id);
+
+    useEffect(() => {
+        if (!restrictedList && restrictedLists?.length) {
+            setRestrictedList(restrictedLists[0]._id);
+        }
+    }, [restrictedList, restrictedLists]);
 
     const restrictedListsById = useMemo(() => {
         return restrictedLists?.reduce((acc, rl) => {

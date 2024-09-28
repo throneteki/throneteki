@@ -7,7 +7,7 @@ const GameButtons = ({ onNewGame, onQuickJoin }) => {
 
     return (
         <>
-            <Button disabled={!user} color='primary' onClick={() => onNewGame && onNewGame()}>
+            <Button isDisabled={!user} color='primary' onClick={() => onNewGame && onNewGame()}>
                 New Game
             </Button>
             <Button

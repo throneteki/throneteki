@@ -296,23 +296,26 @@ const Card = ({
             return <div />;
         }
 
-        let cardClass = classNames(
-            'card overflow-hidden rounded-md',
-            className,
-            sizeClass,
-            statusClass,
-            {
-                absolute: !!style?.left,
-                relative: !style?.left,
-                [`card-type-${card.type}`]: card.type,
-                'custom-card': card.code && card.code.startsWith('custom'),
-                horizontal: orientation !== 'vertical' || card.kneeled,
-                vertical: orientation === 'vertical' && !card.kneeled,
-                unselectable: card.unselectable,
-                dragging: isDragging,
-                'z-10': !hideTokens
-            }
-        );
+        let cardClass = classNames('card overflow-hidden rounded-md', className, sizeClass, {
+            'shadow-[0_0px_10px_1px] shadow-primary': card.selectable,
+            'shadow-[0_0px_1px_4px] shadow-secondary': card.selected,
+            'shadow-[0_0px_1px_2px] shadow-danger': card.inChallenge,
+            'shadow-[0_0px_1px_2px] shadow-red-500': card.inDanger,
+            'shadow-[0_0px_1px_2px] shadow-green-500': card.saved,
+            'shadow-[0_0px_1px_2px] shadow-orange-200': card.isContributing,
+            'shadow-[0_0px_1px_2px] shadow-orange-800': card.stealth || card.assault,
+            'shadow-[0_0px_1px_2px] shadow-warning': card.controlled,
+            'shadow-[0_0px_1px_2px] shadow-info': card.new,
+            absolute: !!style?.left,
+            relative: !style?.left,
+            [`card-type-${card.type}`]: card.type,
+            'custom-card': card.code && card.code.startsWith('custom'),
+            horizontal: orientation !== 'vertical' || card.kneeled,
+            vertical: orientation === 'vertical' && !card.kneeled,
+            'backdrop-grayscale backdrop-brightness-50': card.unselectable,
+            dragging: isDragging,
+            'z-10': !hideTokens
+        });
         let imageClass = classNames(
             'card-image absolute left-0 top-0 points-events-none',
             sizeClass,
@@ -360,29 +363,6 @@ const Card = ({
           : '/img/cards/cardback.png';
 
     const sizeClass = { [size]: size !== 'normal' };
-    const statusClass = card
-        ? card.selected
-            ? 'selected'
-            : card.selectable
-              ? 'selectable'
-              : card.inDanger
-                ? 'in-danger'
-                : card.saved
-                  ? 'saved'
-                  : card.inChallenge
-                    ? 'challenge'
-                    : card.isContributing
-                      ? 'contributing'
-                      : card.stealth
-                        ? 'stealth'
-                        : card.assault
-                          ? 'assault'
-                          : card.controlled
-                            ? 'controlled'
-                            : card.new
-                              ? 'new'
-                              : undefined
-        : undefined;
 
     const wrapperClass = classNames('m-0 inline-block user-select-none', {
         absolute: !!style?.left,

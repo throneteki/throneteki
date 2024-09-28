@@ -102,7 +102,7 @@ const ActivePlayerPrompt = ({
                     onClick={clickCallback}
                     onMouseOver={button.card ? (event) => onMouseOver(event, button.card) : null}
                     onMouseOut={button.card ? (event) => onMouseOut(event, button.card) : null}
-                    disabled={button.disabled}
+                    isDisabled={button.disabled}
                 >
                     {button.icon && <ThronesIcon icon={button.icon} withBackground />} {button.text}
                 </Button>

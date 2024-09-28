@@ -181,7 +181,7 @@ const ImportDeck = () => {
                     <Textarea minRows={20} value={deckText} onValueChange={setDeckText} />
                 </div>
 
-                <Button type='submit' color='primary' disabled={!deckText || isAddLoading}>
+                <Button type='submit' color='primary' isDisabled={!deckText || isAddLoading}>
                     Submit &nbsp;
                     {isAddLoading && <FontAwesomeIcon icon={faCircleNotch} spin />}
                 </Button>

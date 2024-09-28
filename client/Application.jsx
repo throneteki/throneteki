@@ -98,8 +98,6 @@ const Application = () => {
             const settings = user.settings;
             const background = settings.background;
 
-            console.info(background, backgrounds);
-
             if (bgRef.current && background === 'custom' && settings.customBackgroundUrl) {
                 bgRef.current.style.backgroundImage = `url('/img/bgs/${settings.customBackgroundUrl}')`;
             } else if (bgRef.current) {
