@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import $ from 'jquery';
 import classNames from 'classnames';
 
 import PlayerStats from './PlayerStats';
@@ -19,6 +18,8 @@ import {
     sendToggleTimerSetting
 } from '../../redux/reducers/game';
 import GameBoardLayout from './GameBoardLayout';
+
+import './GameBoard.css';
 
 const placeholderPlayer = {
     activePlot: null,

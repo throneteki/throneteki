@@ -246,7 +246,11 @@ const Card = ({
             return null;
         }
 
-        return <div className='card-order'>{card.order}</div>;
+        return (
+            <div className='absolute -top-7 w-6 text-white bg-black/80 font-bold h-6 text-center left-1/2 -mb-3 rounded-md border-1'>
+                {card.order}
+            </div>
+        );
     };
 
     const getAlertStatus = () => {
