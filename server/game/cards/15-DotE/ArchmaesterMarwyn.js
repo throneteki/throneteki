@@ -20,7 +20,7 @@ class ArchmaesterMarwyn extends DrawCard {
 
         this.reaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this && this.controller.agenda
+                onCardEntersPlay: (event) => event.card === this
             },
             message:
                 '{player} uses {source} to place top 2 cards of their deck facedown under their agenda',

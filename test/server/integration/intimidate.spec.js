@@ -6,7 +6,7 @@ describe('intimidate', function () {
                 'Robert Baratheon (Core)',
                 'Dragonstone Faithful',
                 'Bastard in Hiding',
-                'Maester Cressen',
+                'Maester Cressen (Core)',
                 'Gendry (NMG)',
                 'Grey Wind (Core)'
             ]);

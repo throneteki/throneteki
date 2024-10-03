@@ -6,7 +6,7 @@ describe('Haldon Halfmaester', function () {
             const deck1 = this.buildDeck('tyrell', [
                 'Marching Orders',
                 'Haldon Halfmaester',
-                'Aegon Targaryen',
+                'Aegon Targaryen (TSC)',
                 'Bribery (R)',
                 'Hedge Knight',
                 'Hedge Knight'
