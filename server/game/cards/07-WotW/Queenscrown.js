@@ -30,6 +30,9 @@ class Queenscrown extends DrawCard {
                                         return true;
                                     }
                                 });
+                            } else {
+                                this.handleCards(context);
+                                return true;
                             }
                         })
                     })),
