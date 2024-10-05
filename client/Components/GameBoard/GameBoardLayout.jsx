@@ -40,7 +40,6 @@ const GameBoardLayout = ({ thisPlayer, otherPlayer, onCardClick, onMouseOver, on
             onDragStart={() => setIsDragging(true)}
             onDragCancel={() => setIsDragging(false)}
             onDragEnd={(event) => {
-                console.info('drag end', event.over, event.active.data.current);
                 setIsDragging(false);
 
                 if (!event.over || event.active.data.current.type !== ItemTypes.CARD) {

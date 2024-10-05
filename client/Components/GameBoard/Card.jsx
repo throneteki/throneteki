@@ -1,6 +1,6 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import classNames from 'classnames';
-import { useDraggable } from '@dnd-kit/core';
+import { useDndMonitor, useDraggable } from '@dnd-kit/core';
 import CardMenu from './CardMenu';
 import CardCounters from './CardCounters';
 import SquishableCardPanel from './SquishableCardPanel';
@@ -26,6 +26,8 @@ const Card = ({
     forceFaceup = false
 }) => {
     const [showMenu, setShowMenu] = useState(false);
+    const [startPosition, setStartPosition] = useState();
+    const dragRef = useRef(null);
 
     const shortNames = {
         count: 'x',
@@ -52,11 +54,7 @@ const Card = ({
         data: { type: ItemTypes.CARD, card, source }
     });
 
-    const dragStyle = {};
-
-    if (transform) {
-        dragStyle.transform = `translate3d(${transform.x}px, ${transform.y}px, 0)`;
-    }
+    const sizeClass = useMemo(() => ({ [size]: size !== 'normal' }), [size]);
 
     const isAllowedMenuSource = useCallback(() => {
         return source === 'play area' || source === 'agenda' || source === 'revealed plots';
@@ -271,24 +269,36 @@ const Card = ({
         return forceFaceup ? false : card.facedown || !card.code;
     };
 
-    // const getDragFrame = useCallback(
-    //     (image) => {
-    //         if (!isDragging) {
-    //             return null;
-    //         }
+    const getDragFrame = useCallback(
+        (image) => {
+            if (!transform) {
+                return null;
+            }
 
-    //         return (
-    //             <div
-    //                 className='pointer-events-none fixed opacity-50 z-50'
-    //                 style={style}
-    //                 ref={preview}
-    //             >
-    //                 {image}
-    //             </div>
-    //         );
-    //     },
-    //     [dragOffset, isDragging, preview]
-    // );
+            if (!startPosition && dragRef.current) {
+                setStartPosition(dragRef.current.getBoundingClientRect());
+            }
+
+            const x = startPosition?.left + transform.x;
+            const y = startPosition?.top + transform.y;
+            const style = { left: x, top: y };
+
+            const dragClass = classNames(
+                'card pointer-events-none fixed opacity-50 z-50',
+                sizeClass,
+                {
+                    horizontal: orientation !== 'vertical' || card.kneeled,
+                    vertical: orientation === 'vertical' && !card.kneeled
+                }
+            );
+            return (
+                <div className={dragClass} style={style} ref={dragRef}>
+                    {image}
+                </div>
+            );
+        },
+        [card.kneeled, orientation, sizeClass, startPosition, transform]
+    );
 
     const getCard = () => {
         if (!card) {
@@ -330,7 +340,7 @@ const Card = ({
 
         let content = (
             <div className='relative'>
-                {/* {getDragFrame(image)} */}
+                {getDragFrame(image)}
                 {getCardOrder()}
                 <div
                     {...listeners}
@@ -340,7 +350,6 @@ const Card = ({
                     onMouseOver={disableMouseOver ? null : () => handleMouseOver(card)}
                     onMouseOut={disableMouseOver ? null : handleMouseOut}
                     onClick={handleClick}
-                    style={dragStyle}
                 >
                     <div>
                         <span className='card-name'>{card.name}</span>
@@ -363,8 +372,6 @@ const Card = ({
         : source === 'shadows'
           ? '/img/cards/cardback_shadow.png'
           : '/img/cards/cardback.png';
-
-    const sizeClass = { [size]: size !== 'normal' };
 
     const wrapperClass = classNames('m-0 inline-block user-select-none', {
         absolute: !!style?.left,
