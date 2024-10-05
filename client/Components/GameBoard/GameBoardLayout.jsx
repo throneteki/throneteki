@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PlayerRow from './PlayerRow';
 import ActivePlayerPrompt from './ActivePlayerPrompt';
 import PlayerBoard from './PlayerBoard';
@@ -12,20 +12,56 @@ import {
     sendShuffleDeckMessage
 } from '../../redux/reducers/game';
 import Plots from './Plots';
+import { DndContext, MouseSensor, TouchSensor, useSensor } from '@dnd-kit/core';
+import { ItemTypes } from '../../constants';
 
 const GameBoardLayout = ({ thisPlayer, otherPlayer, onCardClick, onMouseOver, onMouseOut }) => {
     const currentGame = useSelector((state) => state.lobby.currentGame);
     const user = useSelector((state) => state.auth.user);
     const dispatch = useDispatch();
+    const [isDragging, setIsDragging] = useState(false);
+
+    const mouseSensor = useSensor(MouseSensor, {
+        activationConstraint: {
+            distance: 10
+        }
+    });
+
+    const touchSensor = useSensor(TouchSensor, {
+        activationConstraint: {
+            delay: 250,
+            tolerance: 5
+        }
+    });
 
     return (
-        <>
+        <DndContext
+            sensors={[mouseSensor, touchSensor]}
+            onDragStart={() => setIsDragging(true)}
+            onDragCancel={() => setIsDragging(false)}
+            onDragEnd={(event) => {
+                console.info('drag end', event.over, event.active.data.current);
+                setIsDragging(false);
+
+                if (!event.over || event.active.data.current.type !== ItemTypes.CARD) {
+                    return;
+                }
+
+                dispatch(
+                    sendDragDropMessage(
+                        event.active.data.current.card.uuid,
+                        event.active.data.current.source,
+                        event.over.id
+                    )
+                );
+            }}
+        >
             <Plots
                 thisPlayer={thisPlayer}
                 otherPlayer={otherPlayer}
                 onCardClick={onCardClick}
                 onMouseOut={onMouseOut}
-                onMouseOver={onMouseOver}
+                onMouseOver={isDragging ? null : onMouseOver}
             />
             <div className='flex w-full flex-shrink flex-grow flex-col overflow-hidden'>
                 <div className='flex overflow-hidden'>
@@ -40,7 +76,7 @@ const GameBoardLayout = ({ thisPlayer, otherPlayer, onCardClick, onMouseOver, on
                         deadPile={otherPlayer.cardPiles.deadPile}
                         drawDeck={otherPlayer.cardPiles.drawDeck}
                         onCardClick={onCardClick}
-                        onMouseOver={onMouseOver}
+                        onMouseOver={isDragging ? null : onMouseOver}
                         onMouseOut={onMouseOut}
                         outOfGamePile={otherPlayer.cardPiles.outOfGamePile}
                         username={user.username}
@@ -70,7 +106,7 @@ const GameBoardLayout = ({ thisPlayer, otherPlayer, onCardClick, onMouseOver, on
                                         )
                                     )
                                 }
-                                onMouseOver={onMouseOver}
+                                onMouseOver={isDragging ? null : onMouseOver}
                                 onMouseOut={onMouseOut}
                                 user={user}
                                 phase={thisPlayer.phase}
@@ -88,28 +124,27 @@ const GameBoardLayout = ({ thisPlayer, otherPlayer, onCardClick, onMouseOver, on
                                 dispatch(sendCardMenuItemClickedMessage(card.uuid, menuItem))
                             }
                             onMouseOut={onMouseOut}
-                            onMouseOver={onMouseOver}
+                            onMouseOver={isDragging ? null : onMouseOver}
                             rowDirection='reverse'
                             user={user}
                         />
-                        <Droppable
-                            onDragDrop={(card, source, target) =>
-                                dispatch(sendDragDropMessage(card.uuid, source, target))
-                            }
-                            source='play area'
-                        >
-                            <PlayerBoard
-                                cardsInPlay={thisPlayer.cardPiles.cardsInPlay}
-                                onCardClick={onCardClick}
-                                onMenuItemClick={(card, menuItem) =>
-                                    dispatch(sendCardMenuItemClickedMessage(card.uuid, menuItem))
-                                }
-                                onMouseOut={onMouseOut}
-                                onMouseOver={onMouseOver}
-                                rowDirection='default'
-                                user={user}
-                            />
-                        </Droppable>
+                        <div className='flex-1'>
+                            <Droppable source='play area'>
+                                <PlayerBoard
+                                    cardsInPlay={thisPlayer.cardPiles.cardsInPlay}
+                                    onCardClick={onCardClick}
+                                    onMenuItemClick={(card, menuItem) =>
+                                        dispatch(
+                                            sendCardMenuItemClickedMessage(card.uuid, menuItem)
+                                        )
+                                    }
+                                    onMouseOut={onMouseOut}
+                                    onMouseOver={isDragging ? null : onMouseOver}
+                                    rowDirection='default'
+                                    user={user}
+                                />
+                            </Droppable>
+                        </div>
                     </div>
                 </div>
                 <div className='player-home-row our-side'>
@@ -120,16 +155,13 @@ const GameBoardLayout = ({ thisPlayer, otherPlayer, onCardClick, onMouseOver, on
                         hand={thisPlayer.cardPiles.hand}
                         isMelee={currentGame.isMelee}
                         onCardClick={onCardClick}
-                        onMouseOver={onMouseOver}
+                        onMouseOver={isDragging ? null : onMouseOver}
                         onMouseOut={onMouseOut}
                         numDrawCards={thisPlayer.numDrawCards}
                         onDrawPopupChange={(visible) => dispatch(sendShowDrawDeckMessage(visible))}
                         onShuffleClick={() => dispatch(sendShuffleDeckMessage())}
                         outOfGamePile={thisPlayer.cardPiles.outOfGamePile}
                         drawDeck={thisPlayer.cardPiles.drawDeck}
-                        onDragDrop={(card, source, target) =>
-                            dispatch(sendDragDropMessage(card.uuid, source, target))
-                        }
                         discardPile={thisPlayer.cardPiles.discardPile}
                         deadPile={thisPlayer.cardPiles.deadPile}
                         revealTopCard={thisPlayer.revealTopCard}
@@ -145,7 +177,7 @@ const GameBoardLayout = ({ thisPlayer, otherPlayer, onCardClick, onMouseOver, on
                     />
                 </div>
             </div>
-        </>
+        </DndContext>
     );
 };
 

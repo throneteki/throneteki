@@ -26,7 +26,6 @@ const CardPile = ({
     onMenuItemClick,
     size,
     popupMenu,
-    onDragDrop,
     title,
     popupLocation = 'bottom',
     className,
@@ -217,7 +216,7 @@ const CardPile = ({
                 side={popupLocation}
                 size={size}
             >
-                <Droppable onDragDrop={onDragDrop} source={source} size={size}>
+                <Droppable source={source} size={size}>
                     <div className={popupClass} onClick={(event) => event.stopPropagation()}>
                         {retPopupMenu}
                         <div className={innerClass}>{cardList}</div>
@@ -243,7 +242,6 @@ const CardPile = ({
         popupMenu,
         title,
         onCloseClick,
-        onDragDrop,
         showCards,
         onPopupMenuItemClick
     ]);

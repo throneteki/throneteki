@@ -11,7 +11,6 @@ import { getCardDimensions } from '../../util';
 const PlayerRow = ({
     outOfGamePile,
     onCardClick,
-    onDragDrop,
     onMenuItemClick,
     onMouseOut,
     onMouseOver,
@@ -45,7 +44,6 @@ const PlayerRow = ({
                 cards={outOfGamePile}
                 className='additional-cards'
                 onCardClick={onCardClick}
-                onDragDrop={onDragDrop}
                 onMenuItemClick={onMenuItemClick}
                 onMouseOut={onMouseOut}
                 onMouseOver={onMouseOver}
@@ -58,18 +56,13 @@ const PlayerRow = ({
         );
 
         if (isMe) {
-            return (
-                <Droppable onDragDrop={onDragDrop} source='out of game'>
-                    {outOfGamePileElement}
-                </Droppable>
-            );
+            return <Droppable source='out of game'>{outOfGamePileElement}</Droppable>;
         }
 
         return outOfGamePileElement;
     }, [
         outOfGamePile,
         onCardClick,
-        onDragDrop,
         onMenuItemClick,
         onMouseOut,
         onMouseOver,
@@ -80,19 +73,13 @@ const PlayerRow = ({
 
     const renderDroppablePile = useCallback(
         (source, cards) => {
-            let onDragDropCb = isMe ? onDragDrop : null;
-
             if (isMe) {
-                return (
-                    <Droppable onDragDrop={onDragDropCb} source={source}>
-                        {cards}
-                    </Droppable>
-                );
+                return <Droppable source={source}>{cards}</Droppable>;
             }
 
             return cards;
         },
-        [isMe, onDragDrop]
+        [isMe]
     );
 
     const getAgenda = useCallback(() => {
@@ -126,7 +113,6 @@ const PlayerRow = ({
                         cards={underneath}
                         disablePopup={disablePopup}
                         onCardClick={onCardClick}
-                        onDragDrop={onDragDrop}
                         onMenuItemClick={onMenuItemClick}
                         onMouseOut={onMouseOut}
                         onMouseOver={onMouseOver}
@@ -177,7 +163,6 @@ const PlayerRow = ({
         agendas,
         renderDroppablePile,
         onCardClick,
-        onDragDrop,
         onMenuItemClick,
         onMouseOut,
         onMouseOver,
@@ -195,7 +180,6 @@ const PlayerRow = ({
                 cards={[]}
                 className='title'
                 onCardClick={onCardClick}
-                onDragDrop={onDragDrop}
                 onMenuItemClick={onMenuItemClick}
                 onMouseOut={onMouseOut}
                 onMouseOver={onMouseOver}
@@ -208,11 +192,7 @@ const PlayerRow = ({
         );
 
         if (isMe) {
-            return (
-                <Droppable onDragDrop={onDragDrop} source='title'>
-                    {titleCardElement}
-                </Droppable>
-            );
+            return <Droppable source='title'>{titleCardElement}</Droppable>;
         }
 
         return titleCardElement;
@@ -220,7 +200,6 @@ const PlayerRow = ({
         title,
         isMelee,
         onCardClick,
-        onDragDrop,
         onMenuItemClick,
         onMouseOut,
         onMouseOver,
@@ -231,7 +210,6 @@ const PlayerRow = ({
 
     let cardPileProps = {
         onCardClick: onCardClick,
-        onDragDrop: onDragDrop,
         onMouseOut: onMouseOut,
         onMouseOver: onMouseOver,
         popupLocation: side,

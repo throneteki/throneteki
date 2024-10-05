@@ -10,7 +10,6 @@ const DrawDeck = ({
     cardCount,
     revealTopCard,
     onCardClick,
-    onDragDrop,
     onMouseOut,
     onMouseOver,
     popupLocation,
@@ -42,15 +41,9 @@ const DrawDeck = ({
 
     const renderDroppablePile = useCallback(
         (source, child) => {
-            return isMe ? (
-                <Droppable onDragDrop={onDragDrop} source={source}>
-                    {child}
-                </Droppable>
-            ) : (
-                child
-            );
+            return isMe ? <Droppable source={source}>{child}</Droppable> : child;
         },
-        [isMe, onDragDrop]
+        [isMe]
     );
 
     let drawDeckPopupMenu = [];
@@ -81,7 +74,6 @@ const DrawDeck = ({
             disablePopup={!hasVisibleCards && (spectating || !isMe)}
             hiddenTopCard={!revealTopCard}
             onCardClick={onCardClick}
-            onDragDrop={onDragDrop}
             onMouseOut={onMouseOut}
             onMouseOver={onMouseOver}
             onPopupChange={handlePopupChange}

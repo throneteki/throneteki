@@ -8,8 +8,6 @@ import 'react-redux-toastr/src/styles/index.scss';
 import ReduxToastr from 'react-redux-toastr';
 import * as Sentry from '@sentry/browser';
 import * as SentryReact from '@sentry/react';
-import { DndProvider } from 'react-dnd';
-import { TouchBackend } from 'react-dnd-touch-backend';
 import { createRoot } from 'react-dom/client';
 import { NextUIProvider } from '@nextui-org/react';
 import { ThemeProvider as NextThemesProvider } from 'next-themes';
@@ -82,24 +80,22 @@ const root = createRoot(container);
 
 root.render(
     <Provider store={store}>
-        <DndProvider backend={TouchBackend} options={{ enableMouseEvents: true }}>
-            <NextUIProvider>
-                <NextThemesProvider attribute='class' defaultTheme='dark'>
-                    <div className='body'>
-                        <ReduxToastr
-                            timeOut={4000}
-                            newestOnTop
-                            preventDuplicates
-                            position='top-right'
-                            transitionIn='fadeIn'
-                            transitionOut='fadeOut'
-                        />
-                        <SentryReact.ErrorBoundary fallback={<p>An error has occurred</p>}>
-                            <Application />
-                        </SentryReact.ErrorBoundary>
-                    </div>
-                </NextThemesProvider>
-            </NextUIProvider>
-        </DndProvider>
+        <NextUIProvider>
+            <NextThemesProvider attribute='class' defaultTheme='dark'>
+                <div className='body'>
+                    <ReduxToastr
+                        timeOut={4000}
+                        newestOnTop
+                        preventDuplicates
+                        position='top-right'
+                        transitionIn='fadeIn'
+                        transitionOut='fadeOut'
+                    />
+                    <SentryReact.ErrorBoundary fallback={<p>An error has occurred</p>}>
+                        <Application />
+                    </SentryReact.ErrorBoundary>
+                </div>
+            </NextThemesProvider>
+        </NextUIProvider>
     </Provider>
 );

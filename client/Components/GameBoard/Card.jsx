@@ -1,13 +1,12 @@
 import React, { useState, useCallback } from 'react';
 import classNames from 'classnames';
-import { useDrag } from 'react-dnd';
-
+import { useDraggable } from '@dnd-kit/core';
 import CardMenu from './CardMenu';
 import CardCounters from './CardCounters';
-import { ItemTypes } from '../../constants';
 import SquishableCardPanel from './SquishableCardPanel';
 
 import './Card.scss';
+import { ItemTypes } from '../../constants';
 
 const Card = ({
     card,
@@ -48,14 +47,16 @@ const Card = ({
         ghost: 'H'
     };
 
-    const [{ isDragging, dragOffset }, drag, preview] = useDrag(() => ({
-        type: ItemTypes.CARD,
-        item: { card, source },
-        collect: (monitor) => ({
-            isDragging: monitor.isDragging(),
-            dragOffset: monitor.getSourceClientOffset()
-        })
-    }));
+    const { attributes, listeners, setNodeRef, transform } = useDraggable({
+        id: `card-${card.uuid}`,
+        data: { type: ItemTypes.CARD, card, source }
+    });
+
+    const dragStyle = {};
+
+    if (transform) {
+        dragStyle.transform = `translate3d(${transform.x}px, ${transform.y}px, 0)`;
+    }
 
     const isAllowedMenuSource = useCallback(() => {
         return source === 'play area' || source === 'agenda' || source === 'revealed plots';
@@ -194,16 +195,16 @@ const Card = ({
         let index = 1;
 
         return card.dupes.map((dupe) => {
-            if (card.facedown) {
-                dupe.facedown = true;
-            }
+            const dupeCopy = Object.assign({}, dupe);
+
+            dupeCopy.facedown = card.facedown;
 
             return (
                 <Card
                     key={dupe.uuid}
                     className={classNames('card-dupe', `card-dupe-${index++}`)}
                     source={source}
-                    card={dupe}
+                    card={dupeCopy}
                     wrapped={false}
                     onMouseOver={disableMouseOver ? null : () => handleMouseOver(dupe)}
                     onMouseOut={disableMouseOver ? null : handleMouseOut}
@@ -270,30 +271,24 @@ const Card = ({
         return forceFaceup ? false : card.facedown || !card.code;
     };
 
-    const getDragFrame = useCallback(
-        (image) => {
-            if (!isDragging) {
-                return null;
-            }
+    // const getDragFrame = useCallback(
+    //     (image) => {
+    //         if (!isDragging) {
+    //             return null;
+    //         }
 
-            let style = {};
-            if (dragOffset && isDragging) {
-                let x = dragOffset.x;
-                let y = dragOffset.y;
-                style = { left: x, top: y };
-            }
-            return (
-                <div
-                    className='pointer-events-none fixed opacity-50 z-50'
-                    style={style}
-                    ref={preview}
-                >
-                    {image}
-                </div>
-            );
-        },
-        [dragOffset, isDragging, preview]
-    );
+    //         return (
+    //             <div
+    //                 className='pointer-events-none fixed opacity-50 z-50'
+    //                 style={style}
+    //                 ref={preview}
+    //             >
+    //                 {image}
+    //             </div>
+    //         );
+    //     },
+    //     [dragOffset, isDragging, preview]
+    // );
 
     const getCard = () => {
         if (!card) {
@@ -317,7 +312,6 @@ const Card = ({
             horizontal: orientation !== 'vertical' || card.kneeled,
             vertical: orientation === 'vertical' && !card.kneeled,
             'backdrop-grayscale backdrop-brightness-50': card.unselectable,
-            dragging: isDragging,
             'z-10': !hideTokens
         });
         let imageClass = classNames(
@@ -335,14 +329,18 @@ const Card = ({
         let image = <img className={imageClass} src={imageUrl} />;
 
         let content = (
-            <div className='relative' ref={drag}>
-                {getDragFrame(image)}
+            <div className='relative'>
+                {/* {getDragFrame(image)} */}
                 {getCardOrder()}
                 <div
+                    {...listeners}
+                    {...attributes}
+                    ref={setNodeRef}
                     className={cardClass}
                     onMouseOver={disableMouseOver ? null : () => handleMouseOver(card)}
                     onMouseOut={disableMouseOver ? null : handleMouseOut}
                     onClick={handleClick}
+                    style={dragStyle}
                 >
                     <div>
                         <span className='card-name'>{card.name}</span>
