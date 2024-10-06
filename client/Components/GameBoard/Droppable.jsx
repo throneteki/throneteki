@@ -74,7 +74,7 @@ const validTargets = {
     shadows: ['dead pile', 'discard pile', 'draw deck', 'hand', 'out of game', 'play area']
 };
 
-const Droppable = ({ children, source, size }) => {
+const Droppable = ({ className, children, source, size }) => {
     const { isOver, active, setNodeRef } = useDroppable({
         id: source
     });
@@ -87,7 +87,7 @@ const Droppable = ({ children, source, size }) => {
         );
     }, [active, source]);
 
-    let className = classNames(
+    const innerClass = classNames(
         'pointer-events-none absolute top-0 left-0 h-full w-full opacity-50 z-50',
         {
             'bg-success-500': isOver && canDrop,
@@ -101,13 +101,13 @@ const Droppable = ({ children, source, size }) => {
         }
     );
 
-    let dropClass = classNames('relative h-full', size, {
+    let dropClass = classNames(className, 'relative', size, {
         [source.replace(' ', '-')]: source !== 'play area'
     });
 
     return (
         <div className={dropClass} ref={setNodeRef}>
-            <div className={className} />
+            <div className={innerClass} />
             {children}
         </div>
     );
