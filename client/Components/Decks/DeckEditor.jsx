@@ -12,6 +12,8 @@ import {
     useGetFactionsQuery,
     useSaveDeckMutation
 } from '../../redux/middleware/api';
+import { navigate } from '../../redux/reducers/navigation';
+import { useDispatch } from 'react-redux';
 
 const SmallButton = extendVariants(Button, {
     variants: {
@@ -34,6 +36,7 @@ const factionToTextColourMap = {
 };
 
 const DeckEditor = ({ deck, onBackClick }) => {
+    const dispatch = useDispatch();
     const { data: cards, isLoading, isError } = useGetCardsQuery({});
     const [addDeck, { isLoading: isAddLoading }] = useAddDeckMutation();
     const [saveDeck, { isLoading: isSaveLoading }] = useSaveDeckMutation();
@@ -52,7 +55,9 @@ const DeckEditor = ({ deck, onBackClick }) => {
             )
     );
     const [typeFilter, setTypeFilter] = useState(['character', 'agenda', 'plot']);
-    const [deckCards, setDeckCards] = useState(deck.drawCards.concat(deck.plotCards) || []);
+    const [deckCards, setDeckCards] = useState(
+        (deck.drawCards || []).concat(deck.plotCards || []) || []
+    );
     const [deckName, setDeckName] = useState(deck.name);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
@@ -172,24 +177,31 @@ const DeckEditor = ({ deck, onBackClick }) => {
                                     value={digit}
                                     color={count === digit ? 'primary' : null}
                                     onClick={() => {
-                                        let deckCard = deckCards.find(
-                                            (dc) => dc.card.code === info.row.original.code
-                                        );
+                                        const newDeckCards = [];
+                                        let found = false;
 
-                                        if (!deckCard) {
-                                            deckCard = {
+                                        for (const deckCard of deckCards) {
+                                            const newDeckCard = Object.assign({}, deckCard);
+
+                                            if (deckCard.card.code === info.row.original.code) {
+                                                found = true;
+
+                                                newDeckCard.count = digit;
+                                            }
+
+                                            if (newDeckCard.count > 0) {
+                                                newDeckCards.push(newDeckCard);
+                                            }
+                                        }
+
+                                        if (!found) {
+                                            const newCard = {
                                                 card: cardsByCode[info.row.original.code],
                                                 count: digit
                                             };
 
-                                            deckCards.push(deckCard);
+                                            newDeckCards.push(newCard);
                                         }
-
-                                        deckCard.count = digit;
-
-                                        const newDeckCards = [
-                                            ...deckCards.filter((dc) => dc.count > 0)
-                                        ];
 
                                         setDeckCards(newDeckCards);
                                     }}
@@ -255,14 +267,16 @@ const DeckEditor = ({ deck, onBackClick }) => {
                             const deckToSave = buildSaveDeck();
 
                             try {
-                                const response = deckToSave._id
+                                deckToSave._id
                                     ? await saveDeck(deckToSave).unwrap()
                                     : await addDeck(deckToSave).unwrap();
-                                if (!response.success) {
-                                    setError(response.message);
-                                } else {
-                                    setSuccess('Deck added successfully.');
-                                }
+                                setSuccess(
+                                    `Deck ${deckToSave._id ? 'saved' : 'added'} successfully.`
+                                );
+
+                                setTimeout(() => {
+                                    dispatch(navigate('/decks'));
+                                }, 2000);
                             } catch (err) {
                                 const apiError = err;
                                 setError(

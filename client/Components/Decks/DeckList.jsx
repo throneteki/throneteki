@@ -294,7 +294,7 @@ const DeckList = ({ restrictedList, onDeckSelected, readOnly }) => {
                 disableSelection={readOnly}
                 columns={columns}
                 onRowClick={(row) => onDeckSelected && onDeckSelected(row.original)}
-                onRowSelectionChange={(ids) => setSelectedIds(ids.map((r) => r.original.id))}
+                onRowSelectionChange={(ids) => setSelectedIds(ids.map((r) => r.original._id))}
             />
             {zoomCard && (
                 <div

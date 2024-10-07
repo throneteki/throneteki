@@ -20,9 +20,12 @@ const AddDeck = () => {
                                     name: 'New Deck',
                                     faction: selectedFaction,
                                     agenda: selectedAgendas[0],
-                                    deckCards: selectedAgendas
-                                        .slice(1)
-                                        .map((c) => ({ card: c, count: 1 }))
+                                    drawCards:
+                                        selectedAgendas.length > 1
+                                            ? selectedAgendas
+                                                  .slice(1)
+                                                  .map((c) => ({ card: c, count: 1 }))
+                                            : []
                                 }}
                             />
                         ) : (
