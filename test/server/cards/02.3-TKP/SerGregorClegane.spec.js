@@ -8,7 +8,7 @@ describe('Ser Gregor Clegane (TKP)', function () {
             const deck2 = this.buildDeck('baratheon', [
                 'Sneak Attack',
                 'Hedge Knight',
-                'Maester Cressen',
+                'Maester Cressen (Core)',
                 'Hedge Knight',
                 'Shireen Baratheon (Core)',
                 'The Roseroad'

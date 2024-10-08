@@ -5,7 +5,7 @@ describe('time limit', function () {
                 const deck = this.buildDeck('baratheon', [
                     'Time of Plenty',
                     'Tycho Nestoris',
-                    'Maester Cressen',
+                    'Maester Cressen (Core)',
                     'Tycho Nestoris',
                     'Robert Baratheon (Core)',
                     'Ser Davos Seaworth (Core)',

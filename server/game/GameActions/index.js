@@ -21,6 +21,7 @@ import Kill from './Kill.js';
 import KneelCard from './KneelCard.js';
 import LookAtDeck from './LookAtDeck.js';
 import LookAtHand from './LookAtHand.js';
+import lookAtShadows from './LookAtShadows.js';
 import LoseIcon from './LoseIcon.js';
 import MayGameAction from './MayGameAction.js';
 import MovePower from './MovePower.js';
@@ -67,6 +68,7 @@ const GameActions = {
     kneelCard: (props) => new AbilityAdapter(KneelCard, props),
     lookAtDeck: (props) => new AbilityAdapter(LookAtDeck, props),
     lookAtHand: (props) => new AbilityAdapter(LookAtHand, props),
+    lookAtShadows: (props) => new AbilityAdapter(lookAtShadows, props),
     loseIcon: (props) => new AbilityAdapter(LoseIcon, props),
     may: (props) => new MayGameAction(props),
     movePower: (props) => new AbilityAdapter(MovePower, props),

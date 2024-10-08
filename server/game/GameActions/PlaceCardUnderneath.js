@@ -15,6 +15,7 @@ class PlaceCardUnderneath extends GameAction {
 
     canChangeGameState({ card, parentCard }) {
         return (
+            parentCard &&
             !parentCard.underneath.includes(card) &&
             (parentCard.location === 'play area' || parentCard === parentCard.controller.agenda)
         );
