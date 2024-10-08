@@ -109,7 +109,7 @@ const ContextMenu = () => {
             return (
                 <li key={menuItem.text}>
                     <a
-                        className='clickable'
+                        className='cursor-pointer'
                         onMouseOver={() => onMenuItemMouseOver(menuItem)}
                         onMouseOut={() => onMenuItemMouseOut()}
                         onClick={

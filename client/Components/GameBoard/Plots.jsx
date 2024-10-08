@@ -2,7 +2,7 @@ import React from 'react';
 import PlayerPlots from './PlayerPlots';
 import GameTimer from './GameTimer';
 import { useDispatch, useSelector } from 'react-redux';
-import { sendCardMenuItemClickedMessage, sendDragDropMessage } from '../../redux/reducers/game';
+import { sendCardMenuItemClickedMessage } from '../../redux/reducers/game';
 
 const Plots = ({ thisPlayer, otherPlayer, onCardClick, onMouseOut, onMouseOver }) => {
     const user = useSelector((state) => state.auth.user);
@@ -13,14 +13,12 @@ const Plots = ({ thisPlayer, otherPlayer, onCardClick, onMouseOut, onMouseOver }
         onCardClick: onCardClick,
         onCardMouseOut: onMouseOut,
         onCardMouseOver: onMouseOver,
-        onDragDrop: (card, source, target) =>
-            dispatch(sendDragDropMessage(card.uuid, source, target)),
         onMenuItemClick: (card, menuItem) =>
             dispatch(sendCardMenuItemClickedMessage(card.uuid, menuItem))
     };
 
     return (
-        <div key='plots-pane' className='plots-pane'>
+        <div className='flex flex-col justify-center items-center'>
             <PlayerPlots
                 {...commonProps}
                 activePlot={otherPlayer.activePlot}

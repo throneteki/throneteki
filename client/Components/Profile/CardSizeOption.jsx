@@ -9,14 +9,16 @@ const CardSizeOption = ({ name, label, selected, onSelect }) => {
     }, [name, onSelect]);
 
     return (
-        <div key={name} className='card-settings' onClick={handleClick}>
-            <div className={classNames('card', 'vertical', name, { selected: selected })}>
+        <div key={name} className='inline-block' onClick={handleClick}>
+            <div className={classNames('card', 'vertical', name)}>
                 <img
-                    className={classNames('card', 'vertical', name)}
+                    className={classNames('card', 'vertical', name, {
+                        'border-2 border-green-600': selected
+                    })}
                     src='img/cards/cardback.png'
                 />
             </div>
-            <span className='bg-label'>{label}</span>
+            <span className='inline-block w-full text-center'>{label}</span>
         </div>
     );
 };

@@ -113,7 +113,7 @@ const GameList = ({ gameFilter }) => {
         return (
             <div className='game-list col-xs-12'>
                 <AlertPanel
-                    type='info'
+                    variant='info'
                     message='There are no games matching the filters you have selected'
                 />
             </div>

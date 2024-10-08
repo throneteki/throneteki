@@ -1,3 +1,5 @@
+import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useCallback } from 'react';
 
 const AbilityTargeting = ({
@@ -58,9 +60,9 @@ const AbilityTargeting = ({
     let targetCards = targets.map((target) => renderSimpleCard(target));
 
     return (
-        <div className='prompt-control-targeting'>
+        <div className='flex items-center content-between mb-2 gap-1 mx-2'>
             {renderSimpleCard(source)}
-            <span className='glyphicon glyphicon-arrow-right targeting-arrow' />
+            <FontAwesomeIcon icon={faArrowRight} />
             {targetCards}
         </div>
     );

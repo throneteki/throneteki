@@ -5,7 +5,7 @@ class NewsService {
         this.news = db.get('news');
     }
 
-    getRecentNewsItems(options) {
+    getRecentNewsItems(options = {}) {
         var params = {};
 
         params.sort = { datePublished: -1 };

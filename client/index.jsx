@@ -5,21 +5,17 @@ import Application from './Application';
 import 'jquery-validation';
 import 'jquery-validation-unobtrusive';
 import 'react-redux-toastr/src/styles/index.scss';
-import 'react-bootstrap-typeahead/css/Typeahead.css';
 import ReduxToastr from 'react-redux-toastr';
 import * as Sentry from '@sentry/browser';
 import * as SentryReact from '@sentry/react';
-import 'bootstrap/dist/js/bootstrap';
-import 'core-js/stable';
-import 'regenerator-runtime/runtime';
-import { DndProvider } from 'react-dnd';
-import { TouchBackend } from 'react-dnd-touch-backend';
 import { createRoot } from 'react-dom/client';
+import { NextUIProvider } from '@nextui-org/react';
+import { ThemeProvider as NextThemesProvider } from 'next-themes';
 
 import { store } from './configureStore';
 import { navigate } from './redux/reducers/navigation';
 
-import './less/site.less';
+import './index.css';
 
 $.validator.setDefaults({
     highlight: function (element) {
@@ -84,20 +80,22 @@ const root = createRoot(container);
 
 root.render(
     <Provider store={store}>
-        <DndProvider backend={TouchBackend} options={{ enableMouseEvents: true }}>
-            <div className='body'>
-                <ReduxToastr
-                    timeOut={4000}
-                    newestOnTop
-                    preventDuplicates
-                    position='top-right'
-                    transitionIn='fadeIn'
-                    transitionOut='fadeOut'
-                />
-                <SentryReact.ErrorBoundary fallback={<p>An error has occurred</p>}>
-                    <Application />
-                </SentryReact.ErrorBoundary>
-            </div>
-        </DndProvider>
+        <NextUIProvider>
+            <NextThemesProvider attribute='class' defaultTheme='dark'>
+                <div className='body'>
+                    <ReduxToastr
+                        timeOut={4000}
+                        newestOnTop
+                        preventDuplicates
+                        position='top-right'
+                        transitionIn='fadeIn'
+                        transitionOut='fadeOut'
+                    />
+                    <SentryReact.ErrorBoundary fallback={<p>An error has occurred</p>}>
+                        <Application />
+                    </SentryReact.ErrorBoundary>
+                </div>
+            </NextThemesProvider>
+        </NextUIProvider>
     </Provider>
 );

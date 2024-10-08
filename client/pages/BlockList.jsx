@@ -2,13 +2,25 @@ import React, { useState, useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import AlertPanel from '../Components/Site/AlertPanel';
 import Panel from '../Components/Site/Panel';
-import Input from '../Components/Form/Input';
 import {
     useAddBlockListEntryMutation,
     useGetBlockListQuery,
     useRemoveBlockListEntryMutation
 } from '../redux/middleware/api';
 import { toastr } from 'react-redux-toastr';
+import {
+    Button,
+    Input,
+    Spinner,
+    Table,
+    TableBody,
+    TableCell,
+    TableColumn,
+    TableHeader,
+    TableRow
+} from '@nextui-org/react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
 const BlockList = () => {
     const user = useSelector((state) => state.auth.user);
@@ -76,14 +88,14 @@ const BlockList = () => {
             blockList
                 ? blockList.map((user) => {
                       return (
-                          <tr key={user}>
-                              <td>{user}</td>
-                              <td>
+                          <TableRow key={user}>
+                              <TableCell>{user}</TableCell>
+                              <TableCell>
                                   <a href='#' className='btn' onClick={() => onRemoveClick(user)}>
-                                      <span className='glyphicon glyphicon-remove' />
+                                      <FontAwesomeIcon className='text-red-700' icon={faTimes} />
                                   </a>
-                              </td>
-                          </tr>
+                              </TableCell>
+                          </TableRow>
                       );
                   })
                 : null,
@@ -95,15 +107,13 @@ const BlockList = () => {
             blockList && blockList.length === 0 ? (
                 <div>No users currently blocked</div>
             ) : (
-                <table className='table table-striped blocklist'>
-                    <thead>
-                        <tr>
-                            <th>Username</th>
-                            <th>Remove</th>
-                        </tr>
-                    </thead>
-                    <tbody>{retBlocklist}</tbody>
-                </table>
+                <Table isStriped>
+                    <TableHeader>
+                        <TableColumn>Username</TableColumn>
+                        <TableColumn>Remove</TableColumn>
+                    </TableHeader>
+                    <TableBody>{retBlocklist}</TableBody>
+                </Table>
             ),
         [blockList, retBlocklist]
     );
@@ -115,45 +125,42 @@ const BlockList = () => {
     if (error) {
         return (
             <AlertPanel
-                type='error'
+                variant='danger'
                 message={error.message || 'An error occured loading the block list'}
             />
         );
     }
 
     return (
-        <div className='col-sm-8 col-sm-offset-2 full-height'>
-            <div className='about-container'>
-                <form className='form form-horizontal'>
-                    <Panel title='Block list'>
-                        <p>
-                            It can sometimes become necessary to prevent someone joining your games,
-                            or stop seeing their messages, or both. Users on this list will not be
-                            able to join your games, and you will not see their chat messages or
-                            their games.
-                        </p>
+        <div className='w-2/3 mx-auto'>
+            <div>
+                <Panel title='Block list'>
+                    <p>
+                        It can sometimes become necessary to prevent someone joining your games, or
+                        stop seeing their messages, or both. Users on this list will not be able to
+                        join your games, and you will not see their chat messages or their games.
+                    </p>
 
-                        <div className='form-group'>
-                            <Input
-                                name='blockee'
-                                label='Username'
-                                labelClass='col-sm-4'
-                                fieldClass='col-sm-4'
-                                placeholder='Enter username to block'
-                                type='text'
-                                onChange={onUsernameChange}
-                                value={username}
-                                noGroup
-                            />
-                            <button className='btn btn-primary col-sm-1' onClick={onAddClick}>
-                                Add {isAddLoading && <span className='spinner button-spinner' />}
-                            </button>
+                    <div className='mt-2'>
+                        <Input
+                            className='w-1/3'
+                            name='blockee'
+                            label='Username'
+                            placeholder='Enter username to block'
+                            type='text'
+                            onChange={onUsernameChange}
+                            value={username}
+                        />
+                        <Button className='mt-2' color='primary' onClick={onAddClick}>
+                            Add {isAddLoading && <Spinner />}
+                        </Button>
+
+                        <div className='mt-2'>
+                            <h3 className='font-bold'>Users Blocked</h3>
+                            {table}
                         </div>
-
-                        <h3>Users Blocked</h3>
-                        {table}
-                    </Panel>
-                </form>
+                    </div>
+                </Panel>
             </div>
         </div>
     );
