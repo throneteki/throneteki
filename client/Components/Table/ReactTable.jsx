@@ -47,6 +47,7 @@ function ReactTable({
     defaultColumnFilters = {},
     defaultSort,
     disableSelection = false,
+    emptyContent,
     onRowClick,
     onRowSelectionChange,
     remote = false
@@ -299,9 +300,11 @@ function ReactTable({
                     isLoading={isLoading}
                     loadingContent={<LoadingSpinner text='Loading data, please wait...' />}
                     emptyContent={
-                        <AlertPanel variant={AlertType.Info}>
-                            {'You have no decks. Create or import a new deck above!'}
-                        </AlertPanel>
+                        emptyContent || (
+                            <AlertPanel variant={AlertType.Info}>
+                                {'There is no data to display'}
+                            </AlertPanel>
+                        )
                     }
                 >
                     {table.getRowModel().rows.map((row) => (
