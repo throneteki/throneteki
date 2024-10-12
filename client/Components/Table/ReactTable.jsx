@@ -189,8 +189,6 @@ function ReactTable({
         return <LoadingSpinner text='Loading data, please wait...' />;
     } else if (isError) {
         return <AlertPanel variant='danger'>{'An error occurred loading data.'}</AlertPanel>;
-    } else if (response[dataProperty] && response[dataProperty].length === 0) {
-        return <AlertPanel variant={AlertType.Info}>{'There is no data to display.'}</AlertPanel>;
     }
 
     const currPage = table.getState().pagination.pageIndex + 1;
@@ -300,6 +298,11 @@ function ReactTable({
                 <TableBody
                     isLoading={isLoading}
                     loadingContent={<LoadingSpinner text='Loading data, please wait...' />}
+                    emptyContent={
+                        <AlertPanel variant={AlertType.Info}>
+                            {'You have no decks. Create or import a new deck above!'}
+                        </AlertPanel>
+                    }
                 >
                     {table.getRowModel().rows.map((row) => (
                         <TableRow key={row.id} onClick={() => onRowClick && onRowClick(row)}>
