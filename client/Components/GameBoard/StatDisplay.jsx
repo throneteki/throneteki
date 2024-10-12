@@ -1,10 +1,11 @@
 import React from 'react';
-import { Image } from '@nextui-org/react';
+import { Image, Button } from '@nextui-org/react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import Minus from '../../assets/img/Minus.png';
-import Plus from '../../assets/img/Plus.png';
 import { Constants } from '../../constants';
-import StatButton from './StatButton';
+import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
+
+import './StatDisplay.css';
 
 const StatDisplay = ({
     showControls = true,
@@ -15,14 +16,42 @@ const StatDisplay = ({
     onPlusClick
 }) => {
     return (
-        <>
-            {showControls && <StatButton image={Minus} onClick={onMinusClick} />}
-            <div className='font-[Bombardier] text-medium mr-1'>{statValue}</div>
-            <div className={`flex h-6 w-6 items-center justify-center ${statName}`}>
-                <Image src={Constants.StatIconImagePaths[statCode]} />
+        <div className={`${statName} min-w-12 flex justify-center items-center`}>
+            {showControls && (
+                <div className='flex'>
+                    <Button
+                        isIconOnly
+                        title={`Reduce ${statName}`}
+                        variant='light'
+                        size='sm'
+                        radius='none'
+                        className='flex-col p-1.5 w-9'
+                        onClick={onMinusClick}
+                    >
+                        <FontAwesomeIcon className='self-start' icon={faMinus} />
+                    </Button>
+                    <Button
+                        isIconOnly
+                        title={`Raise ${statName}`}
+                        variant='light'
+                        size='sm'
+                        radius='none'
+                        className='flex-col p-1.5 w-9'
+                        onClick={onPlusClick}
+                    >
+                        <FontAwesomeIcon className='self-end' icon={faPlus} />
+                    </Button>
+                </div>
+            )}
+            <div className='absolute pointer-events-none'>
+                <Image className='h-8 w-8 z-0' src={Constants.StatIconImagePaths[statCode]} />
+                <div className='absolute inset-0 flex justify-center items-center'>
+                    <p className='stat-value font-[steel45] text-large text-center select-none'>
+                        {statValue}
+                    </p>
+                </div>
             </div>
-            {showControls && <StatButton image={Plus} onClick={onPlusClick} />}
-        </>
+        </div>
     );
 };
 

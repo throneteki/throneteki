@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { sendChangeStatMessage } from '../../redux/reducers/game';
-import { Avatar, Badge } from '@nextui-org/react';
+import { Avatar, Badge, Button } from '@nextui-org/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCogs, faComment, faCopy, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import StatContainer from './StatContainer';
@@ -11,7 +11,6 @@ import { toastr } from 'react-redux-toastr';
 const PlayerStats = ({
     stats,
     showControls,
-    showMessages = false,
     onSettingsClick,
     user,
     muteSpectators,
@@ -33,7 +32,7 @@ const PlayerStats = ({
         [stats]
     );
 
-    const getButton = useCallback(
+    const getStatDisplay = useCallback(
         (stat, name, statToSet = stat) => {
             return (
                 <StatContainer title={name}>
@@ -59,6 +58,20 @@ const PlayerStats = ({
         [showControls, getStatValueOrDefault, dispatch]
     );
 
+    const getStatButton = (onClick, icon, title, text) => (
+        <StatContainer title={title}>
+            <Button
+                isIconOnly={!text}
+                onClick={onClick}
+                startContent={icon ? <FontAwesomeIcon icon={icon} /> : null}
+                radius='none'
+                variant='light'
+                className='h-8 p-2'
+            >
+                {text}
+            </Button>
+        </StatContainer>
+    );
     const writeChatToClipboard = useCallback((event) => {
         event.preventDefault();
         const messagePanel = document.getElementById('messages-panel');
@@ -82,47 +95,36 @@ const PlayerStats = ({
 
                 <span className='pl-2 font-bold'>{user?.username || 'Noone'}</span>
             </div>
-            {getButton('gold', 'Gold')}
-            {getButton('totalPower', 'Power', 'power')}
-            {getButton('initiative', 'Initiative')}
-            {getButton('claim', 'Claim')}
-            {getButton('reserve', 'Reserve')}
+            {getStatDisplay('totalPower', 'Power', 'power')}
+            {getStatDisplay('gold', 'Gold')}
+            {getStatDisplay('initiative', 'Initiative')}
+            {getStatDisplay('claim', 'Claim')}
+            {getStatDisplay('reserve', 'Reserve')}
 
             {firstPlayer ? (
                 <StatContainer>
-                    <div className='first-player'>First player</div>
+                    <div className='first-player px-2'>First player</div>
                 </StatContainer>
             ) : null}
 
-            {showMessages && (
+            {showControls && (
                 <StatContainer>
+                    {getStatButton(onSettingsClick, faCogs, 'Open Settings', 'Settings')}
+                    {getStatButton(
+                        onMuteClick,
+                        muteSpectators ? faEyeSlash : faEye,
+                        muteSpectators ? 'Un-mute spectators' : 'Mute spectators'
+                    )}
+                    {getStatButton(writeChatToClipboard, faCopy, 'Copy chat log')}
                     <StatContainer>
-                        <a href='#' onClick={onSettingsClick} className='pl-1 pr-1'>
-                            <FontAwesomeIcon icon={faCogs}></FontAwesomeIcon>
-                            <span className='ml-1'>{'Settings'}</span>
-                        </a>
-                    </StatContainer>
-                    <StatContainer>
-                        <a href='#' className='pl-1 pr-1'>
-                            <FontAwesomeIcon
-                                icon={muteSpectators ? faEyeSlash : faEye}
-                                onClick={onMuteClick}
-                            ></FontAwesomeIcon>
-                        </a>
-                    </StatContainer>
-                    <StatContainer>
-                        <a href='#' className='pl-1 pr-1'>
-                            <FontAwesomeIcon
-                                icon={faCopy}
-                                onClick={writeChatToClipboard}
-                            ></FontAwesomeIcon>
-                        </a>
-                    </StatContainer>
-                    <StatContainer>
-                        <a href='#' onClick={onMessagesClick} className='pl-1'>
-                            <FontAwesomeIcon icon={faComment}></FontAwesomeIcon>
-                            {numMessages > 0 && <Badge color='danger'>{numMessages}</Badge>}
-                        </a>
+                        <Badge
+                            shape='circle'
+                            color='danger'
+                            content={numMessages > 99 ? '99+' : numMessages}
+                            isInvisible={!numMessages || numMessages === 0}
+                        >
+                            {getStatButton(onMessagesClick, faComment, 'Toggle chat')}
+                        </Badge>
                     </StatContainer>
                 </StatContainer>
             )}
