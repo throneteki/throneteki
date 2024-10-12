@@ -4,7 +4,7 @@ import { BannersForFaction, Constants } from '../../constants';
 import ReactTable from '../Table/ReactTable';
 import DeckSummary from './DeckSummary';
 import AlertPanel from '../Site/AlertPanel';
-import { Button, ButtonGroup, Input, extendVariants } from '@nextui-org/react';
+import { Button, ButtonGroup, Input, Spacer, extendVariants } from '@nextui-org/react';
 import LoadingSpinner from '../Site/LoadingSpinner';
 import {
     useAddDeckMutation,
@@ -18,7 +18,7 @@ import { useDispatch } from 'react-redux';
 const SmallButton = extendVariants(Button, {
     variants: {
         size: {
-            xs: 'px-2 min-w-8 h-8  text-small gap-unit-1 rounded-none first:rounded-l-md last:rounded-r-md border'
+            xs: 'px-2 min-w-8 h-8 text-small gap-unit-1 border'
         }
     }
 });
@@ -168,7 +168,7 @@ const DeckEditor = ({ deck, onBackClick }) => {
                     const count = deckCard?.count || 0;
 
                     return (
-                        <ButtonGroup className='rounded-md border' radius='md'>
+                        <ButtonGroup>
                             {[...Array(max).keys()].map((digit) => (
                                 <SmallButton
                                     size='xs'
@@ -298,8 +298,9 @@ const DeckEditor = ({ deck, onBackClick }) => {
                         onChange={(event) => setDeckName(event.target.value)}
                         label={'Deck Name'}
                     />
+                    <Spacer x={10} />
                     <div>
-                        <ButtonGroup className='mt-3 rounded-md border' radius='md'>
+                        <ButtonGroup className='margin'>
                             {cardTypes.map((type) => {
                                 return (
                                     <SmallButton
@@ -322,12 +323,9 @@ const DeckEditor = ({ deck, onBackClick }) => {
                             })}
                         </ButtonGroup>
                     </div>
+                    <Spacer x={10} />
                     <div>
-                        <ButtonGroup
-                            className='mb-3 mt-1 rounded-md border'
-                            radius='md'
-                            aria-label='First group'
-                        >
+                        <ButtonGroup aria-label='First group'>
                             {Constants.Factions.concat('neutral').map((faction) => {
                                 return (
                                     <SmallButton
