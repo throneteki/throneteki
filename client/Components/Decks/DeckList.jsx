@@ -20,6 +20,7 @@ import CardImage from '../Images/CardImage';
 import DeckStatusLabel from './DeckStatusLabel';
 
 import './DeckList.css';
+import AlertPanel, { AlertType } from '../Site/AlertPanel';
 
 const DeckList = ({ restrictedList, onDeckSelected, readOnly }) => {
     const dispatch = useDispatch();
@@ -290,6 +291,11 @@ const DeckList = ({ restrictedList, onDeckSelected, readOnly }) => {
                     column: 'lastUpdated',
                     direction: 'descending'
                 }}
+                emptyContent={
+                    <AlertPanel variant={AlertType.Info}>
+                        {'You have no decks. Create or import a new deck above!'}
+                    </AlertPanel>
+                }
                 remote
                 disableSelection={readOnly}
                 columns={columns}

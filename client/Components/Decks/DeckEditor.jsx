@@ -3,7 +3,7 @@ import React, { useMemo, useState } from 'react';
 import { BannersForFaction, Constants } from '../../constants';
 import ReactTable from '../Table/ReactTable';
 import DeckSummary from './DeckSummary';
-import AlertPanel from '../Site/AlertPanel';
+import AlertPanel, { AlertType } from '../Site/AlertPanel';
 import { Button, ButtonGroup, Input, Spacer, extendVariants } from '@nextui-org/react';
 import LoadingSpinner from '../Site/LoadingSpinner';
 import {
