@@ -103,7 +103,7 @@ const PlayerStats = ({
 
             {firstPlayer ? (
                 <StatContainer>
-                    <div className='first-player'>First player</div>
+                    <div className='first-player px-2'>First player</div>
                 </StatContainer>
             ) : null}
 
