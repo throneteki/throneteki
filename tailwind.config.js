@@ -26,7 +26,7 @@ export default {
                 martell: '#e89521',
                 neutral: '#a99560',
                 stark: '#cfcfcf',
-                targaryen: '#1c1c1c',
+                targaryen: '#e54141',
                 thenightswatch: '#7a7a7a',
                 tyrell: '#509f16',
                 emphasis: '#dc4787',
