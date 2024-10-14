@@ -34,7 +34,8 @@ const DeckSummary = ({ deck }) => {
             <div className='mb-2 mt-2' key={type}>
                 <span className={`icon me-1 icon-${type}`}></span>
                 <strong>
-                    {type[0].toUpperCase() + type.slice(1)} ({cards.length})
+                    {type[0].toUpperCase() + type.slice(1)} (
+                    {cards.reduce((acc, card) => acc + card.count, 0)})
                 </strong>
             </div>
         );
