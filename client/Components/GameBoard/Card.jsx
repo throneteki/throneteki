@@ -321,7 +321,7 @@ const Card = ({
             'custom-card': card.code && card.code.startsWith('custom'),
             horizontal: orientation !== 'vertical' || card.kneeled,
             vertical: orientation === 'vertical' && !card.kneeled,
-            'backdrop-grayscale backdrop-brightness-50': card.unselectable,
+            'grayscale brightness-75': card.unselectable,
             'z-10': !hideTokens
         });
         let imageClass = classNames(
