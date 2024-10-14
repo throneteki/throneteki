@@ -19,23 +19,23 @@ export const ThronesIcons = [
 
 export const Constants = {
     Factions: [
-        'baratheon',
-        'greyjoy',
-        'lannister',
-        'martell',
-        'stark',
-        'targaryen',
-        'thenightswatch',
-        'tyrell'
+        { name: 'House Baratheon', value: 'baratheon' },
+        { name: 'House Greyjoy', value: 'greyjoy' },
+        { name: 'House Lannister', value: 'lannister' },
+        { name: 'House Martell', value: 'martell' },
+        { name: "The Night's Watch", value: 'thenightswatch' },
+        { name: 'House Stark', value: 'stark' },
+        { name: 'House Targaryen', value: 'targaryen' },
+        { name: 'House Tyrell', value: 'tyrell' }
     ],
     Stats: ['gold', 'totalPower', 'initiative', 'claim', 'reserve'],
     FactionsImagePaths: {},
     StatIconImagePaths: {}
 };
 
-for (const faction of Constants.Factions) {
-    Constants.FactionsImagePaths[faction] = new URL(
-        `./assets/img/factions/${faction}.png`,
+for (const faction of Object.values(Constants.Factions)) {
+    Constants.FactionsImagePaths[faction.value] = new URL(
+        `./assets/img/factions/${faction.value}.png`,
         import.meta.url
     ).href;
 }
