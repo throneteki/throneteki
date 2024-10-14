@@ -15,12 +15,9 @@ const FactionSelect = ({ onSelect }) => {
             </div>
             <div className='grid grid-cols-4'>
                 {factions.map((faction) => (
-                    <div key={faction} className='mt-2 mb-2 flex content-center'>
-                        <div
-                            role='button'
-                            onClick={() => onSelect({ value: faction, name: faction })}
-                        >
-                            <FactionImage size='lg' faction={faction} />
+                    <div key={faction.value} className='mt-2 mb-2 flex content-center'>
+                        <div role='button' onClick={() => onSelect(faction)}>
+                            <FactionImage size='lg' faction={faction.value} />
                         </div>
                     </div>
                 ))}

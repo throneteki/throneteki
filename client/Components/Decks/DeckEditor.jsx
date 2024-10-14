@@ -1,10 +1,10 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { BannersForFaction, Constants } from '../../constants';
 import ReactTable from '../Table/ReactTable';
 import DeckSummary from './DeckSummary';
-import AlertPanel, { AlertType } from '../Site/AlertPanel';
-import { Button, ButtonGroup, Input, Spacer, extendVariants } from '@nextui-org/react';
+import AlertPanel from '../Site/AlertPanel';
+import { Button, ButtonGroup, Input, Select, SelectItem, extendVariants } from '@nextui-org/react';
 import LoadingSpinner from '../Site/LoadingSpinner';
 import {
     useAddDeckMutation,
@@ -14,6 +14,7 @@ import {
 } from '../../redux/middleware/api';
 import { navigate } from '../../redux/reducers/navigation';
 import { useDispatch } from 'react-redux';
+import FactionImage from '../Images/FactionImage';
 
 const SmallButton = extendVariants(Button, {
     variants: {
@@ -46,7 +47,7 @@ const DeckEditor = ({ deck, onBackClick }) => {
         isError: isFactionsError
     } = useGetFactionsQuery({});
     const [factionFilter, setFactionFilter] = useState(
-        [deck.faction.code]
+        [deck.faction.value]
             .concat(['neutral'])
             .concat(
                 deck.drawCards
@@ -56,9 +57,13 @@ const DeckEditor = ({ deck, onBackClick }) => {
     );
     const [typeFilter, setTypeFilter] = useState(['character', 'agenda', 'plot']);
     const [deckCards, setDeckCards] = useState(
-        (deck.drawCards || []).concat(deck.plotCards || []) || []
+        (deck.agenda ? [{ card: deck.agenda, count: 1 }] : [])
+            .concat(deck.drawCards || [])
+            .concat(deck.plotCards || [])
+            .concat(deck.bannerCards.map((bc) => ({ card: bc, count: 1 })) || [])
     );
     const [deckName, setDeckName] = useState(deck.name);
+    const [faction, setFaction] = useState(deck.faction);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
@@ -66,7 +71,7 @@ const DeckEditor = ({ deck, onBackClick }) => {
         const saveDeck = {
             _id: deck._id,
             name: deckName,
-            faction: factionsByCode[deck.faction.value],
+            faction: factionsByCode[faction.value],
             agenda: deck.agenda && cardsByCode[deck.agenda.code],
             bannerCards: [],
             plotCards: [],
@@ -74,8 +79,8 @@ const DeckEditor = ({ deck, onBackClick }) => {
         };
 
         saveDeck.bannerCards = deckCards
-            .filter((dc) => dc.card.type === 'agenda')
-            .map((c) => c.card.code);
+            .filter((dc) => dc.card.code !== deck.agenda.code && dc.card.type === 'agenda')
+            .map((c) => c.card);
 
         for (const deckCard of deckCards.filter(
             (dc) => cardsByCode[dc.card.code].type === 'plot'
@@ -222,7 +227,7 @@ const DeckEditor = ({ deck, onBackClick }) => {
 
     const factionsByCode = factions;
 
-    let cardTypes = useMemo(() => {
+    const cardTypes = useMemo(() => {
         if (!cards) {
             return [];
         }
@@ -240,6 +245,10 @@ const DeckEditor = ({ deck, onBackClick }) => {
         return { data: Object.values(cards) };
     }, [cards]);
 
+    useEffect(() => {
+        setFaction(deck.faction);
+    }, [deck.faction]);
+
     if (isLoading || isFactionsLoading) {
         return <LoadingSpinner text={'Loading, please wait...'} />;
     } else if (isError || isFactionsError) {
@@ -252,9 +261,15 @@ const DeckEditor = ({ deck, onBackClick }) => {
 
     return (
         <div className='grid lg:grid-cols-2 gap-4'>
-            <div>
-                <div className='mb-2'>
-                    <Button color='default' className='mr-2' onClick={() => onBackClick()}>
+            <div className='flex flex-col gap-2'>
+                {(error || success) && (
+                    <div className='mb-2'>
+                        {error && <AlertPanel variant='danger'>{error}</AlertPanel>}
+                        {success && <AlertPanel variant='success'>{success}</AlertPanel>}
+                    </div>
+                )}
+                <div className='flex gap-2'>
+                    <Button color='default' onClick={() => onBackClick()}>
                         Back
                     </Button>
                     <Button
@@ -289,18 +304,33 @@ const DeckEditor = ({ deck, onBackClick }) => {
                         Save
                     </Button>
                 </div>
-                {error && <AlertPanel variant='danger'>{error}</AlertPanel>}
-                {success && <AlertPanel variant='success'>{success}</AlertPanel>}
-                <div>
+                <div className='flex flex-col gap-2'>
                     <Input
                         placeholder={'Enter a name'}
                         value={deckName}
                         onChange={(event) => setDeckName(event.target.value)}
                         label={'Deck Name'}
                     />
-                    <Spacer x={10} />
+                    <Select
+                        items={Constants.Factions}
+                        label='Faction'
+                        selectedKeys={new Set([faction.value])}
+                        onChange={(e) => setFaction(e.target)}
+                        renderValue={(items) => {
+                            return items.map((item) => <div key={item.key}>{item.data.name}</div>);
+                        }}
+                    >
+                        {(faction) => (
+                            <SelectItem key={faction.value}>
+                                <div className='flex gap-2 items-center'>
+                                    <FactionImage size='sm' faction={faction.value} />
+                                    <div>{faction.name}</div>
+                                </div>
+                            </SelectItem>
+                        )}
+                    </Select>
                     <div>
-                        <ButtonGroup className='margin'>
+                        <ButtonGroup>
                             {cardTypes.map((type) => {
                                 return (
                                     <SmallButton
@@ -323,33 +353,36 @@ const DeckEditor = ({ deck, onBackClick }) => {
                             })}
                         </ButtonGroup>
                     </div>
-                    <Spacer x={10} />
                     <div>
-                        <ButtonGroup aria-label='First group'>
-                            {Constants.Factions.concat('neutral').map((faction) => {
-                                return (
-                                    <SmallButton
-                                        key={faction}
-                                        size='xs'
-                                        color={
-                                            factionFilter.some((f) => f === faction)
-                                                ? 'primary'
-                                                : null
-                                        }
-                                        onClick={() =>
-                                            setFactionFilter(
-                                                factionFilter.some((f) => f === faction)
-                                                    ? factionFilter.filter((f) => f !== faction)
-                                                    : factionFilter.concat(faction)
-                                            )
-                                        }
-                                    >
-                                        <span
-                                            className={`icon icon-${faction} ${factionToTextColourMap[faction]}`}
-                                        ></span>
-                                    </SmallButton>
-                                );
-                            })}
+                        <ButtonGroup aria-label='Faction buttons'>
+                            {Constants.Factions.concat({ name: 'Neutral', value: 'neutral' }).map(
+                                (faction) => {
+                                    return (
+                                        <SmallButton
+                                            key={faction.value}
+                                            size='xs'
+                                            color={
+                                                factionFilter.some((f) => f === faction.value)
+                                                    ? 'primary'
+                                                    : null
+                                            }
+                                            onClick={() =>
+                                                setFactionFilter(
+                                                    factionFilter.some((f) => f === faction.value)
+                                                        ? factionFilter.filter(
+                                                              (f) => f !== faction.value
+                                                          )
+                                                        : factionFilter.concat(faction.value)
+                                                )
+                                            }
+                                        >
+                                            <span
+                                                className={`icon icon-${faction.value} ${factionToTextColourMap[faction.value]}`}
+                                            ></span>
+                                        </SmallButton>
+                                    );
+                                }
+                            )}
                         </ButtonGroup>
                     </div>
                     <div className='h-[60vh]'>
