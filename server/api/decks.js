@@ -33,8 +33,8 @@ export const init = async function (server, options) {
         '/api/decks',
         passport.authenticate('jwt', { session: false }),
         wrapAsync(async function (req, res) {
-            let decks = await deckService.findByUserName(req.user.username);
-            res.send({ success: true, data: decks });
+            let decks = await deckService.findByUserName(req.user.username, req.query);
+            res.send(decks);
         })
     );
 
@@ -66,6 +66,29 @@ export const init = async function (server, options) {
         wrapAsync(async function (req, res) {
             let deck = Object.assign(req.body, { username: req.user.username });
             await deckService.create(deck);
+            res.send({ success: true });
+        })
+    );
+
+    server.delete(
+        '/api/decks',
+        passport.authenticate('jwt', { session: false }),
+        wrapAsync(async function (req, res) {
+            let deckIds = req.body.deckIds;
+
+            for (const deckId of deckIds) {
+                let deck = await deckService.getById(deckId);
+
+                if (!deck) {
+                    continue;
+                }
+
+                if (deck.username !== req.user.username) {
+                    return res.status(401).send({ message: 'Unauthorized' });
+                }
+
+                await deckService.delete(deckId);
+            }
             res.send({ success: true });
         })
     );

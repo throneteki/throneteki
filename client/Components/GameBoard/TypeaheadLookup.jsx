@@ -1,11 +1,11 @@
-import React, { useState, useCallback } from 'react';
-import Typeahead from '../Form/Typeahead';
+import React, { useState, useCallback, useMemo } from 'react';
+import { Autocomplete, AutocompleteItem, Button } from '@nextui-org/react';
 
 const TypeaheadLookup = ({ onValueSelected, values }) => {
     const [selectedValue, setSelectedValue] = useState('');
 
     const handleChange = useCallback((value) => {
-        setSelectedValue(value[0]);
+        setSelectedValue(value);
     }, []);
 
     const handleDoneClick = useCallback(() => {
@@ -14,12 +14,25 @@ const TypeaheadLookup = ({ onValueSelected, values }) => {
         }
     }, [onValueSelected, selectedValue]);
 
+    const labelsAndValues = useMemo(() => {
+        return values.map((value) => ({ label: value, value }));
+    }, [values]);
+
     return (
         <div>
-            <Typeahead labelKey={'label'} options={values} dropup onChange={handleChange} />
-            <button type='button' onClick={handleDoneClick} className='btn btn-primary'>
-                Done
-            </button>
+            <Autocomplete
+                className='px-2 mt-2'
+                defaultItems={labelsAndValues}
+                onSelectionChange={handleChange}
+                inputProps={{ classNames: { inputWrapper: 'rounded-md' } }}
+            >
+                {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
+            </Autocomplete>
+            <div className='mt-2 mx-2 flex flex-col mb-2'>
+                <Button onClick={handleDoneClick} color='primary'>
+                    Done
+                </Button>
+            </div>
         </div>
     );
 };

@@ -1,7 +1,5 @@
 import React, { useCallback, useState } from 'react';
 
-import Input from '../../Components/Form/Input';
-import TextArea from '../../Components/Form/TextArea';
 import { useDispatch } from 'react-redux';
 import {
     useGetCardsQuery,
@@ -11,6 +9,7 @@ import {
 } from '../../redux/middleware/api';
 import Panel from '../../Components/Site/Panel';
 import { navigate } from '../../redux/reducers/navigation';
+import { Input, Textarea } from '@nextui-org/react';
 
 const calculateMaxPacks = (rarities) => {
     const maxPacksPerRarity = rarities.map((rarity) => {
@@ -276,7 +275,7 @@ const DraftCubeEditor = ({ draftCubeId }) => {
                             <strong>{`Max ${maxPacks} packs of ${totalPerPack} cards`}</strong>
                         </div>
                     </div>
-                    <TextArea
+                    <Textarea
                         label='Card Rarities'
                         labelClass='col-sm-3'
                         fieldClass='col-sm-9'
@@ -284,7 +283,7 @@ const DraftCubeEditor = ({ draftCubeId }) => {
                         value={raritiesText}
                         onChange={handleRarityListChange}
                     />
-                    <TextArea
+                    <Textarea
                         label='Starter Deck'
                         labelClass='col-sm-3'
                         fieldClass='col-sm-9'

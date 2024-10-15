@@ -307,10 +307,12 @@ class Lobby {
     }
 
     sendFilteredMessages(socket) {
-        this.messageService.getLastMessages().then((messages) => {
-            let messagesToSend = this.filterMessages(messages, socket);
-            socket.send('lobbymessages', messagesToSend.reverse());
-        });
+        this.messageService
+            .getLastMessages(socket.user?.permissions?.canModerateChat)
+            .then((messages) => {
+                let messagesToSend = this.filterMessages(messages, socket);
+                socket.send('lobbymessages', messagesToSend.reverse());
+            });
     }
 
     filterMessages(messages, socket) {
@@ -558,8 +560,8 @@ class Lobby {
         this.broadcastGameMessage('updategame', game);
     }
 
-    onStartGame(socket, gameId) {
-        let game = this.games[gameId];
+    onStartGame(socket) {
+        let game = this.findGameForUser(socket.user.username);
 
         if (!game || game.started) {
             return;
@@ -698,10 +700,10 @@ class Lobby {
         }
     }
 
-    onSelectDeck(socket, gameId, deckId) {
-        let game = this.games[gameId];
+    onSelectDeck(socket, deckId) {
+        let game = this.findGameForUser(socket.user.username);
         if (!game) {
-            return Promise.reject('Game not found');
+            return;
         }
 
         return Promise.all([

@@ -1,118 +1,113 @@
-import React, { useCallback } from 'react';
-import Checkbox from '../Form/Checkbox';
+import React from 'react';
+import { Switch } from '@nextui-org/react';
 import Panel from '../Site/Panel';
 
 const windows = [
-    { name: 'plot', label: 'Plots revealed', style: 'col-sm-4' },
-    { name: 'draw', label: 'Draw phase', style: 'col-sm-4' },
-    { name: 'challengeBegin', label: 'Before challenge', style: 'col-sm-4' },
-    { name: 'attackersDeclared', label: 'Attackers declared', style: 'col-sm-4' },
-    { name: 'defendersDeclared', label: 'Defenders declared', style: 'col-sm-4' },
-    { name: 'dominance', label: 'Dominance phase', style: 'col-sm-4' },
-    { name: 'standing', label: 'Standing phase', style: 'col-sm-4' },
-    { name: 'taxation', label: 'Taxation phase', style: 'col-sm-4' }
+    { name: 'plot', label: 'Plots revealed' },
+    { name: 'draw', label: 'Draw phase' },
+    { name: 'challengeBegin', label: 'Before challenge' },
+    { name: 'attackersDeclared', label: 'Attackers declared' },
+    { name: 'defendersDeclared', label: 'Defenders declared' },
+    { name: 'dominance', label: 'Dominance phase' },
+    { name: 'standing', label: 'Standing phase' },
+    { name: 'taxation', label: 'Taxation phase' }
 ];
 
 const GameConfiguration = ({
-    timerSettings,
-    onPromptDupesToggle,
-    onActionWindowToggle,
-    onTimerSettingToggle,
-    onKeywordSettingToggle,
     actionWindows,
     keywordSettings,
-    promptDupes
+    promptDupes,
+    timerSettings,
+    onKeywordSettingToggle,
+    onTimerSettingToggle,
+    onActionWindowToggle,
+    onPromptDupesToggle
 }) => {
-    const onToggle = useCallback(
-        (option, value) => {
-            if (option === 'promptDupes') {
-                onPromptDupesToggle && onPromptDupesToggle(!value);
-            } else {
-                onActionWindowToggle && onActionWindowToggle(option, !value);
-            }
-        },
-        [onPromptDupesToggle, onActionWindowToggle]
-    );
-
-    const onTimerSettingToggleLocal = useCallback(
-        (option, event) => {
-            onTimerSettingToggle && onTimerSettingToggle(option, event.target.checked);
-        },
-        [onTimerSettingToggle]
-    );
-
-    const onKeywordSettingToggleLocal = useCallback(
-        (option, event) => {
-            onKeywordSettingToggle && onKeywordSettingToggle(option, event.target.checked);
-        },
-        [onKeywordSettingToggle]
-    );
-
-    const windowsRender = windows.map((window) => (
-        <Checkbox
-            key={window.name}
-            noGroup
-            name={'promptedActionWindows.' + window.name}
-            label={window.label}
-            fieldClass={window.style}
-            type='checkbox'
-            onChange={() => onToggle(window.name, actionWindows[window.name])}
-            checked={actionWindows[window.name]}
-        />
-    ));
+    const windowsToRender = windows.map((window) => {
+        return (
+            <div key={window.name}>
+                <Switch
+                    onValueChange={(checked) =>
+                        onActionWindowToggle && onActionWindowToggle(window.name, checked)
+                    }
+                    name={'promptedActionWindows.' + window.name}
+                    isSelected={actionWindows[window.name]}
+                >
+                    {window.label}
+                </Switch>
+            </div>
+        );
+    });
 
     return (
         <div>
-            <form className='form form-horizontal'>
-                <Panel title='Action window defaults'>
-                    <div className='form-group'>{windowsRender}</div>
+            <form>
+                <Panel title={'Action window defaults'}>
+                    <div>{windowsToRender}</div>
                 </Panel>
-                <Panel title='Timed Interrupt Window'>
-                    <div className='form-group'>
-                        <Checkbox
-                            name='timerSettings.events'
-                            noGroup
-                            label={'Show timer for events'}
-                            fieldClass='col-sm-6'
-                            onChange={(event) => onTimerSettingToggleLocal('events', event)}
-                            checked={timerSettings.events}
-                        />
-                        <Checkbox
-                            name='timerSettings.abilities'
-                            noGroup
-                            label={'Show timer for card abilities'}
-                            fieldClass='col-sm-6'
-                            onChange={(event) => onTimerSettingToggleLocal('abilities', event)}
-                            checked={timerSettings.abilities}
-                        />
+                <Panel title={'Timed interrupt window'} className='mt-3'>
+                    <div>
+                        <div>
+                            <Switch
+                                onValueChange={(value) =>
+                                    onTimerSettingToggle && onTimerSettingToggle('events', value)
+                                }
+                                name='timerSettings.events'
+                                isSelected={timerSettings.events}
+                            >
+                                {'Show timer for events'}
+                            </Switch>
+                        </div>
+                        <div>
+                            <Switch
+                                onValueChange={(value) =>
+                                    onTimerSettingToggle && onTimerSettingToggle('abilities', value)
+                                }
+                                name='timerSettings.abilities'
+                                isSelected={timerSettings.abilities}
+                            >
+                                {'Show timer for card abilities'}
+                            </Switch>
+                        </div>
                     </div>
                 </Panel>
-                <Panel title='Other Settings'>
-                    <div className='form-group'>
-                        <Checkbox
-                            name='keywordSettings.chooseOrder'
-                            noGroup
-                            label={'Choose order of keywords'}
-                            fieldClass='col-sm-6'
-                            onChange={(event) => onKeywordSettingToggleLocal('chooseOrder', event)}
-                            checked={keywordSettings.chooseOrder}
-                        />
-                        <Checkbox
-                            name='keywordSettings.chooseCards'
-                            noGroup
-                            label={'Make keywords optional'}
-                            fieldClass='col-sm-6'
-                            onChange={(event) => onKeywordSettingToggleLocal('chooseCards', event)}
-                            checked={keywordSettings.chooseCards}
-                        />
-                        <Checkbox
-                            name='promptDupes'
-                            noGroup
-                            label={'Prompt before using dupes to save'}
-                            fieldClass='col-sm-6'
-                            onChange={() => onToggle('promptDupes', promptDupes)}
-                            checked={promptDupes}
-                        />
+                <Panel title={'Other Settings'} className='mt-3'>
+                    <div>
+                        <div>
+                            <Switch
+                                onValueChange={(value) =>
+                                    onKeywordSettingToggle &&
+                                    onKeywordSettingToggle('chooseOrder', value)
+                                }
+                                name='keywordSettings.chooseOrder'
+                                isSelected={keywordSettings.chooseOrder}
+                            >
+                                {'Choose order of keywords'}
+                            </Switch>
+                        </div>
+                        <div>
+                            <Switch
+                                onValueChange={(value) =>
+                                    onKeywordSettingToggle &&
+                                    onKeywordSettingToggle('chooseCards', value)
+                                }
+                                name='keywordSettings.chooseCards'
+                                isSelected={keywordSettings.chooseCards}
+                            >
+                                {'Make keywords optional'}
+                            </Switch>
+                        </div>
+                        <div>
+                            <Switch
+                                onValueChange={(value) =>
+                                    onPromptDupesToggle && onPromptDupesToggle(value)
+                                }
+                                name='promptDupes'
+                                isSelected={promptDupes}
+                            >
+                                {'Prompt before using dupes to save'}
+                            </Switch>
+                        </div>
                     </div>
                 </Panel>
             </form>

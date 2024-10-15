@@ -37,7 +37,7 @@ const Activation = ({ id, token }) => {
     if (!id || !token) {
         return (
             <AlertPanel
-                type='error'
+                variant='danger'
                 message='This page is not intended to be viewed directly.  Please click on the link in your email to activate your account'
             />
         );
@@ -50,8 +50,8 @@ const Activation = ({ id, token }) => {
     return (
         <div>
             <div className='col-sm-6 col-sm-offset-3'>
-                {errorMessage && <AlertPanel type='error' message={errorMessage} />}
-                {successMessage && <AlertPanel type='success' message={successMessage} />}
+                {errorMessage && <AlertPanel variant='danger' message={errorMessage} />}
+                {successMessage && <AlertPanel variant='success' message={successMessage} />}
             </div>
         </div>
     );
