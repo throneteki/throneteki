@@ -259,6 +259,35 @@ const DeckEditor = ({ deck, onBackClick }) => {
         );
     }
 
+    const onSaveClick = async (andClose) => {
+        setError();
+        setSuccess();
+
+        const deckToSave = buildSaveDeck();
+
+        try {
+            deckToSave._id
+                ? await saveDeck(deckToSave).unwrap()
+                : await addDeck(deckToSave).unwrap();
+            setSuccess(`Deck ${deckToSave._id ? 'saved' : 'added'} successfully.`);
+
+            if (andClose) {
+                setTimeout(() => {
+                    dispatch(navigate('/decks'));
+                }, 1500);
+            } else {
+                setTimeout(() => {
+                    setSuccess();
+                }, 1500);
+            }
+        } catch (err) {
+            const apiError = err;
+            setError(
+                apiError.data.message || 'An error occured adding the deck. Please try again later.'
+            );
+        }
+    };
+
     return (
         <div className='grid lg:grid-cols-2 gap-4'>
             <div className='flex flex-col gap-2'>
@@ -275,31 +304,14 @@ const DeckEditor = ({ deck, onBackClick }) => {
                     <Button
                         color='primary'
                         isLoading={isAddLoading || isSaveLoading}
-                        onClick={async () => {
-                            setError('');
-                            setSuccess('');
-
-                            const deckToSave = buildSaveDeck();
-
-                            try {
-                                deckToSave._id
-                                    ? await saveDeck(deckToSave).unwrap()
-                                    : await addDeck(deckToSave).unwrap();
-                                setSuccess(
-                                    `Deck ${deckToSave._id ? 'saved' : 'added'} successfully.`
-                                );
-
-                                setTimeout(() => {
-                                    dispatch(navigate('/decks'));
-                                }, 2000);
-                            } catch (err) {
-                                const apiError = err;
-                                setError(
-                                    apiError.data.message ||
-                                        'An error occured adding the deck. Please try again later.'
-                                );
-                            }
-                        }}
+                        onClick={() => onSaveClick(true)}
+                    >
+                        Save and close
+                    </Button>
+                    <Button
+                        color='primary'
+                        isLoading={isAddLoading || isSaveLoading}
+                        onClick={() => onSaveClick(false)}
                     >
                         Save
                     </Button>
