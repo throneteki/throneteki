@@ -19,7 +19,8 @@ const MovablePanel = ({ name, side, title, onCloseClick, children, size }) => {
     const { attributes, listeners, setNodeRef, transform } = useDraggable({
         id: `panel-${title}`,
         data: {
-            type: ItemTypes.PANEL
+            type: ItemTypes.PANEL,
+            title: title
         }
     });
 
@@ -34,7 +35,10 @@ const MovablePanel = ({ name, side, title, onCloseClick, children, size }) => {
             setStartPosition(currentPos);
         },
         onDragEnd(event) {
-            if (event.active.data.current.type !== ItemTypes.PANEL) {
+            if (
+                event.active.data.current.type !== ItemTypes.PANEL ||
+                event.active.data.current.title !== title
+            ) {
                 return;
             }
 
