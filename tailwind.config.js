@@ -30,7 +30,7 @@ export default {
                 thenightswatch: '#7a7a7a',
                 tyrell: '#509f16',
                 emphasis: '#dc4787',
-                info: '#cff4fc',
+                info: '#0dcaf0',
                 military: '#c72229',
                 intrigue: '#05552f',
                 power: '#2a2e5e'
@@ -52,7 +52,10 @@ export default {
             themes: {
                 dark: {
                     colors: {
-                        primary: '#41658a'
+                        primary: '#41658a',
+                        danger: '#dc3545',
+                        warning: '#ffc107',
+                        success: '#198754'
                     }
                 }
             }

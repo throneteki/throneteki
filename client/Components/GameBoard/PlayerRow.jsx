@@ -156,7 +156,7 @@ const PlayerRow = ({
         let totalStyle = { width: `${totalWidth}px` };
         return (
             <div className='relative flex' style={totalStyle}>
-                {retAgendas}
+                {retAgendas.reverse()}
             </div>
         );
     }, [
