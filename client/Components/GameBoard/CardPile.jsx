@@ -250,7 +250,7 @@ const CardPile = ({
     ]);
 
     let retClassName = classNames(
-        'relative m-1 border-1 border-default-100 bg-opacity-65',
+        'relative m-1 border-1 border-default-100 bg-black/55',
         'card-pile',
         className,
         {
@@ -279,7 +279,7 @@ const CardPile = ({
 
     return (
         <div className={retClassName} onClick={onCollectionClick}>
-            <div className='absolute top-0 left-0 p-1 text-xs bg-black bg-opacity-60 rounded-md z-20'>
+            <div className='absolute top-0 left-0 p-1 text-xs bg-black/55 rounded-md z-20'>
                 {headerText}
             </div>
             {retTopCard ? (
