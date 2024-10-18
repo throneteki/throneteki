@@ -279,9 +279,11 @@ const CardPile = ({
 
     return (
         <div className={retClassName} onClick={onCollectionClick}>
-            <div className='absolute top-0 left-0 p-1 text-xs bg-black/55 rounded-md z-20'>
-                {headerText}
-            </div>
+            {headerText && (
+                <div className='absolute top-0 left-0 p-1 text-xs bg-black/55 rounded-md z-20'>
+                    {headerText}
+                </div>
+            )}
             {retTopCard ? (
                 <Card
                     card={retTopCard}
