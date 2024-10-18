@@ -247,6 +247,7 @@ const PlayerRow = ({
     );
     let retDiscardPile = (
         <CardPile
+            numColumns={5}
             className='discard'
             title='Discard'
             source='discard pile'
@@ -256,6 +257,7 @@ const PlayerRow = ({
     );
     let retDeadPile = (
         <CardPile
+            numColumns={5}
             className='dead'
             title='Dead'
             source='dead pile'

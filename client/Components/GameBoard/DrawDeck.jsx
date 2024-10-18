@@ -73,6 +73,7 @@ const DrawDeck = ({
             cards={cards}
             disablePopup={!hasVisibleCards && (spectating || !isMe)}
             hiddenTopCard={!revealTopCard}
+            numColumns={7}
             onCardClick={onCardClick}
             onMouseOut={onMouseOut}
             onMouseOver={onMouseOver}

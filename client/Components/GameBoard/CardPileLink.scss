@@ -1,6 +1,5 @@
 @import '../../mixins';
 
-.dead-pile,
 .plots,
 .plot-deck,
 .usedPlots,
@@ -41,6 +40,7 @@
 }
 
 .discard,
+.dead-pile,
 .discard-pile {
     .card-list-popup {
         @include calculate-tiled-card-prop(width, 5, width);

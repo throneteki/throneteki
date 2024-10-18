@@ -20,6 +20,7 @@ const CardPile = ({
     topCard,
     closeOnClick,
     disableMouseOver,
+    numColumns,
     onMouseOut,
     onMouseOver,
     onTouchMove,
@@ -148,7 +149,8 @@ const CardPile = ({
             onTouchMove: onTouchMove,
             onMenuItemClick: onMenuItemClick,
             size: size,
-            source: source
+            source: source,
+            numColumns
         };
 
         if (cards && cards.some((card) => card.group)) {
@@ -235,6 +237,7 @@ const CardPile = ({
         onMenuItemClick,
         size,
         source,
+        numColumns,
         cards,
         disablePopup,
         showPopup,
