@@ -52,7 +52,7 @@ const Profile = () => {
     const [selectedCardSize, setSelectedCardSize] = useState(user?.settings.cardSize || 'normal');
     const topRef = useRef(null);
 
-    const [saveProfile, { isLoading, error: profileError }] = useSaveProfileMutation();
+    const [saveProfile, { error: profileError }] = useSaveProfileMutation();
 
     useEffect(() => {
         if (profileError) {
@@ -159,7 +159,6 @@ const Profile = () => {
                         }).unwrap();
                         setSuccess('Profile saved successfully');
 
-                        console.info(ret);
                         dispatch(setUser(ret.user));
 
                         setTimeout(() => {

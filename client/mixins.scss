@@ -2,7 +2,7 @@
     $property,
     $numCards,
     $cardMeasurement,
-    $additionalOffset: 0.75rem
+    $additionalOffset: 1.62rem
 ) {
     #{$property}: calc(
         $numCards * (var(--throneteki-card-#{$cardMeasurement}) + 0.375rem) + $additionalOffset

@@ -55,7 +55,10 @@ export default {
                         primary: '#41658a',
                         danger: '#dc3545',
                         warning: '#ffc107',
-                        success: '#198754'
+                        success: {
+                            DEFAULT: '#198754',
+                            foreground: 'white'
+                        }
                     }
                 }
             }

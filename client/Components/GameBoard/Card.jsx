@@ -1,6 +1,6 @@
-import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
+import React, { useState, useCallback, useMemo, useRef } from 'react';
 import classNames from 'classnames';
-import { useDndMonitor, useDraggable } from '@dnd-kit/core';
+import { useDraggable } from '@dnd-kit/core';
 import CardMenu from './CardMenu';
 import CardCounters from './CardCounters';
 import SquishableCardPanel from './SquishableCardPanel';

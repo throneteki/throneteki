@@ -2,7 +2,6 @@ import React, { useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
 import Link from '../Site/Link';
-import Avatar from '../Site/Avatar';
 import ContextMenu from './ContextMenu';
 import ServerStatus from './ServerStatus';
 
