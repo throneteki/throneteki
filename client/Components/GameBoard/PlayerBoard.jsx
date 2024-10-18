@@ -80,7 +80,7 @@ const PlayerBoard = ({
 
     let rows = getCardRows();
 
-    let className = classNames('flex flex-1 flex-col min-h-0 m-2 gap-1.5', {
+    let className = classNames('flex flex-1 flex-col min-h-0 m-2 gap-1.5 justify-between', {
         'our-side': rowDirection === 'default'
     });
 
