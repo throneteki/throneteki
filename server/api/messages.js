@@ -14,7 +14,7 @@ export const init = function (server, options) {
             }
 
             messageService
-                .removeMessage(req.params.messageId)
+                .removeMessage(req.params.messageId, req.user.username)
                 .then(() => {
                     res.send({ success: true });
                 })

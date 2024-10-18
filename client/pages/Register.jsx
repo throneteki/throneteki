@@ -1,12 +1,14 @@
 import React, { useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
+import * as yup from 'yup';
 
 import Panel from '../Components/Site/Panel';
-import Form from '../Components/Form/Form';
 import Link from '../Components/Site/Link';
 import { navigate } from '../redux/reducers/navigation';
 import { useRegisterAccountMutation } from '../redux/middleware/api';
 import AlertPanel from '../Components/Site/AlertPanel';
+import { Formik } from 'formik';
+import { Button, Input, Switch } from '@nextui-org/react';
 
 const Register = () => {
     const dispatch = useDispatch();
@@ -46,10 +48,30 @@ const Register = () => {
         [dispatch, registerAccount]
     );
 
+    const schema = yup.object({
+        username: yup
+            .string()
+            .required('You must specify a username')
+            .min(3, 'Your username must be at least 3 characters long')
+            .max(15, 'Your username cannot be more than 15 charcters')
+            .matches(
+                /^[A-Za-z0-9_-]+$/,
+                'Usernames must only use the characters a-z, 0-9, _ and -'
+            ),
+        email: yup
+            .string()
+            .email('Please enter a valid email address')
+            .required('You must specify an email address'),
+        password: yup.string().min(6, 'Password must be at least 6 characters'),
+        passwordAgain: yup
+            .string()
+            .oneOf([yup.ref('password'), null], 'The passwords you have entered do not match')
+    });
+
     return (
-        <div className='col-sm-6 col-sm-offset-3'>
-            {successMessage && <AlertPanel type='success' message={successMessage} />}
-            {errorMessage && <AlertPanel type='error' message={errorMessage} />}
+        <div className='w-3/5 mx-auto'>
+            {successMessage && <AlertPanel variant='success' message={successMessage} />}
+            {errorMessage && <AlertPanel variant='danger' message={errorMessage} />}
             <Panel title='Register an account'>
                 <p>
                     We require information from you in order to service your access to the site.
@@ -58,13 +80,66 @@ const Register = () => {
                     the section on avatars.
                 </p>
 
-                <Form
-                    name='register'
-                    apiLoading={isLoading}
-                    buttonClass='col-sm-offset-4 col-sm-3'
-                    buttonText='Register'
-                    onSubmit={onRegister}
-                />
+                <div className='mt-2'>
+                    <Formik initialValues={{}} validationSchema={schema} onSubmit={onRegister}>
+                        {(formProps) => (
+                            <form onSubmit={formProps.handleSubmit}>
+                                <div className='grid grid-cols-1 lg:grid-cols-2 gap-2'>
+                                    <Input
+                                        label='Username'
+                                        {...formProps.getFieldProps('username')}
+                                        isInvalid={
+                                            formProps.errors.username && formProps.touched.username
+                                        }
+                                        errorMessage={formProps.errors.username}
+                                    />
+                                    <Input
+                                        label='Email Address'
+                                        {...formProps.getFieldProps('email')}
+                                        isInvalid={
+                                            formProps.errors.email && formProps.touched.email
+                                        }
+                                        errorMessage={formProps.errors.email}
+                                    />
+                                    <Input
+                                        label='Password'
+                                        type='password'
+                                        isInvalid={
+                                            formProps.errors.password && formProps.touched.password
+                                        }
+                                        errorMessage={formProps.errors.password}
+                                        {...formProps.getFieldProps('password')}
+                                    />
+                                    <Input
+                                        label='Password (again)'
+                                        type='password'
+                                        isInvalid={
+                                            formProps.errors.passwordAgain &&
+                                            formProps.touched.passwordAgain
+                                        }
+                                        errorMessage={formProps.errors.passwordAgain}
+                                        {...formProps.getFieldProps('passwordAgain')}
+                                    />
+                                </div>
+                                <div className='mt-2'>
+                                    <Switch
+                                        {...formProps.getFieldProps('enableGravatar')}
+                                        onValueChange={(value) =>
+                                            formProps.setFieldValue('enableGravatar', value)
+                                        }
+                                    >
+                                        Enable Gravatar
+                                    </Switch>
+                                </div>
+                                <div className='mt-2'>
+                                    <Button isLoading={isLoading} type='submit' color='primary'>
+                                        Register
+                                    </Button>
+                                </div>
+                            </form>
+                        )}
+                    </Formik>
+                </div>
             </Panel>
         </div>
     );

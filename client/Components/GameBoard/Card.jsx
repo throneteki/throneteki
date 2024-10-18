@@ -1,11 +1,12 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo, useRef } from 'react';
 import classNames from 'classnames';
-import { useDrag } from 'react-dnd';
-
+import { useDraggable } from '@dnd-kit/core';
 import CardMenu from './CardMenu';
 import CardCounters from './CardCounters';
-import { ItemTypes } from '../../constants';
 import SquishableCardPanel from './SquishableCardPanel';
+
+import './Card.scss';
+import { ItemTypes } from '../../constants';
 
 const Card = ({
     card,
@@ -25,6 +26,8 @@ const Card = ({
     forceFaceup = false
 }) => {
     const [showMenu, setShowMenu] = useState(false);
+    const [startPosition, setStartPosition] = useState();
+    const dragRef = useRef(null);
 
     const shortNames = {
         count: 'x',
@@ -46,14 +49,12 @@ const Card = ({
         ghost: 'H'
     };
 
-    const [{ isDragging, dragOffset }, drag, preview] = useDrag(() => ({
-        type: ItemTypes.CARD,
-        item: { card, source },
-        collect: (monitor) => ({
-            isDragging: monitor.isDragging(),
-            dragOffset: monitor.getSourceClientOffset()
-        })
-    }));
+    const { attributes, listeners, setNodeRef, transform } = useDraggable({
+        id: `card-${card.uuid}`,
+        data: { type: ItemTypes.CARD, card, source }
+    });
+
+    const sizeClass = useMemo(() => ({ [size]: size !== 'normal' }), [size]);
 
     const isAllowedMenuSource = useCallback(() => {
         return source === 'play area' || source === 'agenda' || source === 'revealed plots';
@@ -192,16 +193,16 @@ const Card = ({
         let index = 1;
 
         return card.dupes.map((dupe) => {
-            if (card.facedown) {
-                dupe.facedown = true;
-            }
+            const dupeCopy = Object.assign({}, dupe);
+
+            dupeCopy.facedown = card.facedown;
 
             return (
                 <Card
                     key={dupe.uuid}
                     className={classNames('card-dupe', `card-dupe-${index++}`)}
                     source={source}
-                    card={dupe}
+                    card={dupeCopy}
                     wrapped={false}
                     onMouseOver={disableMouseOver ? null : () => handleMouseOver(dupe)}
                     onMouseOut={disableMouseOver ? null : handleMouseOut}
@@ -209,6 +210,7 @@ const Card = ({
                     onMenuItemClick={onMenuItemClick}
                     size={size}
                     facedown={forceFaceup ? false : card.facedown}
+                    hideTokens
                 />
             );
         });
@@ -243,7 +245,11 @@ const Card = ({
             return null;
         }
 
-        return <div className='card-order'>{card.order}</div>;
+        return (
+            <div className='absolute -top-7 w-6 text-white bg-black/80 font-bold h-6 text-center left-1/2 -mb-3 rounded-md border-1'>
+                {card.order}
+            </div>
+        );
     };
 
     const getAlertStatus = () => {
@@ -265,23 +271,33 @@ const Card = ({
 
     const getDragFrame = useCallback(
         (image) => {
-            if (!isDragging) {
+            if (!transform) {
                 return null;
             }
 
-            let style = {};
-            if (dragOffset && isDragging) {
-                let x = dragOffset.x;
-                let y = dragOffset.y;
-                style = { left: x, top: y };
+            if (!startPosition && dragRef.current) {
+                setStartPosition(dragRef.current.getBoundingClientRect());
             }
+
+            const x = startPosition?.left + transform.x;
+            const y = startPosition?.top + transform.y;
+            const style = { left: x, top: y };
+
+            const dragClass = classNames(
+                'card pointer-events-none fixed opacity-50 z-50',
+                sizeClass,
+                {
+                    horizontal: orientation !== 'vertical' || card.kneeled,
+                    vertical: orientation === 'vertical' && !card.kneeled
+                }
+            );
             return (
-                <div className='drag-preview' style={style} ref={preview}>
+                <div className={dragClass} style={style} ref={dragRef}>
                     {image}
                 </div>
             );
         },
-        [dragOffset, isDragging, preview]
+        [card.kneeled, orientation, sizeClass, startPosition, transform]
     );
 
     const getCard = () => {
@@ -289,35 +305,47 @@ const Card = ({
             return <div />;
         }
 
-        let cardClass = classNames(
-            'card',
-            `card-type-${card.type}`,
-            className,
+        let cardClass = classNames('card overflow-hidden rounded-md', className, sizeClass, {
+            'shadow-[0_0px_10px_1px] shadow-primary': card.selectable,
+            'shadow-[0_0px_1px_4px] shadow-secondary': card.selected,
+            'shadow-[0_0px_1px_2px] shadow-danger': card.inChallenge,
+            'shadow-[0_0px_1px_2px] shadow-red-500': card.inDanger,
+            'shadow-[0_0px_1px_2px] shadow-green-500': card.saved,
+            'shadow-[0_0px_1px_2px] shadow-orange-200': card.isContributing,
+            'shadow-[0_0px_1px_2px] shadow-orange-800': card.stealth || card.assault,
+            'shadow-[0_0px_1px_2px] shadow-warning': card.controlled,
+            'shadow-[0_0px_1px_2px] shadow-info': card.new,
+            absolute: !!style?.left,
+            relative: !style?.left,
+            [`card-type-${card.type}`]: card.type,
+            'custom-card': card.code && card.code.startsWith('custom'),
+            horizontal: orientation !== 'vertical' || card.kneeled,
+            vertical: orientation === 'vertical' && !card.kneeled,
+            'grayscale brightness-75': card.unselectable,
+            'z-10': !hideTokens
+        });
+        let imageClass = classNames(
+            'card-image absolute left-0 top-0 points-events-none',
             sizeClass,
-            statusClass,
             {
-                'custom-card': card.code && card.code.startsWith('custom'),
-                horizontal: orientation !== 'vertical' || card.kneeled,
-                vertical: orientation === 'vertical' && !card.kneeled,
-                unselectable: card.unselectable,
-                dragging: isDragging
+                horizontal: card.type === 'plot',
+                vertical: card.type !== 'plot',
+                kneeled:
+                    card.type !== 'plot' &&
+                    (orientation === 'kneeled' || card.kneeled || orientation === 'horizontal')
             }
         );
-        let imageClass = classNames('card-image', sizeClass, {
-            horizontal: card.type === 'plot',
-            vertical: card.type !== 'plot',
-            kneeled:
-                card.type !== 'plot' &&
-                (orientation === 'kneeled' || card.kneeled || orientation === 'horizontal')
-        });
 
         let image = <img className={imageClass} src={imageUrl} />;
 
         let content = (
-            <div className='card-frame' ref={drag}>
+            <div className='relative'>
                 {getDragFrame(image)}
                 {getCardOrder()}
                 <div
+                    {...listeners}
+                    {...attributes}
+                    ref={setNodeRef}
                     className={cardClass}
                     onMouseOver={disableMouseOver ? null : () => handleMouseOver(card)}
                     onMouseOut={disableMouseOver ? null : handleMouseOut}
@@ -345,33 +373,13 @@ const Card = ({
           ? '/img/cards/cardback_shadow.png'
           : '/img/cards/cardback.png';
 
-    const sizeClass = { [size]: size !== 'normal' };
-    const statusClass = card
-        ? card.selected
-            ? 'selected'
-            : card.selectable
-              ? 'selectable'
-              : card.inDanger
-                ? 'in-danger'
-                : card.saved
-                  ? 'saved'
-                  : card.inChallenge
-                    ? 'challenge'
-                    : card.isContributing
-                      ? 'contributing'
-                      : card.stealth
-                        ? 'stealth'
-                        : card.assault
-                          ? 'assault'
-                          : card.controlled
-                            ? 'controlled'
-                            : card.new
-                              ? 'new'
-                              : undefined
-        : undefined;
+    const wrapperClass = classNames('m-0 inline-block user-select-none', {
+        absolute: !!style?.left,
+        relative: !style?.left
+    });
 
     return wrapped ? (
-        <div className='card-wrapper' style={style}>
+        <div className={wrapperClass} style={style}>
             {getCard()}
             {getDupes()}
             {getAttachments()}
