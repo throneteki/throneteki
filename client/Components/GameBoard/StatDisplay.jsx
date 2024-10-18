@@ -5,8 +5,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Constants } from '../../constants';
 import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
 
-import './StatDisplay.css';
-
 const StatDisplay = ({
     showControls = true,
     statCode,
@@ -46,7 +44,7 @@ const StatDisplay = ({
             <div className='absolute pointer-events-none'>
                 <Image className='h-8 w-8 z-0' src={Constants.StatIconImagePaths[statCode]} />
                 <div className='absolute inset-0 flex justify-center items-center'>
-                    <p className='stat-value font-[steel45] text-large text-center select-none'>
+                    <p className='stat-value font-[steel45] text-large text-center select-none text-shadow-sm shadow-black'>
                         {statValue}
                     </p>
                 </div>
