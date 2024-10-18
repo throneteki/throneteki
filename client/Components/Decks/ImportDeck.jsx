@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
 
-import { Button, Input, Spinner, Textarea } from '@nextui-org/react';
+import { Button, Spinner, Textarea } from '@nextui-org/react';
 import Panel from '../Site/Panel';
 import {
     useAddDeckMutation,
@@ -73,6 +73,8 @@ const ImportDeck = () => {
                 );
                 if (newFaction) {
                     faction = newFaction;
+                } else {
+                    return;
                 }
 
                 header = header.slice(2);
@@ -138,7 +140,7 @@ const ImportDeck = () => {
             name: deckName,
             faction: faction,
             agenda: agenda,
-            bannerCards: bannerCards?.map((banner) => banner.code),
+            bannerCards: bannerCards,
             plotCards: plotCards,
             drawCards: drawCards
         };
