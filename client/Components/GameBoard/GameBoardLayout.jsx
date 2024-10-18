@@ -128,7 +128,7 @@ const GameBoardLayout = ({ thisPlayer, otherPlayer, onCardClick, onMouseOver, on
                             user={user}
                         />
                         <div className='flex-1'>
-                            <Droppable source='play area' className='h-full'>
+                            <Droppable source='play area' className='h-full flex'>
                                 <PlayerBoard
                                     cardsInPlay={thisPlayer.cardPiles.cardsInPlay}
                                     onCardClick={onCardClick}
