@@ -7,6 +7,8 @@ import SquishableCardPanel from './SquishableCardPanel';
 
 import './Card.scss';
 import { ItemTypes } from '../../constants';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 
 const Card = ({
     card,
@@ -26,6 +28,7 @@ const Card = ({
     forceFaceup = false
 }) => {
     const [showMenu, setShowMenu] = useState(false);
+    const [showStatus, setShowStatus] = useState(false);
     const [startPosition, setStartPosition] = useState();
     const dragRef = useRef(null);
 
@@ -253,14 +256,28 @@ const Card = ({
     };
 
     const getAlertStatus = () => {
-        if (!card.alertStatus) {
-            return null;
-        }
+        const iconClass = classNames('bg-black/50 p-1', {
+            'text-warning': card.alertStatus.type === 'warning',
+            'text-danger': card.alertStatus.type === 'error'
+        });
 
         return (
-            <div className={'status-container ' + card.alertStatus.type}>
-                <div className='status-icon glyphicon glyphicon-exclamation-sign' />
-                <span className='status-message'>{card.alertStatus.message}</span>
+            <div
+                onMouseOut={() => setShowStatus(false)}
+                onMouseOver={() => setShowStatus(true)}
+                className={
+                    'absolute top-0 left-0 flex items-center justify-center w-full h-1/2 ' +
+                    card.alertStatus.type
+                }
+            >
+                <div>
+                    <FontAwesomeIcon className={iconClass} icon={faExclamationCircle} />
+                </div>
+                {showStatus && (
+                    <span className='absolute w-full p-1 text-white bg-black/50 text-xs text-center break-words'>
+                        {card.alertStatus.message}
+                    </span>
+                )}
             </div>
         );
     };

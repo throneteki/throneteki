@@ -68,7 +68,7 @@ const AlertPanel = ({
             break;
         case AlertType.Danger:
             icon = faExclamationCircle;
-            alertType = 'alert-danger';
+            alertType = 'bg-danger-subtle text-danger-subtle-foreground';
             break;
         case AlertType.Info:
             icon = faInfoCircle;
