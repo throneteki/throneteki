@@ -5,6 +5,8 @@ import moment from 'moment';
 import GamePlayer from './GamePlayer';
 import { createGameTitle } from './GameHelper';
 import { Button } from '@nextui-org/react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faLock } from '@fortawesome/free-solid-svg-icons';
 
 const Game = ({
     game,
@@ -83,44 +85,45 @@ const Game = ({
         (game.restrictedList && game.restrictedList.cardSet) || 'redesign'
     );
 
-    const gameTypeClass = classNames('text-center text-small text-white', {
-        'bg-warning bg-opacity-40': game.gameType === 'casual',
-        'bg-success bg-opacity-40': game.gameType === 'beginner',
-        'bg-danger bg-opacity-40': game.gameType === 'competitive'
-    });
+    const gameTypeClass = classNames(
+        'flex gap-2 justify-center items-center text-small text-white',
+        {
+            'bg-warning bg-opacity-40': game.gameType === 'casual',
+            'bg-success bg-opacity-40': game.gameType === 'beginner',
+            'bg-danger bg-opacity-40': game.gameType === 'competitive'
+        }
+    );
 
     return (
         <div key={game.id}>
             <hr />
             <div className={rowClass}>
                 <div className={gameTypeClass}>
-                    <span className='mr-2 text-center capitalize'>({game.gameType})</span>
-                    <span className='pl-0 mr-2 pb-2 text-white'>
+                    <span className='capitalize'>({game.gameType})</span>
+                    <span className='text-white'>
                         <b>{title}</b>
                     </span>
-                    <span className='ml-2'>{`[${formattedTime}]`}</span>
-                    <span className='ml-2'>
+                    <span>{`[${formattedTime}]`}</span>
+                    <span className='flex gap-1.5 items-center'>
                         {game.showHand && (
                             <img
                                 src='/img/ShowHandIcon.png'
-                                className='game-list-icon'
+                                className='h-6 w-6 invert'
                                 alt='Show hands to spectators'
                             />
                         )}
-                        {game.needsPassword && (
-                            <span className='password-game glyphicon glyphicon-lock' />
-                        )}
+                        {game.needsPassword && <FontAwesomeIcon icon={faLock} />}
                         {game.useGameTimeLimit && (
                             <img
                                 src='/img/Timelimit.png'
-                                className='game-list-icon'
+                                className='h-6 w-6 invert p-1'
                                 alt='Time limit used'
                             />
                         )}
                         {game.useChessClocks && (
                             <img
                                 src='/img/chess-clock.png'
-                                className='game-list-icon'
+                                className='h-6 w-6 invert'
                                 alt='Chess clocks used'
                             />
                         )}
