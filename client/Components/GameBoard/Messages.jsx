@@ -10,6 +10,8 @@ import CardBackImage from '../../assets/img/cardback.png';
 import GoldImage from '../../assets/img/stats/gold.png';
 
 import './Messages.css';
+import { ThronesIcons } from '../../constants';
+import ThronesIcon from './ThronesIcon';
 
 const tokens = {
     card: { className: 'h-4 w-3 inline', imageSrc: CardBackImage },
@@ -32,13 +34,15 @@ const Messages = ({ messages, onCardMouseOut, onCardMouseOver }) => {
             if (tokens[lowerToken]) {
                 const tokenEntry = tokens[lowerToken];
 
-                messages.push(` ${token} `);
                 messages.push(
-                    <img
-                        key={`${token}-${i++}`}
-                        className={tokenEntry.className}
-                        src={tokenEntry.imageSrc}
-                    />
+                    <span className='inline-flex gap-0.5'>
+                        {` ${token} `}
+                        <img
+                            key={`${token}-${i++}`}
+                            className={tokenEntry.className}
+                            src={tokenEntry.imageSrc}
+                        />
+                    </span>
                 );
                 messages.push(' ');
             } else {
@@ -159,6 +163,8 @@ const Messages = ({ messages, onCardMouseOut, onCardMouseOver }) => {
                         {fragment.name}
                     </span>
                 );
+            } else if (ThronesIcons.includes(fragment)) {
+                messages.push(<ThronesIcon key={index++} icon={fragment} />);
             } else {
                 const messageFragment = processKeywords(fragment.toString());
                 messages.push(

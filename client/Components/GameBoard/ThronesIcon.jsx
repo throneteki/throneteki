@@ -16,7 +16,7 @@ const ThronesIcon = ({ icon, withBackground = false }) => {
     };
 
     const className = classNames(
-        'w-6 h-6 rounded-xl font-[thronesdb]',
+        'w-6 h-6 rounded-xl font-[thronesdb] inline',
         withBackground ? bgClasses[icon] : fgClasses[icon]
     );
 
