@@ -23,6 +23,11 @@
         font-weight: normal;
         font-style: normal;
     }
+
+    button,
+    [role='button'] {
+        cursor: unset;
+    }
 }
 
 html,

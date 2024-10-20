@@ -17,16 +17,19 @@ const MovablePanel = ({ name, side, title, onCloseClick, children, size }) => {
     const popupRef = useRef(null);
 
     const { attributes, listeners, setNodeRef, transform } = useDraggable({
-        id: `panel-${title}`,
+        id: key,
         data: {
             type: ItemTypes.PANEL,
-            title: title
+            key: key
         }
     });
 
     useDndMonitor({
         onDragStart(event) {
-            if (event.active.data.current.type !== ItemTypes.PANEL) {
+            if (
+                event.active.data.current.type !== ItemTypes.PANEL ||
+                event.active.data.current.key !== key
+            ) {
                 return;
             }
 
@@ -37,7 +40,7 @@ const MovablePanel = ({ name, side, title, onCloseClick, children, size }) => {
         onDragEnd(event) {
             if (
                 event.active.data.current.type !== ItemTypes.PANEL ||
-                event.active.data.current.title !== title
+                event.active.data.current.key !== key
             ) {
                 return;
             }
