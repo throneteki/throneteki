@@ -4,8 +4,7 @@ import {
     faExclamationCircle,
     faExclamationTriangle,
     faInfoCircle,
-    faCheckCircle,
-    faBell
+    faCheckCircle
 } from '@fortawesome/free-solid-svg-icons';
 import { Link } from '@nextui-org/react';
 
@@ -61,33 +60,23 @@ const AlertPanel = ({
      * @type {AlertType}
      */
     let alertType;
-    let fgClass;
 
     switch (variant) {
         case AlertType.Warning:
             icon = faExclamationTriangle;
-            alertType = 'bg-warning';
-            fgClass = 'text-warning-900';
+            alertType = 'bg-warning-subtle text-warning-subtle-foreground';
             break;
         case AlertType.Danger:
             icon = faExclamationCircle;
-            alertType = 'bg-danger';
-            fgClass = 'text-danger-900';
+            alertType = 'alert-danger';
             break;
         case AlertType.Info:
             icon = faInfoCircle;
-            alertType = 'bg-blue-200';
-            fgClass = 'text-blue-900';
+            alertType = 'bg-info-subtle text-info-subtle-foreground';
             break;
         case AlertType.Success:
             icon = faCheckCircle;
-            alertType = 'bg-success';
-            fgClass = 'text-background';
-            break;
-        case AlertType.Bell:
-            icon = faBell;
-            alertType = 'bg-primary';
-            fgClass = 'text-primary-900';
+            alertType = 'bg-success-subtle text-success-subtle-foreground';
             break;
     }
 
@@ -106,7 +95,7 @@ const AlertPanel = ({
     }
 
     return (
-        <div className={`rounded-lg ${padding} ${alertType} ${fgClass}`}>
+        <div className={`rounded-lg ${padding} ${alertType}`}>
             {title}
             {!noIcon && <FontAwesomeIcon icon={icon} />}
             {message && <span id='alert-message'>&nbsp;{getMessageWithLinks(message)}</span>}

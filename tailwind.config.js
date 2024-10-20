@@ -30,7 +30,6 @@ export default {
                 thenightswatch: '#7a7a7a',
                 tyrell: '#509f16',
                 emphasis: '#dc4787',
-                info: '#0dcaf0',
                 military: '#c72229',
                 intrigue: '#05552f',
                 power: '#2a2e5e'
@@ -54,10 +53,30 @@ export default {
                     colors: {
                         primary: '#41658a',
                         danger: '#dc3545',
+                        ['danger-subtle']: {
+                            DEFAULT: '#f8d7da',
+                            foreground: '#842029'
+                        },
                         warning: '#ffc107',
+                        ['warning-subtle']: {
+                            DEFAULT: '#fff3cd',
+                            foreground: '#664d03'
+                        },
                         success: {
                             DEFAULT: '#198754',
                             foreground: 'white'
+                        },
+                        ['success-subtle']: {
+                            DEFAULT: '#d1e7dd',
+                            foreground: '#0f5132'
+                        },
+                        info: {
+                            DEFAULT: '#0dcaf0',
+                            foreground: '#333333'
+                        },
+                        ['info-subtle']: {
+                            DEFAULT: '#cff4fc',
+                            foreground: '#055160'
                         }
                     }
                 }
