@@ -1,3 +1,5 @@
+import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 
 const DeckStatusSummary = ({ status }) => {
@@ -15,14 +17,10 @@ const DeckStatusSummary = ({ status }) => {
     ];
 
     return (
-        <ul className='deck-status-summary'>
+        <ul>
             {items.map((item, index) => (
-                <li className={item.value ? 'valid' : 'invalid'} key={index}>
-                    <span
-                        className={
-                            item.value ? 'glyphicon glyphicon-ok' : 'glyphicon glyphicon-remove'
-                        }
-                    />
+                <li className={item.value ? 'text-success' : 'text-danger'} key={index}>
+                    <FontAwesomeIcon icon={item.value ? faCheck : faXmark} />
                     {` ${item.title}`}
                 </li>
             ))}

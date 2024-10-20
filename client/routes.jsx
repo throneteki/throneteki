@@ -18,7 +18,7 @@ import NewsAdmin from './pages/NewsAdmin';
 import AddDeck from './Components/Decks/AddDeck';
 import EditDeck from './Components/Decks/EditDeck';
 import GameLobby from './Components/Games/GameLobby';
-import GameBoardOld from './Components/GameBoard/GameBoard';
+import GameBoard from './Components/GameBoard/GameBoard';
 import BlockList from './pages/BlockList';
 import NodesAdmin from './pages/NodesAdmin';
 import MotdAdmin from './pages/MotdAdmin';
@@ -29,6 +29,7 @@ import EventsAdmin from './pages/EventsAdmin';
 import EditEvent from './pages/EventsAdmin/EditEvent';
 import EditDraftCube from './pages/EventsAdmin/EditDraftCube';
 import DraftingTable from './Components/Drafting/DraftingTable';
+import ImportDeck from './Components/Decks/ImportDeck';
 
 const routes = [
     { path: '/', action: () => <Lobby key='lobby' /> },
@@ -41,11 +42,12 @@ const routes = [
     },
     { path: '/blocklist', action: () => <BlockList key='blocklist' /> },
     { path: '/decks', action: () => <Decks key='decks' /> },
-    { path: '/decks/add', action: () => <AddDeck key='adddecks' /> },
+    { path: '/decks/new', action: () => <AddDeck key='adddecks' /> },
     {
         path: '/decks/edit/:id([a-f\\d]{24})',
         action: (context) => <EditDeck key='editdeck' deckId={context.params.id} />
     },
+    { path: '/decks/import', action: () => <ImportDeck key='importdeck' /> },
     { path: '/forgot', action: () => <ForgotPassword key='forgotpassword' /> },
     { path: '/how-to-play', action: () => <HowToPlay key='howtoplay' /> },
     { path: '/login', action: () => <Login key='login' /> },
@@ -59,7 +61,7 @@ const routes = [
                     return <DraftingTable key='drafting-table' />;
                 }
 
-                return <GameBoardOld key='gameboard' />;
+                return <GameBoard key='gameboard' />;
             }
 
             return <GameLobby key='gamelobby' gameId={context.params.gameId} />;

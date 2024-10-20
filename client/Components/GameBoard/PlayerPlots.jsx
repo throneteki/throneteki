@@ -7,7 +7,6 @@ import Droppable from './Droppable';
 const PlayerPlots = ({
     plotDiscard,
     onCardClick,
-    onDragDrop,
     onMenuItemClick,
     onCardMouseOut,
     onCardMouseOver,
@@ -25,8 +24,8 @@ const PlayerPlots = ({
                 key='activeplot'
                 cards={plotDiscard}
                 className='plot'
+                numColumns={4}
                 onCardClick={onCardClick}
-                onDragDrop={onDragDrop}
                 onMenuItemClick={onMenuItemClick}
                 onMouseOut={onCardMouseOut}
                 onMouseOver={onCardMouseOver}
@@ -47,7 +46,7 @@ const PlayerPlots = ({
                 closeOnClick={isMe}
                 hiddenTopCard={!mustShowPlotSelection}
                 disablePopup={!isMe}
-                onDragDrop={onDragDrop}
+                numColumns={4}
                 onCardClick={onCardClick}
                 onMouseOut={onCardMouseOut}
                 onMouseOver={onCardMouseOver}
@@ -66,14 +65,14 @@ const PlayerPlots = ({
 
         let piles = [
             isMe ? (
-                <Droppable key='usedplots' onDragDrop={onDragDrop} source='revealed plots'>
+                <Droppable key='usedplots' source='revealed plots'>
                     {revealedPlots}
                 </Droppable>
             ) : (
                 revealedPlots
             ),
             isMe ? (
-                <Droppable key='plotdeck' onDragDrop={onDragDrop} source='plot deck'>
+                <Droppable key='plotdeck' source='plot deck'>
                     {plotDeckElement}
                 </Droppable>
             ) : (
@@ -89,7 +88,6 @@ const PlayerPlots = ({
     }, [
         plotDiscard,
         onCardClick,
-        onDragDrop,
         onMenuItemClick,
         onCardMouseOut,
         onCardMouseOver,
@@ -102,8 +100,8 @@ const PlayerPlots = ({
         direction
     ]);
 
-    let className = classNames('plot-group', {
-        'our-side': direction === 'default'
+    let className = classNames('flex flex-1 justify-start flex-col', {
+        'justify-end': direction === 'default'
     });
 
     return <div className={className}>{renderPlotPiles()}</div>;

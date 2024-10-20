@@ -1,10 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
 
-import Input from '../../Components/Form/Input';
-import Checkbox from '../../Components/Form/Checkbox';
-import Select from '../../Components/Form/Select';
-import Typeahead from '../../Components/Form/Typeahead';
-import TextArea from '../../Components/Form/TextArea';
 import { useDispatch } from 'react-redux';
 import {
     useGetCardsQuery,
@@ -17,6 +12,7 @@ import {
 import Panel from '../../Components/Site/Panel';
 import AlertPanel from '../../Components/Site/AlertPanel';
 import { navigate } from '../../redux/reducers/navigation';
+import { Input, Select, Switch, Textarea } from '@nextui-org/react';
 
 const formatListTextForCards = (cards, cardCodes) => {
     if (!cardCodes || !cards) {
@@ -339,7 +335,7 @@ const EventEditor = ({ eventId }) => {
         console.info(error);
         return (
             <AlertPanel
-                type='error'
+                variant='danger'
                 message={error.data?.message || 'An error occurred loading the event'}
             />
         );
@@ -353,8 +349,6 @@ const EventEditor = ({ eventId }) => {
                         <Input
                             name='name'
                             label='Event Name'
-                            labelClass='col-sm-3'
-                            fieldClass='col-sm-9'
                             placeholder='Event Name'
                             type='text'
                             onChange={(event) => setName(event.target.value)}
@@ -362,13 +356,11 @@ const EventEditor = ({ eventId }) => {
                         />
                         <Select
                             label='Format'
-                            labelClass='col-sm-3'
-                            fieldClass='col-sm-9'
                             options={formats}
                             value={format}
                             onChange={(value) => setFormat(value.value)}
                         />
-                        <Checkbox
+                        <Switch
                             name='lockDecks'
                             label='Prevent users from making changes to their decks for the duration of the event'
                             labelClass='col-sm-10'
@@ -378,7 +370,7 @@ const EventEditor = ({ eventId }) => {
                         />
                     </Panel>
                     <Panel title='Event Game Options'>
-                        <Checkbox
+                        <Switch
                             name='useEventGameOptions'
                             label='Use event game options'
                             labelClass='col-sm-4'
@@ -388,7 +380,7 @@ const EventEditor = ({ eventId }) => {
                         />
                         {useEventGameOptions && (
                             <>
-                                <Checkbox
+                                <Switch
                                     name='spectators'
                                     label='Allow spectators'
                                     labelClass='col-sm-4'
@@ -398,7 +390,7 @@ const EventEditor = ({ eventId }) => {
                                 />
                                 {spectators && (
                                     <>
-                                        <Checkbox
+                                        <Switch
                                             name='muteSpectators'
                                             label='Mute spectators'
                                             labelClass='col-sm-4'
@@ -408,7 +400,7 @@ const EventEditor = ({ eventId }) => {
                                             }
                                             checked={muteSpectators}
                                         />
-                                        <Checkbox
+                                        <Switch
                                             name='showHand'
                                             label='Show hands to spectators'
                                             labelClass='col-sm-4'
@@ -418,7 +410,7 @@ const EventEditor = ({ eventId }) => {
                                         />
                                     </>
                                 )}
-                                <Checkbox
+                                <Switch
                                     name='useGameTimeLimit'
                                     label='Use a time limit (in minutes)'
                                     labelClass='col-sm-4'
@@ -438,7 +430,7 @@ const EventEditor = ({ eventId }) => {
                                         value={gameTimeLimit}
                                     />
                                 )}
-                                <Checkbox
+                                <Switch
                                     name='useChessClocks'
                                     label='Use chess clocks with a time limit per player'
                                     labelClass='col-sm-8'
@@ -489,7 +481,7 @@ const EventEditor = ({ eventId }) => {
                     </Panel>
 
                     <Panel title='Settings for Judges/Streamers'>
-                        <Checkbox
+                        <Switch
                             name='restrictTableCreators'
                             label='Restrict table creators to those on the following list'
                             labelClass='col-sm-8'
@@ -498,7 +490,7 @@ const EventEditor = ({ eventId }) => {
                             checked={restrictTableCreators}
                         />
                         {restrictTableCreators && (
-                            <TextArea
+                            <Textarea
                                 label='Valid Creators'
                                 labelClass='col-sm-3'
                                 fieldClass='col-sm-9'
@@ -510,7 +502,7 @@ const EventEditor = ({ eventId }) => {
                                 }}
                             />
                         )}
-                        <Checkbox
+                        <Switch
                             name='restrictSpectators'
                             label='Restrict spectators to those on the following list'
                             labelClass='col-sm-8'
@@ -519,7 +511,7 @@ const EventEditor = ({ eventId }) => {
                             checked={restrictSpectators}
                         />
                         {restrictSpectators && (
-                            <TextArea
+                            <Textarea
                                 label='Valid Spectators'
                                 labelClass='col-sm-3'
                                 fieldClass='col-sm-9'
@@ -563,7 +555,7 @@ const EventEditor = ({ eventId }) => {
                     {format === 'custom-joust' && (
                         <div>
                             <Panel title='Custom Restricted/Banned List'>
-                                <Typeahead
+                                {/* <Typeahead
                                     label='Card'
                                     labelClass={'col-sm-3 col-xs-2'}
                                     fieldClass='col-sm-4 col-xs-5'
@@ -617,8 +609,8 @@ const EventEditor = ({ eventId }) => {
                                             </ul>
                                         </div>
                                     </div>
-                                </Typeahead>
-                                <TextArea
+                                </Typeahead> */}
+                                <Textarea
                                     label='Restricted List'
                                     labelClass='col-sm-3'
                                     fieldClass='col-sm-9'
@@ -631,7 +623,7 @@ const EventEditor = ({ eventId }) => {
                                         setRestricted(cards);
                                     }}
                                 />
-                                <TextArea
+                                <Textarea
                                     label='Banned List'
                                     labelClass='col-sm-3'
                                     fieldClass='col-sm-9'
@@ -644,7 +636,7 @@ const EventEditor = ({ eventId }) => {
                                         setBanned(cards);
                                     }}
                                 />
-                                <TextArea
+                                <Textarea
                                     label='Banned Pods'
                                     labelClass='col-sm-3'
                                     fieldClass='col-sm-9'

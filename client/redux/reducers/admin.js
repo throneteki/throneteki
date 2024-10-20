@@ -9,7 +9,6 @@ const adminSlice = createSlice({
     initialState,
     reducers: () => ({
         receiveNodeStatus: (state, action) => {
-            console.info(state, action);
             state.nodeStatus = action.payload;
         }
     })

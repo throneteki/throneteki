@@ -4,6 +4,9 @@ import moment from 'moment';
 
 import GamePlayer from './GamePlayer';
 import { createGameTitle } from './GameHelper';
+import { Button } from '@nextui-org/react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faLock } from '@fortawesome/free-solid-svg-icons';
 
 const Game = ({
     game,
@@ -23,18 +26,20 @@ const Game = ({
             players.push(
                 <div
                     key={`game-${game.id}-join`}
-                    className={classNames('game-player-row', {
-                        'first-player': players.length % 2 === 0,
-                        'other-player': players.length % 2 === 1
+                    className={classNames('flex flex-col flex-1', {
+                        'mr-2 items-end': players.length % 2 === 0,
+                        'ml-2 items-start': players.length % 2 === 1
                     })}
                 >
-                    <div className='game-faction-row other-player'>
-                        <button
-                            className='btn btn-primary gamelist-button img-responsive'
+                    <div className='flex items-center flex-1'>
+                        <Button
+                            size='sm'
+                            color='primary'
+                            className='gamelist-button img-responsive'
                             onClick={onJoinGame}
                         >
                             Join
-                        </button>
+                        </Button>
                     </div>
                 </div>
             );
@@ -42,7 +47,7 @@ const Game = ({
 
         if (players.length % 2 === 1) {
             players.push(
-                <div key={`game-${game.id}-empty`} className='game-faction-row other-player' />
+                <div key={`game-${game.id}-empty`} className='flex items-center flex-1' />
             );
         }
 
@@ -53,16 +58,19 @@ const Game = ({
     let gameMiddles = [];
     for (let i = 0; i < players.length; i += 2) {
         gameMiddles.push(
-            <div key={`game-middle-${i}`} className='game-middle-row'>
+            <div key={`game-middle-${i}`} className='my-3 flex justify-center items-center'>
                 {players[i]}
                 {players[i + 1]}
             </div>
         );
     }
 
-    let rowClass = classNames('game-row', {
-        [game.node]: game.node && isAdmin
-    });
+    let rowClass = classNames(
+        'min-h-32 py-3 px-2 hover:border-info hover:bg-info hover:bg-opacity-20',
+        {
+            [game.node]: game.node && isAdmin
+        }
+    );
 
     let timeDifference = moment().diff(moment(game.createdAt));
     if (timeDifference < 0) {
@@ -77,38 +85,45 @@ const Game = ({
         (game.restrictedList && game.restrictedList.cardSet) || 'redesign'
     );
 
+    const gameTypeClass = classNames(
+        'flex gap-2 justify-center items-center text-small text-white',
+        {
+            'bg-warning bg-opacity-40': game.gameType === 'casual',
+            'bg-success bg-opacity-40': game.gameType === 'beginner',
+            'bg-danger bg-opacity-40': game.gameType === 'competitive'
+        }
+    );
+
     return (
         <div key={game.id}>
             <hr />
             <div className={rowClass}>
-                <div className={`game-header-row ${game.gameType}`}>
-                    <span className='game-type'>({game.gameType})</span>
-                    <span className='game-title'>
+                <div className={gameTypeClass}>
+                    <span className='capitalize'>({game.gameType})</span>
+                    <span className='text-white'>
                         <b>{title}</b>
                     </span>
-                    <span className='game-time'>{`[${formattedTime}]`}</span>
-                    <span className='game-icons'>
+                    <span>{`[${formattedTime}]`}</span>
+                    <span className='flex gap-1.5 items-center'>
                         {game.showHand && (
                             <img
                                 src='/img/ShowHandIcon.png'
-                                className='game-list-icon'
+                                className='h-6 w-6 invert'
                                 alt='Show hands to spectators'
                             />
                         )}
-                        {game.needsPassword && (
-                            <span className='password-game glyphicon glyphicon-lock' />
-                        )}
+                        {game.needsPassword && <FontAwesomeIcon icon={faLock} />}
                         {game.useGameTimeLimit && (
                             <img
                                 src='/img/Timelimit.png'
-                                className='game-list-icon'
+                                className='h-6 w-6 invert p-1'
                                 alt='Time limit used'
                             />
                         )}
                         {game.useChessClocks && (
                             <img
                                 src='/img/chess-clock.png'
-                                className='game-list-icon'
+                                className='h-6 w-6 invert'
                                 alt='Chess clocks used'
                             />
                         )}
@@ -117,20 +132,24 @@ const Game = ({
                 {gameMiddles}
                 <div className='game-row-buttons'>
                     {showWatchButton && (
-                        <button
+                        <Button
+                            color='primary'
+                            size='sm'
                             className='btn btn-primary gamelist-lower-button'
                             onClick={onWatchGame}
                         >
                             Watch
-                        </button>
+                        </Button>
                     )}
                     {isAdmin && (
-                        <button
-                            className='btn btn-primary gamelist-lower-button'
+                        <Button
+                            color='primary'
+                            className='gamelist-lower-button p-1 ml-1 mt-1'
+                            size='sm'
                             onClick={onRemoveGame}
                         >
                             Remove
-                        </button>
+                        </Button>
                     )}
                 </div>
             </div>

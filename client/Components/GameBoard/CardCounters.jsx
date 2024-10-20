@@ -7,9 +7,13 @@ const CardCounters = ({ counters }) => {
         return null;
     }
 
-    let countersClass = classNames('counters', 'ignore-mouse-events', {
-        'many-counters': counters.length > 3
-    });
+    let countersClass = classNames(
+        'text-white absolute top-0 bottom-0 right-0 left-0 justify-center flex flex-wrap z-20 items-center',
+        'ignore-mouse-events',
+        {
+            'many-counters': counters.length > 3
+        }
+    );
 
     let counterDivs = [];
 

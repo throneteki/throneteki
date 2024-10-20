@@ -1,43 +1,46 @@
-export default {
+export const PopupDefaults = {
     'plot deck-bottom': {
-        left: '100px',
-        bottom: '155px'
+        left: 100,
+        bottom: 155
     },
     'revealed plots-bottom': {
-        left: '100px',
-        bottom: '230px'
+        left: 100,
+        bottom: 230
     },
     'revealed plots-top': {
-        left: '100px',
-        top: '155px'
+        left: 100,
+        top: 155
+    },
+    'draw deck-top': {
+        top: 185
     },
     'draw deck-bottom': {
-        bottom: '140px'
+        bottom: 140
     },
     'discard pile-bottom': {
-        bottom: '155px'
+        bottom: '155'
     },
     'discard pile-top': {
-        top: '185px'
+        top: 185
     },
     'dead pile-bottom': {
-        bottom: '140px'
+        bottom: 140
     },
     'dead pile-top': {
-        top: '165px'
+        top: 165
     },
     'out of game-top': {
-        top: '155px',
-        left: '20px'
+        top: 155,
+        left: 20
     },
     'out of game-bottom': {
-        bottom: '155px',
-        right: '0'
+        bottom: 155,
+        right: 0
     },
     'agenda-bottom': {
-        bottom: '155px'
+        bottom: 155
     },
     'agenda-top': {
-        top: '185px'
+        top: 185
     }
 };

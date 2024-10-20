@@ -15,14 +15,30 @@ class MessageService extends EventEmitter {
         });
     }
 
-    getLastMessages() {
-        return this.messages.find({ type: { $ne: 'motd' } }, { limit: 100, sort: { time: -1 } });
+    async getLastMessages(isModerator) {
+        const messages = await this.messages.find(
+            { type: { $ne: 'motd' } },
+            { limit: 100, sort: { time: -1 } }
+        );
+
+        return messages.map((message) => {
+            return {
+                _id: message._id,
+                user: message.user,
+                message: !message.deleted || isModerator ? message.message : undefined,
+                time: message.time,
+                deleted: message.deleted,
+                deletedBy: isModerator ? message.deletedBy : undefined
+            };
+        });
     }
 
-    removeMessage(messageId) {
-        return this.messages.remove({ _id: messageId }).then(() => {
-            this.emit('messageDeleted', messageId);
-        });
+    removeMessage(messageId, deletedBy) {
+        return this.messages
+            .update({ _id: messageId }, { $set: { deleted: true, deletedBy } })
+            .then(() => {
+                this.emit('messageDeleted', messageId);
+            });
     }
 
     getMotdMessage() {
