@@ -60,7 +60,7 @@ const DeckEditor = ({ deck, onBackClick }) => {
         (deck.agenda ? [{ card: deck.agenda, count: 1 }] : [])
             .concat(deck.drawCards || [])
             .concat(deck.plotCards || [])
-            .concat(deck.bannerCards.map((bc) => ({ card: bc, count: 1 })) || [])
+            .concat(deck.bannerCards?.map((bc) => ({ card: bc, count: 1 })) || [])
     );
     const [deckName, setDeckName] = useState(deck.name);
     const [faction, setFaction] = useState(deck.faction);
