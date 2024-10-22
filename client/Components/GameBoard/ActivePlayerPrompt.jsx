@@ -103,6 +103,7 @@ const ActivePlayerPrompt = ({
                     onMouseOver={button.card ? (event) => onMouseOver(event, button.card) : null}
                     onMouseOut={button.card ? (event) => onMouseOut(event, button.card) : null}
                     isDisabled={button.disabled}
+                    disableRipple={true}
                 >
                     {button.icon && <ThronesIcon icon={button.icon} withBackground />} {button.text}
                 </Button>
@@ -179,7 +180,7 @@ const ActivePlayerPrompt = ({
 
     if (promptTitle) {
         promptTitleElement = (
-            <div className='font-normal text-center border-1 border-default-200 bg-black bg-opacity-65 py-1'>
+            <div className='font-normal text-center border-1 border-default-200 bg-black/65 py-1'>
                 {promptTitle}
             </div>
         );
@@ -207,7 +208,7 @@ const ActivePlayerPrompt = ({
     }
 
     return (
-        <div>
+        <div className='m-1'>
             {timer}
             <div
                 className={
@@ -220,7 +221,7 @@ const ActivePlayerPrompt = ({
             </div>
             {promptTitleElement}
             <div className='text-center'>
-                <div className='relative mb-2 border-1 border-default-200 bg-black bg-opacity-65 rounded-b-md'>
+                <div className='relative border-1 border-default-200 bg-black/65 rounded-b-md'>
                     <h4 className='my-1'>{promptTextElement}</h4>
                     {getControls()}
                     <div className='flex flex-col'>{getButtons()}</div>

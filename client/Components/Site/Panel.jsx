@@ -19,7 +19,7 @@ const Panel = ({
 }) => {
     return (
         <Card
-            className={`${className} border-2 bg-opacity-65 border-${type} ${
+            className={`${className} border-2 bg-black/65 border-${type} ${
                 fullHeight ? 'h-full' : ''
             } shadow-lg`}
             classNames={{ body: 'h-full overflow-y-auto' }}

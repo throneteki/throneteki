@@ -5,6 +5,7 @@ import Card from './Card';
 import CardTiledList from './CardTiledList';
 import Droppable from './Droppable';
 import MovablePanel from './MovablePanel';
+import LabelledGameArea from './LabelledGameArea';
 
 import './CardPileLink.scss';
 import './CardPile.css';
@@ -28,6 +29,7 @@ const CardPile = ({
     size,
     popupMenu,
     title,
+    titlePosition,
     popupLocation = 'bottom',
     className,
     cardCount,
@@ -180,7 +182,7 @@ const CardPile = ({
         }
 
         const popupClass = classNames(
-            'card-list-popup relative margin-2 border-1 border-default-200 bg-black bg-opacity-75 rounded-b-md h-full',
+            'card-list-popup relative margin-2 border-1 border-default-200 bg-black/75 rounded-b-md h-full',
             {
                 'our-side': popupLocation === 'bottom',
                 [size]: true
@@ -250,8 +252,8 @@ const CardPile = ({
     ]);
 
     let retClassName = classNames(
-        'relative m-1 border-1 border-default-100 bg-black/55',
         'card-pile',
+        'box-border relative bg-black/55 rounded-md',
         className,
         {
             [size]: size !== 'normal',
@@ -278,12 +280,13 @@ const CardPile = ({
     }
 
     return (
-        <div className={retClassName} onClick={onCollectionClick}>
-            {headerText && (
-                <div className='absolute top-0 left-0 p-1 text-xs bg-black/55 rounded-md z-20'>
-                    {headerText}
-                </div>
-            )}
+        <LabelledGameArea
+            label={headerText}
+            position={titlePosition}
+            className={retClassName}
+            onClick={onCollectionClick}
+        >
+            <div className='inner-border absolute border-2 border-default-100/55 w-full h-full rounded-md' />
             {retTopCard ? (
                 <Card
                     card={retTopCard}
@@ -301,7 +304,7 @@ const CardPile = ({
                 <div className='card-placeholder' />
             )}
             {getPopup()}
-        </div>
+        </LabelledGameArea>
     );
 };
 

@@ -66,7 +66,7 @@ const Game = ({
     }
 
     let rowClass = classNames(
-        'min-h-32 py-3 px-2 hover:border-info hover:bg-info hover:bg-opacity-20',
+        'min-h-32 py-3 px-2 hover:border-info hover:bg-info hover:bg-black/20',
         {
             [game.node]: game.node && isAdmin
         }
