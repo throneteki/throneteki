@@ -24,8 +24,7 @@
         font-style: normal;
     }
 
-    button,
-    [role='button'] {
+    .card {
         cursor: unset;
     }
 }
