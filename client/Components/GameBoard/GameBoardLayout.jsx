@@ -11,7 +11,6 @@ import {
     sendShowDrawDeckMessage,
     sendShuffleDeckMessage
 } from '../../redux/reducers/game';
-import Plots from './Plots';
 import { DndContext, MouseSensor, TouchSensor, useSensor } from '@dnd-kit/core';
 import { ItemTypes } from '../../constants';
 
@@ -55,13 +54,6 @@ const GameBoardLayout = ({ thisPlayer, otherPlayer, onCardClick, onMouseOver, on
                 );
             }}
         >
-            <Plots
-                thisPlayer={thisPlayer}
-                otherPlayer={otherPlayer}
-                onCardClick={onCardClick}
-                onMouseOut={onMouseOut}
-                onMouseOver={isDragging ? null : onMouseOver}
-            />
             <div className='flex w-full flex-shrink flex-grow flex-col overflow-hidden'>
                 <div className='flex overflow-hidden'>
                     <PlayerRow
@@ -85,6 +77,10 @@ const GameBoardLayout = ({ thisPlayer, otherPlayer, onCardClick, onMouseOver, on
                         title={otherPlayer.title}
                         side='top'
                         cardSize={user.settings.cardSize}
+                        plotDeck={otherPlayer.cardPiles.plotDeck}
+                        plotDiscard={otherPlayer.cardPiles.plotDiscard}
+                        activePlot={otherPlayer.activePlot}
+                        selectedPlot={otherPlayer.selectedPlot}
                     />
                 </div>
                 <div className='flex flex-grow flex-shrink min-h-0 overflow-x-hidden'>
@@ -173,6 +169,10 @@ const GameBoardLayout = ({ thisPlayer, otherPlayer, onCardClick, onMouseOver, on
                         }
                         cardSize={user.settings.cardSize}
                         side='bottom'
+                        plotDeck={thisPlayer.cardPiles.plotDeck}
+                        plotDiscard={thisPlayer.cardPiles.plotDiscard}
+                        activePlot={thisPlayer.activePlot}
+                        selectedPlot={thisPlayer.selectedPlot}
                     />
                 </div>
             </div>

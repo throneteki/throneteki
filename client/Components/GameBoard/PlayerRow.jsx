@@ -7,6 +7,7 @@ import SquishableCardPanel from './SquishableCardPanel';
 import DrawDeck from './DrawDeck';
 import Droppable from './Droppable';
 import { getCardDimensions } from '../../util';
+import PlayerPlots from './PlayerPlots';
 
 const PlayerRow = ({
     outOfGamePile,
@@ -32,7 +33,11 @@ const PlayerRow = ({
     deadPile,
     shadows,
     faction,
-    agendas
+    agendas,
+    plotDeck,
+    plotDiscard,
+    activePlot,
+    selectedPlot
 }) => {
     const getOutOfGamePile = useCallback(() => {
         if (outOfGamePile.length === 0) {
@@ -82,16 +87,26 @@ const PlayerRow = ({
         [isMe]
     );
 
-    const getAgenda = useCallback(() => {
+    const getAgendas = useCallback(() => {
         let agenda = agendas?.length > 0 ? agendas[0] : undefined;
         if (!agenda || agenda.code === '') {
-            let className = classNames(
-                'agenda card-pile vertical panel relative m-1 border-1 border-default-100 bg-opacity-65',
-                {
-                    [cardSize]: cardSize !== 'normal'
-                }
+            return (
+                // Show empty card pile to ensure empty slot looks consistent
+                <CardPile
+                    cards={[]}
+                    disablePopup={true}
+                    onCardClick={onCardClick}
+                    onMenuItemClick={onMenuItemClick}
+                    onMouseOut={onMouseOut}
+                    onMouseOver={onMouseOver}
+                    popupLocation={side}
+                    showCards={false}
+                    source={null}
+                    title={null}
+                    topCard={null}
+                    size={cardSize}
+                />
             );
-            return <div className={className} />;
         }
         let cardWidth = getCardDimensions(cardSize);
 
@@ -130,7 +145,7 @@ const PlayerRow = ({
         // Add all additional agendas separately (not as a CardPile)
         retAgendas = retAgendas.concat(
             additionalAgendas.map((agenda, index) => {
-                let className = classNames('agenda', `agenda-${agenda.code} mt-1`);
+                let className = classNames('agenda', `agenda-${agenda.code}`);
                 let style = { left: `${spreadWidth * (index + 1)}px` };
                 return (
                     <div key={agenda.uuid} className={className}>
@@ -151,8 +166,7 @@ const PlayerRow = ({
             })
         );
 
-        // 10 is the left + right padding of main agenda; ensures gap on right is equal to gap on left
-        let totalWidth = 10 + cardWidth.width + spreadWidth * additionalAgendas.length;
+        let totalWidth = cardWidth.width + spreadWidth * additionalAgendas.length;
         let totalStyle = { width: `${totalWidth}px` };
         return (
             <div className='relative flex' style={totalStyle}>
@@ -282,7 +296,21 @@ const PlayerRow = ({
     );
 
     return (
-        <div className='flex'>
+        <div className='flex space-x-2 my-1'>
+            <PlayerPlots
+                cardSize={cardSize}
+                onCardClick={onCardClick}
+                onCardMouseOut={onMouseOut}
+                onCardMouseOver={onMouseOver}
+                onMenuItemClick={onMenuItemClick}
+                direction='default'
+                isMe
+                plotDeck={plotDeck}
+                plotDiscard={plotDiscard}
+                activePlot={activePlot}
+                selectedPlot={selectedPlot}
+                mustShowPlotSelection={false}
+            />
             <CardPile
                 className='faction'
                 source='faction'
@@ -293,8 +321,9 @@ const PlayerRow = ({
                 disablePopup
                 onCardClick={onCardClick}
                 size={cardSize}
+                orientation={faction && faction.kneeled ? 'horizontal' : 'vertical'}
             />
-            {getAgenda()}
+            {getAgendas()}
             {getTitleCard()}
             {renderDroppablePile('hand', retHand)}
             {shadows.length !== 0 && renderDroppablePile('shadows', retShadows)}

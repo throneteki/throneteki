@@ -1,8 +1,8 @@
 import React, { useCallback } from 'react';
-import classNames from 'classnames';
 
 import CardPile from './CardPile';
 import Droppable from './Droppable';
+import { getCardDimensions } from '../../util';
 
 const PlayerPlots = ({
     plotDiscard,
@@ -21,7 +21,6 @@ const PlayerPlots = ({
     const renderPlotPiles = useCallback(() => {
         let revealedPlots = (
             <CardPile
-                key='activeplot'
                 cards={plotDiscard}
                 className='plot'
                 numColumns={4}
@@ -40,7 +39,6 @@ const PlayerPlots = ({
 
         let plotDeckElement = (
             <CardPile
-                key='plots'
                 cards={plotDeck}
                 className={selectedPlot ? 'plot plot-selected' : 'plot'}
                 closeOnClick={isMe}
@@ -53,31 +51,33 @@ const PlayerPlots = ({
                 orientation='horizontal'
                 source='plot deck'
                 title='Plots'
+                titlePosition={activePlot ? 'bottom left' : 'top left'}
                 popupLocation={isMe ? 'bottom' : 'top'}
-                topCard={
-                    mustShowPlotSelection && !!selectedPlot
-                        ? selectedPlot
-                        : { facedown: true, kneeled: true }
-                }
+                // TODO: Move this logic (for Bloodraven) into the plot popup (eg. when player is showing, opponent sees the card in plot popup)
+                // topCard={
+                //     mustShowPlotSelection && !!selectedPlot
+                //         ? selectedPlot
+                //         : { facedown: true, kneeled: true }
+                // }
                 size={cardSize}
             />
         );
 
         let piles = [
-            isMe ? (
-                <Droppable key='usedplots' source='revealed plots'>
-                    {revealedPlots}
-                </Droppable>
-            ) : (
-                revealedPlots
-            ),
-            isMe ? (
-                <Droppable key='plotdeck' source='plot deck'>
-                    {plotDeckElement}
-                </Droppable>
-            ) : (
-                plotDeckElement
-            )
+            <div key='plotdeck' className='absolute bottom-0'>
+                {isMe ? (
+                    <Droppable source='plot deck'>{plotDeckElement}</Droppable>
+                ) : (
+                    plotDeckElement
+                )}
+            </div>,
+            <div key='usedplots'>
+                {isMe ? (
+                    <Droppable source='revealed plots'>{revealedPlots}</Droppable>
+                ) : (
+                    revealedPlots
+                )}
+            </div>
         ];
 
         if (direction === 'reverse') {
@@ -100,11 +100,13 @@ const PlayerPlots = ({
         direction
     ]);
 
-    let className = classNames('flex flex-1 justify-start flex-col', {
-        'justify-end': direction === 'default'
-    });
+    const height = getCardDimensions(cardSize).height;
 
-    return <div className={className}>{renderPlotPiles()}</div>;
+    return (
+        <div className={'relative flex flex-col'} style={{ height }}>
+            {renderPlotPiles()}
+        </div>
+    );
 };
 
 export default PlayerPlots;

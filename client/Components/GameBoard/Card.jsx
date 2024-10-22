@@ -256,6 +256,9 @@ const Card = ({
     };
 
     const getAlertStatus = () => {
+        if (!card.alertStatus) {
+            return null;
+        }
         const iconClass = classNames('bg-black/50 p-1', {
             'text-warning': card.alertStatus.type === 'warning',
             'text-danger': card.alertStatus.type === 'error'
@@ -341,17 +344,13 @@ const Card = ({
             'grayscale brightness-75': card.unselectable,
             'z-10': !hideTokens
         });
-        let imageClass = classNames(
-            'card-image absolute left-0 top-0 points-events-none',
-            sizeClass,
-            {
-                horizontal: card.type === 'plot',
-                vertical: card.type !== 'plot',
-                kneeled:
-                    card.type !== 'plot' &&
-                    (orientation === 'kneeled' || card.kneeled || orientation === 'horizontal')
-            }
-        );
+        let imageClass = classNames('card-image absolute left-0 top-0', sizeClass, {
+            horizontal: card.type === 'plot',
+            vertical: card.type !== 'plot',
+            kneeled:
+                card.type !== 'plot' &&
+                (orientation === 'kneeled' || card.kneeled || orientation === 'horizontal')
+        });
 
         let image = <img className={imageClass} src={imageUrl} />;
 
@@ -390,7 +389,7 @@ const Card = ({
           ? '/img/cards/cardback_shadow.png'
           : '/img/cards/cardback.png';
 
-    const wrapperClass = classNames('m-0 inline-block user-select-none', {
+    const wrapperClass = classNames('m-0 inline-block select-none', {
         absolute: !!style?.left,
         relative: !style?.left
     });

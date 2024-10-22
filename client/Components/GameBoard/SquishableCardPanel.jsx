@@ -4,6 +4,7 @@ import { getCardDimensions } from '../../util';
 
 import Card from './Card';
 import { useMemo } from 'react';
+import LabelledGameArea from './LabelledGameArea';
 
 const SquishableCardPanel = ({
     cards,
@@ -14,6 +15,7 @@ const SquishableCardPanel = ({
     source,
     maxCards,
     title,
+    titlePosition,
     className,
     groupVisibleCards
 }) => {
@@ -87,12 +89,13 @@ const SquishableCardPanel = ({
 
     let dimensions = getOverallDimensions();
 
+    let headerText = title ? title + ' (' + cardsToRender.length + ')' : '';
+
     let classNameValue = classNames(
-        'flex justify-start mx-1 mt-1 p-0 relative m-1 border-1 border-default-100 bg-opacity-65',
+        'flex justify-start box-border border-default-100 bg-black/35 rounded-md',
         className,
         {
-            [cardSize]: cardSize !== 'normal',
-            absolute: needsSquish
+            [cardSize]: cardSize !== 'normal'
         }
     );
 
@@ -103,10 +106,10 @@ const SquishableCardPanel = ({
 
     return (
         <div className={classNameValue} style={style}>
-            {title && (
-                <div className='absolute top-0 left-0 p-1 text-xs bg-black bg-opacity-60 rounded-md z-20'>{`${title} (${cardsToRender.length})`}</div>
-            )}
-            {cardsToRender}
+            <LabelledGameArea label={headerText} position={titlePosition} className='w-full h-full'>
+                <div className='inner-border absolute border-2 border-default-100/50 w-full h-full rounded-md' />
+                {cardsToRender}
+            </LabelledGameArea>
         </div>
     );
 };
