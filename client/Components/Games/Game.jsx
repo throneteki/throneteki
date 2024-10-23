@@ -65,12 +65,9 @@ const Game = ({
         );
     }
 
-    let rowClass = classNames(
-        'min-h-32 py-3 px-2 hover:border-info hover:bg-info hover:bg-black/20',
-        {
-            [game.node]: game.node && isAdmin
-        }
-    );
+    let rowClass = classNames('min-h-32 py-3 px-2 hover:border-info hover:bg-info/20', {
+        [game.node]: game.node && isAdmin
+    });
 
     let timeDifference = moment().diff(moment(game.createdAt));
     if (timeDifference < 0) {
@@ -88,9 +85,9 @@ const Game = ({
     const gameTypeClass = classNames(
         'flex gap-2 justify-center items-center text-small text-white',
         {
-            'bg-warning bg-opacity-40': game.gameType === 'casual',
-            'bg-success bg-opacity-40': game.gameType === 'beginner',
-            'bg-danger bg-opacity-40': game.gameType === 'competitive'
+            'bg-warning/40': game.gameType === 'casual',
+            'bg-success/40': game.gameType === 'beginner',
+            'bg-danger/40': game.gameType === 'competitive'
         }
     );
 
