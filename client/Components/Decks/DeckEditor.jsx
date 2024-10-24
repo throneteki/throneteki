@@ -10,11 +10,16 @@ import {
     useAddDeckMutation,
     useGetCardsQuery,
     useGetFactionsQuery,
+    useGetPacksQuery,
+    useGetRestrictedListQuery,
     useSaveDeckMutation
 } from '../../redux/middleware/api';
 import { navigate } from '../../redux/reducers/navigation';
 import { useDispatch } from 'react-redux';
 import FactionImage from '../Images/FactionImage';
+import { validateDeck } from '../../../deck-helper';
+import RestrictedListDropdown from './RestrictedListDropdown';
+import DeckStatus from './DeckStatus';
 
 const SmallButton = extendVariants(Button, {
     variants: {
@@ -41,6 +46,8 @@ const DeckEditor = ({ deck, onBackClick }) => {
     const { data: cards, isLoading, isError } = useGetCardsQuery({});
     const [addDeck, { isLoading: isAddLoading }] = useAddDeckMutation();
     const [saveDeck, { isLoading: isSaveLoading }] = useSaveDeckMutation();
+    const { data: packs } = useGetPacksQuery();
+    const { data: restrictedLists } = useGetRestrictedListQuery();
     const {
         data: factions,
         isLoading: isFactionsLoading,
@@ -67,7 +74,17 @@ const DeckEditor = ({ deck, onBackClick }) => {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
-    const buildSaveDeck = () => {
+    const [currentRestrictedList, setCurrentRestrictedList] = useState(
+        restrictedLists && restrictedLists[0]
+    );
+    const cardsByCode = cards;
+    const factionsByCode = factions;
+
+    const deckToSave = useMemo(() => {
+        if (!factionsByCode || !cardsByCode || !packs || !currentRestrictedList) {
+            return null;
+        }
+
         const saveDeck = {
             _id: deck._id,
             name: deckName,
@@ -96,10 +113,27 @@ const DeckEditor = ({ deck, onBackClick }) => {
             saveDeck.drawCards.push(deckCard);
         }
 
-        return saveDeck;
-    };
+        if (!saveDeck.status) {
+            saveDeck.status = {};
+        }
 
-    const cardsByCode = cards;
+        saveDeck.status[currentRestrictedList._id] = validateDeck(saveDeck, {
+            packs: packs,
+            restrictedLists: [currentRestrictedList]
+        });
+
+        return saveDeck;
+    }, [
+        cardsByCode,
+        currentRestrictedList,
+        deck._id,
+        deck.agenda,
+        deckCards,
+        deckName,
+        faction.value,
+        factionsByCode,
+        packs
+    ]);
 
     const columns = useMemo(
         () => [
@@ -164,6 +198,10 @@ const DeckEditor = ({ deck, onBackClick }) => {
             },
             {
                 id: 'quantity',
+                accessorFn: (row) => {
+                    const deckCard = deckCards.find((dc) => dc.card.code === row.code);
+                    return deckCard?.count || 0;
+                },
                 header: 'Quantity',
                 cell: (info) => {
                     const max = info.row.original.deckLimit + 1;
@@ -225,8 +263,6 @@ const DeckEditor = ({ deck, onBackClick }) => {
         [deckCards, cardsByCode]
     );
 
-    const factionsByCode = factions;
-
     const cardTypes = useMemo(() => {
         if (!cards) {
             return [];
@@ -249,6 +285,12 @@ const DeckEditor = ({ deck, onBackClick }) => {
         setFaction(deck.faction);
     }, [deck.faction]);
 
+    useEffect(() => {
+        if (!currentRestrictedList && restrictedLists) {
+            setCurrentRestrictedList(restrictedLists[0]);
+        }
+    }, [currentRestrictedList, restrictedLists]);
+
     if (isLoading || isFactionsLoading) {
         return <LoadingSpinner text={'Loading, please wait...'} />;
     } else if (isError || isFactionsError) {
@@ -262,8 +304,6 @@ const DeckEditor = ({ deck, onBackClick }) => {
     const onSaveClick = async (andClose) => {
         setError();
         setSuccess();
-
-        const deckToSave = buildSaveDeck();
 
         try {
             deckToSave._id
@@ -341,7 +381,30 @@ const DeckEditor = ({ deck, onBackClick }) => {
                             </SelectItem>
                         )}
                     </Select>
-                    <div>
+                    <RestrictedListDropdown
+                        currentRestrictedList={currentRestrictedList}
+                        onChange={(restrictedList) => {
+                            setCurrentRestrictedList(restrictedList);
+                        }}
+                        restrictedLists={restrictedLists}
+                    />
+                    <div className='flex mt-1 ml-1'>
+                        <dl className='grid grid-cols-2 gap-2'>
+                            <dt className='font-bold'>Draw cards:</dt>
+                            <dd>
+                                {deckToSave.drawCards.reduce((acc, card) => acc + card.count, 0)}
+                            </dd>
+                            <dt className='font-bold'>Plot cards:</dt>
+                            <dd>
+                                {deckToSave.plotCards.reduce((acc, card) => acc + card.count, 0)}
+                            </dd>
+                        </dl>
+                    </div>
+                    <div className='flex gap-2 items-center ml-1'>
+                        <div className='font-bold'>Validity:</div>
+                        <DeckStatus status={deckToSave.status[currentRestrictedList._id]} />
+                    </div>
+                    <div className='mt-1'>
                         <ButtonGroup>
                             {cardTypes.map((type) => {
                                 return (
@@ -397,7 +460,7 @@ const DeckEditor = ({ deck, onBackClick }) => {
                             )}
                         </ButtonGroup>
                     </div>
-                    <div className='h-[60vh]'>
+                    <div className='h-[50vh]'>
                         <ReactTable
                             dataLoadFn={() => ({
                                 data: cardsMemo,

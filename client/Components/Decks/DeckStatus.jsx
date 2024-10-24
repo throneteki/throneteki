@@ -1,13 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import DeckStatusSummary from './DeckStatusSummary';
 import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react';
 import DeckStatusLabel from './DeckStatusLabel';
 
 const DeckStatus = ({ className, status }) => {
+    const [showPopup, setShowPopup] = useState(false);
+
+    console.info(status);
+
     return (
-        <Popover placement='right' className={className}>
+        <Popover
+            placement='right'
+            className={className}
+            isOpen={showPopup}
+            onOpenChange={(open) => setShowPopup(open)}
+        >
             <PopoverTrigger>
-                <div>
+                <div onMouseOver={() => setShowPopup(true)} onMouseOut={() => setShowPopup(false)}>
                     <DeckStatusLabel status={status} />
                 </div>
             </PopoverTrigger>

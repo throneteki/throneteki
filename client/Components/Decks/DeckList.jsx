@@ -17,10 +17,10 @@ import { useDeleteDecksMutation, useGetDecksQuery } from '../../redux/middleware
 import FactionImage from '../Images/FactionImage';
 import { Constants } from '../../constants';
 import CardImage from '../Images/CardImage';
-import DeckStatusLabel from './DeckStatusLabel';
 
 import './DeckList.css';
 import AlertPanel, { AlertType } from '../Site/AlertPanel';
+import DeckStatus from './DeckStatus';
 
 const DeckList = ({ restrictedList, onDeckSelected, readOnly }) => {
     const dispatch = useDispatch();
@@ -172,7 +172,7 @@ const DeckList = ({ restrictedList, onDeckSelected, readOnly }) => {
                 cell: (info) => (
                     <div className='justify-content-center flex'>
                         {restrictedList && (
-                            <DeckStatusLabel status={info.row.original.status[restrictedList]} />
+                            <DeckStatus status={info.row.original.status[restrictedList]} />
                         )}
                     </div>
                 ),

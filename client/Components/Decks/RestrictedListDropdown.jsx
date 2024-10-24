@@ -7,7 +7,7 @@ const RestrictedListDropdown = ({
     setCurrentRestrictedList,
     onChange
 }) => {
-    const [value, setValue] = useState(currentRestrictedList && currentRestrictedList.name);
+    const [value, setValue] = useState(currentRestrictedList && currentRestrictedList._id);
 
     const updateRestrictedList = useCallback(
         (restrictedListName) => {
@@ -39,7 +39,7 @@ const RestrictedListDropdown = ({
 
     useEffect(() => {
         if (!value && restrictedLists) {
-            setValue(restrictedLists[0].id);
+            setValue(restrictedLists[0]._id);
         }
     }, [restrictedLists, value]);
 
@@ -51,7 +51,7 @@ const RestrictedListDropdown = ({
                 selectedKeys={value ? new Set([value]) : null}
             >
                 {restrictedLists?.map((rl) => (
-                    <SelectItem key={rl.id} value={rl.id}>
+                    <SelectItem key={rl._id} value={rl._id}>
                         {rl.name}
                     </SelectItem>
                 ))}
