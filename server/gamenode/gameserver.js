@@ -374,7 +374,7 @@ class GameServer {
         player.socket = socket;
 
         if (!player.isSpectator(player) && !player.disconnectedAt) {
-            game.addMessage('{0} has connected to the game server', player);
+            game.addAlert('info', '{0} has connected to the game server', player);
         }
 
         this.sendGameState(game);

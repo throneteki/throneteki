@@ -7,11 +7,11 @@ import SquishableCardPanel from './SquishableCardPanel';
 import DrawDeck from './DrawDeck';
 import Droppable from './Droppable';
 import { getCardDimensions } from '../../util';
+import PlayerPlots from './PlayerPlots';
 
 const PlayerRow = ({
     outOfGamePile,
     onCardClick,
-    onDragDrop,
     onMenuItemClick,
     onMouseOut,
     onMouseOver,
@@ -33,7 +33,11 @@ const PlayerRow = ({
     deadPile,
     shadows,
     faction,
-    agendas
+    agendas,
+    plotDeck,
+    plotDiscard,
+    activePlot,
+    selectedPlot
 }) => {
     const getOutOfGamePile = useCallback(() => {
         if (outOfGamePile.length === 0) {
@@ -45,7 +49,6 @@ const PlayerRow = ({
                 cards={outOfGamePile}
                 className='additional-cards'
                 onCardClick={onCardClick}
-                onDragDrop={onDragDrop}
                 onMenuItemClick={onMenuItemClick}
                 onMouseOut={onMouseOut}
                 onMouseOver={onMouseOver}
@@ -58,18 +61,13 @@ const PlayerRow = ({
         );
 
         if (isMe) {
-            return (
-                <Droppable onDragDrop={onDragDrop} source='out of game'>
-                    {outOfGamePileElement}
-                </Droppable>
-            );
+            return <Droppable source='out of game'>{outOfGamePileElement}</Droppable>;
         }
 
         return outOfGamePileElement;
     }, [
         outOfGamePile,
         onCardClick,
-        onDragDrop,
         onMenuItemClick,
         onMouseOut,
         onMouseOver,
@@ -80,28 +78,35 @@ const PlayerRow = ({
 
     const renderDroppablePile = useCallback(
         (source, cards) => {
-            let onDragDropCb = isMe ? onDragDrop : null;
-
             if (isMe) {
-                return (
-                    <Droppable onDragDrop={onDragDropCb} source={source}>
-                        {cards}
-                    </Droppable>
-                );
+                return <Droppable source={source}>{cards}</Droppable>;
             }
 
             return cards;
         },
-        [isMe, onDragDrop]
+        [isMe]
     );
 
-    const getAgenda = useCallback(() => {
+    const getAgendas = useCallback(() => {
         let agenda = agendas?.length > 0 ? agendas[0] : undefined;
         if (!agenda || agenda.code === '') {
-            let className = classNames('agenda', 'card-pile', 'vertical', 'panel', {
-                [cardSize]: cardSize !== 'normal'
-            });
-            return <div className={className} />;
+            return (
+                // Show empty card pile to ensure empty slot looks consistent
+                <CardPile
+                    cards={[]}
+                    disablePopup={true}
+                    onCardClick={onCardClick}
+                    onMenuItemClick={onMenuItemClick}
+                    onMouseOut={onMouseOut}
+                    onMouseOver={onMouseOver}
+                    popupLocation={side}
+                    showCards={false}
+                    source={null}
+                    title={null}
+                    topCard={null}
+                    size={cardSize}
+                />
+            );
         }
         let cardWidth = getCardDimensions(cardSize);
 
@@ -123,7 +128,6 @@ const PlayerRow = ({
                         cards={underneath}
                         disablePopup={disablePopup}
                         onCardClick={onCardClick}
-                        onDragDrop={onDragDrop}
                         onMenuItemClick={onMenuItemClick}
                         onMouseOut={onMouseOut}
                         onMouseOver={onMouseOver}
@@ -141,7 +145,7 @@ const PlayerRow = ({
         // Add all additional agendas separately (not as a CardPile)
         retAgendas = retAgendas.concat(
             additionalAgendas.map((agenda, index) => {
-                let className = classNames('agenda', `agenda-${agenda.code} additional`);
+                let className = classNames('agenda', `agenda-${agenda.code}`);
                 let style = { left: `${spreadWidth * (index + 1)}px` };
                 return (
                     <div key={agenda.uuid} className={className}>
@@ -153,7 +157,7 @@ const PlayerRow = ({
                             disableMouseOver={false}
                             onClick={onCardClick}
                             onMenuItemClick={onMenuItemClick}
-                            orientation={'vertical'}
+                            orientation='vertical'
                             size={cardSize}
                             style={style}
                         />
@@ -162,11 +166,10 @@ const PlayerRow = ({
             })
         );
 
-        // 10 is the left + right padding of main agenda; ensures gap on right is equal to gap on left
-        let totalWidth = 10 + cardWidth.width + spreadWidth * additionalAgendas.length;
+        let totalWidth = cardWidth.width + spreadWidth * additionalAgendas.length;
         let totalStyle = { width: `${totalWidth}px` };
         return (
-            <div className='agendas' style={totalStyle}>
+            <div className='relative flex' style={totalStyle}>
                 {retAgendas.reverse()}
             </div>
         );
@@ -174,7 +177,6 @@ const PlayerRow = ({
         agendas,
         renderDroppablePile,
         onCardClick,
-        onDragDrop,
         onMenuItemClick,
         onMouseOut,
         onMouseOver,
@@ -192,7 +194,6 @@ const PlayerRow = ({
                 cards={[]}
                 className='title'
                 onCardClick={onCardClick}
-                onDragDrop={onDragDrop}
                 onMenuItemClick={onMenuItemClick}
                 onMouseOut={onMouseOut}
                 onMouseOver={onMouseOver}
@@ -205,11 +206,7 @@ const PlayerRow = ({
         );
 
         if (isMe) {
-            return (
-                <Droppable onDragDrop={onDragDrop} source='title'>
-                    {titleCardElement}
-                </Droppable>
-            );
+            return <Droppable source='title'>{titleCardElement}</Droppable>;
         }
 
         return titleCardElement;
@@ -217,7 +214,6 @@ const PlayerRow = ({
         title,
         isMelee,
         onCardClick,
-        onDragDrop,
         onMenuItemClick,
         onMouseOut,
         onMouseOver,
@@ -228,7 +224,6 @@ const PlayerRow = ({
 
     let cardPileProps = {
         onCardClick: onCardClick,
-        onDragDrop: onDragDrop,
         onMouseOut: onMouseOut,
         onMouseOver: onMouseOver,
         popupLocation: side,
@@ -266,6 +261,7 @@ const PlayerRow = ({
     );
     let retDiscardPile = (
         <CardPile
+            numColumns={5}
             className='discard'
             title='Discard'
             source='discard pile'
@@ -275,6 +271,7 @@ const PlayerRow = ({
     );
     let retDeadPile = (
         <CardPile
+            numColumns={5}
             className='dead'
             title='Dead'
             source='dead pile'
@@ -299,7 +296,21 @@ const PlayerRow = ({
     );
 
     return (
-        <div className='player-home-row-container'>
+        <div className='flex space-x-2 my-1'>
+            <PlayerPlots
+                cardSize={cardSize}
+                onCardClick={onCardClick}
+                onCardMouseOut={onMouseOut}
+                onCardMouseOver={onMouseOver}
+                onMenuItemClick={onMenuItemClick}
+                direction='default'
+                isMe
+                plotDeck={plotDeck}
+                plotDiscard={plotDiscard}
+                activePlot={activePlot}
+                selectedPlot={selectedPlot}
+                mustShowPlotSelection={false}
+            />
             <CardPile
                 className='faction'
                 source='faction'
@@ -310,8 +321,9 @@ const PlayerRow = ({
                 disablePopup
                 onCardClick={onCardClick}
                 size={cardSize}
+                orientation={faction && faction.kneeled ? 'horizontal' : 'vertical'}
             />
-            {getAgenda()}
+            {getAgendas()}
             {getTitleCard()}
             {renderDroppablePile('hand', retHand)}
             {shadows.length !== 0 && renderDroppablePile('shadows', retShadows)}

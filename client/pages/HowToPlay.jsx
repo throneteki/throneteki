@@ -1,56 +1,70 @@
 import React from 'react';
 
-import Link from '../Components/Site/Link';
 import Panel from '../Components/Site/Panel';
+import { Button, Link } from '@nextui-org/react';
 
 const HowToPlay = () => {
     return (
-        <div className='col-xs-12'>
+        <div className='w-2/3 mx-auto'>
             <Panel title='How To Play on The Iron Throne'>
-                <h3 className='htp-intro'>Introduction</h3>
-                <a
-                    className='btn btn-danger btn-lg pull-right'
-                    target='_blank'
-                    href='https://github.com/cryogen/throneteki/issues'
-                    rel='noreferrer'
-                >
-                    Report Problems
-                </a>
-                <p>
-                    This guide is aimed at players familiar with the A Game of Thrones: The Card
-                    Game 2nd Edition who want to start playing online using The Iron Throne
-                    platform. If you are new to this cardgame in general, there is a{' '}
-                    <a
-                        href='https://www.youtube.com/watch?v=A1s54Wlgfyo'
+                <h2 className='mb-3 text-large font-bold border-b-1 border-b-gray-300'>
+                    Introduction
+                </h2>
+                <div className='flex'>
+                    <div className='flex-1'>
+                        <p>
+                            This guide is aimed at players familiar with the A Game of Thrones: The
+                            Card Game 2nd Edition who want to start playing online using The Iron
+                            Throne platform. If you are new to this cardgame in general, there is a{' '}
+                            <a
+                                href='https://www.youtube.com/watch?v=A1s54Wlgfyo'
+                                target='_blank'
+                                rel='noreferrer'
+                            >
+                                helpful tutorial video
+                            </a>
+                            , a{' '}
+                            <a
+                                href='https://images-cdn.fantasyflightgames.com/filer_public/ba/2a/ba2a5ea6-a3cd-4772-a603-6f1906f63053/gt01_learn-to-play-web.pdf'
+                                target='_blank'
+                                rel='noreferrer'
+                            >
+                                Learn To Play guide
+                            </a>
+                            , and a{' '}
+                            <a
+                                href='http://thronesdb.com/rulesreference'
+                                target='_blank'
+                                rel='noreferrer'
+                            >
+                                Rules Reference Guide
+                            </a>{' '}
+                            to help you out.
+                        </p>
+                    </div>
+                    <Button
+                        size='lg'
+                        color='danger'
+                        as={Link}
                         target='_blank'
+                        href='https://github.com/throneteki/throneteki/issues'
                         rel='noreferrer'
                     >
-                        helpful tutorial video
-                    </a>
-                    , a{' '}
-                    <a
-                        href='https://images-cdn.fantasyflightgames.com/filer_public/ba/2a/ba2a5ea6-a3cd-4772-a603-6f1906f63053/gt01_learn-to-play-web.pdf'
-                        target='_blank'
-                        rel='noreferrer'
-                    >
-                        Learn To Play guide
-                    </a>
-                    , and a{' '}
-                    <a href='http://thronesdb.com/rulesreference' target='_blank' rel='noreferrer'>
-                        Rules Reference Guide
-                    </a>{' '}
-                    to help you out.
-                </p>
-                <div className='htp-topic'>
-                    <h3 className='htp-title'>Topics</h3>
-                    <ul className='htp-main-list'>
+                        Report Problems
+                    </Button>
+                </div>
+                <div className='my-3'>
+                    <h3 className='mb-3 text-large font-bold border-b-1 border-b-gray-300'>
+                        Topics
+                    </h3>
+                    <ul className='m-0 p-0 font-bold'>
                         <li>
                             <a href='#decks'>Adding Decks</a>
                         </li>
                         <li>
                             <a href='#profile'>Profile Options</a>
                         </li>
-                        <ul className='htp-sub-list'>
+                        <ul className='ml-4 font-normal p-0'>
                             <li>
                                 <a href='#action'>Action Windows</a>
                             </li>
@@ -67,7 +81,7 @@ const HowToPlay = () => {
                         <li>
                             <a href='#interactions'>Specific Card Interactions</a>
                         </li>
-                        <ul className='htp-sub-list'>
+                        <ul className='ml-4 font-normal p-0'>
                             <li>
                                 <a href='#riddle'>Varys&quot; Riddle vs Summer Harvest</a>
                             </li>
@@ -80,8 +94,11 @@ const HowToPlay = () => {
                         </li>
                     </ul>
                 </div>
-                <div className='htp-topic'>
-                    <h3 className='htp-title' id='decks'>
+                <div className='my-3'>
+                    <h3
+                        className='mb-3 text-large font-bold border-b-1 border-b-gray-300'
+                        id='decks'
+                    >
                         Adding Decks
                     </h3>
                     <p>
@@ -121,8 +138,11 @@ const HowToPlay = () => {
                         hang of it soon enough.
                     </p>
                 </div>
-                <div className='htp-topic'>
-                    <h3 className='htp-title' id='profile'>
+                <div className='my-3'>
+                    <h3
+                        className='mb-3 text-large font-bold border-b-1 border-b-gray-300'
+                        id='profile'
+                    >
                         Profile Options
                     </h3>
                     <p>
@@ -130,8 +150,11 @@ const HowToPlay = () => {
                         page allows you to tailor certain aspects of gameplay to your wishes.
                     </p>
 
-                    <div className='htp-subtopic'>
-                        <h4 className='htp-subtitle' id='action'>
+                    <div className='my-3 mx-0'>
+                        <h4
+                            className='font-bold italic ml-2 pl-3 border-l-3 border-l-grey-400'
+                            id='action'
+                        >
                             Action Windows
                         </h4>
                         <p>
@@ -182,8 +205,11 @@ const HowToPlay = () => {
                         </p>
                     </div>
 
-                    <div className='htp-subtopic'>
-                        <h4 className='htp-subtitle' id='timed'>
+                    <div className='my-3 mx-0'>
+                        <h4
+                            className='font-bold italic ml-2 pl-3 border-l-3 border-l-grey-400'
+                            id='timed'
+                        >
                             Timed Interrupt Window
                         </h4>
                         <p>
@@ -237,21 +263,24 @@ const HowToPlay = () => {
                         </p>
                     </div>
                 </div>
-                <div className='htp-topic'>
-                    <h3 className='htp-title' id='framework-timing-sheet'>
+                <div className='my-3'>
+                    <h3
+                        className='mb-3 text-large font-bold border-b-1 border-b-gray-300'
+                        id='framework-timing-sheet'
+                    >
                         Framework Timing Sheet
                     </h3>
                     <p>
                         Below you will find a sheet summarizing the framework and the timings of the
                         game in a quick reference:
                     </p>
-                    <img
-                        src='/img/AGOT-2nd-Ed-framework-timing-sheet.jpg'
-                        className='img-framework-timing-sheet'
-                    />
+                    <img src='/img/AGOT-2nd-Ed-framework-timing-sheet.jpg' className='w-full' />
                 </div>
-                <div className='htp-topic'>
-                    <h3 className='htp-title' id='bugs'>
+                <div className='my-3'>
+                    <h3
+                        className='mb-3 text-large font-bold border-b-1 border-b-gray-300'
+                        id='bugs'
+                    >
                         Bugs and automation
                     </h3>
                     <p>
@@ -278,13 +307,19 @@ const HowToPlay = () => {
                         . Other comments and/or feedback can be left on GitHub as well.
                     </p>
                 </div>
-                <div className='htp-topic'>
-                    <h3 className='htp-title' id='interactions'>
+                <div className='my-3'>
+                    <h3
+                        className='mb-3 text-large font-bold border-b-1 border-b-gray-300'
+                        id='interactions'
+                    >
                         Specific Card Interactions
                     </h3>
 
-                    <div className='htp-subtopic'>
-                        <h4 className='htp-subtitle' id='riddle'>
+                    <div className='my-3 mx-0'>
+                        <h4
+                            className='font-bold italic ml-2 pl-3 border-l-3 border-l-grey-400'
+                            id='riddle'
+                        >
                             <a
                                 href='https://thronesdb.com/card/04020'
                                 target='_blank'
@@ -336,8 +371,11 @@ const HowToPlay = () => {
                         </p>
                     </div>
                 </div>
-                <div className='htp-topic'>
-                    <h3 className='htp-title' id='commands'>
+                <div className='my-3'>
+                    <h3
+                        className='mb-3 text-large font-bold border-b-1 border-b-gray-300'
+                        id='commands'
+                    >
                         Manual Commands
                     </h3>
                     <p>
@@ -408,8 +446,11 @@ const HowToPlay = () => {
                         </li>
                     </ul>
                 </div>
-                <div className='htp-topic'>
-                    <h3 className='htp-title' id='conceding'>
+                <div className='my-3'>
+                    <h3
+                        className='mb-3 text-large font-bold border-b-1 border-b-gray-300'
+                        id='conceding'
+                    >
                         About Stats, Conceding, and Leaving Games
                     </h3>
                     <p>

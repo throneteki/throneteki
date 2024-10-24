@@ -8,6 +8,7 @@ import {
     sendJoinGameMessage,
     sendWatchGameMessage
 } from '../../redux/reducers/lobby';
+import { Button, Input } from '@nextui-org/react';
 
 const PasswordGame = () => {
     const [password, setPassword] = useState('');
@@ -21,7 +22,6 @@ const PasswordGame = () => {
             if (!passwordGame?.id) {
                 return;
             }
-            console.info(passwordJoinType, passwordGame.id, password);
             if (passwordJoinType === 'Join') {
                 dispatch(sendJoinGameMessage(passwordGame.id, password));
             } else if (passwordJoinType === 'Watch') {
@@ -51,30 +51,29 @@ const PasswordGame = () => {
     return (
         <div>
             <Panel title={passwordGame.name}>
-                <div>
-                    <h3>Enter the password</h3>
-                </div>
-                <div className='game-password'>
-                    <input
-                        className='form-control'
-                        type='password'
-                        onChange={onPasswordChange}
-                        value={password}
-                    />
-                </div>
-                {passwordError ? (
-                    <div>
-                        <AlertPanel type='error' message={passwordError} />
+                <div className='flex gap-2 flex-col'>
+                    {passwordError ? (
+                        <div>
+                            <AlertPanel variant='danger' message={passwordError} />
+                        </div>
+                    ) : null}
+                    <div className='game-password'>
+                        <Input
+                            type='password'
+                            onChange={onPasswordChange}
+                            value={password}
+                            label='Game password'
+                            placeholder='Enter the password'
+                        />
                     </div>
-                ) : null}
-                <div>
-                    <div className='btn-group'>
-                        <button className='btn btn-primary' onClick={onJoinClick}>
+
+                    <div className='flex gap-2'>
+                        <Button color='primary' onClick={onJoinClick}>
                             {passwordJoinType}
-                        </button>
-                        <button className='btn btn-primary' onClick={onCancelClick}>
+                        </Button>
+                        <Button color='primary' onClick={onCancelClick}>
                             Cancel
-                        </button>
+                        </Button>
                     </div>
                 </div>
             </Panel>

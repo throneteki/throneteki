@@ -91,6 +91,10 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
         };
     }
 
+    if (api.endpoint === 'getDecks' || api.endpoint === 'getAllNews') {
+        return result;
+    }
+
     if (result.data) {
         return { data: result.data.data, success: result.data.success };
     }
@@ -103,9 +107,17 @@ export const apiSlice = createApi({
     tagTypes: Object.values(TagTypes),
     endpoints: (builder) => ({
         getNews: builder.query({
-            query: (limit) => ({
-                url: '/news',
-                params: { limit }
+            query: () => ({
+                url: '/news'
+            }),
+            providesTags: (result = { data: [] }) => [
+                TagTypes.News,
+                ...(result.data || []).map(({ id }) => ({ type: TagTypes.News, id }))
+            ]
+        }),
+        getAllNews: builder.query({
+            query: () => ({
+                url: '/news/all'
             }),
             providesTags: (result = { data: [] }) => [
                 TagTypes.News,
@@ -130,10 +142,21 @@ export const apiSlice = createApi({
             ]
         }),
         getDecks: builder.query({
-            query: () => '/decks',
+            query: (loadOptions) => {
+                return {
+                    url: '/decks',
+                    params: {
+                        pageSize: loadOptions.pageSize,
+                        pageNumber: loadOptions.pageIndex,
+                        sorting: loadOptions.sorting,
+                        filters: loadOptions.columnFilters,
+                        restrictedList: loadOptions.restrictedList
+                    }
+                };
+            },
             providesTags: (result = { data: [] }) => [
                 TagTypes.Deck,
-                ...(result.data || [].map(({ _id }) => ({ type: TagTypes.Deck, _id })))
+                ...result.data.map(({ _id }) => ({ type: TagTypes.Deck, _id }))
             ]
         }),
         getCards: builder.query({
@@ -190,6 +213,16 @@ export const apiSlice = createApi({
             query: (deckId) => ({
                 url: `/decks/${deckId}`,
                 method: 'DELETE'
+            }),
+            invalidatesTags: [TagTypes.Deck]
+        }),
+        deleteDecks: builder.mutation({
+            query: (deckIds) => ({
+                url: '/decks',
+                method: 'DELETE',
+                body: {
+                    deckIds: deckIds
+                }
             }),
             invalidatesTags: [TagTypes.Deck]
         }),
@@ -325,7 +358,7 @@ export const apiSlice = createApi({
             invalidatesTags: [TagTypes.BanList]
         }),
         removeBanListEntry: builder.mutation({
-            query: ({ id }) => ({
+            query: (id) => ({
                 url: `/banlist/${id}`,
                 method: 'DELETE'
             }),
@@ -430,6 +463,7 @@ export const apiSlice = createApi({
 
 export const {
     useGetNewsQuery,
+    useGetAllNewsQuery,
     useGetDecksQuery,
     useGetCardsQuery,
     useGetRestrictedListQuery,
@@ -472,5 +506,6 @@ export const {
     useResetPasswordMutation,
     useLinkPatreonMutation,
     useDeleteDraftCubeMutation,
-    useRemoveMessageMutation
+    useRemoveMessageMutation,
+    useDeleteDecksMutation
 } = apiSlice;

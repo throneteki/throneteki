@@ -44,7 +44,7 @@ const Patreon = ({ code }) => {
     if (!code) {
         return (
             <AlertPanel
-                type='error'
+                variant='danger'
                 message='This page is not intended to be viewed directly.  Please click on one of the links at the top of the page or your browser back button to return to the site.'
             />
         );
@@ -52,8 +52,8 @@ const Patreon = ({ code }) => {
 
     return (
         <div>
-            {successMessage && <AlertPanel type='success' message={successMessage} />}
-            {errorMessage && <AlertPanel type='error' message={errorMessage} />}
+            {successMessage && <AlertPanel variant='success' message={successMessage} />}
+            {errorMessage && <AlertPanel variant='danger' message={errorMessage} />}
             {isLoading && <div>Please wait while we verify your details..</div>}
         </div>
     );

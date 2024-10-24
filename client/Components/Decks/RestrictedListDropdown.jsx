@@ -1,3 +1,4 @@
+import { Select, SelectItem } from '@nextui-org/react';
 import React, { useState, useEffect, useCallback } from 'react';
 
 const RestrictedListDropdown = ({
@@ -6,7 +7,7 @@ const RestrictedListDropdown = ({
     setCurrentRestrictedList,
     onChange
 }) => {
-    const [value, setValue] = useState(currentRestrictedList && currentRestrictedList.name);
+    const [value, setValue] = useState(currentRestrictedList && currentRestrictedList._id);
 
     const updateRestrictedList = useCallback(
         (restrictedListName) => {
@@ -36,29 +37,25 @@ const RestrictedListDropdown = ({
         }
     }, [currentRestrictedList, restrictedLists, updateRestrictedList]);
 
-    const handleChange = useCallback(
-        (event) => {
-            const selectedName = event.target.value;
-            updateRestrictedList(selectedName);
-        },
-        [updateRestrictedList]
-    );
+    useEffect(() => {
+        if (!value && restrictedLists) {
+            setValue(restrictedLists[0]._id);
+        }
+    }, [restrictedLists, value]);
 
     return (
         <>
-            <label htmlFor='current-restricted-list'>Restricted List:</label>
-            <select
-                id='current-restricted-list'
-                className='form-control'
-                value={value}
-                onChange={handleChange}
+            <Select
+                label={'Game mode'}
+                onChange={(e) => updateRestrictedList(e.target.value)}
+                selectedKeys={value ? new Set([value]) : null}
             >
-                {restrictedLists.map((rl, index) => (
-                    <option key={index} value={rl.name}>
+                {restrictedLists?.map((rl) => (
+                    <SelectItem key={rl._id} value={rl._id}>
                         {rl.name}
-                    </option>
+                    </SelectItem>
                 ))}
-            </select>
+            </Select>
         </>
     );
 };
