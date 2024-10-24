@@ -296,14 +296,14 @@ const PlayerRow = ({
     );
 
     return (
-        <div className='flex space-x-2 my-1'>
+        <div className='flex space-x-2 m-1'>
             <PlayerPlots
                 cardSize={cardSize}
                 onCardClick={onCardClick}
                 onCardMouseOut={onMouseOut}
                 onCardMouseOver={onMouseOver}
                 onMenuItemClick={onMenuItemClick}
-                direction='default'
+                direction={isMe ? 'default' : 'reverse'}
                 isMe
                 plotDeck={plotDeck}
                 plotDiscard={plotDiscard}
