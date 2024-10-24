@@ -291,7 +291,7 @@ const PlayerRow = ({
     );
 
     return (
-        <div className='flex space-x-2 mx-1'>
+        <div className='flex space-x-2 m-1'>
             <PlayerPlots
                 cardSize={cardSize}
                 onCardClick={onCardClick}
