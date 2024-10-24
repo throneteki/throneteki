@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import { useSelector } from 'react-redux';
-import { Link } from '@nextui-org/react';
+import { Avatar, Link } from '@nextui-org/react';
 
 import CardZoom from './CardZoom';
 import AlertPanel from '../Site/AlertPanel';
@@ -144,11 +144,18 @@ const Messages = ({ messages, onCardMouseOut, onCardMouseOver }) => {
                     </span>
                 );
             } else if (fragment.name && fragment.argType === 'player') {
-                const userClass =
-                    'username' + (fragment.role ? ` ${fragment.role.toLowerCase()}-role` : '');
-
+                const userClass = classNames({
+                    ['text-red-500']: fragment.role === 'admin',
+                    ['text-green-500']: fragment.role === 'supporter',
+                    ['text-blue-500']: fragment.role === 'contributor'
+                });
                 messages.push(
-                    <div key={index++} className='message-chat'>
+                    <div key={index++} className='message-chat flex items-center gap-1'>
+                        <Avatar
+                            src={`/img/avatar/${fragment.name}.png`}
+                            showFallback
+                            className='w-6 h-6 text-tiny'
+                        />
                         <span key={index++} className={userClass}>
                             {fragment.name}
                         </span>
