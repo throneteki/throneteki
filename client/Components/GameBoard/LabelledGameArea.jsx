@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import classNames from 'classnames';
 
-const LabelledGameArea = ({ label, className, position = 'top left', children }) => {
+const LabelledGameArea = ({ label, className, position = 'top left', children, onClick }) => {
     const getLabel = useCallback(() => {
         if (!label) {
             return null;
@@ -16,7 +16,7 @@ const LabelledGameArea = ({ label, className, position = 'top left', children })
 
     const areaClassName = classNames('relative', className);
     return (
-        <div className={areaClassName}>
+        <div className={areaClassName} onClick={onClick}>
             {getLabel()}
             {children}
         </div>
