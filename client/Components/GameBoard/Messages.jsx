@@ -134,10 +134,12 @@ const Messages = ({ messages, onCardMouseOut, onCardMouseOver }) => {
                     <span
                         key={index++}
                         className='cursor-pointer text-secondary hover:text-info'
-                        onMouseOver={onCardMouseOver.bind(this, {
-                            image: <CardZoom imageUrl={`/img/cards/${fragment.code}.png`} />,
-                            size: 'normal'
-                        })}
+                        onMouseOver={() =>
+                            onCardMouseOver({
+                                code: fragment.code,
+                                name: fragment.label || fragment.name
+                            })
+                        }
                         onMouseOut={() => onCardMouseOut && onCardMouseOut(fragment)}
                     >
                         {fragment.label}
