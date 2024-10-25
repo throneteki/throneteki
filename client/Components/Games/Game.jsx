@@ -85,9 +85,9 @@ const Game = ({
     const gameTypeClass = classNames(
         'flex gap-2 justify-center items-center text-small text-white',
         {
-            'bg-warning bg-opacity-40': game.gameType === 'casual',
-            'bg-success bg-opacity-40': game.gameType === 'beginner',
-            'bg-danger bg-opacity-40': game.gameType === 'competitive'
+            'bg-warning/40': game.gameType === 'casual',
+            'bg-success/60': game.gameType === 'beginner',
+            'bg-danger/50': game.gameType === 'competitive'
         }
     );
 
