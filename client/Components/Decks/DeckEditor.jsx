@@ -4,7 +4,20 @@ import { BannersForFaction, Constants } from '../../constants';
 import ReactTable from '../Table/ReactTable';
 import DeckSummary from './DeckSummary';
 import AlertPanel from '../Site/AlertPanel';
-import { Button, ButtonGroup, Input, Select, SelectItem, extendVariants } from '@nextui-org/react';
+import {
+    Button,
+    ButtonGroup,
+    Input,
+    Modal,
+    ModalBody,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    Select,
+    SelectItem,
+    Textarea,
+    extendVariants
+} from '@nextui-org/react';
 import LoadingSpinner from '../Site/LoadingSpinner';
 import {
     useAddDeckMutation,
@@ -20,6 +33,7 @@ import FactionImage from '../Images/FactionImage';
 import { validateDeck } from '../../../deck-helper';
 import RestrictedListDropdown from './RestrictedListDropdown';
 import DeckStatus from './DeckStatus';
+import { processThronesDbDeckText } from './DeckHelper';
 
 const SmallButton = extendVariants(Button, {
     variants: {
@@ -73,6 +87,8 @@ const DeckEditor = ({ deck, onBackClick }) => {
     const [faction, setFaction] = useState(deck.faction);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const [showImportPopup, setShowImportPopup] = useState(false);
+    const [deckText, setDeckText] = useState();
 
     const [currentRestrictedList, setCurrentRestrictedList] = useState(
         restrictedLists && restrictedLists[0]
@@ -355,6 +371,7 @@ const DeckEditor = ({ deck, onBackClick }) => {
                     >
                         Save
                     </Button>
+                    <Button onClick={() => setShowImportPopup(true)}>Import</Button>
                 </div>
                 <div className='flex flex-col gap-2'>
                     <Input
@@ -487,6 +504,81 @@ const DeckEditor = ({ deck, onBackClick }) => {
                     }}
                 />
             </div>
+
+            <Modal isOpen={showImportPopup} onOpenChange={(open) => setShowImportPopup(open)}>
+                <ModalContent>
+                    {(onClose) => (
+                        <>
+                            <ModalHeader className='flex flex-col gap-1'>
+                                Import from ThronesDb
+                            </ModalHeader>
+                            <ModalBody>
+                                <label>
+                                    Export your deck as plain text from{' '}
+                                    <a
+                                        href='https://thronesdb.com'
+                                        target='_blank'
+                                        rel='noreferrer'
+                                    >
+                                        ThronesDB
+                                    </a>{' '}
+                                    and paste it into this box.
+                                    <p className='text-bold text-danger-300'>
+                                        Note: The deck you are editing will be overwritten!
+                                    </p>
+                                </label>
+                                <Textarea
+                                    minRows={20}
+                                    value={deckText}
+                                    onValueChange={setDeckText}
+                                />
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button onPress={onClose}>Close</Button>
+                                <Button
+                                    color='primary'
+                                    onPress={() => {
+                                        const deck = processThronesDbDeckText(
+                                            factions,
+                                            packs,
+                                            cards,
+                                            deckText
+                                        );
+
+                                        if (!deck) {
+                                            setError(
+                                                'Invalid deck. Ensure you have exported a plain text deck from ThronesDb.'
+                                            );
+
+                                            onClose();
+
+                                            return;
+                                        }
+
+                                        setFaction(deck.faction);
+                                        setDeckName(deck.name);
+                                        setDeckCards(
+                                            (deck.agenda ? [{ card: deck.agenda, count: 1 }] : [])
+                                                .concat(deck.drawCards || [])
+                                                .concat(deck.plotCards || [])
+                                                .concat(
+                                                    deck.bannerCards?.map((bc) => ({
+                                                        card: bc,
+                                                        count: 1
+                                                    })) || []
+                                                )
+                                        );
+
+                                        onClose();
+                                    }}
+                                >
+                                    Import
+                                </Button>
+                            </ModalFooter>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
         </div>
     );
 };

@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useGetCardsQuery } from '../../redux/middleware/api';
 import CardImage from '../Images/CardImage';
+import { sortBy } from 'underscore';
 
 const DeckSummary = ({ deck }) => {
     const { data: cardsResponse } = useGetCardsQuery({});
@@ -39,7 +40,7 @@ const DeckSummary = ({ deck }) => {
                 </strong>
             </div>
         );
-        for (const deckCard of cards) {
+        for (const deckCard of sortBy(cards, (card) => card.card.faction)) {
             currentContainer.push(
                 <React.Fragment key={deckCard.card.code}>
                     <div
