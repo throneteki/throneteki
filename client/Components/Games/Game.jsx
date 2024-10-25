@@ -65,12 +65,9 @@ const Game = ({
         );
     }
 
-    let rowClass = classNames(
-        'min-h-32 py-3 px-2 hover:border-info hover:bg-info hover:bg-black/20',
-        {
-            [game.node]: game.node && isAdmin
-        }
-    );
+    let rowClass = classNames('min-h-32 py-3 px-2 hover:border-info hover:bg-info/20 bg-black/20', {
+        [game.node]: game.node && isAdmin
+    });
 
     let timeDifference = moment().diff(moment(game.createdAt));
     if (timeDifference < 0) {
