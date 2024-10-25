@@ -6,8 +6,6 @@ import DeckStatusLabel from './DeckStatusLabel';
 const DeckStatus = ({ className, status }) => {
     const [showPopup, setShowPopup] = useState(false);
 
-    console.info(status);
-
     return (
         <Popover
             placement='right'
