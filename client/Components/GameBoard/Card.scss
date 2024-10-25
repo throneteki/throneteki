@@ -50,47 +50,6 @@
         height: var(--throneteki-card-width);
         width: var(--throneteki-card-height);
     }
-
-    &.selectable {
-        //box-shadow: 0 0 10px 1px fadeout(lighten(@brand-primary, 60%), 10%);
-    }
-
-    &.unselectable {
-        filter: grayscale(100%) brightness(60%);
-    }
-
-    &.in-danger {
-        box-shadow: 0 0 1px 2px red;
-    }
-
-    &.saved {
-        box-shadow: 0 0 1px 2px green;
-    }
-
-    &.selected {
-        //box-shadow: 0 0 1px 4px @brand-secondary;
-    }
-
-    &.new {
-        //box-shadow: 0 0 1px 2px @brand-info;
-    }
-
-    &.controlled {
-        //box-shadow: 0 0 1px 2px @brand-warning;
-    }
-
-    &.challenge {
-        //box-shadow: 0 0 1px 2px @brand-danger;
-    }
-
-    &.contributing {
-        box-shadow: 0 0 1px 2px #d9904f;
-    }
-
-    &.stealth,
-    &.assault {
-        box-shadow: 0 0 1px 2px #c14e15;
-    }
 }
 
 .card-image {
