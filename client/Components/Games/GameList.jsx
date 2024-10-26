@@ -122,7 +122,7 @@ const GameList = ({ gameFilter }) => {
 
     if (gameList.length === 0) {
         return (
-            <div className='game-list col-xs-12'>
+            <div>
                 <AlertPanel
                     variant='info'
                     message='There are no games matching the filters you have selected'
@@ -131,7 +131,7 @@ const GameList = ({ gameFilter }) => {
         );
     }
 
-    return <div className='game-list col-xs-12'>{gameList}</div>;
+    return <div>{gameList}</div>;
 };
 
 export default GameList;

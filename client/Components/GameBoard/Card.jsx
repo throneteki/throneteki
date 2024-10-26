@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useMemo, useRef } from 'react';
 import classNames from 'classnames';
-import { useDraggable } from '@dnd-kit/core';
+import { useDndMonitor, useDraggable } from '@dnd-kit/core';
 import CardMenu from './CardMenu';
 import CardCounters from './CardCounters';
 import SquishableCardPanel from './SquishableCardPanel';
@@ -9,6 +9,7 @@ import './Card.scss';
 import { ItemTypes } from '../../constants';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
+import { useUniqueId } from '@dnd-kit/utilities';
 
 const Card = ({
     card,
@@ -32,6 +33,14 @@ const Card = ({
     const [startPosition, setStartPosition] = useState();
     const dragRef = useRef(null);
 
+    const key = `card-${card.uuid}-${source}`;
+
+    useDndMonitor({
+        onDragEnd() {
+            setStartPosition();
+        }
+    });
+
     const shortNames = {
         count: 'x',
         stand: 'T',
@@ -53,8 +62,8 @@ const Card = ({
     };
 
     const { attributes, listeners, setNodeRef, transform } = useDraggable({
-        id: `card-${card.uuid}`,
-        data: { type: ItemTypes.CARD, card, source }
+        id: useUniqueId(key),
+        data: { type: ItemTypes.CARD, card, source, key: key }
     });
 
     const sizeClass = useMemo(() => ({ [size]: size !== 'normal' }), [size]);

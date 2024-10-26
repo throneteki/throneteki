@@ -4,17 +4,36 @@ import { BannersForFaction, Constants } from '../../constants';
 import ReactTable from '../Table/ReactTable';
 import DeckSummary from './DeckSummary';
 import AlertPanel from '../Site/AlertPanel';
-import { Button, ButtonGroup, Input, Select, SelectItem, extendVariants } from '@nextui-org/react';
+import {
+    Button,
+    ButtonGroup,
+    Input,
+    Modal,
+    ModalBody,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    Select,
+    SelectItem,
+    Textarea,
+    extendVariants
+} from '@nextui-org/react';
 import LoadingSpinner from '../Site/LoadingSpinner';
 import {
     useAddDeckMutation,
     useGetCardsQuery,
     useGetFactionsQuery,
+    useGetPacksQuery,
+    useGetRestrictedListQuery,
     useSaveDeckMutation
 } from '../../redux/middleware/api';
 import { navigate } from '../../redux/reducers/navigation';
 import { useDispatch } from 'react-redux';
 import FactionImage from '../Images/FactionImage';
+import { validateDeck } from '../../../deck-helper';
+import RestrictedListDropdown from './RestrictedListDropdown';
+import DeckStatus from './DeckStatus';
+import { processThronesDbDeckText } from './DeckHelper';
 
 const SmallButton = extendVariants(Button, {
     variants: {
@@ -41,6 +60,8 @@ const DeckEditor = ({ deck, onBackClick }) => {
     const { data: cards, isLoading, isError } = useGetCardsQuery({});
     const [addDeck, { isLoading: isAddLoading }] = useAddDeckMutation();
     const [saveDeck, { isLoading: isSaveLoading }] = useSaveDeckMutation();
+    const { data: packs } = useGetPacksQuery();
+    const { data: restrictedLists } = useGetRestrictedListQuery();
     const {
         data: factions,
         isLoading: isFactionsLoading,
@@ -66,8 +87,20 @@ const DeckEditor = ({ deck, onBackClick }) => {
     const [faction, setFaction] = useState(deck.faction);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const [showImportPopup, setShowImportPopup] = useState(false);
+    const [deckText, setDeckText] = useState();
 
-    const buildSaveDeck = () => {
+    const [currentRestrictedList, setCurrentRestrictedList] = useState(
+        restrictedLists && restrictedLists[0]
+    );
+    const cardsByCode = cards;
+    const factionsByCode = factions;
+
+    const deckToSave = useMemo(() => {
+        if (!factionsByCode || !cardsByCode || !packs || !currentRestrictedList) {
+            return null;
+        }
+
         const saveDeck = {
             _id: deck._id,
             name: deckName,
@@ -96,10 +129,27 @@ const DeckEditor = ({ deck, onBackClick }) => {
             saveDeck.drawCards.push(deckCard);
         }
 
-        return saveDeck;
-    };
+        if (!saveDeck.status) {
+            saveDeck.status = {};
+        }
 
-    const cardsByCode = cards;
+        saveDeck.status[currentRestrictedList._id] = validateDeck(saveDeck, {
+            packs: packs,
+            restrictedLists: [currentRestrictedList]
+        });
+
+        return saveDeck;
+    }, [
+        cardsByCode,
+        currentRestrictedList,
+        deck._id,
+        deck.agenda,
+        deckCards,
+        deckName,
+        faction.value,
+        factionsByCode,
+        packs
+    ]);
 
     const columns = useMemo(
         () => [
@@ -164,6 +214,10 @@ const DeckEditor = ({ deck, onBackClick }) => {
             },
             {
                 id: 'quantity',
+                accessorFn: (row) => {
+                    const deckCard = deckCards.find((dc) => dc.card.code === row.code);
+                    return deckCard?.count || 0;
+                },
                 header: 'Quantity',
                 cell: (info) => {
                     const max = info.row.original.deckLimit + 1;
@@ -225,8 +279,6 @@ const DeckEditor = ({ deck, onBackClick }) => {
         [deckCards, cardsByCode]
     );
 
-    const factionsByCode = factions;
-
     const cardTypes = useMemo(() => {
         if (!cards) {
             return [];
@@ -249,6 +301,12 @@ const DeckEditor = ({ deck, onBackClick }) => {
         setFaction(deck.faction);
     }, [deck.faction]);
 
+    useEffect(() => {
+        if (!currentRestrictedList && restrictedLists) {
+            setCurrentRestrictedList(restrictedLists[0]);
+        }
+    }, [currentRestrictedList, restrictedLists]);
+
     if (isLoading || isFactionsLoading) {
         return <LoadingSpinner text={'Loading, please wait...'} />;
     } else if (isError || isFactionsError) {
@@ -262,8 +320,6 @@ const DeckEditor = ({ deck, onBackClick }) => {
     const onSaveClick = async (andClose) => {
         setError();
         setSuccess();
-
-        const deckToSave = buildSaveDeck();
 
         try {
             deckToSave._id
@@ -315,6 +371,7 @@ const DeckEditor = ({ deck, onBackClick }) => {
                     >
                         Save
                     </Button>
+                    <Button onClick={() => setShowImportPopup(true)}>Import</Button>
                 </div>
                 <div className='flex flex-col gap-2'>
                     <Input
@@ -341,7 +398,30 @@ const DeckEditor = ({ deck, onBackClick }) => {
                             </SelectItem>
                         )}
                     </Select>
-                    <div>
+                    <RestrictedListDropdown
+                        currentRestrictedList={currentRestrictedList}
+                        onChange={(restrictedList) => {
+                            setCurrentRestrictedList(restrictedList);
+                        }}
+                        restrictedLists={restrictedLists}
+                    />
+                    <div className='flex mt-1 ml-1'>
+                        <dl className='grid grid-cols-2 gap-2'>
+                            <dt className='font-bold'>Draw cards:</dt>
+                            <dd>
+                                {deckToSave.drawCards.reduce((acc, card) => acc + card.count, 0)}
+                            </dd>
+                            <dt className='font-bold'>Plot cards:</dt>
+                            <dd>
+                                {deckToSave.plotCards.reduce((acc, card) => acc + card.count, 0)}
+                            </dd>
+                        </dl>
+                    </div>
+                    <div className='flex gap-2 items-center ml-1'>
+                        <div className='font-bold'>Validity:</div>
+                        <DeckStatus status={deckToSave.status[currentRestrictedList._id]} />
+                    </div>
+                    <div className='mt-1'>
                         <ButtonGroup>
                             {cardTypes.map((type) => {
                                 return (
@@ -397,7 +477,7 @@ const DeckEditor = ({ deck, onBackClick }) => {
                             )}
                         </ButtonGroup>
                     </div>
-                    <div className='h-[60vh]'>
+                    <div className='h-[50vh]'>
                         <ReactTable
                             dataLoadFn={() => ({
                                 data: cardsMemo,
@@ -424,6 +504,81 @@ const DeckEditor = ({ deck, onBackClick }) => {
                     }}
                 />
             </div>
+
+            <Modal isOpen={showImportPopup} onOpenChange={(open) => setShowImportPopup(open)}>
+                <ModalContent>
+                    {(onClose) => (
+                        <>
+                            <ModalHeader className='flex flex-col gap-1'>
+                                Import from ThronesDb
+                            </ModalHeader>
+                            <ModalBody>
+                                <label>
+                                    Export your deck as plain text from{' '}
+                                    <a
+                                        href='https://thronesdb.com'
+                                        target='_blank'
+                                        rel='noreferrer'
+                                    >
+                                        ThronesDB
+                                    </a>{' '}
+                                    and paste it into this box.
+                                    <p className='text-bold text-danger-300'>
+                                        Note: The deck you are editing will be overwritten!
+                                    </p>
+                                </label>
+                                <Textarea
+                                    minRows={20}
+                                    value={deckText}
+                                    onValueChange={setDeckText}
+                                />
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button onPress={onClose}>Close</Button>
+                                <Button
+                                    color='primary'
+                                    onPress={() => {
+                                        const deck = processThronesDbDeckText(
+                                            factions,
+                                            packs,
+                                            cards,
+                                            deckText
+                                        );
+
+                                        if (!deck) {
+                                            setError(
+                                                'Invalid deck. Ensure you have exported a plain text deck from ThronesDb.'
+                                            );
+
+                                            onClose();
+
+                                            return;
+                                        }
+
+                                        setFaction(deck.faction);
+                                        setDeckName(deck.name);
+                                        setDeckCards(
+                                            (deck.agenda ? [{ card: deck.agenda, count: 1 }] : [])
+                                                .concat(deck.drawCards || [])
+                                                .concat(deck.plotCards || [])
+                                                .concat(
+                                                    deck.bannerCards?.map((bc) => ({
+                                                        card: bc,
+                                                        count: 1
+                                                    })) || []
+                                                )
+                                        );
+
+                                        onClose();
+                                    }}
+                                >
+                                    Import
+                                </Button>
+                            </ModalFooter>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
         </div>
     );
 };

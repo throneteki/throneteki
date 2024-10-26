@@ -8,6 +8,7 @@ import Panel from '../Site/Panel';
 import { useSelector } from 'react-redux';
 import AlertPanel, { AlertType } from '../Site/AlertPanel';
 import GameButtons from './GameButtons';
+import PasswordGame from './PasswordGame';
 
 const filterDefaults = {
     ['beginner']: true,
@@ -23,6 +24,7 @@ const GameLobby = () => {
     const [currentFilter, setCurrentFilter] = useState(filterDefaults);
     const currentGame = useSelector((state) => state.lobby.currentGame);
     const games = useSelector((state) => state.lobby.games);
+    const passwordGame = useSelector((state) => state.lobby.passwordGame);
 
     const topRef = useRef(null);
 
@@ -44,9 +46,9 @@ const GameLobby = () => {
             <div ref={topRef}>
                 {newGame && <NewGame quickJoin={quickJoin} onClosed={() => setNewGame(false)} />}
                 {currentGame?.started === false && <PendingGame />}
-                {/*passwordGame && <PasswordGame />} */}
+                {passwordGame && <PasswordGame />}
             </div>
-            <Panel title={'Current Games'} className='mt-3'>
+            <Panel title={'Current Games'}>
                 {!user && (
                     <div className='mb-2 text-center'>
                         <AlertPanel variant={AlertType.Warning}>

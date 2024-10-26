@@ -65,7 +65,7 @@ const Game = ({
         );
     }
 
-    let rowClass = classNames('min-h-32 py-3 px-2 hover:border-info hover:bg-info/20', {
+    let rowClass = classNames('min-h-32 py-3 px-2 hover:border-info hover:bg-info/20 bg-black/20', {
         [game.node]: game.node && isAdmin
     });
 
@@ -86,8 +86,8 @@ const Game = ({
         'flex gap-2 justify-center items-center text-small text-white',
         {
             'bg-warning/40': game.gameType === 'casual',
-            'bg-success/40': game.gameType === 'beginner',
-            'bg-danger/40': game.gameType === 'competitive'
+            'bg-success/60': game.gameType === 'beginner',
+            'bg-danger/50': game.gameType === 'competitive'
         }
     );
 

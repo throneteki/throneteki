@@ -30,7 +30,14 @@ export const Constants = {
     ],
     Stats: ['gold', 'totalPower', 'initiative', 'claim', 'reserve'],
     FactionsImagePaths: {},
-    StatIconImagePaths: {}
+    StatIconImagePaths: {},
+    ColourClassByRole: {
+        admin: 'text-red-500',
+        contributor: 'text-blue-400',
+        supporter: 'text-green-500',
+        winner: 'text-yellow-200',
+        previouswinner: 'text-pink-500'
+    }
 };
 
 for (const faction of Object.values(Constants.Factions)) {

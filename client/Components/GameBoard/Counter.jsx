@@ -1,5 +1,8 @@
 import React, { useCallback } from 'react';
 import classNames from 'classnames';
+import ThronesIcon from './ThronesIcon';
+
+import './Counter.css';
 
 const Counter = ({ name, cancel, fade, icon, shortName, value }) => {
     const getClassName = useCallback(() => {
@@ -22,7 +25,8 @@ const Counter = ({ name, cancel, fade, icon, shortName, value }) => {
                 'bg-white/85 text-black': name === 'prayer' || name === 'ghost',
                 'bg-gray-400/85': name === 'tale',
                 'bg-teal-600/85': name === 'venom',
-                cancel: cancel,
+                'bg-black': name === 'challenge-icon',
+                'cancel relative': cancel,
                 'fade-out': fade
             }
         );
@@ -32,10 +36,9 @@ const Counter = ({ name, cancel, fade, icon, shortName, value }) => {
 
     if (icon) {
         return (
-            <div
-                key={icon}
-                className={classNames(className, 'thronesicon', `thronesicon-${icon}`)}
-            />
+            <div className={className}>
+                <ThronesIcon icon={icon} noSize />
+            </div>
         );
     }
 

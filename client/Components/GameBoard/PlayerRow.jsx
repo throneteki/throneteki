@@ -101,7 +101,7 @@ const PlayerRow = ({
                     onMouseOver={onMouseOver}
                     popupLocation={side}
                     showCards={false}
-                    source={null}
+                    source='agendas'
                     title={null}
                     topCard={null}
                     size={cardSize}
@@ -138,6 +138,7 @@ const PlayerRow = ({
                         title={title}
                         topCard={agenda}
                         size={cardSize}
+                        numColumns={5}
                     />
                 )}
             </div>

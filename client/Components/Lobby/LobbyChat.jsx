@@ -5,14 +5,7 @@ import $ from 'jquery';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { Avatar } from '@nextui-org/react';
-
-const colourClassByRole = {
-    admin: 'text-red-500',
-    contributor: 'text-blue-400',
-    supporter: 'text-green-500',
-    winner: 'text-yellow-200',
-    previouswinner: 'text-pink-500'
-};
+import { Constants } from '../../constants';
 
 const LobbyChat = ({ messages, isModerator, onRemoveMessageClick }) => {
     const [canScroll, setCanScroll] = useState(true);
@@ -119,7 +112,7 @@ const LobbyChat = ({ messages, isModerator, onRemoveMessageClick }) => {
             const userClass =
                 'username' +
                 (firstMessage.user.role
-                    ? ` ${colourClassByRole[firstMessage.user.role.toLowerCase()]}`
+                    ? ` ${Constants.ColourClassByRole[firstMessage.user.role.toLowerCase()]}`
                     : '');
 
             return (

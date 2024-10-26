@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 
-const ThronesIcon = ({ icon, withBackground = false }) => {
+const ThronesIcon = ({ icon, noSize = true, withBackground = false }) => {
     const bgClasses = {
         military: 'bg-military',
         power: 'bg-power',
@@ -16,8 +16,11 @@ const ThronesIcon = ({ icon, withBackground = false }) => {
     };
 
     const className = classNames(
-        'w-6 h-6 rounded-xl font-[thronesdb] inline',
-        withBackground ? bgClasses[icon] : fgClasses[icon]
+        'rounded-xl font-[thronesdb] inline',
+        withBackground ? bgClasses[icon] : fgClasses[icon],
+        {
+            'w-6 h-6': !noSize
+        }
     );
 
     const iconText = {

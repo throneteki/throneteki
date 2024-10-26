@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import { useSelector } from 'react-redux';
-import { Link } from '@nextui-org/react';
+import { Avatar, Link } from '@nextui-org/react';
 
 import CardZoom from './CardZoom';
 import AlertPanel from '../Site/AlertPanel';
@@ -10,7 +10,7 @@ import CardBackImage from '../../assets/img/cardback.png';
 import GoldImage from '../../assets/img/stats/gold.png';
 
 import './Messages.css';
-import { ThronesIcons } from '../../constants';
+import { Constants, ThronesIcons } from '../../constants';
 import ThronesIcon from './ThronesIcon';
 
 const tokens = {
@@ -134,29 +134,36 @@ const Messages = ({ messages, onCardMouseOut, onCardMouseOver }) => {
                     <span
                         key={index++}
                         className='cursor-pointer text-secondary hover:text-info'
-                        onMouseOver={onCardMouseOver.bind(this, {
-                            image: <CardZoom imageUrl={`/img/cards/${fragment.code}.png`} />,
-                            size: 'normal'
-                        })}
+                        onMouseOver={() =>
+                            onCardMouseOver({
+                                code: fragment.code,
+                                name: fragment.label || fragment.name
+                            })
+                        }
                         onMouseOut={() => onCardMouseOut && onCardMouseOut(fragment)}
                     >
                         {fragment.label}
                     </span>
                 );
             } else if (fragment.name && fragment.argType === 'player') {
-                const userClass =
-                    'username' + (fragment.role ? ` ${fragment.role.toLowerCase()}-role` : '');
-
                 messages.push(
-                    <div key={index++} className='message-chat'>
-                        <span key={index++} className={userClass}>
+                    <div key={index++} className='message-chat flex items-center gap-1'>
+                        <Avatar
+                            src={`/img/avatar/${fragment.name}.png`}
+                            showFallback
+                            className='w-6 h-6 text-tiny'
+                        />
+                        <span key={index++} className={Constants.ColourClassByRole[fragment.role]}>
                             {fragment.name}
                         </span>
                     </div>
                 );
             } else if (fragment.argType === 'nonAvatarPlayer') {
                 const userClass =
-                    'username' + (fragment.role ? ` ${fragment.role.toLowerCase()}-role` : '');
+                    'username' +
+                    (fragment.role
+                        ? ` ${Constants.ColourClassByRole[fragment.role.toLowerCase()]}`
+                        : '');
 
                 messages.push(
                     <span key={index++} className={userClass}>
