@@ -10,7 +10,7 @@ import CardBackImage from '../../assets/img/cardback.png';
 import GoldImage from '../../assets/img/stats/gold.png';
 
 import './Messages.css';
-import { ThronesIcons } from '../../constants';
+import { Constants, ThronesIcons } from '../../constants';
 import ThronesIcon from './ThronesIcon';
 
 const tokens = {
@@ -146,11 +146,6 @@ const Messages = ({ messages, onCardMouseOut, onCardMouseOver }) => {
                     </span>
                 );
             } else if (fragment.name && fragment.argType === 'player') {
-                const userClass = classNames({
-                    ['text-red-500']: fragment.role === 'admin',
-                    ['text-green-500']: fragment.role === 'supporter',
-                    ['text-blue-500']: fragment.role === 'contributor'
-                });
                 messages.push(
                     <div key={index++} className='message-chat flex items-center gap-1'>
                         <Avatar
@@ -158,14 +153,17 @@ const Messages = ({ messages, onCardMouseOut, onCardMouseOver }) => {
                             showFallback
                             className='w-6 h-6 text-tiny'
                         />
-                        <span key={index++} className={userClass}>
+                        <span key={index++} className={Constants.ColourClassByRole[fragment.role]}>
                             {fragment.name}
                         </span>
                     </div>
                 );
             } else if (fragment.argType === 'nonAvatarPlayer') {
                 const userClass =
-                    'username' + (fragment.role ? ` ${fragment.role.toLowerCase()}-role` : '');
+                    'username' +
+                    (fragment.role
+                        ? ` ${Constants.ColourClassByRole[fragment.role.toLowerCase()]}`
+                        : '');
 
                 messages.push(
                     <span key={index++} className={userClass}>

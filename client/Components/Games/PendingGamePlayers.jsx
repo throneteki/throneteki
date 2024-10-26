@@ -2,13 +2,14 @@ import React from 'react';
 import { Avatar, Button } from '@nextui-org/react';
 import Panel from '../Site/Panel';
 import DeckStatus from '../Decks/DeckStatus';
+import { Constants } from '../../constants';
 
 const PendingGamePlayers = ({ currentGame, user, onSelectDeck }) => {
     let firstPlayer = true;
 
     return (
         <Panel title={'Players'}>
-            <div className='mt-2'>
+            <div>
                 {Object.values(currentGame.players).map((player) => {
                     const playerIsMe = player && player.name === user?.username;
 
@@ -18,26 +19,21 @@ const PendingGamePlayers = ({ currentGame, user, onSelectDeck }) => {
 
                     if (player && player.deck?.selected) {
                         if (playerIsMe) {
-                            deck = (
-                                <Button className='ml-2 mr-2' onClick={onSelectDeck}>
-                                    {player.deck.name}
-                                </Button>
-                            );
+                            deck = <Button onClick={onSelectDeck}>{player.deck.name}</Button>;
                         } else {
-                            deck = <span className='deck-selection mr-2'>Deck Selected</span>;
+                            deck = <Button isDisabled>Deck Selected</Button>;
                         }
 
                         status = <DeckStatus status={player.deck.status} />;
                     } else if (player && playerIsMe) {
-                        selectLink = (
-                            <Button className='ml-2' onClick={onSelectDeck}>
-                                Select Deck
-                            </Button>
-                        );
+                        selectLink = <Button onClick={onSelectDeck}>Select Deck</Button>;
                     }
                     const userClass =
-                        'ml-2 username' + (player.role ? ` ${player.role.toLowerCase()}-role` : '');
-                    let rowClass = 'flex items-center ';
+                        'username' +
+                        (player.role
+                            ? ` ${Constants.ColourClassByRole[player.role.toLowerCase()]}`
+                            : '');
+                    let rowClass = 'flex items-center gap-2 ';
                     if (firstPlayer) {
                         rowClass += 'mb-2';
 
