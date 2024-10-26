@@ -137,6 +137,7 @@ const PlayerRow = ({
                         title={title}
                         topCard={agenda}
                         size={cardSize}
+                        numColumns={5}
                     />
                 )}
             </div>

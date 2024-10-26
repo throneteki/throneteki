@@ -18,11 +18,11 @@
 
 .agenda {
     .card-list-popup {
-        @include calculate-tiled-card-prop(width, 2, width);
+        @include calculate-tiled-card-prop(width, 5, width);
 
         .inner {
-            @include calculate-tiled-card-prop(width, 2, width);
-            @include calculate-tiled-card-prop(height, 1, height);
+            @include calculate-tiled-card-prop(width, 5, width);
+            @include calculate-tiled-card-prop(height, 1, height, 0rem);
         }
     }
 }
@@ -44,11 +44,11 @@
 .discard-pile {
     .card-list-popup {
         @include calculate-tiled-card-prop(width, 5, width);
-        @include calculate-tiled-card-prop(height, 2, height);
+        @include calculate-tiled-card-prop(height, 2, height, 0rem);
 
         .inner {
             @include calculate-tiled-card-prop(width, 5, width);
-            @include calculate-tiled-card-prop(height, 2, height);
+            @include calculate-tiled-card-prop(height, 2, height, 0.1rem);
         }
     }
 }
@@ -60,13 +60,3 @@
         }
     }
 }
-
-// .hand {
-//     z-index: 20;
-//     @include calculate-tiled-card-prop(width, 6, width, var(--scrollbar-width) + 10px);
-//     @include calculate-tiled-card-prop(height, 1, height);
-
-//     .inner {
-//         @include calculate-tiled-card-prop(width, 6, width, var(--scrollbar-width));
-//     }
-// }
