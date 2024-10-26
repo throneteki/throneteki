@@ -77,7 +77,10 @@ const validTargets = {
 
 const Droppable = ({ className, children, source, size }) => {
     const { isOver, active, setNodeRef } = useDroppable({
-        id: useUniqueId(source)
+        id: useUniqueId(source),
+        data: {
+            source: source
+        }
     });
 
     const canDrop = useMemo(() => {

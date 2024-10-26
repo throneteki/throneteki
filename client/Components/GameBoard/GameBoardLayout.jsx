@@ -49,7 +49,7 @@ const GameBoardLayout = ({ thisPlayer, otherPlayer, onCardClick, onMouseOver, on
                     sendDragDropMessage(
                         event.active.data.current.card.uuid,
                         event.active.data.current.source,
-                        event.over.id
+                        event.over.data.current.source
                     )
                 );
             }}
