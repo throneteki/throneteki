@@ -3,6 +3,7 @@ import classNames from 'classnames';
 
 import { useDroppable } from '@dnd-kit/core';
 import { ItemTypes } from '../../constants';
+import { useUniqueId } from '@dnd-kit/utilities';
 
 const validTargets = {
     hand: [
@@ -76,7 +77,7 @@ const validTargets = {
 
 const Droppable = ({ className, children, source, size }) => {
     const { isOver, active, setNodeRef } = useDroppable({
-        id: source
+        id: useUniqueId(source)
     });
 
     const canDrop = useMemo(() => {

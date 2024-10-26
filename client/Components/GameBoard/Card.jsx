@@ -9,6 +9,7 @@ import './Card.scss';
 import { ItemTypes } from '../../constants';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
+import { useUniqueId } from '@dnd-kit/utilities';
 
 const Card = ({
     card,
@@ -61,7 +62,7 @@ const Card = ({
     };
 
     const { attributes, listeners, setNodeRef, transform } = useDraggable({
-        id: key,
+        id: useUniqueId(key),
         data: { type: ItemTypes.CARD, card, source, key: key }
     });
 
