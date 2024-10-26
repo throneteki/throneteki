@@ -95,18 +95,24 @@ const ActivePlayerPrompt = ({
                 : (event) => handleButtonClick(event, button);
 
             let option = (
-                <Button
-                    color='primary'
-                    key={button.command + buttonIndex.toString()}
-                    className='mb-1 mx-2'
-                    onClick={clickCallback}
-                    onMouseOver={button.card ? (event) => onMouseOver(event, button.card) : null}
-                    onMouseOut={button.card ? (event) => onMouseOut(event, button.card) : null}
-                    isDisabled={button.disabled}
-                    disableRipple={true}
-                >
-                    {button.icon && <ThronesIcon icon={button.icon} withBackground />} {button.text}
-                </Button>
+                <div className='w-full px-1'>
+                    <Button
+                        color='primary'
+                        key={button.command + buttonIndex.toString()}
+                        className='text-wrap mb-1'
+                        onClick={clickCallback}
+                        onMouseOver={
+                            button.card ? (event) => onMouseOver(event, button.card) : null
+                        }
+                        onMouseOut={button.card ? (event) => onMouseOut(event, button.card) : null}
+                        isDisabled={button.disabled}
+                        disableRipple
+                        fullWidth
+                    >
+                        {button.icon && <ThronesIcon icon={button.icon} withBackground />}{' '}
+                        {button.text}
+                    </Button>
+                </div>
             );
             buttonIndex++;
 
