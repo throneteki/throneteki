@@ -105,7 +105,10 @@ const ActivePlayerPrompt = ({
                     isDisabled={button.disabled}
                     disableRipple={true}
                 >
-                    {button.icon && <ThronesIcon icon={button.icon} withBackground />} {button.text}
+                    {button.icon && (
+                        <ThronesIcon icon={button.icon} withBackground noSize={false} />
+                    )}{' '}
+                    {button.text}
                 </Button>
             );
             buttonIndex++;

@@ -16,7 +16,7 @@ const ThronesIcon = ({ icon, noSize = true, withBackground = false }) => {
     };
 
     const className = classNames(
-        'rounded-xl font-[thronesdb] inline',
+        'rounded-xl font-[thronesdb] inline text-center leading-6',
         withBackground ? bgClasses[icon] : fgClasses[icon],
         {
             'w-6 h-6': !noSize
