@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 
@@ -69,6 +69,17 @@ const GameBoard = () => {
             setLastMessageCount(currentGame?.messages.length);
         }
     }, [currentGame?.messages.length, showMessages]);
+
+    useEffect(() => {
+        let currentMessageCount = currentGame ? currentGame.messages.length : 0;
+
+        if (showMessages) {
+            setLastMessageCount(currentMessageCount);
+            setNewMessages(0);
+        } else {
+            setNewMessages(currentMessageCount - lastMessageCount);
+        }
+    }, [currentGame, lastMessageCount, showMessages]);
 
     const onCardClick = useCallback(
         (card) => {
