@@ -2,7 +2,7 @@
 
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { accountLoggedIn } from '../reducers/auth';
-import { startConnecting } from '../reducers/lobby';
+import { sendAuthenticateMessage } from '../reducers/lobby';
 import { navigate } from '../reducers/navigation';
 
 const TagTypes = {
@@ -79,7 +79,7 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
                 )
             );
 
-            api.dispatch(startConnecting());
+            api.dispatch(sendAuthenticateMessage());
 
             result = await baseQuery(args, api, extraOptions);
         } else {
