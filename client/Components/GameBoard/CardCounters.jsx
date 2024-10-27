@@ -8,11 +8,11 @@ const CardCounters = ({ counters }) => {
     }
 
     let countersClass = classNames(
-        'text-white absolute top-0 bottom-0 right-0 left-0 justify-center flex flex-wrap z-20 items-center gap-1',
+        'text-white justify-center flex flex-wrap items-center gap-1 h-auto flex-row',
         'ignore-mouse-events',
         {
-            'flex-col': counters.length <= 3,
-            'flex-row': counters.length > 3
+            'w-3/4': counters.length <= 4,
+            'w-full': counters.length > 4
         }
     );
 
@@ -32,7 +32,11 @@ const CardCounters = ({ counters }) => {
         );
     }
 
-    return <div className={countersClass}>{counterDivs}</div>;
+    return (
+        <div className='w-full h-full flex items-center justify-center absolute top-0 left-0 z-20'>
+            <div className={countersClass}>{counterDivs}</div>
+        </div>
+    );
 };
 
 export default CardCounters;

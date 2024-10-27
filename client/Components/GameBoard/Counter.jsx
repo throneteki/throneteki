@@ -7,7 +7,7 @@ import './Counter.css';
 const Counter = ({ name, cancel, fade, icon, shortName, value }) => {
     const getClassName = useCallback(() => {
         return classNames(
-            'p-0 text-sm w-6 h-6 flex justify-center items-center rounded-md ',
+            'p-0 text-sm w-6 h-6 flex justify-center items-center rounded-md',
             `${name}-token`,
             {
                 'bg-success-100/85': name === 'dupe',
@@ -25,7 +25,7 @@ const Counter = ({ name, cancel, fade, icon, shortName, value }) => {
                 'bg-white/85 text-black': name === 'prayer' || name === 'ghost',
                 'bg-gray-400/85': name === 'tale',
                 'bg-teal-600/85': name === 'venom',
-                'bg-black': name === 'challenge-icon',
+                'bg-black/85': name === 'challenge-icon' || name === 'faction',
                 'cancel relative': cancel,
                 'fade-out': fade
             }
