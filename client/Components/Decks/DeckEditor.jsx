@@ -160,7 +160,8 @@ const DeckEditor = ({ deck, onBackClick }) => {
                 cell: (info) => info.getValue(),
                 meta: {
                     colWidth: '70%'
-                }
+                },
+                enableColumnFilter: true
             },
             {
                 id: 'C/I',
@@ -486,10 +487,12 @@ const DeckEditor = ({ deck, onBackClick }) => {
                                 isError: false
                             })}
                             defaultColumnFilters={{ type: typeFilter, faction: factionFilter }}
-                            defaultSort={{
-                                column: 'type',
-                                direction: 'descending'
-                            }}
+                            defaultSort={[
+                                {
+                                    id: 'type',
+                                    desc: true
+                                }
+                            ]}
                             disableSelection
                             columns={columns}
                             startPageNumber={pageNumber}

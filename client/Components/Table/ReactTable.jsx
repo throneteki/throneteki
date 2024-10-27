@@ -10,10 +10,17 @@ import {
 
 import TablePagination from './TablePagination';
 import LoadingSpinner from '../Site/LoadingSpinner';
-import { faFilter, faRefresh } from '@fortawesome/free-solid-svg-icons';
+import {
+    faArrowDownLong,
+    faArrowUpLong,
+    faFilter,
+    faRefresh,
+    faSearch
+} from '@fortawesome/free-solid-svg-icons';
 import FaIconButton from '../Site/FaIconButton';
 import {
     Button,
+    Input,
     Popover,
     PopoverContent,
     PopoverTrigger,
@@ -67,9 +74,7 @@ function ReactTable({
         columnFilters,
         pageIndex: pagination.pageIndex + 1,
         pageSize: pagination.pageSize,
-        sorting: sorting
-            ? [{ id: sorting.column.toString(), desc: sorting.direction === 'descending' }]
-            : []
+        sorting: sorting || []
     };
 
     const {
@@ -80,17 +85,6 @@ function ReactTable({
     } = dataLoadFn(dataLoadArg ? Object.assign(fetchDataOptions, dataLoadArg) : fetchDataOptions);
 
     let tableOptions;
-
-    const tableSort = useMemo(() => {
-        return sorting
-            ? [
-                  {
-                      id: sorting.column,
-                      desc: sorting.direction === 'descending'
-                  }
-              ]
-            : [];
-    }, [sorting]);
 
     if (remote) {
         tableOptions = {
@@ -103,11 +97,10 @@ function ReactTable({
             manualSorting: true,
             onPaginationChange: setPagination,
             onColumnFiltersChange: setColumnFilters,
+            onSortingChange: setSorting,
             pageCount: Math.ceil(response?.totalCount / pagination.pageSize) ?? -1,
             state: {
-                sorting: sorting
-                    ? [{ id: sorting.column.toString(), desc: sorting.direction === 'descending' }]
-                    : [],
+                sorting: sorting || [],
                 pagination: pagination,
                 columnFilters: columnFilters,
                 rowSelection: [...rowSelection].reduce((keys, v) => {
@@ -124,17 +117,20 @@ function ReactTable({
             getFilteredRowModel: getFilteredRowModel(),
             getPaginationRowModel: getPaginationRowModel(),
             getSortedRowModel: getSortedRowModel(),
-            onPaginationChange: (opc) => {
-                setPagination(opc);
+            onSortingChange: setSorting,
+            onColumnFiltersChange: setColumnFilters,
+            onPaginationChange: (pi) => {
+                setPagination(pi);
                 onPageChanged(table.getState().pagination.pageIndex);
             },
             state: {
-                sorting: tableSort,
+                sorting,
                 rowSelection: [...rowSelection].reduce((keys, v) => {
                     keys[v] = true;
                     return keys;
                 }, {}),
-                pagination
+                pagination,
+                columnFilters
             }
         };
     }
@@ -237,8 +233,6 @@ function ReactTable({
                 selectionMode={disableSelection ? 'none' : 'multiple'}
                 selectedKeys={rowSelection}
                 onSelectionChange={setRowSelection}
-                sortDescriptor={sorting}
-                onSortChange={setSorting}
                 topContent={topContent}
                 bottomContent={tableFooter}
                 removeWrapper
@@ -251,46 +245,94 @@ function ReactTable({
                             <TableColumn
                                 key={header.id}
                                 width={header.column.columnDef.meta?.colWidth}
-                                allowsSorting={header.column.columnDef.enableSorting !== false}
+                                allowsSorting={false}
                             >
-                                {flexRender(header.column.columnDef.header, header.getContext())}
+                                <div className='flex flex-col'>
+                                    <div
+                                        className='flex gap-1'
+                                        role={header.column.getCanSort() ? 'button' : ''}
+                                        onClick={header.column.getToggleSortingHandler()}
+                                    >
+                                        <span className='flex-grow-1'>
+                                            {flexRender(
+                                                header.column.columnDef.header,
+                                                header.getContext()
+                                            )}
+                                        </span>
+                                        {
+                                            {
+                                                asc: (
+                                                    <div>
+                                                        {' '}
+                                                        <FontAwesomeIcon icon={faArrowUpLong} />
+                                                    </div>
+                                                ),
+                                                desc: (
+                                                    <div>
+                                                        {' '}
+                                                        <FontAwesomeIcon icon={faArrowDownLong} />
+                                                    </div>
+                                                )
+                                            }[header.column.getIsSorted()]
+                                        }
+                                    </div>
+                                    {header.column.getCanFilter() &&
+                                        !header.column.columnDef.meta?.groupingFilter && (
+                                            <Input
+                                                className='select-text'
+                                                onClick={(e) => {
+                                                    // Something steals focus, probably the parent, without this code
+                                                    e.target.focus();
+                                                    e.stopPropagation();
+                                                    e.preventDefault();
+                                                }}
+                                                onChange={(e) =>
+                                                    header.column.setFilterValue(e.target.value)
+                                                }
+                                                onClear={() => header.column.setFilterValue('')}
+                                                value={header.column.getFilterValue() || ''}
+                                                size='sm'
+                                                isClearable
+                                                startContent={
+                                                    <div>
+                                                        <FontAwesomeIcon icon={faSearch} />
+                                                    </div>
+                                                }
+                                            />
+                                        )}
+                                </div>
                                 {header.column.columnDef.meta?.groupingFilter && (
-                                    <>
-                                        <Popover
-                                            placement='right'
-                                            isOpen={isFilterPopOverOpen[header.id]}
-                                            onOpenChange={(open) => {
-                                                isFilterPopOverOpen[header.id] = open;
+                                    <Popover
+                                        placement='right'
+                                        isOpen={isFilterPopOverOpen[header.id]}
+                                        onOpenChange={(open) => {
+                                            isFilterPopOverOpen[header.id] = open;
 
-                                                const newState = Object.assign(
-                                                    {},
-                                                    isFilterPopOverOpen
-                                                );
+                                            const newState = Object.assign({}, isFilterPopOverOpen);
 
-                                                setFilterPopOverOpen(newState);
-                                            }}
-                                        >
-                                            <PopoverTrigger>
-                                                <FontAwesomeIcon className='ml-1' icon={faFilter} />
-                                            </PopoverTrigger>
-                                            <PopoverContent>
-                                                {header.column.columnDef.meta?.groupingFilter(
-                                                    header.getContext().table,
-                                                    () => {
-                                                        isFilterPopOverOpen[header.id] =
-                                                            !isFilterPopOverOpen[header.id];
+                                            setFilterPopOverOpen(newState);
+                                        }}
+                                    >
+                                        <PopoverTrigger>
+                                            <FontAwesomeIcon className='ml-1' icon={faFilter} />
+                                        </PopoverTrigger>
+                                        <PopoverContent>
+                                            {header.column.columnDef.meta?.groupingFilter(
+                                                header.getContext().table,
+                                                () => {
+                                                    isFilterPopOverOpen[header.id] =
+                                                        !isFilterPopOverOpen[header.id];
 
-                                                        const newState = Object.assign(
-                                                            {},
-                                                            isFilterPopOverOpen
-                                                        );
+                                                    const newState = Object.assign(
+                                                        {},
+                                                        isFilterPopOverOpen
+                                                    );
 
-                                                        setFilterPopOverOpen(newState);
-                                                    }
-                                                )}
-                                            </PopoverContent>
-                                        </Popover>
-                                    </>
+                                                    setFilterPopOverOpen(newState);
+                                                }
+                                            )}
+                                        </PopoverContent>
+                                    </Popover>
                                 )}
                             </TableColumn>
                         )

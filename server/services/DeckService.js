@@ -74,19 +74,28 @@ class DeckService {
     }
 
     async findByUserName(username, options = {}) {
-        const sort = options.sorting || ['lastUpdated', 'true'];
+        const sort = options.sorting || [{ id: 'lastUpdated', desc: 'true' }];
+        const filter = options.filters || [];
         const page = parseInt(options.pageNumber, 10) || 1;
         const pageSize = parseInt(options.pageSize, 10) || 10;
 
-        this.restrictedLists = await this.cardService.getRestrictedList();
+        filter.push({ id: 'username', value: username });
 
+        this.restrictedLists = await this.cardService.getRestrictedList();
         const dbDecks = await this.decks.aggregate([
             {
                 $facet: {
                     metadata: [{ $match: { username: username } }, { $count: 'totalCount' }],
                     data: [
-                        { $match: { username: username } },
-                        { $sort: { [sort[0]]: sort[1] === 'true' ? -1 : 1 } },
+                        {
+                            $match: filter.reduce(
+                                (acc, curr) => (
+                                    (acc[curr.id] = { $regex: curr.value, $options: 'i' }), acc
+                                ),
+                                {}
+                            )
+                        },
+                        { $sort: { [sort[0].id]: sort[0].desc === 'true' ? -1 : 1 } },
                         { $skip: (page - 1) * pageSize },
                         { $limit: pageSize }
                     ]

@@ -287,13 +287,16 @@ const DeckList = ({ restrictedList, onDeckSelected, readOnly }) => {
                 buttons={buttons}
                 dataLoadFn={useGetDecksQuery}
                 dataLoadArg={restrictedList ? { restrictedList: restrictedList } : null}
-                defaultSort={{
-                    column: 'lastUpdated',
-                    direction: 'descending'
-                }}
+                defaultSort={[
+                    {
+                        id: 'lastUpdated',
+                        desc: true
+                    }
+                ]}
                 emptyContent={
                     <AlertPanel variant={AlertType.Info}>
-                        {'You have no decks. Create or import a new deck above!'}
+                        You have no decks or none have been found using the specific filter. Create
+                        or import a new deck above, or clear the filter
                     </AlertPanel>
                 }
                 remote

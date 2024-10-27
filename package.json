@@ -81,6 +81,7 @@
         "postcss-mixins": "^10.0.1",
         "postcss-nested": "^6.2.0",
         "postcss-simple-vars": "^7.0.1",
+        "qs": "^6.13.0",
         "react-bootstrap-range-slider": "^3.0.8",
         "redis": "^3.1.2",
         "redux-loop": "^4.5.2",

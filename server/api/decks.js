@@ -1,4 +1,6 @@
 import passport from 'passport';
+import qs from 'qs';
+
 import DeckService from '../services/DeckService.js';
 import { wrapAsync } from '../util.js';
 
@@ -33,7 +35,10 @@ export const init = async function (server, options) {
         '/api/decks',
         passport.authenticate('jwt', { session: false }),
         wrapAsync(async function (req, res) {
-            let decks = await deckService.findByUserName(req.user.username, req.query);
+            let decks = await deckService.findByUserName(
+                req.user.username,
+                qs.parse(req._parsedUrl.query, { allowDots: true })
+            );
             res.send(decks);
         })
     );
