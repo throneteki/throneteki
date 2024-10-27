@@ -14,7 +14,6 @@
         &.horizontal {
             height: var(--throneteki-card-sm-width);
             width: var(--throneteki-card-sm-height);
-            margin-bottom: calc(var(--throneteki-card-sm-height) - var(--throneteki-card-sm-width));
         }
     }
 
@@ -27,7 +26,6 @@
         &.horizontal {
             height: var(--throneteki-card-lg-width);
             width: var(--throneteki-card-lg-height);
-            margin-bottom: calc(var(--throneteki-card-lg-height) - var(--throneteki-card-lg-width));
         }
     }
 
@@ -40,7 +38,6 @@
         &.horizontal {
             height: var(--throneteki-card-xl-width);
             width: var(--throneteki-card-xl-height);
-            margin-bottom: calc(var(--throneteki-card-xl-height) - var(--throneteki-card-xl-width));
         }
     }
 
@@ -52,6 +49,29 @@
     &.horizontal {
         height: var(--throneteki-card-width);
         width: var(--throneteki-card-height);
+    }
+}
+
+.card-row .card {
+    &.small {
+        &.horizontal {
+            margin-bottom: calc(var(--throneteki-card-sm-height) - var(--throneteki-card-sm-width));
+        }
+    }
+
+    &.large {
+        &.horizontal {
+            margin-bottom: calc(var(--throneteki-card-lg-height) - var(--throneteki-card-lg-width));
+        }
+    }
+
+    &.x-large {
+        &.horizontal {
+            margin-bottom: calc(var(--throneteki-card-xl-height) - var(--throneteki-card-xl-width));
+        }
+    }
+
+    &.horizontal {
         margin-bottom: calc((var(--throneteki-card-height) - var(--throneteki-card-width)));
     }
 }
