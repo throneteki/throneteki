@@ -336,7 +336,7 @@ const Card = ({
 
         let cardClass = classNames('card overflow-hidden rounded-md', className, sizeClass, {
             'shadow-[0_0px_10px_1px] shadow-primary': card.selectable,
-            'shadow-[0_0px_1px_4px] shadow-secondary': card.selected,
+            'shadow-[0_0px_2px_4px] shadow-green-300': card.selected,
             'shadow-[0_0px_1px_2px] shadow-danger': card.inChallenge,
             'shadow-[0_0px_1px_2px] shadow-red-500': card.inDanger,
             'shadow-[0_0px_1px_2px] shadow-green-500': card.saved,
