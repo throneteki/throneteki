@@ -89,6 +89,7 @@ const DeckEditor = ({ deck, onBackClick }) => {
     const [success, setSuccess] = useState('');
     const [showImportPopup, setShowImportPopup] = useState(false);
     const [deckText, setDeckText] = useState();
+    const [pageNumber, setPageNumber] = useState(0);
 
     const [currentRestrictedList, setCurrentRestrictedList] = useState(
         restrictedLists && restrictedLists[0]
@@ -491,6 +492,8 @@ const DeckEditor = ({ deck, onBackClick }) => {
                             }}
                             disableSelection
                             columns={columns}
+                            startPageNumber={pageNumber}
+                            onPageChanged={(page) => setPageNumber(page)}
                         />
                     </div>
                 </div>

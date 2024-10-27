@@ -50,28 +50,23 @@ function ReactTable({
     emptyContent,
     onRowClick,
     onRowSelectionChange,
+    onPageChanged,
+    startPageNumber = 0,
     remote = false
 }) {
-    const [{ pageIndex, pageSize }, setPagination] = useState({
-        pageIndex: 0,
+    const [pagination, setPagination] = useState({
+        pageIndex: startPageNumber,
         pageSize: 10
     });
     const [sorting, setSorting] = useState(defaultSort);
     const [columnFilters, setColumnFilters] = useState([]);
-    const pagination = useMemo(
-        () => ({
-            pageIndex,
-            pageSize
-        }),
-        [pageIndex, pageSize]
-    );
     const [rowSelection, setRowSelection] = useState(new Set([]));
     const [isFilterPopOverOpen, setFilterPopOverOpen] = useState({});
 
     const fetchDataOptions = {
         columnFilters,
-        pageIndex: pageIndex + 1,
-        pageSize,
+        pageIndex: pagination.pageIndex + 1,
+        pageSize: pagination.pageSize,
         sorting: sorting
             ? [{ id: sorting.column.toString(), desc: sorting.direction === 'descending' }]
             : []
@@ -108,7 +103,7 @@ function ReactTable({
             manualSorting: true,
             onPaginationChange: setPagination,
             onColumnFiltersChange: setColumnFilters,
-            pageCount: Math.ceil(response?.totalCount / pageSize) ?? -1,
+            pageCount: Math.ceil(response?.totalCount / pagination.pageSize) ?? -1,
             state: {
                 sorting: sorting
                     ? [{ id: sorting.column.toString(), desc: sorting.direction === 'descending' }]
@@ -129,12 +124,17 @@ function ReactTable({
             getFilteredRowModel: getFilteredRowModel(),
             getPaginationRowModel: getPaginationRowModel(),
             getSortedRowModel: getSortedRowModel(),
+            onPaginationChange: (opc) => {
+                setPagination(opc);
+                onPageChanged(table.getState().pagination.pageIndex);
+            },
             state: {
                 sorting: tableSort,
                 rowSelection: [...rowSelection].reduce((keys, v) => {
                     keys[v] = true;
                     return keys;
-                }, {})
+                }, {}),
+                pagination
             }
         };
     }
