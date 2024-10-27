@@ -242,6 +242,13 @@ export const apiSlice = createApi({
             }),
             invalidatesTags: (result, error, arg) => [{ type: TagTypes.Deck, _id: arg._id }]
         }),
+        toggleDeckFavourite: builder.mutation({
+            query: (deckId) => ({
+                url: `/decks/${deckId}/toggleFavourite`,
+                method: 'POST'
+            }),
+            invalidatesTags: (result, error, arg) => [{ type: TagTypes.Deck, _id: arg._id }]
+        }),
         saveProfile: builder.mutation({
             query: ({ username, profile }) => ({
                 url: `/account/${username}`,
@@ -477,6 +484,7 @@ export const {
     useDeleteDeckMutation,
     useGetDeckQuery,
     useSaveDeckMutation,
+    useToggleDeckFavouriteMutation,
     useSaveProfileMutation,
     useUpdateAvatarMutation,
     useUnlinkPatreonMutation,

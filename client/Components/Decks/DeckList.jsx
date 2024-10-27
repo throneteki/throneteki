@@ -5,14 +5,18 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faDownload,
     faFileCirclePlus,
-    //faHeart,
+    faHeart,
     faTrashAlt
 } from '@fortawesome/free-solid-svg-icons';
-//import { faHeart as faHeartRegular } from '@fortawesome/free-regular-svg-icons';
+import { faHeart as faHeartRegular } from '@fortawesome/free-regular-svg-icons';
 import { useDispatch } from 'react-redux';
 import { navigate } from '../../redux/reducers/navigation';
 import { toastr } from 'react-redux-toastr';
-import { useDeleteDecksMutation, useGetDecksQuery } from '../../redux/middleware/api';
+import {
+    useDeleteDecksMutation,
+    useGetDecksQuery,
+    useToggleDeckFavouriteMutation
+} from '../../redux/middleware/api';
 // import TableGroupFilter from '../Table/TableGroupFilter';
 import FactionImage from '../Images/FactionImage';
 import { Constants } from '../../constants';
@@ -29,6 +33,7 @@ const DeckList = ({ restrictedList, onDeckSelected, readOnly }) => {
     const [mousePos, setMousePosition] = useState({ x: 0, y: 0 });
     const [zoomCard, setZoomCard] = useState(null);
     const [deleteDecks, { isLoading: isDeleteLoading }] = useDeleteDecksMutation();
+    const [toggleFavourite] = useToggleDeckFavouriteMutation();
 
     const columns = useMemo(
         () => [
@@ -148,16 +153,6 @@ const DeckList = ({ restrictedList, onDeckSelected, readOnly }) => {
                 enableColumnFilter: false,
                 enableSorting: false
             },
-            // {
-            //     accessorKey: 'created',
-            //     cell: (info) => moment(info.getValue()).local().format('YYYY-MM-DD'),
-
-            //     header: 'Created',
-            //     meta: {
-            //         colWidth: '15%'
-            //     },
-            //     enableColumnFilter: false
-            // },
             {
                 accessorKey: 'lastUpdated',
                 cell: (info) => moment(info.getValue()).local().format('YYYY-MM-DD'),
@@ -182,7 +177,7 @@ const DeckList = ({ restrictedList, onDeckSelected, readOnly }) => {
                 },
                 enableColumnFilter: false,
                 enableSorting: false
-            }
+            },
             /*  {
                 accessorKey: 'winRate',
                 cell: (info) => {
@@ -198,12 +193,11 @@ const DeckList = ({ restrictedList, onDeckSelected, readOnly }) => {
                     colWidth: '10%'
                 },
                 enableColumnFilter: false
-            },
-            {
+            }*/ {
                 accessorKey: 'isFavourite',
                 cell: (info) => (
                     <div
-                        className='justify-content-center flex text-danger'
+                        className='justify-center flex text-danger h-full'
                         role={readOnly ? 'false' : 'button'}
                         onClick={async (event) => {
                             event.stopPropagation();
@@ -212,7 +206,7 @@ const DeckList = ({ restrictedList, onDeckSelected, readOnly }) => {
                                 return;
                             }
 
-                            await toggleFavourite(info.row.original.id);
+                            await toggleFavourite(info.row.original._id);
                         }}
                     >
                         <FontAwesomeIcon icon={info.getValue() ? faHeart : faHeartRegular} />
@@ -223,9 +217,9 @@ const DeckList = ({ restrictedList, onDeckSelected, readOnly }) => {
                     colWidth: '10%'
                 },
                 enableColumnFilter: false
-            }*/
+            }
         ],
-        [restrictedList]
+        [readOnly, restrictedList, toggleFavourite]
     );
     const buttons = readOnly
         ? []

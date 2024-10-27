@@ -85,7 +85,17 @@ class DeckService {
         const dbDecks = await this.decks.aggregate([
             {
                 $facet: {
-                    metadata: [{ $match: { username: username } }, { $count: 'totalCount' }],
+                    metadata: [
+                        {
+                            $match: filter.reduce(
+                                (acc, curr) => (
+                                    (acc[curr.id] = { $regex: curr.value, $options: 'i' }), acc
+                                ),
+                                {}
+                            )
+                        },
+                        { $count: 'totalCount' }
+                    ],
                     data: [
                         {
                             $match: filter.reduce(
@@ -210,6 +220,7 @@ class DeckService {
             faction: deck.faction,
             eventId: deck.eventId,
             agenda: deck.agenda,
+            isFavourite: deck.isFavourite,
             lastUpdated: new Date()
         };
 

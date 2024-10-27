@@ -59,7 +59,7 @@ export const init = async function (server, options) {
 
             let data = Object.assign({ id: req.params.id }, req.body);
 
-            deckService.update(data);
+            await deckService.update(data);
 
             res.send({ success: true });
         })
@@ -71,6 +71,29 @@ export const init = async function (server, options) {
         wrapAsync(async function (req, res) {
             let deck = Object.assign(req.body, { username: req.user.username });
             await deckService.create(deck);
+            res.send({ success: true });
+        })
+    );
+
+    server.post(
+        '/api/decks/:id/toggleFavourite',
+        passport.authenticate('jwt', { session: false }),
+        wrapAsync(async function (req, res) {
+            let deck = await deckService.getById(req.params.id);
+
+            if (!deck) {
+                return res.status(404).send({ message: 'No such deck' });
+            }
+
+            if (deck.username !== req.user.username) {
+                return res.status(401).send({ message: 'Unauthorized' });
+            }
+
+            deck.isFavourite = !deck.isFavourite;
+            deck.id = deck._id;
+
+            await deckService.update(deck);
+
             res.send({ success: true });
         })
     );
