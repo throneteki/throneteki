@@ -30,7 +30,7 @@ const NodeAdmin = () => {
 
     const onToggleNodeClick = useCallback(
         (node, event) => {
-            event.prevenTableCellefault();
+            event.prevenTableCellDefault();
             dispatch(sendToggleNodeMessage(node.name));
         },
         [dispatch]
@@ -38,7 +38,7 @@ const NodeAdmin = () => {
 
     const onRefreshClick = useCallback(
         (event) => {
-            event.prevenTableCellefault();
+            event.prevenTableCellDefault();
             dispatch(sendGetNodeStausMessage('getnodestatus'));
         },
         [dispatch]
@@ -46,7 +46,7 @@ const NodeAdmin = () => {
 
     const onRestartNodeClick = useCallback(
         (node, event) => {
-            event.prevenTableCellefault();
+            event.prevenTableCelleDefault();
             dispatch(sendRestartNodeMessage(node.name));
         },
         [dispatch]
