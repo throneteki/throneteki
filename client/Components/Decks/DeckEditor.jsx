@@ -7,6 +7,8 @@ import AlertPanel from '../Site/AlertPanel';
 import {
     Button,
     ButtonGroup,
+    Card,
+    CardBody,
     Input,
     Modal,
     ModalBody,
@@ -407,22 +409,32 @@ const DeckEditor = ({ deck, onBackClick }) => {
                         }}
                         restrictedLists={restrictedLists}
                     />
-                    <div className='flex mt-1 ml-1'>
-                        <dl className='grid grid-cols-2 gap-2'>
-                            <dt className='font-bold'>Draw cards:</dt>
-                            <dd>
-                                {deckToSave.drawCards.reduce((acc, card) => acc + card.count, 0)}
-                            </dd>
-                            <dt className='font-bold'>Plot cards:</dt>
-                            <dd>
-                                {deckToSave.plotCards.reduce((acc, card) => acc + card.count, 0)}
-                            </dd>
-                        </dl>
-                    </div>
-                    <div className='flex gap-2 items-center ml-1'>
-                        <div className='font-bold'>Validity:</div>
-                        <DeckStatus status={deckToSave.status[currentRestrictedList._id]} />
-                    </div>
+                    <Card>
+                        <CardBody>
+                            <div className='flex mt-1 ml-1'>
+                                <dl className='grid grid-cols-2 gap-2'>
+                                    <dt className='font-bold'>Draw cards:</dt>
+                                    <dd>
+                                        {deckToSave.drawCards.reduce(
+                                            (acc, card) => acc + card.count,
+                                            0
+                                        )}
+                                    </dd>
+                                    <dt className='font-bold'>Plot cards:</dt>
+                                    <dd>
+                                        {deckToSave.plotCards.reduce(
+                                            (acc, card) => acc + card.count,
+                                            0
+                                        )}
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div className='flex gap-2 items-center ml-1 mt-1'>
+                                <div className='font-bold'>Validity:</div>
+                                <DeckStatus status={deckToSave.status[currentRestrictedList._id]} />
+                            </div>
+                        </CardBody>
+                    </Card>
                     <div className='mt-1'>
                         <ButtonGroup>
                             {cardTypes.map((type) => {
