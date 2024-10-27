@@ -19,7 +19,7 @@ const ProfileDropdown = ({ user, menu }) => {
                     src={`/img/avatar/${user.username}.png`}
                 />
             </DropdownTrigger>
-            <DropdownMenu variant='flat' className='font-[PoppinsMedium] text-emphasis'>
+            <DropdownMenu variant='flat' className='font-[PoppinsMedium] text-secondary'>
                 {menu.map((mi) => (
                     <DropdownItem key={mi.title}>
                         <Link href={mi.path}>{mi.title}</Link>

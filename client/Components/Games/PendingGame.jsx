@@ -1,6 +1,4 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import $ from 'jquery';
-
 import Panel from '../Site/Panel';
 import Messages from '../GameBoard/Messages';
 import SelectDeckModal from './SelectDeckModal';

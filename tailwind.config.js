@@ -30,7 +30,7 @@ export default {
                 targaryen: '#e54141',
                 thenightswatch: '#7a7a7a',
                 tyrell: '#509f16',
-                emphasis: '#dc4787',
+                secondary: '#DA8A2A',
                 military: '#c72229',
                 intrigue: '#05552f',
                 power: '#2a2e5e'

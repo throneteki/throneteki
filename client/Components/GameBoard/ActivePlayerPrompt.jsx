@@ -95,7 +95,7 @@ const ActivePlayerPrompt = ({
                 : (event) => handleButtonClick(event, button);
 
             let option = (
-                <div className='w-full px-1'>
+                <div className='w-full'>
                     <Button
                         color='primary'
                         key={button.command + buttonIndex.toString()}
@@ -232,7 +232,7 @@ const ActivePlayerPrompt = ({
                 <div className='relative border-1 border-default-200 bg-black/65 rounded-b-md'>
                     <p className='my-1 mx-2 text-small'>{promptTextElement}</p>
                     {getControls()}
-                    <div className='flex flex-col m-1'>{getButtons()}</div>
+                    <div className='flex flex-col mx-2 gap-1'>{getButtons()}</div>
                 </div>
             </div>
         </div>

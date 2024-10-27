@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import Link from '../Site/Link';
@@ -23,6 +23,8 @@ import {
 } from '@nextui-org/react';
 import { LeftMenu, ProfileMenu, RightMenu } from '../../menus';
 import ProfileDropdown from './ProfileDropdown';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 
 const NavBar = () => {
     const { path } = useSelector((state) => state.navigation);
@@ -39,6 +41,8 @@ const NavBar = () => {
         connecting: gameConnecting,
         responseTime: gameResponse
     } = useSelector((state) => state.game);
+
+    const [dropdownOpenStatus, setDropdownOpenStatus] = useState({});
 
     const userCanSeeMenu = (menuItem, user) => {
         return !menuItem.permission || user.permissions[menuItem.permission];
@@ -72,20 +76,36 @@ const NavBar = () => {
                 const children = menuItem.childItems && filterMenuItems(menuItem.childItems, user);
 
                 if (children && children.length > 0) {
+                    console.info(dropdownOpenStatus, menuItem.title || index);
                     return (
-                        <Dropdown key={menuItem.title || index}>
+                        <Dropdown
+                            key={menuItem.title || index}
+                            onOpenChange={(isOpen) => {
+                                const newDropDownStatus = Object.assign({}, dropdownOpenStatus);
+                                newDropDownStatus[menuItem.title || index] = isOpen;
+
+                                setDropdownOpenStatus(newDropDownStatus);
+                            }}
+                        >
                             <DropdownTrigger>
                                 <NextUiLink
-                                    className='cursor-pointer font-[PoppinsMedium] text-emphasis transition-colors duration-500 ease-in-out hover:text-white'
+                                    className='flex gap-1 cursor-pointer font-[PoppinsMedium] text-secondary transition-colors duration-500 ease-in-out hover:text-white'
                                     size='lg'
                                 >
                                     {menuItem.title}
+                                    <FontAwesomeIcon
+                                        icon={
+                                            dropdownOpenStatus[menuItem.title || index]
+                                                ? faChevronUp
+                                                : faChevronDown
+                                        }
+                                    />
                                 </NextUiLink>
                             </DropdownTrigger>
                             <DropdownMenu
                                 id={`nav-${menuItem.title}`}
                                 variant='flat'
-                                className='font-[PoppinsMedium] text-emphasis'
+                                className='font-[PoppinsMedium] text-secondary'
                                 title={menuItem.title}
                             >
                                 {children.map((childItem, index) =>
@@ -111,7 +131,7 @@ const NavBar = () => {
                 return (
                     <NavbarMenuItem key={index}>
                         <Link
-                            className='w-full font-[PoppinsMedium] text-emphasis transition-colors duration-500 ease-in-out hover:text-white'
+                            className='w-full font-[PoppinsMedium] text-secondary transition-colors duration-500 ease-in-out hover:text-white'
                             size='lg'
                             as={Link}
                             href={menuItem.path}
@@ -122,7 +142,7 @@ const NavBar = () => {
                 );
             });
         },
-        [filterMenuItems, user]
+        [dropdownOpenStatus, filterMenuItems, user]
     );
 
     let leftMenu = useMemo(() => {
