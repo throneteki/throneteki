@@ -397,7 +397,7 @@ export const apiSlice = createApi({
         saveEvent: builder.mutation({
             query: (event) => ({
                 url: `/events/${event._id || ''}`,
-                method: event.id ? 'PUT' : 'POST',
+                method: event._id ? 'PUT' : 'POST',
                 body: event
             }),
             invalidatesTags: (result, error, arg) => [{ type: TagTypes.Event, _id: arg._id }]

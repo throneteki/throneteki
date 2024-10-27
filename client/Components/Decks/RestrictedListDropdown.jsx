@@ -12,7 +12,7 @@ const RestrictedListDropdown = ({
     const updateRestrictedList = useCallback(
         (restrictedListName) => {
             setValue(restrictedListName);
-            let restrictedList = restrictedLists.find((rl) => rl.name === restrictedListName);
+            let restrictedList = restrictedLists.find((rl) => rl._id === restrictedListName);
 
             if (restrictedList.useDefaultRestrictedList && restrictedList.defaultRestrictedList) {
                 restrictedList = restrictedLists.find(
@@ -44,19 +44,17 @@ const RestrictedListDropdown = ({
     }, [restrictedLists, value]);
 
     return (
-        <>
-            <Select
-                label={'Game mode'}
-                onChange={(e) => updateRestrictedList(e.target.value)}
-                selectedKeys={value ? new Set([value]) : null}
-            >
-                {restrictedLists?.map((rl) => (
-                    <SelectItem key={rl._id} value={rl._id}>
-                        {rl.name}
-                    </SelectItem>
-                ))}
-            </Select>
-        </>
+        <Select
+            label={'Game mode'}
+            onChange={(e) => updateRestrictedList(e.target.value)}
+            selectedKeys={value ? new Set([value]) : null}
+        >
+            {restrictedLists?.map((rl) => (
+                <SelectItem key={rl._id} value={rl._id}>
+                    {rl.name}
+                </SelectItem>
+            ))}
+        </Select>
     );
 };
 

@@ -37,6 +37,8 @@ class DeckService {
 
     async getById(id) {
         try {
+            this.restrictedLists = await this.cardService.getRestrictedList();
+
             const deck = await this.decks.findOne({ _id: id });
             if (!deck) {
                 return null;
@@ -75,6 +77,8 @@ class DeckService {
         const sort = options.sorting || ['lastUpdated', 'true'];
         const page = parseInt(options.pageNumber, 10) || 1;
         const pageSize = parseInt(options.pageSize, 10) || 10;
+
+        this.restrictedLists = await this.cardService.getRestrictedList();
 
         const dbDecks = await this.decks.aggregate([
             {

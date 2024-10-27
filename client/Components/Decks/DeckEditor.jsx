@@ -98,7 +98,7 @@ const DeckEditor = ({ deck, onBackClick }) => {
 
     const deckToSave = useMemo(() => {
         if (!factionsByCode || !cardsByCode || !packs || !currentRestrictedList) {
-            return null;
+            return {};
         }
 
         const saveDeck = {

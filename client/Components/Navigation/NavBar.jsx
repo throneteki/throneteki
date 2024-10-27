@@ -76,7 +76,6 @@ const NavBar = () => {
                 const children = menuItem.childItems && filterMenuItems(menuItem.childItems, user);
 
                 if (children && children.length > 0) {
-                    console.info(dropdownOpenStatus, menuItem.title || index);
                     return (
                         <Dropdown
                             key={menuItem.title || index}
