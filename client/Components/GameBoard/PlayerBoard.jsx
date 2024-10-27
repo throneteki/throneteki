@@ -70,7 +70,10 @@ const PlayerBoard = ({
     const renderRows = useCallback(
         (rows) => {
             return rows.map((row, index) => (
-                <div className='flex justify-start min-h-0 gap-1.5' key={`card-row-${index}`}>
+                <div
+                    className='flex justify-start min-h-0 gap-1.5 card-row'
+                    key={`card-row-${index}`}
+                >
                     {renderRow(row)}
                 </div>
             ));

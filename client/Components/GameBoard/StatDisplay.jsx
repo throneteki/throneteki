@@ -44,7 +44,14 @@ const StatDisplay = ({
             <div className='absolute pointer-events-none'>
                 <Image className='h-8 w-8 z-0' src={Constants.StatIconImagePaths[statCode]} />
                 <div className='absolute inset-0 flex justify-center items-center'>
-                    <p className='stat-value font-[steel45] text-large text-center select-none text-shadow-sm shadow-black'>
+                    <p
+                        className='stat-value font-[PoppinsMedium] text-large text-center select-none text-shadow-sm shadow-black'
+                        style={{
+                            lineHeight: 'initial',
+                            WebkitTextStroke: '0.15em black',
+                            paintOrder: 'stroke fill'
+                        }}
+                    >
                         {statValue}
                     </p>
                 </div>

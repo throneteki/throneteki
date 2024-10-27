@@ -99,7 +99,7 @@ const ActivePlayerPrompt = ({
                     <Button
                         color='primary'
                         key={button.command + buttonIndex.toString()}
-                        className='text-wrap mb-1'
+                        className='text-wrap mb-1 h-full min-h-10'
                         onClick={clickCallback}
                         onMouseOver={
                             button.card ? (event) => onMouseOver(event, button.card) : null
@@ -109,8 +109,10 @@ const ActivePlayerPrompt = ({
                         disableRipple
                         fullWidth
                     >
-                        {button.icon && <ThronesIcon icon={button.icon} withBackground />}{' '}
-                        {button.text}
+                        {button.icon && (
+                            <ThronesIcon icon={button.icon} withBackground noSize={false} />
+                        )}
+                        <span>{button.text}</span>
                     </Button>
                 </div>
             );
@@ -218,7 +220,7 @@ const ActivePlayerPrompt = ({
             {timer}
             <div
                 className={
-                    'relative font-bold text-center uppercase border-1 border-default-200 bg-secondary-200 py-1 rounded-t-md mx-0 mb-0 ' +
+                    'relative text-medium font-bold text-center uppercase border-1 border-default-200 bg-secondary-200 py-1 rounded-t-md mx-0 mb-0 ' +
                     phase
                 }
                 onClick={onTitleClick}
@@ -228,9 +230,9 @@ const ActivePlayerPrompt = ({
             {promptTitleElement}
             <div className='text-center'>
                 <div className='relative border-1 border-default-200 bg-black/65 rounded-b-md'>
-                    <h4 className='my-1'>{promptTextElement}</h4>
+                    <p className='my-1 mx-2 text-small'>{promptTextElement}</p>
                     {getControls()}
-                    <div className='flex flex-col'>{getButtons()}</div>
+                    <div className='flex flex-col m-1'>{getButtons()}</div>
                 </div>
             </div>
         </div>

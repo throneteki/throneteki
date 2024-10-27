@@ -114,14 +114,15 @@ const PlayerRow = ({
         let disablePopup = underneath.length === 0;
         let title = !disablePopup ? 'Agenda' : null;
         let source = 'agenda';
-        let pileClass = classNames('agenda', `agenda-${agenda.code}`);
-
         let additionalAgendas = agendas.slice(1);
+        let pileClass = classNames('agenda', `agenda-${agenda.code}`);
+        let style = { zIndex: additionalAgendas.length * 10 };
+
         let spreadWidth = cardWidth.width / 2;
 
         let retAgendas = [];
         retAgendas.push(
-            <div key={agenda.uuid} className={pileClass}>
+            <div key={agenda.uuid} className={pileClass} style={style}>
                 {renderDroppablePile(
                     source,
                     <CardPile
@@ -145,35 +146,29 @@ const PlayerRow = ({
 
         // Add all additional agendas separately (not as a CardPile)
         retAgendas = retAgendas.concat(
-            additionalAgendas.map((agenda, index) => {
-                let className = classNames('agenda', `agenda-${agenda.code}`);
-                let style = { left: `${spreadWidth * (index + 1)}px` };
-                return (
-                    <div key={agenda.uuid} className={className}>
-                        <Card
-                            card={agenda}
-                            source={source}
-                            onMouseOver={onMouseOver}
-                            onMouseOut={onMouseOut}
-                            disableMouseOver={false}
-                            onClick={onCardClick}
-                            onMenuItemClick={onMenuItemClick}
-                            orientation='vertical'
-                            size={cardSize}
-                            style={style}
-                        />
-                    </div>
-                );
-            })
+            additionalAgendas
+                .map((agenda, index) => {
+                    let className = classNames('agenda', `agenda-${agenda.code}`);
+                    let style = { marginLeft: `-${spreadWidth}px`, zIndex: index * 10 };
+                    return (
+                        <div key={agenda.uuid} className={className} style={style}>
+                            <Card
+                                card={agenda}
+                                source={source}
+                                onMouseOver={onMouseOver}
+                                onMouseOut={onMouseOut}
+                                disableMouseOver={false}
+                                onClick={onCardClick}
+                                onMenuItemClick={onMenuItemClick}
+                                orientation='vertical'
+                                size={cardSize}
+                            />
+                        </div>
+                    );
+                })
+                .reverse()
         );
-
-        let totalWidth = cardWidth.width + spreadWidth * additionalAgendas.length;
-        let totalStyle = { width: `${totalWidth}px` };
-        return (
-            <div className='relative flex' style={totalStyle}>
-                {retAgendas.reverse()}
-            </div>
-        );
+        return <div className='relative flex'>{retAgendas}</div>;
     }, [
         agendas,
         renderDroppablePile,
@@ -297,14 +292,14 @@ const PlayerRow = ({
     );
 
     return (
-        <div className='flex space-x-2 my-1'>
+        <div className='flex space-x-2 m-1'>
             <PlayerPlots
                 cardSize={cardSize}
                 onCardClick={onCardClick}
                 onCardMouseOut={onMouseOut}
                 onCardMouseOver={onMouseOver}
                 onMenuItemClick={onMenuItemClick}
-                direction='default'
+                direction={isMe ? 'default' : 'reverse'}
                 isMe
                 plotDeck={plotDeck}
                 plotDiscard={plotDiscard}

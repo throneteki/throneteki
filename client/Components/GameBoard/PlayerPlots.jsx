@@ -33,6 +33,7 @@ const PlayerPlots = ({
                 source='revealed plots'
                 popupLocation={isMe ? 'bottom' : 'top'}
                 title='Used Plots'
+                titlePosition={direction === 'reverse' && !activePlot ? 'bottom left' : 'top left'}
                 topCard={activePlot}
             />
         );
@@ -51,7 +52,7 @@ const PlayerPlots = ({
                 orientation='horizontal'
                 source='plot deck'
                 title='Plots'
-                titlePosition={activePlot ? 'bottom left' : 'top left'}
+                titlePosition={direction !== 'reverse' && activePlot ? 'bottom left' : 'top left'}
                 popupLocation={isMe ? 'bottom' : 'top'}
                 // TODO: Move this logic (for Bloodraven) into the plot popup (eg. when player is showing, opponent sees the card in plot popup)
                 // topCard={
@@ -64,14 +65,14 @@ const PlayerPlots = ({
         );
 
         let piles = [
-            <div key='plotdeck' className='absolute bottom-0'>
+            <div key='plotdeck' className={direction !== 'reverse' && 'absolute bottom-0'}>
                 {isMe ? (
                     <Droppable source='plot deck'>{plotDeckElement}</Droppable>
                 ) : (
                     plotDeckElement
                 )}
             </div>,
-            <div key='usedplots'>
+            <div key='usedplots' className={direction === 'reverse' && 'absolute bottom-0'}>
                 {isMe ? (
                     <Droppable source='revealed plots'>{revealedPlots}</Droppable>
                 ) : (
@@ -79,10 +80,6 @@ const PlayerPlots = ({
                 )}
             </div>
         ];
-
-        if (direction === 'reverse') {
-            piles.reverse();
-        }
 
         return piles;
     }, [

@@ -79,7 +79,18 @@ const GameList = ({ gameFilter }) => {
 
         let isAdmin = user && user.permissions.canManageGames;
 
-        for (const game of games) {
+        // Orders games by whether they've started, followed by the time it was created (earliest first)
+        const compareGames = (a, b) => {
+            if (!a.started && b.started) {
+                return -1;
+            }
+            if (a.started && !b.started) {
+                return 1;
+            }
+            return a.createdAt - b.createdAt;
+        };
+
+        for (const game of [...games].sort((a, b) => compareGames(a, b))) {
             if (gameFilter.showOnlyNewGames && game.started) {
                 continue;
             }

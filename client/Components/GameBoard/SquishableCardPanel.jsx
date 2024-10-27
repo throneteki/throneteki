@@ -23,7 +23,7 @@ const SquishableCardPanel = ({
         let cardDimensions = getCardDimensions(cardSize);
 
         return {
-            width: (cardDimensions.width + 5) * maxCards,
+            width: cardDimensions.width * maxCards,
             height: cardDimensions.height
         };
     }, [cardSize, maxCards]);
