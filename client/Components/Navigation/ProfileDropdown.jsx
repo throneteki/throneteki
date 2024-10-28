@@ -22,7 +22,11 @@ const ProfileDropdown = ({ user, menu }) => {
             <DropdownMenu variant='flat' className='font-[PoppinsMedium] text-secondary'>
                 {menu.map((mi) => (
                     <DropdownItem key={mi.title}>
-                        <Link href={mi.path}>{mi.title}</Link>
+                        <span className='flex'>
+                            <Link className='w-full' href={mi.path}>
+                                {mi.title}
+                            </Link>
+                        </span>
                     </DropdownItem>
                 ))}
             </DropdownMenu>

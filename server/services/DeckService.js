@@ -89,7 +89,11 @@ class DeckService {
                         {
                             $match: filter.reduce(
                                 (acc, curr) => (
-                                    (acc[curr.id] = { $regex: curr.value, $options: 'i' }), acc
+                                    (acc[curr.id] =
+                                        curr.id === 'username'
+                                            ? curr.value
+                                            : { $regex: curr.value, $options: 'i' }),
+                                    acc
                                 ),
                                 {}
                             )
@@ -100,7 +104,11 @@ class DeckService {
                         {
                             $match: filter.reduce(
                                 (acc, curr) => (
-                                    (acc[curr.id] = { $regex: curr.value, $options: 'i' }), acc
+                                    (acc[curr.id] =
+                                        curr.id === 'username'
+                                            ? curr.value
+                                            : { $regex: curr.value, $options: 'i' }),
+                                    acc
                                 ),
                                 {}
                             )

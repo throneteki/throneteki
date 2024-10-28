@@ -27,7 +27,7 @@ const LobbyChat = ({ messages, isModerator, onRemoveMessageClick }) => {
         if (canScroll) {
             $(messagesEndRef.current).scrollTop(999999);
         }
-    }, [messages, canScroll]);
+    }, []);
 
     const getMessages = useCallback(() => {
         const groupedMessages = {};
