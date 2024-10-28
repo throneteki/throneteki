@@ -70,8 +70,6 @@ const Lobby = () => {
             if (event.key === 'Enter') {
                 sendMessage();
 
-                messageRef?.current.clear();
-
                 event.preventDefault();
             }
         },
@@ -136,6 +134,7 @@ const Lobby = () => {
                 }}
             >
                 <Input
+                    ref={messageRef}
                     classNames={{ inputWrapper: 'rounded-tl-none rounded-tr-none' }}
                     onKeyDown={onKeyPress}
                     onChange={(event) =>
