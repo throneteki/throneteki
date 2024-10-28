@@ -311,7 +311,7 @@ const DeckEditor = ({ deck, onBackClick }) => {
         }
     }, [currentRestrictedList, restrictedLists]);
 
-    if (isLoading || isFactionsLoading) {
+    if (isLoading || isFactionsLoading || !packs || !currentRestrictedList) {
         return <LoadingSpinner text={'Loading, please wait...'} />;
     } else if (isError || isFactionsError) {
         return (
