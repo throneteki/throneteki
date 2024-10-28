@@ -70,7 +70,10 @@ const PlayerBoard = ({
     const renderRows = useCallback(
         (rows) => {
             return rows.map((row, index) => (
-                <div className='card-row' key={`card-row-${index}`}>
+                <div
+                    className='flex justify-start min-h-0 gap-1.5 card-row'
+                    key={`card-row-${index}`}
+                >
                     {renderRow(row)}
                 </div>
             ));
@@ -80,7 +83,7 @@ const PlayerBoard = ({
 
     let rows = getCardRows();
 
-    let className = classNames('player-board', {
+    let className = classNames('flex flex-1 flex-col min-h-0 m-2 gap-1.5 justify-between', {
         'our-side': rowDirection === 'default'
     });
 

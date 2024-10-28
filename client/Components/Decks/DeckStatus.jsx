@@ -1,33 +1,36 @@
-import React from 'react';
-import classNames from 'classnames';
-import { deckStatusLabel } from './DeckHelper';
-
+import React, { useState } from 'react';
 import DeckStatusSummary from './DeckStatusSummary';
-import StatusPopOver from './StatusPopOver';
+import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react';
+import DeckStatusLabel from './DeckStatusLabel';
 
 const DeckStatus = ({ className, status }) => {
-    const restrictionsFollowed = status.faqJoustRules && status.noUnreleasedCards;
-    let classNameValue = classNames('deck-status', className, {
-        invalid: !status.basicRules || !status.noBannedCards,
-        'casual-play': status.basicRules && status.noBannedCards && !restrictionsFollowed,
-        valid: status.basicRules && status.noBannedCards && restrictionsFollowed
-    });
+    const [showPopup, setShowPopup] = useState(false);
 
     return (
-        <span className={classNameValue}>
-            <StatusPopOver status={deckStatusLabel(status)} show>
+        <Popover
+            placement='right'
+            className={className}
+            isOpen={showPopup}
+            onOpenChange={(open) => setShowPopup(open)}
+        >
+            <PopoverTrigger>
+                <div onMouseOver={() => setShowPopup(true)} onMouseOut={() => setShowPopup(false)}>
+                    <DeckStatusLabel status={status} />
+                </div>
+            </PopoverTrigger>
+            <PopoverContent className='bg-background'>
                 <div>
                     <DeckStatusSummary status={status} />
-                    {status.extendedStatus && status.extendedStatus.length !== 0 && (
-                        <ul className='deck-status-errors'>
-                            {status.extendedStatus.map((error, index) => (
+                    {status.errors && status.errors.length !== 0 && (
+                        <ul className='mt-4 border-t pt-4'>
+                            {status.errors.map((error, index) => (
                                 <li key={index}>{error}</li>
                             ))}
                         </ul>
                     )}
                 </div>
-            </StatusPopOver>
-        </span>
+            </PopoverContent>
+        </Popover>
     );
 };
 

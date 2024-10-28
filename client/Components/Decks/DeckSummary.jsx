@@ -1,43 +1,93 @@
-import React, { useCallback, useState } from 'react';
-
-import CardHoverPreview from './CardHoverPreview';
-import CardTypeGroups from './CardTypeGroups';
-import DeckSummaryHeader from './DeckSummaryHeader';
+import React, { useMemo, useState } from 'react';
 import { useGetCardsQuery } from '../../redux/middleware/api';
+import CardImage from '../Images/CardImage';
+import { sortBy } from 'underscore';
 
-const DeckSummary = ({ currentRestrictedList, deck }) => {
-    const [cardToShow, setCardToShow] = useState('');
-    const { data: cards, isLoading: isCardsLoading } = useGetCardsQuery();
+const DeckSummary = ({ deck }) => {
+    const { data: cardsResponse } = useGetCardsQuery({});
+    const [mousePos, setMousePosition] = useState({ x: 0, y: 0 });
+    const [zoomCard, setZoomCard] = useState(null);
 
-    const onCardMouseOver = useCallback(
-        (card) => {
-            let cardToDisplay = cards[card.code];
-            setCardToShow(cardToDisplay);
-        },
-        [cards]
-    );
+    const cardsByCode = useMemo(() => {
+        return cardsResponse;
+    }, [cardsResponse]);
 
-    if (!deck || isCardsLoading || !currentRestrictedList) {
-        return <div>Waiting for selected deck...</div>;
+    const groupedCards = {};
+
+    const deckCards = deck.deckCards
+        .filter((dc) => dc.type !== 'Banner')
+        .map((dc) => ({ card: cardsByCode[dc.card.code], count: dc.count }));
+
+    for (const deckCard of deckCards) {
+        const type = deckCard.card.type;
+        if (!groupedCards[type]) {
+            groupedCards[type] = [deckCard];
+        } else {
+            groupedCards[type].push(deckCard);
+        }
+    }
+
+    const splitCards = [[], [], []];
+    let cardIndex = 0;
+    let currentContainer = splitCards[0];
+    for (const [type, cards] of Object.entries(groupedCards)) {
+        currentContainer.push(
+            <div className='mb-2 mt-2' key={type}>
+                <span className={`icon me-1 icon-${type}`}></span>
+                <strong>
+                    {type[0].toUpperCase() + type.slice(1)} (
+                    {cards.reduce((acc, card) => acc + card.count, 0)})
+                </strong>
+            </div>
+        );
+        for (const deckCard of sortBy(cards, (card) => card.card.faction)) {
+            currentContainer.push(
+                <React.Fragment key={deckCard.card.code}>
+                    <div
+                        onMouseOver={() => setZoomCard(deckCard.card.code)}
+                        onMouseMove={(event) => {
+                            let y = event.clientY;
+                            const yPlusHeight = y + 420;
+
+                            if (yPlusHeight >= window.innerHeight) {
+                                y -= yPlusHeight - window.innerHeight;
+                            }
+
+                            setMousePosition({ x: event.clientX, y: y });
+                        }}
+                        onMouseOut={() => setZoomCard(null)}
+                    >
+                        {deckCard.count}x{' '}
+                        <span
+                            className={`icon me-1 icon-${type} text-${deckCard.card.faction}`}
+                        ></span>
+                        {deckCard.card.label}
+                    </div>
+                </React.Fragment>
+            );
+            cardIndex++;
+
+            if (cardIndex > 30) {
+                currentContainer = splitCards[2];
+            } else if (cardIndex > 15) {
+                currentContainer = splitCards[1];
+            }
+        }
     }
 
     return (
-        <div className='deck-summary col-xs-12'>
-            {cardToShow && <CardHoverPreview card={cardToShow} />}
-            <DeckSummaryHeader
-                currentRestrictedList={currentRestrictedList}
-                deck={deck}
-                onCardMouseOut={() => setCardToShow(undefined)}
-                onCardMouseOver={onCardMouseOver}
-            />
-            <div className='col-xs-12 no-x-padding'>
-                <CardTypeGroups
-                    cards={deck.plotCards.concat(deck.drawCards)}
-                    onCardMouseOut={() => setCardToShow(undefined)}
-                    onCardMouseOver={onCardMouseOver}
-                    useSchemes={deck.agenda && deck.agenda.code === '05045'}
-                />
-            </div>
+        <div className='mt-3 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4'>
+            {zoomCard && (
+                <div
+                    className='decklist-card-zoom fixed left-0 top-0 z-50'
+                    style={{ left: mousePos.x + 5 + 'px', top: mousePos.y + 'px' }}
+                >
+                    <CardImage imageUrl={`/img/cards/${zoomCard}.png`} size='lg' />
+                </div>
+            )}
+            <div>{splitCards[0]}</div>
+            <div>{splitCards[1]}</div>
+            <div>{splitCards[2]}</div>
         </div>
     );
 };

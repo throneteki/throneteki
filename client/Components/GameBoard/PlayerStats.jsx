@@ -1,7 +1,12 @@
 import React, { useCallback } from 'react';
-import Avatar from '../Site/Avatar';
 import { useDispatch } from 'react-redux';
 import { sendChangeStatMessage } from '../../redux/reducers/game';
+import { Avatar, Badge, Button } from '@nextui-org/react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCogs, faComment, faCopy, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import StatContainer from './StatContainer';
+import StatDisplay from './StatDisplay';
+import { toastr } from 'react-redux-toastr';
 
 const PlayerStats = ({
     stats,
@@ -16,13 +21,6 @@ const PlayerStats = ({
 }) => {
     const dispatch = useDispatch();
 
-    const sendUpdate = useCallback(
-        (type, direction) => {
-            dispatch(sendChangeStatMessage(type, direction === 'up' ? 1 : -1));
-        },
-        [dispatch]
-    );
-
     const getStatValueOrDefault = useCallback(
         (stat) => {
             if (!stats) {
@@ -34,103 +32,101 @@ const PlayerStats = ({
         [stats]
     );
 
-    const getButton = useCallback(
+    const getStatDisplay = useCallback(
         (stat, name, statToSet = stat) => {
             return (
-                <div className='state'>
-                    <span>
-                        <img
-                            src={'/img/' + name + '.png'}
-                            title={name}
-                            alt={name}
-                            style={{ width: '27px', height: '27px' }}
-                        />
-                    </span>
-                    {showControls ? (
-                        <button
-                            className='btn btn-stat'
-                            onClick={() => sendUpdate(statToSet, 'down')}
-                        >
-                            <img src='/img/Minus.png' title='-' alt='-' />
-                        </button>
-                    ) : null}
-
-                    <span>{getStatValueOrDefault(stat)}</span>
-                    {showControls ? (
-                        <button
-                            className='btn btn-stat'
-                            onClick={() => sendUpdate(statToSet, 'up')}
-                        >
-                            <img src='/img/Plus.png' title='+' alt='+' />
-                        </button>
-                    ) : null}
-                </div>
+                <StatContainer title={name}>
+                    <StatDisplay
+                        showControls={showControls}
+                        statName={name}
+                        statCode={stat}
+                        statValue={getStatValueOrDefault(stat)}
+                        onMinusClick={
+                            showControls
+                                ? () => dispatch(sendChangeStatMessage(statToSet, -1))
+                                : null
+                        }
+                        onPlusClick={
+                            showControls
+                                ? () => dispatch(sendChangeStatMessage(statToSet, 1))
+                                : null
+                        }
+                    />
+                </StatContainer>
             );
         },
-        [sendUpdate, getStatValueOrDefault, showControls]
+        [showControls, getStatValueOrDefault, dispatch]
     );
 
-    const handleSettingsClick = useCallback(
-        (event) => {
-            event.preventDefault();
-
-            if (onSettingsClick) {
-                onSettingsClick();
-            }
-        },
-        [onSettingsClick]
+    const getStatButton = (onClick, icon, title, text) => (
+        <StatContainer title={title}>
+            <Button
+                isIconOnly={!text}
+                onClick={onClick}
+                startContent={icon ? <FontAwesomeIcon icon={icon} /> : null}
+                radius='none'
+                variant='light'
+                className='h-8 p-2'
+            >
+                {text}
+            </Button>
+        </StatContainer>
     );
+    const writeChatToClipboard = useCallback((event) => {
+        event.preventDefault();
+        const messagePanel = document.getElementById('messages-panel');
 
-    const playerAvatar = (
-        <div className='player-avatar'>
-            <Avatar username={user ? user.username : undefined} />
-            <b>{user ? user.username : 'Noone'}</b>
-        </div>
-    );
-
-    let muteClass = muteSpectators ? 'glyphicon-eye-close' : 'glyphicon-eye-open';
+        if (messagePanel) {
+            navigator.clipboard
+                .writeText(messagePanel.innerText)
+                .then(() => toastr.success('Copied game chat to clipboard', null))
+                .catch((err) => toastr.error(`Could not copy game chat: ${err}`, null));
+        }
+    }, []);
 
     return (
-        <div className='panel player-stats'>
-            {playerAvatar}
+        <div className='relative margin-2 border-1 border-default-100 bg-black/35 flex items-center border-x-0'>
+            <div className='pr-1 py-1 flex items-center'>
+                <Avatar
+                    src={`/img/avatar/${user?.username}.png`}
+                    showFallback
+                    className='w-7 h-7 text-tiny'
+                />
 
-            {getButton('gold', 'Gold')}
-            {getButton('totalPower', 'Power', 'power')}
-            {getButton('initiative', 'Initiative')}
-            {getButton('claim', 'Claim')}
-            {getButton('reserve', 'Reserve')}
+                <span className='pl-2 font-bold'>{user?.username || 'Noone'}</span>
+            </div>
+            {getStatDisplay('totalPower', 'Power', 'power')}
+            {getStatDisplay('gold', 'Gold')}
+            {getStatDisplay('initiative', 'Initiative')}
+            {getStatDisplay('claim', 'Claim')}
+            {getStatDisplay('reserve', 'Reserve')}
 
             {firstPlayer ? (
-                <div className='state'>
-                    <div className='first-player'>First player</div>
-                </div>
-            ) : null}
-
-            {showControls ? (
-                <div className='state'>
-                    <button className='btn btn-transparent' onClick={handleSettingsClick}>
-                        <span className='glyphicon glyphicon-cog' />
-                        Settings
-                    </button>
-                </div>
+                <StatContainer>
+                    <div className='first-player px-2'>First player</div>
+                </StatContainer>
             ) : null}
 
             {showControls && (
-                <div className='state chat-status'>
-                    <div className='state' onClick={onMuteClick}>
-                        <button className='btn btn-transparent'>
-                            <span className={`glyphicon ${muteClass}`} />
-                        </button>
-                    </div>
-                    <div className='state' onClick={onMessagesClick}>
-                        <button className='btn btn-transparent'>
-                            <span className='glyphicon glyphicon-envelope' />
-                            <span className='chat-badge badge progress-bar-danger'>
-                                {numMessages || null}
-                            </span>
-                        </button>
-                    </div>
-                </div>
+                <StatContainer>
+                    {getStatButton(onSettingsClick, faCogs, 'Open Settings', 'Settings')}
+                    {getStatButton(
+                        onMuteClick,
+                        muteSpectators ? faEyeSlash : faEye,
+                        muteSpectators ? 'Un-mute spectators' : 'Mute spectators'
+                    )}
+                    {getStatButton(writeChatToClipboard, faCopy, 'Copy chat log')}
+                    <StatContainer>
+                        <Badge
+                            shape='circle'
+                            color='danger'
+                            content={numMessages > 99 ? '99+' : numMessages}
+                            isInvisible={!numMessages || numMessages === 0}
+                        >
+                            {getStatButton(onMessagesClick, faComment, 'Toggle chat')}
+                        </Badge>
+                    </StatContainer>
+                </StatContainer>
             )}
         </div>
     );

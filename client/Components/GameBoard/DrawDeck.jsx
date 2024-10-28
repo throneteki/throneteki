@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import CardPile from './CardPile';
 import Droppable from './Droppable';
+import { faEye, faShuffle } from '@fortawesome/free-solid-svg-icons';
 
 const DrawDeck = ({
     isMe,
@@ -9,7 +10,6 @@ const DrawDeck = ({
     cardCount,
     revealTopCard,
     onCardClick,
-    onDragDrop,
     onMouseOut,
     onMouseOver,
     popupLocation,
@@ -41,15 +41,9 @@ const DrawDeck = ({
 
     const renderDroppablePile = useCallback(
         (source, child) => {
-            return isMe ? (
-                <Droppable onDragDrop={onDragDrop} source={source}>
-                    {child}
-                </Droppable>
-            ) : (
-                child
-            );
+            return isMe ? <Droppable source={source}>{child}</Droppable> : child;
         },
-        [isMe, onDragDrop]
+        [isMe]
     );
 
     let drawDeckPopupMenu = [];
@@ -58,13 +52,13 @@ const DrawDeck = ({
         if (!showDeck) {
             drawDeckPopupMenu.push({
                 text: 'View Hidden',
-                icon: 'eye-open',
+                icon: faEye,
                 handler: handleShowDeckClick
             });
         }
         drawDeckPopupMenu.push({
             text: 'Close and Shuffle',
-            icon: 'random',
+            icon: faShuffle,
             handler: handleShuffleClick,
             close: true
         });
@@ -79,8 +73,8 @@ const DrawDeck = ({
             cards={cards}
             disablePopup={!hasVisibleCards && (spectating || !isMe)}
             hiddenTopCard={!revealTopCard}
+            numColumns={7}
             onCardClick={onCardClick}
-            onDragDrop={onDragDrop}
             onMouseOut={onMouseOut}
             onMouseOver={onMouseOver}
             onPopupChange={handlePopupChange}

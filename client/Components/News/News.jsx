@@ -1,36 +1,24 @@
 import React from 'react';
-
 import NewsItem from './NewsItem';
+import AlertPanel from '../Site/AlertPanel';
 
 const News = ({ news }) => {
     const icons = ['military', 'intrigue', 'power'];
 
     let iconIndex = 0;
-    const newsItems = news.map((newsItem) => {
-        const retNews = (
-            <NewsItem
-                key={newsItem.datePublished}
-                icon={icons[iconIndex++]}
-                date={newsItem.datePublished}
-                text={newsItem.text}
-            />
-        );
-        if (iconIndex === 3) {
-            iconIndex = 0;
-        }
-
-        return retNews;
+    const renderedNews = news.map((newsItem, newsIndex) => {
+        return <NewsItem key={newsIndex} icon={icons[iconIndex++ % 3]} newsItem={newsItem} />;
     });
 
-    if (newsItems.length === 0) {
-        return (
-            <div className='news-container'>
-                <div className='military-container'>There is no site news at the moment</div>
-            </div>
+    if (renderedNews.length === 0) {
+        renderedNews.push(
+            <AlertPanel key={0} variant='info'>
+                There is no site news at the moment
+            </AlertPanel>
         );
     }
 
-    return <div className='news-container'>{newsItems}</div>;
+    return <div className='overflow-y-auto'>{renderedNews}</div>;
 };
 
 export default News;

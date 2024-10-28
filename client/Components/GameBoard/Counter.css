@@ -1,0 +1,16 @@
+.cancel::before {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    right: 0;
+    bottom: 0;
+    width: 100%; /* Make lines wider to fully cover corners */
+    height: 2px; /* Thickness of the X lines */
+    background-color: red;
+    transform-origin: top left;
+}
+
+.cancel::before {
+    transform: rotate(45deg);
+}

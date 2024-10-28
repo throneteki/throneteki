@@ -2,9 +2,8 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import Panel from '../Components/Site/Panel';
-import TextArea from '../Components/Form/TextArea';
-import RadioGroup from '../Components/Form/RadioGroup';
 import { sendMotdMessage } from '../redux/reducers/lobby';
+import { Button, Radio, RadioGroup, Textarea } from '@nextui-org/react';
 
 const MotdAdmin = () => {
     const motd = useSelector((state) => state.lobby.motd);
@@ -24,8 +23,6 @@ const MotdAdmin = () => {
         setMotdText(motd?.message);
         setSelectedMotdType(motd ? motd.motdType : 'info');
     }, [motd]);
-
-    console.info(motd, motd?.motdType, selectedMotdType);
 
     const onMotdTextChange = useCallback((event) => {
         setMotdText(event.target.value);
@@ -50,31 +47,34 @@ const MotdAdmin = () => {
     );
 
     return (
-        <div className='col-sm-offset-2 col-sm-8'>
+        <div className='w-2/3 mx-auto'>
             <Panel title='Motd administration'>
-                <TextArea
-                    fieldClass='col-xs-12'
+                <Textarea
                     name='motd'
                     value={motdText}
-                    onChange={onMotdTextChange}
+                    onValueChange={onMotdTextChange}
                     rows='4'
                     placeholder='Enter a motd message'
                 />
-                <div className='col-xs-12'>
+                <div className='mt-2'>
                     <RadioGroup
+                        orientation='horizontal'
                         buttons={motdTypes}
-                        onValueSelected={onMotdTypeChange}
+                        onValueChange={onMotdTypeChange}
                         value={selectedMotdType}
-                    />
+                    >
+                        <Radio value='error'>Error (Red)</Radio>
+                        <Radio value='warning'>Warning (Yellow)</Radio>
+                        <Radio value='info'>Info (Blue)</Radio>
+                        <Radio value='success'>Success (Green)</Radio>
+                    </RadioGroup>
                 </div>
 
-                <button
-                    className='btn btn-primary col-xs-2 motd-button'
-                    type='button'
-                    onClick={onSaveClick}
-                >
-                    Save
-                </button>
+                <div className='mt-2'>
+                    <Button color='primary' type='button' onClick={onSaveClick}>
+                        Save
+                    </Button>
+                </div>
             </Panel>
         </div>
     );

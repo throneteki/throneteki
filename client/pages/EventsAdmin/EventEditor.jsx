@@ -1,10 +1,5 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import Input from '../../Components/Form/Input';
-import Checkbox from '../../Components/Form/Checkbox';
-import Select from '../../Components/Form/Select';
-import Typeahead from '../../Components/Form/Typeahead';
-import TextArea from '../../Components/Form/TextArea';
 import { useDispatch } from 'react-redux';
 import {
     useGetCardsQuery,
@@ -17,6 +12,8 @@ import {
 import Panel from '../../Components/Site/Panel';
 import AlertPanel from '../../Components/Site/AlertPanel';
 import { navigate } from '../../redux/reducers/navigation';
+import { Button, Input, Select, SelectItem, Switch, Textarea } from '@nextui-org/react';
+import { toastr } from 'react-redux-toastr';
 
 const formatListTextForCards = (cards, cardCodes) => {
     if (!cardCodes || !cards) {
@@ -250,8 +247,11 @@ const EventEditor = ({ eventId }) => {
             try {
                 await saveEvent(getEventFromState()).unwrap();
 
-                setTimeout(() => {}, 5000);
-            } catch (err) {}
+                toastr.success('Event saved successfully', '', { closeDuration: 5000 });
+            } catch (err) {
+                console.info(err);
+                toastr.error('Error saving event');
+            }
         },
         [getEventFromState, saveEvent]
     );
@@ -325,6 +325,36 @@ const EventEditor = ({ eventId }) => {
         [parseCardLine]
     );
 
+    useEffect(() => {
+        if (!event) {
+            return;
+        }
+
+        setName(event.name);
+        setFormat(event.format);
+        setLockDecks(event.lockDecks);
+        setUseEventGameOptions(event.useEventGameOptions);
+        if (event.useEventGameOptions) {
+            setSpectators(event.eventGameOptions.spectators);
+            setMuteSpectators(event.eventGameOptions.muteSpectators);
+            setUseGameTimeLimit(event.eventGameOptions.useGameTimeLimit);
+            setGameTimeLimit(event.eventGameOptions.gameTimeLimit);
+            setShowHand(event.eventGameOptions.showHand);
+            setUseChessClocks(event.eventGameOptions.useChessClocks);
+            setChessClockTimeLimit(event.eventGameOptions.chessClockTimeLimit);
+            setDelayToStartClock(event.eventGameOptions.delayToStartClock);
+            setPassword(event.eventGameOptions.password);
+        }
+        setRestrictSpectators(event.restrictSpectators);
+        setRestrictTableCreators(event.restrictTableCreators);
+
+        setValidTableCreators(event.validTableCreators || []);
+        setValidTableCreatorsText(formatListTextForUsers(event.validTableCreators || []));
+
+        setValidSpectators(event.validSpectators || []);
+        setValidSpectatorsText(formatListTextForUsers(event.validSpectators || []));
+    }, [event]);
+
     if (
         isLoading ||
         isCardsLoading ||
@@ -336,10 +366,9 @@ const EventEditor = ({ eventId }) => {
     }
 
     if (error) {
-        console.info(error);
         return (
             <AlertPanel
-                type='error'
+                variant='danger'
                 message={error.data?.message || 'An error occurred loading the event'}
             />
         );
@@ -348,111 +377,111 @@ const EventEditor = ({ eventId }) => {
     return (
         <div>
             <Panel title='Event Editor'>
-                <form className='form form-horizontal'>
+                <form className='flex gap-2 flex-col'>
                     <Panel title='Event Details'>
-                        <Input
-                            name='name'
-                            label='Event Name'
-                            labelClass='col-sm-3'
-                            fieldClass='col-sm-9'
-                            placeholder='Event Name'
-                            type='text'
-                            onChange={(event) => setName(event.target.value)}
-                            value={name}
-                        />
-                        <Select
-                            label='Format'
-                            labelClass='col-sm-3'
-                            fieldClass='col-sm-9'
-                            options={formats}
-                            value={format}
-                            onChange={(value) => setFormat(value.value)}
-                        />
-                        <Checkbox
-                            name='lockDecks'
-                            label='Prevent users from making changes to their decks for the duration of the event'
-                            labelClass='col-sm-10'
-                            fieldClass='col-sm-offset-3 col-sm-8'
-                            onChange={(event) => setLockDecks(event.target.checked)}
-                            checked={lockDecks}
-                        />
-                    </Panel>
-                    <Panel title='Event Game Options'>
-                        <Checkbox
-                            name='useEventGameOptions'
-                            label='Use event game options'
-                            labelClass='col-sm-4'
-                            fieldClass='col-sm-offset-3 col-sm-8'
-                            onChange={(event) => setUseEventGameOptions(event.target.checked)}
-                            checked={useEventGameOptions}
-                        />
-                        {useEventGameOptions && (
-                            <>
-                                <Checkbox
-                                    name='spectators'
-                                    label='Allow spectators'
-                                    labelClass='col-sm-4'
-                                    fieldClass='col-sm-offset-3 col-sm-8'
-                                    onChange={(event) => setSpectators(event.target.checked)}
-                                    checked={spectators}
+                        <div className='flex gap-2 flex-col'>
+                            <div className='grid grid-cols-2 gap-2'>
+                                <Input
+                                    name='name'
+                                    label='Event Name'
+                                    placeholder='Event Name'
+                                    type='text'
+                                    onChange={(event) => setName(event.target.value)}
+                                    value={name}
                                 />
+                                <Select
+                                    label='Format'
+                                    items={formats}
+                                    selectedKeys={[format]}
+                                    onChange={(e) => setFormat(e.target.value)}
+                                >
+                                    {formats?.map((format) => (
+                                        <SelectItem key={format.value} value={format.value}>
+                                            {format.name}
+                                        </SelectItem>
+                                    ))}
+                                </Select>
+                            </div>
+                            <Switch
+                                name='lockDecks'
+                                onChange={(event) => setLockDecks(event.target.checked)}
+                                isSelected={lockDecks}
+                            >
+                                Prevent users from making changes to their decks for the duration of
+                                the event
+                            </Switch>
+                            <Switch
+                                name='useEventGameOptions'
+                                onChange={(event) => setUseEventGameOptions(event.target.checked)}
+                                isSelected={useEventGameOptions}
+                            >
+                                Use event game options
+                            </Switch>
+                        </div>
+                    </Panel>
+                    {useEventGameOptions && (
+                        <Panel title='Event Game Options'>
+                            <div className='grid grid-cols-2 gap-2'>
+                                <Switch
+                                    className='col-span-2'
+                                    name='spectators'
+                                    onChange={(event) => setSpectators(event.target.checked)}
+                                    isSelected={spectators}
+                                >
+                                    Allow spectators
+                                </Switch>
                                 {spectators && (
                                     <>
-                                        <Checkbox
+                                        <Switch
                                             name='muteSpectators'
-                                            label='Mute spectators'
-                                            labelClass='col-sm-4'
-                                            fieldClass='col-sm-offset-3 col-sm-8'
                                             onChange={(event) =>
                                                 setMuteSpectators(event.target.checked)
                                             }
-                                            checked={muteSpectators}
-                                        />
-                                        <Checkbox
+                                            isSelected={muteSpectators}
+                                        >
+                                            Mute spectators
+                                        </Switch>
+                                        <Switch
                                             name='showHand'
-                                            label='Show hands to spectators'
-                                            labelClass='col-sm-4'
-                                            fieldClass='col-sm-offset-3 col-sm-8'
                                             onChange={(event) => setShowHand(event.target.checked)}
-                                            checked={showHand}
-                                        />
+                                            isSelected={showHand}
+                                        >
+                                            Show hands to spectators
+                                        </Switch>
                                     </>
                                 )}
-                                <Checkbox
+                                <Switch
                                     name='useGameTimeLimit'
-                                    label='Use a time limit (in minutes)'
-                                    labelClass='col-sm-4'
-                                    fieldClass='col-sm-offset-3 col-sm-8'
+                                    className='col-span-2'
                                     onChange={onUseGameTimeLimitClick}
-                                    checked={useGameTimeLimit}
-                                />
+                                    isSelected={useGameTimeLimit}
+                                >
+                                    Use a time limit (in minutes)
+                                </Switch>
                                 {useGameTimeLimit && (
                                     <Input
+                                        className='col-span-2 w-1/2'
                                         name='gameTimeLimit'
                                         label='Timelimit in minutes'
-                                        labelClass='col-sm-3'
-                                        fieldClass='col-sm-9'
                                         placeholder='Timelimit in minutes'
                                         type='number'
                                         onChange={(event) => setGameTimeLimit(event.target.value)}
                                         value={gameTimeLimit}
                                     />
                                 )}
-                                <Checkbox
+                                <Switch
                                     name='useChessClocks'
-                                    label='Use chess clocks with a time limit per player'
-                                    labelClass='col-sm-8'
-                                    fieldClass='col-sm-offset-3 col-sm-8'
+                                    className='col-span-2'
                                     onChange={onUseChessClocksClick}
-                                    checked={useChessClocks}
-                                />
+                                    isSelected={useChessClocks}
+                                >
+                                    Use chess clocks with a time limit per player
+                                </Switch>
                                 {useChessClocks && (
                                     <>
                                         <Input
                                             name='chessClockTimeLimit'
                                             label='Timelimit in minutes'
-                                            labelClass='col-sm-3'
-                                            fieldClass='col-sm-9'
                                             placeholder='Timelimit in minutes'
                                             type='number'
                                             onChange={(event) =>
@@ -463,8 +492,6 @@ const EventEditor = ({ eventId }) => {
                                         <Input
                                             name='delayToStartClock'
                                             label='Delay to start the clock in seconds'
-                                            labelClass='col-sm-3'
-                                            fieldClass='col-sm-9'
                                             placeholder='Delay to start the clock in seconds'
                                             type='number'
                                             onChange={(event) =>
@@ -477,60 +504,56 @@ const EventEditor = ({ eventId }) => {
                                 <Input
                                     name='password'
                                     label='Password'
-                                    labelClass='col-sm-3'
-                                    fieldClass='col-sm-9'
                                     placeholder='Password'
                                     type='text'
                                     onChange={(event) => setPassword(event.target.value)}
                                     value={password}
                                 />
-                            </>
-                        )}
-                    </Panel>
+                            </div>
+                        </Panel>
+                    )}
 
                     <Panel title='Settings for Judges/Streamers'>
-                        <Checkbox
-                            name='restrictTableCreators'
-                            label='Restrict table creators to those on the following list'
-                            labelClass='col-sm-8'
-                            fieldClass='col-sm-offset-3 col-sm-8'
-                            onChange={(event) => setRestrictTableCreators(event.target.checked)}
-                            checked={restrictTableCreators}
-                        />
-                        {restrictTableCreators && (
-                            <TextArea
-                                label='Valid Creators'
-                                labelClass='col-sm-3'
-                                fieldClass='col-sm-9'
-                                rows='10'
-                                value={validTableCreatorsText}
-                                onChange={(event) => {
-                                    setValidTableCreatorsText(event.target.value);
-                                    setValidTableCreators(getUsernameList(event));
-                                }}
-                            />
-                        )}
-                        <Checkbox
-                            name='restrictSpectators'
-                            label='Restrict spectators to those on the following list'
-                            labelClass='col-sm-8'
-                            fieldClass='col-sm-offset-3 col-sm-8'
-                            onChange={(event) => setRestrictSpectators(event.target.checked)}
-                            checked={restrictSpectators}
-                        />
-                        {restrictSpectators && (
-                            <TextArea
-                                label='Valid Spectators'
-                                labelClass='col-sm-3'
-                                fieldClass='col-sm-9'
-                                rows='10'
-                                value={validSpectatorsText}
-                                onChange={(event) => {
-                                    setValidSpectatorsText(event.target.value);
-                                    setValidSpectators(getUsernameList(event));
-                                }}
-                            />
-                        )}
+                        <div className='flex flex-col gap-2'>
+                            <Switch
+                                name='restrictTableCreators'
+                                onChange={(event) => setRestrictTableCreators(event.target.checked)}
+                                isSelected={restrictTableCreators}
+                            >
+                                Restrict table creators to those on the following list
+                            </Switch>
+                            {restrictTableCreators && (
+                                <Textarea
+                                    label='Valid Creators'
+                                    rows='10'
+                                    value={validTableCreatorsText}
+                                    onChange={(event) => {
+                                        setValidTableCreatorsText(event.target.value);
+                                        setValidTableCreators(getUsernameList(event));
+                                    }}
+                                />
+                            )}
+                            <Switch
+                                name='restrictSpectators'
+                                onChange={(event) => setRestrictSpectators(event.target.checked)}
+                                isSelected={restrictSpectators}
+                            >
+                                Restrict spectators to those on the following list
+                            </Switch>
+                            {restrictSpectators && (
+                                <Textarea
+                                    label='Valid Spectators'
+                                    labelClass='col-sm-3'
+                                    fieldClass='col-sm-9'
+                                    rows='10'
+                                    value={validSpectatorsText}
+                                    onChange={(event) => {
+                                        setValidSpectatorsText(event.target.value);
+                                        setValidSpectators(getUsernameList(event));
+                                    }}
+                                />
+                            )}
+                        </div>
                     </Panel>
                     {format === 'draft' && (
                         <div>
@@ -563,7 +586,7 @@ const EventEditor = ({ eventId }) => {
                     {format === 'custom-joust' && (
                         <div>
                             <Panel title='Custom Restricted/Banned List'>
-                                <Typeahead
+                                {/* <Typeahead
                                     label='Card'
                                     labelClass={'col-sm-3 col-xs-2'}
                                     fieldClass='col-sm-4 col-xs-5'
@@ -617,8 +640,8 @@ const EventEditor = ({ eventId }) => {
                                             </ul>
                                         </div>
                                     </div>
-                                </Typeahead>
-                                <TextArea
+                                </Typeahead> */}
+                                <Textarea
                                     label='Restricted List'
                                     labelClass='col-sm-3'
                                     fieldClass='col-sm-9'
@@ -631,7 +654,7 @@ const EventEditor = ({ eventId }) => {
                                         setRestricted(cards);
                                     }}
                                 />
-                                <TextArea
+                                <Textarea
                                     label='Banned List'
                                     labelClass='col-sm-3'
                                     fieldClass='col-sm-9'
@@ -644,7 +667,7 @@ const EventEditor = ({ eventId }) => {
                                         setBanned(cards);
                                     }}
                                 />
-                                <TextArea
+                                <Textarea
                                     label='Banned Pods'
                                     labelClass='col-sm-3'
                                     fieldClass='col-sm-9'
@@ -655,23 +678,22 @@ const EventEditor = ({ eventId }) => {
                             </Panel>
                         </div>
                     )}
-                    <div className='form-group'>
-                        <div className='col-sm-offset-3 col-sm-8'>
-                            <button
-                                type='submit'
-                                className='btn btn-primary'
-                                onClick={handleSaveClick}
-                            >
-                                Save {isSaveLoading && <span className='spinner button-spinner' />}
-                            </button>
-                            <button
-                                type='button'
-                                className='btn btn-primary'
-                                onClick={() => dispatch(navigate('/events'))}
-                            >
-                                Cancel
-                            </button>
-                        </div>
+                    <div className='flex gap-2'>
+                        <Button
+                            isLoading={isSaveLoading}
+                            color='primary'
+                            type='submit'
+                            onClick={handleSaveClick}
+                        >
+                            Save
+                        </Button>
+                        <Button
+                            type='button'
+                            color='primary'
+                            onClick={() => dispatch(navigate('/events'))}
+                        >
+                            Cancel
+                        </Button>
                     </div>
                 </form>
             </Panel>

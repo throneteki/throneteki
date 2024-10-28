@@ -2,7 +2,7 @@
 
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { accountLoggedIn } from '../reducers/auth';
-import { startConnecting } from '../reducers/lobby';
+import { sendAuthenticateMessage } from '../reducers/lobby';
 import { navigate } from '../reducers/navigation';
 
 const TagTypes = {
@@ -79,7 +79,7 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
                 )
             );
 
-            api.dispatch(startConnecting());
+            api.dispatch(sendAuthenticateMessage());
 
             result = await baseQuery(args, api, extraOptions);
         } else {
@@ -89,6 +89,10 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
         return {
             error: result.data.message || 'An unknown error occured. Please try again later.'
         };
+    }
+
+    if (api.endpoint === 'getDecks' || api.endpoint === 'getAllNews') {
+        return result;
     }
 
     if (result.data) {
@@ -103,9 +107,17 @@ export const apiSlice = createApi({
     tagTypes: Object.values(TagTypes),
     endpoints: (builder) => ({
         getNews: builder.query({
-            query: (limit) => ({
-                url: '/news',
-                params: { limit }
+            query: () => ({
+                url: '/news'
+            }),
+            providesTags: (result = { data: [] }) => [
+                TagTypes.News,
+                ...(result.data || []).map(({ id }) => ({ type: TagTypes.News, id }))
+            ]
+        }),
+        getAllNews: builder.query({
+            query: () => ({
+                url: '/news/all'
             }),
             providesTags: (result = { data: [] }) => [
                 TagTypes.News,
@@ -130,10 +142,21 @@ export const apiSlice = createApi({
             ]
         }),
         getDecks: builder.query({
-            query: () => '/decks',
+            query: (loadOptions) => {
+                return {
+                    url: '/decks',
+                    params: {
+                        pageSize: loadOptions.pageSize,
+                        pageNumber: loadOptions.pageIndex,
+                        sorting: loadOptions.sorting,
+                        filters: loadOptions.columnFilters,
+                        restrictedList: loadOptions.restrictedList
+                    }
+                };
+            },
             providesTags: (result = { data: [] }) => [
                 TagTypes.Deck,
-                ...(result.data || [].map(({ _id }) => ({ type: TagTypes.Deck, _id })))
+                ...result.data.map(({ _id }) => ({ type: TagTypes.Deck, _id }))
             ]
         }),
         getCards: builder.query({
@@ -193,6 +216,16 @@ export const apiSlice = createApi({
             }),
             invalidatesTags: [TagTypes.Deck]
         }),
+        deleteDecks: builder.mutation({
+            query: (deckIds) => ({
+                url: '/decks',
+                method: 'DELETE',
+                body: {
+                    deckIds: deckIds
+                }
+            }),
+            invalidatesTags: [TagTypes.Deck]
+        }),
         getDeck: builder.query({
             query: (deckId) => {
                 return {
@@ -206,6 +239,13 @@ export const apiSlice = createApi({
                 url: `/decks/${deck._id}`,
                 method: 'PUT',
                 body: deck
+            }),
+            invalidatesTags: (result, error, arg) => [{ type: TagTypes.Deck, _id: arg._id }]
+        }),
+        toggleDeckFavourite: builder.mutation({
+            query: (deckId) => ({
+                url: `/decks/${deckId}/toggleFavourite`,
+                method: 'POST'
             }),
             invalidatesTags: (result, error, arg) => [{ type: TagTypes.Deck, _id: arg._id }]
         }),
@@ -325,7 +365,7 @@ export const apiSlice = createApi({
             invalidatesTags: [TagTypes.BanList]
         }),
         removeBanListEntry: builder.mutation({
-            query: ({ id }) => ({
+            query: (id) => ({
                 url: `/banlist/${id}`,
                 method: 'DELETE'
             }),
@@ -364,7 +404,7 @@ export const apiSlice = createApi({
         saveEvent: builder.mutation({
             query: (event) => ({
                 url: `/events/${event._id || ''}`,
-                method: event.id ? 'PUT' : 'POST',
+                method: event._id ? 'PUT' : 'POST',
                 body: event
             }),
             invalidatesTags: (result, error, arg) => [{ type: TagTypes.Event, _id: arg._id }]
@@ -430,6 +470,7 @@ export const apiSlice = createApi({
 
 export const {
     useGetNewsQuery,
+    useGetAllNewsQuery,
     useGetDecksQuery,
     useGetCardsQuery,
     useGetRestrictedListQuery,
@@ -443,6 +484,7 @@ export const {
     useDeleteDeckMutation,
     useGetDeckQuery,
     useSaveDeckMutation,
+    useToggleDeckFavouriteMutation,
     useSaveProfileMutation,
     useUpdateAvatarMutation,
     useUnlinkPatreonMutation,
@@ -472,5 +514,6 @@ export const {
     useResetPasswordMutation,
     useLinkPatreonMutation,
     useDeleteDraftCubeMutation,
-    useRemoveMessageMutation
+    useRemoveMessageMutation,
+    useDeleteDecksMutation
 } = apiSlice;

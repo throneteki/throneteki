@@ -14,7 +14,7 @@ class PendingGame {
         this.name = details.name;
         this.event = details.event || { _id: 'none' };
         this.restrictedList = details.restrictedList;
-        this.allowSpectators = details.spectators;
+        this.allowSpectators = details.allowSpectators;
         this.showHand = details.showHand;
         this.gamePrivate = details.gamePrivate;
         this.gameType = details.gameType;

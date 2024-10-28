@@ -1,20 +1,15 @@
 import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheckCircle, faTimesCircle, faBan } from '@fortawesome/free-solid-svg-icons';
 
-const ServerStatus = (props) => {
-    const { connecting, connected, responseTime, serverType } = props;
-
+const ServerStatus = ({ connecting, connected, responseTime, serverType }) => {
     const connectionStatus =
         (connected && 'Connected') || (connecting && 'Connecting') || 'Disconnected';
-    let className =
-        (connected && 'glyphicon-ok-sign') ||
-        (connecting && 'glyphicon-remove-sign') ||
-        'glyphicon-ban-circle';
-
-    className += ' glyphicon';
+    const connectionIcon = (connected && faCheckCircle) || (connecting && faTimesCircle) || faBan;
 
     const toolTip = `${serverType} is ${connectionStatus}`;
 
-    const pingLevel = `text-${
+    const pingLevel = `text-medium text-${
         connected
             ? responseTime
                 ? (responseTime < 150 && 'success') || (responseTime < 300 && 'warning') || 'danger'
@@ -29,12 +24,14 @@ const ServerStatus = (props) => {
     }`;
 
     return (
-        <li className='navbar-item'>
+        <div className='font-[PoppinsMedium] text-large text-nowrap'>
             <span className={pingLevel}>
-                {pingText2} <span className={className} title={toolTip} />
+                {pingText2} <FontAwesomeIcon icon={connectionIcon} title={toolTip} />
             </span>
-        </li>
+        </div>
     );
 };
+
+ServerStatus.displayName = 'ServerStatus';
 
 export default ServerStatus;

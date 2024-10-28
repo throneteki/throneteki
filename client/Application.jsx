@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import $ from 'jquery';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Sentry from '@sentry/react';
@@ -10,6 +10,16 @@ import { useVerifyAuthenticationQuery } from './redux/middleware/api';
 import { setAuthTokens, setUser } from './redux/reducers/auth';
 import { startConnecting } from './redux/reducers/lobby';
 import { navigate } from './redux/reducers/navigation';
+import Background from './assets/img/bgs/mainbg.png';
+import BlankBg from './assets/img/bgs/blank.png';
+import StandardBg from './assets/img/bgs/background.png';
+import WinterBg from './assets/img/bgs/background2.png';
+
+const backgrounds = {
+    none: BlankBg,
+    BG1: StandardBg,
+    BG2: WinterBg
+};
 
 const Application = () => {
     const router = new Router();
@@ -17,6 +27,7 @@ const Application = () => {
     const currentGame = useSelector((state) => state.lobby.currentGame);
     const path = useSelector((state) => state.navigation.path);
     const { user, token, refreshToken } = useSelector((state) => state.auth);
+    const bgRef = useRef();
 
     const [incompatibleBrowser, setIncompatibleBrowser] = useState(false);
     const [cannotLoad, setCannotLoad] = useState(false);
@@ -69,44 +80,51 @@ const Application = () => {
     if (incompatibleBrowser) {
         component = (
             <AlertPanel
-                type='error'
+                variant='danger'
                 message='Your browser does not provide the required functionality for this site to work.  Please upgrade your browser.  The site works best with a recet version of Chrome, Safari or Firefox'
             />
         );
     } else if (cannotLoad) {
         component = (
             <AlertPanel
-                type='error'
+                variant='danger'
                 message='This site requires the ability to store cookies and local site data to function.  Please enable these features to use the site.'
             />
         );
     }
 
-    let backgroundClass = 'bg';
-    if (gameBoardVisible && user) {
-        switch (user.settings.background) {
-            case 'BG1':
-                backgroundClass = 'bg-board';
-                break;
-            case 'BG2':
-                backgroundClass = 'bg-board2';
-                break;
-            default:
-                backgroundClass = '';
-                break;
+    useEffect(() => {
+        if (gameBoardVisible && user) {
+            const settings = user.settings;
+            const background = settings.background;
+
+            if (bgRef.current && background === 'custom' && settings.customBackgroundUrl) {
+                bgRef.current.style.backgroundImage = `url('/img/bgs/${settings.customBackgroundUrl}')`;
+            } else if (bgRef.current) {
+                bgRef.current.style.backgroundImage = `url('${backgrounds[background]}')`;
+            }
+        } else if (bgRef.current) {
+            bgRef.current.style.backgroundImage = `url('${Background}')`;
         }
-    }
+    }, [gameBoardVisible, user]);
 
     return (
-        <div className={backgroundClass}>
-            <NavBar title='The Iron Throne' />
-            <div className='wrapper'>
-                <div className='container content'>
+        <div>
+            <NavBar />
+            <main role='main'>
+                <div
+                    className='absolute bottom-0 left-0 right-0 top-12 bg-cover bg-center bg-no-repeat'
+                    ref={bgRef}
+                >
                     <Sentry.ErrorBoundary fallback={<p>An error has occurred</p>}>
-                        {isLoading ? <div>Please wait...</div> : component}
+                        {isLoading ? (
+                            <div>Please wait...</div>
+                        ) : (
+                            <div className='container mt-4'>{component}</div>
+                        )}
                     </Sentry.ErrorBoundary>
                 </div>
-            </div>
+            </main>
         </div>
     );
 };

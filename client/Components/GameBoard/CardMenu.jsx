@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import classNames from 'classnames';
+import { Button } from '@nextui-org/react';
 
 const CardMenu = ({ menu, onMenuItemClick }) => {
     const handleMenuItemClick = useCallback(
@@ -12,17 +12,26 @@ const CardMenu = ({ menu, onMenuItemClick }) => {
     );
 
     const menuItems = menu.map((menuItem, index) => {
-        let className = classNames('menu-item', {
-            disabled: !!menuItem.disabled
-        });
         return (
-            <div key={index} className={className} onClick={() => handleMenuItemClick(menuItem)}>
+            <Button
+                key={index}
+                className={'cursor-pointer'}
+                variant='ghost'
+                size='sm'
+                radius='sm'
+                isDisabled={!!menuItem.disabled}
+                onPress={() => handleMenuItemClick(menuItem)}
+            >
                 {menuItem.text}
-            </div>
+            </Button>
         );
     });
 
-    return <div className='panel menu'>{menuItems}</div>;
+    return (
+        <div className='bg-black/65 p-1 absolute top-0 left-full z-20 flex gap-1 flex-col rounded-md'>
+            {menuItems}
+        </div>
+    );
 };
 
 export default CardMenu;

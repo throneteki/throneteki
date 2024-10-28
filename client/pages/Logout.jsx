@@ -43,8 +43,8 @@ const Logout = () => {
 
     return (
         <div className='col-sm-6 col-sm-offset-3'>
-            {success && <AlertPanel type='success' message={success} />}
-            {error && <AlertPanel type='error' message={error} />}
+            {success && <AlertPanel variant='success' message={success} />}
+            {error && <AlertPanel variant='danger' message={error} />}
 
             {isLoading && <span>Logging you out of your account, please wait...</span>}
         </div>

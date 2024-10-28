@@ -1,575 +1,602 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { validateDeck } from '../../../deck-helper';
+import React, { useEffect, useMemo, useState } from 'react';
 
-import Input from '../Form/Input';
-import Select from '../Form/Select';
-import Typeahead from '../Form/Typeahead';
-import TextArea from '../Form/TextArea';
-import RestrictedListDropdown from './RestrictedListDropdown';
-import { lookupCardByName } from './DeckParser';
+import { BannersForFaction, Constants } from '../../constants';
+import ReactTable from '../Table/ReactTable';
+import DeckSummary from './DeckSummary';
+import AlertPanel from '../Site/AlertPanel';
 import {
+    Button,
+    ButtonGroup,
+    Card,
+    CardBody,
+    Input,
+    Modal,
+    ModalBody,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    Select,
+    SelectItem,
+    Textarea,
+    extendVariants
+} from '@nextui-org/react';
+import LoadingSpinner from '../Site/LoadingSpinner';
+import {
+    useAddDeckMutation,
     useGetCardsQuery,
-    useGetEventsQuery,
     useGetFactionsQuery,
     useGetPacksQuery,
-    useGetRestrictedListQuery
+    useGetRestrictedListQuery,
+    useSaveDeckMutation
 } from '../../redux/middleware/api';
-import DeckWrapper from '../../../deck-helper/DeckWrapper';
 import { navigate } from '../../redux/reducers/navigation';
+import { useDispatch } from 'react-redux';
+import FactionImage from '../Images/FactionImage';
+import { validateDeck } from '../../../deck-helper';
+import RestrictedListDropdown from './RestrictedListDropdown';
+import DeckStatus from './DeckStatus';
+import { processThronesDbDeckText } from './DeckHelper';
 
-const isAllianceAgenda = (agenda) => {
-    return agenda && agenda.code === '06018';
-};
-
-const formatCardListItem = (card) => {
-    if (card.card.custom) {
-        let typeCode = card.card.type;
-        let typeName = typeCode[0].toUpperCase() + typeCode.slice(1);
-        return card.count + ' Custom ' + typeName + ' - ' + card.card.name;
+const SmallButton = extendVariants(Button, {
+    variants: {
+        size: {
+            xs: 'px-2 min-w-8 h-8 text-small gap-unit-1 border'
+        }
     }
+});
 
-    return card.count + ' ' + card.card.label;
+const factionToTextColourMap = {
+    baratheon: 'text-baratheon',
+    greyjoy: 'text-greyjoy',
+    lannister: 'text-lannister',
+    martell: 'text-martell',
+    neutral: 'text-neutral',
+    stark: 'text-startl',
+    targaryen: 'text-targaryen',
+    thenightswatch: 'text-thenightswatch',
+    tyrell: 'text-tyrell'
 };
 
-const addCard = (list, card, number) => {
-    if (list[card.code]) {
-        list[card.code].count += number;
-    } else {
-        list.push({ count: number, card: card });
-    }
-};
-
-const DeckEditor = ({ deck, onDeckUpdated, onDeckSave, isSaveLoading, onRestrictedListChange }) => {
+const DeckEditor = ({ deck, onBackClick }) => {
     const dispatch = useDispatch();
-
-    const { data: events, isLoading } = useGetEventsQuery();
-    const { data: packs, isLoading: isPacksLoading } = useGetPacksQuery();
-    const { data: factions, isLoading: isFactionsLoading } = useGetFactionsQuery();
-    const { data: restrictedLists, isLoading: isRestrictedListLoading } =
-        useGetRestrictedListQuery();
-    const { data: cards, isLoading: isCardsLoading } = useGetCardsQuery();
-
-    const [bannerCards, setBannerCards] = useState(deck?.bannerCards || []);
-    const [cardList, setCardList] = useState('');
-    const [deckName, setDeckName] = useState(deck?.name || 'New Deck');
-    const [drawCards, setDrawCards] = useState(deck?.drawCards || []);
-    const [faction, setFaction] = useState(deck?.faction || (factions && factions['baratheon']));
-    const [numberToAdd, setNumberToAdd] = useState(1);
-    const [plotCards, setPlotCards] = useState(deck?.plotCards || []);
-    const [showBanners, setShowBanners] = useState(
-        deck?.agenda ? isAllianceAgenda(deck?.agenda) : false
+    const { data: cards, isLoading, isError } = useGetCardsQuery({});
+    const [addDeck, { isLoading: isAddLoading }] = useAddDeckMutation();
+    const [saveDeck, { isLoading: isSaveLoading }] = useSaveDeckMutation();
+    const { data: packs } = useGetPacksQuery();
+    const { data: restrictedLists } = useGetRestrictedListQuery();
+    const {
+        data: factions,
+        isLoading: isFactionsLoading,
+        isError: isFactionsError
+    } = useGetFactionsQuery({});
+    const [factionFilter, setFactionFilter] = useState(
+        [deck.faction.value]
+            .concat(['neutral'])
+            .concat(
+                deck.drawCards
+                    .filter((a) => BannersForFaction[a.card.code])
+                    .map((a) => BannersForFaction[a.card.code])
+            )
     );
-    const [selectedBanner, setSelectedBanner] = useState({});
-    const [cardToAdd, setCardToAdd] = useState();
-    const [eventId, setEventId] = useState(deck?.eventId);
-    const [deckId, _] = useState(deck?._id);
-    const [agenda, setAgenda] = useState(deck?.agenda);
+    const [typeFilter, setTypeFilter] = useState(['character', 'agenda', 'plot']);
+    const [deckCards, setDeckCards] = useState(
+        (deck.agenda ? [{ card: deck.agenda, count: 1 }] : [])
+            .concat(deck.drawCards || [])
+            .concat(deck.plotCards || [])
+            .concat(deck.bannerCards?.map((bc) => ({ card: bc, count: 1 })) || [])
+    );
+    const [deckName, setDeckName] = useState(deck.name);
+    const [faction, setFaction] = useState(deck.faction);
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
+    const [showImportPopup, setShowImportPopup] = useState(false);
+    const [deckText, setDeckText] = useState();
+    const [pageNumber, setPageNumber] = useState(0);
+
     const [currentRestrictedList, setCurrentRestrictedList] = useState(
         restrictedLists && restrictedLists[0]
     );
+    const cardsByCode = cards;
+    const factionsByCode = factions;
 
-    useEffect(() => {
-        if (!faction && factions) {
-            setFaction(factions['baratheon']);
+    const deckToSave = useMemo(() => {
+        if (!factionsByCode || !cardsByCode || !packs || !currentRestrictedList) {
+            return {};
         }
-    }, [faction, factions]);
 
-    useEffect(() => {
-        onRestrictedListChange && onRestrictedListChange(currentRestrictedList);
-    }, [currentRestrictedList, onRestrictedListChange]);
-
-    const currentDeck = useMemo(() => {
-        let retDeck = {
-            _id: deckId,
+        const saveDeck = {
+            _id: deck._id,
             name: deckName,
-            faction: faction,
-            agenda: agenda,
-            bannerCards: bannerCards,
-            plotCards: plotCards,
-            drawCards: drawCards,
-            eventId: eventId,
-            status: {}
+            faction: factionsByCode[faction.value],
+            agenda: deck.agenda && cardsByCode[deck.agenda.code],
+            bannerCards: [],
+            plotCards: [],
+            drawCards: []
         };
 
-        if (!faction) {
-            return retDeck;
+        saveDeck.bannerCards = deckCards
+            .filter((dc) => dc.card.code !== deck.agenda.code && dc.card.type === 'agenda')
+            .map((c) => c.card);
+
+        for (const deckCard of deckCards.filter(
+            (dc) => cardsByCode[dc.card.code].type === 'plot'
+        )) {
+            saveDeck.plotCards.push(deckCard);
         }
 
-        const wrappedDeck = new DeckWrapper(retDeck);
-
-        retDeck.plotCount = wrappedDeck.countPlotCards();
-        retDeck.drawCount = wrappedDeck.countDrawCards();
-
-        if ((!restrictedLists && !currentRestrictedList) || !packs) {
-            retDeck.status = {};
-        } else {
-            for (const restrictedList of restrictedLists) {
-                retDeck.status[restrictedList._id] = validateDeck(retDeck, {
-                    packs: packs,
-                    restrictedLists: [restrictedList]
-                });
-            }
+        for (const deckCard of deckCards.filter(
+            (dc) =>
+                cardsByCode[dc.card.code].type !== 'plot' &&
+                cardsByCode[dc.card.code].type !== 'agenda'
+        )) {
+            saveDeck.drawCards.push(deckCard);
         }
 
-        return retDeck;
+        if (!saveDeck.status) {
+            saveDeck.status = {};
+        }
+
+        saveDeck.status[currentRestrictedList._id] = validateDeck(saveDeck, {
+            packs: packs,
+            restrictedLists: [currentRestrictedList]
+        });
+
+        return saveDeck;
     }, [
-        agenda,
-        bannerCards,
+        cardsByCode,
         currentRestrictedList,
-        deckId,
+        deck._id,
+        deck.agenda,
+        deckCards,
         deckName,
-        drawCards,
-        eventId,
-        faction,
-        packs,
-        plotCards,
-        restrictedLists
+        faction.value,
+        factionsByCode,
+        packs
     ]);
 
-    const agendas = useMemo(
-        () =>
-            (cards &&
-                Object.values(cards).reduce((acc, card) => {
-                    if (card.type === 'agenda') {
-                        acc[card.code] = card;
-                    }
-                    return acc;
-                }, {})) ||
-            [],
-        [cards]
-    );
-
-    const banners = useMemo(
-        () =>
-            cards &&
-            Object.values(cards).filter((card) => {
-                return card.traits.some((t) => t.toLowerCase() === 'banner');
-            }),
-        [cards]
-    );
-
-    useEffect(() => {
-        if (!packs || !currentRestrictedList || !restrictedLists) {
-            return;
-        }
-
-        onDeckUpdated && onDeckUpdated(currentDeck);
-    }, [currentDeck, currentRestrictedList, onDeckUpdated, packs, restrictedLists]);
-
-    const onRemoveBanner = useCallback(
-        (banner) => {
-            const banners = bannerCards.filter((card) => {
-                return card.code !== banner.code;
-            });
-
-            setBannerCards(banners);
-        },
-        [bannerCards]
-    );
-
-    const onSaveClick = useCallback(
-        (event) => {
-            event.preventDefault();
-
-            onDeckSave && onDeckSave(currentDeck);
-        },
-        [currentDeck, onDeckSave]
-    );
-
-    const onCancelClick = useCallback(() => {
-        dispatch(navigate('/decks'));
-    }, [dispatch]);
-
-    const onAddBanner = useCallback(
-        (event) => {
-            event.preventDefault();
-
-            if (!selectedBanner || !selectedBanner.code) {
-                return;
-            }
-
-            // Don't allow more than 2 banners
-            if (bannerCards.length >= 2) {
-                return;
-            }
-
-            // Don't allow duplicate banners
-            if (
-                bannerCards.some((banner) => {
-                    return banner.code === selectedBanner.code;
-                })
-            ) {
-                return;
-            }
-
-            let banners = bannerCards;
-            banners.push(selectedBanner);
-
-            setBannerCards(banners);
-        },
-        [bannerCards, setBannerCards, selectedBanner]
-    );
-
-    const onAddCard = useCallback(
-        (event) => {
-            event.preventDefault();
-
-            if (!cardToAdd || !cardToAdd.label) {
-                return;
-            }
-
-            let newCardList = cardList;
-            newCardList += `${numberToAdd}  ${cardToAdd.label}\n`;
-
-            if (cardToAdd.type === 'plot') {
-                let plots = [...plotCards];
-                addCard(plots, cardToAdd, parseInt(numberToAdd));
-                setPlotCards(plots);
-            } else {
-                let cards = [...drawCards];
-                addCard(cards, cardToAdd, parseInt(numberToAdd));
-                setDrawCards(cards);
-            }
-
-            setCardList(newCardList);
-        },
-        [cardToAdd, drawCards, numberToAdd, plotCards, cardList]
-    );
-
-    const parseCardLine = useCallback(
-        (line) => {
-            const pattern = /^(\d+)x?\s+(.+)$/;
-
-            let match = line.trim().match(pattern);
-            if (!match) {
-                return { count: 0 };
-            }
-
-            let count = parseInt(match[1]);
-            let card = lookupCardByName({
-                cardName: match[2],
-                cards: Object.values(cards),
-                packs: packs
-            });
-
-            return { count: count, card: card };
-        },
-        [cards, packs]
-    );
-
-    const onAgendaChange = useCallback(
-        (selectedAgenda) => {
-            setAgenda(selectedAgenda);
-            setShowBanners(isAllianceAgenda(selectedAgenda));
-            if (!showBanners) {
-                setBannerCards([]);
-            }
-        },
-        [showBanners]
-    );
-
-    const onCardListChange = useCallback(
-        (event) => {
-            let split = event.target.value.split('\n');
-
-            let headerMark = split.findIndex((line) => line.match(/^Packs:/));
-            if (headerMark >= 0) {
-                // ThronesDB-style deck header found
-                // extract deck title, faction, agenda, and banners
-                let header = split.slice(0, headerMark).filter((line) => line !== '');
-                split = split.slice(headerMark);
-
-                if (header.length >= 2) {
-                    setDeckName(header[0]);
-
-                    let newFaction = Object.values(factions).find(
-                        (faction) => faction.name === header[1].trim()
-                    );
-                    if (newFaction) {
-                        setFaction(newFaction);
-                    }
-
-                    header = header.slice(2);
-                    if (header.length >= 1) {
-                        let rawAgenda, rawBanners;
-
-                        if (
-                            header.some((line) => {
-                                return line.trim() === 'Alliance';
-                            })
-                        ) {
-                            rawAgenda = 'Alliance';
-                            rawBanners = header.filter((line) => line.trim() !== 'Alliance');
-                        } else {
-                            rawAgenda = header[0].trim();
-                        }
-
-                        let newAgenda = lookupCardByName({
-                            cardName: rawAgenda,
-                            cards: Object.values(cards),
-                            packs: packs
-                        });
-                        if (newAgenda) {
-                            setAgenda(newAgenda);
-                        }
-
-                        if (rawBanners) {
-                            let newBanners = [];
-                            for (let rawBanner of rawBanners) {
-                                let banner = lookupCardByName({
-                                    cardName: rawBanner,
-                                    cards: Object.values(cards),
-                                    packs: packs
-                                });
-
-                                if (banner) {
-                                    newBanners.push(banner);
-                                }
-                            }
-
-                            setBannerCards(newBanners);
-                        }
-                    }
-                }
-            }
-
-            const newPlotCards = [];
-            const newDrawCards = [];
-
-            for (const line of split) {
-                let { card, count } = parseCardLine(line);
-                if (card) {
-                    addCard(card.type === 'plot' ? newPlotCards : newDrawCards, card, count);
-                }
-            }
-
-            setCardList(event.target.value);
-            setPlotCards(newPlotCards);
-            setDrawCards(newDrawCards);
-            setShowBanners(isAllianceAgenda(agenda));
-        },
-        [agenda, cards, factions, packs, parseCardLine]
-    );
-
-    useEffect(() => {
-        if (deck) {
-            let cardList = '';
-            for (const card of deck.drawCards) {
-                cardList += formatCardListItem(card) + '\n';
-            }
-
-            for (const plot of deck.plotCards) {
-                cardList += formatCardListItem(plot) + '\n';
-            }
-
-            setCardList(cardList);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [JSON.stringify(deck)]);
-
-    useEffect(() => {
-        if (factions && !faction) {
-            setFaction(factions['baratheon']);
-        }
-    }, [faction, factions]);
-
-    let bannersToRender = useMemo(() => {
-        if (bannerCards.length === 0) {
-            return null;
-        }
-
-        return bannerCards.map((card) => {
-            return (
-                <div key={card.code}>
-                    <span key={card.code} className='card-link col-sm-10'>
-                        {card.label}
-                    </span>
+    const columns = useMemo(
+        () => [
+            {
+                accessorFn: (row) => row.label,
+                header: 'Name',
+                cell: (info) => info.getValue(),
+                meta: {
+                    colWidth: '70%'
+                },
+                enableColumnFilter: true
+            },
+            {
+                id: 'C/I',
+                accessorFn: (row) =>
+                    row.income != undefined ? row.income : row.cost != undefined ? row.cost : '',
+                header: 'C/I',
+                meta: {
+                    colWidth: '10%'
+                },
+                enableColumnFilter: false
+            },
+            {
+                id: 'S/I',
+                accessorFn: (row) =>
+                    row.initiative != undefined
+                        ? row.initiative
+                        : row.strength != undefined
+                          ? row.strength
+                          : '',
+                header: 'S/I',
+                meta: {
+                    colWidth: '10%'
+                },
+                enableColumnFilter: false
+            },
+            {
+                accessorKey: 'type',
+                header: 'T',
+                cell: (info) => (
                     <span
-                        className='glyphicon glyphicon-remove icon-danger btn col-sm-1'
-                        aria-hidden='true'
-                        onClick={() => onRemoveBanner(card)}
-                    />
-                </div>
-            );
-        });
-    }, [bannerCards, onRemoveBanner]);
+                        className={`icon icon-${info.getValue()} text-${info.row.original.faction}`}
+                    ></span>
+                ),
+                filterFn: 'arrIncludesSome',
+                meta: {
+                    colWidth: '10%'
+                },
+                enableColumnFilter: false
+            },
+            {
+                id: 'faction',
+                accessorKey: 'faction',
+                header: 'F',
+                cell: (info) => (
+                    <span className={`icon icon-${info.getValue()} text-${info.getValue()}`}></span>
+                ),
+                filterFn: 'arrIncludesSome',
+                meta: {
+                    colWidth: '10%'
+                },
+                enableColumnFilter: false
+            },
+            {
+                id: 'quantity',
+                accessorFn: (row) => {
+                    const deckCard = deckCards.find((dc) => dc.card.code === row.code);
+                    return deckCard?.count || 0;
+                },
+                header: 'Quantity',
+                cell: (info) => {
+                    const max = info.row.original.deckLimit + 1;
+                    const deckCard = deckCards.find(
+                        (dc) => dc.card.code === info.row.original.code
+                    );
+                    const count = deckCard?.count || 0;
 
-    let lockedDecksEvents = useMemo(() => {
-        return (events?.events || []).filter((e) => e.lockDecks);
-    }, [events]);
+                    return (
+                        <ButtonGroup>
+                            {[...Array(max).keys()].map((digit) => (
+                                <SmallButton
+                                    size='xs'
+                                    className='w-1'
+                                    key={digit}
+                                    value={digit}
+                                    color={count === digit ? 'primary' : null}
+                                    onClick={() => {
+                                        const newDeckCards = [];
+                                        let found = false;
 
-    if (
-        !factions ||
-        !agendas ||
-        !cards ||
-        !restrictedLists ||
-        isPacksLoading ||
-        isFactionsLoading ||
-        isLoading ||
-        isRestrictedListLoading ||
-        isCardsLoading ||
-        !packs
-    ) {
-        return <div>Please wait while loading from the server...</div>;
+                                        for (const deckCard of deckCards) {
+                                            const newDeckCard = Object.assign({}, deckCard);
+
+                                            if (deckCard.card.code === info.row.original.code) {
+                                                found = true;
+
+                                                newDeckCard.count = digit;
+                                            }
+
+                                            if (newDeckCard.count > 0) {
+                                                newDeckCards.push(newDeckCard);
+                                            }
+                                        }
+
+                                        if (!found) {
+                                            const newCard = {
+                                                card: cardsByCode[info.row.original.code],
+                                                count: digit
+                                            };
+
+                                            newDeckCards.push(newCard);
+                                        }
+
+                                        setDeckCards(newDeckCards);
+                                    }}
+                                >
+                                    {digit}
+                                </SmallButton>
+                            ))}
+                        </ButtonGroup>
+                    );
+                },
+                meta: {
+                    colWidth: 1
+                }
+            }
+        ],
+        [deckCards, cardsByCode]
+    );
+
+    const cardTypes = useMemo(() => {
+        if (!cards) {
+            return [];
+        }
+        let cardTypes = Object.values(cards)
+            .filter((c) => c.type !== 'title')
+            .map((card) => card.type);
+
+        return Array.from(new Set(cardTypes));
+    }, [cards]);
+
+    const cardsMemo = useMemo(() => {
+        if (!cards) {
+            return {};
+        }
+        return { data: Object.values(cards) };
+    }, [cards]);
+
+    useEffect(() => {
+        setFaction(deck.faction);
+    }, [deck.faction]);
+
+    useEffect(() => {
+        if (!currentRestrictedList && restrictedLists) {
+            setCurrentRestrictedList(restrictedLists[0]);
+        }
+    }, [currentRestrictedList, restrictedLists]);
+
+    if (isLoading || isFactionsLoading || !packs || !currentRestrictedList) {
+        return <LoadingSpinner text={'Loading, please wait...'} />;
+    } else if (isError || isFactionsError) {
+        return (
+            <AlertPanel variant='danger'>
+                An error occurred loading data from the server. Please try again later.
+            </AlertPanel>
+        );
     }
 
-    const cardsExcludingAgendas = Object.values(cards).filter((card) => !agendas[card.code]);
+    const onSaveClick = async (andClose) => {
+        setError();
+        setSuccess();
+
+        try {
+            deckToSave._id
+                ? await saveDeck(deckToSave).unwrap()
+                : await addDeck(deckToSave).unwrap();
+            setSuccess(`Deck ${deckToSave._id ? 'saved' : 'added'} successfully.`);
+
+            if (andClose) {
+                setTimeout(() => {
+                    dispatch(navigate('/decks'));
+                }, 1500);
+            } else {
+                setTimeout(() => {
+                    setSuccess();
+                }, 1500);
+            }
+        } catch (err) {
+            const apiError = err;
+            setError(
+                apiError.data.message || 'An error occured adding the deck. Please try again later.'
+            );
+        }
+    };
 
     return (
-        <div>
-            <div className='form-group'>
-                <div className='col-xs-12 deck-buttons'>
-                    <span className='col-xs-2'>
-                        <button type='submit' className='btn btn-primary' onClick={onSaveClick}>
-                            Save {isSaveLoading && <span className='spinner button-spinner' />}
-                        </button>
-                    </span>
-                    <button type='button' className='btn btn-primary' onClick={onCancelClick}>
-                        Cancel
-                    </button>
-                </div>
-            </div>
-
-            <div className='form-group'>
-                <RestrictedListDropdown
-                    currentRestrictedList={currentRestrictedList}
-                    onChange={(restrictedList) => {
-                        setCurrentRestrictedList(restrictedList);
-                        onRestrictedListChange && onRestrictedListChange(restrictedList);
-                    }}
-                    restrictedLists={restrictedLists}
-                />
-            </div>
-
-            <h4>
-                Either type the cards manually into the box below, add the cards one by one using
-                the card box and autocomplete or for best results, copy and paste a decklist from{' '}
-                <a href='http://thronesdb.com' target='_blank' rel='noreferrer'>
-                    Thrones DB
-                </a>{' '}
-                into the box below.
-            </h4>
-            <form className='form form-horizontal'>
-                <Input
-                    name='deckName'
-                    label='Deck Name'
-                    labelClass='col-sm-3'
-                    fieldClass='col-sm-9'
-                    placeholder='Deck Name'
-                    type='text'
-                    onChange={(event) => setDeckName(event.target.value)}
-                    value={deckName}
-                />
-                <Select
-                    name='faction'
-                    label='Faction'
-                    labelClass='col-sm-3'
-                    fieldClass='col-sm-9'
-                    options={Object.values(factions)}
-                    onChange={(selectedFaction) => {
-                        setFaction(selectedFaction);
-                    }}
-                    value={faction ? faction.value : undefined}
-                />
-                <Select
-                    name='agenda'
-                    label='Agenda'
-                    labelClass='col-sm-3'
-                    fieldClass='col-sm-9'
-                    options={Object.values(agendas)}
-                    onChange={onAgendaChange}
-                    value={agenda ? agenda.code : undefined}
-                    valueKey='code'
-                    nameKey='label'
-                    blankOption={{ label: '- Select -', code: '' }}
-                />
-
-                {showBanners && (
-                    <div>
-                        <Select
-                            name='banners'
-                            label='Banners'
-                            labelClass='col-sm-3'
-                            fieldClass='col-sm-9'
-                            options={banners}
-                            onChange={(banner) => setSelectedBanner(banner)}
-                            value={selectedBanner ? selectedBanner.code : undefined}
-                            valueKey='code'
-                            nameKey='label'
-                            blankOption={{ label: '- Select -', code: '' }}
-                            button={{ text: 'Add', onClick: onAddBanner }}
-                        />
-                        <div className='col-sm-9 col-sm-offset-3 banner-list'>
-                            {bannersToRender}
-                        </div>
+        <div className='grid lg:grid-cols-2 gap-4'>
+            <div className='flex flex-col gap-2'>
+                {(error || success) && (
+                    <div className='mb-2'>
+                        {error && <AlertPanel variant='danger'>{error}</AlertPanel>}
+                        {success && <AlertPanel variant='success'>{success}</AlertPanel>}
                     </div>
                 )}
-                <Typeahead
-                    label='Card'
-                    labelClass={'col-sm-3 col-xs-2'}
-                    fieldClass='col-sm-4 col-xs-5'
-                    labelKey={'label'}
-                    options={cardsExcludingAgendas}
-                    onChange={(selectedCards) => setCardToAdd(selectedCards[0])}
-                >
-                    <Input
-                        name='numcards'
-                        type='text'
-                        label='Num'
-                        labelClass='col-xs-1 no-x-padding'
-                        fieldClass='col-xs-2'
-                        value={numberToAdd.toString()}
-                        onChange={(event) => setNumberToAdd(event.target.value)}
-                        noGroup
+                <div className='flex gap-2'>
+                    <Button color='default' onClick={() => onBackClick()}>
+                        Back
+                    </Button>
+                    <Button
+                        color='primary'
+                        isLoading={isAddLoading || isSaveLoading}
+                        onClick={() => onSaveClick(true)}
                     >
-                        <div className='col-xs-1 no-x-padding'>
-                            <div className='btn-group'>
-                                <button className='btn btn-primary' onClick={onAddCard}>
-                                    Add
-                                </button>
-                            </div>
-                        </div>
-                    </Input>
-                </Typeahead>
-                <TextArea
-                    label='Cards'
-                    labelClass='col-sm-3'
-                    fieldClass='col-sm-9'
-                    rows='10'
-                    value={cardList}
-                    onChange={onCardListChange}
-                />
-                {eventId && (
-                    <h4>
-                        Please be aware: Assigning this deck to an event will mean that you will be
-                        unable to modify or delete this deck for the duration of the event!
-                    </h4>
-                )}
-                {lockedDecksEvents.length > 0 && (
-                    <Select
-                        name='event'
-                        label='Event'
-                        labelClass='col-sm-3'
-                        fieldClass='col-sm-9'
-                        options={lockedDecksEvents}
-                        onChange={(selectedEvent) =>
-                            setEventId(selectedEvent ? selectedEvent._id : undefined)
-                        }
-                        value={eventId ? eventId : undefined}
-                        valueKey='_id'
-                        nameKey='name'
-                        blankOption={{ label: '- Select -', name: '', value: undefined }}
+                        Save and close
+                    </Button>
+                    <Button
+                        color='primary'
+                        isLoading={isAddLoading || isSaveLoading}
+                        onClick={() => onSaveClick(false)}
+                    >
+                        Save
+                    </Button>
+                    <Button onClick={() => setShowImportPopup(true)}>Import</Button>
+                </div>
+                <div className='flex flex-col gap-2'>
+                    <Input
+                        placeholder={'Enter a name'}
+                        value={deckName}
+                        onChange={(event) => setDeckName(event.target.value)}
+                        label={'Deck Name'}
                     />
-                )}
-                <div className='form-group'>
-                    <div className='col-sm-offset-3 col-sm-8'>
-                        <button type='submit' className='btn btn-primary' onClick={onSaveClick}>
-                            Save {isSaveLoading && <span className='spinner button-spinner' />}
-                        </button>
+                    <Select
+                        items={Constants.Factions}
+                        label='Faction'
+                        selectedKeys={new Set([faction.value])}
+                        onChange={(e) => setFaction(e.target)}
+                        renderValue={(items) => {
+                            return items.map((item) => <div key={item.key}>{item.data.name}</div>);
+                        }}
+                    >
+                        {(faction) => (
+                            <SelectItem key={faction.value}>
+                                <div className='flex gap-2 items-center'>
+                                    <FactionImage size='sm' faction={faction.value} />
+                                    <div>{faction.name}</div>
+                                </div>
+                            </SelectItem>
+                        )}
+                    </Select>
+                    <RestrictedListDropdown
+                        currentRestrictedList={currentRestrictedList}
+                        onChange={(restrictedList) => {
+                            setCurrentRestrictedList(restrictedList);
+                        }}
+                        restrictedLists={restrictedLists}
+                    />
+                    <Card>
+                        <CardBody>
+                            <div className='flex mt-1 ml-1'>
+                                <dl className='grid grid-cols-2 gap-2'>
+                                    <dt className='font-bold'>Draw cards:</dt>
+                                    <dd>
+                                        {deckToSave.drawCards.reduce(
+                                            (acc, card) => acc + card.count,
+                                            0
+                                        )}
+                                    </dd>
+                                    <dt className='font-bold'>Plot cards:</dt>
+                                    <dd>
+                                        {deckToSave.plotCards.reduce(
+                                            (acc, card) => acc + card.count,
+                                            0
+                                        )}
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div className='flex gap-2 items-center ml-1 mt-1'>
+                                <div className='font-bold'>Validity:</div>
+                                <DeckStatus status={deckToSave.status[currentRestrictedList._id]} />
+                            </div>
+                        </CardBody>
+                    </Card>
+                    <div className='mt-1'>
+                        <ButtonGroup>
+                            {cardTypes.map((type) => {
+                                return (
+                                    <SmallButton
+                                        key={type}
+                                        size='xs'
+                                        color={
+                                            typeFilter.some((t) => t === type) ? 'primary' : null
+                                        }
+                                        onClick={() =>
+                                            setTypeFilter(
+                                                typeFilter.some((t) => t === type)
+                                                    ? typeFilter.filter((t) => t !== type)
+                                                    : typeFilter.concat(type)
+                                            )
+                                        }
+                                    >
+                                        <span className={`icon icon-${type}`}></span>
+                                    </SmallButton>
+                                );
+                            })}
+                        </ButtonGroup>
+                    </div>
+                    <div>
+                        <ButtonGroup aria-label='Faction buttons'>
+                            {Constants.Factions.concat({ name: 'Neutral', value: 'neutral' }).map(
+                                (faction) => {
+                                    return (
+                                        <SmallButton
+                                            key={faction.value}
+                                            size='xs'
+                                            color={
+                                                factionFilter.some((f) => f === faction.value)
+                                                    ? 'primary'
+                                                    : null
+                                            }
+                                            onClick={() =>
+                                                setFactionFilter(
+                                                    factionFilter.some((f) => f === faction.value)
+                                                        ? factionFilter.filter(
+                                                              (f) => f !== faction.value
+                                                          )
+                                                        : factionFilter.concat(faction.value)
+                                                )
+                                            }
+                                        >
+                                            <span
+                                                className={`icon icon-${faction.value} ${factionToTextColourMap[faction.value]}`}
+                                            ></span>
+                                        </SmallButton>
+                                    );
+                                }
+                            )}
+                        </ButtonGroup>
+                    </div>
+                    <div className='h-[50vh]'>
+                        <ReactTable
+                            dataLoadFn={() => ({
+                                data: cardsMemo,
+                                isLoading: false,
+                                isError: false
+                            })}
+                            defaultColumnFilters={{ type: typeFilter, faction: factionFilter }}
+                            defaultSort={[
+                                {
+                                    id: 'type',
+                                    desc: true
+                                }
+                            ]}
+                            disableSelection
+                            columns={columns}
+                            startPageNumber={pageNumber}
+                            onPageChanged={(page) => setPageNumber(page)}
+                        />
                     </div>
                 </div>
-            </form>
+            </div>
+            <div>
+                <DeckSummary
+                    deck={{
+                        name: deckName,
+                        deckCards: deckCards,
+                        faction: factionsByCode[deck.faction.code]
+                    }}
+                />
+            </div>
+
+            <Modal isOpen={showImportPopup} onOpenChange={(open) => setShowImportPopup(open)}>
+                <ModalContent>
+                    {(onClose) => (
+                        <>
+                            <ModalHeader className='flex flex-col gap-1'>
+                                Import from ThronesDb
+                            </ModalHeader>
+                            <ModalBody>
+                                <label>
+                                    Export your deck as plain text from{' '}
+                                    <a
+                                        href='https://thronesdb.com'
+                                        target='_blank'
+                                        rel='noreferrer'
+                                    >
+                                        ThronesDB
+                                    </a>{' '}
+                                    and paste it into this box.
+                                    <p className='text-bold text-danger-300'>
+                                        Note: The deck you are editing will be overwritten!
+                                    </p>
+                                </label>
+                                <Textarea
+                                    minRows={20}
+                                    value={deckText}
+                                    onValueChange={setDeckText}
+                                />
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button onPress={onClose}>Close</Button>
+                                <Button
+                                    color='primary'
+                                    onPress={() => {
+                                        const deck = processThronesDbDeckText(
+                                            factions,
+                                            packs,
+                                            cards,
+                                            deckText
+                                        );
+
+                                        if (!deck) {
+                                            setError(
+                                                'Invalid deck. Ensure you have exported a plain text deck from ThronesDb.'
+                                            );
+
+                                            onClose();
+
+                                            return;
+                                        }
+
+                                        setFaction(deck.faction);
+                                        setDeckName(deck.name);
+                                        setDeckCards(
+                                            (deck.agenda ? [{ card: deck.agenda, count: 1 }] : [])
+                                                .concat(deck.drawCards || [])
+                                                .concat(deck.plotCards || [])
+                                                .concat(
+                                                    deck.bannerCards?.map((bc) => ({
+                                                        card: bc,
+                                                        count: 1
+                                                    })) || []
+                                                )
+                                        );
+
+                                        onClose();
+                                    }}
+                                >
+                                    Import
+                                </Button>
+                            </ModalFooter>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
         </div>
     );
 };

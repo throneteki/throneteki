@@ -1,77 +1,44 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import DeckSummary from './DeckSummary';
+import React, { useState } from 'react';
 import DeckEditor from './DeckEditor';
-import AlertPanel from '../Site/AlertPanel';
 import Panel from '../Site/Panel';
-import { useAddDeckMutation } from '../../redux/middleware/api';
-import { navigate } from '../../redux/reducers/navigation';
+import AgendaSelect from './AgendaSelect';
+import FactionSelect from './FactionSelect';
 
 const AddDeck = () => {
-    const dispatch = useDispatch();
-    const [deck, setDeck] = useState({
-        status: {},
-        name: 'New Deck',
-        drawCards: [],
-        plotCards: []
-    });
-    const [error, setError] = useState(undefined);
-    const [success, setSuccess] = useState(undefined);
-    const [currentRestrictedList, setCurrentRestrictedList] = useState(undefined);
-
-    const [addDeck, { isLoading: isAddLoading }] = useAddDeckMutation();
-
-    const timer = useRef(null);
-
-    const onDeckUpdated = (deck) => {
-        setDeck(deck);
-    };
-
-    useEffect(() => {
-        return () => clearInterval(timer.current);
-    }, []);
+    const [selectedFaction, setFaction] = useState();
+    const [selectedAgendas, setAgendas] = useState();
 
     return (
         <div>
-            <div className='col-sm-6'>
-                <Panel title='Deck Editor'>
-                    {error && <AlertPanel type='error' message={error} />}
-                    {success && <AlertPanel type='success' message={success} />}
-                    <DeckEditor
-                        onDeckSave={async (deck) => {
-                            try {
-                                await addDeck(deck).unwrap();
-                                setSuccess('Deck added successfully');
-
-                                timer.current = setTimeout(() => {
-                                    setSuccess(undefined);
-                                    dispatch(navigate('/decks'));
-                                }, 5000);
-                            } catch (err) {
-                                setError(
-                                    err.message ||
-                                        'An error occured adding the deck. Please try again later.'
-                                );
-                            }
-                        }}
-                        onDeckUpdated={onDeckUpdated}
-                        onRestrictedListChange={(restrictedList) =>
-                            setCurrentRestrictedList(restrictedList)
-                        }
-                        deck={deck}
-                        isSaveLoading={isAddLoading}
-                    />
-                </Panel>
-            </div>
-            <div className='col-sm-6'>
-                <Panel title={deck ? deck.name : 'New Deck'}>
-                    {currentRestrictedList && deck ? (
-                        <DeckSummary currentRestrictedList={currentRestrictedList} deck={deck} />
-                    ) : (
-                        <div>Please wait...</div>
-                    )}
-                </Panel>
-            </div>
+            <Panel title={'New Deck'}>
+                {selectedFaction ? (
+                    <div>
+                        {selectedAgendas ? (
+                            <DeckEditor
+                                onBackClick={() => setAgendas(undefined)}
+                                deck={{
+                                    name: 'New Deck',
+                                    faction: selectedFaction,
+                                    agenda: selectedAgendas[0],
+                                    drawCards:
+                                        selectedAgendas.length > 1
+                                            ? selectedAgendas
+                                                  .slice(1)
+                                                  .map((c) => ({ card: c, count: 1 }))
+                                            : []
+                                }}
+                            />
+                        ) : (
+                            <AgendaSelect
+                                onBackClick={() => setFaction(undefined)}
+                                onNextClick={(agendas) => setAgendas(agendas)}
+                            />
+                        )}
+                    </div>
+                ) : (
+                    <FactionSelect onSelect={(faction) => setFaction(faction)} />
+                )}
+            </Panel>
         </div>
     );
 };

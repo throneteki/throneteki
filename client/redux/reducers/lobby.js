@@ -182,12 +182,7 @@ const lobbySlice = createSlice({
             state.responseTime = action.payload;
         },
         sendNewGameMessage: () => {},
-        sendSelectDeckMessage: create.preparedReducer(
-            (gameId, deckId) => {
-                return { payload: { gameId, deckId } };
-            },
-            () => {}
-        ),
+        sendSelectDeckMessage: () => {},
         sendStartGameMessage: () => {},
         sendLeaveGameMessage: () => {},
         sendChatMessage: () => {},

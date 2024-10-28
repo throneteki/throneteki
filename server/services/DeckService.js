@@ -37,6 +37,8 @@ class DeckService {
 
     async getById(id) {
         try {
+            this.restrictedLists = await this.cardService.getRestrictedList();
+
             const deck = await this.decks.findOne({ _id: id });
             if (!deck) {
                 return null;
@@ -71,16 +73,65 @@ class DeckService {
         });
     }
 
-    async findByUserName(username) {
-        const decks = await this.decks.find({ username: username }, { sort: { lastUpdated: -1 } });
+    async findByUserName(username, options = {}) {
+        const sort = options.sorting || [{ id: 'lastUpdated', desc: 'true' }];
+        const filter = options.filters || [];
+        const page = parseInt(options.pageNumber, 10) || 1;
+        const pageSize = parseInt(options.pageSize, 10) || 10;
 
-        return decks.map((deck) => {
-            deck.locked = !!deck.eventId;
+        filter.push({ id: 'username', value: username });
 
-            deck = this.processDeck(deck);
+        this.restrictedLists = await this.cardService.getRestrictedList();
+        const dbDecks = await this.decks.aggregate([
+            {
+                $facet: {
+                    metadata: [
+                        {
+                            $match: filter.reduce(
+                                (acc, curr) => (
+                                    (acc[curr.id] = { $regex: curr.value, $options: 'i' }), acc
+                                ),
+                                {}
+                            )
+                        },
+                        { $count: 'totalCount' }
+                    ],
+                    data: [
+                        {
+                            $match: filter.reduce(
+                                (acc, curr) => (
+                                    (acc[curr.id] = { $regex: curr.value, $options: 'i' }), acc
+                                ),
+                                {}
+                            )
+                        },
+                        { $sort: { [sort[0].id]: sort[0].desc === 'true' ? -1 : 1 } },
+                        { $skip: (page - 1) * pageSize },
+                        { $limit: pageSize }
+                    ]
+                }
+            }
+        ]);
 
-            return deck;
-        });
+        if (dbDecks.length === 0 || dbDecks[0].metadata.length === 0) {
+            return { success: true, data: [], totalCount: 0, page, pageSize };
+        }
+
+        const decks = Object.assign(
+            { totalCount: dbDecks[0].metadata[0].totalCount, page, pageSize },
+            {
+                success: true,
+                data: dbDecks[0].data.map((deck) => {
+                    deck.locked = !!deck.eventId;
+
+                    deck = this.processDeck(deck);
+
+                    return deck;
+                })
+            }
+        );
+
+        return decks;
     }
 
     removeEventIdAndUnlockDecks(eventId) {
@@ -169,6 +220,7 @@ class DeckService {
             faction: deck.faction,
             eventId: deck.eventId,
             agenda: deck.agenda,
+            isFavourite: deck.isFavourite,
             lastUpdated: new Date()
         };
 

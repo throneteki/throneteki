@@ -6,6 +6,8 @@ import CardNameLookup from './CardNameLookup';
 import TraitNameLookup from './TraitNameLookup';
 import SelectFromValuesLookup from './SelectFromValuesLookup';
 import { useGetCardsQuery } from '../../redux/middleware/api';
+import { Button } from '@nextui-org/react';
+import ThronesIcon from './ThronesIcon';
 
 const ActivePlayerPrompt = ({
     stopAbilityTimer,
@@ -93,22 +95,27 @@ const ActivePlayerPrompt = ({
                 : (event) => handleButtonClick(event, button);
 
             let option = (
-                <button
-                    key={button.command + buttonIndex.toString()}
-                    className='btn btn-default prompt-button'
-                    onClick={clickCallback}
-                    onMouseOver={(event) => onMouseOver(event, button.card)}
-                    onMouseOut={(event) => onMouseOut(event, button.card)}
-                    disabled={button.disabled}
-                >
-                    {' '}
-                    {button.icon && (
-                        <div className={`with-background thronesicon thronesicon-${button.icon}`} />
-                    )}{' '}
-                    {button.text}
-                </button>
+                <div className='w-full'>
+                    <Button
+                        color='primary'
+                        key={button.command + buttonIndex.toString()}
+                        className='text-wrap mb-1 h-full min-h-10'
+                        onClick={clickCallback}
+                        onMouseOver={
+                            button.card ? (event) => onMouseOver(event, button.card) : null
+                        }
+                        onMouseOut={button.card ? (event) => onMouseOut(event, button.card) : null}
+                        isDisabled={button.disabled}
+                        disableRipple
+                        fullWidth
+                    >
+                        {button.icon && (
+                            <ThronesIcon icon={button.icon} withBackground noSize={false} />
+                        )}
+                        <span>{button.text}</span>
+                    </Button>
+                </div>
             );
-
             buttonIndex++;
 
             retButtons.push(option);
@@ -180,7 +187,11 @@ const ActivePlayerPrompt = ({
     let promptTitleElement;
 
     if (promptTitle) {
-        promptTitleElement = <div className='menu-pane-source'>{promptTitle}</div>;
+        promptTitleElement = (
+            <div className='font-normal text-center border-1 border-default-200 bg-black/65 py-1'>
+                {promptTitle}
+            </div>
+        );
     }
 
     let timer = null;
@@ -205,17 +216,23 @@ const ActivePlayerPrompt = ({
     }
 
     return (
-        <div>
+        <div className='m-1'>
             {timer}
-            <div className={'phase-indicator ' + phase} onClick={onTitleClick}>
+            <div
+                className={
+                    'relative text-medium font-bold text-center uppercase border-1 border-default-200 bg-secondary-200 py-1 rounded-t-md mx-0 mb-0 ' +
+                    phase
+                }
+                onClick={onTitleClick}
+            >
                 {phase} phase
             </div>
             {promptTitleElement}
-            <div className='menu-pane'>
-                <div className='panel'>
-                    <h4>{promptTextElement}</h4>
+            <div className='text-center'>
+                <div className='relative border-1 border-default-200 bg-black/65 rounded-b-md'>
+                    <p className='my-1 mx-2 text-small'>{promptTextElement}</p>
                     {getControls()}
-                    {getButtons()}
+                    <div className='flex flex-col mx-2 gap-1'>{getButtons()}</div>
                 </div>
             </div>
         </div>

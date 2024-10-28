@@ -19,6 +19,7 @@ export function formatDeckAsFullCards(deck, data) {
         name: deck.name,
         username: deck.username,
         lastUpdated: deck.lastUpdated,
+        isFavourite: !!deck.isFavourite,
         faction: Object.assign({}, deck.faction)
     };
 

@@ -1,8 +1,9 @@
-import React from 'react';
-import { useDrop } from 'react-dnd';
+import React, { useMemo } from 'react';
 import classNames from 'classnames';
 
+import { useDroppable } from '@dnd-kit/core';
 import { ItemTypes } from '../../constants';
+import { useUniqueId } from '@dnd-kit/utilities';
 
 const validTargets = {
     hand: [
@@ -74,42 +75,43 @@ const validTargets = {
     shadows: ['dead pile', 'discard pile', 'draw deck', 'hand', 'out of game', 'play area']
 };
 
-const Droppable = ({ children, onDragDrop, source }) => {
-    const [{ canDrop, isOver, itemSource }, drop] = useDrop({
-        accept: ItemTypes.CARD,
-        drop: (_, monitor) => {
-            let item = monitor.getItem();
-
-            onDragDrop && onDragDrop(item.card, item.source, source);
-        },
-        canDrop: (item) =>
-            validTargets[item.source] &&
-            validTargets[item.source].some((target) => target === source),
-        collect: (monitor) => {
-            let item = monitor.getItem();
-
-            return {
-                isOver: monitor.isOver(),
-                canDrop: monitor.canDrop(),
-                itemSource: item && item.source
-            };
+const Droppable = ({ className, children, source, size }) => {
+    const { isOver, active, setNodeRef } = useDroppable({
+        id: useUniqueId(source),
+        data: {
+            source: source
         }
     });
 
-    let className = classNames('overlay', {
-        'drop-ok': isOver && canDrop,
-        'no-drop': isOver && !canDrop && source !== itemSource,
-        'can-drop': !isOver && canDrop,
-        [source]: true
-    });
+    const canDrop = useMemo(() => {
+        return (
+            active &&
+            validTargets[active.data.current.source] &&
+            validTargets[active.data.current.source].some((target) => target === source)
+        );
+    }, [active, source]);
 
-    let dropClass = classNames('drop-target', {
+    const innerClass = classNames(
+        'pointer-events-none absolute top-0 left-0 h-full w-full opacity-50 z-50',
+        {
+            'bg-success-500': isOver && canDrop,
+            'bg-danger-500':
+                isOver &&
+                active?.data.type === ItemTypes.CARD &&
+                !canDrop &&
+                source !== active?.data.current.source,
+            'bg-warning-500': !isOver && canDrop,
+            [source.replace(' ', '-')]: true
+        }
+    );
+
+    let dropClass = classNames(className, 'relative', size, {
         [source.replace(' ', '-')]: source !== 'play area'
     });
 
     return (
-        <div className={dropClass} ref={drop}>
-            <div className={className} />
+        <div className={dropClass} ref={setNodeRef}>
+            <div className={innerClass} />
             {children}
         </div>
     );

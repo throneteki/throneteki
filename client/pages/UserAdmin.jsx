@@ -2,12 +2,22 @@ import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import moment from 'moment';
 
-import Form from '../Components/Form/Form';
-import Checkbox from '../Components/Form/Checkbox';
 import Panel from '../Components/Site/Panel';
 import { useGetUserQuery, useSaveUserMutation } from '../redux/middleware/api';
 import AlertPanel from '../Components/Site/AlertPanel';
 import { sendClearUserSessions } from '../redux/reducers/lobby';
+import {
+    Button,
+    Input,
+    Spinner,
+    Switch,
+    Table,
+    TableBody,
+    TableCell,
+    TableColumn,
+    TableHeader,
+    TableRow
+} from '@nextui-org/react';
 
 const defaultPermissions = {
     canEditNews: false,
@@ -44,6 +54,7 @@ const UserAdmin = () => {
     const [searchUsername, setSearchUsername] = useState();
     const [permissions, setPermissions] = useState(defaultPermissions);
     const [currentUser, setCurrentUser] = useState();
+    const [username, setUsername] = useState();
 
     const { data, isLoading, error, refetch } = useGetUserQuery(searchUsername, {
         skip: !searchUsername
@@ -55,9 +66,9 @@ const UserAdmin = () => {
     const [successMessage, setSuccessMessage] = useState(undefined);
     const [errorMessage, setErrorMessage] = useState(undefined);
 
-    const onFindClick = useCallback((state) => {
-        setSearchUsername(state.username);
-    }, []);
+    const onFindClick = useCallback(() => {
+        setSearchUsername(username);
+    }, [username]);
 
     const onSaveClick = useCallback(
         async (event) => {
@@ -95,19 +106,11 @@ const UserAdmin = () => {
         [currentUser, dispatch]
     );
 
-    const onPermissionToggle = useCallback((field, event) => {
+    const onPermissionToggle = useCallback((field, value) => {
         setPermissions((prevPermissions) => ({
             ...prevPermissions,
-            [field]: event.target.checked
+            [field]: value
         }));
-    }, []);
-
-    const onDisabledChanged = useCallback((event) => {
-        setDisabled(event.target.checked);
-    }, []);
-
-    const onVerifiedChanged = useCallback((event) => {
-        setVerified(event.target.checked);
     }, []);
 
     const onLinkedUserClick = useCallback(
@@ -121,15 +124,14 @@ const UserAdmin = () => {
     const retPermissions = useMemo(
         () =>
             availablePermissions.map((permission) => (
-                <Checkbox
+                <Switch
                     key={permission.name}
                     name={'permissions.' + permission.name}
-                    label={permission.label}
-                    fieldClass='col-xs-4'
-                    type='checkbox'
-                    onChange={(event) => onPermissionToggle(permission.name, event)}
-                    checked={permissions[permission.name]}
-                />
+                    onValueChange={(value) => onPermissionToggle(permission.name, value)}
+                    isSelected={permissions[permission.name]}
+                >
+                    {permission.label}
+                </Switch>
             )),
         [onPermissionToggle, permissions]
     );
@@ -140,98 +142,95 @@ const UserAdmin = () => {
         }
 
         return (
-            <div>
+            <div className='mt-2'>
                 <form className='form'>
-                    <Panel title={`${currentUser.username} - User details`}>
-                        <dl className='dl-horizontal'>
-                            <dt>Username:</dt>
-                            <dd>{currentUser.username}</dd>
-                            <dt>Email:</dt>
-                            <dd>{currentUser.email}</dd>
-                            <dt>Registered:</dt>
-                            <dd>{moment(currentUser.registered).format('YYYY-MM-DD HH:MM')}</dd>
-                        </dl>
+                    <div className='flex flex-col gap-2'>
+                        <Panel title={`${currentUser.username} - User details`}>
+                            <dl className='grid grid-cols-2'>
+                                <dt className='font-bold'>Username</dt>
+                                <dd>{currentUser.username}</dd>
+                                <dt className='font-bold'>Email</dt>
+                                <dd>{currentUser.email}</dd>
+                                <dt className='font-bold'>Registered</dt>
+                                <dd>{moment(currentUser.registered).format('YYYY-MM-DD HH:MM')}</dd>
+                            </dl>
 
-                        <Checkbox
-                            name={'disabled'}
-                            label='Disabled'
-                            fieldClass='col-xs-4'
-                            type='checkbox'
-                            onChange={onDisabledChanged}
-                            checked={disabled}
-                        />
-                        <Checkbox
-                            name={'verified'}
-                            label='Verified'
-                            fieldClass='col-xs-4'
-                            type='checkbox'
-                            onChange={onVerifiedChanged}
-                            checked={verified}
-                        />
-                    </Panel>
-                    {data?.linkedAccounts && (
-                        <Panel title='Possibly linked accounts'>
-                            <ul className='list'>
-                                {data.linkedAccounts.map((name) => {
-                                    return (
-                                        <li key={name}>
-                                            <a
-                                                className='clickable'
-                                                onClick={() => onLinkedUserClick(name)}
-                                            >
-                                                {name}
-                                            </a>
-                                        </li>
-                                    );
-                                })}
-                            </ul>
+                            <div className='mt-2 flex gap-2'>
+                                <Switch
+                                    name='disabled'
+                                    type='Switch'
+                                    onValueChange={setDisabled}
+                                    isSelected={disabled}
+                                >
+                                    Disabled
+                                </Switch>
+                                <Switch
+                                    name='verified'
+                                    onValueChange={setVerified}
+                                    isSelected={verified}
+                                >
+                                    Verified
+                                </Switch>
+                            </div>
                         </Panel>
-                    )}
-                    {currentUser && currentUser.tokens && (
-                        <Panel title='Sessions'>
-                            <table className='table table-striped'>
-                                <thead>
-                                    <tr>
-                                        <th>IP Address</th>
-                                        <th>Last Used</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {currentUser.tokens.map((token, index) => {
+                        {data?.linkedAccounts && (
+                            <Panel title='Possibly linked accounts'>
+                                <ul className='list'>
+                                    {data.linkedAccounts.map((name) => {
                                         return (
-                                            <tr key={index}>
-                                                <td>{token.ip}</td>
-                                                <td>
-                                                    {moment(token.lastUsed).format(
-                                                        'YYYY-MM-DD HH:MM'
-                                                    )}
-                                                </td>
-                                            </tr>
+                                            <li key={name}>
+                                                <a
+                                                    className='cursor-pointer text-secondary-600'
+                                                    onClick={() => onLinkedUserClick(name)}
+                                                >
+                                                    {name}
+                                                </a>
+                                            </li>
                                         );
                                     })}
-                                </tbody>
-                            </table>
-                        </Panel>
-                    )}
-                    {user?.permissions.canManagePermissions ? (
-                        <Panel title='Permissions'>
-                            <div>{retPermissions}</div>
-                        </Panel>
-                    ) : null}
-                    <button
-                        type='button'
-                        className='btn btn-primary col-xs-3'
-                        onClick={onClearClick}
-                    >
-                        Clear sessions
-                    </button>
-                    <button
-                        type='button'
-                        className='btn btn-primary col-xs-3'
-                        onClick={onSaveClick}
-                    >
-                        Save {isSaveLoading && <span className='spinner button-spinner' />}
-                    </button>
+                                </ul>
+                            </Panel>
+                        )}
+                        {currentUser && currentUser.tokens && (
+                            <Panel title='Sessions'>
+                                <Table isStriped>
+                                    <TableHeader>
+                                        <TableColumn>IP Address</TableColumn>
+                                        <TableColumn>Last Used</TableColumn>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {currentUser.tokens.map((token, index) => {
+                                            return (
+                                                <TableRow key={index}>
+                                                    <TableCell>{token.ip}</TableCell>
+                                                    <TableCell>
+                                                        {moment(token.lastUsed).format(
+                                                            'YYYY-MM-DD HH:MM'
+                                                        )}
+                                                    </TableCell>
+                                                </TableRow>
+                                            );
+                                        })}
+                                    </TableBody>
+                                </Table>
+                            </Panel>
+                        )}
+                        {user?.permissions.canManagePermissions ? (
+                            <Panel title='Permissions'>
+                                <div className='grid grid-cols-2 gap-1'>{retPermissions}</div>
+                            </Panel>
+                        ) : null}
+                        <div>
+                            <div className='flex gap-2'>
+                                <Button color='primary' onClick={onClearClick}>
+                                    Clear sessions
+                                </Button>
+                                <Button color='primary' onClick={onSaveClick}>
+                                    Save {isSaveLoading && <Spinner />}
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
                 </form>
             </div>
         );
@@ -241,10 +240,8 @@ const UserAdmin = () => {
         disabled,
         isSaveLoading,
         onClearClick,
-        onDisabledChanged,
         onLinkedUserClick,
         onSaveClick,
-        onVerifiedChanged,
         retPermissions,
         user?.permissions.canManagePermissions,
         verified
@@ -270,17 +267,23 @@ const UserAdmin = () => {
     }, [data]);
 
     return (
-        <div className='col-sm-offset-2 col-sm-8'>
+        <div className='w-3/4 mx-auto'>
             <Panel title='User administration'>
-                {errorMessage && <AlertPanel type='error' message={errorMessage} />}
-                {successMessage && <AlertPanel type='success' message={successMessage} />}
-                <Form
-                    name='userAdmin'
-                    apiLoading={isLoading}
-                    buttonClass='col-sm-offset-4 col-sm-3'
-                    buttonText='Search'
-                    onSubmit={onFindClick}
-                />
+                {errorMessage && <AlertPanel variant='danger' message={errorMessage} />}
+                {successMessage && <AlertPanel variant='success' message={successMessage} />}
+                <div className='w-1/3'>
+                    <Input
+                        label='Username'
+                        name='username'
+                        onValueChange={setUsername}
+                        value={username}
+                    />
+                </div>
+                <div className='mt-2'>
+                    <Button color='primary' onClick={onFindClick} loading={isLoading}>
+                        Search
+                    </Button>
+                </div>
             </Panel>
             {renderedUser}
         </div>

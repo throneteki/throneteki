@@ -1,14 +1,30 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import Link from '../Site/Link';
-import Avatar from '../Site/Avatar';
-import menus from '../../menus';
 import ContextMenu from './ContextMenu';
 import ServerStatus from './ServerStatus';
 
 import SmallHeaderIcon from '../../assets/img/header_icon.png';
 import HeaderIcon from '../../assets/img/main_header_logo.png';
+import {
+    Dropdown,
+    DropdownItem,
+    DropdownMenu,
+    DropdownTrigger,
+    Image,
+    Link as NextUiLink,
+    Navbar,
+    NavbarBrand,
+    NavbarContent,
+    NavbarMenu,
+    NavbarMenuItem,
+    NavbarMenuToggle
+} from '@nextui-org/react';
+import { LeftMenu, ProfileMenu, RightMenu } from '../../menus';
+import ProfileDropdown from './ProfileDropdown';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 
 const NavBar = () => {
     const { path } = useSelector((state) => state.navigation);
@@ -26,167 +42,178 @@ const NavBar = () => {
         responseTime: gameResponse
     } = useSelector((state) => state.game);
 
-    const renderMenuItem = useCallback(
-        (menuItem) => {
-            let navClass = 'navbar-item';
+    const [dropdownOpenStatus, setDropdownOpenStatus] = useState({});
 
-            navClass += menuItem.path === path ? ' active' : '';
+    const userCanSeeMenu = (menuItem, user) => {
+        return !menuItem.permission || user.permissions[menuItem.permission];
+    };
 
-            if (menuItem.showOnlyWhenLoggedOut && user) {
-                return null;
+    const filterMenuItems = useCallback((menuItems, user) => {
+        const returnedItems = [];
+
+        for (const menuItem of menuItems) {
+            if (user && menuItem.showOnlyWhenLoggedOut) {
+                continue;
             }
 
-            if (menuItem.showOnlyWhenLoggedIn && !user) {
-                return null;
+            if (!user && menuItem.showOnlyWhenLoggedIn) {
+                continue;
             }
 
-            if (menuItem.permission && (!user || !user.permissions[menuItem.permission])) {
-                return null;
+            if (!userCanSeeMenu(menuItem, user)) {
+                continue;
             }
 
-            if (menuItem.childItems) {
-                let className = 'navbar-item dropdown';
+            returnedItems.push(menuItem);
+        }
 
-                if (
-                    menuItem.childItems.some((item) => {
-                        return item.path === path;
-                    })
-                ) {
-                    className += ' active';
+        return returnedItems;
+    }, []);
+
+    const renderMenuItems = useCallback(
+        (menuItems) => {
+            return filterMenuItems(menuItems, user).map((menuItem, index) => {
+                const children = menuItem.childItems && filterMenuItems(menuItem.childItems, user);
+
+                if (children && children.length > 0) {
+                    return (
+                        <Dropdown
+                            key={menuItem.title || index}
+                            onOpenChange={(isOpen) => {
+                                const newDropDownStatus = Object.assign({}, dropdownOpenStatus);
+                                newDropDownStatus[menuItem.title || index] = isOpen;
+
+                                setDropdownOpenStatus(newDropDownStatus);
+                            }}
+                        >
+                            <DropdownTrigger>
+                                <NextUiLink
+                                    className='flex gap-1 cursor-pointer font-[PoppinsMedium] text-secondary transition-colors duration-500 ease-in-out hover:text-white'
+                                    size='lg'
+                                >
+                                    {menuItem.title}
+                                    <FontAwesomeIcon
+                                        icon={
+                                            dropdownOpenStatus[menuItem.title || index]
+                                                ? faChevronUp
+                                                : faChevronDown
+                                        }
+                                    />
+                                </NextUiLink>
+                            </DropdownTrigger>
+                            <DropdownMenu
+                                id={`nav-${menuItem.title}`}
+                                variant='flat'
+                                className='font-[PoppinsMedium] text-secondary'
+                                title={menuItem.title}
+                            >
+                                {children.map((childItem, index) =>
+                                    childItem.path ? (
+                                        <DropdownItem key={index} classNames={{ base: 'flex' }}>
+                                            <span className='flex'>
+                                                <Link className='w-full' href={childItem.path}>
+                                                    {childItem.title}
+                                                </Link>
+                                            </span>
+                                        </DropdownItem>
+                                    ) : null
+                                )}
+                            </DropdownMenu>
+                        </Dropdown>
+                    );
                 }
 
-                var childItems = menuItem.childItems.reduce((items, item) => {
-                    let dropDownClass = 'navbar-item';
-
-                    if (item.permission && (!user || !user.permissions[item.permission])) {
-                        return items;
-                    }
-
-                    if (item.path === path) {
-                        dropDownClass += ' active';
-                    }
-
-                    return items.concat(
-                        <li key={item.title} className={dropDownClass}>
-                            <Link href={item.path}>{item.title}</Link>
-                        </li>
-                    );
-                }, []);
-
-                if (childItems.length === 0) {
-                    return null;
+                if (!menuItem.path) {
+                    return <React.Fragment key={index}></React.Fragment>;
                 }
 
                 return (
-                    <li key={menuItem.title} className={className}>
-                        <a
-                            href='#'
-                            className='dropdown-toggle'
-                            data-toggle='dropdown'
-                            role='button'
-                            aria-haspopup='true'
-                            aria-expanded='false'
+                    <NavbarMenuItem key={index}>
+                        <Link
+                            className='w-full font-[PoppinsMedium] text-secondary transition-colors duration-500 ease-in-out hover:text-white'
+                            size='lg'
+                            as={Link}
+                            href={menuItem.path}
                         >
-                            {menuItem.showProfilePicture && user ? (
-                                <Avatar username={user.username} />
-                            ) : null}
-                            {menuItem.showProfilePicture && user ? user.username : menuItem.title}
-                            <span className='caret' />
-                        </a>
-                        <ul className='dropdown-menu'>{childItems}</ul>
-                    </li>
+                            {menuItem.title}
+                        </Link>
+                    </NavbarMenuItem>
                 );
-            }
-
-            return (
-                <li key={menuItem.title} className={navClass}>
-                    <Link href={menuItem.path}>{menuItem.title}</Link>
-                </li>
-            );
+            });
         },
-        [path, user]
+        [dropdownOpenStatus, filterMenuItems, user]
     );
 
     let leftMenu = useMemo(() => {
-        return menus.filter((menu) => {
-            return menu.position === 'left';
-        });
-    }, []);
-    let rightMenu = useMemo(() => {
-        return menus.filter((menu) => {
-            return menu.position === 'right';
-        });
-    }, []);
+        return renderMenuItems(LeftMenu);
+    }, [renderMenuItems]);
 
-    let leftMenuToRender = leftMenu.map(renderMenuItem);
-    let rightMenuToRender = rightMenu.map(renderMenuItem);
+    let rightMenu = useMemo(() => {
+        return renderMenuItems(RightMenu);
+    }, [renderMenuItems]);
 
     let numGames = games ? (
-        <li className='navbar-item text-white'>
+        <li className='font-[PoppinsMedium] text-white text-nowrap'>
             <span>{`${games.length} Games`}</span>
         </li>
     ) : null;
 
     return (
-        <nav className='navbar navbar-inverse navbar-fixed-top navbar-sm'>
-            <div className='small-navbar-wrapper hidden-md hidden-lg'>
-                <div className='small-navbar-spacer'></div>
-                <Link href='/' className='navbar-brand'>
+        <Navbar isBordered height='3rem' maxWidth='full'>
+            <NavbarContent className='lg:hidden' justify='start'>
+                <NavbarMenuToggle />
+            </NavbarContent>
+            <NavbarContent className='pr-3 lg:hidden' justify='center'>
+                <NavbarBrand as={Link} href='/'>
                     <img
                         src={SmallHeaderIcon}
+                        width='32'
                         height='32'
-                        className='d-inline-block align-top'
+                        className='inline-block align-top'
                         alt='The Iron Throne Logo'
                     />
-                </Link>
-                <div className='small-navbar-right'>
-                    <button
-                        className='navbar-toggle collapsed'
-                        type='button'
-                        data-toggle='collapse'
-                        data-target='#navbar'
-                        aria-expanded='false'
-                        aria-controls='navbar'
-                    >
-                        <span className='sr-only'>Toggle Navigation</span>
-                        <span className='icon-bar' />
-                        <span className='icon-bar' />
-                        <span className='icon-bar' />
-                    </button>
-                </div>
-            </div>
-            <div id='navbar' className='collapse-menu collapse navbar-collapse'>
-                <ul className='nav navbar-nav left-menu'>{leftMenuToRender}</ul>
-                <Link href='/' className='navbar-brand visible-md-block visible-lg-block'>
-                    <img
+                </NavbarBrand>
+            </NavbarContent>
+            <NavbarContent className='lg:hidden' justify='end'>
+                {rightMenu}
+            </NavbarContent>
+
+            <NavbarMenu>{leftMenu}</NavbarMenu>
+
+            <NavbarContent className='hidden lg:flex' justify='start'>
+                {leftMenu}
+            </NavbarContent>
+            <NavbarContent className='hidden lg:flex' justify='center'>
+                <NavbarBrand as={Link} href='/'>
+                    <Image
                         src={currentGame?.started ? SmallHeaderIcon : HeaderIcon}
-                        height='32'
-                        className='d-inline-block align-top'
+                        style={{ height: '48px' }}
                         alt='The Iron Throne Logo'
                     />
-                </Link>
-                <ul className='nav navbar-right navbar-nav'>
-                    <ContextMenu />
-                    {numGames}
-                    {currentGame?.started ? (
-                        <ServerStatus
-                            connected={gameConnected}
-                            connecting={gameConnecting}
-                            serverType='Game server'
-                            responseTime={gameResponse}
-                        />
-                    ) : (
-                        <ServerStatus
-                            connected={lobbySocketConnected}
-                            connecting={lobbySocketConnecting}
-                            serverType='Lobby'
-                            responseTime={lobbyResponse}
-                        />
-                    )}
-                    {rightMenuToRender}
-                </ul>
-            </div>
-        </nav>
+                </NavbarBrand>
+            </NavbarContent>
+            <NavbarContent className='hidden lg:flex' justify='end'>
+                <ContextMenu />
+                {!currentGame?.started && numGames}
+                {currentGame?.started ? (
+                    <ServerStatus
+                        connected={gameConnected}
+                        connecting={gameConnecting}
+                        serverType='Game server'
+                        responseTime={gameResponse}
+                    />
+                ) : (
+                    <ServerStatus
+                        connected={lobbySocketConnected}
+                        connecting={lobbySocketConnecting}
+                        serverType='Lobby'
+                        responseTime={lobbyResponse}
+                    />
+                )}
+                {rightMenu}
+                <ProfileDropdown menu={ProfileMenu} user={user} />
+            </NavbarContent>
+        </Navbar>
     );
 };
 

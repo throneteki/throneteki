@@ -174,8 +174,8 @@ const DraftingTable = () => {
     }));
 
     return (
-        <div className='game-board'>
-            <div className='main-window'>
+        <div className='absolute bottom-0 left-0 top-0 right-0 flex flex-col justify-between'>
+            <div>
                 <CardZoom
                     imageUrl={cardToZoom ? '/img/cards/' + cardToZoom.code + '.png' : ''}
                     orientation={
