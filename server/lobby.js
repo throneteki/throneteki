@@ -230,7 +230,9 @@ class Lobby {
             );
             let gameSummaries = filteredGames.map((game) => game.getSummary());
 
-            socket.send(message, gameSummaries);
+            if (gameSummaries.length > 0) {
+                socket.send(message, gameSummaries);
+            }
         }
     }
 

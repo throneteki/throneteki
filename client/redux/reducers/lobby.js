@@ -79,6 +79,9 @@ const lobbySlice = createSlice({
             }
         },
         receiveNewGame: (state, action) => {
+            if (action.payload.length === 0) {
+                return;
+            }
             state.games.push(action.payload[0]);
         },
         receiveRemoveGame: (state, action) => {
@@ -86,15 +89,12 @@ const lobbySlice = createSlice({
             state.games = state.games.filter((game) => !gameIdsToRemove.has(game.id));
         },
         receiveUpdateGame: (state, action) => {
+            if (action.payload.length === 0) {
+                return;
+            }
             const game = action.payload[0];
 
-            if (!game?.id) {
-                throw new Error(`Game or id is null ${action.payload}`);
-            }
             const index = state.games.findIndex((g) => {
-                if (!g?.id) {
-                    throw new Error(`inner game or id is null ${g}`);
-                }
                 return g.id === game.id;
             });
             if (index !== -1) {
