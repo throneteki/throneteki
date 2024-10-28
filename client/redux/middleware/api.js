@@ -79,7 +79,7 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
                 )
             );
 
-            api.dispatch(sendAuthenticateMessage());
+            api.dispatch(sendAuthenticateMessage(refreshResult.data.data.token));
 
             result = await baseQuery(args, api, extraOptions);
         } else {
