@@ -1,24 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
 import DeckStatusSummary from './DeckStatusSummary';
-import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react';
+import { PopoverContent, PopoverTrigger } from '@nextui-org/react';
 import DeckStatusLabel from './DeckStatusLabel';
+import MouseOverPopover from '../Site/MouseOverPopover';
 
 const DeckStatus = ({ className, status }) => {
-    const [showPopup, setShowPopup] = useState(false);
-
     return (
-        <Popover
-            placement='right'
-            className={className}
-            isOpen={showPopup}
-            onOpenChange={(open) => setShowPopup(open)}
-        >
+        <MouseOverPopover placement='right' className={className}>
             <PopoverTrigger>
-                <div onMouseOver={() => setShowPopup(true)} onMouseOut={() => setShowPopup(false)}>
-                    <DeckStatusLabel status={status} />
-                </div>
+                <DeckStatusLabel status={status} />
             </PopoverTrigger>
-            <PopoverContent className='bg-background'>
+            <PopoverContent>
                 <div>
                     <DeckStatusSummary status={status} />
                     {status.errors && status.errors.length !== 0 && (
@@ -30,7 +22,7 @@ const DeckStatus = ({ className, status }) => {
                     )}
                 </div>
             </PopoverContent>
-        </Popover>
+        </MouseOverPopover>
     );
 };
 
