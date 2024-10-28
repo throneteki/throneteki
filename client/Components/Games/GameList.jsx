@@ -87,10 +87,10 @@ const GameList = ({ gameFilter }) => {
             if (a.started && !b.started) {
                 return 1;
             }
-            return a.createdAt - b.createdAt;
+            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
         };
 
-        for (const game of [...games].sort((a, b) => compareGames(a, b))) {
+        for (const game of [...games].sort(compareGames)) {
             if (gameFilter.showOnlyNewGames && game.started) {
                 continue;
             }
