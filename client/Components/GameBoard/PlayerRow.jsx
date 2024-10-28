@@ -88,7 +88,7 @@ const PlayerRow = ({
     );
 
     const getAgendas = useCallback(() => {
-        let agenda = agendas?.length > 0 ? agendas[0] : undefined;
+        const agenda = agendas?.length > 0 ? agendas[0] : undefined;
         if (!agenda || agenda.code === '') {
             return (
                 // Show empty card pile to ensure empty slot looks consistent
@@ -108,21 +108,19 @@ const PlayerRow = ({
                 />
             );
         }
-        let cardWidth = getCardDimensions(cardSize);
+        const cardWidth = getCardDimensions(cardSize);
 
-        let underneath = agenda.childCards ? [...agenda.childCards] : [];
-        let disablePopup = underneath.length === 0;
-        let title = !disablePopup ? 'Agenda' : null;
-        let source = 'agenda';
-        let additionalAgendas = agendas.slice(1);
-        let pileClass = classNames('agenda', `agenda-${agenda.code}`);
-        let style = { zIndex: additionalAgendas.length * 10 };
+        const underneath = agenda.childCards ? [...agenda.childCards] : [];
+        const disablePopup = underneath.length === 0;
+        const title = !disablePopup ? 'Agenda' : null;
+        const source = 'agenda';
+        const additionalAgendas = agendas.slice(1);
+        const agendaClass = (a) => classNames('agenda', `agenda-${a.code}`);
 
-        let spreadWidth = cardWidth.width / 2;
+        const spreadWidth = cardWidth.width / 2;
 
-        let retAgendas = [];
-        retAgendas.push(
-            <div key={agenda.uuid} className={pileClass} style={style}>
+        const retAgendas = [
+            <div key={agenda.uuid} className={agendaClass(agenda)}>
                 {renderDroppablePile(
                     source,
                     <CardPile
@@ -142,33 +140,30 @@ const PlayerRow = ({
                     />
                 )}
             </div>
-        );
+        ];
 
         // Add all additional agendas separately (not as a CardPile)
-        retAgendas = retAgendas.concat(
-            additionalAgendas
-                .map((agenda, index) => {
-                    let className = classNames('agenda', `agenda-${agenda.code}`);
-                    let style = { marginLeft: `-${spreadWidth}px`, zIndex: index * 10 };
-                    return (
-                        <div key={agenda.uuid} className={className} style={style}>
-                            <Card
-                                card={agenda}
-                                source={source}
-                                onMouseOver={onMouseOver}
-                                onMouseOut={onMouseOut}
-                                disableMouseOver={false}
-                                onClick={onCardClick}
-                                onMenuItemClick={onMenuItemClick}
-                                orientation='vertical'
-                                size={cardSize}
-                            />
-                        </div>
-                    );
-                })
-                .reverse()
+        retAgendas.unshift(
+            ...additionalAgendas.reverse().map((agenda) => {
+                const style = { marginLeft: `-${spreadWidth}px` };
+                return (
+                    <div key={agenda.uuid} className={agendaClass(agenda)} style={style}>
+                        <Card
+                            card={agenda}
+                            source={source}
+                            onMouseOver={onMouseOver}
+                            onMouseOut={onMouseOut}
+                            disableMouseOver={false}
+                            onClick={onCardClick}
+                            onMenuItemClick={onMenuItemClick}
+                            orientation='vertical'
+                            size={cardSize}
+                        />
+                    </div>
+                );
+            })
         );
-        return <div className='relative flex'>{retAgendas}</div>;
+        return <div className='relative flex flex-row-reverse'>{retAgendas}</div>;
     }, [
         agendas,
         renderDroppablePile,
