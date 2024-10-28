@@ -8,7 +8,6 @@ import Panel from '../Components/Site/Panel';
 import LobbyChat from '../Components/Lobby/LobbyChat';
 import { getMessageWithLinks } from '../util';
 
-import * as actions from '../actions';
 import { createSelector } from '@reduxjs/toolkit';
 import { useGetNewsQuery, useRemoveMessageMutation } from '../redux/middleware/api';
 import { clearChatStatus, sendLobbyChatMessage } from '../redux/reducers/lobby';
@@ -71,26 +70,13 @@ const Lobby = () => {
             if (event.key === 'Enter') {
                 sendMessage();
 
-                messageRef.current.clear();
+                messageRef?.current.clear();
 
                 event.preventDefault();
             }
         },
         [sendMessage]
     );
-
-    const onSendClick = useCallback(
-        (event) => {
-            event.preventDefault();
-
-            sendMessage();
-        },
-        [sendMessage]
-    );
-
-    const onChange = useCallback((value) => {
-        setMessage(value);
-    }, []);
 
     const onRemoveMessageClick = useCallback(
         async (messageId) => {
