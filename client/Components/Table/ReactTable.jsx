@@ -37,7 +37,7 @@ import AlertPanel, { AlertType } from '../Site/AlertPanel';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 // eslint-disable-next-line react/display-name
-const TableWrapper = forwardRef(({ children, ref }) => {
+const TableWrapper = forwardRef(({ children }, ref) => {
     return (
         <div className='h-full overflow-y-auto'>
             <table ref={ref}>{children}</table>
