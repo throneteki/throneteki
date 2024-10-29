@@ -111,7 +111,7 @@
         "less": "^4.2.0",
         "moment": "^2.22.1",
         "node-noop": "^1.0.0",
-        "path-to-regexp": "^2.2.1",
+        "path-to-regexp": "^3.3.0",
         "prettier": "^3.2.5",
         "prettier-plugin-tailwindcss": "^0.6.5",
         "query-string": "^5.1.1",
