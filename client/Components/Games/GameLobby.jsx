@@ -42,7 +42,7 @@ const GameLobby = () => {
     }, [currentGame]);
 
     return (
-        <div className='mx-auto w-4/5'>
+        <div className='mx-auto my-2 w-4/5 flex flex-col gap-2'>
             <div ref={topRef}>
                 {newGame && <NewGame quickJoin={quickJoin} onClosed={() => setNewGame(false)} />}
                 {currentGame?.started === false && <PendingGame />}
