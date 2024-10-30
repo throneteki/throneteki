@@ -3,7 +3,7 @@ import DrawCard from '../../drawcard.js';
 class Aggo extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
-            title: 'Stand a Bloodrider (if a Summer plot is revealed)',
+            title: 'Stand a Bloodrider',
             condition: () => this.game.anyPlotHasTrait('Summer'),
             target: {
                 cardCondition: (card) =>
