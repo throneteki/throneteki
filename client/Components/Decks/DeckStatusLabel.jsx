@@ -1,6 +1,7 @@
 import React from 'react';
 import { Chip } from '@nextui-org/react';
 import { deckStatusLabel } from './DeckHelper';
+import classNames from 'classnames';
 
 const DeckStatusLabel = ({ className = 'h-10', status }) => {
     const text = status ? deckStatusLabel(status) : 'Loading...';
@@ -15,9 +16,9 @@ const DeckStatusLabel = ({ className = 'h-10', status }) => {
     } else if (status.basicRules && status.noBannedCards && restrictionsFollowed) {
         bg = 'success';
     }
-
+    const chipClass = classNames('select-none', className);
     return (
-        <Chip className={className} color={bg} radius='md'>
+        <Chip className={chipClass} color={bg} radius='md'>
             {text}
         </Chip>
     );

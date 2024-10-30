@@ -2,8 +2,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toastr } from 'react-redux-toastr';
 import { sendConcedeMessage, sendLeaveGameMessage } from '../../redux/reducers/game';
-import { PopoverContent, PopoverTrigger, Link, NavbarMenuItem } from '@nextui-org/react';
-import MouseOverPopover from '../Site/MouseOverPopover';
+import { Link, NavbarMenuItem, Tooltip } from '@nextui-org/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faWarning } from '@fortawesome/free-solid-svg-icons';
 
@@ -77,7 +76,7 @@ const ContextMenu = () => {
                     </Link>
                 );
             }
-            const spectatorPopover =
+            const spectators =
                 currentGame.spectators.length > 0 ? (
                     <ul>
                         {currentGame.spectators.map((spectator) => (
@@ -99,18 +98,12 @@ const ContextMenu = () => {
             }
 
             menuOptions.unshift(
-                <MouseOverPopover triggerScaleOnOpen={false}>
-                    <PopoverTrigger>
-                        <a
-                            className={menuItemClass}
-                            onMouseOver={() => setShowSpectatorWarning(false)}
-                        >
-                            {showSpectatorWarning ? <FontAwesomeIcon icon={faWarning} /> : null}{' '}
-                            {'Spectators: ' + currentGame.spectators.length}
-                        </a>
-                    </PopoverTrigger>
-                    <PopoverContent>{spectatorPopover}</PopoverContent>
-                </MouseOverPopover>
+                <Tooltip content={spectators} closeDelay={0}>
+                    <a className={menuItemClass} onMouseOver={() => setShowSpectatorWarning(false)}>
+                        {showSpectatorWarning ? <FontAwesomeIcon icon={faWarning} /> : null}{' '}
+                        {'Spectators: ' + currentGame.spectators.length}
+                    </a>
+                </Tooltip>
             );
 
             setLastSpectatorCount(currentGame.spectators.length);
