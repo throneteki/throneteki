@@ -18,6 +18,7 @@ import {
     TableHeader,
     TableRow
 } from '@nextui-org/react';
+import LoadingSpinner from '../Components/Site/LoadingSpinner';
 
 const BanlistAdmin = () => {
     const { data: banList, isLoading } = useGetBanListQuery();
@@ -87,7 +88,7 @@ const BanlistAdmin = () => {
     );
 
     if (isLoading) {
-        return 'Loading banlist, please wait...';
+        return <LoadingSpinner className='p-10' label={'Loading banlist...'}></LoadingSpinner>;
     }
 
     return (
