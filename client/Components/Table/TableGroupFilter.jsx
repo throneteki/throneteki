@@ -17,7 +17,7 @@ const TableGroupFilter = ({ args, fetchData, onOkClick, filter, onCancelClick })
     let content;
 
     if (isLoading) {
-        content = <LoadingSpinner text='Loading...' />;
+        content = <LoadingSpinner label='Loading...' />;
     } else if (isError) {
         content = <div>Failed to load options</div>;
     } else {

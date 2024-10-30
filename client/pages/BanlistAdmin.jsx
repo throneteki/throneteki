@@ -11,7 +11,6 @@ import { toastr } from 'react-redux-toastr';
 import {
     Button,
     Input,
-    Spinner,
     Table,
     TableBody,
     TableCell,
@@ -73,8 +72,12 @@ const BanlistAdmin = () => {
                         <TableCell>{moment(ban.added).format('YYYY-MM-DD')}</TableCell>
                         <TableCell>{ban.addedBy}</TableCell>
                         <TableCell>
-                            <Button color='danger' onClick={() => onDeleteBanlistClick(ban._id)}>
-                                Delete {isRemoveLoading && <Spinner />}
+                            <Button
+                                isLoading={isRemoveLoading}
+                                color='danger'
+                                onClick={() => onDeleteBanlistClick(ban._id)}
+                            >
+                                Delete
                             </Button>
                         </TableCell>
                     </TableRow>
@@ -109,7 +112,11 @@ const BanlistAdmin = () => {
                             onValueChange={setBanListText}
                         />
                         <div className='mt-2'>
-                            <Button color='primary' onClick={onAddBanlistClick}>
+                            <Button
+                                isLoading={isAddLoading}
+                                color='primary'
+                                onClick={onAddBanlistClick}
+                            >
                                 Add
                             </Button>
                         </div>

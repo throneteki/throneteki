@@ -11,7 +11,6 @@ import { toastr } from 'react-redux-toastr';
 import {
     Button,
     Input,
-    Spinner,
     Table,
     TableBody,
     TableCell,
@@ -151,8 +150,13 @@ const BlockList = () => {
                             onChange={onUsernameChange}
                             value={username}
                         />
-                        <Button className='mt-2' color='primary' onClick={onAddClick}>
-                            Add {isAddLoading && <Spinner />}
+                        <Button
+                            isLoading={isAddLoading}
+                            className='mt-2'
+                            color='primary'
+                            onClick={onAddClick}
+                        >
+                            Add
                         </Button>
 
                         <div className='mt-2'>

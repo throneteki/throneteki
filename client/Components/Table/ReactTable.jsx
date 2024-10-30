@@ -183,7 +183,7 @@ function ReactTable({
     }, [rowSelection]);
 
     if (isLoading) {
-        return <LoadingSpinner text='Loading data, please wait...' />;
+        return <LoadingSpinner label={'Loading...'} />;
     } else if (isError) {
         return <AlertPanel variant='danger'>{'An error occurred loading data.'}</AlertPanel>;
     }
@@ -340,7 +340,7 @@ function ReactTable({
                 </TableHeader>
                 <TableBody
                     isLoading={isLoading}
-                    loadingContent={<LoadingSpinner text='Loading data, please wait...' />}
+                    loadingContent={<LoadingSpinner label='Loading data...' />}
                     emptyContent={
                         emptyContent || (
                             <AlertPanel variant={AlertType.Info}>

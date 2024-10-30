@@ -14,7 +14,7 @@ import Background from './assets/img/bgs/mainbg.png';
 import BlankBg from './assets/img/bgs/blank.png';
 import StandardBg from './assets/img/bgs/background.png';
 import WinterBg from './assets/img/bgs/background2.png';
-import { Spinner } from '@nextui-org/react';
+import LoadingSpinner from './Components/Site/LoadingSpinner';
 
 const backgrounds = {
     none: BlankBg,
@@ -122,19 +122,14 @@ const Application = () => {
                             <div className='w-full h-full flex justify-center items-center'>
                                 <div className='text-center'>
                                     <h1 className='text-large'>Unexpected Error</h1>
-                                    <p>Rreport has been automatically submitted</p>
+                                    <p>Report has been automatically submitted</p>
                                 </div>
                             </div>
                         }
                     >
-                        {isLoading ? (
+                        {!isLoading ? (
                             <div className='w-full h-full flex justify-center items-center'>
-                                <Spinner
-                                    size='lg'
-                                    label='Loading'
-                                    color='white'
-                                    className='select-none'
-                                />
+                                <LoadingSpinner size='lg' />
                             </div>
                         ) : (
                             <div className='container'>{component}</div>

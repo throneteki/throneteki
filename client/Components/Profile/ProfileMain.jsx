@@ -5,7 +5,7 @@ import { toastr } from 'react-redux-toastr';
 
 import PatreonImage from '../../assets/img/Patreon_Mark_Coral.jpg';
 
-import { Avatar, Button, Input, Link, Spinner, Switch } from '@nextui-org/react';
+import { Avatar, Button, Input, Link, Switch } from '@nextui-org/react';
 
 const ProfileMain = ({ user, formProps }) => {
     const [unlinkPatreon, { isLoading: unlinkLoading }] = useUnlinkPatreonMutation();
@@ -88,12 +88,13 @@ const ProfileMain = ({ user, formProps }) => {
                         <div className='flex'>
                             <Avatar src={`/img/avatar/${user.username}.png`} showFallback />
                             <Button
+                                isLoading={avatarLoading}
                                 type='button'
                                 className='ml-2'
                                 color='secondary'
                                 onClick={onUpdateAvatarClick}
                             >
-                                Update avatar {avatarLoading && <Spinner />}
+                                Update avatar
                             </Button>
                         </div>
                         <div>
@@ -120,9 +121,12 @@ const ProfileMain = ({ user, formProps }) => {
                                 Link Patreon account
                             </Button>
                         ) : (
-                            <Button color='secondary' onClick={onUnlinkClick}>
-                                Unlink Patreon account{' '}
-                                {unlinkLoading && <Spinner size='small' className='ml-1' />}
+                            <Button
+                                isLoading={unlinkLoading}
+                                color='secondary'
+                                onClick={onUnlinkClick}
+                            >
+                                Unlink Patreon account
                             </Button>
                         )}
                     </div>
