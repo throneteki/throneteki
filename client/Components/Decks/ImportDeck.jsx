@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
 
-import { Button, Spinner, Textarea } from '@nextui-org/react';
+import { Button, Textarea } from '@nextui-org/react';
 import Panel from '../Site/Panel';
 import {
     useAddDeckMutation,
@@ -12,6 +12,7 @@ import {
 } from '../../redux/middleware/api';
 import AlertPanel from '../Site/AlertPanel';
 import { processThronesDbDeckText } from './DeckHelper';
+import LoadingSpinner from '../Site/LoadingSpinner';
 
 const ImportDeck = () => {
     const [deckText, setDeckText] = useState('');
@@ -49,7 +50,7 @@ const ImportDeck = () => {
     let content;
 
     if (isFactionsLoading || isCardsLoading || isPacksLoading) {
-        content = <Spinner text='Loading data, please wait...' />;
+        content = <LoadingSpinner label='Loading data...' />;
     } else if (isFactionsError || isCardsError || isPacksError) {
         <AlertPanel variant='danger'>
             {'An error occured loading the card data. Please try again later.'}

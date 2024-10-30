@@ -1,16 +1,16 @@
 import React from 'react';
 import DeckStatusSummary from './DeckStatusSummary';
-import { PopoverContent, PopoverTrigger } from '@nextui-org/react';
+import { Tooltip } from '@nextui-org/react';
 import DeckStatusLabel from './DeckStatusLabel';
-import MouseOverPopover from '../Site/MouseOverPopover';
 
 const DeckStatus = ({ className, status }) => {
     return (
-        <MouseOverPopover placement='right' className={className}>
-            <PopoverTrigger>
-                <DeckStatusLabel status={status} />
-            </PopoverTrigger>
-            <PopoverContent>
+        <Tooltip
+            className={className}
+            placement={'right'}
+            showArrow={true}
+            closeDelay={100}
+            content={
                 <div>
                     <DeckStatusSummary status={status} />
                     {status.errors && status.errors.length !== 0 && (
@@ -21,8 +21,12 @@ const DeckStatus = ({ className, status }) => {
                         </ul>
                     )}
                 </div>
-            </PopoverContent>
-        </MouseOverPopover>
+            }
+        >
+            <div>
+                <DeckStatusLabel status={status} />
+            </div>
+        </Tooltip>
     );
 };
 

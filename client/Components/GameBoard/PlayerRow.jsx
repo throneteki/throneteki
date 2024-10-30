@@ -37,7 +37,8 @@ const PlayerRow = ({
     plotDeck,
     plotDiscard,
     activePlot,
-    selectedPlot
+    selectedPlot,
+    mustShowPlotSelection
 }) => {
     const getOutOfGamePile = useCallback(() => {
         if (outOfGamePile.length === 0) {
@@ -300,7 +301,7 @@ const PlayerRow = ({
                 plotDiscard={plotDiscard}
                 activePlot={activePlot}
                 selectedPlot={selectedPlot}
-                mustShowPlotSelection={false}
+                mustShowPlotSelection={mustShowPlotSelection}
             />
             <CardPile
                 className='faction'

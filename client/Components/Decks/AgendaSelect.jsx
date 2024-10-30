@@ -37,7 +37,7 @@ const AgendaSelect = ({ onBackClick, onNextClick }) => {
     };
 
     if (isLoading) {
-        return <LoadingSpinner text={'Loading, please wait...'} />;
+        return <LoadingSpinner />;
     } else if (isError) {
         return (
             <AlertPanel variant='danger'>

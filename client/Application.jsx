@@ -14,6 +14,7 @@ import Background from './assets/img/bgs/mainbg.png';
 import BlankBg from './assets/img/bgs/blank.png';
 import StandardBg from './assets/img/bgs/background.png';
 import WinterBg from './assets/img/bgs/background2.png';
+import LoadingSpinner from './Components/Site/LoadingSpinner';
 
 const backgrounds = {
     none: BlankBg,
@@ -116,11 +117,22 @@ const Application = () => {
                     className='absolute bottom-0 left-0 right-0 top-12 bg-cover bg-center bg-no-repeat'
                     ref={bgRef}
                 >
-                    <Sentry.ErrorBoundary fallback={<p>An error has occurred</p>}>
+                    <Sentry.ErrorBoundary
+                        fallback={
+                            <div className='w-full h-full flex justify-center items-center'>
+                                <div className='text-center'>
+                                    <h1 className='text-large'>Unexpected Error</h1>
+                                    <p>Report has been automatically submitted</p>
+                                </div>
+                            </div>
+                        }
+                    >
                         {isLoading ? (
-                            <div>Please wait...</div>
+                            <div className='w-full h-full flex justify-center items-center'>
+                                <LoadingSpinner size='lg' />
+                            </div>
                         ) : (
-                            <div className='container mt-4'>{component}</div>
+                            <div className='container'>{component}</div>
                         )}
                     </Sentry.ErrorBoundary>
                 </div>

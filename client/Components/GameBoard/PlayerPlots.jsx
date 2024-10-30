@@ -3,6 +3,7 @@ import React, { useCallback } from 'react';
 import CardPile from './CardPile';
 import Droppable from './Droppable';
 import { getCardDimensions } from '../../util';
+import classNames from 'classnames';
 
 const PlayerPlots = ({
     plotDiscard,
@@ -19,10 +20,11 @@ const PlayerPlots = ({
     direction
 }) => {
     const renderPlotPiles = useCallback(() => {
-        let revealedPlots = (
+        const showSelectedPlot = mustShowPlotSelection && !!selectedPlot;
+        const revealedPlots = (
             <CardPile
                 cards={plotDiscard}
-                className='plot'
+                className={'plot'}
                 numColumns={4}
                 onCardClick={onCardClick}
                 onMenuItemClick={onMenuItemClick}
@@ -33,17 +35,24 @@ const PlayerPlots = ({
                 source='revealed plots'
                 popupLocation={isMe ? 'bottom' : 'top'}
                 title='Used Plots'
-                titlePosition={direction === 'reverse' && !activePlot ? 'bottom left' : 'top left'}
+                titlePosition={
+                    direction === 'reverse' && (showSelectedPlot || !activePlot)
+                        ? 'bottom left'
+                        : 'top left'
+                }
                 topCard={activePlot}
+                disableBackground={true}
             />
         );
 
-        let plotDeckElement = (
+        const plotDeckElement = (
             <CardPile
                 cards={plotDeck}
-                className={selectedPlot ? 'plot plot-selected' : 'plot'}
+                className={classNames('plot', {
+                    'plot-selected': selectedPlot
+                })}
                 closeOnClick={isMe}
-                hiddenTopCard={!mustShowPlotSelection}
+                hiddenTopCard={!showSelectedPlot}
                 disablePopup={!isMe}
                 numColumns={4}
                 onCardClick={onCardClick}
@@ -54,25 +63,32 @@ const PlayerPlots = ({
                 title='Plots'
                 titlePosition={direction !== 'reverse' && activePlot ? 'bottom left' : 'top left'}
                 popupLocation={isMe ? 'bottom' : 'top'}
-                // TODO: Move this logic (for Bloodraven) into the plot popup (eg. when player is showing, opponent sees the card in plot popup)
-                // topCard={
-                //     mustShowPlotSelection && !!selectedPlot
-                //         ? selectedPlot
-                //         : { facedown: true, kneeled: true }
-                // }
+                topCard={showSelectedPlot ? selectedPlot : null}
                 size={cardSize}
+                disableBackground={true}
             />
         );
 
+        const plotClass = classNames('rounded-md', {
+            'absolute bottom-0': direction !== 'reverse',
+            'z-50': showSelectedPlot
+        });
+
+        const usedClass = classNames('rounded-md', {
+            'absolute bottom-0': direction === 'reverse',
+            'shadow-[0_0_5px_0] shadow-black': !!activePlot,
+            'z-50': !showSelectedPlot
+        });
+
         let piles = [
-            <div key='plotdeck' className={direction !== 'reverse' && 'absolute bottom-0'}>
+            <div key='plotdeck' className={plotClass}>
                 {isMe ? (
                     <Droppable source='plot deck'>{plotDeckElement}</Droppable>
                 ) : (
                     plotDeckElement
                 )}
             </div>,
-            <div key='usedplots' className={direction === 'reverse' && 'absolute bottom-0'}>
+            <div key='usedplots' className={usedClass}>
                 {isMe ? (
                     <Droppable source='revealed plots'>{revealedPlots}</Droppable>
                 ) : (
@@ -101,6 +117,7 @@ const PlayerPlots = ({
 
     return (
         <div className={'relative flex flex-col'} style={{ height }}>
+            <div className=' inner-border absolute border-2 border-default-100/55 bg-black/55 w-full h-full rounded-md' />
             {renderPlotPiles()}
         </div>
     );

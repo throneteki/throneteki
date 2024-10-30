@@ -77,51 +77,42 @@ const ActivePlayerPrompt = ({
     );
 
     const getButtons = useCallback(() => {
-        let buttonIndex = 0;
-
-        let retButtons = [];
-
         if (!buttons) {
             return null;
         }
 
-        for (const button of buttons) {
-            if (button.timer) {
-                continue;
+        return buttons.reduce((buttons, button, index) => {
+            if (!button.timer) {
+                const clickCallback = button.timerCancel
+                    ? (event) => handleCancelTimerClick(event, button)
+                    : (event) => handleButtonClick(event, button);
+
+                buttons.push(
+                    <div className='w-full' key={index}>
+                        <Button
+                            color='primary'
+                            className='text-wrap h-full min-h-10'
+                            onClick={clickCallback}
+                            onMouseOver={
+                                button.card ? (event) => onMouseOver(event, button.card) : null
+                            }
+                            onMouseOut={
+                                button.card ? (event) => onMouseOut(event, button.card) : null
+                            }
+                            isDisabled={button.disabled}
+                            disableRipple
+                            fullWidth
+                        >
+                            {button.icon && (
+                                <ThronesIcon icon={button.icon} withBackground noSize={false} />
+                            )}
+                            <span>{button.text}</span>
+                        </Button>
+                    </div>
+                );
             }
-
-            let clickCallback = button.timerCancel
-                ? (event) => handleCancelTimerClick(event, button)
-                : (event) => handleButtonClick(event, button);
-
-            let option = (
-                <div className='w-full'>
-                    <Button
-                        color='primary'
-                        key={button.command + buttonIndex.toString()}
-                        className='text-wrap mb-1 h-full min-h-10'
-                        onClick={clickCallback}
-                        onMouseOver={
-                            button.card ? (event) => onMouseOver(event, button.card) : null
-                        }
-                        onMouseOut={button.card ? (event) => onMouseOut(event, button.card) : null}
-                        isDisabled={button.disabled}
-                        disableRipple
-                        fullWidth
-                    >
-                        {button.icon && (
-                            <ThronesIcon icon={button.icon} withBackground noSize={false} />
-                        )}
-                        <span>{button.text}</span>
-                    </Button>
-                </div>
-            );
-            buttonIndex++;
-
-            retButtons.push(option);
-        }
-
-        return retButtons;
+            return buttons;
+        }, []);
     }, [buttons, handleButtonClick, handleCancelTimerClick, onMouseOver, onMouseOut]);
 
     const getControls = useCallback(() => {
@@ -232,7 +223,7 @@ const ActivePlayerPrompt = ({
                 <div className='relative border-1 border-default-200 bg-black/65 rounded-b-md'>
                     <p className='my-1 mx-2 text-small'>{promptTextElement}</p>
                     {getControls()}
-                    <div className='flex flex-col mx-2 gap-1'>{getButtons()}</div>
+                    <div className='flex flex-col mx-2 gap-1 mb-1'>{getButtons()}</div>
                 </div>
             </div>
         </div>

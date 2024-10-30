@@ -52,7 +52,7 @@ export function getCardDimensions(cardSize) {
 function getCardSizeMultiplier(cardSize) {
     switch (cardSize) {
         case 'small':
-            return 0.8;
+            return 0.6;
         case 'large':
             return 1.4;
         case 'x-large':

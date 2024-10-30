@@ -37,7 +37,7 @@ import AlertPanel, { AlertType } from '../Site/AlertPanel';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 // eslint-disable-next-line react/display-name
-const TableWrapper = forwardRef(({ children, ref }) => {
+const TableWrapper = forwardRef(({ children }, ref) => {
     return (
         <div className='h-full overflow-y-auto'>
             <table ref={ref}>{children}</table>
@@ -183,7 +183,7 @@ function ReactTable({
     }, [rowSelection]);
 
     if (isLoading) {
-        return <LoadingSpinner text='Loading data, please wait...' />;
+        return <LoadingSpinner label={'Loading...'} />;
     } else if (isError) {
         return <AlertPanel variant='danger'>{'An error occurred loading data.'}</AlertPanel>;
     }
@@ -340,7 +340,7 @@ function ReactTable({
                 </TableHeader>
                 <TableBody
                     isLoading={isLoading}
-                    loadingContent={<LoadingSpinner text='Loading data, please wait...' />}
+                    loadingContent={<LoadingSpinner label='Loading data...' />}
                     emptyContent={
                         emptyContent || (
                             <AlertPanel variant={AlertType.Info}>

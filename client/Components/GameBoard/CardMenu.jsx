@@ -13,22 +13,23 @@ const CardMenu = ({ menu, onMenuItemClick }) => {
 
     const menuItems = menu.map((menuItem, index) => {
         return (
-            <Button
-                key={index}
-                className={'cursor-pointer'}
-                variant='ghost'
-                size='sm'
-                radius='sm'
-                isDisabled={!!menuItem.disabled}
-                onPress={() => handleMenuItemClick(menuItem)}
-            >
-                {menuItem.text}
-            </Button>
+            <div className='w-full' key={index}>
+                <Button
+                    className='text-wrap h-full min-h-10 w-full'
+                    variant='ghost'
+                    size='sm'
+                    radius='sm'
+                    isDisabled={!!menuItem.disabled}
+                    onPress={() => handleMenuItemClick(menuItem)}
+                >
+                    {menuItem.text}
+                </Button>
+            </div>
         );
     });
 
     return (
-        <div className='bg-black/65 p-1 absolute top-0 left-full z-50 flex gap-1 flex-col rounded-md'>
+        <div className='bg-black/65 p-1 absolute top-0 left-full z-50 flex flex-col gap-0.5 w-[10rem] rounded-lg'>
             {menuItems}
         </div>
     );

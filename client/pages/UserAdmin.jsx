@@ -9,7 +9,6 @@ import { sendClearUserSessions } from '../redux/reducers/lobby';
 import {
     Button,
     Input,
-    Spinner,
     Switch,
     Table,
     TableBody,
@@ -225,8 +224,12 @@ const UserAdmin = () => {
                                 <Button color='primary' onClick={onClearClick}>
                                     Clear sessions
                                 </Button>
-                                <Button color='primary' onClick={onSaveClick}>
-                                    Save {isSaveLoading && <Spinner />}
+                                <Button
+                                    isLoading={isSaveLoading}
+                                    color='primary'
+                                    onClick={onSaveClick}
+                                >
+                                    Save
                                 </Button>
                             </div>
                         </div>

@@ -16,7 +16,7 @@ const EditDeckPage = ({ deckId }) => {
     let content;
 
     if (isLoading) {
-        content = <LoadingSpinner text='Loading deck, please wait...' />;
+        content = <LoadingSpinner label={'Loading deck...'} />;
     } else if (isError) {
         content = (
             <AlertPanel variant='danger'>

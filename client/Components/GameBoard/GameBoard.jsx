@@ -190,7 +190,7 @@ const GameBoard = () => {
             <div>
                 <PlayerStats
                     stats={thisPlayer.stats}
-                    showControls={!!thisPlayer}
+                    showControls={!!thisPlayer && thisPlayer.user?.username === user?.username}
                     showMessages
                     user={thisPlayer.user}
                     firstPlayer={thisPlayer.firstPlayer}

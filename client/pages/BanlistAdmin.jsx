@@ -11,7 +11,6 @@ import { toastr } from 'react-redux-toastr';
 import {
     Button,
     Input,
-    Spinner,
     Table,
     TableBody,
     TableCell,
@@ -19,6 +18,7 @@ import {
     TableHeader,
     TableRow
 } from '@nextui-org/react';
+import LoadingSpinner from '../Components/Site/LoadingSpinner';
 
 const BanlistAdmin = () => {
     const { data: banList, isLoading } = useGetBanListQuery();
@@ -73,8 +73,12 @@ const BanlistAdmin = () => {
                         <TableCell>{moment(ban.added).format('YYYY-MM-DD')}</TableCell>
                         <TableCell>{ban.addedBy}</TableCell>
                         <TableCell>
-                            <Button color='danger' onClick={() => onDeleteBanlistClick(ban._id)}>
-                                Delete {isRemoveLoading && <Spinner />}
+                            <Button
+                                isLoading={isRemoveLoading}
+                                color='danger'
+                                onClick={() => onDeleteBanlistClick(ban._id)}
+                            >
+                                Delete
                             </Button>
                         </TableCell>
                     </TableRow>
@@ -84,7 +88,7 @@ const BanlistAdmin = () => {
     );
 
     if (isLoading) {
-        return 'Loading banlist, please wait...';
+        return <LoadingSpinner className='p-10' label={'Loading banlist...'}></LoadingSpinner>;
     }
 
     return (
@@ -109,7 +113,11 @@ const BanlistAdmin = () => {
                             onValueChange={setBanListText}
                         />
                         <div className='mt-2'>
-                            <Button color='primary' onClick={onAddBanlistClick}>
+                            <Button
+                                isLoading={isAddLoading}
+                                color='primary'
+                                onClick={onAddBanlistClick}
+                            >
                                 Add
                             </Button>
                         </div>

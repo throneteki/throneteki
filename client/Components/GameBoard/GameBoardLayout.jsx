@@ -81,6 +81,7 @@ const GameBoardLayout = ({ thisPlayer, otherPlayer, onCardClick, onMouseOver, on
                         plotDiscard={otherPlayer.cardPiles.plotDiscard}
                         activePlot={otherPlayer.activePlot}
                         selectedPlot={otherPlayer.selectedPlot}
+                        mustShowPlotSelection={otherPlayer.mustShowPlotSelection}
                     />
                 </div>
                 <div className='flex flex-grow flex-shrink min-h-0 overflow-x-hidden'>
