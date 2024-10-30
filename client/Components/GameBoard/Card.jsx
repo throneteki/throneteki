@@ -294,6 +294,37 @@ const Card = ({
         );
     };
 
+    // Need to get classes in priority, as tailwind is not consistent in CSS priority
+    const getHighlightClass = () => {
+        if (card.selected) {
+            return 'shadow-[0_0_2px_4px] shadow-green-400';
+        }
+        if (card.selectable) {
+            return 'shadow-[0_0_8px_4px] shadow-slate-300';
+        }
+        if (card.inChallenge) {
+            return 'shadow-[0_0_1px_2px] shadow-red-500';
+        }
+        if (card.inDanger) {
+            return 'shadow-[0_0_1px_2px] shadow-red-900';
+        }
+        if (card.saved) {
+            return 'shadow-[0_0_1px_2px] shadow-green-500';
+        }
+        if (card.isContributing) {
+            return 'shadow-[0_0_1px_2px] shadow-orange-200';
+        }
+        if (card.stealth || card.assault) {
+            return 'shadow-[0_0_1px_2px] shadow-orange-800';
+        }
+        if (card.controlled) {
+            return 'shadow-[0_0_1px_2px] shadow-yellow-300';
+        }
+        if (card.new) {
+            return 'shadow-[0_0_1px_2px] shadow-green-800';
+        }
+    };
+
     const isFacedown = () => {
         return forceFaceup ? false : card.facedown || !card.code;
     };
@@ -334,25 +365,22 @@ const Card = ({
             return <div />;
         }
 
-        let cardClass = classNames('card overflow-hidden rounded-md', className, sizeClass, {
-            'shadow-[0_0px_10px_1px] shadow-primary': card.selectable,
-            'shadow-[0_0px_2px_4px] shadow-green-300': card.selected,
-            'shadow-[0_0px_1px_2px] shadow-danger': card.inChallenge,
-            'shadow-[0_0px_1px_2px] shadow-red-500': card.inDanger,
-            'shadow-[0_0px_1px_2px] shadow-green-500': card.saved,
-            'shadow-[0_0px_1px_2px] shadow-orange-200': card.isContributing,
-            'shadow-[0_0px_1px_2px] shadow-orange-800': card.stealth || card.assault,
-            'shadow-[0_0px_1px_2px] shadow-warning': card.controlled,
-            'shadow-[0_0px_1px_2px] shadow-info': card.new,
-            absolute: !!style?.left,
-            relative: !style?.left,
-            [`card-type-${card.type}`]: card.type,
-            'custom-card': card.code && card.code.startsWith('custom'),
-            horizontal: orientation !== 'vertical' || card.kneeled,
-            vertical: orientation === 'vertical' && !card.kneeled,
-            'grayscale brightness-75': card.unselectable,
-            'z-10': !hideTokens
-        });
+        const cardClass = classNames(
+            'card overflow-hidden rounded-md',
+            className,
+            sizeClass,
+            getHighlightClass(),
+            {
+                absolute: !!style?.left,
+                relative: !style?.left,
+                [`card-type-${card.type}`]: card.type,
+                'custom-card': card.code && card.code.startsWith('custom'),
+                horizontal: orientation !== 'vertical' || card.kneeled,
+                vertical: orientation === 'vertical' && !card.kneeled,
+                'grayscale brightness-75': card.unselectable,
+                'z-10': !hideTokens
+            }
+        );
         let imageClass = classNames('card-image absolute left-0 top-0', sizeClass, {
             horizontal: card.type === 'plot',
             vertical: card.type !== 'plot',
