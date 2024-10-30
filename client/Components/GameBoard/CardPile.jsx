@@ -15,6 +15,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 const CardPile = ({
     cards,
     disablePopup,
+    disableBackground = false,
     onPopupChange,
     source,
     onCardClick: propsOnCardClick,
@@ -182,14 +183,14 @@ const CardPile = ({
         }
 
         const popupClass = classNames(
-            'card-list-popup relative margin-2 border-1 border-default-200 bg-black/75 rounded-b-md h-full',
+            'card-list-popup relative box-content border-1 border-default-200 bg-black/75 rounded-b-md h-full',
             {
                 'our-side': popupLocation === 'bottom',
                 [size]: true
             }
         );
 
-        let innerClass = classNames('inner overflow-y-auto px-2 pb-2 mt-2', size);
+        let innerClass = classNames('inner overflow-y-auto px-2 pb-2 my-2', size);
         let linkIndex = 0;
 
         let retPopupMenu = popupMenu && (
@@ -251,16 +252,11 @@ const CardPile = ({
         onPopupMenuItemClick
     ]);
 
-    let retClassName = classNames(
-        'card-pile',
-        'box-border relative bg-black/55 rounded-md',
-        className,
-        {
-            [size]: size !== 'normal',
-            horizontal: orientation === 'horizontal' || orientation === 'kneeled',
-            vertical: orientation === 'vertical'
-        }
-    );
+    let retClassName = classNames('card-pile box-border relative rounded-md', className, {
+        [size]: size !== 'normal',
+        horizontal: orientation === 'horizontal' || orientation === 'kneeled',
+        vertical: orientation === 'vertical'
+    });
 
     let retCardCount = cardCount || (cards ? cards.length : '0');
     let headerText = title ? title + ' (' + retCardCount + ')' : '';
@@ -268,7 +264,7 @@ const CardPile = ({
     let cardOrientation =
         orientation === 'horizontal' && retTopCard && retTopCard.facedown ? 'kneeled' : orientation;
 
-    if (hiddenTopCard && !topCard) {
+    if (retTopCard && hiddenTopCard) {
         retTopCard = { facedown: true };
     }
 
@@ -286,7 +282,9 @@ const CardPile = ({
             className={retClassName}
             onClick={onCollectionClick}
         >
-            <div className='inner-border absolute border-2 border-default-100/55 w-full h-full rounded-md' />
+            {!disableBackground && (
+                <div className=' inner-border absolute border-2 border-default-100/55 bg-black/55 w-full h-full rounded-md' />
+            )}
             {retTopCard ? (
                 <Card
                     card={retTopCard}
