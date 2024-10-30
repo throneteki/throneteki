@@ -31,6 +31,14 @@ const ImportDeck = () => {
         try {
             const deck = processThronesDbDeckText(factions, packs, cards, deckText);
 
+            if (!deck) {
+                setError(
+                    'There was an error processing your deck. Please ensure you have pasted a ThronesDb deck plain text export.'
+                );
+
+                return;
+            }
+
             await addDeck(deck).unwrap();
             setSuccess('Deck added successfully.');
         } catch (err) {

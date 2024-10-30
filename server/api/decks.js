@@ -70,7 +70,17 @@ export const init = async function (server, options) {
         passport.authenticate('jwt', { session: false }),
         wrapAsync(async function (req, res) {
             let deck = Object.assign(req.body, { username: req.user.username });
+
+            if (!deck.name) {
+                return res.status(400).send({ message: 'Deck name is required' });
+            }
+
+            if (!deck.faction) {
+                return res.status(400).status({ message: 'Faction is required' });
+            }
+
             await deckService.create(deck);
+
             res.send({ success: true });
         })
     );
