@@ -4,7 +4,7 @@ import ThronesIcon from './ThronesIcon';
 
 import './Counter.css';
 
-const Counter = ({ name, cancel, fade, icon, shortName, value }) => {
+const Counter = ({ name, cancel, fade, icon, shortName, value, className }) => {
     const getClassName = useCallback(() => {
         return classNames(
             'p-0 text-sm w-6 h-6 flex justify-center items-center rounded-md',
@@ -28,22 +28,23 @@ const Counter = ({ name, cancel, fade, icon, shortName, value }) => {
                 'bg-black/85': name === 'challenge-icon' || name === 'faction',
                 'cancel relative': cancel,
                 'fade-out': fade
-            }
+            },
+            className
         );
-    }, [name, cancel, fade]);
+    }, [name, cancel, fade, className]);
 
-    const className = getClassName();
+    const counterClassName = getClassName();
 
     if (icon) {
         return (
-            <div className={className}>
+            <div className={counterClassName}>
                 <ThronesIcon icon={icon} noSize />
             </div>
         );
     }
 
     return (
-        <div key={name} className={className}>
+        <div key={name} className={counterClassName}>
             {shortName}
             {value}
         </div>
