@@ -65,14 +65,14 @@ const ContextMenu = () => {
             'cursor-pointer text-medium font-[PoppinsMedium] text-white transition-colors duration-500 ease-in-out hover:text-gray-500';
         if (currentGame?.started) {
             menuOptions.push(
-                <Link onPress={onLeaveClick}>
-                    <a className={menuItemClass}>Leave Game</a>
+                <Link onPress={onLeaveClick} className={menuItemClass}>
+                    Leave Game
                 </Link>
             );
             if (currentGame.players[user.username]) {
                 menuOptions.unshift(
-                    <Link onPress={() => dispatch(sendConcedeMessage())}>
-                        <a className={menuItemClass}>Concede</a>
+                    <Link onPress={() => dispatch(sendConcedeMessage())} className={menuItemClass}>
+                        Concede
                     </Link>
                 );
             }
