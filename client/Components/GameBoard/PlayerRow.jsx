@@ -296,7 +296,7 @@ const PlayerRow = ({
                 onCardMouseOver={onMouseOver}
                 onMenuItemClick={onMenuItemClick}
                 direction={isMe ? 'default' : 'reverse'}
-                isMe
+                isMe={isMe}
                 plotDeck={plotDeck}
                 plotDiscard={plotDiscard}
                 activePlot={activePlot}

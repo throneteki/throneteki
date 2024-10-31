@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import AlertPanel from '../Components/Site/AlertPanel';
 import { navigate } from '../redux/reducers/navigation';
 import { useActivateAccountMutation } from '../redux/middleware/api';
+import LoadingSpinner from '../Components/Site/LoadingSpinner';
 
 const Activation = ({ id, token }) => {
     const dispatch = useDispatch();
@@ -44,7 +45,7 @@ const Activation = ({ id, token }) => {
     }
 
     if (isLoading) {
-        return <span>Activating your account, please wait...</span>;
+        return <LoadingSpinner label='Activating your account...' />;
     }
 
     return (

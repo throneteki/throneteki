@@ -14,6 +14,7 @@ import { Button, Textarea } from '@nextui-org/react';
 import ReactTable from '../Components/Table/ReactTable';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
+import LoadingSpinner from '../Components/Site/LoadingSpinner';
 
 const NewsAdmin = () => {
     const { data: news, isLoading, error } = useGetAllNewsQuery();
@@ -125,7 +126,7 @@ const NewsAdmin = () => {
     ];
 
     if (isLoading) {
-        return 'Loading news, please wait...';
+        return <LoadingSpinner label='Loading news...' />;
     }
     return (
         <div className='lg:w-5/6 mx-auto'>

@@ -190,7 +190,7 @@ const CardPile = ({
             }
         );
 
-        let innerClass = classNames('inner overflow-y-auto px-2 pb-2 my-2', size);
+        let innerClass = classNames('inner overflow-y-auto px-2 py-2', size);
         let linkIndex = 0;
 
         let retPopupMenu = popupMenu && (

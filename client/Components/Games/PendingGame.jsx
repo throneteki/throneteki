@@ -19,6 +19,7 @@ import { Button, Input, Link, Snippet } from '@nextui-org/react';
 import GameTypeInfo from './GameTypeInfo';
 import AlertPanel, { AlertType } from '../Site/AlertPanel';
 import PendingGamePlayers from './PendingGamePlayers';
+import LoadingSpinner from '../Site/LoadingSpinner';
 
 const PendingGame = () => {
     const dispatch = useDispatch();
@@ -150,13 +151,13 @@ const PendingGame = () => {
     };
 
     if (currentGame && currentGame.started) {
-        return <div>Loading game in progress, please wait...</div>;
+        return <LoadingSpinner label='Loading game in progress...' />;
     }
 
     if (!user) {
         dispatch(navigate('/'));
 
-        return <div>You must be logged in to play, redirecting...</div>;
+        return <LoadingSpinner label='You must be logged in to play, redirecting...' />;
     }
 
     return (

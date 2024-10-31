@@ -339,8 +339,8 @@ const Card = ({
                 setStartPosition(dragRef.current.getBoundingClientRect());
             }
 
-            const x = startPosition?.left + transform.x;
-            const y = startPosition?.top + transform.y;
+            const x = (startPosition?.left || 0) + transform.x;
+            const y = (startPosition?.top || 0) + transform.y;
             const style = { left: x, top: y };
 
             const dragClass = classNames(

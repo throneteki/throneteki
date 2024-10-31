@@ -21,6 +21,8 @@ const PlayerPlots = ({
 }) => {
     const renderPlotPiles = useCallback(() => {
         const showSelectedPlot = mustShowPlotSelection && !!selectedPlot;
+        const plotsInFront = showSelectedPlot || !activePlot;
+
         const revealedPlots = (
             <CardPile
                 cards={plotDiscard}
@@ -35,11 +37,7 @@ const PlayerPlots = ({
                 source='revealed plots'
                 popupLocation={isMe ? 'bottom' : 'top'}
                 title='Used Plots'
-                titlePosition={
-                    direction === 'reverse' && (showSelectedPlot || !activePlot)
-                        ? 'bottom left'
-                        : 'top left'
-                }
+                titlePosition={direction === 'reverse' && plotsInFront ? 'bottom left' : 'top left'}
                 topCard={activePlot}
                 disableBackground={true}
             />
@@ -71,13 +69,13 @@ const PlayerPlots = ({
 
         const plotClass = classNames('rounded-md', {
             'absolute bottom-0': direction !== 'reverse',
-            'z-50': showSelectedPlot
+            'z-50': plotsInFront
         });
 
         const usedClass = classNames('rounded-md', {
             'absolute bottom-0': direction === 'reverse',
             'shadow-[0_0_5px_0] shadow-black': !!activePlot,
-            'z-50': !showSelectedPlot
+            'z-50': !plotsInFront
         });
 
         let piles = [

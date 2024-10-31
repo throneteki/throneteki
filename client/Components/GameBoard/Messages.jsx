@@ -35,13 +35,9 @@ const Messages = ({ messages, onCardMouseOut, onCardMouseOver }) => {
                 const tokenEntry = tokens[lowerToken];
 
                 messages.push(
-                    <span className='inline-flex gap-0.5'>
+                    <span key={`${token}-${i++}`} className='inline-flex gap-0.5'>
                         {` ${token} `}
-                        <img
-                            key={`${token}-${i++}`}
-                            className={tokenEntry.className}
-                            src={tokenEntry.imageSrc}
-                        />
+                        <img className={tokenEntry.className} src={tokenEntry.imageSrc} />
                     </span>
                 );
                 messages.push(' ');
@@ -111,7 +107,7 @@ const Messages = ({ messages, onCardMouseOut, onCardMouseOver }) => {
                 messages.concat(formatMessageText(fragment.message));
             } else if (fragment.link && fragment.label) {
                 messages.push(
-                    <Link isExternal href={fragment.link}>
+                    <Link key={index++} isExternal href={fragment.link}>
                         {fragment.label}
                     </Link>
                 );
@@ -159,11 +155,8 @@ const Messages = ({ messages, onCardMouseOut, onCardMouseOver }) => {
                     </div>
                 );
             } else if (fragment.argType === 'nonAvatarPlayer') {
-                const userClass =
-                    'username' +
-                    (fragment.role
-                        ? ` ${Constants.ColourClassByRole[fragment.role.toLowerCase()]}`
-                        : '');
+                const roleClass = Constants.ColourClassByRole[fragment.role?.toLowerCase()];
+                const userClass = classNames('username font-bold', roleClass);
 
                 messages.push(
                     <span key={index++} className={userClass}>
@@ -187,7 +180,7 @@ const Messages = ({ messages, onCardMouseOut, onCardMouseOver }) => {
 
     const renderMessages = () => {
         return messages.map((message, index) => {
-            const className = classNames('break-words leading-4', '', {
+            const className = classNames('break-words leading-5', '', {
                 'this-player': message.activePlayer && message.activePlayer == owner.name,
                 'other-player': message.activePlayer && message.activePlayer !== owner.name,
                 'chat-bubble': Object.values(message.message).some(
