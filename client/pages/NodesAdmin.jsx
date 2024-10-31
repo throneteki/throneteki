@@ -29,24 +29,18 @@ const NodeAdmin = () => {
     }, [dispatch, isConnected]);
 
     const onToggleNodeClick = useCallback(
-        (node, event) => {
-            event.preventTableCellDefault();
+        (node) => {
             dispatch(sendToggleNodeMessage(node.name));
         },
         [dispatch]
     );
 
-    const onRefreshClick = useCallback(
-        (event) => {
-            event.preventTableCellDefault();
-            dispatch(sendGetNodeStausMessage('getnodestatus'));
-        },
-        [dispatch]
-    );
+    const onRefreshClick = useCallback(() => {
+        dispatch(sendGetNodeStausMessage('getnodestatus'));
+    }, [dispatch]);
 
     const onRestartNodeClick = useCallback(
-        (node, event) => {
-            event.prevenTableCelleDefault();
+        (node) => {
             dispatch(sendRestartNodeMessage(node.name));
         },
         [dispatch]
