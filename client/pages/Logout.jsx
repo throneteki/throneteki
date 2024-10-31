@@ -6,6 +6,7 @@ import AlertPanel from '../Components/Site/AlertPanel';
 import { startConnecting } from '../redux/reducers/lobby';
 import { accountLoggedOut } from '../redux/reducers/auth';
 import { navigate } from '../redux/reducers/navigation';
+import LoadingSpinner from '../Components/Site/LoadingSpinner';
 
 const Logout = () => {
     const [logout, { isLoading }] = useLogoutAccountMutation();
@@ -46,7 +47,7 @@ const Logout = () => {
             {success && <AlertPanel variant='success' message={success} />}
             {error && <AlertPanel variant='danger' message={error} />}
 
-            {isLoading && <span>Logging you out of your account, please wait...</span>}
+            {isLoading && <LoadingSpinner label='Logging you out of your account...' />}
         </div>
     );
 };

@@ -18,6 +18,7 @@ import {
     TableHeader,
     TableRow
 } from '@nextui-org/react';
+import LoadingSpinner from '../../Components/Site/LoadingSpinner';
 
 const EventsAdmin = () => {
     const dispatch = useDispatch();
@@ -92,7 +93,7 @@ const EventsAdmin = () => {
     }, [dispatch, draftCubes, handleDeleteDraftCubeClick, isDeleteDraftCubeLoading]);
 
     if (isEventsLoading || isDraftCubesLoading) {
-        return 'Loading events, please wait...';
+        return <LoadingSpinner label='Loading events...' />;
     }
 
     return (

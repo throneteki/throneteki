@@ -10,6 +10,7 @@ import {
 import Panel from '../../Components/Site/Panel';
 import { navigate } from '../../redux/reducers/navigation';
 import { Input, Textarea } from '@nextui-org/react';
+import LoadingSpinner from '../../Components/Site/LoadingSpinner';
 
 const calculateMaxPacks = (rarities) => {
     const maxPacksPerRarity = rarities.map((rarity) => {
@@ -118,7 +119,9 @@ const DraftCubeEditor = ({ draftCubeId }) => {
                 await saveDraftCube(getDraftCubeFromState()).unwrap();
 
                 setTimeout(() => {}, 5000);
-            } catch (err) {}
+            } catch (err) {
+                // Empty
+            }
         },
         [getDraftCubeFromState, saveDraftCube]
     );
@@ -252,7 +255,7 @@ const DraftCubeEditor = ({ draftCubeId }) => {
     };
 
     if (isCardsLoading || isPacksLoading || isLoading) {
-        return 'Loading draft cube, please wait...';
+        return <LoadingSpinner label='Loading draft cube...' />;
     }
 
     return (
