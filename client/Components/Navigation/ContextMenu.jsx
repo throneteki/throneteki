@@ -1,10 +1,10 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { toastr } from 'react-redux-toastr';
 import { sendConcedeMessage, sendLeaveGameMessage } from '../../redux/reducers/game';
 import { Link, NavbarMenuItem, Tooltip } from '@nextui-org/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faWarning } from '@fortawesome/free-solid-svg-icons';
+import ConfirmDialog from '../Site/ConfirmDialog';
 
 const ContextMenu = () => {
     const dispatch = useDispatch();
@@ -13,6 +13,7 @@ const ContextMenu = () => {
 
     const [lastSpectatorCount, setLastSpectatorCount] = useState(0);
     const [showSpectatorWarning, setShowSpectatorWarning] = useState(false);
+    const [showConfirm, setShowConfirm] = useState(false);
 
     let spectating = currentGame && !currentGame.players[user.username];
 
@@ -47,11 +48,7 @@ const ContextMenu = () => {
 
     const onLeaveClick = useCallback(() => {
         if (!spectating && isGameActive) {
-            toastr.confirm('Your game is not finished, are you sure you want to leave?', {
-                onOk: () => {
-                    dispatch(sendLeaveGameMessage());
-                }
-            });
+            setShowConfirm(true);
 
             return;
         }
@@ -110,7 +107,20 @@ const ContextMenu = () => {
         }
 
         return menuOptions.map((menuItem, index) => {
-            return <NavbarMenuItem key={index}>{menuItem}</NavbarMenuItem>;
+            return (
+                <>
+                    <NavbarMenuItem key={index}>{menuItem}</NavbarMenuItem>{' '}
+                    <ConfirmDialog
+                        isOpen={showConfirm}
+                        message='Your game is not finished, are you sure you want to leave?'
+                        onOpenChange={setShowConfirm}
+                        onCancel={() => setShowConfirm(false)}
+                        onOk={async () => {
+                            dispatch(sendLeaveGameMessage());
+                        }}
+                    />
+                </>
+            );
         });
     }, [
         currentGame?.players,
@@ -119,6 +129,7 @@ const ContextMenu = () => {
         dispatch,
         lastSpectatorCount,
         onLeaveClick,
+        showConfirm,
         showSpectatorWarning,
         user?.username
     ]);

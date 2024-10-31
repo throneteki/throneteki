@@ -13,11 +13,12 @@ import {
 import AlertPanel from '../Site/AlertPanel';
 import { processThronesDbDeckText } from './DeckHelper';
 import LoadingSpinner from '../Site/LoadingSpinner';
+import { toast } from 'react-toastify';
+import { useDispatch } from 'react-redux';
+import { navigate } from '../../redux/reducers/navigation';
 
 const ImportDeck = () => {
     const [deckText, setDeckText] = useState('');
-    const [error, setError] = useState('');
-    const [success, setSuccess] = useState('');
 
     const {
         data: factions,
@@ -27,23 +28,26 @@ const ImportDeck = () => {
     const { data: cards, isLoading: isCardsLoading, isError: isCardsError } = useGetCardsQuery({});
     const { data: packs, isLoading: isPacksLoading, isError: isPacksError } = useGetPacksQuery({});
     const [addDeck, { isLoading: isAddLoading }] = useAddDeckMutation();
+    const dispatch = useDispatch();
 
     const processDeck = async () => {
         try {
             const deck = processThronesDbDeckText(factions, packs, cards, deckText);
 
             if (!deck) {
-                setError(
-                    'There was an error processing your deck. Please ensure you have pasted a ThronesDb deck plain text export.'
+                toast.error(
+                    'There was an error processing your deck. Please ensure you have pasted a ThronesDb deck plain text export'
                 );
 
                 return;
             }
 
             await addDeck(deck).unwrap();
-            setSuccess('Deck added successfully.');
+            toast.success('Deck added successfully.');
+
+            dispatch(navigate('/decks'));
         } catch (err) {
-            setError(err.message || 'An error occured adding the deck. Please try again later.');
+            toast.error(err.message || 'An error occured adding the deck. Please try again later');
         }
     };
 
@@ -53,15 +57,13 @@ const ImportDeck = () => {
         content = <LoadingSpinner label='Loading data...' />;
     } else if (isFactionsError || isCardsError || isPacksError) {
         <AlertPanel variant='danger'>
-            {'An error occured loading the card data. Please try again later.'}
+            An error occured loading the card data. Please try again later
         </AlertPanel>;
     } else {
         content = (
             <form
                 onSubmit={(event) => {
                     event.preventDefault();
-
-                    setError('');
 
                     processDeck();
                 }}
@@ -87,11 +89,7 @@ const ImportDeck = () => {
 
     return (
         <div className='container'>
-            <Panel title={'Import Deck'}>
-                {error && <AlertPanel variant='danger'>{error}</AlertPanel>}
-                {success && <AlertPanel variant='success'>{success}</AlertPanel>}
-                {content}
-            </Panel>
+            <Panel title={'Import Deck'}>{content}</Panel>
         </div>
     );
 };

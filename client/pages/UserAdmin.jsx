@@ -4,7 +4,6 @@ import moment from 'moment';
 
 import Panel from '../Components/Site/Panel';
 import { useGetUserQuery, useSaveUserMutation } from '../redux/middleware/api';
-import AlertPanel from '../Components/Site/AlertPanel';
 import { sendClearUserSessions } from '../redux/reducers/lobby';
 import {
     Button,
@@ -17,6 +16,7 @@ import {
     TableHeader,
     TableRow
 } from '@nextui-org/react';
+import { toast } from 'react-toastify';
 
 const defaultPermissions = {
     canEditNews: false,
@@ -62,8 +62,6 @@ const UserAdmin = () => {
 
     const [disabled, setDisabled] = useState(currentUser ? currentUser.disabled : false);
     const [verified, setVerified] = useState(currentUser ? currentUser.verified : false);
-    const [successMessage, setSuccessMessage] = useState(undefined);
-    const [errorMessage, setErrorMessage] = useState(undefined);
 
     const onFindClick = useCallback(() => {
         setSearchUsername(username);
@@ -71,8 +69,6 @@ const UserAdmin = () => {
 
     const onSaveClick = useCallback(
         async (event) => {
-            setSuccessMessage();
-
             event.preventDefault();
 
             let savedUser = { ...currentUser };
@@ -84,13 +80,11 @@ const UserAdmin = () => {
             try {
                 await saveUser(savedUser).unwrap();
 
-                setSuccessMessage('User saved successfully.');
-
-                setTimeout(() => {
-                    setSuccessMessage();
-                }, 5000);
+                toast.success('User saved successfully.');
             } catch (err) {
-                setErrorMessage(err || 'An error occured saving the user. Please try again later.');
+                toast.error(
+                    err.message || 'An error occured saving the user. Please try again later.'
+                );
             }
         },
         [currentUser, permissions, disabled, verified, saveUser]
@@ -253,9 +247,9 @@ const UserAdmin = () => {
     useEffect(() => {
         if (error) {
             if (error.status === 404) {
-                setErrorMessage('User was not found.');
+                toast.error('User was not found.');
             } else {
-                setErrorMessage(error.data?.message || 'An error occured loading the user.');
+                toast.error(error.message || 'An error occured loading the user.');
             }
         }
     }, [error]);
@@ -272,8 +266,6 @@ const UserAdmin = () => {
     return (
         <div className='w-3/4 mx-auto'>
             <Panel title='User administration'>
-                {errorMessage && <AlertPanel variant='danger' message={errorMessage} />}
-                {successMessage && <AlertPanel variant='success' message={successMessage} />}
                 <div className='w-1/3'>
                     <Input
                         label='Username'

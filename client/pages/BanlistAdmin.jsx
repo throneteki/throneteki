@@ -7,7 +7,6 @@ import {
     useGetBanListQuery,
     useRemoveBanListEntryMutation
 } from '../redux/middleware/api';
-import { toastr } from 'react-redux-toastr';
 import {
     Button,
     Input,
@@ -19,6 +18,7 @@ import {
     TableRow
 } from '@nextui-org/react';
 import LoadingSpinner from '../Components/Site/LoadingSpinner';
+import { toast } from 'react-toastify';
 
 const BanlistAdmin = () => {
     const { data: banList, isLoading } = useGetBanListQuery();
@@ -30,13 +30,9 @@ const BanlistAdmin = () => {
         try {
             await addBanListEntry(banListText).unwrap();
 
-            toastr.success('Ban list entry added successfully.');
-
-            setTimeout(() => {
-                toastr.clean();
-            }, 5000);
+            toast.success('Ban list entry added successfully.');
         } catch (err) {
-            toastr.error(
+            toast.error(
                 err.data?.message ||
                     'An error occured adding the ban list entry. Please try again later.'
             );
@@ -48,13 +44,9 @@ const BanlistAdmin = () => {
             try {
                 await removeBanListEntry(id).unwrap();
 
-                toastr.success('Ban list entry deleted successfully.');
-
-                setTimeout(() => {
-                    toastr.clean();
-                }, 5000);
+                toast.success('Ban list entry deleted successfully.');
             } catch (err) {
-                toastr.error(
+                toast.error(
                     err.data?.message ||
                         'An error occured deleting the ban list entry. Please try again later.'
                 );

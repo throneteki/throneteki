@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { toastr } from 'react-redux-toastr';
 
 import AlertPanel from '../Site/AlertPanel';
 import Game from './Game';
@@ -10,6 +9,7 @@ import {
     sendRemoveGameMessage,
     sendWatchGameMessage
 } from '../../redux/reducers/lobby';
+import { toast } from 'react-toastify';
 
 const GameList = ({ gameFilter }) => {
     const dispatch = useDispatch();
@@ -20,7 +20,7 @@ const GameList = ({ gameFilter }) => {
     const joinGame = useCallback(
         (game) => {
             if (!user) {
-                toastr.error('Please login before trying to join a game');
+                toast.error('Please login before trying to join a game');
                 return;
             }
 
@@ -43,7 +43,7 @@ const GameList = ({ gameFilter }) => {
     const watchGame = useCallback(
         (game) => {
             if (!user) {
-                toastr.error('Please login before trying to watch a game');
+                toast.error('Please login before trying to watch a game');
                 return;
             }
 

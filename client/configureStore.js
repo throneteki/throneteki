@@ -1,5 +1,4 @@
 import thunkMiddleware from 'redux-thunk';
-import { reducer as toastrReducer } from 'react-redux-toastr';
 import * as Sentry from '@sentry/react';
 import { configureStore } from '@reduxjs/toolkit';
 import auth from './redux/reducers/auth.js';
@@ -25,8 +24,7 @@ export const store = configureStore({
         cards,
         navigation,
         lobby,
-        game,
-        toastr: toastrReducer
+        game
     },
     enhancers: (getDefaultEnhancers) => {
         return getDefaultEnhancers().concat(sentryReduxEnhancer);

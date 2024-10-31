@@ -11,7 +11,6 @@ import {
 import { faHeart as faHeartRegular } from '@fortawesome/free-regular-svg-icons';
 import { useDispatch } from 'react-redux';
 import { navigate } from '../../redux/reducers/navigation';
-import { toastr } from 'react-redux-toastr';
 import {
     useDeleteDecksMutation,
     useGetDecksQuery,
@@ -25,6 +24,8 @@ import CardImage from '../Images/CardImage';
 import './DeckList.css';
 import AlertPanel, { AlertType } from '../Site/AlertPanel';
 import DeckStatus from './DeckStatus';
+import ConfirmDialog from '../Site/ConfirmDialog';
+import { toast } from 'react-toastify';
 
 const DeckList = ({ restrictedList, onDeckSelected, readOnly }) => {
     const dispatch = useDispatch();
@@ -33,6 +34,7 @@ const DeckList = ({ restrictedList, onDeckSelected, readOnly }) => {
     const [mousePos, setMousePosition] = useState({ x: 0, y: 0 });
     const [zoomCard, setZoomCard] = useState(null);
     const [selectedRows, setSelectedRows] = useState(new Set([]));
+    const [showConfirm, setShowConfirm] = useState(false);
     const [deleteDecks, { isLoading: isDeleteLoading }] = useDeleteDecksMutation();
     const [toggleFavourite] = useToggleDeckFavouriteMutation();
 
@@ -244,31 +246,7 @@ const DeckList = ({ restrictedList, onDeckSelected, readOnly }) => {
                   disabled: selectedIds.length === 0,
                   isLoading: isDeleteLoading,
                   onClick: () => {
-                      toastr.confirm(
-                          `Are you sure you want to delete ${
-                              selectedIds.length === 1 ? 'this deck' : 'these decks'
-                          }?`,
-                          {
-                              okText: 'Yes',
-                              cancelText: 'Cancel',
-                              onOk: async () => {
-                                  try {
-                                      await deleteDecks(selectedIds).unwrap();
-
-                                      setSelectedRows(new Set([]));
-                                      setSelectedIds([]);
-                                  } catch (err) {
-                                      //   const apiError = err as ApiError;
-                                      /* setError(
-                                    t(
-                                        apiError.data.message ||
-                                            'An error occured adding the deck. Please try again later.'
-                                    )
-                                );*/
-                                  }
-                              }
-                          }
-                      );
+                      setShowConfirm(true);
                   }
               }
           ];
@@ -306,6 +284,26 @@ const DeckList = ({ restrictedList, onDeckSelected, readOnly }) => {
                     <CardImage imageUrl={zoomCard} size='lg' />
                 </div>
             )}
+            <ConfirmDialog
+                isOpen={showConfirm}
+                message={`Are you sure you want to delete ${
+                    selectedIds.length === 1 ? 'this deck' : 'these decks'
+                }?`}
+                onOpenChange={setShowConfirm}
+                onCancel={() => setShowConfirm(false)}
+                onOk={async () => {
+                    try {
+                        await deleteDecks(selectedIds).unwrap();
+
+                        setSelectedRows(new Set([]));
+                        setSelectedIds([]);
+
+                        toast.success('Deck(s) deleted successfully');
+                    } catch (err) {
+                        toast.error('An error occurred deleting the decks');
+                    }
+                }}
+            />
         </div>
     );
 };

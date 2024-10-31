@@ -1,33 +1,28 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import AlertPanel from '../Components/Site/AlertPanel';
 import { navigate } from '../redux/reducers/navigation';
 import { useActivateAccountMutation } from '../redux/middleware/api';
 import LoadingSpinner from '../Components/Site/LoadingSpinner';
+import { toast } from 'react-toastify';
 
 const Activation = ({ id, token }) => {
     const dispatch = useDispatch();
-
-    const [successMessage, setSuccessMessage] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
-
     const [activateAccount, { isLoading }] = useActivateAccountMutation();
 
     useEffect(() => {
         const doActivate = async () => {
-            setSuccessMessage();
-            setErrorMessage();
             try {
                 await activateAccount({ id, token }).unwrap();
             } catch (err) {
-                setErrorMessage(err || 'An error occurred activating your account');
+                toast.error(err.message || 'An error occurred activating your account');
+
+                return;
             }
 
-            setTimeout(() => {
-                dispatch(navigate('/login'));
-            }, 3000);
+            dispatch(navigate('/login'));
 
-            setSuccessMessage(
+            toast.success(
                 'Your account has been activated.  You will shortly be redirected to the login page.'
             );
         };
@@ -50,10 +45,7 @@ const Activation = ({ id, token }) => {
 
     return (
         <div>
-            <div className='col-sm-6 col-sm-offset-3'>
-                {errorMessage && <AlertPanel variant='danger' message={errorMessage} />}
-                {successMessage && <AlertPanel variant='success' message={successMessage} />}
-            </div>
+            <div className='mx-auto w-1/3'></div>
         </div>
     );
 };

@@ -16,6 +16,7 @@ import BlankBg from '../assets/img/bgs/blank.png';
 import Background1 from '../assets/img/bgs/background.png';
 import Background2 from '../assets/img/bgs/background2.png';
 import { setUser } from '../redux/reducers/auth';
+import { toast } from 'react-toastify';
 
 const backgrounds = [
     { name: 'none', label: 'None', imageUrl: BlankBg },
@@ -44,8 +45,6 @@ const defaultActionWindows = {
 const Profile = () => {
     const dispatch = useDispatch();
     const user = useSelector((state) => state.auth.user);
-    const [success, setSuccess] = useState();
-    const [error, setError] = useState();
     const [selectedBackground, setSelectedBackground] = useState(
         user?.settings.background || 'BG1'
     );
@@ -56,7 +55,7 @@ const Profile = () => {
 
     useEffect(() => {
         if (profileError) {
-            setError(
+            toast.error(
                 profileError.message ||
                     'An error occured saving your profile. Please try again later.'
             );
@@ -124,15 +123,10 @@ const Profile = () => {
 
     return (
         <div className='w-5/6 lg:w-3/4 mb-5 m-auto'>
-            {success && <AlertPanel variant='success' message={success} />}
-            {error && <AlertPanel variant='error' message={error} />}
-
             <Formik
                 initialValues={initialValues}
                 validationSchema={schema}
                 onSubmit={async (values) => {
-                    setSuccess(undefined);
-
                     try {
                         const ret = await saveProfile({
                             username: user.username,
@@ -157,15 +151,11 @@ const Profile = () => {
                                 }
                             }
                         }).unwrap();
-                        setSuccess('Profile saved successfully');
+                        toast.success('Profile saved successfully');
 
                         dispatch(setUser(ret.user));
-
-                        setTimeout(() => {
-                            setSuccess(undefined);
-                        }, 5000);
                     } catch (err) {
-                        setError(
+                        toast.error(
                             err.message ||
                                 'An error occured saving your profile. Please try again later.'
                         );

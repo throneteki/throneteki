@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { toastr } from 'react-redux-toastr';
 
 import News from '../Components/News/News';
 import AlertPanel from '../Components/Site/AlertPanel';
@@ -12,6 +11,7 @@ import { createSelector } from '@reduxjs/toolkit';
 import { useGetNewsQuery, useRemoveMessageMutation } from '../redux/middleware/api';
 import { clearChatStatus, sendLobbyChatMessage } from '../redux/reducers/lobby';
 import { Input } from '@nextui-org/react';
+import { toast } from 'react-toastify';
 
 const Lobby = () => {
     const [message, setMessage] = useState('');
@@ -47,7 +47,7 @@ const Lobby = () => {
 
     const checkChatError = useCallback(() => {
         if (lobbyError) {
-            toastr.error('New users are limited from chatting in the lobby, try again later');
+            toast.error('New users are limited from chatting in the lobby, try again later');
 
             setTimeout(() => {
                 dispatch(clearChatStatus());

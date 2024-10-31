@@ -1,11 +1,11 @@
 import React, { useCallback, useMemo } from 'react';
 import Panel from '../Site/Panel';
 import { useUnlinkPatreonMutation, useUpdateAvatarMutation } from '../../redux/middleware/api';
-import { toastr } from 'react-redux-toastr';
 
 import PatreonImage from '../../assets/img/Patreon_Mark_Coral.jpg';
 
 import { Avatar, Button, Input, Link, Switch } from '@nextui-org/react';
+import { toast } from 'react-toastify';
 
 const ProfileMain = ({ user, formProps }) => {
     const [unlinkPatreon, { isLoading: unlinkLoading }] = useUnlinkPatreonMutation();
@@ -14,13 +14,9 @@ const ProfileMain = ({ user, formProps }) => {
     const onUnlinkClick = useCallback(async () => {
         try {
             await unlinkPatreon().unwrap();
-            toastr.success('Patreon unlinked successfully');
-
-            setTimeout(() => {
-                toastr.clean();
-            }, 5000);
+            toast.success('Patreon unlinked successfully');
         } catch (err) {
-            toastr.error(
+            toast.error(
                 err.message || 'An error occured unlinking from Patreon. Please try again later.'
             );
         }
@@ -32,13 +28,9 @@ const ProfileMain = ({ user, formProps }) => {
 
             try {
                 await updateAvatar(user.username).unwrap();
-                toastr.success('Avatar updated successfully');
-
-                setTimeout(() => {
-                    toastr.clean();
-                }, 5000);
+                toast.success('Avatar updated successfully');
             } catch (err) {
-                toastr.error(
+                toast.error(
                     err.message || 'An error occured updating your avatar Please try again later.'
                 );
             }

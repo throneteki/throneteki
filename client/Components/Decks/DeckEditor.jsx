@@ -36,6 +36,7 @@ import { validateDeck } from '../../../deck-helper';
 import RestrictedListDropdown from './RestrictedListDropdown';
 import DeckStatus from './DeckStatus';
 import { processThronesDbDeckText } from './DeckHelper';
+import { toast } from 'react-toastify';
 
 const SmallButton = extendVariants(Button, {
     variants: {
@@ -87,8 +88,6 @@ const DeckEditor = ({ deck, onBackClick }) => {
     );
     const [deckName, setDeckName] = useState(deck.name);
     const [faction, setFaction] = useState(deck.faction);
-    const [error, setError] = useState('');
-    const [success, setSuccess] = useState('');
     const [showImportPopup, setShowImportPopup] = useState(false);
     const [deckText, setDeckText] = useState();
     const [pageNumber, setPageNumber] = useState(0);
@@ -322,41 +321,24 @@ const DeckEditor = ({ deck, onBackClick }) => {
     }
 
     const onSaveClick = async (andClose) => {
-        setError();
-        setSuccess();
-
         try {
             deckToSave._id
                 ? await saveDeck(deckToSave).unwrap()
                 : await addDeck(deckToSave).unwrap();
-            setSuccess(`Deck ${deckToSave._id ? 'saved' : 'added'} successfully.`);
+
+            toast.success(`Deck ${deckToSave._id ? 'saved' : 'added'} successfully.`);
 
             if (andClose) {
-                setTimeout(() => {
-                    dispatch(navigate('/decks'));
-                }, 1500);
-            } else {
-                setTimeout(() => {
-                    setSuccess();
-                }, 1500);
+                dispatch(navigate('/decks'));
             }
         } catch (err) {
-            const apiError = err;
-            setError(
-                apiError.data.message || 'An error occured adding the deck. Please try again later.'
-            );
+            toast.error('An error occured adding the deck. Please try again later');
         }
     };
 
     return (
         <div className='grid lg:grid-cols-2 gap-4'>
             <div className='flex flex-col gap-2'>
-                {(error || success) && (
-                    <div className='mb-2'>
-                        {error && <AlertPanel variant='danger'>{error}</AlertPanel>}
-                        {success && <AlertPanel variant='success'>{success}</AlertPanel>}
-                    </div>
-                )}
                 <div className='flex gap-2'>
                     <Button color='default' onClick={() => onBackClick()}>
                         Back
@@ -564,7 +546,7 @@ const DeckEditor = ({ deck, onBackClick }) => {
                                         );
 
                                         if (!deck) {
-                                            setError(
+                                            toast.error(
                                                 'Invalid deck. Ensure you have exported a plain text deck from ThronesDb.'
                                             );
 

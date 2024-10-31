@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import moment from 'moment';
-import { toastr } from 'react-redux-toastr';
 
 import AlertPanel from '../Components/Site/AlertPanel';
 import Panel from '../Components/Site/Panel';
@@ -9,6 +8,7 @@ import { useGetUserSessionsQuery, useRemoveSessionMutation } from '../redux/midd
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import { toast } from 'react-toastify';
 
 const Security = () => {
     const user = useSelector((state) => state.auth.user);
@@ -25,7 +25,7 @@ const Security = () => {
                 return;
             }
 
-            toastr.confirm(
+            toast.confirm(
                 'Are you sure you want to remove this session?  It will be logged out and any games in progress may be abandonded.',
                 {
                     onOk: async () => {
@@ -34,13 +34,9 @@ const Security = () => {
                                 username: user.username,
                                 sessionId: session.id
                             }).unwrap();
-                            toastr.success('Session removed successfully');
-
-                            setTimeout(() => {
-                                toastr.clean();
-                            }, 5000);
+                            toast.success('Session removed successfully');
                         } catch (err) {
-                            toastr.error(
+                            toast.error(
                                 err.message ||
                                     'An error occured removing the session. Please try again later.'
                             );

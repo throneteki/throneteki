@@ -8,13 +8,14 @@ import {
     useSaveNewsMutation,
     useAddNewsMutation
 } from '../redux/middleware/api';
-import { toastr } from 'react-redux-toastr';
 import AlertPanel from '../Components/Site/AlertPanel';
 import { Button, Textarea } from '@nextui-org/react';
 import ReactTable from '../Components/Table/ReactTable';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import LoadingSpinner from '../Components/Site/LoadingSpinner';
+import { toast } from 'react-toastify';
+import ConfirmDialog from '../Components/Site/ConfirmDialog';
 
 const NewsAdmin = () => {
     const { data: news, isLoading, error } = useGetAllNewsQuery();
@@ -24,18 +25,16 @@ const NewsAdmin = () => {
     const [newsText, setNewsText] = useState('');
     const [selectedItem, setSelectedItem] = useState(null);
     const [selectedIds, setSelectedIds] = useState([]);
+    const [showConfirm, setShowConfirm] = useState(false);
+    const [selectedRows, setSelectedRows] = useState(new Set([]));
 
     const onAddNewsClick = useCallback(async () => {
         try {
             await addNews(newsText).unwrap();
 
-            toastr.success('News added successfully.');
-
-            setTimeout(() => {
-                toastr.clean();
-            }, 5000);
+            toast.success('News added successfully.');
         } catch (err) {
-            toastr.error(err || 'An error occured adding the news item. Please try again later.');
+            toast.error(err || 'An error occured adding the news item. Please try again later.');
         }
     }, [addNews, newsText]);
 
@@ -43,13 +42,9 @@ const NewsAdmin = () => {
         try {
             await saveNews({ id: selectedItem._id, text: newsText }).unwrap();
 
-            toastr.success('News edited successfully.');
-
-            setTimeout(() => {
-                toastr.clean();
-            }, 5000);
+            toast.success('News edited successfully.');
         } catch (err) {
-            toastr.error(err || 'An error occured editing the news item. Please try again later.');
+            toast.error(err || 'An error occured editing the news item. Please try again later.');
         }
     }, [newsText, saveNews, selectedItem?._id]);
 
@@ -96,31 +91,7 @@ const NewsAdmin = () => {
             disabled: selectedIds.length === 0,
             isLoading: isDeleteLoading,
             onClick: () => {
-                toastr.confirm(
-                    `Are you sure you want to delete ${
-                        selectedIds.length === 1 ? 'this news entry' : 'these news entries'
-                    }?`,
-                    {
-                        okText: 'Yes',
-                        cancelText: 'Cancel',
-                        onOk: async () => {
-                            try {
-                                await deleteNews(selectedIds[0]).unwrap();
-
-                                toastr.success('News deleted successfully.');
-
-                                setTimeout(() => {
-                                    toastr.clean();
-                                }, 5000);
-                            } catch (err) {
-                                toastr.error(
-                                    err ||
-                                        'An error occured deleting the news item(s). Please try again later.'
-                                );
-                            }
-                        }
-                    }
-                );
+                setShowConfirm(true);
             }
         }
     ];
@@ -148,6 +119,7 @@ const NewsAdmin = () => {
                         onRowSelectionChange={(ids) =>
                             setSelectedIds(ids.map((r) => r.original._id))
                         }
+                        selectedRows={selectedRows}
                     />
                 </div>
             </Panel>
@@ -193,6 +165,29 @@ const NewsAdmin = () => {
                     </div>
                 </Panel>
             </div>
+            <ConfirmDialog
+                isOpen={showConfirm}
+                message={`Are you sure you want to delete ${
+                    selectedIds.length === 1 ? 'this news entry' : 'these news entries'
+                }?`}
+                onOpenChange={setShowConfirm}
+                onCancel={() => setShowConfirm(false)}
+                onOk={async () => {
+                    try {
+                        await deleteNews(selectedIds[0]).unwrap();
+
+                        setSelectedIds([]);
+                        setSelectedRows(new Set([]));
+
+                        toast.success('News deleted successfully');
+                    } catch (err) {
+                        toast.error(
+                            err ||
+                                'An error occured deleting the news item(s). Please try again later'
+                        );
+                    }
+                }}
+            />
         </div>
     );
 };

@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import $ from 'jquery';
-import { toastr } from 'react-redux-toastr';
 
 import GameChat from '../GameBoard/GameChat';
 import CardTypeGroups from '../Decks/CardTypeGroups';

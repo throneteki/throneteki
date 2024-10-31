@@ -7,7 +7,6 @@ import {
     useGetDraftCubesQuery,
     useGetEventsQuery
 } from '../../redux/middleware/api';
-import { toastr } from 'react-redux-toastr';
 import { navigate } from '../../redux/reducers/navigation';
 import {
     Button,
@@ -19,6 +18,7 @@ import {
     TableRow
 } from '@nextui-org/react';
 import LoadingSpinner from '../../Components/Site/LoadingSpinner';
+import { toast } from 'react-toastify';
 
 const EventsAdmin = () => {
     const dispatch = useDispatch();
@@ -33,13 +33,9 @@ const EventsAdmin = () => {
             try {
                 await deleteEvent(id).unwrap();
 
-                toastr.success('Success', 'Event deleted successfully');
-
-                setTimeout(() => {
-                    toastr.clean();
-                }, 5000);
+                toast.success('Event deleted successfully');
             } catch (err) {
-                toastr.error('Error', err || 'An error occurred deleting the event');
+                toast.error('Error', err || 'An error occurred deleting the event');
             }
         },
         [deleteEvent]
@@ -50,13 +46,9 @@ const EventsAdmin = () => {
             try {
                 await deleteDraftCube(id).unwrap();
 
-                toastr.success('Success', 'Draft cube deleted successfully');
-
-                setTimeout(() => {
-                    toastr.clean();
-                }, 5000);
+                toast.success('Draft cube deleted successfully');
             } catch (err) {
-                toastr.error('Error', err || 'An error occurred deleting the draft cube');
+                toast.error('Error', err || 'An error occurred deleting the draft cube');
             }
         },
         [deleteDraftCube]

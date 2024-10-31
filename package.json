@@ -83,6 +83,7 @@
         "postcss-simple-vars": "^7.0.1",
         "qs": "^6.13.0",
         "react-bootstrap-range-slider": "^3.0.8",
+        "react-toastify": "^10.0.6",
         "redis": "^3.1.2",
         "redux-loop": "^4.5.2",
         "sass": "^1.74.1",

@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCogs, faComment, faCopy, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import StatContainer from './StatContainer';
 import StatDisplay from './StatDisplay';
-import { toastr } from 'react-redux-toastr';
+import { toast } from 'react-toastify';
 
 const PlayerStats = ({
     stats,
@@ -79,8 +79,8 @@ const PlayerStats = ({
         if (messagePanel) {
             navigator.clipboard
                 .writeText(messagePanel.innerText)
-                .then(() => toastr.success('Copied game chat to clipboard', null))
-                .catch((err) => toastr.error(`Could not copy game chat: ${err}`, null));
+                .then(() => toast.success('Copied game chat to clipboard', null))
+                .catch((err) => toast.error(`Could not copy game chat: ${err}`, null));
         }
     }, []);
 

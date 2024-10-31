@@ -13,7 +13,7 @@ import Panel from '../../Components/Site/Panel';
 import AlertPanel from '../../Components/Site/AlertPanel';
 import { navigate } from '../../redux/reducers/navigation';
 import { Button, Input, Select, SelectItem, Switch, Textarea } from '@nextui-org/react';
-import { toastr } from 'react-redux-toastr';
+import { toast } from 'react-toastify';
 
 const formatListTextForCards = (cards, cardCodes) => {
     if (!cardCodes || !cards) {
@@ -247,10 +247,9 @@ const EventEditor = ({ eventId }) => {
             try {
                 await saveEvent(getEventFromState()).unwrap();
 
-                toastr.success('Event saved successfully', '', { closeDuration: 5000 });
+                toast.success('Event saved successfully');
             } catch (err) {
-                console.info(err);
-                toastr.error('Error saving event');
+                toast.error('Error saving event');
             }
         },
         [getEventFromState, saveEvent]

@@ -6,41 +6,31 @@ import Panel from '../Components/Site/Panel';
 import { navigate } from '../redux/reducers/navigation';
 import { useResetPasswordMutation } from '../redux/middleware/api';
 import { Button, Input } from '@nextui-org/react';
+import { toast } from 'react-toastify';
 
 const ResetPassword = ({ id, token }) => {
     const dispatch = useDispatch();
 
     const [resetPassword, { isLoading }] = useResetPasswordMutation();
-
-    const [successMessage, setSuccessMessage] = useState('');
-    const [errorMessage, setErrorMessage] = useState([]);
     const [password, setPassword] = useState('');
 
-    const onSubmit = useCallback(
-        async (state) => {
-            setErrorMessage();
-            setSuccessMessage();
+    const onSubmit = useCallback(async () => {
+        try {
+            await resetPassword({
+                id: id,
+                token: token,
+                newPassword: password
+            }).unwrap();
 
-            try {
-                await resetPassword({
-                    id: id,
-                    token: token,
-                    newPassword: password
-                }).unwrap();
+            toast.success(
+                'Your password has been changed.  You will shortly be redirected to the login page'
+            );
 
-                setSuccessMessage(
-                    'Your password has been changed.  You will shortly be redirected to the login page.'
-                );
-
-                setTimeout(() => {
-                    dispatch(navigate('/login'));
-                });
-            } catch (err) {
-                setErrorMessage(err || 'An error occurred resetting your password');
-            }
-        },
-        [dispatch, id, password, resetPassword, token]
-    );
+            dispatch(navigate('/login'));
+        } catch (err) {
+            toast.error(err.message || 'An error occurred resetting your password');
+        }
+    }, [dispatch, id, password, resetPassword, token]);
 
     if (!id || !token) {
         return (
@@ -54,8 +44,6 @@ const ResetPassword = ({ id, token }) => {
     return (
         <div>
             <div className='w-2/5 mx-auto'>
-                {errorMessage && <AlertPanel variant='danger' message={errorMessage} />}
-                {successMessage && <AlertPanel variant='success' message={successMessage} />}
                 <Panel title='Reset password'>
                     <Input
                         name='password'

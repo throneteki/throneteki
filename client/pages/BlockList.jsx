@@ -7,7 +7,6 @@ import {
     useGetBlockListQuery,
     useRemoveBlockListEntryMutation
 } from '../redux/middleware/api';
-import { toastr } from 'react-redux-toastr';
 import {
     Button,
     Input,
@@ -20,6 +19,7 @@ import {
 } from '@nextui-org/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import { toast } from 'react-toastify';
 
 const BlockList = () => {
     const user = useSelector((state) => state.auth.user);
@@ -45,13 +45,9 @@ const BlockList = () => {
                     username: user.username,
                     blockedUsername: username
                 }).unwrap();
-                toastr.success('Blocklist entry added successfully');
-
-                setTimeout(() => {
-                    toastr.clean();
-                }, 5000);
+                toast.success('Blocklist entry added successfully');
             } catch (err) {
-                toastr.error(
+                toast.error(
                     err.message ||
                         'An error occured adding the blocklist entry. Please try again later.'
                 );
@@ -67,13 +63,9 @@ const BlockList = () => {
                     username: user.username,
                     blockedUsername: username
                 }).unwrap();
-                toastr.success('Blocklist entry removed successfully');
-
-                setTimeout(() => {
-                    toastr.clean();
-                }, 5000);
+                toast.success('Blocklist entry removed successfully');
             } catch (err) {
-                toastr.error(
+                toast.error(
                     err.message ||
                         'An error occured removing the blocklist entry. Please try again later.'
                 );

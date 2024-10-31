@@ -1,7 +1,6 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
-import AlertPanel from '../Components/Site/AlertPanel';
 import Panel from '../Components/Site/Panel';
 import Link from '../Components/Site/Link';
 import { useLoginAccountMutation } from '../redux/middleware/api';
@@ -11,17 +10,14 @@ import { sendAuthenticateMessage } from '../redux/reducers/lobby';
 import * as yup from 'yup';
 import { Button, Input } from '@nextui-org/react';
 import { Formik } from 'formik';
+import { toast } from 'react-toastify';
 
 const Login = () => {
     const dispatch = useDispatch();
     const [loginAccount, { isLoading }] = useLoginAccountMutation();
-    const [error, setError] = useState();
-    const [success, setSuccess] = useState();
 
     const onLogin = useCallback(
         async (state) => {
-            setError(undefined);
-            setSuccess(undefined);
             try {
                 const response = await loginAccount({
                     username: state.username,
@@ -31,20 +27,15 @@ const Login = () => {
                 dispatch(accountLoggedIn(response.user, response.token, response.refreshToken));
                 dispatch(sendAuthenticateMessage(response.token));
 
-                setSuccess('You have successfully logged in. Redirecting you to the home page...');
+                toast.success('Logged in successfully');
 
-                setTimeout(() => {
-                    dispatch(navigate('/'));
-                }, 3000);
+                dispatch(navigate('/'));
             } catch (err) {
-                setError(err || 'An error occured logging in. Please try again later.');
+                toast.error(err || 'An error occured logging in. Please try again later.');
             }
         },
         [dispatch, loginAccount]
     );
-
-    const errorBar = error ? <AlertPanel variant='danger' message={error} /> : null;
-    const successBar = success ? <AlertPanel variant='success' message={success} /> : null;
 
     const schema = yup.object({
         username: yup.string().required('You must specify a username'),
@@ -53,8 +44,6 @@ const Login = () => {
 
     return (
         <div className='mx-auto w-2/5'>
-            {errorBar}
-            {successBar}
             <Panel className='mt-1' title='Login'>
                 <Formik
                     initialValues={{ username: '', password: '' }}

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import * as yup from 'yup';
 
@@ -6,24 +6,18 @@ import Panel from '../Components/Site/Panel';
 import Link from '../Components/Site/Link';
 import { navigate } from '../redux/reducers/navigation';
 import { useRegisterAccountMutation } from '../redux/middleware/api';
-import AlertPanel from '../Components/Site/AlertPanel';
 import { Formik } from 'formik';
 import { Button, Input, Switch } from '@nextui-org/react';
+import { toast } from 'react-toastify';
 
 const Register = () => {
     const dispatch = useDispatch();
-
-    const [successMessage, setSuccessMessage] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
 
     const [registerAccount, { isLoading }] = useRegisterAccountMutation();
 
     const onRegister = useCallback(
         async (state) => {
             try {
-                setSuccessMessage();
-                setErrorMessage();
-
                 await registerAccount({
                     username: state.username,
                     password: state.password,
@@ -31,16 +25,14 @@ const Register = () => {
                     enableGravatar: state.enableGravatar
                 }).unwrap();
 
-                setSuccessMessage(
-                    'Your account was successfully registered.  Please verify your account using the link in the email sent to the address you have provided.'
+                toast.error(
+                    'Your account was successfully registered.  Please verify your account using the link in the email sent to the address you have provided'
                 );
 
-                setTimeout(() => {
-                    dispatch(navigate('/'));
-                }, 2000);
+                dispatch(navigate('/'));
             } catch (err) {
-                setErrorMessage(
-                    err?.data?.message ||
+                toast.error(
+                    err.message ||
                         'An error occurred registering your account. Please try again later.'
                 );
             }
@@ -70,8 +62,6 @@ const Register = () => {
 
     return (
         <div className='w-3/5 mx-auto'>
-            {successMessage && <AlertPanel variant='success' message={successMessage} />}
-            {errorMessage && <AlertPanel variant='danger' message={errorMessage} />}
             <Panel title='Register an account'>
                 <p>
                     We require information from you in order to service your access to the site.

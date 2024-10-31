@@ -4,8 +4,8 @@ import { Provider } from 'react-redux';
 import Application from './Application';
 import 'jquery-validation';
 import 'jquery-validation-unobtrusive';
-import 'react-redux-toastr/src/styles/index.scss';
-import ReduxToastr from 'react-redux-toastr';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import * as Sentry from '@sentry/browser';
 import * as SentryReact from '@sentry/react';
 import { createRoot } from 'react-dom/client';
@@ -83,13 +83,12 @@ root.render(
         <NextUIProvider>
             <NextThemesProvider attribute='class' defaultTheme='dark'>
                 <div className='body'>
-                    <ReduxToastr
-                        timeOut={4000}
-                        newestOnTop
-                        preventDuplicates
+                    <ToastContainer
                         position='top-right'
-                        transitionIn='fadeIn'
-                        transitionOut='fadeOut'
+                        autoClose={5000}
+                        newestOnTop={false}
+                        closeOnClick
+                        pauseOnHover
                     />
                     <SentryReact.ErrorBoundary fallback={<p>An error has occurred</p>}>
                         <Application />
