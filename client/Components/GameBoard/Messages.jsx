@@ -66,7 +66,7 @@ const Messages = ({ messages, onCardMouseOut, onCardMouseOver }) => {
                     case 'endofround':
                     case 'phasestart':
                         // eslint-disable-next-line no-var
-                        var sepClass = classNames('font-bold', {
+                        var sepClass = classNames('font-bold text-foreground', {
                             'text-md': fragment.type === 'phasestart',
                             capitalize: fragment.type === 'phasestart'
                         });
@@ -180,7 +180,7 @@ const Messages = ({ messages, onCardMouseOut, onCardMouseOver }) => {
 
     const renderMessages = () => {
         return messages.map((message, index) => {
-            const className = classNames('break-words leading-5', '', {
+            const className = classNames('break-words leading-[1.15rem] text-gray-300', '', {
                 'this-player': message.activePlayer && message.activePlayer == owner.name,
                 'other-player': message.activePlayer && message.activePlayer !== owner.name,
                 'chat-bubble': Object.values(message.message).some(
