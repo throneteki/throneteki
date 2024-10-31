@@ -66,7 +66,8 @@ const Game = ({
     }
 
     let rowClass = classNames('min-h-32 py-3 px-2 hover:border-info hover:bg-info/20 bg-black/20', {
-        [game.node]: game.node && isAdmin
+        'bg-yellow-700/20': game.node === 'node1' && isAdmin,
+        'bg-red-700/20': game.node === 'node2' && isAdmin
     });
 
     let timeDifference = moment().diff(moment(game.createdAt));
