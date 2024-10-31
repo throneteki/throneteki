@@ -90,7 +90,7 @@ const MovablePanel = ({ name, side, title, onCloseClick, children, size }) => {
     return (
         <div
             ref={popupRef}
-            className={`panel border-primary bg-black/65 ${size} rounded-md fixed z-50`}
+            className={`panel border-primary bg-black/65 ${size} rounded-md fixed z-50 overflow-hidden`}
             style={position}
         >
             <div
