@@ -59,6 +59,7 @@ function ReactTable({
     onRowSelectionChange,
     onPageChanged,
     startPageNumber = 0,
+    selectedRows = new Set([]),
     remote = false
 }) {
     const [pagination, setPagination] = useState({
@@ -67,8 +68,12 @@ function ReactTable({
     });
     const [sorting, setSorting] = useState(defaultSort);
     const [columnFilters, setColumnFilters] = useState([]);
-    const [rowSelection, setRowSelection] = useState(new Set([]));
+    const [rowSelection, setRowSelection] = useState(selectedRows);
     const [isFilterPopOverOpen, setFilterPopOverOpen] = useState({});
+
+    useEffect(() => {
+        setRowSelection(selectedRows);
+    }, [selectedRows]);
 
     const fetchDataOptions = {
         columnFilters,
