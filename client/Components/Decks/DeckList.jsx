@@ -32,6 +32,7 @@ const DeckList = ({ restrictedList, onDeckSelected, readOnly }) => {
     const [selectedIds, setSelectedIds] = useState([]);
     const [mousePos, setMousePosition] = useState({ x: 0, y: 0 });
     const [zoomCard, setZoomCard] = useState(null);
+    const [selectedRows, setSelectedRows] = useState(new Set([]));
     const [deleteDecks, { isLoading: isDeleteLoading }] = useDeleteDecksMutation();
     const [toggleFavourite] = useToggleDeckFavouriteMutation();
 
@@ -252,13 +253,10 @@ const DeckList = ({ restrictedList, onDeckSelected, readOnly }) => {
                               cancelText: 'Cancel',
                               onOk: async () => {
                                   try {
-                                      const response = await deleteDecks(selectedIds).unwrap();
+                                      await deleteDecks(selectedIds).unwrap();
 
-                                      if (!response.success) {
-                                          //    setError(response.message);
-                                      } else {
-                                          //   setSuccess(t('Deck added successfully.'));
-                                      }
+                                      setSelectedRows(new Set([]));
+                                      setSelectedIds([]);
                                   } catch (err) {
                                       //   const apiError = err as ApiError;
                                       /* setError(
@@ -298,6 +296,7 @@ const DeckList = ({ restrictedList, onDeckSelected, readOnly }) => {
                 columns={columns}
                 onRowClick={(row) => onDeckSelected && onDeckSelected(row.original)}
                 onRowSelectionChange={(ids) => setSelectedIds(ids.map((r) => r.original._id))}
+                selectedRows={selectedRows}
             />
             {zoomCard && (
                 <div
