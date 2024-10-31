@@ -173,8 +173,8 @@ const lobbyMiddleware = (store) => {
                 dispatch(receiveNoChat());
             });
 
-            socket.on(LobbyMessage.RemoveMessage, (messageId) => {
-                dispatch(receiveRemoveMessage(messageId));
+            socket.on(LobbyMessage.RemoveMessage, (messageId, deletedBy) => {
+                dispatch(receiveRemoveMessage(messageId, deletedBy));
             });
 
             socket.on(LobbyMessage.Banner, (message) => {

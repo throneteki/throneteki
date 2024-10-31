@@ -35,9 +35,9 @@ class MessageService extends EventEmitter {
 
     removeMessage(messageId, deletedBy) {
         return this.messages
-            .update({ _id: messageId }, { $set: { deleted: true, deletedBy } })
+            .update({ _id: messageId }, { $set: { deleted: true, deletedBy: deletedBy.username } })
             .then(() => {
-                this.emit('messageDeleted', messageId);
+                this.emit('messageDeleted', messageId, deletedBy);
             });
     }
 

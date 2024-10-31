@@ -42,8 +42,22 @@ class Lobby {
         this.io.use(this.handshake.bind(this));
         this.io.on('connection', this.onConnection.bind(this));
 
-        this.messageService.on('messageDeleted', (messageId) => {
-            this.io.emit('removemessage', messageId);
+        this.messageService.on('messageDeleted', (messageId, user) => {
+            for (let socket of Object.values(this.sockets)) {
+                if (socket.user === user || (socket.user && socket.user.hasUserBlocked(user))) {
+                    continue;
+                }
+
+                if (
+                    socket.user &&
+                    socket.user.permissions &&
+                    socket.user.permissions.canModerateChat
+                ) {
+                    socket.send('removemessage', messageId, user.username);
+                } else {
+                    socket.send('removemessage', messageId);
+                }
+            }
         });
 
         setInterval(() => this.clearStalePendingGames(), 60 * 1000);

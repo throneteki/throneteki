@@ -122,9 +122,18 @@ const lobbySlice = createSlice({
         receiveNoChat: (state) => {
             state.lobbyError = true;
         },
-        receiveRemoveMessage: (state, action) => {
-            state.messages = state.messages.filter((message) => message._id !== action.payload);
-        },
+        receiveRemoveMessage: create.preparedReducer(
+            (messageId, removedBy) => {
+                return { payload: { messageId, removedBy } };
+            },
+            (state, action) => {
+                const message = state.messages.find((m) => m._id === action.payload.messageId);
+                if (message) {
+                    message.deleted = true;
+                    message.deletedBy = action.payload.removedBy;
+                }
+            }
+        ),
         receiveBanner: (state, action) => {
             state.notice = action.payload;
         },
