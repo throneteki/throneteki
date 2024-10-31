@@ -112,7 +112,7 @@ const GameBoardLayout = ({ thisPlayer, otherPlayer, onCardClick, onMouseOver, on
                             />
                         </div>
                     </div>
-                    <div className='flex flex-1 flex-col  m-2'>
+                    <div className='flex flex-1 flex-col m-2 overflow-x-auto'>
                         <PlayerBoard
                             cardsInPlay={otherPlayer.cardPiles.cardsInPlay}
                             onCardClick={onCardClick}
