@@ -35,13 +35,9 @@ const Messages = ({ messages, onCardMouseOut, onCardMouseOver }) => {
                 const tokenEntry = tokens[lowerToken];
 
                 messages.push(
-                    <span className='inline-flex gap-0.5'>
+                    <span key={`${token}-${i++}`} className='inline-flex gap-0.5'>
                         {` ${token} `}
-                        <img
-                            key={`${token}-${i++}`}
-                            className={tokenEntry.className}
-                            src={tokenEntry.imageSrc}
-                        />
+                        <img className={tokenEntry.className} src={tokenEntry.imageSrc} />
                     </span>
                 );
                 messages.push(' ');
@@ -111,7 +107,7 @@ const Messages = ({ messages, onCardMouseOut, onCardMouseOver }) => {
                 messages.concat(formatMessageText(fragment.message));
             } else if (fragment.link && fragment.label) {
                 messages.push(
-                    <Link isExternal href={fragment.link}>
+                    <Link key={index++} isExternal href={fragment.link}>
                         {fragment.label}
                     </Link>
                 );
