@@ -16,11 +16,11 @@ class OldTattersalt extends DrawCard {
             },
             message: {
                 format: '{player} uses {source} to search the top {reserve} cards of their deck for a card with printed cost 1 or lower',
-                args: { reserve: (context) => context.player.getTotalReserve() }
+                args: { reserve: (context) => context.player.getReserve() }
             },
             gameAction: GameActions.search({
                 title: 'Select a card',
-                topCards: (context) => context.player.getTotalReserve(),
+                topCards: (context) => context.player.getReserve(),
                 match: { printedCostOrLower: 1 },
                 message: '{player} {gameAction}',
                 gameAction: GameActions.addToHand((context) => ({

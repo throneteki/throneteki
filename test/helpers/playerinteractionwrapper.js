@@ -257,7 +257,7 @@ class PlayerInteractionWrapper {
     }
 
     discardToReserve() {
-        let needsDiscard = this.player.hand.length - this.player.getTotalReserve();
+        let needsDiscard = this.player.hand.length - this.player.getReserve();
         for (let i = 0; i < needsDiscard; ++i) {
             this.clickCard(this.player.hand[i]);
         }

@@ -7,7 +7,7 @@ class Sweetrobin extends DrawCard {
             when: {
                 onCardRevealed: (event) =>
                     event.card.hasPrintedCost() &&
-                    event.card.getPrintedCost() <= event.card.owner.getTotalInitiative() &&
+                    event.card.getPrintedCost() <= event.card.owner.getInitiative() &&
                     ['hand', 'draw deck', 'shadows'].includes(event.card.location)
             },
             limit: ability.limit.perPhase(1),

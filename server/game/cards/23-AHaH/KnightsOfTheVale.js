@@ -34,7 +34,7 @@ class KnightsOfTheVale extends DrawCard {
     }
 
     calculateSTR(context) {
-        return context.player.getTotalInitiative() === 0 ? 4 : 2;
+        return context.player.getInitiative() === 0 ? 4 : 2;
     }
 }
 

@@ -11,7 +11,7 @@ class Mord extends DrawCard {
                     location: 'play area',
                     type: 'character',
                     condition: (card, context) =>
-                        card.controller.getTotalInitiative() >= context.player.getTotalInitiative()
+                        card.controller.getInitiative() >= context.player.getInitiative()
                 }
             },
             message:

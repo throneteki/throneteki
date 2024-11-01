@@ -88,7 +88,7 @@ class RevealPlots extends BaseStep {
         let playerInitiatives = this.game.getPlayers().map((player) => {
             return {
                 player: player,
-                initiative: player.getTotalInitiative(),
+                initiative: player.getInitiative(),
                 power: player.getTotalPower()
             };
         });
