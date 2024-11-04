@@ -20,7 +20,7 @@ class TorrhensSquare extends DrawCard {
                     location: 'play area',
                     condition: (card, context) =>
                         card.hasPrintedCost() &&
-                        card.getPrintedCost() > context.player.getTotalInitiative()
+                        card.getPrintedCost() > context.player.getInitiative()
                 }
             },
             cost: ability.costs.kneelSelf(),

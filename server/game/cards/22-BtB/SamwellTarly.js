@@ -38,7 +38,7 @@ class SamwellTarly extends DrawCard {
     }
 
     satisfiableBonuses() {
-        let reserve = this.controller.getTotalReserve();
+        let reserve = this.controller.getReserve();
         let satisfiable = [];
         if (reserve >= 6 && this.controller.canDraw()) {
             satisfiable.push('draw');

@@ -6,7 +6,7 @@ class FleetFromTenTowers extends DrawCard {
             condition: () =>
                 this.isAttacking() &&
                 this.game.isDuringChallenge({
-                    match: (challenge) => challenge.defendingPlayer.getTotalReserve() <= 4
+                    match: (challenge) => challenge.defendingPlayer.getReserve() <= 4
                 }),
             match: this,
             effect: [ability.effects.modifyStrength(3), ability.effects.addKeyword('Renown')]

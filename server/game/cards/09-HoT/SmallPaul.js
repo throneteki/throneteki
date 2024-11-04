@@ -9,12 +9,12 @@ class SmallPaul extends DrawCard {
             },
             message: {
                 format: '{player} uses {source} to search the top {reserve} cards of their deck for any number of Steward characters',
-                args: { reserve: () => this.controller.getTotalReserve() }
+                args: { reserve: () => this.controller.getReserve() }
             },
             gameAction: GameActions.search({
                 title: 'Select any number of characters',
-                numToSelect: (context) => context.player.getTotalReserve(),
-                topCards: (context) => context.player.getTotalReserve(),
+                numToSelect: (context) => context.player.getReserve(),
+                topCards: (context) => context.player.getReserve(),
                 match: { type: 'character', trait: 'Steward' },
                 message: '{player} adds {searchTarget} to their hand',
                 gameAction: GameActions.simultaneously((context) =>

@@ -9,7 +9,7 @@ class ProtectorsOfTheRealm extends DrawCard {
     }
 
     getSTR() {
-        return this.controller.getTotalReserve();
+        return this.controller.getReserve();
     }
 }
 

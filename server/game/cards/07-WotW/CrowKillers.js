@@ -18,7 +18,7 @@ class CrowKillers extends DrawCard {
 
         return (
             challenge.attackingPlayer === this.controller &&
-            this.controller.getTotalReserve() < challenge.defendingPlayer.getTotalReserve()
+            this.controller.getReserve() < challenge.defendingPlayer.getReserve()
         );
     }
 }
