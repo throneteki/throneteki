@@ -59,7 +59,7 @@ const ContextMenu = () => {
     const contextMenu = useMemo(() => {
         const menuOptions = [];
         const menuItemClass =
-            'cursor-pointer text-medium font-[PoppinsMedium] text-white transition-colors duration-500 ease-in-out hover:text-gray-500';
+            'cursor-pointer text-medium font-[PoppinsMedium] text-white transition-colors duration-500 ease-in-out hover:text-gray-500 text-nowrap';
         if (currentGame?.started) {
             menuOptions.push(
                 <Link onPress={onLeaveClick} className={menuItemClass}>

@@ -176,9 +176,29 @@ const NavBar = () => {
             </NavbarContent>
             <NavbarContent className='lg:hidden' justify='end'>
                 {rightMenu}
+                <ProfileDropdown menu={ProfileMenu} user={user} />
             </NavbarContent>
 
-            <NavbarMenu>{leftMenu}</NavbarMenu>
+            <NavbarMenu>
+                {leftMenu}
+                {!currentGame?.started && numGames}
+                {currentGame?.started ? (
+                    <ServerStatus
+                        connected={gameConnected}
+                        connecting={gameConnecting}
+                        serverType='Game server'
+                        responseTime={gameResponse}
+                    />
+                ) : (
+                    <ServerStatus
+                        connected={lobbySocketConnected}
+                        connecting={lobbySocketConnecting}
+                        serverType='Lobby'
+                        responseTime={lobbyResponse}
+                    />
+                )}
+                <ContextMenu />
+            </NavbarMenu>
 
             <NavbarContent className='hidden lg:flex' justify='start'>
                 {leftMenu}
