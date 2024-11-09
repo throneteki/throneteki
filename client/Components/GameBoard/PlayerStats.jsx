@@ -107,27 +107,29 @@ const PlayerStats = ({
                 </StatContainer>
             ) : null}
 
-            {showControls && (
+            <StatContainer>
+                {showControls && (
+                    <>
+                        {getStatButton(onSettingsClick, faCogs, 'Open Settings', 'Settings')}
+                        {getStatButton(
+                            onMuteClick,
+                            muteSpectators ? faEyeSlash : faEye,
+                            muteSpectators ? 'Un-mute spectators' : 'Mute spectators'
+                        )}
+                    </>
+                )}
+                {getStatButton(writeChatToClipboard, faCopy, 'Copy chat log')}
                 <StatContainer>
-                    {getStatButton(onSettingsClick, faCogs, 'Open Settings', 'Settings')}
-                    {getStatButton(
-                        onMuteClick,
-                        muteSpectators ? faEyeSlash : faEye,
-                        muteSpectators ? 'Un-mute spectators' : 'Mute spectators'
-                    )}
-                    {getStatButton(writeChatToClipboard, faCopy, 'Copy chat log')}
-                    <StatContainer>
-                        <Badge
-                            shape='circle'
-                            color='danger'
-                            content={numMessages > 99 ? '99+' : numMessages}
-                            isInvisible={!numMessages || numMessages === 0}
-                        >
-                            {getStatButton(onMessagesClick, faComment, 'Toggle chat')}
-                        </Badge>
-                    </StatContainer>
+                    <Badge
+                        shape='circle'
+                        color='danger'
+                        content={numMessages > 99 ? '99+' : numMessages}
+                        isInvisible={!numMessages || numMessages === 0}
+                    >
+                        {getStatButton(onMessagesClick, faComment, 'Toggle chat')}
+                    </Badge>
                 </StatContainer>
-            )}
+            </StatContainer>
         </div>
     );
 };
