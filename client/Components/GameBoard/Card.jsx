@@ -10,6 +10,7 @@ import { ItemTypes } from '../../constants';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import { useUniqueId } from '@dnd-kit/utilities';
+import CardImage from './CardImage';
 
 const Card = ({
     card,
@@ -139,14 +140,6 @@ const Card = ({
 
             if (card.dupes && card.dupes.length > 0) {
                 counters.push({ name: 'dupe', count: card.dupes.length, shortName: 'D' });
-            }
-
-            for (const icon of card.iconsAdded || []) {
-                counters.push({ name: 'challenge-icon', icon, count: 0, cancel: false });
-            }
-
-            for (const icon of card.iconsRemoved || []) {
-                counters.push({ name: 'challenge-icon', icon, count: 0, cancel: true });
             }
 
             for (const item of card.factionStatus || []) {
@@ -387,16 +380,16 @@ const Card = ({
                 'z-10': !hideTokens
             }
         );
-        let imageClass = classNames('card-image absolute left-0 top-0', sizeClass, {
-            horizontal: card.type === 'plot',
-            vertical: card.type !== 'plot',
-            kneeled:
-                card.type !== 'plot' &&
-                (orientation === 'kneeled' || card.kneeled || orientation === 'horizontal')
-        });
 
-        let image = <img className={imageClass} src={imageUrl} />;
-
+        let image = (
+            <CardImage
+                facedown={isFacedown()}
+                card={card}
+                orientation={orientation}
+                size={size}
+                source={source}
+            />
+        );
         let content = (
             <div className='relative'>
                 {getDragFrame(image)}
@@ -412,7 +405,13 @@ const Card = ({
                 >
                     <div>
                         <span className='card-name'>{card.name}</span>
-                        {image}
+                        <CardImage
+                            facedown={isFacedown()}
+                            card={card}
+                            orientation={orientation}
+                            size={size}
+                            source={source}
+                        />
                     </div>
                     {!hideTokens ? <CardCounters counters={getCountersForCard(card)} /> : null}
                     {!isFacedown() ? getAlertStatus() : null}
@@ -425,12 +424,6 @@ const Card = ({
 
         return content;
     };
-
-    const imageUrl = !isFacedown()
-        ? `/img/cards/${card.code}.png`
-        : source === 'shadows'
-          ? '/img/cards/cardback_shadow.png'
-          : '/img/cards/cardback.png';
 
     const wrapperClass = classNames('m-0 inline-block select-none', {
         absolute: !!style?.left,
