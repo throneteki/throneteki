@@ -12,10 +12,13 @@ const LobbyChat = ({ messages, isModerator, onRemoveMessageClick }) => {
     const messagesEndRef = useRef(null);
 
     const onScroll = useCallback(() => {
-        let messages = messagesEndRef.current;
+        let messagePanel = messagesEndRef.current;
 
         setTimeout(() => {
-            if (messages.scrollTop >= messages.scrollHeight - messages.offsetHeight - 20) {
+            if (
+                messagePanel.scrollTop >=
+                messagePanel.scrollHeight - messagePanel.offsetHeight - 20
+            ) {
                 setCanScroll(true);
             } else {
                 setCanScroll(false);
@@ -27,7 +30,7 @@ const LobbyChat = ({ messages, isModerator, onRemoveMessageClick }) => {
         if (canScroll) {
             $(messagesEndRef.current).scrollTop(999999);
         }
-    }, []);
+    }, [messages, canScroll]);
 
     const getMessages = useCallback(() => {
         const groupedMessages = {};
