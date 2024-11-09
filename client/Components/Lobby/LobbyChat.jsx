@@ -97,7 +97,10 @@ const LobbyChat = ({ messages, isModerator, onRemoveMessageClick }) => {
                 }
 
                 return (
-                    <div key={message.user.username + i++} className='break-words'>
+                    <div
+                        key={message.user.username + i++}
+                        className='break-words text-gray-300 text-sm leading-[1.15rem]'
+                    >
                         {messageText}
                         {isModerator && (
                             <a
@@ -113,7 +116,7 @@ const LobbyChat = ({ messages, isModerator, onRemoveMessageClick }) => {
             });
 
             const userClass =
-                'username' +
+                'username font-bold' +
                 (firstMessage.user.role
                     ? ` ${Constants.ColourClassByRole[firstMessage.user.role.toLowerCase()]}`
                     : '');
@@ -132,7 +135,7 @@ const LobbyChat = ({ messages, isModerator, onRemoveMessageClick }) => {
                     <div className='overflow-x-hidden'>
                         <div className='flex'>
                             <span className={userClass}>{firstMessage.user.username}</span>
-                            <span className='ml-2 text-white'>{timestamp}</span>
+                            <span className='ml-2 text-gray-300 text-small'>{timestamp}</span>
                         </div>
                         {renderedMessages}
                     </div>
