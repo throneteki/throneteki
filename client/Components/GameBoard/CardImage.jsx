@@ -59,6 +59,10 @@ const CardImage = ({ facedown, card, orientation, size, source }) => {
         const doEffect = async () => {
             canvas = new StaticCanvas(canvasRef.current);
 
+            if (!canvas) {
+                return;
+            }
+
             const cardDimensions = getCardDimensions(size);
             const group = new Group();
 
