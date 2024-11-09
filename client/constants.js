@@ -37,11 +37,6 @@ export const Constants = {
         supporter: 'text-green-500',
         winner: 'text-yellow-200',
         previouswinner: 'text-pink-500'
-    },
-    Icons: {
-        military: new URL(`./assets/img/icons/military.png`, import.meta.url).href,
-        intrigue: new URL(`./assets/img/icons/intrigue.png`, import.meta.url).href,
-        power: new URL(`./assets/img/icons/power.png`, import.meta.url).href
     }
 };
 

@@ -44,8 +44,8 @@ export function getMessageWithLinks(message) {
 export function getCardDimensions(cardSize) {
     let multiplier = getCardSizeMultiplier(cardSize);
     return {
-        width: Math.floor(65 * multiplier),
-        height: Math.floor(91 * multiplier)
+        width: 65 * multiplier,
+        height: 91 * multiplier
     };
 }
 
