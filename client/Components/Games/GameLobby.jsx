@@ -5,10 +5,17 @@ import GameList from './GameList';
 import NewGame from './NewGame';
 import PendingGame from './PendingGame';
 import Panel from '../Site/Panel';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import AlertPanel, { AlertType } from '../Site/AlertPanel';
 import GameButtons from './GameButtons';
 import PasswordGame from './PasswordGame';
+import { toast } from 'react-toastify';
+import {
+    joinPasswordGame,
+    sendJoinGameMessage,
+    sendWatchGameMessage
+} from '../../redux/reducers/lobby';
+import { setUrl } from '../../redux/reducers/navigation';
 
 const filterDefaults = {
     ['beginner']: true,
@@ -16,7 +23,8 @@ const filterDefaults = {
     ['competitive']: true
 };
 
-const GameLobby = () => {
+const GameLobby = ({ gameId }) => {
+    const dispatch = useDispatch();
     const user = useSelector((state) => state.auth.user);
 
     const [quickJoin, setQuickJoin] = useState(false);
@@ -38,8 +46,31 @@ const GameLobby = () => {
     useEffect(() => {
         if (currentGame) {
             setNewGame(false);
+        } else if (!currentGame && gameId && games.length !== 0) {
+            const game = games.find((x) => x.id === gameId);
+
+            if (!game) {
+                toast.error('Game not found');
+                return;
+            }
+
+            if (!game.started && !game.full) {
+                if (game.needsPassword) {
+                    dispatch(joinPasswordGame(game, 'Join'));
+                } else {
+                    dispatch(sendJoinGameMessage(gameId));
+                }
+            } else {
+                if (game.needsPassword) {
+                    dispatch(joinPasswordGame(game, 'Watch'));
+                } else {
+                    dispatch(sendWatchGameMessage(game.id));
+                }
+            }
+
+            dispatch(setUrl('/play'));
         }
-    }, [currentGame]);
+    }, [currentGame, dispatch, gameId, games]);
 
     return (
         <div className='mx-auto my-2 w-4/5 flex flex-col gap-2'>

@@ -29,7 +29,7 @@ const Logout = () => {
 
             dispatch(startConnecting());
 
-            toast.success('You were successfully logged out, redirecting you shortly.');
+            toast.success('You were successfully logged out.');
             dispatch(navigate('/'));
         }
 
