@@ -107,48 +107,51 @@ const Lobby = () => {
     }
 
     return (
-        <div className='mx-auto flex h-[91vh] w-2/3 flex-col'>
+        <div className='lg:mx-auto flex h-full lg:w-4/5 flex-col'>
             <div></div>
             {motd && motd.message && (
                 <AlertPanel variant={motd.motdType}>{getMessageWithLinks(motd.message)}</AlertPanel>
             )}
             {bannerNotice ? <AlertPanel message={bannerNotice} variant='danger' /> : null}
-            <div>
+            <div className='max-h-[20vh]'>
                 <Panel title='Latest site news' className='mt-2'>
                     {newsStatus}
                     {newsSuccess && <News news={news} />}
                 </Panel>
             </div>
-            <Panel className='mt-4' title={`Lobby Chat (${users.length} online)`}>
+            <Panel
+                className='mt-4 mb-4 flex flex-col'
+                title={`Lobby Chat (${users.length} online)`}
+            >
                 <LobbyChat
                     messages={messages}
                     isModerator={user && user.permissions.canModerateChat}
                     onRemoveMessageClick={onRemoveMessageClick}
                 />
-            </Panel>
-            <form
-                className='relative bottom-[42px] left-[2px] z-50 pr-[5px]'
-                onSubmit={(event) => {
-                    event.preventDefault();
-                    sendMessage();
-                }}
-            >
-                <Input
-                    ref={messageRef}
-                    classNames={{ inputWrapper: 'rounded-tl-none rounded-tr-none' }}
-                    onKeyDown={onKeyPress}
-                    onChange={(event) =>
-                        setMessage(
-                            event.target.value.substring(
-                                0,
-                                Math.min(512, event.target.value.length)
+                <form
+                    className='z-50'
+                    onSubmit={(event) => {
+                        event.preventDefault();
+                        sendMessage();
+                    }}
+                >
+                    <Input
+                        ref={messageRef}
+                        classNames={{ inputWrapper: 'rounded-tl-none rounded-tr-none' }}
+                        onKeyDown={onKeyPress}
+                        onChange={(event) =>
+                            setMessage(
+                                event.target.value.substring(
+                                    0,
+                                    Math.min(512, event.target.value.length)
+                                )
                             )
-                        )
-                    }
-                    placeholder={placeholder}
-                    value={message}
-                ></Input>
-            </form>
+                        }
+                        placeholder={placeholder}
+                        value={message}
+                    ></Input>
+                </form>
+            </Panel>
         </div>
     );
 };

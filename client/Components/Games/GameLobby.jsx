@@ -73,7 +73,7 @@ const GameLobby = ({ gameId }) => {
     }, [currentGame, dispatch, gameId, games]);
 
     return (
-        <div className='mx-auto my-2 w-4/5 flex flex-col gap-2'>
+        <div className='m-2 lg:mx-auto lg:w-4/5 flex flex-col gap-2'>
             <div ref={topRef}>
                 {newGame && <NewGame quickJoin={quickJoin} onClosed={() => setNewGame(false)} />}
                 {currentGame?.started === false && <PendingGame />}
@@ -87,8 +87,8 @@ const GameLobby = ({ gameId }) => {
                         </AlertPanel>
                     </div>
                 )}
-                <div className='grid grid-cols-12'>
-                    <div className='col-span-2 mr-5 flex flex-col justify-center'>
+                <div className='flex gap-2'>
+                    <div className='flex flex-col'>
                         <GameButtons
                             onNewGame={() => {
                                 setQuickJoin(false);
@@ -100,7 +100,7 @@ const GameLobby = ({ gameId }) => {
                             }}
                         />
                     </div>
-                    <div className='col-span-10'>
+                    <div className='flex-1'>
                         <GameFilter
                             filter={currentFilter}
                             onFilterChanged={(filter) => {

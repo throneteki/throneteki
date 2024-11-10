@@ -122,7 +122,7 @@ const Profile = () => {
     };
 
     return (
-        <div className='w-5/6 lg:w-3/4 mb-5 m-auto'>
+        <div className='m-2 lg:w-3/4 mb-5 lg:mx-auto'>
             <Formik
                 initialValues={initialValues}
                 validationSchema={schema}

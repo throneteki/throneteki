@@ -149,11 +149,7 @@ const LobbyChat = ({ messages, isModerator, onRemoveMessageClick }) => {
     }
 
     return (
-        <div
-            className='absolute bottom-10 left-2 right-0 top-0 overflow-y-auto'
-            ref={messagesEndRef}
-            onScroll={onScroll}
-        >
+        <div className='overflow-y-auto' ref={messagesEndRef} onScroll={onScroll}>
             {getMessages()}
         </div>
     );

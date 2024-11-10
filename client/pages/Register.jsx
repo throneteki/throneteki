@@ -61,7 +61,7 @@ const Register = () => {
     });
 
     return (
-        <div className='w-3/5 mx-auto'>
+        <div className='md:mx-auto md:w-4/5 lg:w-2/5 mx-2'>
             <Panel title='Register an account'>
                 <p>
                     We require information from you in order to service your access to the site.

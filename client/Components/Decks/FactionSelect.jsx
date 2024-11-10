@@ -17,7 +17,7 @@ const FactionSelect = ({ onSelect }) => {
                     <h3 className='text-bold text-large'>To start, select a faction:</h3>
                 </div>
             </div>
-            <div className='grid grid-cols-4 gap-8 my-8'>
+            <div className='grid grid-cols-3 lg:grid-cols-4 gap-8 my-8'>
                 {factions.map((faction) => (
                     <div key={faction.value} className='flex content-center justify-center'>
                         <div role='button' onClick={() => onSelect(faction)}>

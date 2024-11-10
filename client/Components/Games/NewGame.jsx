@@ -97,23 +97,23 @@ const NewGame = ({
                             formProps.handleSubmit(event);
                         }}
                     >
-                        {quickJoin && (
-                            <div className='mb-2'>
-                                <AlertPanel variant={AlertType.Info}>
-                                    Select the type of game you&apos;d like to play and either
-                                    you&apos;ll join the next one available, or one will be created
-                                    for you with default options.
-                                </AlertPanel>
-                            </div>
-                        )}
-                        {!quickJoin && (
-                            <>
-                                {
-                                    <div className='flex gap-2'>
-                                        <div className='w-1/2'>
-                                            <div className='mb-2'>
+                        <div className='flex flex-col gap-2'>
+                            {quickJoin && (
+                                <div className='mb-2'>
+                                    <AlertPanel variant={AlertType.Info}>
+                                        Select the type of game you&apos;d like to play and either
+                                        you&apos;ll join the next one available, or one will be
+                                        created for you with default options.
+                                    </AlertPanel>
+                                </div>
+                            )}
+                            {!quickJoin && (
+                                <>
+                                    {
+                                        <div className='flex flex-col gap-2 w-full lg:grid lg:grid-cols-2'>
+                                            <div>
                                                 <Input
-                                                    label={'Name'}
+                                                    label='Name'
                                                     endContent={
                                                         <span>
                                                             {GameNameMaxLength -
@@ -121,13 +121,22 @@ const NewGame = ({
                                                         </span>
                                                     }
                                                     type='text'
-                                                    placeholder={'Game Name'}
+                                                    placeholder='Game Name'
                                                     maxLength={GameNameMaxLength}
                                                     {...formProps.getFieldProps('name')}
                                                     errorMessage={formProps.errors.name}
                                                 />
                                             </div>
-                                            <div className='mb-2'>
+                                            <div>
+                                                <Input
+                                                    autocomplete='new-password'
+                                                    label='Password'
+                                                    type='password'
+                                                    placeholder={'Enter a password'}
+                                                    {...formProps.getFieldProps('password')}
+                                                />
+                                            </div>
+                                            <div>
                                                 <Select
                                                     label={'Mode'}
                                                     selectedKeys={new Set([restrictedList])}
@@ -143,33 +152,24 @@ const NewGame = ({
                                                 </Select>
                                             </div>
                                         </div>
-                                        <div className='lg:w-1/2'>
-                                            <Input
-                                                autocomplete='new-password'
-                                                label={'Password'}
-                                                type='password'
-                                                placeholder={'Enter a password'}
-                                                {...formProps.getFieldProps('password')}
-                                            />
-                                        </div>
-                                    </div>
-                                }
+                                    }
 
-                                <GameOptions formProps={formProps} />
-                            </>
-                        )}
-                        {<GameTypes formProps={formProps} />}
-                        <div className='mt-4'>
-                            <Button color='success' type='submit'>
-                                Start
-                            </Button>
-                            <Button
-                                color='primary'
-                                onClick={() => onClosed && onClosed()}
-                                className='ms-1'
-                            >
-                                Cancel
-                            </Button>
+                                    <GameOptions formProps={formProps} />
+                                </>
+                            )}
+                            {<GameTypes formProps={formProps} />}
+                            <div className='mt-4'>
+                                <Button color='success' type='submit'>
+                                    Start
+                                </Button>
+                                <Button
+                                    color='primary'
+                                    onClick={() => onClosed && onClosed()}
+                                    className='ms-1'
+                                >
+                                    Cancel
+                                </Button>
+                            </div>
                         </div>
                     </form>
                 )}

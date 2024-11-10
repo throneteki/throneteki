@@ -31,7 +31,7 @@ const ForgotPassword = () => {
 
     return (
         <div>
-            <div className='mx-auto w-2/5'>
+            <div className='md:mx-auto md:w-4/5 lg:w-2/5 mx-2'>
                 <AlertPanel
                     variant='info'
                     message='To start the password recovery process, please enter your username and click the submit button.'

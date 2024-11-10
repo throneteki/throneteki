@@ -56,7 +56,7 @@ const AgendaSelect = ({ onBackClick, onNextClick }) => {
                     Next
                 </Button>
             </div>
-            <div className='grid h-[75vh] grid-cols-8 overflow-y-auto '>
+            <div className='grid h-[75vh] grid-cols-3 lg:grid-cols-8 overflow-y-auto '>
                 {agendas.map((agenda) => (
                     <div key={agenda.code} className='m-4 flex content-center'>
                         <div

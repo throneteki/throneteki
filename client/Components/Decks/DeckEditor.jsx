@@ -114,7 +114,7 @@ const DeckEditor = ({ deck, onBackClick }) => {
         };
 
         saveDeck.bannerCards = deckCards
-            .filter((dc) => dc.card.code !== deck.agenda.code && dc.card.type === 'agenda')
+            .filter((dc) => dc.card.code !== deck.agenda?.code && dc.card.type === 'agenda')
             .map((c) => c.card);
 
         for (const deckCard of deckCards.filter(

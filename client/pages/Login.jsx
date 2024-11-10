@@ -43,7 +43,7 @@ const Login = () => {
     });
 
     return (
-        <div className='mx-auto w-2/5'>
+        <div className='md:mx-auto md:w-4/5 lg:w-2/5 mx-2'>
             <Panel className='mt-1' title='Login'>
                 <Formik
                     initialValues={{ username: '', password: '' }}

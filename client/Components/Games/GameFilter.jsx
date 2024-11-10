@@ -22,7 +22,7 @@ const GameFilter = ({ filter, onFilterChanged }) => {
 
     return (
         <Panel type='primary'>
-            <div className='grid grid-cols-3'>
+            <div className='grid lg:grid-cols-3'>
                 {filters.map((filter) => (
                     <div key={filter.name}>
                         <Switch

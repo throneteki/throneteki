@@ -101,7 +101,7 @@ const Security = () => {
     }
 
     return (
-        <div className='w-2/3 mx-auto profile'>
+        <div className='m-2 lg:w-2/3 lg:mx-auto profile'>
             <Panel title='Active Sessions'>
                 <p className='help-block'>
                     Below you will see the active &lsquo;sessions&rsquo; that you have on the

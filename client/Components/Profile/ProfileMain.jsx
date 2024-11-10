@@ -73,10 +73,10 @@ const ProfileMain = ({ user, formProps }) => {
                     type='password'
                 />
             </div>
-            <div className='mt-2 flex gap-2'>
-                <div>
-                    <span className='font-bold'>Avatar</span>
-                    <div className='md:flex items-center mt-1'>
+            <div className='mt-2'>
+                <div className='flex gap-2 flex-col lg:grid lg:grid-cols-3 lg:items-center'>
+                    <div>
+                        <span className='font-bold'>Avatar</span>
                         <div className='flex'>
                             <Avatar src={`/img/avatar/${user.username}.png`} showFallback />
                             <Button
@@ -89,38 +89,39 @@ const ProfileMain = ({ user, formProps }) => {
                                 Update avatar
                             </Button>
                         </div>
-                        <div>
-                            <Switch
-                                className='md:ml-2 mt-2 md:mt-0'
-                                {...formProps.getFieldProps('enableGravatar')}
-                                isSelected={formProps.values.enableGravatar}
-                            >
-                                Enable Gravatar integration
-                            </Switch>
-                        </div>
                     </div>
-                </div>
-                <div>
-                    <span className='font-bold'>Patreon</span>
+
                     <div>
-                        {!isPatreonLinked ? (
-                            <Button
-                                color='secondary'
-                                href={`https://www.patreon.com/oauth2/authorize?response_type=code&client_id=317bxGpXD7sAOlyFKp6D-LOBRX731lLK-2YYQSFfBmJCrVSiJI77eUgRoLoN2KoI&redirect_uri=${callbackUrl}`}
-                                as={Link}
-                            >
-                                <img src={PatreonImage} className='h-7' />
-                                Link Patreon account
-                            </Button>
-                        ) : (
-                            <Button
-                                isLoading={unlinkLoading}
-                                color='secondary'
-                                onClick={onUnlinkClick}
-                            >
-                                Unlink Patreon account
-                            </Button>
-                        )}
+                        <Switch
+                            className='md:ml-2 mt-2 md:mt-0'
+                            {...formProps.getFieldProps('enableGravatar')}
+                            isSelected={formProps.values.enableGravatar}
+                        >
+                            Enable Gravatar integration
+                        </Switch>
+                    </div>
+                    <div>
+                        <span className='font-bold'>Patreon</span>
+                        <div>
+                            {!isPatreonLinked ? (
+                                <Button
+                                    color='secondary'
+                                    href={`https://www.patreon.com/oauth2/authorize?response_type=code&client_id=317bxGpXD7sAOlyFKp6D-LOBRX731lLK-2YYQSFfBmJCrVSiJI77eUgRoLoN2KoI&redirect_uri=${callbackUrl}`}
+                                    as={Link}
+                                >
+                                    <img src={PatreonImage} className='h-7' />
+                                    Link Patreon account
+                                </Button>
+                            ) : (
+                                <Button
+                                    isLoading={unlinkLoading}
+                                    color='secondary'
+                                    onClick={onUnlinkClick}
+                                >
+                                    Unlink Patreon account
+                                </Button>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>

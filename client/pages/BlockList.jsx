@@ -123,41 +123,39 @@ const BlockList = () => {
     }
 
     return (
-        <div className='w-2/3 mx-auto'>
-            <div>
-                <Panel title='Block list'>
-                    <p>
-                        It can sometimes become necessary to prevent someone joining your games, or
-                        stop seeing their messages, or both. Users on this list will not be able to
-                        join your games, and you will not see their chat messages or their games.
-                    </p>
+        <div className='m-2 lg:w-2/3 lg:mx-auto'>
+            <Panel title='Block list'>
+                <p>
+                    It can sometimes become necessary to prevent someone joining your games, or stop
+                    seeing their messages, or both. Users on this list will not be able to join your
+                    games, and you will not see their chat messages or their games.
+                </p>
+
+                <div className='mt-2'>
+                    <Input
+                        className='lg:w-1/3'
+                        name='blockee'
+                        label='Username'
+                        placeholder='Enter username to block'
+                        type='text'
+                        onChange={onUsernameChange}
+                        value={username}
+                    />
+                    <Button
+                        isLoading={isAddLoading}
+                        className='mt-2'
+                        color='primary'
+                        onClick={onAddClick}
+                    >
+                        Add
+                    </Button>
 
                     <div className='mt-2'>
-                        <Input
-                            className='w-1/3'
-                            name='blockee'
-                            label='Username'
-                            placeholder='Enter username to block'
-                            type='text'
-                            onChange={onUsernameChange}
-                            value={username}
-                        />
-                        <Button
-                            isLoading={isAddLoading}
-                            className='mt-2'
-                            color='primary'
-                            onClick={onAddClick}
-                        >
-                            Add
-                        </Button>
-
-                        <div className='mt-2'>
-                            <h3 className='font-bold'>Users Blocked</h3>
-                            {table}
-                        </div>
+                        <h3 className='font-bold'>Users Blocked</h3>
+                        {table}
                     </div>
-                </Panel>
-            </div>
+                </div>
+            </Panel>
         </div>
     );
 };
