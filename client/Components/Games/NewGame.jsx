@@ -129,7 +129,7 @@ const NewGame = ({
                                             </div>
                                             <div>
                                                 <Input
-                                                    autocomplete='new-password'
+                                                    autoComplete='off'
                                                     label='Password'
                                                     type='password'
                                                     placeholder={'Enter a password'}

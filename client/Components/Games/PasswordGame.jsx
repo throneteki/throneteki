@@ -59,6 +59,7 @@ const PasswordGame = () => {
                     ) : null}
                     <div className='game-password'>
                         <Input
+                            autoComplete='off'
                             type='password'
                             onChange={onPasswordChange}
                             value={password}
