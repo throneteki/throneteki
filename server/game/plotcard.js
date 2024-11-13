@@ -59,6 +59,7 @@ export class PlotStat {
     constructor(printedValue) {
         this.printedValue = printedValue;
         this.baseValue = this.printedValue;
+        this.modifiers = [];
         // TODO: Improve modifiers so that other cards apply a "PlotStatModifier" which is collected here & used in calculate
         //       Would make affecting that modified stat (eg. Rains of Autumn) much simpler
         this.modifier = 0;
@@ -67,7 +68,7 @@ export class PlotStat {
 
     calculate() {
         if (!this.setValue) {
-            return this.baseValue + this.modifier;
+            return Math.max(this.baseValue + this.modifier, 0);
         }
         return this.setValue;
     }
