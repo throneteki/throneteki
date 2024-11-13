@@ -43,7 +43,8 @@ class AmbushCardAction extends BaseAbility {
             card,
             params.originalController,
             params.originalLocation,
-            params.originalParent
+            params.originalParent,
+            context.costs.gold
         );
         context.player.putIntoPlay(context.source, 'ambush');
     }
