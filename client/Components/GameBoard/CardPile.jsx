@@ -36,7 +36,8 @@ const CardPile = ({
     cardCount,
     orientation = 'vertical',
     hiddenTopCard,
-    showCards
+    showCards,
+    selected
 }) => {
     const [showPopup, setShowPopup] = useState(cards && cards.some((card) => card.selectable));
     const prevCards = useRef(cards);
@@ -265,7 +266,7 @@ const CardPile = ({
         orientation === 'horizontal' && retTopCard && retTopCard.facedown ? 'kneeled' : orientation;
 
     if (retTopCard && hiddenTopCard) {
-        retTopCard = { facedown: true };
+        retTopCard = { facedown: true, selected };
     }
 
     let menu;

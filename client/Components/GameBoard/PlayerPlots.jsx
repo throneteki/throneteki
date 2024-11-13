@@ -64,6 +64,7 @@ const PlayerPlots = ({
                 topCard={showSelectedPlot ? selectedPlot : null}
                 size={cardSize}
                 disableBackground={true}
+                selected={!!selectedPlot}
             />
         );
 
