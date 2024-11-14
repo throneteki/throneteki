@@ -1,6 +1,6 @@
 import { formatDeckAsFullCards } from '../../deck-helper';
 
-import { sendGameMessage } from './socket';
+//import { sendGameMessage } from './socket';
 
 export function startAbilityTimer(timeLimit, timerProps) {
     return (dispatch) => {
@@ -31,29 +31,5 @@ export function expireAbilityTimer(timerProps) {
         dispatch(
             sendGameMessage('menuButton', timerProps.arg, timerProps.method, timerProps.promptId)
         );
-    };
-}
-
-export function openRookeryPrompt(rookery) {
-    return (dispatch, getState) => {
-        let state = getState();
-        let formattedDeck = formatDeckAsFullCards(rookery.deck, state.cards);
-        dispatch({
-            type: 'OPEN_ROOKERY_PROMPT',
-            deck: formattedDeck,
-            promptId: rookery.promptId
-        });
-    };
-}
-
-export function submitRookeryPrompt(deck, promptId) {
-    return (dispatch) => {
-        dispatch(sendGameMessage('menuButton', deck, null, promptId));
-    };
-}
-
-export function closeRookeryPrompt() {
-    return {
-        type: 'CLOSE_ROOKERY_PROMPT'
     };
 }

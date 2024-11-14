@@ -1,54 +1,44 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import classNames from 'classnames';
+import { useSelector } from 'react-redux';
+import { Avatar, Link } from '@nextui-org/react';
 
-import Avatar from '../Site/Avatar';
-import { ThronesIcons } from '../../constants';
-import * as actions from '../../actions';
+import CardZoom from './CardZoom';
+import AlertPanel from '../Site/AlertPanel';
 
-class Messages extends React.Component {
-    constructor() {
-        super();
+import CardBackImage from '../../assets/img/cardback.png';
+import GoldImage from '../../assets/img/stats/gold.png';
 
-        this.state = {
-            message: ''
-        };
+import './Messages.css';
+import { Constants, ThronesIcons } from '../../constants';
+import ThronesIcon from './ThronesIcon';
 
-        this.tokens = {
-            card: { className: 'icon-card', imageSrc: '/img/cards/cardback.png' },
-            cards: { className: 'icon-card', imageSrc: '/img/cards/cardback.png' },
-            gold: { className: 'icon-gold', imageSrc: '/img/Gold.png' }
-        };
+const tokens = {
+    card: { className: 'h-4 w-3 inline', imageSrc: CardBackImage },
+    cards: { className: 'h-4 w-3 inline', imageSrc: CardBackImage },
+    gold: { className: 'h-3 w-3 inline mt-1', imageSrc: GoldImage }
+};
 
-        this.formatMessageText = this.formatMessageText.bind(this);
-    }
+const Messages = ({ messages, onCardMouseOut, onCardMouseOver }) => {
+    const currentGame = useSelector((state) => state.lobby.currentGame);
 
-    getMessage() {
-        let index = 0;
-        let messages = this.props.messages.map((message) => {
-            return (
-                <div key={'message' + index++} className='message'>
-                    {this.formatMessageText(message.message)}
-                </div>
-            );
-        });
+    const owner = currentGame.players[currentGame.owner];
 
-        return messages;
-    }
-
-    processKeywords(message) {
-        let messages = [];
+    const processKeywords = (message) => {
+        const messages = [];
         let i = 0;
 
-        for (let token of message.split(' ')) {
-            if (this.tokens[token]) {
-                let tokenEntry = this.tokens[token];
+        for (const token of message.split(' ')) {
+            const lowerToken = token.toLowerCase();
+
+            if (tokens[lowerToken]) {
+                const tokenEntry = tokens[lowerToken];
+
                 messages.push(
-                    <img
-                        key={`${token}-${i++}`}
-                        className={tokenEntry.className}
-                        src={tokenEntry.imageSrc}
-                    />
+                    <span key={`${token}-${i++}`} className='inline-flex gap-0.5'>
+                        {` ${token} `}
+                        <img className={tokenEntry.className} src={tokenEntry.imageSrc} />
+                    </span>
                 );
                 messages.push(' ');
             } else {
@@ -57,101 +47,116 @@ class Messages extends React.Component {
         }
 
         return messages;
-    }
+    };
 
-    formatMessageText(message) {
+    const formatMessageText = (message) => {
         let index = 0;
-
-        let messages = [];
+        const messages = [];
 
         for (const [key, fragment] of Object.entries(message)) {
             if (fragment === null || fragment === undefined) {
-                messages.push('');
+                messages.push(null);
 
                 continue;
             }
 
             if (key === 'alert') {
-                let message = this.formatMessageText(fragment.message);
-
+                const message = formatMessageText(fragment.message);
                 switch (fragment.type) {
                     case 'endofround':
                     case 'phasestart':
+                        // eslint-disable-next-line no-var
+                        var sepClass = classNames('font-bold text-foreground', {
+                            'text-md': fragment.type === 'phasestart',
+                            capitalize: fragment.type === 'phasestart'
+                        });
+                        messages.push(
+                            <div className={sepClass} key={index++}>
+                                <hr className={'mb-4 mt-2 border-primary ' + fragment.type} />
+                                {message}
+                                {fragment.type === 'phasestart' && (
+                                    <hr className='mt-4 border-primary' />
+                                )}
+                            </div>
+                        );
+                        break;
                     case 'startofround':
                         messages.push(
-                            <div className={'bold seperator ' + fragment.type} key={index++}>
-                                <hr className={fragment.type} />
+                            <div className={'separator font-bold ' + fragment.type} key={index++}>
                                 {message}
-                                {fragment.type === 'phasestart' && <hr />}
                             </div>
                         );
                         break;
                     case 'success':
-                        messages.push(
-                            <div className='alert alert-success' key={index++}>
-                                <span className='glyphicon glyphicon-ok-sign' />
-                                &nbsp;
-                                {message}
-                            </div>
-                        );
-                        break;
                     case 'info':
-                        messages.push(
-                            <div className='alert alert-info' key={index++}>
-                                <span className='glyphicon glyphicon-info-sign' />
-                                &nbsp;
-                                {message}
-                            </div>
-                        );
-                        break;
                     case 'danger':
-                        messages.push(
-                            <div className='alert alert-danger' key={index++}>
-                                <span className='glyphicon glyphicon-exclamation-sign' />
-                                &nbsp;
-                                {message}
-                            </div>
-                        );
-                        break;
+                    case 'bell':
                     case 'warning':
                         messages.push(
-                            <div className='alert alert-warning' key={index++}>
-                                <span className='glyphicon glyphicon-warning-sign' />
-                                &nbsp;
+                            <AlertPanel variant={fragment.type} key={index++} size={'sm'}>
                                 {message}
-                            </div>
+                            </AlertPanel>
                         );
                         break;
+
                     default:
-                        messages.push(message);
+                        messages.concat(message);
                         break;
                 }
             } else if (fragment.message) {
-                messages.push(this.formatMessageText(fragment.message));
+                messages.concat(formatMessageText(fragment.message));
+            } else if (fragment.link && fragment.label) {
+                messages.push(
+                    <Link key={index++} isExternal href={fragment.link}>
+                        {fragment.label}
+                    </Link>
+                );
+            } else if (fragment.image && fragment.label) {
+                messages.push(
+                    <span
+                        key={index++}
+                        className='cursor-pointer text-secondary hover:text-info'
+                        onMouseOver={onCardMouseOver.bind(this, {
+                            image: <CardZoom imageUrl={`/img/cards/${fragment.code}.png`} />,
+                            size: 'normal'
+                        })}
+                        onMouseOut={() => onCardMouseOut && onCardMouseOut(fragment)}
+                    >
+                        {fragment.label}
+                    </span>
+                );
             } else if (fragment.code && fragment.label) {
                 messages.push(
                     <span
                         key={index++}
-                        className='card-link'
-                        onMouseOver={this.props.onCardMouseOver.bind(this, fragment)}
-                        onMouseOut={this.props.onCardMouseOut.bind(this)}
+                        className='cursor-pointer text-secondary hover:text-info'
+                        onMouseOver={() =>
+                            onCardMouseOver({
+                                code: fragment.code,
+                                name: fragment.label || fragment.name
+                            })
+                        }
+                        onMouseOut={() => onCardMouseOut && onCardMouseOut(fragment)}
                     >
                         {fragment.label}
                     </span>
                 );
             } else if (fragment.name && fragment.argType === 'player') {
-                let userClass = 'username' + (fragment.role ? ` ${fragment.role}-role` : '');
-
                 messages.push(
-                    <div key={index++} className='message-chat'>
-                        <Avatar username={fragment.name} float />
-                        <span key={index++} className={userClass}>
+                    <div key={index++} className='message-chat flex items-center gap-1'>
+                        <Avatar
+                            src={`/img/avatar/${fragment.name}.png`}
+                            showFallback
+                            className='w-6 h-6 text-tiny'
+                        />
+                        <span key={index++} className={Constants.ColourClassByRole[fragment.role]}>
                             {fragment.name}
                         </span>
                     </div>
                 );
             } else if (fragment.argType === 'nonAvatarPlayer') {
-                let userClass = 'username' + (fragment.role ? ` ${fragment.role}-role` : '');
+                const roleClass = Constants.ColourClassByRole[fragment.role?.toLowerCase()];
+                const userClass = classNames('username font-bold', roleClass);
 
                 messages.push(
                     <span key={index++} className={userClass}>
@@ -159,35 +164,38 @@ class Messages extends React.Component {
                     </span>
                 );
             } else if (ThronesIcons.includes(fragment)) {
-                messages.push(
-                    <span key={index++} className={`thronesicon thronesicon-${fragment}`} />
-                );
+                messages.push(<ThronesIcon key={index++} icon={fragment} />);
             } else {
-                let messageFragment = this.processKeywords(fragment.toString());
-                messages.push(messageFragment);
+                const messageFragment = processKeywords(fragment.toString());
+                messages.push(
+                    <span key={index++} className='message-fragment'>
+                        {messageFragment}
+                    </span>
+                );
             }
         }
 
         return messages;
-    }
+    };
 
-    render() {
-        return <div>{this.getMessage()}</div>;
-    }
-}
+    const renderMessages = () => {
+        return messages.map((message, index) => {
+            const className = classNames('break-words leading-[1.15rem] text-gray-300', '', {
+                'this-player': message.activePlayer && message.activePlayer == owner.name,
+                'other-player': message.activePlayer && message.activePlayer !== owner.name,
+                'chat-bubble': Object.values(message.message).some(
+                    (m) => m.name && m.argType === 'player'
+                )
+            });
+            return (
+                <div key={index} className={className}>
+                    {formatMessageText(message.message)}
+                </div>
+            );
+        });
+    };
 
-Messages.displayName = 'Messages';
-Messages.propTypes = {
-    messages: PropTypes.array,
-    onCardMouseOut: PropTypes.func,
-    onCardMouseOver: PropTypes.func,
-    socket: PropTypes.object
+    return <>{renderMessages()} </>;
 };
 
-function mapStateToProps(state) {
-    return {
-        socket: state.lobby.socket
-    };
-}
-
-export default connect(mapStateToProps, actions)(Messages);
+export default Messages;

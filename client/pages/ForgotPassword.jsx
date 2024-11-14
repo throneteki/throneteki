@@ -1,109 +1,66 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import React, { useState, useCallback } from 'react';
 import ReCAPTCHA from 'react-google-recaptcha';
 
 import AlertPanel from '../Components/Site/AlertPanel';
 import Panel from '../Components/Site/Panel';
-import Form from '../Components/Form/Form';
 
-import * as actions from '../actions';
+import { useForgotPasswordMutation } from '../redux/middleware/api';
+import { Button, Input } from '@nextui-org/react';
+import { toast } from 'react-toastify';
 
-class ForgotPassword extends React.Component {
-    constructor() {
-        super();
+const ForgotPassword = () => {
+    const [captcha, setCaptcha] = useState('');
+    const [forgotPassword, { isLoading }] = useForgotPasswordMutation();
+    const [username, setUsername] = useState('');
 
-        this.state = {
-            captcha: ''
-        };
+    const onCaptchaChange = useCallback((value) => {
+        setCaptcha(value);
+    }, []);
 
-        this.onSubmit = this.onSubmit.bind(this);
-    }
+    const onSubmit = useCallback(async () => {
+        try {
+            await forgotPassword({ username, captcha }).unwrap();
 
-    onCaptchaChange(value) {
-        this.setState({ captcha: value });
-    }
-
-    onSubmit(state) {
-        this.props.forgotPassword({ username: state.username, captcha: this.state.captcha });
-    }
-
-    render() {
-        let errorBar =
-            this.props.apiSuccess === false ? (
-                <AlertPanel type='error' message={this.props.apiMessage} />
-            ) : null;
-        let successBar = this.props.apiSuccess ? (
-            <AlertPanel
-                type='success'
-                message='Your request was submitted.  If the username you entered is registered with the site, an email will be sent to the address registered on the account, detailing what to do next.'
-            />
-        ) : null;
-
-        if (this.props.apiSuccess) {
-            return <div className='col-sm-6 col-sm-offset-3'>{successBar}</div>;
+            toast.success(
+                'Your request was submitted.  If the username you entered is registered with the site, an email will be sent to the address registered on the account, detailing what to do next.'
+            );
+        } catch (err) {
+            toast.error(err.message || 'An error occurred submitting your request');
         }
+    }, [forgotPassword, username, captcha]);
 
-        return (
-            <div>
-                <div className='col-sm-6 col-sm-offset-3'>
-                    {errorBar}
-                    {this.props.apiSuccess === false ? null : (
-                        <AlertPanel
-                            type='info'
-                            message='To start the password recovery process, please enter your username and click the submit button.'
-                        />
-                    )}
+    return (
+        <div>
+            <div className='md:mx-auto md:w-4/5 lg:w-2/5 mx-2'>
+                <AlertPanel
+                    variant='info'
+                    message='To start the password recovery process, please enter your username and click the submit button.'
+                />
+                <div className='mt-2'>
                     <Panel title='Forgot password'>
-                        <Form
-                            name='forgotpassword'
-                            buttonClass='col-sm-offset-2 col-sm-3'
-                            buttonText='Submit'
-                            onSubmit={this.onSubmit}
-                            apiLoading={this.props.apiLoading}
-                        >
-                            <div className='form-group'>
-                                <div className='col-sm-offset-2 col-sm-3'>
-                                    <ReCAPTCHA
-                                        ref='recaptcha'
-                                        sitekey='6LfELhMUAAAAAKbD2kLd6OtbsBbrZJFs7grwOREZ'
-                                        theme='dark'
-                                        onChange={this.onCaptchaChange.bind(this)}
-                                    />
-                                </div>
-                            </div>
-                        </Form>
+                        <Input
+                            label='Username'
+                            name='username'
+                            value={username}
+                            onValueChange={setUsername}
+                        />
+                        <div className='mt-2 ml-1'>
+                            <ReCAPTCHA
+                                sitekey='6LfELhMUAAAAAKbD2kLd6OtbsBbrZJFs7grwOREZ'
+                                theme='dark'
+                                onChange={onCaptchaChange}
+                            />
+                        </div>
+                        <div className='mt-2'>
+                            <Button color='primary' onClick={onSubmit} loading={isLoading}>
+                                Submit
+                            </Button>
+                        </div>
                     </Panel>
                 </div>
             </div>
-        );
-    }
-}
-
-ForgotPassword.displayName = 'ForgotPassword';
-ForgotPassword.propTypes = {
-    apiLoading: PropTypes.bool,
-    apiMessage: PropTypes.string,
-    apiSuccess: PropTypes.bool,
-    forgotPassword: PropTypes.func,
-    login: PropTypes.func,
-    navigate: PropTypes.func,
-    socket: PropTypes.object
+        </div>
+    );
 };
 
-function mapStateToProps(state) {
-    return {
-        apiLoading: state.api.FORGOTPASSWORD_ACCOUNT
-            ? state.api.FORGOTPASSWORD_ACCOUNT.loading
-            : undefined,
-        apiMessage: state.api.FORGOTPASSWORD_ACCOUNT
-            ? state.api.FORGOTPASSWORD_ACCOUNT.message
-            : undefined,
-        apiSuccess: state.api.FORGOTPASSWORD_ACCOUNT
-            ? state.api.FORGOTPASSWORD_ACCOUNT.success
-            : undefined,
-        socket: state.lobby.socket
-    };
-}
-
-export default connect(mapStateToProps, actions)(ForgotPassword);
+export default ForgotPassword;

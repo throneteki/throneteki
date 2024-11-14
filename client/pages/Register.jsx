@@ -1,98 +1,138 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import React, { useCallback } from 'react';
+import { useDispatch } from 'react-redux';
+import * as yup from 'yup';
 
-import ApiStatus from '../Components/Site/ApiStatus';
 import Panel from '../Components/Site/Panel';
-import Form from '../Components/Form/Form';
 import Link from '../Components/Site/Link';
+import { navigate } from '../redux/reducers/navigation';
+import { useRegisterAccountMutation } from '../redux/middleware/api';
+import { Formik } from 'formik';
+import { Button, Input, Switch } from '@nextui-org/react';
+import { toast } from 'react-toastify';
 
-import * as actions from '../actions';
+const Register = () => {
+    const dispatch = useDispatch();
 
-export class Register extends React.Component {
-    constructor() {
-        super();
+    const [registerAccount, { isLoading }] = useRegisterAccountMutation();
 
-        this.onRegister = this.onRegister.bind(this);
+    const onRegister = useCallback(
+        async (state) => {
+            try {
+                await registerAccount({
+                    username: state.username,
+                    password: state.password,
+                    email: state.email,
+                    enableGravatar: state.enableGravatar
+                }).unwrap();
 
-        this.state = {
-            successMessage: '',
-            enableGravatar: true
-        };
-    }
+                toast.error(
+                    'Your account was successfully registered.  Please verify your account using the link in the email sent to the address you have provided'
+                );
 
-    componentWillReceiveProps(props) {
-        if (props.accountRegistered) {
-            this.setState({
-                successMessage:
-                    'Your account was successfully registered.  Please verify your account using the link in the email sent to the address you have provided.'
-            });
+                dispatch(navigate('/'));
+            } catch (err) {
+                toast.error(
+                    err.message ||
+                        'An error occurred registering your account. Please try again later.'
+                );
+            }
+        },
+        [dispatch, registerAccount]
+    );
 
-            setTimeout(() => {
-                this.props.navigate('/');
-            }, 2000);
-        }
-    }
+    const schema = yup.object({
+        username: yup
+            .string()
+            .required('You must specify a username')
+            .min(3, 'Your username must be at least 3 characters long')
+            .max(15, 'Your username cannot be more than 15 charcters')
+            .matches(
+                /^[A-Za-z0-9_-]+$/,
+                'Usernames must only use the characters a-z, 0-9, _ and -'
+            ),
+        email: yup
+            .string()
+            .email('Please enter a valid email address')
+            .required('You must specify an email address'),
+        password: yup.string().min(6, 'Password must be at least 6 characters'),
+        passwordAgain: yup
+            .string()
+            .oneOf([yup.ref('password'), null], 'The passwords you have entered do not match')
+    });
 
-    onRegister(state) {
-        this.props.registerAccount({
-            username: state.username,
-            password: state.password,
-            email: state.email,
-            enableGravatar: state.enableGravatar
-        });
-    }
+    return (
+        <div className='md:mx-auto md:w-4/5 lg:w-2/5 mx-2'>
+            <Panel title='Register an account'>
+                <p>
+                    We require information from you in order to service your access to the site.
+                    Please see the <Link href='/privacy'>privacy policy</Link> for details on why we
+                    need this information and what we do with it. Please pay particular attention to
+                    the section on avatars.
+                </p>
 
-    onEnableGravatarChanged(event) {
-        this.setState({ enableGravatar: event.target.checked });
-    }
-
-    render() {
-        return (
-            <div className='col-sm-6 col-sm-offset-3'>
-                <ApiStatus
-                    apiState={this.props.apiState}
-                    successMessage={this.state.successMessage}
-                />
-                <Panel title='Register an account'>
-                    <p>
-                        We require information from you in order to service your access to the site.
-                        Please see the <Link href='/privacy'>privacy policy</Link> for details on
-                        why we need this information and what we do with it. Please pay particular
-                        attention to the section on avatars.
-                    </p>
-
-                    <Form
-                        name='register'
-                        apiLoading={this.props.apiState && this.props.apiState.loading}
-                        buttonClass='col-sm-offset-4 col-sm-3'
-                        buttonText='Register'
-                        onSubmit={this.onRegister}
-                    />
-                </Panel>
-            </div>
-        );
-    }
-}
-
-Register.displayName = 'Register';
-Register.propTypes = {
-    accountRegistered: PropTypes.bool,
-    apiState: PropTypes.object,
-    navigate: PropTypes.func,
-    register: PropTypes.func,
-    registerAccount: PropTypes.func,
-    registeredToken: PropTypes.string,
-    registeredUser: PropTypes.object,
-    socket: PropTypes.object
+                <div className='mt-2'>
+                    <Formik initialValues={{}} validationSchema={schema} onSubmit={onRegister}>
+                        {(formProps) => (
+                            <form onSubmit={formProps.handleSubmit}>
+                                <div className='grid grid-cols-1 lg:grid-cols-2 gap-2'>
+                                    <Input
+                                        label='Username'
+                                        {...formProps.getFieldProps('username')}
+                                        isInvalid={
+                                            formProps.errors.username && formProps.touched.username
+                                        }
+                                        errorMessage={formProps.errors.username}
+                                    />
+                                    <Input
+                                        label='Email Address'
+                                        {...formProps.getFieldProps('email')}
+                                        isInvalid={
+                                            formProps.errors.email && formProps.touched.email
+                                        }
+                                        errorMessage={formProps.errors.email}
+                                    />
+                                    <Input
+                                        label='Password'
+                                        type='password'
+                                        isInvalid={
+                                            formProps.errors.password && formProps.touched.password
+                                        }
+                                        errorMessage={formProps.errors.password}
+                                        {...formProps.getFieldProps('password')}
+                                    />
+                                    <Input
+                                        label='Password (again)'
+                                        type='password'
+                                        isInvalid={
+                                            formProps.errors.passwordAgain &&
+                                            formProps.touched.passwordAgain
+                                        }
+                                        errorMessage={formProps.errors.passwordAgain}
+                                        {...formProps.getFieldProps('passwordAgain')}
+                                    />
+                                </div>
+                                <div className='mt-2'>
+                                    <Switch
+                                        {...formProps.getFieldProps('enableGravatar')}
+                                        onValueChange={(value) =>
+                                            formProps.setFieldValue('enableGravatar', value)
+                                        }
+                                    >
+                                        Enable Gravatar
+                                    </Switch>
+                                </div>
+                                <div className='mt-2'>
+                                    <Button isLoading={isLoading} type='submit' color='primary'>
+                                        Register
+                                    </Button>
+                                </div>
+                            </form>
+                        )}
+                    </Formik>
+                </div>
+            </Panel>
+        </div>
+    );
 };
 
-function mapStateToProps(state) {
-    return {
-        accountRegistered: state.account.registered,
-        apiState: state.api.REGISTER_ACCOUNT,
-        socket: state.lobby.socket
-    };
-}
-
-export default connect(mapStateToProps, actions)(Register);
+export default Register;

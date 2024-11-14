@@ -5,7 +5,8 @@ class JonSnow extends DrawCard {
     setupCardAbilities() {
         this.interrupt({
             when: {
-                onClaimApplied: (event) => event.challenge.isMatch({ challengeType: 'military' })
+                onClaimApplied: (event) =>
+                    event.challenge && event.challenge.isMatch({ challengeType: 'military' })
             },
             message:
                 '{player} uses {source} to have either standing or kneeling characters satisfied for claim, if able',

@@ -15,7 +15,7 @@ export const init = function (server, options) {
 
             let banlist = await banlistService.getBanList();
 
-            return res.send({ success: true, banlist: banlist });
+            return res.send({ success: true, data: banlist });
         })
     );
 

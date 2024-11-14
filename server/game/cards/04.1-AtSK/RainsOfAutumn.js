@@ -4,7 +4,7 @@ class RainsOfAutumn extends PlotCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) =>
-                card.plotModifierValues.gold > 0 &&
+                card.printedPlotModifiers.gold &&
                 (card.getType() === 'character' || card.getType() === 'location'),
             targetController: 'any',
             effect: ability.effects.preventPlotModifier('gold')

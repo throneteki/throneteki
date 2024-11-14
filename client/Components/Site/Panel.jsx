@@ -1,35 +1,39 @@
+import { Card, CardBody, CardHeader } from '@nextui-org/react';
 import React from 'react';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
 
-class Panel extends React.Component {
-    render() {
-        return (
-            <div className={classNames('panel', `panel-${this.props.type}`, this.props.className)}>
-                {this.props.title && <div className='panel-heading'>{this.props.title}</div>}
-                <div className='panel-body'>{this.props.children}</div>
-            </div>
-        );
-    }
-}
+const PanelType = Object.freeze({
+    Default: 'default',
+    Primary: 'primary',
+    Info: 'info',
+    Warning: 'warning',
+    Danger: 'danger'
+});
 
-Panel.displayName = 'Panel';
-Panel.propTypes = {
-    children: PropTypes.node,
-    className: PropTypes.string,
-    title: PropTypes.string,
-    type: PropTypes.oneOf([
-        'danger',
-        'success',
-        'warning',
-        'info',
-        'default',
-        'primary',
-        'tertiary'
-    ])
-};
-Panel.defaultProps = {
-    type: 'primary'
+const Panel = ({
+    className,
+    type = PanelType.Primary,
+    title,
+    titleClass,
+    children,
+    fullHeight = true
+}) => {
+    return (
+        <Card
+            className={`${className} border-2 bg-black/65 border-${type} ${
+                fullHeight ? 'h-full' : ''
+            } shadow-lg`}
+            classNames={{ body: 'h-full overflow-y-auto' }}
+        >
+            {title && (
+                <CardHeader
+                    className={`${titleClass} justify-center bg-${type} rounded-none font-bold`}
+                >
+                    {title}
+                </CardHeader>
+            )}
+            <CardBody>{children}</CardBody>
+        </Card>
+    );
 };
 
 export default Panel;

@@ -1,124 +1,133 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useCallback } from 'react';
 
 import AbilityTargeting from './AbilityTargeting';
 import AbilityTimer from './AbilityTimer';
 import CardNameLookup from './CardNameLookup';
 import TraitNameLookup from './TraitNameLookup';
 import SelectFromValuesLookup from './SelectFromValuesLookup';
+import { useGetCardsQuery } from '../../redux/middleware/api';
+import { Button } from '@nextui-org/react';
+import ThronesIcon from './ThronesIcon';
 
-class ActivePlayerPrompt extends React.Component {
-    onButtonClick(event, button) {
-        event.preventDefault();
+const ActivePlayerPrompt = ({
+    stopAbilityTimer,
+    onButtonClick,
+    buttons,
+    onMouseOver,
+    onMouseOut,
+    controls,
+    promptTitle,
+    timerStartTime,
+    timerLimit,
+    phase,
+    onTitleClick,
+    promptText
+}) => {
+    const { data: cards, isLoading } = useGetCardsQuery();
 
-        this.props.stopAbilityTimer();
+    const handleButtonClick = useCallback(
+        (event, button) => {
+            event.preventDefault();
 
-        // Checks & opens google form if button is formatted as such, rather than regular button-click actions
-        let googleFormMatcher =
-            button.arg && button.arg.toString().match(/^googleForm:(?<formId>.+)$/);
-        if (googleFormMatcher) {
-            window.open(
-                `https://forms.gle/${googleFormMatcher.groups.formId}`,
-                '_blank',
-                'noopener,noreferrer'
-            );
-            return;
-        }
+            //     stopAbilityTimer();
 
-        if (this.props.onButtonClick) {
-            this.props.onButtonClick(button);
-        }
-    }
-
-    onCancelTimerClick(event, button) {
-        event.preventDefault();
-
-        this.props.stopAbilityTimer();
-
-        if (button.method || button.arg) {
-            this.props.onButtonClick(button);
-        }
-    }
-
-    onMouseOver(event, card) {
-        if (card && this.props.onMouseOver) {
-            this.props.onMouseOver(card);
-        }
-    }
-
-    onMouseOut(event, card) {
-        if (card && this.props.onMouseOut) {
-            this.props.onMouseOut(card);
-        }
-    }
-
-    getButtons() {
-        let buttonIndex = 0;
-
-        let buttons = [];
-
-        if (!this.props.buttons) {
-            return null;
-        }
-
-        for (const button of this.props.buttons) {
-            if (button.timer) {
-                continue;
+            let googleFormMatcher =
+                button.arg && button.arg.toString().match(/^googleForm:(?<formId>.+)$/);
+            if (googleFormMatcher) {
+                window.open(
+                    `https://forms.gle/${googleFormMatcher.groups.formId}`,
+                    '_blank',
+                    'noopener,noreferrer'
+                );
+                return;
             }
 
-            let clickCallback = button.timerCancel
-                ? (event) => this.onCancelTimerClick(event, button)
-                : (event) => this.onButtonClick(event, button);
+            if (onButtonClick) {
+                onButtonClick(button);
+            }
+        },
+        [stopAbilityTimer, onButtonClick]
+    );
 
-            let option = (
-                <button
-                    key={button.command + buttonIndex.toString()}
-                    className='btn btn-default prompt-button'
-                    onClick={clickCallback}
-                    onMouseOver={(event) => this.onMouseOver(event, button.card)}
-                    onMouseOut={(event) => this.onMouseOut(event, button.card)}
-                    disabled={button.disabled}
-                >
-                    {' '}
-                    {button.icon && (
-                        <div className={`with-background thronesicon thronesicon-${button.icon}`} />
-                    )}{' '}
-                    {button.text}
-                </button>
-            );
+    const handleCancelTimerClick = useCallback(
+        (event, button) => {
+            event.preventDefault();
 
-            buttonIndex++;
+            //      stopAbilityTimer();
 
-            buttons.push(option);
-        }
+            if (button.method || button.arg) {
+                onButtonClick(button);
+            }
+        },
+        [stopAbilityTimer, onButtonClick]
+    );
 
-        return buttons;
-    }
+    const handleLookupValueSelected = useCallback(
+        (command, method, promptId, cardName) => {
+            if (onButtonClick) {
+                onButtonClick({
+                    command: command,
+                    arg: cardName,
+                    method: method,
+                    promptId: promptId
+                });
+            }
+        },
+        [onButtonClick]
+    );
 
-    handleLookupValueSelected(command, method, promptId, cardName) {
-        if (this.props.onButtonClick) {
-            this.props.onButtonClick({
-                command: command,
-                arg: cardName,
-                method: method,
-                promptId: promptId
-            });
-        }
-    }
-
-    getControls() {
-        if (!this.props.controls) {
+    const getButtons = useCallback(() => {
+        if (!buttons) {
             return null;
         }
 
-        return this.props.controls.map((control) => {
+        return buttons.reduce((buttons, button, index) => {
+            if (!button.timer) {
+                const clickCallback = button.timerCancel
+                    ? (event) => handleCancelTimerClick(event, button)
+                    : (event) => handleButtonClick(event, button);
+
+                buttons.push(
+                    <div className='w-full' key={index}>
+                        <Button
+                            color='primary'
+                            className='text-wrap h-full min-h-10'
+                            onClick={clickCallback}
+                            onMouseOver={
+                                button.card ? (event) => onMouseOver(event, button.card) : null
+                            }
+                            onMouseOut={
+                                button.card ? (event) => onMouseOut(event, button.card) : null
+                            }
+                            isDisabled={button.disabled}
+                            disableRipple
+                            fullWidth
+                        >
+                            {button.icon && (
+                                <ThronesIcon icon={button.icon} withBackground noSize={false} />
+                            )}
+                            <span>{button.text}</span>
+                        </Button>
+                    </div>
+                );
+            }
+            return buttons;
+        }, []);
+    }, [buttons, handleButtonClick, handleCancelTimerClick, onMouseOver, onMouseOut]);
+
+    const getControls = useCallback(() => {
+        if (!controls) {
+            return null;
+        }
+
+        return controls.map((control) => {
             switch (control.type) {
                 case 'targeting':
                     return (
                         <AbilityTargeting
                             key={control.promptId}
-                            onMouseOut={this.props.onMouseOut}
-                            onMouseOver={this.props.onMouseOver}
+                            onMouseOut={onMouseOut}
+                            onMouseOver={onMouseOver}
                             source={control.source}
                             targets={control.targets}
                         />
@@ -127,8 +136,8 @@ class ActivePlayerPrompt extends React.Component {
                     return (
                         <CardNameLookup
                             key={control.promptId}
-                            cards={this.props.cards}
-                            onValueSelected={this.handleLookupValueSelected.bind(
+                            cards={cards}
+                            onValueSelected={handleLookupValueSelected.bind(
                                 this,
                                 control.command,
                                 control.method,
@@ -140,8 +149,8 @@ class ActivePlayerPrompt extends React.Component {
                     return (
                         <TraitNameLookup
                             key={control.promptId}
-                            cards={this.props.cards}
-                            onValueSelected={this.handleLookupValueSelected.bind(
+                            cards={cards}
+                            onValueSelected={handleLookupValueSelected.bind(
                                 this,
                                 control.command,
                                 control.method,
@@ -154,7 +163,7 @@ class ActivePlayerPrompt extends React.Component {
                         <SelectFromValuesLookup
                             key={control.promptId}
                             selectableValues={control.selectableValues}
-                            onValueSelected={this.handleLookupValueSelected.bind(
+                            onValueSelected={handleLookupValueSelected.bind(
                                 this,
                                 control.command,
                                 control.method,
@@ -164,73 +173,61 @@ class ActivePlayerPrompt extends React.Component {
                     );
             }
         });
-    }
+    }, [controls, cards, handleLookupValueSelected, onMouseOver, onMouseOut]);
 
-    render() {
-        let promptTitle;
+    let promptTitleElement;
 
-        if (this.props.promptTitle) {
-            promptTitle = <div className='menu-pane-source'>{this.props.promptTitle}</div>;
-        }
-
-        let timer = null;
-
-        let promptText = [];
-        if (this.props.promptText && this.props.promptText.includes('\n')) {
-            let split = this.props.promptText.split('\n');
-            for (let token of split) {
-                promptText.push(token);
-                promptText.push(<br />);
-            }
-        } else {
-            promptText.push(this.props.promptText);
-        }
-
-        if (this.props.timerStartTime) {
-            timer = (
-                <AbilityTimer startTime={this.props.timerStartTime} limit={this.props.timerLimit} />
-            );
-        }
-
-        return (
-            <div>
-                {timer}
-                <div
-                    className={'phase-indicator ' + this.props.phase}
-                    onClick={this.props.onTitleClick}
-                >
-                    {this.props.phase} phase
-                </div>
+    if (promptTitle) {
+        promptTitleElement = (
+            <div className='font-normal text-center border-1 border-default-200 bg-black/65 py-1'>
                 {promptTitle}
-                <div className='menu-pane'>
-                    <div className='panel'>
-                        <h4>{promptText}</h4>
-                        {this.getControls()}
-                        {this.getButtons()}
-                    </div>
-                </div>
             </div>
         );
     }
-}
 
-ActivePlayerPrompt.displayName = 'ActivePlayerPrompt';
-ActivePlayerPrompt.propTypes = {
-    buttons: PropTypes.array,
-    cards: PropTypes.object,
-    controls: PropTypes.array,
-    onButtonClick: PropTypes.func,
-    onMouseOut: PropTypes.func,
-    onMouseOver: PropTypes.func,
-    onTitleClick: PropTypes.func,
-    phase: PropTypes.string,
-    promptText: PropTypes.string,
-    promptTitle: PropTypes.string,
-    socket: PropTypes.object,
-    stopAbilityTimer: PropTypes.func,
-    timerLimit: PropTypes.number,
-    timerStartTime: PropTypes.instanceOf(Date),
-    user: PropTypes.object
+    let timer = null;
+
+    let promptTextElement = [];
+    if (promptText && promptText.includes('\n')) {
+        let split = promptText.split('\n');
+        for (let token of split) {
+            promptTextElement.push(token);
+            promptTextElement.push(<br />);
+        }
+    } else {
+        promptTextElement.push(promptText);
+    }
+
+    if (timerStartTime) {
+        timer = <AbilityTimer startTime={timerStartTime} limit={timerLimit} />;
+    }
+
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
+
+    return (
+        <div className='m-1'>
+            {timer}
+            <div
+                className={
+                    'relative text-medium font-bold text-center uppercase border-1 border-default-200 bg-secondary-200 py-1 rounded-t-md mx-0 mb-0 ' +
+                    phase
+                }
+                onClick={onTitleClick}
+            >
+                {phase} phase
+            </div>
+            {promptTitleElement}
+            <div className='text-center'>
+                <div className='relative border-1 border-default-200 bg-black/65 rounded-b-md'>
+                    <p className='my-1 mx-2 text-small'>{promptTextElement}</p>
+                    {getControls()}
+                    <div className='flex flex-col mx-2 gap-1 mb-1'>{getButtons()}</div>
+                </div>
+            </div>
+        </div>
+    );
 };
 
 export default ActivePlayerPrompt;

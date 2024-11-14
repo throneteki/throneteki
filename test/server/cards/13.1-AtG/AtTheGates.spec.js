@@ -32,8 +32,8 @@ describe('At The Gates', function () {
             });
 
             it('modifies income correctly', function () {
-                expect(this.player1Object.getTotalIncome()).toBe(7);
-                expect(this.player2Object.getTotalIncome()).toBe(8);
+                expect(this.player1Object.getIncome()).toBe(7);
+                expect(this.player2Object.getIncome()).toBe(8);
             });
         });
 

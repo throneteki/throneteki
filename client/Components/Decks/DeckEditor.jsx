@@ -1,608 +1,586 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import React, { useEffect, useMemo, useState } from 'react';
+
+import { BannersForFaction, Constants } from '../../constants';
+import ReactTable from '../Table/ReactTable';
+import DeckSummary from './DeckSummary';
+import AlertPanel from '../Site/AlertPanel';
+import {
+    Button,
+    ButtonGroup,
+    Card,
+    CardBody,
+    Input,
+    Modal,
+    ModalBody,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    Select,
+    SelectItem,
+    Textarea,
+    extendVariants
+} from '@nextui-org/react';
+import LoadingSpinner from '../Site/LoadingSpinner';
+import {
+    useAddDeckMutation,
+    useGetCardsQuery,
+    useGetFactionsQuery,
+    useGetPacksQuery,
+    useGetRestrictedListQuery,
+    useSaveDeckMutation
+} from '../../redux/middleware/api';
+import { navigate } from '../../redux/reducers/navigation';
+import { useDispatch } from 'react-redux';
+import FactionImage from '../Images/FactionImage';
 import { validateDeck } from '../../../deck-helper';
-
-import Input from '../Form/Input';
-import Select from '../Form/Select';
-import Typeahead from '../Form/Typeahead';
-import TextArea from '../Form/TextArea';
-import ApiStatus from '../Site/ApiStatus';
 import RestrictedListDropdown from './RestrictedListDropdown';
-import { lookupCardByName } from './DeckParser';
-import * as actions from '../../actions';
+import DeckStatus from './DeckStatus';
+import { processThronesDbDeckText } from './DeckHelper';
+import { toast } from 'react-toastify';
 
-class DeckEditor extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            bannerCards: [],
-            cardList: '',
-            deckName: 'New Deck',
-            drawCards: [],
-            faction: props.factions && props.factions['baratheon'],
-            numberToAdd: 1,
-            plotCards: [],
-            showBanners: false,
-            selectedBanner: {},
-            validation: {
-                deckname: '',
-                cardToAdd: ''
-            },
-            eventId: undefined
-        };
-
-        if (props.deck) {
-            this.state.deckId = props.deck._id;
-            this.state.deckName = props.deck.name;
-            this.state.plotCards = props.deck.plotCards;
-            this.state.drawCards = props.deck.drawCards;
-            this.state.bannerCards = props.deck.bannerCards;
-            this.state.faction = props.deck.faction;
-            this.state.agenda = props.deck.agenda;
-            this.state.showBanners = this.isAllianceAgenda(props.deck.agenda);
-            this.state.status = props.deck.status;
-            this.state.eventId = props.deck.eventId;
-
-            let cardList = '';
-            for (const card of props.deck.drawCards) {
-                cardList += this.formatCardListItem(card) + '\n';
-            }
-
-            for (const plot of props.deck.plotCards) {
-                cardList += this.formatCardListItem(plot) + '\n';
-            }
-
-            this.state.cardList = cardList;
+const SmallButton = extendVariants(Button, {
+    variants: {
+        size: {
+            xs: 'px-2 min-w-8 h-8 text-small gap-unit-1 border'
         }
     }
-
-    componentDidMount() {
-        this.triggerDeckUpdated();
-    }
-
-    componentWillReceiveProps(props) {
-        if (props.factions && !this.state.faction) {
-            this.setState({ faction: props.factions['baratheon'] }, this.triggerDeckUpdated);
-        }
-    }
-
-    getDeckFromState(restrictedList) {
-        let deck = {
-            _id: this.state.deckId,
-            name: this.state.deckName,
-            faction: this.state.faction,
-            agenda: this.state.agenda,
-            bannerCards: this.state.bannerCards,
-            plotCards: this.state.plotCards,
-            drawCards: this.state.drawCards,
-            eventId: this.state.eventId
-        };
-
-        if (!this.props.restrictedList && !this.props.currentRestrictedList) {
-            deck.status = {};
-        } else {
-            const selectedRestrictedList = restrictedList || this.props.currentRestrictedList;
-            const restrictedLists = selectedRestrictedList
-                ? [selectedRestrictedList]
-                : this.props.restrictedList;
-            deck.status = validateDeck(deck, { packs: this.props.packs, restrictedLists });
-        }
-
-        return deck;
-    }
-
-    triggerDeckUpdated(restrictedList) {
-        const deck = this.getDeckFromState(restrictedList);
-
-        if (this.props.onDeckUpdated) {
-            this.props.onDeckUpdated(deck);
-        }
-    }
-
-    formatCardListItem(card) {
-        if (card.card.custom) {
-            let typeCode = card.card.type;
-            let typeName = typeCode[0].toUpperCase() + typeCode.slice(1);
-            return card.count + ' Custom ' + typeName + ' - ' + card.card.name;
-        }
-
-        return card.count + ' ' + card.card.label;
-    }
-
-    isAllianceAgenda(agenda) {
-        return agenda && agenda.code === '06018';
-    }
-
-    onChange(field, event) {
-        let state = this.state;
-
-        state[field] = event.target.value;
-
-        this.setState({ state }, this.triggerDeckUpdated);
-    }
-
-    onNumberToAddChange(event) {
-        this.setState({ numberToAdd: event.target.value });
-    }
-
-    onFactionChange(selectedFaction) {
-        this.setState({ faction: selectedFaction }, this.triggerDeckUpdated);
-    }
-
-    onAgendaChange(selectedAgenda) {
-        let toUpdate = {
-            agenda: selectedAgenda,
-            showBanners: this.isAllianceAgenda(selectedAgenda)
-        };
-
-        if (!toUpdate.showBanners) {
-            toUpdate.bannerCards = [];
-        }
-
-        this.setState(toUpdate, this.triggerDeckUpdated);
-    }
-
-    onBannerChange(selectedBanner) {
-        this.setState({ selectedBanner: selectedBanner });
-    }
-
-    onAddBanner(event) {
-        event.preventDefault();
-
-        if (!this.state.selectedBanner || !this.state.selectedBanner.code) {
-            return;
-        }
-
-        // Don't allow more than 2 banners
-        if (this.state.bannerCards.length >= 2) {
-            return;
-        }
-
-        // Don't allow duplicate banners
-        if (
-            this.state.bannerCards.some((banner) => {
-                return banner.code === this.state.selectedBanner.code;
-            })
-        ) {
-            return;
-        }
-
-        let banners = this.state.bannerCards;
-        banners.push(this.state.selectedBanner);
-
-        this.setState({ bannerCards: banners }, this.triggerDeckUpdated);
-    }
-
-    onRemoveBanner(banner) {
-        const banners = this.state.bannerCards.filter((card) => {
-            return card.code !== banner.code;
-        });
-
-        this.setState({ bannerCards: banners }, this.triggerDeckUpdated);
-    }
-
-    addCardChange(selectedCards) {
-        this.setState({ cardToAdd: selectedCards[0] });
-    }
-
-    onAddCard(event) {
-        event.preventDefault();
-
-        if (!this.state.cardToAdd || !this.state.cardToAdd.label) {
-            return;
-        }
-
-        let cardList = this.state.cardList;
-        cardList += `${this.state.numberToAdd}  ${this.state.cardToAdd.label}\n`;
-
-        if (this.state.cardToAdd.type === 'plot') {
-            let plots = this.state.plotCards;
-            this.addCard(plots, this.state.cardToAdd, parseInt(this.state.numberToAdd));
-            this.setState({ cardList: cardList, plotCards: plots }, this.triggerDeckUpdated);
-        } else {
-            let cards = this.state.drawCards;
-            this.addCard(cards, this.state.cardToAdd, parseInt(this.state.numberToAdd));
-            this.setState({ cardList: cardList, drawCards: cards }, this.triggerDeckUpdated);
-        }
-    }
-
-    onCardListChange(event) {
-        let split = event.target.value.split('\n');
-        let { deckName, faction, agenda, bannerCards, plotCards, drawCards } = this.state;
-
-        let headerMark = split.findIndex((line) => line.match(/^Packs:/));
-        if (headerMark >= 0) {
-            // ThronesDB-style deck header found
-            // extract deck title, faction, agenda, and banners
-            let header = split.slice(0, headerMark).filter((line) => line !== '');
-            split = split.slice(headerMark);
-
-            if (header.length >= 2) {
-                deckName = header[0];
-
-                let newFaction = Object.values(this.props.factions).find(
-                    (faction) => faction.name === header[1].trim()
-                );
-                if (newFaction) {
-                    faction = newFaction;
-                }
-
-                header = header.slice(2);
-                if (header.length >= 1) {
-                    let rawAgenda, rawBanners;
-
-                    if (
-                        header.some((line) => {
-                            return line.trim() === 'Alliance';
-                        })
-                    ) {
-                        rawAgenda = 'Alliance';
-                        rawBanners = header.filter((line) => line.trim() !== 'Alliance');
-                    } else {
-                        rawAgenda = header[0].trim();
-                    }
-
-                    let newAgenda = lookupCardByName({
-                        cardName: rawAgenda,
-                        cards: Object.values(this.props.cards),
-                        packs: this.props.packs
-                    });
-                    if (newAgenda) {
-                        agenda = newAgenda;
-                    }
-
-                    if (rawBanners) {
-                        let banners = [];
-                        for (let rawBanner of rawBanners) {
-                            let banner = lookupCardByName({
-                                cardName: rawBanner,
-                                cards: Object.values(this.props.cards),
-                                packs: this.props.packs
-                            });
-
-                            if (banner) {
-                                banners.push(banner);
-                            }
-                        }
-
-                        bannerCards = banners;
-                    }
-                }
-            }
-        }
-
-        plotCards = [];
-        drawCards = [];
-
-        for (const line of split) {
-            let { card, count } = this.parseCardLine(line);
-            if (card) {
-                this.addCard(card.type === 'plot' ? plotCards : drawCards, card, count);
-            }
-        }
-
-        this.setState(
-            {
-                cardList: event.target.value,
-                deckName: deckName,
-                faction: faction,
-                agenda: agenda,
-                bannerCards: bannerCards,
-                showBanners: this.isAllianceAgenda(agenda),
-                plotCards: plotCards,
-                drawCards: drawCards
-            },
-            this.triggerDeckUpdated
-        );
-    }
-
-    parseCardLine(line) {
-        const pattern = /^(\d+)x?\s+(.+)$/;
-
-        let match = line.trim().match(pattern);
-        if (!match) {
-            return { count: 0 };
-        }
-
-        let count = parseInt(match[1]);
-        let card = lookupCardByName({
-            cardName: match[2],
-            cards: Object.values(this.props.cards),
-            packs: this.props.packs
-        });
-
-        return { count: count, card: card };
-    }
-
-    addCard(list, card, number) {
-        if (list[card.code]) {
-            list[card.code].count += number;
-        } else {
-            list.push({ count: number, card: card });
-        }
-    }
-
-    onSaveClick(event) {
-        event.preventDefault();
-
-        if (this.props.onDeckSave) {
-            this.props.onDeckSave(this.getDeckFromState());
-        }
-    }
-
-    getBannerList() {
-        if (this.state.bannerCards.length === 0) {
-            return null;
-        }
-
-        return this.state.bannerCards.map((card) => {
-            return (
-                <div key={card.code}>
-                    <span key={card.code} className='card-link col-sm-10'>
-                        {card.label}
-                    </span>
-                    <span
-                        className='glyphicon glyphicon-remove icon-danger btn col-sm-1'
-                        aria-hidden='true'
-                        onClick={this.onRemoveBanner.bind(this, card)}
-                    />
-                </div>
-            );
-        });
-    }
-
-    onCancelClick() {
-        this.props.navigate('/decks');
-    }
-
-    onEventChange(selectedEvent) {
-        this.setState(
-            { eventId: selectedEvent ? selectedEvent._id : undefined },
-            this.triggerDeckUpdated
-        );
-    }
-
-    getLockedDecksEvents() {
-        return this.props.events.filter((e) => e.lockDecks);
-    }
-
-    render() {
-        if (
-            !this.props.factions ||
-            !this.props.agendas ||
-            !this.props.cards ||
-            !this.props.restrictedList
-        ) {
-            return <div>Please wait while loading from the server...</div>;
-        }
-
-        let banners = this.getBannerList();
-        const cardsExcludingAgendas = Object.values(this.props.cards).filter(
-            (card) => !this.props.agendas[card.code]
-        );
-
-        let lockedDecksEvents = this.getLockedDecksEvents();
-
-        return (
-            <div>
-                <ApiStatus
-                    apiState={this.props.apiState}
-                    successMessage='Deck saved successfully.'
-                />
-
-                <div className='form-group'>
-                    <div className='col-xs-12 deck-buttons'>
-                        <span className='col-xs-2'>
-                            <button
-                                ref='submit'
-                                type='submit'
-                                className='btn btn-primary'
-                                onClick={this.onSaveClick.bind(this)}
-                            >
-                                Save{' '}
-                                {this.props.apiState && this.props.apiState.loading && (
-                                    <span className='spinner button-spinner' />
-                                )}
-                            </button>
-                        </span>
-                        <button
-                            ref='submit'
-                            type='button'
-                            className='btn btn-primary'
-                            onClick={this.onCancelClick.bind(this)}
-                        >
-                            Cancel
-                        </button>
-                    </div>
-                </div>
-
-                <div className='form-group'>
-                    <RestrictedListDropdown
-                        currentRestrictedList={this.props.currentRestrictedList}
-                        onChange={(restrictedList) => this.triggerDeckUpdated(restrictedList)}
-                        restrictedLists={this.props.restrictedList}
-                        setCurrentRestrictedList={this.props.setCurrentRestrictedList}
-                    />
-                </div>
-
-                <h4>
-                    Either type the cards manually into the box below, add the cards one by one
-                    using the card box and autocomplete or for best results, copy and paste a
-                    decklist from{' '}
-                    <a href='http://thronesdb.com' target='_blank' rel='noreferrer'>
-                        Thrones DB
-                    </a>{' '}
-                    into the box below.
-                </h4>
-                <form className='form form-horizontal'>
-                    <Input
-                        name='deckName'
-                        label='Deck Name'
-                        labelClass='col-sm-3'
-                        fieldClass='col-sm-9'
-                        placeholder='Deck Name'
-                        type='text'
-                        onChange={this.onChange.bind(this, 'deckName')}
-                        value={this.state.deckName}
-                    />
-                    <Select
-                        name='faction'
-                        label='Faction'
-                        labelClass='col-sm-3'
-                        fieldClass='col-sm-9'
-                        options={Object.values(this.props.factions)}
-                        onChange={this.onFactionChange.bind(this)}
-                        value={this.state.faction ? this.state.faction.value : undefined}
-                    />
-                    <Select
-                        name='agenda'
-                        label='Agenda'
-                        labelClass='col-sm-3'
-                        fieldClass='col-sm-9'
-                        options={Object.values(this.props.agendas)}
-                        onChange={this.onAgendaChange.bind(this)}
-                        value={this.state.agenda ? this.state.agenda.code : undefined}
-                        valueKey='code'
-                        nameKey='label'
-                        blankOption={{ label: '- Select -', code: '' }}
-                    />
-
-                    {this.state.showBanners && (
-                        <div>
-                            <Select
-                                name='banners'
-                                label='Banners'
-                                labelClass='col-sm-3'
-                                fieldClass='col-sm-9'
-                                options={this.props.banners}
-                                onChange={this.onBannerChange.bind(this)}
-                                value={
-                                    this.state.selectedBanner
-                                        ? this.state.selectedBanner.code
-                                        : undefined
-                                }
-                                valueKey='code'
-                                nameKey='label'
-                                blankOption={{ label: '- Select -', code: '' }}
-                                button={{ text: 'Add', onClick: this.onAddBanner.bind(this) }}
-                            />
-                            <div className='col-sm-9 col-sm-offset-3 banner-list'>{banners}</div>
-                        </div>
-                    )}
-                    <Typeahead
-                        label='Card'
-                        labelClass={'col-sm-3 col-xs-2'}
-                        fieldClass='col-sm-4 col-xs-5'
-                        labelKey={'label'}
-                        options={cardsExcludingAgendas}
-                        onChange={this.addCardChange.bind(this)}
-                    >
-                        <Input
-                            name='numcards'
-                            type='text'
-                            label='Num'
-                            labelClass='col-xs-1 no-x-padding'
-                            fieldClass='col-xs-2'
-                            value={this.state.numberToAdd.toString()}
-                            onChange={this.onNumberToAddChange.bind(this)}
-                            noGroup
-                        >
-                            <div className='col-xs-1 no-x-padding'>
-                                <div className='btn-group'>
-                                    <button
-                                        className='btn btn-primary'
-                                        onClick={this.onAddCard.bind(this)}
-                                    >
-                                        Add
-                                    </button>
-                                </div>
-                            </div>
-                        </Input>
-                    </Typeahead>
-                    <TextArea
-                        label='Cards'
-                        labelClass='col-sm-3'
-                        fieldClass='col-sm-9'
-                        rows='10'
-                        value={this.state.cardList}
-                        onChange={this.onCardListChange.bind(this)}
-                    />
-                    {this.state.eventId && (
-                        <h4>
-                            Please be aware: Assigning this deck to an event will mean that you will
-                            be unable to modify or delete this deck for the duration of the event!
-                        </h4>
-                    )}
-                    {lockedDecksEvents.length > 0 && (
-                        <Select
-                            name='event'
-                            label='Event'
-                            labelClass='col-sm-3'
-                            fieldClass='col-sm-9'
-                            options={lockedDecksEvents}
-                            onChange={this.onEventChange.bind(this)}
-                            value={this.state.eventId ? this.state.eventId : undefined}
-                            valueKey='_id'
-                            nameKey='name'
-                            blankOption={{ label: '- Select -', name: '', value: undefined }}
-                        />
-                    )}
-                    <div className='form-group'>
-                        <div className='col-sm-offset-3 col-sm-8'>
-                            <button
-                                ref='submit'
-                                type='submit'
-                                className='btn btn-primary'
-                                onClick={this.onSaveClick.bind(this)}
-                            >
-                                Save{' '}
-                                {this.props.apiState && this.props.apiState.loading && (
-                                    <span className='spinner button-spinner' />
-                                )}
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        );
-    }
-}
-
-DeckEditor.displayName = 'DeckEditor';
-DeckEditor.propTypes = {
-    agendas: PropTypes.object,
-    apiState: PropTypes.object,
-    banners: PropTypes.array,
-    cards: PropTypes.object,
-    currentRestrictedList: PropTypes.object,
-    deck: PropTypes.object,
-    events: PropTypes.array,
-    factions: PropTypes.object,
-    navigate: PropTypes.func,
-    onDeckSave: PropTypes.func,
-    onDeckUpdated: PropTypes.func,
-    packs: PropTypes.array,
-    restrictedList: PropTypes.array,
-    setCurrentRestrictedList: PropTypes.func,
-    updateDeck: PropTypes.func
+});
+
+const factionToTextColourMap = {
+    baratheon: 'text-baratheon',
+    greyjoy: 'text-greyjoy',
+    lannister: 'text-lannister',
+    martell: 'text-martell',
+    neutral: 'text-neutral',
+    stark: 'text-startl',
+    targaryen: 'text-targaryen',
+    thenightswatch: 'text-thenightswatch',
+    tyrell: 'text-tyrell'
 };
 
-function mapStateToProps(state) {
-    return {
-        agendas: state.cards.agendas,
-        apiState: state.api.SAVE_DECK,
-        banners: state.cards.banners,
-        cards: state.cards.cards,
-        currentRestrictedList: state.cards.currentRestrictedList,
-        decks: state.cards.decks,
-        events: state.events.events,
-        factions: state.cards.factions,
-        loading: state.api.loading,
-        packs: state.cards.packs,
-        restrictedList: state.cards.restrictedList
-    };
-}
+const DeckEditor = ({ deck, onBackClick }) => {
+    const dispatch = useDispatch();
+    const { data: cards, isLoading, isError } = useGetCardsQuery({});
+    const [addDeck, { isLoading: isAddLoading }] = useAddDeckMutation();
+    const [saveDeck, { isLoading: isSaveLoading }] = useSaveDeckMutation();
+    const { data: packs } = useGetPacksQuery();
+    const { data: restrictedLists } = useGetRestrictedListQuery();
+    const {
+        data: factions,
+        isLoading: isFactionsLoading,
+        isError: isFactionsError
+    } = useGetFactionsQuery({});
+    const [factionFilter, setFactionFilter] = useState(
+        [deck.faction.value]
+            .concat(['neutral'])
+            .concat(
+                deck.drawCards
+                    .filter((a) => BannersForFaction[a.card.code])
+                    .map((a) => BannersForFaction[a.card.code])
+            )
+    );
+    const [typeFilter, setTypeFilter] = useState(['character', 'agenda', 'plot']);
+    const [deckCards, setDeckCards] = useState(
+        (deck.agenda ? [{ card: deck.agenda, count: 1 }] : [])
+            .concat(deck.drawCards || [])
+            .concat(deck.plotCards || [])
+            .concat(deck.bannerCards?.map((bc) => ({ card: bc, count: 1 })) || [])
+    );
+    const [deckName, setDeckName] = useState(deck.name);
+    const [faction, setFaction] = useState(deck.faction);
+    const [showImportPopup, setShowImportPopup] = useState(false);
+    const [deckText, setDeckText] = useState();
+    const [pageNumber, setPageNumber] = useState(0);
 
-export default connect(mapStateToProps, actions)(DeckEditor);
+    const [currentRestrictedList, setCurrentRestrictedList] = useState(
+        restrictedLists && restrictedLists[0]
+    );
+    const cardsByCode = cards;
+    const factionsByCode = factions;
+
+    const deckToSave = useMemo(() => {
+        if (!factionsByCode || !cardsByCode || !packs || !currentRestrictedList) {
+            return {};
+        }
+
+        const saveDeck = {
+            _id: deck._id,
+            name: deckName,
+            faction: factionsByCode[faction.value],
+            agenda: deck.agenda && cardsByCode[deck.agenda.code],
+            bannerCards: [],
+            plotCards: [],
+            drawCards: []
+        };
+
+        saveDeck.bannerCards = deckCards
+            .filter((dc) => dc.card.code !== deck.agenda?.code && dc.card.type === 'agenda')
+            .map((c) => c.card);
+
+        for (const deckCard of deckCards.filter(
+            (dc) => cardsByCode[dc.card.code].type === 'plot'
+        )) {
+            saveDeck.plotCards.push(deckCard);
+        }
+
+        for (const deckCard of deckCards.filter(
+            (dc) =>
+                cardsByCode[dc.card.code].type !== 'plot' &&
+                cardsByCode[dc.card.code].type !== 'agenda'
+        )) {
+            saveDeck.drawCards.push(deckCard);
+        }
+
+        if (!saveDeck.status) {
+            saveDeck.status = {};
+        }
+
+        saveDeck.status[currentRestrictedList._id] = validateDeck(saveDeck, {
+            packs: packs,
+            restrictedLists: [currentRestrictedList]
+        });
+
+        return saveDeck;
+    }, [
+        cardsByCode,
+        currentRestrictedList,
+        deck._id,
+        deck.agenda,
+        deckCards,
+        deckName,
+        faction.value,
+        factionsByCode,
+        packs
+    ]);
+
+    const columns = useMemo(
+        () => [
+            {
+                accessorFn: (row) => row.label,
+                header: 'Name',
+                cell: (info) => info.getValue(),
+                meta: {
+                    colWidth: '70%'
+                },
+                enableColumnFilter: true
+            },
+            {
+                id: 'C/I',
+                accessorFn: (row) =>
+                    row.income != undefined ? row.income : row.cost != undefined ? row.cost : '',
+                header: 'C/I',
+                meta: {
+                    colWidth: '10%'
+                },
+                enableColumnFilter: false
+            },
+            {
+                id: 'S/I',
+                accessorFn: (row) =>
+                    row.initiative != undefined
+                        ? row.initiative
+                        : row.strength != undefined
+                          ? row.strength
+                          : '',
+                header: 'S/I',
+                meta: {
+                    colWidth: '10%'
+                },
+                enableColumnFilter: false
+            },
+            {
+                accessorKey: 'type',
+                header: 'T',
+                cell: (info) => (
+                    <span
+                        className={`icon icon-${info.getValue()} text-${info.row.original.faction}`}
+                    ></span>
+                ),
+                filterFn: 'arrIncludesSome',
+                meta: {
+                    colWidth: '10%'
+                },
+                enableColumnFilter: false
+            },
+            {
+                id: 'faction',
+                accessorKey: 'faction',
+                header: 'F',
+                cell: (info) => (
+                    <span className={`icon icon-${info.getValue()} text-${info.getValue()}`}></span>
+                ),
+                filterFn: 'arrIncludesSome',
+                meta: {
+                    colWidth: '10%'
+                },
+                enableColumnFilter: false
+            },
+            {
+                id: 'quantity',
+                accessorFn: (row) => {
+                    const deckCard = deckCards.find((dc) => dc.card.code === row.code);
+                    return deckCard?.count || 0;
+                },
+                header: 'Quantity',
+                cell: (info) => {
+                    const max = info.row.original.deckLimit + 1;
+                    const deckCard = deckCards.find(
+                        (dc) => dc.card.code === info.row.original.code
+                    );
+                    const count = deckCard?.count || 0;
+
+                    return (
+                        <ButtonGroup>
+                            {[...Array(max).keys()].map((digit) => (
+                                <SmallButton
+                                    size='xs'
+                                    className='w-1'
+                                    key={digit}
+                                    value={digit}
+                                    color={count === digit ? 'primary' : null}
+                                    onClick={() => {
+                                        const newDeckCards = [];
+                                        let found = false;
+
+                                        for (const deckCard of deckCards) {
+                                            const newDeckCard = Object.assign({}, deckCard);
+
+                                            if (deckCard.card.code === info.row.original.code) {
+                                                found = true;
+
+                                                newDeckCard.count = digit;
+                                            }
+
+                                            if (newDeckCard.count > 0) {
+                                                newDeckCards.push(newDeckCard);
+                                            }
+                                        }
+
+                                        if (!found) {
+                                            const newCard = {
+                                                card: cardsByCode[info.row.original.code],
+                                                count: digit
+                                            };
+
+                                            newDeckCards.push(newCard);
+                                        }
+
+                                        setDeckCards(newDeckCards);
+                                    }}
+                                >
+                                    {digit}
+                                </SmallButton>
+                            ))}
+                        </ButtonGroup>
+                    );
+                },
+                meta: {
+                    colWidth: 1
+                }
+            }
+        ],
+        [deckCards, cardsByCode]
+    );
+
+    const cardTypes = useMemo(() => {
+        if (!cards) {
+            return [];
+        }
+        let cardTypes = Object.values(cards)
+            .filter((c) => c.type !== 'title')
+            .map((card) => card.type);
+
+        return Array.from(new Set(cardTypes));
+    }, [cards]);
+
+    const cardsMemo = useMemo(() => {
+        if (!cards) {
+            return {};
+        }
+        return { data: Object.values(cards) };
+    }, [cards]);
+
+    useEffect(() => {
+        setFaction(deck.faction);
+    }, [deck.faction]);
+
+    useEffect(() => {
+        if (!currentRestrictedList && restrictedLists) {
+            setCurrentRestrictedList(restrictedLists[0]);
+        }
+    }, [currentRestrictedList, restrictedLists]);
+
+    if (isLoading || isFactionsLoading || !packs || !currentRestrictedList) {
+        return <LoadingSpinner />;
+    } else if (isError || isFactionsError) {
+        return (
+            <AlertPanel variant='danger'>
+                An error occurred loading data from the server. Please try again later.
+            </AlertPanel>
+        );
+    }
+
+    const onSaveClick = async (andClose) => {
+        try {
+            deckToSave._id
+                ? await saveDeck(deckToSave).unwrap()
+                : await addDeck(deckToSave).unwrap();
+
+            toast.success(`Deck ${deckToSave._id ? 'saved' : 'added'} successfully.`);
+
+            if (andClose) {
+                dispatch(navigate('/decks'));
+            }
+        } catch (err) {
+            toast.error('An error occured adding the deck. Please try again later');
+        }
+    };
+
+    return (
+        <div className='grid lg:grid-cols-2 gap-4'>
+            <div className='flex flex-col gap-2'>
+                <div className='flex gap-2'>
+                    <Button color='default' onClick={() => onBackClick()}>
+                        Back
+                    </Button>
+                    <Button
+                        color='primary'
+                        isLoading={isAddLoading || isSaveLoading}
+                        onClick={() => onSaveClick(true)}
+                    >
+                        Save and close
+                    </Button>
+                    <Button
+                        color='primary'
+                        isLoading={isAddLoading || isSaveLoading}
+                        onClick={() => onSaveClick(false)}
+                    >
+                        Save
+                    </Button>
+                    <Button onClick={() => setShowImportPopup(true)}>Import</Button>
+                </div>
+                <div className='flex flex-col gap-2'>
+                    <Input
+                        placeholder={'Enter a name'}
+                        value={deckName}
+                        onChange={(event) => setDeckName(event.target.value)}
+                        label={'Deck Name'}
+                    />
+                    <Select
+                        items={Constants.Factions}
+                        label='Faction'
+                        selectedKeys={new Set([faction.value])}
+                        onChange={(e) => setFaction(e.target)}
+                        renderValue={(items) => {
+                            return items.map((item) => <div key={item.key}>{item.data.name}</div>);
+                        }}
+                    >
+                        {(faction) => (
+                            <SelectItem key={faction.value}>
+                                <div className='flex gap-2 items-center'>
+                                    <FactionImage size='sm' faction={faction.value} />
+                                    <div>{faction.name}</div>
+                                </div>
+                            </SelectItem>
+                        )}
+                    </Select>
+                    <RestrictedListDropdown
+                        currentRestrictedList={currentRestrictedList}
+                        onChange={(restrictedList) => {
+                            setCurrentRestrictedList(restrictedList);
+                        }}
+                        restrictedLists={restrictedLists}
+                    />
+                    <Card>
+                        <CardBody>
+                            <div className='flex mt-1 ml-1'>
+                                <dl className='grid grid-cols-2 gap-2'>
+                                    <dt className='font-bold'>Draw cards:</dt>
+                                    <dd>
+                                        {deckToSave.drawCards.reduce(
+                                            (acc, card) => acc + card.count,
+                                            0
+                                        )}
+                                    </dd>
+                                    <dt className='font-bold'>Plot cards:</dt>
+                                    <dd>
+                                        {deckToSave.plotCards.reduce(
+                                            (acc, card) => acc + card.count,
+                                            0
+                                        )}
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div className='flex gap-2 items-center ml-1 mt-1'>
+                                <div className='font-bold'>Validity:</div>
+                                <DeckStatus status={deckToSave.status[currentRestrictedList._id]} />
+                            </div>
+                        </CardBody>
+                    </Card>
+                    <div className='mt-1'>
+                        <ButtonGroup>
+                            {cardTypes.map((type) => {
+                                return (
+                                    <SmallButton
+                                        key={type}
+                                        size='xs'
+                                        color={
+                                            typeFilter.some((t) => t === type) ? 'primary' : null
+                                        }
+                                        onClick={() =>
+                                            setTypeFilter(
+                                                typeFilter.some((t) => t === type)
+                                                    ? typeFilter.filter((t) => t !== type)
+                                                    : typeFilter.concat(type)
+                                            )
+                                        }
+                                    >
+                                        <span className={`icon icon-${type}`}></span>
+                                    </SmallButton>
+                                );
+                            })}
+                        </ButtonGroup>
+                    </div>
+                    <div>
+                        <ButtonGroup aria-label='Faction buttons'>
+                            {Constants.Factions.concat({ name: 'Neutral', value: 'neutral' }).map(
+                                (faction) => {
+                                    return (
+                                        <SmallButton
+                                            key={faction.value}
+                                            size='xs'
+                                            color={
+                                                factionFilter.some((f) => f === faction.value)
+                                                    ? 'primary'
+                                                    : null
+                                            }
+                                            onClick={() =>
+                                                setFactionFilter(
+                                                    factionFilter.some((f) => f === faction.value)
+                                                        ? factionFilter.filter(
+                                                              (f) => f !== faction.value
+                                                          )
+                                                        : factionFilter.concat(faction.value)
+                                                )
+                                            }
+                                        >
+                                            <span
+                                                className={`icon icon-${faction.value} ${factionToTextColourMap[faction.value]}`}
+                                            ></span>
+                                        </SmallButton>
+                                    );
+                                }
+                            )}
+                        </ButtonGroup>
+                    </div>
+                    <div className='h-[50vh]'>
+                        <ReactTable
+                            dataLoadFn={() => ({
+                                data: cardsMemo,
+                                isLoading: false,
+                                isError: false
+                            })}
+                            defaultColumnFilters={{ type: typeFilter, faction: factionFilter }}
+                            defaultSort={[
+                                {
+                                    id: 'type',
+                                    desc: true
+                                }
+                            ]}
+                            disableSelection
+                            columns={columns}
+                            startPageNumber={pageNumber}
+                            onPageChanged={(page) => setPageNumber(page)}
+                        />
+                    </div>
+                </div>
+            </div>
+            <div>
+                <DeckSummary
+                    deck={{
+                        name: deckName,
+                        deckCards: deckCards,
+                        faction: factionsByCode[deck.faction.code]
+                    }}
+                />
+            </div>
+
+            <Modal isOpen={showImportPopup} onOpenChange={(open) => setShowImportPopup(open)}>
+                <ModalContent>
+                    {(onClose) => (
+                        <>
+                            <ModalHeader className='flex flex-col gap-1'>
+                                Import from ThronesDb
+                            </ModalHeader>
+                            <ModalBody>
+                                <label>
+                                    Export your deck as plain text from{' '}
+                                    <a
+                                        href='https://thronesdb.com'
+                                        target='_blank'
+                                        rel='noreferrer'
+                                    >
+                                        ThronesDB
+                                    </a>{' '}
+                                    and paste it into this box.
+                                    <p className='text-bold text-danger-300'>
+                                        Note: The deck you are editing will be overwritten!
+                                    </p>
+                                </label>
+                                <Textarea
+                                    minRows={20}
+                                    value={deckText}
+                                    onValueChange={setDeckText}
+                                />
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button onPress={onClose}>Close</Button>
+                                <Button
+                                    color='primary'
+                                    onPress={() => {
+                                        const deck = processThronesDbDeckText(
+                                            factions,
+                                            packs,
+                                            cards,
+                                            deckText
+                                        );
+
+                                        if (!deck) {
+                                            toast.error(
+                                                'Invalid deck. Ensure you have exported a plain text deck from ThronesDb.'
+                                            );
+
+                                            onClose();
+
+                                            return;
+                                        }
+
+                                        setFaction(deck.faction);
+                                        setDeckName(deck.name);
+                                        setDeckCards(
+                                            (deck.agenda ? [{ card: deck.agenda, count: 1 }] : [])
+                                                .concat(deck.drawCards || [])
+                                                .concat(deck.plotCards || [])
+                                                .concat(
+                                                    deck.bannerCards?.map((bc) => ({
+                                                        card: bc,
+                                                        count: 1
+                                                    })) || []
+                                                )
+                                        );
+
+                                        onClose();
+                                    }}
+                                >
+                                    Import
+                                </Button>
+                            </ModalFooter>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
+        </div>
+    );
+};
+
+export default DeckEditor;

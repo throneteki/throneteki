@@ -1,44 +1,54 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useCallback } from 'react';
 import classNames from 'classnames';
+import ThronesIcon from './ThronesIcon';
 
-class Counter extends React.Component {
-    render() {
-        let className = classNames('counter', `${this.props.name}-token`, {
-            cancel: this.props.cancel,
-            'fade-out': this.props.fade
-        });
+import './Counter.css';
 
-        if (this.props.icon) {
-            return (
-                <div
-                    key={this.props.icon}
-                    className={classNames(
-                        className,
-                        'thronesicon',
-                        `thronesicon-${this.props.icon}`
-                    )}
-                />
-            );
-        }
+const Counter = ({ name, cancel, fade, icon, shortName, value, className }) => {
+    const getClassName = useCallback(() => {
+        return classNames(
+            'p-0 text-sm w-6 h-6 flex justify-center items-center rounded-md',
+            `${name}-token`,
+            {
+                'bg-success-100/85': name === 'dupe',
+                'bg-red-800/85': name === 'strength' || name === 'blood',
+                'bg-blue-900/85': name === 'card-power',
+                'bg-gray-500/85': name === 'stand',
+                'bg-yellow-900/85': name === 'poison',
+                'bg-yellow-400/85': name === 'gold',
+                'bg-gray-300/85': name === 'valarmorghulis',
+                'bg-orange-800/85': name === 'betrayal' || name === 'journey',
+                'bg-purple-800/85': name === 'vengeance' || name === 'shadow',
+                'bg-lime-400/85': name === 'ear',
+                'bg-purple-600/85': name === 'kiss',
+                'bg-yellow-700/85': name === 'bell',
+                'bg-white/85 text-black': name === 'prayer' || name === 'ghost',
+                'bg-gray-400/85': name === 'tale',
+                'bg-teal-600/85': name === 'venom',
+                'bg-black/85': name === 'challenge-icon' || name === 'faction',
+                'cancel relative': cancel,
+                'fade-out': fade
+            },
+            className
+        );
+    }, [name, cancel, fade, className]);
 
+    const counterClassName = getClassName();
+
+    if (icon) {
         return (
-            <div key={this.props.name} className={className}>
-                {this.props.shortName ? <span>{this.props.shortName}</span> : null}
-                <span>{this.props.value}</span>
+            <div className={counterClassName}>
+                <ThronesIcon icon={icon} noSize />
             </div>
         );
     }
-}
 
-Counter.displayName = 'Counter';
-Counter.propTypes = {
-    cancel: PropTypes.bool,
-    fade: PropTypes.bool,
-    icon: PropTypes.string,
-    name: PropTypes.string.isRequired,
-    shortName: PropTypes.string,
-    value: PropTypes.number
+    return (
+        <div key={name} className={counterClassName}>
+            {shortName}
+            {value}
+        </div>
+    );
 };
 
 export default Counter;

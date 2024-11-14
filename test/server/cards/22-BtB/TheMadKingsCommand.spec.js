@@ -3,7 +3,7 @@ describe("The Mad King's Command", function () {
         beforeEach(function () {
             const deck = this.buildDeck('targaryen', [
                 "The Mad King's Command",
-                'Aegon Targaryen',
+                'Aegon Targaryen (TSC)',
                 'Septa Lemore',
                 'Beggar King'
             ]);

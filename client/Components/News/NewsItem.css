@@ -1,0 +1,11 @@
+.military {
+    color: theme(colors.military);
+}
+
+.intrigue {
+    color: theme(colors.intrigue);
+}
+
+.power {
+    color: theme(colors.power);
+}

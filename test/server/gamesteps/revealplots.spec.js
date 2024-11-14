@@ -9,11 +9,11 @@ describe('RevealPlots', function () {
     describe('getInitiativeResult()', function () {
         beforeEach(function () {
             this.player1Spy = jasmine.createSpyObj('player', [
-                'getTotalInitiative',
+                'getInitiative',
                 'getTotalPower'
             ]);
             this.player2Spy = jasmine.createSpyObj('player', [
-                'getTotalInitiative',
+                'getInitiative',
                 'getTotalPower'
             ]);
             this.gameSpy.getPlayers.and.returnValue([this.player1Spy, this.player2Spy]);
@@ -21,10 +21,10 @@ describe('RevealPlots', function () {
 
         describe('when one player has higher initiative', function () {
             beforeEach(function () {
-                this.player1Spy.getTotalInitiative.and.returnValue(4);
+                this.player1Spy.getInitiative.and.returnValue(4);
                 this.player1Spy.getTotalPower.and.returnValue(3);
 
-                this.player2Spy.getTotalInitiative.and.returnValue(5);
+                this.player2Spy.getInitiative.and.returnValue(5);
                 this.player2Spy.getTotalPower.and.returnValue(5);
 
                 this.phase.determineInitiative();
@@ -43,10 +43,10 @@ describe('RevealPlots', function () {
 
         describe('when initiative is tied but one player has lower power', function () {
             beforeEach(function () {
-                this.player1Spy.getTotalInitiative.and.returnValue(5);
+                this.player1Spy.getInitiative.and.returnValue(5);
                 this.player1Spy.getTotalPower.and.returnValue(3);
 
-                this.player2Spy.getTotalInitiative.and.returnValue(5);
+                this.player2Spy.getInitiative.and.returnValue(5);
                 this.player2Spy.getTotalPower.and.returnValue(5);
 
                 this.phase.determineInitiative();
@@ -66,10 +66,10 @@ describe('RevealPlots', function () {
 
         describe('when initiative and power are tied', function () {
             beforeEach(function () {
-                this.player1Spy.getTotalInitiative.and.returnValue(5);
+                this.player1Spy.getInitiative.and.returnValue(5);
                 this.player1Spy.getTotalPower.and.returnValue(3);
 
-                this.player2Spy.getTotalInitiative.and.returnValue(5);
+                this.player2Spy.getInitiative.and.returnValue(5);
                 this.player2Spy.getTotalPower.and.returnValue(3);
 
                 // Set up sampling function to just return the last entry.

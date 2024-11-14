@@ -1,175 +1,123 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import React, { useCallback, useMemo, useState } from 'react';
 import moment from 'moment';
 
-import Form from '../Components/Form/Form';
 import Panel from '../Components/Site/Panel';
-import ApiStatus from '../Components/Site/ApiStatus';
-import * as actions from '../actions';
+import {
+    useAddBanListEntryMutation,
+    useGetBanListQuery,
+    useRemoveBanListEntryMutation
+} from '../redux/middleware/api';
+import {
+    Button,
+    Input,
+    Table,
+    TableBody,
+    TableCell,
+    TableColumn,
+    TableHeader,
+    TableRow
+} from '@nextui-org/react';
+import LoadingSpinner from '../Components/Site/LoadingSpinner';
+import { toast } from 'react-toastify';
 
-class BanlistAdmin extends React.Component {
-    constructor(props) {
-        super(props);
+const BanlistAdmin = () => {
+    const { data: banList, isLoading } = useGetBanListQuery();
+    const [addBanListEntry, { isLoading: isAddLoading }] = useAddBanListEntryMutation();
+    const [removeBanListEntry, { isLoading: isRemoveLoading }] = useRemoveBanListEntryMutation();
+    const [banListText, setBanListText] = useState('');
 
-        this.state = {
-            ip: '',
-            currentRequest: 'REQUEST_BANLIST'
-        };
+    const onAddBanlistClick = useCallback(async () => {
+        try {
+            await addBanListEntry(banListText).unwrap();
 
-        this.onAddBanlistClick = this.onAddBanlistClick.bind(this);
-    }
-
-    componentWillMount() {
-        this.props.loadBanlist();
-    }
-
-    componentWillReceiveProps(props) {
-        let clearStatus = false;
-        if (props.banListAdded) {
-            clearStatus = true;
-            this.setState({ successMessage: 'Banlist item added successfully.' });
-        }
-
-        if (props.banListDeleted) {
-            clearStatus = true;
-            this.setState({ successMessage: 'Banlist item deleted successfully.' });
-        }
-
-        if (clearStatus) {
-            setTimeout(() => {
-                this.props.clearBanlistStatus();
-                this.setState({ successMessage: undefined });
-            }, 5000);
-        }
-    }
-
-    onIpTextChange(event) {
-        this.setState({ ip: event.target.value });
-    }
-
-    onAddBanlistClick(state) {
-        this.setState({ currentRequest: 'ADD_BANLIST' });
-        this.props.addBanlist(state.ip);
-    }
-
-    onDeleteClick(id) {
-        this.setState({ currentRequest: 'DELETE_BANLIST' });
-        this.props.deleteBanlist(id);
-    }
-
-    render() {
-        if (this.props.apiState && this.props.apiState.loading) {
-            return 'Loading banlist, please wait...';
-        }
-
-        let statusBar;
-
-        switch (this.state.currentRequest) {
-            case 'REQUEST_BANLIST':
-                statusBar = (
-                    <ApiStatus
-                        apiState={this.props.apiState}
-                        successMessage={this.state.successMessage}
-                    />
-                );
-                break;
-            case 'ADD_BANLIST':
-                statusBar = (
-                    <ApiStatus
-                        apiState={this.props.apiAddState}
-                        successMessage={this.state.successMessage}
-                    />
-                );
-                break;
-            case 'DELETE_BANLIST':
-                statusBar = (
-                    <ApiStatus
-                        apiState={this.props.apiDeleteState}
-                        successMessage={this.state.successMessage}
-                    />
-                );
-                break;
-        }
-
-        let renderedBanlist = this.props.banlist.map((entry) => {
-            return (
-                <tr key={entry._id}>
-                    <td>{entry.ip}</td>
-                    <td>{moment(entry.added).format('YYYY-MM-DD')}</td>
-                    <td>{entry.user}</td>
-                    <td>
-                        <button
-                            type='button'
-                            className='btn btn-danger'
-                            onClick={this.onDeleteClick.bind(this, entry._id)}
-                        >
-                            Delete{' '}
-                            {this.props.apiDeleteState && this.props.apiDeleteState.loading && (
-                                <span className='spinner button-spinner' />
-                            )}
-                        </button>
-                    </td>
-                </tr>
+            toast.success('Ban list entry added successfully.');
+        } catch (err) {
+            toast.error(
+                err.data?.message ||
+                    'An error occured adding the ban list entry. Please try again later.'
             );
-        });
+        }
+    }, [addBanListEntry, banListText]);
 
-        return (
-            <div className='col-xs-12'>
-                {statusBar}
-                <Panel title='Banlist administration'>
-                    <table className='table table-striped'>
-                        <thead>
-                            <tr>
-                                <th className='col-sm-2'>Ip</th>
-                                <th className='col-sm-2'>Added</th>
-                                <th className='col-sm-3'>Added By</th>
-                                <th className='col-sm-2'>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>{renderedBanlist}</tbody>
-                    </table>
-                </Panel>
+    const onDeleteBanlistClick = useCallback(
+        async (id) => {
+            try {
+                await removeBanListEntry(id).unwrap();
+
+                toast.success('Ban list entry deleted successfully.');
+            } catch (err) {
+                toast.error(
+                    err.data?.message ||
+                        'An error occured deleting the ban list entry. Please try again later.'
+                );
+            }
+        },
+        [removeBanListEntry]
+    );
+
+    const renderedBanlist = useMemo(
+        () =>
+            banList &&
+            banList.map((ban) => {
+                return (
+                    <TableRow key={ban._id}>
+                        <TableCell>{ban.ip}</TableCell>
+                        <TableCell>{moment(ban.added).format('YYYY-MM-DD')}</TableCell>
+                        <TableCell>{ban.addedBy}</TableCell>
+                        <TableCell>
+                            <Button
+                                isLoading={isRemoveLoading}
+                                color='danger'
+                                onClick={() => onDeleteBanlistClick(ban._id)}
+                            >
+                                Delete
+                            </Button>
+                        </TableCell>
+                    </TableRow>
+                );
+            }),
+        [banList, isRemoveLoading, onDeleteBanlistClick]
+    );
+
+    if (isLoading) {
+        return <LoadingSpinner className='p-10' label={'Loading banlist...'}></LoadingSpinner>;
+    }
+
+    return (
+        <div className='w-2/3 mx-auto'>
+            <Panel title='Banlist administration'>
+                <Table isStriped>
+                    <TableHeader>
+                        <TableColumn className='col-sm-2'>Ip</TableColumn>
+                        <TableColumn className='col-sm-2'>Added</TableColumn>
+                        <TableColumn className='col-sm-3'>Added By</TableColumn>
+                        <TableColumn className='col-sm-2'>Action</TableColumn>
+                    </TableHeader>
+                    <TableBody>{renderedBanlist}</TableBody>
+                </Table>
+            </Panel>
+            <div className='mt-2'>
                 <Panel title='Add new ip'>
-                    <Form
-                        name='banlistAdmin'
-                        apiLoading={this.props.apiAddState && this.props.apiAddState.loading}
-                        buttonClass='col-sm-offset-2 col-sm-4'
-                        buttonText='Add'
-                        onSubmit={this.onAddBanlistClick}
-                    />
+                    <div>
+                        <Input
+                            label='Add ip address'
+                            value={banListText}
+                            onValueChange={setBanListText}
+                        />
+                        <div className='mt-2'>
+                            <Button
+                                isLoading={isAddLoading}
+                                color='primary'
+                                onClick={onAddBanlistClick}
+                            >
+                                Add
+                            </Button>
+                        </div>
+                    </div>
                 </Panel>
             </div>
-        );
-    }
-}
-
-BanlistAdmin.displayName = 'BanlistAdmin';
-BanlistAdmin.propTypes = {
-    addBanlist: PropTypes.func,
-    apiAddState: PropTypes.object,
-    apiDeleteState: PropTypes.object,
-    apiState: PropTypes.object,
-    banListAdded: PropTypes.bool,
-    banListDeleted: PropTypes.bool,
-    banlist: PropTypes.array,
-    clearBanlistStatus: PropTypes.func,
-    deleteBanlist: PropTypes.func,
-    loadBanlist: PropTypes.func,
-    successMessage: PropTypes.string
+        </div>
+    );
 };
 
-function mapStateToProps(state) {
-    return {
-        apiAddState: state.api.ADD_BANLIST,
-        apiDeleteState: state.api.DELETE_BANLIST,
-        apiState: state.api.REQUEST_BANLIST,
-        banlistAdded: state.admin.banlistAdded,
-        banlistDeleted: state.admin.banlistDeleted,
-        banlist: state.admin.banlist,
-        loadBanlist: state.admin.loadBanlist,
-        loading: state.api.loading
-    };
-}
-
-export default connect(mapStateToProps, actions)(BanlistAdmin);
+export default BanlistAdmin;

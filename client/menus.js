@@ -1,28 +1,13 @@
-const menus = [
-    { path: '/login', title: 'Login', showOnlyWhenLoggedOut: true, position: 'right' },
-    { path: '/register', title: 'Register', showOnlyWhenLoggedOut: true, position: 'right' },
-    { path: '/decks', title: 'Decks', showOnlyWhenLoggedIn: true, position: 'left' },
-    { path: '/play', title: 'Play', position: 'left' },
+export const LeftMenu = [
+    { path: '/decks', title: 'Decks', showOnlyWhenLoggedIn: true },
+    { path: '/play', title: 'Play' },
     {
         title: 'Help',
-        position: 'left',
         childItems: [
             { path: '/how-to-play', title: 'How To Play' },
             { path: '/about', title: 'About' },
             { path: '/privacy', title: 'Privacy Policy' }
         ]
-    },
-    {
-        title: 'Placeholder',
-        childItems: [
-            { title: 'Profile', path: '/profile' },
-            { title: 'Security', path: '/security' },
-            { title: 'Block List', path: '/blocklist' },
-            { title: 'Logout', path: '/logout' }
-        ],
-        showOnlyWhenLoggedIn: true,
-        position: 'right',
-        showProfilePicture: true
     },
     {
         title: 'Admin',
@@ -34,9 +19,18 @@ const menus = [
             { path: '/admin/motd', title: 'Motd', permission: 'canManageMotd' },
             { path: '/banlist', title: 'Ban List', permission: 'canManageBanlist' },
             { path: '/events', title: 'Events', permission: 'canManageEvents' }
-        ],
-        position: 'left'
+        ]
     }
 ];
 
-export default menus;
+export const RightMenu = [
+    { path: '/login', title: 'Login', showOnlyWhenLoggedOut: true },
+    { path: '/register', title: 'Register', showOnlyWhenLoggedOut: true }
+];
+
+export const ProfileMenu = [
+    { title: 'Profile', path: '/profile' },
+    { title: 'Security', path: '/security' },
+    { title: 'Block List', path: '/blocklist' },
+    { title: 'Logout', path: '/logout' }
+];

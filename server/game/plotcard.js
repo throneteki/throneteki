@@ -5,11 +5,14 @@ class PlotCard extends BaseCard {
     constructor(owner, cardData) {
         super(owner, cardData);
 
-        this.reserveModifier = 0;
-        this.goldModifier = 0;
-        this.initiativeModifier = 0;
-        this.claimModifier = 0;
-        this.claimSet = undefined;
+        const printedIncome = this.getPrintedNumberFor(this.cardData.plotStats?.income);
+        this.income = new PlotStat(printedIncome);
+        const printedInitiative = this.getPrintedNumberFor(this.cardData.plotStats?.initiative);
+        this.initiative = new PlotStat(printedInitiative);
+        const printedClaim = this.getPrintedNumberFor(this.cardData.plotStats?.claim);
+        this.claim = new PlotStat(printedClaim);
+        const printedReserve = this.getPrintedNumberFor(this.cardData.plotStats?.reserve);
+        this.reserve = new PlotStat(printedReserve);
     }
 
     whenRevealed(properties) {
@@ -27,50 +30,20 @@ class PlotCard extends BaseCard {
         return this.abilities.reactions.find((ability) => ability instanceof CardWhenRevealed);
     }
 
-    getInitiative() {
-        const baseValue = this.canProvidePlotModifier['initiative']
-            ? this.getPrintedInitiative()
-            : 0;
-        return Math.max(baseValue + this.initiativeModifier, 0);
-    }
-
-    getPrintedInitiative() {
-        return this.getPrintedNumberFor(this.cardData.plotStats.initiative);
-    }
-
     getIncome() {
-        let baseValue = this.canProvidePlotModifier['gold']
-            ? this.baseIncome || this.getPrintedIncome()
-            : 0;
-
-        return baseValue + this.goldModifier;
+        return this.income.calculate();
     }
 
-    getPrintedIncome() {
-        return this.getPrintedNumberFor(this.cardData.plotStats.income);
-    }
-
-    getReserve() {
-        var baseValue = this.canProvidePlotModifier['reserve'] ? this.getPrintedReserve() : 0;
-        return baseValue + this.reserveModifier;
-    }
-
-    getPrintedReserve() {
-        return this.getPrintedNumberFor(this.cardData.plotStats.reserve);
-    }
-
-    getPrintedClaim() {
-        return this.getPrintedNumberFor(this.cardData.plotStats.claim);
+    getInitiative() {
+        return this.initiative.calculate();
     }
 
     getClaim() {
-        let baseClaim = this.getPrintedClaim();
+        return this.claim.calculate();
+    }
 
-        if (typeof this.claimSet === 'number') {
-            return this.claimSet;
-        }
-
-        return Math.max(baseClaim + this.claimModifier, 0);
+    getReserve() {
+        return this.reserve.calculate();
     }
 
     flipFaceup() {
@@ -79,6 +52,25 @@ class PlotCard extends BaseCard {
 
         // But this is
         this.selected = false;
+    }
+}
+
+export class PlotStat {
+    constructor(printedValue) {
+        this.printedValue = printedValue;
+        this.baseValue = this.printedValue;
+        this.modifiers = [];
+        // TODO: Improve modifiers so that other cards apply a "PlotStatModifier" which is collected here & used in calculate
+        //       Would make affecting that modified stat (eg. Rains of Autumn) much simpler
+        this.modifier = 0;
+        this.setValue = null;
+    }
+
+    calculate() {
+        if (!this.setValue) {
+            return Math.max(this.baseValue + this.modifier, 0);
+        }
+        return this.setValue;
     }
 }
 

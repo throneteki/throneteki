@@ -1,21 +1,21 @@
 import React from 'react';
 import $ from 'jquery';
-import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import Application from './Application';
 import 'jquery-validation';
 import 'jquery-validation-unobtrusive';
-import 'react-redux-toastr/src/styles/index.scss';
-import 'react-bootstrap-typeahead/css/Typeahead.css';
-import ReduxToastr from 'react-redux-toastr';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import * as Sentry from '@sentry/browser';
-import 'core-js/stable';
-import 'regenerator-runtime/runtime';
-import { DragDropContext } from 'react-dnd';
-import { default as TouchBackend } from 'react-dnd-touch-backend';
-import configureStore from './configureStore';
-import { navigate } from './actions';
-import './less/site.less';
+import * as SentryReact from '@sentry/react';
+import { createRoot } from 'react-dom/client';
+import { NextUIProvider } from '@nextui-org/react';
+import { ThemeProvider as NextThemesProvider } from 'next-themes';
+
+import { store } from './configureStore';
+import { navigate } from './redux/reducers/navigation';
+
+import './index.css';
 
 $.validator.setDefaults({
     highlight: function (element) {
@@ -25,8 +25,6 @@ $.validator.setDefaults({
         $(element).closest('.form-group').removeClass('has-error');
     }
 });
-
-import ErrorBoundary from './Components/Site/ErrorBoundary';
 
 const sentryOptions = {
     dsn: import.meta.env.VITE_SENTRY_KEY,
@@ -71,35 +69,32 @@ if (import.meta.env.VITE_SENTRY_KEY) {
     Sentry.init(sentryOptions);
 }
 
-const store = configureStore();
-
 store.dispatch(navigate(window.location.pathname, window.location.search));
 
 window.onpopstate = function (e) {
     store.dispatch(navigate(e.target.location.pathname));
 };
 
-const DnDContainer = DragDropContext(TouchBackend({ enableMouseEvents: true }))(Application);
+const container = document.getElementById('component');
+const root = createRoot(container);
 
-render(
+root.render(
     <Provider store={store}>
-        <div className='body'>
-            <ReduxToastr
-                timeOut={4000}
-                newestOnTop
-                preventDuplicates
-                position='top-right'
-                transitionIn='fadeIn'
-                transitionOut='fadeOut'
-            />
-            <ErrorBoundary
-                message={
-                    "We're sorry, a critical error has occured in the client and we're unable to show you anything.  Please try refreshing your browser after filling out a report."
-                }
-            >
-                <DnDContainer />
-            </ErrorBoundary>
-        </div>
-    </Provider>,
-    document.getElementById('component')
+        <NextUIProvider>
+            <NextThemesProvider attribute='class' defaultTheme='dark'>
+                <div className='body'>
+                    <ToastContainer
+                        position='top-right'
+                        autoClose={5000}
+                        newestOnTop={false}
+                        closeOnClick
+                        pauseOnHover
+                    />
+                    <SentryReact.ErrorBoundary fallback={<p>An error has occurred</p>}>
+                        <Application />
+                    </SentryReact.ErrorBoundary>
+                </div>
+            </NextThemesProvider>
+        </NextUIProvider>
+    </Provider>
 );

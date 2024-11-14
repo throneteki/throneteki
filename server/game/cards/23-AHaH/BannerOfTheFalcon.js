@@ -10,7 +10,7 @@ class BannerOfTheFalcon extends AgendaCard {
         this.persistentEffect({
             condition: () =>
                 this.controller.filterCardsInPlay((card) => card.hasTrait('House Arryn')).length >
-                this.controller.getTotalInitiative(),
+                this.controller.getInitiative(),
             match: (card) =>
                 card.controller === this.controller &&
                 card.getType() === 'character' &&

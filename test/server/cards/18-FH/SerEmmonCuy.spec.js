@@ -31,10 +31,10 @@ describe('Ser Emmon Cuy', function () {
             });
 
             it('should ask to trigger for Ser Emmon to trigger and raise claim and kill ser emmon', function () {
-                expect(this.player1Object.activePlot.claimModifier).toBe(0);
+                expect(this.player1Object.activePlot.claim.modifier).toBe(0);
                 expect(this.player1).toHavePrompt('Any reactions?');
                 this.player1.clickCard(this.emmon);
-                expect(this.player1Object.activePlot.claimModifier).toBe(1);
+                expect(this.player1Object.activePlot.claim.modifier).toBe(1);
                 expect(this.emmon.location).toBe('dead pile');
             });
 

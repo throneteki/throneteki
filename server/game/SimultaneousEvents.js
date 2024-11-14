@@ -11,7 +11,6 @@ class SimultaneousEvents {
     }
 
     addChildEvent(event) {
-        event.parentEvent = this;
         this.childEvents.push(event);
     }
 

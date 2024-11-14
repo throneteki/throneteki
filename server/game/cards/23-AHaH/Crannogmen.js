@@ -5,10 +5,12 @@ class Crannogmen extends DrawCard {
         this.interrupt({
             when: {
                 onClaimApplied: (event) =>
+                    event.challenge &&
                     event.challenge.isMatch({
                         winner: this.controller,
                         challengeType: 'intrigue'
-                    }) && this.isAttacking()
+                    }) &&
+                    this.isAttacking()
             },
             target: {
                 cardCondition: {

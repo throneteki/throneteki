@@ -22,8 +22,8 @@ class Lobby {
         this.games = {};
         this.configService = options.configService || ServiceFactory.configService();
         this.messageService = options.messageService || ServiceFactory.messageService(options.db);
-        this.deckService = options.deckService || new DeckService(options.db);
         this.cardService = options.cardService || new CardService(options.db);
+        this.deckService = options.deckService || new DeckService(options.db, this.cardService);
         this.eventService = options.eventService || new EventService(options.db);
         this.userService =
             options.userService || ServiceFactory.userService(options.db, this.configService);
@@ -42,11 +42,30 @@ class Lobby {
         this.io.use(this.handshake.bind(this));
         this.io.on('connection', this.onConnection.bind(this));
 
-        this.messageService.on('messageDeleted', (messageId) => {
-            this.io.emit('removemessage', messageId);
+        this.messageService.on('messageDeleted', (messageId, user) => {
+            for (let socket of Object.values(this.sockets)) {
+                if (socket.user === user || (socket.user && socket.user.hasUserBlocked(user))) {
+                    continue;
+                }
+
+                if (
+                    socket.user &&
+                    socket.user.permissions &&
+                    socket.user.permissions.canModerateChat
+                ) {
+                    socket.send('removemessage', messageId, user.username);
+                } else {
+                    socket.send('removemessage', messageId);
+                }
+            }
         });
 
         setInterval(() => this.clearStalePendingGames(), 60 * 1000);
+    }
+
+    async init() {
+        await this.deckService.init();
+        await this.eventService.init();
     }
 
     // External methods
@@ -131,9 +150,9 @@ class Lobby {
     }
 
     handshake(ioSocket, next) {
-        if (ioSocket.handshake.query.token && ioSocket.handshake.query.token !== 'undefined') {
+        if (ioSocket.handshake.auth.token && ioSocket.handshake.auth.token !== 'undefined') {
             jwt.verify(
-                ioSocket.handshake.query.token,
+                ioSocket.handshake.auth.token,
                 this.configService.getValue('secret'),
                 (err, user) => {
                     if (err) {
@@ -185,9 +204,6 @@ class Lobby {
     mapGamesToGameSummaries(games) {
         return _.chain(games)
             .map((game) => game.getSummary())
-            .sortBy('createdAt')
-            .sortBy('started')
-            .reverse()
             .value();
     }
 
@@ -228,7 +244,9 @@ class Lobby {
             );
             let gameSummaries = filteredGames.map((game) => game.getSummary());
 
-            socket.send(message, gameSummaries);
+            if (gameSummaries.length > 0) {
+                socket.send(message, gameSummaries);
+            }
         }
     }
 
@@ -300,10 +318,12 @@ class Lobby {
     }
 
     sendFilteredMessages(socket) {
-        this.messageService.getLastMessages().then((messages) => {
-            let messagesToSend = this.filterMessages(messages, socket);
-            socket.send('lobbymessages', messagesToSend.reverse());
-        });
+        this.messageService
+            .getLastMessages(socket.user?.permissions?.canModerateChat)
+            .then((messages) => {
+                let messagesToSend = this.filterMessages(messages, socket);
+                socket.send('lobbymessages', messagesToSend.reverse());
+            });
     }
 
     filterMessages(messages, socket) {
@@ -318,6 +338,10 @@ class Lobby {
 
     // Events
     onConnection(ioSocket) {
+        ioSocket.on('ping', (cb) => {
+            if (typeof cb === 'function') cb();
+        });
+
         let socket = new Socket(ioSocket, { configService: this.configService });
 
         socket.registerEvent('lobbychat', this.onLobbyChat.bind(this));
@@ -547,8 +571,8 @@ class Lobby {
         this.broadcastGameMessage('updategame', game);
     }
 
-    onStartGame(socket, gameId) {
-        let game = this.games[gameId];
+    onStartGame(socket) {
+        let game = this.findGameForUser(socket.user.username);
 
         if (!game || game.started) {
             return;
@@ -687,10 +711,10 @@ class Lobby {
         }
     }
 
-    onSelectDeck(socket, gameId, deckId) {
-        let game = this.games[gameId];
+    onSelectDeck(socket, deckId) {
+        let game = this.findGameForUser(socket.user.username);
         if (!game) {
-            return Promise.reject('Game not found');
+            return;
         }
 
         return Promise.all([
@@ -834,7 +858,6 @@ class Lobby {
             gameType: game.gameType,
             gamePrivate: game.gamePrivate,
             isMelee: game.isMelee,
-            useRookery: game.useRookery,
             useGameTimeLimit: game.useGameTimeLimit,
             gameTimeLimit: game.gameTimeLimit,
             useChessClocks: game.useChessClocks,

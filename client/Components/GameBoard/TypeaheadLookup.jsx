@@ -1,51 +1,40 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useState, useCallback, useMemo } from 'react';
+import { Autocomplete, AutocompleteItem, Button } from '@nextui-org/react';
 
-import Typeahead from '../Form/Typeahead';
+const TypeaheadLookup = ({ onValueSelected, values }) => {
+    const [selectedValue, setSelectedValue] = useState('');
 
-class TypeaheadLookup extends React.Component {
-    constructor(props) {
-        super(props);
+    const handleChange = useCallback((value) => {
+        setSelectedValue(value);
+    }, []);
 
-        this.state = {
-            selectedValue: ''
-        };
-
-        this.handleChange = this.handleChange.bind(this);
-        this.handleDoneClick = this.handleDoneClick.bind(this);
-    }
-
-    handleChange(value) {
-        this.setState({ selectedValue: value[0] });
-    }
-
-    handleDoneClick() {
-        if (this.props.onValueSelected) {
-            this.props.onValueSelected(this.state.selectedValue);
+    const handleDoneClick = useCallback(() => {
+        if (onValueSelected) {
+            onValueSelected(selectedValue);
         }
-    }
+    }, [onValueSelected, selectedValue]);
 
-    render() {
-        return (
-            <div>
-                <Typeahead
-                    labelKey={'label'}
-                    options={this.props.values}
-                    dropup
-                    onChange={this.handleChange}
-                />
-                <button type='button' onClick={this.handleDoneClick} className='btn btn-primary'>
+    const labelsAndValues = useMemo(() => {
+        return values.map((value) => ({ label: value, value }));
+    }, [values]);
+
+    return (
+        <div>
+            <Autocomplete
+                className='px-2 mt-2'
+                defaultItems={labelsAndValues}
+                onSelectionChange={handleChange}
+                inputProps={{ classNames: { inputWrapper: 'rounded-md' } }}
+            >
+                {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
+            </Autocomplete>
+            <div className='mt-2 mx-2 flex flex-col mb-2'>
+                <Button onClick={handleDoneClick} color='primary'>
                     Done
-                </button>
+                </Button>
             </div>
-        );
-    }
-}
-
-TypeaheadLookup.displayName = 'TraitNameLookup';
-TypeaheadLookup.propTypes = {
-    onValueSelected: PropTypes.func,
-    values: PropTypes.array
+        </div>
+    );
 };
 
 export default TypeaheadLookup;

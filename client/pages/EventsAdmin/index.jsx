@@ -1,143 +1,153 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import $ from 'jquery';
-window.jQuery = $;
-import 'bootstrap/dist/js/bootstrap';
+import React, { useCallback, useMemo } from 'react';
+import { useDispatch } from 'react-redux';
 import Panel from '../../Components/Site/Panel';
-import * as actions from '../../actions';
+import {
+    useDeleteDraftCubeMutation,
+    useDeleteEventMutation,
+    useGetDraftCubesQuery,
+    useGetEventsQuery
+} from '../../redux/middleware/api';
+import { navigate } from '../../redux/reducers/navigation';
+import {
+    Button,
+    Table,
+    TableBody,
+    TableCell,
+    TableColumn,
+    TableHeader,
+    TableRow
+} from '@nextui-org/react';
+import LoadingSpinner from '../../Components/Site/LoadingSpinner';
+import { toast } from 'react-toastify';
 
-class EventsAdmin extends React.Component {
-    constructor(props) {
-        super(props);
+const EventsAdmin = () => {
+    const dispatch = useDispatch();
 
-        this.state = {
-            currentRequest: 'REQUEST_EVENTS'
-        };
-    }
+    const { data: events, isLoading: isEventsLoading } = useGetEventsQuery();
+    const { data: draftCubes, isLoading: isDraftCubesLoading } = useGetDraftCubesQuery();
+    const [deleteEvent, { isLoading: isDeleteEventLoading }] = useDeleteEventMutation();
+    const [deleteDraftCube, { isLoading: isDeleteDraftCubeLoading }] = useDeleteDraftCubeMutation();
 
-    componentWillMount() {
-        this.props.loadDraftCubes();
-        this.props.loadEvents();
-    }
+    const handleDeleteClick = useCallback(
+        async (id) => {
+            try {
+                await deleteEvent(id).unwrap();
 
-    handleDeleteClick(id) {
-        this.setState({ currentRequest: 'DELETE_EVENT' });
-        this.props.deleteEvent(id);
-    }
+                toast.success('Event deleted successfully');
+            } catch (err) {
+                toast.error('Error', err || 'An error occurred deleting the event');
+            }
+        },
+        [deleteEvent]
+    );
 
-    handleDeleteDraftCubeClick(id) {
-        this.setState({ currentRequest: 'DELETE_DRAFT_CUBE' });
-        this.props.deleteDraftCube(id);
-    }
+    const handleDeleteDraftCubeClick = useCallback(
+        async (id) => {
+            try {
+                await deleteDraftCube(id).unwrap();
 
-    render() {
-        if ((this.props.apiState && this.props.apiState.loading) || !this.props.draftCubes) {
-            return 'Loading events, please wait...';
+                toast.success('Draft cube deleted successfully');
+            } catch (err) {
+                toast.error('Error', err || 'An error occurred deleting the draft cube');
+            }
+        },
+        [deleteDraftCube]
+    );
+
+    const renderedDraftCubes = useMemo(() => {
+        {
+            draftCubes &&
+                draftCubes.map((draftCube) => (
+                    <tr key={`draft-cube:${draftCubes.name}`}>
+                        <td>{draftCube.name}</td>
+                        <td>
+                            <button
+                                className='btn btn-primary'
+                                onClick={() =>
+                                    dispatch(navigate(`/events/draft-cubes/${draftCube._id}`))
+                                }
+                            >
+                                Edit
+                            </button>
+                            <button
+                                className='btn btn-danger'
+                                onClick={() => handleDeleteDraftCubeClick(draftCube._id)}
+                            >
+                                Delete{' '}
+                                {isDeleteDraftCubeLoading && (
+                                    <span className='spinner button-spinner' />
+                                )}
+                            </button>
+                        </td>
+                    </tr>
+                ));
         }
+    }, [dispatch, draftCubes, handleDeleteDraftCubeClick, isDeleteDraftCubeLoading]);
 
-        const { draftCubes, events, navigate } = this.props;
-
-        return (
-            <div className='col-xs-12'>
-                <Panel title='Events administration'>
-                    <a className='btn btn-primary' onClick={() => navigate('/events/add')}>
-                        Add event
-                    </a>
-                    <table className='table table-striped'>
-                        <thead>
-                            <tr>
-                                <th className='col-sm-2'>Event</th>
-                                <th className='col-sm-2'>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {events.map((event, index) => (
-                                <tr key={index}>
-                                    <td>{event.name}</td>
-                                    <td>
-                                        <button
-                                            className='btn btn-primary'
-                                            onClick={() => navigate(`/events/${event._id}`)}
-                                        >
-                                            Edit
-                                        </button>
-                                        <button
-                                            className='btn btn-danger'
-                                            onClick={() => this.handleDeleteClick(event._id)}
-                                        >
-                                            Delete
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </Panel>
-                <Panel title='Draft Cubes'>
-                    <a
-                        className='btn btn-primary'
-                        onClick={() => navigate('/events/draft-cubes/add')}
-                    >
-                        Add draft cube
-                    </a>
-                    <table className='table table-striped'>
-                        <thead>
-                            <tr>
-                                <th className='col-sm-2'>Draft Cube</th>
-                                <th className='col-sm-2'>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {draftCubes.map((draftCube) => (
-                                <tr key={`draft-cube:${draftCubes.name}`}>
-                                    <td>{draftCube.name}</td>
-                                    <td>
-                                        <button
-                                            className='btn btn-primary'
-                                            onClick={() =>
-                                                navigate(`/events/draft-cubes/${draftCube._id}`)
-                                            }
-                                        >
-                                            Edit
-                                        </button>
-                                        <button
-                                            className='btn btn-danger'
-                                            onClick={() =>
-                                                this.handleDeleteDraftCubeClick(draftCube._id)
-                                            }
-                                        >
-                                            Delete
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </Panel>
-            </div>
-        );
+    if (isEventsLoading || isDraftCubesLoading) {
+        return <LoadingSpinner label='Loading events...' />;
     }
-}
 
-EventsAdmin.displayName = 'EventsAdmin';
-EventsAdmin.propTypes = {
-    apiState: PropTypes.object,
-    deleteDraftCube: PropTypes.func,
-    deleteEvent: PropTypes.func,
-    draftCubes: PropTypes.array,
-    events: PropTypes.array,
-    loadDraftCubes: PropTypes.func,
-    loadEvents: PropTypes.func,
-    navigate: PropTypes.func
+    return (
+        <div className='w-full'>
+            <Panel title='Events administration'>
+                <div>
+                    <Button color='primary' onClick={() => dispatch(navigate('/events/add'))}>
+                        Add event
+                    </Button>
+                </div>
+                <Table isStriped>
+                    <TableHeader>
+                        <TableColumn>Event</TableColumn>
+                        <TableColumn>Action</TableColumn>
+                    </TableHeader>
+                    <TableBody>
+                        {events.map((event, index) => (
+                            <TableRow key={index}>
+                                <TableCell>{event.name}</TableCell>
+                                <TableCell>
+                                    <div className='flex gap-2'>
+                                        <Button
+                                            color='primary'
+                                            onClick={() =>
+                                                dispatch(navigate(`/events/${event._id}`))
+                                            }
+                                        >
+                                            Edit
+                                        </Button>
+                                        <Button
+                                            color='danger'
+                                            isLoading={isDeleteEventLoading}
+                                            onClick={() => handleDeleteClick(event._id)}
+                                        >
+                                            Delete
+                                        </Button>
+                                    </div>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </Panel>
+            <Panel title='Draft Cubes'>
+                <a
+                    className='btn btn-primary'
+                    onClick={() => dispatch(navigate('/events/draft-cubes/add'))}
+                >
+                    Add draft cube
+                </a>
+                <table className='table table-striped'>
+                    <thead>
+                        <tr>
+                            <th className='col-sm-2'>Draft Cube</th>
+                            <th className='col-sm-2'>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>{renderedDraftCubes}</tbody>
+                </table>
+            </Panel>
+        </div>
+    );
 };
 
-function mapStateToProps(state) {
-    return {
-        apiState: state.api.REQUEST_EVENTS,
-        draftCubes: state.events.draftCubes,
-        events: state.events.events
-    };
-}
-
-export default connect(mapStateToProps, actions)(EventsAdmin);
+export default EventsAdmin;

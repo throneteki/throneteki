@@ -1,25 +1,16 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-class Avatar extends React.Component {
-    render() {
-        let className = classNames('gravatar', {
-            'pull-left': this.props.float
-        });
+const Avatar = ({ float, username }) => {
+    let className = classNames('gravatar', {
+        'pull-left': float
+    });
 
-        if (!this.props.username) {
-            return null;
-        }
-
-        return <img className={className} src={`/img/avatar/${this.props.username}.png`} />;
+    if (!username) {
+        return null;
     }
-}
 
-Avatar.displayName = 'Avatar';
-Avatar.propTypes = {
-    float: PropTypes.bool,
-    username: PropTypes.string
+    return <img className={className} src={`/img/avatar/${username}.png`} />;
 };
 
 export default Avatar;

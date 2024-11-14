@@ -1,12 +1,13 @@
 import AgendaCard from '../../agendacard.js';
-import ApplyClaim from '../../gamesteps/challenge/applyclaim.js';
 import ChallengeTypes from '../../ChallengeTypes.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheFreeFolk extends AgendaCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
                 onClaimApplied: (event) =>
+                    event.challenge &&
                     event.challenge.attackers.some(
                         (attacker) =>
                             attacker.controller === this.controller &&
@@ -41,7 +42,7 @@ class TheFreeFolk extends AgendaCard {
 
         let claim = this.initialClaim.clone();
         claim.challengeType = claimType;
-        this.game.queueStep(new ApplyClaim(this.game, claim));
+        this.game.resolveGameAction(GameActions.applyClaim({ player, claim, game: this.game }));
 
         return true;
     }

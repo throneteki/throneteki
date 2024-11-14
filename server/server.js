@@ -21,7 +21,7 @@ class Server {
         this.configService = ServiceFactory.configService();
     }
 
-    init(options) {
+    async init(options) {
         this.userService = ServiceFactory.userService(options.db, this.configService);
         this.server = http.Server(app);
 
@@ -60,14 +60,10 @@ class Server {
         app.use(bodyParser.json());
         app.use(bodyParser.urlencoded({ extended: false }));
 
-        ApiInit(app, options);
+        await ApiInit(app, options);
 
         app.use(express.static(__dirname + '/../public'));
         app.use(express.static(__dirname + '/../dist'));
-
-        // app.get('*', (req, res) => {
-        //     res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'));
-        // });
 
         // Define error middleware last
         app.use(function (err, req, res, next) {

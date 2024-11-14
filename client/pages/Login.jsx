@@ -1,90 +1,83 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import React, { useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 
-import Link from '../Components/Site/Link';
-import AlertPanel from '../Components/Site/AlertPanel';
 import Panel from '../Components/Site/Panel';
-import Form from '../Components/Form/Form';
-import * as actions from '../actions';
+import Link from '../Components/Site/Link';
+import { useLoginAccountMutation } from '../redux/middleware/api';
+import { accountLoggedIn } from '../redux/reducers/auth';
+import { navigate } from '../redux/reducers/navigation';
+import { sendAuthenticateMessage } from '../redux/reducers/lobby';
+import * as yup from 'yup';
+import { Button, Input } from '@nextui-org/react';
+import { Formik } from 'formik';
+import { toast } from 'react-toastify';
 
-class Login extends React.Component {
-    constructor() {
-        super();
+const Login = () => {
+    const dispatch = useDispatch();
+    const [loginAccount, { isLoading }] = useLoginAccountMutation();
 
-        this.onLogin = this.onLogin.bind(this);
-    }
+    const onLogin = useCallback(
+        async (state) => {
+            try {
+                const response = await loginAccount({
+                    username: state.username,
+                    password: state.password
+                }).unwrap();
 
-    componentWillReceiveProps(props) {
-        if (props.loggedIn) {
-            this.props.authenticateSocket();
+                dispatch(accountLoggedIn(response.user, response.token, response.refreshToken));
+                dispatch(sendAuthenticateMessage(response.token));
 
-            this.props.navigate('/');
-        }
-    }
+                toast.success('Logged in successfully');
 
-    onLogin(state) {
-        this.props.loginAccount({ username: state.username, password: state.password });
-    }
+                dispatch(navigate('/'));
+            } catch (err) {
+                toast.error(err || 'An error occured logging in. Please try again later.');
+            }
+        },
+        [dispatch, loginAccount]
+    );
 
-    render() {
-        let errorBar =
-            this.props.apiSuccess === false ? (
-                <AlertPanel type='error' message={this.props.apiMessage} />
-            ) : null;
+    const schema = yup.object({
+        username: yup.string().required('You must specify a username'),
+        password: yup.string().required('You must specify a password')
+    });
 
-        return (
-            <div className='col-sm-6 col-sm-offset-3'>
-                {errorBar}
-                <Panel title='Login'>
-                    <Form
-                        name='login'
-                        apiLoading={this.props.apiLoading}
-                        buttonClass='col-sm-offset-2 col-sm-3'
-                        buttonText='Log In'
-                        onSubmit={this.onLogin}
-                    >
-                        <div className='form-group'>
-                            <div className='col-sm-offset-2 col-sm-10'>
-                                <Link href='/forgot'>Forgot your password?</Link>
+    return (
+        <div className='md:mx-auto md:w-4/5 lg:w-2/5 mx-2'>
+            <Panel className='mt-1' title='Login'>
+                <Formik
+                    initialValues={{ username: '', password: '' }}
+                    validationSchema={schema}
+                    onSubmit={onLogin}
+                >
+                    {(formProps) => (
+                        <form onSubmit={formProps.handleSubmit}>
+                            <Input
+                                label='Username'
+                                {...formProps.getFieldProps('username')}
+                                isInvalid={formProps.errors.username && formProps.touched.username}
+                                errorMessage={formProps.errors.username}
+                            />
+                            <Input
+                                className='mt-2'
+                                label='Password'
+                                type='password'
+                                isInvalid={formProps.errors.password && formProps.touched.password}
+                                errorMessage={formProps.errors.password}
+                                {...formProps.getFieldProps('password')}
+                            />
+                            <Link href='/forgot'>Forgot your password?</Link>
+                            <div className='mt-2'>
+                                <Button isLoading={isLoading} type='submit' color='primary'>
+                                    Login
+                                </Button>
                             </div>
-                        </div>
-                    </Form>
-                </Panel>
-            </div>
-        );
-    }
-}
-
-Login.displayName = 'Login';
-Login.propTypes = {
-    apiLoading: PropTypes.bool,
-    apiMessage: PropTypes.string,
-    apiSuccess: PropTypes.bool,
-    authenticateSocket: PropTypes.func,
-    loggedIn: PropTypes.bool,
-    loggedInToken: PropTypes.string,
-    loggedInUser: PropTypes.object,
-    login: PropTypes.func,
-    loginAccount: PropTypes.func,
-    navigate: PropTypes.func,
-    socket: PropTypes.object
+                        </form>
+                    )}
+                </Formik>
+            </Panel>
+        </div>
+    );
 };
 
-function mapStateToProps(state) {
-    return {
-        apiLoading: state.api.LOGIN_ACCOUNT ? state.api.LOGIN_ACCOUNT.loading : undefined,
-        apiMessage: state.api.LOGIN_ACCOUNT
-            ? state.api.LOGIN_ACCOUNT.status === 401
-                ? 'Invalid username or password.  Please check and try again'
-                : state.api.LOGIN_ACCOUNT.message
-            : undefined,
-        apiSuccess: state.api.LOGIN_ACCOUNT ? state.api.LOGIN_ACCOUNT.success : undefined,
-        loggedIn: state.account.loggedIn,
-        loggedInToken: state.auth.token,
-        loggedInUser: state.account.loggedInUser,
-        socket: state.lobby.socket
-    };
-}
-
-export default connect(mapStateToProps, actions)(Login);
+export default Login;

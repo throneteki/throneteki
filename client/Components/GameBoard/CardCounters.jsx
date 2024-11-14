@@ -1,42 +1,38 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
-
 import Counter from './Counter';
 
-class CardCounters extends React.Component {
-    render() {
-        if (this.props.counters.length === 0) {
-            return null;
-        }
-
-        let countersClass = classNames('counters', 'ignore-mouse-events', {
-            'many-counters': this.props.counters.length > 3
-        });
-
-        let counterDivs = [];
-
-        for (const [key, counter] of Object.entries(this.props.counters)) {
-            counterDivs.push(
-                <Counter
-                    key={key}
-                    name={counter.name}
-                    icon={counter.icon}
-                    value={counter.count}
-                    fade={counter.fade}
-                    cancel={counter.cancel}
-                    shortName={counter.shortName}
-                />
-            );
-        }
-
-        return <div className={countersClass}>{counterDivs}</div>;
+const CardCounters = ({ counters }) => {
+    if (counters.length === 0) {
+        return null;
     }
-}
 
-CardCounters.displayName = 'CardCounters';
-CardCounters.propTypes = {
-    counters: PropTypes.array.isRequired
+    let counterDivs = [];
+
+    for (const [key, counter] of Object.entries(counters)) {
+        counterDivs.push(
+            <Counter
+                key={key}
+                name={counter.name}
+                icon={counter.icon}
+                value={counter.count}
+                fade={counter.fade}
+                cancel={counter.cancel}
+                shortName={counter.shortName}
+            />
+        );
+    }
+
+    return (
+        <div className='w-full h-full flex items-center justify-center absolute top-0 left-0 z-20'>
+            <div
+                className={
+                    'text-white justify-center flex flex-wrap items-center gap-1 h-auto w-full flex-row ignore-mouse-events'
+                }
+            >
+                {counterDivs}
+            </div>
+        </div>
+    );
 };
 
 export default CardCounters;

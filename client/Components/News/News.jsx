@@ -1,40 +1,24 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-
 import NewsItem from './NewsItem';
+import AlertPanel from '../Site/AlertPanel';
 
-class News extends React.Component {
-    render() {
-        let icons = ['military', 'intrigue', 'power'];
+const News = ({ news }) => {
+    const icons = ['military', 'intrigue', 'power'];
 
-        let iconIndex = 0;
-        let news = this.props.news.map((newsItem) => {
-            let retNews = (
-                <NewsItem
-                    key={newsItem.datePublished}
-                    icon={icons[iconIndex++]}
-                    date={newsItem.datePublished}
-                    text={newsItem.text}
-                />
-            );
-            if (iconIndex === 3) {
-                iconIndex = 0;
-            }
+    let iconIndex = 0;
+    const renderedNews = news.map((newsItem, newsIndex) => {
+        return <NewsItem key={newsIndex} icon={icons[iconIndex++ % 3]} newsItem={newsItem} />;
+    });
 
-            return retNews;
-        });
-
-        if (news.length === 0) {
-            news = <div className='military-container'>There is no site news at the moment</div>;
-        }
-
-        return <div className='news-container'>{news}</div>;
+    if (renderedNews.length === 0) {
+        renderedNews.push(
+            <AlertPanel key={0} variant='info'>
+                There is no site news at the moment
+            </AlertPanel>
+        );
     }
-}
 
-News.displayName = 'News';
-News.propTypes = {
-    news: PropTypes.array
+    return <div className='overflow-y-auto'>{renderedNews}</div>;
 };
 
 export default News;

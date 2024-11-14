@@ -1,134 +1,94 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useCallback } from 'react';
 import classNames from 'classnames';
 
-class DraftCard extends React.Component {
-    constructor() {
-        super();
+const DraftCard = ({
+    card,
+    className,
+    onClick,
+    onMouseOut,
+    onMouseOver,
+    orientation = 'vertical',
+    selected,
+    size,
+    style,
+    wrapped = true
+}) => {
+    const imageUrl = `/img/cards/${card.code}.png`;
 
-        this.onMouseOver = this.onMouseOver.bind(this);
-        this.onMouseOut = this.onMouseOut.bind(this);
+    const sizeClass = {
+        [size]: size !== 'normal'
+    };
 
-        this.state = {
-            showMenu: false
-        };
-    }
+    const statusClass = selected ? 'selected' : undefined;
 
-    onMouseOver(card) {
-        if (this.props.onMouseOver) {
-            this.props.onMouseOver(card);
+    const handleMouseOver = useCallback(() => {
+        if (onMouseOver) {
+            onMouseOver(card);
         }
-    }
+    }, [onMouseOver, card]);
 
-    onMouseOut() {
-        if (this.props.onMouseOut) {
-            this.props.onMouseOut();
+    const handleMouseOut = useCallback(() => {
+        if (onMouseOut) {
+            onMouseOut();
         }
-    }
+    }, [onMouseOut]);
 
-    onClick(event, card) {
-        if (this.props.onClick) {
-            this.props.onClick(card);
+    const handleClick = useCallback(() => {
+        if (onClick) {
+            onClick(card);
         }
-    }
+    }, [onClick, card]);
 
-    getCard() {
-        if (!this.props.card) {
+    const getCard = () => {
+        if (!card) {
             return <div />;
         }
 
-        let cardClass = classNames(
+        const cardClass = classNames(
             'card',
-            `card-type-${this.props.card.type}`,
-            this.props.className,
-            this.sizeClass,
-            this.statusClass,
+            `card-type-${card.type}`,
+            className,
+            sizeClass,
+            statusClass,
             {
-                'custom-card': this.props.card.code && this.props.card.code.startsWith('custom'),
-                horizontal: this.props.orientation !== 'vertical',
-                vertical: this.props.orientation === 'vertical'
+                'custom-card': card.code && card.code.startsWith('custom'),
+                horizontal: orientation !== 'vertical',
+                vertical: orientation === 'vertical'
             }
         );
-        let imageClass = classNames('card-image', this.sizeClass, {
-            horizontal: this.props.card.type === 'plot',
-            vertical: this.props.card.type !== 'plot'
+        const imageClass = classNames('card-image', sizeClass, {
+            horizontal: card.type === 'plot',
+            vertical: card.type !== 'plot'
         });
 
-        let image = <img className={imageClass} src={this.imageUrl} />;
+        const image = <img className={imageClass} src={imageUrl} />;
 
         return (
             <div className='card-frame'>
                 <div
                     className={cardClass}
-                    onMouseOver={this.onMouseOver.bind(this, this.props.card)}
-                    onMouseOut={this.onMouseOut}
-                    onClick={(ev) => this.onClick(ev, this.props.card)}
+                    onMouseOver={handleMouseOver}
+                    onMouseOut={handleMouseOut}
+                    onClick={handleClick}
                 >
                     <div>
-                        <span className='card-name'>{this.props.card.name}</span>
+                        <span className='card-name'>{card.name}</span>
                         {image}
                     </div>
                 </div>
             </div>
         );
+    };
+
+    if (wrapped) {
+        return (
+            <div className='card-wrapper' style={style}>
+                {getCard()}
+            </div>
+        );
     }
 
-    get imageUrl() {
-        let image = `${this.props.card.code}.png`;
-
-        return '/img/cards/' + image;
-    }
-
-    get sizeClass() {
-        return {
-            [this.props.size]: this.props.size !== 'normal'
-        };
-    }
-
-    get statusClass() {
-        if (!this.props.selected) {
-            return undefined;
-        }
-
-        if (this.props.selected) {
-            return 'selected';
-        }
-
-        return 'undefined';
-    }
-
-    render() {
-        if (this.props.wrapped) {
-            return (
-                <div className='card-wrapper' style={this.props.style}>
-                    {this.getCard()}
-                </div>
-            );
-        }
-
-        return this.getCard();
-    }
-}
-
-DraftCard.displayName = 'Card';
-DraftCard.propTypes = {
-    card: PropTypes.shape({
-        code: PropTypes.string,
-        name: PropTypes.string
-    }).isRequired,
-    className: PropTypes.string,
-    onClick: PropTypes.func,
-    onMouseOut: PropTypes.func,
-    onMouseOver: PropTypes.func,
-    orientation: PropTypes.oneOf(['horizontal', 'kneeled', 'vertical']),
-    selected: PropTypes.bool,
-    size: PropTypes.string,
-    style: PropTypes.object,
-    wrapped: PropTypes.bool
-};
-DraftCard.defaultProps = {
-    orientation: 'vertical',
-    wrapped: true
+    return getCard();
 };
 
 export default DraftCard;

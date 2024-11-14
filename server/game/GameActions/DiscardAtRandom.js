@@ -8,7 +8,11 @@ class DiscardAtRandom extends GameAction {
     }
 
     canChangeGameState({ amount = 1, player }) {
-        return amount >= 1 && player.hand.length >= 1;
+        return (
+            amount >= 1 &&
+            player.hand.length >= 1 &&
+            player.hand.some((card) => card.allowGameAction('discardAtRandom', { card }))
+        );
     }
 
     createEvent({

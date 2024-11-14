@@ -1,136 +1,131 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import $ from 'jquery';
-import { toastr } from 'react-redux-toastr';
-import { bindActionCreators } from 'redux';
 
-import * as actions from '../../actions';
 import GameChat from '../GameBoard/GameChat';
 import CardTypeGroups from '../Decks/CardTypeGroups';
 import CardZoom from '../GameBoard/CardZoom';
 import DraftCard from './DraftCard';
 import Panel from '../Site/Panel';
 import DraftPlayerPrompt from './DraftPlayerPrompt';
+import { navigate } from '../../redux/reducers/navigation';
+import { sendLeaveGameMessage } from '../../redux/reducers/game';
 
-class DraftingTable extends React.Component {
-    constructor() {
-        super();
+const DraftingTable = () => {
+    const [selectedGroupBy, setSelectedGroupBy] = useState('type');
+    const [spectating, setSpectating] = useState(false);
 
-        this.onMouseOut = this.onMouseOut.bind(this);
-        this.onMouseOver = this.onMouseOver.bind(this);
-        this.onLeaveClick = this.onLeaveClick.bind(this);
-        this.sendChatMessage = this.sendChatMessage.bind(this);
-        this.onPromptButtonClick = this.onPromptButtonClick.bind(this);
+    const { currentGame, cardToZoom, cards, user } = useSelector((state) => ({
+        currentGame: state.lobby.currentGame,
+        cardToZoom: state.cards.zoomCard,
+        cards: state.cards.cards,
+        socket: state.lobby.socket,
+        user: state.account.user
+    }));
 
-        this.state = {
-            selectedGroupBy: 'type'
-        };
-    }
+    const dispatch = useDispatch();
 
-    componentDidMount() {
-        this.updateContextMenu(this.props);
-        $('.modal-backdrop').remove();
-    }
+    const selectCard = (card) => {
+        dispatch(sendGameMessage('chooseCard', card));
+    };
 
-    componentWillReceiveProps(props) {
-        this.updateContextMenu(props);
-    }
+    const renderHand = (hand, chosenCardIndex) => {
+        if (hand) {
+            return hand.map((card, index) => (
+                <DraftCard
+                    key={card.uuid}
+                    card={cards[card]}
+                    onClick={() => selectCard(card)}
+                    onMouseOut={onMouseOut}
+                    onMouseOver={() => onMouseOver(cards[card])}
+                    selected={index === chosenCardIndex}
+                    size={user.settings.cardSize}
+                    orientation={cards[card].type === 'plot' ? 'horizontal' : 'vertical'}
+                />
+            ));
+        }
+    };
 
-    onMouseOver(card) {
-        this.props.zoomCard(card);
-    }
+    const setContextMenu = useCallback(
+        (menu) => {
+            dispatch(setContextMenu(menu));
+        },
+        [dispatch]
+    );
 
-    onMouseOut() {
-        this.props.clearZoom();
-    }
-
-    handleChangeGroupBy(value) {
-        this.setState({ selectedGroupBy: value });
-    }
-
-    sendChatMessage(message) {
-        this.props.sendGameMessage('chat', message);
-    }
-
-    selectCard(card) {
-        this.props.sendGameMessage('chooseCard', card);
-    }
-
-    onPromptButtonClick(button) {
-        this.props.sendGameMessage(button.command, button.arg);
-    }
-
-    updateContextMenu(props) {
-        if (!props.currentGame || !props.user) {
+    const updateContextMenu = useCallback(() => {
+        if (!currentGame || !user) {
             return;
         }
 
-        let thisPlayer = props.currentGame.players[props.user.username];
+        let thisPlayer = currentGame.players[user.username];
 
         if (thisPlayer) {
-            this.setState({ spectating: false });
+            setSpectating(false);
         } else {
-            this.setState({ spectating: true });
+            setSpectating(true);
         }
 
-        let menuOptions = [{ text: 'Leave Game', onClick: this.onLeaveClick }];
+        let menuOptions = [{ text: 'Leave Game', onClick: onLeaveClick }];
 
-        if (props.currentGame && props.currentGame.started) {
-            let spectators = props.currentGame.spectators.map((spectator) => {
+        if (currentGame && currentGame.started) {
+            let spectators = currentGame.spectators.map((spectator) => {
                 return <li key={spectator.id}>{spectator.name}</li>;
             });
 
             let spectatorPopup = <ul className='spectators-popup absolute-panel'>{spectators}</ul>;
 
             menuOptions.unshift({
-                text: 'Spectators: ' + props.currentGame.spectators.length,
+                text: 'Spectators: ' + currentGame.spectators.length,
                 popup: spectatorPopup
             });
 
-            this.setContextMenu(menuOptions);
+            setContextMenu(menuOptions);
         } else {
-            this.setContextMenu([]);
+            setContextMenu([]);
         }
-    }
+    }, [currentGame, onLeaveClick, setContextMenu, user]);
 
-    setContextMenu(menu) {
-        if (this.props.setContextMenu) {
-            this.props.setContextMenu(menu);
-        }
-    }
+    useEffect(() => {
+        updateContextMenu();
+        $('.modal-backdrop').remove();
+    }, [currentGame, user, updateContextMenu]);
 
-    onLeaveClick() {
-        if (!this.state.spectating && this.isDraftActive()) {
-            toastr.confirm('Your draft is not finished, are you sure you want to leave?', {
-                onOk: () => {
-                    this.props.sendGameMessage('leavegame');
-                    this.props.closeGameSocket();
-                }
-            });
+    const onMouseOver = (card) => {
+        dispatch(zoomCard(card));
+    };
 
-            return;
-        }
+    const onMouseOut = () => {
+        dispatch(clearZoom());
+    };
 
-        this.props.sendGameMessage('leavegame');
-        this.props.closeGameSocket();
-    }
+    const handleChangeGroupBy = (value) => {
+        setSelectedGroupBy(value);
+    };
 
-    isDraftActive() {
-        if (!this.props.currentGame || !this.props.user) {
+    const sendChatMessage = (message) => {
+        dispatch(sendGameMessage(message));
+    };
+
+    const onPromptButtonClick = (button) => {
+        dispatch(sendGameMessage(button.command, button.arg));
+    };
+
+    const isDraftActive = useCallback(() => {
+        if (!currentGame || !user) {
             return false;
         }
 
-        if (this.props.currentGame.draftingTable.draftFinished) {
+        if (currentGame.draftingTable.draftFinished) {
             return false;
         }
 
-        let thisPlayer = this.props.currentGame.players[this.props.user.username];
+        let thisPlayer = currentGame.players[user.username];
         if (!thisPlayer) {
-            thisPlayer = Object.values(this.props.currentGame.players)[0];
+            thisPlayer = Object.values(currentGame.players)[0];
         }
 
-        let otherPlayers = Object.values(this.props.currentGame.players).filter((player) => {
+        let otherPlayers = Object.values(currentGame.players).filter((player) => {
             return player.name !== thisPlayer.name;
         });
 
@@ -143,162 +138,116 @@ class DraftingTable extends React.Component {
         }
 
         return true;
+    }, [currentGame, user]);
+
+    const onLeaveClick = useCallback(() => {
+        if (!spectating && isDraftActive()) {
+            toastr.confirm('Your draft is not finished, are you sure you want to leave?', {
+                onOk: () => {
+                    dispatch(sendLeaveGameMessage());
+                }
+            });
+
+            return;
+        }
+
+        dispatch(sendLeaveGameMessage());
+    }, [dispatch, isDraftActive, spectating]);
+
+    if (!currentGame || !cards || !currentGame.started) {
+        return <div>Waiting for server...</div>;
     }
 
-    renderHand(hand, chosenCardIndex) {
-        if (hand) {
-            return hand.map((card, index) => (
-                <DraftCard
-                    key={card.uuid}
-                    card={this.props.cards[card]}
-                    onClick={() => this.selectCard(card)}
-                    onMouseOut={this.onMouseOut}
-                    onMouseOver={this.onMouseOver}
-                    selected={index === chosenCardIndex}
-                    size={this.props.user.settings.cardSize}
-                    orientation={this.props.cards[card].type === 'plot' ? 'horizontal' : 'vertical'}
-                />
-            ));
-        }
+    if (!user) {
+        dispatch(navigate('/'));
+        return <div>You are not logged in, redirecting...</div>;
     }
 
-    render() {
-        if (!this.props.currentGame || !this.props.cards || !this.props.currentGame.started) {
-            return <div>Waiting for server...</div>;
-        }
+    const activePlayer = currentGame.draftingTable.activePlayer;
+    const { chosenCardIndex, deck, hand } = activePlayer;
 
-        if (!this.props.user) {
-            this.props.navigate('/');
-            return <div>You are not logged in, redirecting...</div>;
-        }
+    const deckWithCards = deck.map((cardQuantity) => ({
+        count: cardQuantity.count,
+        code: cardQuantity.code,
+        card: cards[cardQuantity.code]
+    }));
 
-        const activePlayer = this.props.currentGame.draftingTable.activePlayer;
-        const { chosenCardIndex, deck, hand } = activePlayer;
-
-        const deckWithCards = deck.map((cardQuantity) => ({
-            count: cardQuantity.count,
-            code: cardQuantity.code,
-            card: this.props.cards[cardQuantity.code]
-        }));
-
-        return (
-            <div className='game-board'>
-                <div className='main-window'>
-                    <CardZoom
-                        imageUrl={
-                            this.props.cardToZoom
-                                ? '/img/cards/' + this.props.cardToZoom.code + '.png'
-                                : ''
-                        }
-                        orientation={
-                            this.props.cardToZoom
-                                ? this.props.cardToZoom.type === 'plot'
-                                    ? 'horizontal'
-                                    : 'vertical'
+    return (
+        <div className='absolute bottom-0 left-0 top-0 right-0 flex flex-col justify-between'>
+            <div>
+                <CardZoom
+                    imageUrl={cardToZoom ? '/img/cards/' + cardToZoom.code + '.png' : ''}
+                    orientation={
+                        cardToZoom
+                            ? cardToZoom.type === 'plot'
+                                ? 'horizontal'
                                 : 'vertical'
-                        }
-                        show={!!this.props.cardToZoom}
-                        cardName={this.props.cardToZoom ? this.props.cardToZoom.name : null}
-                        card={
-                            this.props.cardToZoom
-                                ? this.props.cards[this.props.cardToZoom.code]
-                                : null
-                        }
-                    />
-                    <div className='board-middle'>
-                        <div className='draft-current-cards'>
-                            <Panel title='Current Hand'>
-                                {this.renderHand(hand, chosenCardIndex)}
-                            </Panel>
-                        </div>
-                        <div className='draft-prompt-area'>
-                            <div className='draft-inset-pane'>
-                                <DraftPlayerPrompt
-                                    cards={this.props.cards}
-                                    buttons={activePlayer.buttons}
-                                    promptText={activePlayer.menuTitle}
-                                    promptTitle={activePlayer.promptTitle}
-                                    onButtonClick={this.onPromptButtonClick}
-                                    onMouseOver={this.onMouseOver}
-                                    onMouseOut={this.onMouseOut}
-                                    user={this.props.user}
-                                />
-                            </div>
-                        </div>
-                        <div className='draft-deck'>
-                            <Panel title='Drafted Cards'>
-                                <div style={{ textAlign: 'right' }}>
-                                    <label>
-                                        Group by:
-                                        <select
-                                            value={this.state.selectedGroupBy}
-                                            onChange={(event) =>
-                                                this.handleChangeGroupBy(event.target.value)
-                                            }
-                                        >
-                                            <option value='type'>Type</option>
-                                            <option value='cost'>Cost</option>
-                                        </select>
-                                    </label>
-                                </div>
-                                <CardTypeGroups
-                                    cards={deckWithCards}
-                                    displayFactionIcons
-                                    groupBy={this.state.selectedGroupBy}
-                                    onCardMouseOut={this.onMouseOut}
-                                    onCardMouseOver={this.onMouseOver}
-                                    sortCardsBy='faction'
-                                />
-                            </Panel>
-                        </div>
+                            : 'vertical'
+                    }
+                    show={!!cardToZoom}
+                    cardName={cardToZoom ? cardToZoom.name : null}
+                    card={cardToZoom ? cards[cardToZoom.code] : null}
+                />
+                <div className='board-middle'>
+                    <div className='draft-current-cards'>
+                        <Panel title='Current Hand'>{renderHand(hand, chosenCardIndex)}</Panel>
                     </div>
-                    <div className='right-side'>
-                        <div className='gamechat'>
-                            <GameChat
-                                key='gamechat'
-                                messages={this.props.currentGame.messages}
-                                onCardMouseOut={this.onMouseOut}
-                                onCardMouseOver={this.onMouseOver}
-                                onSendChat={this.sendChatMessage}
-                                muted={this.props.currentGame.muteSpectators}
+                    <div className='draft-prompt-area'>
+                        <div className='draft-inset-pane'>
+                            <DraftPlayerPrompt
+                                cards={cards}
+                                buttons={activePlayer.buttons}
+                                promptText={activePlayer.menuTitle}
+                                promptTitle={activePlayer.promptTitle}
+                                onButtonClick={onPromptButtonClick}
+                                onMouseOver={onMouseOver}
+                                onMouseOut={onMouseOut}
+                                user={user}
                             />
                         </div>
                     </div>
+                    <div className='draft-deck'>
+                        <Panel title='Drafted Cards'>
+                            <div style={{ textAlign: 'right' }}>
+                                <label>
+                                    Group by:
+                                    <select
+                                        value={selectedGroupBy}
+                                        onChange={(event) =>
+                                            handleChangeGroupBy(event.target.value)
+                                        }
+                                    >
+                                        <option value='type'>Type</option>
+                                        <option value='cost'>Cost</option>
+                                    </select>
+                                </label>
+                            </div>
+                            <CardTypeGroups
+                                cards={deckWithCards}
+                                displayFactionIcons
+                                groupBy={selectedGroupBy}
+                                onCardMouseOut={onMouseOut}
+                                onCardMouseOver={onMouseOver}
+                                sortCardsBy='faction'
+                            />
+                        </Panel>
+                    </div>
+                </div>
+                <div className='right-side'>
+                    <div className='gamechat'>
+                        <GameChat
+                            key='gamechat'
+                            messages={currentGame.messages}
+                            onCardMouseOut={onMouseOut}
+                            onCardMouseOver={onMouseOver}
+                            onSendChat={sendChatMessage}
+                            muted={currentGame.muteSpectators}
+                        />
+                    </div>
                 </div>
             </div>
-        );
-    }
-}
-
-DraftingTable.displayName = 'DraftingTable';
-DraftingTable.propTypes = {
-    cardToZoom: PropTypes.object,
-    cards: PropTypes.object,
-    clearZoom: PropTypes.func,
-    closeGameSocket: PropTypes.func,
-    currentGame: PropTypes.object,
-    navigate: PropTypes.func,
-    sendGameMessage: PropTypes.func,
-    setContextMenu: PropTypes.func,
-    user: PropTypes.object,
-    zoomCard: PropTypes.func
+        </div>
+    );
 };
 
-function mapStateToProps(state) {
-    return {
-        currentGame: state.lobby.currentGame,
-        cardToZoom: state.cards.zoomCard,
-        cards: state.cards.cards,
-        socket: state.lobby.socket,
-        user: state.account.user
-    };
-}
-
-function mapDispatchToProps(dispatch) {
-    let boundActions = bindActionCreators(actions, dispatch);
-    boundActions.dispatch = dispatch;
-
-    return boundActions;
-}
-
-export default connect(mapStateToProps, mapDispatchToProps, null, { withRef: true })(DraftingTable);
+export default DraftingTable;

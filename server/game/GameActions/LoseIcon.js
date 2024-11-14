@@ -6,10 +6,8 @@ class LoseIcon extends GameAction {
     }
 
     canChangeGameState({ card, applying = true }) {
-        //when the effect is applying, check if the card´s location is play area
-        //when the effect is unapplying, skip the check for the location as we want the effect to be removed in any case
-        let playAreaCheck = applying ? card.location === 'play area' : true;
-        return playAreaCheck && card.getType() === 'character';
+        // Checks if effect is either unapplying (which could happen in or out of play), or character is in play area
+        return card.getType() === 'character' && (!applying || card.location === 'play area');
     }
 
     createEvent({ card, icon, applying = true }) {

@@ -4,13 +4,15 @@ describe('Khal Drogo (Core)', function () {
             const deck = this.buildDeck('targaryen', [
                 'A Noble Cause',
                 'A Noble Cause',
-                'Khal Drogo (Core)'
+                'Khal Drogo (Core)',
+                'Braided Warrior'
             ]);
             this.player1.selectDeck(deck);
             this.player2.selectDeck(deck);
             this.startGame();
             this.keepStartingHands();
             this.player1.clickCard('Khal Drogo', 'hand');
+            this.player1.clickCard('Braided Warrior', 'hand');
             this.completeSetup();
             this.player1.selectPlot('A Noble Cause');
             this.player2.selectPlot('A Noble Cause');

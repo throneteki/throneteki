@@ -105,26 +105,26 @@ export const init = function (server, options) {
         wrapAsync(async (req, res, next) => {
             let message = validateUserName(req.body.username);
             if (message) {
-                res.send({ success: false, message: message });
+                res.status(400).send({ success: false, message: message });
 
                 return next();
             }
 
             message = validateEmail(req.body.email);
             if (message) {
-                res.send({ success: false, message: message });
+                res.status(400).send({ success: false, message: message });
                 return next();
             }
 
             message = validatePassword(req.body.password);
             if (message) {
-                res.send({ success: false, message: message });
+                res.status(400).send({ success: false, message: message });
                 return next();
             }
 
             let user = await userService.getUserByEmail(req.body.email);
             if (user) {
-                res.send({
+                res.status(400).send({
                     success: false,
                     message: 'An account with that email already exists, please use another'
                 });
@@ -134,7 +134,7 @@ export const init = function (server, options) {
 
             user = await userService.getUserByUsername(req.body.username);
             if (user) {
-                res.send({
+                res.status(400).send({
                     success: false,
                     message: 'An account with that name already exists, please choose another'
                 });
@@ -162,7 +162,7 @@ export const init = function (server, options) {
                             domain,
                             req.body.username
                         );
-                        res.send({
+                        res.status(400).send({
                             success: false,
                             message:
                                 'One time use email services are not permitted on this site.  Please use a real email address'
@@ -198,7 +198,7 @@ export const init = function (server, options) {
             try {
                 let lookup = await banlistService.getEntryByIp(ip);
                 if (lookup) {
-                    return res.send({
+                    return res.status(400).send({
                         success: false,
                         message:
                             'An error occurred registering your account, please try again later.'
@@ -207,7 +207,7 @@ export const init = function (server, options) {
             } catch (err) {
                 logger.error(err);
 
-                return res.send({
+                return res.status(400).send({
                     success: false,
                     message: 'An error occurred registering your account, please try again later.'
                 });
@@ -235,7 +235,7 @@ export const init = function (server, options) {
                 await sendEmail(user.email, `${appName} - Account activation`, emailText);
             }
 
-            res.send({ success: true, requireActivation: requireActivation });
+            res.send({ success: true, data: requireActivation });
 
             await downloadAvatar(user);
         })
@@ -245,7 +245,7 @@ export const init = function (server, options) {
         '/api/account/activate',
         wrapAsync(async (req, res, next) => {
             if (!req.body.id || !req.body.token) {
-                return res.send({ success: false, message: 'Invalid parameters' });
+                return res.status(400).send({ success: false, message: 'Invalid parameters' });
             }
 
             if (!req.body.id.match(/^[a-f\d]{24}$/i)) {
@@ -315,9 +315,9 @@ export const init = function (server, options) {
         wrapAsync(async (req, res) => {
             let user = await userService.getUserByUsername(req.body.username);
             if (user) {
-                return res.send({
-                    success: true,
-                    message: 'An account with that name already exists, please choose another'
+                return res.status(400).send({
+                    success: false,
+                    data: 'An account with that name already exists, please choose another'
                 });
             }
 
@@ -355,7 +355,7 @@ export const init = function (server, options) {
             let userDetails = user.getWireSafeDetails();
 
             if (!user.patreon || !user.patreon.refresh_token) {
-                return res.send({ success: true, user: userDetails });
+                return res.send({ success: true, data: userDetails });
             }
 
             userDetails.patreon = await patreonService.getPatreonStatusForUser(user);
@@ -365,13 +365,13 @@ export const init = function (server, options) {
 
                 let ret = await patreonService.refreshTokenForUser(user);
                 if (!ret) {
-                    return res.send({ success: true, user: userDetails });
+                    return res.send({ success: true, data: userDetails });
                 }
 
                 userDetails.patreon = await patreonService.getPatreonStatusForUser(user);
 
                 if (userDetails.patreon === 'none') {
-                    return res.send({ success: true, user: userDetails });
+                    return res.send({ success: true, data: userDetails });
                 }
             }
 
@@ -385,7 +385,7 @@ export const init = function (server, options) {
                 userDetails.permissions.isSupporter = req.user.permissions.isSupporter = false;
             }
 
-            res.send({ success: true, user: userDetails });
+            res.send({ success: true, data: userDetails });
         })
     );
 
@@ -458,9 +458,11 @@ export const init = function (server, options) {
 
             res.send({
                 success: true,
-                user: userObj,
-                token: authToken,
-                refreshToken: refreshToken
+                data: {
+                    user: userObj,
+                    token: authToken,
+                    refreshToken: refreshToken
+                }
             });
         })
     );
@@ -526,7 +528,7 @@ export const init = function (server, options) {
 
             await userService.updateRefreshTokenUsage(refreshToken.id, ip);
 
-            res.send({ success: true, user: userObj, token: authToken });
+            res.send({ success: true, data: { user: userObj, token: authToken } });
         })
     );
 
@@ -649,7 +651,7 @@ export const init = function (server, options) {
         '/api/account/:username',
         passport.authenticate('jwt', { session: false }),
         wrapAsync(async (req, res) => {
-            let userToSet = req.body.data;
+            let userToSet = req.body;
 
             if (req.user.username !== req.params.username) {
                 return res.status(403).send({ message: 'Unauthorized' });
@@ -689,7 +691,7 @@ export const init = function (server, options) {
             res.send(
                 Object.assign(
                     { success: true },
-                    { user: updatedUser.getWireSafeDetails(), token: authToken }
+                    { data: { user: updatedUser.getWireSafeDetails(), token: authToken } }
                 )
             );
         })
@@ -709,7 +711,7 @@ export const init = function (server, options) {
 
             res.send({
                 success: true,
-                tokens: tokens
+                data: tokens
                     .sort((a, b) => {
                         return a.lastUsed < b.lastUsed;
                     })
@@ -751,8 +753,7 @@ export const init = function (server, options) {
 
             res.send({
                 success: true,
-                message: 'Session deleted successfully',
-                tokenId: req.params.id
+                data: { message: 'Session deleted successfully', tokenId: req.params.id }
             });
         })
     );
@@ -768,7 +769,7 @@ export const init = function (server, options) {
             }
 
             let blockList = user.blockList || [];
-            res.send({ success: true, blockList: blockList.sort() });
+            res.send({ success: true, data: blockList.sort() });
         })
     );
 
@@ -803,9 +804,11 @@ export const init = function (server, options) {
 
             res.send({
                 success: true,
-                message: 'Block list entry added successfully',
-                username: lowerCaseUser,
-                user: updatedUser.getWireSafeDetails()
+                data: {
+                    message: 'Block list entry added successfully',
+                    username: lowerCaseUser,
+                    user: updatedUser.getWireSafeDetails()
+                }
             });
         })
     );
@@ -849,9 +852,11 @@ export const init = function (server, options) {
 
             res.send({
                 success: true,
-                message: 'Block list entry removed successfully',
-                username: lowerCaseUser,
-                user: updatedUser.getWireSafeDetails()
+                data: {
+                    message: 'Block list entry removed successfully',
+                    username: lowerCaseUser,
+                    user: updatedUser.getWireSafeDetails()
+                }
             });
         })
     );
@@ -890,8 +895,8 @@ export const init = function (server, options) {
                 return res.send({ success: false, message: 'Code is required' });
             }
 
-            let ret = await patreonService.linkAccount(req.params.username, req.body.code);
-            if (!ret) {
+            user = await patreonService.linkAccount(req.params.username, req.body.code);
+            if (!user) {
                 return res.send({
                     success: false,
                     message:
@@ -899,7 +904,6 @@ export const init = function (server, options) {
                 });
             }
 
-            user.patreon = ret;
             let status = await patreonService.getPatreonStatusForUser(user);
 
             if (status === 'pledged' && !user.permissions.isSupporter) {

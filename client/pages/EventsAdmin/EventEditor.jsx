@@ -1,217 +1,135 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import Input from '../../Components/Form/Input';
-import Checkbox from '../../Components/Form/Checkbox';
-import Select from '../../Components/Form/Select';
-import Typeahead from '../../Components/Form/Typeahead';
-import TextArea from '../../Components/Form/TextArea';
-import ApiStatus from '../../Components/Site/ApiStatus';
+import { useDispatch } from 'react-redux';
+import {
+    useGetCardsQuery,
+    useGetDraftCubesQuery,
+    useGetEventQuery,
+    useGetPacksQuery,
+    useGetRestrictedListQuery,
+    useSaveEventMutation
+} from '../../redux/middleware/api';
+import Panel from '../../Components/Site/Panel';
+import AlertPanel from '../../Components/Site/AlertPanel';
+import { navigate } from '../../redux/reducers/navigation';
+import { Button, Input, Select, SelectItem, Switch, Textarea } from '@nextui-org/react';
+import { toast } from 'react-toastify';
 
-class EventEditor extends React.Component {
-    constructor(props) {
-        super(props);
-
-        let event = {};
-        event = Object.assign(
-            event,
-            {
-                draftOptions: {
-                    draftCubeId: props.draftCubes.length > 0 && props.draftCubes[0]._id,
-                    numOfRounds: 3
-                },
-                format: 'standard',
-                useEventGameOptions: false,
-                eventGameOptions: {},
-                restricted: [],
-                banned: [],
-                restrictSpectators: false,
-                restrictTableCreators: false,
-                validTableCreators: [],
-                validSpectators: [],
-                lockDecks: false
-            },
-            props.event
-        );
-        this.state = {
-            eventId: event._id,
-            name: event.name,
-            draftOptions: event.draftOptions,
-            format: event.format,
-            restricted: event.restricted,
-            banned: event.banned,
-            pods: event.pods,
-            restrictedListText: this.formatListTextForCards(props.cards, event.restricted),
-            bannedListText: this.formatListTextForCards(props.cards, event.banned),
-            podsText: event.pods ? JSON.stringify(event.pods) : '',
-            useEventGameOptions: event.useEventGameOptions,
-            eventGameOptions: event.eventGameOptions,
-            restrictSpectators: event.restrictSpectators,
-            restrictTableCreators: event.restrictTableCreators,
-            validSpectators: event.validSpectators,
-            validSpectatorsText: this.formatListTextForUsers(event.validSpectators),
-            lockDecks: event.lockDecks,
-            validTableCreators: event.validTableCreators,
-            validTableCreatorsText: this.formatListTextForUsers(event.validTableCreators)
-        };
+const formatListTextForCards = (cards, cardCodes) => {
+    if (!cardCodes || !cards) {
+        return '';
     }
 
-    getEventFromState() {
-        let defaultRestrictedList = null;
-        if (this.state.format === 'standard') {
-            defaultRestrictedList = this.props.restrictedLists.find(
-                (rl) => rl.cardSet === 'redesign'
-            ).name;
-        } else if (this.state.format === 'valyrian') {
-            defaultRestrictedList = this.props.restrictedLists.find(
-                (rl) => rl.cardSet === 'original'
-            ).name;
-        }
+    const allCards = Object.values(cards);
+    const cardCodeToNameIndex = allCards.reduce((index, card) => {
+        index[card.code] = card.label;
+        return index;
+    }, {});
 
-        return {
-            _id: this.state.eventId,
-            name: this.state.name,
-            draftOptions: this.state.draftOptions,
-            format: this.state.format,
-            useDefaultRestrictedList: ['standard', 'valyrian'].includes(this.state.format),
-            defaultRestrictedList,
-            useEventGameOptions: this.state.useEventGameOptions,
-            eventGameOptions: this.state.eventGameOptions,
-            restricted: this.state.restricted,
-            banned: this.state.banned,
-            pods: this.state.pods,
-            restrictSpectators: this.state.restrictSpectators,
-            restrictTableCreators: this.state.restrictTableCreators,
-            validSpectators: this.state.validSpectators,
-            lockDecks: this.state.lockDecks,
-            validTableCreators: this.state.validTableCreators
-        };
+    return cardCodes.map((cardCode) => `${cardCodeToNameIndex[cardCode]}\n`).join('');
+};
+
+const formatListTextForUsers = (users) => {
+    if (!users) {
+        return '';
     }
 
-    formatListTextForUsers(users) {
-        if (!users) {
-            return '';
-        }
+    return users.map((user) => `${user}\n`).join('');
+};
 
-        return users.map((user) => `${user}\n`).join('');
-    }
+const EventEditor = ({ eventId }) => {
+    const { data: cards, isLoading: isCardsLoading } = useGetCardsQuery();
+    const { data: restrictedLists, isLoading: isRestrictedListsLoading } =
+        useGetRestrictedListQuery();
+    const { data: packs, isLoading: isPacksLoading } = useGetPacksQuery();
+    const [saveEvent, { isLoading: isSaveLoading }] = useSaveEventMutation();
+    const { data: draftCubes, isLoading: isDraftCubesLoading } = useGetDraftCubesQuery();
+    const { data: event, isLoading, error } = useGetEventQuery(eventId, { skip: !eventId });
 
-    formatListTextForCards(cards, cardCodes) {
-        if (!cardCodes || !cards) {
-            return '';
-        }
+    const allCards = useMemo(() => cards && Object.values(cards), [cards]);
 
-        const allCards = Object.values(cards);
-        const cardCodeToNameIndex = allCards.reduce((index, card) => {
-            index[card.code] = card.label;
-            return index;
-        }, {});
+    const standardRL = useMemo(
+        () =>
+            restrictedLists &&
+            restrictedLists.find((rl) => rl.official && rl.cardSet === 'redesign'),
+        [restrictedLists]
+    );
+    const valyrianRL = useMemo(
+        () =>
+            restrictedLists &&
+            restrictedLists.find((rl) => rl.official && rl.cardSet === 'original'),
+        [restrictedLists]
+    );
 
-        return cardCodes.map((cardCode) => `${cardCodeToNameIndex[cardCode]}\n`).join('');
-    }
+    const formats = useMemo(
+        () => [
+            { name: standardRL?.name, value: 'standard' },
+            { name: valyrianRL?.name, value: 'valyrian' },
+            { name: 'Draft', value: 'draft' },
+            { name: 'Custom Joust', value: 'custom-joust' }
+        ],
+        [standardRL?.name, valyrianRL?.name]
+    );
 
-    formatCardListItem(card) {
-        return card.label;
-    }
+    const [name, setName] = useState(event?.name);
+    const [format, setFormat] = useState(event?.format || 'standard');
+    const [restricted, setRestricted] = useState(event?.restricted || []);
+    const [restrictedListText, setRestrictedListText] = useState(
+        (event && formatListTextForCards(cards, event.restricted)) || ''
+    );
+    const [banned, setBanned] = useState(event?.banned || []);
+    const [bannedListText, setBannedListText] = useState(
+        (event && formatListTextForCards(cards, event.banned)) || ''
+    );
+    const [pods, setPods] = useState(event?.pods);
+    const [podsText, setPodsText] = useState(event?.pods ? JSON.stringify(event.pods) : '');
+    const [lockDecks, setLockDecks] = useState(!!event?.lockDecks);
+    const [useEventGameOptions, setUseEventGameOptions] = useState(!!event?.useEventGameOptions);
+    const [spectators, setSpectators] = useState();
+    const [muteSpectators, setMuteSpectators] = useState();
+    const [showHand, setShowHand] = useState();
+    const [useGameTimeLimit, setUseGameTimeLimit] = useState();
+    const [useChessClocks, setUseChessClocks] = useState();
+    const [gameTimeLimit, setGameTimeLimit] = useState();
+    const [chessClockTimeLimit, setChessClockTimeLimit] = useState();
+    const [delayToStartClock, setDelayToStartClock] = useState();
+    const [password, setPassword] = useState();
+    const [restrictTableCreators, setRestrictTableCreators] = useState(
+        !!event?.restrictTableCreators
+    );
+    const [validTableCreators, setValidTableCreators] = useState(event?.validTableCreators || []);
+    const [validTableCreatorsText, setValidTableCreatorsText] = useState(
+        formatListTextForUsers(event?.validTableCreators)
+    );
+    const [restrictSpectators, setRestrictSpectators] = useState(!!event?.restrictSpectators);
+    const [validSpectators, setValidSpectators] = useState(event?.validSpectators || []);
+    const [validSpectatorsText, setValidSpectatorsText] = useState(
+        formatListTextForUsers(event?.validSpectators)
+    );
+    const [cardToAdd, setCardToAdd] = useState();
+    const [draftCubeId, setDraftCubeId] = useState(event?.draftOptions?.draftCubeId);
+    const [numOfRounds, setNumOfRounds] = useState(event?.draftOptions?.numOfRounds || 3);
 
-    onChange(field, event) {
-        let state = this.state;
+    const dispatch = useDispatch();
 
-        const value = event.target ? event.target.value : event.value;
+    const onUseGameTimeLimitClick = useCallback((event) => {
+        setUseGameTimeLimit(event.target.checked);
 
-        const fields = field.split('.');
-        if (fields.length === 1) {
-            state[field] = value;
-        } else {
-            state[fields[0]][fields[1]] = value;
-        }
-
-        this.setState({ state });
-    }
-
-    onChangeNumber(field, event) {
-        let state = this.state;
-
-        const value = Number(event.target ? event.target.value : event.value);
-
-        const fields = field.split('.');
-        if (fields.length === 1) {
-            state[field] = value;
-        } else {
-            state[fields[0]][fields[1]] = value;
-        }
-
-        this.setState({ state });
-    }
-
-    onEventGameOptionChange(field, event) {
-        let state = this.state;
-
-        state['eventGameOptions'][field] = event.target.value;
-
-        this.setState({ state });
-    }
-
-    onUseGameTimeLimitClick(event) {
-        this.onEventGameOptionChange('useGameTimeLimit', event);
         //deactivate chessclock when timelimit is used
         if (event.target.checked) {
-            let state = this.state;
-
-            state['eventGameOptions']['useChessClocks'] = false;
-
-            this.setState({ state });
+            setUseChessClocks(false);
         }
-    }
+    }, []);
 
-    onUseChessClocksClick(event) {
-        this.onEventGameOptionChange('useChessClocks', event);
+    const onUseChessClocksClick = useCallback((event) => {
+        setUseChessClocks(event.target.checked);
         //deactivate other timeLimit when chessClocks are used
         if (event.target.checked) {
-            let state = this.state;
-
-            state['eventGameOptions']['useGameTimeLimit'] = false;
-
-            this.setState({ state });
+            setUseGameTimeLimit(false);
         }
-    }
+    }, []);
 
-    onCheckboxChange(field, event) {
-        let state = this.state;
-
-        state[field] = event.target.checked;
-
-        this.setState({ state });
-    }
-
-    onEventGameOptionCheckboxChange(field, event) {
-        let state = this.state;
-
-        state['eventGameOptions'][field] = event.target.checked;
-
-        this.setState({ state });
-    }
-
-    addCardChange(selectedCards) {
-        this.setState({ cardToAdd: selectedCards[0] });
-    }
-
-    handleAddCard({ event, textProperty, arrayProperty }) {
-        event.preventDefault();
-
-        if (!this.state.cardToAdd || !this.state.cardToAdd.label) {
-            return;
-        }
-
-        let cardList = this.state[textProperty];
-        cardList += `${this.state.cardToAdd.label}\n`;
-
-        let cards = this.state[arrayProperty];
-        this.addCard(cards, this.state.cardToAdd);
-        this.setState({ [textProperty]: cardList, [arrayProperty]: cards });
-    }
-
-    handleUserListChange({ event, textProperty, arrayProperty }) {
+    const getUsernameList = useCallback((event) => {
         let split = event.target.value.split('\n');
         const userNames = [];
 
@@ -222,343 +140,432 @@ class EventEditor extends React.Component {
             }
         }
 
-        this.setState({
-            [textProperty]: event.target.value,
-            [arrayProperty]: userNames
-        });
-    }
+        return userNames;
+    }, []);
 
-    handleCardListChange({ event, textProperty, arrayProperty }) {
-        let split = event.target.value.split('\n');
-        const cards = [];
+    const handleAddCard = useCallback(
+        (event, text, list) => {
+            event.preventDefault();
 
-        for (const line of split) {
-            const card = this.parseCardLine(line);
-            if (card) {
-                this.addCard(cards, card);
-            }
-        }
-
-        this.setState({
-            [textProperty]: event.target.value,
-            [arrayProperty]: cards
-        });
-    }
-
-    parseCardLine(line) {
-        const pattern = /^([^()]+)(\s+\((.+)\))?$/;
-
-        let match = line.trim().match(pattern);
-        if (!match) {
-            return null;
-        }
-
-        let cardName = match[1].trim().toLowerCase();
-        let packName = match[3] && match[3].trim().toLowerCase();
-        let pack =
-            packName &&
-            this.props.packs.find(
-                (pack) =>
-                    pack.code.toLowerCase() === packName || pack.name.toLowerCase() === packName
-            );
-        let cards = Object.values(this.props.cards);
-
-        let matchingCards = cards.filter((card) => {
-            if (pack) {
-                return pack.code === card.packCode && card.name.toLowerCase() === cardName;
+            if (!cardToAdd || !cardToAdd.label) {
+                return;
             }
 
-            return card.name.toLowerCase() === cardName;
-        });
+            let cardText = text;
+            cardText += `${cardToAdd.label}\n`;
 
-        matchingCards.sort((a, b) => this.compareCardByReleaseDate(a, b));
+            let cards = list;
 
-        return matchingCards[0];
-    }
+            cards.push(cardToAdd.code);
 
-    handlePodListChange({ event, textProperty, arrayProperty }) {
+            return { cardText, cards };
+        },
+        [cardToAdd]
+    );
+
+    const handlePodListChange = useCallback((event) => {
         let parsedPodObject = undefined;
         try {
             parsedPodObject = JSON.parse(event.target.value);
         } finally {
-            this.setState({
-                [textProperty]: event.target.value,
-                [arrayProperty]: parsedPodObject ? parsedPodObject : []
+            setPodsText(event.target.value);
+            setPods(parsedPodObject ? parsedPodObject : []);
+        }
+    }, []);
+
+    const getEventFromState = useCallback(() => {
+        let defaultRestrictedList = null;
+        if (format === 'standard') {
+            defaultRestrictedList = standardRL.name;
+        } else if (format === 'valyrian') {
+            defaultRestrictedList = valyrianRL.name;
+        }
+
+        return {
+            _id: eventId,
+            name: name,
+            draftOptions: {
+                draftCubeId,
+                numOfRounds
+            },
+            format: format,
+            useDefaultRestrictedList: ['standard', 'valyrian'].includes(format),
+            defaultRestrictedList,
+            useEventGameOptions: useEventGameOptions,
+            eventGameOptions: {
+                spectators,
+                muteSpectators,
+                showHand,
+                useGameTimeLimit,
+                gameTimeLimit,
+                useChessClocks,
+                chessClockTimeLimit,
+                delayToStartClock,
+                password
+            },
+            restricted: restricted,
+            banned: banned,
+            pods: pods,
+            restrictSpectators: restrictSpectators,
+            restrictTableCreators: restrictTableCreators,
+            validSpectators: validSpectators,
+            lockDecks: lockDecks,
+            validTableCreators: validTableCreators
+        };
+    }, [
+        banned,
+        chessClockTimeLimit,
+        delayToStartClock,
+        draftCubeId,
+        eventId,
+        format,
+        gameTimeLimit,
+        lockDecks,
+        muteSpectators,
+        name,
+        numOfRounds,
+        password,
+        pods,
+        restrictSpectators,
+        restrictTableCreators,
+        restricted,
+        showHand,
+        spectators,
+        standardRL?.name,
+        useChessClocks,
+        useEventGameOptions,
+        useGameTimeLimit,
+        validSpectators,
+        validTableCreators,
+        valyrianRL?.name
+    ]);
+
+    const handleSaveClick = useCallback(
+        async (event) => {
+            event.preventDefault();
+
+            try {
+                await saveEvent(getEventFromState()).unwrap();
+
+                toast.success('Event saved successfully');
+            } catch (err) {
+                toast.error('Error saving event');
+            }
+        },
+        [getEventFromState, saveEvent]
+    );
+
+    const compareCardByReleaseDate = useCallback(
+        (a, b) => {
+            let packA = packs.find((pack) => pack.code === a.packCode);
+            let packB = packs.find((pack) => pack.code === b.packCode);
+
+            if (!packA.releaseDate && packB.releaseDate) {
+                return 1;
+            }
+
+            if (!packB.releaseDate && packA.releaseDate) {
+                return -1;
+            }
+
+            return new Date(packA.releaseDate) < new Date(packB.releaseDate) ? -1 : 1;
+        },
+        [packs]
+    );
+
+    const parseCardLine = useCallback(
+        (line) => {
+            const pattern = /^([^()]+)(\s+\((.+)\))?$/;
+
+            let match = line.trim().match(pattern);
+            if (!match) {
+                return null;
+            }
+
+            let cardName = match[1].trim().toLowerCase();
+            let packName = match[3] && match[3].trim().toLowerCase();
+            let pack =
+                packName &&
+                packs.find(
+                    (pack) =>
+                        pack.code.toLowerCase() === packName || pack.name.toLowerCase() === packName
+                );
+            let cards = Object.values(cards);
+
+            let matchingCards = cards.filter((card) => {
+                if (pack) {
+                    return pack.code === card.packCode && card.name.toLowerCase() === cardName;
+                }
+
+                return card.name.toLowerCase() === cardName;
             });
+
+            matchingCards.sort((a, b) => compareCardByReleaseDate(a, b));
+
+            return matchingCards[0];
+        },
+        [compareCardByReleaseDate, packs]
+    );
+
+    const handleCardListChange = useCallback(
+        (event) => {
+            let split = event.target.value.split('\n');
+            const cards = [];
+
+            for (const line of split) {
+                const card = parseCardLine(line);
+                if (card) {
+                    cards.push(card.code);
+                }
+            }
+
+            return cards;
+        },
+        [parseCardLine]
+    );
+
+    useEffect(() => {
+        if (!event) {
+            return;
         }
-    }
 
-    compareCardByReleaseDate(a, b) {
-        let packA = this.props.packs.find((pack) => pack.code === a.packCode);
-        let packB = this.props.packs.find((pack) => pack.code === b.packCode);
-
-        if (!packA.releaseDate && packB.releaseDate) {
-            return 1;
+        setName(event.name);
+        setFormat(event.format);
+        setLockDecks(event.lockDecks);
+        setUseEventGameOptions(event.useEventGameOptions);
+        if (event.useEventGameOptions) {
+            setSpectators(event.eventGameOptions.spectators);
+            setMuteSpectators(event.eventGameOptions.muteSpectators);
+            setUseGameTimeLimit(event.eventGameOptions.useGameTimeLimit);
+            setGameTimeLimit(event.eventGameOptions.gameTimeLimit);
+            setShowHand(event.eventGameOptions.showHand);
+            setUseChessClocks(event.eventGameOptions.useChessClocks);
+            setChessClockTimeLimit(event.eventGameOptions.chessClockTimeLimit);
+            setDelayToStartClock(event.eventGameOptions.delayToStartClock);
+            setPassword(event.eventGameOptions.password);
         }
+        setRestrictSpectators(event.restrictSpectators);
+        setRestrictTableCreators(event.restrictTableCreators);
 
-        if (!packB.releaseDate && packA.releaseDate) {
-            return -1;
-        }
+        setValidTableCreators(event.validTableCreators || []);
+        setValidTableCreatorsText(formatListTextForUsers(event.validTableCreators || []));
 
-        return new Date(packA.releaseDate) < new Date(packB.releaseDate) ? -1 : 1;
+        setValidSpectators(event.validSpectators || []);
+        setValidSpectatorsText(formatListTextForUsers(event.validSpectators || []));
+    }, [event]);
+
+    if (
+        isLoading ||
+        isCardsLoading ||
+        isRestrictedListsLoading ||
+        isPacksLoading ||
+        isDraftCubesLoading
+    ) {
+        return <div>Loading...</div>;
     }
 
-    addCard(list, card) {
-        list.push(card.code);
-    }
-
-    handleSaveClick(event) {
-        event.preventDefault();
-
-        if (this.props.onEventSave) {
-            this.props.onEventSave(this.getEventFromState());
-        }
-    }
-
-    handleCancelClick() {
-        this.props.navigate('/events');
-    }
-
-    render() {
-        const allCards = Object.values(this.props.cards);
-
-        const standardRL = this.props.restrictedLists.find(
-            (rl) => rl.official && rl.cardSet === 'redesign'
-        );
-        const valyrianRL = this.props.restrictedLists.find(
-            (rl) => rl.official && rl.cardSet === 'original'
-        );
-        const formats = [
-            { name: standardRL.name, value: 'standard' },
-            { name: valyrianRL.name, value: 'valyrian' },
-            { name: 'Draft', value: 'draft' },
-            { name: 'Custom Joust', value: 'custom-joust' }
-        ];
-
+    if (error) {
         return (
-            <div>
-                <ApiStatus
-                    apiState={this.props.apiState}
-                    successMessage='Deck saved successfully.'
-                />
+            <AlertPanel
+                variant='danger'
+                message={error.data?.message || 'An error occurred loading the event'}
+            />
+        );
+    }
 
-                <form className='form form-horizontal'>
-                    <Input
-                        name='name'
-                        label='Event Name'
-                        labelClass='col-sm-3'
-                        fieldClass='col-sm-9'
-                        placeholder='Event Name'
-                        type='text'
-                        onChange={this.onChange.bind(this, 'name')}
-                        value={this.state.name}
-                    />
-                    <Select
-                        label='Format'
-                        labelClass='col-sm-3'
-                        fieldClass='col-sm-9'
-                        options={formats}
-                        value={this.state.format}
-                        onChange={this.onChange.bind(this, 'format')}
-                    />
-                    <Checkbox
-                        name='lockDecks'
-                        label='Prevent users from making changes to their decks for the duration of the event'
-                        labelClass='col-sm-4'
-                        fieldClass='col-sm-offset-3 col-sm-8'
-                        onChange={this.onCheckboxChange.bind(this, 'lockDecks')}
-                        checked={this.state.lockDecks}
-                    />
-
-                    <div className='form-group'>
-                        <label className='col-sm-3 col-xs-2 control-label'>
-                            Event Game Options
-                        </label>
-                    </div>
-                    <Checkbox
-                        name='useEventGameOptions'
-                        label='Use event game options'
-                        labelClass='col-sm-4'
-                        fieldClass='col-sm-offset-3 col-sm-8'
-                        onChange={this.onCheckboxChange.bind(this, 'useEventGameOptions')}
-                        checked={this.state.useEventGameOptions}
-                    />
-                    {this.state.useEventGameOptions && (
-                        <Checkbox
-                            name='spectators'
-                            label='Allow spectators'
-                            labelClass='col-sm-4'
-                            fieldClass='col-sm-offset-3 col-sm-8'
-                            onChange={this.onEventGameOptionCheckboxChange.bind(this, 'spectators')}
-                            checked={this.state.eventGameOptions.spectators}
-                        />
+    return (
+        <div>
+            <Panel title='Event Editor'>
+                <form className='flex gap-2 flex-col'>
+                    <Panel title='Event Details'>
+                        <div className='flex gap-2 flex-col'>
+                            <div className='grid grid-cols-2 gap-2'>
+                                <Input
+                                    name='name'
+                                    label='Event Name'
+                                    placeholder='Event Name'
+                                    type='text'
+                                    onChange={(event) => setName(event.target.value)}
+                                    value={name}
+                                />
+                                <Select
+                                    label='Format'
+                                    items={formats}
+                                    selectedKeys={[format]}
+                                    onChange={(e) => setFormat(e.target.value)}
+                                >
+                                    {formats?.map((format) => (
+                                        <SelectItem key={format.value} value={format.value}>
+                                            {format.name}
+                                        </SelectItem>
+                                    ))}
+                                </Select>
+                            </div>
+                            <Switch
+                                name='lockDecks'
+                                onChange={(event) => setLockDecks(event.target.checked)}
+                                isSelected={lockDecks}
+                            >
+                                Prevent users from making changes to their decks for the duration of
+                                the event
+                            </Switch>
+                            <Switch
+                                name='useEventGameOptions'
+                                onChange={(event) => setUseEventGameOptions(event.target.checked)}
+                                isSelected={useEventGameOptions}
+                            >
+                                Use event game options
+                            </Switch>
+                        </div>
+                    </Panel>
+                    {useEventGameOptions && (
+                        <Panel title='Event Game Options'>
+                            <div className='grid grid-cols-2 gap-2'>
+                                <Switch
+                                    className='col-span-2'
+                                    name='spectators'
+                                    onChange={(event) => setSpectators(event.target.checked)}
+                                    isSelected={spectators}
+                                >
+                                    Allow spectators
+                                </Switch>
+                                {spectators && (
+                                    <>
+                                        <Switch
+                                            name='muteSpectators'
+                                            onChange={(event) =>
+                                                setMuteSpectators(event.target.checked)
+                                            }
+                                            isSelected={muteSpectators}
+                                        >
+                                            Mute spectators
+                                        </Switch>
+                                        <Switch
+                                            name='showHand'
+                                            onChange={(event) => setShowHand(event.target.checked)}
+                                            isSelected={showHand}
+                                        >
+                                            Show hands to spectators
+                                        </Switch>
+                                    </>
+                                )}
+                                <Switch
+                                    name='useGameTimeLimit'
+                                    className='col-span-2'
+                                    onChange={onUseGameTimeLimitClick}
+                                    isSelected={useGameTimeLimit}
+                                >
+                                    Use a time limit (in minutes)
+                                </Switch>
+                                {useGameTimeLimit && (
+                                    <Input
+                                        className='col-span-2 w-1/2'
+                                        name='gameTimeLimit'
+                                        label='Timelimit in minutes'
+                                        placeholder='Timelimit in minutes'
+                                        type='number'
+                                        onChange={(event) => setGameTimeLimit(event.target.value)}
+                                        value={gameTimeLimit}
+                                    />
+                                )}
+                                <Switch
+                                    name='useChessClocks'
+                                    className='col-span-2'
+                                    onChange={onUseChessClocksClick}
+                                    isSelected={useChessClocks}
+                                >
+                                    Use chess clocks with a time limit per player
+                                </Switch>
+                                {useChessClocks && (
+                                    <>
+                                        <Input
+                                            name='chessClockTimeLimit'
+                                            label='Timelimit in minutes'
+                                            placeholder='Timelimit in minutes'
+                                            type='number'
+                                            onChange={(event) =>
+                                                setChessClockTimeLimit(event.target.value)
+                                            }
+                                            value={chessClockTimeLimit}
+                                        />
+                                        <Input
+                                            name='delayToStartClock'
+                                            label='Delay to start the clock in seconds'
+                                            placeholder='Delay to start the clock in seconds'
+                                            type='number'
+                                            onChange={(event) =>
+                                                setDelayToStartClock(event.target.value)
+                                            }
+                                            value={delayToStartClock}
+                                        />
+                                    </>
+                                )}
+                                <Input
+                                    name='password'
+                                    label='Password'
+                                    placeholder='Password'
+                                    type='text'
+                                    onChange={(event) => setPassword(event.target.value)}
+                                    value={password}
+                                />
+                            </div>
+                        </Panel>
                     )}
-                    {this.state.useEventGameOptions && this.state.eventGameOptions.spectators && (
-                        <Checkbox
-                            name='muteSpectators'
-                            label='Mute spectators'
-                            labelClass='col-sm-4'
-                            fieldClass='col-sm-offset-3 col-sm-8'
-                            onChange={this.onEventGameOptionCheckboxChange.bind(
-                                this,
-                                'muteSpectators'
+
+                    <Panel title='Settings for Judges/Streamers'>
+                        <div className='flex flex-col gap-2'>
+                            <Switch
+                                name='restrictTableCreators'
+                                onChange={(event) => setRestrictTableCreators(event.target.checked)}
+                                isSelected={restrictTableCreators}
+                            >
+                                Restrict table creators to those on the following list
+                            </Switch>
+                            {restrictTableCreators && (
+                                <Textarea
+                                    label='Valid Creators'
+                                    rows='10'
+                                    value={validTableCreatorsText}
+                                    onChange={(event) => {
+                                        setValidTableCreatorsText(event.target.value);
+                                        setValidTableCreators(getUsernameList(event));
+                                    }}
+                                />
                             )}
-                            checked={this.state.eventGameOptions.muteSpectators}
-                        />
-                    )}
-                    {this.state.useEventGameOptions && this.state.eventGameOptions.spectators && (
-                        <Checkbox
-                            name='showHand'
-                            label='Show hands to spectators'
-                            labelClass='col-sm-4'
-                            fieldClass='col-sm-offset-3 col-sm-8'
-                            onChange={this.onEventGameOptionCheckboxChange.bind(this, 'showHand')}
-                            checked={this.state.eventGameOptions.showHand}
-                        />
-                    )}
-                    {this.state.useEventGameOptions && (
-                        <Checkbox
-                            name='useGameTimeLimit'
-                            label='Use a time limit (in minutes)'
-                            labelClass='col-sm-4'
-                            fieldClass='col-sm-offset-3 col-sm-8'
-                            onChange={this.onUseGameTimeLimitClick.bind(this)}
-                            checked={this.state.eventGameOptions.useGameTimeLimit}
-                        />
-                    )}
-                    {this.state.useEventGameOptions &&
-                        this.state.eventGameOptions.useGameTimeLimit && (
-                            <Input
-                                name='gameTimeLimit'
-                                label='Timelimit in minutes'
-                                labelClass='col-sm-3'
-                                fieldClass='col-sm-9'
-                                placeholder='Timelimit in minutes'
-                                type='number'
-                                onChange={this.onEventGameOptionChange.bind(this, 'gameTimeLimit')}
-                                value={this.state.eventGameOptions.gameTimeLimit}
-                            />
-                        )}
-                    {this.state.useEventGameOptions && (
-                        <Checkbox
-                            name='useChessClocks'
-                            label='Use chess clocks with a time limit per player'
-                            labelClass='col-sm-4'
-                            fieldClass='col-sm-offset-3 col-sm-8'
-                            onChange={this.onUseChessClocksClick.bind(this)}
-                            checked={this.state.eventGameOptions.useChessClocks}
-                        />
-                    )}
-                    {this.state.useEventGameOptions &&
-                        this.state.eventGameOptions.useChessClocks && (
-                            <Input
-                                name='chessClockTimeLimit'
-                                label='Timelimit in minutes'
-                                labelClass='col-sm-3'
-                                fieldClass='col-sm-9'
-                                placeholder='Timelimit in minutes'
-                                type='number'
-                                onChange={this.onEventGameOptionChange.bind(
-                                    this,
-                                    'chessClockTimeLimit'
-                                )}
-                                value={this.state.eventGameOptions.chessClockTimeLimit}
-                            />
-                        )}
-                    {this.state.useEventGameOptions &&
-                        this.state.eventGameOptions.useChessClocks && (
-                            <Input
-                                name='delayToStartClock'
-                                label='Delay to start the clock in seconds'
-                                labelClass='col-sm-3'
-                                fieldClass='col-sm-9'
-                                placeholder='Delay to start the clock in seconds'
-                                type='number'
-                                onChange={this.onEventGameOptionChange.bind(
-                                    this,
-                                    'delayToStartClock'
-                                )}
-                                value={this.state.eventGameOptions.delayToStartClock}
-                            />
-                        )}
-                    {this.state.useEventGameOptions && (
-                        <Input
-                            name='password'
-                            label='Password'
-                            labelClass='col-sm-3'
-                            fieldClass='col-sm-9'
-                            placeholder='Password'
-                            type='text'
-                            onChange={this.onEventGameOptionChange.bind(this, 'password')}
-                            value={this.state.eventGameOptions.password}
-                        />
-                    )}
-
-                    <div className='form-group'>
-                        <label className='col-sm-3 col-xs-2 control-label'>
-                            Settings for Judges/Streamers
-                        </label>
-                    </div>
-                    <Checkbox
-                        name='restrictTableCreators'
-                        label='Restrict table creators to those on the following list'
-                        labelClass='col-sm-4'
-                        fieldClass='col-sm-offset-3 col-sm-8'
-                        onChange={this.onCheckboxChange.bind(this, 'restrictTableCreators')}
-                        checked={this.state.restrictTableCreators}
-                    />
-                    {this.state.restrictTableCreators && (
-                        <TextArea
-                            label='Valid Creators'
-                            labelClass='col-sm-3'
-                            fieldClass='col-sm-9'
-                            rows='10'
-                            value={this.state.validTableCreatorsText}
-                            onChange={(event) =>
-                                this.handleUserListChange({
-                                    event,
-                                    textProperty: 'validTableCreatorsText',
-                                    arrayProperty: 'validTableCreators'
-                                })
-                            }
-                        />
-                    )}
-                    <Checkbox
-                        name='restrictSpectators'
-                        label='Restrict spectators to those on the following list'
-                        labelClass='col-sm-4'
-                        fieldClass='col-sm-offset-3 col-sm-8'
-                        onChange={this.onCheckboxChange.bind(this, 'restrictSpectators')}
-                        checked={this.state.restrictSpectators}
-                    />
-                    {this.state.restrictSpectators && (
-                        <TextArea
-                            label='Valid Spectators'
-                            labelClass='col-sm-3'
-                            fieldClass='col-sm-9'
-                            rows='10'
-                            value={this.state.validSpectatorsText}
-                            onChange={(event) =>
-                                this.handleUserListChange({
-                                    event,
-                                    textProperty: 'validSpectatorsText',
-                                    arrayProperty: 'validSpectators'
-                                })
-                            }
-                        />
-                    )}
-                    {this.state.format === 'draft' && (
+                            <Switch
+                                name='restrictSpectators'
+                                onChange={(event) => setRestrictSpectators(event.target.checked)}
+                                isSelected={restrictSpectators}
+                            >
+                                Restrict spectators to those on the following list
+                            </Switch>
+                            {restrictSpectators && (
+                                <Textarea
+                                    label='Valid Spectators'
+                                    labelClass='col-sm-3'
+                                    fieldClass='col-sm-9'
+                                    rows='10'
+                                    value={validSpectatorsText}
+                                    onChange={(event) => {
+                                        setValidSpectatorsText(event.target.value);
+                                        setValidSpectators(getUsernameList(event));
+                                    }}
+                                />
+                            )}
+                        </div>
+                    </Panel>
+                    {format === 'draft' && (
                         <div>
                             <Select
                                 label='Draft Cube'
                                 labelClass='col-sm-3'
                                 fieldClass='col-sm-9'
-                                options={this.props.draftCubes.map((draftCube) => ({
+                                options={draftCubes.map((draftCube) => ({
                                     value: draftCube._id,
                                     name: draftCube.name
                                 }))}
-                                value={this.state.draftOptions.draftCubeId}
-                                onChange={this.onChange.bind(this, 'draftOptions.draftCubeId')}
+                                value={draftCubeId}
+                                onChange={(value) => setDraftCubeId(value)}
                             />
                             <Input
                                 name='numOfRounds'
@@ -566,155 +573,131 @@ class EventEditor extends React.Component {
                                 labelClass='col-sm-3'
                                 fieldClass='col-sm-9'
                                 type='text'
-                                value={this.state.draftOptions.numOfRounds}
-                                onChange={this.onChangeNumber.bind(
-                                    this,
-                                    'draftOptions.numOfRounds'
-                                )}
+                                value={numOfRounds}
+                                onChange={(event) =>
+                                    setNumOfRounds(
+                                        Number(event.target ? event.target.value : event.value)
+                                    )
+                                }
                             />
                         </div>
                     )}
-                    {this.state.format === 'custom-joust' && (
+                    {format === 'custom-joust' && (
                         <div>
-                            <div className='form-group'>
-                                <label className='col-sm-3 col-xs-2 control-label'>
-                                    Custom Restricted/Banned List
-                                </label>
-                            </div>
-                            <Typeahead
-                                label='Card'
-                                labelClass={'col-sm-3 col-xs-2'}
-                                fieldClass='col-sm-4 col-xs-5'
-                                labelKey={'label'}
-                                options={allCards}
-                                onChange={this.addCardChange.bind(this)}
-                            >
-                                <div className='col-xs-1 no-x-padding'>
-                                    <div className='btn-group'>
-                                        <button
-                                            className='btn btn-primary dropdown-toggle'
-                                            data-toggle='dropdown'
-                                            aria-haspopup='true'
-                                            aria-expanded='false'
-                                        >
-                                            Add <span className='caret' />
-                                        </button>
-                                        <ul className='dropdown-menu'>
-                                            <li>
-                                                <a
-                                                    href='#'
-                                                    onClick={(event) =>
-                                                        this.handleAddCard({
-                                                            event,
-                                                            textProperty: 'restrictedListText',
-                                                            arrayProperty: 'restricted'
-                                                        })
-                                                    }
-                                                >
-                                                    Add to restricted
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a
-                                                    href='#'
-                                                    onClick={(event) =>
-                                                        this.handleAddCard({
-                                                            event,
-                                                            textProperty: 'bannedListText',
-                                                            arrayProperty: 'banned'
-                                                        })
-                                                    }
-                                                >
-                                                    Add to banned
-                                                </a>
-                                            </li>
-                                        </ul>
+                            <Panel title='Custom Restricted/Banned List'>
+                                {/* <Typeahead
+                                    label='Card'
+                                    labelClass={'col-sm-3 col-xs-2'}
+                                    fieldClass='col-sm-4 col-xs-5'
+                                    labelKey={'label'}
+                                    options={allCards}
+                                    onChange={(selectedCards) => setCardToAdd(selectedCards[0])}
+                                >
+                                    <div className='col-xs-1 no-x-padding'>
+                                        <div className='btn-group'>
+                                            <button
+                                                className='btn btn-primary dropdown-toggle'
+                                                data-toggle='dropdown'
+                                                aria-haspopup='true'
+                                                aria-expanded='false'
+                                            >
+                                                Add <span className='caret' />
+                                            </button>
+                                            <ul className='dropdown-menu'>
+                                                <li>
+                                                    <a
+                                                        href='#'
+                                                        onClick={(event) => {
+                                                            let { cardText, cards } = handleAddCard(
+                                                                event,
+                                                                restrictedListText,
+                                                                restricted
+                                                            );
+                                                            setRestrictedListText(cardText);
+                                                            setRestricted(cards);
+                                                        }}
+                                                    >
+                                                        Add to restricted
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a
+                                                        href='#'
+                                                        onClick={(event) => {
+                                                            let { cardText, cards } = handleAddCard(
+                                                                event,
+                                                                bannedListText,
+                                                                banned
+                                                            );
+                                                            setBannedListText(cardText);
+                                                            setBanned(cards);
+                                                        }}
+                                                    >
+                                                        Add to banned
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
                                     </div>
-                                </div>
-                            </Typeahead>
-                            <TextArea
-                                label='Restricted List'
-                                labelClass='col-sm-3'
-                                fieldClass='col-sm-9'
-                                rows='10'
-                                value={this.state.restrictedListText}
-                                onChange={(event) =>
-                                    this.handleCardListChange({
-                                        event,
-                                        textProperty: 'restrictedListText',
-                                        arrayProperty: 'restricted'
-                                    })
-                                }
-                            />
-                            <TextArea
-                                label='Banned List'
-                                labelClass='col-sm-3'
-                                fieldClass='col-sm-9'
-                                rows='4'
-                                value={this.state.bannedListText}
-                                onChange={(event) =>
-                                    this.handleCardListChange({
-                                        event,
-                                        textProperty: 'bannedListText',
-                                        arrayProperty: 'banned'
-                                    })
-                                }
-                            />
-                            <TextArea
-                                label='Banned Pods'
-                                labelClass='col-sm-3'
-                                fieldClass='col-sm-9'
-                                rows='4'
-                                value={this.state.podsText}
-                                onChange={(event) =>
-                                    this.handlePodListChange({
-                                        event,
-                                        textProperty: 'podsText',
-                                        arrayProperty: 'pods'
-                                    })
-                                }
-                            />
+                                </Typeahead> */}
+                                <Textarea
+                                    label='Restricted List'
+                                    labelClass='col-sm-3'
+                                    fieldClass='col-sm-9'
+                                    rows='10'
+                                    value={restrictedListText}
+                                    onChange={(event) => {
+                                        const cards = handleCardListChange(event);
+
+                                        setRestrictedListText(event.target.value);
+                                        setRestricted(cards);
+                                    }}
+                                />
+                                <Textarea
+                                    label='Banned List'
+                                    labelClass='col-sm-3'
+                                    fieldClass='col-sm-9'
+                                    rows='4'
+                                    value={bannedListText}
+                                    onChange={(event) => {
+                                        const cards = handleCardListChange(event);
+
+                                        setBannedListText(event.target.value);
+                                        setBanned(cards);
+                                    }}
+                                />
+                                <Textarea
+                                    label='Banned Pods'
+                                    labelClass='col-sm-3'
+                                    fieldClass='col-sm-9'
+                                    rows='4'
+                                    value={podsText}
+                                    onChange={handlePodListChange}
+                                />
+                            </Panel>
                         </div>
                     )}
-                    <div className='form-group'>
-                        <div className='col-sm-offset-3 col-sm-8'>
-                            <button
-                                ref='submit'
-                                type='submit'
-                                className='btn btn-primary'
-                                onClick={this.handleSaveClick.bind(this)}
-                            >
-                                Save{' '}
-                                {this.props.apiState && this.props.apiState.loading && (
-                                    <span className='spinner button-spinner' />
-                                )}
-                            </button>
-                            <button
-                                ref='submit'
-                                type='button'
-                                className='btn btn-primary'
-                                onClick={this.handleCancelClick.bind(this)}
-                            >
-                                Cancel
-                            </button>
-                        </div>
+                    <div className='flex gap-2'>
+                        <Button
+                            isLoading={isSaveLoading}
+                            color='primary'
+                            type='submit'
+                            onClick={handleSaveClick}
+                        >
+                            Save
+                        </Button>
+                        <Button
+                            type='button'
+                            color='primary'
+                            onClick={() => dispatch(navigate('/events'))}
+                        >
+                            Cancel
+                        </Button>
                     </div>
                 </form>
-            </div>
-        );
-    }
-}
-
-EventEditor.displayName = 'EventEditor';
-EventEditor.propTypes = {
-    apiState: PropTypes.object,
-    cards: PropTypes.object,
-    draftCubes: PropTypes.array,
-    event: PropTypes.object,
-    navigate: PropTypes.func,
-    onEventSave: PropTypes.func,
-    packs: PropTypes.array,
-    restrictedLists: PropTypes.array
+            </Panel>
+        </div>
+    );
 };
 
 export default EventEditor;

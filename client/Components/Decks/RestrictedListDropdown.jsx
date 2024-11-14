@@ -1,69 +1,61 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import { Select, SelectItem } from '@nextui-org/react';
+import React, { useState, useEffect, useCallback } from 'react';
 
-class RestrictedListDropdown extends React.Component {
-    constructor(props) {
-        super(props);
+const RestrictedListDropdown = ({
+    currentRestrictedList,
+    restrictedLists,
+    setCurrentRestrictedList,
+    onChange
+}) => {
+    const [value, setValue] = useState(currentRestrictedList && currentRestrictedList._id);
 
-        this.state = { value: props.currentRestrictedList && props.currentRestrictedList.name };
-        //if the currentRestrictedList is not set, update the restrictedList with the first RL in the list to set the initial state
-        //this solves the problem, that the display of the dropdown (showing a selected entry) doesn´t correspond to the state
-        if (!props.currentRestrictedList) {
-            this.updateRestrictedList(props.restrictedLists[0].name);
+    const updateRestrictedList = useCallback(
+        (restrictedListName) => {
+            setValue(restrictedListName);
+            let restrictedList = restrictedLists.find((rl) => rl._id === restrictedListName);
+
+            if (restrictedList.useDefaultRestrictedList && restrictedList.defaultRestrictedList) {
+                restrictedList = restrictedLists.find(
+                    (rl) => rl.name === restrictedList.defaultRestrictedList
+                );
+            }
+
+            if (setCurrentRestrictedList) {
+                setCurrentRestrictedList(restrictedList);
+            }
+
+            if (onChange) {
+                onChange(restrictedList);
+            }
+        },
+        [onChange, restrictedLists, setCurrentRestrictedList]
+    );
+
+    useEffect(() => {
+        if (!currentRestrictedList && restrictedLists.length > 0) {
+            updateRestrictedList(restrictedLists[0].name);
         }
-    }
+    }, [currentRestrictedList, restrictedLists, updateRestrictedList]);
 
-    handleChange(event) {
-        const selectedName = event.target.value;
-        this.updateRestrictedList(selectedName);
-    }
-
-    updateRestrictedList(restrictedListName) {
-        this.setState({ value: restrictedListName });
-        let restrictedList = this.props.restrictedLists.find(
-            (rl) => rl.name === restrictedListName
-        );
-        //if the chosen restrictedList is an event and that event uses a default restricted list instead of a custom one, use the defaultRestrictedList instead
-        if (restrictedList.useDefaultRestrictedList && restrictedList.defaultRestrictedList) {
-            restrictedList = this.props.restrictedLists.find(
-                (rl) => rl.name === restrictedList.defaultRestrictedList
-            );
+    useEffect(() => {
+        if (!value && restrictedLists) {
+            setValue(restrictedLists[0]._id);
         }
-        if (this.props.setCurrentRestrictedList) {
-            this.props.setCurrentRestrictedList(restrictedList);
-        }
-        if (this.props.onChange) {
-            this.props.onChange(restrictedList);
-        }
-    }
+    }, [restrictedLists, value]);
 
-    render() {
-        return (
-            <React.Fragment>
-                <label htmlFor='current-restricted-list'>Restricted List:</label>
-                <select
-                    id='current-restricted-list'
-                    className='form-control'
-                    value={this.state.value}
-                    onChange={this.handleChange.bind(this)}
-                >
-                    {this.props.restrictedLists.map((rl, index) => (
-                        <option key={index} value={rl.name}>
-                            {rl.name}
-                        </option>
-                    ))}
-                </select>
-            </React.Fragment>
-        );
-    }
-}
-
-RestrictedListDropdown.displayName = 'RestrictedListDropdown';
-RestrictedListDropdown.propTypes = {
-    currentRestrictedList: PropTypes.object,
-    onChange: PropTypes.func,
-    restrictedLists: PropTypes.array,
-    setCurrentRestrictedList: PropTypes.func
+    return (
+        <Select
+            label={'Game mode'}
+            onChange={(e) => updateRestrictedList(e.target.value)}
+            selectedKeys={value ? new Set([value]) : null}
+        >
+            {restrictedLists?.map((rl) => (
+                <SelectItem key={rl._id} value={rl._id}>
+                    {rl.name}
+                </SelectItem>
+            ))}
+        </Select>
+    );
 };
 
 export default RestrictedListDropdown;

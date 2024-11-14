@@ -1,0 +1,62 @@
+@import '../../mixins';
+
+.plots,
+.plot-deck,
+.usedPlots,
+.used-plots,
+.revealed-plots {
+    .card-list-popup {
+        @include calculate-tiled-card-prop(width, 4, height);
+        @include calculate-tiled-card-prop(height, 2, width);
+
+        .inner {
+            @include calculate-tiled-card-prop(width, 4, height);
+            @include calculate-tiled-card-prop(height, 2, width);
+        }
+    }
+}
+
+.agenda {
+    .card-list-popup {
+        @include calculate-tiled-card-prop(width, 5, width);
+
+        .inner {
+            @include calculate-tiled-card-prop(width, 5, width);
+            @include calculate-tiled-card-prop(height, 1, height, 0rem);
+        }
+    }
+}
+
+.draw-deck {
+    .card-list-popup {
+        @include calculate-tiled-card-prop(width, 7, width);
+        @include calculate-tiled-card-prop(height, 4, height + 40px);
+
+        .inner {
+            @include calculate-tiled-card-prop(width, 7, width);
+            @include calculate-tiled-card-prop(height, 4, height);
+        }
+    }
+}
+
+.discard,
+.dead-pile,
+.discard-pile {
+    .card-list-popup {
+        @include calculate-tiled-card-prop(width, 5, width);
+        @include calculate-tiled-card-prop(height, 2, height, 0rem);
+
+        .inner {
+            @include calculate-tiled-card-prop(width, 5, width);
+            @include calculate-tiled-card-prop(height, 2, height, 0.1rem);
+        }
+    }
+}
+
+.additional-cards {
+    .panel {
+        .inner {
+            @include calculate-tiled-card-prop(min-width, 2, height);
+        }
+    }
+}

@@ -569,6 +569,28 @@ this.reaction({
 });
 ```
 
+There may also be scenarios where the triggering conditions need to be aggregated or grouped to determine whether the ability should be executed. For example, The Warden of the West draws a number of cards which are discarded simultaneously from an opponent's hand or deck. In these cases, you can `aggregateBy` within the event defined in the `when` object, with the triggering condition passed to the `condition` function. When that function returns `true` the ability will be executed, and all valid events will be accessible within `context.events`.
+```javascript
+this.reaction({
+    when: {
+        onCardDiscarded: {
+            // Aggregate by the controller of the discarded cards, and the location they were discarded in
+            aggregateBy: (event, context) => ({
+                controller: event.cardStateWhenDiscarded.controller,
+                location: event.cardStateWhenDiscarded.location
+            }),
+            // Check if this ability should trigger using the aggregate details defined above
+            condition: (aggregate, events, context) =>
+                aggregate.controller !== this.controller &&
+                ['hand', 'draw deck'].includes(aggregate.location)
+        }
+    },
+    handler: context => {
+        // Draw context.events.length worth of cards
+    }
+});
+```
+
 #### Forced reactions and interrupts
 
 Forced reactions and interrupts do not provide the player with a choice - unless cancelled, the provided `handler` method will always be executed.
@@ -603,7 +625,7 @@ this.forcedInterrupt({
 
 #### Cancelling or replacing events with interrupts
 
-Some cards (primarily saving cards) allow the player to cancel an effect. The `handler` method is always passed a `context` object that allows the handler to cancel the event. Such abilities must also be passed `canCancel: true` in the declaration.
+Some cards (primarily saving cards) allow the player to cancel an effect. The `handler` method is always passed a `context` object that allows the handler to cancel the `event` within it. Such abilities must also be passed `canCancel: true` in the declaration.
 
 ```javascript
 this.interrupt({
@@ -612,7 +634,7 @@ this.interrupt({
     },
     canCancel: true,
     handler: (context) => {
-        context.cancel();
+        context.event.cancel();
         // sacrifice the Bodyguard
     }
 });

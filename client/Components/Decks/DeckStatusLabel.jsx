@@ -1,21 +1,27 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import { Chip } from '@nextui-org/react';
+import { deckStatusLabel } from './DeckHelper';
 import classNames from 'classnames';
 
-import { deckStatusLabel } from './DeckHelper';
-
-export default function DeckStatusLabel({ className, status }) {
+const DeckStatusLabel = ({ className = 'h-10', status }) => {
     const text = status ? deckStatusLabel(status) : 'Loading...';
     const restrictionsFollowed = status.faqJoustRules && status.noUnreleasedCards;
-    let fullClassName = classNames(className, 'label', {
-        'label-danger': !status.basicRules || !status.noBannedCards,
-        'label-warning': status.basicRules && status.noBannedCards && !restrictionsFollowed,
-        'label-success': status.basicRules && status.noBannedCards && restrictionsFollowed
-    });
-    return <span className={fullClassName}>{text}</span>;
-}
 
-DeckStatusLabel.propTypes = {
-    className: PropTypes.string,
-    status: PropTypes.object
+    let bg = 'default';
+
+    if (!status.basicRules || !status.noBannedCards) {
+        bg = 'danger';
+    } else if (status.basicRules && status.noBannedCards && !restrictionsFollowed) {
+        bg = 'warning';
+    } else if (status.basicRules && status.noBannedCards && restrictionsFollowed) {
+        bg = 'success';
+    }
+    const chipClass = classNames('select-none', className);
+    return (
+        <Chip className={chipClass} color={bg} radius='md'>
+            {text}
+        </Chip>
+    );
 };
+
+export default DeckStatusLabel;

@@ -38,7 +38,7 @@ describe('WraithsInTheirMidst', function () {
 
             it('should reduce the reserve by the full amount', function () {
                 // Reduce 6 reserve by 2 from plot, 1 by Alannys
-                expect(this.player2Object.getTotalReserve()).toBe(3);
+                expect(this.player2Object.getReserve()).toBe(3);
             });
         });
 
@@ -51,7 +51,7 @@ describe('WraithsInTheirMidst', function () {
 
             it('should reduce the reserve and cap at the 2 minimum', function () {
                 // Reduce 4 reserve by 2 from plot, 1 by Alannys, min 2.
-                expect(this.player2Object.getTotalReserve()).toBe(2);
+                expect(this.player2Object.getReserve()).toBe(2);
             });
         });
 
@@ -71,7 +71,7 @@ describe('WraithsInTheirMidst', function () {
 
             it('should reduce the new plot revealed', function () {
                 // Reduce 6 by 2 from plot, 0 from Alannys since not first player
-                expect(this.player2Object.getTotalReserve()).toBe(4);
+                expect(this.player2Object.getReserve()).toBe(4);
             });
         });
 
@@ -94,7 +94,7 @@ describe('WraithsInTheirMidst', function () {
             });
 
             it('should not get a NaN reserve prompt', function () {
-                expect(this.player2Object.getTotalReserve()).toBe(4);
+                expect(this.player2Object.getReserve()).toBe(4);
             });
         });
     });

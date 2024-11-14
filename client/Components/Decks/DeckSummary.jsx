@@ -1,65 +1,95 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useMemo, useState } from 'react';
+import { useGetCardsQuery } from '../../redux/middleware/api';
+import CardImage from '../Images/CardImage';
+import { sortBy } from 'underscore';
 
-import CardHoverPreview from './CardHoverPreview';
-import CardTypeGroups from './CardTypeGroups';
-import DeckSummaryHeader from './DeckSummaryHeader';
+const DeckSummary = ({ deck }) => {
+    const { data: cardsResponse } = useGetCardsQuery({});
+    const [mousePos, setMousePosition] = useState({ x: 0, y: 0 });
+    const [zoomCard, setZoomCard] = useState(null);
 
-class DeckSummary extends React.Component {
-    constructor() {
-        super();
+    const cardsByCode = useMemo(() => {
+        return cardsResponse;
+    }, [cardsResponse]);
 
-        this.onCardMouseOut = this.onCardMouseOut.bind(this);
-        this.onCardMouseOver = this.onCardMouseOver.bind(this);
+    const groupedCards = {};
 
-        this.state = {
-            cardToShow: ''
-        };
-    }
+    const deckCards = deck.deckCards
+        .filter((dc) => dc.type !== 'Banner')
+        .map((dc) => ({ card: cardsByCode[dc.card.code], count: dc.count }));
 
-    onCardMouseOver(card) {
-        let cardToDisplay = this.props.cards[card.code];
-
-        this.setState({ cardToShow: cardToDisplay });
-    }
-
-    onCardMouseOut() {
-        this.setState({ cardToShow: undefined });
-    }
-
-    render() {
-        if (!this.props.deck || !this.props.cards) {
-            return <div>Waiting for selected deck...</div>;
+    for (const deckCard of deckCards) {
+        const type = deckCard.card.type;
+        if (!groupedCards[type]) {
+            groupedCards[type] = [deckCard];
+        } else {
+            groupedCards[type].push(deckCard);
         }
+    }
 
-        return (
-            <div className='deck-summary col-xs-12'>
-                {this.state.cardToShow && <CardHoverPreview card={this.state.cardToShow} />}
-                <DeckSummaryHeader
-                    deck={this.props.deck}
-                    onCardMouseOut={this.onCardMouseOut}
-                    onCardMouseOver={this.onCardMouseOver}
-                />
-                <div className='col-xs-12 no-x-padding'>
-                    <CardTypeGroups
-                        cards={this.props.deck.plotCards.concat(this.props.deck.drawCards)}
-                        onCardMouseOut={this.onCardMouseOut}
-                        onCardMouseOver={this.onCardMouseOver}
-                        useSchemes={
-                            this.props.deck.agenda && this.props.deck.agenda.code === '05045'
-                        }
-                    />
-                </div>
+    const splitCards = [[], [], []];
+    let cardIndex = 0;
+    let currentContainer = splitCards[0];
+    for (const [type, cards] of Object.entries(groupedCards)) {
+        currentContainer.push(
+            <div className='mb-2 mt-2' key={type}>
+                <span className={`icon me-1 icon-${type}`}></span>
+                <strong>
+                    {type[0].toUpperCase() + type.slice(1)} (
+                    {cards.reduce((acc, card) => acc + card.count, 0)})
+                </strong>
             </div>
         );
-    }
-}
+        for (const deckCard of sortBy(cards, (card) => card.card.faction)) {
+            currentContainer.push(
+                <React.Fragment key={deckCard.card.code}>
+                    <div
+                        onMouseOver={() => setZoomCard(deckCard.card.code)}
+                        onMouseMove={(event) => {
+                            let y = event.clientY;
+                            const yPlusHeight = y + 420;
 
-DeckSummary.displayName = 'DeckSummary';
-DeckSummary.propTypes = {
-    cards: PropTypes.object,
-    currentRestrictedList: PropTypes.object,
-    deck: PropTypes.object
+                            if (yPlusHeight >= window.innerHeight) {
+                                y -= yPlusHeight - window.innerHeight;
+                            }
+
+                            setMousePosition({ x: event.clientX, y: y });
+                        }}
+                        onMouseOut={() => setZoomCard(null)}
+                    >
+                        {deckCard.count}x{' '}
+                        <span
+                            className={`icon me-1 icon-${type} text-${deckCard.card.faction}`}
+                        ></span>
+                        {deckCard.card.label}
+                    </div>
+                </React.Fragment>
+            );
+            cardIndex++;
+
+            if (cardIndex > 30) {
+                currentContainer = splitCards[2];
+            } else if (cardIndex > 15) {
+                currentContainer = splitCards[1];
+            }
+        }
+    }
+
+    return (
+        <div className='mt-3 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4'>
+            {zoomCard && (
+                <div
+                    className='decklist-card-zoom fixed left-0 top-0 z-50'
+                    style={{ left: mousePos.x + 5 + 'px', top: mousePos.y + 'px' }}
+                >
+                    <CardImage imageUrl={`/img/cards/${zoomCard}.png`} size='lg' />
+                </div>
+            )}
+            <div>{splitCards[0]}</div>
+            <div>{splitCards[1]}</div>
+            <div>{splitCards[2]}</div>
+        </div>
+    );
 };
 
 export default DeckSummary;

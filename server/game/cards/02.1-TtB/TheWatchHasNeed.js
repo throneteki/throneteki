@@ -5,10 +5,10 @@ class TheWatchHasNeed extends DrawCard {
     setupCardAbilities() {
         this.action({
             title: 'Search for a character',
-            condition: () => this.controller.getTotalReserve() > 0,
+            condition: () => this.controller.getReserve() > 0,
             message: {
                 format: '{player} plays {source} to name a trait and search the top {reserve} cards of their deck',
-                args: { reserve: (context) => context.player.getTotalReserve() }
+                args: { reserve: (context) => context.player.getReserve() }
             },
             gameAction: GameActions.choose({
                 player: () => this.controller,
@@ -27,8 +27,8 @@ class TheWatchHasNeed extends DrawCard {
         return GameActions.search({
             title: 'Select a character',
             match: { trait: trait },
-            numToSelect: (context) => context.player.getTotalReserve(),
-            topCards: (context) => context.player.getTotalReserve(),
+            numToSelect: (context) => context.player.getReserve(),
+            topCards: (context) => context.player.getReserve(),
             message: '{player} adds {searchTarget} to their hand',
             gameAction: GameActions.simultaneously((context) =>
                 context.searchTarget.map((card) => GameActions.addToHand({ card }))

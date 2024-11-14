@@ -1,18 +1,19 @@
 import KingsOfWinter from '../../../../server/game/cards/04.2-CtA/KingsOfWinter.js';
+import { PlotStat } from '../../../../server/game/plotcard.js';
 
 describe('Kings Of Winter', function () {
     beforeEach(function () {
         this.gameSpy = jasmine.createSpyObj('game', ['addMessage', 'getPlayers', 'on']);
 
         this.plot1 = jasmine.createSpyObj('plot1', ['hasTrait']);
-        this.plot1.goldModifier = 0;
-        this.plot1.reserveModifier = 0;
+        this.plot1.income = new PlotStat(0);
+        this.plot1.reserve = new PlotStat(0);
         this.plot2 = jasmine.createSpyObj('plot2', ['hasTrait']);
-        this.plot2.goldModifier = 0;
-        this.plot2.reserveModifier = 0;
+        this.plot2.income = new PlotStat(0);
+        this.plot2.reserve = new PlotStat(0);
         this.plot3 = jasmine.createSpyObj('plot3', ['hasTrait']);
-        this.plot3.goldModifier = 0;
-        this.plot3.reserveModifier = 0;
+        this.plot3.income = new PlotStat(0);
+        this.plot3.reserve = new PlotStat(0);
 
         this.plot1.hasTrait.and.callFake((trait) => {
             return trait === 'Summer';
@@ -22,16 +23,12 @@ describe('Kings Of Winter', function () {
         this.player1Fake = {};
         this.player1Fake.game = this.gameSpy;
         this.player1Fake.activePlot = this.plot1;
-        this.player1Fake.activePlot.reserveModifier = 0;
-        this.player1Fake.activePlot.goldModifier = 0;
         this.plot1.controller = this.player1Fake;
         this.plot3.controller = this.player1Fake;
 
         this.player2Fake = {};
         this.player2Fake.game = this.gameSpy;
         this.player2Fake.activePlot = this.plot2;
-        this.player2Fake.activePlot.reserveModifier = 0;
-        this.player2Fake.activePlot.goldModifier = 0;
         this.plot2.controller = this.player2Fake;
 
         this.gameSpy.getPlayers.and.returnValue([this.player1Fake, this.player2Fake]);
@@ -58,7 +55,7 @@ describe('Kings Of Winter', function () {
 
         it('should reduce the plots reserve', function () {
             this.reserveEffect.effect.apply(this.plot1, this.context);
-            expect(this.plot1.reserveModifier).toBe(-1);
+            expect(this.plot1.reserve.modifier).toBe(-1);
         });
     });
 
@@ -69,7 +66,7 @@ describe('Kings Of Winter', function () {
 
         it('should reduce the gold on the plot', function () {
             this.goldEffect.effect.apply(this.plot1, this.context);
-            expect(this.plot1.goldModifier).toBe(-1);
+            expect(this.plot1.income.modifier).toBe(-1);
         });
 
         describe('when the current player does not have a Winter', function () {

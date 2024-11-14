@@ -373,11 +373,11 @@ class Player extends Spectator {
     }
 
     canInitiateChallenge(challengeType, opponent) {
-        if (this.isSupporter(opponent)) {
-            return false;
-        }
-
         return this.challenges.canInitiate(challengeType, opponent);
+    }
+
+    mustInitiateChallenge(challengeType, opponent) {
+        return this.challenges.mustInitiate(challengeType, opponent);
     }
 
     canGainGold() {
@@ -410,6 +410,14 @@ class Player extends Spectator {
 
     removeAllowedChallenge(allowedChallenge) {
         this.challenges.removeAllowedChallenge(allowedChallenge);
+    }
+
+    addForcedChallenge(forcedChallenge) {
+        this.challenges.addForcedChallenge(forcedChallenge);
+    }
+
+    removeForcedChallenge(forcedChallenge) {
+        this.challenges.removeForcedChallenge(forcedChallenge);
     }
 
     setMaxChallenge(number) {
@@ -1246,36 +1254,24 @@ class Player extends Spectator {
         }
     }
 
-    getTotalInitiative() {
-        if (!this.activePlot) {
-            return 0;
-        }
-
-        return this.activePlot.getInitiative();
+    getIncome() {
+        return this.activePlot ? this.activePlot.getIncome() : 0;
     }
 
-    getTotalIncome() {
-        if (!this.activePlot) {
-            return 0;
-        }
-
-        return this.activePlot.getIncome();
-    }
-
-    getTotalReserve() {
-        if (!this.activePlot) {
-            return 0;
-        }
-
-        return Math.max(this.activePlot.getReserve(), this.minReserve);
+    getInitiative() {
+        return this.activePlot ? this.activePlot.getInitiative() : 0;
     }
 
     getClaim() {
         return this.activePlot ? this.activePlot.getClaim() : 0;
     }
 
+    getReserve() {
+        return this.activePlot ? Math.max(this.activePlot.getReserve(), this.minReserve) : 0;
+    }
+
     isBelowReserve() {
-        return this.hand.length <= this.getTotalReserve();
+        return this.hand.length <= this.getReserve();
     }
 
     isRival(opponent) {
@@ -1367,9 +1363,9 @@ class Player extends Spectator {
     getStats(isActivePlayer) {
         return {
             claim: this.getClaim(),
-            initiative: this.getTotalInitiative(),
+            initiative: this.getInitiative(),
             gold: !isActivePlayer && this.game.currentPhase === 'setup' ? 0 : this.gold,
-            reserve: this.getTotalReserve(),
+            reserve: this.getReserve(),
             totalPower: this.getTotalPower()
         };
     }

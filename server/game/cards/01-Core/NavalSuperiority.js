@@ -7,7 +7,7 @@ class NavalSuperiority extends PlotCard {
                 card.controller.activePlot === card &&
                 (card.hasTrait('Kingdom') || card.hasTrait('Edict')),
             targetController: 'any',
-            effect: ability.effects.preventPlotModifier('gold')
+            effect: ability.effects.setBaseGold(0)
         });
     }
 }

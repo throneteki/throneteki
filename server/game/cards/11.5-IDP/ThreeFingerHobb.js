@@ -6,7 +6,7 @@ class ThreeFingerHobb extends DrawCard {
         this.reaction({
             when: {
                 onReserveChecked: () =>
-                    this.controller.hand.length < this.controller.getTotalReserve() &&
+                    this.controller.hand.length < this.controller.getReserve() &&
                     this.controller.canDraw()
             },
             handler: (context) => {

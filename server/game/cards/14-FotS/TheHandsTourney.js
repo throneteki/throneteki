@@ -1,11 +1,12 @@
+import SatisfyClaim from '../../gamesteps/challenge/SatisfyClaim.js';
 import PlotCard from '../../plotcard.js';
-import ApplyClaim from '../../gamesteps/challenge/applyclaim.js';
 
 class TheHandsTourney extends PlotCard {
     setupCardAbilities() {
         this.forcedInterrupt({
             when: {
-                onClaimApplied: (event) => event.challenge.challengeType === 'military'
+                onClaimApplied: (event) =>
+                    event.challenge && event.challenge.challengeType === 'military'
             },
             handler: (context) => {
                 this.game.addMessage(
@@ -16,11 +17,10 @@ class TheHandsTourney extends PlotCard {
                     'military'
                 );
 
-                context.replaceHandler(() => {
-                    let replacementClaim = context.event.claim.clone();
-                    replacementClaim.challengeType = 'power';
+                context.replaceHandler((event) => {
+                    event.claim.challengeType = 'power';
 
-                    this.game.queueStep(new ApplyClaim(this.game, replacementClaim));
+                    this.game.queueStep(new SatisfyClaim(this.game, event.claim));
                 });
             }
         });

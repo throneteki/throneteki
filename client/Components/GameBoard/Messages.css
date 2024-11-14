@@ -1,0 +1,29 @@
+.chat-bubble .message-chat {
+    background: hsl(var(--nextui-default));
+    border-radius: 5px 5px 0 0;
+    padding: 5px;
+}
+
+.chat-bubble .message-fragment + .message-fragment {
+    background: hsl(var(--nextui-default));
+    border-radius: 0 0 5px 5px;
+    padding: 0 5px 5px 5px;
+    position: relative;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.chat-bubble .message-fragment + .message-fragment:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 10%;
+    width: 0;
+    height: 0;
+    border: 10px solid transparent;
+    border-top-color: hsl(var(--nextui-default));
+    border-bottom: 0;
+    border-left: 0;
+    margin-left: -10px;
+    margin-bottom: -10px;
+}

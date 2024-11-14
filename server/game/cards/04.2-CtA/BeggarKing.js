@@ -31,7 +31,7 @@ class BeggarKing extends DrawCard {
 
         return opponentPlots.some(
             (opponentPlot) =>
-                this.controller.activePlot.getPrintedIncome() < opponentPlot.getPrintedIncome()
+                this.controller.activePlot.income.printedValue < opponentPlot.income.printedValue
         );
     }
 

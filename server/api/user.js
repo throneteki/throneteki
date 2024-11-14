@@ -35,12 +35,14 @@ export const init = function (server, options) {
 
             res.send({
                 success: true,
-                user: user.getFullDetails(),
-                linkedAccounts:
-                    linkedAccounts &&
-                    linkedAccounts
-                        .map((account) => account.username)
-                        .filter((name) => name !== user.username)
+                data: {
+                    user: user.getFullDetails(),
+                    linkedAccounts:
+                        linkedAccounts &&
+                        linkedAccounts
+                            .map((account) => account.username)
+                            .filter((name) => name !== user.username)
+                }
             });
         })
     );
@@ -53,7 +55,7 @@ export const init = function (server, options) {
                 return res.status(403);
             }
 
-            let userToSet = req.body.userToChange;
+            let userToSet = req.body;
 
             userService
                 .getUserByUsername(req.params.username)

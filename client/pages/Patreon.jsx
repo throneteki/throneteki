@@ -1,79 +1,49 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
-import * as actions from '../actions';
 import AlertPanel from '../Components/Site/AlertPanel';
-import ApiStatus from '../Components/Site/ApiStatus';
+import { navigate } from '../redux/reducers/navigation';
+import { useLinkPatreonMutation } from '../redux/middleware/api';
+import { toast } from 'react-toastify';
 
-class Patreon extends React.Component {
-    constructor(props) {
-        super(props);
+const Patreon = ({ code }) => {
+    const dispatch = useDispatch();
+    const [linkPatreon, { isLoading }] = useLinkPatreonMutation();
 
-        this.state = {};
-    }
-
-    componentDidMount() {
-        if (!this.props.code) {
+    useEffect(() => {
+        if (!code) {
             return;
         }
 
-        this.props.linkPatreon(this.props.code);
-    }
+        const doLink = async () => {
+            try {
+                await linkPatreon(code).unwrap();
+            } catch (err) {
+                toast.error(err.message || 'An error occurred linking your account');
 
-    componentWillReceiveProps(props) {
-        if (props.accountLinked) {
-            this.setState({
-                successMessage:
-                    'Your account was linked successfully.  Sending you back to the profile page.'
-            });
+                return;
+            }
 
-            setTimeout(() => {
-                this.props.clearLinkStatus();
-                this.props.navigate('/profile');
-            }, 5000);
-        }
-    }
+            dispatch(navigate('/profile'));
 
-    render() {
-        if (!this.props.code) {
-            return (
-                <AlertPanel
-                    type='error'
-                    message='This page is not intended to be viewed directly.  Please click on one of the links at the top of the page or your browser back button to return to the site.'
-                />
+            toast.success(
+                'Your account was linked successfully.  Sending you back to the profile page'
             );
-        }
+        };
 
+        doLink();
+    }, [code, dispatch, linkPatreon]);
+
+    if (!code) {
         return (
-            <div>
-                <ApiStatus
-                    apiState={this.props.apiState}
-                    successMessage={this.state.successMessage}
-                />
-                {this.props.apiState.loading && (
-                    <div>Please wait while we verify your details..</div>
-                )}
-            </div>
+            <AlertPanel
+                variant='danger'
+                message='This page is not intended to be viewed directly.  Please click on one of the links at the top of the page or your browser back button to return to the site.'
+            />
         );
     }
-}
 
-Patreon.propTypes = {
-    accountLinked: PropTypes.bool,
-    apiState: PropTypes.object,
-    clearLinkStatus: PropTypes.func,
-    code: PropTypes.string.isRequired,
-    linkPatreon: PropTypes.func,
-    navigate: PropTypes.func
+    return <div>{isLoading && <div>Please wait while we verify your details..</div>}</div>;
 };
-Patreon.displayName = 'Patreon';
 
-function mapStateToProps(state) {
-    return {
-        accountLinked: state.account.accountLinked,
-        apiState: state.api.ACCOUNT_LINK_REQUEST || {}
-    };
-}
-
-export default connect(mapStateToProps, actions)(Patreon);
+export default Patreon;

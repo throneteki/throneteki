@@ -1,116 +1,138 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useState, useCallback, useMemo, useRef } from 'react';
 import classNames from 'classnames';
-import { DragSource } from 'react-dnd';
-
+import { useDndMonitor, useDraggable } from '@dnd-kit/core';
 import CardMenu from './CardMenu';
 import CardCounters from './CardCounters';
-import { ItemTypes } from '../../constants';
-
 import SquishableCardPanel from './SquishableCardPanel';
 
-const cardSource = {
-    beginDrag(props) {
-        return {
-            card: props.card,
-            source: props.source
-        };
-    }
-};
+import './Card.scss';
+import { ItemTypes } from '../../constants';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
+import { useUniqueId } from '@dnd-kit/utilities';
 
-function collect(connect, monitor) {
-    return {
-        connectDragPreview: connect.dragPreview(),
-        connectDragSource: connect.dragSource(),
-        isDragging: monitor.isDragging(),
-        dragOffset: monitor.getSourceClientOffset()
+const Card = ({
+    card,
+    className,
+    disableMouseOver,
+    hideTokens,
+    menu,
+    onClick,
+    onMenuItemClick,
+    onMouseOut,
+    onMouseOver,
+    orientation = 'vertical',
+    size,
+    source,
+    style,
+    wrapped = true,
+    forceFaceup = false
+}) => {
+    const [showMenu, setShowMenu] = useState(false);
+    const [showStatus, setShowStatus] = useState(false);
+    const [startPosition, setStartPosition] = useState();
+    const dragRef = useRef(null);
+
+    const key = `card-${card.uuid}-${source}`;
+
+    useDndMonitor({
+        onDragEnd() {
+            setStartPosition();
+        }
+    });
+
+    const shortNames = {
+        count: 'x',
+        stand: 'T',
+        poison: 'O',
+        gold: 'G',
+        valarmorghulis: 'V',
+        betrayal: 'B',
+        vengeance: 'N',
+        ear: 'E',
+        venom: 'M',
+        kiss: 'K',
+        bell: 'L',
+        blood: 'D',
+        shadow: 'W',
+        journey: 'J',
+        prayer: 'R',
+        tale: 'A',
+        ghost: 'H'
     };
-}
 
-class InnerCard extends React.Component {
-    constructor() {
-        super();
+    const { attributes, listeners, setNodeRef, transform } = useDraggable({
+        id: useUniqueId(key),
+        data: { type: ItemTypes.CARD, card, source, key: key }
+    });
 
-        this.onMouseOver = this.onMouseOver.bind(this);
-        this.onMouseOut = this.onMouseOut.bind(this);
-        this.onMenuItemClick = this.onMenuItemClick.bind(this);
+    const sizeClass = useMemo(() => ({ [size]: size !== 'normal' }), [size]);
 
-        this.state = {
-            showMenu: false
-        };
+    const isAllowedMenuSource = useCallback(() => {
+        return source === 'play area' || source === 'agenda' || source === 'revealed plots';
+    }, [source]);
 
-        this.shortNames = {
-            count: 'x',
-            stand: 'T',
-            poison: 'O',
-            gold: 'G',
-            valarmorghulis: 'V',
-            betrayal: 'B',
-            vengeance: 'N',
-            ear: 'E',
-            venom: 'M',
-            kiss: 'K',
-            bell: 'L',
-            blood: 'D',
-            shadow: 'W',
-            journey: 'J',
-            prayer: 'R',
-            tale: 'A',
-            ghost: 'H'
-        };
-    }
+    const handleMouseOver = useCallback(
+        (c) => {
+            if (onMouseOver) {
+                onMouseOver(c);
+            }
+        },
+        [onMouseOver]
+    );
 
-    onMouseOver(card) {
-        if (this.props.onMouseOver) {
-            this.props.onMouseOver(card);
+    const handleMouseOut = useCallback(() => {
+        if (onMouseOut) {
+            onMouseOut();
         }
-    }
+    }, [onMouseOut]);
 
-    onMouseOut() {
-        if (this.props.onMouseOut) {
-            this.props.onMouseOut();
-        }
-    }
+    const handleMenuItemClick = useCallback(
+        (menuItem) => {
+            if (onMenuItemClick) {
+                onMenuItemClick(card, menuItem);
+                setShowMenu(!showMenu);
+            }
+        },
+        [card, onMenuItemClick, showMenu]
+    );
 
-    isAllowedMenuSource() {
-        return (
-            this.props.source === 'play area' ||
-            this.props.source === 'agenda' ||
-            this.props.source === 'revealed plots'
-        );
-    }
+    const getMenu = useCallback(() => {
+        let retMenu = menu || [];
 
-    onClick(event, card) {
-        event.preventDefault();
-        event.stopPropagation();
-
-        if (this.showMenu()) {
-            this.setState({ showMenu: !this.state.showMenu });
-
-            return;
+        if (card.menu) {
+            retMenu = retMenu.concat(card.menu);
         }
 
-        if (this.props.onClick) {
-            this.props.onClick(card);
-        }
-    }
+        return retMenu;
+    }, [card.menu, menu]);
 
-    onMenuItemClick(menuItem) {
-        if (this.props.onMenuItemClick) {
-            this.props.onMenuItemClick(this.props.card, menuItem);
-            this.setState({ showMenu: !this.state.showMenu });
-        }
-    }
+    const shouldShowMenu = useCallback(() => {
+        return getMenu().some((item) => item.command !== 'click') && isAllowedMenuSource();
+    }, [getMenu, isAllowedMenuSource]);
 
-    getCountersForCard(card) {
+    const handleClick = useCallback(
+        (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            if (shouldShowMenu()) {
+                setShowMenu(!showMenu);
+                return;
+            }
+
+            onClick && onClick(card);
+        },
+        [card, onClick, shouldShowMenu, showMenu]
+    );
+
+    const getCountersForCard = (card) => {
         let counters = [];
-
         if (card.power) {
             counters.push({ name: 'card-power', count: card.power, shortName: 'P' });
         }
 
-        // Only display psuedo-tokens for face up cards in play
-        if (!card.facedown && this.props.source === 'play area') {
+        if (!card.facedown && source === 'play area') {
             if (card.type === 'character' && card.baseStrength !== card.strength) {
                 counters.push({ name: 'strength', count: card.strength, shortName: 'S' });
             }
@@ -120,11 +142,11 @@ class InnerCard extends React.Component {
             }
 
             for (const icon of card.iconsAdded || []) {
-                counters.push({ name: 'challenge-icon', icon: icon, count: 0, cancel: false });
+                counters.push({ name: 'challenge-icon', icon, count: 0, cancel: false });
             }
 
             for (const icon of card.iconsRemoved || []) {
-                counters.push({ name: 'challenge-icon', icon: icon, count: 0, cancel: true });
+                counters.push({ name: 'challenge-icon', icon, count: 0, cancel: true });
             }
 
             for (const item of card.factionStatus || []) {
@@ -138,384 +160,293 @@ class InnerCard extends React.Component {
         }
 
         for (const [key, token] of Object.entries(card.tokens || {})) {
-            counters.push({ name: key, count: token, shortName: this.shortNames[key] });
+            counters.push({ name: key, count: token, shortName: shortNames[key] });
         }
 
         for (const attachment of card.attachments || []) {
-            let attachmentCounters = this.getCountersForCard(attachment).map((counter) =>
+            let attachmentCounters = getCountersForCard(attachment).map((counter) =>
                 Object.assign({ fade: true }, counter)
             );
             counters = counters.concat(attachmentCounters);
         }
 
         return counters.filter((counter) => counter.count >= 0);
-    }
+    };
 
-    getAttachments() {
-        if (!['rookery', 'full deck', 'play area'].includes(this.props.source)) {
-            return null;
-        }
-
-        var index = 1;
-        var attachments = this.props.card.attachments.map((attachment) => {
-            var returnedAttachment = (
-                <Card
-                    key={attachment.uuid}
-                    source={this.props.source}
-                    card={attachment}
-                    className={classNames('attachment', `attachment-${index}`)}
-                    wrapped={false}
-                    hideTokens
-                    onMouseOver={
-                        this.props.disableMouseOver ? null : this.onMouseOver.bind(this, attachment)
-                    }
-                    onMouseOut={this.props.disableMouseOver ? null : this.onMouseOut}
-                    onClick={this.props.onClick}
-                    onMenuItemClick={this.props.onMenuItemClick}
-                    size={this.props.size}
-                />
-            );
-
-            index += 1;
-
-            return returnedAttachment;
-        });
-
-        return attachments;
-    }
-
-    getDupes() {
-        if (this.props.source !== 'play area') {
+    const getAttachments = () => {
+        if (!['full deck', 'play area'].includes(source)) {
             return null;
         }
 
         let index = 1;
-        let dupes = this.props.card.dupes.map((dupe) => {
-            // If a dupe is dragged into play during setup, it will display faceup.  This fixes that by forcing it to the parent's state
-            if (this.props.card.facedown) {
-                dupe.facedown = true;
-            }
 
-            let returnedDupe = (
+        return card.attachments.map((attachment) => (
+            <Card
+                key={attachment.uuid}
+                source={source}
+                card={attachment}
+                className={classNames('attachment', `attachment-${index++}`)}
+                wrapped={false}
+                hideTokens
+                onMouseOver={disableMouseOver ? null : () => handleMouseOver(attachment)}
+                onMouseOut={disableMouseOver ? null : handleMouseOut}
+                onClick={onClick}
+                onMenuItemClick={onMenuItemClick}
+                size={size}
+            />
+        ));
+    };
+
+    const getDupes = () => {
+        if (source !== 'play area') {
+            return null;
+        }
+
+        let index = 1;
+
+        return card.dupes.map((dupe) => {
+            const dupeCopy = Object.assign({}, dupe);
+
+            dupeCopy.facedown = card.facedown;
+
+            return (
                 <Card
                     key={dupe.uuid}
-                    className={classNames('card-dupe', `card-dupe-${index}`)}
-                    source={this.props.source}
-                    card={dupe}
+                    className={classNames('card-dupe', `card-dupe-${index++}`)}
+                    source={source}
+                    card={dupeCopy}
                     wrapped={false}
-                    onMouseOver={
-                        this.props.disableMouseOver ? null : this.onMouseOver.bind(this, dupe)
-                    }
-                    onMouseOut={this.props.disableMouseOver ? null : this.onMouseOut}
-                    onClick={this.props.onClick}
-                    onMenuItemClick={this.props.onMenuItemClick}
-                    size={this.props.size}
-                    facedown={this.props.card.facedown}
+                    onMouseOver={disableMouseOver ? null : () => handleMouseOver(dupe)}
+                    onMouseOut={disableMouseOver ? null : handleMouseOut}
+                    onClick={onClick}
+                    onMenuItemClick={onMenuItemClick}
+                    size={size}
+                    facedown={forceFaceup ? false : card.facedown}
+                    hideTokens
                 />
             );
-
-            index += 1;
-
-            return returnedDupe;
         });
+    };
 
-        return dupes;
-    }
-
-    renderUnderneathCards() {
+    const renderUnderneathCards = () => {
         // TODO: Right now it is assumed that all cards in the childCards array
         // are being placed underneath the current card. In the future there may
         // be other types of cards in this array and it should be filtered.
-        let underneathCards = this.props.card.childCards;
-        if (!underneathCards || underneathCards.length === 0 || this.props.card.type === 'agenda') {
+        let underneathCards = card.childCards;
+        if (!underneathCards || underneathCards.length === 0 || card.type === 'agenda') {
             return;
         }
 
         let maxCards = 1 + (underneathCards.length - 1) / 6;
-
         return (
             <SquishableCardPanel
-                cardSize={this.props.size}
+                cardSize={size}
                 cards={underneathCards}
                 className='underneath'
                 maxCards={maxCards}
-                onCardClick={this.props.onClick}
-                onMouseOut={this.props.onMouseOut}
-                onMouseOver={this.props.onMouseOver}
+                onCardClick={onClick}
+                onMouseOut={onMouseOut}
+                onMouseOver={onMouseOver}
                 source='underneath'
             />
         );
-    }
+    };
 
-    getCardOrder() {
-        if (!this.props.card.order) {
-            return null;
-        }
-
-        return <div className='card-order'>{this.props.card.order}</div>;
-    }
-
-    getAlertStatus() {
-        if (!this.props.card.alertStatus) {
+    const getCardOrder = () => {
+        if (!card.order) {
             return null;
         }
 
         return (
-            <div className={'status-container ' + this.props.card.alertStatus.type}>
-                <div className='status-icon glyphicon glyphicon-exclamation-sign' />
-                <span className='status-message'>{this.props.card.alertStatus.message}</span>
+            <div className='absolute -top-7 w-6 text-white bg-black/80 font-bold h-6 text-center left-1/2 -mb-3 rounded-md border-1'>
+                {card.order}
             </div>
         );
-    }
+    };
 
-    showMenu() {
-        return (
-            this.getMenu().some((item) => item.command !== 'click') && this.isAllowedMenuSource()
-        );
-    }
-
-    getMenu() {
-        let menu = this.props.menu || [];
-
-        if (this.props.card.menu) {
-            menu = menu.concat(this.props.card.menu);
-        }
-
-        return menu;
-    }
-
-    isFacedown() {
-        return this.props.card.facedown || !this.props.card.code;
-    }
-
-    getDragFrame(image) {
-        if (!this.props.isDragging) {
+    const getAlertStatus = () => {
+        if (!card.alertStatus) {
             return null;
         }
-
-        let style = {};
-
-        if (this.props.dragOffset && this.props.isDragging) {
-            let x = this.props.dragOffset.x;
-            let y = this.props.dragOffset.y;
-
-            style = {
-                left: x,
-                top: y
-            };
-        }
+        const iconClass = classNames('bg-black/50 p-1', {
+            'text-warning': card.alertStatus.type === 'warning',
+            'text-danger': card.alertStatus.type === 'error'
+        });
 
         return (
-            <div className='drag-preview' style={style}>
-                {image}
+            <div
+                onMouseOut={() => setShowStatus(false)}
+                onMouseOver={() => setShowStatus(true)}
+                className={
+                    'absolute top-0 left-0 flex items-center justify-center w-full h-1/2 ' +
+                    card.alertStatus.type
+                }
+            >
+                <div>
+                    <FontAwesomeIcon className={iconClass} icon={faExclamationCircle} />
+                </div>
+                {showStatus && (
+                    <span className='absolute w-full p-1 text-white bg-black/50 text-xs text-center break-words'>
+                        {card.alertStatus.message}
+                    </span>
+                )}
             </div>
         );
-    }
+    };
 
-    getCard() {
-        if (!this.props.card) {
+    // Need to get classes in priority, as tailwind is not consistent in CSS priority
+    const getHighlightClass = () => {
+        if (card.selected) {
+            return 'shadow-[0_0_2px_4px] shadow-green-400';
+        }
+        if (card.selectable) {
+            return 'shadow-[0_0_8px_4px] shadow-slate-300';
+        }
+        if (card.inChallenge) {
+            return 'shadow-[0_0_1px_2px] shadow-red-500';
+        }
+        if (card.inDanger) {
+            return 'shadow-[0_0_1px_2px] shadow-red-900';
+        }
+        if (card.saved) {
+            return 'shadow-[0_0_1px_2px] shadow-green-500';
+        }
+        if (card.isContributing) {
+            return 'shadow-[0_0_1px_2px] shadow-orange-200';
+        }
+        if (card.stealth || card.assault) {
+            return 'shadow-[0_0_1px_2px] shadow-orange-800';
+        }
+        if (card.controlled) {
+            return 'shadow-[0_0_1px_2px] shadow-yellow-300';
+        }
+        if (card.new) {
+            return 'shadow-[0_0_1px_2px] shadow-blue-100';
+        }
+    };
+
+    const isFacedown = () => {
+        return forceFaceup ? false : card.facedown || !card.code;
+    };
+
+    const getDragFrame = useCallback(
+        (image) => {
+            if (!transform) {
+                return null;
+            }
+
+            if (!startPosition && dragRef.current) {
+                setStartPosition(dragRef.current.getBoundingClientRect());
+            }
+
+            const style = {};
+
+            if (dragRef.current) {
+                const x = startPosition?.left + transform.x;
+                const y = startPosition?.top + transform.y;
+
+                style.left = x;
+                style.top = y;
+            }
+
+            const dragClass = classNames(
+                'card pointer-events-none fixed opacity-50 z-50',
+                sizeClass,
+                {
+                    horizontal: orientation !== 'vertical' || card.kneeled,
+                    vertical: orientation === 'vertical' && !card.kneeled
+                }
+            );
+            return (
+                <div className={dragClass} style={style} ref={dragRef}>
+                    {image}
+                </div>
+            );
+        },
+        [card.kneeled, orientation, sizeClass, startPosition, transform]
+    );
+
+    const getCard = () => {
+        if (!card) {
             return <div />;
         }
 
-        let cardClass = classNames(
-            'card',
-            `card-type-${this.props.card.type}`,
-            this.props.className,
-            this.sizeClass,
-            this.statusClass,
+        const cardClass = classNames(
+            'card overflow-hidden rounded-md',
+            className,
+            sizeClass,
+            getHighlightClass(),
             {
-                'custom-card': this.props.card.code && this.props.card.code.startsWith('custom'),
-                horizontal: this.props.orientation !== 'vertical' || this.props.card.kneeled,
-                vertical: this.props.orientation === 'vertical' && !this.props.card.kneeled,
-                unselectable: this.props.card.unselectable,
-                dragging: this.props.isDragging
+                absolute: !!style?.left,
+                relative: !style?.left,
+                [`card-type-${card.type}`]: card.type,
+                'custom-card': card.code && card.code.startsWith('custom'),
+                horizontal: orientation !== 'vertical' || card.kneeled,
+                vertical: orientation === 'vertical' && !card.kneeled,
+                'grayscale brightness-75': card.unselectable,
+                'z-10': !hideTokens
             }
         );
-        let imageClass = classNames('card-image', this.sizeClass, {
-            horizontal: this.props.card.type === 'plot',
-            vertical: this.props.card.type !== 'plot',
+        let imageClass = classNames('card-image absolute left-0 top-0', sizeClass, {
+            horizontal: card.type === 'plot',
+            vertical: card.type !== 'plot',
             kneeled:
-                this.props.card.type !== 'plot' &&
-                (this.props.orientation === 'kneeled' ||
-                    this.props.card.kneeled ||
-                    this.props.orientation === 'horizontal')
+                card.type !== 'plot' &&
+                (orientation === 'kneeled' || card.kneeled || orientation === 'horizontal')
         });
 
-        let image = <img className={imageClass} src={this.imageUrl} />;
+        let image = <img className={imageClass} src={imageUrl} />;
 
-        let content = this.props.connectDragSource(
-            <div className='card-frame'>
-                {this.getDragFrame(image)}
-                {this.getCardOrder()}
+        let content = (
+            <div className='relative'>
+                {getDragFrame(image)}
+                {getCardOrder()}
                 <div
+                    {...listeners}
+                    {...attributes}
+                    ref={setNodeRef}
                     className={cardClass}
-                    onMouseOver={
-                        this.props.disableMouseOver
-                            ? null
-                            : this.onMouseOver.bind(this, this.props.card)
-                    }
-                    onMouseOut={this.props.disableMouseOver ? null : this.onMouseOut}
-                    onClick={(ev) => this.onClick(ev, this.props.card)}
+                    onMouseOver={disableMouseOver ? null : () => handleMouseOver(card)}
+                    onMouseOut={disableMouseOver ? null : handleMouseOut}
+                    onClick={handleClick}
                 >
                     <div>
-                        <span className='card-name'>{this.props.card.name}</span>
+                        <span className='card-name'>{card.name}</span>
                         {image}
                     </div>
-                    {!this.props.hideTokens ? (
-                        <CardCounters counters={this.getCountersForCard(this.props.card)} />
-                    ) : null}
-                    {!this.isFacedown() ? this.getAlertStatus() : null}
+                    {!hideTokens ? <CardCounters counters={getCountersForCard(card)} /> : null}
+                    {!isFacedown() ? getAlertStatus() : null}
                 </div>
-                {this.state.showMenu ? (
-                    <CardMenu menu={this.getMenu()} onMenuItemClick={this.onMenuItemClick} />
+                {showMenu ? (
+                    <CardMenu menu={getMenu()} onMenuItemClick={handleMenuItemClick} />
                 ) : null}
             </div>
         );
 
-        return this.props.connectDragPreview(content);
-    }
+        return content;
+    };
 
-    get imageUrl() {
-        let image = 'cardback.png';
+    const imageUrl = !isFacedown()
+        ? `/img/cards/${card.code}.png`
+        : source === 'shadows'
+          ? '/img/cards/cardback_shadow.png'
+          : '/img/cards/cardback.png';
 
-        if (!this.isFacedown()) {
-            image = `${this.props.card.code}.png`;
-        } else if (this.props.source === 'shadows') {
-            image = 'cardback_shadow.png';
-        }
+    const wrapperClass = classNames('m-0 inline-block select-none', {
+        absolute: !!style?.left,
+        relative: !style?.left
+    });
 
-        return '/img/cards/' + image;
-    }
-
-    get sizeClass() {
-        return {
-            [this.props.size]: this.props.size !== 'normal'
-        };
-    }
-
-    get statusClass() {
-        if (!this.props.card) {
-            return undefined;
-        }
-
-        if (this.props.card.selected) {
-            return 'selected';
-        } else if (this.props.card.selectable) {
-            return 'selectable';
-        } else if (this.props.card.inDanger) {
-            return 'in-danger';
-        } else if (this.props.card.saved) {
-            return 'saved';
-        } else if (this.props.card.inChallenge) {
-            return 'challenge';
-        } else if (this.props.card.isContributing) {
-            return 'contributing';
-        } else if (this.props.card.stealth) {
-            return 'stealth';
-        } else if (this.props.card.assault) {
-            return 'assault';
-        } else if (this.props.card.controlled) {
-            return 'controlled';
-        } else if (this.props.card.new) {
-            return 'new';
-        }
-
-        return undefined;
-    }
-
-    render() {
-        if (this.props.wrapped) {
-            return (
-                <div className='card-wrapper' style={this.props.style}>
-                    {this.getCard()}
-                    {this.getDupes()}
-                    {this.getAttachments()}
-                    {this.renderUnderneathCards()}
-                </div>
-            );
-        }
-
-        return this.getCard();
-    }
-}
-
-InnerCard.displayName = 'Card';
-InnerCard.propTypes = {
-    card: PropTypes.shape({
-        alertStatus: PropTypes.shape({
-            type: PropTypes.string,
-            message: PropTypes.string
-        }),
-        assault: PropTypes.bool,
-        attached: PropTypes.bool,
-        attachments: PropTypes.array,
-        baseStrength: PropTypes.number,
-        childCards: PropTypes.array,
-        code: PropTypes.string,
-        controlled: PropTypes.bool,
-        dupes: PropTypes.array,
-        facedown: PropTypes.bool,
-        factionStatus: PropTypes.array,
-        iconsAdded: PropTypes.array,
-        iconsRemoved: PropTypes.array,
-        inChallenge: PropTypes.bool,
-        inDanger: PropTypes.bool,
-        isContributing: PropTypes.bool,
-        kneeled: PropTypes.bool,
-        menu: PropTypes.array,
-        name: PropTypes.string,
-        new: PropTypes.bool,
-        order: PropTypes.number,
-        power: PropTypes.number,
-        saved: PropTypes.bool,
-        selectable: PropTypes.bool,
-        selected: PropTypes.bool,
-        stealth: PropTypes.bool,
-        strength: PropTypes.number,
-        tokens: PropTypes.object,
-        type: PropTypes.string,
-        unselectable: PropTypes.bool
-    }).isRequired,
-    className: PropTypes.string,
-    connectDragPreview: PropTypes.func,
-    connectDragSource: PropTypes.func,
-    disableMouseOver: PropTypes.bool,
-    dragOffset: PropTypes.object,
-    hideTokens: PropTypes.bool,
-    isDragging: PropTypes.bool,
-    menu: PropTypes.array,
-    onClick: PropTypes.func,
-    onMenuItemClick: PropTypes.func,
-    onMouseOut: PropTypes.func,
-    onMouseOver: PropTypes.func,
-    orientation: PropTypes.oneOf(['horizontal', 'kneeled', 'vertical']),
-    size: PropTypes.string,
-    source: PropTypes.oneOf([
-        'hand',
-        'discard pile',
-        'play area',
-        'dead pile',
-        'draw deck',
-        'plot deck',
-        'revealed plots',
-        'selected plot',
-        'attachment',
-        'agenda',
-        'faction',
-        'additional',
-        'shadows',
-        'full deck',
-        'rookery',
-        'underneath'
-    ]).isRequired,
-    style: PropTypes.object,
-    wrapped: PropTypes.bool
+    return wrapped ? (
+        <div className={wrapperClass} style={style}>
+            {getCard()}
+            {getDupes()}
+            {getAttachments()}
+            {renderUnderneathCards()}
+        </div>
+    ) : (
+        getCard()
+    );
 };
-InnerCard.defaultProps = {
-    orientation: 'vertical',
-    wrapped: true
-};
-
-const Card = DragSource(ItemTypes.CARD, cardSource, collect)(InnerCard);
 
 export default Card;

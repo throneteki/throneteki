@@ -15,6 +15,7 @@ class BranStark extends DrawCard {
         this.interrupt({
             when: {
                 onClaimApplied: (event) =>
+                    event.challenge &&
                     event.challenge.isMatch({ challengeType: 'intrigue' }) &&
                     event.challenge.defendingPlayer.hand.length !== 0 &&
                     event.challenge

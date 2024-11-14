@@ -1,9 +1,9 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { DropTarget } from 'react-dnd';
+import React, { useMemo } from 'react';
 import classNames from 'classnames';
 
+import { useDroppable } from '@dnd-kit/core';
 import { ItemTypes } from '../../constants';
+import { useUniqueId } from '@dnd-kit/utilities';
 
 const validTargets = {
     hand: [
@@ -49,10 +49,9 @@ const validTargets = {
         'play area',
         'out of game',
         'agenda',
-        'rookery',
         'shadows'
     ],
-    'plot deck': ['revealed plots', 'out of game', 'rookery'],
+    'plot deck': ['revealed plots', 'out of game'],
     'revealed plots': ['plot deck', 'out of game'],
     'out of game': [
         'plot deck',
@@ -73,68 +72,49 @@ const validTargets = {
         'out of game',
         'shadows'
     ],
-    shadows: ['dead pile', 'discard pile', 'draw deck', 'hand', 'out of game', 'play area'],
-    'full deck': ['rookery'],
-    rookery: ['full deck']
+    shadows: ['dead pile', 'discard pile', 'draw deck', 'hand', 'out of game', 'play area']
 };
 
-const dropTarget = {
-    canDrop(props, monitor) {
-        let item = monitor.getItem();
-
-        return (
-            validTargets[item.source] &&
-            validTargets[item.source].some((target) => target === props.source)
-        );
-    },
-    drop(props, monitor) {
-        let item = monitor.getItem();
-
-        if (props.onDragDrop) {
-            props.onDragDrop(item.card, item.source, props.source);
+const Droppable = ({ className, children, source, size }) => {
+    const { isOver, active, setNodeRef } = useDroppable({
+        id: useUniqueId(source),
+        data: {
+            source: source
         }
-    }
-};
+    });
 
-function collect(connect, monitor) {
-    let item = monitor.getItem();
-
-    return {
-        connectDropTarget: connect.dropTarget(),
-        isOver: monitor.isOver(),
-        canDrop: monitor.canDrop(),
-        itemSource: item && item.source
-    };
-}
-
-class Droppable extends React.Component {
-    render() {
-        let className = classNames('overlay', {
-            'drop-ok': this.props.isOver && this.props.canDrop,
-            'no-drop':
-                this.props.isOver &&
-                !this.props.canDrop &&
-                this.props.source !== this.props.itemSource,
-            'can-drop': !this.props.isOver && this.props.canDrop
-        });
-
-        return this.props.connectDropTarget(
-            <div className='drop-target'>
-                <div className={className} />
-                {this.props.children}
-            </div>
+    const canDrop = useMemo(() => {
+        return (
+            active &&
+            validTargets[active.data.current.source] &&
+            validTargets[active.data.current.source].some((target) => target === source)
         );
-    }
-}
+    }, [active, source]);
 
-Droppable.propTypes = {
-    canDrop: PropTypes.bool,
-    children: PropTypes.node,
-    connectDropTarget: PropTypes.func,
-    isOver: PropTypes.bool,
-    itemSource: PropTypes.string,
-    onDragDrop: PropTypes.func,
-    source: PropTypes.string.isRequired
+    const innerClass = classNames(
+        'pointer-events-none absolute top-0 left-0 h-full w-full opacity-50 z-50',
+        {
+            'bg-success-500': isOver && canDrop,
+            'bg-danger-500':
+                isOver &&
+                active?.data.type === ItemTypes.CARD &&
+                !canDrop &&
+                source !== active?.data.current.source,
+            'bg-warning-500': !isOver && canDrop,
+            [source.replace(' ', '-')]: true
+        }
+    );
+
+    let dropClass = classNames(className, 'relative', size, {
+        [source.replace(' ', '-')]: source !== 'play area'
+    });
+
+    return (
+        <div className={dropClass} ref={setNodeRef}>
+            <div className={innerClass} />
+            {children}
+        </div>
+    );
 };
 
-export default DropTarget(ItemTypes.CARD, dropTarget, collect)(Droppable);
+export default Droppable;

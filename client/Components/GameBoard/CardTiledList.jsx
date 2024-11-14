@@ -1,54 +1,79 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useMemo } from 'react';
 
 import Card from './Card';
 
-function CardTiledList(props) {
-    let cardList =
-        props.cards &&
-        props.cards.map((card, index) => {
-            return (
-                <Card
-                    card={card}
-                    disableMouseOver={props.disableMouseOver}
-                    key={index}
-                    onClick={props.onCardClick}
-                    onMouseOut={props.onCardMouseOut}
-                    onMouseOver={props.onCardMouseOver}
-                    onTouchMove={props.onTouchMove}
-                    onMenuItemClick={props.onMenuItemClick}
-                    orientation={card.type === 'plot' ? 'horizontal' : 'vertical'}
-                    size={props.size}
-                    source={props.source}
-                />
-            );
-        });
+// This is super manual and explicit so that tailwindcss realises we are using these css classes and doesn't filter them out
+// Change this list at your peril
+const columnClassMap = {
+    1: 'grid-cols-1',
+    2: 'grid-cols-2',
+    3: 'grid-cols-3',
+    4: 'grid-cols-4',
+    5: 'grid-cols-5',
+    6: 'grid-cols-6',
+    7: 'grid-cols-7'
+};
 
-    let title =
-        props.title && props.cards
-            ? `${props.title} (${props.titleCount || props.cards.length})`
-            : props.title;
+const CardTiledList = ({
+    cards,
+    disableMouseOver,
+    numColumns,
+    onCardClick,
+    onCardMouseOut,
+    onCardMouseOver,
+    onTouchMove,
+    onMenuItemClick,
+    size,
+    source,
+    title,
+    titleCount,
+    showCards
+}) => {
+    const cardList = useMemo(() => {
+        return (
+            cards &&
+            cards.map((card, index) => {
+                return (
+                    <Card
+                        card={card}
+                        forceFaceup={showCards}
+                        disableMouseOver={disableMouseOver}
+                        key={index}
+                        onClick={onCardClick}
+                        onMouseOut={onCardMouseOut}
+                        onMouseOver={onCardMouseOver}
+                        onTouchMove={onTouchMove}
+                        onMenuItemClick={onMenuItemClick}
+                        orientation={card.type === 'plot' ? 'horizontal' : 'vertical'}
+                        size={size}
+                        source={source}
+                    />
+                );
+            })
+        );
+    }, [
+        cards,
+        disableMouseOver,
+        onCardClick,
+        onCardMouseOut,
+        onCardMouseOver,
+        onMenuItemClick,
+        onTouchMove,
+        showCards,
+        size,
+        source
+    ]);
+
+    let titleText = title && cards ? `${title} (${titleCount || cards.length})` : title;
 
     return (
         <div className='card-list'>
-            {title && <div className='card-list-title'>{title}</div>}
-            <div className='card-list-cards'>{cardList}</div>
+            {titleText && <div className='card-list-title'>{titleText}</div>}
+            <div className={`card-list-cards gap-1.5 grid ${columnClassMap[numColumns]}`}>
+                {cardList}
+            </div>
         </div>
     );
-}
-
-CardTiledList.propTypes = {
-    cards: PropTypes.array,
-    disableMouseOver: PropTypes.bool,
-    onCardClick: PropTypes.func,
-    onCardMouseOut: PropTypes.func,
-    onCardMouseOver: PropTypes.func,
-    onMenuItemClick: PropTypes.func,
-    onTouchMove: PropTypes.func,
-    size: PropTypes.string,
-    source: PropTypes.string,
-    title: PropTypes.string,
-    titleCount: PropTypes.number
 };
 
 export default CardTiledList;

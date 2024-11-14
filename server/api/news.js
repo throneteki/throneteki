@@ -6,11 +6,24 @@ import { wrapAsync } from '../util.js';
 export const init = function (server, options) {
     let newsService = new NewsService(options.db);
 
-    server.get('/api/news', function (req, res) {
+    server.get('/api/news', function (_, res) {
         newsService
-            .getRecentNewsItems({ limit: req.query.limit })
+            .getRecentNewsItems({ limit: 3 })
             .then((news) => {
-                res.send({ success: true, news: news });
+                res.send({ success: true, data: news });
+            })
+            .catch((err) => {
+                logger.error(err);
+
+                res.send({ success: false, message: 'Error loading news' });
+            });
+    });
+
+    server.get('/api/news/all', function (_, res) {
+        newsService
+            .getRecentNewsItems()
+            .then((news) => {
+                res.send({ success: true, data: news });
             })
             .catch((err) => {
                 logger.error(err);
@@ -32,7 +45,7 @@ export const init = function (server, options) {
                 text: req.body.text,
                 datePublished: new Date()
             });
-            res.send({ success: true, newsItem: newsItem });
+            res.send({ success: true, data: newsItem });
         })
     );
 
@@ -45,7 +58,7 @@ export const init = function (server, options) {
             }
 
             await newsService.editNews(req.params.id, req.body.text);
-            res.send({ success: true, id: req.params.id, text: req.body.text });
+            res.send({ success: true, data: { id: req.params.id, text: req.body.text } });
         })
     );
 

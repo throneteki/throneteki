@@ -1,0 +1,85 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    @font-face {
+        font-family: 'thronesdb';
+        src: url('assets/fonts/thronesdb.ttf') format('truetype');
+        font-weight: normal;
+        font-style: normal;
+    }
+
+    @font-face {
+        font-family: 'PoppinsMedium';
+        src: url('assets/fonts/Poppins-Medium.ttf') format('truetype');
+        font-weight: normal;
+        font-style: normal;
+    }
+
+    @font-face {
+        font-family: 'steel45';
+        src: url('assets/fonts/steel45.ttf') format('truetype');
+        font-weight: normal;
+        font-style: normal;
+    }
+
+    .card {
+        cursor: unset;
+    }
+}
+
+html,
+body {
+    height: 100%;
+    overflow-y: hidden;
+}
+
+.container {
+    overflow-y: auto;
+    height: 100%;
+}
+
+body {
+    font-size: 0.9rem;
+}
+
+.wrapper {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 48px;
+    bottom: 0;
+
+    overflow-y: auto;
+}
+
+:root {
+    --throneteki-card-width: 65px;
+    --throneteki-card-height: 91px;
+
+    --throneteki-card-lg-width: calc(var(--throneteki-card-width) * 1.4);
+    --throneteki-card-lg-height: calc(1.4 * var(--throneteki-card-height));
+
+    --throneteki-card-xl-width: calc(var(--throneteki-card-width) * 2);
+    --throneteki-card-xl-height: calc(var(--throneteki-card-height) * 2);
+
+    --throneteki-card-sm-width: calc(var(--throneteki-card-width) * 0.6);
+    --throneteki-card-sm-height: calc(var(--throneteki-card-height) * 0.6);
+
+    --scrollbar-width: 20px;
+
+    --attachment-offset: 10px;
+    --attachment-offset-lg: calc(var(--attachment-offset) * 1.4);
+    --attachment-offset-xl: calc(var(--attachment-offset) * 2);
+
+    --layer-cards: 10;
+}
+
+.rrt-message {
+    background: var(--color-black) !important;
+}
+
+.rrt-confirm {
+    background: var(--color-primary) !important;
+}

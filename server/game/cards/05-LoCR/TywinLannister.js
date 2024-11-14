@@ -5,64 +5,48 @@ class TywinLannister extends DrawCard {
     setupCardAbilities() {
         this.interrupt({
             when: {
-                onCardDiscarded: (event) => this.exactlyOneCardDiscardedFromPlayersDeck(event)
+                onCardDiscarded: {
+                    aggregateBy: (event) => ({
+                        controller: event.card.controller,
+                        location: event.originalLocation
+                    }),
+                    condition: (aggregate, events) =>
+                        events.length === 1 && aggregate.location === 'draw deck'
+                }
             },
             message: {
                 format: "{player} uses {source} to look at the top 2 cards of {discardingPlayer}'s deck and discard 1",
-                args: { discardingPlayer: (context) => context.event.card.controller }
+                args: { discardingPlayer: (context) => context.aggregate.controller }
             },
-            handler: (context) => {
-                this.context = context;
-                let top2Cards = this.context.event.card.controller.drawDeck.slice(0, 2);
-                let buttons = top2Cards.map((card) => {
-                    return { method: 'cardSelected', card: card, mapCard: true };
-                });
-
-                this.game.promptWithMenu(this.controller, this, {
-                    activePrompt: {
-                        menuTitle: 'Select which card to discard',
-                        buttons: buttons
-                    },
-                    source: this
-                });
-            }
+            gameAction: GameActions.choose({
+                title: 'Select which card to discard',
+                // TODO: Add message
+                choices: (context) => this.buildChoices(context)
+            })
         });
     }
 
-    exactlyOneCardDiscardedFromPlayersDeck(event) {
-        // If there are no other concurrent events with the same controller being discarded from the draw deck, then exactly 1 card is being discarded from that players deck
-        return (
-            event.originalLocation === 'draw deck' &&
-            !(
-                event.parentEvent &&
-                event.parentEvent
-                    .getConcurrentEvents()
-                    .some(
-                        (childEvent) =>
-                            childEvent.name === 'onCardDiscarded' &&
-                            childEvent !== event &&
-                            childEvent.card.controller === event.card.controller &&
-                            childEvent.originalLocation === 'draw deck'
-                    )
-            )
-        );
-    }
-
-    cardSelected(p, card) {
-        const currentEvent = this.context.event.childEvent.placeCard;
-        const { player, location, bottom, orderable } = currentEvent;
-        currentEvent.replace(
-            GameActions.placeCard({
+    buildChoices(context) {
+        const topCards = context.aggregate.controller.drawDeck.slice(0, 2);
+        return topCards.reduce((choices, card) => {
+            choices[card.uuid] = {
                 card,
-                player,
-                location,
-                bottom,
-                orderable
-            }).createEvent()
-        );
-        this.game.addMessage('{0} chooses to discard {1}', this.controller, card);
-
-        return true;
+                gameAction: GameActions.genericHandler(() => {
+                    const currentEvent = context.events[0].childEvent.placeCard;
+                    const { player, location, bottom, orderable } = currentEvent;
+                    currentEvent.replace(
+                        GameActions.placeCard({
+                            card,
+                            player,
+                            location,
+                            bottom,
+                            orderable
+                        }).createEvent()
+                    );
+                })
+            };
+            return choices;
+        }, {});
     }
 }
 

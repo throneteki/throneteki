@@ -62,7 +62,6 @@ class Game extends EventEmitter {
         this.name = details.name;
         this.allowSpectators = details.allowSpectators;
         this.showHand = details.showHand;
-        this.useRookery = details.useRookery;
         this.owner = details.owner.username;
         this.started = false;
         this.playStarted = false;
@@ -703,20 +702,28 @@ class Game extends EventEmitter {
             let valueGetter;
             switch (stat) {
                 case 'claim':
-                    if (typeof player.activePlot.claimSet === 'number') {
-                        effect = Effects.setClaim(Math.max(player.getClaim() + value, 0));
-                    } else {
+                    if (!player.activePlot.claim.setValue) {
                         effect = Effects.modifyClaim(value);
+                    } else {
+                        effect = Effects.setClaim(Math.max(player.getClaim() + value, 0));
                     }
                     valueGetter = () => player.getClaim();
                     break;
                 case 'initiative':
-                    effect = Effects.modifyInitiative(value);
-                    valueGetter = () => player.getTotalInitiative();
+                    if (!player.activePlot.initiative.setValue) {
+                        effect = Effects.modifyInitiative(value);
+                    } else {
+                        effect = Effects.setInitiative(Math.max(player.getInitiative() + value, 0));
+                    }
+                    valueGetter = () => player.getInitiative();
                     break;
                 case 'reserve':
-                    effect = Effects.modifyReserve(value);
-                    valueGetter = () => player.getTotalReserve();
+                    if (!player.activePlot.reserve.setValue) {
+                        effect = Effects.modifyReserve(value);
+                    } else {
+                        effect = Effects.setReserve(Math.max(player.getReserve() + value, 0));
+                    }
+                    valueGetter = () => player.getReserve();
                     break;
             }
 
@@ -1088,15 +1095,15 @@ class Game extends EventEmitter {
         this.queueStep(new InterruptWindow(this, groupedEvent, () => this.postEventCalculations()));
     }
 
-    registerAbility(ability, event) {
+    registerAbility(ability, context) {
         let reverseStack = [...this.abilityWindowStack].reverse();
-        let window = reverseStack.find((window) => window.canTriggerAbility(ability));
+        let window = reverseStack.find((window) => window.canTriggerAbility(ability, context));
 
         if (!window) {
             return;
         }
 
-        window.registerAbility(ability, event);
+        window.registerAbility(ability, context);
     }
 
     clearAbilityResolution(ability) {
@@ -1550,7 +1557,7 @@ class Game extends EventEmitter {
         for (let player of this.getAllPlayers()) {
             var deck = undefined;
             if (player.left) {
-                return;
+                continue;
             }
 
             if (activePlayerName === player.name && player.deck) {

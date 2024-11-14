@@ -1,11 +1,12 @@
 import DrawCard from '../../drawcard.js';
-import ApplyClaim from '../../gamesteps/challenge/applyclaim.js';
+import SatisfyClaim from '../../gamesteps/challenge/SatisfyClaim.js';
 
 class TrialByCombat extends DrawCard {
     setupCardAbilities() {
         this.interrupt({
             when: {
                 onClaimApplied: (event) =>
+                    event.challenge &&
                     event.challenge.winner === this.controller &&
                     // While valid for anyone to play, typically only the attacking player
                     // or other Melee players will want to trigger it.
@@ -24,11 +25,10 @@ class TrialByCombat extends DrawCard {
                     'intrigue'
                 );
 
-                context.replaceHandler(() => {
-                    let replacementClaim = context.event.claim.clone();
-                    replacementClaim.challengeType = 'military';
+                context.replaceHandler((event) => {
+                    event.claim.challengeType = 'military';
 
-                    this.game.queueStep(new ApplyClaim(this.game, replacementClaim));
+                    this.game.queueStep(new SatisfyClaim(this.game, event.claim));
                 });
             }
         });

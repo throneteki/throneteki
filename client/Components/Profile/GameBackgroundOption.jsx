@@ -1,30 +1,22 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useCallback } from 'react';
 import classNames from 'classnames';
 
-function GameBackgroundOption(props) {
-    let { name, label, imageUrl, selected, onSelect } = props;
-
-    const handleClick = () => {
+const GameBackgroundOption = ({ name, label, imageUrl, selected, onSelect }) => {
+    const handleClick = useCallback(() => {
         if (onSelect) {
             onSelect(name);
         }
-    };
+    }, [name, onSelect]);
 
     return (
-        <div className='col-sm-4' onClick={handleClick}>
-            <img className={classNames('img-responsive', { selected: selected })} src={imageUrl} />
-            <span className='bg-label'>{label}</span>
+        <div onClick={handleClick}>
+            <img
+                className={classNames('img-responsive', { 'border-2 border-green-600': selected })}
+                src={imageUrl}
+            />
+            <span className='inline-block w-full text-center'>{label}</span>
         </div>
     );
-}
-
-GameBackgroundOption.propTypes = {
-    imageUrl: PropTypes.string.isRequired,
-    label: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    onSelect: PropTypes.func,
-    selected: PropTypes.bool
 };
 
 export default GameBackgroundOption;

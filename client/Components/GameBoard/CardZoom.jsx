@@ -1,37 +1,30 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 import AltCard from './AltCard';
 
-class CardZoom extends React.Component {
-    render() {
-        const zoomClass = classNames('card-large', {
-            vertical: this.props.orientation === 'vertical',
-            horizontal: this.props.orientation === 'horizontal'
-        });
+const CardZoom = ({ card, cardName, imageUrl, orientation, show }) => {
+    const zoomClass = classNames('right-1 top-1 absolute z-50 pointer-events-none', {
+        'w-[calc(var(--throneteki-card-width)*4)]': orientation === 'vertical',
+        'w-[calc(var(--throneteki-card-height)*4)]': orientation !== 'vertical'
+    });
 
-        return (
-            <div className={zoomClass}>
-                {this.props.show ? (
-                    <div className='card-zoomed shadow'>
-                        <span className='card-name'>{this.props.cardName}</span>
-                        <img className='image-large img-responsive' src={this.props.imageUrl} />
-                        {this.props.card && <AltCard card={this.props.card} />}
-                    </div>
-                ) : null}
-            </div>
-        );
-    }
-}
-
-CardZoom.displayName = 'CardZoom';
-CardZoom.propTypes = {
-    card: PropTypes.object,
-    cardName: PropTypes.string,
-    imageUrl: PropTypes.string,
-    orientation: PropTypes.oneOf(['horizontal', 'vertical']),
-    show: PropTypes.bool
+    return (
+        <div className={zoomClass}>
+            {show ? (
+                <div className='w-full h-full shadow'>
+                    <span className='block text-sm font-[Lucida Sans] uppercase text-center whitespace-nowrap overflow-hidden'>
+                        {cardName}
+                    </span>
+                    <img
+                        className='absolute top-0 right-0 rounded-xl z-50 img-responsive'
+                        src={imageUrl}
+                    />
+                    {card && <AltCard card={card} />}
+                </div>
+            ) : null}
+        </div>
+    );
 };
 
 export default CardZoom;

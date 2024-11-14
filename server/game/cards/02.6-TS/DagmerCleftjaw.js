@@ -5,6 +5,7 @@ class DagmerCleftjaw extends DrawCard {
         this.interrupt({
             when: {
                 onClaimApplied: (event) =>
+                    event.challenge &&
                     event.challenge.isMatch({ winner: this.controller, attackingAlone: this })
             },
             target: {

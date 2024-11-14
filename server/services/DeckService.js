@@ -1,21 +1,56 @@
+import { formatDeckAsFullCards } from '../../deck-helper/formatDeckAsFullCards.js';
+import { validateDeck } from '../../deck-helper/index.js';
 import logger from '../log.js';
 
 class DeckService {
-    constructor(db) {
+    constructor(db, cardService) {
         this.decks = db.get('decks');
+        this.cardService = cardService;
     }
 
-    getById(id) {
-        return this.decks
-            .findOne({ _id: id })
-            .then((deck) => {
-                deck.locked = deck.eventId ? true : false; // lock the deck from further changes if the eventId is set //TODO refactor this when draft is finished
-                return deck;
-            })
-            .catch((err) => {
-                logger.error('Unable to fetch deck %s', err);
-                throw new Error('Unable to fetch deck ' + id);
+    async init() {
+        this.packs = await this.cardService.getAllPacks();
+        this.restrictedLists = await this.cardService.getRestrictedList();
+        this.cards = await this.cardService.getAllCards();
+    }
+
+    processDeck = (deck) => {
+        let formattedDeck = formatDeckAsFullCards(deck, {
+            cards: this.cards,
+            factions: this.factions
+        });
+        //copy over the locked properties from the server deck object
+        formattedDeck.lockedForEditing = deck.lockedForEditing;
+        formattedDeck.lockedForDeletion = deck.lockedForDeletion;
+
+        formattedDeck.status = {};
+
+        for (const restrictedList of this.restrictedLists) {
+            formattedDeck.status[restrictedList._id] = validateDeck(formattedDeck, {
+                packs: this.packs,
+                restrictedLists: [restrictedList]
             });
+        }
+
+        return formattedDeck;
+    };
+
+    async getById(id) {
+        try {
+            this.restrictedLists = await this.cardService.getRestrictedList();
+
+            const deck = await this.decks.findOne({ _id: id });
+            if (!deck) {
+                return null;
+            }
+
+            deck.locked = !!deck.eventId; // lock the deck from further changes if the eventId is set //TODO refactor this when draft is finished
+
+            return this.processDeck(deck);
+        } catch (err) {
+            logger.error('Unable to fetch deck %s', err);
+            throw new Error('Unable to fetch deck ' + id);
+        }
     }
 
     getByName(name) {
@@ -38,13 +73,73 @@ class DeckService {
         });
     }
 
-    findByUserName(username) {
-        return this.decks
-            .find({ username: username }, { sort: { lastUpdated: -1 } })
-            .then((decks) => {
-                decks.forEach((d) => (d.locked = d.eventId ? true : false));
-                return decks;
-            });
+    async findByUserName(username, options = {}) {
+        const sort = options.sorting || [{ id: 'lastUpdated', desc: 'true' }];
+        const filter = options.filters || [];
+        const page = parseInt(options.pageNumber, 10) || 1;
+        const pageSize = parseInt(options.pageSize, 10) || 10;
+
+        filter.push({ id: 'username', value: username });
+
+        this.restrictedLists = await this.cardService.getRestrictedList();
+        const dbDecks = await this.decks.aggregate([
+            {
+                $facet: {
+                    metadata: [
+                        {
+                            $match: filter.reduce(
+                                (acc, curr) => (
+                                    (acc[curr.id] =
+                                        curr.id === 'username'
+                                            ? curr.value
+                                            : { $regex: curr.value, $options: 'i' }),
+                                    acc
+                                ),
+                                {}
+                            )
+                        },
+                        { $count: 'totalCount' }
+                    ],
+                    data: [
+                        {
+                            $match: filter.reduce(
+                                (acc, curr) => (
+                                    (acc[curr.id] =
+                                        curr.id === 'username'
+                                            ? curr.value
+                                            : { $regex: curr.value, $options: 'i' }),
+                                    acc
+                                ),
+                                {}
+                            )
+                        },
+                        { $sort: { [sort[0].id]: sort[0].desc === 'true' ? -1 : 1 } },
+                        { $skip: (page - 1) * pageSize },
+                        { $limit: pageSize }
+                    ]
+                }
+            }
+        ]);
+
+        if (dbDecks.length === 0 || dbDecks[0].metadata.length === 0) {
+            return { success: true, data: [], totalCount: 0, page, pageSize };
+        }
+
+        const decks = Object.assign(
+            { totalCount: dbDecks[0].metadata[0].totalCount, page, pageSize },
+            {
+                success: true,
+                data: dbDecks[0].data.map((deck) => {
+                    deck.locked = !!deck.eventId;
+
+                    deck = this.processDeck(deck);
+
+                    return deck;
+                })
+            }
+        );
+
+        return decks;
     }
 
     removeEventIdAndUnlockDecks(eventId) {
@@ -58,11 +153,13 @@ class DeckService {
         );
     }
 
-    getStandaloneDecks() {
-        return this.decks.find(
+    async getStandaloneDecks() {
+        const decks = await this.decks.find(
             { standaloneDeckId: { $exists: true } },
             { sort: { lastUpdated: -1 } }
         );
+
+        return decks.map((deck) => this.processDeck(deck));
     }
 
     async create(deck) {
@@ -78,14 +175,13 @@ class DeckService {
 
         let properties = {
             username: deck.username,
-            name: deck.deckName,
+            name: deck.name,
             plotCards: deck.plotCards,
             bannerCards: deck.bannerCards,
             drawCards: deck.drawCards,
             eventId: deck.eventId,
             faction: deck.faction,
             agenda: deck.agenda,
-            rookeryCards: deck.rookeryCards || [],
             lastUpdated: new Date()
         };
 
@@ -100,7 +196,6 @@ class DeckService {
             drawCards: deck.drawCards,
             faction: deck.faction,
             agenda: deck.agenda,
-            rookeryCards: deck.rookeryCards || [],
             lastUpdated: deck.lastUpdated,
             standaloneDeckId: deck.standaloneDeckId
         };
@@ -126,14 +221,14 @@ class DeckService {
         }
 
         let properties = {
-            name: deck.deckName,
+            name: deck.name,
             plotCards: deck.plotCards,
             drawCards: deck.drawCards,
             bannerCards: deck.bannerCards,
             faction: deck.faction,
             eventId: deck.eventId,
             agenda: deck.agenda,
-            rookeryCards: deck.rookeryCards || [],
+            isFavourite: deck.isFavourite,
             lastUpdated: new Date()
         };
 
