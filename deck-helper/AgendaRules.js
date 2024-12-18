@@ -312,9 +312,8 @@ const agendaRules = {
             {
                 message: 'Cannot contain more than 3 different cards from any faction',
                 condition: (deck) => {
-                    const cardQuantities = deck.drawCards.concat(deck.plotCards);
                     const factionCounts = new Map();
-                    for (const cardQuantity of cardQuantities) {
+                    for (const cardQuantity of deck.drawCards) {
                         if (cardQuantity.card.faction !== 'neutral') {
                             let count = factionCounts.get(cardQuantity.card.faction) || 0;
                             factionCounts.set(cardQuantity.card.faction, count + 1);
