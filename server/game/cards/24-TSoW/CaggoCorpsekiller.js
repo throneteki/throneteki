@@ -20,15 +20,12 @@ class CaggoCorpsekiller extends DrawCard {
                 }
             },
             handler: (context) => {
-                context.event.replaceHandler(() => {
-                    this.game.resolveGameAction(
-                        GameActions.placeCard((context) => ({
-                            card: context.event.card,
-                            location: 'dead pile'
-                        })),
-                        context
-                    );
-                });
+                context.event.childEvent.placeCard.replace(
+                    GameActions.placeCard({
+                        card: context.event.card,
+                        location: 'dead pile'
+                    }).createEvent()
+                );
             }
         });
     }

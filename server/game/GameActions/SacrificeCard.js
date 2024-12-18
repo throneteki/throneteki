@@ -1,7 +1,7 @@
 import GameAction from './GameAction.js';
 import Message from '../Message.js';
+import MoveCardEventGenerator from './MoveCardEventGenerator.js';
 import LeavePlay from './LeavePlay.js';
-import PlaceCard from './PlaceCard.js';
 
 class SacrificeCard extends GameAction {
     constructor() {
@@ -17,17 +17,7 @@ class SacrificeCard extends GameAction {
     }
 
     createEvent({ card, player }) {
-        player = player || card.controller;
-        const params = {
-            card,
-            player,
-            snapshotName: 'cardStateWhenSacrificed'
-        };
-        const sacrificeEvent = this.event('onSacrificed', params, (event) => {
-            event.thenAttachEvent(PlaceCard.createEvent({ card: card, location: 'discard pile' }));
-        });
-        const leavePlayEvent = LeavePlay.createEvent({ card });
-        return this.atomic(sacrificeEvent, leavePlayEvent);
+        return MoveCardEventGenerator.createSacrificeCardEvent({ card, player });
     }
 }
 
