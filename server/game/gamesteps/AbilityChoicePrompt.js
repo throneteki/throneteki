@@ -56,7 +56,7 @@ class AbilityChoicePrompt extends BaseStep {
         );
         if (choice) {
             this.context.selectedChoice = choice;
-            choice.message.output(this.game, this.context);
+            choice.message.output(this.game, { ...this.context, gameAction: choice.gameAction });
             this.gameActionResolver(choice.gameAction, this.context);
         }
 
