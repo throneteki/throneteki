@@ -1202,7 +1202,8 @@ class Player extends Spectator {
             this.game.raiseEvent('onCardPlaced', {
                 card: card,
                 location: targetLocation,
-                player: this
+                player: this,
+                cardStateWhenPlaced: card.createSnapshot()
             });
         }
     }

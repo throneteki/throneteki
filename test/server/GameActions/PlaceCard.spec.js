@@ -102,13 +102,17 @@ describe('PlaceCard', function () {
     xdescribe('createEvent()', function () {
         beforeEach(function () {
             this.event = PlaceCard.createEvent(this.props);
+            this.concurrentEvents = this.event.getConcurrentEvents();
         });
 
-        it('creates a onCardLeftPlay event', function () {
-            expect(this.event.name).toBe('onCardPlaced');
-            expect(this.event.card).toBe(this.cardSpy);
-            expect(this.event.location).toBe('discard pile');
-            expect(this.event.bottom).toBe(false);
+        it('creates an onCardPlaced event', function () {
+            const eventObj = {
+                name: 'onCardPlaced',
+                card: this.cardSpy,
+                location: 'discard pile',
+                bottom: false
+            };
+            expect(this.concurrentEvents).toContain(jasmine.objectContaining(eventObj));
         });
 
         describe('the event handler', function () {
