@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TywinLannister extends DrawCard {
     setupCardAbilities() {
@@ -17,29 +18,36 @@ class TywinLannister extends DrawCard {
                 format: "{player} uses {source} to look at the top 2 cards of {discardingPlayer}'s deck and discard 1",
                 args: { discardingPlayer: (context) => context.aggregate.controller }
             },
-            handler: (context) => {
-                this.eventObj = context.events[0];
-                let top2Cards = context.aggregate.controller.drawDeck.slice(0, 2);
-                let buttons = top2Cards.map((card) => {
-                    return { method: 'cardSelected', card: card, mapCard: true };
-                });
-
-                this.game.promptWithMenu(this.controller, this, {
-                    activePrompt: {
-                        menuTitle: 'Select which card to discard',
-                        buttons: buttons
-                    },
-                    source: this
-                });
-            }
+            gameAction: GameActions.choose({
+                title: 'Select which card to discard',
+                // TODO: Add message
+                choices: (context) => this.buildChoices(context)
+            })
         });
     }
 
-    cardSelected(player, card) {
-        this.eventObj.card = card;
-        this.game.addMessage('{0} chooses to discard {1}', this.controller, card);
+    buildChoices(context) {
+        const topCards = context.aggregate.controller.drawDeck.slice(0, 2);
+        return topCards.reduce((choices, card) => {
+            choices[card.uuid] = {
+                card,
+                gameAction: GameActions.genericHandler(() => {
+                    const event = context.events[0];
+                    const currentEvent = event.childEvents[0];
+                    const { player, location, bottom, orderable } = currentEvent;
+                    const newEvent = GameActions.placeCard({
+                        card,
+                        player,
+                        location,
+                        bottom,
+                        orderable
+                    }).createEvent();
 
-        return true;
+                    event.replaceChildEvent((event) => event === currentEvent, newEvent);
+                })
+            };
+            return choices;
+        }, {});
     }
 }
 

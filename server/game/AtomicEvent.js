@@ -1,3 +1,9 @@
+/**
+ * An Atomic Event groups multiple events into a single window, with properties & processes being shared.
+ * - Cancelling this event, or any child events, will cancel all children events.
+ * - Child events will have this event as it's parent.
+ * - This event will be "resolved" if it was not cancelled & all child events resolved successfully.
+ */
 class AtomicEvent {
     constructor() {
         this.cancelled = false;
@@ -5,6 +11,7 @@ class AtomicEvent {
         this.childEvents = [];
         this.attachedEvents = [];
         this.params = {};
+        this.order = 0;
     }
 
     get resolved() {
@@ -46,6 +53,24 @@ class AtomicEvent {
         }
     }
 
+    replace(newEvent) {
+        if (this.parent) {
+            this.parent.replaceChildEvent(this, newEvent);
+        } else {
+            throw new Error('Cannot replace an event without a parent!');
+        }
+    }
+
+    replaceChildEvent(childEvent, newEvent) {
+        const index = this.childEvents.findIndex((e) => e == childEvent);
+
+        if (index >= 0) {
+            childEvent.parent = null;
+            this.childEvents.splice(index, 1);
+            this.addChildEvent(newEvent);
+        }
+    }
+
     replaceHandler(handler) {
         if (this.childEvents.length !== 0) {
             this.childEvents[0].replaceHandler(handler);
@@ -59,8 +84,13 @@ class AtomicEvent {
     }
 
     executeHandler() {
-        for (let event of this.childEvents.sort((a, b) => a.order - b.order)) {
-            event.executeHandler();
+        this.queue = this.getConcurrentEvents().sort((a, b) => a.order - b.order);
+
+        for (let event of this.queue) {
+            event.createSnapshot();
+            if (!event.invalid) {
+                event.handler(event);
+            }
         }
     }
 
