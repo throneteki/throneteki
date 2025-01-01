@@ -1,6 +1,5 @@
 import AtomicEvent from '../AtomicEvent.js';
 import BestowPrompt from '../gamesteps/bestowprompt.js';
-import CompositeEvent from '../CompositeEvent.js';
 import Event from '../event.js';
 
 const orderableLocatons = ['draw deck', 'shadows', 'discard pile', 'dead pile'];
@@ -31,8 +30,8 @@ class MoveCardEventGenerator {
             allowSave,
             orderable
         });
-        const discardEvent = this.composite('onCardDiscarded', params);
-        discardEvent.setChildEvent('placeCard', placeCardEvent);
+        const discardEvent = this.event('onCardDiscarded', params);
+        discardEvent.addChildEvent(placeCardEvent);
 
         return discardEvent;
     }
@@ -50,8 +49,8 @@ class MoveCardEventGenerator {
             location: 'dead pile',
             allowSave
         });
-        const killedEvent = this.composite('onCharacterKilled', params);
-        killedEvent.setChildEvent('placeCard', placeCardEvent);
+        const killedEvent = this.event('onCharacterKilled', params);
+        killedEvent.addChildEvent(placeCardEvent);
 
         return killedEvent;
     }
@@ -68,8 +67,8 @@ class MoveCardEventGenerator {
             player: card.controller,
             location: 'discard pile'
         });
-        const sacrificeEvent = this.composite('onSacrificed', params);
-        sacrificeEvent.setChildEvent('placeCard', placeCardEvent);
+        const sacrificeEvent = this.event('onSacrificed', params);
+        sacrificeEvent.addChildEvent(placeCardEvent);
 
         return sacrificeEvent;
     }
@@ -87,8 +86,8 @@ class MoveCardEventGenerator {
             location: 'hand',
             allowSave
         });
-        const returnEvent = this.composite('onCardReturnedToHand', params);
-        returnEvent.setChildEvent('placeCard', placeCardEvent);
+        const returnEvent = this.event('onCardReturnedToHand', params);
+        returnEvent.addChildEvent(placeCardEvent);
 
         return returnEvent;
     }
@@ -109,8 +108,8 @@ class MoveCardEventGenerator {
             bottom,
             orderable
         });
-        const returnEvent = this.composite('onCardReturnedToDeck', params);
-        returnEvent.setChildEvent('placeCard', placeCardEvent);
+        const returnEvent = this.event('onCardReturnedToDeck', params);
+        returnEvent.addChildEvent(placeCardEvent);
 
         return returnEvent;
     }
@@ -129,8 +128,8 @@ class MoveCardEventGenerator {
             allowSave,
             location: 'shadows'
         });
-        const putEvent = this.composite('onCardPutIntoShadows', params);
-        putEvent.setChildEvent('placeCard', placeCardEvent);
+        const putEvent = this.event('onCardPutIntoShadows', params);
+        putEvent.addChildEvent(placeCardEvent);
 
         return putEvent;
     }
@@ -162,7 +161,7 @@ class MoveCardEventGenerator {
             !['play area', 'duplicate'].includes(location)
         ) {
             const onLeavePlayEvent = this.createLeavePlayEvent({ card, allowSave });
-            return this.atomic(onLeavePlayEvent, onCardPlacedEvent);
+            return this.atomic(onCardPlacedEvent, onLeavePlayEvent);
         }
         // TODO: Handle entering play as well (requires larger edits)
 
@@ -252,14 +251,6 @@ class MoveCardEventGenerator {
 
     event(name, params, handler) {
         return new Event(name, params, handler);
-    }
-
-    composite(name, params, ...events) {
-        const compositeEvent = new CompositeEvent(name, params);
-        for (const event of events) {
-            compositeEvent.addChildEvent(event);
-        }
-        return compositeEvent;
     }
 
     atomic(...events) {

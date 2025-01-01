@@ -1,5 +1,4 @@
 import AtomicEvent from '../AtomicEvent.js';
-import CompositeEvent from '../CompositeEvent.js';
 import Event from '../event.js';
 
 /**
@@ -59,14 +58,6 @@ class GameAction {
 
     event(name, params, handler) {
         return new Event(name, params, handler);
-    }
-
-    composite(name, params, ...events) {
-        const compositeEvent = new CompositeEvent(name, params);
-        for (const event of events) {
-            compositeEvent.addChildEvent(event);
-        }
-        return compositeEvent;
     }
 
     atomic(...events) {

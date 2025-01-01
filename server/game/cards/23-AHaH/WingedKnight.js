@@ -13,7 +13,8 @@ class WingedKnight extends DrawCard {
                 args: { character: (context) => context.event.card }
             },
             handler: (context) => {
-                context.event.childEvent.placeCard.replace(
+                context.event.replaceChildEvent(
+                    'onCardPlaced',
                     GameActions.removeFromGame({ card: context.event.card }).createEvent()
                 );
             }

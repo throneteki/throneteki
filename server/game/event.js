@@ -1,15 +1,10 @@
-const ReservedEventParamKeys = [
-    'attachedEvents',
-    'cancelled',
-    'childEvents',
-    'handler',
-    'name',
-    'params',
-    'parent',
-    'postHandlers',
-    'cardStateWhenEventCreated'
-];
-
+/**
+ * An Event to indicate a reactable or interruptable game process, (eg. drawing a card or killing a character).
+ * - Child events within this event are considered to be making up this event; reactions or interrupts to this event & its parents are to be shared.
+ * - Cancelling this event will cancel all children events, but cancelling a child event will simply remove that event as part of this one.
+ * - Child events can be replaced with new events (eg. Benjen Stark (Core) replacing placing him in the dead pile with shuffling him into the deck).
+ * - This event will be "resolved" if it was not cancelled, was fully resolved & all child events resolved successfully.
+ */
 class Event {
     constructor(name, params = {}, handler = () => true, postHandler = () => true) {
         const { isFullyResolved, ...otherParams } = params;
@@ -22,21 +17,27 @@ class Event {
         this.childEvents = [];
         this.attachedEvents = [];
         this.params = otherParams;
+        this.parent = null;
+        this.cardStateWhenEventCreated = this.createCardSnapshot();
         this.isFullyResolved = isFullyResolved || (() => true);
         this.order = 0;
 
         this.assignParamProperties(otherParams);
+    }
 
-        if (this.params.card && this.params.card.createSnapshot) {
-            this.cardStateWhenEventCreated = this.params.card.createSnapshot();
-        }
+    createCardSnapshot() {
+        return this.params.card && this.params.card.createSnapshot
+            ? this.params.card.createSnapshot()
+            : null;
     }
 
     assignParamProperties(params) {
-        let reservedKeys = ReservedEventParamKeys.filter((key) => !!params[key]);
-        if (reservedKeys.length !== 0) {
+        const overridingKeys = Object.entries(params)
+            .map(([key]) => key)
+            .filter((param) => this[param] !== undefined);
+        if (overridingKeys.length !== 0) {
             throw new Error(
-                `Event '${this.name}' cannot have params with keys: ${reservedKeys.map((key) => `'${key}'`).join(', ')}`
+                `Event '${this.name}' cannot have params with keys as they already exist: ${overridingKeys.map((key) => `'${key}'`).join(', ')}`
             );
         }
 
@@ -44,7 +45,11 @@ class Event {
     }
 
     get resolved() {
-        return !this.cancelled && this.isFullyResolved(this);
+        return (
+            !this.cancelled &&
+            this.isFullyResolved(this) &&
+            this.childEvents.every((event) => event.resolved)
+        );
     }
 
     addChildEvent(event) {
@@ -78,30 +83,35 @@ class Event {
         this.cancelled = true;
 
         for (let event of this.childEvents) {
+            // Disassociate the child with the parent so that indirect calls to
+            // onChildCancelled are not made. This will prevent an infinite loop.
+            event.parent = null;
             event.cancel();
         }
+
+        this.childEvents = [];
 
         if (this.parent) {
             this.parent.onChildCancelled(this);
         }
     }
 
-    replace(newEvent) {
-        if (this.parent) {
-            this.parent.replaceChildEvent(this, newEvent);
-        } else {
-            throw new Error('Cannot replace an event without a parent!');
-        }
-    }
+    replaceChildEvent(nameOrFunc, newEvent) {
+        const findFunc =
+            typeof nameOrFunc === 'string' ? (event) => event.name === nameOrFunc : nameOrFunc;
 
-    replaceChildEvent(childEvent, newEvent) {
-        const index = this.childEvents.findIndex((e) => e == childEvent);
-
-        if (index >= 0) {
-            childEvent.parent = null;
-            this.childEvents.splice(index, 1);
+        // Check primary events to safely include simultaneous & atomic
+        const childIndex = this.childEvents.findIndex((event) =>
+            event.getPrimaryEvents().some(findFunc)
+        );
+        if (childIndex >= 0) {
+            // Clear the old events parent first
+            this.childEvents[childIndex].parent = null;
+            this.childEvents.splice(childIndex, 1);
             this.addChildEvent(newEvent);
+            return true;
         }
+        return false;
     }
 
     replaceHandler(handler) {

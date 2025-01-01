@@ -18,7 +18,8 @@ class HeadsOnSpikes extends PlotCard {
                             let powerMessage = '';
 
                             if (card.getType() === 'character') {
-                                event.childEvent.placeCard.replace(
+                                event.replaceChildEvent(
+                                    'onCardPlaced',
                                     GameActions.placeCard({
                                         card: event.card,
                                         location: 'dead pile'

@@ -1,3 +1,9 @@
+/**
+ * An Atomic Event groups multiple events into a single window, with properties & processes being shared.
+ * - Cancelling this event, or any child events, will cancel all children events.
+ * - Child events will have this event as it's parent.
+ * - This event will be "resolved" if it was not cancelled & all child events resolved successfully.
+ */
 class AtomicEvent {
     constructor() {
         this.cancelled = false;

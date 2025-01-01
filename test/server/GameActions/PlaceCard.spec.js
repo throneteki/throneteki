@@ -4,8 +4,10 @@ describe('PlaceCard', function () {
     beforeEach(function () {
         this.controllerSpy = jasmine.createSpyObj('player', ['placeCardInPile']);
         this.controllerSpy.drawDeck = [];
+        this.controllerSpy.name = 'controller player';
         this.ownerSpy = jasmine.createSpyObj('player', ['placeCardInPile']);
         this.ownerSpy.drawDeck = [];
+        this.ownerSpy.name = 'owner player';
 
         this.cardSpy = jasmine.createSpyObj('card', ['allowGameAction', 'leavesPlay']);
         this.cardSpy.location = 'play area';
@@ -99,7 +101,7 @@ describe('PlaceCard', function () {
         });
     });
 
-    xdescribe('createEvent()', function () {
+    describe('createEvent()', function () {
         beforeEach(function () {
             this.event = PlaceCard.createEvent(this.props);
             this.concurrentEvents = this.event.getConcurrentEvents();
@@ -119,14 +121,31 @@ describe('PlaceCard', function () {
             describe('when the target location is in-play', function () {
                 beforeEach(function () {
                     this.props.location = 'play area';
-                    this.event.executeHandler();
+                    this.event = PlaceCard.createEvent(this.props);
+                    this.cardSpy.location = 'discard pile';
                 });
 
-                it('places in the controller pile', function () {
+                it('places in the controllers play area', function () {
+                    this.event.executeHandler();
                     expect(this.controllerSpy.placeCardInPile).toHaveBeenCalledWith({
                         card: this.cardSpy,
                         location: 'play area',
                         bottom: false
+                    });
+                });
+
+                describe('and the event player was not the controller', function () {
+                    beforeEach(function () {
+                        this.event.player = this.ownerSpy;
+                        this.event.executeHandler();
+                    });
+
+                    it('places in the event players play area', function () {
+                        expect(this.ownerSpy.placeCardInPile).toHaveBeenCalledWith({
+                            card: this.cardSpy,
+                            location: 'play area',
+                            bottom: false
+                        });
                     });
                 });
             });
@@ -140,7 +159,7 @@ describe('PlaceCard', function () {
                 it('places in the owner pile', function () {
                     expect(this.ownerSpy.placeCardInPile).toHaveBeenCalledWith({
                         card: this.cardSpy,
-                        location: 'play area',
+                        location: 'discard pile',
                         bottom: false
                     });
                 });

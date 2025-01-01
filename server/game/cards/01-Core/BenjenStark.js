@@ -16,8 +16,12 @@ class BenjenStark extends DrawCard {
                 '{player} uses {source} to gain 2 power for their faction and shuffles {source} back into their deck instead of placing him in their dead pile',
             handler: (context) => {
                 this.game.addPower(this.controller, 2);
-                context.event.childEvent.placeCard.replace(
-                    GameActions.shuffleIntoDeck({ cards: [this], allowSave: false }).createEvent()
+                context.event.replaceChildEvent(
+                    'onCardPlaced',
+                    GameActions.shuffleIntoDeck({
+                        cards: [this],
+                        allowSave: false
+                    }).createEvent()
                 );
             }
         });

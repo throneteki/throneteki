@@ -76,7 +76,7 @@ describe('SimultaneousEvents', function () {
         });
     });
 
-    xdescribe('addChildEvent', function () {
+    describe('addChildEvent', function () {
         beforeEach(function () {
             this.childEvent1.params = { prop1: 'foo', prop2: 'bar' };
             this.event = new SimultaneousEvents();
@@ -87,27 +87,13 @@ describe('SimultaneousEvents', function () {
             expect(this.event.childEvents).toContain(this.childEvent1);
         });
 
-        it('should set the parent for the child', function () {
-            expect(this.childEvent1.parent).toBe(this.event);
+        it('should not set the parent for the child', function () {
+            expect(this.childEvent1.parent).toBeFalsy();
         });
 
-        it('should extend any properties of the child onto the event', function () {
-            expect(this.event.prop1).toBe('foo');
-            expect(this.event.prop2).toBe('bar');
-        });
-    });
-
-    xdescribe('onChildCancelled', function () {
-        beforeEach(function () {
-            this.event.onChildCancelled(this.childEvent1);
-        });
-
-        it('should cancel all other children', function () {
-            expect(this.childEvent2.cancel).toHaveBeenCalled();
-        });
-
-        it('should remove all child events', function () {
-            expect(this.event.childEvents).toEqual([]);
+        it('should not extend any properties of the child onto the simultaneous event', function () {
+            expect(this.event).not.toEqual(jasmine.objectContaining({ prop1: 'foo' }));
+            expect(this.event).not.toEqual(jasmine.objectContaining({ prop2: 'bar' }));
         });
     });
 

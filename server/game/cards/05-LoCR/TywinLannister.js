@@ -32,17 +32,18 @@ class TywinLannister extends DrawCard {
             choices[card.uuid] = {
                 card,
                 gameAction: GameActions.genericHandler(() => {
-                    const currentEvent = context.events[0].childEvent.placeCard;
+                    const event = context.events[0];
+                    const currentEvent = event.childEvents[0];
                     const { player, location, bottom, orderable } = currentEvent;
-                    currentEvent.replace(
-                        GameActions.placeCard({
-                            card,
-                            player,
-                            location,
-                            bottom,
-                            orderable
-                        }).createEvent()
-                    );
+                    const newEvent = GameActions.placeCard({
+                        card,
+                        player,
+                        location,
+                        bottom,
+                        orderable
+                    }).createEvent();
+
+                    event.replaceChildEvent((event) => event === currentEvent, newEvent);
                 })
             };
             return choices;
