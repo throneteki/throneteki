@@ -11,26 +11,26 @@ class Event {
 
         this.name = name;
         this.cancelled = false;
-        this.invalid = false;
         this.handler = handler;
         this.postHandlers = [postHandler];
         this.childEvents = [];
         this.attachedEvents = [];
         this.params = otherParams;
         this.parent = null;
-        this.cardStateWhenEventCreated = this.createCardSnapshot();
         this.isFullyResolved = isFullyResolved || (() => true);
         this.order = 0;
+        this.createSnapshot('cardStateWhenEventCreated');
 
+        // Important: All event properties which cannot be overridden must be set prior to this method
+        // to ensure overlapping params are prevented.
+        // If not to be set yet (such as this.parent), make it null.
+        // If it can be overriden by params, then set a default (eg. this.param1 = params.param1 || "value")
         this.assignParamProperties(otherParams);
     }
 
-    createCardSnapshot() {
-        return this.params.card && this.params.card.createSnapshot
-            ? this.params.card.createSnapshot()
-            : null;
-    }
-
+    /**
+     * Checks that none of the provided properties conflict with properties tied to an event.
+     */
     assignParamProperties(params) {
         const overridingKeys = Object.entries(params)
             .map(([key]) => key)
@@ -118,35 +118,19 @@ class Event {
         this.handler = handler;
     }
 
-    checkExecuteValidity() {
-        // When the card in which the event affects is moved before the event can start resolving, it should not execute (but is also not cancelled)
-        if (
-            this.params.card &&
-            this.cardStateWhenEventCreated &&
-            this.params.card.location !== this.cardStateWhenEventCreated.location
-        ) {
-            this.invalid = true;
-        }
-
-        for (let event of this.childEvents) {
-            event.checkExecuteValidity();
-        }
-    }
-
-    createSnapshot() {
-        if (this.params.card && this.params.card.createSnapshot && this.params.snapshotName) {
-            this[this.params.snapshotName] = this.params.card.createSnapshot();
+    createSnapshot(snapshotName = this.params.snapshotName) {
+        if (this.params.card && this.params.card.createSnapshot && snapshotName) {
+            this[snapshotName] = this.params.card.createSnapshot();
         }
     }
 
     executeHandler() {
+        // Execute as concurrent events so they can be ordered appropriately at the highest level
         this.queue = this.getConcurrentEvents().sort((a, b) => a.order - b.order);
 
         for (let event of this.queue) {
             event.createSnapshot();
-            if (!event.invalid) {
-                event.handler(event);
-            }
+            event.handler(event);
         }
     }
 

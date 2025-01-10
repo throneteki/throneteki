@@ -82,7 +82,7 @@ const InterruptWindowOrder = {
         for (const eventName of Object.keys(OrderableEventFunc)) {
             const orderableEvents = event
                 .getConcurrentEvents()
-                .filter((event) => event.name === eventName && event.orderable && !event.invalid);
+                .filter((event) => event.name === eventName && event.orderable && !event.cancelled);
             if (orderableEvents.length > 0) {
                 OrderableEventFunc[eventName](game, orderableEvents);
             }

@@ -1115,6 +1115,9 @@ class Game extends EventEmitter {
         return this.abilityWindowStack.length !== 0;
     }
 
+    /**
+     * Raises a singular event to appear in the next prompt.
+     */
     raiseEvent(eventName, params, handler) {
         if (!handler) {
             handler = () => true;
@@ -1142,10 +1145,16 @@ class Game extends EventEmitter {
         this.queueStep(new EventWindow(this, event, () => this.postEventCalculations()));
     }
 
+    /**
+     * Resolves a single event, which will open as a window in the next prompt.
+     */
     resolveEvent(event) {
         this.queueStep(new EventWindow(this, event, () => this.postEventCalculations()));
     }
 
+    /**
+     * Resolves a game action by creating & resolving its event built with the given properties.
+     */
     resolveGameAction(action, props) {
         if (!action.allow(props)) {
             return new NullEvent();

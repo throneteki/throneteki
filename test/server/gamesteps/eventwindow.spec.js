@@ -12,13 +12,12 @@ describe('EventWindow', function () {
             'cancel',
             'clearAttachedEvents',
             'emitTo',
-            'checkExecuteValidity',
             'executeHandler',
             'executePostHandler',
             'getConcurrentEvents'
         ]);
         this.eventSpy.attachedEvents = [];
-        this.eventSpy.getConcurrentEvents.and.returnValue([]);
+        this.eventSpy.getConcurrentEvents.and.returnValue([this.eventSpy]);
         this.eventWindow = new EventWindow(this.gameSpy, this.eventSpy);
     });
 
@@ -52,8 +51,7 @@ describe('EventWindow', function () {
                 });
             });
 
-            it('should call the validator and handler', function () {
-                expect(this.eventSpy.checkExecuteValidity).toHaveBeenCalled();
+            it('should call the handler', function () {
                 expect(this.eventSpy.executeHandler).toHaveBeenCalled();
             });
         });
@@ -139,9 +137,8 @@ describe('EventWindow', function () {
                 });
             });
 
-            it('should not call the validator and handler', function () {
+            it('should not call the handler', function () {
                 this.eventWindow.continue();
-                expect(this.eventSpy.checkExecuteValidity).not.toHaveBeenCalled();
                 expect(this.eventSpy.executeHandler).not.toHaveBeenCalled();
             });
 
@@ -190,6 +187,30 @@ describe('EventWindow', function () {
                 expect(this.gameSpy.openAbilityWindow).not.toHaveBeenCalledWith({
                     abilityType: 'reaction',
                     event: this.eventSpy
+                });
+            });
+        });
+
+        describe('when the event has a card', function () {
+            beforeEach(function () {
+                this.card = { location: 'play area' };
+                this.eventSpy.card = this.card;
+                // Simulate card being cloned
+                this.eventSpy.cardStateWhenEventCreated = { ...this.card };
+            });
+
+            describe('and the card does not move prior to execution', function () {
+                it('should not cancel the event', function () {
+                    this.eventWindow.continue();
+                    expect(this.eventSpy.cancel).not.toHaveBeenCalled();
+                });
+            });
+
+            describe('and the card has moved prior to execution', function () {
+                it('should cancel the event', function () {
+                    this.card.location = 'hand';
+                    this.eventWindow.continue();
+                    expect(this.eventSpy.cancel).toHaveBeenCalled();
                 });
             });
         });

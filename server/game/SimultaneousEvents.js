@@ -46,20 +46,13 @@ class SimultaneousEvents {
         }
     }
 
-    checkExecuteValidity() {
-        for (let event of this.childEvents) {
-            event.checkExecuteValidity();
-        }
-    }
-
     executeHandler() {
+        // Execute as concurrent events so they can be ordered appropriately at the highest level
         this.queue = this.getConcurrentEvents().sort((a, b) => a.order - b.order);
 
         for (let event of this.queue) {
             event.createSnapshot();
-            if (!event.invalid) {
-                event.handler(event);
-            }
+            event.handler(event);
         }
     }
 
