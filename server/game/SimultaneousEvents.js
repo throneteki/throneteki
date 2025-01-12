@@ -5,7 +5,7 @@ import { flatten } from '../Array.js';
  * - Cancelling this event will cancel all children events, but cancelling a child event will not cancel any others.
  * - Child events will intentionally have no parent.
  * - This event will be "resolved" if all child events resolved successfully.
- * - THis event will be "cancelled" if all child events were cancelled.
+ * - This event will be "cancelled" if all child events were cancelled.
  */
 class SimultaneousEvents {
     constructor() {

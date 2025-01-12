@@ -7,6 +7,7 @@ describe('Event', function () {
             'emitTo',
             'handler',
             'getConcurrentEvents',
+            'getPrimaryEvents',
             'createSnapshot'
         ]);
     });
@@ -96,11 +97,35 @@ describe('Event', function () {
             beforeEach(function () {
                 this.event.addChildEvent(this.childEventSpy);
                 this.childEventSpy.getConcurrentEvents.and.returnValue([this.childEventSpy]);
-                this.event.executeHandler();
             });
 
             it('should call handler on the children', function () {
+                this.event.executeHandler();
                 expect(this.childEventSpy.handler).toHaveBeenCalled();
+            });
+
+            describe('and a child has been replaced', function () {
+                beforeEach(function () {
+                    this.childEventSpy.getPrimaryEvents.and.returnValue([this.childEventSpy]);
+                    this.replacementEventSpy = jasmine.createSpyObj('replacementEvent', [
+                        'handler',
+                        'getConcurrentEvents',
+                        'createSnapshot'
+                    ]);
+                    this.replacementEventSpy.getConcurrentEvents.and.returnValue([
+                        this.replacementEventSpy
+                    ]);
+                    this.event.replaceChildEvent(
+                        (event) => event === this.childEventSpy,
+                        this.replacementEventSpy
+                    );
+                });
+
+                it('should call handler on the new child', function () {
+                    this.event.executeHandler();
+                    expect(this.childEventSpy.handler).not.toHaveBeenCalled();
+                    expect(this.replacementEventSpy.handler).toHaveBeenCalled();
+                });
             });
         });
 

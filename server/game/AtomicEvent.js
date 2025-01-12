@@ -52,22 +52,25 @@ class AtomicEvent {
         }
     }
 
-    replace(newEvent) {
-        if (this.parent) {
-            this.parent.replaceChildEvent(this, newEvent);
-        } else {
-            throw new Error('Cannot replace an event without a parent!');
-        }
-    }
+    /**
+     * Replaces the first child event by name, or first child event that matches function, with a new event
+     */
+    replaceChildEvent(nameOrFunc, newEvent) {
+        const findFunc =
+            typeof nameOrFunc === 'string' ? (event) => event.name === nameOrFunc : nameOrFunc;
 
-    replaceChildEvent(childEvent, newEvent) {
-        const index = this.childEvents.findIndex((e) => e == childEvent);
-
-        if (index >= 0) {
-            childEvent.parent = null;
-            this.childEvents.splice(index, 1);
+        // Check primary events to safely include simultaneous & atomic
+        const childIndex = this.childEvents.findIndex((event) =>
+            event.getPrimaryEvents().some(findFunc)
+        );
+        if (childIndex >= 0) {
+            // Clear the old events parent first
+            this.childEvents[childIndex].parent = null;
+            this.childEvents.splice(childIndex, 1);
             this.addChildEvent(newEvent);
+            return true;
         }
+        return false;
     }
 
     replaceHandler(handler) {

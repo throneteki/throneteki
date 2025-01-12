@@ -96,6 +96,9 @@ class Event {
         }
     }
 
+    /**
+     * Replaces the first child event by name, or first child event that matches function, with a new event
+     */
     replaceChildEvent(nameOrFunc, newEvent) {
         const findFunc =
             typeof nameOrFunc === 'string' ? (event) => event.name === nameOrFunc : nameOrFunc;
