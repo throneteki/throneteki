@@ -3,7 +3,7 @@ import { Spinner } from '@nextui-org/react';
 
 function LoadingSpinner({ label = 'Loading...', color = 'white', ...props }) {
     return (
-        <div className='flex justify-center items-center'>
+        <div className='flex justify-center items-center h-full'>
             <Spinner {...props} label={label} color={color} />
         </div>
     );

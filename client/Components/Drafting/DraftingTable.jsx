@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import $ from 'jquery';
+import LoadingSpinner from '../Site/LoadingSpinner';
 
 import GameChat from '../GameBoard/GameChat';
 import CardTypeGroups from '../Decks/CardTypeGroups';
@@ -155,12 +156,12 @@ const DraftingTable = () => {
     }, [dispatch, isDraftActive, spectating]);
 
     if (!currentGame || !cards || !currentGame.started) {
-        return <div>Waiting for server...</div>;
+        return <LoadingSpinner label={'Waiting for server...'} />;
     }
 
     if (!user) {
         dispatch(navigate('/'));
-        return <div>You are not logged in, redirecting...</div>;
+        return <LoadingSpinner label={'You are not logged in, redirecting...'} />;
     }
 
     const activePlayer = currentGame.draftingTable.activePlayer;
