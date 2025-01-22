@@ -9,7 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import * as Sentry from '@sentry/browser';
 import * as SentryReact from '@sentry/react';
 import { createRoot } from 'react-dom/client';
-import { NextUIProvider } from '@nextui-org/react';
+import { HeroUIProvider } from "@heroui/react";
 import { ThemeProvider as NextThemesProvider } from 'next-themes';
 
 import { store } from './configureStore';
@@ -80,7 +80,7 @@ const root = createRoot(container);
 
 root.render(
     <Provider store={store}>
-        <NextUIProvider>
+        <HeroUIProvider>
             <NextThemesProvider attribute='class' defaultTheme='dark'>
                 <div className='body'>
                     <ToastContainer
@@ -95,6 +95,6 @@ root.render(
                     </SentryReact.ErrorBoundary>
                 </div>
             </NextThemesProvider>
-        </NextUIProvider>
+        </HeroUIProvider>
     </Provider>
 );

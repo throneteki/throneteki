@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Image } from '@nextui-org/react';
+import { Button, Image } from "@heroui/react";
 
 const StatButton = ({ image, onClick }) => {
     return (

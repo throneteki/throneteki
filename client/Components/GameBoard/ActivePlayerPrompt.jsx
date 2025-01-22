@@ -6,7 +6,7 @@ import CardNameLookup from './CardNameLookup';
 import TraitNameLookup from './TraitNameLookup';
 import SelectFromValuesLookup from './SelectFromValuesLookup';
 import { useGetCardsQuery } from '../../redux/middleware/api';
-import { Button } from '@nextui-org/react';
+import { Button } from "@heroui/react";
 import ThronesIcon from './ThronesIcon';
 
 const ActivePlayerPrompt = ({

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Panel from '../Components/Site/Panel';
 import DeckList from '../Components/Decks/DeckList';
 import { useGetRestrictedListQuery } from '../redux/middleware/api';
-import { Select, SelectItem } from '@nextui-org/react';
+import { Select, SelectItem } from "@heroui/react";
 import { useDispatch } from 'react-redux';
 import { navigate } from '../redux/reducers/navigation';
 

@@ -9,7 +9,7 @@ import LabelledGameArea from './LabelledGameArea';
 
 import './CardPileLink.scss';
 import './CardPile.css';
-import { Button } from '@nextui-org/react';
+import { Button } from "@heroui/react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const CardPile = ({

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Input, Switch } from '@nextui-org/react';
+import { Input, Switch } from "@heroui/react";
 
 const GameOptions = ({ formProps }) => {
     const options = [

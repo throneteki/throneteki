@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import classNames from 'classnames';
-import { Avatar } from '@nextui-org/react';
+import { Avatar } from "@heroui/react";
 
 const GamePlayer = (props) => {
     let classes = classNames('flex flex-col flex-1', {

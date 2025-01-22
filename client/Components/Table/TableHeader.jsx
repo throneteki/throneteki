@@ -1,7 +1,7 @@
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 // import { flexRender, HeaderGroup } from '@tanstack/react-table';
 // import DebouncedInput from '../Site/DebouncedInput';
-// import { TableColumn, TableHeader } from '@nextui-org/react';
+// import { TableColumn, TableHeader } from '@heroui/react';
 
 // interface TableHeaderProps<T> {
 //     headerGroups: HeaderGroup<T>[];

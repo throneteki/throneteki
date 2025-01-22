@@ -1,7 +1,7 @@
 import React from 'react';
 
 import Panel from '../Components/Site/Panel';
-import { Button, Link } from '@nextui-org/react';
+import { Button, Link } from "@heroui/react";
 
 const HowToPlay = () => {
     return (

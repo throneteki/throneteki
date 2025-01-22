@@ -1,6 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button } from '@nextui-org/react';
+import { Button } from "@heroui/react";
 
 function FaIconButton({ text, icon, ...rest }) {
     return (

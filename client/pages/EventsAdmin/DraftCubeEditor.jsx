@@ -9,7 +9,7 @@ import {
 } from '../../redux/middleware/api';
 import Panel from '../../Components/Site/Panel';
 import { navigate } from '../../redux/reducers/navigation';
-import { Input, Textarea } from '@nextui-org/react';
+import { Input, Textarea } from "@heroui/react";
 import LoadingSpinner from '../../Components/Site/LoadingSpinner';
 
 const calculateMaxPacks = (rarities) => {

@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Constants } from '../../constants';
 import FactionImage from '../Images/FactionImage';
-import { Button } from '@nextui-org/react';
+import { Button } from "@heroui/react";
 import { useDispatch } from 'react-redux';
 import { navigate } from '../../redux/reducers/navigation';
 

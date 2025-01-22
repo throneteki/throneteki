@@ -1,6 +1,6 @@
 import React from 'react';
 import DeckStatusSummary from './DeckStatusSummary';
-import { Tooltip } from '@nextui-org/react';
+import { Tooltip } from "@heroui/react";
 import DeckStatusLabel from './DeckStatusLabel';
 
 const DeckStatus = ({ className, status }) => {

@@ -1,6 +1,6 @@
 import React from 'react';
 import Panel from '../Site/Panel';
-import { Switch } from '@nextui-org/react';
+import { Switch } from "@heroui/react";
 
 const GameSettings = ({ formProps }) => {
     return (

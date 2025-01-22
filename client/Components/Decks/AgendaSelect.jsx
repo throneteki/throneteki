@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import CardImage from '../Images/CardImage';
 import AlertPanel from '../Site/AlertPanel';
-import { Button } from '@nextui-org/react';
+import { Button } from "@heroui/react";
 import { useGetCardsQuery } from '../../redux/middleware/api';
 import LoadingSpinner from '../Site/LoadingSpinner';
 

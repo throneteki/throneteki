@@ -9,7 +9,7 @@ import {
     useAddNewsMutation
 } from '../redux/middleware/api';
 import AlertPanel from '../Components/Site/AlertPanel';
-import { Button, Textarea } from '@nextui-org/react';
+import { Button, Textarea } from "@heroui/react";
 import ReactTable from '../Components/Table/ReactTable';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';

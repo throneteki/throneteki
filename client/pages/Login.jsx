@@ -8,7 +8,7 @@ import { accountLoggedIn } from '../redux/reducers/auth';
 import { navigate } from '../redux/reducers/navigation';
 import { sendAuthenticateMessage } from '../redux/reducers/lobby';
 import * as yup from 'yup';
-import { Button, Input } from '@nextui-org/react';
+import { Button, Input } from "@heroui/react";
 import { Formik } from 'formik';
 import { toast } from 'react-toastify';
 
