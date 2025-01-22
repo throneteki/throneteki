@@ -15,7 +15,7 @@ import {
     TableColumn,
     TableHeader,
     TableRow
-} from "@heroui/react";
+} from '@heroui/react';
 import { toast } from 'react-toastify';
 
 const defaultPermissions = {

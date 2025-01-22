@@ -2,7 +2,7 @@ import React from 'react';
 
 import Panel from '../Components/Site/Panel';
 import Link from '../Components/Site/Link';
-import { Button } from "@heroui/react";
+import { Button } from '@heroui/react';
 
 const About = () => {
     return (

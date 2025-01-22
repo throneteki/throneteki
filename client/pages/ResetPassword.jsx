@@ -5,7 +5,7 @@ import AlertPanel from '../Components/Site/AlertPanel';
 import Panel from '../Components/Site/Panel';
 import { navigate } from '../redux/reducers/navigation';
 import { useResetPasswordMutation } from '../redux/middleware/api';
-import { Button, Input } from "@heroui/react";
+import { Button, Input } from '@heroui/react';
 import { toast } from 'react-toastify';
 
 const ResetPassword = ({ id, token }) => {

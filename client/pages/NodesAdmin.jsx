@@ -15,7 +15,7 @@ import {
     TableColumn,
     TableHeader,
     TableRow
-} from "@heroui/react";
+} from '@heroui/react';
 
 const NodeAdmin = () => {
     const dispatch = useDispatch();

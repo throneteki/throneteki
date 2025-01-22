@@ -7,7 +7,7 @@ import Link from '../Components/Site/Link';
 import { navigate } from '../redux/reducers/navigation';
 import { useRegisterAccountMutation } from '../redux/middleware/api';
 import { Formik } from 'formik';
-import { Button, Input, Switch } from "@heroui/react";
+import { Button, Input, Switch } from '@heroui/react';
 import { toast } from 'react-toastify';
 
 const Register = () => {

@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import Panel from '../Components/Site/Panel';
 import { sendMotdMessage } from '../redux/reducers/lobby';
-import { Button, Radio, RadioGroup, Textarea } from "@heroui/react";
+import { Button, Radio, RadioGroup, Textarea } from '@heroui/react';
 
 const MotdAdmin = () => {
     const motd = useSelector((state) => state.lobby.motd);
