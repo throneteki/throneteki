@@ -8,7 +8,7 @@ class Dragonstone extends DrawCard {
         });
         this.reaction({
             when: {
-                onCardPutIntoShadows: (event) => (event.reason = 'ability')
+                onCardPutIntoShadows: (event) => event.reason === 'ability'
             },
             message: {
                 format: "{player} kneels {source} to prevent card #{position} in {opponent}'s shadow area from coming out of shadows until {source} stands or leaves play",
