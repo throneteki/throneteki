@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { sendChangeStatMessage } from '../../redux/reducers/game';
-import { Avatar, Badge, Button } from "@heroui/react";
+import { Avatar, Badge, Button } from '@heroui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCogs, faComment, faCopy, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import StatContainer from './StatContainer';

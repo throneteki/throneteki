@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import $ from 'jquery';
 import Messages from './Messages';
-import { Input } from "@heroui/react";
+import { Input } from '@heroui/react';
 
 const GameChat = ({ messages, onCardMouseOver, onCardMouseOut, onSendChat, muted }) => {
     const [canScroll, setCanScroll] = useState(true);

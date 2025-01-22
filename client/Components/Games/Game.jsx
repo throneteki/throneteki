@@ -4,7 +4,7 @@ import moment from 'moment';
 
 import GamePlayer from './GamePlayer';
 import { createGameTitle } from './GameHelper';
-import { Button } from "@heroui/react";
+import { Button } from '@heroui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLock } from '@fortawesome/free-solid-svg-icons';
 

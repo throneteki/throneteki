@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-import { Image } from "@heroui/react";
+import { Image } from '@heroui/react';
 
 import { Constants } from '../../constants';
 import './FactionImage.css';

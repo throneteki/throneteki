@@ -12,7 +12,7 @@ import {
 import Panel from '../../Components/Site/Panel';
 import AlertPanel from '../../Components/Site/AlertPanel';
 import { navigate } from '../../redux/reducers/navigation';
-import { Button, Input, Select, SelectItem, Switch, Textarea } from "@heroui/react";
+import { Button, Input, Select, SelectItem, Switch, Textarea } from '@heroui/react';
 import { toast } from 'react-toastify';
 
 const formatListTextForCards = (cards, cardCodes) => {

@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import { Autocomplete, AutocompleteItem, Button } from "@heroui/react";
+import { Autocomplete, AutocompleteItem, Button } from '@heroui/react';
 
 const TypeaheadLookup = ({ onValueSelected, values }) => {
     const [selectedValue, setSelectedValue] = useState('');

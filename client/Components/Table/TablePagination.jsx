@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pagination } from "@heroui/react";
+import { Pagination } from '@heroui/react';
 
 const TablePagination = ({ currentPage, pageCount, setCurrentPage }) => {
     return (

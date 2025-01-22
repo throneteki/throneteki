@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Image } from "@heroui/react";
+import { Button, Image } from '@heroui/react';
 
 const StatButton = ({ image, onClick }) => {
     return (

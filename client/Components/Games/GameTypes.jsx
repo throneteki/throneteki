@@ -1,6 +1,6 @@
 import React from 'react';
 import GameTypeInfo from './GameTypeInfo';
-import { Radio, RadioGroup } from "@heroui/react";
+import { Radio, RadioGroup } from '@heroui/react';
 
 const GameTypes = ({ formProps }) => {
     const types = [

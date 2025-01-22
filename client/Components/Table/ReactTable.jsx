@@ -32,7 +32,7 @@ import {
     TableColumn,
     TableHeader,
     TableRow
-} from "@heroui/react";
+} from '@heroui/react';
 import AlertPanel, { AlertType } from '../Site/AlertPanel';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 

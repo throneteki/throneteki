@@ -1,4 +1,4 @@
-import { Switch } from "@heroui/react";
+import { Switch } from '@heroui/react';
 import React, { useMemo } from 'react';
 import Panel from '../Site/Panel';
 

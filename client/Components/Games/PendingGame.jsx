@@ -15,7 +15,7 @@ import { navigate } from '../../redux/reducers/navigation';
 
 import ChargeMp3 from '../../assets/sound/charge.mp3';
 import ChargeOgg from '../../assets/sound/charge.ogg';
-import { Button, Input, Link, Snippet } from "@heroui/react";
+import { Button, Input, Link, Snippet } from '@heroui/react';
 import GameTypeInfo from './GameTypeInfo';
 import AlertPanel, { AlertType } from '../Site/AlertPanel';
 import PendingGamePlayers from './PendingGamePlayers';

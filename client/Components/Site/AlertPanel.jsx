@@ -6,7 +6,7 @@ import {
     faInfoCircle,
     faCheckCircle
 } from '@fortawesome/free-solid-svg-icons';
-import { Link } from "@heroui/react";
+import { Link } from '@heroui/react';
 
 export const AlertType = Object.freeze({
     Default: 'default',

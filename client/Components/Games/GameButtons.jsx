@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from "@heroui/react";
+import { Button } from '@heroui/react';
 import { useSelector } from 'react-redux';
 
 const GameButtons = ({ onNewGame, onQuickJoin }) => {

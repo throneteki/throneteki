@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import { useSelector } from 'react-redux';
-import { Avatar, Link } from "@heroui/react";
+import { Avatar, Link } from '@heroui/react';
 
 import CardZoom from './CardZoom';
 import AlertPanel from '../Site/AlertPanel';

@@ -89,7 +89,9 @@
         }
 
         &.kneeled {
-            left: calc(calc(var(--throneteki-card-sm-height) - var(--throneteki-card-sm-width)) / 2);
+            left: calc(
+                calc(var(--throneteki-card-sm-height) - var(--throneteki-card-sm-width)) / 2
+            );
             top: calc(calc(var(--throneteki-card-sm-width) - var(--throneteki-card-sm-height)) / 2);
         }
     }
@@ -106,7 +108,9 @@
         }
 
         &.kneeled {
-            left: calc(calc(var(--throneteki-card-lg-height) - var(--throneteki-card-lg-width)) / 2);
+            left: calc(
+                calc(var(--throneteki-card-lg-height) - var(--throneteki-card-lg-width)) / 2
+            );
             top: calc(calc(var(--throneteki-card-lg-width) - var(--throneteki-card-lg-height)) / 2);
         }
     }
@@ -123,7 +127,9 @@
         }
 
         &.kneeled {
-            left: calc(calc(var(--throneteki-card-xl-height) - var(--throneteki-card-xl-width)) / 2);
+            left: calc(
+                calc(var(--throneteki-card-xl-height) - var(--throneteki-card-xl-width)) / 2
+            );
             top: calc(calc(var(--throneteki-card-xl-width) - var(--throneteki-card-xl-height)) / 2);
         }
     }

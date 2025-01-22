@@ -16,7 +16,7 @@ import {
     TableColumn,
     TableHeader,
     TableRow
-} from "@heroui/react";
+} from '@heroui/react';
 import LoadingSpinner from '../../Components/Site/LoadingSpinner';
 import { toast } from 'react-toastify';
 

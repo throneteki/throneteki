@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Switch } from "@heroui/react";
+import { Switch } from '@heroui/react';
 import Panel from '../Site/Panel';
 
 const GameFilter = ({ filter, onFilterChanged }) => {

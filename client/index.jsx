@@ -9,7 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import * as Sentry from '@sentry/browser';
 import * as SentryReact from '@sentry/react';
 import { createRoot } from 'react-dom/client';
-import { HeroUIProvider } from "@heroui/react";
+import { HeroUIProvider } from '@heroui/react';
 import { ThemeProvider as NextThemesProvider } from 'next-themes';
 
 import { store } from './configureStore';

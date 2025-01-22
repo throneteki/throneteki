@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { Button } from "@heroui/react";
+import { Button } from '@heroui/react';
 
 const CardMenu = ({ menu, onMenuItemClick }) => {
     const handleMenuItemClick = useCallback(

@@ -1,6 +1,6 @@
 import React from 'react';
 import Panel from '../Site/Panel';
-import { Input, Slider, Switch } from "@heroui/react";
+import { Input, Slider, Switch } from '@heroui/react';
 
 const TimerSettings = ({ formProps }) => {
     return (

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
 
-import { Button, Textarea } from "@heroui/react";
+import { Button, Textarea } from '@heroui/react';
 import Panel from '../Site/Panel';
 import {
     useAddDeckMutation,
