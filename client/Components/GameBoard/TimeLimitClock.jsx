@@ -1,23 +1,38 @@
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faClock, faPauseCircle } from '@fortawesome/free-solid-svg-icons';
 
-const TimeLimitClock = ({ timeLimitStarted, timeLimitStartedAt, timeLimit }) => {
+const formatTime = (seconds) => {
+    if (!seconds) {
+        return null;
+    }
+    const momentTime = moment.utc(seconds * 1000);
+    const format = momentTime.hours() > 0 ? 'HH:mm:ss' : 'mm:ss';
+    return momentTime.format(format);
+};
+
+const TimeLimitClock = ({ active, paused, timerStart, timeLeft: timeLeftProp }) => {
     const [timer, setTimer] = useState(null);
-    const [timeLeft, setTimeLeft] = useState(undefined);
+    const [timeLeft, setTimeLeft] = useState(() => timeLeftProp);
 
     useEffect(() => {
-        if (timeLimitStarted && !timer) {
-            let timerId = setInterval(() => {
-                let endTime = moment(timeLimitStartedAt).add(timeLimit, 'seconds');
-                let time = moment.utc(endTime.diff(moment()));
-                let timeDisplay = time.hours() > 0 ? time.format('HH:mm:ss') : time.format('mm:ss');
-                setTimeLeft(timeDisplay);
-            }, 1000);
+        // This logic must match the server-side timeLimit.js calculateTimeLeft to ensure both are in sync
+        const calculateTimeLeft = () => {
+            const endTime = moment(timerStart).add(timeLeftProp, 'seconds');
+            const difference = moment.duration(endTime.diff(moment())).asSeconds();
+            const remaining = Math.max(0, Math.round(difference));
+            setTimeLeft(remaining);
+        };
 
+        if (active && !paused && !timer) {
+            // Run once immediately, then every second
+            calculateTimeLeft();
+            const timerId = setInterval(calculateTimeLeft, 1000);
             setTimer(timerId);
         }
 
-        if (!timeLimitStarted && timer) {
+        if ((!active || paused) && timer) {
             clearInterval(timer);
             setTimer(null);
         }
@@ -25,13 +40,23 @@ const TimeLimitClock = ({ timeLimitStarted, timeLimitStartedAt, timeLimit }) => 
         return () => {
             if (timer) {
                 clearInterval(timer);
+                setTimer(null);
             }
         };
-    }, [timeLimitStarted, timeLimitStartedAt, timeLimit, timer]);
+    }, [active, paused, timerStart, timeLeftProp, timer]);
+
+    let icon = null;
+
+    if (paused) {
+        icon = <FontAwesomeIcon icon={faPauseCircle} />;
+    } else if (active) {
+        icon = <FontAwesomeIcon icon={faClock} />;
+    }
 
     return (
-        <div>
-            <h1>{timeLeft}</h1>
+        <div className='flex items-center gap-2'>
+            <div className='text-3xl'>{formatTime(timeLeft)}</div>
+            <div className='text-xl w-5'>{icon}</div>
         </div>
     );
 };

@@ -86,11 +86,7 @@ class Player extends Spectator {
         this.role = user.role;
         this.flags = new ReferenceCountedSetProperty();
         if (game.useChessClocks) {
-            this.chessClock = new ChessClock(
-                this,
-                game.chessClockTimeLimit,
-                game.delayToStartClock
-            );
+            this.chessClock = new ChessClock(this, game.chessClockTimeLimit, game.chessClockDelay);
         } else {
             this.chessClock = undefined;
         }

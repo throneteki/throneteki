@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import PlayerRow from './PlayerRow';
 import ActivePlayerPrompt from './ActivePlayerPrompt';
 import PlayerBoard from './PlayerBoard';
+import GameTimer from './GameTimer';
 import Droppable from './Droppable';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -85,7 +86,8 @@ const GameBoardLayout = ({ thisPlayer, otherPlayer, onCardClick, onMouseOver, on
                     />
                 </div>
                 <div className='flex flex-grow flex-shrink min-h-0 overflow-x-hidden'>
-                    <div className='flex flex-col justify-end'>
+                    <div className='relative flex flex-col justify-end'>
+                        <GameTimer thisPlayer={thisPlayer} otherPlayer={otherPlayer}></GameTimer>
                         <div className='flex flex-col w-52 justify-between'>
                             <ActivePlayerPrompt
                                 buttons={thisPlayer.buttons}
