@@ -3,7 +3,7 @@ import moment from 'moment';
 import classNames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock, faClockRotateLeft, faPauseCircle } from '@fortawesome/free-solid-svg-icons';
-import { Avatar } from '@nextui-org/react';
+import { Avatar } from '@heroui/react';
 
 const formatTime = (seconds) => {
     if (!seconds) {
