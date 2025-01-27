@@ -4,7 +4,7 @@ import $ from 'jquery';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
-import { Avatar } from '@nextui-org/react';
+import { Avatar } from '@heroui/react';
 import { Constants } from '../../constants';
 
 const LobbyChat = ({ messages, isModerator, onRemoveMessageClick }) => {

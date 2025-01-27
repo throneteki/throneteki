@@ -1,5 +1,5 @@
 import React from 'react';
-import { Avatar, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from '@nextui-org/react';
+import { Avatar, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from '@heroui/react';
 import Link from '../Site/Link';
 
 const ProfileDropdown = ({ user, menu }) => {

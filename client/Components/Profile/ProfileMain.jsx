@@ -4,7 +4,7 @@ import { useUnlinkPatreonMutation, useUpdateAvatarMutation } from '../../redux/m
 
 import PatreonImage from '../../assets/img/Patreon_Mark_Coral.jpg';
 
-import { Avatar, Button, Input, Link, Switch } from '@nextui-org/react';
+import { Avatar, Button, Input, Link, Switch } from '@heroui/react';
 import { toast } from 'react-toastify';
 
 const ProfileMain = ({ user, formProps }) => {

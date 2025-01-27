@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch } from '@nextui-org/react';
+import { Switch } from '@heroui/react';
 import Panel from '../Site/Panel';
 
 const windows = [
