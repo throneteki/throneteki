@@ -1381,6 +1381,11 @@ class Game extends EventEmitter {
                 this.finishedAt = new Date();
             }
         }
+
+        if (this.isEmpty()) {
+            if (this.timeLimit.stop());
+            player.stopClock();
+        }
     }
 
     disconnect(playerName) {
