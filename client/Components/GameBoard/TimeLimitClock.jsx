@@ -14,7 +14,7 @@ const formatTime = (seconds) => {
 
 const TimeLimitClock = ({ active, paused, timerStart, timeLeft: timeLeftProp }) => {
     const [timer, setTimer] = useState(null);
-    const [timeLeft, setTimeLeft] = useState(() => timeLeftProp);
+    const [timeLeft, setTimeLeft] = useState(timeLeftProp);
 
     useEffect(() => {
         // This logic must match the server-side timeLimit.js calculateTimeLeft to ensure both are in sync
