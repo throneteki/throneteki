@@ -25,7 +25,7 @@ const ChessClock = ({
     delayLeft: delayLeftProp
 }) => {
     const [timer, setTimer] = useState(null);
-    const [timeLeft, setTimeLeft] = useState(() => timeLeftProp);
+    const [timeLeft, setTimeLeft] = useState(timeLeftProp);
     const [delayLeft, setDelayLeft] = useState(null);
 
     useEffect(() => {
