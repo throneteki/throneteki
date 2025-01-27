@@ -108,8 +108,8 @@ const ContextMenu = () => {
 
         return menuOptions.map((menuItem, index) => {
             return (
-                <>
-                    <NavbarMenuItem key={index}>{menuItem}</NavbarMenuItem>{' '}
+                <div key={index}>
+                    <NavbarMenuItem>{menuItem}</NavbarMenuItem>{' '}
                     <ConfirmDialog
                         isOpen={showConfirm}
                         message='Your game is not finished, are you sure you want to leave?'
@@ -119,7 +119,7 @@ const ContextMenu = () => {
                             dispatch(sendLeaveGameMessage());
                         }}
                     />
-                </>
+                </div>
             );
         });
     }, [

@@ -1,85 +1,107 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
+import moment from 'moment';
+import classNames from 'classnames';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faClock, faClockRotateLeft, faPauseCircle } from '@fortawesome/free-solid-svg-icons';
+import { Avatar } from '@nextui-org/react';
 
-const formattedSeconds = (sec) =>
-    `${sec < 0 ? '-' : ''}${Math.floor(Math.abs(sec) / 60)}:${('0' + (Math.abs(sec) % 60)).slice(-2)}`;
+const formatTime = (seconds) => {
+    if (!seconds) {
+        return null;
+    }
+    const momentTime = moment.utc(seconds * 1000);
+    const format = momentTime.hours() > 0 ? 'HH:mm:ss' : 'mm:ss';
+    return momentTime.format(format);
+};
+const formatDelay = (seconds) => (seconds ? `+${seconds}s` : null);
 
 const ChessClock = ({
-    stateId: propStateId,
-    mode: propMode,
-    secondsLeft: propSecondsLeft,
-    delayToStartClock: propDelayToStartClock
+    username,
+    delayPosition,
+    active,
+    paused,
+    timerStart,
+    timeLeft: timeLeftProp,
+    delayLeft: delayLeftProp
 }) => {
-    const [mode, setMode] = useState(undefined);
-    const [secondsLeft, setSecondsLeft] = useState(undefined);
-    const [delayToStartClock, setDelayToStartClock] = useState(undefined);
-    const [stateId, setStateId] = useState(undefined);
-    const [endTime, setEndTime] = useState(undefined);
-    const [delayEndTime, setDelayEndTime] = useState(undefined);
-    const timer = useRef(null);
+    const [timer, setTimer] = useState(null);
+    const [timeLeft, setTimeLeft] = useState(() => timeLeftProp);
+    const [delayLeft, setDelayLeft] = useState(null);
 
     useEffect(() => {
-        if (propMode !== 'stop' && delayEndTime) {
-            if (timer.current) {
-                clearInterval(timer.current);
+        // This logic must match the server-side ChessClock.js calculateTimeLeft to ensure both are in sync
+        const calculateTimeLeft = () => {
+            const delayEndTime = moment(timerStart).add(delayLeftProp, 'seconds');
+            const delayDifference = moment.duration(delayEndTime.diff(moment())).asSeconds();
+            const delayRemaining = Math.max(0, Math.round(delayDifference));
+            if (delayRemaining > 0) {
+                // If there is delay remaining, update that
+                setDelayLeft(delayRemaining);
+            } else {
+                // Otherwise, update the time remaining
+                setDelayLeft(null);
+                const timeEndTime = delayEndTime
+                    .add(timeLeftProp, 'seconds')
+                    .add(-delayRemaining, 'seconds');
+                const timeDifference = moment.duration(timeEndTime.diff(moment())).asSeconds();
+                const timeRemaining = Math.max(0, Math.round(timeDifference));
+                setTimeLeft(timeRemaining);
             }
-            timer.current = setInterval(() => {
-                const delta = Math.round((delayEndTime.getTime() - Date.now()) / 1000);
-                if (delta >= 0) {
-                    setDelayToStartClock(delta);
-                } else if (delta < 0) {
-                    const endDelta = Math.round((endTime.getTime() - Date.now()) / 1000);
-                    setSecondsLeft(endDelta);
-                }
-            }, 1000);
+        };
+
+        if (active && !paused && !timer) {
+            // Run once immediately, then every second
+            calculateTimeLeft();
+            const timerId = setInterval(calculateTimeLeft, 1000);
+            setTimer(timerId);
         }
 
-        return () => clearInterval(timer.current);
-    }, [propMode, delayEndTime, endTime]);
+        // When inactive or paused, clear the timer
+        if ((!active || paused) && timer) {
+            clearInterval(timer);
+            setTimer(null);
+        }
 
-    useEffect(() => {
-        if (propStateId !== stateId) {
-            if (propSecondsLeft === 0) {
-                setSecondsLeft(0);
-                return;
+        // When not active, clear the delay
+        if (!active && !paused) {
+            setDelayLeft(null);
+        }
+
+        return () => {
+            if (timer) {
+                clearInterval(timer);
+                setTimer(null);
             }
-            setStateId(propStateId);
-            setMode(propMode);
-            setSecondsLeft(propSecondsLeft);
-            setDelayEndTime(new Date(Date.now() + propDelayToStartClock * 1000));
-            setEndTime(new Date(Date.now() + (propDelayToStartClock + propSecondsLeft) * 1000));
-            setDelayToStartClock(propDelayToStartClock);
-        }
-    }, [propDelayToStartClock, propMode, propSecondsLeft, propStateId, stateId]);
+        };
+    }, [active, paused, timerStart, timeLeftProp, delayLeftProp, timer]);
 
-    const timeLeftText = useMemo(() => {
-        return formattedSeconds(secondsLeft);
-    }, [secondsLeft]);
+    let icon = null;
 
-    const delayText = useMemo(() => {
-        return formattedSeconds(delayToStartClock);
-    }, [delayToStartClock]);
-
-    if (mode !== 'inactive') {
-        let stateInfo = null;
-        if (mode === 'down') {
-            stateInfo = (
-                <h1 className='chessclock-item'>
-                    {delayToStartClock <= 0 ? (
-                        <img src='/img/chess-clock.png' className='chessclock-icon' />
-                    ) : (
-                        <span className='chessclock-delay'>+{delayText}</span>
-                    )}
-                </h1>
-            );
-        }
-        return (
-            <div className='chessclock-container'>
-                <h1 className='chessclock-item'>{timeLeftText} </h1>
-                {stateInfo}
-            </div>
-        );
+    if (paused) {
+        icon = <FontAwesomeIcon icon={faPauseCircle} />;
+    } else if (active && delayLeft > 0) {
+        icon = <FontAwesomeIcon icon={faClockRotateLeft} />;
+    } else if (active) {
+        icon = <FontAwesomeIcon icon={faClock} />;
     }
-    return <div />;
+    const className = classNames(
+        'flex',
+        delayPosition === 'bottom' ? 'flex-col' : 'flex-col-reverse'
+    );
+    return (
+        <div className={className}>
+            <div className='flex items-center gap-2'>
+                <Avatar
+                    src={`/img/avatar/${username}.png`}
+                    showFallback
+                    className='w-7 h-7 text-tiny'
+                />
+                <div className='text-2xl'>{formatTime(timeLeft)}</div>
+                <div className='text-xl w-5'>{icon}</div>
+            </div>
+            <div className='text-right text-xl pr-7 h-7'>{formatDelay(delayLeft)}</div>
+        </div>
+    );
 };
 
 export default ChessClock;

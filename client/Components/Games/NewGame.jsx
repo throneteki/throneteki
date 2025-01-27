@@ -64,7 +64,8 @@ const NewGame = ({
         gameTimeLimit: defaultTimeLimit || 55,
         gamePrivate: defaultPrivate,
         useChessBlocks: false,
-        gameChessClockLimit: 30
+        chessClockTimeLimit: 30,
+        chessClockDelay: 5
     };
 
     if (!connected) {
