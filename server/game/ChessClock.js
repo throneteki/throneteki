@@ -1,100 +1,120 @@
+import moment from 'moment';
+
 class ChessClock {
-    constructor(player, time, delayToStartClock) {
+    constructor(player, timeLimitInMinutes, delay, startEvent = 'onSetupFinished') {
         this.player = player;
-        this.mainTime = time * 60;
-        this.timeLeft = time * 60;
-        this.mode = 'inactive';
-        this.timerStart = 0; //when the clock is running, this contains the instant on which it started
-        this.paused = false; //has the clock been paused via chat command?
-        this.running = false; //is the clock ticking for the player?
-        this.stateId = 0;
-        this.name = 'ChessClock';
-        this.activated = false; //indicates if the game has started/setup is finished
-        this.delayToStartClock = delayToStartClock;
+        this.enabled = false; // Clocks are disabled until start event hit
+        this.active = false; // Clock is active when that player has the current window
+        this.timeLeft = timeLimitInMinutes * 60;
+        this.delay = delay;
+        this.delayLeft = this.delay;
+        this.timerStart = null;
+        this.paused = false;
 
-        this.player.game.on('onSetupFinished', () => this.activateChessClock());
-    }
-
-    activateChessClock() {
-        this.activated = true;
+        this.player.game.on(startEvent, () => (this.enabled = true));
     }
 
     togglePause() {
-        if (!this.activated) {
+        if (!this.enabled) {
             return;
         }
         this.paused = !this.paused;
-        if (this.paused) {
-            this.stop();
-        }
-    }
-
-    modify(secs) {
-        this.timeLeft += secs;
-    }
-
-    updateStateId() {
-        this.stateId++;
-    }
-
-    start() {
-        if (!this.activated) {
-            return;
-        }
-        if (!this.paused && !this.running) {
-            this.mode = 'down';
-            this.running = true;
-            this.timerStart = Date.now();
-            this.updateStateId();
-        }
-    }
-
-    stop() {
-        if (!this.activated) {
-            return;
-        }
-        if (this.timerStart > 0 && this.running) {
-            this.running = false;
-            this.updateTimeLeft(Math.floor((Date.now() - this.timerStart) / 1000 + 0.5));
-            this.timerStart = 0;
-            this.updateStateId();
-        }
-        this.mode = 'stop';
-    }
-
-    timeRanOut() {
-        this.player.game.addAlert('warning', "{0}'s clock has run out", this.player);
-        //TODO make this melee friendly
-        this.player.game.recordWinner(this.player.game.getOpponents(this.player)[0], 'time');
-        return;
-    }
-
-    updateTimeLeft(secs) {
-        if (this.timeLeft === 0 || secs < 0) {
-            return;
-        }
-        if (secs <= this.delayToStartClock) {
-            return;
-        }
-
-        secs = secs - this.delayToStartClock;
-        if (this.mode === 'down') {
-            this.modify(-secs);
-            if (this.timeLeft < 0) {
-                this.timeLeft = 0;
-                this.timeRanOut();
+        // Only start/stop timer when active
+        if (this.active) {
+            if (this.paused) {
+                this.stopTimer();
+            } else {
+                this.startTimer();
             }
         }
     }
 
+    start() {
+        if (!this.enabled) {
+            return;
+        }
+        if (!this.active) {
+            this.active = true;
+            this.delayLeft = this.delay;
+            this.startTimer();
+        }
+    }
+
+    startTimer() {
+        this.timerStart = new Date();
+        const timer = setInterval(() => {
+            // To avoid a spam-clicking bug that could duplicate this interval, we
+            // simply check if the local timer variable (which is unique to each scope) is
+            // the most recently set one. If it isn't, then clear it.
+            if (timer === this.timer) {
+                this.checkForTimeRanOut();
+            } else {
+                clearInterval(timer);
+            }
+        }, 1000);
+        this.timer = timer;
+    }
+
+    stop() {
+        if (!this.enabled) {
+            return;
+        }
+        if (this.active) {
+            this.active = false;
+            this.stopTimer();
+        }
+    }
+
+    stopTimer() {
+        delete this.timer;
+        const { timeRemaining, delayRemaining } = this.calculateTimeLeft();
+        this.timeLeft = timeRemaining;
+        this.delayLeft = delayRemaining;
+    }
+
+    checkForTimeRanOut() {
+        if (this.active && this.timer && this.timeLeft > 0) {
+            const { timeRemaining } = this.calculateTimeLeft();
+            if (timeRemaining === 0) {
+                this.stop();
+                this.player.game.addAlert('warning', "{0}'s clock has run out", this.player);
+                this.player.eliminated = true;
+                // Check if there is only one non-eliminated player remaining. If so, they win!
+                const remainingPlayers = this.player.game.getPlayers();
+                if (remainingPlayers.length === 1) {
+                    this.player.game.recordWinner(remainingPlayers[0], 'time');
+                }
+                // Re-sends the game state to clients due to time expiring
+                this.player.game.timeExpired();
+
+                delete this.timer;
+            }
+        }
+    }
+
+    calculateTimeLeft() {
+        // Calculate how much delay is remaining
+        const delayEndTime = moment(this.timerStart).add(this.delayLeft, 'seconds');
+        const delayDifference = moment.duration(delayEndTime.diff(moment())).asSeconds();
+        const delayRemaining = Math.max(0, Math.round(delayDifference));
+
+        // Calculate how much time is remaining (with remaining delay taken into account)
+        const timeEndTime = delayEndTime
+            .add(this.timeLeft, 'seconds')
+            .add(-delayRemaining, 'seconds');
+        const timeDifference = moment.duration(timeEndTime.diff(moment())).asSeconds();
+        const timeRemaining = Math.max(0, Math.round(timeDifference));
+
+        return { timeRemaining, delayRemaining };
+    }
+
     getState() {
         return {
-            mode: this.mode,
+            active: this.active,
+            paused: this.paused,
+            timerStart: this.timerStart,
             timeLeft: this.timeLeft,
-            stateId: this.stateId,
-            mainTime: this.mainTime,
-            name: this.name,
-            delayToStartClock: this.delayToStartClock
+            delayLeft: this.delayLeft
         };
     }
 }

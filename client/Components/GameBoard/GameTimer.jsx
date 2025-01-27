@@ -6,48 +6,57 @@ import { useSelector } from 'react-redux';
 const GameTimer = ({ thisPlayer, otherPlayer }) => {
     const currentGame = useSelector((state) => state.lobby.currentGame);
 
-    let timeLimitClock;
-
-    if (currentGame.useGameTimeLimit) {
-        timeLimitClock = (
-            <TimeLimitClock
-                timeLimitStarted={currentGame.gameTimeLimitStarted}
-                timeLimitStartedAt={currentGame.gameTimeLimitStartedAt}
-                timeLimit={currentGame.gameTimeLimitTime}
+    const clockStack = [];
+    if (currentGame.useChessClocks && otherPlayer.chessClock) {
+        clockStack.push(
+            <ChessClock
+                key={`chess-clock-${otherPlayer.name}`}
+                username={otherPlayer.user.username}
+                delayPosition={'top'}
+                active={otherPlayer.chessClock.active}
+                paused={otherPlayer.chessClock.paused}
+                timerStart={otherPlayer.chessClock.timerStart}
+                timeLeft={otherPlayer.chessClock.timeLeft}
+                delayLeft={otherPlayer.chessClock.delayLeft}
             />
-        );
-    } else if (currentGame.useChessClocks) {
-        let chessClockOtherPlayer;
-        if (otherPlayer.chessClock) {
-            chessClockOtherPlayer = (
-                <ChessClock
-                    delayToStartClock={otherPlayer.chessClock.delayToStartClock}
-                    mode={otherPlayer.chessClock.mode}
-                    secondsLeft={otherPlayer.chessClock.timeLeft}
-                    stateId={otherPlayer.chessClock.stateId}
-                />
-            );
-        }
-        let chessClockThisPlayer;
-        if (thisPlayer.chessClock) {
-            chessClockThisPlayer = (
-                <ChessClock
-                    delayToStartClock={thisPlayer.chessClock.delayToStartClock}
-                    mode={thisPlayer.chessClock.mode}
-                    secondsLeft={thisPlayer.chessClock.timeLeft}
-                    stateId={thisPlayer.chessClock.stateId}
-                />
-            );
-        }
-        timeLimitClock = (
-            <div className='chessclock-group'>
-                {chessClockOtherPlayer}
-                {chessClockThisPlayer}
-            </div>
         );
     }
 
-    return timeLimitClock;
+    if (currentGame.useGameTimeLimit) {
+        clockStack.push(
+            <TimeLimitClock
+                key={`game-clock`}
+                active={currentGame.timeLimit.active}
+                paused={currentGame.timeLimit.paused}
+                timerStart={currentGame.timeLimit.timerStart}
+                timeLeft={currentGame.timeLimit.timeLeft}
+            />
+        );
+    }
+
+    if (currentGame.useChessClocks && thisPlayer.chessClock) {
+        clockStack.push(
+            <ChessClock
+                key={`chess-clock-${thisPlayer.name}`}
+                username={thisPlayer.user.username}
+                delayPosition={'bottom'}
+                active={thisPlayer.chessClock.active}
+                paused={thisPlayer.chessClock.paused}
+                timerStart={thisPlayer.chessClock.timerStart}
+                timeLeft={thisPlayer.chessClock.timeLeft}
+                delayLeft={thisPlayer.chessClock.delayLeft}
+            />
+        );
+    }
+
+    if (!clockStack.length === 0) {
+        return null;
+    }
+    return (
+        <div className='absolute h-full w-full px-1 flex flex-col gap-5 justify-center items-end select-none pr-10'>
+            {clockStack}
+        </div>
+    );
 };
 
 export default GameTimer;

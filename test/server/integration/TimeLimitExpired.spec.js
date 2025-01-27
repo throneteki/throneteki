@@ -28,12 +28,12 @@ describe('time limit', function () {
             });
 
             it('the time limit does not start until the setup phase has finished', function () {
-                expect(this.game.timeLimit.timeLimitStarted).toBe(false);
+                expect(this.game.timeLimit.active).toBe(false);
             });
 
             it('the time limit starts when the setup phase has finished', function () {
                 this.completeSetup();
-                expect(this.game.timeLimit.timeLimitStarted).toBe(true);
+                expect(this.game.timeLimit.active).toBe(true);
             });
 
             describe('the game correctly determines the winner', function () {
