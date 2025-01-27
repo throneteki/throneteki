@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import LoadingSpinner from '../Site/LoadingSpinner';
-import { Button, Checkbox } from '@nextui-org/react';
+import { Button, Checkbox } from '@heroui/react';
 
 const TableGroupFilter = ({ args, fetchData, onOkClick, filter, onCancelClick }) => {
     const { data, isLoading, isError } = fetchData(args);
@@ -17,7 +17,7 @@ const TableGroupFilter = ({ args, fetchData, onOkClick, filter, onCancelClick })
     let content;
 
     if (isLoading) {
-        content = <LoadingSpinner label='Loading...' />;
+        content = <LoadingSpinner />;
     } else if (isError) {
         content = <div>Failed to load options</div>;
     } else {

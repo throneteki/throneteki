@@ -4,7 +4,7 @@ import $ from 'jquery';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
-import { Avatar } from '@nextui-org/react';
+import { Avatar } from '@heroui/react';
 import { Constants } from '../../constants';
 
 const LobbyChat = ({ messages, isModerator, onRemoveMessageClick }) => {
@@ -145,7 +145,11 @@ const LobbyChat = ({ messages, isModerator, onRemoveMessageClick }) => {
     }, [messages, isModerator, onRemoveMessageClick]);
 
     if (messages.length === 0) {
-        return <div>There are no messages at the moment.</div>;
+        return (
+            <div className='bg-default-200 rounded-lg rounded-b-none p-2'>
+                There are no messages at the moment
+            </div>
+        );
     }
 
     return (

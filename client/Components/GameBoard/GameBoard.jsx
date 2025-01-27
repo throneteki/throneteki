@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
+import LoadingSpinner from '../Site/LoadingSpinner';
 
 import PlayerStats from './PlayerStats';
 import CardZoom from './CardZoom';
@@ -102,16 +103,16 @@ const GameBoard = () => {
     }, [currentGame?.players, thisPlayer?.name]);
 
     if (!currentGame || !cards || !currentGame.started) {
-        return <div>Waiting for server...</div>;
+        return <LoadingSpinner label={'Waiting for server...'} />;
     }
 
     if (!user) {
         dispatch(navigate('/'));
-        return <div>You are not logged in, redirecting...</div>;
+        return <LoadingSpinner label={'You are not logged in, redirecting...'} />;
     }
 
     if (!thisPlayer) {
-        return <div>Waiting for game to have players or close...</div>;
+        return <LoadingSpinner label={'Waiting for game to have players or close...'} />;
     }
 
     const boardClass = classNames(

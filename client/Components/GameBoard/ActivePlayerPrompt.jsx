@@ -6,8 +6,9 @@ import CardNameLookup from './CardNameLookup';
 import TraitNameLookup from './TraitNameLookup';
 import SelectFromValuesLookup from './SelectFromValuesLookup';
 import { useGetCardsQuery } from '../../redux/middleware/api';
-import { Button } from '@nextui-org/react';
+import { Button } from '@heroui/react';
 import ThronesIcon from './ThronesIcon';
+import LoadingSpinner from '../Site/LoadingSpinner';
 
 const ActivePlayerPrompt = ({
     stopAbilityTimer,
@@ -203,7 +204,13 @@ const ActivePlayerPrompt = ({
     }
 
     if (isLoading) {
-        return <div>Loading...</div>;
+        return (
+            <div className='m-1'>
+                <div className='relative border-1 border-default-200 bg-black/65 rounded-md py-8'>
+                    <LoadingSpinner />
+                </div>
+            </div>
+        );
     }
 
     return (

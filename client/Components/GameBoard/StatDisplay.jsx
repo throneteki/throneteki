@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, Button } from '@nextui-org/react';
+import { Image, Button } from '@heroui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { Constants } from '../../constants';

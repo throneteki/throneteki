@@ -26,7 +26,7 @@ class PendingGame {
         this.muteSpectators = details.muteSpectators;
         this.useChessClocks = details.useChessClocks;
         this.chessClockTimeLimit = details.chessClockTimeLimit;
-        this.delayToStartClock = details.delayToStartClock;
+        this.chessClockDelay = details.chessClockDelay;
         this.started = false;
         this.maxPlayers = 2;
     }
@@ -395,7 +395,7 @@ class PendingGame {
             muteSpectators: this.muteSpectators,
             useChessClocks: this.useChessClocks,
             chessClockTimeLimit: this.chessClockTimeLimit,
-            delayToStartClock: this.delayToStartClock
+            chessClockDelay: this.chessClockDelay
         };
     }
 
@@ -441,7 +441,7 @@ class PendingGame {
             muteSpectators: this.muteSpectators,
             useChessClocks: this.useChessClocks,
             chessClockTimeLimit: this.chessClockTimeLimit,
-            delayToStartClock: this.delayToStartClock
+            chessClockDelay: this.chessClockDelay
         };
     }
 }

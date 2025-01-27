@@ -8,7 +8,7 @@ import {
     sendJoinGameMessage,
     sendWatchGameMessage
 } from '../../redux/reducers/lobby';
-import { Button, Input } from '@nextui-org/react';
+import { Button, Input } from '@heroui/react';
 
 const PasswordGame = () => {
     const [password, setPassword] = useState('');

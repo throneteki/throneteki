@@ -1,16 +1,16 @@
 import React from 'react';
-import { Input, Switch } from '@nextui-org/react';
+import { Input, Switch } from '@heroui/react';
 
 const GameOptions = ({ formProps }) => {
     const options = [
         { name: 'allowSpectators', label: 'Allow spectators' },
         { name: 'showHand', label: 'Show hands to spectators' },
         { name: 'muteSpectators', label: 'Mute spectators' },
-        { name: 'useGameTimeLimit', label: 'Use a time limit (in minutes)' },
         { name: 'gamePrivate', label: 'Private (requires game link)' },
+        { name: 'useGameTimeLimit', label: 'Use game time limit' },
         {
             name: 'useChessClocks',
-            label: 'Use chess clocks with a time limit per player (in minutes)'
+            label: 'Use chess clocks (time limit per player)'
         }
     ];
 
@@ -35,30 +35,55 @@ const GameOptions = ({ formProps }) => {
                     ))}
                 </div>
             </div>
-            {formProps.values.useGameTimeLimit && (
-                <div>
-                    <Input
-                        label={'Time Limit'}
-                        className='lg:max-w-28'
-                        type='text'
-                        placeholder={'Enter time limit'}
-                        {...formProps.getFieldProps('gameTimeLimit')}
-                        errorMessage={formProps.errors.gameTimeLimit}
-                    />
-                </div>
-            )}
-            {formProps.values.useChessClocks && (
-                <div className='mt-2'>
-                    <Input
-                        label={'Chess Clock Limit'}
-                        className='lg:max-w-32 mb-2'
-                        type='text'
-                        placeholder={'Enter time limit'}
-                        {...formProps.getFieldProps('gameChessClockLimit')}
-                        errorMessage={formProps.errors.gameChessClockLimit}
-                    />
-                </div>
-            )}
+            <div className='flex gap-2'>
+                {formProps.values.useGameTimeLimit && (
+                    <div>
+                        <span className='relative text-foreground-500'>Time Limit</span>
+                        <div className='flex gap-2'>
+                            <Input
+                                label={'Limit (minutes)'}
+                                className='lg:max-w-28'
+                                type='number'
+                                {...formProps.getFieldProps('gameTimeLimit')}
+                                isInvalid={
+                                    formProps.errors.gameTimeLimit &&
+                                    formProps.touched.gameTimeLimit
+                                }
+                                errorMessage={formProps.errors.gameTimeLimit}
+                            />
+                        </div>
+                    </div>
+                )}
+                {formProps.values.useChessClocks && (
+                    <div>
+                        <span className='relative text-foreground-500'>Chess Clock</span>
+                        <div className='flex gap-2'>
+                            <Input
+                                label={'Limit (minutes)'}
+                                className='lg:max-w-32'
+                                type='number'
+                                {...formProps.getFieldProps('chessClockTimeLimit')}
+                                isInvalid={
+                                    formProps.errors.chessClockTimeLimit &&
+                                    formProps.touched.chessClockTimeLimit
+                                }
+                                errorMessage={formProps.errors.chessClockTimeLimit}
+                            />
+                            <Input
+                                label={'Delay (seconds)'}
+                                className='lg:max-w-32'
+                                type='number'
+                                {...formProps.getFieldProps('chessClockDelay')}
+                                isInvalid={
+                                    formProps.errors.chessClockDelay &&
+                                    formProps.touched.chessClockDelay
+                                }
+                                errorMessage={formProps.errors.chessClockDelay}
+                            />
+                        </div>
+                    </div>
+                )}
+            </div>
         </>
     );
 };

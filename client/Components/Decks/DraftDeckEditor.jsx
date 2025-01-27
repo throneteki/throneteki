@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { validateDeck } from '../../../deck-helper';
+import LoadingSpinner from '../Site/LoadingSpinner';
 
 import Input from '../Form/Input';
 import Select from '../Form/Select';
@@ -329,7 +330,7 @@ class DraftDeckEditor extends React.Component {
             !this.props.restrictedList ||
             !this.props.events
         ) {
-            return <div>Please wait while loading from the server...</div>;
+            return <LoadingSpinner label={'Loading deck...'} />;
         }
 
         const agendas = this.props.deck.draftedCards
