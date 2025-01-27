@@ -45,6 +45,10 @@ const GameOptions = ({ formProps }) => {
                                 className='lg:max-w-28'
                                 type='number'
                                 {...formProps.getFieldProps('gameTimeLimit')}
+                                isInvalid={
+                                    formProps.errors.gameTimeLimit &&
+                                    formProps.touched.gameTimeLimit
+                                }
                                 errorMessage={formProps.errors.gameTimeLimit}
                             />
                         </div>
@@ -59,6 +63,10 @@ const GameOptions = ({ formProps }) => {
                                 className='lg:max-w-32'
                                 type='number'
                                 {...formProps.getFieldProps('chessClockTimeLimit')}
+                                isInvalid={
+                                    formProps.errors.chessClockTimeLimit &&
+                                    formProps.touched.chessClockTimeLimit
+                                }
                                 errorMessage={formProps.errors.chessClockTimeLimit}
                             />
                             <Input
@@ -66,6 +74,10 @@ const GameOptions = ({ formProps }) => {
                                 className='lg:max-w-32'
                                 type='number'
                                 {...formProps.getFieldProps('chessClockDelay')}
+                                isInvalid={
+                                    formProps.errors.chessClockDelay &&
+                                    formProps.touched.chessClockDelay
+                                }
                                 errorMessage={formProps.errors.chessClockDelay}
                             />
                         </div>

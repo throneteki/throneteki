@@ -50,6 +50,8 @@ const NewGame = ({
             .number()
             .min(10, 'Games must be at least 10 minutes long')
             .max(120, 'Games must be less than 2 hours'),
+        chessClockTimeLimit: yup.number().min(1, 'Clock must be at least 1 minute long'),
+        chessClockDelay: yup.number().min(0, 'Delay cannot be less than 0').optional(),
         gameFormat: yup.string().required(),
         gameType: yup.string().required()
     });
@@ -125,6 +127,10 @@ const NewGame = ({
                                                     placeholder='Game Name'
                                                     maxLength={GameNameMaxLength}
                                                     {...formProps.getFieldProps('name')}
+                                                    isInvalid={
+                                                        formProps.errors.name &&
+                                                        formProps.touched.name
+                                                    }
                                                     errorMessage={formProps.errors.name}
                                                 />
                                             </div>
