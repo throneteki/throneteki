@@ -188,7 +188,7 @@ function ReactTable({
     }, [rowSelection]);
 
     if (isLoading) {
-        return <LoadingSpinner label={'Loading...'} />;
+        return <LoadingSpinner />;
     } else if (isError) {
         return <AlertPanel variant='danger'>{'An error occurred loading data.'}</AlertPanel>;
     }

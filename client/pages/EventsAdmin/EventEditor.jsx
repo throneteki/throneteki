@@ -14,6 +14,7 @@ import AlertPanel from '../../Components/Site/AlertPanel';
 import { navigate } from '../../redux/reducers/navigation';
 import { Button, Input, Select, SelectItem, Switch, Textarea } from '@nextui-org/react';
 import { toast } from 'react-toastify';
+import LoadingSpinner from '../../Components/Site/LoadingSpinner';
 
 const formatListTextForCards = (cards, cardCodes) => {
     if (!cardCodes || !cards) {
@@ -361,7 +362,7 @@ const EventEditor = ({ eventId }) => {
         isPacksLoading ||
         isDraftCubesLoading
     ) {
-        return <div>Loading...</div>;
+        return <LoadingSpinner />;
     }
 
     if (error) {

@@ -207,7 +207,7 @@ const ActivePlayerPrompt = ({
         return (
             <div className='m-1'>
                 <div className='relative border-1 border-default-200 bg-black/65 rounded-md py-8'>
-                    <LoadingSpinner label={'Loading...'} />
+                    <LoadingSpinner />
                 </div>
             </div>
         );
