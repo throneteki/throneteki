@@ -10,7 +10,7 @@ import { getMessageWithLinks } from '../util';
 import { createSelector } from '@reduxjs/toolkit';
 import { useGetNewsQuery, useRemoveMessageMutation } from '../redux/middleware/api';
 import { clearChatStatus, sendLobbyChatMessage } from '../redux/reducers/lobby';
-import { Input } from '@nextui-org/react';
+import { Input } from '@heroui/react';
 import { toast } from 'react-toastify';
 
 const Lobby = () => {

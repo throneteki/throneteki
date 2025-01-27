@@ -19,7 +19,7 @@ import {
     SelectItem,
     Textarea,
     extendVariants
-} from '@nextui-org/react';
+} from '@heroui/react';
 import LoadingSpinner from '../Site/LoadingSpinner';
 import {
     useAddDeckMutation,

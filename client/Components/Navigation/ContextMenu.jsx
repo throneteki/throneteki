@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { sendConcedeMessage, sendLeaveGameMessage } from '../../redux/reducers/game';
-import { Link, NavbarMenuItem, Tooltip } from '@nextui-org/react';
+import { Link, NavbarMenuItem, Tooltip } from '@heroui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faWarning } from '@fortawesome/free-solid-svg-icons';
 import ConfirmDialog from '../Site/ConfirmDialog';

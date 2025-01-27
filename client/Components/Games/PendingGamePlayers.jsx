@@ -1,5 +1,5 @@
 import React from 'react';
-import { Avatar, Button } from '@nextui-org/react';
+import { Avatar, Button } from '@heroui/react';
 import Panel from '../Site/Panel';
 import DeckStatus from '../Decks/DeckStatus';
 import { Constants } from '../../constants';

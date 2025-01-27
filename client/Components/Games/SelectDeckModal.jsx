@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, ModalBody, ModalContent, ModalHeader } from '@nextui-org/react';
+import { Modal, ModalBody, ModalContent, ModalHeader } from '@heroui/react';
 import DeckList from '../Decks/DeckList';
 
 const SelectDeckModal = ({ onClose, onDeckSelected, restrictedList }) => {

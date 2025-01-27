@@ -1,5 +1,5 @@
 import React from 'react';
-import { Chip } from '@nextui-org/react';
+import { Chip } from '@heroui/react';
 import { deckStatusLabel } from './DeckHelper';
 import classNames from 'classnames';
 

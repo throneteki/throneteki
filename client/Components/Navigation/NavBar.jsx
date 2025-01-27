@@ -20,7 +20,7 @@ import {
     NavbarMenu,
     NavbarMenuItem,
     NavbarMenuToggle
-} from '@nextui-org/react';
+} from '@heroui/react';
 import { LeftMenu, ProfileMenu, RightMenu } from '../../menus';
 import ProfileDropdown from './ProfileDropdown';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

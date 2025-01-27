@@ -1,6 +1,6 @@
 import React from 'react';
 import GameConfiguration from './GameConfiguration';
-import { Modal, ModalBody, ModalContent, ModalHeader } from '@nextui-org/react';
+import { Modal, ModalBody, ModalContent, ModalHeader } from '@heroui/react';
 
 const GameConfigurationModal = ({
     keywordSettings,
