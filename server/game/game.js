@@ -1383,8 +1383,13 @@ class Game extends EventEmitter {
         }
 
         if (this.isEmpty()) {
-            if (this.timeLimit.stop());
-            player.stopClock();
+            if (this.timeLimit) {
+                this.timeLimit.stop();
+            }
+
+            if (!player.isSpectator()) {
+                player.stopClock();
+            }
         }
     }
 
