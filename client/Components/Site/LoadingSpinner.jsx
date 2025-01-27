@@ -1,5 +1,5 @@
 import React from 'react';
-import { Spinner } from '@nextui-org/react';
+import { Spinner } from '@heroui/react';
 
 function LoadingSpinner({ label = 'Loading...', color = 'white', ...props }) {
     return (
