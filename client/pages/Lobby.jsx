@@ -12,6 +12,7 @@ import { useGetNewsQuery, useRemoveMessageMutation } from '../redux/middleware/a
 import { clearChatStatus, sendLobbyChatMessage } from '../redux/reducers/lobby';
 import { Input } from '@heroui/react';
 import { toast } from 'react-toastify';
+import LoadingSpinner from '../Components/Site/LoadingSpinner';
 
 const Lobby = () => {
     const [message, setMessage] = useState('');
@@ -99,11 +100,13 @@ const Lobby = () => {
     let placeholder = isLoggedIn
         ? 'Enter a message...'
         : 'You must be logged in to send lobby chat messages';
-    let newsStatus = null;
+    let newsInfo = null;
     if (newsLoading) {
-        newsStatus = <div>News loading...</div>;
+        newsInfo = <LoadingSpinner />;
     } else if (newsError) {
-        newsStatus = <div>Site news failed to load.</div>;
+        newsInfo = <AlertPanel variant='danger'>Site news failed to load</AlertPanel>;
+    } else if (newsSuccess) {
+        newsInfo = <News news={news} />;
     }
 
     return (
@@ -115,8 +118,7 @@ const Lobby = () => {
             {bannerNotice ? <AlertPanel message={bannerNotice} variant='danger' /> : null}
             <div className='max-h-[20vh]'>
                 <Panel title='Latest site news' className='mt-2'>
-                    {newsStatus}
-                    {newsSuccess && <News news={news} />}
+                    {newsInfo}
                 </Panel>
             </div>
             <Panel
