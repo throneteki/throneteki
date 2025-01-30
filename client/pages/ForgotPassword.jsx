@@ -1,6 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import ReCAPTCHA from 'react-google-recaptcha';
-
+import HCaptcha from '@hcaptcha/react-hcaptcha';
 import AlertPanel from '../Components/Site/AlertPanel';
 import Panel from '../Components/Site/Panel';
 
@@ -45,10 +44,9 @@ const ForgotPassword = () => {
                             onValueChange={setUsername}
                         />
                         <div className='mt-2 ml-1'>
-                            <ReCAPTCHA
-                                sitekey='6LfELhMUAAAAAKbD2kLd6OtbsBbrZJFs7grwOREZ'
-                                theme='dark'
-                                onChange={onCaptchaChange}
+                            <HCaptcha
+                                sitekey={import.meta.env.VITE_HCAPTCHA_SITE_KEY}
+                                onVerify={onCaptchaChange}
                             />
                         </div>
                         <div className='mt-2'>

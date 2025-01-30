@@ -608,12 +608,20 @@ export const init = function (server, options) {
         wrapAsync(async (req, res) => {
             let resetToken;
 
-            let response = await fetch(
-                `https://www.google.com/recaptcha/api/siteverify?secret=${configService.getValue('captchaKey')}&response=${req.body.captcha}`
-            );
-            let answer = response.json();
+            const params = new URLSearchParams();
+            params.append('secret', configService.getValue('captchaKey'));
+            params.append('response', req.body.captcha);
+
+            let response = await fetch('https://api.hcaptcha.com/siteverify', {
+                method: 'POST',
+                headers: { 'content-type': 'application/x-www-form-urlencoded' },
+                body: params
+            });
+
+            let answer = await response.json();
 
             if (!answer.success) {
+                logger.warn('Failed captcha %s', answer);
                 return res.send({
                     success: false,
                     message: 'Please complete the captcha correctly'
