@@ -55,7 +55,7 @@
         "body-parser": "^1.18.2",
         "command-line-args": "^4.0.7",
         "config": "^3.2.2",
-        "cross-env": "^3.2.4",
+        "cross-env": "^7.0.3",
         "enzyme": "^3.9.0",
         "express": "^4.15.5",
         "formik": "^2.4.6",
