@@ -72,6 +72,7 @@ jobs:
                       VERSION=${{ steps.determine_version.outputs.semVer }}
                       SENTRY_KEY=${{ secrets.SENTRY_DSN }}
                       SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
+                      HCAPTCHA_SITE_KEY=${{ secrets.HCAPTCHA_SITE_KEY }}
                   push: true
                   tags: ${{ secrets.DOCKERHUB_USERNAME }}/throneteki-lobby:latest, ${{ secrets.DOCKERHUB_USERNAME }}/throneteki-lobby:${{ steps.determine_version.outputs.semVer }}
             - name: Build and push node
