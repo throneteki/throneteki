@@ -22,7 +22,7 @@
 
         .inner {
             @include calculate-tiled-card-prop(width, 5, width);
-            @include calculate-tiled-card-prop(height, 1, height, 0rem);
+            @include calculate-tiled-card-prop(height, 1, height);
         }
     }
 }

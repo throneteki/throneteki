@@ -3,7 +3,7 @@ import $ from 'jquery';
 
 import { ItemTypes } from '../../constants';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { PopupDefaults } from './PopupDefaults';
 import { useDndMonitor, useDraggable } from '@dnd-kit/core';
 
@@ -103,7 +103,7 @@ const MovablePanel = ({ name, side, title, onCloseClick, children, size }) => {
                 <span className='flex-1 text-center'>{title}</span>
                 <span className='cursor-pointer'>
                     <a onClick={onCloseClick}>
-                        <FontAwesomeIcon icon={faTimes} />
+                        <FontAwesomeIcon icon={faXmark} />
                     </a>
                 </span>
             </div>
