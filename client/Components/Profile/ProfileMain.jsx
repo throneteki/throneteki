@@ -22,21 +22,16 @@ const ProfileMain = ({ user, formProps }) => {
         }
     }, [unlinkPatreon]);
 
-    const onUpdateAvatarClick = useCallback(
-        async (event) => {
-            event.preventDefault();
-
-            try {
-                await updateAvatar(user.username).unwrap();
-                toast.success('Avatar updated successfully');
-            } catch (err) {
-                toast.error(
-                    err.message || 'An error occured updating your avatar Please try again later.'
-                );
-            }
-        },
-        [updateAvatar, user?.username]
-    );
+    const onUpdateAvatarClick = useCallback(async () => {
+        try {
+            await updateAvatar(user.username).unwrap();
+            toast.success('Avatar updated successfully');
+        } catch (err) {
+            toast.error(
+                err.message || 'An error occured updating your avatar Please try again later.'
+            );
+        }
+    }, [updateAvatar, user?.username]);
 
     const callbackUrl =
         import.meta.env.MODE === 'production'
