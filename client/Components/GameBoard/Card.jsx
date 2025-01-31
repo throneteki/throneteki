@@ -16,7 +16,7 @@ const Card = ({
     className,
     disableMouseOver,
     hideTokens,
-    menu,
+    menu = [{ hideable: true, command: 'click', text: 'Select Card' }],
     onClick,
     onMenuItemClick,
     onMouseOut,
