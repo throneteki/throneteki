@@ -15,30 +15,20 @@ const PasswordGame = () => {
     const dispatch = useDispatch();
     const { passwordJoinType, passwordGame, passwordError } = useSelector((state) => state.lobby);
 
-    const onJoinClick = useCallback(
-        (event) => {
-            event.preventDefault();
+    const onJoinClick = useCallback(() => {
+        if (!passwordGame?.id) {
+            return;
+        }
+        if (passwordJoinType === 'Join') {
+            dispatch(sendJoinGameMessage(passwordGame.id, password));
+        } else if (passwordJoinType === 'Watch') {
+            dispatch(sendWatchGameMessage(passwordGame.id, password));
+        }
+    }, [passwordJoinType, dispatch, passwordGame?.id, password]);
 
-            if (!passwordGame?.id) {
-                return;
-            }
-            if (passwordJoinType === 'Join') {
-                dispatch(sendJoinGameMessage(passwordGame.id, password));
-            } else if (passwordJoinType === 'Watch') {
-                dispatch(sendWatchGameMessage(passwordGame.id, password));
-            }
-        },
-        [passwordJoinType, dispatch, passwordGame?.id, password]
-    );
-
-    const onCancelClick = useCallback(
-        (event) => {
-            dispatch(cancelPasswordJoin());
-
-            event.preventDefault();
-        },
-        [dispatch]
-    );
+    const onCancelClick = useCallback(() => {
+        dispatch(cancelPasswordJoin());
+    }, [dispatch]);
 
     const onPasswordChange = useCallback((event) => {
         setPassword(event.target.value);
@@ -69,10 +59,10 @@ const PasswordGame = () => {
                     </div>
 
                     <div className='flex gap-2'>
-                        <Button color='primary' onClick={onJoinClick}>
+                        <Button color='primary' onPress={onJoinClick}>
                             {passwordJoinType}
                         </Button>
-                        <Button color='primary' onClick={onCancelClick}>
+                        <Button color='primary' onPress={onCancelClick}>
                             Cancel
                         </Button>
                     </div>

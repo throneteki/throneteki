@@ -67,37 +67,25 @@ const UserAdmin = () => {
         setSearchUsername(username);
     }, [username]);
 
-    const onSaveClick = useCallback(
-        async (event) => {
-            event.preventDefault();
+    const onSaveClick = useCallback(async () => {
+        let savedUser = { ...currentUser };
 
-            let savedUser = { ...currentUser };
+        savedUser.permissions = permissions;
+        savedUser.disabled = disabled;
+        savedUser.verified = verified;
 
-            savedUser.permissions = permissions;
-            savedUser.disabled = disabled;
-            savedUser.verified = verified;
+        try {
+            await saveUser(savedUser).unwrap();
 
-            try {
-                await saveUser(savedUser).unwrap();
+            toast.success('User saved successfully.');
+        } catch (err) {
+            toast.error(err.message || 'An error occured saving the user. Please try again later.');
+        }
+    }, [currentUser, permissions, disabled, verified, saveUser]);
 
-                toast.success('User saved successfully.');
-            } catch (err) {
-                toast.error(
-                    err.message || 'An error occured saving the user. Please try again later.'
-                );
-            }
-        },
-        [currentUser, permissions, disabled, verified, saveUser]
-    );
-
-    const onClearClick = useCallback(
-        (event) => {
-            event.preventDefault();
-
-            dispatch(sendClearUserSessions(currentUser.username));
-        },
-        [currentUser, dispatch]
-    );
+    const onClearClick = useCallback(() => {
+        dispatch(sendClearUserSessions(currentUser.username));
+    }, [currentUser, dispatch]);
 
     const onPermissionToggle = useCallback((field, value) => {
         setPermissions((prevPermissions) => ({
@@ -215,13 +203,13 @@ const UserAdmin = () => {
                         ) : null}
                         <div>
                             <div className='flex gap-2'>
-                                <Button color='primary' onClick={onClearClick}>
+                                <Button color='primary' oonPressnClick={onClearClick}>
                                     Clear sessions
                                 </Button>
                                 <Button
                                     isLoading={isSaveLoading}
                                     color='primary'
-                                    onClick={onSaveClick}
+                                    onPress={onSaveClick}
                                 >
                                     Save
                                 </Button>
@@ -275,7 +263,7 @@ const UserAdmin = () => {
                     />
                 </div>
                 <div className='mt-2'>
-                    <Button color='primary' onClick={onFindClick} loading={isLoading}>
+                    <Button color='primary' onPress={onFindClick} loading={isLoading}>
                         Search
                     </Button>
                 </div>

@@ -36,7 +36,7 @@ const Game = ({
                             size='sm'
                             color='primary'
                             className='gamelist-button img-responsive'
-                            onClick={onJoinGame}
+                            onPress={onJoinGame}
                         >
                             Join
                         </Button>
@@ -134,7 +134,7 @@ const Game = ({
                             color='primary'
                             size='sm'
                             className='btn btn-primary gamelist-lower-button'
-                            onClick={onWatchGame}
+                            onPress={onWatchGame}
                         >
                             Watch
                         </Button>
@@ -144,7 +144,7 @@ const Game = ({
                             color='primary'
                             className='gamelist-lower-button p-1 ml-1 mt-1'
                             size='sm'
-                            onClick={onRemoveGame}
+                            onPress={onRemoveGame}
                         >
                             Remove
                         </Button>

@@ -215,7 +215,7 @@ const CardPile = ({
                             color='primary'
                             className='flex-1 m-2'
                             key={linkIndex++}
-                            onClick={() => onPopupMenuItemClick(menuItem)}
+                            onPress={() => onPopupMenuItemClick(menuItem)}
                         >
                             <span>
                                 {menuItem.icon && <FontAwesomeIcon icon={menuItem.icon} />}{' '}

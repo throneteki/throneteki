@@ -241,20 +241,15 @@ const EventEditor = ({ eventId }) => {
         valyrianRL?.name
     ]);
 
-    const handleSaveClick = useCallback(
-        async (event) => {
-            event.preventDefault();
+    const handleSaveClick = useCallback(async () => {
+        try {
+            await saveEvent(getEventFromState()).unwrap();
 
-            try {
-                await saveEvent(getEventFromState()).unwrap();
-
-                toast.success('Event saved successfully');
-            } catch (err) {
-                toast.error('Error saving event');
-            }
-        },
-        [getEventFromState, saveEvent]
-    );
+            toast.success('Event saved successfully');
+        } catch (err) {
+            toast.error('Error saving event');
+        }
+    }, [getEventFromState, saveEvent]);
 
     const compareCardByReleaseDate = useCallback(
         (a, b) => {
@@ -683,14 +678,14 @@ const EventEditor = ({ eventId }) => {
                             isLoading={isSaveLoading}
                             color='primary'
                             type='submit'
-                            onClick={handleSaveClick}
+                            onPress={handleSaveClick}
                         >
                             Save
                         </Button>
                         <Button
                             type='button'
                             color='primary'
-                            onClick={() => dispatch(navigate('/events'))}
+                            onPress={() => dispatch(navigate('/events'))}
                         >
                             Cancel
                         </Button>

@@ -14,7 +14,7 @@ const GameButtons = ({ onNewGame, onQuickJoin }) => {
                 className='mt-2'
                 disabled={!user}
                 color='primary'
-                onClick={() => {
+                onPress={() => {
                     onQuickJoin && onQuickJoin();
                 }}
             >

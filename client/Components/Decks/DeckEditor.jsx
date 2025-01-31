@@ -340,24 +340,24 @@ const DeckEditor = ({ deck, onBackClick }) => {
         <div className='grid lg:grid-cols-2 gap-4'>
             <div className='flex flex-col gap-2'>
                 <div className='flex gap-2'>
-                    <Button color='default' onClick={() => onBackClick()}>
+                    <Button color='default' onPress={() => onBackClick()}>
                         Back
                     </Button>
                     <Button
                         color='primary'
                         isLoading={isAddLoading || isSaveLoading}
-                        onClick={() => onSaveClick(true)}
+                        onPress={() => onSaveClick(true)}
                     >
                         Save and close
                     </Button>
                     <Button
                         color='primary'
                         isLoading={isAddLoading || isSaveLoading}
-                        onClick={() => onSaveClick(false)}
+                        onPress={() => onSaveClick(false)}
                     >
                         Save
                     </Button>
-                    <Button onClick={() => setShowImportPopup(true)}>Import</Button>
+                    <Button onPress={() => setShowImportPopup(true)}>Import</Button>
                 </div>
                 <div className='flex flex-col gap-2'>
                     <Input

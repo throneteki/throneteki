@@ -24,7 +24,7 @@ const StatDisplay = ({
                         size='sm'
                         radius='none'
                         className='flex-col p-1.5 w-9'
-                        onClick={onMinusClick}
+                        onPress={onMinusClick}
                     >
                         <FontAwesomeIcon className='self-start' icon={faMinus} />
                     </Button>
@@ -35,7 +35,7 @@ const StatDisplay = ({
                         size='sm'
                         radius='none'
                         className='flex-col p-1.5 w-9'
-                        onClick={onPlusClick}
+                        onPress={onPlusClick}
                     >
                         <FontAwesomeIcon className='self-end' icon={faPlus} />
                     </Button>

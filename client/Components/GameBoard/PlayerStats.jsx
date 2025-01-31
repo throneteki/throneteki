@@ -62,7 +62,7 @@ const PlayerStats = ({
         <StatContainer title={title}>
             <Button
                 isIconOnly={!text}
-                onClick={onClick}
+                onPress={onClick}
                 startContent={icon ? <FontAwesomeIcon icon={icon} /> : null}
                 radius='none'
                 variant='light'
@@ -72,8 +72,7 @@ const PlayerStats = ({
             </Button>
         </StatContainer>
     );
-    const writeChatToClipboard = useCallback((event) => {
-        event.preventDefault();
+    const writeChatToClipboard = useCallback(() => {
         const messagePanel = document.getElementById('messages-panel');
 
         if (messagePanel) {

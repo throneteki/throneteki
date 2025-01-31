@@ -192,7 +192,7 @@ const PendingGame = () => {
                             className='me-2'
                             color='success'
                             isDisabled={!canStartGame()}
-                            onClick={() => {
+                            onPress={() => {
                                 setWaiting(true);
                                 dispatch(sendStartGameMessage());
                             }}
@@ -201,7 +201,7 @@ const PendingGame = () => {
                         </Button>
                         <Button
                             color='primary'
-                            onClick={() => {
+                            onPress={() => {
                                 dispatch(sendLeaveGameMessage());
                             }}
                         >
