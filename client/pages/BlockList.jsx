@@ -37,24 +37,20 @@ const BlockList = () => {
         setUsername(event.target.value);
     }, []);
 
-    const onAddClick = useCallback(
-        async (event) => {
-            try {
-                event.preventDefault();
-                await addBlockListEntry({
-                    username: user.username,
-                    blockedUsername: username
-                }).unwrap();
-                toast.success('Blocklist entry added successfully');
-            } catch (err) {
-                toast.error(
-                    err.message ||
-                        'An error occured adding the blocklist entry. Please try again later.'
-                );
-            }
-        },
-        [addBlockListEntry, user?.username, username]
-    );
+    const onAddClick = useCallback(async () => {
+        try {
+            await addBlockListEntry({
+                username: user.username,
+                blockedUsername: username
+            }).unwrap();
+            toast.success('Blocklist entry added successfully');
+        } catch (err) {
+            toast.error(
+                err.message ||
+                    'An error occured adding the blocklist entry. Please try again later.'
+            );
+        }
+    }, [addBlockListEntry, user?.username, username]);
 
     const onRemoveClick = useCallback(
         async (username) => {
@@ -145,7 +141,7 @@ const BlockList = () => {
                         isLoading={isAddLoading}
                         className='mt-2'
                         color='primary'
-                        onClick={onAddClick}
+                        onPress={onAddClick}
                     >
                         Add
                     </Button>

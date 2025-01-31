@@ -11,7 +11,6 @@ import ThronesIcon from './ThronesIcon';
 import LoadingSpinner from '../Site/LoadingSpinner';
 
 const ActivePlayerPrompt = ({
-    stopAbilityTimer,
     onButtonClick,
     buttons,
     onMouseOver,
@@ -28,8 +27,6 @@ const ActivePlayerPrompt = ({
 
     const handleButtonClick = useCallback(
         (event, button) => {
-            event.preventDefault();
-
             //     stopAbilityTimer();
 
             let googleFormMatcher =
@@ -47,20 +44,18 @@ const ActivePlayerPrompt = ({
                 onButtonClick(button);
             }
         },
-        [stopAbilityTimer, onButtonClick]
+        [onButtonClick]
     );
 
     const handleCancelTimerClick = useCallback(
         (event, button) => {
-            event.preventDefault();
-
             //      stopAbilityTimer();
 
             if (button.method || button.arg) {
                 onButtonClick(button);
             }
         },
-        [stopAbilityTimer, onButtonClick]
+        [onButtonClick]
     );
 
     const handleLookupValueSelected = useCallback(
@@ -91,9 +86,10 @@ const ActivePlayerPrompt = ({
                 buttons.push(
                     <div className='w-full' key={index}>
                         <Button
+                            type='button'
                             color='primary'
                             className='text-wrap h-full min-h-10'
-                            onClick={clickCallback}
+                            onPress={clickCallback}
                             onMouseOver={
                                 button.card ? (event) => onMouseOver(event, button.card) : null
                             }

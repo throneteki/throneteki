@@ -28,7 +28,7 @@ const FactionSelect = ({ onSelect }) => {
             </div>
 
             <div className='flex justify-center'>
-                <Button onClick={() => dispatch(navigate('/decks'))}>Cancel</Button>
+                <Button onPress={() => dispatch(navigate('/decks'))}>Cancel</Button>
             </div>
         </>
     );

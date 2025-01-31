@@ -137,14 +137,14 @@ const NewsAdmin = () => {
                                     className='mr-2 mt-2'
                                     color='primary'
                                     isLoading={isSaveLoading}
-                                    onClick={onSaveClick}
+                                    onPress={onSaveClick}
                                 >
                                     Save
                                 </Button>
                                 <Button
                                     className='mt-2'
                                     color='default'
-                                    onClick={() => {
+                                    onPress={() => {
                                         setSelectedItem(null);
                                         setNewsText('');
                                     }}
@@ -157,7 +157,7 @@ const NewsAdmin = () => {
                                 className='mt-2'
                                 color='primary'
                                 isLoading={isAddLoading}
-                                onClick={() => onAddNewsClick(newsText)}
+                                onPress={() => onAddNewsClick(newsText)}
                             >
                                 Add
                             </Button>

@@ -68,7 +68,7 @@ const BanlistAdmin = () => {
                             <Button
                                 isLoading={isRemoveLoading}
                                 color='danger'
-                                onClick={() => onDeleteBanlistClick(ban._id)}
+                                onPress={() => onDeleteBanlistClick(ban._id)}
                             >
                                 Delete
                             </Button>
@@ -108,7 +108,7 @@ const BanlistAdmin = () => {
                             <Button
                                 isLoading={isAddLoading}
                                 color='primary'
-                                onClick={onAddBanlistClick}
+                                onPress={onAddBanlistClick}
                             >
                                 Add
                             </Button>

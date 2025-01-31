@@ -171,7 +171,7 @@ const NewGame = ({
                                 </Button>
                                 <Button
                                     color='primary'
-                                    onClick={() => onClosed && onClosed()}
+                                    onPress={() => onClosed && onClosed()}
                                     className='ms-1'
                                 >
                                     Cancel

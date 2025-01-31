@@ -54,10 +54,10 @@ const NodeAdmin = () => {
                 <TableCell>{node.status}</TableCell>
                 <TableCell>{node.version}</TableCell>
                 <TableCell className='flex gap-2'>
-                    <Button color='primary' onClick={(event) => onToggleNodeClick(node, event)}>
+                    <Button color='primary' onPress={(event) => onToggleNodeClick(node, event)}>
                         {node.status === 'active' ? 'Disable' : 'Enable'}
                     </Button>
-                    <Button color='danger' onClick={(event) => onRestartNodeClick(node, event)}>
+                    <Button color='danger' onPress={(event) => onRestartNodeClick(node, event)}>
                         Restart
                     </Button>
                 </TableCell>
@@ -94,7 +94,7 @@ const NodeAdmin = () => {
                 {content}
 
                 <div className='mt-2'>
-                    <Button color='primary' onClick={onRefreshClick}>
+                    <Button color='primary' onPress={onRefreshClick}>
                         Refresh
                     </Button>
                 </div>

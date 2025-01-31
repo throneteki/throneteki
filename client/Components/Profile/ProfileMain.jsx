@@ -84,7 +84,7 @@ const ProfileMain = ({ user, formProps }) => {
                                 type='button'
                                 className='ml-2'
                                 color='secondary'
-                                onClick={onUpdateAvatarClick}
+                                onPress={onUpdateAvatarClick}
                             >
                                 Update avatar
                             </Button>
@@ -116,7 +116,7 @@ const ProfileMain = ({ user, formProps }) => {
                                 <Button
                                     isLoading={unlinkLoading}
                                     color='secondary'
-                                    onClick={onUnlinkClick}
+                                    onPress={onUnlinkClick}
                                 >
                                     Unlink Patreon account
                                 </Button>

@@ -49,10 +49,10 @@ const AgendaSelect = ({ onBackClick, onNextClick }) => {
     return (
         <>
             <div className='mb-2'>
-                <Button color='default' className='mr-2' onClick={() => onBackClick()}>
+                <Button color='default' className='mr-2' onPress={() => onBackClick()}>
                     Back
                 </Button>
-                <Button color='primary' onClick={() => onNextClick(selectedAgendas)}>
+                <Button color='primary' onPress={() => onNextClick(selectedAgendas)}>
                     Next
                 </Button>
             </div>

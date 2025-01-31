@@ -51,7 +51,7 @@ const ResetPassword = ({ id, token }) => {
                         type='password'
                         onChange={setPassword}
                     />
-                    <Button onClick={onSubmit} loading={isLoading}>
+                    <Button onPress={onSubmit} loading={isLoading}>
                         Submit
                     </Button>
                 </Panel>

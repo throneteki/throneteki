@@ -152,7 +152,7 @@ function ReactTable({
                             key={b.label}
                             color={b.color}
                             endContent={b.icon}
-                            onClick={b.onClick}
+                            onPress={b.onClick}
                             isDisabled={b.disabled}
                             isLoading={b.isLoading}
                         >

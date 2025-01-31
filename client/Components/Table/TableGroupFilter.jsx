@@ -50,7 +50,7 @@ const TableGroupFilter = ({ args, fetchData, onOkClick, filter, onCancelClick })
             <div className='mb-2 mt-2'>
                 <Button
                     color='primary'
-                    onClick={() => {
+                    onPress={() => {
                         const filterResult = [];
 
                         for (const [key, value] of Object.entries(filters)) {
@@ -63,7 +63,7 @@ const TableGroupFilter = ({ args, fetchData, onOkClick, filter, onCancelClick })
                 >
                     Ok
                 </Button>
-                <Button className='ml-2' color='default' onClick={onCancelClick}>
+                <Button className='ml-2' color='default' onPress={onCancelClick}>
                     Cancel
                 </Button>
             </div>

@@ -50,7 +50,7 @@ const ForgotPassword = () => {
                             />
                         </div>
                         <div className='mt-2'>
-                            <Button color='primary' onClick={onSubmit} loading={isLoading}>
+                            <Button color='primary' onPress={onSubmit} loading={isLoading}>
                                 Submit
                             </Button>
                         </div>

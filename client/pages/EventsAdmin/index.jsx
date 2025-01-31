@@ -92,7 +92,7 @@ const EventsAdmin = () => {
         <div className='w-full'>
             <Panel title='Events administration'>
                 <div>
-                    <Button color='primary' onClick={() => dispatch(navigate('/events/add'))}>
+                    <Button color='primary' onPress={() => dispatch(navigate('/events/add'))}>
                         Add event
                     </Button>
                 </div>
@@ -109,7 +109,7 @@ const EventsAdmin = () => {
                                     <div className='flex gap-2'>
                                         <Button
                                             color='primary'
-                                            onClick={() =>
+                                            onPress={() =>
                                                 dispatch(navigate(`/events/${event._id}`))
                                             }
                                         >
@@ -118,7 +118,7 @@ const EventsAdmin = () => {
                                         <Button
                                             color='danger'
                                             isLoading={isDeleteEventLoading}
-                                            onClick={() => handleDeleteClick(event._id)}
+                                            onPress={() => handleDeleteClick(event._id)}
                                         >
                                             Delete
                                         </Button>
