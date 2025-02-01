@@ -14,7 +14,7 @@ class InterruptWindow extends BaseStep {
             new SimpleStep(game, () => this.automaticSaveWithDupes()),
             new SimpleStep(game, () => this.openAbilityWindow('forcedinterrupt')),
             new SimpleStep(game, () => this.openAbilityWindow('interrupt')),
-            new SimpleStep(game, () => this.validateExecution()),
+            new SimpleStep(game, () => this.checkEventValidity()),
             new SimpleStep(game, () => this.selectExecuteOrder()),
             new SimpleStep(game, () => this.executeHandler()),
             new SimpleStep(game, () => this.openWindowForAttachedEvents()),
@@ -71,12 +71,28 @@ class InterruptWindow extends BaseStep {
         });
     }
 
-    validateExecution() {
+    /**
+     * Checks each concurrent event which affects a card for whether it should be cancelled or not by the game-state of that card changing, likely caused by a "cancelinterrupt" or "interrupt" ability
+     *
+     * E.g. When a card is moved to its owners hand during the interrupt window of that card being discarded, then the event(s) to discard that card should be cancelled
+     *
+     * See the following for references:
+     * - https://thronesdb.com/faq#Card_Abilities_and_Out_of_Play_Areas
+     * - https://thronesdb.com/rulesreference#Triggering_Condition
+     */
+    checkEventValidity() {
         if (this.event.cancelled) {
             return;
         }
-
-        this.event.checkExecuteValidity();
+        for (const event of this.event.getConcurrentEvents()) {
+            if (event.cancelled || !event.card || !event.cardStateWhenEventCreated) {
+                continue;
+            }
+            // Check if the events card has moved locations since the event was created/initiated (eg. after event creation, but before event execution)
+            if (event.card.location !== event.cardStateWhenEventCreated.location) {
+                event.cancel();
+            }
+        }
     }
 
     selectExecuteOrder() {
