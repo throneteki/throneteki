@@ -10,31 +10,22 @@ const GameTypes = ({ formProps }) => {
     ];
 
     return (
-        <>
-            <div>
-                <GameTypeInfo gameType={formProps.values.gameType} />
-            </div>
-            <div className='mt-2'>
-                <RadioGroup
-                    name='gameType'
-                    label={'Type'}
-                    orientation='horizontal'
-                    value={formProps.values.gameType}
-                    onValueChange={(value) => formProps.setFieldValue('gameType', value)}
-                >
-                    {types.map((type) => (
-                        <Radio
-                            key={type.name}
-                            id={type.name}
-                            //         onChange={formProps.handleChange}
-                            value={type.name}
-                        >
-                            {type.label}
-                        </Radio>
-                    ))}
-                </RadioGroup>
-            </div>
-        </>
+        <div className='flex flex-col gap-2'>
+            <RadioGroup
+                name='gameType'
+                label={'Type'}
+                orientation='horizontal'
+                value={formProps.values.gameType}
+                onValueChange={(value) => formProps.setFieldValue('gameType', value)}
+            >
+                {types.map((type) => (
+                    <Radio key={type.name} id={type.name} value={type.name}>
+                        {type.label}
+                    </Radio>
+                ))}
+            </RadioGroup>
+            <GameTypeInfo gameType={formProps.values.gameType} />
+        </div>
     );
 };
 

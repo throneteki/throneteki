@@ -102,78 +102,66 @@ const NewGame = ({
                     >
                         <div className='flex flex-col gap-2'>
                             {quickJoin && (
-                                <div className='mb-2'>
-                                    <AlertPanel variant={AlertType.Info}>
-                                        Select the type of game you&apos;d like to play and either
-                                        you&apos;ll join the next one available, or one will be
-                                        created for you with default options.
-                                    </AlertPanel>
-                                </div>
+                                <AlertPanel variant={AlertType.Info}>
+                                    Select the type of game you&apos;d like to play and either
+                                    you&apos;ll join the next one available, or one will be created
+                                    for you with default options.
+                                </AlertPanel>
                             )}
                             {!quickJoin && (
                                 <>
-                                    {
-                                        <div className='flex flex-col gap-2 w-full lg:grid lg:grid-cols-2'>
-                                            <div>
-                                                <Input
-                                                    label='Name'
-                                                    endContent={
-                                                        <span>
-                                                            {GameNameMaxLength -
-                                                                formProps.values.name.length}
-                                                        </span>
-                                                    }
-                                                    type='text'
-                                                    placeholder='Game Name'
-                                                    maxLength={GameNameMaxLength}
-                                                    {...formProps.getFieldProps('name')}
-                                                    isInvalid={
-                                                        formProps.errors.name &&
-                                                        formProps.touched.name
-                                                    }
-                                                    errorMessage={formProps.errors.name}
-                                                />
-                                            </div>
-                                            <div>
-                                                <Input
-                                                    autoComplete='off'
-                                                    label='Password'
-                                                    type='password'
-                                                    placeholder={'Enter a password'}
-                                                    {...formProps.getFieldProps('password')}
-                                                />
-                                            </div>
-                                            <div>
-                                                <Select
-                                                    label={'Mode'}
-                                                    selectedKeys={new Set([restrictedList])}
-                                                    onChange={(e) =>
-                                                        setRestrictedList(e.target.value)
-                                                    }
-                                                >
-                                                    {restrictedLists?.map((rl) => (
-                                                        <SelectItem key={rl._id} value={rl._id}>
-                                                            {rl.name}
-                                                        </SelectItem>
-                                                    ))}
-                                                </Select>
-                                            </div>
+                                    <div className='flex flex-col gap-2 w-full lg:grid lg:grid-cols-2'>
+                                        <div>
+                                            <Input
+                                                label='Name'
+                                                endContent={
+                                                    <span>
+                                                        {GameNameMaxLength -
+                                                            formProps.values.name.length}
+                                                    </span>
+                                                }
+                                                type='text'
+                                                placeholder='Game Name'
+                                                maxLength={GameNameMaxLength}
+                                                {...formProps.getFieldProps('name')}
+                                                isInvalid={
+                                                    formProps.errors.name && formProps.touched.name
+                                                }
+                                                errorMessage={formProps.errors.name}
+                                            />
                                         </div>
-                                    }
-
+                                        <div>
+                                            <Input
+                                                autoComplete='off'
+                                                label='Password'
+                                                type='password'
+                                                placeholder={'Enter a password'}
+                                                {...formProps.getFieldProps('password')}
+                                            />
+                                        </div>
+                                        <div>
+                                            <Select
+                                                label={'Mode'}
+                                                selectedKeys={new Set([restrictedList])}
+                                                onChange={(e) => setRestrictedList(e.target.value)}
+                                            >
+                                                {restrictedLists?.map((rl) => (
+                                                    <SelectItem key={rl._id} value={rl._id}>
+                                                        {rl.name}
+                                                    </SelectItem>
+                                                ))}
+                                            </Select>
+                                        </div>
+                                    </div>
                                     <GameOptions formProps={formProps} />
                                 </>
                             )}
                             {<GameTypes formProps={formProps} />}
-                            <div className='mt-4'>
+                            <div className='flex gap-2'>
                                 <Button color='success' type='submit'>
                                     Start
                                 </Button>
-                                <Button
-                                    color='primary'
-                                    onPress={() => onClosed && onClosed()}
-                                    className='ms-1'
-                                >
+                                <Button color='primary' onPress={() => onClosed && onClosed()}>
                                     Cancel
                                 </Button>
                             </div>

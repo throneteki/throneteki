@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import moment from 'moment';
 
-import GamePlayer from './GamePlayer';
+import GamePlayerSlot from './GamePlayerSlot';
 import { createGameTitle } from './GameHelper';
 import { Button } from '@heroui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -17,65 +17,36 @@ const Game = ({
     showJoinButton,
     showWatchButton
 }) => {
-    let getPlayers = function (game) {
-        let players = Object.values(game.players).map((player, i) => {
-            return <GamePlayer key={player.name} player={player} firstPlayer={i % 2 === 0} />;
+    const getPlayerSlots = function (game) {
+        // TODO: Update this to fetch from game once Melee implemented
+        const maxPlayers = 2;
+        const perRow = 2;
+        // Divide by number of players which can be displayed per row
+        const playerSlots = [...Array(Math.ceil(maxPlayers / perRow) * perRow)];
+        Object.values(game.players).forEach((player, i) => (playerSlots[i] = player));
+        return Object.values(playerSlots).map((player, i) => {
+            return (
+                <GamePlayerSlot
+                    key={player ? player.name : `slot-${i}`}
+                    player={player}
+                    showJoinButton={showJoinButton && !player && i === playerSlots.length - 1}
+                    onJoinGame={onJoinGame}
+                    position={i % 2 === 0 ? 'left' : 'right'}
+                />
+            );
         });
-
-        if (showJoinButton) {
-            players.push(
-                <div
-                    key={`game-${game.id}-join`}
-                    className={classNames('flex flex-col flex-1', {
-                        'mr-2 items-end': players.length % 2 === 0,
-                        'ml-2 items-start': players.length % 2 === 1
-                    })}
-                >
-                    <div className='flex items-center flex-1'>
-                        <Button
-                            size='sm'
-                            color='primary'
-                            className='gamelist-button img-responsive'
-                            onPress={onJoinGame}
-                        >
-                            Join
-                        </Button>
-                    </div>
-                </div>
-            );
-        }
-
-        if (players.length % 2 === 1) {
-            players.push(
-                <div key={`game-${game.id}-empty`} className='flex items-center flex-1' />
-            );
-        }
-
-        return players;
     };
 
-    let players = getPlayers(game);
-    let gameMiddles = [];
-    for (let i = 0; i < players.length; i += 2) {
-        gameMiddles.push(
-            <div key={`game-middle-${i}`} className='my-3 flex justify-center items-center'>
-                {players[i]}
-                {players[i + 1]}
-            </div>
-        );
-    }
+    const rowClass = classNames(
+        'min-h-32 py-3 px-2 hover:border-info hover:bg-info/20 bg-black/20',
+        {
+            'bg-yellow-700/20': game.node === 'node1' && isAdmin,
+            'bg-red-700/20': game.node === 'node2' && isAdmin
+        }
+    );
 
-    let rowClass = classNames('min-h-32 py-3 px-2 hover:border-info hover:bg-info/20 bg-black/20', {
-        'bg-yellow-700/20': game.node === 'node1' && isAdmin,
-        'bg-red-700/20': game.node === 'node2' && isAdmin
-    });
-
-    let timeDifference = moment().diff(moment(game.createdAt));
-    if (timeDifference < 0) {
-        timeDifference = 0;
-    }
-
-    let formattedTime = moment.utc(timeDifference).format('HH:mm');
+    const timeDifference = Math.max(0, moment().diff(moment(game.createdAt)));
+    const formattedTime = moment.utc(timeDifference).format('HH:mm');
 
     const title = createGameTitle(
         game.name,
@@ -83,8 +54,8 @@ const Game = ({
         (game.restrictedList && game.restrictedList.cardSet) || 'redesign'
     );
 
-    const gameTypeClass = classNames(
-        'flex gap-2 justify-center items-center text-small text-white',
+    const gameHeaderClass = classNames(
+        'flex gap-2 justify-center content-center flex-wrap items-center text-small text-white',
         {
             'bg-warning/40': game.gameType === 'casual',
             'bg-success/60': game.gameType === 'beginner',
@@ -96,9 +67,9 @@ const Game = ({
         <div key={game.id}>
             <hr />
             <div className={rowClass}>
-                <div className={gameTypeClass}>
+                <div className={gameHeaderClass}>
                     <span className='capitalize'>({game.gameType})</span>
-                    <span className='text-white'>
+                    <span className='text-white leading-normal self-start'>
                         <b>{title}</b>
                     </span>
                     <span>{`[${formattedTime}]`}</span>
@@ -127,25 +98,15 @@ const Game = ({
                         )}
                     </span>
                 </div>
-                {gameMiddles}
-                <div className='game-row-buttons'>
+                <div className='flex justify-center'>{getPlayerSlots(game)}</div>
+                <div className='flex justify-center gap-2'>
                     {showWatchButton && (
-                        <Button
-                            color='primary'
-                            size='sm'
-                            className='btn btn-primary gamelist-lower-button'
-                            onPress={onWatchGame}
-                        >
+                        <Button color='primary' size='sm' onPress={onWatchGame}>
                             Watch
                         </Button>
                     )}
                     {isAdmin && (
-                        <Button
-                            color='primary'
-                            className='gamelist-lower-button p-1 ml-1 mt-1'
-                            size='sm'
-                            onPress={onRemoveGame}
-                        >
+                        <Button color='danger' size='sm' onPress={onRemoveGame}>
                             Remove
                         </Button>
                     )}

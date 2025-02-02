@@ -87,19 +87,17 @@ const GameLobby = ({ gameId }) => {
                         </AlertPanel>
                     </div>
                 )}
-                <div className='flex gap-2'>
-                    <div className='flex flex-col'>
-                        <GameButtons
-                            onNewGame={() => {
-                                setQuickJoin(false);
-                                setNewGame(true);
-                            }}
-                            onQuickJoin={() => {
-                                setQuickJoin(true);
-                                setNewGame(true);
-                            }}
-                        />
-                    </div>
+                <div className='flex gap-2 lg:flex-row flex-col'>
+                    <GameButtons
+                        onNewGame={() => {
+                            setQuickJoin(false);
+                            setNewGame(true);
+                        }}
+                        onQuickJoin={() => {
+                            setQuickJoin(true);
+                            setNewGame(true);
+                        }}
+                    />
                     <div className='flex-1'>
                         <GameFilter
                             filter={currentFilter}

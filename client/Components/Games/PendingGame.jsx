@@ -161,7 +161,7 @@ const PendingGame = () => {
     }
 
     return (
-        <>
+        <div className='flex flex-col gap-2'>
             <audio ref={notificationRef}>
                 <source src={ChargeMp3} type='audio/mpeg' />
                 <source src={ChargeOgg} type='audio/ogg' />
@@ -173,76 +173,79 @@ const PendingGame = () => {
                     currentGame.restrictedList.cardSet
                 )}
             >
-                {currentGame.event.name && (
-                    <p>
-                        <strong>Event:</strong> {currentGame.event.name}
-                    </p>
-                )}
-                <p>
-                    <strong>Restricted List:</strong> {currentGame.restrictedList.name}
-                </p>
-                {currentGame.event.format !== 'draft' && (
-                    <p>
-                        <strong>Cards:</strong> {cardSetLabel(currentGame.restrictedList.cardSet)}
-                    </p>
-                )}
-                <div className='flex content-between mt-2'>
+                <div className='flex flex-col gap-2'>
                     <div>
-                        <Button
-                            className='me-2'
-                            color='success'
-                            isDisabled={!canStartGame()}
-                            onPress={() => {
-                                setWaiting(true);
-                                dispatch(sendStartGameMessage());
-                            }}
-                        >
-                            Start
-                        </Button>
-                        <Button
-                            color='primary'
-                            onPress={() => {
-                                dispatch(sendLeaveGameMessage());
-                            }}
-                        >
-                            Leave
-                        </Button>
+                        {currentGame.event.name && (
+                            <p>
+                                <strong>Event:</strong> {currentGame.event.name}
+                            </p>
+                        )}
+                        <p>
+                            <strong>Restricted List:</strong> {currentGame.restrictedList.name}
+                        </p>
+                        {currentGame.event.format !== 'draft' && (
+                            <p>
+                                <strong>Cards:</strong>{' '}
+                                {cardSetLabel(currentGame.restrictedList.cardSet)}
+                            </p>
+                        )}
                     </div>
-                    <Snippet
-                        className='ml-2'
-                        classNames={{ base: 'py-1' }}
-                        codeString={`${window.location.protocol}//${window.location.host}/play?gameId=${currentGame.id}`}
-                        hideSymbol
-                    >
-                        <Link href={`/play?gameId=${currentGame.id}`} isExternal>
-                            Game Link
-                        </Link>
-                    </Snippet>
-                </div>
-                <div className='mt-3'>
-                    <GameTypeInfo gameType={currentGame.gameType} />
-                </div>
-                <div className='mt-4'>
-                    {gameError ? (
-                        <AlertPanel variant={AlertType.Danger}>{getGameStatus()}</AlertPanel>
-                    ) : (
-                        getGameStatus()
-                    )}
+                    <div className='flex gap-2 flex-wrap'>
+                        <div className='flex gap-1'>
+                            <Button
+                                color='success'
+                                isDisabled={!canStartGame()}
+                                onPress={() => {
+                                    setWaiting(true);
+                                    dispatch(sendStartGameMessage());
+                                }}
+                            >
+                                Start
+                            </Button>
+                            <Button
+                                color='primary'
+                                onPress={() => {
+                                    dispatch(sendLeaveGameMessage());
+                                }}
+                            >
+                                Leave
+                            </Button>
+                        </div>
+                        <Snippet
+                            classNames={{ base: 'py-1' }}
+                            codeString={`${window.location.protocol}//${window.location.host}/play?gameId=${currentGame.id}`}
+                            hideSymbol
+                        >
+                            <Link href={`/play?gameId=${currentGame.id}`} isExternal>
+                                Game Link
+                            </Link>
+                        </Snippet>
+                    </div>
+                    <div>
+                        <GameTypeInfo gameType={currentGame.gameType} />
+                    </div>
+                    <div>
+                        {gameError ? (
+                            <AlertPanel variant={AlertType.Danger}>{getGameStatus()}</AlertPanel>
+                        ) : (
+                            getGameStatus()
+                        )}
+                    </div>
                 </div>
             </Panel>
-            <div className='mt-2'>
+            <div>
                 <PendingGamePlayers
                     currentGame={currentGame}
                     user={user}
                     onSelectDeck={() => setShowModal(true)}
                 />
             </div>
-            <Panel className='mt-2' title={`Spectators(${currentGame.spectators.length})`}>
+            <Panel title={`Spectators (${currentGame.spectators.length})`}>
                 {currentGame.spectators.map((spectator) => {
                     return <div key={spectator.name}>{spectator.name}</div>;
                 })}
             </Panel>
-            <Panel className='mt-2' title={'Chat'}>
+            <Panel title={'Chat'}>
                 <div
                     className='h-48 w-full border-1 border-primary-500 rounded-lg overflow-auto py-1 px-2'
                     ref={messageRef}
@@ -291,7 +294,7 @@ const PendingGame = () => {
                     restrictedList={currentGame.restrictedList?._id}
                 />
             )}
-        </>
+        </div>
     );
 };
 
