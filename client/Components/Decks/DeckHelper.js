@@ -1,15 +1,19 @@
 import { lookupCardByName } from './DeckParser';
 
 export function deckStatusLabel(status) {
+    if (!status) {
+        return null;
+    }
+
     if (!status.basicRules) {
         return 'Invalid';
     }
 
-    if (!status.noBannedCards) {
-        return 'Banned';
+    if (!status.noBannedCards || !status.faqJoustRules) {
+        return 'Not Legal';
     }
 
-    if (!status.faqJoustRules || !status.noUnreleasedCards) {
+    if (!status.noUnreleasedCards) {
         return 'Casual';
     }
 

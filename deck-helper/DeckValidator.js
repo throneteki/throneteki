@@ -19,9 +19,8 @@ class DeckValidator {
     validateDeck(rawDeck) {
         const deck = new DeckWrapper(rawDeck);
 
-        let errors = [];
-        let unreleasedCards = [];
-        let rules = this.getRules(deck);
+        const errors = [];
+        const rules = this.getRules(deck);
 
         if (deck.plotCount < rules.requiredPlots) {
             errors.push('Too few plot cards');
@@ -39,23 +38,30 @@ class DeckValidator {
             }
         }
 
-        let cardCountByName = deck.getCardCountsByName();
-
+        const cannotIncludeCards = [];
         for (const card of deck.getCardsIncludedInDeck()) {
             if (!rules.mayInclude(card) || rules.cannotInclude(card)) {
-                errors.push(card.label + ' is not allowed by faction or agenda');
+                cannotIncludeCards.push(card.label);
             }
         }
+        if (cannotIncludeCards.length > 0) {
+            errors.push('Cards not allowed by faction or agenda: ' + cannotIncludeCards.join(', '));
+        }
 
+        const unreleasedCards = [];
         if (deck.format !== 'draft') {
             for (const card of deck.getUniqueCards()) {
                 if (!this.releasedPackCodes.has(card.packCode)) {
-                    unreleasedCards.push(card.label + ' is not yet released');
+                    unreleasedCards.push(card.label);
                 }
             }
         }
+        if (unreleasedCards.length > 0) {
+            errors.push('Cards are not yet released: ' + unreleasedCards.join(', '));
+        }
 
-        let doubledPlots = Object.values(cardCountByName).filter(
+        const cardCountByName = deck.getCardCountsByName();
+        const doubledPlots = Object.values(cardCountByName).filter(
             (card) => card.type === 'plot' && card.count === 2
         );
         if (doubledPlots.length > rules.maxDoubledPlots) {
@@ -68,10 +74,10 @@ class DeckValidator {
             }
         }
 
-        let restrictedListResults = this.restrictedLists.map((restrictedList) =>
+        const restrictedListResults = this.restrictedLists.map((restrictedList) =>
             restrictedList.validate(deck)
         );
-        let officialRestrictedResult = restrictedListResults[0] || {
+        const officialRestrictedResult = restrictedListResults[0] || {
             noBannedCards: true,
             restrictedRules: true,
             version: ''
