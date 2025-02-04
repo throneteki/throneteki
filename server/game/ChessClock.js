@@ -42,17 +42,9 @@ class ChessClock {
 
     startTimer() {
         this.timerStart = new Date();
-        const timer = setInterval(() => {
-            // To avoid a spam-clicking bug that could duplicate this interval, we
-            // simply check if the local timer variable (which is unique to each scope) is
-            // the most recently set one. If it isn't, then clear it.
-            if (timer === this.timer) {
-                this.checkForTimeRanOut();
-            } else {
-                clearInterval(timer);
-            }
+        this.timer = setInterval(() => {
+            this.checkForTimeRanOut();
         }, 1000);
-        this.timer = timer;
     }
 
     stop() {
@@ -66,6 +58,7 @@ class ChessClock {
     }
 
     stopTimer() {
+        clearInterval(this.timer);
         delete this.timer;
         const { timeRemaining, delayRemaining } = this.calculateTimeLeft();
         this.timeLeft = timeRemaining;
@@ -87,6 +80,7 @@ class ChessClock {
                 // Re-sends the game state to clients due to time expiring
                 this.player.game.timeExpired();
 
+                clearInterval(this.timer);
                 delete this.timer;
             }
         }

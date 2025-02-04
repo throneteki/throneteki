@@ -26,7 +26,7 @@ const CardPile = ({
     onMouseOut,
     onMouseOver,
     onTouchMove,
-    onMenuItemClick,
+    onMenuItemClick: propsOnMenuItemClick,
     size,
     popupMenu,
     title,
@@ -112,6 +112,19 @@ const CardPile = ({
             }
         },
         [closeOnClick, propsOnCardClick, updatePopupVisibility]
+    );
+
+    const onMenuItemClick = useCallback(
+        (card, menuItem) => {
+            if (menuItem.showPopup !== undefined) {
+                updatePopupVisibility(menuItem.showPopup);
+            }
+
+            if (propsOnMenuItemClick) {
+                propsOnMenuItemClick(card, menuItem);
+            }
+        },
+        [updatePopupVisibility, propsOnMenuItemClick]
     );
 
     const onPopupMenuItemClick = useCallback(
@@ -200,7 +213,7 @@ const CardPile = ({
                     return (
                         <Button
                             color='primary'
-                            className='flex-1 mx-2 mt-2'
+                            className='flex-1 m-2'
                             key={linkIndex++}
                             onPress={() => onPopupMenuItemClick(menuItem)}
                         >
@@ -270,10 +283,22 @@ const CardPile = ({
     }
 
     let menu;
-    // Note "Open/Close Popup" item will never be available for CardPiles in locations that use select in non-triggerable ways (eg. click to force stand or kneel)
-    // For example, if CardPile is ever used in play area, it will need to know when "clicking" on it is a valid option to do something
-    if (!disablePopup && topCard?.selectable) {
-        menu = [{ showPopup: true, text: `${showPopup ? 'Close' : 'Open'} Popup` }];
+    // If popup is available, that should always be a menu item
+    // Note: If popup is disabled, default Card menu will be used
+    if (!disablePopup) {
+        menu = [
+            {
+                hideable: true,
+                showPopup: !showPopup,
+                text: `${showPopup ? 'Close' : 'Open'} Popup`
+            }
+        ];
+
+        // Additionally, if the top card is currently selectable, that also needs to be an option
+        // Note: If CardPiles ever become available in locations where "Select Card" is always an option (such as "play area"), this will need to be permenantly enabled for those cards
+        if (topCard?.selectable) {
+            menu.push({ hideable: true, command: 'click', text: 'Select Card' });
+        }
     }
 
     return (

@@ -1,30 +1,95 @@
 import React from 'react';
 import DeckStatusSummary from './DeckStatusSummary';
-import { Tooltip } from '@heroui/react';
-import DeckStatusLabel from './DeckStatusLabel';
+import { Chip, Divider, Tooltip } from '@heroui/react';
+import { deckStatusLabel } from './DeckHelper';
+import LoadingSpinner from '../Site/LoadingSpinner';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+    faCircleCheck,
+    faExclamationCircle,
+    faXmarkCircle
+} from '@fortawesome/free-solid-svg-icons';
+import classNames from 'classnames';
 
-const DeckStatus = ({ className, status }) => {
+const DeckStatus = ({ className, compact = false, status }) => {
+    const [isOpen, setIsOpen] = React.useState(false);
+
+    const statusInfo = (status) => {
+        const label = deckStatusLabel(status) || 'Loading...';
+        let icon = <LoadingSpinner label={false} />;
+        switch (label) {
+            case 'Invalid':
+                icon = <FontAwesomeIcon icon={faExclamationCircle} />;
+                break;
+            case 'Not Legal':
+                icon = <FontAwesomeIcon icon={faXmarkCircle} />;
+                break;
+            case 'Casual':
+            case 'Legal':
+                icon = <FontAwesomeIcon icon={faCircleCheck} />;
+                break;
+        }
+
+        let color = 'default';
+        if (label === 'Invalid' || label === 'Not Legal') {
+            color = 'danger';
+        } else if (label === 'Casual') {
+            color = 'warning';
+        } else if (label === 'Legal') {
+            color = 'success';
+        }
+
+        return { label, icon, color };
+    };
+
+    const info = statusInfo(status);
+    const chipClass = classNames('select-none pointer-events-none h-8', className);
+
     return (
         <Tooltip
-            className={className}
             placement={'right'}
             showArrow={true}
             closeDelay={100}
+            isOpen={isOpen}
             content={
-                <div>
+                <div className='flex flex-col gap-1 max-w-64'>
+                    <span className={`text-${info.color}`}>
+                        {info.icon} <b>{info.label}</b>
+                    </span>
+                    <Divider />
                     <DeckStatusSummary status={status} />
-                    {status.errors && status.errors.length !== 0 && (
-                        <ul className='mt-4 border-t pt-4'>
-                            {status.errors.map((error, index) => (
-                                <li key={index}>{error}</li>
+                    {status.extendedStatus && status.extendedStatus.length !== 0 && (
+                        <ul className='flex flex-col gap-1'>
+                            {status.extendedStatus.map((error, index) => (
+                                <>
+                                    <Divider />
+                                    <li key={index}>{error}</li>
+                                </>
                             ))}
                         </ul>
                     )}
                 </div>
             }
         >
-            <div>
-                <DeckStatusLabel status={status} />
+            <div
+                onMouseEnter={() => setIsOpen(true)}
+                onMouseLeave={() => setIsOpen(false)}
+                onTouchStart={() => setIsOpen(true)}
+                onTouchEnd={() => setIsOpen(false)}
+                onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }}
+            >
+                <Chip className={chipClass} color={info.color} radius='md'>
+                    {compact ? (
+                        info.icon
+                    ) : (
+                        <>
+                            {info.icon} {info.label}
+                        </>
+                    )}
+                </Chip>
             </div>
         </Tooltip>
     );
