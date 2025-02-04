@@ -16,7 +16,7 @@ const DeckStatus = ({ className, compact = false, status }) => {
 
     const statusInfo = (status) => {
         const label = deckStatusLabel(status) || 'Loading...';
-        let icon = <LoadingSpinner label={false} />;
+        let icon = <LoadingSpinner size='sm' label={false} />;
         switch (label) {
             case 'Invalid':
                 icon = <FontAwesomeIcon icon={faExclamationCircle} />;
@@ -53,7 +53,7 @@ const DeckStatus = ({ className, compact = false, status }) => {
             isOpen={isOpen}
             content={
                 <div className='flex flex-col gap-1 max-w-64'>
-                    <span className={`text-${info.color}`}>
+                    <span className={`text-${info.color} flex flex-row gap-1 items-center`}>
                         {info.icon} <b>{info.label}</b>
                     </span>
                     <Divider />
@@ -85,9 +85,10 @@ const DeckStatus = ({ className, compact = false, status }) => {
                     {compact ? (
                         info.icon
                     ) : (
-                        <>
-                            {info.icon} {info.label}
-                        </>
+                        <div className='flex flex-row gap-1 items-center'>
+                            {info.icon}
+                            {info.label}
+                        </div>
                     )}
                 </Chip>
             </div>

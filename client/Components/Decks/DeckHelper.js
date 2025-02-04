@@ -9,7 +9,7 @@ export function deckStatusLabel(status) {
         return 'Invalid';
     }
 
-    if (!status.noBannedCards || !status.faqJoustRules) {
+    if (!status.valid) {
         return 'Not Legal';
     }
 
