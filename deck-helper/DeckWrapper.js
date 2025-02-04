@@ -8,10 +8,11 @@ class DeckWrapper {
         this.faction = rawDeck.faction;
         this.format = rawDeck.format || 'joust';
         this.plotCards = rawDeck.plotCards;
-        this.cardCoount = rawDeck.cardCount;
-        this.plotCount = rawDeck.plotCount;
 
         this.agendas = [this.agenda, ...this.bannerCards].filter((agenda) => !!agenda);
+
+        this.drawCount = this.countDrawCards();
+        this.plotCount = this.countPlotCards();
     }
 
     getCardCountsByName() {
@@ -29,9 +30,7 @@ class DeckWrapper {
     }
 
     getCardsIncludedInDeck() {
-        return [...this.drawCards, ...this.plotCards].map(
-            (cardQuantity) => cardQuantity.card
-        );
+        return [...this.drawCards, ...this.plotCards].map((cardQuantity) => cardQuantity.card);
     }
 
     getUniqueCards() {
