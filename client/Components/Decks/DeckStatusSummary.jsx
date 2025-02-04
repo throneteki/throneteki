@@ -5,9 +5,7 @@ import React from 'react';
 const DeckStatusSummary = ({ status }) => {
     let { basicRules, noUnreleasedCards, restrictedLists } = status;
     const restrictedListItems = (restrictedLists || [])
-        .map((rl) => [
-            { title: `${rl.name} Card Legality`, value: rl.noBannedCards && rl.restrictedRules }
-        ])
+        .map((rl) => [{ title: `${rl.name} Card Legality`, value: rl.valid }])
         .reduce((items, rlItems) => items.concat(rlItems), []);
     const items = [
         { title: 'Basic deckbuilding rules', value: basicRules },
