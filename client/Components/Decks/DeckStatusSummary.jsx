@@ -6,8 +6,7 @@ const DeckStatusSummary = ({ status }) => {
     let { basicRules, noUnreleasedCards, restrictedLists } = status;
     const restrictedListItems = (restrictedLists || [])
         .map((rl) => [
-            { title: `${rl.name} restricted list`, value: rl.restrictedRules },
-            { title: `${rl.name} banned list`, value: rl.noBannedCards }
+            { title: `${rl.name} Card Legality`, value: rl.noBannedCards && rl.restrictedRules }
         ])
         .reduce((items, rlItems) => items.concat(rlItems), []);
     const items = [

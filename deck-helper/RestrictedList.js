@@ -16,22 +16,29 @@ class RestrictedList {
 
         if (this.rules.format === 'draft' && deck.eventId !== this.rules._id) {
             noBannedCards = false;
-            errors.push(`${this.rules.name}: Deck wasn't created for this event`);
+            errors.push(`${this.rules.name} - Deck was not created for this event`);
         }
 
         if (restrictedCardsOnList.length > 1) {
             errors.push(
-                `${this.rules.name}: Contains more than 1 card on the restricted list: ${restrictedCardsOnList.map((card) => card.name).join(', ')}`
+                `${this.rules.name} - Contains more than 1 card on the restricted list: ${restrictedCardsOnList.map((card) => card.name).join(', ')}`
             );
         }
 
         if (bannedCardsOnList.length > 0) {
             noBannedCards = false;
             errors.push(
-                `${this.rules.name}: Contains cards that are not tournament legal: ${bannedCardsOnList.map((card) => card.name).join(', ')}`
+                `${this.rules.name} - Contains cards on the banned list: ${bannedCardsOnList.map((card) => card.name).join(', ')}`
             );
         }
 
+        for (let i = 0; i < this.pods.length; i++) {
+            const pod = this.pods[i];
+            const podErrors = pod.restricted
+                ? this.validateRestrictedPods({ pod, cards, number: i + 1 })
+                : this.validateAnyCardPod({ pod, cards, number: i + 1 });
+            errors = errors.concat(podErrors);
+        }
         for (const pod of this.pods) {
             const podErrors = pod.restricted
                 ? this.validateRestrictedPods({ pod, cards })
@@ -51,7 +58,7 @@ class RestrictedList {
         };
     }
 
-    validateRestrictedPods({ pod, cards }) {
+    validateRestrictedPods({ pod, cards, number }) {
         const errors = [];
 
         const restrictedCard = cards.find((card) => card.code === pod.restricted);
@@ -63,20 +70,20 @@ class RestrictedList {
         const cardsOnList = cards.filter((card) => pod.cards.includes(card.code));
         if (cardsOnList.length > 0) {
             errors.push(
-                `${this.rules.name}: ${cardsOnList.map((card) => card.name).join(', ')} cannot be used with ${restrictedCard.name}`
+                `${this.rules.name} - Contains cards that cannot be used with "${restrictedCard.name}" from pod #${number}: ${cardsOnList.map((card) => card.name).join(', ')}`
             );
         }
 
         return errors;
     }
 
-    validateAnyCardPod({ pod, cards }) {
+    validateAnyCardPod({ pod, cards, number }) {
         const errors = [];
 
         const cardsOnList = cards.filter((card) => pod.cards.includes(card.code));
         if (cardsOnList.length > 1) {
             errors.push(
-                `${this.rules.name}: ${cardsOnList.map((card) => card.name).join(', ')} cannot be used together`
+                `${this.rules.name} - Contains multiple cards from pod #${number}: ${cardsOnList.map((card) => card.name).join(', ')}`
             );
         }
 
