@@ -53,7 +53,7 @@ describe('PlaceCardUnderneath', function () {
         });
     });
 
-    xdescribe('createEvent()', function () {
+    describe('createEvent()', function () {
         beforeEach(function () {
             this.event = PlaceCardUnderneath.createEvent(this.props);
         });

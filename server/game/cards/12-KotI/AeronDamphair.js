@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class AeronDamphair extends DrawCard {
@@ -5,13 +6,12 @@ class AeronDamphair extends DrawCard {
         this.reaction({
             when: {
                 onCharacterKilled: (event) =>
-                    event.card.hasTrait('drowned god') && event.card.controller === this.controller
+                    event.cardStateWhenKilled.hasTrait('drowned god') &&
+                    event.cardStateWhenKilled.controller === this.controller
             },
             limit: ability.limit.perPhase(1),
-            handler: () => {
-                this.controller.drawCardsToHand(1);
-                this.game.addMessage('{0} uses {1} to draw 1 card', this.controller, this);
-            }
+            message: '{player} uses {source} to draw 1 card',
+            gameAction: GameActions.drawCards((context) => ({ player: context.player, amount: 1 }))
         });
     }
 }
