@@ -1,3 +1,4 @@
+import { Link } from '@heroui/react';
 import React from 'react';
 
 const urlMatchingRegex = new RegExp(
@@ -23,22 +24,32 @@ export function tryParseJSON(jsonString) {
 }
 
 export function getMessageWithLinks(message) {
-    let tokens = message.split(/\s/);
+    const links = message.match(urlMatchingRegex);
+    const retMessage = [];
 
-    let i = 0;
-    let parts = tokens.map((token) => {
-        if (token.match(urlMatchingRegex)) {
-            return (
-                <a key={`link-${i++}`} href={token} target='_blank' rel='noreferrer'>
-                    {token}
-                </a>
-            );
-        }
+    if (!links || links.length === 0) {
+        return message;
+    }
 
-        return token + ' ';
-    });
+    let lastIndex = 0;
+    let linkCount = 0;
 
-    return parts;
+    for (const link of links) {
+        const index = message.indexOf(link);
+
+        retMessage.push(message.substring(lastIndex, index));
+        retMessage.push(
+            <Link key={linkCount++} href={link}>
+                {link}
+            </Link>
+        );
+
+        lastIndex += index + link.length;
+    }
+
+    retMessage.push(message.substr(lastIndex, message.length - lastIndex));
+
+    return retMessage;
 }
 
 export function getCardDimensions(cardSize) {

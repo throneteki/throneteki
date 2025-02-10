@@ -1,6 +1,5 @@
 import React from 'react';
-import { Avatar, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from '@heroui/react';
-import Link from '../Site/Link';
+import { Avatar, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Link } from '@heroui/react';
 
 const ProfileDropdown = ({ user, menu }) => {
     if (!user) {
@@ -22,11 +21,9 @@ const ProfileDropdown = ({ user, menu }) => {
             <DropdownMenu variant='flat' className='font-[PoppinsMedium] text-secondary'>
                 {menu.map((mi) => (
                     <DropdownItem key={mi.title}>
-                        <span className='flex'>
-                            <Link className='w-full' href={mi.path}>
-                                {mi.title}
-                            </Link>
-                        </span>
+                        <Link className='w-full' href={mi.path}>
+                            {mi.title}
+                        </Link>
                     </DropdownItem>
                 ))}
             </DropdownMenu>

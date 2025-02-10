@@ -42,16 +42,16 @@ const MotdAdmin = () => {
     }, [dispatch, motdText, selectedMotdType]);
 
     return (
-        <div className='w-2/3 mx-auto'>
+        <div className='m-2 lg:mx-auto lg:w-4/5'>
             <Panel title='Motd administration'>
-                <Textarea
-                    name='motd'
-                    value={motdText}
-                    onValueChange={onMotdTextChange}
-                    rows='4'
-                    placeholder='Enter a motd message'
-                />
-                <div className='mt-2'>
+                <div className='flex flex-col gap-2'>
+                    <Textarea
+                        name='motd'
+                        value={motdText}
+                        onValueChange={onMotdTextChange}
+                        rows='4'
+                        placeholder='Enter a motd message'
+                    />
                     <RadioGroup
                         orientation='horizontal'
                         buttons={motdTypes}
@@ -63,10 +63,12 @@ const MotdAdmin = () => {
                         <Radio value='info'>Info (Blue)</Radio>
                         <Radio value='success'>Success (Green)</Radio>
                     </RadioGroup>
-                </div>
-
-                <div className='mt-2'>
-                    <Button color='primary' type='button' onPress={onSaveClick}>
+                    <Button
+                        color='primary'
+                        type='button'
+                        className='self-start'
+                        onPress={onSaveClick}
+                    >
                         Save
                     </Button>
                 </div>

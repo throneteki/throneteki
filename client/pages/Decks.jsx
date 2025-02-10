@@ -19,11 +19,12 @@ const Decks = () => {
     }, [restrictedList, restrictedLists]);
 
     return (
-        <div>
+        <div className='m-2 lg:mx-auto lg:w-4/5'>
             <Panel className='h-full' title='Decks'>
-                <div className='mb-2 mt-2 w-full md:w-2/6'>
+                <div className='flex flex-col gap-2'>
                     <Select
                         label={'Game mode'}
+                        className='md:w-2/6'
                         onChange={(e) => setRestrictedList(e.target.value)}
                         selectedKeys={restrictedList ? new Set([restrictedList]) : null}
                     >
@@ -33,11 +34,11 @@ const Decks = () => {
                             </SelectItem>
                         ))}
                     </Select>
+                    <DeckList
+                        restrictedList={restrictedList}
+                        onDeckSelected={(deck) => dispatch(navigate(`/decks/edit/${deck._id}/`))}
+                    />
                 </div>
-                <DeckList
-                    restrictedList={restrictedList}
-                    onDeckSelected={(deck) => dispatch(navigate(`/decks/edit/${deck._id}/`))}
-                />
             </Panel>
         </div>
     );

@@ -12,23 +12,24 @@ import {
 import Panel from '../../Components/Site/Panel';
 import AlertPanel from '../../Components/Site/AlertPanel';
 import { navigate } from '../../redux/reducers/navigation';
-import { Button, Input, Select, SelectItem, Switch, Textarea } from '@heroui/react';
+import {
+    Autocomplete,
+    AutocompleteItem,
+    Button,
+    Chip,
+    Input,
+    Select,
+    SelectItem,
+    Switch,
+    Textarea
+} from '@heroui/react';
 import { toast } from 'react-toastify';
 import LoadingSpinner from '../../Components/Site/LoadingSpinner';
-
-const formatListTextForCards = (cards, cardCodes) => {
-    if (!cardCodes || !cards) {
-        return '';
-    }
-
-    const allCards = Object.values(cards);
-    const cardCodeToNameIndex = allCards.reduce((index, card) => {
-        index[card.code] = card.label;
-        return index;
-    }, {});
-
-    return cardCodes.map((cardCode) => `${cardCodeToNameIndex[cardCode]}\n`).join('');
-};
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import CardImage from '../../Components/Images/CardImage';
+import { Constants } from '../../constants';
+import CardHover from '../../Components/Images/CardHover';
 
 const formatListTextForUsers = (users) => {
     if (!users) {
@@ -49,41 +50,15 @@ const EventEditor = ({ eventId }) => {
 
     const allCards = useMemo(() => cards && Object.values(cards), [cards]);
 
-    const standardRL = useMemo(
-        () =>
-            restrictedLists &&
-            restrictedLists.find((rl) => rl.official && rl.cardSet === 'redesign'),
-        [restrictedLists]
-    );
-    const valyrianRL = useMemo(
-        () =>
-            restrictedLists &&
-            restrictedLists.find((rl) => rl.official && rl.cardSet === 'original'),
-        [restrictedLists]
-    );
-
-    const formats = useMemo(
-        () => [
-            { name: standardRL?.name, value: 'standard' },
-            { name: valyrianRL?.name, value: 'valyrian' },
-            { name: 'Draft', value: 'draft' },
-            { name: 'Custom Joust', value: 'custom-joust' }
-        ],
-        [standardRL?.name, valyrianRL?.name]
-    );
-
     const [name, setName] = useState(event?.name);
     const [format, setFormat] = useState(event?.format || 'standard');
+    const [restrictedList, setRestrictedList] = useState(event?.format || 'standard');
+
     const [restricted, setRestricted] = useState(event?.restricted || []);
-    const [restrictedListText, setRestrictedListText] = useState(
-        (event && formatListTextForCards(cards, event.restricted)) || ''
-    );
     const [banned, setBanned] = useState(event?.banned || []);
-    const [bannedListText, setBannedListText] = useState(
-        (event && formatListTextForCards(cards, event.banned)) || ''
-    );
-    const [pods, setPods] = useState(event?.pods);
-    const [podsText, setPodsText] = useState(event?.pods ? JSON.stringify(event.pods) : '');
+    const [pods, setPods] = useState(event?.pods || []);
+    const [draftPod, setDraftPod] = useState([]);
+
     const [lockDecks, setLockDecks] = useState(!!event?.lockDecks);
     const [useEventGameOptions, setUseEventGameOptions] = useState(!!event?.useEventGameOptions);
     const [spectators, setSpectators] = useState();
@@ -113,21 +88,31 @@ const EventEditor = ({ eventId }) => {
 
     const dispatch = useDispatch();
 
+    const formats = [
+        { name: 'Standard', value: 'standard' },
+        { name: 'Valyrian', value: 'valyrian' },
+        { name: 'Draft', value: 'draft' },
+        { name: 'Custom Joust', value: 'custom-joust' }
+    ];
+    const formatRestrictedLists = useMemo(() => {
+        let cardSet = null;
+        if (format === 'standard') {
+            cardSet = 'redesign';
+        } else if (format === 'valyrian') {
+            cardSet = 'original';
+        }
+        if (restrictedLists && cardSet) {
+            return restrictedLists.filter((rl) => rl.official && rl.cardSet === cardSet);
+        }
+        return null;
+    }, [restrictedLists, format]);
+
     const onUseGameTimeLimitClick = useCallback((event) => {
         setUseGameTimeLimit(event.target.checked);
-
-        //deactivate chessclock when timelimit is used
-        if (event.target.checked) {
-            setUseChessClocks(false);
-        }
     }, []);
 
     const onUseChessClocksClick = useCallback((event) => {
         setUseChessClocks(event.target.checked);
-        //deactivate other timeLimit when chessClocks are used
-        if (event.target.checked) {
-            setUseGameTimeLimit(false);
-        }
     }, []);
 
     const getUsernameList = useCallback((event) => {
@@ -144,44 +129,7 @@ const EventEditor = ({ eventId }) => {
         return userNames;
     }, []);
 
-    const handleAddCard = useCallback(
-        (event, text, list) => {
-            event.preventDefault();
-
-            if (!cardToAdd || !cardToAdd.label) {
-                return;
-            }
-
-            let cardText = text;
-            cardText += `${cardToAdd.label}\n`;
-
-            let cards = list;
-
-            cards.push(cardToAdd.code);
-
-            return { cardText, cards };
-        },
-        [cardToAdd]
-    );
-
-    const handlePodListChange = useCallback((event) => {
-        let parsedPodObject = undefined;
-        try {
-            parsedPodObject = JSON.parse(event.target.value);
-        } finally {
-            setPodsText(event.target.value);
-            setPods(parsedPodObject ? parsedPodObject : []);
-        }
-    }, []);
-
     const getEventFromState = useCallback(() => {
-        let defaultRestrictedList = null;
-        if (format === 'standard') {
-            defaultRestrictedList = standardRL.name;
-        } else if (format === 'valyrian') {
-            defaultRestrictedList = valyrianRL.name;
-        }
-
         return {
             _id: eventId,
             name: name,
@@ -191,7 +139,7 @@ const EventEditor = ({ eventId }) => {
             },
             format: format,
             useDefaultRestrictedList: ['standard', 'valyrian'].includes(format),
-            defaultRestrictedList,
+            defaultRestrictedList: restrictedList,
             useEventGameOptions: useEventGameOptions,
             eventGameOptions: {
                 spectators,
@@ -206,7 +154,7 @@ const EventEditor = ({ eventId }) => {
             },
             restricted: restricted,
             banned: banned,
-            pods: pods,
+            ...(pods.length > 0 && { pods }),
             restrictSpectators: restrictSpectators,
             restrictTableCreators: restrictTableCreators,
             validSpectators: validSpectators,
@@ -214,31 +162,30 @@ const EventEditor = ({ eventId }) => {
             validTableCreators: validTableCreators
         };
     }, [
-        banned,
+        eventId,
+        name,
+        draftCubeId,
+        numOfRounds,
+        format,
+        restrictedList,
+        useEventGameOptions,
+        spectators,
+        muteSpectators,
+        showHand,
+        useGameTimeLimit,
+        gameTimeLimit,
+        useChessClocks,
         chessClockTimeLimit,
         chessClockDelay,
-        draftCubeId,
-        eventId,
-        format,
-        gameTimeLimit,
-        lockDecks,
-        muteSpectators,
-        name,
-        numOfRounds,
         password,
+        restricted,
+        banned,
         pods,
         restrictSpectators,
         restrictTableCreators,
-        restricted,
-        showHand,
-        spectators,
-        standardRL?.name,
-        useChessClocks,
-        useEventGameOptions,
-        useGameTimeLimit,
         validSpectators,
-        validTableCreators,
-        valyrianRL?.name
+        lockDecks,
+        validTableCreators
     ]);
 
     const handleSaveClick = useCallback(async () => {
@@ -251,73 +198,34 @@ const EventEditor = ({ eventId }) => {
         }
     }, [getEventFromState, saveEvent]);
 
-    const compareCardByReleaseDate = useCallback(
+    const compareByFactionNameRelease = useCallback(
         (a, b) => {
-            let packA = packs.find((pack) => pack.code === a.packCode);
-            let packB = packs.find((pack) => pack.code === b.packCode);
-
-            if (!packA.releaseDate && packB.releaseDate) {
+            if (a.faction > b.faction) {
                 return 1;
-            }
-
-            if (!packB.releaseDate && packA.releaseDate) {
+            } else if (a.faction < b.faction) {
+                return -1;
+            } else if (a.name > b.name) {
+                return 1;
+            } else if (a.name < b.name) {
                 return -1;
             }
+            if (!isPacksLoading) {
+                const packA = packs.find((pack) => pack.code === a.packCode);
+                const packB = packs.find((pack) => pack.code === b.packCode);
 
-            return new Date(packA.releaseDate) < new Date(packB.releaseDate) ? -1 : 1;
-        },
-        [packs]
-    );
-
-    const parseCardLine = useCallback(
-        (line) => {
-            const pattern = /^([^()]+)(\s+\((.+)\))?$/;
-
-            let match = line.trim().match(pattern);
-            if (!match) {
-                return null;
-            }
-
-            let cardName = match[1].trim().toLowerCase();
-            let packName = match[3] && match[3].trim().toLowerCase();
-            let pack =
-                packName &&
-                packs.find(
-                    (pack) =>
-                        pack.code.toLowerCase() === packName || pack.name.toLowerCase() === packName
-                );
-            let cards = Object.values(cards);
-
-            let matchingCards = cards.filter((card) => {
-                if (pack) {
-                    return pack.code === card.packCode && card.name.toLowerCase() === cardName;
+                if (!packA.releaseDate && packB.releaseDate) {
+                    return 1;
                 }
 
-                return card.name.toLowerCase() === cardName;
-            });
-
-            matchingCards.sort((a, b) => compareCardByReleaseDate(a, b));
-
-            return matchingCards[0];
-        },
-        [compareCardByReleaseDate, packs]
-    );
-
-    const handleCardListChange = useCallback(
-        (event) => {
-            let split = event.target.value.split('\n');
-            const cards = [];
-
-            for (const line of split) {
-                const card = parseCardLine(line);
-                if (card) {
-                    cards.push(card.code);
+                if (!packB.releaseDate && packA.releaseDate) {
+                    return -1;
                 }
-            }
 
-            return cards;
+                return new Date(packA.releaseDate) < new Date(packB.releaseDate) ? -1 : 1;
+            }
+            return 0;
         },
-        [parseCardLine]
+        [isPacksLoading, packs]
     );
 
     useEffect(() => {
@@ -350,13 +258,28 @@ const EventEditor = ({ eventId }) => {
         setValidSpectatorsText(formatListTextForUsers(event.validSpectators || []));
     }, [event]);
 
-    if (
-        isLoading ||
-        isCardsLoading ||
-        isRestrictedListsLoading ||
-        isPacksLoading ||
-        isDraftCubesLoading
-    ) {
+    const cardChipList = useCallback(
+        (codes, onClose) =>
+            allCards
+                .filter((card) => codes.includes(card.code))
+                .sort(compareByFactionNameRelease)
+                .map((card, index) => (
+                    <Chip
+                        key={index}
+                        startContent={
+                            <span
+                                className={`icon icon-${card.faction} ${Constants.FactionColorMaps[card.faction]}`}
+                            ></span>
+                        }
+                        onClose={onClose ? () => onClose(card.code, index) : null}
+                    >
+                        <CardHover code={card.code}>{card.label}</CardHover>
+                    </Chip>
+                )),
+        [allCards, compareByFactionNameRelease]
+    );
+
+    if (isLoading || isRestrictedListsLoading) {
         return <LoadingSpinner />;
     }
 
@@ -370,12 +293,12 @@ const EventEditor = ({ eventId }) => {
     }
 
     return (
-        <div>
+        <div className='m-2 lg:mx-auto lg:w-4/5'>
             <Panel title='Event Editor'>
                 <form className='flex gap-2 flex-col'>
                     <Panel title='Event Details'>
                         <div className='flex gap-2 flex-col'>
-                            <div className='grid grid-cols-2 gap-2'>
+                            <div className='flex flex-col md:flex-row gap-2'>
                                 <Input
                                     name='name'
                                     label='Event Name'
@@ -396,6 +319,20 @@ const EventEditor = ({ eventId }) => {
                                         </SelectItem>
                                     ))}
                                 </Select>
+                                {formatRestrictedLists && (
+                                    <Select
+                                        label='Restricted List'
+                                        items={formatRestrictedLists}
+                                        selectedKeys={[restrictedList]}
+                                        onChange={(e) => setRestrictedList(e.target.value)}
+                                    >
+                                        {formatRestrictedLists?.map((rl) => (
+                                            <SelectItem key={rl._id} value={rl._id}>
+                                                {rl.name}
+                                            </SelectItem>
+                                        ))}
+                                    </Select>
+                                )}
                             </div>
                             <Switch
                                 name='lockDecks'
@@ -416,86 +353,91 @@ const EventEditor = ({ eventId }) => {
                     </Panel>
                     {useEventGameOptions && (
                         <Panel title='Event Game Options'>
-                            <div className='grid grid-cols-2 gap-2'>
-                                <Switch
-                                    className='col-span-2'
-                                    name='spectators'
-                                    onChange={(event) => setSpectators(event.target.checked)}
-                                    isSelected={spectators}
-                                >
-                                    Allow spectators
-                                </Switch>
-                                {spectators && (
-                                    <>
-                                        <Switch
-                                            name='muteSpectators'
-                                            onChange={(event) =>
-                                                setMuteSpectators(event.target.checked)
-                                            }
-                                            isSelected={muteSpectators}
-                                        >
-                                            Mute spectators
-                                        </Switch>
-                                        <Switch
-                                            name='showHand'
-                                            onChange={(event) => setShowHand(event.target.checked)}
-                                            isSelected={showHand}
-                                        >
-                                            Show hands to spectators
-                                        </Switch>
-                                    </>
-                                )}
-                                <Switch
-                                    name='useGameTimeLimit'
-                                    className='col-span-2'
-                                    onChange={onUseGameTimeLimitClick}
-                                    isSelected={useGameTimeLimit}
-                                >
-                                    Use a time limit (in minutes)
-                                </Switch>
-                                {useGameTimeLimit && (
-                                    <Input
-                                        className='col-span-2 w-1/2'
-                                        name='gameTimeLimit'
-                                        label='Timelimit in minutes'
-                                        placeholder='Timelimit in minutes'
-                                        type='number'
-                                        onChange={(event) => setGameTimeLimit(event.target.value)}
-                                        value={gameTimeLimit}
-                                    />
-                                )}
-                                <Switch
-                                    name='useChessClocks'
-                                    className='col-span-2'
-                                    onChange={onUseChessClocksClick}
-                                    isSelected={useChessClocks}
-                                >
-                                    Use chess clocks with a time limit per player
-                                </Switch>
-                                {useChessClocks && (
-                                    <>
-                                        <Input
-                                            name='chessClockTimeLimit'
-                                            label='Timelimit in minutes'
-                                            placeholder='Timelimit in minutes'
-                                            type='number'
-                                            onChange={(event) =>
-                                                setChessClockTimeLimit(event.target.value)
-                                            }
-                                            value={chessClockTimeLimit}
-                                        />
-                                        <Input
-                                            name='chessClockDelay'
-                                            label='Delay to start the clock in seconds'
-                                            placeholder='Delay to start the clock in seconds'
-                                            type='number'
-                                            onChange={(event) =>
-                                                setChessClockDelay(event.target.value)
-                                            }
-                                            value={chessClockDelay}
-                                        />
-                                    </>
-                                )}
+                            <div className='grid grid-cols-1 md:grid-cols-2 gap-2'>
+                                <div>
+                                    <Switch
+                                        name='spectators'
+                                        onChange={(event) => setSpectators(event.target.checked)}
+                                        isSelected={spectators}
+                                    >
+                                        Allow spectators
+                                    </Switch>
+                                    {spectators && (
+                                        <div className='flex flex-col gap-2 border-l-1 pl-2 pt-2 border-default-200'>
+                                            <Switch
+                                                name='muteSpectators'
+                                                onChange={(event) =>
+                                                    setMuteSpectators(event.target.checked)
+                                                }
+                                                isSelected={muteSpectators}
+                                            >
+                                                Mute spectators
+                                            </Switch>
+                                            <Switch
+                                                name='showHand'
+                                                onChange={(event) =>
+                                                    setShowHand(event.target.checked)
+                                                }
+                                                isSelected={showHand}
+                                            >
+                                                Show hands to spectators
+                                            </Switch>
+                                        </div>
+                                    )}
+                                </div>
+                                <div>
+                                    <Switch
+                                        name='useGameTimeLimit'
+                                        onChange={onUseGameTimeLimitClick}
+                                        isSelected={useGameTimeLimit}
+                                    >
+                                        Use game time limit
+                                    </Switch>
+                                    {useGameTimeLimit && (
+                                        <div className='border-l-1 pl-2 pt-2 border-default-200'>
+                                            <Input
+                                                name='gameTimeLimit'
+                                                label='Limit (minutes)'
+                                                type='number'
+                                                onChange={(event) =>
+                                                    setGameTimeLimit(event.target.value)
+                                                }
+                                                value={gameTimeLimit}
+                                            />
+                                        </div>
+                                    )}
+                                </div>
+                                <div>
+                                    <Switch
+                                        name='useChessClocks'
+                                        onChange={onUseChessClocksClick}
+                                        isSelected={useChessClocks}
+                                    >
+                                        Use chess clocks (time limit per player)
+                                    </Switch>
+                                    {useChessClocks && (
+                                        <div className='flex flex-row gap-2 border-l-1 pl-2 pt-2 border-default-200'>
+                                            <Input
+                                                name='chessClockTimeLimit'
+                                                label='Limit (minutes)'
+                                                type='number'
+                                                onChange={(event) =>
+                                                    setChessClockTimeLimit(event.target.value)
+                                                }
+                                                value={chessClockTimeLimit}
+                                            />
+                                            <Input
+                                                name='chessClockDelay'
+                                                label={'Delay (seconds)'}
+                                                type='number'
+                                                onChange={(event) =>
+                                                    setChessClockDelay(event.target.value)
+                                                }
+                                                value={chessClockDelay}
+                                            />
+                                        </div>
+                                    )}
+                                </div>
                                 <Input
                                     name='password'
                                     label='Password'
@@ -551,127 +493,184 @@ const EventEditor = ({ eventId }) => {
                         </div>
                     </Panel>
                     {format === 'draft' && (
-                        <div>
-                            <Select
-                                label='Draft Cube'
-                                labelClass='col-sm-3'
-                                fieldClass='col-sm-9'
-                                options={draftCubes.map((draftCube) => ({
-                                    value: draftCube._id,
-                                    name: draftCube.name
-                                }))}
-                                value={draftCubeId}
-                                onChange={(value) => setDraftCubeId(value)}
-                            />
-                            <Input
-                                name='numOfRounds'
-                                label='Num of Rounds'
-                                labelClass='col-sm-3'
-                                fieldClass='col-sm-9'
-                                type='text'
-                                value={numOfRounds}
-                                onChange={(event) =>
-                                    setNumOfRounds(
-                                        Number(event.target ? event.target.value : event.value)
-                                    )
-                                }
-                            />
-                        </div>
+                        <Panel title='Draft Settings'>
+                            {isDraftCubesLoading ? (
+                                <LoadingSpinner />
+                            ) : (
+                                <div className='flex flex-col gap-2'>
+                                    <Select
+                                        label='Draft Cube'
+                                        options={draftCubes.map((draftCube) => ({
+                                            value: draftCube._id,
+                                            name: draftCube.name
+                                        }))}
+                                        value={draftCubeId}
+                                        onChange={(value) => setDraftCubeId(value)}
+                                    />
+                                    <Input
+                                        name='numOfRounds'
+                                        label='Num of Rounds'
+                                        type='text'
+                                        value={numOfRounds}
+                                        onChange={(event) =>
+                                            setNumOfRounds(
+                                                Number(
+                                                    event.target ? event.target.value : event.value
+                                                )
+                                            )
+                                        }
+                                    />
+                                </div>
+                            )}
+                        </Panel>
                     )}
                     {format === 'custom-joust' && (
-                        <div>
-                            <Panel title='Custom Restricted/Banned List'>
-                                {/* <Typeahead
-                                    label='Card'
-                                    labelClass={'col-sm-3 col-xs-2'}
-                                    fieldClass='col-sm-4 col-xs-5'
-                                    labelKey={'label'}
-                                    options={allCards}
-                                    onChange={(selectedCards) => setCardToAdd(selectedCards[0])}
-                                >
-                                    <div className='col-xs-1 no-x-padding'>
-                                        <div className='btn-group'>
-                                            <button
-                                                className='btn btn-primary dropdown-toggle'
-                                                data-toggle='dropdown'
-                                                aria-haspopup='true'
-                                                aria-expanded='false'
+                        <Panel title='Custom Restricted/Banned List'>
+                            {isCardsLoading || isPacksLoading ? (
+                                <LoadingSpinner />
+                            ) : (
+                                <div className='flex flex-col gap-2'>
+                                    <div className='flex flex-wrap gap-2 items-center'>
+                                        <Autocomplete
+                                            label={'Select a card'}
+                                            className='max-w-96'
+                                            onSelectionChange={(value) => setCardToAdd(value)}
+                                            value={cardToAdd}
+                                        >
+                                            {allCards
+                                                .sort(compareByFactionNameRelease)
+                                                .map((card) => (
+                                                    <AutocompleteItem
+                                                        key={card.code}
+                                                        value={card.code}
+                                                        startContent={
+                                                            <CardImage code={card.code} size='sm' />
+                                                        }
+                                                    >
+                                                        {card.label}
+                                                    </AutocompleteItem>
+                                                ))}
+                                        </Autocomplete>
+                                        <div className='flex flex-wrap gap-2'>
+                                            <Button
+                                                startContent={<FontAwesomeIcon icon={faPlus} />}
+                                                isDisabled={
+                                                    !cardToAdd || banned.includes(cardToAdd)
+                                                }
+                                                onPress={() => {
+                                                    if (cardToAdd) {
+                                                        setBanned(banned.concat(cardToAdd));
+                                                    }
+                                                }}
                                             >
-                                                Add <span className='caret' />
-                                            </button>
-                                            <ul className='dropdown-menu'>
-                                                <li>
-                                                    <a
-                                                        href='#'
-                                                        onClick={(event) => {
-                                                            let { cardText, cards } = handleAddCard(
-                                                                event,
-                                                                restrictedListText,
-                                                                restricted
-                                                            );
-                                                            setRestrictedListText(cardText);
-                                                            setRestricted(cards);
-                                                        }}
-                                                    >
-                                                        Add to restricted
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a
-                                                        href='#'
-                                                        onClick={(event) => {
-                                                            let { cardText, cards } = handleAddCard(
-                                                                event,
-                                                                bannedListText,
-                                                                banned
-                                                            );
-                                                            setBannedListText(cardText);
-                                                            setBanned(cards);
-                                                        }}
-                                                    >
-                                                        Add to banned
-                                                    </a>
-                                                </li>
-                                            </ul>
+                                                Add to Banned
+                                            </Button>
+                                            <Button
+                                                startContent={<FontAwesomeIcon icon={faPlus} />}
+                                                isDisabled={
+                                                    !cardToAdd || restricted.includes(cardToAdd)
+                                                }
+                                                onPress={() => {
+                                                    if (cardToAdd) {
+                                                        setRestricted(restricted.concat(cardToAdd));
+                                                    }
+                                                }}
+                                            >
+                                                Add to Restricted
+                                            </Button>
+                                            <Button
+                                                startContent={<FontAwesomeIcon icon={faPlus} />}
+                                                isDisabled={
+                                                    !cardToAdd || draftPod.includes(cardToAdd)
+                                                }
+                                                onPress={() => {
+                                                    if (cardToAdd) {
+                                                        setDraftPod(draftPod.concat(cardToAdd));
+                                                    }
+                                                }}
+                                            >
+                                                {draftPod.length > 0
+                                                    ? `Add to Draft Pod`
+                                                    : 'Add new Pod'}
+                                            </Button>
                                         </div>
                                     </div>
-                                </Typeahead> */}
-                                <Textarea
-                                    label='Restricted List'
-                                    labelClass='col-sm-3'
-                                    fieldClass='col-sm-9'
-                                    rows='10'
-                                    value={restrictedListText}
-                                    onChange={(event) => {
-                                        const cards = handleCardListChange(event);
-
-                                        setRestrictedListText(event.target.value);
-                                        setRestricted(cards);
-                                    }}
-                                />
-                                <Textarea
-                                    label='Banned List'
-                                    labelClass='col-sm-3'
-                                    fieldClass='col-sm-9'
-                                    rows='4'
-                                    value={bannedListText}
-                                    onChange={(event) => {
-                                        const cards = handleCardListChange(event);
-
-                                        setBannedListText(event.target.value);
-                                        setBanned(cards);
-                                    }}
-                                />
-                                <Textarea
-                                    label='Banned Pods'
-                                    labelClass='col-sm-3'
-                                    fieldClass='col-sm-9'
-                                    rows='4'
-                                    value={podsText}
-                                    onChange={handlePodListChange}
-                                />
-                            </Panel>
-                        </div>
+                                    {draftPod.length > 0 && (
+                                        <div className='flex flex-col gap-2 bg-default-50 p-2 rounded-lg'>
+                                            <h1 className='text-medium'>Draft Pod</h1>
+                                            <div className='flex flex-wrap gap-1'>
+                                                {cardChipList(draftPod, (code) =>
+                                                    setDraftPod(draftPod.filter((c) => c !== code))
+                                                )}
+                                            </div>
+                                            <Button
+                                                isDisabled={draftPod.length < 2}
+                                                startContent={<FontAwesomeIcon icon={faPlus} />}
+                                                onPress={() => {
+                                                    if (draftPod.length > 0) {
+                                                        // TODO: Add "restricted" to pod
+                                                        const newPod = {
+                                                            cards: draftPod
+                                                        };
+                                                        setPods(pods.concat(newPod));
+                                                        setDraftPod([]);
+                                                    }
+                                                }}
+                                            >
+                                                {`Add as Pod #${pods.length + 1}`}
+                                            </Button>
+                                        </div>
+                                    )}
+                                    {banned.length > 0 && (
+                                        <div className='flex flex-col gap-2 bg-default-50 p-2 rounded-lg'>
+                                            <h1 className='text-large'>Banned List</h1>
+                                            <div className='columns-1 sm:columns-2 md:columns-3 lg:columns-4 flex flex-col gap-1'>
+                                                {cardChipList(banned, (code) =>
+                                                    setBanned(banned.filter((c) => c !== code))
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
+                                    {restricted.length > 0 && (
+                                        <div className='flex flex-col gap-2 bg-default-50 p-2 rounded-lg'>
+                                            <h1 className='text-large'>Restricted List</h1>
+                                            <div className='columns-1 sm:columns-2 md:columns-3 lg:columns-4 flex flex-col gap-1'>
+                                                {cardChipList(restricted, (code) =>
+                                                    setRestricted(
+                                                        restricted.filter((c) => c !== code)
+                                                    )
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
+                                    {pods.length > 0 && (
+                                        <div className='flex flex-col gap-2 bg-default-50 p-2 rounded-lg'>
+                                            <h1 className='text-large'>Pod List</h1>
+                                            <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2'>
+                                                {pods.map((pod, index) => (
+                                                    <Chip
+                                                        key={index}
+                                                        onClose={() => {
+                                                            let temp = [...pods];
+                                                            temp.splice(index, 1);
+                                                            setPods(temp);
+                                                        }}
+                                                        className='h-full rounded-xl bg-default-100 py-2'
+                                                    >
+                                                        <h1 className='text-medium'>
+                                                            Pod #{index + 1}
+                                                        </h1>
+                                                        <div className='flex flex-col gap-1'>
+                                                            {cardChipList(pod.cards)}
+                                                        </div>
+                                                    </Chip>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </Panel>
                     )}
                     <div className='flex gap-2'>
                         <Button
@@ -684,10 +683,10 @@ const EventEditor = ({ eventId }) => {
                         </Button>
                         <Button
                             type='button'
-                            color='primary'
+                            color='default'
                             onPress={() => dispatch(navigate('/events'))}
                         >
-                            Cancel
+                            Back
                         </Button>
                     </div>
                 </form>

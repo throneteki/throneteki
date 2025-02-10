@@ -4,7 +4,7 @@ import $ from 'jquery';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
-import { Avatar } from '@heroui/react';
+import { Avatar, Link } from '@heroui/react';
 import { Constants } from '../../constants';
 
 const LobbyChat = ({ messages, isModerator, onRemoveMessageClick }) => {
@@ -82,8 +82,7 @@ const LobbyChat = ({ messages, isModerator, onRemoveMessageClick }) => {
                             <>
                                 <span className='italic line-through'>{message.message}</span>
                                 <span className='italic'>
-                                    {' '}
-                                    - (Message removed by {message.deletedBy})
+                                    {` - (Message removed by ${message.deletedBy})`}
                                 </span>
                             </>
                         );
@@ -99,17 +98,16 @@ const LobbyChat = ({ messages, isModerator, onRemoveMessageClick }) => {
                 return (
                     <div
                         key={message.user.username + i++}
-                        className='break-words text-gray-300 text-sm leading-[1.15rem]'
+                        className='break-words text-gray-300 text-sm leading-[1.15rem] flex gap-1'
                     >
-                        {messageText}
-                        {isModerator && (
-                            <a
-                                href='#'
-                                className='ml-2 text-danger'
-                                onClick={() => onRemoveMessageClick(message._id)}
+                        <span>{messageText}</span>
+                        {isModerator && !message.deleted && (
+                            <Link
+                                className='text-danger text-small'
+                                onPress={() => onRemoveMessageClick(message._id)}
                             >
                                 <FontAwesomeIcon icon={faTimes} />
-                            </a>
+                            </Link>
                         )}
                     </div>
                 );

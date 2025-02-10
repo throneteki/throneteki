@@ -388,8 +388,8 @@ export const apiSlice = createApi({
         }),
         saveDraftCube: builder.mutation({
             query: (draftCube) => ({
-                url: `/draft-cubes/${draftCube._id}`,
-                method: 'PUT',
+                url: `/draft-cubes/${draftCube._id || ''}`,
+                method: draftCube._id ? 'PUT' : 'POST',
                 body: draftCube
             }),
             invalidatesTags: (result, error, arg) => [{ type: TagTypes.DraftCube, _id: arg._id }]

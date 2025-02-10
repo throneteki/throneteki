@@ -80,11 +80,11 @@ const BanlistAdmin = () => {
     );
 
     if (isLoading) {
-        return <LoadingSpinner className='p-10' label={'Loading banlist...'}></LoadingSpinner>;
+        return <LoadingSpinner label={'Loading banlist...'}></LoadingSpinner>;
     }
 
     return (
-        <div className='w-2/3 mx-auto'>
+        <div className='m-2 lg:mx-auto lg:w-4/5 flex flex-col gap-2'>
             <Panel title='Banlist administration'>
                 <Table isStriped>
                     <TableHeader>
@@ -96,26 +96,23 @@ const BanlistAdmin = () => {
                     <TableBody>{renderedBanlist}</TableBody>
                 </Table>
             </Panel>
-            <div className='mt-2'>
-                <Panel title='Add new ip'>
-                    <div>
-                        <Input
-                            label='Add ip address'
-                            value={banListText}
-                            onValueChange={setBanListText}
-                        />
-                        <div className='mt-2'>
-                            <Button
-                                isLoading={isAddLoading}
-                                color='primary'
-                                onPress={onAddBanlistClick}
-                            >
-                                Add
-                            </Button>
-                        </div>
-                    </div>
-                </Panel>
-            </div>
+            <Panel title='Add new ip'>
+                <div className='flex flex-col md:flex-row gap-2 items-center'>
+                    <Input
+                        label='Add ip address'
+                        value={banListText}
+                        onValueChange={setBanListText}
+                    />
+                    <Button
+                        isLoading={isAddLoading}
+                        className='max-md:self-start'
+                        color='primary'
+                        onPress={onAddBanlistClick}
+                    >
+                        Add
+                    </Button>
+                </div>
+            </Panel>
         </div>
     );
 };

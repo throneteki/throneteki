@@ -4,7 +4,7 @@ import Panel from '../Components/Site/Panel';
 
 const Privacy = () => {
     return (
-        <div className='w-2/3 mx-auto'>
+        <div className='m-2 lg:mx-auto lg:w-4/5'>
             <Panel title='Privacy Policy'>
                 <h3 className='text-large font-bold mt-2'>Background</h3>
 

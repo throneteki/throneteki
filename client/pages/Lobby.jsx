@@ -10,7 +10,7 @@ import { getMessageWithLinks } from '../util';
 import { createSelector } from '@reduxjs/toolkit';
 import { useGetNewsQuery, useRemoveMessageMutation } from '../redux/middleware/api';
 import { clearChatStatus, sendLobbyChatMessage } from '../redux/reducers/lobby';
-import { Input } from '@heroui/react';
+import { Textarea } from '@heroui/react';
 import { toast } from 'react-toastify';
 import LoadingSpinner from '../Components/Site/LoadingSpinner';
 
@@ -110,21 +110,15 @@ const Lobby = () => {
     }
 
     return (
-        <div className='lg:mx-auto flex h-full lg:w-4/5 flex-col'>
-            <div></div>
+        <div className='m-2 lg:mx-auto lg:w-4/5 flex flex-col gap-2 h-full'>
             {motd && motd.message && (
                 <AlertPanel variant={motd.motdType}>{getMessageWithLinks(motd.message)}</AlertPanel>
             )}
             {bannerNotice ? <AlertPanel message={bannerNotice} variant='danger' /> : null}
-            <div className='max-h-[20vh]'>
-                <Panel title='Latest site news' className='mt-2'>
-                    {newsInfo}
-                </Panel>
+            <div className='min-h-32 max-h-[25vh]'>
+                <Panel title='Latest site news'>{newsInfo}</Panel>
             </div>
-            <Panel
-                className='mt-4 mb-4 flex flex-col'
-                title={`Lobby Chat (${users.length} online)`}
-            >
+            <Panel className='flex flex-col' title={`Lobby Chat (${users.length} online)`}>
                 <LobbyChat
                     messages={messages}
                     isModerator={user && user.permissions.canModerateChat}
@@ -137,21 +131,16 @@ const Lobby = () => {
                         sendMessage();
                     }}
                 >
-                    <Input
+                    <Textarea
                         ref={messageRef}
                         classNames={{ inputWrapper: 'rounded-tl-none rounded-tr-none' }}
                         onKeyDown={onKeyPress}
-                        onChange={(event) =>
-                            setMessage(
-                                event.target.value.substring(
-                                    0,
-                                    Math.min(512, event.target.value.length)
-                                )
-                            )
-                        }
+                        onValueChange={setMessage}
+                        maxLength={512}
                         placeholder={placeholder}
                         value={message}
-                    ></Input>
+                        minRows={1}
+                    ></Textarea>
                 </form>
             </Panel>
         </div>

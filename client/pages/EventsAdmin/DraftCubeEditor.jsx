@@ -9,8 +9,10 @@ import {
 } from '../../redux/middleware/api';
 import Panel from '../../Components/Site/Panel';
 import { navigate } from '../../redux/reducers/navigation';
-import { Input, Textarea } from '@heroui/react';
+import { Button, Input, Textarea } from '@heroui/react';
 import LoadingSpinner from '../../Components/Site/LoadingSpinner';
+import { toast } from 'react-toastify';
+import AlertPanel from '../../Components/Site/AlertPanel';
 
 const calculateMaxPacks = (rarities) => {
     const maxPacksPerRarity = rarities.map((rarity) => {
@@ -100,7 +102,7 @@ const DraftCubeEditor = ({ draftCubeId }) => {
 
     const getDraftCubeFromState = useCallback(() => {
         return {
-            _id: draftCube._id,
+            _id: draftCubeId,
             name: name,
             packDefinitions: [
                 {
@@ -109,22 +111,17 @@ const DraftCubeEditor = ({ draftCubeId }) => {
             ],
             starterDeck: starterDeck
         };
-    }, [draftCube?._id, name, rarities, starterDeck]);
+    }, [draftCubeId, name, rarities, starterDeck]);
 
-    const handleSaveClick = useCallback(
-        async (event) => {
-            event.preventDefault();
+    const handleSaveClick = useCallback(async () => {
+        try {
+            await saveDraftCube(getDraftCubeFromState()).unwrap();
 
-            try {
-                await saveDraftCube(getDraftCubeFromState()).unwrap();
-
-                setTimeout(() => {}, 5000);
-            } catch (err) {
-                // Empty
-            }
-        },
-        [getDraftCubeFromState, saveDraftCube]
-    );
+            toast.success('Draft cube saved successfully');
+        } catch (err) {
+            toast.error('Error saving draft cube');
+        }
+    }, [getDraftCubeFromState, saveDraftCube]);
 
     const compareCardByReleaseDate = useCallback(
         (a, b) => {
@@ -258,10 +255,19 @@ const DraftCubeEditor = ({ draftCubeId }) => {
         return <LoadingSpinner label='Loading draft cube...' />;
     }
 
+    if (error) {
+        return (
+            <AlertPanel
+                variant='danger'
+                message={error.data?.message || 'An error occurred loading the event'}
+            />
+        );
+    }
+
     return (
-        <div>
-            <Panel title='Draft cube editor'>
-                <form className='form form-horizontal'>
+        <div className='m-2 lg:mx-auto lg:w-4/5'>
+            <Panel title='Draft Cube Editor'>
+                <form className='flex gap-2 flex-col'>
                     <Input
                         name='name'
                         label='Cube Name'
@@ -295,23 +301,13 @@ const DraftCubeEditor = ({ draftCubeId }) => {
                         onChange={handleStarterDeckChange}
                     />
 
-                    <div className='form-group'>
-                        <div className='col-sm-offset-3 col-sm-8'>
-                            <button
-                                type='submit'
-                                className='btn btn-primary'
-                                onClick={handleSaveClick}
-                            >
-                                Save {isSaveLoading && <span className='spinner button-spinner' />}
-                            </button>
-                            <button
-                                type='button'
-                                className='btn btn-primary'
-                                onClick={() => dispatch(navigate('/events'))}
-                            >
-                                Cancel
-                            </button>
-                        </div>
+                    <div className='flex gap-2'>
+                        <Button color='primary' onPress={handleSaveClick} isLoading={isSaveLoading}>
+                            Save
+                        </Button>
+                        <Button color='default' onPress={() => dispatch(navigate('/events'))}>
+                            Back
+                        </Button>
                     </div>
                 </form>
             </Panel>

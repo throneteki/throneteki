@@ -82,14 +82,14 @@ const Application = () => {
         component = (
             <AlertPanel
                 variant='danger'
-                message='Your browser does not provide the required functionality for this site to work.  Please upgrade your browser.  The site works best with a recet version of Chrome, Safari or Firefox'
+                message='Your browser does not provide the required functionality for this site to work. Please upgrade your browser. The site works best with a recet version of Chrome, Safari or Firefox.'
             />
         );
     } else if (cannotLoad) {
         component = (
             <AlertPanel
                 variant='danger'
-                message='This site requires the ability to store cookies and local site data to function.  Please enable these features to use the site.'
+                message='This site requires the ability to store cookies and local site data to function. Please enable these features to use the site.'
             />
         );
     }
@@ -114,7 +114,7 @@ const Application = () => {
             <NavBar />
             <main role='main'>
                 <div
-                    className='absolute bottom-0 left-0 right-0 top-12 bg-cover bg-center bg-no-repeat'
+                    className='absolute bottom-0 left-0 right-0 top-12 bg-cover bg-center bg-no-repeat overflow-y-auto'
                     ref={bgRef}
                 >
                     <Sentry.ErrorBoundary

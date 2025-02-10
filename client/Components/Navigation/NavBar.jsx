@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-import Link from '../Site/Link';
 import ContextMenu from './ContextMenu';
 import ServerStatus from './ServerStatus';
 
@@ -13,7 +12,7 @@ import {
     DropdownMenu,
     DropdownTrigger,
     Image,
-    Link as NextUiLink,
+    Link,
     Navbar,
     NavbarBrand,
     NavbarContent,
@@ -42,6 +41,7 @@ const NavBar = () => {
         responseTime: gameResponse
     } = useSelector((state) => state.game);
 
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [dropdownOpenStatus, setDropdownOpenStatus] = useState({});
 
     const userCanSeeMenu = (menuItem, user) => {
@@ -87,7 +87,7 @@ const NavBar = () => {
                             }}
                         >
                             <DropdownTrigger>
-                                <NextUiLink
+                                <Link
                                     className='flex gap-1 cursor-pointer font-[PoppinsMedium] text-secondary transition-colors duration-500 ease-in-out hover:text-white'
                                     size='lg'
                                 >
@@ -99,7 +99,7 @@ const NavBar = () => {
                                                 : faChevronDown
                                         }
                                     />
-                                </NextUiLink>
+                                </Link>
                             </DropdownTrigger>
                             <DropdownMenu
                                 id={`nav-${menuItem.title}`}
@@ -128,11 +128,10 @@ const NavBar = () => {
                 }
 
                 return (
-                    <NavbarMenuItem key={index}>
+                    <NavbarMenuItem key={index} onPointerDown={() => setIsMenuOpen(false)}>
                         <Link
                             className='w-full font-[PoppinsMedium] text-secondary transition-colors duration-500 ease-in-out hover:text-white'
                             size='lg'
-                            as={Link}
                             href={menuItem.path}
                         >
                             {menuItem.title}
@@ -159,11 +158,11 @@ const NavBar = () => {
     ) : null;
 
     return (
-        <Navbar isBordered height='3rem' maxWidth='full'>
+        <Navbar isBordered height='3rem' maxWidth='full' isMenuOpen={isMenuOpen}>
             <NavbarContent className='lg:hidden' justify='start'>
-                <NavbarMenuToggle />
+                <NavbarMenuToggle onChange={(isOpen) => setIsMenuOpen(isOpen)} />
             </NavbarContent>
-            <NavbarContent className='pr-3 lg:hidden' justify='center'>
+            <NavbarContent className='lg:hidden' justify='center'>
                 <NavbarBrand as={Link} href='/'>
                     <img
                         src={SmallHeaderIcon}

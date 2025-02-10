@@ -8,6 +8,7 @@ import { sendClearUserSessions } from '../redux/reducers/lobby';
 import {
     Button,
     Input,
+    Link,
     Switch,
     Table,
     TableBody,
@@ -123,10 +124,10 @@ const UserAdmin = () => {
         }
 
         return (
-            <div className='mt-2'>
-                <form className='form'>
-                    <div className='flex flex-col gap-2'>
-                        <Panel title={`${currentUser.username} - User details`}>
+            <form className='form'>
+                <div className='flex flex-col gap-2'>
+                    <Panel title={`${currentUser.username} - User details`}>
+                        <div className={'flex flex-col gap-2 md:flex-row'}>
                             <dl className='grid grid-cols-2'>
                                 <dt className='font-bold'>Username</dt>
                                 <dd>{currentUser.username}</dd>
@@ -135,8 +136,7 @@ const UserAdmin = () => {
                                 <dt className='font-bold'>Registered</dt>
                                 <dd>{moment(currentUser.registered).format('YYYY-MM-DD HH:MM')}</dd>
                             </dl>
-
-                            <div className='mt-2 flex gap-2'>
+                            <div className='flex gap-2 md:flex-col'>
                                 <Switch
                                     name='disabled'
                                     type='Switch'
@@ -153,71 +153,69 @@ const UserAdmin = () => {
                                     Verified
                                 </Switch>
                             </div>
+                        </div>
+                    </Panel>
+                    {data?.linkedAccounts && (
+                        <Panel title='Possibly linked accounts'>
+                            <ul className='list'>
+                                {data.linkedAccounts.map((name) => {
+                                    return (
+                                        <li key={name}>
+                                            <Link
+                                                className='cursor-pointer text-secondary-600'
+                                                onPress={() => onLinkedUserClick(name)}
+                                            >
+                                                {name}
+                                            </Link>
+                                        </li>
+                                    );
+                                })}
+                            </ul>
                         </Panel>
-                        {data?.linkedAccounts && (
-                            <Panel title='Possibly linked accounts'>
-                                <ul className='list'>
-                                    {data.linkedAccounts.map((name) => {
+                    )}
+                    {currentUser && currentUser.tokens && (
+                        <Panel title='Sessions'>
+                            <Table isStriped>
+                                <TableHeader>
+                                    <TableColumn>IP Address</TableColumn>
+                                    <TableColumn>Last Used</TableColumn>
+                                </TableHeader>
+                                <TableBody>
+                                    {currentUser.tokens.map((token, index) => {
                                         return (
-                                            <li key={name}>
-                                                <a
-                                                    className='cursor-pointer text-secondary-600'
-                                                    onClick={() => onLinkedUserClick(name)}
-                                                >
-                                                    {name}
-                                                </a>
-                                            </li>
+                                            <TableRow key={index}>
+                                                <TableCell>{token.ip}</TableCell>
+                                                <TableCell>
+                                                    {moment(token.lastUsed).format(
+                                                        'YYYY-MM-DD HH:MM'
+                                                    )}
+                                                </TableCell>
+                                            </TableRow>
                                         );
                                     })}
-                                </ul>
-                            </Panel>
-                        )}
-                        {currentUser && currentUser.tokens && (
-                            <Panel title='Sessions'>
-                                <Table isStriped>
-                                    <TableHeader>
-                                        <TableColumn>IP Address</TableColumn>
-                                        <TableColumn>Last Used</TableColumn>
-                                    </TableHeader>
-                                    <TableBody>
-                                        {currentUser.tokens.map((token, index) => {
-                                            return (
-                                                <TableRow key={index}>
-                                                    <TableCell>{token.ip}</TableCell>
-                                                    <TableCell>
-                                                        {moment(token.lastUsed).format(
-                                                            'YYYY-MM-DD HH:MM'
-                                                        )}
-                                                    </TableCell>
-                                                </TableRow>
-                                            );
-                                        })}
-                                    </TableBody>
-                                </Table>
-                            </Panel>
-                        )}
-                        {user?.permissions.canManagePermissions ? (
-                            <Panel title='Permissions'>
-                                <div className='grid grid-cols-2 gap-1'>{retPermissions}</div>
-                            </Panel>
-                        ) : null}
-                        <div>
-                            <div className='flex gap-2'>
-                                <Button color='primary' oonPressnClick={onClearClick}>
-                                    Clear sessions
-                                </Button>
-                                <Button
-                                    isLoading={isSaveLoading}
-                                    color='primary'
-                                    onPress={onSaveClick}
-                                >
-                                    Save
-                                </Button>
+                                </TableBody>
+                            </Table>
+                        </Panel>
+                    )}
+                    {user?.permissions.canManagePermissions ? (
+                        <Panel title='Permissions'>
+                            <div className='grid grid-cols-2 gap-1 md:grid-cols-3'>
+                                {retPermissions}
                             </div>
+                        </Panel>
+                    ) : null}
+                    <div>
+                        <div className='flex gap-2'>
+                            <Button color='primary' onPress={onClearClick}>
+                                Clear sessions
+                            </Button>
+                            <Button isLoading={isSaveLoading} color='primary' onPress={onSaveClick}>
+                                Save
+                            </Button>
                         </div>
                     </div>
-                </form>
-            </div>
+                </div>
+            </form>
         );
     }, [
         currentUser,
@@ -252,23 +250,29 @@ const UserAdmin = () => {
     }, [data]);
 
     return (
-        <div className='w-3/4 mx-auto'>
-            <Panel title='User administration'>
-                <div className='w-1/3'>
-                    <Input
-                        label='Username'
-                        name='username'
-                        onValueChange={setUsername}
-                        value={username}
-                    />
-                </div>
-                <div className='mt-2'>
-                    <Button color='primary' onPress={onFindClick} loading={isLoading}>
-                        Search
-                    </Button>
-                </div>
-            </Panel>
-            {renderedUser}
+        <div className='m-2 lg:mx-auto lg:w-4/5'>
+            <div className='flex flex-col gap-2'>
+                <Panel title='User administration'>
+                    <div className='flex flex-col md:flex-row gap-2 items-center'>
+                        <Input
+                            label='Username'
+                            name='username'
+                            onValueChange={setUsername}
+                            value={username}
+                            className='w-full md:w-1/3'
+                        />
+                        <Button
+                            color='primary'
+                            onPress={onFindClick}
+                            loading={isLoading}
+                            className='w-full md:w-auto'
+                        >
+                            Search
+                        </Button>
+                    </div>
+                </Panel>
+                {renderedUser}
+            </div>
         </div>
     );
 };

@@ -6,7 +6,8 @@ import {
     faInfoCircle,
     faCheckCircle
 } from '@fortawesome/free-solid-svg-icons';
-import { Link } from '@heroui/react';
+import classNames from 'classnames';
+import { getMessageWithLinks } from '../../util';
 
 export const AlertType = Object.freeze({
     Default: 'default',
@@ -18,35 +19,6 @@ export const AlertType = Object.freeze({
     Bell: 'bell'
 });
 
-function getMessageWithLinks(message) {
-    const links = message.match(/(https?:\/\/)?([^.\s]+)?[^.\s]+\.[^\s]+/gi);
-    const retMessage = [];
-
-    if (!links || links.length === 0) {
-        return message;
-    }
-
-    let lastIndex = 0;
-    let linkCount = 0;
-
-    for (const link of links) {
-        const index = message.indexOf(link);
-
-        retMessage.push(message.substring(lastIndex, index));
-        retMessage.push(
-            <Link key={linkCount++} href={link}>
-                {link}
-            </Link>
-        );
-
-        lastIndex += index + link.length;
-    }
-
-    retMessage.push(message.substr(lastIndex, message.length - lastIndex));
-
-    return retMessage;
-}
-
 const AlertPanel = ({
     variant = AlertType.Info,
     title,
@@ -56,50 +28,37 @@ const AlertPanel = ({
     size = 'md'
 }) => {
     let icon;
-    /**
-     * @type {AlertType}
-     */
-    let alertType;
-
     switch (variant) {
         case AlertType.Warning:
             icon = faExclamationTriangle;
-            alertType = 'bg-warning-subtle text-warning-subtle-foreground';
             break;
         case AlertType.Danger:
             icon = faExclamationCircle;
-            alertType = 'bg-danger-subtle text-danger-subtle-foreground';
             break;
         case AlertType.Info:
             icon = faInfoCircle;
-            alertType = 'bg-info-subtle text-info-subtle-foreground';
             break;
         case AlertType.Success:
             icon = faCheckCircle;
-            alertType = 'bg-success-subtle text-success-subtle-foreground';
             break;
     }
-
-    let padding;
-
-    switch (size) {
-        case 'sm':
-            padding = 'p-2';
-            break;
-        case 'md':
-            padding = 'p-4';
-            break;
-        case 'lg':
-            padding = 'p-6';
-            break;
-    }
-
+    const containerClass = classNames('flex flex-col gap-1 rounded-lg', {
+        'p-2': size === 'sm',
+        'p-4': size === 'md',
+        'p-6': size === 'lg',
+        'bg-warning-subtle text-warning-subtle-foreground': variant === AlertType.Warning,
+        'bg-danger-subtle text-danger-subtle-foreground': variant === AlertType.Danger,
+        'bg-info-subtle text-info-subtle-foreground': variant === AlertType.Info,
+        'bg-success-subtle text-success-subtle-foreground': variant === AlertType.Success
+    });
     return (
-        <div className={`rounded-lg ${padding} ${alertType}`}>
-            {title}
-            {!noIcon && <FontAwesomeIcon icon={icon} />}
-            {message && <span id='alert-message'>&nbsp;{getMessageWithLinks(message)}</span>}
-            {children && <span>&nbsp;{children}</span>}
+        <div className={containerClass}>
+            <h1 className='text-medium font-bold'>{title}</h1>
+            <div className='flex items-center gap-1'>
+                {!noIcon && <FontAwesomeIcon icon={icon} />}
+                {message && <span>{getMessageWithLinks(message)}</span>}
+                {children && <span>{children}</span>}
+            </div>
         </div>
     );
 };

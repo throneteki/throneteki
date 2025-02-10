@@ -3,11 +3,10 @@ import { useDispatch } from 'react-redux';
 import * as yup from 'yup';
 
 import Panel from '../Components/Site/Panel';
-import Link from '../Components/Site/Link';
 import { navigate } from '../redux/reducers/navigation';
 import { useRegisterAccountMutation } from '../redux/middleware/api';
 import { Formik } from 'formik';
-import { Button, Input, Switch } from '@heroui/react';
+import { Button, Input, Link, Switch } from '@heroui/react';
 import { toast } from 'react-toastify';
 
 const Register = () => {
@@ -73,8 +72,8 @@ const Register = () => {
                 <div className='mt-2'>
                     <Formik initialValues={{}} validationSchema={schema} onSubmit={onRegister}>
                         {(formProps) => (
-                            <form onSubmit={formProps.handleSubmit}>
-                                <div className='grid grid-cols-1 lg:grid-cols-2 gap-2'>
+                            <form onSubmit={formProps.handleSubmit} className='flex flex-col gap-2'>
+                                <div className='grid grid-cols-1 sm:grid-cols-2 gap-2'>
                                     <Input
                                         label='Username'
                                         {...formProps.getFieldProps('username')}
@@ -111,21 +110,22 @@ const Register = () => {
                                         {...formProps.getFieldProps('passwordAgain')}
                                     />
                                 </div>
-                                <div className='mt-2'>
-                                    <Switch
-                                        {...formProps.getFieldProps('enableGravatar')}
-                                        onValueChange={(value) =>
-                                            formProps.setFieldValue('enableGravatar', value)
-                                        }
-                                    >
-                                        Enable Gravatar
-                                    </Switch>
-                                </div>
-                                <div className='mt-2'>
-                                    <Button isLoading={isLoading} type='submit' color='primary'>
-                                        Register
-                                    </Button>
-                                </div>
+                                <Switch
+                                    {...formProps.getFieldProps('enableGravatar')}
+                                    onValueChange={(value) =>
+                                        formProps.setFieldValue('enableGravatar', value)
+                                    }
+                                >
+                                    Enable Gravatar
+                                </Switch>
+                                <Button
+                                    className='sm:self-start'
+                                    isLoading={isLoading}
+                                    type='submit'
+                                    color='primary'
+                                >
+                                    Register
+                                </Button>
                             </form>
                         )}
                     </Formik>

@@ -90,7 +90,7 @@ const NewsAdmin = () => {
             label: 'Delete',
             disabled: selectedIds.length === 0,
             isLoading: isDeleteLoading,
-            onClick: () => {
+            onPress: () => {
                 setShowConfirm(true);
             }
         }
@@ -100,30 +100,30 @@ const NewsAdmin = () => {
         return <LoadingSpinner label='Loading news...' />;
     }
     return (
-        <div className='lg:w-5/6 mx-auto'>
-            {error && <AlertPanel variant='danger' message={error} />}
-            <Panel title='News administration'>
-                <div className='h-[400px]'>
-                    <ReactTable
-                        buttons={buttons}
-                        columns={columns}
-                        dataLoadFn={() => ({
-                            data: news,
-                            isLoading: isLoading,
-                            isError: false
-                        })}
-                        onRowClick={(row) => {
-                            setSelectedItem(row.original);
-                            setNewsText(row.original.text);
-                        }}
-                        onRowSelectionChange={(ids) =>
-                            setSelectedIds(ids.map((r) => r.original._id))
-                        }
-                        selectedRows={selectedRows}
-                    />
-                </div>
-            </Panel>
-            <div className='mt-2'>
+        <div className='m-2 lg:mx-auto lg:w-4/5'>
+            <div className='flex flex-col gap-2'>
+                {error && <AlertPanel variant='danger' message={error} />}
+                <Panel title='News administration'>
+                    <div className='h-[400px]'>
+                        <ReactTable
+                            buttons={buttons}
+                            columns={columns}
+                            dataLoadFn={() => ({
+                                data: news,
+                                isLoading: isLoading,
+                                isError: false
+                            })}
+                            onRowClick={(row) => {
+                                setSelectedItem(row.original);
+                                setNewsText(row.original.text);
+                            }}
+                            onRowSelectionChange={(ids) =>
+                                setSelectedIds(ids.map((r) => r.original._id))
+                            }
+                            selectedRows={selectedRows}
+                        />
+                    </div>
+                </Panel>
                 <Panel title='Add new news item'>
                     <Textarea
                         label={selectedItem ? 'News text' : 'Enter new news item'}
@@ -164,30 +164,30 @@ const NewsAdmin = () => {
                         )}
                     </div>
                 </Panel>
+                <ConfirmDialog
+                    isOpen={showConfirm}
+                    message={`Are you sure you want to delete ${
+                        selectedIds.length === 1 ? 'this news entry' : 'these news entries'
+                    }?`}
+                    onOpenChange={setShowConfirm}
+                    onCancel={() => setShowConfirm(false)}
+                    onOk={async () => {
+                        try {
+                            await deleteNews(selectedIds[0]).unwrap();
+
+                            setSelectedIds([]);
+                            setSelectedRows(new Set([]));
+
+                            toast.success('News deleted successfully');
+                        } catch (err) {
+                            toast.error(
+                                err ||
+                                    'An error occured deleting the news item(s). Please try again later'
+                            );
+                        }
+                    }}
+                />
             </div>
-            <ConfirmDialog
-                isOpen={showConfirm}
-                message={`Are you sure you want to delete ${
-                    selectedIds.length === 1 ? 'this news entry' : 'these news entries'
-                }?`}
-                onOpenChange={setShowConfirm}
-                onCancel={() => setShowConfirm(false)}
-                onOk={async () => {
-                    try {
-                        await deleteNews(selectedIds[0]).unwrap();
-
-                        setSelectedIds([]);
-                        setSelectedRows(new Set([]));
-
-                        toast.success('News deleted successfully');
-                    } catch (err) {
-                        toast.error(
-                            err ||
-                                'An error occured deleting the news item(s). Please try again later'
-                        );
-                    }
-                }}
-            />
         </div>
     );
 };

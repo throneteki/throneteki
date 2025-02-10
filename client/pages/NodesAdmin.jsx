@@ -16,6 +16,8 @@ import {
     TableHeader,
     TableRow
 } from '@heroui/react';
+import LoadingSpinner from '../Components/Site/LoadingSpinner';
+import AlertPanel from '../Components/Site/AlertPanel';
 
 const NodeAdmin = () => {
     const dispatch = useDispatch();
@@ -81,20 +83,24 @@ const NodeAdmin = () => {
     let content;
 
     if (!nodeStatus) {
-        content = <div>Waiting for game node status from the lobby...</div>;
+        content = <LoadingSpinner label='Fetching game node details...' />;
     } else if (nodeStatus.length > 0) {
         content = getNodesTable();
     } else {
-        content = <div>There are no game nodes connected. This is probably bad.</div>;
+        content = (
+            <AlertPanel
+                variant='warning'
+                message='There are no game nodes connected. This is probably bad.'
+            />
+        );
     }
 
     return (
-        <div className='w-2/3 mx-auto'>
+        <div className='m-2 lg:mx-auto lg:w-4/5'>
             <Panel title='Game Node Administration'>
-                {content}
-
-                <div className='mt-2'>
-                    <Button color='primary' onPress={onRefreshClick}>
+                <div className='flex flex-col gap-2'>
+                    {content}
+                    <Button color='primary' className='self-start' onPress={onRefreshClick}>
                         Refresh
                     </Button>
                 </div>
