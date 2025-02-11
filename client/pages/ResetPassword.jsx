@@ -36,7 +36,7 @@ const ResetPassword = ({ id, token }) => {
         return (
             <AlertPanel
                 type='error'
-                message='This page is not intended to be viewed directly.  Please click on the link in your email to reset your password'
+                message='This page is not intended to be viewed directly. Please click on the link in your email to reset your password.'
             />
         );
     }
@@ -49,7 +49,7 @@ const ResetPassword = ({ id, token }) => {
                         name='password'
                         label='New password'
                         type='password'
-                        onChange={setPassword}
+                        onValueChange={setPassword}
                     />
                     <Button onPress={onSubmit} loading={isLoading}>
                         Submit

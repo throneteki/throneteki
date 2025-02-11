@@ -197,8 +197,8 @@ const DraftCubeEditor = ({ draftCubeId }) => {
     );
 
     const handleRarityListChange = useCallback(
-        (event) => {
-            const raritySections = event.target.value.trim().split(/\n\n+/);
+        (value) => {
+            const raritySections = value.trim().split(/\n\n+/);
             const updatedRarities = [];
 
             for (const raritySection of raritySections) {
@@ -230,14 +230,14 @@ const DraftCubeEditor = ({ draftCubeId }) => {
 
             setMaxPacks(calculateMaxPacks(updatedRarities));
             setRarities(updatedRarities);
-            setRaritiesText(event.target.value);
+            setRaritiesText(value);
             setTotalPerPack(calculateTotalperPack(updatedRarities));
         },
         [parseCardQuantityLine]
     );
 
-    const handleStarterDeckChange = (event) => {
-        const cardLines = event.target.value.split(/\n+/);
+    const handleStarterDeckChange = (value) => {
+        const cardLines = value.split(/\n+/);
         const updatedStarterDeck = [];
 
         for (const cardLine of cardLines) {
@@ -248,7 +248,7 @@ const DraftCubeEditor = ({ draftCubeId }) => {
         }
 
         setStarterDeck(updatedStarterDeck);
-        setStarterDeckText(event.target.value);
+        setStarterDeckText(value);
     };
 
     if (isCardsLoading || isPacksLoading || isLoading) {
@@ -275,7 +275,7 @@ const DraftCubeEditor = ({ draftCubeId }) => {
                         fieldClass='col-sm-9'
                         placeholder='Cube Name'
                         type='text'
-                        onChange={(event) => setName(event.target.value)}
+                        onValueChange={setName}
                         value={name}
                     />
                     <div className='form-group'>
@@ -290,7 +290,7 @@ const DraftCubeEditor = ({ draftCubeId }) => {
                         fieldClass='col-sm-9'
                         rows='10'
                         value={raritiesText}
-                        onChange={handleRarityListChange}
+                        onValueChange={handleRarityListChange}
                     />
                     <Textarea
                         label='Starter Deck'
@@ -298,7 +298,7 @@ const DraftCubeEditor = ({ draftCubeId }) => {
                         fieldClass='col-sm-9'
                         rows='10'
                         value={starterDeckText}
-                        onChange={handleStarterDeckChange}
+                        onValueChange={handleStarterDeckChange}
                     />
 
                     <div className='flex gap-2'>

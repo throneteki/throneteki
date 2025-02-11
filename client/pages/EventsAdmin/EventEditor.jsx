@@ -115,8 +115,8 @@ const EventEditor = ({ eventId }) => {
         setUseChessClocks(event.target.checked);
     }, []);
 
-    const getUsernameList = useCallback((event) => {
-        let split = event.target.value.split('\n');
+    const getUsernameList = useCallback((value) => {
+        const split = value.split('\n');
         const userNames = [];
 
         for (const line of split) {
@@ -304,7 +304,7 @@ const EventEditor = ({ eventId }) => {
                                     label='Event Name'
                                     placeholder='Event Name'
                                     type='text'
-                                    onChange={(event) => setName(event.target.value)}
+                                    onValueChange={setName}
                                     value={name}
                                 />
                                 <Select
@@ -399,9 +399,7 @@ const EventEditor = ({ eventId }) => {
                                                 name='gameTimeLimit'
                                                 label='Limit (minutes)'
                                                 type='number'
-                                                onChange={(event) =>
-                                                    setGameTimeLimit(event.target.value)
-                                                }
+                                                onValueChange={setGameTimeLimit}
                                                 value={gameTimeLimit}
                                             />
                                         </div>
@@ -421,18 +419,14 @@ const EventEditor = ({ eventId }) => {
                                                 name='chessClockTimeLimit'
                                                 label='Limit (minutes)'
                                                 type='number'
-                                                onChange={(event) =>
-                                                    setChessClockTimeLimit(event.target.value)
-                                                }
+                                                onValueChange={setChessClockTimeLimit}
                                                 value={chessClockTimeLimit}
                                             />
                                             <Input
                                                 name='chessClockDelay'
                                                 label={'Delay (seconds)'}
                                                 type='number'
-                                                onChange={(event) =>
-                                                    setChessClockDelay(event.target.value)
-                                                }
+                                                onValueChange={setChessClockDelay}
                                                 value={chessClockDelay}
                                             />
                                         </div>
@@ -443,7 +437,7 @@ const EventEditor = ({ eventId }) => {
                                     label='Password'
                                     placeholder='Password'
                                     type='text'
-                                    onChange={(event) => setPassword(event.target.value)}
+                                    onValueChange={setPassword}
                                     value={password}
                                 />
                             </div>
@@ -464,9 +458,9 @@ const EventEditor = ({ eventId }) => {
                                     label='Valid Creators'
                                     rows='10'
                                     value={validTableCreatorsText}
-                                    onChange={(event) => {
-                                        setValidTableCreatorsText(event.target.value);
-                                        setValidTableCreators(getUsernameList(event));
+                                    onValueChange={(value) => {
+                                        setValidTableCreatorsText(value);
+                                        setValidTableCreators(getUsernameList(value));
                                     }}
                                 />
                             )}
@@ -484,9 +478,9 @@ const EventEditor = ({ eventId }) => {
                                     fieldClass='col-sm-9'
                                     rows='10'
                                     value={validSpectatorsText}
-                                    onChange={(event) => {
-                                        setValidSpectatorsText(event.target.value);
-                                        setValidSpectators(getUsernameList(event));
+                                    onValueChange={(value) => {
+                                        setValidSpectatorsText(value);
+                                        setValidSpectators(getUsernameList(value));
                                     }}
                                 />
                             )}

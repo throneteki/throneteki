@@ -21,6 +21,7 @@ const TimerSettings = ({ formProps }) => {
                         step={1}
                         maxValue={10}
                         defaultValue={formProps.values.windowTimer}
+                        value={formProps.values.windowTimer}
                         onChange={(value) => formProps.setFieldValue('windowTimer', value)}
                     />
                     <Input
@@ -29,8 +30,8 @@ const TimerSettings = ({ formProps }) => {
                         max={10}
                         min={1}
                         {...formProps.getFieldProps('windowTimer')}
-                        onChange={(e) => {
-                            let value = parseInt(e.target.value);
+                        onValueChange={(value) => {
+                            value = parseInt(value);
 
                             if (isNaN(value)) {
                                 return;
