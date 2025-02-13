@@ -28,7 +28,7 @@ const EditDeckPage = ({ deckId }) => {
     }
 
     return (
-        <div className='w-full'>
+        <div className='m-2 lg:mx-auto lg:w-4/5'>
             <Panel title={data?.name}>{content}</Panel>
         </div>
     );

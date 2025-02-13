@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
 
-import { Button, Textarea } from '@heroui/react';
+import { Button, Link, Textarea } from '@heroui/react';
 import Panel from '../Site/Panel';
 import {
     useAddDeckMutation,
@@ -51,45 +49,40 @@ const ImportDeck = () => {
         }
     };
 
-    let content;
-
-    if (isFactionsLoading || isCardsLoading || isPacksLoading) {
-        content = <LoadingSpinner label='Loading data...' />;
-    } else if (isFactionsError || isCardsError || isPacksError) {
-        <AlertPanel variant='danger'>
-            An error occured loading the card data. Please try again later
-        </AlertPanel>;
-    } else {
-        content = (
-            <form
-                onSubmit={(event) => {
-                    event.preventDefault();
-
-                    processDeck();
-                }}
-            >
-                <div className='mb-3'>
-                    <label>
-                        Export your deck as plain text from{' '}
-                        <a href='https://thronesdb.com' target='_blank' rel='noreferrer'>
-                            ThronesDB
-                        </a>{' '}
-                        and paste it into this box
-                    </label>
-                    <Textarea minRows={20} value={deckText} onValueChange={setDeckText} />
-                </div>
-
-                <Button type='submit' color='primary' isDisabled={!deckText || isAddLoading}>
-                    Submit &nbsp;
-                    {isAddLoading && <FontAwesomeIcon icon={faCircleNotch} spin />}
-                </Button>
-            </form>
-        );
-    }
-
     return (
-        <div className='container'>
-            <Panel title={'Import Deck'}>{content}</Panel>
+        <div className='m-2 flex flex-col gap-2 lg:mx-auto lg:w-4/5'>
+            {(isFactionsError || isCardsError || isPacksError) && (
+                <AlertPanel variant='danger'>
+                    An error occured loading the card data. Please try again later
+                </AlertPanel>
+            )}
+            <Panel title={'Import Deck'}>
+                {isFactionsLoading || isCardsLoading || isPacksLoading ? (
+                    <LoadingSpinner />
+                ) : (
+                    <div>
+                        <div className='mb-3'>
+                            <label>
+                                Export your deck as plain text from{' '}
+                                <Link href='https://thronesdb.com' target='_blank' rel='noreferrer'>
+                                    ThronesDB
+                                </Link>{' '}
+                                and paste it into this box
+                            </label>
+                            <Textarea minRows={20} value={deckText} onValueChange={setDeckText} />
+                        </div>
+
+                        <Button
+                            type='submit'
+                            color='primary'
+                            isDisabled={!deckText || isAddLoading}
+                            onPress={processDeck}
+                        >
+                            Submit
+                        </Button>
+                    </div>
+                )}
+            </Panel>
         </div>
     );
 };

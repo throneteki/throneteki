@@ -43,7 +43,14 @@ const DeckStatus = ({ className, compact = false, status }) => {
     };
 
     const info = statusInfo(status);
-    const chipClass = classNames('select-none pointer-events-none h-8', className);
+    const chipClass = classNames('select-none pointer-events-none h- h-8', className);
+    let labelClass = null;
+    // Compacts if true, or at the provided size step
+    if (compact === true) {
+        labelClass = 'hidden';
+    } else if (typeof compact === 'string') {
+        labelClass = `${compact}:hidden`;
+    }
 
     return (
         <Tooltip
@@ -61,10 +68,10 @@ const DeckStatus = ({ className, compact = false, status }) => {
                     {status.extendedStatus && status.extendedStatus.length !== 0 && (
                         <ul className='flex flex-col gap-1'>
                             {status.extendedStatus.map((error, index) => (
-                                <>
+                                <li key={index}>
                                     <Divider />
-                                    <li key={index}>{error}</li>
-                                </>
+                                    {error}
+                                </li>
                             ))}
                         </ul>
                     )}
@@ -72,24 +79,15 @@ const DeckStatus = ({ className, compact = false, status }) => {
             }
         >
             <div
-                onMouseEnter={() => setIsOpen(true)}
-                onMouseLeave={() => setIsOpen(false)}
-                onTouchStart={() => setIsOpen(true)}
-                onTouchEnd={() => setIsOpen(false)}
-                onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                }}
+                onPointerEnter={() => setIsOpen(true)}
+                onPointerLeave={() => setIsOpen(false)}
+                onContextMenu={(e) => e.preventDefault()}
             >
                 <Chip className={chipClass} color={info.color} radius='md'>
-                    {compact ? (
-                        info.icon
-                    ) : (
-                        <div className='flex flex-row gap-1 items-center'>
-                            {info.icon}
-                            {info.label}
-                        </div>
-                    )}
+                    <div className='flex flex-row gap-1 items-center'>
+                        <span>{info.icon}</span>
+                        <span className={labelClass}>{info.label}</span>
+                    </div>
                 </Chip>
             </div>
         </Tooltip>

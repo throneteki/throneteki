@@ -37,7 +37,27 @@ export const Constants = {
         supporter: 'text-green-500',
         winner: 'text-yellow-200',
         previouswinner: 'text-pink-500'
-    }
+    },
+    FactionColorMaps: {
+        baratheon: 'text-baratheon',
+        greyjoy: 'text-greyjoy',
+        lannister: 'text-lannister',
+        martell: 'text-martell',
+        neutral: 'text-neutral',
+        stark: 'text-startl',
+        targaryen: 'text-targaryen',
+        thenightswatch: 'text-thenightswatch',
+        tyrell: 'text-tyrell'
+    },
+    CardTypes: [
+        { name: 'Title', value: 'title' },
+        { name: 'Agenda', value: 'agenda' },
+        { name: 'Plot', value: 'plot' },
+        { name: 'Character', value: 'character' },
+        { name: 'Attachment', value: 'attachment' },
+        { name: 'Location', value: 'location' },
+        { name: 'Event', value: 'event' }
+    ]
 };
 
 for (const faction of Object.values(Constants.Factions)) {
