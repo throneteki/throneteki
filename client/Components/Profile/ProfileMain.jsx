@@ -44,63 +44,75 @@ const ProfileMain = ({ user, formProps }) => {
 
     return (
         <Panel title='Profile'>
-            <div className='md:flex'>
-                <Input
-                    {...formProps.getFieldProps('email')}
-                    label='Email'
-                    isInvalid={formProps.errors.email && formProps.touched.email}
-                    errorMessage={formProps.errors.email}
-                />
-                <Input
-                    className='md:ml-2 mt-2 md:mt-0'
-                    label='Password'
-                    {...formProps.getFieldProps('password')}
-                    isInvalid={formProps.errors.password && formProps.touched.password}
-                    errorMessage={formProps.errors.password}
-                    type='password'
-                />
-                <Input
-                    className='md:ml-2 mt-2 md:mt-0'
-                    label='Password (again)'
-                    {...formProps.getFieldProps('passwordAgain')}
-                    isInvalid={formProps.errors.passwordAgain && formProps.touched.passwordAgain}
-                    errorMessage={formProps.errors.passwordAgain}
-                    type='password'
-                />
-            </div>
-            <div className='mt-2'>
-                <div className='flex gap-2 flex-col lg:grid lg:grid-cols-3 lg:items-center'>
-                    <div>
-                        <span className='font-bold'>Avatar</span>
-                        <div className='flex'>
+            <div className='flex flex-col gap-2'>
+                <div className='flex flex-col sm:flex-row gap-2'>
+                    <Input
+                        {...formProps.getFieldProps('email')}
+                        label='Email'
+                        isInvalid={formProps.errors.email && formProps.touched.email}
+                        errorMessage={formProps.errors.email}
+                    />
+                    <Input
+                        label='Password'
+                        {...formProps.getFieldProps('password')}
+                        isInvalid={formProps.errors.password && formProps.touched.password}
+                        errorMessage={formProps.errors.password}
+                        type='password'
+                    />
+                    <Input
+                        label='Password (again)'
+                        {...formProps.getFieldProps('passwordAgain')}
+                        isInvalid={
+                            formProps.errors.passwordAgain && formProps.touched.passwordAgain
+                        }
+                        errorMessage={formProps.errors.passwordAgain}
+                        type='password'
+                    />
+                </div>
+                <div className='flex flex-col md:flex-row gap-2'>
+                    <div className='flex flex-col gap-1 w-full md:w-1/2'>
+                        <label className='font-bold'>Avatar</label>
+                        <p className='text-sm'>
+                            You can update your avatar on this website through your{' '}
+                            <Link href='https://gravatar.com/' size='sm'>
+                                Gravatar
+                            </Link>{' '}
+                            account. Please ensure your email for Gravatar matches the above email.
+                        </p>
+                        <div className='flex gap-2 items-center'>
                             <Avatar src={`/img/avatar/${user.username}.png`} showFallback />
                             <Button
                                 isLoading={avatarLoading}
                                 type='button'
-                                className='ml-2'
-                                color='secondary'
+                                color='default'
+                                isDisabled={!formProps.values.enableGravatar}
                                 onPress={onUpdateAvatarClick}
                             >
                                 Update avatar
                             </Button>
+                            <Switch
+                                {...formProps.getFieldProps('enableGravatar')}
+                                isSelected={formProps.values.enableGravatar}
+                                className='h-full'
+                            >
+                                Enable Gravatar integration
+                            </Switch>
                         </div>
                     </div>
-
-                    <div>
-                        <Switch
-                            className='md:ml-2 mt-2 md:mt-0'
-                            {...formProps.getFieldProps('enableGravatar')}
-                            isSelected={formProps.values.enableGravatar}
-                        >
-                            Enable Gravatar integration
-                        </Switch>
-                    </div>
-                    <div>
-                        <span className='font-bold'>Patreon</span>
+                    <div className='flex flex-col gap-1 w-full md:w-1/2'>
+                        <label className='font-bold'>Patreon</label>
+                        <p className='text-sm'>
+                            You can link your{' '}
+                            <Link href='https://www.patreon.com/' size='sm'>
+                                Patreon
+                            </Link>{' '}
+                            account to recieve certain benefits on this website. Thank you for your
+                            support!
+                        </p>
                         <div>
                             {!isPatreonLinked ? (
                                 <Button
-                                    color='secondary'
+                                    color='default'
                                     href={`https://www.patreon.com/oauth2/authorize?response_type=code&client_id=317bxGpXD7sAOlyFKp6D-LOBRX731lLK-2YYQSFfBmJCrVSiJI77eUgRoLoN2KoI&redirect_uri=${callbackUrl}`}
                                     as={Link}
                                 >
@@ -110,7 +122,7 @@ const ProfileMain = ({ user, formProps }) => {
                             ) : (
                                 <Button
                                     isLoading={unlinkLoading}
-                                    color='secondary'
+                                    color='default'
                                     onPress={onUnlinkClick}
                                 >
                                     Unlink Patreon account

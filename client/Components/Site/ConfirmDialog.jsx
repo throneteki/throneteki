@@ -7,10 +7,11 @@ const ConfirmDialog = ({
     title = 'Are you sure?',
     message,
     onOk,
-    onCancel
+    onCancel,
+    placement = 'center'
 }) => {
     return (
-        <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+        <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement={placement}>
             <ModalContent>
                 {(onClose) => (
                     <>
