@@ -70,13 +70,13 @@ const PlayerPlots = ({
 
         const plotClass = classNames('rounded-md', {
             'absolute bottom-0': direction !== 'reverse',
-            'z-50': plotsInFront
+            'z-20': plotsInFront
         });
 
         const usedClass = classNames('rounded-md', {
             'absolute bottom-0': direction === 'reverse',
             'shadow-[0_0_5px_0] shadow-black': !!activePlot,
-            'z-50': !plotsInFront
+            'z-20': !plotsInFront
         });
 
         let piles = [

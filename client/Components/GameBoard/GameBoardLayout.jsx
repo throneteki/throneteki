@@ -55,8 +55,8 @@ const GameBoardLayout = ({ thisPlayer, otherPlayer, onCardClick, onMouseOver, on
                 );
             }}
         >
-            <div className='flex w-full flex-shrink flex-grow flex-col overflow-hidden'>
-                <div className='flex overflow-hidden'>
+            <div className='flex w-full flex-shrink flex-grow flex-col overflow-auto'>
+                <div className='flex'>
                     <PlayerRow
                         agendas={otherPlayer.agendas}
                         faction={otherPlayer.faction}
@@ -85,10 +85,10 @@ const GameBoardLayout = ({ thisPlayer, otherPlayer, onCardClick, onMouseOver, on
                         mustShowPlotSelection={otherPlayer.mustShowPlotSelection}
                     />
                 </div>
-                <div className='flex flex-grow flex-shrink min-h-0 overflow-x-hidden'>
-                    <div className='relative flex flex-col justify-end'>
+                <div className='flex flex-grow flex-shrink'>
+                    <div className='relative flex flex-col justify-end w-40 md:w-56'>
                         <GameTimer thisPlayer={thisPlayer} otherPlayer={otherPlayer}></GameTimer>
-                        <div className='flex flex-col w-52 justify-between'>
+                        <div className='flex flex-col justify-between'>
                             <ActivePlayerPrompt
                                 buttons={thisPlayer.buttons}
                                 controls={thisPlayer.controls}

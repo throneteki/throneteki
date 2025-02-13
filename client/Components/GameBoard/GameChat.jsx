@@ -33,7 +33,7 @@ const GameChat = ({ messages, onCardMouseOver, onCardMouseOut, onSendChat, muted
         setMessage('');
     }, [message, onSendChat]);
 
-    const onKeyPress = useCallback(
+    const onKeyDown = useCallback(
         (event) => {
             if (event.key === 'Enter') {
                 sendMessage();
@@ -70,8 +70,8 @@ const GameChat = ({ messages, onCardMouseOver, onCardMouseOut, onSendChat, muted
                 <Input
                     classNames={{ inputWrapper: 'rounded-none' }}
                     placeholder={placeholder}
-                    onKeyPress={onKeyPress}
-                    onChange={onChange}
+                    onKeyDown={onKeyDown}
+                    onValueChange={onChange}
                     value={message}
                     disabled={muted}
                 />

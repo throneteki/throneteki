@@ -395,6 +395,7 @@ const Card = ({
                 (orientation === 'kneeled' || card.kneeled || orientation === 'horizontal')
         });
 
+        // TODO: Update this to a `CardImage`, allowing for built-in zoom?
         let image = <img className={imageClass} src={imageUrl} />;
 
         let content = (

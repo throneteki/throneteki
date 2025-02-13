@@ -55,7 +55,7 @@ const Game = ({
     );
 
     const gameHeaderClass = classNames(
-        'flex gap-2 justify-center content-center flex-wrap items-center text-small text-white',
+        'flex gap-2 justify-center content-center flex-wrap items-center text-small text-white p-1 rounded-md',
         {
             'bg-warning/40': game.gameType === 'casual',
             'bg-success/60': game.gameType === 'beginner',

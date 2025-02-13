@@ -41,7 +41,7 @@ const PendingGamePlayers = ({ currentGame, user, onSelectDeck }) => {
                                 <Avatar src={`/img/avatar/${player.name}.png`} />
                                 <span className={userClass}>{player.name}</span>
                             </div>
-                            <span className='flex gap-1'>
+                            <span className='flex items-center gap-1'>
                                 {deckButton}
                                 {status}
                             </span>

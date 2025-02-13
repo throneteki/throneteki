@@ -273,13 +273,13 @@ const PendingGame = () => {
                             type='text'
                             placeholder={'Enter a message...'}
                             value={message}
-                            onKeyPress={(event) => {
+                            onKeyDown={(event) => {
                                 if (event.key === 'Enter') {
                                     sendMessage();
                                     event.preventDefault();
                                 }
                             }}
-                            onChange={(event) => setMessage(event.target.value)}
+                            onValueChange={setMessage}
                         ></Input>
                     </form>
                 </div>

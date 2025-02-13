@@ -22,22 +22,22 @@ const GameFilter = ({ filter, onFilterChanged }) => {
 
     return (
         <Panel type='primary'>
-            <div className='grid lg:grid-cols-3'>
-                {filters.map((filter) => (
-                    <div key={filter.name}>
-                        <Switch
-                            id={filter.name}
-                            onValueChange={(isSelected) => {
-                                onFilterChecked(filter.name, isSelected);
-                            }}
-                            isSelected={currentFilter[filter.name]}
-                        >
-                            {filter.label}
-                        </Switch>
-                    </div>
-                ))}
-            </div>
-            <div className='mt-2'>
+            <div className='flex flex-wrap gap-2'>
+                <div className='flex flex-wrap gap-2 justify-start'>
+                    {filters.map((filter) => (
+                        <div key={filter.name}>
+                            <Switch
+                                id={filter.name}
+                                onValueChange={(isSelected) => {
+                                    onFilterChecked(filter.name, isSelected);
+                                }}
+                                isSelected={currentFilter[filter.name]}
+                            >
+                                {filter.label}
+                            </Switch>
+                        </div>
+                    ))}
+                </div>
                 <Switch
                     id='onlyShowNew'
                     onValueChange={(isSelected) => {

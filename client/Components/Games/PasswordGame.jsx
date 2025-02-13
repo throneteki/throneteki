@@ -30,10 +30,6 @@ const PasswordGame = () => {
         dispatch(cancelPasswordJoin());
     }, [dispatch]);
 
-    const onPasswordChange = useCallback((event) => {
-        setPassword(event.target.value);
-    }, []);
-
     if (!passwordGame) {
         return null;
     }
@@ -43,15 +39,13 @@ const PasswordGame = () => {
             <Panel title={passwordGame.name}>
                 <div className='flex gap-2 flex-col'>
                     {passwordError ? (
-                        <div>
-                            <AlertPanel variant='danger' message={passwordError} />
-                        </div>
+                        <AlertPanel variant='danger'>{passwordError}</AlertPanel>
                     ) : null}
                     <div className='game-password'>
                         <Input
                             autoComplete='off'
                             type='password'
-                            onChange={onPasswordChange}
+                            onValueChange={setPassword}
                             value={password}
                             label='Game password'
                             placeholder='Enter the password'
@@ -62,7 +56,7 @@ const PasswordGame = () => {
                         <Button color='primary' onPress={onJoinClick}>
                             {passwordJoinType}
                         </Button>
-                        <Button color='primary' onPress={onCancelClick}>
+                        <Button color='default' onPress={onCancelClick}>
                             Cancel
                         </Button>
                     </div>

@@ -9,7 +9,7 @@ const GamePlayerSlot = ({ player, showJoinButton, onJoinGame, position = 'left' 
             'flex-row-reverse': position === 'left'
         });
         const faction = (
-            <div className='w-12 rounded-md'>
+            <div key='faction' className='w-12 rounded-md'>
                 {
                     <img
                         className='rounded-md'

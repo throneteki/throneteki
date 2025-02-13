@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { sendChangeStatMessage } from '../../redux/reducers/game';
 import { Avatar, Badge, Button } from '@heroui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -12,7 +12,7 @@ const PlayerStats = ({
     stats,
     showControls,
     onSettingsClick,
-    user,
+    user: userProp,
     muteSpectators,
     firstPlayer,
     onMuteClick,
@@ -20,6 +20,8 @@ const PlayerStats = ({
     numMessages
 }) => {
     const dispatch = useDispatch();
+    const user = useSelector((state) => state.auth.user);
+    const isMe = userProp?.username === user?.username;
 
     const getStatValueOrDefault = useCallback(
         (stat) => {
@@ -37,25 +39,21 @@ const PlayerStats = ({
             return (
                 <StatContainer title={name}>
                     <StatDisplay
-                        showControls={showControls}
+                        showControls={isMe}
                         statName={name}
                         statCode={stat}
                         statValue={getStatValueOrDefault(stat)}
                         onMinusClick={
-                            showControls
-                                ? () => dispatch(sendChangeStatMessage(statToSet, -1))
-                                : null
+                            isMe ? () => dispatch(sendChangeStatMessage(statToSet, -1)) : null
                         }
                         onPlusClick={
-                            showControls
-                                ? () => dispatch(sendChangeStatMessage(statToSet, 1))
-                                : null
+                            isMe ? () => dispatch(sendChangeStatMessage(statToSet, 1)) : null
                         }
                     />
                 </StatContainer>
             );
         },
-        [showControls, getStatValueOrDefault, dispatch]
+        [isMe, getStatValueOrDefault, dispatch]
     );
 
     const getStatButton = (onClick, icon, title, text) => (
@@ -84,15 +82,17 @@ const PlayerStats = ({
     }, []);
 
     return (
-        <div className='relative px-2 border-1 border-default-100 bg-black/35 flex items-center border-x-0'>
+        <div className='relative px-2 border-1 border-default-100 bg-black/35 flex items-center border-x-0 overflow-x-auto'>
             <div className='pr-1 py-1 flex items-center'>
                 <Avatar
-                    src={`/img/avatar/${user?.username}.png`}
+                    src={`/img/avatar/${userProp?.username}.png`}
                     showFallback
                     className='w-7 h-7 text-tiny'
                 />
 
-                <span className='pl-2 font-bold'>{user?.username || 'Noone'}</span>
+                <span className='pl-2 font-bold max-md:hidden'>
+                    {userProp?.username || 'Noone'}
+                </span>
             </div>
             {getStatDisplay('totalPower', 'Power', 'power')}
             {getStatDisplay('gold', 'Gold')}
@@ -102,32 +102,41 @@ const PlayerStats = ({
 
             {firstPlayer ? (
                 <StatContainer>
-                    <div className='first-player px-2'>First player</div>
+                    <div className='px-2'>First player</div>
                 </StatContainer>
             ) : null}
 
             <StatContainer>
                 {showControls && (
                     <>
-                        {getStatButton(onSettingsClick, faCogs, 'Open Settings', 'Settings')}
-                        {getStatButton(
-                            onMuteClick,
-                            muteSpectators ? faEyeSlash : faEye,
-                            muteSpectators ? 'Un-mute spectators' : 'Mute spectators'
+                        {isMe && (
+                            <>
+                                {getStatButton(
+                                    onSettingsClick,
+                                    faCogs,
+                                    'Open Settings',
+                                    'Settings'
+                                )}
+                                {getStatButton(
+                                    onMuteClick,
+                                    muteSpectators ? faEyeSlash : faEye,
+                                    muteSpectators ? 'Un-mute spectators' : 'Mute spectators'
+                                )}
+                            </>
                         )}
+                        {getStatButton(writeChatToClipboard, faCopy, 'Copy chat log')}
+                        <StatContainer>
+                            <Badge
+                                shape='circle'
+                                color='danger'
+                                content={numMessages > 99 ? '99+' : numMessages}
+                                isInvisible={!numMessages || numMessages === 0}
+                            >
+                                {getStatButton(onMessagesClick, faComment, 'Toggle chat')}
+                            </Badge>
+                        </StatContainer>
                     </>
                 )}
-                {getStatButton(writeChatToClipboard, faCopy, 'Copy chat log')}
-                <StatContainer>
-                    <Badge
-                        shape='circle'
-                        color='danger'
-                        content={numMessages > 99 ? '99+' : numMessages}
-                        isInvisible={!numMessages || numMessages === 0}
-                    >
-                        {getStatButton(onMessagesClick, faComment, 'Toggle chat')}
-                    </Badge>
-                </StatContainer>
             </StatContainer>
         </div>
     );

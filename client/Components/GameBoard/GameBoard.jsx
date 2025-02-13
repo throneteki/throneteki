@@ -54,7 +54,7 @@ const GameBoard = () => {
     const dispatch = useDispatch();
     const currentGame = useSelector((state) => state.lobby.currentGame);
     const user = useSelector((state) => state.auth.user);
-    const { data: cards, isLoading } = useGetCardsQuery();
+    const { data: cards, isLoading: isCardsLoading } = useGetCardsQuery();
 
     const [cardToZoom, setCardToZoom] = useState(undefined);
     const [showMessages, setShowMessages] = useState(true);
@@ -102,8 +102,12 @@ const GameBoard = () => {
         );
     }, [currentGame?.players, thisPlayer?.name]);
 
-    if (!currentGame || !cards || !currentGame.started) {
+    if (!currentGame || !currentGame.started) {
         return <LoadingSpinner label={'Waiting for server...'} />;
+    }
+
+    if (isCardsLoading) {
+        return <LoadingSpinner label={'Waiting to fetch cards...'} />;
     }
 
     if (!user) {
@@ -191,7 +195,7 @@ const GameBoard = () => {
             <div>
                 <PlayerStats
                     stats={thisPlayer.stats}
-                    showControls={!!thisPlayer && thisPlayer.user?.username === user?.username}
+                    showControls={true}
                     showMessages
                     user={thisPlayer.user}
                     firstPlayer={thisPlayer.firstPlayer}
