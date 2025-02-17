@@ -42,9 +42,17 @@ const CardHover = ({ className, children, code, size = '3xl', radius = 'lg' }) =
     // Used to hide the image until it is ready to be positioned in above memo
     const imageAvailable = imageSize.width > 0 && imageSize.height > 0;
 
+    const wrapperClassName = useMemo(
+        () =>
+            classNames(className, {
+                'select-none': ['touch', 'pen'].includes(pointerType) // Disables text selection on touch/pen devices, but not desktop
+            }),
+        [className, pointerType]
+    );
+
     return (
         <div
-            className={className}
+            className={wrapperClassName}
             onPointerMove={(e) => {
                 if (['touch', 'pen'].includes(e.pointerType)) {
                     e.preventDefault();
@@ -63,9 +71,7 @@ const CardHover = ({ className, children, code, size = '3xl', radius = 'lg' }) =
                     setPointerType(e.pointerType);
                 }
             }}
-            onPointerLeave={() => {
-                setPointerType(null);
-            }}
+            onPointerLeave={() => setPointerType(null)}
             onContextMenu={(e) => e.preventDefault()}
         >
             {children}

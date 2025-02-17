@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import DeckStatusSummary from './DeckStatusSummary';
 import { Chip, Divider, Tooltip } from '@heroui/react';
 import { deckStatusLabel } from './DeckHelper';
@@ -12,7 +12,7 @@ import {
 import classNames from 'classnames';
 
 const DeckStatus = ({ className, compact = false, status }) => {
-    const [isOpen, setIsOpen] = React.useState(false);
+    const [pointerType, setPointerType] = useState(false);
 
     const statusInfo = (status) => {
         const label = deckStatusLabel(status) || 'Loading...';
@@ -43,7 +43,17 @@ const DeckStatus = ({ className, compact = false, status }) => {
     };
 
     const info = statusInfo(status);
-    const chipClass = classNames('select-none pointer-events-none h- h-8', className);
+
+    const wrapperClass = useMemo(
+        () =>
+            classNames({
+                'select-none': ['touch', 'pen'].includes(pointerType) // Disables text selection on touch/pen devices, but not desktop
+            }),
+        [pointerType]
+    );
+
+    const chipClass = classNames('pointer-events-none h- h-8', className);
+
     let labelClass = null;
     // Compacts if true, or at the provided size step
     if (compact === true) {
@@ -57,7 +67,7 @@ const DeckStatus = ({ className, compact = false, status }) => {
             placement={'right'}
             showArrow={true}
             closeDelay={100}
-            isOpen={isOpen}
+            isOpen={!!pointerType}
             content={
                 <div className='flex flex-col gap-1 max-w-64'>
                     <span className={`text-${info.color} flex flex-row gap-1 items-center`}>
@@ -79,8 +89,9 @@ const DeckStatus = ({ className, compact = false, status }) => {
             }
         >
             <div
-                onPointerEnter={() => setIsOpen(true)}
-                onPointerLeave={() => setIsOpen(false)}
+                className={wrapperClass}
+                onPointerEnter={(e) => setPointerType(e.pointerType)}
+                onPointerLeave={() => setPointerType(null)}
                 onContextMenu={(e) => e.preventDefault()}
             >
                 <Chip className={chipClass} color={info.color} radius='md'>
