@@ -49,7 +49,7 @@ const ResetPassword = ({ id, token }) => {
                         name='password'
                         label='New password'
                         type='password'
-                        onChange={setPassword}
+                        onValueChange={setPassword}
                     />
                     <Button onPress={onSubmit} loading={isLoading}>
                         Submit
