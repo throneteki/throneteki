@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import News from '../Components/News/News';
@@ -22,7 +22,6 @@ const Lobby = () => {
         isError: newsError,
         isSuccess: newsSuccess
     } = useGetNewsQuery();
-    const messageRef = useRef();
 
     const getLobbyState = (state) => state.lobby;
 
@@ -66,11 +65,10 @@ const Lobby = () => {
         setMessage('');
     }, [dispatch, message]);
 
-    const onKeyPress = useCallback(
+    const onKeyDown = useCallback(
         (event) => {
             if (event.key === 'Enter') {
                 sendMessage();
-
                 event.preventDefault();
             }
         },
@@ -124,24 +122,15 @@ const Lobby = () => {
                     isModerator={user && user.permissions.canModerateChat}
                     onRemoveMessageClick={onRemoveMessageClick}
                 />
-                <form
-                    className='z-50'
-                    onSubmit={(event) => {
-                        event.preventDefault();
-                        sendMessage();
-                    }}
-                >
-                    <Textarea
-                        ref={messageRef}
-                        classNames={{ inputWrapper: 'rounded-tl-none rounded-tr-none' }}
-                        onKeyDown={onKeyPress}
-                        onValueChange={setMessage}
-                        maxLength={512}
-                        placeholder={placeholder}
-                        value={message}
-                        minRows={1}
-                    ></Textarea>
-                </form>
+                <Textarea
+                    classNames={{ inputWrapper: 'rounded-tl-none rounded-tr-none' }}
+                    onKeyDown={onKeyDown}
+                    onValueChange={setMessage}
+                    maxLength={512}
+                    placeholder={placeholder}
+                    value={message}
+                    minRows={1}
+                ></Textarea>
             </Panel>
         </div>
     );

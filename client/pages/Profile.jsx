@@ -5,7 +5,6 @@ import { Button } from '@heroui/react';
 import * as yup from 'yup';
 import AlertPanel from '../Components/Site/AlertPanel';
 import Panel from '../Components/Site/Panel';
-import CardSizeOption from '../Components/Profile/CardSizeOption';
 import GameBackgroundOption from '../Components/Profile/GameBackgroundOption';
 import { useSaveProfileMutation } from '../redux/middleware/api';
 import ProfileMain from '../Components/Profile/ProfileMain';
@@ -17,18 +16,12 @@ import Background1 from '../assets/img/bgs/background.png';
 import Background2 from '../assets/img/bgs/background2.png';
 import { setUser } from '../redux/reducers/auth';
 import { toast } from 'react-toastify';
+import CardSizeSettings from '../Components/Profile/CardSizeSettings';
 
 const backgrounds = [
     { name: 'none', label: 'None', imageUrl: BlankBg },
     { name: 'BG1', label: 'Standard', imageUrl: Background1 },
     { name: 'BG2', label: 'Winter', imageUrl: Background2 }
-];
-
-const cardSizes = [
-    { name: 'small', label: 'Small' },
-    { name: 'normal', label: 'Normal' },
-    { name: 'large', label: 'Large' },
-    { name: 'x-large', label: 'Extra-Large' }
 ];
 
 const defaultActionWindows = {
@@ -48,7 +41,6 @@ const Profile = () => {
     const [selectedBackground, setSelectedBackground] = useState(
         user?.settings.background || 'BG1'
     );
-    const [selectedCardSize, setSelectedCardSize] = useState(user?.settings.cardSize || 'normal');
 
     const [saveProfile, { isLoading: isSaveLoading, error: saveError }] = useSaveProfileMutation();
 
@@ -61,7 +53,6 @@ const Profile = () => {
     }, [saveError]);
 
     useEffect(() => {
-        setSelectedCardSize(user?.settings?.cardSize || 'normal');
         setSelectedBackground(user?.settings?.background || 'BG1');
     }, [user?.settings?.background, user?.settings?.cardSize]);
 
@@ -116,7 +107,8 @@ const Profile = () => {
         promptDupes: !!settings.promptDupes,
         windowTimer: settings.windowTimer || 5,
         timerAbilities: !!settings.timerSettings.abilities,
-        timerEvents: settings.timerSettings.events
+        timerEvents: settings.timerSettings.events,
+        cardSize: settings.cardSize || 'normal'
     };
 
     return (
@@ -145,7 +137,7 @@ const Profile = () => {
                                         events: values.timerEvents
                                     },
                                     background: selectedBackground,
-                                    cardSize: selectedCardSize
+                                    cardSize: values.cardSize
                                 }
                             }
                         }).unwrap();
@@ -167,19 +159,7 @@ const Profile = () => {
                         <GameSettings formProps={formProps} />
                         <div className='grid grid-cols-1 lg:grid-cols-2 gap-2'>
                             <TimerSettings formProps={formProps} />
-                            <Panel title='Card Image Size'>
-                                <div className='flex gap-2 items-end justify-center'>
-                                    {cardSizes.map((cardSize) => (
-                                        <CardSizeOption
-                                            key={cardSize.name}
-                                            label={cardSize.label}
-                                            name={cardSize.name}
-                                            onSelect={(cardSize) => setSelectedCardSize(cardSize)}
-                                            selected={selectedCardSize === cardSize.name}
-                                        />
-                                    ))}
-                                </div>
-                            </Panel>
+                            <CardSizeSettings user={user} formProps={formProps} />
                         </div>
                         <Panel title='Game Board Background'>
                             <div className='grid sm:grid-cols-3 gap-2'>

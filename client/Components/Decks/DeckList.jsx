@@ -64,7 +64,7 @@ const DeckList = ({ restrictedList, onDeckSelected, readOnly }) => {
                             onPointerDown={(e) => e.stopPropagation()}
                         >
                             <CardHover code={faction.value}>
-                                <CardImage size='sm' code={faction.value} />
+                                <CardImage size='small' code={faction.value} />
                             </CardHover>
                         </div>
                     );
@@ -102,7 +102,7 @@ const DeckList = ({ restrictedList, onDeckSelected, readOnly }) => {
                                 return (
                                     <div key={code} onPointerDown={(e) => e.stopPropagation()}>
                                         <CardHover code={code}>
-                                            <CardImage size='sm' code={code} />
+                                            <CardImage size='small' code={code} />
                                         </CardHover>
                                     </div>
                                 );

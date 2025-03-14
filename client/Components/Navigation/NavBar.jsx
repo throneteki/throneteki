@@ -7,6 +7,7 @@ import ServerStatus from './ServerStatus';
 import SmallHeaderIcon from '../../assets/img/header_icon.png';
 import HeaderIcon from '../../assets/img/main_header_logo.png';
 import {
+    Button,
     Dropdown,
     DropdownItem,
     DropdownMenu,
@@ -24,8 +25,10 @@ import { LeftMenu, ProfileMenu, RightMenu } from '../../menus';
 import ProfileDropdown from './ProfileDropdown';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
+import screenfull from 'screenfull';
 
 const NavBar = () => {
+    const [isFullscreen, setIsFullscreen] = useState(screenfull.isFullscreen);
     const { path } = useSelector((state) => state.navigation);
     const { user } = useSelector((state) => state.auth);
     const {
@@ -174,6 +177,17 @@ const NavBar = () => {
                 </NavbarBrand>
             </NavbarContent>
             <NavbarContent className='lg:hidden' justify='end'>
+                <Button
+                    variant='flat'
+                    onPress={() => {
+                        if (screenfull.isEnabled) {
+                            screenfull.toggle();
+                            setIsFullscreen(!isFullscreen);
+                        }
+                    }}
+                >
+                    {isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
+                </Button>
                 {rightMenu}
                 <ProfileDropdown menu={ProfileMenu} user={user} />
             </NavbarContent>

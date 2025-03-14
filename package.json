@@ -88,6 +88,7 @@
         "redis": "^3.1.2",
         "redux-loop": "^4.5.2",
         "sass": "^1.74.1",
+        "screenfull": "^6.0.2",
         "socket.io": "^4.7.5",
         "tailwindcss": "^3.4.6",
         "underscore": "^1.13.1",

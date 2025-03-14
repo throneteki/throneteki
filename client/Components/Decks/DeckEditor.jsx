@@ -388,7 +388,7 @@ const DeckEditor = ({ deck, onBackClick }) => {
                             {(faction) => (
                                 <SelectItem key={faction.value}>
                                     <div className='flex gap-2 items-center'>
-                                        <CardImage size='sm' radius='sm' code={faction.value} />
+                                        <CardImage size='small' code={faction.value} />
                                         <div>{faction.name}</div>
                                     </div>
                                 </SelectItem>

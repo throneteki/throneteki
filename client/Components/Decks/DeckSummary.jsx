@@ -45,7 +45,7 @@ const DeckSummary = ({ className, deck }) => {
         );
 
         const sortedCards = sortBy(cards, (card) => card.card.name).map((card, index) => (
-            <CardHover key={index} code={card.card.code}>
+            <CardHover key={index} code={card.card.code} type={card.card.type}>
                 <div className='flex flex-row gap-1'>
                     {`${card.count}x`}
                     <span className={`icon icon-${type} text-${card.card.faction}`}></span>

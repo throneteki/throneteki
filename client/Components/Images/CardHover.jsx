@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import classNames from 'classnames';
 import CardImage from './CardImage';
 
-const CardHover = ({ className, children, code, size = '3xl', radius = 'lg' }) => {
+const CardHover = ({ className, children, code, size = '3x-large', orientation }) => {
     const [pointerType, setPointerType] = useState(false);
     const [pointerPos, setPointerPos] = useState({ x: 0, y: 0 });
     const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
@@ -40,7 +40,7 @@ const CardHover = ({ className, children, code, size = '3xl', radius = 'lg' }) =
     }, [pointerPos, pointerType, imageSize]);
 
     // Used to hide the image until it is ready to be positioned in above memo
-    const imageAvailable = imageSize.width > 0 && imageSize.height > 0;
+    // const imageAvailable = imageSize.width > 0 && imageSize.height > 0;
 
     const wrapperClassName = useMemo(
         () =>
@@ -51,7 +51,7 @@ const CardHover = ({ className, children, code, size = '3xl', radius = 'lg' }) =
     );
 
     return (
-        <div
+        <span
             className={wrapperClassName}
             onPointerMove={(e) => {
                 if (['touch', 'pen'].includes(e.pointerType)) {
@@ -72,26 +72,23 @@ const CardHover = ({ className, children, code, size = '3xl', radius = 'lg' }) =
                 }
             }}
             onPointerLeave={() => setPointerType(null)}
-            onContextMenu={(e) => e.preventDefault()}
+            onContextMenu={(e) => {
+                if (['touch', 'pen'].includes(e.nativeEvent.pointerType)) {
+                    e.preventDefault();
+                }
+            }}
         >
             {children}
             {!!pointerType && (
                 <div
-                    className={'fixed z-50 pointer-events-none'}
+                    className={'fixed z-[100] pointer-events-none'}
                     style={imageStyle}
                     ref={containerCallback}
                 >
-                    <CardImage
-                        className={classNames('border-white border-2', {
-                            hidden: !imageAvailable
-                        })}
-                        size={size}
-                        radius={radius}
-                        code={code}
-                    />
+                    <CardImage size={size} code={code} orientation={orientation} />
                 </div>
             )}
-        </div>
+        </span>
     );
 };
 

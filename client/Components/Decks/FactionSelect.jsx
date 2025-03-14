@@ -21,7 +21,7 @@ const FactionSelect = ({ onSelect }) => {
                 {factions.map((faction) => (
                     <div key={faction.value} className='flex content-center justify-center'>
                         <div role='button' onPointerDown={() => onSelect(faction)}>
-                            <CardImage size='lg' code={faction.value} />
+                            <CardImage size='large' code={faction.value} />
                         </div>
                     </div>
                 ))}

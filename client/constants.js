@@ -84,3 +84,13 @@ export const BannersForFaction = {
     '01204': 'targaryen',
     '01205': 'tyrell'
 };
+
+export const cardSizes = {
+    sm: [2.4, 3.36], // * 0.6
+    md: [4, 5.6], // * 1
+    lg: [5.6, 7.84], // * 1.4
+    xl: [8, 11.2], // * 2
+    '2xl': [12, 16.8], // * 3
+    '3xl': [16, 22.4], // * 4
+    '4xl': [20, 28] // * 5
+};

@@ -1,5 +1,6 @@
 import { heroui } from '@heroui/react';
 import plugin from 'tailwindcss/plugin';
+import { cardSizes } from './client/constants';
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -19,15 +20,7 @@ export default {
             '4xl': ['2.441rem', '2.441rem'],
             '5xl': ['3.052rem', '3.052rem']
         },
-        cardSize: {
-            sm: ['2.4rem', '3.36rem'], // * 0.6
-            md: ['4rem', '5.6rem'], // * 1
-            lg: ['5.6rem', '7.84rem'], // * 1.4
-            xl: ['8rem', '11.2rem'], // * 2
-            '2xl': ['12rem', '16.8rem'], // * 3
-            '3xl': ['16rem', '22.4rem'], // * 4
-            '4xl': ['20rem', '28rem'] // * 5
-        },
+        cardSize: cardSizes,
         extend: {
             colors: {
                 baratheon: '#e3d852',
@@ -109,18 +102,34 @@ export default {
             matchUtilities(
                 {
                     card: (value) => ({
-                        width: value[0],
-                        height: value[1]
+                        width: `${value[0]}rem`,
+                        height: `${value[1]}rem`,
+                        'border-radius': `${value[0] / 16}rem`
                     }),
-                    'card-rotated': (value) => ({
-                        width: value[1],
-                        height: value[0]
-                    })
+                    'card-horizontal': (value) => ({
+                        width: `${value[1]}rem`,
+                        height: `${value[0]}rem`,
+                        'border-radius': `${value[0] / 16}rem`
+                    }),
+                    'card-rotated': (value) => {
+                        const translateValue = (value[0] - value[1]) / 2;
+                        return {
+                            width: `${value[0]}rem`,
+                            height: `${value[1]}rem`,
+                            'border-radius': `${value[0] / 16}rem`,
+                            transform: `rotate(90deg) translate(${translateValue}rem, ${translateValue}rem)`
+                        };
+                    }
                 },
                 {
                     values: theme('cardSize')
                 }
             );
         })
+    ],
+    safelist: [
+        {
+            pattern: /card-+/
+        }
     ]
 };

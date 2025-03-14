@@ -81,8 +81,11 @@ const AgendaSelect = ({ onBackClick, onNextClick }) => {
                             <CardHover code={agenda.code}>
                                 <CardImage
                                     code={agenda.code}
-                                    size='lg'
-                                    selected={selectedAgendas.some((a) => a.code === agenda.code)}
+                                    size='large'
+                                    className={
+                                        selectedAgendas.some((a) => a.code === agenda.code) &&
+                                        'outline outline-4 outline-green-600'
+                                    }
                                 />
                             </CardHover>
                         </div>

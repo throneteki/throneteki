@@ -538,7 +538,10 @@ const EventEditor = ({ eventId }) => {
                                                         key={card.code}
                                                         value={card.code}
                                                         startContent={
-                                                            <CardImage code={card.code} size='sm' />
+                                                            <CardImage
+                                                                code={card.code}
+                                                                size='small'
+                                                            />
                                                         }
                                                     >
                                                         {card.label}
