@@ -29,7 +29,7 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import CardImage from '../../Components/Images/CardImage';
 import { Constants } from '../../constants';
-import CardHover from '../../Components/Images/CardHover';
+import CardHoverable from '../../Components/Images/CardHoverable';
 
 const formatListTextForUsers = (users) => {
     if (!users) {
@@ -273,7 +273,7 @@ const EventEditor = ({ eventId }) => {
                         }
                         onClose={onClose ? () => onClose(card.code, index) : null}
                     >
-                        <CardHover code={card.code}>{card.label}</CardHover>
+                        <CardHoverable code={card.code}>{card.label}</CardHoverable>
                     </Chip>
                 )),
         [allCards, compareByFactionNameRelease]
