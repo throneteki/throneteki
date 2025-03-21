@@ -4,7 +4,7 @@ import AlertPanel from '../Site/AlertPanel';
 import { Button } from '@heroui/react';
 import { useGetCardsQuery } from '../../redux/middleware/api';
 import LoadingSpinner from '../Site/LoadingSpinner';
-import CardHover from '../Images/CardHover';
+import CardHoverable from '../Images/CardHoverable';
 
 const AgendaSelect = ({ onBackClick, onNextClick }) => {
     const { data, isLoading, isError } = useGetCardsQuery({});
@@ -78,7 +78,7 @@ const AgendaSelect = ({ onBackClick, onNextClick }) => {
                                 );
                             }}
                         >
-                            <CardHover code={agenda.code}>
+                            <CardHoverable code={agenda.code}>
                                 <CardImage
                                     code={agenda.code}
                                     size='large'
@@ -87,7 +87,7 @@ const AgendaSelect = ({ onBackClick, onNextClick }) => {
                                         'outline outline-4 outline-green-600'
                                     }
                                 />
-                            </CardHover>
+                            </CardHoverable>
                         </div>
                     </div>
                 ))}

@@ -24,7 +24,7 @@ import AlertPanel, { AlertType } from '../Site/AlertPanel';
 import DeckStatus from './DeckStatus';
 import ConfirmDialog from '../Site/ConfirmDialog';
 import { toast } from 'react-toastify';
-import CardHover from '../Images/CardHover';
+import CardHoverable from '../Images/CardHoverable';
 import FactionFilter from '../Table/FactionFilter';
 import { Constants } from '../../constants';
 import ImportDeckModal from './ImportDeckModal';
@@ -63,9 +63,9 @@ const DeckList = ({ restrictedList, onDeckSelected, readOnly }) => {
                             className='flex justify-center align-middle'
                             onPointerDown={(e) => e.stopPropagation()}
                         >
-                            <CardHover code={faction.value}>
+                            <CardHoverable code={faction.value}>
                                 <CardImage size='small' code={faction.value} />
-                            </CardHover>
+                            </CardHoverable>
                         </div>
                     );
                 },
@@ -101,9 +101,9 @@ const DeckList = ({ restrictedList, onDeckSelected, readOnly }) => {
                             agendas.map((code) => {
                                 return (
                                     <div key={code} onPointerDown={(e) => e.stopPropagation()}>
-                                        <CardHover code={code}>
+                                        <CardHoverable code={code}>
                                             <CardImage size='small' code={code} />
-                                        </CardHover>
+                                        </CardHoverable>
                                     </div>
                                 );
                             })

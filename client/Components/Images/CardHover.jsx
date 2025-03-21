@@ -1,13 +1,22 @@
-import React, { useCallback, useMemo, useState } from 'react';
-import classNames from 'classnames';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import CardImage from './CardImage';
+import { Spinner } from '@heroui/react';
+import { CardHoverContext } from './CardHoverContext';
+import classNames from 'classnames';
 
-const CardHover = ({ className, children, code, size = '3x-large', orientation }) => {
-    const [pointerType, setPointerType] = useState(false);
-    const [pointerPos, setPointerPos] = useState({ x: 0, y: 0 });
-    const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
+const CardHover = ({ children, size = '3x-large' }) => {
+    const wrapperRef = useRef(null);
+    const spinnerRef = useRef(null);
+    const mousePosRef = useRef({ x: 0, y: 0 });
 
-    const containerCallback = useCallback((node) => {
+    const [type, setType] = useState(null);
+    const [code, setCode] = useState(null);
+
+    const [isLoading, setIsLoading] = useState(false);
+    const [imageSize, setImageSize] = useState({});
+    const [orientation, setOrientation] = useState(null);
+
+    const imageCallback = useCallback((node) => {
         if (node) {
             const resizeObserver = new ResizeObserver(([entry]) => {
                 const width = entry.target.clientWidth;
@@ -18,77 +27,83 @@ const CardHover = ({ className, children, code, size = '3x-large', orientation }
         }
     }, []);
 
-    const imageStyle = useMemo(() => {
-        let { x, y } = pointerPos;
-        if (['touch', 'pen'].includes(pointerType)) {
-            // Offset pointer position to place image above & center of touch point (rather than below & right)
-            x -= imageSize.width / 2;
-            y -= imageSize.height;
+    const positionCallback = useCallback((width, height, type, isLoading) => {
+        if (wrapperRef.current && mousePosRef.current) {
+            let { x, y } = mousePosRef.current;
+            if (isLoading) {
+                // Center the loading spinner to pointer
+                x -= (spinnerRef.current?.clientWidth || 0) / 2;
+                y -= (spinnerRef.current?.clientHeight || 0) / 2;
+            } else if (type === 'touch') {
+                // Place card center & above touch position
+                x -= width / 2;
+                y -= height;
+            }
+            if (!isLoading) {
+                if (y < 0) {
+                    y = 0;
+                } else if (y + height >= window.innerHeight) {
+                    y = window.innerHeight - height;
+                }
+                if (x < 0) {
+                    x = 0;
+                } else if (x + width >= window.innerWidth) {
+                    x = window.innerWidth - width;
+                }
+            }
+            wrapperRef.current.style.top = `${y}px`;
+            wrapperRef.current.style.left = `${x}px`;
         }
+    }, []);
 
-        if (y < 0) {
-            y = 0;
-        } else if (y + imageSize.height >= window.innerHeight) {
-            y = window.innerHeight - imageSize.height;
-        }
-        if (x < 0) {
-            x = 0;
-        } else if (x + imageSize.width >= window.innerWidth) {
-            x = window.innerWidth - imageSize.width;
-        }
-        return { left: x + 'px', top: y + 'px' };
-    }, [pointerPos, pointerType, imageSize]);
+    // Update loading status when card code changes
+    useEffect(() => {
+        setIsLoading(true);
+    }, [code]);
 
-    // Used to hide the image until it is ready to be positioned in above memo
-    // const imageAvailable = imageSize.width > 0 && imageSize.height > 0;
+    // Update card position when any relevant values change
+    useEffect(() => {
+        positionCallback(imageSize.width, imageSize.height, type, isLoading);
+    }, [positionCallback, imageSize.height, imageSize.width, isLoading, type]);
 
-    const wrapperClassName = useMemo(
-        () =>
-            classNames(className, {
-                'select-none': ['touch', 'pen'].includes(pointerType) // Disables text selection on touch/pen devices, but not desktop
-            }),
-        [className, pointerType]
-    );
+    // Update mouse position when pointer move or enter, then update card position
+    const mousePosHandler = (e) => {
+        mousePosRef.current = { x: e.clientX, y: e.clientY };
+        positionCallback(imageSize.width, imageSize.height, type, isLoading);
+    };
+    const imageClassName = classNames('transition-opacity', {
+        'opacity-100': !isLoading,
+        'opacity-0': isLoading
+    });
 
     return (
-        <span
-            className={wrapperClassName}
-            onPointerMove={(e) => {
-                if (['touch', 'pen'].includes(e.pointerType)) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                } else if (e.pointerType === 'mouse') {
-                    setPointerPos({ x: e.clientX, y: e.clientY });
-                }
-            }}
-            onPointerEnter={(e) => {
-                if (['touch', 'pen'].includes(e.pointerType)) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setPointerPos({ x: e.clientX, y: e.clientY });
-                    setPointerType(e.pointerType);
-                } else if (e.pointerType === 'mouse') {
-                    setPointerType(e.pointerType);
-                }
-            }}
-            onPointerLeave={() => setPointerType(null)}
-            onContextMenu={(e) => {
-                if (['touch', 'pen'].includes(e.nativeEvent.pointerType)) {
-                    e.preventDefault();
-                }
-            }}
-        >
-            {children}
-            {!!pointerType && (
-                <div
-                    className={'fixed z-[100] pointer-events-none'}
-                    style={imageStyle}
-                    ref={containerCallback}
-                >
-                    <CardImage size={size} code={code} orientation={orientation} />
-                </div>
-            )}
-        </span>
+        <CardHoverContext.Provider value={{ type, setType, code, setCode }}>
+            <div onPointerMove={mousePosHandler} onPointerEnter={mousePosHandler}>
+                {children}
+            </div>
+            <div ref={wrapperRef} className='fixed z-[100] pointer-events-none'>
+                {code && (
+                    <>
+                        {isLoading && <Spinner ref={spinnerRef} size='lg' color='white' />}
+                        <div ref={imageCallback}>
+                            <CardImage
+                                className={imageClassName}
+                                size={size}
+                                code={code}
+                                orientation={orientation}
+                                onLoad={(e) => {
+                                    setOrientation(
+                                        e.target.width > e.target.height ? 'horizontal' : 'vertical'
+                                    );
+                                    setIsLoading(false);
+                                }}
+                                disableSkeleton={true}
+                            />
+                        </div>
+                    </>
+                )}
+            </div>
+        </CardHoverContext.Provider>
     );
 };
 

@@ -29,7 +29,7 @@ import { validateDeck } from '../../../deck-helper';
 import RestrictedListDropdown from './RestrictedListDropdown';
 import DeckStatus from './DeckStatus';
 import { toast } from 'react-toastify';
-import CardHover from '../Images/CardHover';
+import CardHoverable from '../Images/CardHoverable';
 import CardImage from '../Images/CardImage';
 import FactionFilter from '../Table/FactionFilter';
 import CardTypeFilter from '../Table/CardTypeFilter';
@@ -145,7 +145,7 @@ const DeckEditor = ({ deck, onBackClick }) => {
                 accessorFn: (row) => row.label,
                 header: 'Name',
                 cell: (info) => (
-                    <CardHover code={info.row.original.code}>{info.getValue()}</CardHover>
+                    <CardHoverable code={info.row.original.code}>{info.getValue()}</CardHoverable>
                 ),
                 meta: {
                     colWidth: '70%',

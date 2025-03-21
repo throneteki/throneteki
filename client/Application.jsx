@@ -15,6 +15,7 @@ import BlankBg from './assets/img/bgs/blank.png';
 import StandardBg from './assets/img/bgs/background.png';
 import WinterBg from './assets/img/bgs/background2.png';
 import LoadingSpinner from './Components/Site/LoadingSpinner';
+import CardHover from './Components/Images/CardHover';
 
 const backgrounds = {
     none: BlankBg,
@@ -110,7 +111,7 @@ const Application = () => {
     }, [gameBoardVisible, user]);
 
     return (
-        <div>
+        <>
             <NavBar />
             <main role='main'>
                 <div
@@ -127,17 +128,19 @@ const Application = () => {
                             </div>
                         }
                     >
-                        {isLoading ? (
-                            <div className='w-full h-full flex justify-center items-center'>
-                                <LoadingSpinner size='lg' />
-                            </div>
-                        ) : (
-                            <div className='container'>{component}</div>
-                        )}
+                        <CardHover>
+                            {isLoading ? (
+                                <div className='w-full h-full flex justify-center items-center'>
+                                    <LoadingSpinner size='lg' />
+                                </div>
+                            ) : (
+                                <div className='container'>{component}</div>
+                            )}
+                        </CardHover>
                     </Sentry.ErrorBoundary>
                 </div>
             </main>
-        </div>
+        </>
     );
 };
 
