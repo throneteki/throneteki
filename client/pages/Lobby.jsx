@@ -113,7 +113,7 @@ const Lobby = () => {
                 <AlertPanel variant={motd.motdType}>{getMessageWithLinks(motd.message)}</AlertPanel>
             )}
             {bannerNotice ? <AlertPanel message={bannerNotice} variant='danger' /> : null}
-            <div className='min-h-32 max-h-[25vh]'>
+            <div className='max-h-[25vh]'>
                 <Panel title='Latest site news'>{newsInfo}</Panel>
             </div>
             <Panel className='flex flex-col' title={`Lobby Chat (${users.length} online)`}>

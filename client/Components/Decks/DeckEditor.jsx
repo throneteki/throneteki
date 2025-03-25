@@ -478,6 +478,7 @@ const DeckEditor = ({ deck, onBackClick }) => {
                 <ImportDeckModal
                     isOpen={showImportModal}
                     onOpenChange={(open) => setShowImportModal(open)}
+                    submitLabel='Submit & Save'
                     onProcessed={async (deck) => {
                         try {
                             setFaction(deck.faction);

@@ -24,6 +24,7 @@ const ImportDeckModal = ({
     isLoading,
     message,
     placement = 'center',
+    submitLabel = 'Submit',
     ...modalProps
 }) => {
     const [deckText, setDeckText] = useState('');
@@ -100,7 +101,7 @@ const ImportDeckModal = ({
                                     setIsProcessing(false);
                                 }}
                             >
-                                Submit
+                                {submitLabel}
                             </Button>
                         </ModalFooter>
                     </>

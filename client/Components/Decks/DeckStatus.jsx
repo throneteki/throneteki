@@ -52,7 +52,7 @@ const DeckStatus = ({ className, compact = false, status }) => {
         [pointerType]
     );
 
-    const chipClass = classNames('pointer-events-none h- h-8', className);
+    const chipClass = classNames('pointer-events-none h-8', className);
 
     let labelClass = null;
     // Compacts if true, or at the provided size step
@@ -92,7 +92,6 @@ const DeckStatus = ({ className, compact = false, status }) => {
                 className={wrapperClass}
                 onPointerEnter={(e) => setPointerType(e.pointerType)}
                 onPointerLeave={() => setPointerType(null)}
-                onContextMenu={(e) => e.preventDefault()}
             >
                 <Chip className={chipClass} color={info.color} radius='md'>
                     <div className='flex flex-row gap-1 items-center'>

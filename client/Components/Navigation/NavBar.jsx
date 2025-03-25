@@ -24,7 +24,12 @@ import {
 import { LeftMenu, ProfileMenu, RightMenu } from '../../menus';
 import ProfileDropdown from './ProfileDropdown';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
+import {
+    faChevronDown,
+    faChevronUp,
+    faDownLeftAndUpRightToCenter,
+    faUpRightAndDownLeftFromCenter
+} from '@fortawesome/free-solid-svg-icons';
 import screenfull from 'screenfull';
 
 const NavBar = () => {
@@ -185,9 +190,17 @@ const NavBar = () => {
                             setIsFullscreen(!isFullscreen);
                         }
                     }}
-                >
-                    {isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
-                </Button>
+                    startContent={
+                        <FontAwesomeIcon
+                            icon={
+                                isFullscreen
+                                    ? faDownLeftAndUpRightToCenter
+                                    : faUpRightAndDownLeftFromCenter
+                            }
+                        />
+                    }
+                    isIconOnly={true}
+                />
                 {rightMenu}
                 <ProfileDropdown menu={ProfileMenu} user={user} />
             </NavbarContent>

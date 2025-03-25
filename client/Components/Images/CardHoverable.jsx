@@ -36,11 +36,6 @@ const CardHoverable = ({ className, children, code }) => {
                 setType(null);
                 setCode(null);
             }}
-            onContextMenu={(e) => {
-                if (['touch', 'pen'].includes(e.nativeEvent.pointerType)) {
-                    e.preventDefault();
-                }
-            }}
         >
             {children}
         </div>
