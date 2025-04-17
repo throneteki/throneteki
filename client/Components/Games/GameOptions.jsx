@@ -1,7 +1,7 @@
 import React from 'react';
 import { Input, Switch } from '@heroui/react';
 
-const GameOptions = ({ formProps }) => {
+const GameOptions = ({ formProps, isDisabled }) => {
     const options = [
         { name: 'allowSpectators', label: 'Allow spectators' },
         { name: 'showHand', label: 'Show hands to spectators' },
@@ -28,6 +28,7 @@ const GameOptions = ({ formProps }) => {
                                 onChange={formProps.handleChange}
                                 value='true'
                                 isSelected={formProps.values[option.name]}
+                                isDisabled={isDisabled}
                             >
                                 {option.label}
                             </Switch>
@@ -50,6 +51,7 @@ const GameOptions = ({ formProps }) => {
                                     formProps.touched.gameTimeLimit
                                 }
                                 errorMessage={formProps.errors.gameTimeLimit}
+                                isDisabled={isDisabled}
                             />
                         </div>
                     </div>
@@ -68,6 +70,7 @@ const GameOptions = ({ formProps }) => {
                                     formProps.touched.chessClockTimeLimit
                                 }
                                 errorMessage={formProps.errors.chessClockTimeLimit}
+                                isDisabled={isDisabled}
                             />
                             <Input
                                 label={'Delay (seconds)'}
@@ -79,6 +82,7 @@ const GameOptions = ({ formProps }) => {
                                     formProps.touched.chessClockDelay
                                 }
                                 errorMessage={formProps.errors.chessClockDelay}
+                                isDisabled={isDisabled}
                             />
                         </div>
                     </div>

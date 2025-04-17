@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Formik } from 'formik';
 import { Button, Input, Select, SelectItem } from '@heroui/react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -26,6 +26,7 @@ const NewGame = ({
     const connected = useSelector((state) => state.lobby.connected);
     const user = useSelector((state) => state.auth.user);
     const [restrictedList, setRestrictedList] = useState(restrictedLists?.[0]._id);
+    const [usingEventOptions, setUsingEventOptions] = useState(false);
 
     useEffect(() => {
         if (!restrictedList && restrictedLists?.length) {
@@ -39,6 +40,22 @@ const NewGame = ({
             return acc;
         }, {});
     }, [restrictedLists]);
+
+    const syncGameOptions = useCallback(
+        (formProps, restirctedListId) => {
+            const restrictedList = restrictedListsById[restirctedListId];
+            if (restrictedList.useEventGameOptions) {
+                formProps.setFieldValue('gameType', 'competitive');
+                for (const [key, value] of Object.entries(restrictedList.eventGameOptions)) {
+                    formProps.setFieldValue(key, value);
+                }
+                setUsingEventOptions(true);
+            } else {
+                setUsingEventOptions(false);
+            }
+        },
+        [restrictedListsById]
+    );
 
     const schema = yup.object({
         name: yup
@@ -143,7 +160,10 @@ const NewGame = ({
                                             <Select
                                                 label={'Mode'}
                                                 selectedKeys={new Set([restrictedList])}
-                                                onChange={(e) => setRestrictedList(e.target.value)}
+                                                onChange={(e) => {
+                                                    setRestrictedList(e.target.value);
+                                                    syncGameOptions(formProps, e.target.value);
+                                                }}
                                             >
                                                 {restrictedLists?.map((rl) => (
                                                     <SelectItem key={rl._id} value={rl._id}>
@@ -153,10 +173,13 @@ const NewGame = ({
                                             </Select>
                                         </div>
                                     </div>
-                                    <GameOptions formProps={formProps} />
+                                    <GameOptions
+                                        formProps={formProps}
+                                        isDisabled={usingEventOptions}
+                                    />
                                 </>
                             )}
-                            {<GameTypes formProps={formProps} />}
+                            {<GameTypes formProps={formProps} isDisabled={usingEventOptions} />}
                             <div className='flex gap-2'>
                                 <Button color='success' type='submit'>
                                     Start

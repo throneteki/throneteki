@@ -2,7 +2,7 @@ import React from 'react';
 import GameTypeInfo from './GameTypeInfo';
 import { Radio, RadioGroup } from '@heroui/react';
 
-const GameTypes = ({ formProps }) => {
+const GameTypes = ({ formProps, isDisabled }) => {
     const types = [
         { name: 'beginner', label: 'Beginner' },
         { name: 'casual', label: 'Casual' },
@@ -17,6 +17,7 @@ const GameTypes = ({ formProps }) => {
                 orientation='horizontal'
                 value={formProps.values.gameType}
                 onValueChange={(value) => formProps.setFieldValue('gameType', value)}
+                isDisabled={isDisabled}
             >
                 {types.map((type) => (
                     <Radio key={type.name} id={type.name} value={type.name}>
