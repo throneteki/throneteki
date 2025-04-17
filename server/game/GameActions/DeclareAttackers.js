@@ -20,19 +20,17 @@ class DeclareAttackers extends GameAction {
         };
         return this.event('onAttackersDeclared', eventParams, (event) => {
             for (let card of event.cards) {
-                const attackEventParams = { card, challenge: event.challenge };
-                event.thenAttachEvent(
-                    this.event('onDeclaredAsAttacker', attackEventParams, (attackEvent) => {
-                        if (
-                            !attackEvent.card.kneeled &&
-                            attackEvent.card.kneelsAsAttacker(attackEvent.challenge.challengeType)
-                        ) {
-                            attackEvent.thenAttachEvent(
-                                KneelCard.createEvent({ card: attackEvent.card })
-                            );
-                        }
-                    })
-                );
+                const declareAsAttackerEvent = this.event('onDeclaredAsAttacker', {
+                    card,
+                    challenge: event.challenge
+                });
+                if (!card.kneeled && card.kneelsAsAttacker(event.challenge.challengeType)) {
+                    event.thenAttachEvent(
+                        this.atomic(declareAsAttackerEvent, KneelCard.createEvent({ card }))
+                    );
+                } else {
+                    event.thenAttachEvent(declareAsAttackerEvent);
+                }
             }
         });
     }
@@ -40,7 +38,7 @@ class DeclareAttackers extends GameAction {
     canBeDeclaredAsAttacker(card, challenge) {
         let canKneelForChallenge =
             (!card.kneeled && !card.kneelsAsAttacker(challenge.challengeType)) ||
-            (!card.kneeled && card.allowGameAction('kneel')) ||
+            KneelCard.allow({ card }) ||
             (card.kneeled && card.challengeOptions.contains('canBeDeclaredWhileKneeling'));
 
         return (
