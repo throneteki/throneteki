@@ -194,4 +194,55 @@ describe('The Rains of Castamere', function () {
             expect(this.player1).not.toAllowAbilityTrigger('The Red Wedding');
         });
     });
+
+    integration(function () {
+        beforeEach(function () {
+            const starkDeck = this.buildDeck('stark', ['Trading with the Pentoshi']);
+            const martellRainsDeck = this.buildDeck('martell',[
+                '"The Rains of Castamere"',
+                'Trading with the Pentoshi',
+                'Filthy Accusations',
+                'A Song of Summer',
+                'Dorne (R)',
+                'Nymeria of Ny Sar',
+                'The Red Viper (Core)',
+                'House Dayne Knight'
+            ]);
+
+            this.player1.selectDeck(starkDeck);
+            this.player2.selectDeck(martellRainsDeck);
+            this.startGame();
+            this.keepStartingHands();
+
+            this.dorne = this.player2.findCardByName('Dorne', 'hand');
+            this.nym = this.player2.findCardByName('Nymeria of Ny Sar', 'hand');
+            this.viper = this.player2.findCardByName('The Red Viper', 'hand');
+            this.martellPentoshi = this.player2.findCardByName(
+                'Trading with the Pentoshi',
+                'plot deck'
+            );
+            this.songOfSummer = this.player2.findCardByName('A Song of Summer', 'plot deck');
+
+            this.player2.clickCard(this.viper);
+
+            this.completeSetup();
+        });
+
+        it('should not prevent plot recycling when usable plots are exhausted in the challenge phase', function () {
+            this.player2.selectPlot('Trading with the Pentoshi');
+            this.selectFirstPlayer(this.player2);
+            this.selectPlotOrder(this.player2);
+            this.player2.clickCard(this.dorne);
+            this.player2.clickCard(this.nym);
+            this.player2.clickCard(this.dorne);
+
+            this.completeMarshalPhase();
+            this.unopposedChallenge(this.player2, 'Power', this.viper);
+
+            this.player2.triggerAbility(this.nym);
+            this.player2.clickCard('A Song of Summer');
+
+            expect(this.martellPentoshi.location).toBe('plot deck');
+        });
+    });
 });
