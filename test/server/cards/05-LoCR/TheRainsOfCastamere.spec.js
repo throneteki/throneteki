@@ -198,7 +198,7 @@ describe('The Rains of Castamere', function () {
     integration(function () {
         beforeEach(function () {
             const starkDeck = this.buildDeck('stark', ['Trading with the Pentoshi']);
-            const martellRainsDeck = this.buildDeck('martell',[
+            const martellRainsDeck = this.buildDeck('martell', [
                 '"The Rains of Castamere"',
                 'Trading with the Pentoshi',
                 'Filthy Accusations',
