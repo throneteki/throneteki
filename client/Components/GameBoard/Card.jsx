@@ -301,7 +301,7 @@ const Card = ({
 
         // Wrapper class handles the rotating of knelt or horizontally placed vertical cards (eg. dead pile)
         const wrapperClass = classNames(
-            'relative overflow-visible transition-all touch-manipulation',
+            'relative overflow-visible transition-all',
             cardClass(
                 size,
                 (card.type !== 'plot' && orientation === 'horizontal') || card.kneeled
@@ -330,7 +330,7 @@ const Card = ({
                 {card.name && <span className='absolute left-0 top-0'>{card.name}</span>}
                 <CardImage
                     ref={setNodeRef}
-                    className='absolute left-0 top-0'
+                    className='absolute left-0 top-0 touch-none'
                     size={size}
                     code={imageCode}
                     orientation={card.type === 'plot' ? 'horizontal' : 'vertical'}
