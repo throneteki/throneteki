@@ -10,6 +10,7 @@ import { useGetCardsQuery } from '../../redux/middleware/api';
 import { navigate } from '../../redux/reducers/navigation';
 import {
     sendCardClickedMessage,
+    sendCardSizeChangeMessage,
     sendGameChatMessage,
     sendToggleDupesMessage,
     sendToggleKeywordSettingMessage,
@@ -155,9 +156,11 @@ const GameBoard = () => {
                 onTimerSettingToggle={(option, value) =>
                     dispatch(sendToggleTimerSetting(option, value))
                 }
+                onCardSizeSettingChange={(value) => dispatch(sendCardSizeChangeMessage(value))}
                 promptDupes={thisPlayer.promptDupes}
                 promptedActionWindows={thisPlayer.promptedActionWindows}
                 timerSettings={thisPlayer.timerSettings}
+                cardSizeSetting={thisPlayer.cardSize}
             />
         </>
     );

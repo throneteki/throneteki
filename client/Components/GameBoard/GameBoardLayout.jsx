@@ -81,7 +81,7 @@ const GameBoardLayout = ({ thisPlayer, otherPlayer, onCardClick }) => {
                     spectating={!thisPlayer}
                     title={otherPlayer.title}
                     side='top'
-                    cardSize={user.settings.cardSize}
+                    cardSize={thisPlayer.cardSize}
                     plotDeck={otherPlayer.cardPiles.plotDeck}
                     plotDiscard={otherPlayer.cardPiles.plotDiscard}
                     activePlot={otherPlayer.activePlot}
@@ -164,7 +164,7 @@ const GameBoardLayout = ({ thisPlayer, otherPlayer, onCardClick }) => {
                     onMenuItemClick={(card, menuItem) =>
                         dispatch(sendCardMenuItemClickedMessage(card.uuid, menuItem))
                     }
-                    cardSize={user.settings.cardSize}
+                    cardSize={thisPlayer.cardSize}
                     side='bottom'
                     plotDeck={thisPlayer.cardPiles.plotDeck}
                     plotDiscard={thisPlayer.cardPiles.plotDiscard}

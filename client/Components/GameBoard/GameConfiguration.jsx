@@ -1,6 +1,8 @@
 import React from 'react';
-import { Switch } from '@heroui/react';
+import { Radio, RadioGroup, Switch } from '@heroui/react';
 import Panel from '../Site/Panel';
+import { allowedCardSizes } from '../Profile/CardSizeSettings';
+import CardImage from '../Images/CardImage';
 
 const windows = [
     { name: 'plot', label: 'Plots revealed' },
@@ -18,8 +20,10 @@ const GameConfiguration = ({
     keywordSettings,
     promptDupes,
     timerSettings,
+    cardSizeSetting,
     onKeywordSettingToggle,
     onTimerSettingToggle,
+    onCardSizeSettingChange,
     onActionWindowToggle,
     onPromptDupesToggle
 }) => {
@@ -66,6 +70,21 @@ const GameConfiguration = ({
                             {'Show timer for card abilities'}
                         </Switch>
                     </div>
+                </Panel>
+                <Panel title='Card Sizing'>
+                    <RadioGroup
+                        value={cardSizeSetting}
+                        onValueChange={(value) =>
+                            onCardSizeSettingChange && onCardSizeSettingChange(value)
+                        }
+                        orientation='horizontal'
+                    >
+                        {allowedCardSizes.map(({ name, label }) => (
+                            <Radio key={name} value={name}>
+                                {label}
+                            </Radio>
+                        ))}
+                    </RadioGroup>
                 </Panel>
                 <Panel title={'Other Settings'}>
                     <div className='flex flex-col gap-2'>

@@ -909,6 +909,15 @@ class Game extends EventEmitter {
         player.timerSettings[settingName] = toggle;
     }
 
+    cardSizeChange(playerName, value) {
+        var player = this.getPlayerByName(playerName);
+        if (!player) {
+            return;
+        }
+
+        player.cardSize = value;
+    }
+
     toggleKeywordSetting(playerName, settingName, toggle) {
         var player = this.getPlayerByName(playerName);
         if (!player) {

@@ -3,7 +3,7 @@ import Panel from '../Site/Panel';
 import { Radio, RadioGroup } from '@heroui/react';
 import CardImage from '../Images/CardImage';
 
-const allowedSizes = [
+export const allowedCardSizes = [
     // { name: 'auto', label: 'Auto' },
     { name: 'small', label: 'Small' },
     { name: 'normal', label: 'Normal' },
@@ -19,7 +19,7 @@ const CardSizeSettings = ({ formProps }) => {
                     value={formProps.values.cardSize}
                     onValueChange={(value) => formProps.setFieldValue('cardSize', value)}
                 >
-                    {allowedSizes.map(({ name, label }) => (
+                    {allowedCardSizes.map(({ name, label }) => (
                         <Radio key={name} value={name}>
                             {label}
                         </Radio>
