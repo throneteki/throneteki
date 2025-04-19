@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import Card from './Card';
 import { standardiseCardSize } from '../../util';
 
-const PlayerBoard = ({ cardsInPlay, rowDirection, onCardClick, onMenuItemClick, user }) => {
+const PlayerBoard = ({ cardsInPlay, rowDirection, onCardClick, onMenuItemClick, cardSize }) => {
     const getCardRows = useCallback(() => {
         let groupedCards = cardsInPlay.reduce((group, card) => {
             (group[card.type] = group[card.type] || []).push(card);
@@ -47,10 +47,7 @@ const PlayerBoard = ({ cardsInPlay, rowDirection, onCardClick, onMenuItemClick, 
             return row.map((card) => {
                 const dupeOffset = maxDupe - (card.dupes?.length || 0);
                 const dupeOffsets = Array.from({ length: dupeOffset }, (_, i) => (
-                    <div
-                        key={i}
-                        className={`duplicate-offset-${standardiseCardSize(user.settings.cardSize)}`}
-                    />
+                    <div key={i} className={`duplicate-offset-${standardiseCardSize(cardSize)}`} />
                 ));
                 return (
                     <div key={card.uuid} className='flex flex-col'>
@@ -60,14 +57,14 @@ const PlayerBoard = ({ cardsInPlay, rowDirection, onCardClick, onMenuItemClick, 
                             disableHover={card.facedown && !card.code}
                             onClick={onCardClick}
                             onMenuItemClick={onMenuItemClick}
-                            size={user.settings.cardSize}
+                            size={cardSize}
                             source='play area'
                         />
                     </div>
                 );
             });
         },
-        [onCardClick, onMenuItemClick, user]
+        [onCardClick, onMenuItemClick, cardSize]
     );
 
     const renderRows = useCallback(

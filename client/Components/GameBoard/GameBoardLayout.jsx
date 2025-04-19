@@ -123,7 +123,7 @@ const GameBoardLayout = ({ thisPlayer, otherPlayer, onCardClick }) => {
                                 dispatch(sendCardMenuItemClickedMessage(card.uuid, menuItem))
                             }
                             rowDirection='reverse'
-                            user={user}
+                            cardSize={thisPlayer.cardSize}
                         />
                         <div className='flex-1'>
                             <Droppable source='play area' className='h-full flex'>
@@ -136,7 +136,7 @@ const GameBoardLayout = ({ thisPlayer, otherPlayer, onCardClick }) => {
                                         )
                                     }
                                     rowDirection='default'
-                                    user={user}
+                                    cardSize={thisPlayer.cardSize}
                                 />
                             </Droppable>
                         </div>
@@ -176,7 +176,7 @@ const GameBoardLayout = ({ thisPlayer, otherPlayer, onCardClick }) => {
             <DragOverlay className={'opacity-50'} dropAnimation={null}>
                 {draggingDetail && (
                     <CardImage
-                        size={user.settings.cardSize}
+                        size={thisPlayer.cardSize}
                         code={draggingDetail.card.code || 'cardback'}
                         orientation={
                             (draggingDetail.card.type !== 'plot' &&
