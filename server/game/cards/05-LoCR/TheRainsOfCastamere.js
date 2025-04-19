@@ -45,7 +45,6 @@ class TheRainsOfCastamere extends AgendaCard {
         });
 
         this.persistentEffect({
-            condition: () => this.game.currentPhase === 'plot',
             match: (card) => card.getType() === 'plot' && card.hasTrait('Scheme'),
             targetController: 'current',
             targetLocation: 'plot deck',
