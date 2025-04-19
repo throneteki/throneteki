@@ -2,7 +2,6 @@ import React from 'react';
 import { Radio, RadioGroup, Switch } from '@heroui/react';
 import Panel from '../Site/Panel';
 import { allowedCardSizes } from '../Profile/CardSizeSettings';
-import CardImage from '../Images/CardImage';
 
 const windows = [
     { name: 'plot', label: 'Plots revealed' },
