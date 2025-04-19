@@ -1,19 +1,18 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import $ from 'jquery';
 
 import { ItemTypes } from '../../constants';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
-import { PopupDefaults } from './PopupDefaults';
 import { useDndMonitor, useDraggable } from '@dnd-kit/core';
+import classNames from 'classnames';
+// import { PopupDefaults } from './PopupDefaults';
 
-const MovablePanel = ({ name, side, title, onCloseClick, children, size }) => {
+const MovablePanel = ({ name, side, title, onCloseClick, children, className }) => {
     const key = `${name}-${side}`;
-    const savedStyle = localStorage.getItem(key);
-    const initialStyle = (savedStyle && JSON.parse(savedStyle)) || PopupDefaults[key];
+    const savedPosition = localStorage.getItem(key);
+    const initialPosition = (savedPosition && JSON.parse(savedPosition)) || { x: 150, y: 150 }; // PopupDefaults[key]; TODO: Implement popup defaults properly/programatically
 
-    const [position, setPosition] = useState(Object.assign({}, initialStyle));
-    const [startPosition, setStartPosition] = useState();
+    const [startPosition, setStartPosition] = useState(initialPosition);
     const popupRef = useRef(null);
 
     const { attributes, listeners, setNodeRef, transform } = useDraggable({
@@ -33,9 +32,9 @@ const MovablePanel = ({ name, side, title, onCloseClick, children, size }) => {
                 return;
             }
 
-            const currentPos = popupRef.current.getBoundingClientRect();
+            const { x, y } = popupRef.current.getBoundingClientRect();
 
-            setStartPosition(currentPos);
+            setStartPosition({ x, y });
         },
         onDragEnd(event) {
             if (
@@ -45,59 +44,62 @@ const MovablePanel = ({ name, side, title, onCloseClick, children, size }) => {
                 return;
             }
 
-            const offset = event.delta;
-
-            updatePosition(offset);
-
-            const style = {
-                left: startPosition.left + offset.x,
-                top: startPosition.top + offset.y
-            };
-
-            localStorage.setItem(`${name}-${side}`, JSON.stringify(style));
+            let { x, y } = popupRef.current.getBoundingClientRect();
+            localStorage.setItem(key, JSON.stringify({ x, y }));
+            setStartPosition({ x, y });
         }
     });
 
     const updatePosition = useCallback(
-        (dragOffset) => {
-            const popup = $(popupRef.current);
+        (offset) => {
+            if (popupRef.current) {
+                let { x, y } = startPosition;
+                x += offset?.x || 0;
+                y += offset?.y || 0;
+                const height = popupRef.current.clientHeight;
+                const width = popupRef.current.clientWidth;
+                if (y < 0) {
+                    y = 0;
+                } else if (y + height >= window.innerHeight) {
+                    y = window.innerHeight - height;
+                }
+                if (x < 0) {
+                    x = 0;
+                } else if (x + width >= window.innerWidth) {
+                    x = window.innerWidth - width;
+                }
 
-            const style = {
-                position: 'fixed',
-                left: Math.max(startPosition.left + dragOffset.x, 0),
-                top: Math.max(startPosition.top + dragOffset.y, 50)
-            };
-
-            if (style.left + popup.width() > window.innerWidth) {
-                style.left = window.innerWidth - popup.width();
+                popupRef.current.style.top = `${y}px`;
+                popupRef.current.style.left = `${x}px`;
             }
-
-            if (style.top + popup.height() > window.innerHeight) {
-                style.top = window.innerHeight - popup.height();
-            }
-
-            setPosition(style);
         },
-        [startPosition?.left, startPosition?.top]
+        [startPosition]
     );
 
     useEffect(() => {
-        if (transform) {
-            updatePosition(transform);
-        }
-    }, [transform, updatePosition]);
+        updatePosition(transform);
+    }, [transform, updatePosition, popupRef]);
+
+    useEffect(() => {
+        window.addEventListener('resize', updatePosition);
+
+        return () => {
+            window.removeEventListener('resize', updatePosition);
+        };
+    }, [updatePosition]);
+
+    const wrapperClass = classNames(
+        className,
+        'max-h-screen max-w-screen fixed flex flex-col border-primary bg-black/65 rounded-md z-50 overflow-hidden'
+    );
 
     return (
-        <div
-            ref={popupRef}
-            className={`panel border-primary bg-black/65 ${size} rounded-md fixed z-50 overflow-hidden`}
-            style={position}
-        >
+        <div ref={popupRef} className={wrapperClass}>
             <div
                 {...attributes}
                 {...listeners}
                 ref={setNodeRef}
-                className='flex justify-end border-b-1 border-foreground border-transparent bg-primary p-1.5 text-center font-bold text-white opacity-100'
+                className='flex justify-end border-b-1 border-foreground border-transparent bg-primary p-1.5 text-center font-bold text-white opacity-100 h-auto touch-none'
                 onClick={(event) => event.stopPropagation()}
             >
                 <span className='flex-1 text-center'>{title}</span>

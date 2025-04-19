@@ -12,14 +12,15 @@ import {
     sendShowDrawDeckMessage,
     sendShuffleDeckMessage
 } from '../../redux/reducers/game';
-import { DndContext, MouseSensor, TouchSensor, useSensor } from '@dnd-kit/core';
+import { DndContext, DragOverlay, MouseSensor, TouchSensor, useSensor } from '@dnd-kit/core';
 import { ItemTypes } from '../../constants';
+import CardImage from '../Images/CardImage';
 
-const GameBoardLayout = ({ thisPlayer, otherPlayer, onCardClick, onMouseOver, onMouseOut }) => {
+const GameBoardLayout = ({ thisPlayer, otherPlayer, onCardClick }) => {
     const currentGame = useSelector((state) => state.lobby.currentGame);
     const user = useSelector((state) => state.auth.user);
+    const [draggingDetail, setDraggingDetail] = useState(null);
     const dispatch = useDispatch();
-    const [isDragging, setIsDragging] = useState(false);
 
     const mouseSensor = useSensor(MouseSensor, {
         activationConstraint: {
@@ -27,25 +28,31 @@ const GameBoardLayout = ({ thisPlayer, otherPlayer, onCardClick, onMouseOver, on
         }
     });
 
+    // TODO: Create a custom touch sensor to allow for distance, delay & tolerance to work together (as TouchSensor does not support all 3 used together)
+    // Distance is required to ensure press + hold shows the card hover
+    // Delay is required to ensure a swipe gesture will scroll, such as scrolling down the draw deck window
+    // Tolerance is a nice-to-have, but can probably be 0
     const touchSensor = useSensor(TouchSensor, {
         activationConstraint: {
-            delay: 250,
-            tolerance: 5
+            distance: 10
         }
     });
 
     return (
         <DndContext
             sensors={[mouseSensor, touchSensor]}
-            onDragStart={() => setIsDragging(true)}
-            onDragCancel={() => setIsDragging(false)}
+            onDragStart={(event) => {
+                const card = event.active.data.current?.card;
+                if (card) {
+                    const orientation = event.active.data.current?.orientation;
+                    setDraggingDetail({ card, orientation });
+                }
+            }}
             onDragEnd={(event) => {
-                setIsDragging(false);
-
                 if (!event.over || event.active.data.current.type !== ItemTypes.CARD) {
                     return;
                 }
-
+                setDraggingDetail(null);
                 dispatch(
                     sendDragDropMessage(
                         event.active.data.current.card.uuid,
@@ -55,38 +62,34 @@ const GameBoardLayout = ({ thisPlayer, otherPlayer, onCardClick, onMouseOver, on
                 );
             }}
         >
-            <div className='flex w-full flex-shrink flex-grow flex-col overflow-auto'>
-                <div className='flex'>
-                    <PlayerRow
-                        agendas={otherPlayer.agendas}
-                        faction={otherPlayer.faction}
-                        hand={otherPlayer.cardPiles.hand}
-                        isMe={false}
-                        isMelee={currentGame.isMelee}
-                        numDrawCards={otherPlayer.numDrawCards}
-                        discardPile={otherPlayer.cardPiles.discardPile}
-                        deadPile={otherPlayer.cardPiles.deadPile}
-                        drawDeck={otherPlayer.cardPiles.drawDeck}
-                        onCardClick={onCardClick}
-                        onMouseOver={isDragging ? null : onMouseOver}
-                        onMouseOut={onMouseOut}
-                        outOfGamePile={otherPlayer.cardPiles.outOfGamePile}
-                        username={user.username}
-                        revealTopCard={otherPlayer.revealTopCard}
-                        shadows={otherPlayer.cardPiles.shadows}
-                        spectating={!thisPlayer}
-                        title={otherPlayer.title}
-                        side='top'
-                        cardSize={user.settings.cardSize}
-                        plotDeck={otherPlayer.cardPiles.plotDeck}
-                        plotDiscard={otherPlayer.cardPiles.plotDiscard}
-                        activePlot={otherPlayer.activePlot}
-                        selectedPlot={otherPlayer.selectedPlot}
-                        mustShowPlotSelection={otherPlayer.mustShowPlotSelection}
-                    />
-                </div>
-                <div className='flex flex-grow flex-shrink'>
-                    <div className='relative flex flex-col justify-end w-40 md:w-56'>
+            <div className={'flex flex-grow flex-col min-w-max'}>
+                <PlayerRow
+                    agendas={otherPlayer.agendas}
+                    faction={otherPlayer.faction}
+                    hand={otherPlayer.cardPiles.hand}
+                    isMe={false}
+                    isMelee={currentGame.isMelee}
+                    numDrawCards={otherPlayer.numDrawCards}
+                    discardPile={otherPlayer.cardPiles.discardPile}
+                    deadPile={otherPlayer.cardPiles.deadPile}
+                    drawDeck={otherPlayer.cardPiles.drawDeck}
+                    onCardClick={onCardClick}
+                    outOfGamePile={otherPlayer.cardPiles.outOfGamePile}
+                    username={user.username}
+                    revealTopCard={otherPlayer.revealTopCard}
+                    shadows={otherPlayer.cardPiles.shadows}
+                    spectating={!thisPlayer}
+                    title={otherPlayer.title}
+                    side='top'
+                    cardSize={user.settings.cardSize}
+                    plotDeck={otherPlayer.cardPiles.plotDeck}
+                    plotDiscard={otherPlayer.cardPiles.plotDiscard}
+                    activePlot={otherPlayer.activePlot}
+                    selectedPlot={otherPlayer.selectedPlot}
+                    mustShowPlotSelection={otherPlayer.mustShowPlotSelection}
+                />
+                <div className='flex flex-grow'>
+                    <div className='relative flex flex-col justify-end w-56'>
                         <GameTimer thisPlayer={thisPlayer} otherPlayer={otherPlayer}></GameTimer>
                         <div className='flex flex-col justify-between'>
                             <ActivePlayerPrompt
@@ -104,8 +107,6 @@ const GameBoardLayout = ({ thisPlayer, otherPlayer, onCardClick, onMouseOver, on
                                         )
                                     )
                                 }
-                                onMouseOver={isDragging ? null : onMouseOver}
-                                onMouseOut={onMouseOut}
                                 user={user}
                                 phase={thisPlayer.phase}
                                 // timerLimit={this.props.timerLimit}
@@ -114,15 +115,13 @@ const GameBoardLayout = ({ thisPlayer, otherPlayer, onCardClick, onMouseOver, on
                             />
                         </div>
                     </div>
-                    <div className='flex flex-1 flex-col m-2 overflow-x-auto'>
+                    <div className='flex flex-1 flex-col m-2'>
                         <PlayerBoard
                             cardsInPlay={otherPlayer.cardPiles.cardsInPlay}
                             onCardClick={onCardClick}
                             onMenuItemClick={(card, menuItem) =>
                                 dispatch(sendCardMenuItemClickedMessage(card.uuid, menuItem))
                             }
-                            onMouseOut={onMouseOut}
-                            onMouseOver={isDragging ? null : onMouseOver}
                             rowDirection='reverse'
                             user={user}
                         />
@@ -136,8 +135,6 @@ const GameBoardLayout = ({ thisPlayer, otherPlayer, onCardClick, onMouseOver, on
                                             sendCardMenuItemClickedMessage(card.uuid, menuItem)
                                         )
                                     }
-                                    onMouseOut={onMouseOut}
-                                    onMouseOver={isDragging ? null : onMouseOver}
                                     rowDirection='default'
                                     user={user}
                                 />
@@ -145,40 +142,52 @@ const GameBoardLayout = ({ thisPlayer, otherPlayer, onCardClick, onMouseOver, on
                         </div>
                     </div>
                 </div>
-                <div className='player-home-row our-side'>
-                    <PlayerRow
-                        isMe={!!thisPlayer}
-                        agendas={thisPlayer.agendas}
-                        faction={thisPlayer.faction}
-                        hand={thisPlayer.cardPiles.hand}
-                        isMelee={currentGame.isMelee}
-                        onCardClick={onCardClick}
-                        onMouseOver={isDragging ? null : onMouseOver}
-                        onMouseOut={onMouseOut}
-                        numDrawCards={thisPlayer.numDrawCards}
-                        onDrawPopupChange={(visible) => dispatch(sendShowDrawDeckMessage(visible))}
-                        onShuffleClick={() => dispatch(sendShuffleDeckMessage())}
-                        outOfGamePile={thisPlayer.cardPiles.outOfGamePile}
-                        drawDeck={thisPlayer.cardPiles.drawDeck}
-                        discardPile={thisPlayer.cardPiles.discardPile}
-                        deadPile={thisPlayer.cardPiles.deadPile}
-                        revealTopCard={thisPlayer.revealTopCard}
-                        shadows={thisPlayer.cardPiles.shadows}
-                        showDeck={thisPlayer.showDeck}
-                        spectating={!thisPlayer}
-                        title={thisPlayer.title}
-                        onMenuItemClick={(card, menuItem) =>
-                            dispatch(sendCardMenuItemClickedMessage(card.uuid, menuItem))
-                        }
-                        cardSize={user.settings.cardSize}
-                        side='bottom'
-                        plotDeck={thisPlayer.cardPiles.plotDeck}
-                        plotDiscard={thisPlayer.cardPiles.plotDiscard}
-                        activePlot={thisPlayer.activePlot}
-                        selectedPlot={thisPlayer.selectedPlot}
-                    />
-                </div>
+                <PlayerRow
+                    isMe={!!thisPlayer}
+                    agendas={thisPlayer.agendas}
+                    faction={thisPlayer.faction}
+                    hand={thisPlayer.cardPiles.hand}
+                    isMelee={currentGame.isMelee}
+                    onCardClick={onCardClick}
+                    numDrawCards={thisPlayer.numDrawCards}
+                    onDrawPopupChange={(visible) => dispatch(sendShowDrawDeckMessage(visible))}
+                    onShuffleClick={() => dispatch(sendShuffleDeckMessage())}
+                    outOfGamePile={thisPlayer.cardPiles.outOfGamePile}
+                    drawDeck={thisPlayer.cardPiles.drawDeck}
+                    discardPile={thisPlayer.cardPiles.discardPile}
+                    deadPile={thisPlayer.cardPiles.deadPile}
+                    revealTopCard={thisPlayer.revealTopCard}
+                    shadows={thisPlayer.cardPiles.shadows}
+                    showDeck={thisPlayer.showDeck}
+                    spectating={!thisPlayer}
+                    title={thisPlayer.title}
+                    onMenuItemClick={(card, menuItem) =>
+                        dispatch(sendCardMenuItemClickedMessage(card.uuid, menuItem))
+                    }
+                    cardSize={user.settings.cardSize}
+                    side='bottom'
+                    plotDeck={thisPlayer.cardPiles.plotDeck}
+                    plotDiscard={thisPlayer.cardPiles.plotDiscard}
+                    activePlot={thisPlayer.activePlot}
+                    selectedPlot={thisPlayer.selectedPlot}
+                    showHiddenPiles={!!draggingDetail}
+                />
             </div>
+            <DragOverlay className={'opacity-50'} dropAnimation={null}>
+                {draggingDetail && (
+                    <CardImage
+                        size={user.settings.cardSize}
+                        code={draggingDetail.card.code || 'cardback'}
+                        orientation={
+                            (draggingDetail.card.type !== 'plot' &&
+                                draggingDetail.orientation === 'horizontal') ||
+                            draggingDetail.card.kneeled
+                                ? 'rotated'
+                                : draggingDetail.orientation
+                        }
+                    />
+                )}
+            </DragOverlay>
         </DndContext>
     );
 };

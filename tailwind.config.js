@@ -114,12 +114,21 @@ export default {
                     'card-rotated': (value) => {
                         const translateValue = (value[0] - value[1]) / 2;
                         return {
-                            width: `${value[0]}rem`,
-                            height: `${value[1]}rem`,
-                            'border-radius': `${value[0] / 16}rem`,
                             transform: `rotate(90deg) translate(${translateValue}rem, ${translateValue}rem)`
                         };
-                    }
+                    },
+                    'card-kneeled': (value) => ({
+                        'margin-bottom': `${value[1] - value[0]}rem`
+                    }),
+                    attachment: (value) => ({
+                        'margin-top': `${value[1] * -0.9}rem`
+                    }),
+                    duplicate: (value) => ({
+                        'margin-bottom': `${value[1] * -0.9}rem`
+                    }),
+                    'duplicate-offset': (value) => ({
+                        'margin-top': `${value[1] * 0.1}rem`
+                    })
                 },
                 {
                     values: theme('cardSize')
@@ -130,6 +139,12 @@ export default {
     safelist: [
         {
             pattern: /card-+/
+        },
+        {
+            pattern: /attachment-+/
+        },
+        {
+            pattern: /duplicate-+/
         }
     ]
 };

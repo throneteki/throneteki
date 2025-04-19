@@ -85,11 +85,23 @@ export function standardiseCardSize(cardSize) {
 }
 
 export const cardClass = (size, orientation = 'vertical') => {
-    const classes = ['card'];
-    if (orientation !== 'vertical') {
-        // Can be 'vertical', 'horizontal' or 'rotated' (which is vertical, knelt)
-        classes.push(orientation);
+    const classSize = standardiseCardSize(size);
+
+    const classes = [];
+
+    if (['kneeled', 'horizontal'].includes(orientation)) {
+        classes.push(`card-${orientation}-${classSize}`);
+
+        if (orientation === 'kneeled') {
+            classes.push(`card-horizontal-${classSize}`);
+        }
+    } else {
+        classes.push(`card-${classSize}`);
     }
-    classes.push(standardiseCardSize(size));
-    return classes.join('-');
+
+    if (orientation === 'rotated') {
+        classes.push(`card-rotated-${classSize}`);
+    }
+
+    return classes.join(' ');
 };

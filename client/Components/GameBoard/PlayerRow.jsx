@@ -13,8 +13,6 @@ const PlayerRow = ({
     outOfGamePile,
     onCardClick,
     onMenuItemClick,
-    onMouseOut,
-    onMouseOver,
     side,
     cardSize,
     isMe,
@@ -38,45 +36,9 @@ const PlayerRow = ({
     plotDiscard,
     activePlot,
     selectedPlot,
-    mustShowPlotSelection
+    mustShowPlotSelection,
+    showHiddenPiles = false
 }) => {
-    const getOutOfGamePile = useCallback(() => {
-        if (outOfGamePile.length === 0) {
-            return;
-        }
-
-        let outOfGamePileElement = (
-            <CardPile
-                cards={outOfGamePile}
-                className='additional-cards'
-                onCardClick={onCardClick}
-                onMenuItemClick={onMenuItemClick}
-                onMouseOut={onMouseOut}
-                onMouseOver={onMouseOver}
-                orientation='kneeled'
-                popupLocation={side}
-                source='out of game'
-                title='Out of Game'
-                size={cardSize}
-            />
-        );
-
-        if (isMe) {
-            return <Droppable source='out of game'>{outOfGamePileElement}</Droppable>;
-        }
-
-        return outOfGamePileElement;
-    }, [
-        outOfGamePile,
-        onCardClick,
-        onMenuItemClick,
-        onMouseOut,
-        onMouseOver,
-        side,
-        cardSize,
-        isMe
-    ]);
-
     const renderDroppablePile = useCallback(
         (source, cards) => {
             if (isMe) {
@@ -98,8 +60,6 @@ const PlayerRow = ({
                     disablePopup={true}
                     onCardClick={onCardClick}
                     onMenuItemClick={onMenuItemClick}
-                    onMouseOut={onMouseOut}
-                    onMouseOver={onMouseOver}
                     popupLocation={side}
                     showCards={false}
                     source='agendas'
@@ -129,8 +89,6 @@ const PlayerRow = ({
                         disablePopup={disablePopup}
                         onCardClick={onCardClick}
                         onMenuItemClick={onMenuItemClick}
-                        onMouseOut={onMouseOut}
-                        onMouseOver={onMouseOver}
                         popupLocation={side}
                         showCards={true}
                         source={source}
@@ -138,6 +96,7 @@ const PlayerRow = ({
                         topCard={agenda}
                         size={cardSize}
                         numColumns={5}
+                        numRows={1.2}
                     />
                 )}
             </div>
@@ -152,9 +111,7 @@ const PlayerRow = ({
                         <Card
                             card={agenda}
                             source={source}
-                            onMouseOver={onMouseOver}
-                            onMouseOut={onMouseOut}
-                            disableMouseOver={false}
+                            disableHover={false}
                             onClick={onCardClick}
                             onMenuItemClick={onMenuItemClick}
                             orientation='vertical'
@@ -165,30 +122,19 @@ const PlayerRow = ({
             })
         );
         return <div className='relative flex flex-row-reverse'>{retAgendas}</div>;
-    }, [
-        agendas,
-        renderDroppablePile,
-        onCardClick,
-        onMenuItemClick,
-        onMouseOut,
-        onMouseOver,
-        side,
-        cardSize
-    ]);
+    }, [agendas, renderDroppablePile, onCardClick, onMenuItemClick, side, cardSize]);
 
     const getTitleCard = useCallback(() => {
         if (!title || !isMelee) {
             return null;
         }
 
-        let titleCardElement = (
+        const titleCard = (
             <CardPile
                 cards={[]}
                 className='title'
                 onCardClick={onCardClick}
                 onMenuItemClick={onMenuItemClick}
-                onMouseOut={onMouseOut}
-                onMouseOver={onMouseOver}
                 popupLocation={side}
                 source='title'
                 title={title.name}
@@ -198,46 +144,31 @@ const PlayerRow = ({
         );
 
         if (isMe) {
-            return <Droppable source='title'>{titleCardElement}</Droppable>;
+            return <Droppable source='title'>{titleCard}</Droppable>;
         }
 
-        return titleCardElement;
-    }, [
-        title,
-        isMelee,
-        onCardClick,
-        onMenuItemClick,
-        onMouseOut,
-        onMouseOver,
-        side,
-        cardSize,
-        isMe
-    ]);
+        return titleCard;
+    }, [title, isMelee, onCardClick, onMenuItemClick, side, cardSize, isMe]);
 
-    let cardPileProps = {
+    const cardPileProps = {
         onCardClick: onCardClick,
-        onMouseOut: onMouseOut,
-        onMouseOver: onMouseOver,
         popupLocation: side,
         size: cardSize
     };
 
-    let retHand = (
+    const retHand = (
         <SquishableCardPanel
             cards={hand}
-            className='panel hand'
             groupVisibleCards
             username={username}
             maxCards={5}
             onCardClick={onCardClick}
-            onMouseOut={onMouseOut}
-            onMouseOver={onMouseOver}
             source='hand'
             title='Hand'
             cardSize={cardSize}
         />
     );
-    let retDrawDeck = (
+    const retDrawDeck = (
         <DrawDeck
             cardCount={numDrawCards}
             cards={drawDeck}
@@ -251,9 +182,10 @@ const PlayerRow = ({
             {...cardPileProps}
         />
     );
-    let retDiscardPile = (
+    const retDiscardPile = (
         <CardPile
             numColumns={5}
+            numRows={2.2}
             className='discard'
             title='Discard'
             source='discard pile'
@@ -261,39 +193,47 @@ const PlayerRow = ({
             {...cardPileProps}
         />
     );
-    let retDeadPile = (
+    const retDeadPile = (
         <CardPile
             numColumns={5}
+            numRows={2.2}
             className='dead'
             title='Dead'
             source='dead pile'
             cards={deadPile}
-            orientation='kneeled'
+            orientation='horizontal'
             {...cardPileProps}
         />
     );
-    let retShadows = (
+    const retShadows = (
         <SquishableCardPanel
             cards={shadows}
             cardSize={cardSize}
-            className='panel shadows'
-            maxCards={2}
+            maxCards={shadows.length === 0 ? 1 : 2}
             onCardClick={onCardClick}
-            onMouseOut={onMouseOut}
-            onMouseOver={onMouseOver}
             source='shadows'
             title='Shadows'
             username={username}
         />
     );
+    const retOutOfGame = (
+        <CardPile
+            numColumns={4}
+            numRows={1.2}
+            cards={outOfGamePile}
+            orientation='horizontal'
+            source='out of game'
+            title='Out of Game'
+            size={cardSize}
+            {...cardPileProps}
+        />
+    );
 
     return (
-        <div className='flex space-x-2 m-1'>
+        <div className='flex gap-2 m-1 w-fit'>
             <PlayerPlots
                 cardSize={cardSize}
                 onCardClick={onCardClick}
-                onCardMouseOut={onMouseOut}
-                onCardMouseOver={onMouseOver}
                 onMenuItemClick={onMenuItemClick}
                 direction={isMe ? 'default' : 'reverse'}
                 isMe={isMe}
@@ -308,8 +248,6 @@ const PlayerRow = ({
                 source='faction'
                 cards={[]}
                 topCard={faction}
-                onMouseOver={onMouseOver}
-                onMouseOut={onMouseOut}
                 disablePopup
                 onCardClick={onCardClick}
                 size={cardSize}
@@ -318,11 +256,12 @@ const PlayerRow = ({
             {getAgendas()}
             {getTitleCard()}
             {renderDroppablePile('hand', retHand)}
-            {shadows.length !== 0 && renderDroppablePile('shadows', retShadows)}
+            {(showHiddenPiles || shadows.length > 0) && renderDroppablePile('shadows', retShadows)}
             {renderDroppablePile('draw deck', retDrawDeck)}
             {renderDroppablePile('discard pile', retDiscardPile)}
             {renderDroppablePile('dead pile', retDeadPile)}
-            {getOutOfGamePile()}
+            {(showHiddenPiles || outOfGamePile.length > 0) &&
+                renderDroppablePile('out of game', retOutOfGame)}
         </div>
     );
 };

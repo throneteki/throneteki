@@ -85,21 +85,20 @@ const CardHover = ({ children, size = '3x-large' }) => {
                 {code && (
                     <>
                         {isLoading && <Spinner ref={spinnerRef} size='lg' color='white' />}
-                        <div ref={imageCallback}>
-                            <CardImage
-                                className={imageClassName}
-                                size={size}
-                                code={code}
-                                orientation={orientation}
-                                onLoad={(e) => {
-                                    setOrientation(
-                                        e.target.width > e.target.height ? 'horizontal' : 'vertical'
-                                    );
-                                    setIsLoading(false);
-                                }}
-                                disableSkeleton={true}
-                            />
-                        </div>
+                        <CardImage
+                            ref={imageCallback}
+                            className={imageClassName}
+                            size={size}
+                            code={code}
+                            orientation={orientation}
+                            onLoad={(e) => {
+                                setOrientation(
+                                    e.target.width > e.target.height ? 'horizontal' : 'vertical'
+                                );
+                                setIsLoading(false);
+                            }}
+                            disableSkeleton={true}
+                        />
                     </>
                 )}
             </div>

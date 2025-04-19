@@ -1,26 +1,27 @@
-import React, { useState, useCallback, useMemo, useRef } from 'react';
+import React, { useState, useCallback } from 'react';
 import classNames from 'classnames';
-import { useDndMonitor, useDraggable } from '@dnd-kit/core';
+import { useDraggable } from '@dnd-kit/core';
 import CardMenu from './CardMenu';
 import CardCounters from './CardCounters';
 import SquishableCardPanel from './SquishableCardPanel';
 
-import './Card.scss';
 import { ItemTypes } from '../../constants';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import { useUniqueId } from '@dnd-kit/utilities';
+import CardHoverable from '../Images/CardHoverable';
+import CardImage from '../Images/CardImage';
+import { cardClass, standardiseCardSize } from '../../util';
+import { Tooltip } from '@heroui/react';
 
 const Card = ({
     card,
     className,
-    disableMouseOver,
+    disableHover,
     hideTokens,
     menu = [{ hideable: true, command: 'click', text: 'Select Card' }],
     onClick,
     onMenuItemClick,
-    onMouseOut,
-    onMouseOver,
     orientation = 'vertical',
     size,
     source,
@@ -29,17 +30,8 @@ const Card = ({
     forceFaceup = false
 }) => {
     const [showMenu, setShowMenu] = useState(false);
-    const [showStatus, setShowStatus] = useState(false);
-    const [startPosition, setStartPosition] = useState();
-    const dragRef = useRef(null);
 
     const key = `card-${card.uuid}-${source}`;
-
-    useDndMonitor({
-        onDragEnd() {
-            setStartPosition();
-        }
-    });
 
     const shortNames = {
         count: 'x',
@@ -61,31 +53,18 @@ const Card = ({
         ghost: 'H'
     };
 
-    const { attributes, listeners, setNodeRef, transform } = useDraggable({
+    const standardisedSize = standardiseCardSize(size);
+    let cardStackIndex = (card.attachments?.length || 0) + (card.childCards?.length > 0 ? 1 : 0);
+
+    const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
         id: useUniqueId(key),
-        data: { type: ItemTypes.CARD, card, source, key: key }
+        data: { type: ItemTypes.CARD, card, orientation, source, key: key }
     });
 
-    const sizeClass = useMemo(() => ({ [size]: size !== 'normal' }), [size]);
-
-    const isAllowedMenuSource = useCallback(() => {
-        return source === 'play area' || source === 'agenda' || source === 'revealed plots';
-    }, [source]);
-
-    const handleMouseOver = useCallback(
-        (c) => {
-            if (onMouseOver) {
-                onMouseOver(c);
-            }
-        },
-        [onMouseOver]
+    const isAllowedMenuSource = useCallback(
+        () => ['play area', 'agenda', 'revealed plots'].includes(source),
+        [source]
     );
-
-    const handleMouseOut = useCallback(() => {
-        if (onMouseOut) {
-            onMouseOut();
-        }
-    }, [onMouseOut]);
 
     const handleMenuItemClick = useCallback(
         (menuItem) => {
@@ -98,18 +77,19 @@ const Card = ({
     );
 
     const getMenu = useCallback(() => {
-        let retMenu = menu || [];
+        const retMenu = [...menu] || [];
 
         if (card.menu) {
-            retMenu = retMenu.concat(card.menu);
+            retMenu.push(...card.menu);
         }
 
         return retMenu;
     }, [card.menu, menu]);
 
-    const shouldShowMenu = useCallback(() => {
-        return getMenu().some((item) => item.command !== 'click') && isAllowedMenuSource();
-    }, [getMenu, isAllowedMenuSource]);
+    const shouldShowMenu = useCallback(
+        () => getMenu().some((item) => item.command !== 'click') && isAllowedMenuSource(),
+        [getMenu, isAllowedMenuSource]
+    );
 
     const handleClick = useCallback(
         (event) => {
@@ -127,7 +107,7 @@ const Card = ({
     );
 
     const getCountersForCard = (card) => {
-        let counters = [];
+        const counters = [];
         if (card.power) {
             counters.push({ name: 'card-power', count: card.power, shortName: 'P' });
         }
@@ -167,42 +147,41 @@ const Card = ({
             let attachmentCounters = getCountersForCard(attachment).map((counter) =>
                 Object.assign({ fade: true }, counter)
             );
-            counters = counters.concat(attachmentCounters);
+            counters.push(...attachmentCounters);
         }
 
         return counters.filter((counter) => counter.count >= 0);
     };
 
     const getAttachments = () => {
-        if (!['full deck', 'play area'].includes(source)) {
+        if (source !== 'play area') {
             return null;
         }
 
-        let index = 1;
-
-        return card.attachments.map((attachment) => (
-            <Card
-                key={attachment.uuid}
-                source={source}
-                card={attachment}
-                className={classNames('attachment', `attachment-${index++}`)}
-                wrapped={false}
-                hideTokens
-                onMouseOver={disableMouseOver ? null : () => handleMouseOver(attachment)}
-                onMouseOut={disableMouseOver ? null : handleMouseOut}
-                onClick={onClick}
-                onMenuItemClick={onMenuItemClick}
-                size={size}
-            />
-        ));
+        return card.attachments.map((attachment) => {
+            return (
+                <Card
+                    key={attachment.uuid}
+                    style={{
+                        zIndex: cardStackIndex--
+                    }}
+                    source={source}
+                    card={attachment}
+                    className={`attachment-${standardisedSize}`}
+                    wrapped={false}
+                    hideTokens
+                    onClick={onClick}
+                    onMenuItemClick={onMenuItemClick}
+                    size={size}
+                />
+            );
+        });
     };
 
     const getDupes = () => {
         if (source !== 'play area') {
             return null;
         }
-
-        let index = 1;
 
         return card.dupes.map((dupe) => {
             const dupeCopy = Object.assign({}, dupe);
@@ -212,12 +191,10 @@ const Card = ({
             return (
                 <Card
                     key={dupe.uuid}
-                    className={classNames('card-dupe', `card-dupe-${index++}`)}
+                    className={`duplicate-${standardisedSize}`}
                     source={source}
                     card={dupeCopy}
                     wrapped={false}
-                    onMouseOver={disableMouseOver ? null : () => handleMouseOver(dupe)}
-                    onMouseOut={disableMouseOver ? null : handleMouseOut}
                     onClick={onClick}
                     onMenuItemClick={onMenuItemClick}
                     size={size}
@@ -228,27 +205,32 @@ const Card = ({
         });
     };
 
-    const renderUnderneathCards = () => {
+    const getUnderneath = () => {
         // TODO: Right now it is assumed that all cards in the childCards array
         // are being placed underneath the current card. In the future there may
         // be other types of cards in this array and it should be filtered.
-        let underneathCards = card.childCards;
+        const underneathCards = card.childCards;
         if (!underneathCards || underneathCards.length === 0 || card.type === 'agenda') {
-            return;
+            return null;
         }
 
-        let maxCards = 1 + (underneathCards.length - 1) / 6;
+        const maxCards = 1 + (underneathCards.length - 1) / 6;
         return (
-            <SquishableCardPanel
-                cardSize={size}
-                cards={underneathCards}
-                className='underneath'
-                maxCards={maxCards}
-                onCardClick={onClick}
-                onMouseOut={onMouseOut}
-                onMouseOver={onMouseOver}
-                source='underneath'
-            />
+            // Using attachment class as to ensure underneath cards are visually shown underneath the stack
+            // Attachments & card zIndex's consider these underneath cards to ensure this is rendered at bottom of attachment stack
+            <div
+                className={`relative attachment-${standardisedSize}`}
+                style={{ zIndex: cardStackIndex-- }}
+            >
+                <SquishableCardPanel
+                    cardSize={size}
+                    cards={underneathCards}
+                    className='underneath'
+                    maxCards={maxCards}
+                    onCardClick={onClick}
+                    source='underneath'
+                />
+            </div>
         );
     };
 
@@ -258,7 +240,7 @@ const Card = ({
         }
 
         return (
-            <div className='absolute -top-7 w-6 text-white bg-black/80 font-bold h-6 text-center left-1/2 -mb-3 rounded-md border-1'>
+            <div className='absolute w-6 h-6 -ml-3 -top-7 left-1/2 text-white bg-black/80 font-bold text-center rounded-md border-1'>
                 {card.order}
             </div>
         );
@@ -268,28 +250,16 @@ const Card = ({
         if (!card.alertStatus) {
             return null;
         }
-        const iconClass = classNames('bg-black/50 p-1', {
+        const iconClass = classNames('animate-pulse', {
             'text-warning': card.alertStatus.type === 'warning',
             'text-danger': card.alertStatus.type === 'error'
         });
-
+        const content = <span className='select-none'>{card.alertStatus.message}</span>;
         return (
-            <div
-                onMouseOut={() => setShowStatus(false)}
-                onMouseOver={() => setShowStatus(true)}
-                className={
-                    'absolute top-0 left-0 flex items-center justify-center w-full h-1/2 ' +
-                    card.alertStatus.type
-                }
-            >
-                <div>
+            <div className='absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2'>
+                <Tooltip content={content} showArrow={true}>
                     <FontAwesomeIcon className={iconClass} icon={faExclamationCircle} />
-                </div>
-                {showStatus && (
-                    <span className='absolute w-full p-1 text-white bg-black/50 text-xs text-center break-words'>
-                        {card.alertStatus.message}
-                    </span>
-                )}
+                </Tooltip>
             </div>
         );
     };
@@ -324,129 +294,95 @@ const Card = ({
             return 'shadow-[0_0_1px_2px] shadow-blue-100';
         }
     };
-
-    const isFacedown = () => {
-        return forceFaceup ? false : card.facedown || !card.code;
-    };
-
-    const getDragFrame = useCallback(
-        (image) => {
-            if (!transform) {
-                return null;
-            }
-
-            if (!startPosition && dragRef.current) {
-                setStartPosition(dragRef.current.getBoundingClientRect());
-            }
-
-            const style = {};
-
-            if (dragRef.current) {
-                const x = startPosition?.left + transform.x;
-                const y = startPosition?.top + transform.y;
-
-                style.left = x;
-                style.top = y;
-            }
-
-            const dragClass = classNames(
-                'card pointer-events-none fixed opacity-50 z-50',
-                sizeClass,
-                {
-                    horizontal: orientation !== 'vertical' || card.kneeled,
-                    vertical: orientation === 'vertical' && !card.kneeled
-                }
-            );
-            return (
-                <div className={dragClass} style={style} ref={dragRef}>
-                    {image}
-                </div>
-            );
-        },
-        [card.kneeled, orientation, sizeClass, startPosition, transform]
-    );
-
-    const getCard = () => {
+    const getCard = (style) => {
         if (!card) {
             return <div />;
         }
 
-        const cardClass = classNames(
-            'card overflow-hidden rounded-md',
-            className,
-            sizeClass,
+        // Wrapper class handles the rotating of knelt or horizontally placed vertical cards (eg. dead pile)
+        const wrapperClass = classNames(
+            'relative overflow-visible transition-all touch-manipulation',
+            cardClass(
+                size,
+                (card.type !== 'plot' && orientation === 'horizontal') || card.kneeled
+                    ? 'rotated'
+                    : orientation
+            ),
             getHighlightClass(),
             {
-                absolute: !!style?.left,
-                relative: !style?.left,
-                [`card-type-${card.type}`]: card.type,
-                'custom-card': card.code && card.code.startsWith('custom'),
-                horizontal: orientation !== 'vertical' || card.kneeled,
-                vertical: orientation === 'vertical' && !card.kneeled,
-                'grayscale brightness-75': card.unselectable,
-                'z-10': !hideTokens
+                'grayscale brightness-75': card.unselectable
             }
         );
-        let imageClass = classNames('card-image absolute left-0 top-0', sizeClass, {
-            horizontal: card.type === 'plot',
-            vertical: card.type !== 'plot',
-            kneeled:
-                card.type !== 'plot' &&
-                (orientation === 'kneeled' || card.kneeled || orientation === 'horizontal')
-        });
-
-        // TODO: Update this to a `CardImage`, allowing for built-in zoom?
-        let image = <img className={imageClass} src={imageUrl} />;
-
-        let content = (
-            <div className='relative'>
-                {getDragFrame(image)}
-                {getCardOrder()}
-                <div
-                    {...listeners}
-                    {...attributes}
+        const isFaceup = forceFaceup || (!card.facedown && card.code);
+        const imageCode = isFaceup
+            ? card.code
+            : source === 'shadows'
+              ? 'cardback_shadow'
+              : 'cardback';
+        const image = (
+            <div
+                {...listeners}
+                {...attributes}
+                className={wrapperClass}
+                onClick={handleClick}
+                style={{ zIndex: cardStackIndex--, ...style }}
+            >
+                {card.name && <span className='absolute left-0 top-0'>{card.name}</span>}
+                <CardImage
                     ref={setNodeRef}
-                    className={cardClass}
-                    onMouseOver={disableMouseOver ? null : () => handleMouseOver(card)}
-                    onMouseOut={disableMouseOver ? null : handleMouseOut}
-                    onClick={handleClick}
-                >
-                    <div>
-                        <span className='card-name'>{card.name}</span>
+                    className='absolute left-0 top-0'
+                    size={size}
+                    code={imageCode}
+                    orientation={card.type === 'plot' ? 'horizontal' : 'vertical'}
+                />
+            </div>
+        );
+        return (
+            <div
+                className={classNames(
+                    'relative transition-all',
+                    cardClass(
+                        size,
+                        orientation === 'vertical' && card.kneeled ? 'kneeled' : orientation
+                    ),
+                    className
+                )}
+            >
+                {disableHover ? (
+                    image
+                ) : (
+                    <CardHoverable
+                        code={card.code}
+                        isDisabled={isDragging || showMenu}
+                        touchDelay={250}
+                    >
                         {image}
-                    </div>
-                    {!hideTokens ? <CardCounters counters={getCountersForCard(card)} /> : null}
-                    {!isFacedown() ? getAlertStatus() : null}
-                </div>
+                    </CardHoverable>
+                )}
                 {showMenu ? (
                     <CardMenu menu={getMenu()} onMenuItemClick={handleMenuItemClick} />
                 ) : null}
+                {!hideTokens ? <CardCounters counters={getCountersForCard(card)} /> : null}
+                {isFaceup ? getAlertStatus() : null}
+                {getCardOrder()}
             </div>
         );
-
-        return content;
     };
 
-    const imageUrl = !isFacedown()
-        ? `/img/cards/${card.code}.png`
-        : source === 'shadows'
-          ? '/img/cards/cardback_shadow.png'
-          : '/img/cards/cardback.png';
-
-    const wrapperClass = classNames('m-0 inline-block select-none', {
+    const wrapperClass = classNames('inline-block select-none', {
         absolute: !!style?.left,
         relative: !style?.left
     });
 
     return wrapped ? (
         <div className={wrapperClass} style={style}>
-            {getCard()}
             {getDupes()}
+            {getCard()}
             {getAttachments()}
-            {renderUnderneathCards()}
+            {getUnderneath()}
         </div>
     ) : (
-        getCard()
+        getCard(style)
     );
 };
 

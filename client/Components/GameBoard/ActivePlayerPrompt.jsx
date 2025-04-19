@@ -217,7 +217,7 @@ const ActivePlayerPrompt = ({
                     'relative text-small md:text-medium font-bold text-center uppercase border-1 border-default-200 bg-secondary-200 py-1 rounded-t-md mx-0 mb-0 ' +
                     phase
                 }
-                onClick={onTitleClick}
+                onPointerDown={onTitleClick}
             >
                 {phase} phase
             </div>

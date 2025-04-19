@@ -3,10 +3,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { sendChangeStatMessage } from '../../redux/reducers/game';
 import { Avatar, Badge, Button } from '@heroui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCogs, faComment, faCopy, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { faCogs, faComment, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import StatContainer from './StatContainer';
 import StatDisplay from './StatDisplay';
-import { toast } from 'react-toastify';
 
 const PlayerStats = ({
     stats,
@@ -70,19 +69,9 @@ const PlayerStats = ({
             </Button>
         </StatContainer>
     );
-    const writeChatToClipboard = useCallback(() => {
-        const messagePanel = document.getElementById('messages-panel');
-
-        if (messagePanel) {
-            navigator.clipboard
-                .writeText(messagePanel.innerText)
-                .then(() => toast.success('Copied game chat to clipboard', null))
-                .catch((err) => toast.error(`Could not copy game chat: ${err}`, null));
-        }
-    }, []);
 
     return (
-        <div className='relative px-2 border-1 border-default-100 bg-black/35 flex items-center border-x-0 overflow-x-auto'>
+        <div className='relative px-2 border-1 border-default-100 bg-black/35 flex items-center border-x-0'>
             <div className='pr-1 py-1 flex items-center'>
                 <Avatar
                     src={`/img/avatar/${userProp?.username}.png`}
@@ -124,7 +113,6 @@ const PlayerStats = ({
                                 )}
                             </>
                         )}
-                        {getStatButton(writeChatToClipboard, faCopy, 'Copy chat log')}
                         <StatContainer>
                             <Badge
                                 shape='circle'

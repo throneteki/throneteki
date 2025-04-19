@@ -3,6 +3,7 @@ import GameConfiguration from './GameConfiguration';
 import { Modal, ModalBody, ModalContent, ModalHeader } from '@heroui/react';
 
 const GameConfigurationModal = ({
+    isOpen,
     keywordSettings,
     onClose,
     onKeywordSettingToggle,
@@ -15,7 +16,7 @@ const GameConfigurationModal = ({
 }) => {
     return (
         <>
-            <Modal isOpen={true} onClose={onClose} size='lg'>
+            <Modal isOpen={isOpen} onClose={onClose} size='lg' scrollBehavior='inside'>
                 <ModalContent>
                     <ModalHeader>{'Game Configuration'}</ModalHeader>
                     <ModalBody>

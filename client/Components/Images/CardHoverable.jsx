@@ -1,44 +1,73 @@
-import React, { useContext, useMemo } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef } from 'react';
 import classNames from 'classnames';
 import { CardHoverContext } from './CardHoverContext';
 
-const CardHoverable = ({ className, children, code }) => {
+const CardHoverable = ({ touchDelay, className, children, code, isDisabled }) => {
     const { type, setType, setCode } = useContext(CardHoverContext);
+    const holdTimeout = useRef(null);
 
     const wrapperClassName = useMemo(
         () =>
-            classNames('w-full h-full', className, {
+            classNames(className, {
                 'select-none': ['touch', 'pen'].includes(type) // Disables text selection on touch/pen devices, but not desktop
             }),
         [className, type]
     );
 
+    const clear = useCallback(() => {
+        setType(null);
+        setCode(null);
+        clearTimeout(holdTimeout.current);
+    }, [setCode, setType]);
+
+    useEffect(() => {
+        if (isDisabled) {
+            clear();
+        }
+    }, [isDisabled, clear]);
+
     return (
-        <div
-            className={wrapperClassName}
+        <span
+            className={wrapperClassName || null}
             onPointerMove={(e) => {
+                if (isDisabled) {
+                    return;
+                }
                 if (['touch', 'pen'].includes(e.pointerType)) {
                     e.preventDefault();
                     e.stopPropagation();
+                } else if (!type) {
+                    // If pointer is within element whilst disabled & then is re-enabled, this ensures we update on first pointer move
+                    setType('mouse');
+                    setCode(code);
                 }
             }}
             onPointerEnter={(e) => {
+                if (isDisabled) {
+                    return;
+                }
                 if (['touch', 'pen'].includes(e.pointerType)) {
                     e.preventDefault();
                     e.stopPropagation();
-                    setType('touch');
+
+                    holdTimeout.current = setTimeout(() => {
+                        setType('touch');
+                        setCode(code);
+                    }, touchDelay || 0);
                 } else {
                     setType('mouse');
+                    setCode(code);
                 }
-                setCode(code);
             }}
             onPointerLeave={() => {
-                setType(null);
-                setCode(null);
+                if (isDisabled) {
+                    return;
+                }
+                clear();
             }}
         >
             {children}
-        </div>
+        </span>
     );
 };
 

@@ -2,16 +2,9 @@ import React, { useCallback } from 'react';
 import classNames from 'classnames';
 
 import Card from './Card';
+import { standardiseCardSize } from '../../util';
 
-const PlayerBoard = ({
-    cardsInPlay,
-    rowDirection,
-    onCardClick,
-    onMenuItemClick,
-    onMouseOut,
-    onMouseOver,
-    user
-}) => {
+const PlayerBoard = ({ cardsInPlay, rowDirection, onCardClick, onMenuItemClick, user }) => {
     const getCardRows = useCallback(() => {
         let groupedCards = cardsInPlay.reduce((group, card) => {
             (group[card.type] = group[card.type] || []).push(card);
@@ -50,21 +43,31 @@ const PlayerBoard = ({
 
     const renderRow = useCallback(
         (row) => {
-            return row.map((card) => (
-                <Card
-                    key={card.uuid}
-                    card={card}
-                    disableMouseOver={card.facedown && !card.code}
-                    onClick={onCardClick}
-                    onMenuItemClick={onMenuItemClick}
-                    onMouseOut={onMouseOut}
-                    onMouseOver={onMouseOver}
-                    size={user.settings.cardSize}
-                    source='play area'
-                />
-            ));
+            const maxDupe = Math.max(...row.map((card) => card.dupes?.length || 0), 0);
+            return row.map((card) => {
+                const dupeOffset = maxDupe - (card.dupes?.length || 0);
+                const dupeOffsets = Array.from({ length: dupeOffset }, (_, i) => (
+                    <div
+                        key={i}
+                        className={`duplicate-offset-${standardiseCardSize(user.settings.cardSize)}`}
+                    />
+                ));
+                return (
+                    <div key={card.uuid} className='flex flex-col'>
+                        {dupeOffsets}
+                        <Card
+                            card={card}
+                            disableHover={card.facedown && !card.code}
+                            onClick={onCardClick}
+                            onMenuItemClick={onMenuItemClick}
+                            size={user.settings.cardSize}
+                            source='play area'
+                        />
+                    </div>
+                );
+            });
         },
-        [onCardClick, onMenuItemClick, onMouseOut, onMouseOver, user]
+        [onCardClick, onMenuItemClick, user]
     );
 
     const renderRows = useCallback(

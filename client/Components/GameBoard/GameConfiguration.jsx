@@ -40,78 +40,68 @@ const GameConfiguration = ({
     });
 
     return (
-        <div>
-            <form>
+        <form>
+            <div className='flex flex-col gap-2 overflow-y-auto'>
                 <Panel title={'Action window defaults'}>
-                    <div>{windowsToRender}</div>
+                    <div className='grid sm:grid-cols-2 gap-2'>{windowsToRender}</div>
                 </Panel>
-                <Panel title={'Timed interrupt window'} className='mt-3'>
-                    <div>
-                        <div>
-                            <Switch
-                                onValueChange={(value) =>
-                                    onTimerSettingToggle && onTimerSettingToggle('events', value)
-                                }
-                                name='timerSettings.events'
-                                isSelected={timerSettings.events}
-                            >
-                                {'Show timer for events'}
-                            </Switch>
-                        </div>
-                        <div>
-                            <Switch
-                                onValueChange={(value) =>
-                                    onTimerSettingToggle && onTimerSettingToggle('abilities', value)
-                                }
-                                name='timerSettings.abilities'
-                                isSelected={timerSettings.abilities}
-                            >
-                                {'Show timer for card abilities'}
-                            </Switch>
-                        </div>
+                <Panel title={'Timed interrupt window'}>
+                    <div className='flex flex-col gap-2'>
+                        <Switch
+                            onValueChange={(value) =>
+                                onTimerSettingToggle && onTimerSettingToggle('events', value)
+                            }
+                            name='timerSettings.events'
+                            isSelected={timerSettings.events}
+                        >
+                            {'Show timer for events'}
+                        </Switch>
+                        <Switch
+                            onValueChange={(value) =>
+                                onTimerSettingToggle && onTimerSettingToggle('abilities', value)
+                            }
+                            name='timerSettings.abilities'
+                            isSelected={timerSettings.abilities}
+                        >
+                            {'Show timer for card abilities'}
+                        </Switch>
                     </div>
                 </Panel>
-                <Panel title={'Other Settings'} className='mt-3'>
-                    <div>
-                        <div>
-                            <Switch
-                                onValueChange={(value) =>
-                                    onKeywordSettingToggle &&
-                                    onKeywordSettingToggle('chooseOrder', value)
-                                }
-                                name='keywordSettings.chooseOrder'
-                                isSelected={keywordSettings.chooseOrder}
-                            >
-                                {'Choose order of keywords'}
-                            </Switch>
-                        </div>
-                        <div>
-                            <Switch
-                                onValueChange={(value) =>
-                                    onKeywordSettingToggle &&
-                                    onKeywordSettingToggle('chooseCards', value)
-                                }
-                                name='keywordSettings.chooseCards'
-                                isSelected={keywordSettings.chooseCards}
-                            >
-                                {'Make keywords optional'}
-                            </Switch>
-                        </div>
-                        <div>
-                            <Switch
-                                onValueChange={(value) =>
-                                    onPromptDupesToggle && onPromptDupesToggle(value)
-                                }
-                                name='promptDupes'
-                                isSelected={promptDupes}
-                            >
-                                {'Prompt before using dupes to save'}
-                            </Switch>
-                        </div>
+                <Panel title={'Other Settings'}>
+                    <div className='flex flex-col gap-2'>
+                        <Switch
+                            onValueChange={(value) =>
+                                onKeywordSettingToggle &&
+                                onKeywordSettingToggle('chooseOrder', value)
+                            }
+                            name='keywordSettings.chooseOrder'
+                            isSelected={keywordSettings.chooseOrder}
+                        >
+                            {'Choose order of keywords'}
+                        </Switch>
+                        <Switch
+                            onValueChange={(value) =>
+                                onKeywordSettingToggle &&
+                                onKeywordSettingToggle('chooseCards', value)
+                            }
+                            name='keywordSettings.chooseCards'
+                            isSelected={keywordSettings.chooseCards}
+                        >
+                            {'Make keywords optional'}
+                        </Switch>
+                        <Switch
+                            onValueChange={(value) =>
+                                onPromptDupesToggle && onPromptDupesToggle(value)
+                            }
+                            name='promptDupes'
+                            isSelected={promptDupes}
+                        >
+                            {'Prompt before using dupes to save'}
+                        </Switch>
                     </div>
                 </Panel>
-            </form>
-        </div>
+            </div>
+        </form>
     );
 };
 

@@ -1,8 +1,16 @@
-import React, { useCallback } from 'react';
+import React, { useMemo } from 'react';
 import classNames from 'classnames';
 
-const LabelledGameArea = ({ label, className, position = 'top left', children, onClick }) => {
-    const getLabel = useCallback(() => {
+const LabelledGameArea = ({
+    label,
+    disableBackground = false,
+    className,
+    position = 'top left',
+    children,
+    style,
+    onClick
+}) => {
+    const areaLabel = useMemo(() => {
         if (!label) {
             return null;
         }
@@ -16,8 +24,11 @@ const LabelledGameArea = ({ label, className, position = 'top left', children, o
 
     const areaClassName = classNames('relative', className);
     return (
-        <div className={areaClassName} onClick={onClick}>
-            {getLabel()}
+        <div className={areaClassName} onClick={onClick} style={style}>
+            {areaLabel}
+            {!disableBackground && (
+                <div className='absolute border-2 border-default-100/55 bg-black/55 w-full h-full rounded-md' />
+            )}
             {children}
         </div>
     );

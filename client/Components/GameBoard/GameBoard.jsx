@@ -1,10 +1,9 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 import LoadingSpinner from '../Site/LoadingSpinner';
 
 import PlayerStats from './PlayerStats';
-import CardZoom from './CardZoom';
 import GameChat from './GameChat';
 import GameConfigurationModal from './GameConfigurationModal';
 import { useGetCardsQuery } from '../../redux/middleware/api';
@@ -51,36 +50,15 @@ const defaultPlayerInfo = (source) => {
 };
 
 const GameBoard = () => {
+    // const gameBoardLayoutRef = useRef(null);
     const dispatch = useDispatch();
     const currentGame = useSelector((state) => state.lobby.currentGame);
     const user = useSelector((state) => state.auth.user);
     const { data: cards, isLoading: isCardsLoading } = useGetCardsQuery();
 
-    const [cardToZoom, setCardToZoom] = useState(undefined);
-    const [showMessages, setShowMessages] = useState(true);
-    const [newMessages, setNewMessages] = useState(0);
+    const [showGameChat, setShowGameChat] = useState(window.innerWidth > 768);
+    const [unreadMessages, setUnreadMessages] = useState(0);
     const [showModal, setShowModal] = useState(false);
-    const [lastMessageCount, setLastMessageCount] = useState(0);
-
-    const onMessagesClick = useCallback(() => {
-        setShowMessages(!showMessages);
-
-        if (!showMessages) {
-            setNewMessages(0);
-            setLastMessageCount(currentGame?.messages.length);
-        }
-    }, [currentGame?.messages.length, showMessages]);
-
-    useEffect(() => {
-        let currentMessageCount = currentGame ? currentGame.messages.length : 0;
-
-        if (showMessages) {
-            setLastMessageCount(currentMessageCount);
-            setNewMessages(0);
-        } else {
-            setNewMessages(currentMessageCount - lastMessageCount);
-        }
-    }, [currentGame, lastMessageCount, showMessages]);
 
     const onCardClick = useCallback(
         (card) => {
@@ -119,94 +97,69 @@ const GameBoard = () => {
         return <LoadingSpinner label={'Waiting for game to have players or close...'} />;
     }
 
-    const boardClass = classNames(
-        'absolute top-0 bottom-0 right-0 left-0 flex justify-between flex-col',
-        {
-            'select-cursor': thisPlayer && thisPlayer.selectCard
-        }
-    );
+    const boardClass = classNames('absolute top-0 bottom-0 right-0 left-0 flex overflow-x-hidden', {
+        'select-cursor': thisPlayer && thisPlayer.selectCard
+    });
 
     return (
-        <div className={boardClass}>
-            {showModal && (
-                <GameConfigurationModal
-                    onClose={() => setShowModal(false)}
-                    keywordSettings={thisPlayer.keywordSettings}
-                    onKeywordSettingToggle={(option, value) =>
-                        dispatch(sendToggleKeywordSettingMessage(option, value))
-                    }
-                    onPromptDupesToggle={(value) => dispatch(sendToggleDupesMessage(value))}
-                    onPromptedActionWindowToggle={(option, value) =>
-                        dispatch(sendTogglePromptedActionWindowMessage(option, value))
-                    }
-                    onTimerSettingToggle={(option, value) =>
-                        dispatch(sendToggleTimerSetting(option, value))
-                    }
-                    promptDupes={thisPlayer.promptDupes}
-                    promptedActionWindows={thisPlayer.promptedActionWindows}
-                    timerSettings={thisPlayer.timerSettings}
-                />
-            )}
-            <div>
-                <PlayerStats
-                    showControls={false}
-                    stats={otherPlayer.stats}
-                    user={otherPlayer.user}
-                    firstPlayer={otherPlayer.firstPlayer}
-                />
-            </div>
-            <div className='flex flex-shrink flex-grow basis-0 overflow-hidden'>
-                <GameBoardLayout
-                    thisPlayer={thisPlayer}
-                    otherPlayer={otherPlayer}
-                    onCardClick={onCardClick}
-                    onMouseOver={setCardToZoom}
-                    onMouseOut={() => setCardToZoom(undefined)}
-                />
-                {cardToZoom && (
-                    <CardZoom
-                        imageUrl={'/img/cards/' + cardToZoom.code + '.png'}
-                        orientation={
-                            cardToZoom
-                                ? cardToZoom.type === 'plot'
-                                    ? 'horizontal'
-                                    : 'vertical'
-                                : 'vertical'
-                        }
-                        show={!!cardToZoom}
-                        cardName={cardToZoom ? cardToZoom.name : null}
-                        card={cardToZoom ? cards[cardToZoom.code] : null}
-                    />
-                )}
-                {showMessages && (
-                    <div className='relative flex flex-col items-end overflow-hidden min-w-72 max-w-72'>
-                        <div className='relative w-full flex-1 flex flex-col overflow-y-hidden'>
-                            <GameChat
-                                messages={currentGame.messages}
-                                onCardMouseOut={() => setCardToZoom(undefined)}
-                                onCardMouseOver={setCardToZoom}
-                                onSendChat={(message) => dispatch(sendGameChatMessage(message))}
-                                muted={!thisPlayer && currentGame.muteSpectators}
-                            />
-                        </div>
+        <>
+            <div className={boardClass}>
+                <div className='overflow-auto basis-[100%]'>
+                    <div className='flex flex-col min-w-max h-full'>
+                        <PlayerStats
+                            showControls={false}
+                            stats={otherPlayer.stats}
+                            user={otherPlayer.user}
+                            firstPlayer={otherPlayer.firstPlayer}
+                        />
+                        <GameBoardLayout
+                            thisPlayer={thisPlayer}
+                            otherPlayer={otherPlayer}
+                            onCardClick={onCardClick}
+                        />
+                        <PlayerStats
+                            stats={thisPlayer.stats}
+                            showControls={true}
+                            showMessages
+                            user={thisPlayer.user}
+                            firstPlayer={thisPlayer.firstPlayer}
+                            onSettingsClick={() => setShowModal(!showModal)}
+                            onMessagesClick={() => setShowGameChat(!showGameChat)}
+                            numMessages={unreadMessages}
+                            muteSpectators={currentGame.muteSpectators}
+                            onMuteClick={() => dispatch(sendToggleMuteSpectatorsMessage())}
+                        />
                     </div>
-                )}
-            </div>
-            <div>
-                <PlayerStats
-                    stats={thisPlayer.stats}
-                    showControls={true}
-                    showMessages
-                    user={thisPlayer.user}
-                    firstPlayer={thisPlayer.firstPlayer}
-                    onSettingsClick={() => setShowModal(!showModal)}
-                    onMessagesClick={onMessagesClick}
-                    numMessages={newMessages}
-                    muteSpectators={currentGame.muteSpectators}
-                    onMuteClick={() => dispatch(sendToggleMuteSpectatorsMessage())}
+                </div>
+                <GameChat
+                    className='shrink-0 grow-0'
+                    isOpen={showGameChat}
+                    onClose={() => setShowGameChat(false)}
+                    onUnreadMessagesChange={setUnreadMessages}
+                    messages={currentGame.messages}
+                    onSendChat={(message) => dispatch(sendGameChatMessage(message))}
+                    muted={!thisPlayer && currentGame.muteSpectators}
                 />
             </div>
-        </div>
+            <GameConfigurationModal
+                isOpen={showModal}
+                onClose={() => setShowModal(false)}
+                keywordSettings={thisPlayer.keywordSettings}
+                onKeywordSettingToggle={(option, value) =>
+                    dispatch(sendToggleKeywordSettingMessage(option, value))
+                }
+                onPromptDupesToggle={(value) => dispatch(sendToggleDupesMessage(value))}
+                onPromptedActionWindowToggle={(option, value) =>
+                    dispatch(sendTogglePromptedActionWindowMessage(option, value))
+                }
+                onTimerSettingToggle={(option, value) =>
+                    dispatch(sendToggleTimerSetting(option, value))
+                }
+                promptDupes={thisPlayer.promptDupes}
+                promptedActionWindows={thisPlayer.promptedActionWindows}
+                timerSettings={thisPlayer.timerSettings}
+            />
+        </>
     );
 };
 
