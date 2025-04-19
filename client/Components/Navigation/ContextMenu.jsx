@@ -1,10 +1,15 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { sendConcedeMessage, sendLeaveGameMessage } from '../../redux/reducers/game';
-import { Link, NavbarMenuItem, Tooltip } from '@heroui/react';
+import { Button, Link, NavbarMenuItem, Tooltip } from '@heroui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faWarning } from '@fortawesome/free-solid-svg-icons';
+import {
+    faDownLeftAndUpRightToCenter,
+    faUpRightAndDownLeftFromCenter,
+    faWarning
+} from '@fortawesome/free-solid-svg-icons';
 import ConfirmDialog from '../Site/ConfirmDialog';
+import screenfull from 'screenfull';
 
 const ContextMenu = () => {
     const dispatch = useDispatch();
@@ -14,6 +19,7 @@ const ContextMenu = () => {
     const [lastSpectatorCount, setLastSpectatorCount] = useState(0);
     const [showSpectatorWarning, setShowSpectatorWarning] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
+    const [isFullscreen, setIsFullscreen] = useState(screenfull.isFullscreen);
 
     let spectating = currentGame && !currentGame.players[user.username];
 
@@ -62,6 +68,27 @@ const ContextMenu = () => {
             'cursor-pointer text-medium font-[PoppinsMedium] text-white transition-colors duration-500 ease-in-out hover:text-gray-500 text-nowrap';
         if (currentGame?.started) {
             menuOptions.push(
+                <Button
+                    variant='flat'
+                    onPress={() => {
+                        if (screenfull.isEnabled) {
+                            screenfull.toggle();
+                            setIsFullscreen(!isFullscreen);
+                        }
+                    }}
+                    startContent={
+                        <FontAwesomeIcon
+                            icon={
+                                isFullscreen
+                                    ? faDownLeftAndUpRightToCenter
+                                    : faUpRightAndDownLeftFromCenter
+                            }
+                        />
+                    }
+                    isIconOnly={true}
+                />
+            );
+            menuOptions.unshift(
                 <Link onPress={onLeaveClick} className={menuItemClass}>
                     Leave Game
                 </Link>
@@ -127,6 +154,7 @@ const ContextMenu = () => {
         currentGame?.spectators,
         currentGame?.started,
         dispatch,
+        isFullscreen,
         lastSpectatorCount,
         onLeaveClick,
         showConfirm,
