@@ -9,18 +9,16 @@ import { useGetCardsQuery } from '../../redux/middleware/api';
 import { Button } from '@heroui/react';
 import ThronesIcon from './ThronesIcon';
 import LoadingSpinner from '../Site/LoadingSpinner';
+import CardHoverable from '../Images/CardHoverable';
 
 const ActivePlayerPrompt = ({
     onButtonClick,
     buttons,
-    onMouseOver,
-    onMouseOut,
     controls,
     promptTitle,
     timerStartTime,
     timerLimit,
     phase,
-    onTitleClick,
     promptText
 }) => {
     const { data: cards, isLoading } = useGetCardsQuery();
@@ -83,34 +81,35 @@ const ActivePlayerPrompt = ({
                     ? (event) => handleCancelTimerClick(event, button)
                     : (event) => handleButtonClick(event, button);
 
+                const buttonRet = (
+                    <Button
+                        type='button'
+                        color='primary'
+                        className='text-wrap text-xs h-8 md:h-full md:min-h-10 md:text-small'
+                        onPress={clickCallback}
+                        isDisabled={button.disabled}
+                        disableRipple
+                        fullWidth
+                    >
+                        {button.icon && (
+                            <ThronesIcon icon={button.icon} withBackground noSize={false} />
+                        )}
+                        <span>{button.text}</span>
+                    </Button>
+                );
                 buttons.push(
                     <div className='w-full' key={index}>
-                        <Button
-                            type='button'
-                            color='primary'
-                            className='text-wrap text-xs h-8 md:h-full md:min-h-10 md:text-small'
-                            onPress={clickCallback}
-                            onMouseOver={
-                                button.card ? (event) => onMouseOver(event, button.card) : null
-                            }
-                            onMouseOut={
-                                button.card ? (event) => onMouseOut(event, button.card) : null
-                            }
-                            isDisabled={button.disabled}
-                            disableRipple
-                            fullWidth
-                        >
-                            {button.icon && (
-                                <ThronesIcon icon={button.icon} withBackground noSize={false} />
-                            )}
-                            <span>{button.text}</span>
-                        </Button>
+                        {button.card ? (
+                            <CardHoverable code={button.card.code}>{buttonRet}</CardHoverable>
+                        ) : (
+                            buttonRet
+                        )}
                     </div>
                 );
             }
             return buttons;
         }, []);
-    }, [buttons, handleButtonClick, handleCancelTimerClick, onMouseOver, onMouseOut]);
+    }, [buttons, handleButtonClick, handleCancelTimerClick]);
 
     const getControls = useCallback(() => {
         if (!controls) {
@@ -123,8 +122,6 @@ const ActivePlayerPrompt = ({
                     return (
                         <AbilityTargeting
                             key={control.promptId}
-                            onMouseOut={onMouseOut}
-                            onMouseOver={onMouseOver}
                             source={control.source}
                             targets={control.targets}
                         />
@@ -170,7 +167,7 @@ const ActivePlayerPrompt = ({
                     );
             }
         });
-    }, [controls, cards, handleLookupValueSelected, onMouseOver, onMouseOut]);
+    }, [controls, cards, handleLookupValueSelected]);
 
     let promptTitleElement;
 
@@ -217,7 +214,6 @@ const ActivePlayerPrompt = ({
                     'relative text-small md:text-medium font-bold text-center uppercase border-1 border-default-200 bg-secondary-200 py-1 rounded-t-md mx-0 mb-0 ' +
                     phase
                 }
-                onPointerDown={onTitleClick}
             >
                 {phase} phase
             </div>
