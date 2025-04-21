@@ -17,8 +17,8 @@ class PendingGame {
         this.allowSpectators = details.allowSpectators;
         this.showHand = details.showHand;
         this.gamePrivate = details.gamePrivate;
+        this.gameFormat = details.gameFormat;
         this.gameType = details.gameType;
-        this.isMelee = details.isMelee;
         this.createdAt = new Date();
         this.gameChat = new GameChat();
         this.useGameTimeLimit = details.useGameTimeLimit;
@@ -65,6 +65,7 @@ class PendingGame {
 
         return {
             gameId: this.id,
+            gameFormat: this.gameFormat,
             gameType: this.gameType,
             players: players,
             startedAt: this.createdAt
@@ -370,6 +371,7 @@ class PendingGame {
             allowSpectators: this.allowSpectators,
             createdAt: this.createdAt,
             gamePrivate: this.gamePrivate,
+            gameFormat: this.gameFormat,
             gameType: this.gameType,
             event: this.event,
             full: Object.values(this.players).length >= this.maxPlayers,
@@ -427,9 +429,9 @@ class PendingGame {
             createdAt: this.createdAt,
             event: this.event,
             gamePrivate: this.gamePrivate,
+            gameFormat: this.gameFormat,
             gameType: this.gameType,
             id: this.id,
-            isMelee: this.isMelee,
             name: this.name,
             owner: this.owner.getDetails(),
             players,

@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 import LoadingSpinner from '../Site/LoadingSpinner';
 
-import PlayerStats from './PlayerStats';
 import GameChat from './GameChat';
 import GameConfigurationModal from './GameConfigurationModal';
 import { useGetCardsQuery } from '../../redux/middleware/api';
@@ -11,16 +10,21 @@ import { navigate } from '../../redux/reducers/navigation';
 import {
     sendCardClickedMessage,
     sendCardSizeChangeMessage,
+    sendDragDropMessage,
     sendGameChatMessage,
     sendToggleDupesMessage,
     sendToggleKeywordSettingMessage,
-    sendToggleMuteSpectatorsMessage,
     sendTogglePromptedActionWindowMessage,
     sendToggleTimerSetting
 } from '../../redux/reducers/game';
-import GameBoardLayout from './GameBoardLayout';
 
 import './GameBoard.css';
+import { DndContext, DragOverlay, MouseSensor, TouchSensor, useSensor } from '@dnd-kit/core';
+import { ItemTypes } from '../../constants';
+import CardImage from '../Images/CardImage';
+import JoustGameBoardLayout from './JoustGameBoardLayout';
+import ErrorMessage from '../Site/ErrorMessage';
+import MeleeGameBoardLayout from './MeleeGameBoardLayout';
 
 const placeholderPlayer = {
     activePlot: null,
@@ -40,7 +44,6 @@ const placeholderPlayer = {
     numDrawCards: 0,
     selectedPlot: null,
     stats: null,
-    title: null,
     user: null
 };
 
@@ -61,6 +64,24 @@ const GameBoard = () => {
     const [unreadMessages, setUnreadMessages] = useState(0);
     const [showModal, setShowModal] = useState(false);
 
+    const [draggingDetail, setDraggingDetail] = useState(null);
+
+    const mouseSensor = useSensor(MouseSensor, {
+        activationConstraint: {
+            distance: 10
+        }
+    });
+
+    // TODO: Create a custom touch sensor to allow for distance, delay & tolerance to work together (as TouchSensor does not support all 3 used together)
+    // Distance is required to ensure press + hold shows the card hover
+    // Delay is required to ensure a swipe gesture will scroll, such as scrolling down the draw deck window
+    // Tolerance is a nice-to-have, but can probably be 0
+    const touchSensor = useSensor(TouchSensor, {
+        activationConstraint: {
+            distance: 10
+        }
+    });
+
     const onCardClick = useCallback(
         (card) => {
             //stopAbilityTimer();
@@ -69,16 +90,21 @@ const GameBoard = () => {
         [dispatch]
     );
 
-    let thisPlayer = useMemo(() => {
-        return defaultPlayerInfo(
-            currentGame?.players[user?.username] || Object.values(currentGame.players)[0]
-        );
-    }, [currentGame?.players, user?.username]);
+    const thisPlayer = useMemo(
+        () =>
+            defaultPlayerInfo(
+                currentGame?.players[user?.username] || Object.values(currentGame?.players)[0]
+            ),
+        [currentGame?.players, user?.username]
+    );
 
-    let otherPlayer = useMemo(() => {
-        return defaultPlayerInfo(
-            Object.values(currentGame.players).find((player) => player.name !== thisPlayer.name)
+    const otherPlayers = useMemo(() => {
+        const others = Object.values(currentGame?.players).filter(
+            (player) => player.name !== thisPlayer.name
         );
+        return others.length > 0
+            ? others.map(defaultPlayerInfo)
+            : Array.from({ length: 3 }, () => defaultPlayerInfo({}));
     }, [currentGame?.players, thisPlayer?.name]);
 
     if (!currentGame || !currentGame.started) {
@@ -94,43 +120,91 @@ const GameBoard = () => {
         return <LoadingSpinner label={'You are not logged in, redirecting...'} />;
     }
 
-    if (!thisPlayer) {
+    if (!currentGame.players || currentGame.players.length === 0) {
         return <LoadingSpinner label={'Waiting for game to have players or close...'} />;
     }
-
     const boardClass = classNames('absolute top-0 bottom-0 right-0 left-0 flex overflow-x-hidden', {
         'select-cursor': thisPlayer && thisPlayer.selectCard
     });
+
+    let gameBoard = null;
+    if (currentGame.gameFormat === 'joust') {
+        gameBoard = (
+            <JoustGameBoardLayout
+                thisPlayer={thisPlayer}
+                otherPlayer={otherPlayers[0]}
+                onCardClick={onCardClick}
+                onSettingsClick={() => setShowModal(!showModal)}
+                onChatToggle={() => setShowGameChat(!showGameChat)}
+                numMessages={unreadMessages}
+                isDragging={!!draggingDetail}
+            />
+        );
+    } else if (currentGame.gameFormat === 'melee') {
+        gameBoard = (
+            <MeleeGameBoardLayout
+                thisPlayer={thisPlayer}
+                otherPlayers={otherPlayers}
+                onCardClick={onCardClick}
+                onSettingsClick={() => setShowModal(!showModal)}
+                onChatToggle={() => setShowGameChat(!showGameChat)}
+                numMessages={unreadMessages}
+                isDragging={!!draggingDetail}
+            />
+        );
+    } else {
+        return (
+            <ErrorMessage
+                title={'Failed to load game board'}
+                message={`Board for ${currentGame.gameFormat} format is not yet implemented`}
+            />
+        );
+    }
 
     return (
         <>
             <div className={boardClass}>
                 <div className='overflow-auto basis-[100%]'>
-                    <div className='flex flex-col min-w-max h-full'>
-                        <PlayerStats
-                            showControls={false}
-                            stats={otherPlayer.stats}
-                            user={otherPlayer.user}
-                            firstPlayer={otherPlayer.firstPlayer}
-                        />
-                        <GameBoardLayout
-                            thisPlayer={thisPlayer}
-                            otherPlayer={otherPlayer}
-                            onCardClick={onCardClick}
-                        />
-                        <PlayerStats
-                            stats={thisPlayer.stats}
-                            showControls={true}
-                            showMessages
-                            user={thisPlayer.user}
-                            firstPlayer={thisPlayer.firstPlayer}
-                            onSettingsClick={() => setShowModal(!showModal)}
-                            onMessagesClick={() => setShowGameChat(!showGameChat)}
-                            numMessages={unreadMessages}
-                            muteSpectators={currentGame.muteSpectators}
-                            onMuteClick={() => dispatch(sendToggleMuteSpectatorsMessage())}
-                        />
-                    </div>
+                    <DndContext
+                        sensors={[mouseSensor, touchSensor]}
+                        onDragStart={(event) => {
+                            const card = event.active.data.current?.card;
+                            if (card) {
+                                const orientation = event.active.data.current?.orientation;
+                                setDraggingDetail({ card, orientation });
+                            }
+                        }}
+                        onDragEnd={(event) => {
+                            if (!event.over || event.active.data.current.type !== ItemTypes.CARD) {
+                                return;
+                            }
+                            setDraggingDetail(null);
+                            dispatch(
+                                sendDragDropMessage(
+                                    event.active.data.current.card.uuid,
+                                    event.active.data.current.source,
+                                    event.over.data.current.source
+                                )
+                            );
+                        }}
+                    >
+                        {gameBoard}
+                        <DragOverlay className={'opacity-50'} dropAnimation={null}>
+                            {draggingDetail && (
+                                <CardImage
+                                    size={thisPlayer.cardSize}
+                                    code={draggingDetail.card.code || 'cardback'}
+                                    orientation={
+                                        (draggingDetail.card.type !== 'plot' &&
+                                            draggingDetail.orientation === 'horizontal') ||
+                                        draggingDetail.card.kneeled
+                                            ? 'rotated'
+                                            : draggingDetail.orientation
+                                    }
+                                />
+                            )}
+                        </DragOverlay>
+                    </DndContext>
                 </div>
                 <GameChat
                     className='shrink-0 grow-0'

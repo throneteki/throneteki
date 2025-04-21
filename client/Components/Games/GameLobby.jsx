@@ -20,7 +20,9 @@ import { setUrl } from '../../redux/reducers/navigation';
 const filterDefaults = {
     ['beginner']: true,
     ['casual']: true,
-    ['competitive']: true
+    ['competitive']: true,
+    ['joust']: true,
+    ['melee']: true
 };
 
 const GameLobby = ({ gameId }) => {

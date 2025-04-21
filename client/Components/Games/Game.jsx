@@ -68,7 +68,7 @@ const Game = ({
             <hr />
             <div className={rowClass}>
                 <div className={gameHeaderClass}>
-                    <span className='capitalize'>({game.gameType})</span>
+                    <span className='capitalize'>({`${game.gameType} ${game.gameFormat}`})</span>
                     <span className='text-white leading-normal self-start'>
                         <b>{title}</b>
                     </span>

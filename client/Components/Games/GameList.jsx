@@ -99,6 +99,10 @@ const GameList = ({ gameFilter }) => {
                 continue;
             }
 
+            if (!gameFilter[game.gameFormat]) {
+                continue;
+            }
+
             if (!game.started && game.gamePrivate && !isAdmin) {
                 continue;
             }

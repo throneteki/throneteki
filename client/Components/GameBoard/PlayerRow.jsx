@@ -17,7 +17,6 @@ const PlayerRow = ({
     cardSize,
     isMe,
     title,
-    isMelee,
     username,
     hand,
     numDrawCards,
@@ -125,30 +124,23 @@ const PlayerRow = ({
     }, [agendas, renderDroppablePile, onCardClick, onMenuItemClick, side, cardSize]);
 
     const getTitleCard = useCallback(() => {
-        if (!title || !isMelee) {
+        if (!title) {
             return null;
         }
 
-        const titleCard = (
+        return (
             <CardPile
-                cards={[]}
                 className='title'
-                onCardClick={onCardClick}
-                onMenuItemClick={onMenuItemClick}
-                popupLocation={side}
                 source='title'
-                title={title.name}
+                cards={[]}
                 topCard={title}
+                disablePopup
+                onCardClick={onCardClick}
                 size={cardSize}
+                orientation={title.kneeled ? 'horizontal' : 'vertical'}
             />
         );
-
-        if (isMe) {
-            return <Droppable source='title'>{titleCard}</Droppable>;
-        }
-
-        return titleCard;
-    }, [title, isMelee, onCardClick, onMenuItemClick, side, cardSize, isMe]);
+    }, [title, onCardClick, cardSize]);
 
     const cardPileProps = {
         onCardClick: onCardClick,

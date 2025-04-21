@@ -75,6 +75,7 @@ class Game extends EventEmitter {
         this.clockPaused = false;
         this.savedGameId = details.savedGameId;
         this.gamePrivate = details.gamePrivate;
+        this.gameFormat = details.gameFormat;
         this.gameType = details.gameType;
         this.abilityContextStack = [];
         this.abilityWindowStack = [];
@@ -84,7 +85,6 @@ class Game extends EventEmitter {
             isApplying: false,
             type: undefined
         };
-        this.isMelee = !!details.isMelee;
         this.noTitleSetAside = !!details.noTitleSetAside;
         this.titlePool = new TitlePool(this, options.titleCardData || []);
         this.cardData = options.cardData || [];
@@ -124,6 +124,14 @@ class Game extends EventEmitter {
 
     isPlaytesting() {
         return this.instance && this.instance.type === 'playtesting';
+    }
+
+    get isJoust() {
+        return this.gameFormat === 'joust';
+    }
+
+    get isMelee() {
+        return this.gameFormat === 'melee';
     }
 
     reportError(e) {
@@ -1539,7 +1547,6 @@ class Game extends EventEmitter {
 
             return {
                 id: this.id,
-                isMelee: this.isMelee,
                 name: this.name,
                 owner: this.owner,
                 players: playerState,
@@ -1553,6 +1560,7 @@ class Game extends EventEmitter {
                 }),
                 started: this.started,
                 winner: this.winner ? this.winner.name : undefined,
+                gameFormat: this.gameFormat,
                 cancelPromptUsed: this.cancelPromptUsed,
                 useGameTimeLimit: this.useGameTimeLimit,
                 gameTimeLimit: this.gameTimeLimit,
@@ -1601,9 +1609,9 @@ class Game extends EventEmitter {
             allowSpectators: this.allowSpectators,
             createdAt: this.createdAt,
             gamePrivate: this.gamePrivate,
+            gameFormat: this.gameFormat,
             gameType: this.gameType,
             id: this.id,
-            isMelee: this.isMelee,
             messages: this.gameChat.messages,
             name: this.name,
             owner: this.owner,

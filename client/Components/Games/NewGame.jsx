@@ -10,6 +10,7 @@ import { useGetRestrictedListQuery } from '../../redux/middleware/api';
 import Panel from '../Site/Panel';
 import { sendNewGameMessage } from '../../redux/reducers/lobby';
 import AlertPanel, { AlertType } from '../Site/AlertPanel';
+import { GameFormats } from '../../constants';
 
 const GameNameMaxLength = 64;
 
@@ -25,6 +26,7 @@ const NewGame = ({
 
     const connected = useSelector((state) => state.lobby.connected);
     const user = useSelector((state) => state.auth.user);
+    const [gameFormat, setGameFormat] = useState('joust');
     const [restrictedList, setRestrictedList] = useState(restrictedLists?.[0]._id);
     const [usingEventOptions, setUsingEventOptions] = useState(false);
 
@@ -77,7 +79,7 @@ const NewGame = ({
         name: `${user?.username}'s game`,
         password: '',
         allowSpectators: true,
-        gameFormat: 'normal',
+        gameFormat: 'joust',
         gameType: defaultGameType || 'casual',
         useGameTimeLimit: !!defaultTimeLimit,
         gameTimeLimit: defaultTimeLimit || 55,
@@ -102,7 +104,8 @@ const NewGame = ({
                 validationSchema={schema}
                 onSubmit={(values) => {
                     const newGame = Object.assign({}, values, {
-                        restrictedList: restrictedListsById[restrictedList]
+                        restrictedList: restrictedListsById[restrictedList],
+                        gameFormat
                     });
 
                     dispatch(sendNewGameMessage(newGame));
@@ -155,6 +158,22 @@ const NewGame = ({
                                                 placeholder={'Enter a password'}
                                                 {...formProps.getFieldProps('password')}
                                             />
+                                        </div>
+                                        <div>
+                                            <Select
+                                                label={'Format'}
+                                                selectedKeys={new Set([gameFormat])}
+                                                onChange={(e) => {
+                                                    setGameFormat(e.target.value);
+                                                }}
+                                                disallowEmptySelection={true}
+                                            >
+                                                {GameFormats?.map((gm) => (
+                                                    <SelectItem key={gm.name} value={gm.name}>
+                                                        {gm.label}
+                                                    </SelectItem>
+                                                ))}
+                                            </Select>
                                         </div>
                                         <div>
                                             <Select

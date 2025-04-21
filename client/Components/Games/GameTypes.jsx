@@ -1,14 +1,9 @@
 import React from 'react';
 import GameTypeInfo from './GameTypeInfo';
 import { Radio, RadioGroup } from '@heroui/react';
+import { GameTypes as gameTypes } from '../../constants';
 
 const GameTypes = ({ formProps, isDisabled }) => {
-    const types = [
-        { name: 'beginner', label: 'Beginner' },
-        { name: 'casual', label: 'Casual' },
-        { name: 'competitive', label: 'Competitive' }
-    ];
-
     return (
         <div className='flex flex-col gap-2'>
             <RadioGroup
@@ -19,7 +14,7 @@ const GameTypes = ({ formProps, isDisabled }) => {
                 onValueChange={(value) => formProps.setFieldValue('gameType', value)}
                 isDisabled={isDisabled}
             >
-                {types.map((type) => (
+                {gameTypes.map((type) => (
                     <Radio key={type.name} id={type.name} value={type.name}>
                         {type.label}
                     </Radio>

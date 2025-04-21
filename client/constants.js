@@ -3,6 +3,17 @@ export const ItemTypes = {
     PANEL: 'panel'
 };
 
+export const GameFormats = [
+    { name: 'joust', label: 'Joust' },
+    { name: 'melee', label: 'Melee (Alpha)' }
+];
+
+export const GameTypes = [
+    { name: 'beginner', label: 'Beginner' },
+    { name: 'casual', label: 'Casual' },
+    { name: 'competitive', label: 'Competitive' }
+];
+
 export const ThronesIcons = [
     'military',
     'power',

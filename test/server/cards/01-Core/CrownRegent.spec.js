@@ -1,5 +1,5 @@
 describe('Crown Regent', function () {
-    integration({ isMelee: true }, function () {
+    integration({ gameFormat: 'melee' }, function () {
         describe('redirecting a challenge', function () {
             beforeEach(function () {
                 const deck = this.buildDeck('stark', ['Trading with the Pentoshi', 'Hedge Knight']);

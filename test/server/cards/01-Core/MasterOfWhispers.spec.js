@@ -1,5 +1,5 @@
 describe('Master of Whispers', function () {
-    integration({ isMelee: true }, function () {
+    integration({ gameFormat: 'melee' }, function () {
         describe('applying intrigue claim', function () {
             beforeEach(function () {
                 const deck = this.buildDeck('stark', [

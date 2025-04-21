@@ -1,14 +1,9 @@
 import React, { useState } from 'react';
-import { Switch } from '@heroui/react';
+import { Divider, Switch } from '@heroui/react';
 import Panel from '../Site/Panel';
+import { GameFormats, GameTypes } from '../../constants';
 
 const GameFilter = ({ filter, onFilterChanged }) => {
-    const filters = [
-        { name: 'beginner', label: 'Beginner' },
-        { name: 'casual', label: 'Casual' },
-        { name: 'competitive', label: 'Competitive' }
-    ];
-
     const [currentFilter, setCurrentFilter] = useState(filter);
 
     const onFilterChecked = (name, checked) => {
@@ -24,7 +19,7 @@ const GameFilter = ({ filter, onFilterChanged }) => {
         <Panel type='primary'>
             <div className='flex flex-wrap gap-2'>
                 <div className='flex flex-wrap gap-2 justify-start'>
-                    {filters.map((filter) => (
+                    {GameTypes.map((filter) => (
                         <div key={filter.name}>
                             <Switch
                                 id={filter.name}
@@ -38,6 +33,23 @@ const GameFilter = ({ filter, onFilterChanged }) => {
                         </div>
                     ))}
                 </div>
+                <Divider orientation='vertical' />
+                <div className='flex flex-warp gap-2 justify-start'>
+                    {GameFormats.map((filter) => (
+                        <div key={filter.name}>
+                            <Switch
+                                id={filter.name}
+                                onValueChange={(isSelected) => {
+                                    onFilterChecked(filter.name, isSelected);
+                                }}
+                                isSelected={currentFilter[filter.name]}
+                            >
+                                {filter.label}
+                            </Switch>
+                        </div>
+                    ))}
+                </div>
+                <Divider orientation='vertical' />
                 <Switch
                     id='onlyShowNew'
                     onValueChange={(isSelected) => {

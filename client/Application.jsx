@@ -16,6 +16,7 @@ import StandardBg from './assets/img/bgs/background.png';
 import WinterBg from './assets/img/bgs/background2.png';
 import LoadingSpinner from './Components/Site/LoadingSpinner';
 import CardHover from './Components/Images/CardHover';
+import ErrorMessage from './Components/Site/ErrorMessage';
 
 const backgrounds = {
     none: BlankBg,
@@ -120,12 +121,10 @@ const Application = () => {
                 >
                     <Sentry.ErrorBoundary
                         fallback={
-                            <div className='w-full h-full flex justify-center items-center'>
-                                <div className='text-center'>
-                                    <h1 className='text-large'>Unexpected Error</h1>
-                                    <p>Report has been automatically submitted</p>
-                                </div>
-                            </div>
+                            <ErrorMessage
+                                title='Unexpected Error'
+                                message='Report has been automatically submitted'
+                            />
                         }
                     >
                         <CardHover>

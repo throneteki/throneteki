@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { sendChangeStatMessage } from '../../redux/reducers/game';
+import { sendChangeStatMessage, sendToggleMuteSpectatorsMessage } from '../../redux/reducers/game';
 import { Avatar, Badge, Button } from '@heroui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCogs, faComment, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
@@ -12,13 +12,12 @@ const PlayerStats = ({
     showControls,
     onSettingsClick,
     user: userProp,
-    muteSpectators,
     firstPlayer,
-    onMuteClick,
-    onMessagesClick,
+    onChatToggle,
     numMessages
 }) => {
     const dispatch = useDispatch();
+    const currentGame = useSelector((state) => state.lobby.currentGame);
     const user = useSelector((state) => state.auth.user);
     const isMe = userProp?.username === user?.username;
 
@@ -107,9 +106,11 @@ const PlayerStats = ({
                                     'Settings'
                                 )}
                                 {getStatButton(
-                                    onMuteClick,
-                                    muteSpectators ? faEyeSlash : faEye,
-                                    muteSpectators ? 'Un-mute spectators' : 'Mute spectators'
+                                    () => dispatch(sendToggleMuteSpectatorsMessage()),
+                                    currentGame.muteSpectators ? faEyeSlash : faEye,
+                                    currentGame.muteSpectators
+                                        ? 'Un-mute spectators'
+                                        : 'Mute spectators'
                                 )}
                             </>
                         )}
@@ -120,7 +121,7 @@ const PlayerStats = ({
                                 content={numMessages > 99 ? '99+' : numMessages}
                                 isInvisible={!numMessages || numMessages === 0}
                             >
-                                {getStatButton(onMessagesClick, faComment, 'Toggle chat')}
+                                {getStatButton(onChatToggle, faComment, 'Toggle chat')}
                             </Badge>
                         </StatContainer>
                     </>

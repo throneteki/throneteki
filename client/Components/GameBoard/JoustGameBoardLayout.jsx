@@ -1,66 +1,38 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PlayerRow from './PlayerRow';
 import ActivePlayerPrompt from './ActivePlayerPrompt';
 import PlayerBoard from './PlayerBoard';
 import GameTimer from './GameTimer';
 import Droppable from './Droppable';
-import { useDispatch, useSelector } from 'react-redux';
 import {
     sendButtonClickedMessage,
     sendCardMenuItemClickedMessage,
-    sendDragDropMessage,
     sendShowDrawDeckMessage,
     sendShuffleDeckMessage
 } from '../../redux/reducers/game';
-import { DndContext, DragOverlay, MouseSensor, TouchSensor, useSensor } from '@dnd-kit/core';
-import { ItemTypes } from '../../constants';
-import CardImage from '../Images/CardImage';
+import { useDispatch, useSelector } from 'react-redux';
+import PlayerStats from './PlayerStats';
 
-const GameBoardLayout = ({ thisPlayer, otherPlayer, onCardClick }) => {
-    const user = useSelector((state) => state.auth.user);
-    const [draggingDetail, setDraggingDetail] = useState(null);
+const JoustGameBoardLayout = ({
+    thisPlayer,
+    otherPlayer,
+    onCardClick,
+    onSettingsClick,
+    onChatToggle,
+    unreadMessages,
+    isDragging
+}) => {
     const dispatch = useDispatch();
-
-    const mouseSensor = useSensor(MouseSensor, {
-        activationConstraint: {
-            distance: 10
-        }
-    });
-
-    // TODO: Create a custom touch sensor to allow for distance, delay & tolerance to work together (as TouchSensor does not support all 3 used together)
-    // Distance is required to ensure press + hold shows the card hover
-    // Delay is required to ensure a swipe gesture will scroll, such as scrolling down the draw deck window
-    // Tolerance is a nice-to-have, but can probably be 0
-    const touchSensor = useSensor(TouchSensor, {
-        activationConstraint: {
-            distance: 10
-        }
-    });
+    const user = useSelector((state) => state.auth.user);
 
     return (
-        <DndContext
-            sensors={[mouseSensor, touchSensor]}
-            onDragStart={(event) => {
-                const card = event.active.data.current?.card;
-                if (card) {
-                    const orientation = event.active.data.current?.orientation;
-                    setDraggingDetail({ card, orientation });
-                }
-            }}
-            onDragEnd={(event) => {
-                if (!event.over || event.active.data.current.type !== ItemTypes.CARD) {
-                    return;
-                }
-                setDraggingDetail(null);
-                dispatch(
-                    sendDragDropMessage(
-                        event.active.data.current.card.uuid,
-                        event.active.data.current.source,
-                        event.over.data.current.source
-                    )
-                );
-            }}
-        >
+        <div className='flex flex-col min-w-max h-full'>
+            <PlayerStats
+                showControls={false}
+                stats={otherPlayer.stats}
+                user={otherPlayer.user}
+                firstPlayer={otherPlayer.firstPlayer}
+            />
             <div className={'flex flex-grow flex-col min-w-max'}>
                 <PlayerRow
                     agendas={otherPlayer.agendas}
@@ -77,7 +49,6 @@ const GameBoardLayout = ({ thisPlayer, otherPlayer, onCardClick }) => {
                     revealTopCard={otherPlayer.revealTopCard}
                     shadows={otherPlayer.cardPiles.shadows}
                     spectating={!thisPlayer}
-                    title={otherPlayer.title}
                     side='top'
                     cardSize={thisPlayer.cardSize}
                     plotDeck={otherPlayer.cardPiles.plotDeck}
@@ -157,7 +128,6 @@ const GameBoardLayout = ({ thisPlayer, otherPlayer, onCardClick }) => {
                     shadows={thisPlayer.cardPiles.shadows}
                     showDeck={thisPlayer.showDeck}
                     spectating={!thisPlayer}
-                    title={thisPlayer.title}
                     onMenuItemClick={(card, menuItem) =>
                         dispatch(sendCardMenuItemClickedMessage(card.uuid, menuItem))
                     }
@@ -167,26 +137,21 @@ const GameBoardLayout = ({ thisPlayer, otherPlayer, onCardClick }) => {
                     plotDiscard={thisPlayer.cardPiles.plotDiscard}
                     activePlot={thisPlayer.activePlot}
                     selectedPlot={thisPlayer.selectedPlot}
-                    showHiddenPiles={!!draggingDetail}
+                    showHiddenPiles={isDragging}
                 />
             </div>
-            <DragOverlay className={'opacity-50'} dropAnimation={null}>
-                {draggingDetail && (
-                    <CardImage
-                        size={thisPlayer.cardSize}
-                        code={draggingDetail.card.code || 'cardback'}
-                        orientation={
-                            (draggingDetail.card.type !== 'plot' &&
-                                draggingDetail.orientation === 'horizontal') ||
-                            draggingDetail.card.kneeled
-                                ? 'rotated'
-                                : draggingDetail.orientation
-                        }
-                    />
-                )}
-            </DragOverlay>
-        </DndContext>
+            <PlayerStats
+                stats={thisPlayer.stats}
+                showControls={true}
+                showMessages
+                user={thisPlayer.user}
+                firstPlayer={thisPlayer.firstPlayer}
+                onSettingsClick={onSettingsClick}
+                onChatToggle={onChatToggle}
+                numMessages={unreadMessages}
+            />
+        </div>
     );
 };
 
-export default GameBoardLayout;
+export default JoustGameBoardLayout;
