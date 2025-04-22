@@ -92,7 +92,6 @@ class BattleoftheTrident extends AgendaCard {
         this.game.queueStep(new RevealPlots(this.game, [context.target]));
         this.game.queueStep(
             new SimpleStep(this.game, () => {
-                context.player.recyclePlots();
                 if (context.player.plotDiscard.length > 0) {
                     let removeFromGameAction = this.abilities.reactions.find(
                         (reaction) => reaction.title === 'removeFromGameMarker'
