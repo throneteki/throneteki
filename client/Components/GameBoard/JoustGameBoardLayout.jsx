@@ -45,7 +45,6 @@ const JoustGameBoardLayout = ({
                     drawDeck={otherPlayer.cardPiles.drawDeck}
                     onCardClick={onCardClick}
                     outOfGamePile={otherPlayer.cardPiles.outOfGamePile}
-                    username={user.username}
                     revealTopCard={otherPlayer.revealTopCard}
                     shadows={otherPlayer.cardPiles.shadows}
                     spectating={!thisPlayer}

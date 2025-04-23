@@ -6,15 +6,18 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCogs, faComment, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import StatContainer from './StatContainer';
 import StatDisplay from './StatDisplay';
+import classNames from 'classnames';
 
 const PlayerStats = ({
+    className,
     stats,
     showControls,
     onSettingsClick,
     user: userProp,
     firstPlayer,
     onChatToggle,
-    numMessages
+    numMessages,
+    seatNo
 }) => {
     const dispatch = useDispatch();
     const currentGame = useSelector((state) => state.lobby.currentGame);
@@ -69,8 +72,12 @@ const PlayerStats = ({
         </StatContainer>
     );
 
+    const wrapperClassName = classNames(
+        'relative px-2 border-1 border-default-100 bg-black/35 flex items-center border-x-0',
+        className
+    );
     return (
-        <div className='relative px-2 border-1 border-default-100 bg-black/35 flex items-center border-x-0'>
+        <div className={wrapperClassName}>
             <div className='pr-1 py-1 flex items-center'>
                 <Avatar
                     src={`/img/avatar/${userProp?.username}.png`}
@@ -87,12 +94,16 @@ const PlayerStats = ({
             {getStatDisplay('initiative', 'Initiative')}
             {getStatDisplay('claim', 'Claim')}
             {getStatDisplay('reserve', 'Reserve')}
-
-            {firstPlayer ? (
+            {seatNo && (
+                <StatContainer>
+                    <div className='px-2'>{`Seat ${seatNo}`}</div>
+                </StatContainer>
+            )}
+            {firstPlayer && (
                 <StatContainer>
                     <div className='px-2'>First player</div>
                 </StatContainer>
-            ) : null}
+            )}
 
             <StatContainer>
                 {showControls && (

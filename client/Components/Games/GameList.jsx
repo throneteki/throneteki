@@ -117,6 +117,7 @@ const GameList = ({ gameFilter }) => {
                     onRemoveGame={() => removeGame(game)}
                     onWatchGame={() => watchGame(game)}
                     isAdmin={isAdmin}
+                    maxPlayers={game.maxPlayers}
                 />
             );
         }

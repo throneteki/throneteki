@@ -10,6 +10,7 @@ import { getCardDimensions } from '../../util';
 import PlayerPlots from './PlayerPlots';
 
 const PlayerRow = ({
+    className,
     outOfGamePile,
     onCardClick,
     onMenuItemClick,
@@ -17,7 +18,6 @@ const PlayerRow = ({
     cardSize,
     isMe,
     title,
-    username,
     hand,
     numDrawCards,
     drawDeck,
@@ -152,7 +152,6 @@ const PlayerRow = ({
         <SquishableCardPanel
             cards={hand}
             groupVisibleCards
-            username={username}
             maxCards={5}
             onCardClick={onCardClick}
             source='hand'
@@ -205,7 +204,6 @@ const PlayerRow = ({
             onCardClick={onCardClick}
             source='shadows'
             title='Shadows'
-            username={username}
         />
     );
     const retOutOfGame = (
@@ -220,14 +218,14 @@ const PlayerRow = ({
             {...cardPileProps}
         />
     );
-
+    const wrapperClassName = classNames('flex gap-2 m-1 w-fit', className);
     return (
-        <div className='flex gap-2 m-1 w-fit'>
+        <div className={wrapperClassName}>
             <PlayerPlots
                 cardSize={cardSize}
                 onCardClick={onCardClick}
                 onMenuItemClick={onMenuItemClick}
-                direction={isMe ? 'default' : 'reverse'}
+                direction={side === 'bottom' ? 'default' : 'reverse'}
                 isMe={isMe}
                 plotDeck={plotDeck}
                 plotDiscard={plotDiscard}

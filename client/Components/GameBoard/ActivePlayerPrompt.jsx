@@ -173,7 +173,7 @@ const ActivePlayerPrompt = ({
 
     if (promptTitle) {
         promptTitleElement = (
-            <div className='font-normal text-xs md:text-medium text-center border-1 border-default-200 bg-black/65 py-1'>
+            <div className='font-normal text-xs md:text-small lg:text-medium text-center border-1 border-default-200 bg-black/65 py-1'>
                 {promptTitle}
             </div>
         );
@@ -211,7 +211,7 @@ const ActivePlayerPrompt = ({
             {timer}
             <div
                 className={
-                    'relative text-small md:text-medium font-bold text-center uppercase border-1 border-default-200 bg-secondary-200 py-1 rounded-t-md mx-0 mb-0 ' +
+                    'relative text-xs md:text-small lg:text-medium font-bold text-center uppercase border-1 border-default-200 bg-secondary-200 py-1 rounded-t-md mx-0 mb-0 ' +
                     phase
                 }
             >

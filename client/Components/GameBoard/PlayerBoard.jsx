@@ -4,7 +4,14 @@ import classNames from 'classnames';
 import Card from './Card';
 import { standardiseCardSize } from '../../util';
 
-const PlayerBoard = ({ cardsInPlay, rowDirection, onCardClick, onMenuItemClick, cardSize }) => {
+const PlayerBoard = ({
+    cardsInPlay,
+    rowDirection,
+    onCardClick,
+    onMenuItemClick,
+    cardSize,
+    className
+}) => {
     const getCardRows = useCallback(() => {
         let groupedCards = cardsInPlay.reduce((group, card) => {
             (group[card.type] = group[card.type] || []).push(card);
@@ -81,13 +88,17 @@ const PlayerBoard = ({ cardsInPlay, rowDirection, onCardClick, onMenuItemClick, 
         [renderRow]
     );
 
-    let rows = getCardRows();
+    const rows = getCardRows();
 
-    let className = classNames('flex flex-1 flex-col min-h-0 m-2 gap-1.5 justify-between', {
-        'our-side': rowDirection === 'default'
-    });
+    const wrapperClassName = classNames(
+        className,
+        'flex flex-1 flex-col min-h-0 m-2 gap-1.5 justify-between',
+        {
+            'our-side': rowDirection === 'default'
+        }
+    );
 
-    return <div className={className}>{renderRows(rows)}</div>;
+    return <div className={wrapperClassName}>{renderRows(rows)}</div>;
 };
 
 export default PlayerBoard;

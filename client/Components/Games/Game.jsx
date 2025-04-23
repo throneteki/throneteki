@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import classNames from 'classnames';
 import moment from 'moment';
 
@@ -15,27 +15,54 @@ const Game = ({
     onRemoveGame,
     onWatchGame,
     showJoinButton,
-    showWatchButton
+    showWatchButton,
+    maxPlayers
 }) => {
-    const getPlayerSlots = function (game) {
-        // TODO: Update this to fetch from game once Melee implemented
-        const maxPlayers = 2;
-        const perRow = 2;
-        // Divide by number of players which can be displayed per row
-        const playerSlots = [...Array(Math.ceil(maxPlayers / perRow) * perRow)];
-        Object.values(game.players).forEach((player, i) => (playerSlots[i] = player));
-        return Object.values(playerSlots).map((player, i) => {
-            return (
-                <GamePlayerSlot
-                    key={player ? player.name : `slot-${i}`}
-                    player={player}
-                    showJoinButton={showJoinButton && !player && i === playerSlots.length - 1}
-                    onJoinGame={onJoinGame}
-                    position={i % 2 === 0 ? 'left' : 'right'}
-                />
-            );
-        });
-    };
+    const getPlayerSlots = useCallback(
+        (game) => {
+            const slots = Object.values(game.players)
+                .sort((a, b) => a.seatNo - b.seatNo)
+                .map((player, index) => (
+                    <GamePlayerSlot
+                        className='w-1/2 px-1'
+                        key={player.name}
+                        player={player}
+                        position={index % 2 === 0 ? 'left' : 'right'}
+                    />
+                ));
+
+            // If player can join, then add join button on latest slot
+            if (slots.length < maxPlayers && showJoinButton) {
+                const joinClassName = classNames('w-1/2 px-1 flex', {
+                    'justify-end': slots.length % 2 === 0
+                });
+                slots.push(
+                    <div className={joinClassName}>
+                        <div className='bg-default-100/50 rounded-lg flex justify-center items-center max-w-52 h-full min-h-20 flex-grow'>
+                            <Button size='sm' color='primary' onPress={onJoinGame}>
+                                {maxPlayers > 2 ? `Join (${slots.length}/${maxPlayers})` : 'Join'}
+                            </Button>
+                        </div>
+                    </div>
+                );
+            }
+            // Group the slots into rows of 2
+            const rows = slots.reduce((r, s, i) => {
+                if (i % 2 === 0) {
+                    r.push([s]);
+                } else {
+                    r[r.length - 1].push(s);
+                }
+                return r;
+            }, []);
+            return rows.map((row, index) => (
+                <div key={`row-${index}`} className='flex w-full'>
+                    {row}
+                </div>
+            ));
+        },
+        [maxPlayers, onJoinGame, showJoinButton]
+    );
 
     const rowClass = classNames(
         'min-h-32 py-3 px-2 hover:border-info hover:bg-info/20 bg-black/20',
@@ -98,7 +125,9 @@ const Game = ({
                         )}
                     </span>
                 </div>
-                <div className='flex justify-center'>{getPlayerSlots(game)}</div>
+                <div className='flex flex-wrap justify-center px-2 py-4 gap-2'>
+                    {getPlayerSlots(game)}
+                </div>
                 <div className='flex justify-center gap-2'>
                     {showWatchButton && (
                         <Button color='primary' size='sm' onPress={onWatchGame}>

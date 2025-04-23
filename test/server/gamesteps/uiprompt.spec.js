@@ -2,18 +2,8 @@ import UiPrompt from '../../../server/game/gamesteps/uiprompt.js';
 
 describe('the UiPrompt', function () {
     beforeEach(function () {
-        this.player1 = jasmine.createSpyObj('player', [
-            'setPrompt',
-            'cancelPrompt',
-            'startClock',
-            'stopClock'
-        ]);
-        this.player2 = jasmine.createSpyObj('player', [
-            'setPrompt',
-            'cancelPrompt',
-            'startClock',
-            'stopClock'
-        ]);
+        this.player1 = jasmine.createSpyObj('player', ['setPrompt', 'cancelPrompt', 'setIsActive']);
+        this.player2 = jasmine.createSpyObj('player', ['setPrompt', 'cancelPrompt', 'setIsActive']);
 
         this.game = jasmine.createSpyObj('game', ['getPlayers']);
         this.game.getPlayers.and.returnValue([this.player1, this.player2]);

@@ -64,17 +64,15 @@ const PlayerPlots = ({
         );
 
         const plotClass = classNames('rounded-md', {
-            'absolute bottom-0': direction !== 'reverse',
-            'z-20': plotsInFront
+            'absolute bottom-0': direction !== 'reverse'
         });
 
         const usedClass = classNames('rounded-md', {
             'absolute bottom-0': direction === 'reverse',
-            'shadow-[0_0_5px_0] shadow-black': !!activePlot,
-            'z-20': !plotsInFront
+            'shadow-[0_0_5px_0] shadow-black': !!activePlot
         });
 
-        let piles = [
+        const piles = [
             <div key='plotdeck' className={plotClass}>
                 {isMe ? (
                     <Droppable source='plot deck'>{plotDeckElement}</Droppable>
@@ -91,7 +89,7 @@ const PlayerPlots = ({
             </div>
         ];
 
-        return piles;
+        return plotsInFront ? piles.reverse() : piles;
     }, [
         plotDiscard,
         onCardClick,

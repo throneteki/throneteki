@@ -17,6 +17,7 @@ import WinterBg from './assets/img/bgs/background2.png';
 import LoadingSpinner from './Components/Site/LoadingSpinner';
 import CardHover from './Components/Images/CardHover';
 import ErrorMessage from './Components/Site/ErrorMessage';
+import classNames from 'classnames';
 
 const backgrounds = {
     none: BlankBg,
@@ -111,6 +112,9 @@ const Application = () => {
         }
     }, [gameBoardVisible, user]);
 
+    const containerClass = classNames('container', {
+        'max-w-full h-full': component?.key === 'gameboard'
+    });
     return (
         <>
             <NavBar />
@@ -127,13 +131,13 @@ const Application = () => {
                             />
                         }
                     >
-                        <CardHover>
+                        <CardHover className='w-full h-full'>
                             {isLoading ? (
                                 <div className='w-full h-full flex justify-center items-center'>
                                     <LoadingSpinner size='lg' />
                                 </div>
                             ) : (
-                                <div className='container'>{component}</div>
+                                <div className={containerClass}>{component}</div>
                             )}
                         </CardHover>
                     </Sentry.ErrorBoundary>

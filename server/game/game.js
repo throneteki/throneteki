@@ -40,6 +40,7 @@ import EndRound from './GameActions/EndRound.js';
 import TimeLimit from './timeLimit.js';
 import PrizedKeywordListener from './PrizedKeywordListener.js';
 import GameWonPrompt from './gamesteps/GameWonPrompt.js';
+import shuffle from 'lodash.shuffle';
 
 class Game extends EventEmitter {
     constructor(details, options = {}) {
@@ -77,6 +78,7 @@ class Game extends EventEmitter {
         this.gamePrivate = details.gamePrivate;
         this.gameFormat = details.gameFormat;
         this.gameType = details.gameType;
+        this.maxPlayers = details.maxPlayers;
         this.abilityContextStack = [];
         this.abilityWindowStack = [];
         this.password = details.password;
@@ -99,16 +101,25 @@ class Game extends EventEmitter {
         this.prizedKeywordListener = new PrizedKeywordListener(this);
         this.muteSpectators = details.muteSpectators;
 
-        for (let player of Object.values(details.players || {})) {
+        let players = Object.values(details.players || {});
+
+        if (details.randomSeats) {
+            // Randomise players & use new index as seatNo
+            players = shuffle(players);
+            players.forEach((player, index) => (player.seatNo = index + 1));
+        }
+
+        for (const player of players) {
             this.playersAndSpectators[player.user.username] = new Player(
                 player.id,
                 player.user,
                 this.owner === player.user.username,
+                player.seatNo,
                 this
             );
         }
 
-        for (let spectator of Object.values(details.spectators || {})) {
+        for (const spectator of Object.values(details.spectators || {})) {
             this.playersAndSpectators[spectator.user.username] = new Spectator(
                 spectator.id,
                 spectator.user
@@ -160,7 +171,9 @@ class Game extends EventEmitter {
     }
 
     getAllPlayers() {
-        return Object.values(this.playersAndSpectators).filter((player) => !player.isSpectator());
+        return Object.values(this.playersAndSpectators)
+            .filter((player) => !player.isSpectator())
+            .sort((a, b) => a.seatNo - b.seatNo);
     }
 
     getPlayers() {
@@ -1405,7 +1418,7 @@ class Game extends EventEmitter {
             }
 
             if (!player.isSpectator()) {
-                player.stopClock();
+                player.setIsActivePrompt(false);
             }
         }
     }
@@ -1561,6 +1574,7 @@ class Game extends EventEmitter {
                 started: this.started,
                 winner: this.winner ? this.winner.name : undefined,
                 gameFormat: this.gameFormat,
+                maxPlayers: this.maxPlayers,
                 cancelPromptUsed: this.cancelPromptUsed,
                 useGameTimeLimit: this.useGameTimeLimit,
                 gameTimeLimit: this.gameTimeLimit,
@@ -1601,7 +1615,8 @@ class Game extends EventEmitter {
                 left: player.left,
                 name: player.name,
                 owner: player.owner,
-                user: options.fullData && player.user
+                user: options.fullData && player.user,
+                seatNo: player.seatNo
             };
         }
 
@@ -1610,6 +1625,7 @@ class Game extends EventEmitter {
             createdAt: this.createdAt,
             gamePrivate: this.gamePrivate,
             gameFormat: this.gameFormat,
+            maxPlayers: this.maxPlayers,
             gameType: this.gameType,
             id: this.id,
             messages: this.gameChat.messages,

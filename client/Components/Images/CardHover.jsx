@@ -4,7 +4,7 @@ import { Spinner } from '@heroui/react';
 import { CardHoverContext } from './CardHoverContext';
 import classNames from 'classnames';
 
-const CardHover = ({ children, size = '3x-large' }) => {
+const CardHover = ({ className, children, size = '3x-large' }) => {
     const wrapperRef = useRef(null);
     const spinnerRef = useRef(null);
     const mousePosRef = useRef({ x: 0, y: 0 });
@@ -78,10 +78,14 @@ const CardHover = ({ children, size = '3x-large' }) => {
 
     return (
         <CardHoverContext.Provider value={{ type, setType, code, setCode }}>
-            <div onPointerMove={mousePosHandler} onPointerEnter={mousePosHandler}>
+            <div
+                onPointerMove={mousePosHandler}
+                onPointerEnter={mousePosHandler}
+                className={className}
+            >
                 {children}
             </div>
-            <div ref={wrapperRef} className='fixed z-[100] pointer-events-none'>
+            <div ref={wrapperRef} className='fixed z-50 pointer-events-none'>
                 {code && (
                     <>
                         {isLoading && <Spinner ref={spinnerRef} size='lg' color='white' />}

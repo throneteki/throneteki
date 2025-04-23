@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Divider, Switch } from '@heroui/react';
+import { Switch } from '@heroui/react';
 import Panel from '../Site/Panel';
 import { GameFormats, GameTypes } from '../../constants';
 
@@ -17,8 +17,8 @@ const GameFilter = ({ filter, onFilterChanged }) => {
 
     return (
         <Panel type='primary'>
-            <div className='flex flex-wrap gap-2'>
-                <div className='flex flex-wrap gap-2 justify-start'>
+            <div className='h-full flex flex-col md:flex-row gap-2 md:items-center'>
+                <div className='flex gap-2 flex-wrap'>
                     {GameTypes.map((filter) => (
                         <div key={filter.name}>
                             <Switch
@@ -33,8 +33,7 @@ const GameFilter = ({ filter, onFilterChanged }) => {
                         </div>
                     ))}
                 </div>
-                <Divider orientation='vertical' />
-                <div className='flex flex-warp gap-2 justify-start'>
+                <div className='flex gap-2 flex-wrap'>
                     {GameFormats.map((filter) => (
                         <div key={filter.name}>
                             <Switch
@@ -49,7 +48,6 @@ const GameFilter = ({ filter, onFilterChanged }) => {
                         </div>
                     ))}
                 </div>
-                <Divider orientation='vertical' />
                 <Switch
                     id='onlyShowNew'
                     onValueChange={(isSelected) => {

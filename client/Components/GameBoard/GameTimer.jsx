@@ -7,7 +7,18 @@ const GameTimer = ({ thisPlayer, otherPlayer }) => {
     const currentGame = useSelector((state) => state.lobby.currentGame);
 
     const clockStack = [];
-    if (currentGame.useChessClocks && otherPlayer.chessClock) {
+    if (currentGame.useGameTimeLimit) {
+        clockStack.push(
+            <TimeLimitClock
+                key={`game-clock`}
+                active={currentGame.timeLimit.active}
+                paused={currentGame.timeLimit.paused}
+                timerStart={currentGame.timeLimit.timerStart}
+                timeLeft={currentGame.timeLimit.timeLeft}
+            />
+        );
+    }
+    if (currentGame.useChessClocks && otherPlayer?.chessClock) {
         clockStack.push(
             <ChessClock
                 key={`chess-clock-${otherPlayer.name}`}
@@ -18,18 +29,6 @@ const GameTimer = ({ thisPlayer, otherPlayer }) => {
                 timerStart={otherPlayer.chessClock.timerStart}
                 timeLeft={otherPlayer.chessClock.timeLeft}
                 delayLeft={otherPlayer.chessClock.delayLeft}
-            />
-        );
-    }
-
-    if (currentGame.useGameTimeLimit) {
-        clockStack.push(
-            <TimeLimitClock
-                key={`game-clock`}
-                active={currentGame.timeLimit.active}
-                paused={currentGame.timeLimit.paused}
-                timerStart={currentGame.timeLimit.timerStart}
-                timeLeft={currentGame.timeLimit.timeLeft}
             />
         );
     }
@@ -53,7 +52,7 @@ const GameTimer = ({ thisPlayer, otherPlayer }) => {
         return null;
     }
     return (
-        <div className='absolute h-full w-full px-1 flex flex-col gap-5 justify-center items-end select-none pr-10'>
+        <div className='flex flex-col-reverse gap-5 justify-center items-center select-none'>
             {clockStack}
         </div>
     );

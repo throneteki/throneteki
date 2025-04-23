@@ -1,28 +1,20 @@
 import React, { useMemo } from 'react';
 import classNames from 'classnames';
-import { Avatar, Button } from '@heroui/react';
+import { Avatar } from '@heroui/react';
+import CardImage from '../Images/CardImage';
 
-const GamePlayerSlot = ({ player, showJoinButton, onJoinGame, position = 'left' }) => {
+const GamePlayerSlot = ({ player, className, position = 'left' }) => {
     const factionAgendas = useMemo(() => {
         const className = classNames('flex items-center gap-1', {
             'flex-row': position === 'right',
             'flex-row-reverse': position === 'left'
         });
         const faction = (
-            <div key='faction' className='w-12 rounded-md'>
-                {
-                    <img
-                        className='rounded-md'
-                        src={`/img/cards/${player?.faction || 'cardback'}.png`}
-                    />
-                }
-            </div>
+            <CardImage key='faction' size='normal' code={player.faction || 'cardback'} />
         );
         const agendas =
-            player?.agendas?.map((agenda) => (
-                <div key={agenda} className='w-8'>
-                    {<img className='rounded-md' src={`/img/cards/${agenda || 'cardback'}.png`} />}
-                </div>
+            player.agendas?.map((agenda) => (
+                <CardImage key={agenda} size='small' code={agenda || 'cardback'} />
             )) || [];
 
         return <div className={className}>{[faction, ...agendas]}</div>;
@@ -39,35 +31,27 @@ const GamePlayerSlot = ({ player, showJoinButton, onJoinGame, position = 'left' 
         return (
             <div className={className}>
                 <span>
-                    <Avatar src={`/img/avatar/${player?.name}.png`} showFallback />{' '}
+                    <Avatar src={`/img/avatar/${player.name}.png`} showFallback />{' '}
                 </span>
-                <span className='text-bold'>{player?.name}</span>
+                <span className='text-bold'>{player.name}</span>
             </div>
         );
     }, [player, position]);
-
-    if (player) {
-        const className = classNames('flex flex-col justify-end gap-1 w-1/2 py-4 px-2', {
+    const wrapperClassName = classNames(
+        'flex flex-col justify-end gap-1',
+        {
             'md:flex-row': position === 'left',
             'md:flex-row-reverse': position === 'right'
-        });
-        return (
-            <div className={className}>
-                {avatarName}
-                {factionAgendas}
-            </div>
-        );
-    } else {
-        return (
-            <div className='flex items-center w-1/2 py-4 px-2'>
-                {showJoinButton && (
-                    <Button size='sm' color='primary' onPress={onJoinGame}>
-                        Join
-                    </Button>
-                )}
-            </div>
-        );
-    }
+        },
+        className
+    );
+
+    return (
+        <div className={wrapperClassName}>
+            {avatarName}
+            {factionAgendas}
+        </div>
+    );
 };
 
 export default GamePlayerSlot;

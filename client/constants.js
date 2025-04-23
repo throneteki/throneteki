@@ -4,8 +4,8 @@ export const ItemTypes = {
 };
 
 export const GameFormats = [
-    { name: 'joust', label: 'Joust' },
-    { name: 'melee', label: 'Melee (Alpha)' }
+    { name: 'joust', label: 'Joust', defaultMaxPlayers: 2 },
+    { name: 'melee', label: 'Melee', defaultMaxPlayers: 4, experimental: true }
 ];
 
 export const GameTypes = [

@@ -28,7 +28,12 @@ class PendingGame {
         this.chessClockTimeLimit = details.chessClockTimeLimit;
         this.chessClockDelay = details.chessClockDelay;
         this.started = false;
-        this.maxPlayers = 2;
+        if (this.gameFormat === 'joust') {
+            this.maxPlayers = 2;
+        } else if (this.gameFormat === 'melee') {
+            this.maxPlayers = details.maxPlayers || 4;
+            this.randomSeats = details.randomSeats;
+        }
     }
 
     // Getters
@@ -104,7 +109,8 @@ class PendingGame {
             id: id,
             name: user.username,
             user: user,
-            owner: this.owner.username === user.username
+            owner: this.owner.username === user.username,
+            seatNo: Object.values(this.players || {}).length + 1
         };
     }
 
@@ -131,7 +137,7 @@ class PendingGame {
     }
 
     join(id, user, password) {
-        if (_.size(this.players) === 2 || this.started) {
+        if (_.size(this.players) === this.maxPlayers || this.started) {
             return 'Game full';
         }
 
@@ -363,7 +369,8 @@ class PendingGame {
                 name: player.name,
                 owner: player.owner,
                 role: player.user.role,
-                settings: player.user.settings
+                settings: player.user.settings,
+                seatNo: player.seatNo
             };
         });
 
@@ -373,6 +380,8 @@ class PendingGame {
             gamePrivate: this.gamePrivate,
             gameFormat: this.gameFormat,
             gameType: this.gameType,
+            maxPlayers: this.maxPlayers,
+            randomSeats: this.randomSeats,
             event: this.event,
             full: Object.values(this.players).length >= this.maxPlayers,
             id: this.id,
@@ -435,6 +444,8 @@ class PendingGame {
             name: this.name,
             owner: this.owner.getDetails(),
             players,
+            maxPlayers: this.maxPlayers,
+            randomSeats: this.randomSeats,
             restrictedList: this.restrictedList,
             showHand: this.showHand,
             spectators,

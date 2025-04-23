@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Formik } from 'formik';
-import { Button, Input, Select, SelectItem } from '@heroui/react';
+import { Button, Input, Select, SelectItem, Switch } from '@heroui/react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as yup from 'yup';
 
@@ -72,7 +72,15 @@ const NewGame = ({
         chessClockTimeLimit: yup.number().min(1, 'Clock must be at least 1 minute long'),
         chessClockDelay: yup.number().min(0, 'Delay cannot be less than 0').optional(),
         gameFormat: yup.string().required(),
-        gameType: yup.string().required()
+        gameType: yup.string().required(),
+        maxPlayers: yup.number().when('gameFormat', {
+            is: () => gameFormat === 'melee',
+            then: (s) =>
+                s
+                    .required('You must specify a number of players')
+                    .min(2, 'Melee must have at least 2 players')
+                    .max(8, 'Melee cannot have more than 8 players')
+        })
     });
 
     const initialValues = {
@@ -86,7 +94,9 @@ const NewGame = ({
         gamePrivate: defaultPrivate,
         useChessBlocks: false,
         chessClockTimeLimit: 30,
-        chessClockDelay: 5
+        chessClockDelay: 5,
+        maxPlayers: 4,
+        randomSeats: true
     };
 
     if (!connected) {
@@ -170,7 +180,7 @@ const NewGame = ({
                                             >
                                                 {GameFormats?.map((gm) => (
                                                     <SelectItem key={gm.name} value={gm.name}>
-                                                        {gm.label}
+                                                        {`${gm.label}${gm.experimental ? ' (Experimental)' : ''}`}
                                                     </SelectItem>
                                                 ))}
                                             </Select>
@@ -192,10 +202,46 @@ const NewGame = ({
                                             </Select>
                                         </div>
                                     </div>
+                                    {GameFormats.find((f) => f.name === gameFormat)
+                                        ?.experimental && (
+                                        <AlertPanel
+                                            variant='warning'
+                                            message={`The ${gameFormat} format is experimental and may not work as expected. Please report any issues to the developers via Github.`}
+                                        />
+                                    )}
                                     <GameOptions
                                         formProps={formProps}
                                         isDisabled={usingEventOptions}
                                     />
+                                    {gameFormat === 'melee' && (
+                                        <div>
+                                            <div className='font-bold'>Melee Options</div>
+                                            <div className='flex gap-2'>
+                                                <Input
+                                                    label={'Max. players'}
+                                                    className='max-w-32'
+                                                    type='number'
+                                                    {...formProps.getFieldProps('maxPlayers')}
+                                                    isInvalid={
+                                                        formProps.errors.maxPlayers &&
+                                                        formProps.touched.maxPlayers
+                                                    }
+                                                    errorMessage={formProps.errors.maxPlayers}
+                                                    isDisabled={usingEventOptions}
+                                                />
+                                                <Switch
+                                                    classNames={{ label: 'text-sm' }}
+                                                    name={'randomSeats'}
+                                                    onChange={formProps.handleChange}
+                                                    value='true'
+                                                    isSelected={formProps.values.randomSeats}
+                                                    isDisabled={usingEventOptions}
+                                                >
+                                                    Random Seats
+                                                </Switch>
+                                            </div>
+                                        </div>
+                                    )}
                                 </>
                             )}
                             {<GameTypes formProps={formProps} isDisabled={usingEventOptions} />}

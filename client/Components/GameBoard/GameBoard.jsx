@@ -104,8 +104,10 @@ const GameBoard = () => {
         );
         return others.length > 0
             ? others.map(defaultPlayerInfo)
-            : Array.from({ length: 3 }, () => defaultPlayerInfo({}));
-    }, [currentGame?.players, thisPlayer?.name]);
+            : Array.from({ length: (currentGame?.maxPlayers || 2) - 1 }, (_, index) =>
+                  defaultPlayerInfo({ seatNo: index + 2 })
+              );
+    }, [currentGame?.maxPlayers, currentGame?.players, thisPlayer.name]);
 
     if (!currentGame || !currentGame.started) {
         return <LoadingSpinner label={'Waiting for server...'} />;
@@ -123,7 +125,7 @@ const GameBoard = () => {
     if (!currentGame.players || currentGame.players.length === 0) {
         return <LoadingSpinner label={'Waiting for game to have players or close...'} />;
     }
-    const boardClass = classNames('absolute top-0 bottom-0 right-0 left-0 flex overflow-x-hidden', {
+    const boardClass = classNames('flex h-full overflow-x-hidden', {
         'select-cursor': thisPlayer && thisPlayer.selectCard
     });
 
