@@ -1,5 +1,4 @@
 import TitleCard from '../../TitleCard.js';
-import InitiatingKeywordsWindow from '../../gamesteps/InitiatingKeywordsWindow.js';
 
 class CrownRegent extends TitleCard {
     setupCardAbilities(ability) {
@@ -14,20 +13,27 @@ class CrownRegent extends TitleCard {
             when: {
                 onChallengeInitiated: () => true
             },
+            message: {
+                format: '{player} uses {source} to force {initiatingPlayer} to redirect the challenge to another player',
+                args: { initiatingPlayer: (context) => context.event.challenge.initiatingPlayer }
+            },
             handler: (context) => {
                 const challenge = context.event.challenge;
-                this.game.promptForOpponentChoice(challenge.attackingPlayer, {
+                this.game.promptForOpponentChoice(challenge.initiatingPlayer, {
                     enabled: (opponent) => opponent !== challenge.defendingPlayer,
                     onSelect: (opponent) => {
-                        challenge.defendingPlayer = opponent;
-                        challenge.clearInitiationActions();
-                        this.game.queueStep(new InitiatingKeywordsWindow(this.game, challenge));
+                        this.game.currentChallengeStep.redirectChallengeTo(opponent);
+                        this.game.addMessage(
+                            '{0} has chosen to redirect the challenge to {1}',
+                            context.player,
+                            opponent
+                        );
                     },
                     onCancel: () => {
                         this.game.addAlert(
                             'danger',
                             '{0} cancels the challenge redirect',
-                            context.event.challenge.attackingPlayer
+                            challenge.initiatingPlayer
                         );
                     }
                 });

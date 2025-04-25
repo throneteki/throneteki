@@ -54,6 +54,12 @@ class Challenge {
         this.isInitiated = true;
     }
 
+    redirectChallengeTo(player) {
+        this.defendingPlayer = player;
+        this.initiatedAgainstPlayer = player;
+        this.initiationActions = [];
+    }
+
     declareAttackers(attackers) {
         this.addAttackers(attackers);
         this.declaredAttackers = this.declaredAttackers.concat(attackers);
@@ -169,10 +175,6 @@ class Challenge {
 
     addInitiationAction(action, properties) {
         this.initiationActions.push({ action, properties });
-    }
-
-    clearInitiationActions() {
-        this.initiationActions = [];
     }
 
     calculateStrength() {
