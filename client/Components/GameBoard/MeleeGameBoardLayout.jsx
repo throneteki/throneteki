@@ -52,48 +52,7 @@ const MeleeGameBoardLayout = ({
         const isMe = thisPlayer && player === thisPlayer;
         const side = index % 2 === 0 && index !== players.length - 1 ? 'bottom' : 'top';
         const isActivePrompt = player.isActivePrompt;
-        const playerStats = (
-            <PlayerStats
-                showControls={isMe}
-                stats={player.stats}
-                user={player.user}
-                firstPlayer={player.firstPlayer}
-                onSettingsClick={isMe ? onSettingsClick : undefined}
-                onChatToggle={isMe ? onChatToggle : undefined}
-                unreadMessages={isMe ? unreadMessages : undefined}
-                seatNo={player.seatNo}
-            />
-        );
-        const playerRow = (
-            <PlayerRow
-                agendas={player.agendas}
-                faction={player.faction}
-                hand={player.cardPiles.hand}
-                isMe={isMe}
-                numDrawCards={player.numDrawCards}
-                onDrawPopupChange={
-                    isMe ? (visible) => dispatch(sendShowDrawDeckMessage(visible)) : undefined
-                }
-                onShuffleClick={isMe ? () => dispatch(sendShuffleDeckMessage()) : undefined}
-                discardPile={player.cardPiles.discardPile}
-                deadPile={player.cardPiles.deadPile}
-                drawDeck={player.cardPiles.drawDeck}
-                onCardClick={onCardClick}
-                outOfGamePile={player.cardPiles.outOfGamePile}
-                revealTopCard={player.revealTopCard}
-                shadows={player.cardPiles.shadows}
-                spectating={!thisPlayer}
-                title={player.title}
-                side={side}
-                cardSize={thisPlayer.cardSize}
-                plotDeck={player.cardPiles.plotDeck}
-                plotDiscard={player.cardPiles.plotDiscard}
-                activePlot={player.activePlot}
-                selectedPlot={player.selectedPlot}
-                mustShowPlotSelection={player.mustShowPlotSelection}
-                showHiddenPiles={isMe && isDragging}
-            />
-        );
+
         const playerBoard = (
             <PlayerBoard
                 className={classNames('min-h-48')}
@@ -125,8 +84,44 @@ const MeleeGameBoardLayout = ({
 
         return (
             <div key={player.name} className={wrapperClassName}>
-                {playerStats}
-                {playerRow}
+                <PlayerStats
+                    showControls={isMe}
+                    stats={player.stats}
+                    user={player.user}
+                    firstPlayer={player.firstPlayer}
+                    onSettingsClick={isMe ? onSettingsClick : undefined}
+                    onChatToggle={isMe ? onChatToggle : undefined}
+                    unreadMessages={isMe ? unreadMessages : undefined}
+                    seatNo={player.seatNo}
+                />
+                <PlayerRow
+                    agendas={player.agendas}
+                    faction={player.faction}
+                    hand={player.cardPiles.hand}
+                    isMe={isMe}
+                    numDrawCards={player.numDrawCards}
+                    onDrawPopupChange={
+                        isMe ? (visible) => dispatch(sendShowDrawDeckMessage(visible)) : undefined
+                    }
+                    onShuffleClick={isMe ? () => dispatch(sendShuffleDeckMessage()) : undefined}
+                    discardPile={player.cardPiles.discardPile}
+                    deadPile={player.cardPiles.deadPile}
+                    drawDeck={player.cardPiles.drawDeck}
+                    onCardClick={onCardClick}
+                    outOfGamePile={player.cardPiles.outOfGamePile}
+                    revealTopCard={player.revealTopCard}
+                    shadows={player.cardPiles.shadows}
+                    spectating={!thisPlayer}
+                    title={player.title}
+                    side={side}
+                    cardSize={thisPlayer.cardSize}
+                    plotDeck={player.cardPiles.plotDeck}
+                    plotDiscard={player.cardPiles.plotDiscard}
+                    activePlot={player.activePlot}
+                    selectedPlot={player.selectedPlot}
+                    mustShowPlotSelection={player.mustShowPlotSelection}
+                    showHiddenPiles={isMe && isDragging}
+                />
                 <div className='relative flex flex-row-reverse flex-grow'>
                     {isMe ? (
                         <Droppable source='play area' className='h-full flex flex-grow'>
@@ -180,10 +175,9 @@ const MeleeGameBoardLayout = ({
             {playerBoardGroups.map((group, index) => (
                 <div
                     key={index}
-                    className={classNames('flex', {
+                    className={classNames('flex flex-grow', {
                         'flex-col-reverse': group.length > 1,
-                        'flex-col': group.length === 1,
-                        'w-full': index === playerBoardGroups.length - 1
+                        'flex-col': group.length === 1
                     })}
                 >
                     {group}
