@@ -1356,7 +1356,7 @@ class Player extends Spectator {
     setIsActivePrompt(isActivePrompt) {
         this.promptState.setIsActive(isActivePrompt);
         if (this.chessClock) {
-            if (this.promptState.isActive) {
+            if (this.promptState.isActivePrompt) {
                 this.chessClock.start();
             } else {
                 this.chessClock.stop();

@@ -73,71 +73,73 @@ const PlayerStats = ({
     );
 
     const wrapperClassName = classNames(
-        'relative px-2 border-1 border-default-100 bg-black/35 flex items-center border-x-0',
+        'relative border-1 border-default-100 bg-black/35 border-x-0',
         className
     );
     return (
         <div className={wrapperClassName}>
-            <div className='pr-1 py-1 flex items-center'>
-                <Avatar
-                    src={`/img/avatar/${userProp?.username}.png`}
-                    showFallback
-                    className='w-7 h-7 text-tiny'
-                />
+            <div className='sticky left-0 flex items-center w-fit px-2'>
+                <div className='pr-1 py-1 flex items-center'>
+                    <Avatar
+                        src={`/img/avatar/${userProp?.username}.png`}
+                        showFallback
+                        className='w-7 h-7 text-tiny'
+                    />
 
-                <span className='pl-2 font-bold max-md:hidden'>
-                    {userProp?.username || 'Noone'}
-                </span>
-            </div>
-            {getStatDisplay('totalPower', 'Power', 'power')}
-            {getStatDisplay('gold', 'Gold')}
-            {getStatDisplay('initiative', 'Initiative')}
-            {getStatDisplay('claim', 'Claim')}
-            {getStatDisplay('reserve', 'Reserve')}
-            {seatNo && (
-                <StatContainer>
-                    <div className='px-2'>{`Seat ${seatNo}`}</div>
-                </StatContainer>
-            )}
-            {firstPlayer && (
-                <StatContainer>
-                    <div className='px-2'>First player</div>
-                </StatContainer>
-            )}
-
-            <StatContainer>
-                {showControls && (
-                    <>
-                        {isMe && (
-                            <>
-                                {getStatButton(
-                                    onSettingsClick,
-                                    faCogs,
-                                    'Open Settings',
-                                    'Settings'
-                                )}
-                                {getStatButton(
-                                    () => dispatch(sendToggleMuteSpectatorsMessage()),
-                                    currentGame.muteSpectators ? faEyeSlash : faEye,
-                                    currentGame.muteSpectators
-                                        ? 'Un-mute spectators'
-                                        : 'Mute spectators'
-                                )}
-                            </>
-                        )}
-                        <StatContainer>
-                            <Badge
-                                shape='circle'
-                                color='danger'
-                                content={numMessages > 99 ? '99+' : numMessages}
-                                isInvisible={!numMessages || numMessages === 0}
-                            >
-                                {getStatButton(onChatToggle, faComment, 'Toggle chat')}
-                            </Badge>
-                        </StatContainer>
-                    </>
+                    <span className='pl-2 font-bold max-md:hidden'>
+                        {userProp?.username || 'Noone'}
+                    </span>
+                </div>
+                {getStatDisplay('totalPower', 'Power', 'power')}
+                {getStatDisplay('gold', 'Gold')}
+                {getStatDisplay('initiative', 'Initiative')}
+                {getStatDisplay('claim', 'Claim')}
+                {getStatDisplay('reserve', 'Reserve')}
+                {seatNo && (
+                    <StatContainer>
+                        <div className='px-2'>{`Seat ${seatNo}`}</div>
+                    </StatContainer>
                 )}
-            </StatContainer>
+                {firstPlayer && (
+                    <StatContainer>
+                        <div className='px-2'>First player</div>
+                    </StatContainer>
+                )}
+
+                <StatContainer>
+                    {showControls && (
+                        <>
+                            {isMe && (
+                                <>
+                                    {getStatButton(
+                                        onSettingsClick,
+                                        faCogs,
+                                        'Open Settings',
+                                        'Settings'
+                                    )}
+                                    {getStatButton(
+                                        () => dispatch(sendToggleMuteSpectatorsMessage()),
+                                        currentGame.muteSpectators ? faEyeSlash : faEye,
+                                        currentGame.muteSpectators
+                                            ? 'Un-mute spectators'
+                                            : 'Mute spectators'
+                                    )}
+                                </>
+                            )}
+                            <StatContainer>
+                                <Badge
+                                    shape='circle'
+                                    color='danger'
+                                    content={numMessages > 99 ? '99+' : numMessages}
+                                    isInvisible={!numMessages || numMessages === 0}
+                                >
+                                    {getStatButton(onChatToggle, faComment, 'Toggle chat')}
+                                </Badge>
+                            </StatContainer>
+                        </>
+                    )}
+                </StatContainer>
+            </div>
         </div>
     );
 };

@@ -12,6 +12,7 @@ import LoadingSpinner from '../Site/LoadingSpinner';
 import CardHoverable from '../Images/CardHoverable';
 
 const ActivePlayerPrompt = ({
+    className,
     onButtonClick,
     buttons,
     controls,
@@ -198,7 +199,7 @@ const ActivePlayerPrompt = ({
 
     if (isLoading) {
         return (
-            <div className='m-1'>
+            <div className={className}>
                 <div className='relative border-1 border-default-200 bg-black/65 rounded-md py-8'>
                     <LoadingSpinner />
                 </div>
@@ -207,22 +208,21 @@ const ActivePlayerPrompt = ({
     }
 
     return (
-        <div className='m-1'>
+        <div className={className}>
             {timer}
             <div
                 className={
-                    'relative text-xs md:text-small lg:text-medium font-bold text-center uppercase border-1 border-default-200 bg-secondary-200 py-1 rounded-t-md mx-0 mb-0 ' +
-                    phase
+                    'relative text-xs md:text-small lg:text-medium font-bold text-center uppercase border-1 border-default-200 bg-secondary-200 py-1 rounded-t-md mx-0 mb-0'
                 }
             >
-                {phase} phase
+                {`${phase} phase`}
             </div>
             {promptTitleElement}
             <div className='text-center'>
                 <div className='relative border-1 border-default-200 bg-black/65 rounded-b-md'>
                     <p className='my-1 mx-2 text-xs md:text-small'>{promptTextElement}</p>
                     {getControls()}
-                    <div className='flex flex-col mx-2 gap-1 mb-1'>{getButtons()}</div>
+                    <div className='flex flex-col mx-2 md:gap-1 mb-1'>{getButtons()}</div>
                 </div>
             </div>
         </div>

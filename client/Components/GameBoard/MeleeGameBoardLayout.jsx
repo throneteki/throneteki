@@ -94,10 +94,9 @@ const MeleeGameBoardLayout = ({
                 showHiddenPiles={isMe && isDragging}
             />
         );
-        // Left padding should match active prompt window widths
         const playerBoard = (
             <PlayerBoard
-                className={classNames('min-h-48', { 'pl-32 md:pl-48 lg:pl-64': index == 1 })}
+                className={classNames('min-h-48')}
                 cardsInPlay={player.cardPiles.cardsInPlay}
                 onCardClick={onCardClick}
                 onMenuItemClick={(card, menuItem) =>
@@ -108,11 +107,21 @@ const MeleeGameBoardLayout = ({
             />
         );
 
-        const wrapperClassName = classNames('flex flex-grow max-h-[50%]', {
+        const wrapperClassName = classNames('flex flex-grow', {
             'flex-col': side === 'top',
             'flex-col-reverse': side === 'bottom',
             'bg-blue-300/5': isActivePrompt
         });
+
+        // Side panel must be treated differently for the 2 left-most boards, and for top/bottom
+        const sidePanelClassName = classNames(
+            'sticky left-0 flex flex-col p-1 pointer-events-none',
+            {
+                'bottom-0 justify-end': side === 'bottom',
+                'top-0 justify-start': side === 'top',
+                'w-32 md:w-48 lg:w-64': index <= 1
+            }
+        );
 
         return (
             <div key={player.name} className={wrapperClassName}>
@@ -126,10 +135,11 @@ const MeleeGameBoardLayout = ({
                     ) : (
                         playerBoard
                     )}
-                    {isMe && (
-                        <div className='sticky left-0 bottom-0 self-end w-32 md:w-48 lg:w-64'>
-                            <GameTimer thisPlayer={thisPlayer} otherPlayer={null}></GameTimer>
+                    <div className={sidePanelClassName}>
+                        {!!player && <GameTimer player={player} isMe={isMe} side={side} />}
+                        {isMe && (
                             <ActivePlayerPrompt
+                                className='pointer-events-auto'
                                 buttons={thisPlayer.buttons}
                                 controls={thisPlayer.controls}
                                 promptText={thisPlayer.menuTitle}
@@ -150,8 +160,8 @@ const MeleeGameBoardLayout = ({
                                 // timerStartTime={this.props.timerStartTime}
                                 // stopAbilityTimer={this.props.stopAbilityTimer}
                             />
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </div>
             </div>
         );
