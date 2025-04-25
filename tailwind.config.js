@@ -21,6 +21,11 @@ export default {
             '5xl': ['3.052rem', '3.052rem']
         },
         cardSize: cardSizes,
+        textStroke: {
+            sm: 0.15,
+            md: 0.3,
+            lg: 0.45
+        },
         extend: {
             colors: {
                 baratheon: '#e3d852',
@@ -132,6 +137,17 @@ export default {
                 },
                 {
                     values: theme('cardSize')
+                }
+            );
+            matchUtilities(
+                {
+                    'text-stroke': (value) => ({
+                        WebkitTextStroke: `${value}em black`,
+                        paintOrder: 'stroke fill'
+                    })
+                },
+                {
+                    values: theme('textStroke')
                 }
             );
         })
