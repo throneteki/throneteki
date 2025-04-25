@@ -10,7 +10,7 @@ import {
     sendShowDrawDeckMessage,
     sendShuffleDeckMessage
 } from '../../redux/reducers/game';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import PlayerStats from './PlayerStats';
 import classNames from 'classnames';
 
@@ -24,7 +24,6 @@ const MeleeGameBoardLayout = ({
     isDragging
 }) => {
     const dispatch = useDispatch();
-    const user = useSelector((state) => state.auth.user);
 
     const renderPlayerBoard = useCallback(
         (player, side, hasSidePanel) => {
@@ -70,7 +69,7 @@ const MeleeGameBoardLayout = ({
                         onSettingsClick={isMe ? onSettingsClick : undefined}
                         onChatToggle={isMe ? onChatToggle : undefined}
                         unreadMessages={isMe ? unreadMessages : undefined}
-                        seatNo={player.seatNo}
+                        seatNo={player.seatNo} // Melee only
                     />
                     <PlayerRow
                         agendas={player.agendas}
@@ -129,7 +128,7 @@ const MeleeGameBoardLayout = ({
                                             )
                                         )
                                     }
-                                    user={user}
+                                    user={player.user}
                                     phase={thisPlayer.phase}
                                     // timerLimit={this.props.timerLimit}
                                     // timerStartTime={this.props.timerStartTime}
@@ -148,8 +147,7 @@ const MeleeGameBoardLayout = ({
             onChatToggle,
             onSettingsClick,
             thisPlayer,
-            unreadMessages,
-            user
+            unreadMessages
         ]
     );
 
@@ -185,7 +183,7 @@ const MeleeGameBoardLayout = ({
         const top = column === 0 && isOddPlayers ? remaining.splice(0, 2) : remaining.shift();
 
         playerBoardGrid.push(
-            <div key={column} className='flex flex-grow flex-col'>
+            <div key={column} className='flex flex-col flex-grow'>
                 {Array.isArray(top) ? (
                     <div className='flex flex-grow'>
                         {top.map((player, index) =>
@@ -200,7 +198,7 @@ const MeleeGameBoardLayout = ({
         );
     }
 
-    return <div className='flex flex-wrap min-h-full'>{playerBoardGrid}</div>;
+    return <div className='flex min-h-full'>{playerBoardGrid}</div>;
 };
 
 export default MeleeGameBoardLayout;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import PlayerRow from './PlayerRow';
 import ActivePlayerPrompt from './ActivePlayerPrompt';
 import PlayerBoard from './PlayerBoard';
@@ -10,8 +10,9 @@ import {
     sendShowDrawDeckMessage,
     sendShuffleDeckMessage
 } from '../../redux/reducers/game';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import PlayerStats from './PlayerStats';
+import classNames from 'classnames';
 
 const JoustGameBoardLayout = ({
     thisPlayer,
@@ -23,132 +24,134 @@ const JoustGameBoardLayout = ({
     isDragging
 }) => {
     const dispatch = useDispatch();
-    const user = useSelector((state) => state.auth.user);
 
-    return (
-        <div className='flex flex-col min-w-max h-full'>
-            <PlayerStats
-                showControls={false}
-                stats={otherPlayer.stats}
-                user={otherPlayer.user}
-                firstPlayer={otherPlayer.firstPlayer}
-            />
-            <div className={'flex flex-grow flex-col min-w-max'}>
-                <PlayerRow
-                    agendas={otherPlayer.agendas}
-                    faction={otherPlayer.faction}
-                    hand={otherPlayer.cardPiles.hand}
-                    isMe={false}
-                    numDrawCards={otherPlayer.numDrawCards}
-                    discardPile={otherPlayer.cardPiles.discardPile}
-                    deadPile={otherPlayer.cardPiles.deadPile}
-                    drawDeck={otherPlayer.cardPiles.drawDeck}
+    const renderPlayerBoard = useCallback(
+        (player, side) => {
+            const isMe = thisPlayer && player === thisPlayer;
+
+            const playerBoard = (
+                <PlayerBoard
+                    className='lg:min-h-48'
+                    cardsInPlay={player.cardPiles.cardsInPlay}
                     onCardClick={onCardClick}
-                    outOfGamePile={otherPlayer.cardPiles.outOfGamePile}
-                    revealTopCard={otherPlayer.revealTopCard}
-                    shadows={otherPlayer.cardPiles.shadows}
-                    spectating={!thisPlayer}
-                    side='top'
-                    cardSize={thisPlayer.cardSize}
-                    plotDeck={otherPlayer.cardPiles.plotDeck}
-                    plotDiscard={otherPlayer.cardPiles.plotDiscard}
-                    activePlot={otherPlayer.activePlot}
-                    selectedPlot={otherPlayer.selectedPlot}
-                    mustShowPlotSelection={otherPlayer.mustShowPlotSelection}
-                />
-                <div className='flex flex-grow'>
-                    <div className='relative flex flex-col justify-end w-56'>
-                        <GameTimer thisPlayer={thisPlayer} otherPlayer={otherPlayer}></GameTimer>
-                        <div className='flex flex-col justify-between'>
-                            <ActivePlayerPrompt
-                                buttons={thisPlayer.buttons}
-                                controls={thisPlayer.controls}
-                                promptText={thisPlayer.menuTitle}
-                                promptTitle={thisPlayer.promptTitle}
-                                onButtonClick={(button) =>
-                                    dispatch(
-                                        sendButtonClickedMessage(
-                                            button.promptId,
-                                            button.command,
-                                            button.method,
-                                            button.arg
-                                        )
-                                    )
-                                }
-                                user={user}
-                                phase={thisPlayer.phase}
-                                // timerLimit={this.props.timerLimit}
-                                // timerStartTime={this.props.timerStartTime}
-                                // stopAbilityTimer={this.props.stopAbilityTimer}
-                            />
-                        </div>
-                    </div>
-                    <div className='flex flex-1 flex-col m-2'>
-                        <PlayerBoard
-                            cardsInPlay={otherPlayer.cardPiles.cardsInPlay}
-                            onCardClick={onCardClick}
-                            onMenuItemClick={(card, menuItem) =>
-                                dispatch(sendCardMenuItemClickedMessage(card.uuid, menuItem))
-                            }
-                            rowDirection='reverse'
-                            cardSize={thisPlayer.cardSize}
-                        />
-                        <div className='flex-1'>
-                            <Droppable source='play area' className='h-full flex'>
-                                <PlayerBoard
-                                    cardsInPlay={thisPlayer.cardPiles.cardsInPlay}
-                                    onCardClick={onCardClick}
-                                    onMenuItemClick={(card, menuItem) =>
-                                        dispatch(
-                                            sendCardMenuItemClickedMessage(card.uuid, menuItem)
-                                        )
-                                    }
-                                    rowDirection='default'
-                                    cardSize={thisPlayer.cardSize}
-                                />
-                            </Droppable>
-                        </div>
-                    </div>
-                </div>
-                <PlayerRow
-                    isMe={!!thisPlayer}
-                    agendas={thisPlayer.agendas}
-                    faction={thisPlayer.faction}
-                    hand={thisPlayer.cardPiles.hand}
-                    onCardClick={onCardClick}
-                    numDrawCards={thisPlayer.numDrawCards}
-                    onDrawPopupChange={(visible) => dispatch(sendShowDrawDeckMessage(visible))}
-                    onShuffleClick={() => dispatch(sendShuffleDeckMessage())}
-                    outOfGamePile={thisPlayer.cardPiles.outOfGamePile}
-                    drawDeck={thisPlayer.cardPiles.drawDeck}
-                    discardPile={thisPlayer.cardPiles.discardPile}
-                    deadPile={thisPlayer.cardPiles.deadPile}
-                    revealTopCard={thisPlayer.revealTopCard}
-                    shadows={thisPlayer.cardPiles.shadows}
-                    showDeck={thisPlayer.showDeck}
-                    spectating={!thisPlayer}
                     onMenuItemClick={(card, menuItem) =>
                         dispatch(sendCardMenuItemClickedMessage(card.uuid, menuItem))
                     }
+                    rowDirection={side === 'bottom' ? 'default' : 'reverse'}
                     cardSize={thisPlayer.cardSize}
-                    side='bottom'
-                    plotDeck={thisPlayer.cardPiles.plotDeck}
-                    plotDiscard={thisPlayer.cardPiles.plotDiscard}
-                    activePlot={thisPlayer.activePlot}
-                    selectedPlot={thisPlayer.selectedPlot}
-                    showHiddenPiles={isDragging}
                 />
+            );
+
+            const wrapperClassName = classNames('flex flex-grow', {
+                'flex-col': side === 'top',
+                'flex-col-reverse': side === 'bottom'
+            });
+
+            // Side panel must be treated differently for the 2 left-most boards, and for top/bottom
+            const sidePanelClassName = classNames(
+                'sticky left-0 flex flex-col p-1 pointer-events-none w-32 md:w-48 lg:w-64',
+                {
+                    'bottom-0 justify-end': side === 'bottom',
+                    'top-0 justify-start': side === 'top'
+                }
+            );
+
+            return (
+                <div key={player.name} className={wrapperClassName}>
+                    <PlayerStats
+                        showControls={isMe}
+                        stats={player.stats}
+                        user={player.user}
+                        firstPlayer={player.firstPlayer}
+                        onSettingsClick={isMe ? onSettingsClick : undefined}
+                        onChatToggle={isMe ? onChatToggle : undefined}
+                        unreadMessages={isMe ? unreadMessages : undefined}
+                    />
+                    <PlayerRow
+                        agendas={player.agendas}
+                        faction={player.faction}
+                        hand={player.cardPiles.hand}
+                        isMe={isMe}
+                        numDrawCards={player.numDrawCards}
+                        onDrawPopupChange={
+                            isMe
+                                ? (visible) => dispatch(sendShowDrawDeckMessage(visible))
+                                : undefined
+                        }
+                        onShuffleClick={isMe ? () => dispatch(sendShuffleDeckMessage()) : undefined}
+                        discardPile={player.cardPiles.discardPile}
+                        deadPile={player.cardPiles.deadPile}
+                        drawDeck={player.cardPiles.drawDeck}
+                        onCardClick={onCardClick}
+                        outOfGamePile={player.cardPiles.outOfGamePile}
+                        revealTopCard={player.revealTopCard}
+                        shadows={player.cardPiles.shadows}
+                        spectating={!thisPlayer}
+                        title={player.title}
+                        side={side}
+                        cardSize={thisPlayer.cardSize}
+                        plotDeck={player.cardPiles.plotDeck}
+                        plotDiscard={player.cardPiles.plotDiscard}
+                        activePlot={player.activePlot}
+                        selectedPlot={player.selectedPlot}
+                        mustShowPlotSelection={player.mustShowPlotSelection}
+                        showHiddenPiles={isMe && isDragging}
+                    />
+                    <div className='relative flex flex-row-reverse flex-grow'>
+                        {isMe ? (
+                            <Droppable source='play area' className='h-full flex flex-grow'>
+                                {playerBoard}
+                            </Droppable>
+                        ) : (
+                            playerBoard
+                        )}
+                        <div className={sidePanelClassName}>
+                            {!!player && <GameTimer player={player} isMe={isMe} side={side} />}
+                            {isMe && (
+                                <ActivePlayerPrompt
+                                    className='pointer-events-auto'
+                                    buttons={thisPlayer.buttons}
+                                    controls={thisPlayer.controls}
+                                    promptText={thisPlayer.menuTitle}
+                                    promptTitle={thisPlayer.promptTitle}
+                                    onButtonClick={(button) =>
+                                        dispatch(
+                                            sendButtonClickedMessage(
+                                                button.promptId,
+                                                button.command,
+                                                button.method,
+                                                button.arg
+                                            )
+                                        )
+                                    }
+                                    user={player.user}
+                                    phase={thisPlayer.phase}
+                                    // timerLimit={this.props.timerLimit}
+                                    // timerStartTime={this.props.timerStartTime}
+                                    // stopAbilityTimer={this.props.stopAbilityTimer}
+                                />
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        },
+        [
+            dispatch,
+            isDragging,
+            onCardClick,
+            onChatToggle,
+            onSettingsClick,
+            thisPlayer,
+            unreadMessages
+        ]
+    );
+    return (
+        <div className='flex min-h-full'>
+            <div className='flex flex-col flex-grow'>
+                {renderPlayerBoard(otherPlayer, 'top')}
+                {renderPlayerBoard(thisPlayer, 'bottom')}
             </div>
-            <PlayerStats
-                stats={thisPlayer.stats}
-                showControls={true}
-                showMessages
-                user={thisPlayer.user}
-                firstPlayer={thisPlayer.firstPlayer}
-                onSettingsClick={onSettingsClick}
-                onChatToggle={onChatToggle}
-                numMessages={unreadMessages}
-            />
         </div>
     );
 };
