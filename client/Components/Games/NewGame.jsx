@@ -206,7 +206,7 @@ const NewGame = ({
                                         ?.experimental && (
                                         <AlertPanel
                                             variant='warning'
-                                            message={`The ${gameFormat} format is experimental and may not work as expected. Please report any issues to the developers via Github.`}
+                                            message={`The ${gameFormat} format is experimental and may not work as expected. Please report any issues to the developers on Github.`}
                                         />
                                     )}
                                     <GameOptions
