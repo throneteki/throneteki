@@ -369,7 +369,8 @@ const Card = ({
         );
     };
 
-    const wrapperClass = classNames('inline-block select-none', {
+    // Explicitly setting z-index to 0 to ensure context is stacked independently per card
+    const wrapperClass = classNames('inline-block select-none z-0', {
         absolute: !!style?.left,
         relative: !style?.left
     });

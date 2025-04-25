@@ -222,7 +222,7 @@ const ActivePlayerPrompt = ({
                 <div className='relative border-1 border-default-200 bg-black/65 rounded-b-md'>
                     <p className='my-1 mx-2 text-xs md:text-small'>{promptTextElement}</p>
                     {getControls()}
-                    <div className='flex flex-col mx-2 md:gap-1 mb-1'>{getButtons()}</div>
+                    <div className='flex flex-col mx-2 gap-0.5 md:gap-1 mb-1'>{getButtons()}</div>
                 </div>
             </div>
         </div>
