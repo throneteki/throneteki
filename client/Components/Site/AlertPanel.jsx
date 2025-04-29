@@ -53,7 +53,7 @@ const AlertPanel = ({
     });
     return (
         <div className={containerClass}>
-            <h1 className='text-medium font-bold'>{title}</h1>
+            {title && <h1 className='text-medium font-bold'>{title}</h1>}
             <div className='flex items-center gap-1'>
                 {!noIcon && <FontAwesomeIcon icon={icon} />}
                 {message && <span>{getMessageWithLinks(message)}</span>}

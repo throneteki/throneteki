@@ -219,7 +219,7 @@ const DeckList = ({ restrictedList, onDeckSelected, readOnly }) => {
           ];
 
     return (
-        <div className='min-h-96 h-[75vh]'>
+        <>
             <ReactTable
                 buttons={buttons}
                 dataLoadFn={useGetDecksQuery}
@@ -255,9 +255,7 @@ const DeckList = ({ restrictedList, onDeckSelected, readOnly }) => {
             />
             <ConfirmDialog
                 isOpen={showConfirm}
-                message={`Are you sure you want to delete ${
-                    selectedIds.length === 1 ? 'this deck' : 'these decks'
-                }?`}
+                message={`Are you sure you want to delete ${selectedIds.length === 1 ? 'this deck' : 'these decks'}?`}
                 onOpenChange={setShowConfirm}
                 onCancel={() => setShowConfirm(false)}
                 onOk={async () => {
@@ -289,7 +287,7 @@ const DeckList = ({ restrictedList, onDeckSelected, readOnly }) => {
                 }}
                 isLoading={isAddLoading}
             />
-        </div>
+        </>
     );
 };
 

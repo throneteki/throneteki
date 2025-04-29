@@ -18,6 +18,7 @@ import {
     TableRow
 } from '@heroui/react';
 import { toast } from 'react-toastify';
+import Page from './Page';
 
 const defaultPermissions = {
     canEditNews: false,
@@ -250,30 +251,28 @@ const UserAdmin = () => {
     }, [data]);
 
     return (
-        <div className='m-2 lg:mx-auto lg:w-4/5'>
-            <div className='flex flex-col gap-2'>
-                <Panel title='User administration'>
-                    <div className='flex flex-col md:flex-row gap-2 items-center'>
-                        <Input
-                            label='Username'
-                            name='username'
-                            onValueChange={setUsername}
-                            value={username}
-                            className='w-full md:w-1/3'
-                        />
-                        <Button
-                            color='primary'
-                            onPress={onFindClick}
-                            loading={isLoading}
-                            className='w-full md:w-auto'
-                        >
-                            Search
-                        </Button>
-                    </div>
-                </Panel>
-                {renderedUser}
-            </div>
-        </div>
+        <Page>
+            <Panel title='User administration'>
+                <div className='flex flex-col md:flex-row gap-2 items-center'>
+                    <Input
+                        label='Username'
+                        name='username'
+                        onValueChange={setUsername}
+                        value={username}
+                        className='w-full md:w-1/3'
+                    />
+                    <Button
+                        color='primary'
+                        onPress={onFindClick}
+                        loading={isLoading}
+                        className='w-full md:w-auto'
+                    >
+                        Search
+                    </Button>
+                </div>
+            </Panel>
+            {renderedUser}
+        </Page>
     );
 };
 

@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux';
 import { navigate } from '../../redux/reducers/navigation';
 import { useGetDeckQuery } from '../../redux/middleware/api';
 import LoadingSpinner from '../Site/LoadingSpinner';
+import Page from '../../pages/Page';
 
 const EditDeckPage = ({ deckId }) => {
     const dispatch = useDispatch();
@@ -28,9 +29,9 @@ const EditDeckPage = ({ deckId }) => {
     }
 
     return (
-        <div className='m-2 lg:mx-auto lg:w-4/5'>
+        <Page>
             <Panel title={data?.name}>{content}</Panel>
-        </div>
+        </Page>
     );
 };
 

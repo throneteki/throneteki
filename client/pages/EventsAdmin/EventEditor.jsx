@@ -30,6 +30,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import CardImage from '../../Components/Images/CardImage';
 import { Constants } from '../../constants';
 import CardHoverable from '../../Components/Images/CardHoverable';
+import Page from '../Page';
 
 const formatListTextForUsers = (users) => {
     if (!users) {
@@ -293,7 +294,7 @@ const EventEditor = ({ eventId }) => {
     }
 
     return (
-        <div className='m-2 lg:mx-auto lg:w-4/5'>
+        <Page>
             <Panel title='Event Editor'>
                 <form className='flex gap-2 flex-col'>
                     <Panel title='Event Details'>
@@ -688,7 +689,7 @@ const EventEditor = ({ eventId }) => {
                     </div>
                 </form>
             </Panel>
-        </div>
+        </Page>
     );
 };
 

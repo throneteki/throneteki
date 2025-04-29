@@ -18,6 +18,7 @@ import {
 } from '@heroui/react';
 import LoadingSpinner from '../Components/Site/LoadingSpinner';
 import AlertPanel from '../Components/Site/AlertPanel';
+import Page from './Page';
 
 const NodeAdmin = () => {
     const dispatch = useDispatch();
@@ -49,7 +50,7 @@ const NodeAdmin = () => {
     );
 
     return (
-        <div className='m-2 lg:mx-auto lg:w-4/5'>
+        <Page>
             <Panel title='Game Node Administration'>
                 <div className='flex flex-col gap-2'>
                     {!nodeStatus ? (
@@ -109,7 +110,7 @@ const NodeAdmin = () => {
                     )}
                 </div>
             </Panel>
-        </div>
+        </Page>
     );
 };
 

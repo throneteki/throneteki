@@ -21,8 +21,6 @@ const ContextMenu = () => {
     const [showConfirm, setShowConfirm] = useState(false);
     const [isFullscreen, setIsFullscreen] = useState(screenfull.isFullscreen);
 
-    let spectating = currentGame && !currentGame.players[user.username];
-
     const isGameActive = useMemo(() => {
         if (!currentGame || !user) {
             return false;
@@ -53,6 +51,7 @@ const ContextMenu = () => {
     }, [currentGame, user]);
 
     const onLeaveClick = useCallback(() => {
+        const spectating = user && currentGame && !currentGame.players[user.username];
         if (!spectating && isGameActive) {
             setShowConfirm(true);
 
@@ -60,7 +59,7 @@ const ContextMenu = () => {
         }
 
         dispatch(sendLeaveGameMessage());
-    }, [dispatch, isGameActive, spectating]);
+    }, [currentGame, dispatch, isGameActive, user]);
 
     const contextMenu = useMemo(() => {
         const menuOptions = [];

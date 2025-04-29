@@ -13,6 +13,7 @@ import { Button, Input, Textarea } from '@heroui/react';
 import LoadingSpinner from '../../Components/Site/LoadingSpinner';
 import { toast } from 'react-toastify';
 import AlertPanel from '../../Components/Site/AlertPanel';
+import Page from '../Page';
 
 const calculateMaxPacks = (rarities) => {
     const maxPacksPerRarity = rarities.map((rarity) => {
@@ -265,7 +266,7 @@ const DraftCubeEditor = ({ draftCubeId }) => {
     }
 
     return (
-        <div className='m-2 lg:mx-auto lg:w-4/5'>
+        <Page>
             <Panel title='Draft Cube Editor'>
                 <form className='flex gap-2 flex-col'>
                     <Input
@@ -311,7 +312,7 @@ const DraftCubeEditor = ({ draftCubeId }) => {
                     </div>
                 </form>
             </Panel>
-        </div>
+        </Page>
     );
 };
 

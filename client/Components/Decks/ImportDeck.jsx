@@ -14,6 +14,7 @@ import LoadingSpinner from '../Site/LoadingSpinner';
 import { toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
 import { navigate } from '../../redux/reducers/navigation';
+import Page from '../../pages/Page';
 
 const ImportDeck = () => {
     const [deckText, setDeckText] = useState('');
@@ -50,7 +51,7 @@ const ImportDeck = () => {
     };
 
     return (
-        <div className='m-2 flex flex-col gap-2 lg:mx-auto lg:w-4/5'>
+        <Page>
             {(isFactionsError || isCardsError || isPacksError) && (
                 <AlertPanel variant='danger'>
                     An error occured loading the card data. Please try again later
@@ -83,7 +84,7 @@ const ImportDeck = () => {
                     </div>
                 )}
             </Panel>
-        </div>
+        </Page>
     );
 };
 

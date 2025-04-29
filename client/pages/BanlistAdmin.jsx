@@ -19,6 +19,7 @@ import {
 } from '@heroui/react';
 import LoadingSpinner from '../Components/Site/LoadingSpinner';
 import { toast } from 'react-toastify';
+import Page from './Page';
 
 const BanlistAdmin = () => {
     const { data: banList, isLoading } = useGetBanListQuery();
@@ -84,7 +85,7 @@ const BanlistAdmin = () => {
     }
 
     return (
-        <div className='m-2 lg:mx-auto lg:w-4/5 flex flex-col gap-2'>
+        <Page>
             <Panel title='Banlist administration'>
                 <Table isStriped>
                     <TableHeader>
@@ -113,7 +114,7 @@ const BanlistAdmin = () => {
                     </Button>
                 </div>
             </Panel>
-        </div>
+        </Page>
     );
 };
 

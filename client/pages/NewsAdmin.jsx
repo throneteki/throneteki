@@ -16,6 +16,7 @@ import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import LoadingSpinner from '../Components/Site/LoadingSpinner';
 import { toast } from 'react-toastify';
 import ConfirmDialog from '../Components/Site/ConfirmDialog';
+import Page from './Page';
 
 const NewsAdmin = () => {
     const { data: news, isLoading, error } = useGetAllNewsQuery();
@@ -100,95 +101,93 @@ const NewsAdmin = () => {
         return <LoadingSpinner label='Loading news...' />;
     }
     return (
-        <div className='m-2 lg:mx-auto lg:w-4/5'>
-            <div className='flex flex-col gap-2'>
-                {error && <AlertPanel variant='danger' message={error} />}
-                <Panel title='News administration'>
-                    <div className='h-[400px]'>
-                        <ReactTable
-                            buttons={buttons}
-                            columns={columns}
-                            dataLoadFn={() => ({
-                                data: news,
-                                isLoading: isLoading,
-                                isError: false
-                            })}
-                            onRowClick={(row) => {
-                                setSelectedItem(row.original);
-                                setNewsText(row.original.text);
-                            }}
-                            onRowSelectionChange={(ids) =>
-                                setSelectedIds(ids.map((r) => r.original._id))
-                            }
-                            selectedRows={selectedRows}
-                        />
-                    </div>
-                </Panel>
-                <Panel title='Add new news item'>
-                    <Textarea
-                        label={selectedItem ? 'News text' : 'Enter new news item'}
-                        onValueChange={setNewsText}
-                        value={newsText}
+        <Page>
+            {error && <AlertPanel variant='danger' message={error} />}
+            <Panel title='News administration'>
+                <div className='h-[400px]'>
+                    <ReactTable
+                        buttons={buttons}
+                        columns={columns}
+                        dataLoadFn={() => ({
+                            data: news,
+                            isLoading: isLoading,
+                            isError: false
+                        })}
+                        onRowClick={(row) => {
+                            setSelectedItem(row.original);
+                            setNewsText(row.original.text);
+                        }}
+                        onRowSelectionChange={(ids) =>
+                            setSelectedIds(ids.map((r) => r.original._id))
+                        }
+                        selectedRows={selectedRows}
                     />
-                    <div>
-                        {selectedItem ? (
-                            <div>
-                                <Button
-                                    className='mr-2 mt-2'
-                                    color='primary'
-                                    isLoading={isSaveLoading}
-                                    onPress={onSaveClick}
-                                >
-                                    Save
-                                </Button>
-                                <Button
-                                    className='mt-2'
-                                    color='default'
-                                    onPress={() => {
-                                        setSelectedItem(null);
-                                        setNewsText('');
-                                    }}
-                                >
-                                    Cancel
-                                </Button>
-                            </div>
-                        ) : (
+                </div>
+            </Panel>
+            <Panel title='Add new news item'>
+                <Textarea
+                    label={selectedItem ? 'News text' : 'Enter new news item'}
+                    onValueChange={setNewsText}
+                    value={newsText}
+                />
+                <div>
+                    {selectedItem ? (
+                        <div>
+                            <Button
+                                className='mr-2 mt-2'
+                                color='primary'
+                                isLoading={isSaveLoading}
+                                onPress={onSaveClick}
+                            >
+                                Save
+                            </Button>
                             <Button
                                 className='mt-2'
-                                color='primary'
-                                isLoading={isAddLoading}
-                                onPress={() => onAddNewsClick(newsText)}
+                                color='default'
+                                onPress={() => {
+                                    setSelectedItem(null);
+                                    setNewsText('');
+                                }}
                             >
-                                Add
+                                Cancel
                             </Button>
-                        )}
-                    </div>
-                </Panel>
-                <ConfirmDialog
-                    isOpen={showConfirm}
-                    message={`Are you sure you want to delete ${
-                        selectedIds.length === 1 ? 'this news entry' : 'these news entries'
-                    }?`}
-                    onOpenChange={setShowConfirm}
-                    onCancel={() => setShowConfirm(false)}
-                    onOk={async () => {
-                        try {
-                            await deleteNews(selectedIds[0]).unwrap();
+                        </div>
+                    ) : (
+                        <Button
+                            className='mt-2'
+                            color='primary'
+                            isLoading={isAddLoading}
+                            onPress={() => onAddNewsClick(newsText)}
+                        >
+                            Add
+                        </Button>
+                    )}
+                </div>
+            </Panel>
+            <ConfirmDialog
+                isOpen={showConfirm}
+                message={`Are you sure you want to delete ${
+                    selectedIds.length === 1 ? 'this news entry' : 'these news entries'
+                }?`}
+                onOpenChange={setShowConfirm}
+                onCancel={() => setShowConfirm(false)}
+                onOk={async () => {
+                    try {
+                        await deleteNews(selectedIds[0]).unwrap();
 
-                            setSelectedIds([]);
-                            setSelectedRows(new Set([]));
+                        setSelectedIds([]);
+                        setSelectedRows(new Set([]));
 
-                            toast.success('News deleted successfully');
-                        } catch (err) {
-                            toast.error(
-                                err ||
-                                    'An error occured deleting the news item(s). Please try again later'
-                            );
-                        }
-                    }}
-                />
-            </div>
-        </div>
+                        toast.success('News deleted successfully');
+                    } catch (err) {
+                        toast.error(
+                            err ||
+                                'An error occured deleting the news item(s). Please try again later'
+                        );
+                    }
+                }}
+            />
+        </Page>
     );
 };
 

@@ -16,6 +16,7 @@ import {
     sendWatchGameMessage
 } from '../../redux/reducers/lobby';
 import { setUrl } from '../../redux/reducers/navigation';
+import Page from '../../pages/Page';
 
 const filterDefaults = {
     ['beginner']: true,
@@ -75,7 +76,7 @@ const GameLobby = ({ gameId }) => {
     }, [currentGame, dispatch, gameId, games]);
 
     return (
-        <div className='m-2 lg:mx-auto lg:w-4/5 flex flex-col gap-2'>
+        <Page>
             <div ref={topRef}>
                 {newGame && <NewGame quickJoin={quickJoin} onClosed={() => setNewGame(false)} />}
                 {currentGame?.started === false && <PendingGame />}
@@ -127,7 +128,7 @@ const GameLobby = ({ gameId }) => {
                     </div>
                 </div>
             </Panel>
-        </div>
+        </Page>
     );
 };
 

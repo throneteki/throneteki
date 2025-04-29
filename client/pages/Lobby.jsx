@@ -13,6 +13,7 @@ import { clearChatStatus, sendLobbyChatMessage } from '../redux/reducers/lobby';
 import { Textarea } from '@heroui/react';
 import { toast } from 'react-toastify';
 import LoadingSpinner from '../Components/Site/LoadingSpinner';
+import Page from './Page';
 
 const Lobby = () => {
     const [message, setMessage] = useState('');
@@ -94,8 +95,8 @@ const Lobby = () => {
         checkChatError();
     }, [checkChatError, lobbyError]);
 
-    let isLoggedIn = !!user;
-    let placeholder = isLoggedIn
+    const isLoggedIn = !!user;
+    const placeholder = isLoggedIn
         ? 'Enter a message...'
         : 'You must be logged in to send lobby chat messages';
     let newsInfo = null;
@@ -108,15 +109,18 @@ const Lobby = () => {
     }
 
     return (
-        <div className='m-2 lg:mx-auto lg:w-4/5 flex flex-col gap-2 h-full'>
+        <Page className='h-full'>
             {motd && motd.message && (
                 <AlertPanel variant={motd.motdType}>{getMessageWithLinks(motd.message)}</AlertPanel>
             )}
             {bannerNotice ? <AlertPanel message={bannerNotice} variant='danger' /> : null}
-            <div className='max-h-[25vh]'>
-                <Panel title='Latest site news'>{newsInfo}</Panel>
-            </div>
-            <Panel className='flex flex-col' title={`Lobby Chat (${users.length} online)`}>
+            <Panel className='max-h-fit min-h-44' title='Latest site news'>
+                {newsInfo}
+            </Panel>
+            <Panel
+                className='flex-grow overflow-y-auto min-h-64'
+                title={`Lobby Chat (${users.length} online)`}
+            >
                 <LobbyChat
                     messages={messages}
                     isModerator={user && user.permissions.canModerateChat}
@@ -128,11 +132,12 @@ const Lobby = () => {
                     onValueChange={setMessage}
                     maxLength={512}
                     placeholder={placeholder}
+                    disabled={!isLoggedIn}
                     value={message}
                     minRows={1}
                 ></Textarea>
             </Panel>
-        </div>
+        </Page>
     );
 };
 

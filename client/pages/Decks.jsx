@@ -5,6 +5,7 @@ import { useGetRestrictedListQuery } from '../redux/middleware/api';
 import { Select, SelectItem } from '@heroui/react';
 import { useDispatch } from 'react-redux';
 import { navigate } from '../redux/reducers/navigation';
+import Page from './Page';
 
 const Decks = () => {
     const dispatch = useDispatch();
@@ -19,8 +20,8 @@ const Decks = () => {
     }, [restrictedList, restrictedLists]);
 
     return (
-        <div className='m-2 lg:mx-auto lg:w-4/5'>
-            <Panel className='h-full' title='Decks'>
+        <Page>
+            <Panel title='Decks'>
                 <div className='flex flex-col gap-2'>
                     <Select
                         label={'Game mode'}
@@ -40,7 +41,7 @@ const Decks = () => {
                     />
                 </div>
             </Panel>
-        </div>
+        </Page>
     );
 };
 

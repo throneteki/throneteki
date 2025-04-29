@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import Panel from '../Components/Site/Panel';
 import { sendMotdMessage } from '../redux/reducers/lobby';
 import { Button, Radio, RadioGroup, Textarea } from '@heroui/react';
+import Page from './Page';
 
 const MotdAdmin = () => {
     const motd = useSelector((state) => state.lobby.motd);
@@ -42,7 +43,7 @@ const MotdAdmin = () => {
     }, [dispatch, motdText, selectedMotdType]);
 
     return (
-        <div className='m-2 lg:mx-auto lg:w-4/5'>
+        <Page>
             <Panel title='Motd administration'>
                 <div className='flex flex-col gap-2'>
                     <Textarea
@@ -73,7 +74,7 @@ const MotdAdmin = () => {
                     </Button>
                 </div>
             </Panel>
-        </div>
+        </Page>
     );
 };
 

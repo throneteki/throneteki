@@ -2,10 +2,11 @@ import React from 'react';
 
 import Panel from '../Components/Site/Panel';
 import { Button, Link } from '@heroui/react';
+import Page from './Page';
 
 const About = () => {
     return (
-        <div className='m-2 lg:mx-auto lg:w-4/5'>
+        <Page>
             <Panel title='About The Iron Throne - Help and information'>
                 <div className='flex flex-col-reverse sm:flex-row'>
                     <div className='flex-1'>
@@ -182,7 +183,7 @@ const About = () => {
                     not endorse, support, and is not involved with, this site in any way.
                 </p>
             </Panel>
-        </div>
+        </Page>
     );
 };
 

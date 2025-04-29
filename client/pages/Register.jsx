@@ -8,6 +8,7 @@ import { useRegisterAccountMutation } from '../redux/middleware/api';
 import { Formik } from 'formik';
 import { Button, Input, Link, Switch } from '@heroui/react';
 import { toast } from 'react-toastify';
+import NavigationLink from '../Components/Site/NavigationLink';
 
 const Register = () => {
     const dispatch = useDispatch();
@@ -64,9 +65,12 @@ const Register = () => {
             <Panel title='Register an account'>
                 <p>
                     We require information from you in order to service your access to the site.
-                    Please see the <Link href='/privacy'>privacy policy</Link> for details on why we
-                    need this information and what we do with it. Please pay particular attention to
-                    the section on avatars.
+                    Please see the{' '}
+                    <Link href='/privacy' as={NavigationLink}>
+                        privacy policy
+                    </Link>{' '}
+                    for details on why we need this information and what we do with it. Please pay
+                    particular attention to the section on avatars.
                 </p>
 
                 <div className='mt-2'>

@@ -73,7 +73,7 @@ const Application = () => {
         }
     }, [data, dispatch]);
 
-    let gameBoardVisible = currentGame && currentGame.started;
+    const gameBoardVisible = currentGame && currentGame.started;
 
     let component = router.resolvePath({
         pathname: path,
@@ -112,17 +112,14 @@ const Application = () => {
         }
     }, [gameBoardVisible, user]);
 
-    const containerClass = classNames('container', {
-        'max-w-full h-full': component?.key === 'gameboard'
+    const containerClass = classNames('container h-full', {
+        'max-w-full': gameBoardVisible
     });
     return (
-        <>
+        <div className='flex flex-col h-screen'>
             <NavBar />
-            <main role='main'>
-                <div
-                    className='absolute bottom-0 left-0 right-0 top-12 bg-cover bg-center bg-no-repeat overflow-y-auto'
-                    ref={bgRef}
-                >
+            <main role='main' className='flex-1 overflow-y-auto'>
+                <div className='bg-cover bg-center bg-no-repeat h-full' ref={bgRef}>
                     <Sentry.ErrorBoundary
                         fallback={
                             <ErrorMessage
@@ -133,9 +130,7 @@ const Application = () => {
                     >
                         <CardHover className='w-full h-full'>
                             {isLoading ? (
-                                <div className='w-full h-full flex justify-center items-center'>
-                                    <LoadingSpinner size='lg' />
-                                </div>
+                                <LoadingSpinner size='lg' />
                             ) : (
                                 <div className={containerClass}>{component}</div>
                             )}
@@ -143,7 +138,7 @@ const Application = () => {
                     </Sentry.ErrorBoundary>
                 </div>
             </main>
-        </>
+        </div>
     );
 };
 

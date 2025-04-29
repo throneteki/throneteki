@@ -16,6 +16,7 @@ import { store } from './configureStore';
 import { navigate } from './redux/reducers/navigation';
 
 import './index.css';
+import ErrorMessage from './Components/Site/ErrorMessage';
 
 $.validator.setDefaults({
     highlight: function (element) {
@@ -90,7 +91,14 @@ root.render(
                         closeOnClick
                         pauseOnHover
                     />
-                    <SentryReact.ErrorBoundary fallback={<p>An error has occurred</p>}>
+                    <SentryReact.ErrorBoundary
+                        fallback={
+                            <ErrorMessage
+                                title='Unexpected Error'
+                                message='Report has been automatically submitted'
+                            />
+                        }
+                    >
                         <Application />
                     </SentryReact.ErrorBoundary>
                 </div>

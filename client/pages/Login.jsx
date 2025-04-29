@@ -10,6 +10,7 @@ import * as yup from 'yup';
 import { Button, Input, Link } from '@heroui/react';
 import { Formik } from 'formik';
 import { toast } from 'react-toastify';
+import NavigationLink from '../Components/Site/NavigationLink';
 
 const Login = () => {
     const dispatch = useDispatch();
@@ -67,7 +68,9 @@ const Login = () => {
                                     errorMessage={formProps.errors.password}
                                     {...formProps.getFieldProps('password')}
                                 />
-                                <Link href='/forgot'>Forgot your password?</Link>
+                                <Link href='/forgot' as={NavigationLink}>
+                                    Forgot your password?
+                                </Link>
                             </div>
                             <Button
                                 className='sm:self-start'

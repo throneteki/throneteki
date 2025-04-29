@@ -19,6 +19,7 @@ import {
 } from '@heroui/react';
 import LoadingSpinner from '../../Components/Site/LoadingSpinner';
 import { toast } from 'react-toastify';
+import Page from '../Page';
 
 const EventsAdmin = () => {
     const dispatch = useDispatch();
@@ -59,7 +60,7 @@ const EventsAdmin = () => {
     }
 
     return (
-        <div className='m-2 lg:mx-auto lg:w-4/5 flex flex-col gap-2'>
+        <Page>
             <Panel title='Events administration'>
                 <div className='flex flex-col gap-2'>
                     <Button
@@ -152,7 +153,7 @@ const EventsAdmin = () => {
                     </Table>
                 </div>
             </Panel>
-        </div>
+        </Page>
     );
 };
 

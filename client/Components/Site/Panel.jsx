@@ -10,14 +10,7 @@ const PanelType = Object.freeze({
     Danger: 'danger'
 });
 
-const Panel = ({
-    className,
-    type = PanelType.Primary,
-    title,
-    titleClass,
-    children,
-    fullHeight = true
-}) => {
+const Panel = ({ className, type = PanelType.Primary, title, children }) => {
     let border = 'border-default';
     if (type === PanelType.Primary) {
         border = 'border-primary';
@@ -28,18 +21,11 @@ const Panel = ({
     } else if (type === PanelType.Danger) {
         border = 'border-danger';
     }
-    const cardClass = classNames(className, 'shadow-lg border-2 bg-black/65', border, {
-        'h-full': fullHeight
-    });
+    const cardClass = classNames('shadow-lg border-2 bg-black/65 h-full', className, border);
+    const titleClass = classNames('justify-center rounded-none font-bold', `bg-${type}`);
     return (
         <Card className={cardClass} classNames={{ body: 'h-full overflow-y-auto' }}>
-            {title && (
-                <CardHeader
-                    className={`${titleClass} justify-center bg-${type} rounded-none font-bold`}
-                >
-                    {title}
-                </CardHeader>
-            )}
+            {title && <CardHeader className={titleClass}>{title}</CardHeader>}
             <CardBody>{children}</CardBody>
         </Card>
     );

@@ -4,7 +4,7 @@ import React from 'react';
 
 const ErrorMessage = ({ includeIcon = true, title, message, color = 'white' }) => {
     return (
-        <div className='absolute left-0 right-0 w-full h-full flex justify-center items-center'>
+        <div className='w-full h-full flex justify-center items-center'>
             <div className='text-center'>
                 {includeIcon && (
                     <FontAwesomeIcon icon={faExclamationTriangle} size='5x' color={color} />

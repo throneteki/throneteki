@@ -2,10 +2,11 @@ import React from 'react';
 
 import Panel from '../Components/Site/Panel';
 import { Button, Link } from '@heroui/react';
+import Page from './Page';
 
 const HowToPlay = () => {
     return (
-        <div className='m-2 lg:mx-auto lg:w-4/5'>
+        <Page>
             <Panel title='How To Play on The Iron Throne'>
                 <h2 className='mb-3 text-large font-bold border-b-1 border-b-gray-300'>
                     Introduction
@@ -468,7 +469,7 @@ const HowToPlay = () => {
                     </p>
                 </div>
             </Panel>
-        </div>
+        </Page>
     );
 };
 

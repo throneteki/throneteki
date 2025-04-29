@@ -24,6 +24,7 @@ import { LeftMenu, ProfileMenu, RightMenu } from '../../menus';
 import ProfileDropdown from './ProfileDropdown';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
+import NavigationLink from '../Site/NavigationLink';
 
 const NavBar = () => {
     const { path } = useSelector((state) => state.navigation);
@@ -109,12 +110,18 @@ const NavBar = () => {
                             >
                                 {children.map((childItem, index) =>
                                     childItem.path ? (
-                                        <DropdownItem key={index} classNames={{ base: 'flex' }}>
-                                            <span className='flex'>
-                                                <Link className='w-full' href={childItem.path}>
-                                                    {childItem.title}
-                                                </Link>
-                                            </span>
+                                        <DropdownItem
+                                            key={index}
+                                            classNames={{ base: 'flex' }}
+                                            onPointerDown={() => setIsMenuOpen(false)}
+                                        >
+                                            <Link
+                                                className='w-full'
+                                                as={NavigationLink}
+                                                href={childItem.path}
+                                            >
+                                                {childItem.title}
+                                            </Link>
                                         </DropdownItem>
                                     ) : null
                                 )}
@@ -132,6 +139,7 @@ const NavBar = () => {
                         <Link
                             className='w-full font-[PoppinsMedium] text-secondary transition-colors duration-500 ease-in-out hover:text-white'
                             size='lg'
+                            as={NavigationLink}
                             href={menuItem.path}
                         >
                             {menuItem.title}
@@ -163,7 +171,7 @@ const NavBar = () => {
                 <NavbarMenuToggle onChange={(isOpen) => setIsMenuOpen(isOpen)} />
             </NavbarContent>
             <NavbarContent className='lg:hidden' justify='center'>
-                <NavbarBrand as={Link} href='/'>
+                <NavbarBrand as={NavigationLink} href='/'>
                     <img
                         src={SmallHeaderIcon}
                         width='32'
@@ -203,7 +211,7 @@ const NavBar = () => {
                 {leftMenu}
             </NavbarContent>
             <NavbarContent className='hidden lg:flex' justify='center'>
-                <NavbarBrand as={Link} href='/'>
+                <NavbarBrand as={NavigationLink} href='/'>
                     <Image
                         src={currentGame?.started ? SmallHeaderIcon : HeaderIcon}
                         style={{ height: '48px' }}
