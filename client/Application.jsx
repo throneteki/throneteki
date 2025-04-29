@@ -116,10 +116,13 @@ const Application = () => {
         'max-w-full': gameBoardVisible
     });
     return (
-        <div className='flex flex-col h-screen'>
+        <>
             <NavBar />
-            <main role='main' className='flex-1 overflow-y-auto'>
-                <div className='bg-cover bg-center bg-no-repeat h-full' ref={bgRef}>
+            <main role='main'>
+                <div
+                    className='absolute bottom-0 left-0 right-0 top-[3rem] bg-cover bg-center bg-no-repeat overflow-y-auto'
+                    ref={bgRef}
+                >
                     <Sentry.ErrorBoundary
                         fallback={
                             <ErrorMessage
@@ -138,7 +141,7 @@ const Application = () => {
                     </Sentry.ErrorBoundary>
                 </div>
             </main>
-        </div>
+        </>
     );
 };
 
