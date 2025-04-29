@@ -51,7 +51,8 @@ const PlayerBoard = ({
     const renderRow = useCallback(
         (row) => {
             const maxDupe = Math.max(...row.map((card) => card.dupes?.length || 0), 0);
-            return row.map((card) => {
+            // Using reverse() & flex-row-reverse (in renderRows) to force HTML to render right to left, allowing card menus to overlap the card to its right
+            return row.reverse().map((card) => {
                 const dupeOffset = maxDupe - (card.dupes?.length || 0);
                 const dupeOffsets = Array.from({ length: dupeOffset }, (_, i) => (
                     <div key={i} className={`duplicate-offset-${standardiseCardSize(cardSize)}`} />
@@ -78,7 +79,7 @@ const PlayerBoard = ({
         (rows) => {
             return rows.map((row, index) => (
                 <div
-                    className='flex justify-start min-h-0 gap-1.5 card-row'
+                    className='flex flex-row-reverse justify-end min-h-0 gap-1.5 card-row'
                     key={`card-row-${index}`}
                 >
                     {renderRow(row)}
