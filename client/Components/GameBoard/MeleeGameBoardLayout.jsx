@@ -32,7 +32,6 @@ const MeleeGameBoardLayout = ({
 
             const playerBoard = (
                 <PlayerBoard
-                    className='lg:min-h-48'
                     cardsInPlay={player.cardPiles.cardsInPlay}
                     onCardClick={onCardClick}
                     onMenuItemClick={(card, menuItem) =>
@@ -198,7 +197,7 @@ const MeleeGameBoardLayout = ({
         );
     }
 
-    return <div className='flex min-h-full'>{playerBoardGrid}</div>;
+    return <div className='flex h-full'>{playerBoardGrid}</div>;
 };
 
 export default MeleeGameBoardLayout;

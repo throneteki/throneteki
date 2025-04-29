@@ -31,7 +31,6 @@ const JoustGameBoardLayout = ({
 
             const playerBoard = (
                 <PlayerBoard
-                    className='lg:min-h-48'
                     cardsInPlay={player.cardPiles.cardsInPlay}
                     onCardClick={onCardClick}
                     onMenuItemClick={(card, menuItem) =>
