@@ -10,9 +10,12 @@ import {
     faXmarkCircle
 } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames';
+import { GameFormats } from '../../constants';
 
-const DeckStatus = ({ className, compact = false, status }) => {
+const DeckStatus = ({ className, compact = false, status, gameFormat }) => {
     const [pointerType, setPointerType] = useState(false);
+    const formatStatus = status[gameFormat];
+    const formatLabel = GameFormats.find((gf) => gf.name === gameFormat).label;
 
     const statusInfo = (status) => {
         const label = deckStatusLabel(status) || 'Loading...';
@@ -42,7 +45,7 @@ const DeckStatus = ({ className, compact = false, status }) => {
         return { label, icon, color };
     };
 
-    const info = statusInfo(status);
+    const info = statusInfo(formatStatus);
 
     const wrapperClass = useMemo(
         () =>
@@ -71,13 +74,16 @@ const DeckStatus = ({ className, compact = false, status }) => {
             content={
                 <div className='flex flex-col gap-1 max-w-64'>
                     <span className={`text-${info.color} flex flex-row gap-1 items-center`}>
-                        {info.icon} <b>{info.label}</b>
+                        {info.icon}
+                        <b>
+                            {info.label} ({formatLabel})
+                        </b>
                     </span>
                     <Divider />
-                    <DeckStatusSummary status={status} />
-                    {status.extendedStatus && status.extendedStatus.length !== 0 && (
+                    <DeckStatusSummary status={formatStatus} />
+                    {formatStatus.extendedStatus && formatStatus.extendedStatus.length !== 0 && (
                         <ul className='flex flex-col gap-1'>
-                            {status.extendedStatus.map((error, index) => (
+                            {formatStatus.extendedStatus.map((error, index) => (
                                 <li key={index}>
                                     <Divider />
                                     {error}

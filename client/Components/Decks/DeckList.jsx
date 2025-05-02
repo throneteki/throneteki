@@ -29,7 +29,13 @@ import FactionFilter from '../Table/FactionFilter';
 import { Constants } from '../../constants';
 import ImportDeckModal from './ImportDeckModal';
 
-const DeckList = ({ restrictedList, onDeckSelected, readOnly }) => {
+const DeckList = ({
+    deckLoadFn = useGetDecksQuery,
+    onDeckSelected,
+    readOnly,
+    gameFormat = 'joust',
+    restrictedList
+}) => {
     const dispatch = useDispatch();
 
     const [selectedIds, setSelectedIds] = useState([]);
@@ -132,11 +138,12 @@ const DeckList = ({ restrictedList, onDeckSelected, readOnly }) => {
                 accessorKey: 'status',
                 cell: (info) => (
                     <div className='justify-content-center flex'>
-                        {restrictedList && (
+                        {restrictedList && gameFormat && (
                             <div onPointerDown={(e) => e.stopPropagation()}>
                                 <DeckStatus
                                     compact={'max-md'}
                                     status={info.row.original.status[restrictedList]}
+                                    gameFormat={gameFormat}
                                 />
                             </div>
                         )}
@@ -191,7 +198,7 @@ const DeckList = ({ restrictedList, onDeckSelected, readOnly }) => {
                 enableColumnFilter: false
             }
         ],
-        [factionFilter, readOnly, restrictedList, toggleFavourite]
+        [factionFilter, gameFormat, readOnly, restrictedList, toggleFavourite]
     );
     const buttons = readOnly
         ? []
@@ -222,8 +229,7 @@ const DeckList = ({ restrictedList, onDeckSelected, readOnly }) => {
         <>
             <ReactTable
                 buttons={buttons}
-                dataLoadFn={useGetDecksQuery}
-                dataLoadArg={restrictedList ? { restrictedList: restrictedList } : null}
+                dataLoadFn={deckLoadFn}
                 defaultColumnFilters={{
                     'faction.name': Constants.Factions.filter(({ value }) =>
                         factionFilter.includes(value)

@@ -20,6 +20,7 @@ import GameTypeInfo from './GameTypeInfo';
 import AlertPanel, { AlertType } from '../Site/AlertPanel';
 import PendingGamePlayers from './PendingGamePlayers';
 import LoadingSpinner from '../Site/LoadingSpinner';
+import { GameFormats } from '../../constants';
 
 const PendingGame = () => {
     const dispatch = useDispatch();
@@ -159,7 +160,7 @@ const PendingGame = () => {
 
         return <LoadingSpinner label='You must be logged in to play, redirecting...' />;
     }
-
+    const gameFormatLabel = GameFormats.find((gf) => gf.name === currentGame.gameFormat).label;
     return (
         <div className='flex flex-col gap-2'>
             <audio ref={notificationRef}>
@@ -180,6 +181,9 @@ const PendingGame = () => {
                                 <strong>Event:</strong> {currentGame.event.name}
                             </p>
                         )}
+                        <p>
+                            <strong>Format:</strong> {gameFormatLabel}
+                        </p>
                         <p>
                             <strong>Restricted List:</strong> {currentGame.restrictedList.name}
                         </p>
@@ -291,6 +295,7 @@ const PendingGame = () => {
                         setShowModal(false);
                         dispatch(sendSelectDeckMessage(deck._id));
                     }}
+                    gameFormat={currentGame.gameFormat}
                     restrictedList={currentGame.restrictedList?._id}
                 />
             )}

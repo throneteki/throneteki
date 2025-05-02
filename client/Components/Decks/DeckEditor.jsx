@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { BannersForFaction, Constants } from '../../constants';
+import { BannersForFaction, Constants, GameFormats } from '../../constants';
 import ReactTable from '../Table/ReactTable';
 import DeckSummary from './DeckSummary';
 import AlertPanel from '../Site/AlertPanel';
@@ -78,6 +78,7 @@ const DeckEditor = ({ deck, onBackClick }) => {
     const [showImportModal, setShowImportModal] = useState(false);
     const [pageNumber, setPageNumber] = useState(0);
 
+    const [currentGameFormat, setCurrentGameFormat] = useState(GameFormats[0].name);
     const [currentRestrictedList, setCurrentRestrictedList] = useState(
         restrictedLists && restrictedLists[0]
     );
@@ -121,9 +122,10 @@ const DeckEditor = ({ deck, onBackClick }) => {
             saveDeck.status = {};
         }
 
-        saveDeck.status[currentRestrictedList._id] = validateDeck(saveDeck, {
+        saveDeck.status = validateDeck(saveDeck, {
             packs: packs,
-            restrictedLists: [currentRestrictedList]
+            gameFormats: GameFormats.map((gf) => gf.name),
+            restrictedLists
         });
 
         return saveDeck;
@@ -136,7 +138,8 @@ const DeckEditor = ({ deck, onBackClick }) => {
         deckName,
         faction.value,
         factionsByCode,
-        packs
+        packs,
+        restrictedLists
     ]);
 
     const columns = useMemo(
@@ -309,6 +312,12 @@ const DeckEditor = ({ deck, onBackClick }) => {
     }, [deck.faction]);
 
     useEffect(() => {
+        if (!currentGameFormat) {
+            setCurrentGameFormat(GameFormats[0].name);
+        }
+    }, [currentGameFormat]);
+
+    useEffect(() => {
         if (!currentRestrictedList && restrictedLists) {
             setCurrentRestrictedList(restrictedLists[0]);
         }
@@ -366,15 +375,16 @@ const DeckEditor = ({ deck, onBackClick }) => {
             </div>
             <div className='columns-1 xl:columns-2 gap-4'>
                 <div className='flex flex-col gap-2 break-inside-avoid'>
-                    <Input
-                        placeholder={'Enter a name'}
-                        value={deckName}
-                        onValueChange={setDeckName}
-                        label={'Deck Name'}
-                    />
                     <div className='flex max-md:flex-wrap gap-2'>
+                        <Input
+                            className='w-full md:w-2/3'
+                            placeholder={'Enter a name'}
+                            value={deckName}
+                            onValueChange={setDeckName}
+                            label={'Deck Name'}
+                        />
                         <Select
-                            className='w-full md:w-1/2'
+                            className='w-full md:w-1/3'
                             items={Constants.Factions}
                             label='Faction'
                             selectedKeys={new Set([faction.value])}
@@ -393,6 +403,20 @@ const DeckEditor = ({ deck, onBackClick }) => {
                                     </div>
                                 </SelectItem>
                             )}
+                        </Select>
+                    </div>
+                    <div className='flex max-md:flex-wrap gap-2'>
+                        <Select
+                            label={'Game format'}
+                            className='w-full md:w-1/2'
+                            onChange={(e) => setCurrentGameFormat(e.target.value)}
+                            selectedKeys={new Set([currentGameFormat])}
+                        >
+                            {GameFormats.map((gf) => (
+                                <SelectItem key={gf.name} value={gf.name}>
+                                    {gf.label}
+                                </SelectItem>
+                            ))}
                         </Select>
                         <RestrictedListDropdown
                             className='w-full md:w-1/2'
@@ -425,7 +449,10 @@ const DeckEditor = ({ deck, onBackClick }) => {
                             </div>
                             <div className='flex gap-2 items-center'>
                                 <div className='font-bold'>Validity:</div>
-                                <DeckStatus status={deckToSave.status[currentRestrictedList._id]} />
+                                <DeckStatus
+                                    status={deckToSave.status[currentRestrictedList._id]}
+                                    gameFormat={currentGameFormat || GameFormats[0].name}
+                                />
                             </div>
                         </CardBody>
                     </Card>

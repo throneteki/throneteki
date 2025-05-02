@@ -728,6 +728,7 @@ class Lobby {
 
                 formattedDeck.status = validateDeck(formattedDeck, {
                     packs: packs,
+                    gameFormats: [game.gameFormat],
                     restrictedLists: [game.restrictedList],
                     includeExtendedStatus: false
                 });

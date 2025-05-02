@@ -1,5 +1,5 @@
-const JoustFormat = {
-    name: 'joust',
+const MeleeFormat = {
+    name: 'melee',
     requiredDraw: 60,
     requiredPlots: 7,
     maxDoubledPlots: 1,
@@ -14,4 +14,4 @@ const JoustFormat = {
     ]
 };
 
-export default JoustFormat;
+export default MeleeFormat;

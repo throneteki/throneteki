@@ -1,30 +1,32 @@
 import React from 'react';
-import { Modal, ModalBody, ModalContent, ModalHeader } from '@heroui/react';
+import { Modal, ModalBody, ModalContent, ModalHeader, Tab, Tabs } from '@heroui/react';
 import DeckList from '../Decks/DeckList';
+import { useGetDecksQuery, useGetStandaloneDecksQuery } from '../../redux/middleware/api';
 
-const SelectDeckModal = ({ onClose, onDeckSelected, restrictedList }) => {
-    //  const standaloneDecks = useSelector((state) => state.cards.standaloneDecks);
+const SelectDeckModal = ({ onClose, onDeckSelected, gameFormat, restrictedList }) => {
+    const deckTabs = [
+        { title: 'My Decks', dataQuery: useGetDecksQuery },
+        { title: 'Standalone Decks', dataQuery: useGetStandaloneDecksQuery }
+    ];
     return (
         <>
             <Modal isOpen={true} onClose={onClose} size='5xl'>
                 <ModalContent>
                     <ModalHeader>{'Select Deck'}</ModalHeader>
                     <ModalBody>
-                        <div>
-                            <DeckList
-                                onDeckSelected={onDeckSelected}
-                                readOnly={true}
-                                restrictedList={restrictedList}
-                            />
-                            {/*standaloneDecks && standaloneDecks.length !== 0 && (
-                            <div>
-                                <h4 className='deck-list-header'>
-                                    <Trans>Or choose a standalone deck</Trans>:
-                                </h4>
-                                <DeckList standaloneDecks onDeckSelected={onDeckSelected} />
-                            </div>
-                        )*/}
-                        </div>
+                        <Tabs items={deckTabs}>
+                            {(item) => (
+                                <Tab key={item.title} title={item.title}>
+                                    <DeckList
+                                        deckLoadFn={item.dataQuery}
+                                        onDeckSelected={onDeckSelected}
+                                        readOnly={true}
+                                        gameFormat={gameFormat}
+                                        restrictedList={restrictedList}
+                                    />
+                                </Tab>
+                            )}
+                        </Tabs>
                     </ModalBody>
                 </ModalContent>
             </Modal>
