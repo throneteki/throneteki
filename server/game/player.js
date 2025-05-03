@@ -89,8 +89,6 @@ class Player extends Spectator {
         this.flags = new ReferenceCountedSetProperty();
         if (game.useChessClocks) {
             this.chessClock = new ChessClock(this, game.chessClockTimeLimit, game.chessClockDelay);
-        } else {
-            this.chessClock = undefined;
         }
 
         this.promptState = new PlayerPromptState();
@@ -1425,12 +1423,6 @@ class Player extends Spectator {
             plots = this.getSummaryForCardList(this.plotDeck, activePlayer);
         }
 
-        let chessClockState = undefined;
-
-        if (this.chessClock) {
-            chessClockState = this.chessClock.getState();
-        }
-
         let state = {
             seatNo: this.seatNo,
             activePlot: this.activePlot ? this.activePlot.getSummary(activePlayer) : undefined,
@@ -1477,7 +1469,7 @@ class Player extends Spectator {
             user: {
                 username: this.user.username
             },
-            chessClock: chessClockState
+            ...(this.game.useChessClocks && { chessClock: this.chessClock.getState() })
         };
 
         return Object.assign(state, promptState);

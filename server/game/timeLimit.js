@@ -72,6 +72,7 @@ class TimeLimit {
     }
 
     getState() {
+        this.checkForTimeLimitReached();
         return {
             active: this.active,
             paused: this.paused,

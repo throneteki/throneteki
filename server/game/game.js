@@ -68,11 +68,15 @@ class Game extends EventEmitter {
         this.playStarted = false;
         this.createdAt = new Date();
         this.useGameTimeLimit = details.useGameTimeLimit;
-        this.gameTimeLimit = details.gameTimeLimit;
-        this.timeLimit = new TimeLimit(this, this.gameTimeLimit);
+        if (this.useGameTimeLimit) {
+            this.gameTimeLimit = details.gameTimeLimit;
+            this.timeLimit = new TimeLimit(this, this.gameTimeLimit);
+        }
         this.useChessClocks = details.useChessClocks;
-        this.chessClockTimeLimit = details.chessClockTimeLimit;
-        this.chessClockDelay = details.chessClockDelay;
+        if (this.useChessClocks) {
+            this.chessClockTimeLimit = details.chessClockTimeLimit;
+            this.chessClockDelay = details.chessClockDelay;
+        }
         this.clockPaused = false;
         this.savedGameId = details.savedGameId;
         this.gamePrivate = details.gamePrivate;
@@ -998,7 +1002,7 @@ class Game extends EventEmitter {
     }
 
     checkForTimeExpired() {
-        if (this.timeLimit.isTimeLimitReached && !this.finishedAt) {
+        if (this.useGameTimeLimit && this.timeLimit.isTimeLimitReached && !this.finishedAt) {
             this.determineWinnerAfterTimeLimitExpired();
         }
     }
@@ -1506,8 +1510,7 @@ class Game extends EventEmitter {
     pauseClock() {
         this.clockPaused = !this.clockPaused;
         if (this.useChessClocks) {
-            let players = this.getPlayers();
-            for (let player of players) {
+            for (const player of this.getPlayers()) {
                 player.togglePauseChessClock();
             }
         }
@@ -1552,12 +1555,6 @@ class Game extends EventEmitter {
                 playerState[player.name] = player.getState(activePlayer);
             }
 
-            let timeLimitState = undefined;
-            if (this.useGameTimeLimit) {
-                timeLimitState = this.timeLimit.getState();
-            }
-            this.timeLimit.checkForTimeLimitReached();
-
             return {
                 id: this.id,
                 name: this.name,
@@ -1577,12 +1574,16 @@ class Game extends EventEmitter {
                 maxPlayers: this.maxPlayers,
                 cancelPromptUsed: this.cancelPromptUsed,
                 useGameTimeLimit: this.useGameTimeLimit,
-                gameTimeLimit: this.gameTimeLimit,
-                timeLimit: timeLimitState,
+                ...(this.useGameTimeLimit && {
+                    gameTimeLimit: this.gameTimeLimit,
+                    timeLimit: this.timeLimit.getState()
+                }),
                 muteSpectators: this.muteSpectators,
                 useChessClocks: this.useChessClocks,
-                chessClockTimeLimit: this.chessClockTimeLimit,
-                chessClockDelay: this.chessClockDelay
+                ...(this.useChessClocks && {
+                    chessClockTimeLimit: this.chessClockTimeLimit,
+                    chessClockDelay: this.chessClockDelay
+                })
             };
         }
 
