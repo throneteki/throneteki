@@ -21,6 +21,12 @@ describe("At Prince Doran's Behest", function () {
                 'Old Nan',
                 'Old Nan',
                 'Old Nan',
+                'Old Nan',
+                'Old Nan',
+                'Old Nan',
+                'Old Nan',
+                'Old Nan',
+                'Old Nan',
                 'Old Nan'
             ]);
 
@@ -152,6 +158,16 @@ describe("At Prince Doran's Behest", function () {
             it('should proceed without prompting to choose a plot', function () {
                 this.selectFirstPlayer(this.player1);
                 expect(this.game.currentPhase).toBe('marshal');
+            });
+
+            it('should cause the plot deck to be recycled before the reaction window', function () {
+                this.player1.dragCard(
+                    this.player1.findCardByName("Caswell's Keep", 'hand'),
+                    'play area'
+                );
+                this.selectFirstPlayer(this.player1);
+                expect(this.player1).toAllowAbilityTrigger("Caswell's Keep");
+                expect(this.player1Object.getNumberOfUsedPlots()).toBe(0);
             });
         });
     });
