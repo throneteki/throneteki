@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useRef } from 'reac
 import classNames from 'classnames';
 import { CardHoverContext } from './CardHoverContext';
 
-const CardHoverable = ({ touchDelay, className, children, code, isDisabled }) => {
+const CardHoverable = ({ touchDelay = 0, className, children, code, isDisabled }) => {
     const { type, setType, setCode } = useContext(CardHoverContext);
     const holdTimeout = useRef(null);
 
@@ -53,7 +53,7 @@ const CardHoverable = ({ touchDelay, className, children, code, isDisabled }) =>
                     holdTimeout.current = setTimeout(() => {
                         setType('touch');
                         setCode(code);
-                    }, touchDelay || 0);
+                    }, touchDelay);
                 } else {
                     setType('mouse');
                     setCode(code);
