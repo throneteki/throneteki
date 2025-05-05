@@ -90,7 +90,7 @@ const MovablePanel = ({ name, side, title, onCloseClick, children, className }) 
 
     const wrapperClass = classNames(
         className,
-        'max-h-screen max-w-screen fixed flex flex-col border-primary bg-black/65 rounded-md z-[240] overflow-hidden'
+        'max-h-screen max-w-screen fixed flex flex-col border-primary bg-black/65 rounded-md z-[250] overflow-hidden'
     );
 
     return (

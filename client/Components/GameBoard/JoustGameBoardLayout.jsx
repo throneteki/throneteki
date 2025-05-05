@@ -1,11 +1,8 @@
 import React, { useCallback } from 'react';
 import PlayerRow from './PlayerRow';
-import ActivePlayerPrompt from './ActivePlayerPrompt';
 import PlayerBoard from './PlayerBoard';
-import GameTimer from './GameTimer';
 import Droppable from './Droppable';
 import {
-    sendButtonClickedMessage,
     sendCardMenuItemClickedMessage,
     sendShowDrawDeckMessage,
     sendShuffleDeckMessage
@@ -13,6 +10,7 @@ import {
 import { useDispatch } from 'react-redux';
 import PlayerStats from './PlayerStats';
 import classNames from 'classnames';
+import SideBoardPanel from './SideBoardPanel';
 
 const JoustGameBoardLayout = ({
     thisPlayer,
@@ -41,19 +39,10 @@ const JoustGameBoardLayout = ({
                 />
             );
 
-            const wrapperClassName = classNames('flex flex-grow', {
+            const wrapperClassName = classNames('flex h-1/2', {
                 'flex-col': side === 'top',
                 'flex-col-reverse': side === 'bottom'
             });
-
-            // Side panel must be treated differently for the 2 left-most boards, and for top/bottom
-            const sidePanelClassName = classNames(
-                'sticky left-0 flex flex-col p-1 pointer-events-none w-32 md:w-48 lg:w-64',
-                {
-                    'bottom-0 justify-end': side === 'bottom',
-                    'top-0 justify-start': side === 'top'
-                }
-            );
 
             return (
                 <div key={player.name} className={wrapperClassName}>
@@ -104,33 +93,12 @@ const JoustGameBoardLayout = ({
                         ) : (
                             playerBoard
                         )}
-                        <div className={sidePanelClassName}>
-                            {!!player && <GameTimer player={player} isMe={isMe} side={side} />}
-                            {isMe && (
-                                <ActivePlayerPrompt
-                                    className='pointer-events-auto'
-                                    buttons={thisPlayer.buttons}
-                                    controls={thisPlayer.controls}
-                                    promptText={thisPlayer.menuTitle}
-                                    promptTitle={thisPlayer.promptTitle}
-                                    onButtonClick={(button) =>
-                                        dispatch(
-                                            sendButtonClickedMessage(
-                                                button.promptId,
-                                                button.command,
-                                                button.method,
-                                                button.arg
-                                            )
-                                        )
-                                    }
-                                    user={player.user}
-                                    phase={thisPlayer.phase}
-                                    // timerLimit={this.props.timerLimit}
-                                    // timerStartTime={this.props.timerStartTime}
-                                    // stopAbilityTimer={this.props.stopAbilityTimer}
-                                />
-                            )}
-                        </div>
+                        <SideBoardPanel
+                            player={player}
+                            thisPlayer={thisPlayer}
+                            isMe={isMe}
+                            side={side}
+                        />
                     </div>
                 </div>
             );
