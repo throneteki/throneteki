@@ -31,13 +31,13 @@ const CardTiledList = ({
     // Returns a card list, or a single "fake card" to ensure grid size is properly reflected
     const cardList = useMemo(() => {
         return cards && cards.length > 0 ? (
-            cards.map((card, index) => {
+            cards.map((card) => {
                 return (
                     <Card
                         card={card}
                         forceFaceup={showCards}
                         disableHover={disableHover}
-                        key={index}
+                        key={card.uuid}
                         onClick={onCardClick}
                         onMenuItemClick={onMenuItemClick}
                         orientation={card.type === 'plot' ? 'horizontal' : 'vertical'}
