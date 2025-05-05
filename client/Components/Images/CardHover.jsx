@@ -85,7 +85,7 @@ const CardHover = ({ className, children, size = '3x-large' }) => {
             >
                 {children}
             </div>
-            <div ref={wrapperRef} className='fixed z-50 pointer-events-none'>
+            <div ref={wrapperRef} className='fixed z-[250] pointer-events-none'>
                 {code && (
                     <>
                         {isLoading && <Spinner ref={spinnerRef} size='lg' color='white' />}

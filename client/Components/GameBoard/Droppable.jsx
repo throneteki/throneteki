@@ -92,7 +92,7 @@ const Droppable = ({ className, children, source }) => {
     }, [active, source]);
 
     const innerClass = classNames(
-        'pointer-events-none absolute top-0 left-0 h-full w-full opacity-50 z-50',
+        'pointer-events-none absolute top-0 left-0 h-full w-full opacity-50 z-[230]',
         {
             'bg-success-500': isOver && canDrop,
             'bg-danger-500':
