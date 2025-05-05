@@ -39,7 +39,7 @@ const JoustGameBoardLayout = ({
                 />
             );
 
-            const wrapperClassName = classNames('flex h-1/2', {
+            const wrapperClassName = classNames('flex flex-grow', {
                 'flex-col': side === 'top',
                 'flex-col-reverse': side === 'bottom'
             });
