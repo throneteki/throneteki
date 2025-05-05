@@ -29,7 +29,7 @@ const CardMenu = ({ menu, onMenuItemClick }) => {
     });
 
     return (
-        <div className='bg-black/65 p-1 absolute top-0 left-full flex flex-col gap-0.5 w-[10rem] rounded-lg'>
+        <div className='bg-black/65 p-1 absolute top-0 left-full flex flex-col gap-0.5 w-[10rem] z-30 rounded-lg'>
             {menuItems}
         </div>
     );

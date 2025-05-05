@@ -27,7 +27,8 @@ const Card = ({
     source,
     style,
     wrapped = true,
-    forceFaceup = false
+    forceFaceup = false,
+    cardStackIndex = 20
 }) => {
     const [showMenu, setShowMenu] = useState(false);
 
@@ -54,7 +55,6 @@ const Card = ({
     };
 
     const standardisedSize = standardiseCardSize(size);
-    let cardStackIndex = (card.attachments?.length || 0) + (card.childCards?.length > 0 ? 1 : 0);
 
     const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
         id: useUniqueId(key),
@@ -162,9 +162,7 @@ const Card = ({
             return (
                 <Card
                     key={attachment.uuid}
-                    style={{
-                        zIndex: cardStackIndex--
-                    }}
+                    cardStackIndex={cardStackIndex--}
                     source={source}
                     card={attachment}
                     className={`attachment-${standardisedSize}`}
@@ -240,7 +238,7 @@ const Card = ({
         }
 
         return (
-            <div className='absolute w-6 h-6 -ml-3 -top-7 left-1/2 text-white bg-black/80 font-bold text-center rounded-md border-1'>
+            <div className='absolute w-6 h-6 -ml-3 -top-7 z-30 left-1/2 text-white bg-black/80 font-bold text-center rounded-md border-1'>
                 {card.order}
             </div>
         );
@@ -294,7 +292,7 @@ const Card = ({
             return 'shadow-[0_0_1px_2px] shadow-blue-100';
         }
     };
-    const getCard = (style) => {
+    const getCard = () => {
         if (!card) {
             return <div />;
         }
@@ -325,7 +323,7 @@ const Card = ({
                 {...attributes}
                 className={wrapperClass}
                 onClick={handleClick}
-                style={{ zIndex: cardStackIndex--, ...style }}
+                style={{ zIndex: cardStackIndex-- }}
             >
                 {card.name && <span className='absolute left-0 top-0'>{card.name}</span>}
                 <CardImage
@@ -359,18 +357,15 @@ const Card = ({
                         {image}
                     </CardHoverable>
                 )}
-                {showMenu ? (
-                    <CardMenu menu={getMenu()} onMenuItemClick={handleMenuItemClick} />
-                ) : null}
                 {!hideTokens ? <CardCounters counters={getCountersForCard(card)} /> : null}
                 {isFaceup ? getAlertStatus() : null}
+                {showMenu && <CardMenu menu={getMenu()} onMenuItemClick={handleMenuItemClick} />}
                 {getCardOrder()}
             </div>
         );
     };
 
-    // Explicitly setting z-index to 0 to ensure context is stacked independently per card
-    const wrapperClass = classNames('inline-block select-none z-0', {
+    const wrapperClass = classNames('inline-block select-none', {
         absolute: !!style?.left,
         relative: !style?.left
     });
@@ -383,7 +378,7 @@ const Card = ({
             {getUnderneath()}
         </div>
     ) : (
-        getCard(style)
+        getCard()
     );
 };
 
