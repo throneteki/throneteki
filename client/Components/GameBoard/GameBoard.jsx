@@ -54,7 +54,6 @@ const defaultPlayerInfo = (source) => {
 };
 
 const GameBoard = () => {
-    // const gameBoardLayoutRef = useRef(null);
     const dispatch = useDispatch();
     const currentGame = useSelector((state) => state.lobby.currentGame);
     const user = useSelector((state) => state.auth.user);

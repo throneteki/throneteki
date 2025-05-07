@@ -166,7 +166,7 @@ const NavBar = () => {
     ) : null;
 
     return (
-        <Navbar isBordered height='3rem' maxWidth='full' isMenuOpen={isMenuOpen}>
+        <Navbar isBordered height='3rem' maxWidth='full' isMenuOpen={isMenuOpen} className='z-0'>
             <NavbarContent className='lg:hidden' justify='start'>
                 <NavbarMenuToggle onChange={(isOpen) => setIsMenuOpen(isOpen)} />
             </NavbarContent>
@@ -204,7 +204,7 @@ const NavBar = () => {
                         responseTime={lobbyResponse}
                     />
                 )}
-                <ContextMenu />
+                <ContextMenu onPress={() => setIsMenuOpen(false)} />
             </NavbarMenu>
 
             <NavbarContent className='hidden lg:flex' justify='start'>
@@ -220,7 +220,7 @@ const NavBar = () => {
                 </NavbarBrand>
             </NavbarContent>
             <NavbarContent className='hidden lg:flex' justify='end'>
-                <ContextMenu />
+                <ContextMenu onPress={() => setIsMenuOpen(false)} />
                 {!currentGame?.started && numGames}
                 {currentGame?.started ? (
                     <ServerStatus

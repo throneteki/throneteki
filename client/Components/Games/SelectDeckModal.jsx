@@ -9,28 +9,32 @@ const SelectDeckModal = ({ onClose, onDeckSelected, gameFormat, restrictedList }
         { title: 'Standalone Decks', dataQuery: useGetStandaloneDecksQuery }
     ];
     return (
-        <>
-            <Modal isOpen={true} onClose={onClose} size='5xl'>
-                <ModalContent>
-                    <ModalHeader>{'Select Deck'}</ModalHeader>
-                    <ModalBody>
-                        <Tabs items={deckTabs}>
-                            {(item) => (
-                                <Tab key={item.title} title={item.title}>
-                                    <DeckList
-                                        deckLoadFn={item.dataQuery}
-                                        onDeckSelected={onDeckSelected}
-                                        readOnly={true}
-                                        gameFormat={gameFormat}
-                                        restrictedList={restrictedList}
-                                    />
-                                </Tab>
-                            )}
-                        </Tabs>
-                    </ModalBody>
-                </ModalContent>
-            </Modal>
-        </>
+        <Modal
+            className='max-h-screen'
+            isOpen={true}
+            onClose={onClose}
+            size='5xl'
+            scrollBehavior='inside'
+        >
+            <ModalContent>
+                <ModalHeader>{'Select Deck'}</ModalHeader>
+                <ModalBody>
+                    <Tabs items={deckTabs}>
+                        {(item) => (
+                            <Tab key={item.title} title={item.title}>
+                                <DeckList
+                                    deckLoadFn={item.dataQuery}
+                                    onDeckSelected={onDeckSelected}
+                                    readOnly={true}
+                                    gameFormat={gameFormat}
+                                    restrictedList={restrictedList}
+                                />
+                            </Tab>
+                        )}
+                    </Tabs>
+                </ModalBody>
+            </ModalContent>
+        </Modal>
     );
 };
 

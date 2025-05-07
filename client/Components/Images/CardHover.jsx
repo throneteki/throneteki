@@ -3,8 +3,9 @@ import CardImage from './CardImage';
 import { Spinner } from '@heroui/react';
 import { CardHoverContext } from './CardHoverContext';
 import classNames from 'classnames';
+import { createPortal } from 'react-dom';
 
-const CardHover = ({ className, children, size = '3x-large' }) => {
+const CardHover = ({ children, size = '3x-large' }) => {
     const wrapperRef = useRef(null);
     const spinnerRef = useRef(null);
     const mousePosRef = useRef({ x: 0, y: 0 });
@@ -81,13 +82,13 @@ const CardHover = ({ className, children, size = '3x-large' }) => {
             <div
                 onPointerMove={mousePosHandler}
                 onPointerEnter={mousePosHandler}
-                className={className}
+                className='w-full h-full'
             >
                 {children}
             </div>
-            <div ref={wrapperRef} className='fixed z-[260] pointer-events-none'>
-                {code && (
-                    <>
+            {code &&
+                createPortal(
+                    <div ref={wrapperRef} className='fixed z-10 pointer-events-none'>
                         {isLoading && <Spinner ref={spinnerRef} size='lg' color='white' />}
                         <CardImage
                             ref={imageCallback}
@@ -103,9 +104,9 @@ const CardHover = ({ className, children, size = '3x-large' }) => {
                             }}
                             disableSkeleton={true}
                         />
-                    </>
+                    </div>,
+                    document.querySelector('[data-overlay-container="true"]')
                 )}
-            </div>
         </CardHoverContext.Provider>
     );
 };

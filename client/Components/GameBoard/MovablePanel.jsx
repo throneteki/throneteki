@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { useDndMonitor, useDraggable } from '@dnd-kit/core';
 import classNames from 'classnames';
+import { createPortal } from 'react-dom';
 // import { PopupDefaults } from './PopupDefaults';
 
 const MovablePanel = ({ name, side, title, onCloseClick, children, className }) => {
@@ -90,10 +91,10 @@ const MovablePanel = ({ name, side, title, onCloseClick, children, className }) 
 
     const wrapperClass = classNames(
         className,
-        'max-h-screen max-w-screen fixed flex flex-col border-primary bg-black/65 rounded-md z-[250] overflow-hidden'
+        'max-h-screen max-w-screen fixed flex flex-col border-primary bg-black/65 rounded-md overflow-hidden'
     );
 
-    return (
+    return createPortal(
         <div ref={popupRef} className={wrapperClass}>
             <div
                 {...attributes}
@@ -110,7 +111,8 @@ const MovablePanel = ({ name, side, title, onCloseClick, children, className }) 
                 </span>
             </div>
             {children}
-        </div>
+        </div>,
+        document.querySelector('[data-overlay-container="true"]')
     );
 };
 

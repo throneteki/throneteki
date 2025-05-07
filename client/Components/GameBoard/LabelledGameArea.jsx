@@ -16,7 +16,7 @@ const LabelledGameArea = ({
         }
         const pos = `${position.includes('bottom') ? 'bottom' : 'top'}-0 ${position.includes('right') ? 'right' : 'left'}-0`;
         const labelClassName = classNames(
-            'absolute text-xs leading-tight px-1 py-0.5 bg-black/40 rounded-md pointer-events-none',
+            'absolute text-xs z-[210] leading-tight px-1 py-0.5 bg-black/40 rounded-md pointer-events-none',
             pos
         );
         return <div className={labelClassName}>{label}</div>;

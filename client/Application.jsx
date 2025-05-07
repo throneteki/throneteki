@@ -73,8 +73,6 @@ const Application = () => {
         }
     }, [data, dispatch]);
 
-    const gameBoardVisible = currentGame && currentGame.started;
-
     let component = router.resolvePath({
         pathname: path,
         user: user,
@@ -97,6 +95,7 @@ const Application = () => {
         );
     }
 
+    const gameBoardVisible = currentGame && currentGame.started && component.key === 'gameboard';
     useEffect(() => {
         if (gameBoardVisible && user) {
             const settings = user.settings;
@@ -112,7 +111,7 @@ const Application = () => {
         }
     }, [gameBoardVisible, user]);
 
-    const containerClass = classNames('container h-full', {
+    const containerClass = classNames('container h-full relative z-0', {
         'max-w-full': gameBoardVisible
     });
     return (
@@ -131,7 +130,7 @@ const Application = () => {
                             />
                         }
                     >
-                        <CardHover className='w-full h-full'>
+                        <CardHover>
                             {isLoading ? (
                                 <LoadingSpinner size='lg' />
                             ) : (

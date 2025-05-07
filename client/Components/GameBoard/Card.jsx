@@ -238,7 +238,7 @@ const Card = ({
         }
 
         return (
-            <div className='absolute w-6 h-6 -ml-3 -top-7 z-[220] left-1/2 text-white bg-black/80 font-bold text-center rounded-md border-1'>
+            <div className='absolute w-6 h-6 -ml-3 -top-7 z-[230] left-1/2 text-white bg-black/80 font-bold text-center rounded-md border-1'>
                 {card.order}
             </div>
         );

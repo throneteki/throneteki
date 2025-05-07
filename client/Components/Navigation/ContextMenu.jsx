@@ -11,7 +11,7 @@ import {
 import ConfirmDialog from '../Site/ConfirmDialog';
 import screenfull from 'screenfull';
 
-const ContextMenu = () => {
+const ContextMenu = ({ onPress = () => true }) => {
     const dispatch = useDispatch();
     const { currentGame } = useSelector((state) => state.lobby);
     const { user } = useSelector((state) => state.auth);
@@ -51,6 +51,7 @@ const ContextMenu = () => {
     }, [currentGame, user]);
 
     const onLeaveClick = useCallback(() => {
+        onPress();
         const spectating = user && currentGame && !currentGame.players[user.username];
         if (!spectating && isGameActive) {
             setShowConfirm(true);
@@ -59,7 +60,12 @@ const ContextMenu = () => {
         }
 
         dispatch(sendLeaveGameMessage());
-    }, [currentGame, dispatch, isGameActive, user]);
+    }, [currentGame, dispatch, isGameActive, onPress, user]);
+
+    const onConcedeClick = useCallback(() => {
+        onPress();
+        dispatch(sendConcedeMessage());
+    }, [dispatch, onPress]);
 
     const contextMenu = useMemo(() => {
         const menuOptions = [];
@@ -70,6 +76,7 @@ const ContextMenu = () => {
                 <Button
                     variant='flat'
                     onPress={() => {
+                        onPress();
                         if (screenfull.isEnabled) {
                             screenfull.toggle();
                             setIsFullscreen(!isFullscreen);
@@ -94,7 +101,7 @@ const ContextMenu = () => {
             );
             if (currentGame.players[user.username]) {
                 menuOptions.unshift(
-                    <Link onPress={() => dispatch(sendConcedeMessage())} className={menuItemClass}>
+                    <Link onPress={onConcedeClick} className={menuItemClass}>
                         Concede
                     </Link>
                 );
@@ -155,7 +162,9 @@ const ContextMenu = () => {
         dispatch,
         isFullscreen,
         lastSpectatorCount,
+        onConcedeClick,
         onLeaveClick,
+        onPress,
         showConfirm,
         showSpectatorWarning,
         user?.username
