@@ -5,6 +5,7 @@ class GilbertOfTheVines extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Reveal top X cards of your deck',
+            phase: 'challenge',
             cost: ability.costs.payXGold(
                 () => 1,
                 (context) => context.player.drawDeck.length
