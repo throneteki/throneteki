@@ -2,11 +2,7 @@ import React, { useCallback } from 'react';
 import PlayerRow from './PlayerRow';
 import PlayerBoard from './PlayerBoard';
 import Droppable from './Droppable';
-import {
-    sendCardMenuItemClickedMessage,
-    sendShowDrawDeckMessage,
-    sendShuffleDeckMessage
-} from '../../redux/reducers/game';
+import { sendShowDrawDeckMessage, sendShuffleDeckMessage } from '../../redux/reducers/game';
 import { useDispatch } from 'react-redux';
 import PlayerStats from './PlayerStats';
 import classNames from 'classnames';
@@ -16,6 +12,7 @@ const JoustGameBoardLayout = ({
     thisPlayer,
     otherPlayer,
     onCardClick,
+    onMenuItemClick,
     onSettingsClick,
     onChatToggle,
     unreadMessages,
@@ -31,9 +28,7 @@ const JoustGameBoardLayout = ({
                 <PlayerBoard
                     cardsInPlay={player.cardPiles.cardsInPlay}
                     onCardClick={onCardClick}
-                    onMenuItemClick={(card, menuItem) =>
-                        dispatch(sendCardMenuItemClickedMessage(card.uuid, menuItem))
-                    }
+                    onMenuItemClick={onMenuItemClick}
                     rowDirection={side === 'bottom' ? 'default' : 'reverse'}
                     cardSize={thisPlayer.cardSize}
                 />
@@ -71,6 +66,7 @@ const JoustGameBoardLayout = ({
                         deadPile={player.cardPiles.deadPile}
                         drawDeck={player.cardPiles.drawDeck}
                         onCardClick={onCardClick}
+                        onMenuItemClick={onMenuItemClick}
                         outOfGamePile={player.cardPiles.outOfGamePile}
                         revealTopCard={player.revealTopCard}
                         shadows={player.cardPiles.shadows}
@@ -108,6 +104,7 @@ const JoustGameBoardLayout = ({
             isDragging,
             onCardClick,
             onChatToggle,
+            onMenuItemClick,
             onSettingsClick,
             thisPlayer,
             unreadMessages

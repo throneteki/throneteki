@@ -254,7 +254,7 @@ const Card = ({
         });
         const content = <span className='select-none'>{card.alertStatus.message}</span>;
         return (
-            <div className='absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2'>
+            <div className='absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[200]'>
                 <Tooltip content={content} showArrow={true}>
                     <FontAwesomeIcon className={iconClass} icon={faExclamationCircle} />
                 </Tooltip>
@@ -357,8 +357,8 @@ const Card = ({
                         {image}
                     </CardHoverable>
                 )}
-                {!hideTokens ? <CardCounters counters={getCountersForCard(card)} /> : null}
-                {isFaceup ? getAlertStatus() : null}
+                {!hideTokens && <CardCounters counters={getCountersForCard(card)} />}
+                {isFaceup && getAlertStatus()}
                 {showMenu && <CardMenu menu={getMenu()} onMenuItemClick={handleMenuItemClick} />}
                 {getCardOrder()}
             </div>
