@@ -1,6 +1,6 @@
 import BaseCard from './basecard.js';
 import CardWhenRevealed from './cardwhenrevealed.js';
-import CardStat from './cardstat.js';
+import CardStat from './cardStat.js';
 
 class PlotCard extends BaseCard {
     constructor(owner, cardData) {
