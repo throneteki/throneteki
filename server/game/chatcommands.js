@@ -3,6 +3,7 @@ import CancelChallengePrompt from './gamesteps/CancelChallengePrompt.js';
 import Deck from './Deck.js';
 import RematchPrompt from './gamesteps/RematchPrompt.js';
 import { Tokens } from './Constants/index.js';
+import Effects from './effects.js';
 
 class ChatCommands {
     constructor(game) {
@@ -286,11 +287,18 @@ class ChatCommands {
                 card.controller === player &&
                 card.getType() === 'character',
             onSelect: (p, card) => {
+                let effect;
                 if (typeof card.strengthSet === 'number') {
-                    card.setStrength(card.uuid, num);
+                    effect = Effects.setStrength(num);
                 } else {
-                    card.strengthModifier = num - card.getPrintedStrength();
+                    effect = Effects.modifyStrength(num - card.getPrintedStrength());
                 }
+                card.lastingEffect(() => ({
+                    condition: () => card.location === 'play area',
+                    match: card,
+                    effect: effect
+                }));
+                this.postEventCalculations();
                 this.game.addAlert(
                     'danger',
                     '{0} uses the /strength command to set the strength of {1} to {2}',
