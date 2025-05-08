@@ -27,6 +27,9 @@ describe('DrawCard', function () {
             describe('when the card has non-zero strength', function () {
                 beforeEach(function () {
                     this.testCard.strength = 5;
+                    this.card = new DrawCard({}, this.testCard);
+                    this.card.game = this.gameSpy;
+                    this.card.owner = this.activePlayer;
                     this.summary = this.card.getSummary(this.activePlayer, false);
                 });
 
@@ -38,6 +41,9 @@ describe('DrawCard', function () {
             describe('when the card has a zero strength', function () {
                 beforeEach(function () {
                     this.testCard.strength = 0;
+                    this.card = new DrawCard({}, this.testCard);
+                    this.card.game = this.gameSpy;
+                    this.card.owner = this.activePlayer;
                     this.summary = this.card.getSummary(this.activePlayer, false);
                 });
 
