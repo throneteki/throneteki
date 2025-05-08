@@ -1,5 +1,5 @@
 import KingsOfWinter from '../../../../server/game/cards/04.2-CtA/KingsOfWinter.js';
-import CardStat from '../../../../server/game/cardstat.js';
+import CardStat from '../../../../server/game/cardStat.js';
 
 describe('Kings Of Winter', function () {
     beforeEach(function () {

@@ -1,5 +1,5 @@
 import KingsOfSummer from '../../../../server/game/cards/04.2-CtA/KingsOfSummer.js';
-import CardStat from '../../../../server/game/cardstat.js';
+import CardStat from '../../../../server/game/cardStat.js';
 
 describe('Kings Of Summer', function () {
     beforeEach(function () {
