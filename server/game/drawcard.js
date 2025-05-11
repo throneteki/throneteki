@@ -54,7 +54,15 @@ class DrawCard extends BaseCard {
     }
 
     setStrength(sourceUuid, newStrength) {
+        let strengthBefore = this.getStrength();
         this._strength.setTheValue(sourceUuid, newStrength);
+        if (newStrength !== strengthBefore) {
+            this.game.raiseEvent('onCardStrengthChanged', {
+                card: this,
+                amount: newStrength - strengthBefore,
+                applying: true
+            });
+        }
     }
 
     removeSetStrengthEffect(sourceUuid) {
