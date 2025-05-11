@@ -291,14 +291,14 @@ class ChatCommands {
                 if (typeof card.strengthSet === 'number') {
                     effect = Effects.setStrength(num);
                 } else {
-                    effect = Effects.modifyStrength(num - card.getPrintedStrength());
+                    effect = Effects.modifyStrength(num - card.getStrength());
                 }
                 card.lastingEffect(() => ({
                     condition: () => card.location === 'play area',
                     match: card,
                     effect: effect
                 }));
-                this.postEventCalculations();
+                this.game.postEventCalculations();
                 this.game.addAlert(
                     'danger',
                     '{0} uses the /strength command to set the strength of {1} to {2}',
