@@ -24,7 +24,7 @@ import { GameFormats } from '../../constants';
 
 const PendingGame = () => {
     const dispatch = useDispatch();
-    const [playerCount, setPlayerCount] = useState(1);
+    const [waitingPlayerNames, setWaitingPlayerNames] = useState([]);
     const [message, setMessage] = useState('');
     const [waiting, setWaiting] = useState(false);
     const [showModal, setShowModal] = useState(false);
@@ -92,31 +92,33 @@ const PendingGame = () => {
             return;
         }
 
-        let players = Object.values(currentGame.players).length;
+        const players = Object.values(currentGame.players);
 
         if (
             notificationRef.current &&
-            playerCount === 1 &&
-            players === 2 &&
+            waitingPlayerNames.length !== players.length &&
             currentGame.owner === user.username
         ) {
-            let promise = notificationRef.current.play();
+            const newPlayers = players.filter(
+                (p) => !waitingPlayerNames.some((pn) => pn === p.name)
+            );
 
-            if (promise !== undefined) {
-                promise.catch(() => {}).then(() => {});
-            }
+            if (newPlayers.some((p) => p.name !== user.username)) {
+                const promise = notificationRef.current.play();
+                if (promise !== undefined) {
+                    promise.catch(() => {}).then(() => {});
+                }
 
-            if (window.Notification && Notification.permission === 'granted') {
-                let otherPlayer = Object.values(currentGame.players).find(
-                    (p) => p.name !== user.username
-                );
+                if (window.Notification && Notification.permission === 'granted') {
+                    for (const newPlayer of newPlayers) {
+                        const windowNotification = new Notification('The Iron Throne', {
+                            body: `${newPlayer.name} has joined your game`,
+                            icon: `/img/avatar/${newPlayer.username}.png`
+                        });
 
-                let windowNotification = new Notification('The Iron Throne', {
-                    body: `${otherPlayer.name} has joined your game`,
-                    icon: `/img/avatar/${otherPlayer.username}.png`
-                });
-
-                setTimeout(() => windowNotification.close(), 5000);
+                        setTimeout(() => windowNotification.close(), 5000);
+                    }
+                }
             }
 
             if (connecting || gameError) {
@@ -127,9 +129,9 @@ const PendingGame = () => {
                 messageRef.current.scrollTop = 999999;
             }
 
-            setPlayerCount(players);
+            setWaitingPlayerNames(players.map((p) => p.name));
         }
-    }, [user, playerCount, currentGame, connecting, gameError, canScroll]);
+    }, [user, currentGame, connecting, gameError, canScroll, waitingPlayerNames]);
 
     const canStartGame = () => {
         if (!user || !currentGame || currentGame.owner !== user.username || connecting) {
