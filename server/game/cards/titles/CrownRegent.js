@@ -11,7 +11,7 @@ class CrownRegent extends TitleCard {
             cannotBeCanceled: true,
             location: 'title',
             when: {
-                onChallengeInitiated: () => true
+                onChallengeRedirectable: () => true
             },
             message: {
                 format: '{player} uses {source} to force {initiatingPlayer} to redirect the challenge to another player',

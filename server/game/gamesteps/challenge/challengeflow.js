@@ -24,7 +24,6 @@ class ChallengeFlow extends BaseStep {
             new SimpleStep(this.game, () => this.recalculateEffects()),
             () => new InitiatingKeywordsWindow(this.game, this.challenge),
             new SimpleStep(this.game, () => this.initiateChallenge()),
-            new SimpleStep(this.game, () => this.promptForRedirect()),
             new ActionWindow(this.game, 'After attackers declared', 'attackersDeclared'),
             new SimpleStep(this.game, () => this.promptForDefenders()),
             new SimpleStep(this.game, () => this.declareDefenders()),
@@ -100,10 +99,6 @@ class ChallengeFlow extends BaseStep {
 
     initiateChallenge() {
         this.game.resolveGameAction(InitiateChallenge, { challenge: this.challenge });
-    }
-
-    promptForRedirect() {
-        this.game.raiseEvent('onChallengeRedirectable', { challenge: this.challenge });
     }
 
     redirectChallengeTo(player) {

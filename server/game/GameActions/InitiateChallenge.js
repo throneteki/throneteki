@@ -55,6 +55,10 @@ class InitiateChallenge extends GameAction {
                     challenge.attackerStrength,
                     challenge.defenderStrength
                 );
+
+                event.thenAttachEvent(
+                    this.event('onChallengeRedirectable', { challenge: event.challenge })
+                );
             });
         });
     }
