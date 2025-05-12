@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class BenjenStark extends DrawCard {
     setupCardAbilities(ability) {
@@ -11,20 +12,17 @@ class BenjenStark extends DrawCard {
                 onCharacterKilled: (event) =>
                     event.card === this && this.controller.canGainFactionPower()
             },
+            message:
+                '{player} uses {source} to gain 2 power for their faction and shuffles {source} back into their deck instead of placing him in their dead pile',
             handler: (context) => {
-                this.game.addMessage(
-                    '{0} uses {1} to gain 2 power for their faction and shuffles {1} back into their deck instead of placing it in their dead pile',
-                    this.controller,
-                    this
-                );
-
                 this.game.addPower(this.controller, 2);
-                context.replaceHandler(() => {
-                    context.event.cardStateWhenKilled = this.createSnapshot();
-                    this.controller.moveCard(this, 'draw deck', {}, () => {
-                        this.controller.shuffleDrawDeck();
-                    });
-                });
+                context.event.replaceChildEvent(
+                    'onCardPlaced',
+                    GameActions.shuffleIntoDeck({
+                        cards: [this],
+                        allowSave: false
+                    }).createEvent()
+                );
             }
         });
     }

@@ -5,8 +5,10 @@ describe('Event', function () {
         this.childEventSpy = jasmine.createSpyObj('childEvent', [
             'cancel',
             'emitTo',
-            'executeHandler',
-            'getConcurrentEvents'
+            'handler',
+            'getConcurrentEvents',
+            'getPrimaryEvents',
+            'createSnapshot'
         ]);
     });
 
@@ -94,11 +96,53 @@ describe('Event', function () {
         describe('when the event has children', function () {
             beforeEach(function () {
                 this.event.addChildEvent(this.childEventSpy);
+                this.childEventSpy.getConcurrentEvents.and.returnValue([this.childEventSpy]);
+            });
+
+            it('should call handler on the children', function () {
+                this.event.executeHandler();
+                expect(this.childEventSpy.handler).toHaveBeenCalled();
+            });
+
+            describe('and a child has been replaced', function () {
+                beforeEach(function () {
+                    this.childEventSpy.getPrimaryEvents.and.returnValue([this.childEventSpy]);
+                    this.replacementEventSpy = jasmine.createSpyObj('replacementEvent', [
+                        'handler',
+                        'getConcurrentEvents',
+                        'createSnapshot'
+                    ]);
+                    this.replacementEventSpy.getConcurrentEvents.and.returnValue([
+                        this.replacementEventSpy
+                    ]);
+                    this.event.replaceChildEvent(
+                        (event) => event === this.childEventSpy,
+                        this.replacementEventSpy
+                    );
+                });
+
+                it('should call handler on the new child', function () {
+                    this.event.executeHandler();
+                    expect(this.childEventSpy.handler).not.toHaveBeenCalled();
+                    expect(this.replacementEventSpy.handler).toHaveBeenCalled();
+                });
+            });
+        });
+
+        describe('when the event has children within children', function () {
+            beforeEach(function () {
+                this.childEvent = new Event('childEvent', { foo: 'bar' });
+                spyOn(this.childEvent, 'handler');
+                this.childEventSpy.getConcurrentEvents.and.returnValue([this.childEventSpy]);
+                this.childEvent.addChildEvent(this.childEventSpy);
+                this.event.addChildEvent(this.childEvent);
+
                 this.event.executeHandler();
             });
 
-            it('should call executeHandler on the children', function () {
-                expect(this.childEventSpy.executeHandler).toHaveBeenCalled();
+            it('should call handler on all historical children', function () {
+                expect(this.childEvent.handler).toHaveBeenCalled();
+                expect(this.childEventSpy.handler).toHaveBeenCalled();
             });
         });
     });
