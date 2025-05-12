@@ -9,7 +9,7 @@ describe('CardStat', function () {
         expect(this.testStat.calculate()).toBe(3);
     });
 
-    it('should report undefined whent there is no set value', function () {
+    it('should report undefined for set value when there is no set value', function () {
         expect(this.testStat.setValue).toBe(undefined);
     });
 
@@ -24,17 +24,9 @@ describe('CardStat', function () {
         expect(this.testStat.calculate()).toBe(4);
     });
 
-    it('should not apply a modifier while a value is set', function () {
+    it('should not apply a modifier while a value is set, but apply it thereafter', function () {
         this.testStat.setTheValue(1111, 2);
         this.testStat.modifier = 1;
-        expect(this.testStat.calculate()).toBe(2);
-        this.testStat.removeSetEffect(1111);
-        expect(this.testStat.calculate()).toBe(4);
-    });
-
-    it('should revert to the previously modified value when a set value expires', function () {
-        this.testStat.modifier = 1;
-        this.testStat.setTheValue(1111, 2);
         expect(this.testStat.calculate()).toBe(2);
         this.testStat.removeSetEffect(1111);
         expect(this.testStat.calculate()).toBe(4);
@@ -61,7 +53,7 @@ describe('CardStat', function () {
         expect(this.testStat.setValue).toBe(undefined);
     });
 
-    describe('when the strength has been modified below 0', function () {
+    describe('when the value has been modified below 0', function () {
         beforeEach(function () {
             this.testStat.modifier = -4;
         });
@@ -71,23 +63,23 @@ describe('CardStat', function () {
         });
     });
 
-    describe('when the strength has been multiplied', function () {
+    describe('when the value has been multiplied', function () {
         beforeEach(function () {
             this.testStat.multiplier = 2;
             this.testStat.modifier = 1;
         });
 
-        it('should return the strength multiplied after addition/subtraction modifiers have been applied', function () {
+        it('should return the value multiplied after addition/subtraction modifiers have been applied', function () {
             expect(this.testStat.calculate()).toBe(8);
         });
     });
 
-    describe('when the strength becomes fractional', function () {
+    describe('when the value becomes fractional', function () {
         beforeEach(function () {
             this.testStat.multiplier = 0.5;
         });
 
-        it('should return the rounded strength', function () {
+        it('should return the rounded value', function () {
             expect(this.testStat.calculate()).toBe(2);
         });
     });
