@@ -31,7 +31,7 @@ class Challenge {
     }
 
     singlePlayerDefender() {
-        let dummyPlayer = new Player(
+        const dummyPlayer = new Player(
             '',
             Settings.getUserWithDefaultsSet({ name: 'Dummy Player' }),
             false,

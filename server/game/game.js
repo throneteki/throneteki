@@ -118,8 +118,8 @@ class Game extends EventEmitter {
                 player.id,
                 player.user,
                 this.owner === player.user.username,
-                player.seatNo,
-                this
+                this,
+                player.seatNo
             );
         }
 
@@ -1368,7 +1368,7 @@ class Game extends EventEmitter {
     }
 
     join(socketId, user) {
-        if (this.started || this.getPlayers().length === 2) {
+        if (this.started || this.getPlayers().length === this.maxPlayers) {
             return false;
         }
 

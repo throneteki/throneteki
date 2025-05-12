@@ -23,7 +23,7 @@ import ChessClock from './ChessClock.js';
 import { DrawPhaseCards, MarshalIntoShadowsCost, SetupGold } from './Constants/index.js';
 
 class Player extends Spectator {
-    constructor(id, user, owner, seatNo, game) {
+    constructor(id, user, owner, game, seatNo) {
         super(id, user);
 
         // Ensure game is set before any cards have been created.
