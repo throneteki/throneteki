@@ -243,11 +243,12 @@ const PendingGame = () => {
                         wrapper: 'h-52 border-1 border-primary-500 rounded-lg overflow-hidden',
                         messages: 'flex flex-col gap-1.5 p-2'
                     }}
-                    messageFragments={<Messages messages={currentGame.messages} />}
                     messageCount={currentGame.messages.length}
                     onSendMessage={(message) => dispatch(sendChatMessage(message))}
                     placeholder={'Enter a message...'}
-                />
+                >
+                    <Messages messages={currentGame.messages} />
+                </ChatArea>
             </Panel>
             {showModal && (
                 <SelectDeckModal

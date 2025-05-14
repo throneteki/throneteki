@@ -74,13 +74,14 @@ const GameChat = ({
                         messages: 'flex flex-col gap-1.5 p-2'
                     }}
                     isOpen={isOpen}
-                    messageFragments={<Messages messages={messages} />}
                     messageCount={messages.length}
                     onSendMessage={onSendChat}
                     isInputDisabled={muted}
                     placeholder={placeholder}
                     onUnreadMessagesChange={onUnreadMessagesChange}
-                />
+                >
+                    <Messages messages={messages} />
+                </ChatArea>
             </div>
         </div>
     );

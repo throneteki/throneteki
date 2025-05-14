@@ -6,8 +6,8 @@ const ChatArea = forwardRef(function ChatArea(
     {
         className,
         classNames: classNamesProp,
+        children,
         isOpen = true,
-        messageFragments,
         messageCount,
         noMessagesLabel,
         onSendMessage,
@@ -95,7 +95,7 @@ const ChatArea = forwardRef(function ChatArea(
                 ref={messagesRef}
                 onScroll={onScroll}
             >
-                {messageCount > 0 ? messageFragments : noMessagesLabel}
+                {messageCount > 0 ? children : noMessagesLabel}
             </div>
             <div className='relative'>
                 {unreadMessages > 0 && (

@@ -167,14 +167,15 @@ const LobbyChat = ({ isLoggedIn, messages, isModerator, lobbyError }) => {
     return (
         <ChatArea
             className='overflow-hidden rounded-b-xl'
-            messageFragments={getMessages()}
             messageCount={messages.length}
             noMessagesLabel={noMessagesLabel}
             onSendMessage={(message) => dispatch(sendLobbyChatMessage(message))}
             isInputDisabled={!isLoggedIn}
             placeholder={placeholder}
             maxInputLength={512}
-        />
+        >
+            {getMessages()}
+        </ChatArea>
     );
 };
 
