@@ -69,6 +69,9 @@ const CardHover = ({ children, size = '3x-large' }) => {
 
     // Update mouse position when pointer move or enter, then update card position
     const mousePosHandler = (e) => {
+        if (!code) {
+            return;
+        }
         mousePosRef.current = { x: e.clientX, y: e.clientY };
         positionCallback(imageSize.width, imageSize.height, type, isLoading);
     };

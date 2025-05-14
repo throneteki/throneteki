@@ -24,6 +24,11 @@ const CardHoverable = ({ touchDelay = 0, className, children, code, isDisabled }
         if (isDisabled) {
             clear();
         }
+
+        // Clear if this component unmounts
+        return () => {
+            clear();
+        };
     }, [isDisabled, clear]);
 
     return (
