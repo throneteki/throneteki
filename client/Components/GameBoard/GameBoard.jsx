@@ -23,9 +23,9 @@ import './GameBoard.css';
 import { DndContext, DragOverlay, MouseSensor, TouchSensor, useSensor } from '@dnd-kit/core';
 import { ItemTypes } from '../../constants';
 import CardImage from '../Images/CardImage';
-import JoustGameBoardLayout from './JoustGameBoardLayout';
 import ErrorMessage from '../Site/ErrorMessage';
-import MeleeGameBoardLayout from './MeleeGameBoardLayout';
+import JoustGameBoardLayout from './GameBoardLayouts/JoustGameBoardLayout';
+import MeleeGameBoardLayout from './GameBoardLayouts/MeleeGameBoardLayout';
 
 const placeholderPlayer = {
     activePlot: null,
