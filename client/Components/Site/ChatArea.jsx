@@ -100,7 +100,7 @@ const ChatArea = forwardRef(function ChatArea(
             <div className='relative'>
                 {unreadMessages > 0 && (
                     <Button
-                        className='absolute bottom-full bg-default-300 h-5 w-full animate-pulse text-white text-small text-center rounded-t-md'
+                        className='absolute bottom-full bg-default-300 h-5 w-full opacity-80 text-white text-small text-center rounded-t-md'
                         radius='none'
                         onPress={() => setIsAnchored(true)}
                     >
