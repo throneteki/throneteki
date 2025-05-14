@@ -15,27 +15,25 @@ import { navigate } from '../../redux/reducers/navigation';
 
 import ChargeMp3 from '../../assets/sound/charge.mp3';
 import ChargeOgg from '../../assets/sound/charge.ogg';
-import { Button, Input, Link, Snippet } from '@heroui/react';
+import { Button, Link, Snippet } from '@heroui/react';
 import GameTypeInfo from './GameTypeInfo';
 import AlertPanel, { AlertType } from '../Site/AlertPanel';
 import PendingGamePlayers from './PendingGamePlayers';
 import LoadingSpinner from '../Site/LoadingSpinner';
 import { GameFormats } from '../../constants';
+import ChatArea from '../Site/ChatArea';
 
 const PendingGame = () => {
     const dispatch = useDispatch();
     const [waitingPlayerNames, setWaitingPlayerNames] = useState([]);
-    const [message, setMessage] = useState('');
     const [waiting, setWaiting] = useState(false);
     const [showModal, setShowModal] = useState(false);
-    const [canScroll, setCanScroll] = useState(true);
 
     const { connecting, host } = useSelector((state) => state.game);
     const { currentGame, gameError } = useSelector((state) => state.lobby);
     const user = useSelector((state) => state.auth.user);
 
     const notificationRef = useRef(null);
-    const messageRef = useRef(null);
 
     const getGameStatus = useCallback(() => {
         if (gameError) {
@@ -77,16 +75,6 @@ const PendingGame = () => {
         waiting
     ]);
 
-    const sendMessage = useCallback(() => {
-        if (message === '') {
-            return;
-        }
-
-        dispatch(sendChatMessage(message));
-
-        setMessage('');
-    }, [dispatch, message]);
-
     useEffect(() => {
         if (!user) {
             return;
@@ -125,13 +113,9 @@ const PendingGame = () => {
                 setWaiting(false);
             }
 
-            if (canScroll && messageRef.current) {
-                messageRef.current.scrollTop = 999999;
-            }
-
             setWaitingPlayerNames(players.map((p) => p.name));
         }
-    }, [user, currentGame, connecting, gameError, canScroll, waitingPlayerNames]);
+    }, [user, currentGame, connecting, gameError, waitingPlayerNames]);
 
     const canStartGame = () => {
         if (!user || !currentGame || currentGame.owner !== user.username || connecting) {
@@ -246,49 +230,24 @@ const PendingGame = () => {
                     onSelectDeck={() => setShowModal(true)}
                 />
             </div>
-            <Panel title={`Spectators (${currentGame.spectators.length})`}>
-                {currentGame.spectators.map((spectator) => {
-                    return <div key={spectator.name}>{spectator.name}</div>;
-                })}
-            </Panel>
+            {currentGame.spectators.length > 0 && (
+                <Panel title={`Spectators (${currentGame.spectators.length})`}>
+                    {currentGame.spectators.map((spectator) => {
+                        return <div key={spectator.name}>{spectator.name}</div>;
+                    })}
+                </Panel>
+            )}
             <Panel title={'Chat'}>
-                <div
-                    className='h-48 w-full border-1 border-primary-500 rounded-lg overflow-auto py-1 px-2'
-                    ref={messageRef}
-                    onScroll={() => {
-                        setTimeout(() => {
-                            if (
-                                messageRef.current &&
-                                messageRef.current.scrollTop >=
-                                    messageRef.current.scrollHeight -
-                                        messageRef.current.offsetHeight -
-                                        20
-                            ) {
-                                setCanScroll(true);
-                            } else {
-                                setCanScroll(false);
-                            }
-                        }, 500);
+                <ChatArea
+                    classNames={{
+                        wrapper: 'h-52 border-1 border-primary-500 rounded-lg overflow-hidden',
+                        messages: 'flex flex-col gap-1.5 p-2'
                     }}
-                >
-                    <Messages messages={currentGame.messages} />
-                </div>
-                <div className='mt-2'>
-                    <form>
-                        <Input
-                            type='text'
-                            placeholder={'Enter a message...'}
-                            value={message}
-                            onKeyDown={(event) => {
-                                if (event.key === 'Enter') {
-                                    sendMessage();
-                                    event.preventDefault();
-                                }
-                            }}
-                            onValueChange={setMessage}
-                        ></Input>
-                    </form>
-                </div>
+                    messageFragments={<Messages messages={currentGame.messages} />}
+                    messageCount={currentGame.messages.length}
+                    onSendMessage={(message) => dispatch(sendChatMessage(message))}
+                    placeholder={'Enter a message...'}
+                />
             </Panel>
             {showModal && (
                 <SelectDeckModal

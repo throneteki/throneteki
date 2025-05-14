@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React from 'react';
+import { useSelector } from 'react-redux';
 
 import News from '../Components/News/News';
 import AlertPanel from '../Components/Site/AlertPanel';
@@ -8,15 +8,11 @@ import LobbyChat from '../Components/Lobby/LobbyChat';
 import { getMessageWithLinks } from '../util';
 
 import { createSelector } from '@reduxjs/toolkit';
-import { useGetNewsQuery, useRemoveMessageMutation } from '../redux/middleware/api';
-import { clearChatStatus, sendLobbyChatMessage } from '../redux/reducers/lobby';
-import { Textarea } from '@heroui/react';
-import { toast } from 'react-toastify';
+import { useGetNewsQuery } from '../redux/middleware/api';
 import LoadingSpinner from '../Components/Site/LoadingSpinner';
 import Page from './Page';
 
 const Lobby = () => {
-    const [message, setMessage] = useState('');
     const {
         data: news,
         isLoading: newsLoading,
@@ -42,63 +38,6 @@ const Lobby = () => {
 
     const motd = useSelector(getMotd);
 
-    const dispatch = useDispatch();
-
-    const [removeMessage] = useRemoveMessageMutation();
-
-    const checkChatError = useCallback(() => {
-        if (lobbyError) {
-            toast.error('New users are limited from chatting in the lobby, try again later');
-
-            setTimeout(() => {
-                dispatch(clearChatStatus());
-            }, 5000);
-        }
-    }, [lobbyError, dispatch]);
-
-    const sendMessage = useCallback(() => {
-        if (message === '') {
-            return;
-        }
-
-        dispatch(sendLobbyChatMessage(message));
-
-        setMessage('');
-    }, [dispatch, message]);
-
-    const onKeyDown = useCallback(
-        (event) => {
-            if (event.key === 'Enter') {
-                sendMessage();
-                event.preventDefault();
-            }
-        },
-        [sendMessage]
-    );
-
-    const onRemoveMessageClick = useCallback(
-        async (messageId) => {
-            try {
-                await removeMessage(messageId).unwrap();
-            } catch (err) {
-                console.info(err);
-            }
-        },
-        [removeMessage]
-    );
-
-    useEffect(() => {
-        checkChatError();
-    }, [checkChatError, dispatch]);
-
-    useEffect(() => {
-        checkChatError();
-    }, [checkChatError, lobbyError]);
-
-    const isLoggedIn = !!user;
-    const placeholder = isLoggedIn
-        ? 'Enter a message...'
-        : 'You must be logged in to send lobby chat messages';
     let newsInfo = null;
     if (newsLoading) {
         newsInfo = <LoadingSpinner />;
@@ -114,7 +53,7 @@ const Lobby = () => {
                 <AlertPanel variant={motd.motdType}>{getMessageWithLinks(motd.message)}</AlertPanel>
             )}
             {bannerNotice ? <AlertPanel message={bannerNotice} variant='danger' /> : null}
-            <Panel className='max-h-fit min-h-44' title='Latest site news'>
+            <Panel className='max-h-[20vh]' title='Latest site news'>
                 {newsInfo}
             </Panel>
             <Panel
@@ -122,20 +61,11 @@ const Lobby = () => {
                 title={`Lobby Chat (${users.length} online)`}
             >
                 <LobbyChat
+                    isLoggedIn={!!user}
                     messages={messages}
                     isModerator={user && user.permissions.canModerateChat}
-                    onRemoveMessageClick={onRemoveMessageClick}
+                    lobbyError={lobbyError}
                 />
-                <Textarea
-                    classNames={{ inputWrapper: 'rounded-tl-none rounded-tr-none' }}
-                    onKeyDown={onKeyDown}
-                    onValueChange={setMessage}
-                    maxLength={512}
-                    placeholder={placeholder}
-                    disabled={!isLoggedIn}
-                    value={message}
-                    minRows={1}
-                ></Textarea>
             </Panel>
         </Page>
     );

@@ -1,36 +1,49 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import moment from 'moment';
-import $ from 'jquery';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { Avatar, Link } from '@heroui/react';
 import { Constants } from '../../constants';
+import { useRemoveMessageMutation } from '../../redux/middleware/api';
+import { toast } from 'react-toastify';
+import ChatArea from '../Site/ChatArea';
+import { useDispatch } from 'react-redux';
+import { clearChatStatus, sendLobbyChatMessage } from '../../redux/reducers/lobby';
 
-const LobbyChat = ({ messages, isModerator, onRemoveMessageClick }) => {
-    const [canScroll, setCanScroll] = useState(true);
-    const messagesEndRef = useRef(null);
+const LobbyChat = ({ isLoggedIn, messages, isModerator, lobbyError }) => {
+    const dispatch = useDispatch();
+    const [removeMessage] = useRemoveMessageMutation();
 
-    const onScroll = useCallback(() => {
-        let messagePanel = messagesEndRef.current;
-
-        setTimeout(() => {
-            if (
-                messagePanel.scrollTop >=
-                messagePanel.scrollHeight - messagePanel.offsetHeight - 20
-            ) {
-                setCanScroll(true);
-            } else {
-                setCanScroll(false);
+    const onRemoveMessageClick = useCallback(
+        async (messageId) => {
+            try {
+                await removeMessage(messageId).unwrap();
+            } catch (err) {
+                toast.error('Failed to remove message. Check console for details');
+                console.info(err);
             }
-        }, 500);
-    }, []);
+        },
+        [removeMessage]
+    );
+
+    const checkChatError = useCallback(() => {
+        if (lobbyError) {
+            toast.error('New users are limited from chatting in the lobby, try again later');
+
+            setTimeout(() => {
+                dispatch(clearChatStatus());
+            }, 5000);
+        }
+    }, [lobbyError, dispatch]);
 
     useEffect(() => {
-        if (canScroll) {
-            $(messagesEndRef.current).scrollTop(999999);
-        }
-    }, [messages, canScroll]);
+        checkChatError();
+    }, [checkChatError, dispatch]);
+
+    useEffect(() => {
+        checkChatError();
+    }, [checkChatError, lobbyError]);
 
     const getMessages = useCallback(() => {
         const groupedMessages = {};
@@ -142,18 +155,26 @@ const LobbyChat = ({ messages, isModerator, onRemoveMessageClick }) => {
         });
     }, [messages, isModerator, onRemoveMessageClick]);
 
-    if (messages.length === 0) {
-        return (
-            <div className='bg-default-200 rounded-lg rounded-b-none p-2'>
-                There are no messages at the moment
-            </div>
-        );
-    }
-
-    return (
-        <div className='overflow-y-auto' ref={messagesEndRef} onScroll={onScroll}>
-            {getMessages()}
+    const noMessagesLabel = (
+        <div className='bg-default-200 rounded-lg rounded-b-none p-2'>
+            There are no messages at the moment
         </div>
+    );
+
+    const placeholder = isLoggedIn
+        ? 'Enter a message...'
+        : 'You must be logged in to send lobby chat messages';
+    return (
+        <ChatArea
+            className='overflow-hidden rounded-b-xl'
+            messageFragments={getMessages()}
+            messageCount={messages.length}
+            noMessagesLabel={noMessagesLabel}
+            onSendMessage={(message) => dispatch(sendLobbyChatMessage(message))}
+            isInputDisabled={!isLoggedIn}
+            placeholder={placeholder}
+            maxInputLength={512}
+        />
     );
 };
 

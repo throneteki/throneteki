@@ -16,7 +16,7 @@ const PlayerStats = ({
     user: userProp,
     firstPlayer,
     onChatToggle,
-    numMessages,
+    unreadMessages,
     seatNo
 }) => {
     const dispatch = useDispatch();
@@ -130,8 +130,8 @@ const PlayerStats = ({
                                 <Badge
                                     shape='circle'
                                     color='danger'
-                                    content={numMessages > 99 ? '99+' : numMessages}
-                                    isInvisible={!numMessages || numMessages === 0}
+                                    content={unreadMessages > 99 ? '99+' : unreadMessages}
+                                    isInvisible={!unreadMessages || unreadMessages === 0}
                                 >
                                     {getStatButton(onChatToggle, faComment, 'Toggle chat')}
                                 </Badge>

@@ -144,7 +144,7 @@ const GameBoard = () => {
                 onMenuItemClick={onMenuItemClick}
                 onSettingsClick={() => setShowModal(!showModal)}
                 onChatToggle={() => setShowGameChat(!showGameChat)}
-                numMessages={unreadMessages}
+                unreadMessages={unreadMessages}
                 isDragging={!!draggingDetail}
             />
         );
@@ -157,7 +157,7 @@ const GameBoard = () => {
                 onMenuItemClick={onMenuItemClick}
                 onSettingsClick={() => setShowModal(!showModal)}
                 onChatToggle={() => setShowGameChat(!showGameChat)}
-                numMessages={unreadMessages}
+                unreadMessages={unreadMessages}
                 isDragging={!!draggingDetail}
             />
         );

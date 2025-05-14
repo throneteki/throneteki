@@ -107,7 +107,7 @@ const NewGame = ({
             </AlertPanel>
         );
     }
-
+    const canStart = gameFormat && restrictedList;
     return (
         <Panel title={quickJoin ? 'Quick Join' : 'New game'}>
             <Formik
@@ -246,7 +246,7 @@ const NewGame = ({
                             )}
                             {<GameTypes formProps={formProps} isDisabled={usingEventOptions} />}
                             <div className='flex gap-2'>
-                                <Button color='success' type='submit'>
+                                <Button color='success' type='submit' isDisabled={!canStart}>
                                     Start
                                 </Button>
                                 <Button color='primary' onPress={() => onClosed && onClosed()}>
