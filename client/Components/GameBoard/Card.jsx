@@ -346,10 +346,14 @@ const Card = ({
                     className
                 )}
             >
-                {disableHover || isDragging || showMenu ? (
+                {disableHover ? (
                     image
                 ) : (
-                    <CardHoverable code={card.code} touchDelay={250}>
+                    <CardHoverable
+                        code={card.code}
+                        isDisabled={isDragging || showMenu}
+                        touchDelay={250}
+                    >
                         {image}
                     </CardHoverable>
                 )}

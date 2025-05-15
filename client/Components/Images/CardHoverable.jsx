@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useRef } from 'reac
 import classNames from 'classnames';
 import { CardHoverContext } from './CardHoverContext';
 
-const CardHoverable = ({ touchDelay = 0, className, children, code }) => {
+const CardHoverable = ({ touchDelay = 0, className, children, code, isDisabled }) => {
     const { type, setType, setCode } = useContext(CardHoverContext);
     const holdTimeout = useRef(null);
 
@@ -21,16 +21,23 @@ const CardHoverable = ({ touchDelay = 0, className, children, code }) => {
     }, [setCode, setType]);
 
     useEffect(() => {
+        if (isDisabled) {
+            clear();
+        }
+
         // Clear if this component unmounts
         return () => {
             clear();
         };
-    }, [clear]);
+    }, [isDisabled, clear]);
 
     return (
         <span
             className={wrapperClassName || null}
             onPointerMove={(e) => {
+                if (isDisabled) {
+                    return;
+                }
                 if (['touch', 'pen'].includes(e.pointerType)) {
                     e.preventDefault();
                     e.stopPropagation();
@@ -41,6 +48,9 @@ const CardHoverable = ({ touchDelay = 0, className, children, code }) => {
                 }
             }}
             onPointerEnter={(e) => {
+                if (isDisabled) {
+                    return;
+                }
                 if (['touch', 'pen'].includes(e.pointerType)) {
                     e.preventDefault();
                     e.stopPropagation();
@@ -55,6 +65,9 @@ const CardHoverable = ({ touchDelay = 0, className, children, code }) => {
                 }
             }}
             onPointerLeave={() => {
+                if (isDisabled) {
+                    return;
+                }
                 clear();
             }}
         >
