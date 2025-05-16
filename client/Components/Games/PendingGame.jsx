@@ -265,6 +265,4 @@ const PendingGame = () => {
     );
 };
 
-PendingGame.displayName = 'PendingGame';
-
 export default PendingGame;

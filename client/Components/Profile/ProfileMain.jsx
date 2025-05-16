@@ -43,7 +43,7 @@ const ProfileMain = ({ user, formProps }) => {
     }, [user]);
 
     return (
-        <Panel title='Profile'>
+        <Panel title={`${user.username}'s Profile`}>
             <div className='flex flex-col gap-2'>
                 <div className='flex flex-col sm:flex-row gap-2'>
                     <Input

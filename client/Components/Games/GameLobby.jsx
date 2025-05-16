@@ -122,7 +122,12 @@ const GameLobby = ({ gameId }) => {
                             <GameList
                                 games={games}
                                 gameFilter={currentFilter}
-                                onJoinOrWatchClick={() => topRef.current?.scrollIntoView(false)}
+                                onJoinOrWatch={() =>
+                                    topRef.current?.scrollIntoView({
+                                        behavior: 'smooth',
+                                        block: 'end'
+                                    })
+                                }
                             />
                         )}
                     </div>
