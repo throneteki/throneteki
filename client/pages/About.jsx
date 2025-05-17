@@ -1,14 +1,14 @@
 import React from 'react';
 
 import Panel from '../Components/Site/Panel';
-import Link from '../Components/Site/Link';
-import { Button } from '@heroui/react';
+import { Button, Link } from '@heroui/react';
+import Page from './Page';
 
 const About = () => {
     return (
-        <div className='w-2/3 mx-auto'>
+        <Page>
             <Panel title='About The Iron Throne - Help and information'>
-                <div className='flex'>
+                <div className='flex flex-col-reverse sm:flex-row'>
                     <div className='flex-1'>
                         <h3 className='text-large font-bold mt-2'>What is this?</h3>
                         <p className='mt-1'>
@@ -39,9 +39,9 @@ const About = () => {
                 </h3>
                 <p className='mt-1'>
                     This is handled by the good people at
-                    <a href='http://gravatar.com' target='_blank' rel='noreferrer'>
+                    <Link href='http://gravatar.com' target='_blank' rel='noreferrer'>
                         Gravatar
-                    </a>
+                    </Link>
                     . Sign up there with the same email address you did there and it should appear
                     on the site after a short while. It will also use the avatar on any site that
                     uses gravatar. Examples include github and jinteki.
@@ -52,24 +52,24 @@ const About = () => {
                 <p className='mt-1'>You&apos;re right, it is pretty nice isn&apos;t it?</p>
                 <p className='mt-1'>
                     The background of the site is by an artist named{' '}
-                    <a href='http://dumaker.deviantart.com/' target='_blank' rel='noreferrer'>
+                    <Link href='http://dumaker.deviantart.com/' target='_blank' rel='noreferrer'>
                         Dumaker
-                    </a>{' '}
+                    </Link>{' '}
                     and can be found{' '}
-                    <a
+                    <Link
                         href='http://dumaker.deviantart.com/art/Looking-for-the-Iron-Throne-Game-of-Thrones-9-364330141'
                         target='_blank'
                         rel='noreferrer'
                     >
                         here
-                    </a>
+                    </Link>
                     .
                 </p>
                 <p className='mt-1'>
                     The in game backgrounds are by{' '}
-                    <a href='http://www.thomastanart.com/' target='_blank' rel='noreferrer'>
+                    <Link href='http://www.thomastanart.com/' target='_blank' rel='noreferrer'>
                         Thomas Tan
-                    </a>
+                    </Link>
                     . He&apos;s very talented, you should check out his work!
                 </p>
                 <p className='mt-1'>
@@ -78,86 +78,92 @@ const About = () => {
                 </p>
                 <p className='mt-1'>
                     Card hand icon is by Henry Ryder from{' '}
-                    <a href='http://www.thenounproject.com' target='_blank' rel='noreferrer'>
+                    <Link href='http://www.thenounproject.com' target='_blank' rel='noreferrer'>
                         the Noun Project
-                    </a>
+                    </Link>
                     .
                 </p>
                 <p className='mt-1'>
                     Chat icon made by{' '}
-                    <a href='https://www.flaticon.com/authors/iconnice' title='Iconnice'>
+                    <Link href='https://www.flaticon.com/authors/iconnice' title='Iconnice'>
                         Iconnice
-                    </a>{' '}
+                    </Link>{' '}
                     from{' '}
-                    <a href='https://www.flaticon.com/' title='Flaticon'>
+                    <Link href='https://www.flaticon.com/' title='Flaticon'>
                         www.flaticon.com
-                    </a>{' '}
+                    </Link>{' '}
                     is licensed by{' '}
-                    <a
+                    <Link
                         href='http://creativecommons.org/licenses/by/3.0/'
                         title='Creative Commons BY 3.0'
                         target='_blank'
                         rel='noreferrer'
                     >
                         CC 3.0 BY
-                    </a>
+                    </Link>
                 </p>
                 <p className='mt-1'>
                     Time Limit icon made by{' '}
-                    <a href='https://www.flaticon.com/authors/minh-hoang' title='Minh Hoang'>
+                    <Link href='https://www.flaticon.com/authors/minh-hoang' title='Minh Hoang'>
                         Minh Hoang
-                    </a>{' '}
+                    </Link>{' '}
                     from{' '}
-                    <a href='https://www.flaticon.com/' title='Flaticon'>
+                    <Link href='https://www.flaticon.com/' title='Flaticon'>
                         www.flaticon.com
-                    </a>{' '}
+                    </Link>{' '}
                     is licensed by{' '}
-                    <a
+                    <Link
                         href='http://creativecommons.org/licenses/by/3.0/'
                         title='Creative Commons BY 3.0'
                         target='_blank'
                         rel='noreferrer'
                     >
                         CC 3.0 BY
-                    </a>
+                    </Link>
                 </p>
                 <p className='mt-1'>
                     Chess Clock icon made by{' '}
-                    <a href='https://www.flaticon.com/authors/freepik' title='Freepik'>
+                    <Link href='https://www.flaticon.com/authors/freepik' title='Freepik'>
                         Freepik
-                    </a>{' '}
+                    </Link>{' '}
                     from{' '}
-                    <a href='https://www.flaticon.com/' title='Flaticon'>
+                    <Link href='https://www.flaticon.com/' title='Flaticon'>
                         www.flaticon.com
-                    </a>{' '}
+                    </Link>{' '}
                     is licensed by{' '}
-                    <a
+                    <Link
                         href='https://www.freepikcompany.com/legal#nav-flaticon-agreement'
                         title='Flaticon License'
                         target='_blank'
                         rel='noreferrer'
                     >
                         Flaticon License
-                    </a>
+                    </Link>
                 </p>
                 <p className='mt-1'>
                     Raven icon by Bluetip Design from{' '}
-                    <a href='https://thenounproject.com/term/raven/683810/'>the Noun Project</a>
+                    <Link href='https://thenounproject.com/term/raven/683810/'>
+                        the Noun Project
+                    </Link>
                 </p>
                 <h3 className='text-large font-bold mt-2'>Can I help?</h3>
                 <p className='mt-1'>
                     Sure! The project is all written in Javascript. The server is node.js and the
                     client is React.js. The source code can be found in the&nbsp;
-                    <a target='_blank' href='http://github.com/cryogen/throneteki' rel='noreferrer'>
+                    <Link
+                        target='_blank'
+                        href='http://github.com/cryogen/throneteki'
+                        rel='noreferrer'
+                    >
                         GitHub Repository
-                    </a>
+                    </Link>
                     . Check out the code and instructions on there on how to get started and hack
                     away! See the card implementation status list above to have a look at what needs
                     to be done. If you want to join the dev discord, or ask any other question, send
                     me a note on here, over at&nbsp;
-                    <a target='_blank' href='http://www.twitter.com/cryogen' rel='noreferrer'>
+                    <Link target='_blank' href='http://www.twitter.com/cryogen' rel='noreferrer'>
                         Twitter
-                    </a>{' '}
+                    </Link>{' '}
                     or post in the AGoT Facebook group. I&apos;ll likely find it.
                 </p>
                 <h2 className='text-2xl mt-2 font-bold'>Special Thanks</h2>
@@ -177,7 +183,7 @@ const About = () => {
                     not endorse, support, and is not involved with, this site in any way.
                 </p>
             </Panel>
-        </div>
+        </Page>
     );
 };
 

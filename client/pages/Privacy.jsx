@@ -1,10 +1,11 @@
 import React from 'react';
 
 import Panel from '../Components/Site/Panel';
+import Page from './Page';
 
 const Privacy = () => {
     return (
-        <div className='w-2/3 mx-auto'>
+        <Page>
             <Panel title='Privacy Policy'>
                 <h3 className='text-large font-bold mt-2'>Background</h3>
 
@@ -67,7 +68,7 @@ const Privacy = () => {
                     moderated to remove offensive content, or deleted altogether at our discretion.
                 </p>
             </Panel>
-        </div>
+        </Page>
     );
 };
 

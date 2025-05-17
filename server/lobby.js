@@ -728,6 +728,7 @@ class Lobby {
 
                 formattedDeck.status = validateDeck(formattedDeck, {
                     packs: packs,
+                    gameFormats: [game.gameFormat],
                     restrictedLists: [game.restrictedList],
                     includeExtendedStatus: false
                 });
@@ -855,9 +856,9 @@ class Lobby {
             restrictedList: game.restrictedList,
             spectators: game.allowSpectators,
             showHand: game.showHand,
+            gameFormat: game.gameFormat,
             gameType: game.gameType,
             gamePrivate: game.gamePrivate,
-            isMelee: game.isMelee,
             useGameTimeLimit: game.useGameTimeLimit,
             gameTimeLimit: game.gameTimeLimit,
             useChessClocks: game.useChessClocks,

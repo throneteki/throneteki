@@ -15,26 +15,25 @@ import { navigate } from '../../redux/reducers/navigation';
 
 import ChargeMp3 from '../../assets/sound/charge.mp3';
 import ChargeOgg from '../../assets/sound/charge.ogg';
-import { Button, Input, Link, Snippet } from '@heroui/react';
+import { Button, Link, Snippet } from '@heroui/react';
 import GameTypeInfo from './GameTypeInfo';
 import AlertPanel, { AlertType } from '../Site/AlertPanel';
 import PendingGamePlayers from './PendingGamePlayers';
 import LoadingSpinner from '../Site/LoadingSpinner';
+import { GameFormats } from '../../constants';
+import ChatArea from '../Site/ChatArea';
 
 const PendingGame = () => {
     const dispatch = useDispatch();
-    const [playerCount, setPlayerCount] = useState(1);
-    const [message, setMessage] = useState('');
+    const [waitingPlayerNames, setWaitingPlayerNames] = useState([]);
     const [waiting, setWaiting] = useState(false);
     const [showModal, setShowModal] = useState(false);
-    const [canScroll, setCanScroll] = useState(true);
 
     const { connecting, host } = useSelector((state) => state.game);
     const { currentGame, gameError } = useSelector((state) => state.lobby);
     const user = useSelector((state) => state.auth.user);
 
     const notificationRef = useRef(null);
-    const messageRef = useRef(null);
 
     const getGameStatus = useCallback(() => {
         if (gameError) {
@@ -76,59 +75,47 @@ const PendingGame = () => {
         waiting
     ]);
 
-    const sendMessage = useCallback(() => {
-        if (message === '') {
-            return;
-        }
-
-        dispatch(sendChatMessage(message));
-
-        setMessage('');
-    }, [dispatch, message]);
-
     useEffect(() => {
         if (!user) {
             return;
         }
 
-        let players = Object.values(currentGame.players).length;
+        const players = Object.values(currentGame.players);
 
         if (
             notificationRef.current &&
-            playerCount === 1 &&
-            players === 2 &&
+            waitingPlayerNames.length !== players.length &&
             currentGame.owner === user.username
         ) {
-            let promise = notificationRef.current.play();
+            const newPlayers = players.filter(
+                (p) => !waitingPlayerNames.some((pn) => pn === p.name)
+            );
 
-            if (promise !== undefined) {
-                promise.catch(() => {}).then(() => {});
-            }
+            if (newPlayers.some((p) => p.name !== user.username)) {
+                const promise = notificationRef.current.play();
+                if (promise !== undefined) {
+                    promise.catch(() => {}).then(() => {});
+                }
 
-            if (window.Notification && Notification.permission === 'granted') {
-                let otherPlayer = Object.values(currentGame.players).find(
-                    (p) => p.name !== user.username
-                );
+                if (window.Notification && Notification.permission === 'granted') {
+                    for (const newPlayer of newPlayers) {
+                        const windowNotification = new Notification('The Iron Throne', {
+                            body: `${newPlayer.name} has joined your game`,
+                            icon: `/img/avatar/${newPlayer.username}.png`
+                        });
 
-                let windowNotification = new Notification('The Iron Throne', {
-                    body: `${otherPlayer.name} has joined your game`,
-                    icon: `/img/avatar/${otherPlayer.username}.png`
-                });
-
-                setTimeout(() => windowNotification.close(), 5000);
+                        setTimeout(() => windowNotification.close(), 5000);
+                    }
+                }
             }
 
             if (connecting || gameError) {
                 setWaiting(false);
             }
 
-            if (canScroll && messageRef.current) {
-                messageRef.current.scrollTop = 999999;
-            }
-
-            setPlayerCount(players);
+            setWaitingPlayerNames(players.map((p) => p.name));
         }
-    }, [user, playerCount, currentGame, connecting, gameError, canScroll]);
+    }, [user, currentGame, connecting, gameError, waitingPlayerNames]);
 
     const canStartGame = () => {
         if (!user || !currentGame || currentGame.owner !== user.username || connecting) {
@@ -159,9 +146,9 @@ const PendingGame = () => {
 
         return <LoadingSpinner label='You must be logged in to play, redirecting...' />;
     }
-
+    const gameFormatLabel = GameFormats.find((gf) => gf.name === currentGame.gameFormat).label;
     return (
-        <>
+        <div className='flex flex-col gap-2'>
             <audio ref={notificationRef}>
                 <source src={ChargeMp3} type='audio/mpeg' />
                 <source src={ChargeOgg} type='audio/ogg' />
@@ -173,113 +160,95 @@ const PendingGame = () => {
                     currentGame.restrictedList.cardSet
                 )}
             >
-                {currentGame.event.name && (
-                    <p>
-                        <strong>Event:</strong> {currentGame.event.name}
-                    </p>
-                )}
-                <p>
-                    <strong>Restricted List:</strong> {currentGame.restrictedList.name}
-                </p>
-                {currentGame.event.format !== 'draft' && (
-                    <p>
-                        <strong>Cards:</strong> {cardSetLabel(currentGame.restrictedList.cardSet)}
-                    </p>
-                )}
-                <div className='flex content-between mt-2'>
+                <div className='flex flex-col gap-2'>
                     <div>
-                        <Button
-                            className='me-2'
-                            color='success'
-                            isDisabled={!canStartGame()}
-                            onPress={() => {
-                                setWaiting(true);
-                                dispatch(sendStartGameMessage());
-                            }}
-                        >
-                            Start
-                        </Button>
-                        <Button
-                            color='primary'
-                            onPress={() => {
-                                dispatch(sendLeaveGameMessage());
-                            }}
-                        >
-                            Leave
-                        </Button>
+                        {currentGame.event.name && (
+                            <p>
+                                <strong>Event:</strong> {currentGame.event.name}
+                            </p>
+                        )}
+                        <p>
+                            <strong>Format:</strong> {gameFormatLabel}
+                        </p>
+                        <p>
+                            <strong>Restricted List:</strong> {currentGame.restrictedList.name}
+                        </p>
+                        {currentGame.event.format !== 'draft' && (
+                            <p>
+                                <strong>Cards:</strong>{' '}
+                                {cardSetLabel(currentGame.restrictedList.cardSet)}
+                            </p>
+                        )}
                     </div>
-                    <Snippet
-                        className='ml-2'
-                        classNames={{ base: 'py-1' }}
-                        codeString={`${window.location.protocol}//${window.location.host}/play?gameId=${currentGame.id}`}
-                        hideSymbol
-                    >
-                        <Link href={`/play?gameId=${currentGame.id}`} isExternal>
-                            Game Link
-                        </Link>
-                    </Snippet>
-                </div>
-                <div className='mt-3'>
-                    <GameTypeInfo gameType={currentGame.gameType} />
-                </div>
-                <div className='mt-4'>
-                    {gameError ? (
-                        <AlertPanel variant={AlertType.Danger}>{getGameStatus()}</AlertPanel>
-                    ) : (
-                        getGameStatus()
-                    )}
+                    <div className='flex gap-2 flex-wrap'>
+                        <div className='flex gap-1'>
+                            <Button
+                                color='success'
+                                isDisabled={!canStartGame()}
+                                onPress={() => {
+                                    setWaiting(true);
+                                    dispatch(sendStartGameMessage());
+                                }}
+                            >
+                                Start
+                            </Button>
+                            <Button
+                                color='primary'
+                                onPress={() => {
+                                    dispatch(sendLeaveGameMessage());
+                                }}
+                            >
+                                Leave
+                            </Button>
+                        </div>
+                        <Snippet
+                            classNames={{ base: 'py-1' }}
+                            codeString={`${window.location.protocol}//${window.location.host}/play?gameId=${currentGame.id}`}
+                            hideSymbol
+                        >
+                            <Link href={`/play?gameId=${currentGame.id}`} isExternal>
+                                Game Link
+                            </Link>
+                        </Snippet>
+                    </div>
+                    <div>
+                        <GameTypeInfo gameType={currentGame.gameType} />
+                    </div>
+                    <div>
+                        {gameError ? (
+                            <AlertPanel variant={AlertType.Danger}>{getGameStatus()}</AlertPanel>
+                        ) : (
+                            getGameStatus()
+                        )}
+                    </div>
                 </div>
             </Panel>
-            <div className='mt-2'>
+            <div>
                 <PendingGamePlayers
                     currentGame={currentGame}
                     user={user}
                     onSelectDeck={() => setShowModal(true)}
                 />
             </div>
-            <Panel className='mt-2' title={`Spectators(${currentGame.spectators.length})`}>
-                {currentGame.spectators.map((spectator) => {
-                    return <div key={spectator.name}>{spectator.name}</div>;
-                })}
-            </Panel>
-            <Panel className='mt-2' title={'Chat'}>
-                <div
-                    className='h-48 w-full border-1 border-primary-500 rounded-lg overflow-auto py-1 px-2'
-                    ref={messageRef}
-                    onScroll={() => {
-                        setTimeout(() => {
-                            if (
-                                messageRef.current &&
-                                messageRef.current.scrollTop >=
-                                    messageRef.current.scrollHeight -
-                                        messageRef.current.offsetHeight -
-                                        20
-                            ) {
-                                setCanScroll(true);
-                            } else {
-                                setCanScroll(false);
-                            }
-                        }, 500);
+            {currentGame.spectators.length > 0 && (
+                <Panel title={`Spectators (${currentGame.spectators.length})`}>
+                    {currentGame.spectators.map((spectator) => {
+                        return <div key={spectator.name}>{spectator.name}</div>;
+                    })}
+                </Panel>
+            )}
+            <Panel title={'Chat'}>
+                <ChatArea
+                    classNames={{
+                        wrapper: 'h-52 border-1 border-primary-500 rounded-lg overflow-hidden',
+                        messages: 'flex flex-col gap-1.5 p-2'
                     }}
+                    messageCount={currentGame.messages.length}
+                    onSendMessage={(message) => dispatch(sendChatMessage(message))}
+                    placeholder={'Enter a message...'}
                 >
                     <Messages messages={currentGame.messages} />
-                </div>
-                <div className='mt-2'>
-                    <form>
-                        <Input
-                            type='text'
-                            placeholder={'Enter a message...'}
-                            value={message}
-                            onKeyPress={(event) => {
-                                if (event.key === 'Enter') {
-                                    sendMessage();
-                                    event.preventDefault();
-                                }
-                            }}
-                            onChange={(event) => setMessage(event.target.value)}
-                        ></Input>
-                    </form>
-                </div>
+                </ChatArea>
             </Panel>
             {showModal && (
                 <SelectDeckModal
@@ -288,13 +257,12 @@ const PendingGame = () => {
                         setShowModal(false);
                         dispatch(sendSelectDeckMessage(deck._id));
                     }}
+                    gameFormat={currentGame.gameFormat}
                     restrictedList={currentGame.restrictedList?._id}
                 />
             )}
-        </>
+        </div>
     );
 };
-
-PendingGame.displayName = 'PendingGame';
 
 export default PendingGame;

@@ -103,6 +103,7 @@ class ChessClock {
     }
 
     getState() {
+        this.checkForTimeRanOut();
         return {
             active: this.active,
             paused: this.paused,

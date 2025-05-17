@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import moment from 'moment';
 import classNames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faClock, faClockRotateLeft, faPauseCircle } from '@fortawesome/free-solid-svg-icons';
+import { faClockRotateLeft, faPauseCircle } from '@fortawesome/free-solid-svg-icons';
 import { Avatar } from '@heroui/react';
 
 const formatTime = (seconds) => {
-    if (!seconds) {
+    if (!seconds && seconds !== 0) {
         return null;
     }
     const momentTime = moment.utc(seconds * 1000);
@@ -17,6 +17,7 @@ const formatDelay = (seconds) => (seconds ? `+${seconds}s` : null);
 
 const ChessClock = ({
     username,
+    className,
     delayPosition,
     active,
     paused,
@@ -75,31 +76,32 @@ const ChessClock = ({
         };
     }, [active, paused, timerStart, timeLeftProp, delayLeftProp, timer]);
 
-    let icon = null;
+    const icon = paused ? <FontAwesomeIcon icon={faPauseCircle} /> : null;
 
-    if (paused) {
-        icon = <FontAwesomeIcon icon={faPauseCircle} />;
-    } else if (active && delayLeft > 0) {
-        icon = <FontAwesomeIcon icon={faClockRotateLeft} />;
-    } else if (active) {
-        icon = <FontAwesomeIcon icon={faClock} />;
-    }
-    const className = classNames(
-        'flex',
-        delayPosition === 'bottom' ? 'flex-col' : 'flex-col-reverse'
+    const wrapperClassName = classNames(
+        'flex w-fit px-2 py-1 rounded-md text-xl bg-black/40',
+        delayPosition === 'bottom' ? 'flex-col' : 'flex-col-reverse',
+        className
     );
+    const time = formatTime(timeLeft);
+    const delay = formatDelay(delayLeft);
     return (
-        <div className={className}>
+        <div className={wrapperClassName}>
             <div className='flex items-center gap-2'>
                 <Avatar
                     src={`/img/avatar/${username}.png`}
                     showFallback
                     className='w-7 h-7 text-tiny'
                 />
-                <div className='text-2xl'>{formatTime(timeLeft)}</div>
-                <div className='text-xl w-5'>{icon}</div>
+                <span className='text-2xl'>{time}</span>
+                {icon && <div className='w-5'>{icon}</div>}
             </div>
-            <div className='text-right text-xl pr-7 h-7'>{formatDelay(delayLeft)}</div>
+            {delay && (
+                <span className='flex gap-1 justify-end text-right p-1'>
+                    {delay}
+                    <FontAwesomeIcon icon={faClockRotateLeft} />
+                </span>
+            )}
         </div>
     );
 };

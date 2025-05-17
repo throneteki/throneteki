@@ -3,15 +3,14 @@ import classNames from 'classnames';
 import { useSelector } from 'react-redux';
 import { Avatar, Link } from '@heroui/react';
 
-import CardZoom from './CardZoom';
 import AlertPanel from '../Site/AlertPanel';
 
 import CardBackImage from '../../assets/img/cardback.png';
 import GoldImage from '../../assets/img/stats/gold.png';
 
-import './Messages.css';
 import { Constants, ThronesIcons } from '../../constants';
 import ThronesIcon from './ThronesIcon';
+import CardHoverable from '../Images/CardHoverable';
 
 const tokens = {
     card: { className: 'h-4 w-3 inline', imageSrc: CardBackImage },
@@ -19,7 +18,7 @@ const tokens = {
     gold: { className: 'h-3 w-3 inline mt-1', imageSrc: GoldImage }
 };
 
-const Messages = ({ messages, onCardMouseOut, onCardMouseOver }) => {
+const Messages = ({ messages }) => {
     const currentGame = useSelector((state) => state.lobby.currentGame);
 
     const owner = currentGame.players[currentGame.owner];
@@ -111,34 +110,10 @@ const Messages = ({ messages, onCardMouseOut, onCardMouseOver }) => {
                         {fragment.label}
                     </Link>
                 );
-            } else if (fragment.image && fragment.label) {
-                messages.push(
-                    <span
-                        key={index++}
-                        className='cursor-pointer text-secondary hover:text-info'
-                        onMouseOver={onCardMouseOver.bind(this, {
-                            image: <CardZoom imageUrl={`/img/cards/${fragment.code}.png`} />,
-                            size: 'normal'
-                        })}
-                        onMouseOut={() => onCardMouseOut && onCardMouseOut(fragment)}
-                    >
-                        {fragment.label}
-                    </span>
-                );
             } else if (fragment.code && fragment.label) {
                 messages.push(
-                    <span
-                        key={index++}
-                        className='cursor-pointer text-secondary hover:text-info'
-                        onMouseOver={() =>
-                            onCardMouseOver({
-                                code: fragment.code,
-                                name: fragment.label || fragment.name
-                            })
-                        }
-                        onMouseOut={() => onCardMouseOut && onCardMouseOut(fragment)}
-                    >
-                        {fragment.label}
+                    <span key={index++} className='cursor-pointer text-secondary hover:text-info'>
+                        <CardHoverable code={fragment.code}>{fragment.label}</CardHoverable>
                     </span>
                 );
             } else if (fragment.name && fragment.argType === 'player') {
@@ -180,10 +155,9 @@ const Messages = ({ messages, onCardMouseOut, onCardMouseOver }) => {
 
     const renderMessages = () => {
         return messages.map((message, index) => {
-            const className = classNames('break-words leading-[1.15rem] text-gray-300', '', {
-                'this-player': message.activePlayer && message.activePlayer == owner.name,
-                'other-player': message.activePlayer && message.activePlayer !== owner.name,
-                'chat-bubble': Object.values(message.message).some(
+            // TODO: Re-add chat bubble triangles (left for this player, right for others)
+            const className = classNames('break-words leading-[1.15rem] text-gray-300', {
+                'p-2 bg-default rounded-md': Object.values(message.message).some(
                     (m) => m.name && m.argType === 'player'
                 )
             });

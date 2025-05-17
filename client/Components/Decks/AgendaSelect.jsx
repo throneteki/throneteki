@@ -4,6 +4,7 @@ import AlertPanel from '../Site/AlertPanel';
 import { Button } from '@heroui/react';
 import { useGetCardsQuery } from '../../redux/middleware/api';
 import LoadingSpinner from '../Site/LoadingSpinner';
+import CardHoverable from '../Images/CardHoverable';
 
 const AgendaSelect = ({ onBackClick, onNextClick }) => {
     const { data, isLoading, isError } = useGetCardsQuery({});
@@ -56,12 +57,12 @@ const AgendaSelect = ({ onBackClick, onNextClick }) => {
                     Next
                 </Button>
             </div>
-            <div className='grid h-[75vh] grid-cols-3 lg:grid-cols-8 overflow-y-auto '>
+            <div className='grid h-[75vh] grid-cols-3 sm:grid-cols-5 md:grid-cols-7 lg:grid-cols-8 overflow-y-auto'>
                 {agendas.map((agenda) => (
-                    <div key={agenda.code} className='m-4 flex content-center'>
+                    <div key={agenda.code} className='m-2 flex content-center'>
                         <div
                             role={canSelectAgenda(agenda.code) ? 'button' : undefined}
-                            onClick={() => {
+                            onPointerDown={() => {
                                 if (!canSelectAgenda(agenda.code)) {
                                     return;
                                 }
@@ -77,14 +78,16 @@ const AgendaSelect = ({ onBackClick, onNextClick }) => {
                                 );
                             }}
                         >
-                            <div className='text-center'>
+                            <CardHoverable code={agenda.code}>
                                 <CardImage
-                                    imageUrl={`/img/cards/${agenda.code}.png`}
-                                    size='lg'
-                                    selected={selectedAgendas.some((a) => a.code === agenda.code)}
+                                    code={agenda.code}
+                                    size='large'
+                                    className={
+                                        selectedAgendas.some((a) => a.code === agenda.code) &&
+                                        'outline outline-4 outline-green-600'
+                                    }
                                 />
-                                {agenda.label}
-                            </div>
+                            </CardHoverable>
                         </div>
                     </div>
                 ))}

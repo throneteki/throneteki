@@ -17,9 +17,14 @@ function createTitleCardLookup(cards) {
         }, {});
 }
 
+const defaultNumOfPlayers = {
+    melee: 3,
+    joust: 2
+}
+
 class GameFlowWrapper {
     constructor(options) {
-        let gameRouter = jasmine.createSpyObj('gameRouter', [
+        const gameRouter = jasmine.createSpyObj('gameRouter', [
             'gameWon',
             'handleError',
             'playerLeft'
@@ -27,14 +32,18 @@ class GameFlowWrapper {
         gameRouter.handleError.and.callFake((game, error) => {
             throw error;
         });
-        let details = {
+        const numOfPlayers = options.numOfPlayers || defaultNumOfPlayers[options.gameFormat || 'joust'];
+        const details = {
             name: "player1's game",
             id: 12345,
             owner: { username: 'player1' },
             saveGameId: 12345,
-            isMelee: !!options.isMelee,
+            gameFormat: options.gameFormat,
             noTitleSetAside: true,
-            players: this.generatePlayerDetails(options.numOfPlayers || (options.isMelee ? 3 : 2))
+            maxPlayers: options.maxPlayers || numOfPlayers,
+            players: this.generatePlayerDetails(numOfPlayers),
+            useGameTimeLimit: options.useGameTimeLimit || false,
+            gameTimeLimit: options.gameTimeLimit
         };
         this.game = new Game(details, { router: gameRouter, titleCardData: titleCardData });
         this.game.started = true;

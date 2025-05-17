@@ -1,3 +1,4 @@
+import { GameFormats } from '../../client/constants.js';
 import { formatDeckAsFullCards } from '../../deck-helper/formatDeckAsFullCards.js';
 import { validateDeck } from '../../deck-helper/index.js';
 import logger from '../log.js';
@@ -10,6 +11,7 @@ class DeckService {
 
     async init() {
         this.packs = await this.cardService.getAllPacks();
+        this.gameFormats = GameFormats.map((gf) => gf.name);
         this.restrictedLists = await this.cardService.getRestrictedList();
         this.cards = await this.cardService.getAllCards();
     }
@@ -25,12 +27,11 @@ class DeckService {
 
         formattedDeck.status = {};
 
-        for (const restrictedList of this.restrictedLists) {
-            formattedDeck.status[restrictedList._id] = validateDeck(formattedDeck, {
-                packs: this.packs,
-                restrictedLists: [restrictedList]
-            });
-        }
+        formattedDeck.status = validateDeck(formattedDeck, {
+            packs: this.packs,
+            gameFormats: this.gameFormats,
+            restrictedLists: this.restrictedLists
+        });
 
         return formattedDeck;
     };
@@ -82,36 +83,35 @@ class DeckService {
         filter.push({ id: 'username', value: username });
 
         this.restrictedLists = await this.cardService.getRestrictedList();
+
+        const baseMatch = {
+            $and: filter.map((curr) => {
+                if (Array.isArray(curr.value)) {
+                    return {
+                        $or: curr.value.map((val) => ({
+                            [curr.id]: { $regex: val, $options: 'i' }
+                        }))
+                    };
+                }
+                return {
+                    [curr.id]:
+                        curr.id === 'username' ? curr.value : { $regex: curr.value, $options: 'i' }
+                };
+            })
+        };
+
         const dbDecks = await this.decks.aggregate([
             {
                 $facet: {
                     metadata: [
                         {
-                            $match: filter.reduce(
-                                (acc, curr) => (
-                                    (acc[curr.id] =
-                                        curr.id === 'username'
-                                            ? curr.value
-                                            : { $regex: curr.value, $options: 'i' }),
-                                    acc
-                                ),
-                                {}
-                            )
+                            $match: baseMatch
                         },
                         { $count: 'totalCount' }
                     ],
                     data: [
                         {
-                            $match: filter.reduce(
-                                (acc, curr) => (
-                                    (acc[curr.id] =
-                                        curr.id === 'username'
-                                            ? curr.value
-                                            : { $regex: curr.value, $options: 'i' }),
-                                    acc
-                                ),
-                                {}
-                            )
+                            $match: baseMatch
                         },
                         { $sort: { [sort[0].id]: sort[0].desc === 'true' ? -1 : 1 } },
                         { $skip: (page - 1) * pageSize },
@@ -153,13 +153,50 @@ class DeckService {
         );
     }
 
-    async getStandaloneDecks() {
-        const decks = await this.decks.find(
-            { standaloneDeckId: { $exists: true } },
-            { sort: { lastUpdated: -1 } }
-        );
+    async getStandaloneDecks(options = {}) {
+        const sort = options.sorting || [{ id: 'lastUpdated', desc: 'true' }];
+        const filter = options.filters || [];
+        const page = parseInt(options.pageNumber, 10) || 1;
+        const pageSize = parseInt(options.pageSize, 10) || 10;
 
-        return decks.map((deck) => this.processDeck(deck));
+        const baseMatch = {
+            $and: [
+                { standaloneDeckId: { $exists: true } },
+                ...filter.map((curr) => {
+                    if (Array.isArray(curr.value)) {
+                        return {
+                            $or: curr.value.map((val) => ({
+                                [curr.id]: { $regex: val, $options: 'i' }
+                            }))
+                        };
+                    }
+                    return {
+                        [curr.id]: { $regex: curr.value, $options: 'i' }
+                    };
+                })
+            ]
+        };
+        const dbDecks = await this.decks.aggregate([
+            {
+                $facet: {
+                    metadata: [{ $match: baseMatch }, { $count: 'totalCount' }],
+                    data: [
+                        { $match: baseMatch },
+                        { $sort: { [sort[0].id]: sort[0].desc === 'true' ? -1 : 1 } },
+                        { $skip: (page - 1) * pageSize },
+                        { $limit: pageSize }
+                    ]
+                }
+            }
+        ]);
+
+        return {
+            totalCount: dbDecks[0].metadata[0].totalCount,
+            page,
+            pageSize,
+            success: true,
+            data: dbDecks[0].data.map((deck) => this.processDeck(deck))
+        };
     }
 
     async create(deck) {

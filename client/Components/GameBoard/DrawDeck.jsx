@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react';
 import CardPile from './CardPile';
-import Droppable from './Droppable';
 import { faEye, faShuffle } from '@fortawesome/free-solid-svg-icons';
 
 const DrawDeck = ({
@@ -10,8 +9,6 @@ const DrawDeck = ({
     cardCount,
     revealTopCard,
     onCardClick,
-    onMouseOut,
-    onMouseOver,
     popupLocation,
     size,
     spectating,
@@ -39,14 +36,7 @@ const DrawDeck = ({
         [onPopupChange]
     );
 
-    const renderDroppablePile = useCallback(
-        (source, child) => {
-            return isMe ? <Droppable source={source}>{child}</Droppable> : child;
-        },
-        [isMe]
-    );
-
-    let drawDeckPopupMenu = [];
+    const drawDeckPopupMenu = [];
 
     if (isMe) {
         if (!showDeck) {
@@ -64,9 +54,9 @@ const DrawDeck = ({
         });
     }
 
-    let hasVisibleCards = !!cards && cards.some((card) => !card.facedown);
+    const hasVisibleCards = !!cards && cards.some((card) => !card.facedown);
 
-    let drawDeck = (
+    return (
         <CardPile
             className='draw'
             cardCount={cardCount}
@@ -74,9 +64,8 @@ const DrawDeck = ({
             disablePopup={!hasVisibleCards && (spectating || !isMe)}
             hiddenTopCard={!revealTopCard}
             numColumns={7}
+            numRows={3.2}
             onCardClick={onCardClick}
-            onMouseOut={onMouseOut}
-            onMouseOver={onMouseOver}
             onPopupChange={handlePopupChange}
             popupLocation={popupLocation}
             popupMenu={drawDeckPopupMenu}
@@ -85,8 +74,6 @@ const DrawDeck = ({
             title='Draw'
         />
     );
-
-    return renderDroppablePile('draw deck', drawDeck);
 };
 
 export default DrawDeck;

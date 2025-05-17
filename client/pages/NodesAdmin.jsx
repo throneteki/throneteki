@@ -16,6 +16,9 @@ import {
     TableHeader,
     TableRow
 } from '@heroui/react';
+import LoadingSpinner from '../Components/Site/LoadingSpinner';
+import AlertPanel from '../Components/Site/AlertPanel';
+import Page from './Page';
 
 const NodeAdmin = () => {
     const dispatch = useDispatch();
@@ -46,60 +49,68 @@ const NodeAdmin = () => {
         [dispatch]
     );
 
-    const getNodesTable = () => {
-        const body = nodeStatus.map((node, index) => (
-            <TableRow key={index}>
-                <TableCell>{node.name}</TableCell>
-                <TableCell>{node.numGames}</TableCell>
-                <TableCell>{node.status}</TableCell>
-                <TableCell>{node.version}</TableCell>
-                <TableCell className='flex gap-2'>
-                    <Button color='primary' onPress={(event) => onToggleNodeClick(node, event)}>
-                        {node.status === 'active' ? 'Disable' : 'Enable'}
-                    </Button>
-                    <Button color='danger' onPress={(event) => onRestartNodeClick(node, event)}>
-                        Restart
-                    </Button>
-                </TableCell>
-            </TableRow>
-        ));
-
-        return (
-            <Table isStriped>
-                <TableHeader>
-                    <TableColumn>Node Name</TableColumn>
-                    <TableColumn>Num Games</TableColumn>
-                    <TableColumn>Status</TableColumn>
-                    <TableColumn>Version</TableColumn>
-                    <TableColumn>Actions</TableColumn>
-                </TableHeader>
-                <TableBody>{body}</TableBody>
-            </Table>
-        );
-    };
-
-    let content;
-
-    if (!nodeStatus) {
-        content = <div>Waiting for game node status from the lobby...</div>;
-    } else if (nodeStatus.length > 0) {
-        content = getNodesTable();
-    } else {
-        content = <div>There are no game nodes connected. This is probably bad.</div>;
-    }
-
     return (
-        <div className='w-2/3 mx-auto'>
+        <Page>
             <Panel title='Game Node Administration'>
-                {content}
-
-                <div className='mt-2'>
-                    <Button color='primary' onPress={onRefreshClick}>
-                        Refresh
-                    </Button>
+                <div className='flex flex-col gap-2'>
+                    {!nodeStatus ? (
+                        <LoadingSpinner />
+                    ) : (
+                        <>
+                            <Table isStriped>
+                                <TableHeader>
+                                    <TableColumn>Node Name</TableColumn>
+                                    <TableColumn>Num Games</TableColumn>
+                                    <TableColumn>Status</TableColumn>
+                                    <TableColumn>Version</TableColumn>
+                                    <TableColumn>Actions</TableColumn>
+                                </TableHeader>
+                                <TableBody
+                                    emptyContent={
+                                        <AlertPanel
+                                            variant='warning'
+                                            message='There are no game nodes connected. This is probably bad.'
+                                        />
+                                    }
+                                >
+                                    {nodeStatus?.map((node, index) => (
+                                        <TableRow key={index}>
+                                            <TableCell>{node.name}</TableCell>
+                                            <TableCell>{node.numGames}</TableCell>
+                                            <TableCell>{node.status}</TableCell>
+                                            <TableCell>{node.version}</TableCell>
+                                            <TableCell className='flex gap-2'>
+                                                <Button
+                                                    color='primary'
+                                                    onPress={(event) =>
+                                                        onToggleNodeClick(node, event)
+                                                    }
+                                                >
+                                                    {node.status === 'active'
+                                                        ? 'Disable'
+                                                        : 'Enable'}
+                                                </Button>
+                                                <Button
+                                                    color='danger'
+                                                    onPress={(event) =>
+                                                        onRestartNodeClick(node, event)
+                                                    }
+                                                >
+                                                    Restart
+                                                </Button>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                            <Button color='primary' className='self-start' onPress={onRefreshClick}>
+                                Refresh
+                            </Button>
+                        </>
+                    )}
                 </div>
             </Panel>
-        </div>
+        </Page>
     );
 };
 

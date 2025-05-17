@@ -1,5 +1,5 @@
 describe('time limit', function () {
-    integration(function () {
+    integration({ useGameTimeLimit: true, gameTimeLimit: 1 }, function () {
         describe('when a game has a time limit', function () {
             beforeEach(function () {
                 const deck = this.buildDeck('baratheon', [
@@ -21,8 +21,6 @@ describe('time limit', function () {
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
-                this.game.useGameTimeLimit = true;
-                this.game.gameTimeLimit = 1;
                 this.startGame();
                 this.keepStartingHands();
             });

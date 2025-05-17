@@ -1,14 +1,9 @@
 import React, { useState } from 'react';
 import { Switch } from '@heroui/react';
 import Panel from '../Site/Panel';
+import { GameFormats, GameTypes } from '../../constants';
 
 const GameFilter = ({ filter, onFilterChanged }) => {
-    const filters = [
-        { name: 'beginner', label: 'Beginner' },
-        { name: 'casual', label: 'Casual' },
-        { name: 'competitive', label: 'Competitive' }
-    ];
-
     const [currentFilter, setCurrentFilter] = useState(filter);
 
     const onFilterChecked = (name, checked) => {
@@ -22,22 +17,37 @@ const GameFilter = ({ filter, onFilterChanged }) => {
 
     return (
         <Panel type='primary'>
-            <div className='grid lg:grid-cols-3'>
-                {filters.map((filter) => (
-                    <div key={filter.name}>
-                        <Switch
-                            id={filter.name}
-                            onValueChange={(isSelected) => {
-                                onFilterChecked(filter.name, isSelected);
-                            }}
-                            isSelected={currentFilter[filter.name]}
-                        >
-                            {filter.label}
-                        </Switch>
-                    </div>
-                ))}
-            </div>
-            <div className='mt-2'>
+            <div className='h-full flex flex-col md:flex-row gap-2 md:items-center'>
+                <div className='flex gap-2 flex-wrap'>
+                    {GameTypes.map((filter) => (
+                        <div key={filter.name}>
+                            <Switch
+                                id={filter.name}
+                                onValueChange={(isSelected) => {
+                                    onFilterChecked(filter.name, isSelected);
+                                }}
+                                isSelected={currentFilter[filter.name]}
+                            >
+                                {filter.label}
+                            </Switch>
+                        </div>
+                    ))}
+                </div>
+                <div className='flex gap-2 flex-wrap'>
+                    {GameFormats.map((filter) => (
+                        <div key={filter.name}>
+                            <Switch
+                                id={filter.name}
+                                onValueChange={(isSelected) => {
+                                    onFilterChecked(filter.name, isSelected);
+                                }}
+                                isSelected={currentFilter[filter.name]}
+                            >
+                                {filter.label}
+                            </Switch>
+                        </div>
+                    ))}
+                </div>
                 <Switch
                     id='onlyShowNew'
                     onValueChange={(isSelected) => {

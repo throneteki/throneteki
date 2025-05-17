@@ -24,10 +24,7 @@ class ChooseTitlePrompt extends BaseStep {
             return false;
         }
 
-        for (let selection of this.selections) {
-            this.titlePool.chooseFromPool(selection.player, selection.title);
-            this.game.addMessage('{0} selects {1}', selection.player, selection.title);
-        }
+        this.titlePool.announceTitles(this.selections);
     }
 
     promptForTitle(player) {
@@ -44,14 +41,16 @@ class ChooseTitlePrompt extends BaseStep {
     }
 
     chooseTitle(player, titleId) {
-        let title = this.remainingTitles.find((title) => title.uuid === titleId);
+        const title = this.remainingTitles.find((title) => title.uuid === titleId);
 
         if (!title) {
             return false;
         }
 
+        this.titlePool.chooseFromPool(player, title);
         this.remainingTitles = this.remainingTitles.filter((t) => t !== title);
         this.selections.push({ player: player, title: title });
+        this.game.addMessage('{0} has selected their title', player);
 
         return true;
     }

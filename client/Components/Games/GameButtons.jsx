@@ -6,12 +6,11 @@ const GameButtons = ({ onNewGame, onQuickJoin }) => {
     const user = useSelector((state) => state.auth.user);
 
     return (
-        <>
-            <Button isDisabled={!user} color='primary' onClick={() => onNewGame && onNewGame()}>
+        <div className='flex lg:flex-col flex-row gap-2'>
+            <Button isDisabled={!user} color='primary' onPress={() => onNewGame && onNewGame()}>
                 New Game
             </Button>
             <Button
-                className='mt-2'
                 disabled={!user}
                 color='primary'
                 onPress={() => {
@@ -20,7 +19,7 @@ const GameButtons = ({ onNewGame, onQuickJoin }) => {
             >
                 Quick Join
             </Button>
-        </>
+        </div>
     );
 };
 

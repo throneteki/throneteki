@@ -1,5 +1,5 @@
 describe('melee titles', function () {
-    integration({ isMelee: true }, function () {
+    integration({ gameFormat: 'melee' }, function () {
         describe('selecting titles', function () {
             beforeEach(function () {
                 const deck = this.buildDeck('stark', ['Trading with the Pentoshi', 'Hedge Knight']);

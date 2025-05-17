@@ -23,12 +23,8 @@ const CardCounters = ({ counters }) => {
     }
 
     return (
-        <div className='w-full h-full flex items-center justify-center absolute top-0 left-0 z-20'>
-            <div
-                className={
-                    'text-white justify-center flex flex-wrap items-center gap-1 h-auto w-full flex-row ignore-mouse-events'
-                }
-            >
+        <div className='w-full h-full flex items-center z-[200] justify-center absolute left-0 top-0 pointer-events-none'>
+            <div className='text-white justify-center flex flex-wrap items-center gap-1 h-auto w-full flex-row'>
                 {counterDivs}
             </div>
         </div>
