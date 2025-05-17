@@ -1,15 +1,9 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { sendConcedeMessage, sendLeaveGameMessage } from '../../redux/reducers/game';
-import { Button, Link, NavbarMenuItem, Tooltip } from '@heroui/react';
+import { Link, NavbarMenuItem, Tooltip } from '@heroui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-    faDownLeftAndUpRightToCenter,
-    faUpRightAndDownLeftFromCenter,
-    faWarning
-} from '@fortawesome/free-solid-svg-icons';
-import ConfirmDialog from '../Site/ConfirmDialog';
-import screenfull from 'screenfull';
+import { faWarning } from '@fortawesome/free-solid-svg-icons';
 
 const ContextMenu = ({ onPress = () => true }) => {
     const dispatch = useDispatch();
@@ -18,8 +12,6 @@ const ContextMenu = ({ onPress = () => true }) => {
 
     const [lastSpectatorCount, setLastSpectatorCount] = useState(0);
     const [showSpectatorWarning, setShowSpectatorWarning] = useState(false);
-    const [showConfirm, setShowConfirm] = useState(false);
-    const [isFullscreen, setIsFullscreen] = useState(screenfull.isFullscreen);
 
     const isGameActive = useMemo(() => {
         if (!currentGame || !user) {
@@ -51,19 +43,19 @@ const ContextMenu = ({ onPress = () => true }) => {
     }, [currentGame, user]);
 
     const onLeaveClick = useCallback(() => {
-        onPress();
         const spectating = user && currentGame && !currentGame.players[user.username];
         if (!spectating && isGameActive) {
-            setShowConfirm(true);
+            onPress(true);
 
             return;
         }
 
+        onPress(false);
         dispatch(sendLeaveGameMessage());
     }, [currentGame, dispatch, isGameActive, onPress, user]);
 
     const onConcedeClick = useCallback(() => {
-        onPress();
+        onPress(false);
         dispatch(sendConcedeMessage());
     }, [dispatch, onPress]);
 
@@ -72,28 +64,6 @@ const ContextMenu = ({ onPress = () => true }) => {
         const menuItemClass =
             'cursor-pointer text-medium font-[PoppinsMedium] text-white transition-colors duration-500 ease-in-out hover:text-gray-500 text-nowrap';
         if (currentGame?.started) {
-            menuOptions.push(
-                <Button
-                    variant='flat'
-                    onPress={() => {
-                        onPress();
-                        if (screenfull.isEnabled) {
-                            screenfull.toggle();
-                            setIsFullscreen(!isFullscreen);
-                        }
-                    }}
-                    startContent={
-                        <FontAwesomeIcon
-                            icon={
-                                isFullscreen
-                                    ? faDownLeftAndUpRightToCenter
-                                    : faUpRightAndDownLeftFromCenter
-                            }
-                        />
-                    }
-                    isIconOnly={true}
-                />
-            );
             menuOptions.unshift(
                 <Link onPress={onLeaveClick} className={menuItemClass}>
                     Leave Game
@@ -143,15 +113,6 @@ const ContextMenu = ({ onPress = () => true }) => {
             return (
                 <div key={index}>
                     <NavbarMenuItem>{menuItem}</NavbarMenuItem>{' '}
-                    <ConfirmDialog
-                        isOpen={showConfirm}
-                        message='Your game is not finished, are you sure you want to leave?'
-                        onOpenChange={setShowConfirm}
-                        onCancel={() => setShowConfirm(false)}
-                        onOk={async () => {
-                            dispatch(sendLeaveGameMessage());
-                        }}
-                    />
                 </div>
             );
         });
@@ -159,13 +120,9 @@ const ContextMenu = ({ onPress = () => true }) => {
         currentGame?.players,
         currentGame?.spectators,
         currentGame?.started,
-        dispatch,
-        isFullscreen,
         lastSpectatorCount,
         onConcedeClick,
         onLeaveClick,
-        onPress,
-        showConfirm,
         showSpectatorWarning,
         user?.username
     ]);
