@@ -15,53 +15,57 @@ const Game = ({
     onRemoveGame,
     onWatchGame,
     showJoinButton,
-    showWatchButton,
-    maxPlayers
+    showWatchButton
 }) => {
+    const getPlayersInSlotOrder = (game) => {
+        const playersInSeatOrder = Object.values(game.players).sort((a, b) => a.seatNo - b.seatNo);
+
+        const numPlayers = playersInSeatOrder.length;
+        const ownerSeatNo = playersInSeatOrder.find((player) => player.owner)?.seatNo || 1;
+        for (let i = 0; i < ownerSeatNo - 1; i++) {
+            playersInSeatOrder.push(playersInSeatOrder.shift());
+        }
+        const players = [];
+        for (let i = 0; i < numPlayers; i++) {
+            if (i % 2 === 0) {
+                players.push(playersInSeatOrder.pop());
+            } else {
+                players.push(playersInSeatOrder.shift());
+            }
+        }
+        return players;
+    };
     const getPlayerSlots = useCallback(
         (game) => {
-            const slots = Object.values(game.players)
-                .sort((a, b) => a.seatNo - b.seatNo)
-                .map((player, index) => (
-                    <GamePlayerSlot
-                        className='w-1/2 px-1'
-                        key={player.name}
-                        player={player}
-                        position={index % 2 === 0 ? 'left' : 'right'}
-                    />
-                ));
+            const slots = getPlayersInSlotOrder(game).map((player, index) => (
+                <GamePlayerSlot
+                    key={player.name}
+                    player={player}
+                    position={index % 2 === 0 ? 'left' : 'right'}
+                />
+            ));
 
             // If player can join, then add join button on latest slot
-            if (slots.length < maxPlayers && showJoinButton) {
-                const joinClassName = classNames('w-1/2 px-1 flex', {
+            if (slots.length < game.maxPlayers && showJoinButton) {
+                const joinClassName = classNames('flex', {
                     'justify-end': slots.length % 2 === 0
                 });
                 slots.push(
-                    <div className={joinClassName}>
+                    <div key={'slot_join'} className={joinClassName}>
                         <div className='bg-default-100/50 rounded-lg flex justify-center items-center max-w-52 h-full min-h-20 flex-grow'>
                             <Button size='sm' color='primary' onPress={onJoinGame}>
-                                {maxPlayers > 2 ? `Join (${slots.length}/${maxPlayers})` : 'Join'}
+                                {game.maxPlayers > 2
+                                    ? `Join (${slots.length}/${game.maxPlayers})`
+                                    : 'Join'}
                             </Button>
                         </div>
                     </div>
                 );
             }
-            // Group the slots into rows of 2
-            const rows = slots.reduce((r, s, i) => {
-                if (i % 2 === 0) {
-                    r.push([s]);
-                } else {
-                    r[r.length - 1].push(s);
-                }
-                return r;
-            }, []);
-            return rows.map((row, index) => (
-                <div key={`row-${index}`} className='flex w-full'>
-                    {row}
-                </div>
-            ));
+
+            return slots;
         },
-        [maxPlayers, onJoinGame, showJoinButton]
+        [onJoinGame, showJoinButton]
     );
 
     const rowClass = classNames(
@@ -89,6 +93,8 @@ const Game = ({
             'bg-danger/50': game.gameType === 'competitive'
         }
     );
+
+    const slots = getPlayerSlots(game);
 
     return (
         <div key={game.id}>
@@ -125,8 +131,11 @@ const Game = ({
                         )}
                     </span>
                 </div>
-                <div className='flex flex-wrap justify-center px-2 py-4 gap-2'>
-                    {getPlayerSlots(game)}
+                <div
+                    className='grid grid-cols-2 px-2 py-4 gap-2'
+                    dir={Object.values(game.players).length <= 1 ? 'auto' : 'rtl'}
+                >
+                    {slots}
                 </div>
                 <div className='flex justify-center gap-2'>
                     {showWatchButton && (

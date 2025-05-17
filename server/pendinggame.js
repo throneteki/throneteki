@@ -216,6 +216,7 @@ class PendingGame {
                 this.removeAndResetOwner(playerName);
 
                 delete this.players[playerName];
+                this.cleanPendingSeats();
             }
         }
 
@@ -239,10 +240,20 @@ class PendingGame {
                 this.removeAndResetOwner(playerName);
 
                 delete this.players[playerName];
+                this.cleanPendingSeats();
             }
         } else {
             delete this.spectators[playerName];
         }
+    }
+
+    cleanPendingSeats() {
+        let seatNo = 1;
+        Object.values(this.players)
+            .sort((a, b) => a.seatNo - b.seatNo)
+            .forEach((player) => {
+                player.seatNo = seatNo++;
+            });
     }
 
     chat(playerName, message) {

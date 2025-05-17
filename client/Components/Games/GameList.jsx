@@ -118,7 +118,6 @@ const GameList = ({ gameFilter, games, onJoinOrWatch }) => {
                     onRemoveGame={() => removeGame(game)}
                     onWatchGame={() => watchGame(game)}
                     isAdmin={isAdmin}
-                    maxPlayers={game.maxPlayers}
                 />
             );
         }
