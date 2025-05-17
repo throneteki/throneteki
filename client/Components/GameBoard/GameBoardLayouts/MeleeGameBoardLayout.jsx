@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import PlayerRow from '../PlayerRow';
 import PlayerBoard from '../PlayerBoard';
-import Droppable from '../Droppable';
 import { sendShowDrawDeckMessage, sendShuffleDeckMessage } from '../../../redux/reducers/game';
 import { useDispatch } from 'react-redux';
 import PlayerStats from '../PlayerStats';
@@ -25,16 +24,6 @@ const MeleeGameBoardLayout = ({
             const isMe = thisPlayer && player === thisPlayer;
             const isActivePrompt = player.isActivePrompt;
 
-            const playerBoard = (
-                <PlayerBoard
-                    cardsInPlay={player.cardPiles.cardsInPlay}
-                    onCardClick={onCardClick}
-                    onMenuItemClick={onMenuItemClick}
-                    rowDirection={side === 'bottom' ? 'default' : 'reverse'}
-                    cardSize={thisPlayer.cardSize}
-                />
-            );
-
             const wrapperClassName = classNames('flex flex-grow', {
                 'flex-col': side === 'top',
                 'flex-col-reverse': side === 'bottom',
@@ -42,7 +31,7 @@ const MeleeGameBoardLayout = ({
             });
 
             return (
-                <div key={player.name} className={wrapperClassName}>
+                <div key={`seat_${player.seatNo}`} className={wrapperClassName}>
                     <PlayerStats
                         showControls={isMe}
                         stats={player.stats}
@@ -85,13 +74,14 @@ const MeleeGameBoardLayout = ({
                         showHiddenPiles={isMe && isDragging}
                     />
                     <div className='relative flex flex-row-reverse flex-grow'>
-                        {isMe ? (
-                            <Droppable source='play area' className='h-full flex flex-grow'>
-                                {playerBoard}
-                            </Droppable>
-                        ) : (
-                            playerBoard
-                        )}
+                        <PlayerBoard
+                            isDroppable={isMe}
+                            cardsInPlay={player.cardPiles.cardsInPlay}
+                            onCardClick={onCardClick}
+                            onMenuItemClick={onMenuItemClick}
+                            rowDirection={side === 'bottom' ? 'default' : 'reverse'}
+                            cardSize={thisPlayer.cardSize}
+                        />
                         <SideBoardPanel
                             player={player}
                             thisPlayer={thisPlayer}
@@ -115,54 +105,64 @@ const MeleeGameBoardLayout = ({
         ]
     );
 
-    // Since rendering must be in top/bottom groups (with bottom first), we must arrange
-    // in seat order, then rotate boards around to ensure thisPlayer is in the bottom left
-    const players = useMemo(() => {
+    // Grid is ordered top to bottom, left to right, ensuring that:
+    // 1. Bottom left cell contains thisPlayer
+    // 2. Other players are arranged in clockwise seating order, around thisPlayer
+    // 3. If there is an odd number of players, thisPlayer will span the first two top opponents boards
+    const playerBoardsGrid = useMemo(() => {
+        // If there is somehow only one player, make sure they are rendered on the bottom, and skip the grid logic
+        if (otherPlayers.length === 0) {
+            return renderPlayerBoard(thisPlayer, 'bottom', true);
+        }
+
+        // Sort players in descending seat number, then rotate so thisPlayer is the 0th index
         const playersInSeatOrder = [thisPlayer, ...otherPlayers].sort(
-            (a, b) => a.seatNo - b.seatNo
+            (a, b) => b.seatNo - a.seatNo
         );
-        // Rotate so thisPlayer is first index
-        while (playersInSeatOrder[0].seatNo !== thisPlayer.seatNo) {
+        for (let i = 0; i < thisPlayer.seatNo - 1; i++) {
             playersInSeatOrder.push(playersInSeatOrder.shift());
         }
-        const numPlayers = playersInSeatOrder.length;
-        const ordered = [];
-        for (let i = 0; i < numPlayers; i++) {
-            if (i === 0 || i % 2 === 1) {
-                ordered.push(playersInSeatOrder.shift());
+
+        const isOdd = playersInSeatOrder.length % 2 !== 0;
+        const gridCells = [];
+        let ci = 0; // Cell Index
+
+        while (playersInSeatOrder.length > 0) {
+            if (ci % 2 !== 1) {
+                // Top row
+                const player = playersInSeatOrder.pop();
+
+                if (isOdd && ci === 0) {
+                    // If odd number of players, we need to ensure the first cell contains the
+                    // first two players in top row, to ensure thisPlayer spans both their widths
+                    const otherPlayer = playersInSeatOrder.pop();
+                    gridCells.push(
+                        <div
+                            key={`seat_${player.seatNo}_${otherPlayer.seatNo}`}
+                            className='flex flex-grow'
+                        >
+                            {renderPlayerBoard(player, 'top', true)}
+                            {renderPlayerBoard(otherPlayer, 'top', false)}
+                        </div>
+                    );
+                } else {
+                    // Otherwise, just render the top player normally
+                    gridCells.push(renderPlayerBoard(player, 'top', ci < 2));
+                }
             } else {
-                ordered.push(playersInSeatOrder.pop());
+                // Bottom row
+                gridCells.push(renderPlayerBoard(playersInSeatOrder.shift(), 'bottom', ci < 2));
             }
+            ci++;
         }
-        return ordered;
-    }, [otherPlayers, thisPlayer]);
+        return gridCells;
+    }, [otherPlayers, thisPlayer, renderPlayerBoard]);
 
-    const remaining = [...players];
-    const playerBoardGrid = [];
-    const isOddPlayers = players.length % 2 !== 0;
-    for (let column = 0; column < Math.floor(players.length / 2); column++) {
-        const bottom = remaining.shift();
-        // If we have an odd number of players, we ensure thisPlayer's board will span the width of
-        // the first 2 above them, with remaining players rendered normally
-        const top = column === 0 && isOddPlayers ? remaining.splice(0, 2) : remaining.shift();
-
-        playerBoardGrid.push(
-            <div key={column} className='flex flex-col flex-grow'>
-                {Array.isArray(top) ? (
-                    <div className='flex flex-grow'>
-                        {top.map((player, index) =>
-                            renderPlayerBoard(player, 'top', index === 0 && column === 0)
-                        )}
-                    </div>
-                ) : (
-                    renderPlayerBoard(top, 'top', column === 0)
-                )}
-                {renderPlayerBoard(bottom, 'bottom', column === 0)}
-            </div>
-        );
-    }
-
-    return <div className='flex h-full'>{playerBoardGrid}</div>;
+    return (
+        <div className='min-h-full grid grid-rows-2 grid-flow-col [grid-auto-columns:auto] [grid-auto-rows:auto]'>
+            {playerBoardsGrid}
+        </div>
+    );
 };
 
 export default MeleeGameBoardLayout;

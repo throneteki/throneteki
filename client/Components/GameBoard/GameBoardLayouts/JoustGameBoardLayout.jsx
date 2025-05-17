@@ -1,7 +1,6 @@
 import React, { useCallback } from 'react';
 import PlayerRow from '../PlayerRow';
 import PlayerBoard from '../PlayerBoard';
-import Droppable from '../Droppable';
 import { sendShowDrawDeckMessage, sendShuffleDeckMessage } from '../../../redux/reducers/game';
 import { useDispatch } from 'react-redux';
 import PlayerStats from '../PlayerStats';
@@ -23,16 +22,6 @@ const JoustGameBoardLayout = ({
     const renderPlayerBoard = useCallback(
         (player, side) => {
             const isMe = thisPlayer && player === thisPlayer;
-
-            const playerBoard = (
-                <PlayerBoard
-                    cardsInPlay={player.cardPiles.cardsInPlay}
-                    onCardClick={onCardClick}
-                    onMenuItemClick={onMenuItemClick}
-                    rowDirection={side === 'bottom' ? 'default' : 'reverse'}
-                    cardSize={thisPlayer.cardSize}
-                />
-            );
 
             const wrapperClassName = classNames('flex flex-grow', {
                 'flex-col': side === 'top',
@@ -81,14 +70,15 @@ const JoustGameBoardLayout = ({
                         mustShowPlotSelection={player.mustShowPlotSelection}
                         showHiddenPiles={isMe && isDragging}
                     />
-                    <div className='relative flex flex-row-reverse flex-grow'>
-                        {isMe ? (
-                            <Droppable source='play area' className='h-full flex flex-grow'>
-                                {playerBoard}
-                            </Droppable>
-                        ) : (
-                            playerBoard
-                        )}
+                    <div className='h-full relative flex flex-row-reverse flex-grow'>
+                        <PlayerBoard
+                            isDroppable={isMe}
+                            cardsInPlay={player.cardPiles.cardsInPlay}
+                            onCardClick={onCardClick}
+                            onMenuItemClick={onMenuItemClick}
+                            rowDirection={side === 'bottom' ? 'default' : 'reverse'}
+                            cardSize={thisPlayer.cardSize}
+                        />
                         <SideBoardPanel
                             player={player}
                             thisPlayer={thisPlayer}
@@ -111,11 +101,9 @@ const JoustGameBoardLayout = ({
         ]
     );
     return (
-        <div className='flex min-h-full'>
-            <div className='flex flex-col flex-grow'>
-                {renderPlayerBoard(otherPlayer, 'top')}
-                {renderPlayerBoard(thisPlayer, 'bottom')}
-            </div>
+        <div className='min-h-full grid grid-rows-2 grid-cols-1 [grid-auto-columns:auto] [grid-auto-rows:auto]'>
+            {renderPlayerBoard(otherPlayer, 'top')}
+            {renderPlayerBoard(thisPlayer, 'bottom')}
         </div>
     );
 };

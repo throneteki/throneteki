@@ -3,8 +3,10 @@ import classNames from 'classnames';
 
 import Card from './Card';
 import { standardiseCardSize } from '../../util';
+import Droppable from './Droppable';
 
 const PlayerBoard = ({
+    isDroppable,
     cardsInPlay,
     rowDirection,
     onCardClick,
@@ -97,8 +99,16 @@ const PlayerBoard = ({
             'our-side': rowDirection === 'default'
         }
     );
+    const content = <div className={wrapperClassName}>{renderRows(rows)}</div>;
 
-    return <div className={wrapperClassName}>{renderRows(rows)}</div>;
+    if (isDroppable) {
+        return (
+            <Droppable source='play area' className='flex flex-grow'>
+                {content}
+            </Droppable>
+        );
+    }
+    return content;
 };
 
 export default PlayerBoard;
