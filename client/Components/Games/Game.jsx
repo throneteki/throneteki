@@ -21,8 +21,8 @@ const Game = ({
         const playersInSeatOrder = Object.values(game.players).sort((a, b) => a.seatNo - b.seatNo);
 
         const numPlayers = playersInSeatOrder.length;
-        const ownerSeatNo = playersInSeatOrder.find((player) => player.owner)?.seatNo || 1;
-        for (let i = 0; i < ownerSeatNo - 1; i++) {
+        const ownerIndex = playersInSeatOrder.findIndex((p) => p.owner);
+        for (let i = 0; i < ownerIndex; i++) {
             playersInSeatOrder.push(playersInSeatOrder.shift());
         }
         const players = [];
