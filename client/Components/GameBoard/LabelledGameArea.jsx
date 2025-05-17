@@ -1,15 +1,18 @@
-import React, { useMemo } from 'react';
+import React, { forwardRef, useMemo } from 'react';
 import classNames from 'classnames';
 
-const LabelledGameArea = ({
-    label,
-    disableBackground = false,
-    className,
-    position = 'top left',
-    children,
-    style,
-    onClick
-}) => {
+const LabelledGameArea = forwardRef(function LabelledGameArea(
+    {
+        label,
+        disableBackground = false,
+        className,
+        position = 'top left',
+        children,
+        style,
+        onClick
+    },
+    ref
+) {
     const areaLabel = useMemo(() => {
         if (!label) {
             return null;
@@ -24,7 +27,7 @@ const LabelledGameArea = ({
 
     const areaClassName = classNames('relative', className);
     return (
-        <div className={areaClassName} onClick={onClick} style={style}>
+        <div ref={ref} className={areaClassName} onClick={onClick} style={style}>
             {!disableBackground && (
                 <div className='absolute border-2 border-default-100/55 bg-black/55 w-full h-full rounded-md' />
             )}
@@ -32,6 +35,6 @@ const LabelledGameArea = ({
             {areaLabel}
         </div>
     );
-};
+});
 
 export default LabelledGameArea;

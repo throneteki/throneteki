@@ -38,6 +38,7 @@ const CardPile = ({
 }) => {
     const [showPopup, setShowPopup] = useState(cards && cards.some((card) => card.selectable));
     const prevCards = useRef(cards);
+    const areaRef = useRef(null);
 
     const isTopCardSelectable = useMemo(() => {
         if (!topCard) {
@@ -214,6 +215,7 @@ const CardPile = ({
 
         return (
             <MovablePanel
+                anchorRef={areaRef}
                 title={title}
                 name={source}
                 onCloseClick={onCloseClick}
@@ -276,6 +278,7 @@ const CardPile = ({
 
     return (
         <LabelledGameArea
+            ref={areaRef}
             label={headerText}
             position={titlePosition}
             className={retClassName}

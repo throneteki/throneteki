@@ -6,15 +6,24 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { useDndMonitor, useDraggable } from '@dnd-kit/core';
 import classNames from 'classnames';
 import { createPortal } from 'react-dom';
-// import { PopupDefaults } from './PopupDefaults';
 
-const MovablePanel = ({ name, side, title, onCloseClick, children, className }) => {
+const MovablePanel = ({
+    name,
+    side,
+    title,
+    onCloseClick,
+    anchorRef,
+    anchorOffset = 10,
+    children,
+    className
+}) => {
+    const popupRef = useRef(null);
+
     const key = `${name}-${side}`;
     const savedPosition = localStorage.getItem(key);
-    const initialPosition = (savedPosition && JSON.parse(savedPosition)) || { x: 150, y: 150 }; // PopupDefaults[key]; TODO: Implement popup defaults properly/programatically
+    const initialPosition = (savedPosition && JSON.parse(savedPosition)) || null;
 
     const [startPosition, setStartPosition] = useState(initialPosition);
-    const popupRef = useRef(null);
 
     const { attributes, listeners, setNodeRef, transform } = useDraggable({
         id: key,
@@ -51,10 +60,42 @@ const MovablePanel = ({ name, side, title, onCloseClick, children, className }) 
         }
     });
 
+    const getDefaultPosition = useCallback(() => {
+        if (anchorRef) {
+            // If an anchor ref is provided, place the popup directly above/below it (based on side)
+            if (anchorRef.current && popupRef.current) {
+                const anchorRect = anchorRef.current.getBoundingClientRect();
+                const popupRect = popupRef.current.getBoundingClientRect();
+                // Offset to center of anchor
+                const widthOffset = anchorRect.width / 2 - popupRect.width / 2;
+                // Offset by anchor height for top side, popup height for bottom
+                const heightOffset =
+                    side === 'top'
+                        ? anchorRect.height + anchorOffset
+                        : -popupRect.height - anchorOffset;
+
+                const anchoredPosition = {
+                    x: anchorRect.x + widthOffset,
+                    y: anchorRect.y + heightOffset
+                };
+                setStartPosition(anchoredPosition);
+                return anchoredPosition;
+            }
+        } else {
+            // Otherwise, place the popup in the center of the screen
+            const centerPosition = {
+                x: window.innerWidth / 2 - popupRef.current.clientWidth / 2,
+                y: window.innerHeight / 2 - popupRef.current.clientHeight / 2
+            };
+            setStartPosition(centerPosition);
+            return centerPosition;
+        }
+    }, [anchorOffset, anchorRef, side]);
+
     const updatePosition = useCallback(
         (offset) => {
             if (popupRef.current) {
-                let { x, y } = startPosition;
+                let { x, y } = startPosition || getDefaultPosition();
                 x += offset?.x || 0;
                 y += offset?.y || 0;
                 const height = popupRef.current.clientHeight;
@@ -74,7 +115,7 @@ const MovablePanel = ({ name, side, title, onCloseClick, children, className }) 
                 popupRef.current.style.left = `${x}px`;
             }
         },
-        [startPosition]
+        [getDefaultPosition, startPosition]
     );
 
     useEffect(() => {
