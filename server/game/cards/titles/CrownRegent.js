@@ -3,6 +3,7 @@ import TitleCard from '../../TitleCard.js';
 class CrownRegent extends TitleCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
+            targetLocation: 'title',
             match: this,
             effect: ability.effects.modifyDominanceStrength(2)
         });

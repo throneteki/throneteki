@@ -1655,7 +1655,7 @@ const Effects = {
             },
             unapply: function (player) {
                 player.multipleOpponentClaim = player.multipleOpponentClaim.filter(
-                    (c) => c === claimType
+                    (c) => c !== claimType
                 );
             }
         };
