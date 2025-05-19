@@ -10,6 +10,7 @@ import { createPortal } from 'react-dom';
 const MovablePanel = ({
     name,
     side,
+    id = side,
     title,
     onCloseClick,
     anchorRef,
@@ -19,7 +20,7 @@ const MovablePanel = ({
 }) => {
     const popupRef = useRef(null);
 
-    const key = `${name}-${side}`;
+    const key = `${name}-${id}`;
     const savedPosition = localStorage.getItem(key);
     const initialPosition = (savedPosition && JSON.parse(savedPosition)) || null;
 

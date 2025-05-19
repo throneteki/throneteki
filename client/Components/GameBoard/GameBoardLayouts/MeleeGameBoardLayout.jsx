@@ -20,7 +20,7 @@ const MeleeGameBoardLayout = ({
     const dispatch = useDispatch();
 
     const renderPlayerBoard = useCallback(
-        (player, side, hasSidePanel) => {
+        (player, side, sideNo, hasSidePanel) => {
             const isMe = thisPlayer && player === thisPlayer;
             const isActivePrompt = player.isActivePrompt;
 
@@ -47,6 +47,7 @@ const MeleeGameBoardLayout = ({
                         faction={player.faction}
                         hand={player.cardPiles.hand}
                         isMe={isMe}
+                        playerName={player.user?.username}
                         numDrawCards={player.numDrawCards}
                         onDrawPopupChange={
                             isMe
@@ -65,6 +66,7 @@ const MeleeGameBoardLayout = ({
                         spectating={!thisPlayer}
                         title={player.title}
                         side={side}
+                        sideNo={sideNo}
                         cardSize={thisPlayer.cardSize}
                         plotDeck={player.cardPiles.plotDeck}
                         plotDiscard={player.cardPiles.plotDiscard}
@@ -127,6 +129,8 @@ const MeleeGameBoardLayout = ({
         const isOdd = playersInSeatOrder.length % 2 !== 0;
         const gridCells = [];
         let ci = 0; // Cell Index
+        let tc = 0; // Top Player Count
+        let bc = 0; // Bottom Player Count
 
         while (playersInSeatOrder.length > 0) {
             if (ci % 2 !== 1) {
@@ -142,17 +146,19 @@ const MeleeGameBoardLayout = ({
                             key={`seat_${player.seatNo}_${otherPlayer.seatNo}`}
                             className='flex flex-grow'
                         >
-                            {renderPlayerBoard(player, 'top', true)}
-                            {renderPlayerBoard(otherPlayer, 'top', false)}
+                            {renderPlayerBoard(player, 'top', ++tc, true)}
+                            {renderPlayerBoard(otherPlayer, 'top', ++tc, false)}
                         </div>
                     );
                 } else {
                     // Otherwise, just render the top player normally
-                    gridCells.push(renderPlayerBoard(player, 'top', ci < 2));
+                    gridCells.push(renderPlayerBoard(player, 'top', ++tc, ci < 2));
                 }
             } else {
                 // Bottom row
-                gridCells.push(renderPlayerBoard(playersInSeatOrder.shift(), 'bottom', ci < 2));
+                gridCells.push(
+                    renderPlayerBoard(playersInSeatOrder.shift(), 'bottom', ++bc, ci < 2)
+                );
             }
             ci++;
         }

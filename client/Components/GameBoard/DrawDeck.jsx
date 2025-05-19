@@ -4,12 +4,15 @@ import { faEye, faShuffle } from '@fortawesome/free-solid-svg-icons';
 
 const DrawDeck = ({
     isMe,
+    playerName,
     showDeck,
     cards,
     cardCount,
     revealTopCard,
     onCardClick,
+    onMenuItemClick,
     popupLocation,
+    popupId,
     size,
     spectating,
     onPopupChange,
@@ -66,12 +69,15 @@ const DrawDeck = ({
             numColumns={7}
             numRows={3.2}
             onCardClick={onCardClick}
+            onMenuItemClick={onMenuItemClick}
             onPopupChange={handlePopupChange}
             popupLocation={popupLocation}
+            popupId={popupId}
             popupMenu={drawDeckPopupMenu}
             size={size}
             source='draw deck'
             title='Draw'
+            playerName={playerName}
         />
     );
 };

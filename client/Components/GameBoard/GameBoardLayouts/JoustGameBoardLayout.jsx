@@ -44,6 +44,7 @@ const JoustGameBoardLayout = ({
                         faction={player.faction}
                         hand={player.cardPiles.hand}
                         isMe={isMe}
+                        playerName={player.user?.username}
                         numDrawCards={player.numDrawCards}
                         onDrawPopupChange={
                             isMe

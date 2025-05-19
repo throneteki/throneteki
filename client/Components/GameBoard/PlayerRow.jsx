@@ -15,8 +15,10 @@ const PlayerRow = ({
     onCardClick,
     onMenuItemClick,
     side,
+    sideNo,
     cardSize,
     isMe,
+    playerName,
     title,
     hand,
     numDrawCards,
@@ -49,79 +51,85 @@ const PlayerRow = ({
         [isMe]
     );
 
-    const getAgendas = useCallback(() => {
-        const agenda = agendas?.length > 0 ? agendas[0] : undefined;
-        if (!agenda || agenda.code === '') {
-            return (
-                // Show empty card pile to ensure empty slot looks consistent
-                <CardPile
-                    cards={[]}
-                    disablePopup={true}
-                    onCardClick={onCardClick}
-                    onMenuItemClick={onMenuItemClick}
-                    popupLocation={side}
-                    showCards={false}
-                    source='agendas'
-                    title={null}
-                    topCard={null}
-                    size={cardSize}
-                />
-            );
-        }
-        const cardWidth = getCardDimensions(cardSize);
-
-        const underneath = agenda.childCards ? [...agenda.childCards] : [];
-        const disablePopup = underneath.length === 0;
-        const title = !disablePopup ? 'Agenda' : null;
-        const source = 'agenda';
-        const additionalAgendas = agendas.slice(1);
-        const agendaClass = (a) => classNames('agenda', `agenda-${a.code}`);
-
-        const spreadWidth = cardWidth.width / 2;
-
-        const retAgendas = [
-            <div key={agenda.uuid} className={agendaClass(agenda)}>
-                {renderDroppablePile(
-                    source,
-                    <CardPile
-                        cards={underneath}
-                        disablePopup={disablePopup}
-                        onCardClick={onCardClick}
-                        onMenuItemClick={onMenuItemClick}
-                        popupLocation={side}
-                        showCards={true}
-                        source={source}
-                        title={title}
-                        topCard={agenda}
-                        size={cardSize}
-                        numColumns={5}
-                        numRows={1.2}
-                    />
-                )}
-            </div>
-        ];
-
-        // Add all additional agendas separately (not as a CardPile)
-        retAgendas.unshift(
-            ...additionalAgendas.reverse().map((agenda) => {
-                const style = { marginLeft: `-${spreadWidth}px` };
+    const getAgendas = useCallback(
+        (cardPileProps) => {
+            const agenda = agendas?.length > 0 ? agendas[0] : undefined;
+            if (!agenda || agenda.code === '') {
                 return (
-                    <div key={agenda.uuid} className={agendaClass(agenda)} style={style}>
-                        <Card
-                            card={agenda}
-                            source={source}
-                            disableHover={false}
-                            onClick={onCardClick}
-                            onMenuItemClick={onMenuItemClick}
-                            orientation='vertical'
-                            size={cardSize}
-                        />
-                    </div>
+                    // Show empty card pile to ensure empty slot looks consistent
+                    <CardPile
+                        cards={[]}
+                        disablePopup={true}
+                        showCards={false}
+                        source='agendas'
+                        title={null}
+                        topCard={null}
+                        {...cardPileProps}
+                    />
                 );
-            })
-        );
-        return <div className='relative flex flex-row-reverse'>{retAgendas}</div>;
-    }, [agendas, renderDroppablePile, onCardClick, onMenuItemClick, side, cardSize]);
+            }
+            const cardWidth = getCardDimensions(cardSize);
+
+            const underneath = agenda.childCards ? [...agenda.childCards] : [];
+            const disablePopup = underneath.length === 0;
+            const title = !disablePopup ? 'Agenda' : null;
+            const source = 'agenda';
+            const additionalAgendas = agendas.slice(1);
+            const agendaClass = (a) => classNames('agenda', `agenda-${a.code}`);
+
+            const spreadWidth = cardWidth.width / 2;
+
+            const retAgendas = [
+                <div key={agenda.uuid} className={agendaClass(agenda)}>
+                    {renderDroppablePile(
+                        source,
+                        <CardPile
+                            cards={underneath}
+                            disablePopup={disablePopup}
+                            showCards={true}
+                            source={source}
+                            title={title}
+                            topCard={agenda}
+                            numColumns={5}
+                            numRows={1.2}
+                            {...cardPileProps}
+                        />
+                    )}
+                </div>
+            ];
+
+            // Add all additional agendas separately (not as a CardPile)
+            retAgendas.unshift(
+                ...additionalAgendas.reverse().map((agenda) => {
+                    const style = { marginLeft: `-${spreadWidth}px` };
+                    return (
+                        <div key={agenda.uuid} className={agendaClass(agenda)} style={style}>
+                            <Card
+                                card={agenda}
+                                source={source}
+                                disableHover={false}
+                                onClick={onCardClick}
+                                onMenuItemClick={onMenuItemClick}
+                                orientation='vertical'
+                                size={cardSize}
+                            />
+                        </div>
+                    );
+                })
+            );
+            return <div className='relative flex flex-row-reverse'>{retAgendas}</div>;
+        },
+        [agendas, cardSize, renderDroppablePile, onCardClick, onMenuItemClick]
+    );
+
+    const cardPileProps = {
+        onCardClick,
+        onMenuItemClick,
+        popupLocation: side,
+        popupId: (sideNo ?? 1) === 1 ? side : `${side}-${sideNo}`, // Retain legacy top/bottom ids for first on each side
+        size: cardSize,
+        playerName
+    };
 
     const getTitleCard = useCallback(() => {
         if (!title) {
@@ -129,24 +137,17 @@ const PlayerRow = ({
         }
 
         return (
-            <CardPile
-                className='title'
-                source='title'
-                cards={[]}
-                topCard={title}
-                disablePopup
-                onCardClick={onCardClick}
+            <Card
+                card={title}
+                source={'title'}
+                disableHover={false}
+                onClick={onCardClick}
+                onMenuItemClick={onMenuItemClick}
+                orientation='vertical'
                 size={cardSize}
-                orientation={title.kneeled ? 'horizontal' : 'vertical'}
             />
         );
-    }, [title, onCardClick, cardSize]);
-
-    const cardPileProps = {
-        onCardClick: onCardClick,
-        popupLocation: side,
-        size: cardSize
-    };
+    }, [title, onCardClick, onMenuItemClick, cardSize]);
 
     const retHand = (
         <SquishableCardPanel
@@ -243,13 +244,14 @@ const PlayerRow = ({
                 size={cardSize}
                 orientation={faction && faction.kneeled ? 'horizontal' : 'vertical'}
             />
-            {getAgendas()}
+            {getAgendas(cardPileProps)}
             {getTitleCard()}
             {renderDroppablePile('hand', retHand)}
-            {(showHiddenPiles || shadows.length > 0) && renderDroppablePile('shadows', retShadows)}
+            {shadows.length > 0 && renderDroppablePile('shadows', retShadows)}
             {renderDroppablePile('draw deck', retDrawDeck)}
             {renderDroppablePile('discard pile', retDiscardPile)}
             {renderDroppablePile('dead pile', retDeadPile)}
+            {showHiddenPiles && shadows.length === 0 && renderDroppablePile('shadows', retShadows)}
             {(showHiddenPiles || outOfGamePile.length > 0) &&
                 renderDroppablePile('out of game', retOutOfGame)}
         </div>

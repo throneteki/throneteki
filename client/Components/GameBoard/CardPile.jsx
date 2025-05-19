@@ -28,7 +28,9 @@ const CardPile = ({
     popupMenu,
     title,
     titlePosition,
+    playerName,
     popupLocation = 'bottom',
+    popupId,
     className,
     cardCount,
     orientation = 'vertical',
@@ -215,8 +217,9 @@ const CardPile = ({
 
         return (
             <MovablePanel
+                id={popupId}
                 anchorRef={areaRef}
-                title={title}
+                title={playerName ? `${playerName}'s ${title}` : title}
                 name={source}
                 onCloseClick={onCloseClick}
                 side={popupLocation}
@@ -241,9 +244,11 @@ const CardPile = ({
         disablePopup,
         showPopup,
         popupMenu,
+        playerName,
         title,
         onCloseClick,
         popupLocation,
+        popupId,
         showCards,
         onPopupMenuItemClick
     ]);
