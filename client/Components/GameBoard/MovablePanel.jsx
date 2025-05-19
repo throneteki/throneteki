@@ -19,12 +19,20 @@ const MovablePanel = ({
     className
 }) => {
     const popupRef = useRef(null);
-
     const key = `${name}-${id}`;
-    const savedPosition = localStorage.getItem(key);
-    const initialPosition = (savedPosition && JSON.parse(savedPosition)) || null;
 
-    const [startPosition, setStartPosition] = useState(initialPosition);
+    const getSavedPosition = (key) => {
+        const raw = localStorage.getItem(key);
+        if (!raw) {
+            return null;
+        }
+        const parsed = JSON.parse(raw);
+        return {
+            x: parsed.x || parsed.left,
+            y: parsed.y || parsed.top
+        };
+    };
+    const [startPosition, setStartPosition] = useState(getSavedPosition(key));
 
     const { attributes, listeners, setNodeRef, transform } = useDraggable({
         id: key,
