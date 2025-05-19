@@ -18,7 +18,7 @@ const formatDelay = (seconds) => (seconds ? `+${seconds}s` : null);
 const ChessClock = ({
     username,
     className,
-    delayPosition,
+    side,
     active,
     paused,
     timerStart,
@@ -80,7 +80,10 @@ const ChessClock = ({
 
     const wrapperClassName = classNames(
         'flex w-fit px-2 py-1 rounded-md text-xl bg-black/40',
-        delayPosition === 'bottom' ? 'flex-col' : 'flex-col-reverse',
+        {
+            'flex-col-reverse': side === 'top',
+            'flex-col': side === 'bottom'
+        },
         className
     );
     const time = formatTime(timeLeft);
