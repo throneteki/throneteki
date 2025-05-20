@@ -19,7 +19,6 @@ import {
     sendToggleTimerSetting
 } from '../../redux/reducers/game';
 
-import './GameBoard.css';
 import { DndContext, DragOverlay, MouseSensor, TouchSensor, useSensor } from '@dnd-kit/core';
 import { ItemTypes } from '../../constants';
 import CardImage from '../Images/CardImage';
@@ -131,7 +130,7 @@ const GameBoard = () => {
         return <LoadingSpinner label={'Waiting for game to have players or close...'} />;
     }
     const boardClass = classNames('flex h-full overflow-x-hidden', {
-        'select-cursor': thisPlayer && thisPlayer.selectCard
+        'cursor-select': thisPlayer && thisPlayer.selectCard
     });
 
     let gameBoard = null;

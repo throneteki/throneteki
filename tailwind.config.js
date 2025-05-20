@@ -27,6 +27,9 @@ export default {
             lg: 0.45
         },
         extend: {
+            cursor: {
+                select: 'url(./client/assets/img/crosshairs.cur), default'
+            },
             colors: {
                 baratheon: '#e3d852',
                 greyjoy: '#1d7a99',
