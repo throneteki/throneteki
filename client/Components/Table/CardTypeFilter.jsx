@@ -2,6 +2,7 @@ import { ButtonGroup } from '@heroui/react';
 import React from 'react';
 import { Constants } from '../../constants';
 import { SmallButton } from '../Site/Variants';
+import ThronesIcon from '../GameBoard/ThronesIcon';
 
 const CardTypeFilter = ({ className, filter, setFilter, types = Constants.CardTypes }) => {
     return (
@@ -20,7 +21,7 @@ const CardTypeFilter = ({ className, filter, setFilter, types = Constants.CardTy
                             )
                         }
                     >
-                        <span className={`icon icon-${type.value}`}></span>
+                        <ThronesIcon icon={type.value} />
                     </SmallButton>
                 );
             })}

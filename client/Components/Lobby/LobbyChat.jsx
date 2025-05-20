@@ -129,7 +129,7 @@ const LobbyChat = ({ isLoggedIn, messages, isModerator, lobbyError }) => {
             const userClass =
                 'username font-bold' +
                 (firstMessage.user.role
-                    ? ` ${Constants.ColourClassByRole[firstMessage.user.role.toLowerCase()]}`
+                    ? ` ${Constants.ColorClassByRole[firstMessage.user.role.toLowerCase()]}`
                     : '');
 
             return (

@@ -2,6 +2,7 @@ import { ButtonGroup } from '@heroui/react';
 import React from 'react';
 import { Constants } from '../../constants';
 import { SmallButton } from '../Site/Variants';
+import ThronesIcon from '../GameBoard/ThronesIcon';
 
 const FactionFilter = ({ className, filter, setFilter, factions = Constants.Factions }) => {
     return (
@@ -20,9 +21,7 @@ const FactionFilter = ({ className, filter, setFilter, factions = Constants.Fact
                             )
                         }
                     >
-                        <span
-                            className={`icon icon-${faction.value} ${Constants.FactionColorMaps[faction.value]}`}
-                        ></span>
+                        <ThronesIcon icon={faction.value} />
                     </SmallButton>
                 );
             })}

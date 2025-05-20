@@ -34,6 +34,7 @@ import CardImage from '../Images/CardImage';
 import FactionFilter from '../Table/FactionFilter';
 import CardTypeFilter from '../Table/CardTypeFilter';
 import ImportDeckModal from './ImportDeckModal';
+import ThronesIcon from '../GameBoard/ThronesIcon';
 
 const SmallButton = extendVariants(Button, {
     variants: {
@@ -186,9 +187,7 @@ const DeckEditor = ({ deck, onBackClick }) => {
                 accessorKey: 'type',
                 header: 'T',
                 cell: (info) => (
-                    <span
-                        className={`icon icon-${info.getValue()} text-${info.row.original.faction}`}
-                    ></span>
+                    <ThronesIcon icon={info.getValue()} color={info.row.original.faction} />
                 ),
                 filterFn: 'arrIncludesSome',
                 meta: {
@@ -200,9 +199,7 @@ const DeckEditor = ({ deck, onBackClick }) => {
                 id: 'faction',
                 accessorKey: 'faction',
                 header: 'F',
-                cell: (info) => (
-                    <span className={`icon icon-${info.getValue()} text-${info.getValue()}`}></span>
-                ),
+                cell: (info) => <ThronesIcon icon={info.getValue()} />,
                 filterFn: 'arrIncludesSome',
                 meta: {
                     colWidth: '10%'

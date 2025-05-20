@@ -19,7 +19,6 @@ import {
 } from '../../redux/middleware/api';
 import CardImage from '../Images/CardImage';
 
-import './DeckList.css';
 import AlertPanel, { AlertType } from '../Site/AlertPanel';
 import DeckStatus from './DeckStatus';
 import ConfirmDialog from '../Site/ConfirmDialog';

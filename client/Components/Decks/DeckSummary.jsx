@@ -3,6 +3,7 @@ import { useGetCardsQuery } from '../../redux/middleware/api';
 import { sortBy } from 'underscore';
 import CardHoverable from '../Images/CardHoverable';
 import classNames from 'classnames';
+import ThronesIcon from '../GameBoard/ThronesIcon';
 
 const DeckSummary = ({ className, deck }) => {
     const { data: cardsResponse } = useGetCardsQuery({});
@@ -35,7 +36,7 @@ const DeckSummary = ({ className, deck }) => {
         const header = (
             <div>
                 <div key={type} className='m-1'>
-                    <span className={`icon me-1 icon-${type}`}></span>
+                    <ThronesIcon icon={type} className='me-1' />
                     <strong>
                         {type[0].toUpperCase() + type.slice(1)} (
                         {cards.reduce((acc, card) => acc + card.count, 0)})
@@ -48,7 +49,7 @@ const DeckSummary = ({ className, deck }) => {
             <CardHoverable key={index} code={card.card.code} type={card.card.type}>
                 <div className='flex flex-row gap-1'>
                     {`${card.count}x`}
-                    <span className={`icon icon-${type} text-${card.card.faction}`}></span>
+                    <ThronesIcon icon={type} color={card.card.faction} />
                     <span>{card.card.label}</span>
                 </div>
             </CardHoverable>

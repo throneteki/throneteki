@@ -28,9 +28,9 @@ import LoadingSpinner from '../../Components/Site/LoadingSpinner';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import CardImage from '../../Components/Images/CardImage';
-import { Constants } from '../../constants';
 import CardHoverable from '../../Components/Images/CardHoverable';
 import Page from '../Page';
+import ThronesIcon from '../../Components/GameBoard/ThronesIcon';
 
 const formatListTextForUsers = (users) => {
     if (!users) {
@@ -267,11 +267,7 @@ const EventEditor = ({ eventId }) => {
                 .map((card, index) => (
                     <Chip
                         key={index}
-                        startContent={
-                            <span
-                                className={`icon icon-${card.faction} ${Constants.FactionColorMaps[card.faction]}`}
-                            ></span>
-                        }
+                        startContent={<ThronesIcon icon={card.faction} />}
                         onClose={onClose ? () => onClose(card.code, index) : null}
                     >
                         <CardHoverable code={card.code}>{card.label}</CardHoverable>

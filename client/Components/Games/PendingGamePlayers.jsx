@@ -37,7 +37,7 @@ const PendingGamePlayers = ({ currentGame, user, onSelectDeck }) => {
                     const userClass =
                         'username' +
                         (player.role
-                            ? ` ${Constants.ColourClassByRole[player.role.toLowerCase()]}`
+                            ? ` ${Constants.ColorClassByRole[player.role.toLowerCase()]}`
                             : '');
                     return (
                         <div className={'flex gap-2 flex-wrap'} key={player.name}>

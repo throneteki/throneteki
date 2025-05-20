@@ -124,13 +124,13 @@ const Messages = ({ messages }) => {
                             showFallback
                             className='w-6 h-6 text-tiny'
                         />
-                        <span key={index++} className={Constants.ColourClassByRole[fragment.role]}>
+                        <span key={index++} className={Constants.ColorClassByRole[fragment.role]}>
                             {fragment.name}
                         </span>
                     </div>
                 );
             } else if (fragment.argType === 'nonAvatarPlayer') {
-                const roleClass = Constants.ColourClassByRole[fragment.role?.toLowerCase()];
+                const roleClass = Constants.ColorClassByRole[fragment.role?.toLowerCase()];
                 const userClass = classNames('username font-bold', roleClass);
 
                 messages.push(
