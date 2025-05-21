@@ -707,6 +707,36 @@ const Effects = {
             }
         };
     },
+    killIf: function (condition) {
+        return {
+            apply: function (card, context) {
+                if (condition(card)) {
+                    context.game.addMessage(
+                        '{0} kills {1} because of {2}',
+                        card.controller,
+                        card,
+                        context.source
+                    );
+                    context.game.resolveGameAction(GameActions.kill({ card }));
+                }
+            },
+            reapply: function (card, context) {
+                if (condition(card)) {
+                    context.game.addMessage(
+                        '{0} kills {1} because of {2}',
+                        card.controller,
+                        card,
+                        context.source
+                    );
+                    context.game.resolveGameAction(GameActions.kill({ card }));
+                }
+            },
+            unapply: function () {
+                // no-op
+            },
+            isStateDependent: true
+        };
+    },
     moveToDeadPileIfStillInPlay: function () {
         return {
             apply: function (card, context) {
