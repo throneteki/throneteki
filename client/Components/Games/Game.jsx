@@ -22,12 +22,14 @@ const Game = ({
 
         const numPlayers = playersInSeatOrder.length;
         const ownerIndex = playersInSeatOrder.findIndex((p) => p.owner);
-        for (let i = 0; i < ownerIndex; i++) {
+        // Rows are right to left, so owner needs to be last in array to remain top-left
+        // If owner doesn't exist anymore, make sure lowest seated player is top-left
+        for (let i = 0; i < Math.max(1, ownerIndex + 1); i++) {
             playersInSeatOrder.push(playersInSeatOrder.shift());
         }
         const players = [];
         for (let i = 0; i < numPlayers; i++) {
-            if (i % 2 === 0) {
+            if (i % 2 > 0) {
                 players.push(playersInSeatOrder.pop());
             } else {
                 players.push(playersInSeatOrder.shift());

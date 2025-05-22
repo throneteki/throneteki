@@ -119,7 +119,7 @@ const MeleeGameBoardLayout = ({
 
         // Sort players in descending seat number, then rotate so thisPlayer is the 0th index
         const playersInSeatOrder = [thisPlayer, ...otherPlayers].sort(
-            (a, b) => a.seatNo - b.seatNo
+            (a, b) => b.seatNo - a.seatNo
         );
         const thisIndex = playersInSeatOrder.findIndex((p) => p === thisPlayer);
         for (let i = 0; i < thisIndex; i++) {
