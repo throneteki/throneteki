@@ -12,7 +12,7 @@ import {
 import classNames from 'classnames';
 import { GameFormats } from '../../constants';
 
-const DeckStatus = ({ className, compact = false, status, gameFormat }) => {
+const DeckStatus = ({ className, showDeckDetails = true, compact = false, status, gameFormat }) => {
     const [pointerType, setPointerType] = useState(false);
     const formatStatus = status[gameFormat];
     const formatLabel = GameFormats.find((gf) => gf.name === gameFormat).label;
@@ -81,7 +81,7 @@ const DeckStatus = ({ className, compact = false, status, gameFormat }) => {
                     </span>
                     <Divider />
                     <DeckStatusSummary status={formatStatus} />
-                    {formatStatus.extendedStatus && formatStatus.extendedStatus.length !== 0 && (
+                    {showDeckDetails && formatStatus.extendedStatus?.length > 0 && (
                         <ul className='flex flex-col gap-1'>
                             {formatStatus.extendedStatus.map((error, index) => (
                                 <li key={index}>

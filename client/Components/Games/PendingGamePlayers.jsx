@@ -27,6 +27,7 @@ const PendingGamePlayers = ({ currentGame, user, onSelectDeck }) => {
 
                         status = (
                             <DeckStatus
+                                showDeckDetails={playerIsMe}
                                 status={player.deck.status[currentGame.restrictedList._id]}
                                 gameFormat={currentGame.gameFormat}
                             />
