@@ -16,8 +16,8 @@ class Claim {
         this.winner = null;
     }
 
-    allowMultipleOpponentClaim() {
-        return this.winner.allowMultipleOpponentClaim(this.challengeType);
+    allowAnyOpponentsClaim() {
+        return this.winner.allowAnyOpponentsClaim(this.challengeType);
     }
 
     addRecipient(player) {

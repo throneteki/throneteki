@@ -1301,8 +1301,8 @@ class Player extends Spectator {
         this.bonusesFromRivals.add(opponent);
     }
 
-    allowMultipleOpponentClaim(claimType) {
-        return this.multipleOpponentClaim.includes(claimType);
+    allowAnyOpponentsClaim(claimType) {
+        return this.anyOpponentsClaim.includes(claimType);
     }
 
     getSelectedCards() {

@@ -24,8 +24,10 @@ class ClaimPrompt extends BaseStep {
     }
 
     applyClaim() {
-        if (this.claim.allowMultipleOpponentClaim()) {
-            this.promptForAdditionalOpponents();
+        if (this.claim.allowAnyOpponentsClaim()) {
+            // Reset recipients, as you can choose to not apply to original defender
+            this.claim.recipients = [];
+            this.promptForAnyOpponents();
         } else {
             this.processClaim();
         }
@@ -39,19 +41,20 @@ class ClaimPrompt extends BaseStep {
         return true;
     }
 
-    promptForAdditionalOpponents() {
-        let opponents = this.game
-            .getOpponents(this.claim.winner)
-            .filter((opponent) => !this.claim.recipients.includes(opponent));
+    promptForAnyOpponents() {
+        const opponents = this.game.getOpponents(this.claim.winner);
 
         if (opponents.length === 0) {
             this.processClaim();
             return true;
         }
 
-        let buttons = opponents.map((opponent) => {
-            return { text: opponent.name, method: 'addOpponent', arg: opponent.name };
-        });
+        const buttons = opponents.map((opponent) => ({
+            disabled: this.claim.recipients.includes(opponent),
+            text: opponent.name,
+            method: 'addOpponent',
+            arg: opponent.name
+        }));
 
         this.game.promptWithMenu(this.challenge.winner, this, {
             activePrompt: {
@@ -63,7 +66,7 @@ class ClaimPrompt extends BaseStep {
     }
 
     addOpponent(player, opponentName) {
-        let opponent = this.game.getPlayerByName(opponentName);
+        const opponent = this.game.getPlayerByName(opponentName);
 
         if (!opponent) {
             return false;

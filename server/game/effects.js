@@ -1647,16 +1647,14 @@ const Effects = {
             }
         };
     },
-    applyClaimToMultipleOpponents: function (claimType) {
+    applyClaimToAnyOpponents: function (claimType) {
         return {
             targetType: 'player',
             apply: function (player) {
-                player.multipleOpponentClaim.push(claimType);
+                player.anyOpponentsClaim.push(claimType);
             },
             unapply: function (player) {
-                player.multipleOpponentClaim = player.multipleOpponentClaim.filter(
-                    (c) => c !== claimType
-                );
+                player.anyOpponentsClaim = player.anyOpponentsClaim.filter((c) => c !== claimType);
             }
         };
     },
