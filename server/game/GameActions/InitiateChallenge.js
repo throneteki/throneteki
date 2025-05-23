@@ -8,6 +8,14 @@ class InitiateChallenge extends GameAction {
     }
 
     createEvent({ challenge }) {
+        // Steps of challenge initiation:
+        // 1. Mark challenge as initiated
+        // 2. Declare defenders (if applicable)
+        // 3. Declare attackers
+        // 4. Reapply effects which rely on being within a challenge (eg. The Lord of the Crossing)
+        // 5. Announce challenge type, opponent & current STR
+        // 6. Trigger challenge redirection (for Crown Regent)
+        // 7. Apply initiation actions (eg. stealth, assault)
         return this.event('onChallengeInitiated', { challenge }, (event) => {
             event.challenge.initiateChallenge();
 
@@ -27,13 +35,6 @@ class InitiateChallenge extends GameAction {
                 })
             );
 
-            // Attaching custom initiation actions, such as stealth & assault
-            event.challenge.initiationActions.forEach((initiationAction) =>
-                event.thenAttachEvent(
-                    initiationAction.action.createEvent(initiationAction.properties)
-                )
-            );
-
             event.thenExecute((event) => {
                 // Reapply effects which rely on being within a challenge (eg. The Lord of the Crossing)
                 event.challenge.game.effectEngine.reapplyStateDependentEffects();
@@ -43,8 +44,8 @@ class InitiateChallenge extends GameAction {
                 // Recalculate challenge strength after effects have been reapplied (and before announcing initiating STR)
                 event.challenge.calculateStrength();
 
-                // Announce challenge opponent, type & STR. Adds defending STR if applicable (eg. Lysono Maar)
-                challenge.game.addMessage(
+                // Announce challenge type, opponent & STR. Adds defending STR if applicable (eg. Lysono Maar)
+                event.challenge.game.addMessage(
                     '{0} has initiated a {1} challenge against {2} with strength {3}' +
                         (challenge.defenders.length > 0
                             ? ', and {2} defending with strength {4}'
@@ -55,6 +56,20 @@ class InitiateChallenge extends GameAction {
                     challenge.attackerStrength,
                     challenge.defenderStrength
                 );
+
+                // Allow for challenge redirection (Crown Regent)
+                const redirectEvent = this.event('onChallengeRedirectable', { challenge });
+                event.thenAttachEvent(redirectEvent);
+
+                // Must execute initiation actions (eg. stealth, assault) after challenge redirection
+                // to ensure effects are applied to the newer redirected target(s), not the original ones
+                redirectEvent.thenExecute((event) => {
+                    event.challenge.initiationActions.forEach((initiationAction) =>
+                        redirectEvent.thenAttachEvent(
+                            initiationAction.action.createEvent(initiationAction.properties)
+                        )
+                    );
+                });
             });
         });
     }

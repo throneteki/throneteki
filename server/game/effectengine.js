@@ -54,7 +54,8 @@ class EffectEngine {
             'duplicate',
             'plot deck',
             'shadows',
-            'revealed plots'
+            'revealed plots',
+            'title'
         ];
         let validTargets = this.game.allCards.filter((card) =>
             validLocations.includes(card.location)

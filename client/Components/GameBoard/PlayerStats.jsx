@@ -1,25 +1,28 @@
 import React, { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
-import { sendChangeStatMessage } from '../../redux/reducers/game';
+import { useDispatch, useSelector } from 'react-redux';
+import { sendChangeStatMessage, sendToggleMuteSpectatorsMessage } from '../../redux/reducers/game';
 import { Avatar, Badge, Button } from '@heroui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCogs, faComment, faCopy, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { faCogs, faComment, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import StatContainer from './StatContainer';
 import StatDisplay from './StatDisplay';
-import { toast } from 'react-toastify';
+import classNames from 'classnames';
 
 const PlayerStats = ({
+    className,
     stats,
     showControls,
     onSettingsClick,
-    user,
-    muteSpectators,
+    user: userProp,
     firstPlayer,
-    onMuteClick,
-    onMessagesClick,
-    numMessages
+    onChatToggle,
+    unreadMessages,
+    seatNo
 }) => {
     const dispatch = useDispatch();
+    const currentGame = useSelector((state) => state.lobby.currentGame);
+    const user = useSelector((state) => state.auth.user);
+    const isMe = userProp?.username === user?.username;
 
     const getStatValueOrDefault = useCallback(
         (stat) => {
@@ -37,25 +40,21 @@ const PlayerStats = ({
             return (
                 <StatContainer title={name}>
                     <StatDisplay
-                        showControls={showControls}
+                        showControls={isMe}
                         statName={name}
                         statCode={stat}
                         statValue={getStatValueOrDefault(stat)}
                         onMinusClick={
-                            showControls
-                                ? () => dispatch(sendChangeStatMessage(statToSet, -1))
-                                : null
+                            isMe ? () => dispatch(sendChangeStatMessage(statToSet, -1)) : null
                         }
                         onPlusClick={
-                            showControls
-                                ? () => dispatch(sendChangeStatMessage(statToSet, 1))
-                                : null
+                            isMe ? () => dispatch(sendChangeStatMessage(statToSet, 1)) : null
                         }
                     />
                 </StatContainer>
             );
         },
-        [showControls, getStatValueOrDefault, dispatch]
+        [isMe, getStatValueOrDefault, dispatch]
     );
 
     const getStatButton = (onClick, icon, title, text) => (
@@ -72,63 +71,75 @@ const PlayerStats = ({
             </Button>
         </StatContainer>
     );
-    const writeChatToClipboard = useCallback(() => {
-        const messagePanel = document.getElementById('messages-panel');
 
-        if (messagePanel) {
-            navigator.clipboard
-                .writeText(messagePanel.innerText)
-                .then(() => toast.success('Copied game chat to clipboard', null))
-                .catch((err) => toast.error(`Could not copy game chat: ${err}`, null));
-        }
-    }, []);
-
+    const wrapperClassName = classNames(
+        'relative border-1 border-default-100 bg-black/35 border-x-0',
+        className
+    );
     return (
-        <div className='relative px-2 border-1 border-default-100 bg-black/35 flex items-center border-x-0'>
-            <div className='pr-1 py-1 flex items-center'>
-                <Avatar
-                    src={`/img/avatar/${user?.username}.png`}
-                    showFallback
-                    className='w-7 h-7 text-tiny'
-                />
+        <div className={wrapperClassName}>
+            <div className='sticky left-0 flex items-center w-fit px-2'>
+                <div className='pr-1 py-1 flex items-center'>
+                    <Avatar
+                        src={`/img/avatar/${userProp?.username}.png`}
+                        showFallback
+                        className='w-7 h-7 text-tiny'
+                    />
 
-                <span className='pl-2 font-bold'>{user?.username || 'Noone'}</span>
-            </div>
-            {getStatDisplay('totalPower', 'Power', 'power')}
-            {getStatDisplay('gold', 'Gold')}
-            {getStatDisplay('initiative', 'Initiative')}
-            {getStatDisplay('claim', 'Claim')}
-            {getStatDisplay('reserve', 'Reserve')}
-
-            {firstPlayer ? (
-                <StatContainer>
-                    <div className='first-player px-2'>First player</div>
-                </StatContainer>
-            ) : null}
-
-            <StatContainer>
-                {showControls && (
-                    <>
-                        {getStatButton(onSettingsClick, faCogs, 'Open Settings', 'Settings')}
-                        {getStatButton(
-                            onMuteClick,
-                            muteSpectators ? faEyeSlash : faEye,
-                            muteSpectators ? 'Un-mute spectators' : 'Mute spectators'
-                        )}
-                    </>
+                    <span className='pl-2 font-bold max-md:hidden'>
+                        {userProp?.username || 'Noone'}
+                    </span>
+                </div>
+                {getStatDisplay('totalPower', 'Power', 'power')}
+                {getStatDisplay('gold', 'Gold')}
+                {getStatDisplay('initiative', 'Initiative')}
+                {getStatDisplay('claim', 'Claim')}
+                {getStatDisplay('reserve', 'Reserve')}
+                {seatNo && (
+                    <StatContainer>
+                        <div className='px-2'>{`Seat ${seatNo}`}</div>
+                    </StatContainer>
                 )}
-                {getStatButton(writeChatToClipboard, faCopy, 'Copy chat log')}
+                {firstPlayer && (
+                    <StatContainer>
+                        <div className='px-2'>First player</div>
+                    </StatContainer>
+                )}
+
                 <StatContainer>
-                    <Badge
-                        shape='circle'
-                        color='danger'
-                        content={numMessages > 99 ? '99+' : numMessages}
-                        isInvisible={!numMessages || numMessages === 0}
-                    >
-                        {getStatButton(onMessagesClick, faComment, 'Toggle chat')}
-                    </Badge>
+                    {showControls && (
+                        <>
+                            {isMe && (
+                                <>
+                                    {getStatButton(
+                                        onSettingsClick,
+                                        faCogs,
+                                        'Open Settings',
+                                        'Settings'
+                                    )}
+                                    {getStatButton(
+                                        () => dispatch(sendToggleMuteSpectatorsMessage()),
+                                        currentGame.muteSpectators ? faEyeSlash : faEye,
+                                        currentGame.muteSpectators
+                                            ? 'Un-mute spectators'
+                                            : 'Mute spectators'
+                                    )}
+                                </>
+                            )}
+                            <StatContainer>
+                                <Badge
+                                    shape='circle'
+                                    color='danger'
+                                    content={unreadMessages > 99 ? '99+' : unreadMessages}
+                                    isInvisible={!unreadMessages || unreadMessages === 0}
+                                >
+                                    {getStatButton(onChatToggle, faComment, 'Toggle chat')}
+                                </Badge>
+                            </StatContainer>
+                        </>
+                    )}
                 </StatContainer>
-            </StatContainer>
+            </div>
         </div>
     );
 };

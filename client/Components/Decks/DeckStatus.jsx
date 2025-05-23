@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import DeckStatusSummary from './DeckStatusSummary';
 import { Chip, Divider, Tooltip } from '@heroui/react';
 import { deckStatusLabel } from './DeckHelper';
@@ -10,9 +10,12 @@ import {
     faXmarkCircle
 } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames';
+import { GameFormats } from '../../constants';
 
-const DeckStatus = ({ className, compact = false, status }) => {
-    const [isOpen, setIsOpen] = React.useState(false);
+const DeckStatus = ({ className, showDeckDetails = true, compact = false, status, gameFormat }) => {
+    const [pointerType, setPointerType] = useState(false);
+    const formatStatus = status[gameFormat];
+    const formatLabel = GameFormats.find((gf) => gf.name === gameFormat).label;
 
     const statusInfo = (status) => {
         const label = deckStatusLabel(status) || 'Loading...';
@@ -42,29 +45,49 @@ const DeckStatus = ({ className, compact = false, status }) => {
         return { label, icon, color };
     };
 
-    const info = statusInfo(status);
-    const chipClass = classNames('select-none pointer-events-none h-8', className);
+    const info = statusInfo(formatStatus);
+
+    const wrapperClass = useMemo(
+        () =>
+            classNames({
+                'select-none': ['touch', 'pen'].includes(pointerType) // Disables text selection on touch/pen devices, but not desktop
+            }),
+        [pointerType]
+    );
+
+    const chipClass = classNames('pointer-events-none h-8', className);
+
+    let labelClass = null;
+    // Compacts if true, or at the provided size step
+    if (compact === true) {
+        labelClass = 'hidden';
+    } else if (typeof compact === 'string') {
+        labelClass = `${compact}:hidden`;
+    }
 
     return (
         <Tooltip
             placement={'right'}
             showArrow={true}
             closeDelay={100}
-            isOpen={isOpen}
+            isOpen={!!pointerType}
             content={
                 <div className='flex flex-col gap-1 max-w-64'>
                     <span className={`text-${info.color} flex flex-row gap-1 items-center`}>
-                        {info.icon} <b>{info.label}</b>
+                        {info.icon}
+                        <b>
+                            {info.label} ({formatLabel})
+                        </b>
                     </span>
                     <Divider />
-                    <DeckStatusSummary status={status} />
-                    {status.extendedStatus && status.extendedStatus.length !== 0 && (
+                    <DeckStatusSummary status={formatStatus} />
+                    {showDeckDetails && formatStatus.extendedStatus?.length > 0 && (
                         <ul className='flex flex-col gap-1'>
-                            {status.extendedStatus.map((error, index) => (
-                                <>
+                            {formatStatus.extendedStatus.map((error, index) => (
+                                <li key={index}>
                                     <Divider />
-                                    <li key={index}>{error}</li>
-                                </>
+                                    {error}
+                                </li>
                             ))}
                         </ul>
                     )}
@@ -72,24 +95,15 @@ const DeckStatus = ({ className, compact = false, status }) => {
             }
         >
             <div
-                onMouseEnter={() => setIsOpen(true)}
-                onMouseLeave={() => setIsOpen(false)}
-                onTouchStart={() => setIsOpen(true)}
-                onTouchEnd={() => setIsOpen(false)}
-                onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                }}
+                className={wrapperClass}
+                onPointerEnter={(e) => setPointerType(e.pointerType)}
+                onPointerLeave={() => setPointerType(null)}
             >
                 <Chip className={chipClass} color={info.color} radius='md'>
-                    {compact ? (
-                        info.icon
-                    ) : (
-                        <div className='flex flex-row gap-1 items-center'>
-                            {info.icon}
-                            {info.label}
-                        </div>
-                    )}
+                    <div className='flex flex-row gap-1 items-center'>
+                        <span>{info.icon}</span>
+                        <span className={labelClass}>{info.label}</span>
+                    </div>
                 </Chip>
             </div>
         </Tooltip>

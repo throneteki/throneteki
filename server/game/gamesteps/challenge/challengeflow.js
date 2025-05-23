@@ -35,51 +35,6 @@ class ChallengeFlow extends BaseStep {
             () => new ResolutionKeywordsWindow(this.game, this.challenge),
             new SimpleStep(this.game, () => this.atEndOfChallenge())
         ]);
-
-        this.attackerPrompt = new ChooseParticipantsPrompt(
-            this.game,
-            this.challenge.attackingPlayer,
-            {
-                attacking: true,
-                challenge: this.challenge,
-                cannotCancel: this.challenge.declareDefendersFirst,
-                mustBeDeclaredOption: 'mustBeDeclaredAsAttacker',
-                limitsProperty: 'attackerLimits',
-                activePromptTitle: 'Select challenge attackers',
-                waitingPromptTitle: 'Waiting for opponent to select attackers',
-                messages: {
-                    autoDeclareSingular: '{0} is automatically declared as an attacker',
-                    autoDeclarePlural: '{0} are automatically declared as attackers',
-                    notEnoughSingular:
-                        '{0} did not declare at least {1} attacker but had characters to do so',
-                    notEnoughPlural:
-                        '{0} did not declare at least {1} attackers but had characters to do so'
-                },
-                onSelect: (attackers) => this.chooseAttackers(attackers)
-            }
-        );
-
-        this.defenderPrompt = new ChooseParticipantsPrompt(
-            this.game,
-            this.challenge.defendingPlayer,
-            {
-                attacking: false,
-                challenge: this.challenge,
-                mustBeDeclaredOption: 'mustBeDeclaredAsDefender',
-                limitsProperty: 'defenderLimits',
-                activePromptTitle: 'Select defenders',
-                waitingPromptTitle: 'Waiting for opponent to defend',
-                messages: {
-                    autoDeclareSingular: '{0} is automatically declared as a defender',
-                    autoDeclarePlural: '{0} are automatically declared as defenders',
-                    notEnoughSingular:
-                        '{0} did not declare at least {1} defender but had characters to do so',
-                    notEnoughPlural:
-                        '{0} did not declare at least {1} defenders but had characters to do so'
-                },
-                onSelect: (defenders) => this.chooseDefenders(defenders)
-            }
-        );
     }
 
     resetCards() {
@@ -105,8 +60,29 @@ class ChallengeFlow extends BaseStep {
         );
     }
 
+    getAttackerPrompt() {
+        return new ChooseParticipantsPrompt(this.game, this.challenge.attackingPlayer, {
+            attacking: true,
+            challenge: this.challenge,
+            cannotCancel: this.challenge.declareDefendersFirst,
+            mustBeDeclaredOption: 'mustBeDeclaredAsAttacker',
+            limitsProperty: 'attackerLimits',
+            activePromptTitle: 'Select challenge attackers',
+            waitingPromptTitle: 'Waiting for opponent to select attackers',
+            messages: {
+                autoDeclareSingular: '{0} is automatically declared as an attacker',
+                autoDeclarePlural: '{0} are automatically declared as attackers',
+                notEnoughSingular:
+                    '{0} did not declare at least {1} attacker but had characters to do so',
+                notEnoughPlural:
+                    '{0} did not declare at least {1} attackers but had characters to do so'
+            },
+            onSelect: (attackers) => this.chooseAttackers(attackers)
+        });
+    }
+
     promptForAttackers() {
-        this.game.queueStep(this.attackerPrompt);
+        this.game.queueStep(this.getAttackerPrompt());
         return;
     }
 
@@ -125,12 +101,37 @@ class ChallengeFlow extends BaseStep {
         this.game.resolveGameAction(InitiateChallenge, { challenge: this.challenge });
     }
 
+    redirectChallengeTo(player) {
+        this.challenge.redirectChallengeTo(player);
+        this.game.queueStep(new InitiatingKeywordsWindow(this.game, this.challenge));
+    }
+
+    getDefenderPrompt() {
+        return new ChooseParticipantsPrompt(this.game, this.challenge.defendingPlayer, {
+            attacking: false,
+            challenge: this.challenge,
+            mustBeDeclaredOption: 'mustBeDeclaredAsDefender',
+            limitsProperty: 'defenderLimits',
+            activePromptTitle: 'Select defenders',
+            waitingPromptTitle: 'Waiting for opponent to defend',
+            messages: {
+                autoDeclareSingular: '{0} is automatically declared as a defender',
+                autoDeclarePlural: '{0} are automatically declared as defenders',
+                notEnoughSingular:
+                    '{0} did not declare at least {1} defender but had characters to do so',
+                notEnoughPlural:
+                    '{0} did not declare at least {1} defenders but had characters to do so'
+            },
+            onSelect: (defenders) => this.chooseDefenders(defenders)
+        });
+    }
+
     preAttackersPromptForDefenders() {
         if (this.challenge.isSinglePlayer || !this.challenge.declareDefendersFirst) {
             return;
         }
 
-        this.game.queueStep(this.defenderPrompt);
+        this.game.queueStep(this.getDefenderPrompt());
     }
 
     promptForDefenders() {
@@ -138,7 +139,7 @@ class ChallengeFlow extends BaseStep {
             return;
         }
 
-        this.game.queueStep(this.defenderPrompt);
+        this.game.queueStep(this.getDefenderPrompt());
     }
 
     chooseDefenders(defenders) {

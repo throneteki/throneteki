@@ -1,7 +1,8 @@
 import React from 'react';
 import classNames from 'classnames';
+import { Constants } from '../../constants';
 
-const ThronesIcon = ({ icon, noSize = true, withBackground = false }) => {
+const ThronesIcon = ({ className, icon, color, noSize = true, withBackground = false }) => {
     const bgClasses = {
         military: 'bg-military',
         power: 'bg-power',
@@ -25,18 +26,10 @@ const ThronesIcon = ({ icon, noSize = true, withBackground = false }) => {
     };
 
     const fgClasses = {
+        ...Constants.ColorClassByFaction,
         military: 'text-military',
         power: 'text-power',
         intrigue: 'text-intrigue',
-        baratheon: 'text-baratheon',
-        greyjoy: 'text-greyjoy',
-        lannister: 'text-lannister',
-        martell: 'text-martell',
-        stark: 'text-stark',
-        thenightswatch: 'text-thenightswatch',
-        targaryen: 'text-targaryen',
-        tyrell: 'text-tyrell',
-        neutral: 'text-neutral',
         agenda: 'text-agenda',
         plot: 'text-plot',
         character: 'text-character',
@@ -45,12 +38,13 @@ const ThronesIcon = ({ icon, noSize = true, withBackground = false }) => {
         event: 'text-event'
     };
 
-    const className = classNames(
+    const wrapperClassName = classNames(
         'rounded-xl font-[thronesdb] inline text-center leading-6',
-        withBackground ? bgClasses[icon] : fgClasses[icon],
+        withBackground ? bgClasses[color || icon] : fgClasses[color || icon],
         {
             'w-6 h-6': !noSize
-        }
+        },
+        className
     );
 
     const iconText = {
@@ -74,7 +68,7 @@ const ThronesIcon = ({ icon, noSize = true, withBackground = false }) => {
         event: ''
     };
 
-    return <div className={className}>{iconText[icon]}</div>;
+    return <span className={wrapperClassName}>{iconText[icon]}</span>;
 };
 
 export default ThronesIcon;

@@ -1,69 +1,39 @@
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useCallback } from 'react';
+import React from 'react';
+import CardHoverable from '../Images/CardHoverable';
+import CardImage from '../Images/CardImage';
 
-const AbilityTargeting = ({
-    onMouseOver: onMouseOverProp,
-    onMouseOut: onMouseOutProp,
-    targets,
-    source
-}) => {
-    const onMouseOver = useCallback(
-        (event, card) => {
-            if (card && onMouseOverProp) {
-                onMouseOverProp(card);
-            }
-        },
-        [onMouseOverProp]
-    );
+const AbilityTargeting = ({ targets, source }) => {
+    const targetCardsRef = React.useRef(null);
 
-    const onMouseOut = useCallback(
-        (event, card) => {
-            if (card && onMouseOutProp) {
-                onMouseOutProp(card);
-            }
-        },
-        [onMouseOutProp]
-    );
-
-    const renderSimpleCard = useCallback(
-        (card) => {
-            return (
-                <div
-                    className='target-card vertical'
-                    onMouseOut={(event) => onMouseOut(event, card)}
-                    onMouseOver={(event) => onMouseOver(event, card)}
-                >
-                    <img
-                        className='target-card-image vertical'
-                        alt={card.name}
-                        src={
-                            '/img/cards/' +
-                            (card.facedown
-                                ? card.shadowPosition
-                                    ? 'cardback_shadow.png'
-                                    : 'cardback.png'
-                                : card.code + '.png')
-                        }
-                    />
-                    {card.shadowPosition ? (
-                        <div className='target-card-shadow-position'>
-                            {'#' + card.shadowPosition}
-                        </div>
-                    ) : null}
+    const renderSimpleCard = (card, index) => (
+        <CardHoverable
+            key={index || card.code}
+            code={card.code}
+            className='relative w-full min-w-0'
+        >
+            <CardImage
+                code={card.code || (card.shadowPosition ? 'cardback_shadow' : 'cardback')}
+                size='normal'
+            />
+            {card.shadowPosition ? (
+                <div className='absolute bottom-0 right-0 pr-2 text-large'>
+                    {'#' + card.shadowPosition}
                 </div>
-            );
-        },
-        [onMouseOut, onMouseOver]
+            ) : null}
+        </CardHoverable>
     );
 
-    let targetCards = targets.map((target) => renderSimpleCard(target));
+    const targetCards = targets.map((target, index) => renderSimpleCard(target, index));
 
     return (
-        <div className='flex items-center content-between mb-2 gap-1 mx-2'>
-            {renderSimpleCard(source)}
+        <div className='flex items-center justify-center content-between pb-2 px-2 gap-1 w-full'>
+            <div>{renderSimpleCard(source)}</div>
             <FontAwesomeIcon icon={faArrowRight} />
-            {targetCards}
+            <div ref={targetCardsRef} className='grid grid-flow-col gap-1'>
+                {targetCards}
+            </div>
         </div>
     );
 };

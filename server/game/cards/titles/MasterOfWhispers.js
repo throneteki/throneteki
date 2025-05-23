@@ -6,7 +6,7 @@ class MasterOfWhispers extends TitleCard {
         this.rivals('Master of Laws', 'Master of Coin');
         this.persistentEffect({
             targetController: 'current',
-            effect: ability.effects.applyClaimToMultipleOpponents('intrigue')
+            effect: ability.effects.applyClaimToAnyOpponents('intrigue')
         });
         this.persistentEffect({
             condition: () =>

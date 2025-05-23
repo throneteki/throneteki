@@ -2,43 +2,44 @@ import React from 'react';
 
 import Panel from '../Components/Site/Panel';
 import { Button, Link } from '@heroui/react';
+import Page from './Page';
 
 const HowToPlay = () => {
     return (
-        <div className='w-2/3 mx-auto'>
+        <Page>
             <Panel title='How To Play on The Iron Throne'>
                 <h2 className='mb-3 text-large font-bold border-b-1 border-b-gray-300'>
                     Introduction
                 </h2>
-                <div className='flex'>
+                <div className='flex flex-col lg:flex-row gap-1'>
                     <div className='flex-1'>
                         <p>
                             This guide is aimed at players familiar with the A Game of Thrones: The
                             Card Game 2nd Edition who want to start playing online using The Iron
                             Throne platform. If you are new to this cardgame in general, there is a{' '}
-                            <a
+                            <Link
                                 href='https://www.youtube.com/watch?v=A1s54Wlgfyo'
                                 target='_blank'
                                 rel='noreferrer'
                             >
                                 helpful tutorial video
-                            </a>
+                            </Link>
                             , a{' '}
-                            <a
+                            <Link
                                 href='https://images-cdn.fantasyflightgames.com/filer_public/ba/2a/ba2a5ea6-a3cd-4772-a603-6f1906f63053/gt01_learn-to-play-web.pdf'
                                 target='_blank'
                                 rel='noreferrer'
                             >
                                 Learn To Play guide
-                            </a>
+                            </Link>
                             , and a{' '}
-                            <a
+                            <Link
                                 href='http://thronesdb.com/rulesreference'
                                 target='_blank'
                                 rel='noreferrer'
                             >
                                 Rules Reference Guide
-                            </a>{' '}
+                            </Link>{' '}
                             to help you out.
                         </p>
                     </div>
@@ -59,38 +60,38 @@ const HowToPlay = () => {
                     </h3>
                     <ul className='m-0 p-0 font-bold'>
                         <li>
-                            <a href='#decks'>Adding Decks</a>
+                            <Link href='#decks'>Adding Decks</Link>
                         </li>
                         <li>
-                            <a href='#profile'>Profile Options</a>
-                        </li>
-                        <ul className='ml-4 font-normal p-0'>
-                            <li>
-                                <a href='#action'>Action Windows</a>
-                            </li>
-                            <li>
-                                <a href='#timed'>Timed Interrupt Window</a>
-                            </li>
-                        </ul>
-                        <li>
-                            <a href='#framework-timing-sheet'>Framework Timing Sheet</a>
-                        </li>
-                        <li>
-                            <a href='#bugs'>Bugs and Automation</a>
-                        </li>
-                        <li>
-                            <a href='#interactions'>Specific Card Interactions</a>
+                            <Link href='#profile'>Profile Options</Link>
                         </li>
                         <ul className='ml-4 font-normal p-0'>
                             <li>
-                                <a href='#riddle'>Varys&quot; Riddle vs Summer Harvest</a>
+                                <Link href='#action'>Action Windows</Link>
+                            </li>
+                            <li>
+                                <Link href='#timed'>Timed Interrupt Window</Link>
                             </li>
                         </ul>
                         <li>
-                            <a href='#commands'>Manual Commands</a>
+                            <Link href='#framework-timing-sheet'>Framework Timing Sheet</Link>
                         </li>
                         <li>
-                            <a href='#conceding'>About Stats, Conceding and Leaving Games</a>
+                            <Link href='#bugs'>Bugs and Automation</Link>
+                        </li>
+                        <li>
+                            <Link href='#interactions'>Specific Card Interactions</Link>
+                        </li>
+                        <ul className='ml-4 font-normal p-0'>
+                            <li>
+                                <Link href='#riddle'>Varys&quot; Riddle vs Summer Harvest</Link>
+                            </li>
+                        </ul>
+                        <li>
+                            <Link href='#commands'>Manual Commands</Link>
+                        </li>
+                        <li>
+                            <Link href='#conceding'>About Stats, Conceding and Leaving Games</Link>
                         </li>
                     </ul>
                 </div>
@@ -106,9 +107,9 @@ const HowToPlay = () => {
                         be logged in to add decks and spectate or play games. The Iron Throne has a
                         functional <Link href='/decks'>Deckbuilder</Link>, although most people use
                         the more fully featured{' '}
-                        <a target='_blank' href='http://www.thronesdb.com' rel='noreferrer'>
+                        <Link target='_blank' href='http://www.thronesdb.com' rel='noreferrer'>
                             ThronesDB
-                        </a>{' '}
+                        </Link>{' '}
                         deckbuilder to build their decks. After building your deck on ThronesDB
                         download it as a TXT file, then copy and paste it into the deckbuilder here.
                         You are now ready to start playing. Head over to the{' '}
@@ -116,21 +117,21 @@ const HowToPlay = () => {
                     </p>
                     <p>
                         If you are new to Thrones 2.0, you can find an introductory Stark deck{' '}
-                        <a
+                        <Link
                             target='_blank'
                             href='http://thronesdb.com/deck/view/358860'
                             rel='noreferrer'
                         >
                             here
-                        </a>
+                        </Link>
                         , and an introductory Lannister/Tyrell deck{' '}
-                        <a
+                        <Link
                             target='_blank'
                             href='http://thronesdb.com/deck/view/358861'
                             rel='noreferrer'
                         >
                             here
-                        </a>
+                        </Link>
                         . Both decks only feature cards from the Core Set. If you are new and using
                         any of these decks to play be sure to check the ‘Beginner’ category when
                         creating your game, so you don’t necessarily get destroyed by an up to date
@@ -168,37 +169,37 @@ const HowToPlay = () => {
                         </p>
                         <p>
                             For example: if you play cards like{' '}
-                            <a
+                            <Link
                                 target='_blank'
                                 href='https://thronesdb.com/card/01088'
                                 rel='noreferrer'
                             >
                                 The Tickler
-                            </a>
+                            </Link>
                             ,{' '}
-                            <a
+                            <Link
                                 target='_blank'
                                 href='https://thronesdb.com/card/06031'
                                 rel='noreferrer'
                             >
                                 Wex Pyke
-                            </a>
+                            </Link>
                             ,{' '}
-                            <a
+                            <Link
                                 target='_blank'
                                 href='https://thronesdb.com/card/01130'
                                 rel='noreferrer'
                             >
                                 Messenger Raven
-                            </a>{' '}
+                            </Link>{' '}
                             or{' '}
-                            <a
+                            <Link
                                 target='_blank'
                                 href='https://thronesdb.com/card/01139'
                                 rel='noreferrer'
                             >
                                 Take the Black
-                            </a>{' '}
+                            </Link>{' '}
                             in your deck, be sure to check Dominance Actions in your profile. Your
                             action window settings can also be changed during a game by clicking the
                             settings button on the bottom of your screen.
@@ -219,29 +220,29 @@ const HowToPlay = () => {
                             an event there is a pause before it resolves, you might guess correctly
                             that was due to your opponent being prompted to use The Hand’s Judgment.
                             The three most notable cards that would be leaked this way are{' '}
-                            <a
+                            <Link
                                 target='_blank'
                                 href='https://thronesdb.com/card/01045'
                                 rel='noreferrer'
                             >
                                 The Hand&apos;s Judgment
-                            </a>
+                            </Link>
                             ,{' '}
-                            <a
+                            <Link
                                 target='_blank'
                                 href='https://thronesdb.com/card/01102'
                                 rel='noreferrer'
                             >
                                 Treachery
-                            </a>{' '}
+                            </Link>{' '}
                             and{' '}
-                            <a
+                            <Link
                                 target='_blank'
                                 href='https://thronesdb.com/card/02096'
                                 rel='noreferrer'
                             >
                                 Vengeance for Elia
-                            </a>
+                            </Link>
                             . To solve this issue, the Timed Interrupt Window was created. Depending
                             on which options you have checked, you get a timed prompt during certain
                             triggers asking for interrupts whether you are able to interrupt these
@@ -287,23 +288,23 @@ const HowToPlay = () => {
                         While The Iron Throne is still a work in progress, the vast majority of
                         cards are implemented and should be working correctly. We keep a list up to
                         date with unimplemented and partially implemented cards{' '}
-                        <a
+                        <Link
                             target='_blank'
                             href='https://github.com/cryogen/throneteki/projects'
                             rel='noreferrer'
                         >
                             here
-                        </a>
+                        </Link>
                         . If you happen upon a card that you believe is not working as it should and
                         it is not on that list, it would help immensely if you would submit an issue
                         on{' '}
-                        <a
+                        <Link
                             target='_blank'
                             href='https://github.com/cryogen/throneteki/issues'
                             rel='noreferrer'
                         >
                             GitHub
-                        </a>
+                        </Link>
                         . Other comments and/or feedback can be left on GitHub as well.
                     </p>
                 </div>
@@ -320,39 +321,39 @@ const HowToPlay = () => {
                             className='font-bold italic ml-2 pl-3 border-l-3 border-l-grey-400'
                             id='riddle'
                         >
-                            <a
+                            <Link
                                 href='https://thronesdb.com/card/04020'
                                 target='_blank'
                                 rel='noreferrer'
                             >
                                 Varys&apos; Riddle
-                            </a>{' '}
+                            </Link>{' '}
                             vs{' '}
-                            <a
+                            <Link
                                 href='https://thronesdb.com/card/04039'
                                 target='_blank'
                                 rel='noreferrer'
                             >
                                 Summer Harvest
-                            </a>
+                            </Link>
                         </h4>
                         <p>
                             CardGameDB rule threads on this interaction:{' '}
-                            <a
+                            <Link
                                 href='http://www.cardgamedb.com/forums/index.php?/topic/32255-varys-riddle-vs-summer-harvest/'
                                 target='_blank'
                                 rel='noreferrer'
                             >
                                 1
-                            </a>
+                            </Link>
                             ,{' '}
-                            <a
+                            <Link
                                 href='http://www.cardgamedb.com/forums/index.php?/topic/33283-timming-varys-riddle-summer-harvest/'
                                 target='_blank'
                                 rel='noreferrer'
                             >
                                 2
-                            </a>
+                            </Link>
                             .
                         </p>
                         <p>
@@ -468,7 +469,7 @@ const HowToPlay = () => {
                     </p>
                 </div>
             </Panel>
-        </div>
+        </Page>
     );
 };
 

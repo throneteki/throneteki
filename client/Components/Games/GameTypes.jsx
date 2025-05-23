@@ -1,41 +1,27 @@
 import React from 'react';
 import GameTypeInfo from './GameTypeInfo';
 import { Radio, RadioGroup } from '@heroui/react';
+import { GameTypes as gameTypes } from '../../constants';
 
 const GameTypes = ({ formProps, isDisabled }) => {
-    const types = [
-        { name: 'beginner', label: 'Beginner' },
-        { name: 'casual', label: 'Casual' },
-        { name: 'competitive', label: 'Competitive' }
-    ];
-
     return (
-        <>
-            <div>
-                <GameTypeInfo gameType={formProps.values.gameType} />
-            </div>
-            <div className='mt-2'>
-                <RadioGroup
-                    name='gameType'
-                    label={'Type'}
-                    orientation='horizontal'
-                    value={formProps.values.gameType}
-                    onValueChange={(value) => formProps.setFieldValue('gameType', value)}
-                    isDisabled={isDisabled}
-                >
-                    {types.map((type) => (
-                        <Radio
-                            key={type.name}
-                            id={type.name}
-                            //         onChange={formProps.handleChange}
-                            value={type.name}
-                        >
-                            {type.label}
-                        </Radio>
-                    ))}
-                </RadioGroup>
-            </div>
-        </>
+        <div className='flex flex-col gap-2'>
+            <RadioGroup
+                name='gameType'
+                label={'Type'}
+                orientation='horizontal'
+                value={formProps.values.gameType}
+                onValueChange={(value) => formProps.setFieldValue('gameType', value)}
+                isDisabled={isDisabled}
+            >
+                {gameTypes.map((type) => (
+                    <Radio key={type.name} id={type.name} value={type.name}>
+                        {type.label}
+                    </Radio>
+                ))}
+            </RadioGroup>
+            <GameTypeInfo gameType={formProps.values.gameType} />
+        </div>
     );
 };
 

@@ -2,6 +2,7 @@ import { Select, SelectItem } from '@heroui/react';
 import React, { useState, useEffect, useCallback } from 'react';
 
 const RestrictedListDropdown = ({
+    className,
     currentRestrictedList,
     restrictedLists,
     setCurrentRestrictedList,
@@ -45,6 +46,7 @@ const RestrictedListDropdown = ({
 
     return (
         <Select
+            className={className}
             label={'Game mode'}
             onChange={(e) => updateRestrictedList(e.target.value)}
             selectedKeys={value ? new Set([value]) : null}

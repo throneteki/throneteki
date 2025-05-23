@@ -1,36 +1,49 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import moment from 'moment';
-import $ from 'jquery';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
-import { Avatar } from '@heroui/react';
+import { Avatar, Link } from '@heroui/react';
 import { Constants } from '../../constants';
+import { useRemoveMessageMutation } from '../../redux/middleware/api';
+import { toast } from 'react-toastify';
+import ChatArea from '../Site/ChatArea';
+import { useDispatch } from 'react-redux';
+import { clearChatStatus, sendLobbyChatMessage } from '../../redux/reducers/lobby';
 
-const LobbyChat = ({ messages, isModerator, onRemoveMessageClick }) => {
-    const [canScroll, setCanScroll] = useState(true);
-    const messagesEndRef = useRef(null);
+const LobbyChat = ({ isLoggedIn, messages, isModerator, lobbyError }) => {
+    const dispatch = useDispatch();
+    const [removeMessage] = useRemoveMessageMutation();
 
-    const onScroll = useCallback(() => {
-        let messagePanel = messagesEndRef.current;
-
-        setTimeout(() => {
-            if (
-                messagePanel.scrollTop >=
-                messagePanel.scrollHeight - messagePanel.offsetHeight - 20
-            ) {
-                setCanScroll(true);
-            } else {
-                setCanScroll(false);
+    const onRemoveMessageClick = useCallback(
+        async (messageId) => {
+            try {
+                await removeMessage(messageId).unwrap();
+            } catch (err) {
+                toast.error('Failed to remove message. Check console for details');
+                console.info(err);
             }
-        }, 500);
-    }, []);
+        },
+        [removeMessage]
+    );
+
+    const checkChatError = useCallback(() => {
+        if (lobbyError) {
+            toast.error('New users are limited from chatting in the lobby, try again later');
+
+            setTimeout(() => {
+                dispatch(clearChatStatus());
+            }, 5000);
+        }
+    }, [lobbyError, dispatch]);
 
     useEffect(() => {
-        if (canScroll) {
-            $(messagesEndRef.current).scrollTop(999999);
-        }
-    }, [messages, canScroll]);
+        checkChatError();
+    }, [checkChatError, dispatch]);
+
+    useEffect(() => {
+        checkChatError();
+    }, [checkChatError, lobbyError]);
 
     const getMessages = useCallback(() => {
         const groupedMessages = {};
@@ -82,8 +95,7 @@ const LobbyChat = ({ messages, isModerator, onRemoveMessageClick }) => {
                             <>
                                 <span className='italic line-through'>{message.message}</span>
                                 <span className='italic'>
-                                    {' '}
-                                    - (Message removed by {message.deletedBy})
+                                    {` - (Message removed by ${message.deletedBy})`}
                                 </span>
                             </>
                         );
@@ -99,17 +111,16 @@ const LobbyChat = ({ messages, isModerator, onRemoveMessageClick }) => {
                 return (
                     <div
                         key={message.user.username + i++}
-                        className='break-words text-gray-300 text-sm leading-[1.15rem]'
+                        className='break-words text-gray-300 text-sm leading-[1.15rem] flex gap-1'
                     >
-                        {messageText}
-                        {isModerator && (
-                            <a
-                                href='#'
-                                className='ml-2 text-danger'
-                                onClick={() => onRemoveMessageClick(message._id)}
+                        <span>{messageText}</span>
+                        {isModerator && !message.deleted && (
+                            <Link
+                                className='text-danger text-small'
+                                onPress={() => onRemoveMessageClick(message._id)}
                             >
                                 <FontAwesomeIcon icon={faTimes} />
-                            </a>
+                            </Link>
                         )}
                     </div>
                 );
@@ -118,7 +129,7 @@ const LobbyChat = ({ messages, isModerator, onRemoveMessageClick }) => {
             const userClass =
                 'username font-bold' +
                 (firstMessage.user.role
-                    ? ` ${Constants.ColourClassByRole[firstMessage.user.role.toLowerCase()]}`
+                    ? ` ${Constants.ColorClassByRole[firstMessage.user.role.toLowerCase()]}`
                     : '');
 
             return (
@@ -144,18 +155,27 @@ const LobbyChat = ({ messages, isModerator, onRemoveMessageClick }) => {
         });
     }, [messages, isModerator, onRemoveMessageClick]);
 
-    if (messages.length === 0) {
-        return (
-            <div className='bg-default-200 rounded-lg rounded-b-none p-2'>
-                There are no messages at the moment
-            </div>
-        );
-    }
-
-    return (
-        <div className='overflow-y-auto' ref={messagesEndRef} onScroll={onScroll}>
-            {getMessages()}
+    const noMessagesLabel = (
+        <div className='bg-default-200 rounded-lg rounded-b-none p-2'>
+            There are no messages at the moment
         </div>
+    );
+
+    const placeholder = isLoggedIn
+        ? 'Enter a message...'
+        : 'You must be logged in to send lobby chat messages';
+    return (
+        <ChatArea
+            className='overflow-hidden rounded-b-xl'
+            messageCount={messages.length}
+            noMessagesLabel={noMessagesLabel}
+            onSendMessage={(message) => dispatch(sendLobbyChatMessage(message))}
+            isInputDisabled={!isLoggedIn}
+            placeholder={placeholder}
+            maxInputLength={512}
+        >
+            {getMessages()}
+        </ChatArea>
     );
 };
 

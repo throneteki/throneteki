@@ -5,7 +5,7 @@ import { Switch } from '@heroui/react';
 const GameSettings = ({ formProps }) => {
     return (
         <Panel title='Game Settings'>
-            <div className='grid grid-cols-1 lg:grid-cols-2 gap-2'>
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-2'>
                 <Switch
                     {...formProps.getFieldProps('chooseOrder')}
                     isSelected={formProps.values.chooseOrder}

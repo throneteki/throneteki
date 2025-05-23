@@ -37,7 +37,7 @@ export const init = async function (server, options) {
         wrapAsync(async function (req, res) {
             let decks = await deckService.findByUserName(
                 req.user.username,
-                qs.parse(req._parsedUrl.query, { allowDots: true })
+                qs.parse(decodeURIComponent(req._parsedUrl.query), { allowDots: true, comma: true })
             );
             res.send(decks);
         })
@@ -154,7 +154,9 @@ export const init = async function (server, options) {
 
     server.get('/api/standalone-decks', function (req, res, next) {
         deckService
-            .getStandaloneDecks()
+            .getStandaloneDecks(
+                qs.parse(decodeURIComponent(req._parsedUrl.query), { allowDots: true, comma: true })
+            )
             .then((decks) => {
                 res.send({ success: true, data: decks });
             })

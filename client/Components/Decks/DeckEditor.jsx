@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { BannersForFaction, Constants } from '../../constants';
+import { BannersForFaction, Constants, GameFormats } from '../../constants';
 import ReactTable from '../Table/ReactTable';
 import DeckSummary from './DeckSummary';
 import AlertPanel from '../Site/AlertPanel';
@@ -10,14 +10,8 @@ import {
     Card,
     CardBody,
     Input,
-    Modal,
-    ModalBody,
-    ModalContent,
-    ModalFooter,
-    ModalHeader,
     Select,
     SelectItem,
-    Textarea,
     extendVariants
 } from '@heroui/react';
 import LoadingSpinner from '../Site/LoadingSpinner';
@@ -31,12 +25,16 @@ import {
 } from '../../redux/middleware/api';
 import { navigate } from '../../redux/reducers/navigation';
 import { useDispatch } from 'react-redux';
-import FactionImage from '../Images/FactionImage';
 import { validateDeck } from '../../../deck-helper';
 import RestrictedListDropdown from './RestrictedListDropdown';
 import DeckStatus from './DeckStatus';
-import { processThronesDbDeckText } from './DeckHelper';
 import { toast } from 'react-toastify';
+import CardHoverable from '../Images/CardHoverable';
+import CardImage from '../Images/CardImage';
+import FactionFilter from '../Table/FactionFilter';
+import CardTypeFilter from '../Table/CardTypeFilter';
+import ImportDeckModal from './ImportDeckModal';
+import ThronesIcon from '../GameBoard/ThronesIcon';
 
 const SmallButton = extendVariants(Button, {
     variants: {
@@ -45,18 +43,6 @@ const SmallButton = extendVariants(Button, {
         }
     }
 });
-
-const factionToTextColourMap = {
-    baratheon: 'text-baratheon',
-    greyjoy: 'text-greyjoy',
-    lannister: 'text-lannister',
-    martell: 'text-martell',
-    neutral: 'text-neutral',
-    stark: 'text-startl',
-    targaryen: 'text-targaryen',
-    thenightswatch: 'text-thenightswatch',
-    tyrell: 'text-tyrell'
-};
 
 const DeckEditor = ({ deck, onBackClick }) => {
     const dispatch = useDispatch();
@@ -79,7 +65,9 @@ const DeckEditor = ({ deck, onBackClick }) => {
                     .map((a) => BannersForFaction[a.card.code])
             )
     );
-    const [typeFilter, setTypeFilter] = useState(['character', 'agenda', 'plot']);
+    const [typeFilter, setTypeFilter] = useState(
+        Constants.CardTypes.map(({ value }) => value).filter((value) => value !== 'title')
+    );
     const [deckCards, setDeckCards] = useState(
         (deck.agenda ? [{ card: deck.agenda, count: 1 }] : [])
             .concat(deck.drawCards || [])
@@ -88,10 +76,10 @@ const DeckEditor = ({ deck, onBackClick }) => {
     );
     const [deckName, setDeckName] = useState(deck.name);
     const [faction, setFaction] = useState(deck.faction);
-    const [showImportPopup, setShowImportPopup] = useState(false);
-    const [deckText, setDeckText] = useState();
+    const [showImportModal, setShowImportModal] = useState(false);
     const [pageNumber, setPageNumber] = useState(0);
 
+    const [currentGameFormat, setCurrentGameFormat] = useState(GameFormats[0].name);
     const [currentRestrictedList, setCurrentRestrictedList] = useState(
         restrictedLists && restrictedLists[0]
     );
@@ -135,9 +123,10 @@ const DeckEditor = ({ deck, onBackClick }) => {
             saveDeck.status = {};
         }
 
-        saveDeck.status[currentRestrictedList._id] = validateDeck(saveDeck, {
+        saveDeck.status = validateDeck(saveDeck, {
             packs: packs,
-            restrictedLists: [currentRestrictedList]
+            gameFormats: GameFormats.map((gf) => gf.name),
+            restrictedLists
         });
 
         return saveDeck;
@@ -150,7 +139,8 @@ const DeckEditor = ({ deck, onBackClick }) => {
         deckName,
         faction.value,
         factionsByCode,
-        packs
+        packs,
+        restrictedLists
     ]);
 
     const columns = useMemo(
@@ -158,9 +148,12 @@ const DeckEditor = ({ deck, onBackClick }) => {
             {
                 accessorFn: (row) => row.label,
                 header: 'Name',
-                cell: (info) => info.getValue(),
+                cell: (info) => (
+                    <CardHoverable code={info.row.original.code}>{info.getValue()}</CardHoverable>
+                ),
                 meta: {
-                    colWidth: '70%'
+                    colWidth: '70%',
+                    className: 'min-w-44'
                 },
                 enableColumnFilter: true
             },
@@ -170,7 +163,8 @@ const DeckEditor = ({ deck, onBackClick }) => {
                     row.income != undefined ? row.income : row.cost != undefined ? row.cost : '',
                 header: 'C/I',
                 meta: {
-                    colWidth: '10%'
+                    colWidth: '10%',
+                    className: 'max-sm:hidden'
                 },
                 enableColumnFilter: false
             },
@@ -184,7 +178,8 @@ const DeckEditor = ({ deck, onBackClick }) => {
                           : '',
                 header: 'S/I',
                 meta: {
-                    colWidth: '10%'
+                    colWidth: '10%',
+                    className: 'max-sm:hidden'
                 },
                 enableColumnFilter: false
             },
@@ -192,9 +187,7 @@ const DeckEditor = ({ deck, onBackClick }) => {
                 accessorKey: 'type',
                 header: 'T',
                 cell: (info) => (
-                    <span
-                        className={`icon icon-${info.getValue()} text-${info.row.original.faction}`}
-                    ></span>
+                    <ThronesIcon icon={info.getValue()} color={info.row.original.faction} />
                 ),
                 filterFn: 'arrIncludesSome',
                 meta: {
@@ -206,9 +199,7 @@ const DeckEditor = ({ deck, onBackClick }) => {
                 id: 'faction',
                 accessorKey: 'faction',
                 header: 'F',
-                cell: (info) => (
-                    <span className={`icon icon-${info.getValue()} text-${info.getValue()}`}></span>
-                ),
+                cell: (info) => <ThronesIcon icon={info.getValue()} />,
                 filterFn: 'arrIncludesSome',
                 meta: {
                     colWidth: '10%'
@@ -221,7 +212,7 @@ const DeckEditor = ({ deck, onBackClick }) => {
                     const deckCard = deckCards.find((dc) => dc.card.code === row.code);
                     return deckCard?.count || 0;
                 },
-                header: 'Quantity',
+                header: 'Qty',
                 cell: (info) => {
                     const max = info.row.original.deckLimit + 1;
                     const deckCard = deckCards.find(
@@ -229,69 +220,82 @@ const DeckEditor = ({ deck, onBackClick }) => {
                     );
                     const count = deckCard?.count || 0;
 
+                    const setCardQuantity = (code, quantity) => {
+                        const newDeckCards = [];
+                        let found = false;
+
+                        for (const deckCard of deckCards) {
+                            const newDeckCard = Object.assign({}, deckCard);
+
+                            if (deckCard.card.code === code) {
+                                found = true;
+
+                                newDeckCard.count = quantity;
+                            }
+
+                            if (newDeckCard.count > 0) {
+                                newDeckCards.push(newDeckCard);
+                            }
+                        }
+
+                        if (!found) {
+                            const newCard = {
+                                card: cardsByCode[code],
+                                count: quantity
+                            };
+
+                            newDeckCards.push(newCard);
+                        }
+
+                        setDeckCards(newDeckCards);
+                    };
                     return (
-                        <ButtonGroup>
-                            {[...Array(max).keys()].map((digit) => (
-                                <SmallButton
-                                    size='xs'
-                                    className='w-1'
-                                    key={digit}
-                                    value={digit}
-                                    color={count === digit ? 'primary' : null}
-                                    onClick={() => {
-                                        const newDeckCards = [];
-                                        let found = false;
-
-                                        for (const deckCard of deckCards) {
-                                            const newDeckCard = Object.assign({}, deckCard);
-
-                                            if (deckCard.card.code === info.row.original.code) {
-                                                found = true;
-
-                                                newDeckCard.count = digit;
-                                            }
-
-                                            if (newDeckCard.count > 0) {
-                                                newDeckCards.push(newDeckCard);
-                                            }
+                        <>
+                            <Select
+                                className='sm:hidden'
+                                onChange={(e) =>
+                                    setCardQuantity(
+                                        info.row.original.code,
+                                        parseInt(e.target.value)
+                                    )
+                                }
+                                defaultSelectedKeys={['0']}
+                                selectedKeys={[count.toString()]}
+                                classNames={{ trigger: 'h-8 min-h-8' }}
+                            >
+                                {[...Array(max).keys()].map((digit) => (
+                                    <SelectItem key={digit.toString()} textValue={digit.toString()}>
+                                        {digit}
+                                    </SelectItem>
+                                ))}
+                            </Select>
+                            <ButtonGroup className='max-sm:hidden'>
+                                {[...Array(max).keys()].map((digit) => (
+                                    <SmallButton
+                                        size='xs'
+                                        className='w-1'
+                                        key={digit}
+                                        value={digit}
+                                        color={count === digit ? 'primary' : null}
+                                        onPress={() =>
+                                            setCardQuantity(info.row.original.code, digit)
                                         }
-
-                                        if (!found) {
-                                            const newCard = {
-                                                card: cardsByCode[info.row.original.code],
-                                                count: digit
-                                            };
-
-                                            newDeckCards.push(newCard);
-                                        }
-
-                                        setDeckCards(newDeckCards);
-                                    }}
-                                >
-                                    {digit}
-                                </SmallButton>
-                            ))}
-                        </ButtonGroup>
+                                    >
+                                        {digit}
+                                    </SmallButton>
+                                ))}
+                            </ButtonGroup>
+                        </>
                     );
                 },
                 meta: {
-                    colWidth: 1
+                    colWidth: '10%',
+                    className: 'min-w-20'
                 }
             }
         ],
         [deckCards, cardsByCode]
     );
-
-    const cardTypes = useMemo(() => {
-        if (!cards) {
-            return [];
-        }
-        let cardTypes = Object.values(cards)
-            .filter((c) => c.type !== 'title')
-            .map((card) => card.type);
-
-        return Array.from(new Set(cardTypes));
-    }, [cards]);
 
     const cardsMemo = useMemo(() => {
         if (!cards) {
@@ -303,6 +307,12 @@ const DeckEditor = ({ deck, onBackClick }) => {
     useEffect(() => {
         setFaction(deck.faction);
     }, [deck.faction]);
+
+    useEffect(() => {
+        if (!currentGameFormat) {
+            setCurrentGameFormat(GameFormats[0].name);
+        }
+    }, [currentGameFormat]);
 
     useEffect(() => {
         if (!currentRestrictedList && restrictedLists) {
@@ -332,76 +342,92 @@ const DeckEditor = ({ deck, onBackClick }) => {
                 dispatch(navigate('/decks'));
             }
         } catch (err) {
-            toast.error('An error occured adding the deck. Please try again later');
+            toast.error(
+                `An error occured ${deckToSave._id ? 'saving' : 'adding'}  the deck. Please try again later`
+            );
         }
     };
 
     return (
-        <div className='grid lg:grid-cols-2 gap-4'>
-            <div className='flex flex-col gap-2'>
-                <div className='flex gap-2'>
-                    <Button color='default' onPress={() => onBackClick()}>
-                        Back
-                    </Button>
-                    <Button
-                        color='primary'
-                        isLoading={isAddLoading || isSaveLoading}
-                        onPress={() => onSaveClick(true)}
-                    >
-                        Save and close
-                    </Button>
-                    <Button
-                        color='primary'
-                        isLoading={isAddLoading || isSaveLoading}
-                        onPress={() => onSaveClick(false)}
-                    >
-                        Save
-                    </Button>
-                    <Button onPress={() => setShowImportPopup(true)}>Import</Button>
-                </div>
-                <div className='flex flex-col gap-2'>
-                    <Input
-                        placeholder={'Enter a name'}
-                        value={deckName}
-                        onChange={(event) => setDeckName(event.target.value)}
-                        label={'Deck Name'}
-                    />
-                    <Select
-                        items={Constants.Factions}
-                        label='Faction'
-                        selectedKeys={new Set([faction.value])}
-                        onChange={(e) => setFaction(e.target)}
-                        renderValue={(items) => {
-                            return items.map((item) => <div key={item.key}>{item.data.name}</div>);
-                        }}
-                    >
-                        {(faction) => (
-                            <SelectItem key={faction.value}>
-                                <div className='flex gap-2 items-center'>
-                                    <FactionImage size='sm' faction={faction.value} />
-                                    <div>{faction.name}</div>
-                                </div>
-                            </SelectItem>
-                        )}
-                    </Select>
-                    <RestrictedListDropdown
-                        currentRestrictedList={currentRestrictedList}
-                        onChange={(restrictedList) => {
-                            setCurrentRestrictedList(restrictedList);
-                        }}
-                        restrictedLists={restrictedLists}
-                    />
+        <div className='flex flex-col gap-3'>
+            <div className='flex flex-wrap gap-2'>
+                <Button color='default' onPress={() => onBackClick()}>
+                    Back
+                </Button>
+                <Button
+                    color='primary'
+                    isLoading={isAddLoading || isSaveLoading}
+                    onPress={() => onSaveClick(true)}
+                >
+                    Save & Close
+                </Button>
+                <Button
+                    color='primary'
+                    isLoading={isAddLoading || isSaveLoading}
+                    onPress={() => onSaveClick(false)}
+                >
+                    Save
+                </Button>
+                <Button onPress={() => setShowImportModal(true)}>Import</Button>
+            </div>
+            <div className='columns-1 xl:columns-2 gap-4'>
+                <div className='flex flex-col gap-2 break-inside-avoid'>
+                    <div className='flex max-md:flex-wrap gap-2'>
+                        <Input
+                            className='w-full md:w-2/3'
+                            placeholder={'Enter a name'}
+                            value={deckName}
+                            onValueChange={setDeckName}
+                            label={'Deck Name'}
+                        />
+                        <Select
+                            className='w-full md:w-1/3'
+                            items={Constants.Factions}
+                            label='Faction'
+                            selectedKeys={new Set([faction.value])}
+                            onChange={(e) => setFaction(e.target)}
+                            renderValue={(items) => {
+                                return items.map((item) => (
+                                    <div key={item.key}>{item.data.name}</div>
+                                ));
+                            }}
+                        >
+                            {(faction) => (
+                                <SelectItem key={faction.value}>
+                                    <div className='flex gap-2 items-center'>
+                                        <CardImage size='small' code={faction.value} />
+                                        <div>{faction.name}</div>
+                                    </div>
+                                </SelectItem>
+                            )}
+                        </Select>
+                    </div>
+                    <div className='flex max-md:flex-wrap gap-2'>
+                        <Select
+                            label={'Game format'}
+                            className='w-full md:w-1/2'
+                            onChange={(e) => setCurrentGameFormat(e.target.value)}
+                            selectedKeys={new Set([currentGameFormat])}
+                        >
+                            {GameFormats.map((gf) => (
+                                <SelectItem key={gf.name} value={gf.name}>
+                                    {gf.label}
+                                </SelectItem>
+                            ))}
+                        </Select>
+                        <RestrictedListDropdown
+                            className='w-full md:w-1/2'
+                            currentRestrictedList={currentRestrictedList}
+                            onChange={(restrictedList) => {
+                                setCurrentRestrictedList(restrictedList);
+                            }}
+                            restrictedLists={restrictedLists}
+                        />
+                    </div>
                     <Card>
                         <CardBody>
-                            <div className='flex mt-1 ml-1'>
+                            <div className='flex'>
                                 <dl className='grid grid-cols-2 gap-2'>
-                                    <dt className='font-bold'>Draw cards:</dt>
-                                    <dd>
-                                        {deckToSave.drawCards.reduce(
-                                            (acc, card) => acc + card.count,
-                                            0
-                                        )}
-                                    </dd>
                                     <dt className='font-bold'>Plot cards:</dt>
                                     <dd>
                                         {deckToSave.plotCards.reduce(
@@ -409,71 +435,37 @@ const DeckEditor = ({ deck, onBackClick }) => {
                                             0
                                         )}
                                     </dd>
+                                    <dt className='font-bold'>Draw cards:</dt>
+                                    <dd>
+                                        {deckToSave.drawCards.reduce(
+                                            (acc, card) => acc + card.count,
+                                            0
+                                        )}
+                                    </dd>
                                 </dl>
                             </div>
-                            <div className='flex gap-2 items-center ml-1 mt-1'>
+                            <div className='flex gap-2 items-center'>
                                 <div className='font-bold'>Validity:</div>
-                                <DeckStatus status={deckToSave.status[currentRestrictedList._id]} />
+                                <DeckStatus
+                                    status={deckToSave.status[currentRestrictedList._id]}
+                                    gameFormat={currentGameFormat || GameFormats[0].name}
+                                />
                             </div>
                         </CardBody>
                     </Card>
-                    <div className='mt-1'>
-                        <ButtonGroup>
-                            {cardTypes.map((type) => {
-                                return (
-                                    <SmallButton
-                                        key={type}
-                                        size='xs'
-                                        color={
-                                            typeFilter.some((t) => t === type) ? 'primary' : null
-                                        }
-                                        onClick={() =>
-                                            setTypeFilter(
-                                                typeFilter.some((t) => t === type)
-                                                    ? typeFilter.filter((t) => t !== type)
-                                                    : typeFilter.concat(type)
-                                            )
-                                        }
-                                    >
-                                        <span className={`icon icon-${type}`}></span>
-                                    </SmallButton>
-                                );
-                            })}
-                        </ButtonGroup>
-                    </div>
-                    <div>
-                        <ButtonGroup aria-label='Faction buttons'>
-                            {Constants.Factions.concat({ name: 'Neutral', value: 'neutral' }).map(
-                                (faction) => {
-                                    return (
-                                        <SmallButton
-                                            key={faction.value}
-                                            size='xs'
-                                            color={
-                                                factionFilter.some((f) => f === faction.value)
-                                                    ? 'primary'
-                                                    : null
-                                            }
-                                            onClick={() =>
-                                                setFactionFilter(
-                                                    factionFilter.some((f) => f === faction.value)
-                                                        ? factionFilter.filter(
-                                                              (f) => f !== faction.value
-                                                          )
-                                                        : factionFilter.concat(faction.value)
-                                                )
-                                            }
-                                        >
-                                            <span
-                                                className={`icon icon-${faction.value} ${factionToTextColourMap[faction.value]}`}
-                                            ></span>
-                                        </SmallButton>
-                                    );
-                                }
-                            )}
-                        </ButtonGroup>
-                    </div>
-                    <div className='h-[50vh]'>
+                    <CardTypeFilter
+                        className='self-start'
+                        filter={typeFilter}
+                        setFilter={setTypeFilter}
+                        types={Constants.CardTypes.filter(({ value }) => value !== 'title')}
+                    />
+                    <FactionFilter
+                        className='self-start'
+                        filter={factionFilter}
+                        setFilter={setFactionFilter}
+                        factions={Constants.Factions.concat({ name: 'Neutral', value: 'neutral' })}
+                    />
+                    <div className='min-h-96 h-[50vh]'>
                         <ReactTable
                             dataLoadFn={() => ({
                                 data: cardsMemo,
@@ -491,94 +483,55 @@ const DeckEditor = ({ deck, onBackClick }) => {
                             columns={columns}
                             startPageNumber={pageNumber}
                             onPageChanged={(page) => setPageNumber(page)}
+                            classNames={{
+                                td: 'max-sm:px-2',
+                                th: 'max-sm:px-2'
+                            }}
                         />
                     </div>
                 </div>
-            </div>
-            <div>
                 <DeckSummary
+                    className='break-inside-avoid'
                     deck={{
                         name: deckName,
                         deckCards: deckCards,
                         faction: factionsByCode[deck.faction.code]
                     }}
                 />
+
+                <ImportDeckModal
+                    isOpen={showImportModal}
+                    onOpenChange={(open) => setShowImportModal(open)}
+                    submitLabel='Submit & Save'
+                    onProcessed={async (deck) => {
+                        try {
+                            setFaction(deck.faction);
+                            setDeckName(deck.name);
+                            setDeckCards(
+                                (deck.agenda ? [{ card: deck.agenda, count: 1 }] : [])
+                                    .concat(deck.drawCards || [])
+                                    .concat(deck.plotCards || [])
+                                    .concat(
+                                        deck.bannerCards?.map((bc) => ({
+                                            card: bc,
+                                            count: 1
+                                        })) || []
+                                    )
+                            );
+                            toast.success('Deck changes imported successfully');
+                            await onSaveClick(false);
+                            setShowImportModal(false);
+                        } catch (err) {
+                            toast.error('An error occurred importing deck changes');
+                        }
+                    }}
+                    message={
+                        <p className='text-bold text-danger-300'>
+                            Note: The deck you are editing will be overwritten!
+                        </p>
+                    }
+                />
             </div>
-
-            <Modal isOpen={showImportPopup} onOpenChange={(open) => setShowImportPopup(open)}>
-                <ModalContent>
-                    {(onClose) => (
-                        <>
-                            <ModalHeader className='flex flex-col gap-1'>
-                                Import from ThronesDb
-                            </ModalHeader>
-                            <ModalBody>
-                                <label>
-                                    Export your deck as plain text from{' '}
-                                    <a
-                                        href='https://thronesdb.com'
-                                        target='_blank'
-                                        rel='noreferrer'
-                                    >
-                                        ThronesDB
-                                    </a>{' '}
-                                    and paste it into this box.
-                                    <p className='text-bold text-danger-300'>
-                                        Note: The deck you are editing will be overwritten!
-                                    </p>
-                                </label>
-                                <Textarea
-                                    minRows={20}
-                                    value={deckText}
-                                    onValueChange={setDeckText}
-                                />
-                            </ModalBody>
-                            <ModalFooter>
-                                <Button onPress={onClose}>Close</Button>
-                                <Button
-                                    color='primary'
-                                    onPress={() => {
-                                        const deck = processThronesDbDeckText(
-                                            factions,
-                                            packs,
-                                            cards,
-                                            deckText
-                                        );
-
-                                        if (!deck) {
-                                            toast.error(
-                                                'Invalid deck. Ensure you have exported a plain text deck from ThronesDb.'
-                                            );
-
-                                            onClose();
-
-                                            return;
-                                        }
-
-                                        setFaction(deck.faction);
-                                        setDeckName(deck.name);
-                                        setDeckCards(
-                                            (deck.agenda ? [{ card: deck.agenda, count: 1 }] : [])
-                                                .concat(deck.drawCards || [])
-                                                .concat(deck.plotCards || [])
-                                                .concat(
-                                                    deck.bannerCards?.map((bc) => ({
-                                                        card: bc,
-                                                        count: 1
-                                                    })) || []
-                                                )
-                                        );
-
-                                        onClose();
-                                    }}
-                                >
-                                    Import
-                                </Button>
-                            </ModalFooter>
-                        </>
-                    )}
-                </ModalContent>
-            </Modal>
         </div>
     );
 };

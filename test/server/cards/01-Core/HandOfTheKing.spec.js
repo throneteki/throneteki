@@ -1,5 +1,5 @@
 describe('Hand of the King', function () {
-    integration({ isMelee: true }, function () {
+    integration({ gameFormat: 'melee' }, function () {
         describe('initiating additional power challenge', function () {
             beforeEach(function () {
                 const deck = this.buildDeck('stark', [

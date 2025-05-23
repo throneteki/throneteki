@@ -1,5 +1,5 @@
 describe('Winning and losing', function () {
-    integration({ isMelee: true }, function () {
+    integration({ gameFormat: 'melee' }, function () {
         beforeEach(function () {
             // Enable losing / winning prompts
             this.game.disableWonPrompt = false;

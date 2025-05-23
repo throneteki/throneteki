@@ -3,6 +3,17 @@ export const ItemTypes = {
     PANEL: 'panel'
 };
 
+export const GameFormats = [
+    { name: 'joust', label: 'Joust', defaultMaxPlayers: 2 },
+    { name: 'melee', label: 'Melee', defaultMaxPlayers: 4, experimental: true }
+];
+
+export const GameTypes = [
+    { name: 'beginner', label: 'Beginner' },
+    { name: 'casual', label: 'Casual' },
+    { name: 'competitive', label: 'Competitive' }
+];
+
 export const ThronesIcons = [
     'military',
     'power',
@@ -31,13 +42,33 @@ export const Constants = {
     Stats: ['gold', 'totalPower', 'initiative', 'claim', 'reserve'],
     FactionsImagePaths: {},
     StatIconImagePaths: {},
-    ColourClassByRole: {
+    ColorClassByRole: {
         admin: 'text-red-500',
         contributor: 'text-blue-400',
         supporter: 'text-green-500',
         winner: 'text-yellow-200',
         previouswinner: 'text-pink-500'
-    }
+    },
+    ColorClassByFaction: {
+        baratheon: 'text-baratheon',
+        greyjoy: 'text-greyjoy',
+        lannister: 'text-lannister',
+        martell: 'text-martell',
+        neutral: 'text-neutral',
+        stark: 'text-stark',
+        targaryen: 'text-targaryen',
+        thenightswatch: 'text-thenightswatch',
+        tyrell: 'text-tyrell'
+    },
+    CardTypes: [
+        { name: 'Title', value: 'title' },
+        { name: 'Agenda', value: 'agenda' },
+        { name: 'Plot', value: 'plot' },
+        { name: 'Character', value: 'character' },
+        { name: 'Attachment', value: 'attachment' },
+        { name: 'Location', value: 'location' },
+        { name: 'Event', value: 'event' }
+    ]
 };
 
 for (const faction of Object.values(Constants.Factions)) {
@@ -63,4 +94,14 @@ export const BannersForFaction = {
     '01203': 'stark',
     '01204': 'targaryen',
     '01205': 'tyrell'
+};
+
+export const cardSizes = {
+    sm: [2.4, 3.36], // * 0.6
+    md: [4, 5.6], // * 1
+    lg: [5.6, 7.84], // * 1.4
+    xl: [8, 11.2], // * 2
+    '2xl': [12, 16.8], // * 3
+    '3xl': [16, 22.4], // * 4
+    '4xl': [20, 28] // * 5
 };

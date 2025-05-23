@@ -90,7 +90,14 @@ class CardService {
         const cardSets = [...new Set(versions.map((version) => version.cardSet))];
         return cardSets.map((cardSet) => {
             const activeVersion = this.getActiveVersion(versions, cardSet);
-            const joustFormat = activeVersion.formats.find((format) => format.name === 'joust');
+            const formats = activeVersion.formats.reduce((acc, format) => {
+                acc[format.name] = {
+                    restricted: format.restricted,
+                    banned: activeVersion.bannedCards.concat(format.banned || []),
+                    pods: format.pods
+                };
+                return acc;
+            }, {});
             return {
                 _id: activeVersion.code,
                 name: activeVersion.name,
@@ -98,10 +105,8 @@ class CardService {
                 issuer: activeVersion.issuer,
                 cardSet: activeVersion.cardSet,
                 version: activeVersion.version,
-                restricted: joustFormat.restricted,
-                banned: activeVersion.bannedCards.concat(joustFormat.banned || []),
-                pods: joustFormat.pods,
-                official: true
+                official: true,
+                formats
             };
         });
     }

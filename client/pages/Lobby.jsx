@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React from 'react';
+import { useSelector } from 'react-redux';
 
 import News from '../Components/News/News';
 import AlertPanel from '../Components/Site/AlertPanel';
@@ -8,21 +8,17 @@ import LobbyChat from '../Components/Lobby/LobbyChat';
 import { getMessageWithLinks } from '../util';
 
 import { createSelector } from '@reduxjs/toolkit';
-import { useGetNewsQuery, useRemoveMessageMutation } from '../redux/middleware/api';
-import { clearChatStatus, sendLobbyChatMessage } from '../redux/reducers/lobby';
-import { Input } from '@heroui/react';
-import { toast } from 'react-toastify';
+import { useGetNewsQuery } from '../redux/middleware/api';
 import LoadingSpinner from '../Components/Site/LoadingSpinner';
+import Page from './Page';
 
 const Lobby = () => {
-    const [message, setMessage] = useState('');
     const {
         data: news,
         isLoading: newsLoading,
         isError: newsError,
         isSuccess: newsSuccess
     } = useGetNewsQuery();
-    const messageRef = useRef();
 
     const getLobbyState = (state) => state.lobby;
 
@@ -42,64 +38,6 @@ const Lobby = () => {
 
     const motd = useSelector(getMotd);
 
-    const dispatch = useDispatch();
-
-    const [removeMessage] = useRemoveMessageMutation();
-
-    const checkChatError = useCallback(() => {
-        if (lobbyError) {
-            toast.error('New users are limited from chatting in the lobby, try again later');
-
-            setTimeout(() => {
-                dispatch(clearChatStatus());
-            }, 5000);
-        }
-    }, [lobbyError, dispatch]);
-
-    const sendMessage = useCallback(() => {
-        if (message === '') {
-            return;
-        }
-
-        dispatch(sendLobbyChatMessage(message));
-
-        setMessage('');
-    }, [dispatch, message]);
-
-    const onKeyPress = useCallback(
-        (event) => {
-            if (event.key === 'Enter') {
-                sendMessage();
-
-                event.preventDefault();
-            }
-        },
-        [sendMessage]
-    );
-
-    const onRemoveMessageClick = useCallback(
-        async (messageId) => {
-            try {
-                await removeMessage(messageId).unwrap();
-            } catch (err) {
-                console.info(err);
-            }
-        },
-        [removeMessage]
-    );
-
-    useEffect(() => {
-        checkChatError();
-    }, [checkChatError, dispatch]);
-
-    useEffect(() => {
-        checkChatError();
-    }, [checkChatError, lobbyError]);
-
-    let isLoggedIn = !!user;
-    let placeholder = isLoggedIn
-        ? 'Enter a message...'
-        : 'You must be logged in to send lobby chat messages';
     let newsInfo = null;
     if (newsLoading) {
         newsInfo = <LoadingSpinner />;
@@ -110,51 +48,26 @@ const Lobby = () => {
     }
 
     return (
-        <div className='lg:mx-auto flex h-full lg:w-4/5 flex-col'>
-            <div></div>
+        <Page className='h-full'>
             {motd && motd.message && (
                 <AlertPanel variant={motd.motdType}>{getMessageWithLinks(motd.message)}</AlertPanel>
             )}
             {bannerNotice ? <AlertPanel message={bannerNotice} variant='danger' /> : null}
-            <div className='max-h-[20vh]'>
-                <Panel title='Latest site news' className='mt-2'>
-                    {newsInfo}
-                </Panel>
-            </div>
+            <Panel className='max-h-[20vh]' title='Latest site news'>
+                {newsInfo}
+            </Panel>
             <Panel
-                className='mt-4 mb-4 flex flex-col'
+                className='flex-grow overflow-y-auto min-h-64'
                 title={`Lobby Chat (${users.length} online)`}
             >
                 <LobbyChat
+                    isLoggedIn={!!user}
                     messages={messages}
                     isModerator={user && user.permissions.canModerateChat}
-                    onRemoveMessageClick={onRemoveMessageClick}
+                    lobbyError={lobbyError}
                 />
-                <form
-                    className='z-50'
-                    onSubmit={(event) => {
-                        event.preventDefault();
-                        sendMessage();
-                    }}
-                >
-                    <Input
-                        ref={messageRef}
-                        classNames={{ inputWrapper: 'rounded-tl-none rounded-tr-none' }}
-                        onKeyDown={onKeyPress}
-                        onChange={(event) =>
-                            setMessage(
-                                event.target.value.substring(
-                                    0,
-                                    Math.min(512, event.target.value.length)
-                                )
-                            )
-                        }
-                        placeholder={placeholder}
-                        value={message}
-                    ></Input>
-                </form>
             </Panel>
-        </div>
+        </Page>
     );
 };
 

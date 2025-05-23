@@ -40,6 +40,7 @@ import EndRound from './GameActions/EndRound.js';
 import TimeLimit from './timeLimit.js';
 import PrizedKeywordListener from './PrizedKeywordListener.js';
 import GameWonPrompt from './gamesteps/GameWonPrompt.js';
+import shuffle from 'lodash.shuffle';
 
 class Game extends EventEmitter {
     constructor(details, options = {}) {
@@ -67,15 +68,21 @@ class Game extends EventEmitter {
         this.playStarted = false;
         this.createdAt = new Date();
         this.useGameTimeLimit = details.useGameTimeLimit;
-        this.gameTimeLimit = details.gameTimeLimit;
-        this.timeLimit = new TimeLimit(this, this.gameTimeLimit);
+        if (this.useGameTimeLimit) {
+            this.gameTimeLimit = details.gameTimeLimit;
+            this.timeLimit = new TimeLimit(this, this.gameTimeLimit);
+        }
         this.useChessClocks = details.useChessClocks;
-        this.chessClockTimeLimit = details.chessClockTimeLimit;
-        this.chessClockDelay = details.chessClockDelay;
+        if (this.useChessClocks) {
+            this.chessClockTimeLimit = details.chessClockTimeLimit;
+            this.chessClockDelay = details.chessClockDelay;
+        }
         this.clockPaused = false;
         this.savedGameId = details.savedGameId;
         this.gamePrivate = details.gamePrivate;
+        this.gameFormat = details.gameFormat;
         this.gameType = details.gameType;
+        this.maxPlayers = details.maxPlayers;
         this.abilityContextStack = [];
         this.abilityWindowStack = [];
         this.password = details.password;
@@ -84,7 +91,6 @@ class Game extends EventEmitter {
             isApplying: false,
             type: undefined
         };
-        this.isMelee = !!details.isMelee;
         this.noTitleSetAside = !!details.noTitleSetAside;
         this.titlePool = new TitlePool(this, options.titleCardData || []);
         this.cardData = options.cardData || [];
@@ -99,16 +105,25 @@ class Game extends EventEmitter {
         this.prizedKeywordListener = new PrizedKeywordListener(this);
         this.muteSpectators = details.muteSpectators;
 
-        for (let player of Object.values(details.players || {})) {
+        let players = Object.values(details.players || {});
+
+        if (details.randomSeats) {
+            // Randomise players & use new index as seatNo
+            players = shuffle(players);
+            players.forEach((player, index) => (player.seatNo = index + 1));
+        }
+
+        for (const player of players) {
             this.playersAndSpectators[player.user.username] = new Player(
                 player.id,
                 player.user,
                 this.owner === player.user.username,
-                this
+                this,
+                player.seatNo
             );
         }
 
-        for (let spectator of Object.values(details.spectators || {})) {
+        for (const spectator of Object.values(details.spectators || {})) {
             this.playersAndSpectators[spectator.user.username] = new Spectator(
                 spectator.id,
                 spectator.user
@@ -124,6 +139,14 @@ class Game extends EventEmitter {
 
     isPlaytesting() {
         return this.instance && this.instance.type === 'playtesting';
+    }
+
+    get isJoust() {
+        return this.gameFormat === 'joust';
+    }
+
+    get isMelee() {
+        return this.gameFormat === 'melee';
     }
 
     reportError(e) {
@@ -152,7 +175,9 @@ class Game extends EventEmitter {
     }
 
     getAllPlayers() {
-        return Object.values(this.playersAndSpectators).filter((player) => !player.isSpectator());
+        return Object.values(this.playersAndSpectators)
+            .filter((player) => !player.isSpectator())
+            .sort((a, b) => a.seatNo - b.seatNo);
     }
 
     getPlayers() {
@@ -909,6 +934,15 @@ class Game extends EventEmitter {
         player.timerSettings[settingName] = toggle;
     }
 
+    cardSizeChange(playerName, value) {
+        var player = this.getPlayerByName(playerName);
+        if (!player) {
+            return;
+        }
+
+        player.cardSize = value;
+    }
+
     toggleKeywordSetting(playerName, settingName, toggle) {
         var player = this.getPlayerByName(playerName);
         if (!player) {
@@ -968,7 +1002,7 @@ class Game extends EventEmitter {
     }
 
     checkForTimeExpired() {
-        if (this.timeLimit.isTimeLimitReached && !this.finishedAt) {
+        if (this.useGameTimeLimit && this.timeLimit.isTimeLimitReached && !this.finishedAt) {
             this.determineWinnerAfterTimeLimitExpired();
         }
     }
@@ -1334,7 +1368,7 @@ class Game extends EventEmitter {
     }
 
     join(socketId, user) {
-        if (this.started || this.getPlayers().length === 2) {
+        if (this.started || this.getPlayers().length === this.maxPlayers) {
             return false;
         }
 
@@ -1388,7 +1422,7 @@ class Game extends EventEmitter {
             }
 
             if (!player.isSpectator()) {
-                player.stopClock();
+                player.setIsActivePrompt(false);
             }
         }
     }
@@ -1476,8 +1510,7 @@ class Game extends EventEmitter {
     pauseClock() {
         this.clockPaused = !this.clockPaused;
         if (this.useChessClocks) {
-            let players = this.getPlayers();
-            for (let player of players) {
+            for (const player of this.getPlayers()) {
                 player.togglePauseChessClock();
             }
         }
@@ -1522,15 +1555,8 @@ class Game extends EventEmitter {
                 playerState[player.name] = player.getState(activePlayer);
             }
 
-            let timeLimitState = undefined;
-            if (this.useGameTimeLimit) {
-                timeLimitState = this.timeLimit.getState();
-            }
-            this.timeLimit.checkForTimeLimitReached();
-
             return {
                 id: this.id,
-                isMelee: this.isMelee,
                 name: this.name,
                 owner: this.owner,
                 players: playerState,
@@ -1544,14 +1570,20 @@ class Game extends EventEmitter {
                 }),
                 started: this.started,
                 winner: this.winner ? this.winner.name : undefined,
+                gameFormat: this.gameFormat,
+                maxPlayers: this.maxPlayers,
                 cancelPromptUsed: this.cancelPromptUsed,
                 useGameTimeLimit: this.useGameTimeLimit,
-                gameTimeLimit: this.gameTimeLimit,
-                timeLimit: timeLimitState,
+                ...(this.useGameTimeLimit && {
+                    gameTimeLimit: this.gameTimeLimit,
+                    timeLimit: this.timeLimit.getState()
+                }),
                 muteSpectators: this.muteSpectators,
                 useChessClocks: this.useChessClocks,
-                chessClockTimeLimit: this.chessClockTimeLimit,
-                chessClockDelay: this.chessClockDelay
+                ...(this.useChessClocks && {
+                    chessClockTimeLimit: this.chessClockTimeLimit,
+                    chessClockDelay: this.chessClockDelay
+                })
             };
         }
 
@@ -1584,7 +1616,8 @@ class Game extends EventEmitter {
                 left: player.left,
                 name: player.name,
                 owner: player.owner,
-                user: options.fullData && player.user
+                user: options.fullData && player.user,
+                seatNo: player.seatNo
             };
         }
 
@@ -1592,9 +1625,10 @@ class Game extends EventEmitter {
             allowSpectators: this.allowSpectators,
             createdAt: this.createdAt,
             gamePrivate: this.gamePrivate,
+            gameFormat: this.gameFormat,
+            maxPlayers: this.maxPlayers,
             gameType: this.gameType,
             id: this.id,
-            isMelee: this.isMelee,
             messages: this.gameChat.messages,
             name: this.name,
             owner: this.owner,
