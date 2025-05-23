@@ -40,20 +40,23 @@ describe('Master of Whispers', function () {
                 this.player1.clickPrompt('Apply Claim');
             });
 
-            it('should prompt to apply claim to additional players', function () {
+            it('should prompt to apply claim to any players', function () {
+                expect(this.player1).toHavePromptButton('player2');
                 expect(this.player1).toHavePromptButton('player3');
             });
 
-            it('should allow it to only be applied to the defending player', function () {
+            it('should allow it to be applied to nobody', function () {
                 this.player1.clickPrompt('Done');
 
+                expect(this.player2Object.discardPile.length).toBe(0);
                 expect(this.player3Object.discardPile.length).toBe(0);
             });
 
             it('should apply it to selected players', function () {
                 this.player1.clickPrompt('player3');
+                this.player1.clickPrompt('Done');
 
-                expect(this.player2Object.discardPile.length).toBe(1);
+                expect(this.player2Object.discardPile.length).toBe(0);
                 expect(this.player3Object.discardPile.length).toBe(1);
             });
         });
@@ -99,6 +102,7 @@ describe('Master of Whispers', function () {
 
                 // Apply claim against both opponents
                 this.player1.clickPrompt('Apply Claim');
+                this.player1.clickPrompt('player2');
                 this.player1.clickPrompt('player3');
 
                 // Trigger Trial by Combat
@@ -162,6 +166,7 @@ describe('Master of Whispers', function () {
 
                 // Apply claim against both opponents
                 this.player1.clickPrompt('Apply Claim');
+                this.player1.clickPrompt('player2');
                 this.player1.clickPrompt('player3');
 
                 // Trigger Vengeance for Elia
@@ -175,6 +180,8 @@ describe('Master of Whispers', function () {
 
             it('should apply the normal effect for Vengeance for Elia', function () {
                 expect(this.player1Object.discardPile.length).toBe(1);
+                // Only Vengeance for Elia in player2 discard pile (ie. no intrigue claim made)
+                expect(this.player2Object.discardPile.length).toBe(1);
             });
         });
     });

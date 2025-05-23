@@ -43,14 +43,14 @@ class ClaimPrompt extends BaseStep {
 
     promptForAnyOpponents() {
         const opponents = this.game.getOpponents(this.claim.winner);
-
-        if (opponents.length === 0) {
+        const remaining = opponents.filter((opponent) => !this.claim.recipients.includes(opponent));
+        if (remaining.length === 0) {
             this.processClaim();
             return true;
         }
 
         const buttons = opponents.map((opponent) => ({
-            disabled: this.claim.recipients.includes(opponent),
+            disabled: !remaining.includes(opponent),
             text: opponent.name,
             method: 'addOpponent',
             arg: opponent.name
@@ -74,7 +74,7 @@ class ClaimPrompt extends BaseStep {
 
         this.claim.addRecipient(opponent);
 
-        this.promptForAdditionalOpponents();
+        this.promptForAnyOpponents();
 
         return true;
     }

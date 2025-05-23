@@ -70,7 +70,7 @@ class Player extends Spectator {
         this.putIntoShadowsRestrictions = [];
         this.abilityMaxByTitle = {};
         this.standPhaseRestrictions = [];
-        this.multipleOpponentClaim = [];
+        this.anyOpponentsClaim = [];
         this.mustChooseAsClaim = [];
         this.plotRevealRestrictions = [];
         this.mustRevealPlot = undefined;
