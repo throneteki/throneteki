@@ -7,13 +7,13 @@ class CardStat {
         //       Would make affecting that modified stat (eg. Rains of Autumn) much simpler
         this._modifier = 0;
         this.setValues = [];
-        this._multiplier = 1;
+        this.multipliers = [];
     }
 
     calculate(boostValue = 0) {
         if (this.setValues.length == 0) {
             let modifiedValue = this._modifier + this.baseValue + boostValue;
-            let multipliedValue = Math.round(this._multiplier * modifiedValue);
+            let multipliedValue = Math.round(this.multiplier * modifiedValue);
             return Math.max(0, multipliedValue);
         }
         return this.setValue;
@@ -35,12 +35,16 @@ class CardStat {
         return this._modifier;
     }
 
-    set multiplier(value) {
-        this._multiplier = value;
+    get multiplier() {
+        return this.multipliers.reduce((acc, curr) => acc * curr.val, 1);
     }
 
-    get multiplier() {
-        return this._multiplier;
+    addMultiplier(source, newValue) {
+        this.multipliers.push({ source: source, val: newValue });
+    }
+
+    removeMultiplier(source) {
+        this.multipliers = this.multipliers.filter((record) => record.source != source);
     }
 
     addSetValue(source, newValue) {
@@ -54,7 +58,7 @@ class CardStat {
     clone() {
         let clonedStat = new CardStat(this.printedValue);
         clonedStat.modifier = this._modifier;
-        clonedStat.multiplier = this._multiplier;
+        this.multipliers.forEach((mult) => clonedStat.addSetValue(mult.source, mult.val));
         this.setValues.forEach((setVal) => clonedStat.addSetValue(setVal.source, setVal.val));
         return clonedStat;
     }
