@@ -74,7 +74,7 @@ describe('CardStat', function () {
 
     describe('when the value has been multiplied', function () {
         beforeEach(function () {
-            this.testStat.multiplier = 2;
+            this.testStat.addMultiplier(this.testSource1, 2);
             this.testStat.modifier = 1;
         });
 
@@ -85,7 +85,7 @@ describe('CardStat', function () {
 
     describe('when the value becomes fractional', function () {
         beforeEach(function () {
-            this.testStat.multiplier = 0.5;
+            this.testStat.addMultiplier(this.testSource1, 0.5);
         });
 
         it('should return the rounded value', function () {
@@ -94,11 +94,29 @@ describe('CardStat', function () {
     });
 
     it('should not multiply a set value', function () {
-        this.testStat.multiplier = 2;
+        this.testStat.addMultiplier(this.testSource1, 2);
         this.testStat.addSetValue(this.testSource1, 1);
         expect(this.testStat.calculate()).toBe(1);
-        this.testStat.multiplier = 3;
+        this.testStat.addMultiplier(this.testSource2, 3);
         expect(this.testStat.calculate()).toBe(1);
+    });
+
+    describe('when more than one multiplier is applied', function () {
+        beforeEach(function () {
+            this.testStat.addMultiplier(this.testSource1, 2);
+            this.testStat.addMultiplier(this.testSource2, 3);
+        });
+
+        it('should report an overall multiplier equal to their product', function () {
+            expect(this.testStat.multiplier).toBe(6);
+            expect(this.testStat.calculate()).toBe(3 * 6);
+        });
+
+        it('should allow removal of multipliers by source', function () {
+            this.testStat.removeMultiplier(this.testSource1);
+            expect(this.testStat.multiplier).toBe(3);
+            expect(this.testStat.calculate()).toBe(3 * 3);
+        });
     });
 
     describe('clone', function () {
@@ -107,7 +125,7 @@ describe('CardStat', function () {
             let clonedStat = this.testStat.clone();
             clonedStat.removeSetValue(this.testSource1);
             clonedStat.modifier = 1;
-            clonedStat.multiplier = 2;
+            clonedStat.addMultiplier(this.testSource1, 2);
             expect(this.testStat.setValue).toBe(1);
             expect(this.testStat.modifier).toBe(0);
             expect(this.testStat.multiplier).toBe(1);
