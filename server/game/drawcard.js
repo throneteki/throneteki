@@ -236,10 +236,10 @@ class DrawCard extends BaseCard {
         }
     }
 
-    modifyStrengthMultiplier(amount, applying = true) {
+    modifyStrengthMultiplier(source, amount, applying = true) {
         let strengthBefore = this.getStrength();
 
-        this.strength.multiplier *= amount;
+        this.strength.addMultiplier(source, amount);
 
         if (this.strengthSet === undefined) {
             this.game.raiseEvent('onCardStrengthChanged', {

@@ -6,6 +6,10 @@ describe('DrawCard', function () {
         this.player = jasmine.createSpyObj('player', ['discardCard']);
         this.player.game = this.game;
         this.card = new DrawCard(this.player, { strength: 3 });
+
+        this.testSource1 = {
+            uuid: 1111
+        };
     });
 
     describe('getStrength()', function () {
@@ -31,7 +35,7 @@ describe('DrawCard', function () {
 
         describe('when the strength has been multiplied', function () {
             beforeEach(function () {
-                this.card.modifyStrengthMultiplier(2);
+                this.card.modifyStrengthMultiplier(this.testSource1, 2);
                 this.card.modifyStrength(1);
             });
 
@@ -42,7 +46,7 @@ describe('DrawCard', function () {
 
         describe('when the strength becomes fractional', function () {
             beforeEach(function () {
-                this.card.modifyStrengthMultiplier(0.5);
+                this.card.modifyStrengthMultiplier(this.testSource1, 0.5);
             });
 
             it('should return the rounded strength', function () {
@@ -53,7 +57,7 @@ describe('DrawCard', function () {
         describe('when requesting printed strength', function () {
             beforeEach(function () {
                 this.card.modifyStrength(1);
-                this.card.modifyStrengthMultiplier(2);
+                this.card.modifyStrengthMultiplier(this.testSource1, 2);
             });
 
             it('should return the base strength', function () {
