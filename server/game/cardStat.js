@@ -36,30 +36,33 @@ class CardStat {
     }
 
     get multiplier() {
-        return this.multipliers.reduce((acc, curr) => acc * curr.val, 1);
+        return this.multipliers.reduce(
+            (accumulatedValue, currentObject) => accumulatedValue * currentObject.val,
+            1
+        );
     }
 
-    addMultiplier(source, newValue) {
-        this.multipliers.push({ source: source, val: newValue });
+    addMultiplier(effect, newValue) {
+        this.multipliers.push({ effect: effect, val: newValue });
     }
 
-    removeMultiplier(source) {
-        this.multipliers = this.multipliers.filter((record) => record.source != source);
+    removeMultiplier(effect) {
+        this.multipliers = this.multipliers.filter((record) => record.effect != effect);
     }
 
-    addSetValue(source, newValue) {
-        this.setValues.push({ source: source, val: newValue });
+    addSetValue(effect, newValue) {
+        this.setValues.push({ effect: effect, val: newValue });
     }
 
-    removeSetValue(source) {
-        this.setValues = this.setValues.filter((record) => record.source != source);
+    removeSetValue(effect) {
+        this.setValues = this.setValues.filter((record) => record.effect != effect);
     }
 
     clone() {
         let clonedStat = new CardStat(this.printedValue);
         clonedStat.modifier = this._modifier;
-        this.multipliers.forEach((mult) => clonedStat.addSetValue(mult.source, mult.val));
-        this.setValues.forEach((setVal) => clonedStat.addSetValue(setVal.source, setVal.val));
+        this.multipliers.forEach((mult) => clonedStat.addSetValue(mult.effect, mult.val));
+        this.setValues.forEach((setVal) => clonedStat.addSetValue(setVal.effect, setVal.val));
         return clonedStat;
     }
 }

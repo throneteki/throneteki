@@ -53,9 +53,9 @@ class DrawCard extends BaseCard {
         return this.strength.setValue;
     }
 
-    setStrength(source, newStrength) {
+    setStrength(effect, newStrength) {
         let strengthBefore = this.getStrength();
-        this.strength.addSetValue(source, newStrength);
+        this.strength.addSetValue(effect, newStrength);
         if (newStrength !== strengthBefore) {
             this.game.raiseEvent('onCardStrengthChanged', {
                 card: this,
@@ -65,8 +65,8 @@ class DrawCard extends BaseCard {
         }
     }
 
-    removeSetStrengthEffect(source) {
-        this.strength.removeSetValue(source);
+    removeSetStrengthEffect(effect) {
+        this.strength.removeSetValue(effect);
     }
 
     setupCardTextProperties(ability) {
@@ -236,10 +236,10 @@ class DrawCard extends BaseCard {
         }
     }
 
-    modifyStrengthMultiplier(source, amount, applying = true) {
+    modifyStrengthMultiplier(effect, amount, applying = true) {
         let strengthBefore = this.getStrength();
 
-        this.strength.addMultiplier(source, amount);
+        this.strength.addMultiplier(effect, amount);
 
         if (this.strengthSet === undefined) {
             this.game.raiseEvent('onCardStrengthChanged', {
@@ -248,6 +248,10 @@ class DrawCard extends BaseCard {
                 applying: applying
             });
         }
+    }
+
+    removeStrengthMultiplier(effect) {
+        this.strength.removeMultiplier(effect);
     }
 
     getPrintedStrength() {
