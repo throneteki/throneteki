@@ -120,16 +120,16 @@ function setCardModifier(propName) {
             apply: function (card, context) {
                 context[propName] = context[propName] || {};
                 context[propName][card.uuid] = calculate(card, context) || 0;
-                card[propName].addSetValue(context.source, context[propName][card.uuid]);
+                card[propName].addSetValue(context.effect, context[propName][card.uuid]);
             },
             reapply: function (card, context) {
                 const newValue = calculate(card, context) || 0;
                 context[propName][card.uuid] = newValue;
-                card[propName].addSetValue(context.source, newValue);
+                card[propName].addSetValue(context.effect, newValue);
             },
             unapply: function (card, context) {
                 delete context[propName][card.uuid];
-                card[propName].removeSetValue(context.source);
+                card[propName].removeSetValue(context.effect);
             },
             isStateDependent
         };
@@ -286,20 +286,20 @@ const Effects = {
                     ? 'decreaseStrength'
                     : 'increaseStrength',
             apply: function (card, context) {
-                card.setStrength(context.source, value);
+                card.setStrength(context.effect, value);
             },
             unapply: function (card, context) {
-                card.removeSetStrengthEffect(context.source);
+                card.removeSetStrengthEffect(context.effect);
             }
         };
     },
     modifyStrengthMultiplier: function (value) {
         return {
-            apply: function (card) {
-                card.modifyStrengthMultiplier(value, true);
+            apply: function (card, context) {
+                card.modifyStrengthMultiplier(context.effect, value, true);
             },
-            unapply: function (card) {
-                card.modifyStrengthMultiplier(1.0 / value, false);
+            unapply: function (card, context) {
+                card.removeStrengthMultiplier(context.effect, false);
             }
         };
     },

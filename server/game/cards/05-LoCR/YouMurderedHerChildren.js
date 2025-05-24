@@ -15,7 +15,7 @@ class YouMurderedHerChildren extends DrawCard {
             handler: (context) => {
                 this.untilEndOfPhase((ability) => ({
                     match: context.target,
-                    effect: ability.effects.modifyStrengthMultiplier(context.source, 2)
+                    effect: ability.effects.modifyStrengthMultiplier(2)
                 }));
                 this.atEndOfPhase((ability) => ({
                     match: context.target,
