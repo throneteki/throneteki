@@ -48,7 +48,7 @@ class Effect {
         this.gameAction = this.effect.gameAction || 'genericEffect';
         this.targets = [];
         this.appliedTargets = new Set();
-        this.context = { game: game, source: source };
+        this.context = { game: game, source: source, effectObject: this };
         this.active = !source.facedown;
         this.isConditional =
             !!properties.condition ||
