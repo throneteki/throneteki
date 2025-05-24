@@ -30,10 +30,16 @@ class JonArryn extends DrawCard {
                             'Gain 1 power': {
                                 message:
                                     '{choosingPlayer} chooses to gain 1 power for their faction',
-                                gameAction: GameActions.gainPower((context) => ({
-                                    card: context.choosingPlayer.faction,
-                                    amount: 1
-                                }))
+                                gameAction: GameActions.ifCondition({
+                                    condition: (context) =>
+                                        context.choosingPlayer.faction.allowGameAction('gainPower'),
+                                    thenAction: {
+                                        gameAction: GameActions.gainPower((context) => ({
+                                            card: context.choosingPlayer.faction,
+                                            amount: 1
+                                        }))
+                                    }
+                                })
                             }
                         },
                         cancelMessage:

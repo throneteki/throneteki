@@ -29,10 +29,16 @@ class SeaSong extends DrawCard {
                 },
                 'Gain 1 power': {
                     message: '{player} uses {source} to gain 1 power for their faction',
-                    gameAction: GameActions.gainPower((context) => ({
-                        card: context.player.faction,
-                        amount: 1
-                    }))
+                    gameAction: GameActions.ifCondition({
+                        condition: (context) =>
+                            context.choosingPlayer.faction.allowGameAction('gainPower'),
+                        thenAction: {
+                            gameAction: GameActions.gainPower((context) => ({
+                                card: context.choosingPlayer.faction,
+                                amount: 1
+                            }))
+                        }
+                    })
                 }
             }
         });

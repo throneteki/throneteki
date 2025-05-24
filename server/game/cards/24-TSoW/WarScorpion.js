@@ -30,7 +30,8 @@ class WarScorpion extends DrawCard {
                 this.game.resolveGameAction(
                     GameActions.ifCondition({
                         condition: (context) =>
-                            !context.target.isMatch({ trait: ['Army', 'Dragon'] }),
+                            !context.target.isMatch({ trait: ['Army', 'Dragon'] }) ||
+                            !context.target.allowGameAction('kill'),
                         thenAction: {
                             gameAction: GameActions.removeFromChallenge((context) => ({
                                 card: context.target
