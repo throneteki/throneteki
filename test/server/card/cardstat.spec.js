@@ -3,14 +3,20 @@ import CardStat from '../../../server/game/cardStat.js';
 describe('CardStat', function () {
     beforeEach(function () {
         this.testStat = new CardStat(3);
-        this.testSource1 = {
-            uuid: 1111
+        this.testEffectObj1 = {
+            source: {
+                uuid: 1111
+            }
         };
-        this.testSource2 = {
-            uuid: 2222
+        this.testEffectObj2 = {
+            source: {
+                uuid: 2222
+            }
         };
-        this.testSource3 = {
-            uuid: 3333
+        this.testEffectObj3 = {
+            source: {
+                uuid: 3333
+            }
         };
     });
 
@@ -23,7 +29,7 @@ describe('CardStat', function () {
     });
 
     it('should override the printed value with a set value', function () {
-        this.testStat.addSetValue(this.testSource1, 2);
+        this.testStat.addSetValue(this.testEffectObj1, 2);
         expect(this.testStat.calculate()).toBe(2);
         expect(this.testStat.setValue).toBe(2);
     });
@@ -34,30 +40,30 @@ describe('CardStat', function () {
     });
 
     it('should not apply a modifier while a value is set, but apply it thereafter', function () {
-        this.testStat.addSetValue(this.testSource1, 2);
+        this.testStat.addSetValue(this.testEffectObj1, 2);
         this.testStat.modifier = 1;
         expect(this.testStat.calculate()).toBe(2);
-        this.testStat.removeSetValue(this.testSource1);
+        this.testStat.removeSetValue(this.testEffectObj1);
         expect(this.testStat.calculate()).toBe(4);
     });
 
     it('should report the latest set value', function () {
-        this.testStat.addSetValue(this.testSource1, 2);
+        this.testStat.addSetValue(this.testEffectObj1, 2);
         expect(this.testStat.calculate()).toBe(2);
         expect(this.testStat.setValue).toBe(2);
-        this.testStat.addSetValue(this.testSource2, 5);
+        this.testStat.addSetValue(this.testEffectObj2, 5);
         expect(this.testStat.calculate()).toBe(5);
         expect(this.testStat.setValue).toBe(5);
-        this.testStat.addSetValue(this.testSource3, 6);
+        this.testStat.addSetValue(this.testEffectObj3, 6);
         expect(this.testStat.calculate()).toBe(6);
         expect(this.testStat.setValue).toBe(6);
-        this.testStat.removeSetValue(this.testSource2);
+        this.testStat.removeSetValue(this.testEffectObj2);
         expect(this.testStat.calculate()).toBe(6);
         expect(this.testStat.setValue).toBe(6);
-        this.testStat.removeSetValue(this.testSource3);
+        this.testStat.removeSetValue(this.testEffectObj3);
         expect(this.testStat.calculate()).toBe(2);
         expect(this.testStat.setValue).toBe(2);
-        this.testStat.removeSetValue(this.testSource1);
+        this.testStat.removeSetValue(this.testEffectObj1);
         expect(this.testStat.calculate()).toBe(3);
         expect(this.testStat.setValue).toBe(undefined);
     });
@@ -95,7 +101,7 @@ describe('CardStat', function () {
 
     it('should not multiply a set value', function () {
         this.testStat.multiplier = 2;
-        this.testStat.addSetValue(this.testSource1, 1);
+        this.testStat.addSetValue(this.testEffectObj1, 1);
         expect(this.testStat.calculate()).toBe(1);
         this.testStat.multiplier = 3;
         expect(this.testStat.calculate()).toBe(1);
@@ -103,9 +109,9 @@ describe('CardStat', function () {
 
     describe('clone', function () {
         it('should create an entirely independent copy', function () {
-            this.testStat.addSetValue(this.testSource1, 1);
+            this.testStat.addSetValue(this.testEffectObj1, 1);
             let clonedStat = this.testStat.clone();
-            clonedStat.removeSetValue(this.testSource1);
+            clonedStat.removeSetValue(this.testEffectObj1);
             clonedStat.modifier = 1;
             clonedStat.multiplier = 2;
             expect(this.testStat.setValue).toBe(1);

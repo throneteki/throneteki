@@ -43,19 +43,19 @@ class CardStat {
         return this._multiplier;
     }
 
-    addSetValue(source, newValue) {
-        this.setValues.push({ source: source, val: newValue });
+    addSetValue(effectObject, newValue) {
+        this.setValues.push({ effectObject: effectObject, val: newValue });
     }
 
-    removeSetValue(source) {
-        this.setValues = this.setValues.filter((record) => record.source != source);
+    removeSetValue(effectObject) {
+        this.setValues = this.setValues.filter((record) => record.effectObject != effectObject);
     }
 
     clone() {
         let clonedStat = new CardStat(this.printedValue);
         clonedStat.modifier = this._modifier;
         clonedStat.multiplier = this._multiplier;
-        this.setValues.forEach((setVal) => clonedStat.addSetValue(setVal.source, setVal.val));
+        this.setValues.forEach((setVal) => clonedStat.addSetValue(setVal.effectObject, setVal.val));
         return clonedStat;
     }
 }

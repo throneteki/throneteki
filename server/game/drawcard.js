@@ -53,9 +53,9 @@ class DrawCard extends BaseCard {
         return this.strength.setValue;
     }
 
-    setStrength(source, newStrength) {
+    setStrength(effectObject, newStrength) {
         let strengthBefore = this.getStrength();
-        this.strength.addSetValue(source, newStrength);
+        this.strength.addSetValue(effectObject, newStrength);
         if (newStrength !== strengthBefore) {
             this.game.raiseEvent('onCardStrengthChanged', {
                 card: this,
@@ -65,8 +65,8 @@ class DrawCard extends BaseCard {
         }
     }
 
-    removeSetStrengthEffect(source) {
-        this.strength.removeSetValue(source);
+    removeSetStrengthEffect(effectObject) {
+        this.strength.removeSetValue(effectObject);
     }
 
     setupCardTextProperties(ability) {
