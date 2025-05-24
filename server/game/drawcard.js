@@ -2,6 +2,7 @@ import BaseCard from './basecard.js';
 import CardMatcher from './CardMatcher.js';
 import ReferenceCountedSetProperty from './PropertyTypes/ReferenceCountedSetProperty.js';
 import StandardPlayActions from './PlayActions/StandardActions.js';
+import CardStat from './cardStat.js';
 
 const Icons = ['military', 'intrigue', 'power'];
 
@@ -12,9 +13,7 @@ class DrawCard extends BaseCard {
         this.dupes = [];
         this.attachments = [];
         this.childCards = [];
-        this.strengthModifier = 0;
-        this.strengthMultiplier = 1;
-        this.strengthSet = undefined;
+        this.strength = new CardStat(this.getPrintedStrength());
         this.dominanceStrengthModifier = 0;
         this.dominanceOptions = new ReferenceCountedSetProperty();
         this.kneeled = false;
@@ -43,13 +42,31 @@ class DrawCard extends BaseCard {
         clone.kneeled = this.kneeled;
         clone.parent = this.parent;
         clone.power = this.power;
-        clone.strengthModifier = this.strengthModifier;
-        clone.strengthMultiplier = this.strengthMultiplier;
-        clone.strengthSet = this.strengthSet;
+        clone.strength = this.strength.clone();
         clone.tokens = Object.assign({}, this.tokens);
         clone.traits = this.traits.clone();
 
         return clone;
+    }
+
+    get strengthSet() {
+        return this.strength.setValue;
+    }
+
+    setStrength(effect, newStrength) {
+        let strengthBefore = this.getStrength();
+        this.strength.addSetValue(effect, newStrength);
+        if (newStrength !== strengthBefore) {
+            this.game.raiseEvent('onCardStrengthChanged', {
+                card: this,
+                amount: newStrength - strengthBefore,
+                applying: true
+            });
+        }
+    }
+
+    removeSetStrengthEffect(effect) {
+        this.strength.removeSetValue(effect);
     }
 
     setupCardTextProperties(ability) {
@@ -203,9 +220,9 @@ class DrawCard extends BaseCard {
     }
 
     modifyStrength(amount, applying = true) {
-        this.strengthModifier += amount;
+        this.strength.modifier += amount;
 
-        if (!this.strengthSet) {
+        if (this.strengthSet === undefined) {
             let params = {
                 card: this,
                 amount: amount,
@@ -219,18 +236,22 @@ class DrawCard extends BaseCard {
         }
     }
 
-    modifyStrengthMultiplier(amount, applying = true) {
+    modifyStrengthMultiplier(effect, amount, applying = true) {
         let strengthBefore = this.getStrength();
 
-        this.strengthMultiplier *= amount;
+        this.strength.addMultiplier(effect, amount);
 
-        if (!this.strengthSet) {
+        if (this.strengthSet === undefined) {
             this.game.raiseEvent('onCardStrengthChanged', {
                 card: this,
                 amount: this.getStrength() - strengthBefore,
                 applying: applying
             });
         }
+    }
+
+    removeStrengthMultiplier(effect) {
+        this.strength.removeMultiplier(effect);
     }
 
     getPrintedStrength() {
@@ -252,13 +273,7 @@ class DrawCard extends BaseCard {
             return baseStrength;
         }
 
-        if (typeof this.strengthSet === 'number') {
-            return this.strengthSet;
-        }
-
-        let modifiedStrength = this.strengthModifier + baseStrength + boostValue;
-        let multipliedStrength = Math.round(this.strengthMultiplier * modifiedStrength);
-        return Math.max(0, multipliedStrength);
+        return this.strength.calculate(boostValue);
     }
 
     modifyDominanceStrength(amount) {
