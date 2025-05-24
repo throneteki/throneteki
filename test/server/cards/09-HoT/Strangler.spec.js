@@ -13,7 +13,8 @@ describe('Strangler', function () {
                 'Trading with the Pentoshi',
                 'Crown of Gold (R)',
                 'Daenerys Targaryen (TFM)',
-                'Visited by Shadows'
+                'Visited by Shadows',
+                'Shadow of the East'
             ]);
             this.player1.selectDeck(tyrell);
             this.player2.selectDeck(targ);
@@ -31,11 +32,13 @@ describe('Strangler', function () {
             this.crown = this.player2.findCardByName('Crown of Gold (R)', 'hand');
             this.dany = this.player2.findCardByName('Daenerys Targaryen (TFM)', 'hand');
             this.shadows = this.player2.findCardByName('Visited by Shadows', 'hand');
+            this.east = this.player2.findCardByName('Shadow of the East', 'hand');
 
             this.player1.clickCard(this.randyll);
             this.player1.clickCard(this.roseroad);
 
             this.player2.clickCard(this.dany);
+            this.player2.clickCard(this.east);
         });
 
         it('should not cause Daenerys (TFM) to become weaker', function () {
@@ -116,6 +119,53 @@ describe('Strangler', function () {
             this.unopposedChallenge(this.player1, 'Power', this.randyll);
             this.player1.clickPrompt('Apply Claim');
             expect(this.player1).not.toAllowAbilityTrigger(this.randyll);
+        });
+
+        it('should unapply the set strength effect if removed in challenge, eg by shadow of the east', function () {
+            this.completeSetup();
+            this.player2.selectPlot(this.p2Pentoshi);
+            this.selectFirstPlayer(this.player1);
+            this.selectPlotOrder(this.player1);
+            this.player1.clickCard(this.strangler);
+            this.player1.clickCard(this.randyll);
+            this.player1.clickPrompt('Done');
+
+            this.player2.clickPrompt('Done');
+
+            expect(this.randyll.getStrength()).toBe(5);
+
+            this.player1.clickPrompt('Power');
+            this.player1.clickCard(this.randyll);
+            this.player1.clickPrompt('Done');
+            expect(this.randyll.kneeled).toBe(true);
+            expect(this.randyll.getStrength()).toBe(1);
+            this.player1.clickPrompt('Pass');
+            this.player2.clickCard(this.east);
+            this.player2.clickCard(this.strangler);
+            expect(this.randyll.getStrength()).toBe(5);
+        });
+
+        it('should unapply the set strength effect if removed in challenge, eg by shadow of the east and revert appropriately if there is another set strength effect', function () {
+            this.completeSetup();
+            this.player2.selectPlot(this.palace);
+            this.selectFirstPlayer(this.player1);
+            this.player1.clickCard(this.strangler);
+            this.player1.clickCard(this.randyll);
+            this.player1.clickPrompt('Done');
+
+            this.player2.clickPrompt('Done');
+
+            expect(this.randyll.getStrength()).toBe(3);
+
+            this.player1.clickPrompt('Power');
+            this.player1.clickCard(this.randyll);
+            this.player1.clickPrompt('Done');
+            expect(this.randyll.kneeled).toBe(true);
+            expect(this.randyll.getStrength()).toBe(1);
+            this.player1.clickPrompt('Pass');
+            this.player2.clickCard(this.east);
+            this.player2.clickCard(this.strangler);
+            expect(this.randyll.getStrength()).toBe(3);
         });
     });
 });
