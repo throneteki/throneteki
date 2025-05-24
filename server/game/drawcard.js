@@ -13,7 +13,7 @@ class DrawCard extends BaseCard {
         this.dupes = [];
         this.attachments = [];
         this.childCards = [];
-        this._strength = new CardStat(this.getPrintedStrength());
+        this.strength = new CardStat(this.getPrintedStrength());
         this.dominanceStrengthModifier = 0;
         this.dominanceOptions = new ReferenceCountedSetProperty();
         this.kneeled = false;
@@ -42,7 +42,7 @@ class DrawCard extends BaseCard {
         clone.kneeled = this.kneeled;
         clone.parent = this.parent;
         clone.power = this.power;
-        clone._strength = this._strength.clone();
+        clone.strength = this.strength.clone();
         clone.tokens = Object.assign({}, this.tokens);
         clone.traits = this.traits.clone();
 
@@ -50,12 +50,12 @@ class DrawCard extends BaseCard {
     }
 
     get strengthSet() {
-        return this._strength.setValue;
+        return this.strength.setValue;
     }
 
-    setStrength(sourceUuid, newStrength) {
+    setStrength(source, newStrength) {
         let strengthBefore = this.getStrength();
-        this._strength.setTheValue(sourceUuid, newStrength);
+        this.strength.addSetValue(source, newStrength);
         if (newStrength !== strengthBefore) {
             this.game.raiseEvent('onCardStrengthChanged', {
                 card: this,
@@ -65,24 +65,8 @@ class DrawCard extends BaseCard {
         }
     }
 
-    removeSetStrengthEffect(sourceUuid) {
-        this._strength.removeSetEffect(sourceUuid);
-    }
-
-    get strengthModifier() {
-        return this._strength.modifier;
-    }
-
-    set strengthModifier(value) {
-        this._strength.modifier = value;
-    }
-
-    get strengthMultiplier() {
-        return this._strength.multiplier;
-    }
-
-    set strengthMultiplier(value) {
-        this._strength.multiplier = value;
+    removeSetStrengthEffect(source) {
+        this.strength.removeSetValue(source);
     }
 
     setupCardTextProperties(ability) {
@@ -236,7 +220,7 @@ class DrawCard extends BaseCard {
     }
 
     modifyStrength(amount, applying = true) {
-        this._strength.modifier += amount;
+        this.strength.modifier += amount;
 
         if (this.strengthSet === undefined) {
             let params = {
@@ -255,7 +239,7 @@ class DrawCard extends BaseCard {
     modifyStrengthMultiplier(amount, applying = true) {
         let strengthBefore = this.getStrength();
 
-        this._strength.multiplier *= amount;
+        this.strength.multiplier *= amount;
 
         if (this.strengthSet === undefined) {
             this.game.raiseEvent('onCardStrengthChanged', {
@@ -285,7 +269,7 @@ class DrawCard extends BaseCard {
             return baseStrength;
         }
 
-        return this._strength.calculate(boostValue);
+        return this.strength.calculate(boostValue);
     }
 
     modifyDominanceStrength(amount) {
