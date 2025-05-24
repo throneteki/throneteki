@@ -286,10 +286,10 @@ const Effects = {
                     ? 'decreaseStrength'
                     : 'increaseStrength',
             apply: function (card, context) {
-                card.setStrength(context.source.uuid, value);
+                card.setStrength(context.source, value);
             },
             unapply: function (card, context) {
-                card.removeSetStrengthEffect(context.source.uuid);
+                card.removeSetStrengthEffect(context.source);
             }
         };
     },
