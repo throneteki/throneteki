@@ -59,8 +59,6 @@ describe('Cersei Lannister (LoCR)', function () {
                     this.unopposedChallenge(this.player1, 'Intrigue', this.cersei);
 
                     this.player1.clickPrompt('Apply Claim');
-                    // Skip order prompt
-                    this.player2.clickPrompt('Done');
                 });
 
                 it('should not prompt Cersei to gain power twice', function () {
