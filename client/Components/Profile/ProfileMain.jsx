@@ -79,7 +79,7 @@ const ProfileMain = ({ user, formProps }) => {
                             </Link>{' '}
                             account. Please ensure your email for Gravatar matches the above email.
                         </p>
-                        <div className='flex gap-2 items-center'>
+                        <div className='flex flex-wrap gap-2 items-center'>
                             <Avatar src={`/img/avatar/${user.username}.png`} showFallback />
                             <Button
                                 isLoading={avatarLoading}
