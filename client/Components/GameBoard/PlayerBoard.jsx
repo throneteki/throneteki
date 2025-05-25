@@ -1,9 +1,9 @@
 import React, { useCallback } from 'react';
 import classNames from 'classnames';
-
 import Card from './Card';
 import { standardiseCardSize } from '../../util';
 import Droppable from './Droppable';
+import { getCardDimensions } from '../../util';
 
 const PlayerBoard = ({
     isDroppable,
@@ -94,12 +94,17 @@ const PlayerBoard = ({
 
     const wrapperClassName = classNames(
         className,
-        'flex flex-1 flex-col min-h-0 m-2 gap-1.5 justify-between',
+        'flex flex-1 flex-col m-2 gap-1.5 justify-between',
         {
             'our-side': rowDirection === 'default'
         }
     );
-    const content = <div className={wrapperClassName}>{renderRows(rows)}</div>;
+    const cardDimensions = getCardDimensions(cardSize);
+    const content = (
+        <div className={wrapperClassName} style={{ minHeight: `${cardDimensions.height}rem` }}>
+            {renderRows(rows)}
+        </div>
+    );
 
     if (isDroppable) {
         return (

@@ -68,7 +68,7 @@ const PlayerRow = ({
                     />
                 );
             }
-            const cardWidth = getCardDimensions(cardSize);
+            const cardDimensions = getCardDimensions(cardSize);
 
             const underneath = agenda.childCards ? [...agenda.childCards] : [];
             const disablePopup = underneath.length === 0;
@@ -77,7 +77,7 @@ const PlayerRow = ({
             const additionalAgendas = agendas.slice(1);
             const agendaClass = (a) => classNames('agenda', `agenda-${a.code}`);
 
-            const spreadWidth = cardWidth.width / 2;
+            const spreadWidth = cardDimensions.width / 2;
 
             const retAgendas = [
                 <div key={agenda.uuid} className={agendaClass(agenda)}>

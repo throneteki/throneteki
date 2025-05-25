@@ -55,10 +55,10 @@ const CardTiledList = ({
 
     const style = useMemo(() => {
         if (numRows) {
-            const dimensions = getCardDimensions(size);
+            const cardDimensions = getCardDimensions(size);
             const rowHeight = cards.some((card) => card.type !== 'plot')
-                ? dimensions.height
-                : dimensions.width;
+                ? cardDimensions.height
+                : cardDimensions.width;
             return {
                 maxHeight: `${rowHeight * numRows}rem`
             };
