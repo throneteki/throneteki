@@ -5,7 +5,6 @@ import LoadingSpinner from '../Site/LoadingSpinner';
 
 import GameChat from './GameChat';
 import GameConfigurationModal from './GameConfigurationModal';
-import { useGetCardsQuery } from '../../redux/middleware/api';
 import { navigate } from '../../redux/reducers/navigation';
 import {
     sendCardClickedMessage,
@@ -57,7 +56,6 @@ const GameBoard = () => {
     const dispatch = useDispatch();
     const currentGame = useSelector((state) => state.lobby.currentGame);
     const user = useSelector((state) => state.auth.user);
-    const { data: cards, isLoading: isCardsLoading } = useGetCardsQuery();
 
     const [showGameChat, setShowGameChat] = useState(window.innerWidth > 768);
     const [unreadMessages, setUnreadMessages] = useState(0);
@@ -115,10 +113,6 @@ const GameBoard = () => {
 
     if (!currentGame || !currentGame.started) {
         return <LoadingSpinner label={'Waiting for server...'} />;
-    }
-
-    if (isCardsLoading) {
-        return <LoadingSpinner label={'Waiting to fetch cards...'} />;
     }
 
     if (!user) {
