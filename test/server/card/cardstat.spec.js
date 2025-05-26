@@ -35,13 +35,13 @@ describe('CardStat', function () {
     });
 
     it('should calculate an appropriate value with a modifier when a value is not set', function () {
-        this.testStat.modifier = 1;
+        this.testStat.addModifier(this.testEffect1, 1);
         expect(this.testStat.calculate()).toBe(4);
     });
 
     it('should not apply a modifier while a value is set, but apply it thereafter', function () {
         this.testStat.addSetValue(this.testEffect1, 2);
-        this.testStat.modifier = 1;
+        this.testStat.addModifier(this.testEffect2, 1);
         expect(this.testStat.calculate()).toBe(2);
         this.testStat.removeSetValue(this.testEffect1);
         expect(this.testStat.calculate()).toBe(4);
@@ -68,20 +68,46 @@ describe('CardStat', function () {
         expect(this.testStat.setValue).toBe(undefined);
     });
 
+    it('should allow a modifier to be removed based on the causing effect', function () {
+        this.testStat.addModifier(this.testEffect1, 1);
+        this.testStat.addModifier(this.testEffect2, 2);
+        expect(this.testStat.calculate()).toBe(6);
+        this.testStat.removeModifier(this.testEffect1);
+        expect(this.testStat.calculate()).toBe(5);
+    });
+
+    it('should allow a modifier to be changed based on the causing effect', function () {
+        this.testStat.addModifier(this.testEffect1, 1);
+        this.testStat.addModifier(this.testEffect2, 2);
+        expect(this.testStat.calculate()).toBe(6);
+        this.testStat.changeModifier(this.testEffect1, 3);
+        expect(this.testStat.calculate()).toBe(8);
+        this.testStat.removeModifier(this.testEffect1);
+        expect(this.testStat.calculate()).toBe(5);
+    });
+
     describe('when the value has been modified below 0', function () {
         beforeEach(function () {
-            this.testStat.modifier = -4;
+            this.testStat.addModifier(this.testEffect1, -5);
         });
 
         it('should return 0', function () {
             expect(this.testStat.calculate()).toBe(0);
+        });
+
+        //https://thronesdb.com/rulesreference#Modifiers
+        it('should use the initial value of the modifier when calculating the effects of subsequent modifiers', function () {
+            this.testStat.addModifier(this.testEffect2, 1);
+            expect(this.testStat.calculate()).toBe(0);
+            this.testStat.addModifier(this.testEffect3, 2);
+            expect(this.testStat.calculate()).toBe(1);
         });
     });
 
     describe('when the value has been multiplied', function () {
         beforeEach(function () {
             this.testStat.addMultiplier(this.testEffect1, 2);
-            this.testStat.modifier = 1;
+            this.testStat.addModifier(this.testEffect2, 1);
         });
 
         it('should return the value multiplied after addition/subtraction modifiers have been applied', function () {
@@ -130,8 +156,8 @@ describe('CardStat', function () {
             this.testStat.addSetValue(this.testEffect1, 1);
             let clonedStat = this.testStat.clone();
             clonedStat.removeSetValue(this.testEffect1);
-            clonedStat.modifier = 1;
-            clonedStat.addMultiplier(this.testEffect1, 2);
+            clonedStat.addModifier(this.testEffect2, 1);
+            clonedStat.addMultiplier(this.testEffect3, 2);
             expect(this.testStat.setValue).toBe(1);
             expect(this.testStat.modifier).toBe(0);
             expect(this.testStat.multiplier).toBe(1);

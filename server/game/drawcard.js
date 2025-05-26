@@ -49,26 +49,6 @@ class DrawCard extends BaseCard {
         return clone;
     }
 
-    get strengthSet() {
-        return this.strength.setValue;
-    }
-
-    setStrength(effect, newStrength) {
-        let strengthBefore = this.getStrength();
-        this.strength.addSetValue(effect, newStrength);
-        if (newStrength !== strengthBefore) {
-            this.game.raiseEvent('onCardStrengthChanged', {
-                card: this,
-                amount: newStrength - strengthBefore,
-                applying: true
-            });
-        }
-    }
-
-    removeSetStrengthEffect(effect) {
-        this.strength.removeSetValue(effect);
-    }
-
     setupCardTextProperties(ability) {
         super.setupCardTextProperties(ability);
 
@@ -219,39 +199,86 @@ class DrawCard extends BaseCard {
         return this.location === 'shadows' ? this.controller.shadows.indexOf(this) + 1 : null;
     }
 
-    modifyStrength(amount, applying = true) {
-        this.strength.modifier += amount;
+    get strengthSet() {
+        return this.strength.setValue;
+    }
+
+    setStrength(effect, newStrength, applying = true) {
+        let strengthBefore = this.getStrength();
+        this.strength.addSetValue(effect, newStrength);
+        let changedAmount = this.getStrength() - strengthBefore;
+
+        this.raiseStrengthChangeEvent(changedAmount, applying);
+    }
+
+    removeSetStrengthEffect(effect, applying = false) {
+        let strengthBefore = this.getStrength();
+        this.strength.removeSetValue(effect);
+        let changedAmount = this.getStrength() - strengthBefore;
+
+        this.raiseStrengthChangeEvent(changedAmount, applying);
+    }
+
+    addStrengthModifier(effect, amount, applying = true) {
+        let strengthBefore = this.getStrength();
+        this.strength.addModifier(effect, amount);
+        let changedAmount = this.getStrength() - strengthBefore;
 
         if (this.strengthSet === undefined) {
-            let params = {
-                card: this,
-                amount: amount,
-                applying: applying
-            };
-            this.game.raiseEvent('onCardStrengthChanged', params, () => {
-                if (this.isBurning && this.getStrength() <= 0) {
-                    this.game.killCharacter(this, { allowSave: false, isBurn: true });
-                }
-            });
+            this.raiseStrengthChangeEvent(changedAmount, applying);
+        }
+    }
+
+    changeStrengthModifier(effect, amount, applying = true) {
+        let strengthBefore = this.getStrength();
+        this.strength.changeModifier(effect, amount);
+        let changedAmount = this.getStrength() - strengthBefore;
+
+        if (this.strengthSet === undefined) {
+            this.raiseStrengthChangeEvent(changedAmount, applying);
+        }
+    }
+
+    removeStrengthModifier(effect, applying = false) {
+        let strengthBefore = this.getStrength();
+        this.strength.removeModifier(effect);
+        let changedAmount = this.getStrength() - strengthBefore;
+
+        if (this.strengthSet === undefined) {
+            this.raiseStrengthChangeEvent(changedAmount, applying);
         }
     }
 
     modifyStrengthMultiplier(effect, amount, applying = true) {
         let strengthBefore = this.getStrength();
-
         this.strength.addMultiplier(effect, amount);
-
+        let changedAmount = this.getStrength() - strengthBefore;
         if (this.strengthSet === undefined) {
-            this.game.raiseEvent('onCardStrengthChanged', {
-                card: this,
-                amount: this.getStrength() - strengthBefore,
-                applying: applying
-            });
+            this.raiseStrengthChangeEvent(changedAmount, applying);
         }
     }
 
-    removeStrengthMultiplier(effect) {
+    removeStrengthMultiplier(effect, applying = false) {
+        let strengthBefore = this.getStrength();
         this.strength.removeMultiplier(effect);
+
+        let changedAmount = this.getStrength() - strengthBefore;
+        if (this.strengthSet === undefined) {
+            this.raiseStrengthChangeEvent(changedAmount, applying);
+        }
+    }
+
+    raiseStrengthChangeEvent(amount, applying) {
+        let params = {
+            card: this,
+            amount: amount,
+            applying: applying
+        };
+        this.game.raiseEvent('onCardStrengthChanged', params, () => {
+            if (this.isBurning && this.getStrength() <= 0) {
+                this.game.killCharacter(this, { allowSave: false, isBurn: true });
+            }
+        });
     }
 
     getPrintedStrength() {
