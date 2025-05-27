@@ -282,5 +282,138 @@ describe('burn effects', function () {
                 });
             });
         });
+
+        describe('burn vs dynamic strength', function () {
+            beforeEach(function () {
+                let stark = this.buildDeck('stark', [
+                    'Dacey Mormont',
+                    'Tumblestone Knight',
+                    'A Noble Cause'
+                ]);
+                let targ = this.buildDeck('targaryen', [
+                    'Braided Warrior',
+                    'Nightmares',
+                    'Blood of the Dragon'
+                ]);
+
+                this.player1.selectDeck(stark);
+                this.player2.selectDeck(targ);
+
+                this.startGame();
+                this.keepStartingHands();
+
+                this.dacey = this.player1.findCardByName('Dacey Mormont', 'hand');
+                this.knight = this.player1.findCardByName('Tumblestone Knight', 'hand');
+
+                this.warrior = this.player2.findCardByName('Braided Warrior', 'hand');
+                this.nightmares = this.player2.findCardByName('Nightmares', 'hand');
+
+                this.player1.clickCard(this.dacey);
+                this.player1.clickCard(this.knight);
+
+                this.player2.clickCard(this.warrior);
+
+                this.completeSetup();
+                this.selectFirstPlayer(this.player2);
+                this.completeMarshalPhase();
+            });
+
+            it('should kill when the strength is reduced to 0 due to the dynamic condition changing', function () {
+                this.unopposedChallenge(this.player2, 'military', this.warrior);
+                expect(this.dacey.getStrength()).toBe(1);
+                this.player2.clickPrompt('Apply Claim');
+                this.player1.clickCard(this.knight);
+                expect(this.dacey.location).toBe('dead pile');
+            });
+
+            it('should kill when the strength is reduced to 0 due to the dynamic card being blanked', function () {
+                this.player2.clickCard(this.nightmares);
+                this.player2.clickCard(this.dacey);
+                expect(this.dacey.location).toBe('dead pile');
+            });
+        });
+
+        describe('burn vs withdrawal of strength effects', function () {
+            beforeEach(function () {
+                let stark = this.buildDeck('stark', [
+                    'Ser Edmure Tully',
+                    'Ice (Core)',
+                    'Strangler',
+                    'A Noble Cause'
+                ]);
+                let targ = this.buildDeck('targaryen', [
+                    'Drogon (Core)',
+                    'Dracarys!',
+                    'A Noble Cause'
+                ]);
+
+                this.player1.selectDeck(stark);
+                this.player2.selectDeck(targ);
+
+                this.startGame();
+                this.keepStartingHands();
+
+                this.edmure = this.player1.findCardByName('Ser Edmure Tully', 'hand');
+                this.ice = this.player1.findCardByName('Ice (Core)', 'hand');
+                this.strangler = this.player1.findCardByName('Strangler', 'hand');
+
+                this.drogon = this.player2.findCardByName('Drogon (Core)', 'hand');
+                this.dracarys = this.player2.findCardByName('Dracarys!', 'hand');
+
+                this.player1.clickCard(this.edmure);
+                this.player2.clickCard(this.drogon);
+
+                this.completeSetup();
+                this.selectFirstPlayer(this.player1);
+            });
+
+            it('should kill when the strength is reduced to 0 due to a strength increase being removed', function () {
+                this.player1.clickCard(this.ice);
+                this.player1.clickCard(this.edmure);
+                this.completeMarshalPhase();
+                this.player1.clickPrompt('Military');
+                this.player1.clickCard(this.edmure);
+                this.player1.clickPrompt('done');
+                this.player1.clickPrompt('pass');
+
+                this.player2.clickCard(this.dracarys);
+                this.player2.clickCard(this.drogon);
+                this.player2.clickCard(this.edmure);
+
+                this.player1.clickPrompt('pass');
+                this.player2.clickPrompt('pass');
+                this.player2.clickPrompt('done');
+                this.player1.clickPrompt('pass');
+                this.player2.clickPrompt('pass');
+                this.player1.triggerAbility(this.ice);
+                this.player1.clickCard(this.drogon);
+
+                expect(this.edmure.location).toBe('dead pile');
+            });
+
+            it('should kill when the strength is reduced to 0 due to a strength set effect being removed', function () {
+                this.player1.clickCard(this.strangler);
+                this.player1.clickCard(this.edmure);
+                this.completeMarshalPhase();
+                this.player1.clickPrompt('Military');
+                this.player1.clickCard(this.edmure);
+                this.player1.clickPrompt('done');
+                this.player1.clickPrompt('pass');
+
+                this.player2.clickCard(this.dracarys);
+                this.player2.clickCard(this.drogon);
+                this.player2.clickCard(this.edmure);
+
+                this.player1.clickPrompt('pass');
+                this.player2.clickPrompt('pass');
+                this.player2.clickPrompt('done');
+                this.player1.clickPrompt('pass');
+                this.player2.clickPrompt('pass');
+                this.player1.clickPrompt('Apply Claim');
+                this.player2.clickCard(this.drogon);
+
+                expect(this.edmure.location).toBe('dead pile');
+            });
+        });
     });
 });
