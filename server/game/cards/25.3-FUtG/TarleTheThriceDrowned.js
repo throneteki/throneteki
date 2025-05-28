@@ -22,7 +22,8 @@ class TarleTheThriceDrowned extends DrawCard {
                         type: 'character',
                         location: 'play area',
                         controller: 'current'
-                    }
+                    },
+                    gameAction: 'kill'
                 },
                 message: 'Then, {player} kills {target}',
                 handler: (context) => {
