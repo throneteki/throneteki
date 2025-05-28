@@ -6,7 +6,7 @@ import CardPile from './CardPile';
 import SquishableCardPanel from './SquishableCardPanel';
 import DrawDeck from './DrawDeck';
 import Droppable from './Droppable';
-import { getCardDimensions } from '../../util';
+import { standardiseCardSize } from '../../util';
 import PlayerPlots from './PlayerPlots';
 
 const PlayerRow = ({
@@ -68,16 +68,16 @@ const PlayerRow = ({
                     />
                 );
             }
-            const cardDimensions = getCardDimensions(cardSize);
 
             const underneath = agenda.childCards ? [...agenda.childCards] : [];
             const disablePopup = underneath.length === 0;
             const title = !disablePopup ? 'Agenda' : null;
             const source = 'agenda';
             const additionalAgendas = agendas.slice(1);
-            const agendaClass = (a) => classNames('agenda', `agenda-${a.code}`);
-
-            const spreadWidth = cardDimensions.width / 2;
+            const agendaClass = (a) =>
+                classNames('agenda', `agenda-${a.code}`, {
+                    [`additional-agenda-${standardiseCardSize(cardSize)}`]: a !== agenda
+                });
 
             const retAgendas = [
                 <div key={agenda.uuid} className={agendaClass(agenda)}>
@@ -101,9 +101,8 @@ const PlayerRow = ({
             // Add all additional agendas separately (not as a CardPile)
             retAgendas.unshift(
                 ...additionalAgendas.reverse().map((agenda) => {
-                    const style = { marginLeft: `-${spreadWidth}px` };
                     return (
-                        <div key={agenda.uuid} className={agendaClass(agenda)} style={style}>
+                        <div key={agenda.uuid} className={agendaClass(agenda)}>
                             <Card
                                 card={agenda}
                                 source={source}

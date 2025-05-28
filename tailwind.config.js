@@ -136,6 +136,9 @@ export default {
                     }),
                     'duplicate-offset': (value) => ({
                         'margin-top': `${value[1] * 0.1}rem`
+                    }),
+                    'additional-agenda': (value) => ({
+                        'margin-left': `-${value[0] / 2}rem`
                     })
                 },
                 {
@@ -164,6 +167,9 @@ export default {
         },
         {
             pattern: /duplicate-+/
+        },
+        {
+            pattern: /additional-agenda-+/
         }
     ]
 };
