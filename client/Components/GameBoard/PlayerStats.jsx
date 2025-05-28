@@ -109,23 +109,15 @@ const PlayerStats = ({
                 <StatContainer>
                     {showControls && (
                         <>
-                            {isMe && (
-                                <>
-                                    {getStatButton(
-                                        onSettingsClick,
-                                        faCogs,
-                                        'Open Settings',
-                                        'Settings'
-                                    )}
-                                    {getStatButton(
-                                        () => dispatch(sendToggleMuteSpectatorsMessage()),
-                                        currentGame.muteSpectators ? faEyeSlash : faEye,
-                                        currentGame.muteSpectators
-                                            ? 'Un-mute spectators'
-                                            : 'Mute spectators'
-                                    )}
-                                </>
-                            )}
+                            {getStatButton(onSettingsClick, faCogs, 'Open Settings', 'Settings')}
+                            {isMe &&
+                                getStatButton(
+                                    () => dispatch(sendToggleMuteSpectatorsMessage()),
+                                    currentGame.muteSpectators ? faEyeSlash : faEye,
+                                    currentGame.muteSpectators
+                                        ? 'Un-mute spectators'
+                                        : 'Mute spectators'
+                                )}
                             <StatContainer>
                                 <Badge
                                     shape='circle'

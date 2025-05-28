@@ -15,7 +15,8 @@ const JoustGameBoardLayout = ({
     onSettingsClick,
     onChatToggle,
     unreadMessages,
-    isDragging
+    isDragging,
+    cardSize
 }) => {
     const dispatch = useDispatch();
 
@@ -63,7 +64,7 @@ const JoustGameBoardLayout = ({
                         spectating={!thisPlayer}
                         title={player.title}
                         side={side}
-                        cardSize={thisPlayer.cardSize}
+                        cardSize={cardSize}
                         plotDeck={player.cardPiles.plotDeck}
                         plotDiscard={player.cardPiles.plotDiscard}
                         activePlot={player.activePlot}
@@ -78,7 +79,7 @@ const JoustGameBoardLayout = ({
                             onCardClick={onCardClick}
                             onMenuItemClick={onMenuItemClick}
                             rowDirection={side === 'bottom' ? 'default' : 'reverse'}
-                            cardSize={thisPlayer.cardSize}
+                            cardSize={cardSize}
                         />
                         <SideBoardPanel
                             player={player}
@@ -98,11 +99,12 @@ const JoustGameBoardLayout = ({
             onMenuItemClick,
             onSettingsClick,
             thisPlayer,
-            unreadMessages
+            unreadMessages,
+            cardSize
         ]
     );
     return (
-        <div className='min-h-full w-max grid grid-cols-1 grid-rows-[repeat(2,auto)]'>
+        <div className='min-h-full min-w-max grid grid-cols-1 grid-rows-[repeat(2,auto)]'>
             {renderPlayerBoard(otherPlayer, 'top')}
             {renderPlayerBoard(thisPlayer, 'bottom')}
         </div>

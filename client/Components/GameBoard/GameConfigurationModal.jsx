@@ -4,6 +4,7 @@ import { Modal, ModalBody, ModalContent, ModalHeader } from '@heroui/react';
 
 const GameConfigurationModal = ({
     isOpen,
+    isSpectating,
     keywordSettings,
     onClose,
     onKeywordSettingToggle,
@@ -23,6 +24,7 @@ const GameConfigurationModal = ({
                     <ModalHeader>{'Game Configuration'}</ModalHeader>
                     <ModalBody>
                         <GameConfiguration
+                            isSpectating={isSpectating}
                             actionWindows={promptedActionWindows}
                             keywordSettings={keywordSettings}
                             promptDupes={promptDupes}

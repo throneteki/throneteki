@@ -79,7 +79,6 @@ class Player extends Spectator {
         this.timerSettings = user.settings.timerSettings || {};
         this.timerSettings.windowTimer = user.settings.windowTimer;
         this.keywordSettings = user.settings.keywordSettings;
-        this.cardSize = user.settings.cardSize;
         this.goldSources = [new GoldSource(this)];
         this.groupedPiles = {};
         this.bonusesFromRivals = new Set();
