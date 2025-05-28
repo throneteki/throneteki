@@ -259,7 +259,12 @@ const CardPile = ({
     const headerText = title ? title + ' (' + retCardCount + ')' : '';
     let retTopCard = topCard || (cards ? cards[0] : null);
     if (retTopCard && hiddenTopCard) {
-        retTopCard = { facedown: true, selected, uuid: retTopCard.uuid };
+        retTopCard = {
+            facedown: true,
+            selected,
+            uuid: retTopCard.uuid,
+            unselectable: retTopCard.unselectable
+        };
     }
 
     let menu;

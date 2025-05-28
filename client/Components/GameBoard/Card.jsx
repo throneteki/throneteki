@@ -297,8 +297,8 @@ const Card = ({
             return <div />;
         }
 
-        // Wrapper class handles the rotating of knelt or horizontally placed vertical cards (eg. dead pile)
-        const wrapperClass = classNames(
+        // Image class handles the rotating of knelt or horizontally placed vertical cards (eg. dead pile)
+        const imageClass = classNames(
             'relative overflow-visible transition-all',
             cardClass(
                 size,
@@ -321,7 +321,7 @@ const Card = ({
             <div
                 {...listeners}
                 {...attributes}
-                className={wrapperClass}
+                className={imageClass}
                 onClick={handleClick}
                 style={{ zIndex: cardStackIndex-- }}
             >
@@ -333,19 +333,17 @@ const Card = ({
                     code={imageCode}
                     orientation={card.type === 'plot' ? 'horizontal' : 'vertical'}
                 />
+                {!hideTokens && <CardCounters counters={getCountersForCard(card)} />}
+                {isFaceup && getAlertStatus()}
             </div>
         );
+        const wrapperClass = classNames(
+            'relative transition-all',
+            cardClass(size, orientation === 'vertical' && card.kneeled ? 'kneeled' : orientation),
+            className
+        );
         return (
-            <div
-                className={classNames(
-                    'relative transition-all',
-                    cardClass(
-                        size,
-                        orientation === 'vertical' && card.kneeled ? 'kneeled' : orientation
-                    ),
-                    className
-                )}
-            >
+            <div className={wrapperClass}>
                 {disableHover ? (
                     image
                 ) : (
@@ -357,8 +355,6 @@ const Card = ({
                         {image}
                     </CardHoverable>
                 )}
-                {!hideTokens && <CardCounters counters={getCountersForCard(card)} />}
-                {isFaceup && getAlertStatus()}
                 {showMenu && <CardMenu menu={getMenu()} onMenuItemClick={handleMenuItemClick} />}
                 {getCardOrder()}
             </div>
