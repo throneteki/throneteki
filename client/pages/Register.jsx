@@ -3,12 +3,13 @@ import { useDispatch } from 'react-redux';
 import * as yup from 'yup';
 
 import Panel from '../Components/Site/Panel';
-import Link from '../Components/Site/Link';
 import { navigate } from '../redux/reducers/navigation';
 import { useRegisterAccountMutation } from '../redux/middleware/api';
 import { Formik } from 'formik';
-import { Button, Input, Switch } from '@heroui/react';
+import { Button, Input, Link, Switch } from '@heroui/react';
 import { toast } from 'react-toastify';
+import NavigationLink from '../Components/Site/NavigationLink';
+import Page from './Page';
 
 const Register = () => {
     const dispatch = useDispatch();
@@ -61,20 +62,23 @@ const Register = () => {
     });
 
     return (
-        <div className='md:mx-auto md:w-4/5 lg:w-2/5 mx-2'>
+        <Page size='small'>
             <Panel title='Register an account'>
                 <p>
                     We require information from you in order to service your access to the site.
-                    Please see the <Link href='/privacy'>privacy policy</Link> for details on why we
-                    need this information and what we do with it. Please pay particular attention to
-                    the section on avatars.
+                    Please see the{' '}
+                    <Link href='/privacy' as={NavigationLink} size='sm'>
+                        privacy policy
+                    </Link>{' '}
+                    for details on why we need this information and what we do with it. Please pay
+                    particular attention to the section on avatars.
                 </p>
 
                 <div className='mt-2'>
                     <Formik initialValues={{}} validationSchema={schema} onSubmit={onRegister}>
                         {(formProps) => (
-                            <form onSubmit={formProps.handleSubmit}>
-                                <div className='grid grid-cols-1 lg:grid-cols-2 gap-2'>
+                            <form onSubmit={formProps.handleSubmit} className='flex flex-col gap-2'>
+                                <div className='grid grid-cols-1 sm:grid-cols-2 gap-2'>
                                     <Input
                                         label='Username'
                                         {...formProps.getFieldProps('username')}
@@ -111,27 +115,37 @@ const Register = () => {
                                         {...formProps.getFieldProps('passwordAgain')}
                                     />
                                 </div>
-                                <div className='mt-2'>
-                                    <Switch
-                                        {...formProps.getFieldProps('enableGravatar')}
-                                        onValueChange={(value) =>
-                                            formProps.setFieldValue('enableGravatar', value)
-                                        }
-                                    >
-                                        Enable Gravatar
-                                    </Switch>
-                                </div>
-                                <div className='mt-2'>
-                                    <Button isLoading={isLoading} type='submit' color='primary'>
-                                        Register
-                                    </Button>
-                                </div>
+                                <p className='text-sm'>
+                                    This website uses{' '}
+                                    <Link href='https://gravatar.com/' size='sm'>
+                                        Gravatar
+                                    </Link>{' '}
+                                    to update user avatars, and can be enabled/disabled in settings
+                                    at any time. For this to work, please ensure you enable below,
+                                    and your Gravatar email matches the above.
+                                </p>
+                                <Switch
+                                    {...formProps.getFieldProps('enableGravatar')}
+                                    onValueChange={(value) =>
+                                        formProps.setFieldValue('enableGravatar', value)
+                                    }
+                                >
+                                    Enable Gravatar
+                                </Switch>
+                                <Button
+                                    className='sm:self-start'
+                                    isLoading={isLoading}
+                                    type='submit'
+                                    color='primary'
+                                >
+                                    Register
+                                </Button>
                             </form>
                         )}
                     </Formik>
                 </div>
             </Panel>
-        </div>
+        </Page>
     );
 };
 

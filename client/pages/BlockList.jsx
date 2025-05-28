@@ -20,6 +20,8 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { toast } from 'react-toastify';
+import LoadingSpinner from '../Components/Site/LoadingSpinner';
+import Page from './Page';
 
 const BlockList = () => {
     const user = useSelector((state) => state.auth.user);
@@ -33,21 +35,18 @@ const BlockList = () => {
     const [addBlockListEntry, { isLoading: isAddLoading }] = useAddBlockListEntryMutation();
     const [removeBlockListEntry, { isLoading: isRemoving }] = useRemoveBlockListEntryMutation();
 
-    const onUsernameChange = useCallback((event) => {
-        setUsername(event.target.value);
-    }, []);
-
     const onAddClick = useCallback(async () => {
         try {
             await addBlockListEntry({
                 username: user.username,
-                blockedUsername: username
+                blockedUsername: username.trim()
             }).unwrap();
-            toast.success('Blocklist entry added successfully');
+            setUsername('');
+            toast.success(`Successfully added ${username.trim()} to block list`);
         } catch (err) {
             toast.error(
                 err.message ||
-                    'An error occured adding the blocklist entry. Please try again later.'
+                    `An error occured adding ${username} to blocked list. Please try again later.`
             );
         }
     }, [addBlockListEntry, user?.username, username]);
@@ -59,11 +58,11 @@ const BlockList = () => {
                     username: user.username,
                     blockedUsername: username
                 }).unwrap();
-                toast.success('Blocklist entry removed successfully');
+                toast.success(`Successfully removed ${username} from blocked list`);
             } catch (err) {
                 toast.error(
                     err.message ||
-                        'An error occured removing the blocklist entry. Please try again later.'
+                        `An error occured removing ${username} from blocked list. Please try again later.`
                 );
             }
         },
@@ -78,81 +77,80 @@ const BlockList = () => {
                           <TableRow key={user}>
                               <TableCell>{user}</TableCell>
                               <TableCell>
-                                  <a href='#' className='btn' onClick={() => onRemoveClick(user)}>
-                                      <FontAwesomeIcon className='text-red-700' icon={faTimes} />
-                                  </a>
+                                  <Button
+                                      isIconOnly
+                                      size='sm'
+                                      startContent={
+                                          <FontAwesomeIcon
+                                              className='text-red-700'
+                                              icon={faTimes}
+                                          />
+                                      }
+                                      onPress={() => onRemoveClick(user)}
+                                      isLoading={isRemoving}
+                                  />
                               </TableCell>
                           </TableRow>
                       );
                   })
                 : null,
-        [blockList, onRemoveClick]
-    );
-
-    const table = useMemo(
-        () =>
-            blockList && blockList.length === 0 ? (
-                <div>No users currently blocked</div>
-            ) : (
-                <Table isStriped>
-                    <TableHeader>
-                        <TableColumn>Username</TableColumn>
-                        <TableColumn>Remove</TableColumn>
-                    </TableHeader>
-                    <TableBody>{retBlocklist}</TableBody>
-                </Table>
-            ),
-        [blockList, retBlocklist]
+        [blockList, isRemoving, onRemoveClick]
     );
 
     if (isLoading) {
-        return <div>Loading block list from the server...</div>;
+        return <LoadingSpinner />;
     }
 
     if (error) {
         return (
-            <AlertPanel
-                variant='danger'
-                message={error.message || 'An error occured loading the block list'}
-            />
+            <AlertPanel variant='danger'>
+                {error.message || 'An error occured loading the block list'}
+            </AlertPanel>
         );
     }
 
     return (
-        <div className='m-2 lg:w-2/3 lg:mx-auto'>
+        <Page>
             <Panel title='Block list'>
-                <p>
-                    It can sometimes become necessary to prevent someone joining your games, or stop
-                    seeing their messages, or both. Users on this list will not be able to join your
-                    games, and you will not see their chat messages or their games.
-                </p>
-
-                <div className='mt-2'>
+                <div className='flex flex-col gap-2'>
+                    <p>
+                        It can sometimes become necessary to prevent someone joining your games, or
+                        stop seeing their messages, or both. Users on this list will not be able to
+                        join your games, and you will not see their chat messages or their games.
+                    </p>
                     <Input
                         className='lg:w-1/3'
-                        name='blockee'
                         label='Username'
                         placeholder='Enter username to block'
                         type='text'
-                        onChange={onUsernameChange}
+                        onValueChange={setUsername}
                         value={username}
                     />
                     <Button
+                        className={'sm:self-start'}
                         isLoading={isAddLoading}
-                        className='mt-2'
                         color='primary'
                         onPress={onAddClick}
                     >
                         Add
                     </Button>
-
-                    <div className='mt-2'>
-                        <h3 className='font-bold'>Users Blocked</h3>
-                        {table}
+                    <div>
+                        <h3 className='font-bold pb-2'>Users Blocked</h3>
+                        {
+                            <Table isStriped>
+                                <TableHeader>
+                                    <TableColumn>Username</TableColumn>
+                                    <TableColumn>Actions</TableColumn>
+                                </TableHeader>
+                                <TableBody emptyContent={'No users currently blocked'}>
+                                    {retBlocklist}
+                                </TableBody>
+                            </Table>
+                        }
                     </div>
                 </div>
             </Panel>
-        </div>
+        </Page>
     );
 };
 

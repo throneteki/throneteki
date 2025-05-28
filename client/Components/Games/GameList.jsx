@@ -11,11 +11,10 @@ import {
 } from '../../redux/reducers/lobby';
 import { toast } from 'react-toastify';
 
-const GameList = ({ gameFilter }) => {
+const GameList = ({ gameFilter, games, onJoinOrWatch }) => {
     const dispatch = useDispatch();
     const currentGame = useSelector((state) => state.lobby.currentGame);
     const user = useSelector((state) => state.auth.user);
-    const games = useSelector((state) => state.lobby.games);
 
     const joinGame = useCallback(
         (game) => {
@@ -29,8 +28,9 @@ const GameList = ({ gameFilter }) => {
             } else {
                 dispatch(sendJoinGameMessage(game.id));
             }
+            onJoinOrWatch();
         },
-        [user, dispatch]
+        [user, dispatch, onJoinOrWatch]
     );
 
     const canWatch = useCallback(
@@ -52,8 +52,9 @@ const GameList = ({ gameFilter }) => {
             } else {
                 dispatch(sendWatchGameMessage(game.id));
             }
+            onJoinOrWatch();
         },
-        [user, dispatch]
+        [user, dispatch, onJoinOrWatch]
     );
 
     const removeGame = useCallback(
@@ -96,6 +97,10 @@ const GameList = ({ gameFilter }) => {
             }
 
             if (!gameFilter[game.gameType]) {
+                continue;
+            }
+
+            if (!gameFilter[game.gameFormat]) {
                 continue;
             }
 

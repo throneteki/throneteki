@@ -2,10 +2,10 @@ import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { navigate } from '../../redux/reducers/navigation';
 
-const Link = ({ href, className, children }) => {
+const NavigationLink = ({ href, className, children }) => {
     const dispatch = useDispatch();
 
-    const onClick = useCallback(
+    const onPointerDown = useCallback(
         (event) => {
             event.preventDefault();
             dispatch(navigate(href));
@@ -14,10 +14,10 @@ const Link = ({ href, className, children }) => {
     );
 
     return (
-        <a className={className} href={href} onClick={onClick}>
+        <a className={className} href={href} onClick={onPointerDown} onPointerDown={onPointerDown}>
             {children}
         </a>
     );
 };
 
-export default Link;
+export default NavigationLink;

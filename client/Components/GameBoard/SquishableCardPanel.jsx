@@ -1,16 +1,15 @@
 import React, { useCallback } from 'react';
-import classNames from 'classnames';
 import { getCardDimensions } from '../../util';
 
 import Card from './Card';
 import { useMemo } from 'react';
 import LabelledGameArea from './LabelledGameArea';
+import classNames from 'classnames';
 
 const SquishableCardPanel = ({
     cards,
+    disableBackground = false,
     onCardClick,
-    onMouseOver,
-    onMouseOut,
     cardSize,
     source,
     maxCards,
@@ -20,43 +19,40 @@ const SquishableCardPanel = ({
     groupVisibleCards
 }) => {
     const getOverallDimensions = useCallback(() => {
-        let cardDimensions = getCardDimensions(cardSize);
-
+        const cardDimensions = getCardDimensions(cardSize);
         return {
             width: cardDimensions.width * maxCards,
             height: cardDimensions.height
         };
     }, [cardSize, maxCards]);
 
-    const hasMixOfVisibleCards = useCallback(() => {
-        return cards.some((card) => !!card.code) && cards.some((card) => !card.code);
-    }, [cards]);
+    const hasMixOfVisibleCards = useCallback(
+        () => cards.some((card) => !!card.code) && cards.some((card) => !card.code),
+        [cards]
+    );
 
     const needsSquish = useMemo(() => cards && cards.length > maxCards, [cards, maxCards]);
 
     const cardsToRender = useMemo(() => {
-        let overallDimensions = getOverallDimensions();
-        let dimensions = getCardDimensions(cardSize);
-        let cardIndex = 0;
-        let handLength = cards ? cards.length : 0;
-        let cardWidth = dimensions.width;
+        const overallDimensions = getOverallDimensions();
+        const dimensions = getCardDimensions(cardSize);
+        const handLength = cards ? cards.length : 0;
+        const cardWidth = dimensions.width;
 
-        let requiredWidth = handLength * cardWidth;
-        let overflow = requiredWidth - overallDimensions.width;
-        let offset = overflow / (handLength - 1);
+        const requiredWidth = handLength * cardWidth;
+        const overflow = requiredWidth - overallDimensions.width;
+        const offset = overflow / (handLength - 1);
 
         let localCards = cards;
         if (groupVisibleCards && hasMixOfVisibleCards()) {
             localCards = [...cards].sort((a, b) => (a.facedown && !b.facedown ? -1 : 1));
         }
 
-        return localCards.map((card) => {
-            let left = (cardWidth - offset) * cardIndex++;
-
+        return localCards.map((card, index) => {
             let style = {};
             if (needsSquish) {
                 style = {
-                    left: left + 'px'
+                    left: `${(cardWidth - offset) * index}rem`
                 };
             }
 
@@ -64,10 +60,8 @@ const SquishableCardPanel = ({
                 <Card
                     key={card.uuid}
                     card={card}
-                    disableMouseOver={!card.code}
+                    disableHover={!card.code}
                     onClick={onCardClick}
-                    onMouseOver={onMouseOver}
-                    onMouseOut={onMouseOut}
                     size={cardSize}
                     style={style}
                     source={source}
@@ -82,35 +76,30 @@ const SquishableCardPanel = ({
         hasMixOfVisibleCards,
         needsSquish,
         onCardClick,
-        onMouseOver,
-        onMouseOut,
         source
     ]);
 
-    let dimensions = getOverallDimensions();
+    const dimensions = getOverallDimensions();
 
-    let headerText = title ? title + ' (' + cardsToRender.length + ')' : '';
+    const headerText = title ? title + ' (' + cardsToRender.length + ')' : '';
 
-    let classNameValue = classNames(
-        'flex justify-start box-border border-default-100 bg-black/35 rounded-md',
-        className,
-        {
-            [cardSize]: cardSize !== 'normal'
-        }
-    );
-
-    let style = {
-        width: dimensions.width + 'px',
-        height: dimensions.height + 'px'
+    const style = {
+        width: dimensions.width + 'rem',
+        height: dimensions.height + 'rem'
     };
 
+    const retClassName = classNames('box-border relative', className);
+
     return (
-        <div className={classNameValue} style={style}>
-            <LabelledGameArea label={headerText} position={titlePosition} className='w-full h-full'>
-                <div className='inner-border absolute border-2 border-default-100/50 w-full h-full rounded-md' />
-                {cardsToRender}
-            </LabelledGameArea>
-        </div>
+        <LabelledGameArea
+            label={headerText}
+            position={titlePosition}
+            className={retClassName}
+            style={style}
+            disableBackground={disableBackground}
+        >
+            {cardsToRender}
+        </LabelledGameArea>
     );
 };
 

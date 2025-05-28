@@ -1,11 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Formik } from 'formik';
 import { Button } from '@heroui/react';
 import * as yup from 'yup';
 import AlertPanel from '../Components/Site/AlertPanel';
 import Panel from '../Components/Site/Panel';
-import CardSizeOption from '../Components/Profile/CardSizeOption';
 import GameBackgroundOption from '../Components/Profile/GameBackgroundOption';
 import { useSaveProfileMutation } from '../redux/middleware/api';
 import ProfileMain from '../Components/Profile/ProfileMain';
@@ -17,18 +16,13 @@ import Background1 from '../assets/img/bgs/background.png';
 import Background2 from '../assets/img/bgs/background2.png';
 import { setUser } from '../redux/reducers/auth';
 import { toast } from 'react-toastify';
+import CardSizeSettings from '../Components/Profile/CardSizeSettings';
+import Page from './Page';
 
 const backgrounds = [
     { name: 'none', label: 'None', imageUrl: BlankBg },
     { name: 'BG1', label: 'Standard', imageUrl: Background1 },
     { name: 'BG2', label: 'Winter', imageUrl: Background2 }
-];
-
-const cardSizes = [
-    { name: 'small', label: 'Small' },
-    { name: 'normal', label: 'Normal' },
-    { name: 'large', label: 'Large' },
-    { name: 'x-large', label: 'Extra-Large' }
 ];
 
 const defaultActionWindows = {
@@ -48,22 +42,18 @@ const Profile = () => {
     const [selectedBackground, setSelectedBackground] = useState(
         user?.settings.background || 'BG1'
     );
-    const [selectedCardSize, setSelectedCardSize] = useState(user?.settings.cardSize || 'normal');
-    const topRef = useRef(null);
 
-    const [saveProfile, { error: profileError }] = useSaveProfileMutation();
+    const [saveProfile, { isLoading: isSaveLoading, error: saveError }] = useSaveProfileMutation();
 
     useEffect(() => {
-        if (profileError) {
+        if (saveError) {
             toast.error(
-                profileError.message ||
-                    'An error occured saving your profile. Please try again later.'
+                saveError.message || 'An error occured saving your profile. Please try again later.'
             );
         }
-    }, [profileError]);
+    }, [saveError]);
 
     useEffect(() => {
-        setSelectedCardSize(user?.settings?.cardSize || 'normal');
         setSelectedBackground(user?.settings?.background || 'BG1');
     }, [user?.settings?.background, user?.settings?.cardSize]);
 
@@ -118,11 +108,12 @@ const Profile = () => {
         promptDupes: !!settings.promptDupes,
         windowTimer: settings.windowTimer || 5,
         timerAbilities: !!settings.timerSettings.abilities,
-        timerEvents: settings.timerSettings.events
+        timerEvents: settings.timerSettings.events,
+        cardSize: settings.cardSize || 'normal'
     };
 
     return (
-        <div className='m-2 lg:w-3/4 mb-5 lg:mx-auto'>
+        <Page>
             <Formik
                 initialValues={initialValues}
                 validationSchema={schema}
@@ -147,7 +138,7 @@ const Profile = () => {
                                         events: values.timerEvents
                                     },
                                     background: selectedBackground,
-                                    cardSize: selectedCardSize
+                                    cardSize: values.cardSize
                                 }
                             }
                         }).unwrap();
@@ -160,62 +151,45 @@ const Profile = () => {
                                 'An error occured saving your profile. Please try again later.'
                         );
                     }
-
-                    topRef?.current?.scrollIntoView(false);
                 }}
             >
                 {(formProps) => (
-                    <form onSubmit={formProps.handleSubmit}>
+                    <form onSubmit={formProps.handleSubmit} className='flex flex-col gap-2'>
                         <ProfileMain user={user} formProps={formProps} />
-                        <div className='mt-2' ref={topRef}>
-                            <ActionWindowOptions formProps={formProps} />
-                        </div>
-                        <div className='mt-2'>
-                            <GameSettings formProps={formProps} />
-                        </div>
-                        <div className='mt-2 grid grid-cols-1 lg:grid-cols-2 gap-2'>
+                        <ActionWindowOptions formProps={formProps} />
+                        <GameSettings formProps={formProps} />
+                        <div className='grid grid-cols-1 lg:grid-cols-2 gap-2'>
                             <TimerSettings formProps={formProps} />
-                            <Panel title='Card Image Size'>
-                                <div className='flex gap-2 items-end justify-center'>
-                                    {cardSizes.map((cardSize) => (
-                                        <CardSizeOption
-                                            key={cardSize.name}
-                                            label={cardSize.label}
-                                            name={cardSize.name}
-                                            onSelect={(cardSize) => setSelectedCardSize(cardSize)}
-                                            selected={selectedCardSize === cardSize.name}
-                                        />
-                                    ))}
-                                </div>
-                            </Panel>
+                            <CardSizeSettings user={user} formProps={formProps} />
                         </div>
-                        <div className='mt-2'>
-                            <Panel title='Game Board Background'>
-                                <div className='grid grid-cols-3 gap-2'>
-                                    {backgrounds.map((background) => (
-                                        <GameBackgroundOption
-                                            imageUrl={background.imageUrl}
-                                            key={background.name}
-                                            label={background.label}
-                                            name={background.name}
-                                            onSelect={(background) =>
-                                                setSelectedBackground(background)
-                                            }
-                                            selected={selectedBackground === background.name}
-                                        />
-                                    ))}
-                                </div>
-                            </Panel>
-                        </div>
+                        <Panel title='Game Board Background'>
+                            <div className='grid sm:grid-cols-3 gap-2'>
+                                {backgrounds.map((background) => (
+                                    <GameBackgroundOption
+                                        imageUrl={background.imageUrl}
+                                        key={background.name}
+                                        label={background.label}
+                                        name={background.name}
+                                        onSelect={(background) => setSelectedBackground(background)}
+                                        selected={selectedBackground === background.name}
+                                    />
+                                ))}
+                            </div>
+                        </Panel>
                         <div className='w-full sticky bottom-6 z-50 mt-2 flex justify-center'>
-                            <Button className='w-1/2' color='success' type='submit'>
+                            <Button
+                                className='w-1/2'
+                                color='success'
+                                type='submit'
+                                isLoading={isSaveLoading}
+                            >
                                 Save
                             </Button>
                         </div>
                     </form>
                 )}
             </Formik>
-        </div>
+        </Page>
     );
 };
 

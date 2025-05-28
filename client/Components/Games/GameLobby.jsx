@@ -16,11 +16,14 @@ import {
     sendWatchGameMessage
 } from '../../redux/reducers/lobby';
 import { setUrl } from '../../redux/reducers/navigation';
+import Page from '../../pages/Page';
 
 const filterDefaults = {
     ['beginner']: true,
     ['casual']: true,
-    ['competitive']: true
+    ['competitive']: true,
+    ['joust']: true,
+    ['melee']: true
 };
 
 const GameLobby = ({ gameId }) => {
@@ -73,12 +76,10 @@ const GameLobby = ({ gameId }) => {
     }, [currentGame, dispatch, gameId, games]);
 
     return (
-        <div className='m-2 lg:mx-auto lg:w-4/5 flex flex-col gap-2'>
-            <div ref={topRef}>
-                {newGame && <NewGame quickJoin={quickJoin} onClosed={() => setNewGame(false)} />}
-                {currentGame?.started === false && <PendingGame />}
-                {passwordGame && <PasswordGame />}
-            </div>
+        <Page ref={topRef}>
+            {newGame && <NewGame quickJoin={quickJoin} onClosed={() => setNewGame(false)} />}
+            {currentGame?.started === false && <PendingGame />}
+            {passwordGame && <PasswordGame />}
             <Panel title={'Current Games'}>
                 {!user && (
                     <div className='mb-2 text-center'>
@@ -87,19 +88,17 @@ const GameLobby = ({ gameId }) => {
                         </AlertPanel>
                     </div>
                 )}
-                <div className='flex gap-2'>
-                    <div className='flex flex-col'>
-                        <GameButtons
-                            onNewGame={() => {
-                                setQuickJoin(false);
-                                setNewGame(true);
-                            }}
-                            onQuickJoin={() => {
-                                setQuickJoin(true);
-                                setNewGame(true);
-                            }}
-                        />
-                    </div>
+                <div className='flex gap-2 lg:flex-row flex-col'>
+                    <GameButtons
+                        onNewGame={() => {
+                            setQuickJoin(false);
+                            setNewGame(true);
+                        }}
+                        onQuickJoin={() => {
+                            setQuickJoin(true);
+                            setNewGame(true);
+                        }}
+                    />
                     <div className='flex-1'>
                         <GameFilter
                             filter={currentFilter}
@@ -121,13 +120,18 @@ const GameLobby = ({ gameId }) => {
                             <GameList
                                 games={games}
                                 gameFilter={currentFilter}
-                                onJoinOrWatchClick={() => topRef.current?.scrollIntoView(false)}
+                                onJoinOrWatch={() =>
+                                    topRef.current?.scrollIntoView({
+                                        behavior: 'smooth',
+                                        block: 'end'
+                                    })
+                                }
                             />
                         )}
                     </div>
                 </div>
             </Panel>
-        </div>
+        </Page>
     );
 };
 

@@ -19,6 +19,7 @@ import {
 } from '@heroui/react';
 import LoadingSpinner from '../Components/Site/LoadingSpinner';
 import { toast } from 'react-toastify';
+import Page from './Page';
 
 const BanlistAdmin = () => {
     const { data: banList, isLoading } = useGetBanListQuery();
@@ -80,11 +81,11 @@ const BanlistAdmin = () => {
     );
 
     if (isLoading) {
-        return <LoadingSpinner className='p-10' label={'Loading banlist...'}></LoadingSpinner>;
+        return <LoadingSpinner label={'Loading banlist...'}></LoadingSpinner>;
     }
 
     return (
-        <div className='w-2/3 mx-auto'>
+        <Page>
             <Panel title='Banlist administration'>
                 <Table isStriped>
                     <TableHeader>
@@ -96,27 +97,24 @@ const BanlistAdmin = () => {
                     <TableBody>{renderedBanlist}</TableBody>
                 </Table>
             </Panel>
-            <div className='mt-2'>
-                <Panel title='Add new ip'>
-                    <div>
-                        <Input
-                            label='Add ip address'
-                            value={banListText}
-                            onValueChange={setBanListText}
-                        />
-                        <div className='mt-2'>
-                            <Button
-                                isLoading={isAddLoading}
-                                color='primary'
-                                onPress={onAddBanlistClick}
-                            >
-                                Add
-                            </Button>
-                        </div>
-                    </div>
-                </Panel>
-            </div>
-        </div>
+            <Panel title='Add new ip'>
+                <div className='flex flex-col md:flex-row gap-2 items-center'>
+                    <Input
+                        label='Add ip address'
+                        value={banListText}
+                        onValueChange={setBanListText}
+                    />
+                    <Button
+                        isLoading={isAddLoading}
+                        className='max-md:self-start'
+                        color='primary'
+                        onPress={onAddBanlistClick}
+                    >
+                        Add
+                    </Button>
+                </div>
+            </Panel>
+        </Page>
     );
 };
 

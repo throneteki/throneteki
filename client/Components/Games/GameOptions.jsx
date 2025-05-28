@@ -36,14 +36,14 @@ const GameOptions = ({ formProps, isDisabled }) => {
                     ))}
                 </div>
             </div>
-            <div className='flex gap-2'>
+            <div className='flex flex-row gap-2 flex-wrap'>
                 {formProps.values.useGameTimeLimit && (
                     <div>
                         <span className='relative text-foreground-500'>Time Limit</span>
                         <div className='flex gap-2'>
                             <Input
                                 label={'Limit (minutes)'}
-                                className='lg:max-w-28'
+                                className='max-w-32'
                                 type='number'
                                 {...formProps.getFieldProps('gameTimeLimit')}
                                 isInvalid={
@@ -62,7 +62,7 @@ const GameOptions = ({ formProps, isDisabled }) => {
                         <div className='flex gap-2'>
                             <Input
                                 label={'Limit (minutes)'}
-                                className='lg:max-w-32'
+                                className='max-w-32'
                                 type='number'
                                 {...formProps.getFieldProps('chessClockTimeLimit')}
                                 isInvalid={
@@ -74,7 +74,7 @@ const GameOptions = ({ formProps, isDisabled }) => {
                             />
                             <Input
                                 label={'Delay (seconds)'}
-                                className='lg:max-w-32'
+                                className='max-w-32'
                                 type='number'
                                 {...formProps.getFieldProps('chessClockDelay')}
                                 isInvalid={

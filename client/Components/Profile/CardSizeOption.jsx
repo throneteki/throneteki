@@ -9,7 +9,7 @@ const CardSizeOption = ({ name, label, selected, onSelect }) => {
     }, [name, onSelect]);
 
     return (
-        <div key={name} className='inline-block' onClick={handleClick}>
+        <div key={name} className='inline-block' onPointerDown={handleClick}>
             <div className={classNames('card', 'vertical', name)}>
                 <img
                     className={classNames('card', 'vertical', name, {

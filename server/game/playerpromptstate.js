@@ -1,5 +1,6 @@
 class PlayerPromptState {
     constructor() {
+        this.isActivePrompt = false;
         this.selectCard = false;
         this.selectOrder = false;
         this.menuTitle = '';
@@ -25,6 +26,10 @@ class PlayerPromptState {
 
     clearSelectableCards() {
         this.selectableCards = [];
+    }
+
+    setIsActive(isActive) {
+        this.isActivePrompt = isActive;
     }
 
     setPrompt(prompt) {
@@ -75,6 +80,7 @@ class PlayerPromptState {
 
     getState() {
         return {
+            isActivePrompt: this.isActivePrompt,
             selectCard: this.selectCard,
             selectOrder: this.selectOrder,
             menuTitle: this.menuTitle,

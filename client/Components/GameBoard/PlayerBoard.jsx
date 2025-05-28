@@ -1,16 +1,18 @@
 import React, { useCallback } from 'react';
 import classNames from 'classnames';
-
 import Card from './Card';
+import { standardiseCardSize } from '../../util';
+import Droppable from './Droppable';
+import { getCardDimensions } from '../../util';
 
 const PlayerBoard = ({
+    isDroppable,
     cardsInPlay,
     rowDirection,
     onCardClick,
     onMenuItemClick,
-    onMouseOut,
-    onMouseOver,
-    user
+    cardSize,
+    className
 }) => {
     const getCardRows = useCallback(() => {
         let groupedCards = cardsInPlay.reduce((group, card) => {
@@ -50,21 +52,28 @@ const PlayerBoard = ({
 
     const renderRow = useCallback(
         (row) => {
-            return row.map((card) => (
-                <Card
-                    key={card.uuid}
-                    card={card}
-                    disableMouseOver={card.facedown && !card.code}
-                    onClick={onCardClick}
-                    onMenuItemClick={onMenuItemClick}
-                    onMouseOut={onMouseOut}
-                    onMouseOver={onMouseOver}
-                    size={user.settings.cardSize}
-                    source='play area'
-                />
-            ));
+            const maxDupe = Math.max(...row.map((card) => card.dupes?.length || 0), 0);
+            return row.map((card) => {
+                const dupeOffset = maxDupe - (card.dupes?.length || 0);
+                const dupeOffsets = Array.from({ length: dupeOffset }, (_, i) => (
+                    <div key={i} className={`duplicate-offset-${standardiseCardSize(cardSize)}`} />
+                ));
+                return (
+                    <div key={card.uuid} className='flex flex-col'>
+                        {dupeOffsets}
+                        <Card
+                            card={card}
+                            disableHover={card.facedown && !card.code}
+                            onClick={onCardClick}
+                            onMenuItemClick={onMenuItemClick}
+                            size={cardSize}
+                            source='play area'
+                        />
+                    </div>
+                );
+            });
         },
-        [onCardClick, onMenuItemClick, onMouseOut, onMouseOver, user]
+        [onCardClick, onMenuItemClick, cardSize]
     );
 
     const renderRows = useCallback(
@@ -81,13 +90,30 @@ const PlayerBoard = ({
         [renderRow]
     );
 
-    let rows = getCardRows();
+    const rows = getCardRows();
 
-    let className = classNames('flex flex-1 flex-col min-h-0 m-2 gap-1.5 justify-between', {
-        'our-side': rowDirection === 'default'
-    });
+    const wrapperClassName = classNames(
+        className,
+        'flex flex-1 flex-col m-2 gap-1.5 justify-between',
+        {
+            'our-side': rowDirection === 'default'
+        }
+    );
+    const cardDimensions = getCardDimensions(cardSize);
+    const content = (
+        <div className={wrapperClassName} style={{ minHeight: `${cardDimensions.height}rem` }}>
+            {renderRows(rows)}
+        </div>
+    );
 
-    return <div className={className}>{renderRows(rows)}</div>;
+    if (isDroppable) {
+        return (
+            <Droppable source='play area' className='flex flex-grow'>
+                {content}
+            </Droppable>
+        );
+    }
+    return content;
 };
 
 export default PlayerBoard;

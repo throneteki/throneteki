@@ -1,11 +1,12 @@
 import React, { useState, useCallback } from 'react';
 import HCaptcha from '@hcaptcha/react-hcaptcha';
-import AlertPanel from '../Components/Site/AlertPanel';
 import Panel from '../Components/Site/Panel';
 
 import { useForgotPasswordMutation } from '../redux/middleware/api';
 import { Button, Input } from '@heroui/react';
 import { toast } from 'react-toastify';
+import Page from './Page';
+import ErrorMessage from '../Components/Site/ErrorMessage';
 
 const ForgotPassword = () => {
     const [captcha, setCaptcha] = useState('');
@@ -27,37 +28,42 @@ const ForgotPassword = () => {
             toast.error(err.message || 'An error occurred submitting your request');
         }
     }, [forgotPassword, username, captcha]);
-
+    const siteKey = import.meta.env.VITE_HCAPTCHA_SITE_KEY;
     return (
-        <div>
-            <div className='md:mx-auto md:w-4/5 lg:w-2/5 mx-2'>
-                <AlertPanel
-                    variant='info'
-                    message='To start the password recovery process, please enter your username and click the submit button.'
-                />
-                <div className='mt-2'>
-                    <Panel title='Forgot password'>
-                        <Input
-                            label='Username'
-                            name='username'
-                            value={username}
-                            onValueChange={setUsername}
+        <Page size='small'>
+            <Panel title='Forgot password'>
+                <div className='flex flex-col gap-2'>
+                    <p>
+                        Please enter your username and click the submit button to start the password
+                        recovery process. If the username exists, the email for that account will be
+                        emailed with instructions on how to reset your password.
+                    </p>
+                    <Input
+                        label={'Username'}
+                        name='username'
+                        value={username}
+                        onValueChange={setUsername}
+                        isDisabled={!siteKey}
+                    />
+                    {siteKey ? (
+                        <HCaptcha sitekey={siteKey} onVerify={onCaptchaChange} />
+                    ) : (
+                        <ErrorMessage
+                            title='Failed to load Captcha'
+                            message='Invalid or missing site key'
                         />
-                        <div className='mt-2 ml-1'>
-                            <HCaptcha
-                                sitekey={import.meta.env.VITE_HCAPTCHA_SITE_KEY}
-                                onVerify={onCaptchaChange}
-                            />
-                        </div>
-                        <div className='mt-2'>
-                            <Button color='primary' onPress={onSubmit} loading={isLoading}>
-                                Submit
-                            </Button>
-                        </div>
-                    </Panel>
+                    )}
+                    <Button
+                        color='primary'
+                        onPress={onSubmit}
+                        loading={isLoading}
+                        isDisabled={!username || !siteKey}
+                    >
+                        Submit
+                    </Button>
                 </div>
-            </div>
-        </div>
+            </Panel>
+        </Page>
     );
 };
 

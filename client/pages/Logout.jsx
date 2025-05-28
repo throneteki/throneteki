@@ -7,6 +7,7 @@ import { accountLoggedOut } from '../redux/reducers/auth';
 import { navigate } from '../redux/reducers/navigation';
 import LoadingSpinner from '../Components/Site/LoadingSpinner';
 import { toast } from 'react-toastify';
+import Page from './Page';
 
 const Logout = () => {
     const [logout, { isLoading }] = useLogoutAccountMutation();
@@ -41,9 +42,9 @@ const Logout = () => {
     }, [dispatch, logout, refreshToken]);
 
     return (
-        <div className='col-sm-6 col-sm-offset-3'>
+        <Page className='h-full'>
             {isLoading && <LoadingSpinner label='Logging you out of your account...' />}
-        </div>
+        </Page>
     );
 };
 

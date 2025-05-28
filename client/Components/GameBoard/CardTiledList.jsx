@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 
 import Card from './Card';
+import { cardClass, getCardDimensions } from '../../util';
 
 // This is super manual and explicit so that tailwindcss realises we are using these css classes and doesn't filter them out
 // Change this list at your peril
@@ -16,12 +17,10 @@ const columnClassMap = {
 
 const CardTiledList = ({
     cards,
-    disableMouseOver,
+    disableHover,
     numColumns,
+    numRows,
     onCardClick,
-    onCardMouseOut,
-    onCardMouseOver,
-    onTouchMove,
     onMenuItemClick,
     size,
     source,
@@ -29,20 +28,17 @@ const CardTiledList = ({
     titleCount,
     showCards
 }) => {
+    // Returns a card list, or a single "fake card" to ensure grid size is properly reflected
     const cardList = useMemo(() => {
-        return (
-            cards &&
-            cards.map((card, index) => {
+        return cards && cards.length > 0 ? (
+            cards.map((card) => {
                 return (
                     <Card
                         card={card}
                         forceFaceup={showCards}
-                        disableMouseOver={disableMouseOver}
-                        key={index}
+                        disableHover={disableHover}
+                        key={card.uuid}
                         onClick={onCardClick}
-                        onMouseOut={onCardMouseOut}
-                        onMouseOver={onCardMouseOver}
-                        onTouchMove={onTouchMove}
                         onMenuItemClick={onMenuItemClick}
                         orientation={card.type === 'plot' ? 'horizontal' : 'vertical'}
                         size={size}
@@ -50,26 +46,30 @@ const CardTiledList = ({
                     />
                 );
             })
+        ) : (
+            <div className={cardClass(size)}></div>
         );
-    }, [
-        cards,
-        disableMouseOver,
-        onCardClick,
-        onCardMouseOut,
-        onCardMouseOver,
-        onMenuItemClick,
-        onTouchMove,
-        showCards,
-        size,
-        source
-    ]);
+    }, [cards, disableHover, onCardClick, onMenuItemClick, showCards, size, source]);
 
-    let titleText = title && cards ? `${title} (${titleCount || cards.length})` : title;
+    const titleText = title && cards ? `${title} (${titleCount || cards.length})` : title;
+
+    const style = useMemo(() => {
+        if (numRows) {
+            const cardDimensions = getCardDimensions(size);
+            const rowHeight = cards.some((card) => card.type !== 'plot')
+                ? cardDimensions.height
+                : cardDimensions.width;
+            return {
+                maxHeight: `${rowHeight * numRows}rem`
+            };
+        }
+        return null;
+    }, [cards, numRows, size]);
 
     return (
-        <div className='card-list'>
-            {titleText && <div className='card-list-title'>{titleText}</div>}
-            <div className={`card-list-cards gap-1.5 grid ${columnClassMap[numColumns]}`}>
+        <div className='p-2'>
+            {titleText && <div>{titleText}</div>}
+            <div className={`gap-1.5 grid ${columnClassMap[numColumns]}`} style={style}>
                 {cardList}
             </div>
         </div>

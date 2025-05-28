@@ -1,5 +1,6 @@
 import { heroui } from '@heroui/react';
 import plugin from 'tailwindcss/plugin';
+import { cardSizes } from './client/constants';
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -19,7 +20,16 @@ export default {
             '4xl': ['2.441rem', '2.441rem'],
             '5xl': ['3.052rem', '3.052rem']
         },
+        cardSize: cardSizes,
+        textStroke: {
+            sm: 0.15,
+            md: 0.3,
+            lg: 0.45
+        },
         extend: {
+            cursor: {
+                select: 'url(./client/assets/img/crosshairs.cur), default'
+            },
             colors: {
                 baratheon: '#e3d852',
                 greyjoy: '#1d7a99',
@@ -97,6 +107,69 @@ export default {
                 },
                 { values: theme('textShadow') }
             );
+            matchUtilities(
+                {
+                    card: (value) => ({
+                        width: `${value[0]}rem`,
+                        height: `${value[1]}rem`,
+                        'border-radius': `${value[0] / 16}rem`
+                    }),
+                    'card-horizontal': (value) => ({
+                        width: `${value[1]}rem`,
+                        height: `${value[0]}rem`,
+                        'border-radius': `${value[0] / 16}rem`
+                    }),
+                    'card-rotated': (value) => {
+                        const translateValue = (value[0] - value[1]) / 2;
+                        return {
+                            transform: `rotate(90deg) translate(${translateValue}rem, ${translateValue}rem)`
+                        };
+                    },
+                    'card-kneeled': (value) => ({
+                        'margin-bottom': `${value[1] - value[0]}rem`
+                    }),
+                    attachment: (value) => ({
+                        'margin-top': `${value[1] * -0.9}rem`
+                    }),
+                    duplicate: (value) => ({
+                        'margin-bottom': `${value[1] * -0.9}rem`
+                    }),
+                    'duplicate-offset': (value) => ({
+                        'margin-top': `${value[1] * 0.1}rem`
+                    }),
+                    'additional-agenda': (value) => ({
+                        'margin-left': `-${value[0] / 2}rem`
+                    })
+                },
+                {
+                    values: theme('cardSize')
+                }
+            );
+            matchUtilities(
+                {
+                    'text-stroke': (value) => ({
+                        WebkitTextStroke: `${value}em black`,
+                        paintOrder: 'stroke fill'
+                    })
+                },
+                {
+                    values: theme('textStroke')
+                }
+            );
         })
+    ],
+    safelist: [
+        {
+            pattern: /card-+/
+        },
+        {
+            pattern: /attachment-+/
+        },
+        {
+            pattern: /duplicate-+/
+        },
+        {
+            pattern: /additional-agenda-+/
+        }
     ]
 };

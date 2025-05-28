@@ -135,7 +135,17 @@ export const apiSlice = createApi({
             })
         }),
         getStandaloneDecks: builder.query({
-            query: () => '/standalone-decks',
+            query: (loadOptions) => {
+                return {
+                    url: '/standalone-decks',
+                    params: {
+                        pageSize: loadOptions.pageSize,
+                        pageNumber: loadOptions.pageIndex,
+                        sorting: loadOptions.sorting,
+                        filters: loadOptions.columnFilters
+                    }
+                };
+            },
             providesTags: (result = { data: [] }) => [
                 TagTypes.Deck,
                 ...(result.data || [].map(({ _id }) => ({ type: TagTypes.Deck, _id })))
@@ -149,8 +159,7 @@ export const apiSlice = createApi({
                         pageSize: loadOptions.pageSize,
                         pageNumber: loadOptions.pageIndex,
                         sorting: loadOptions.sorting,
-                        filters: loadOptions.columnFilters,
-                        restrictedList: loadOptions.restrictedList
+                        filters: loadOptions.columnFilters
                     }
                 };
             },
@@ -388,8 +397,8 @@ export const apiSlice = createApi({
         }),
         saveDraftCube: builder.mutation({
             query: (draftCube) => ({
-                url: `/draft-cubes/${draftCube._id}`,
-                method: 'PUT',
+                url: `/draft-cubes/${draftCube._id || ''}`,
+                method: draftCube._id ? 'PUT' : 'POST',
                 body: draftCube
             }),
             invalidatesTags: (result, error, arg) => [{ type: TagTypes.DraftCube, _id: arg._id }]

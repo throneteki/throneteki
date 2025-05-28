@@ -3,7 +3,10 @@ import Game from '../../../server/game/game.js';
 describe('Game', function () {
     beforeEach(function () {
         this.gameRouter = jasmine.createSpyObj('gameRouter', ['playerLeft']);
-        this.game = new Game({ allowSpectators: true, owner: {} }, { router: this.gameRouter });
+        this.game = new Game(
+            { allowSpectators: true, owner: {}, maxPlayers: 2 },
+            { router: this.gameRouter }
+        );
     });
 
     describe('join()', function () {

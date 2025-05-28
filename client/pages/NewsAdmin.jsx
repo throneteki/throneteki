@@ -16,6 +16,7 @@ import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import LoadingSpinner from '../Components/Site/LoadingSpinner';
 import { toast } from 'react-toastify';
 import ConfirmDialog from '../Components/Site/ConfirmDialog';
+import Page from './Page';
 
 const NewsAdmin = () => {
     const { data: news, isLoading, error } = useGetAllNewsQuery();
@@ -90,7 +91,7 @@ const NewsAdmin = () => {
             label: 'Delete',
             disabled: selectedIds.length === 0,
             isLoading: isDeleteLoading,
-            onClick: () => {
+            onPress: () => {
                 setShowConfirm(true);
             }
         }
@@ -100,7 +101,7 @@ const NewsAdmin = () => {
         return <LoadingSpinner label='Loading news...' />;
     }
     return (
-        <div className='lg:w-5/6 mx-auto'>
+        <Page>
             {error && <AlertPanel variant='danger' message={error} />}
             <Panel title='News administration'>
                 <div className='h-[400px]'>
@@ -123,48 +124,46 @@ const NewsAdmin = () => {
                     />
                 </div>
             </Panel>
-            <div className='mt-2'>
-                <Panel title='Add new news item'>
-                    <Textarea
-                        label={selectedItem ? 'News text' : 'Enter new news item'}
-                        onValueChange={setNewsText}
-                        value={newsText}
-                    />
-                    <div>
-                        {selectedItem ? (
-                            <div>
-                                <Button
-                                    className='mr-2 mt-2'
-                                    color='primary'
-                                    isLoading={isSaveLoading}
-                                    onPress={onSaveClick}
-                                >
-                                    Save
-                                </Button>
-                                <Button
-                                    className='mt-2'
-                                    color='default'
-                                    onPress={() => {
-                                        setSelectedItem(null);
-                                        setNewsText('');
-                                    }}
-                                >
-                                    Cancel
-                                </Button>
-                            </div>
-                        ) : (
+            <Panel title='Add new news item'>
+                <Textarea
+                    label={selectedItem ? 'News text' : 'Enter new news item'}
+                    onValueChange={setNewsText}
+                    value={newsText}
+                />
+                <div>
+                    {selectedItem ? (
+                        <div>
+                            <Button
+                                className='mr-2 mt-2'
+                                color='primary'
+                                isLoading={isSaveLoading}
+                                onPress={onSaveClick}
+                            >
+                                Save
+                            </Button>
                             <Button
                                 className='mt-2'
-                                color='primary'
-                                isLoading={isAddLoading}
-                                onPress={() => onAddNewsClick(newsText)}
+                                color='default'
+                                onPress={() => {
+                                    setSelectedItem(null);
+                                    setNewsText('');
+                                }}
                             >
-                                Add
+                                Cancel
                             </Button>
-                        )}
-                    </div>
-                </Panel>
-            </div>
+                        </div>
+                    ) : (
+                        <Button
+                            className='mt-2'
+                            color='primary'
+                            isLoading={isAddLoading}
+                            onPress={() => onAddNewsClick(newsText)}
+                        >
+                            Add
+                        </Button>
+                    )}
+                </div>
+            </Panel>
             <ConfirmDialog
                 isOpen={showConfirm}
                 message={`Are you sure you want to delete ${
@@ -188,7 +187,7 @@ const NewsAdmin = () => {
                     }
                 }}
             />
-        </div>
+        </Page>
     );
 };
 

@@ -26,10 +26,10 @@ import Privacy from './pages/Privacy';
 import Patreon from './pages/Patreon';
 import BanlistAdmin from './pages/BanlistAdmin';
 import EventsAdmin from './pages/EventsAdmin';
-import EditEvent from './pages/EventsAdmin/EditEvent';
-import EditDraftCube from './pages/EventsAdmin/EditDraftCube';
 import DraftingTable from './Components/Drafting/DraftingTable';
 import ImportDeck from './Components/Decks/ImportDeck';
+import EventEditor from './pages/EventsAdmin/EventEditor';
+import DraftCubeEditor from './pages/EventsAdmin/DraftCubeEditor';
 
 const routes = [
     { path: '/', action: () => <Lobby key='lobby' /> },
@@ -94,15 +94,17 @@ const routes = [
         action: () => <BanlistAdmin key='banlist' permission='canManageBanlist' />
     },
     { path: '/events', action: () => <EventsAdmin key='events' /> },
-    { path: '/events/add', action: () => <EditEvent key='eventsadd' /> },
+    { path: '/events/add', action: () => <EventEditor key='eventsadd' /> },
     {
         path: '/events/:id',
-        action: (context) => <EditEvent eventId={context.params.id} key='eventsedit' />
+        action: (context) => <EventEditor eventId={context.params.id} key='eventsedit' />
     },
-    { path: '/events/draft-cubes/add', action: () => <EditDraftCube key='draftcubesadd' /> },
+    { path: '/events/draft-cubes/add', action: () => <DraftCubeEditor key='draftcubesadd' /> },
     {
         path: '/events/draft-cubes/:id',
-        action: (context) => <EditDraftCube draftCubeId={context.params.id} key='draftcubesedit' />
+        action: (context) => (
+            <DraftCubeEditor draftCubeId={context.params.id} key='draftcubesedit' />
+        )
     }
 ];
 

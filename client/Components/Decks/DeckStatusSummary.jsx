@@ -3,13 +3,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 
 const DeckStatusSummary = ({ status }) => {
-    let { basicRules, noUnreleasedCards, restrictedLists } = status;
-    const restrictedListItems = (restrictedLists || [])
-        .map((rl) => [{ title: `${rl.name} Card Legality`, value: rl.valid }])
-        .reduce((items, rlItems) => items.concat(rlItems), []);
+    const { basicRules, noUnreleasedCards, restrictedList } = status;
     const items = [
         { title: 'Basic deckbuilding rules', value: basicRules },
-        ...restrictedListItems,
+        {
+            title: `${restrictedList.name} Card Legality`,
+            value: restrictedList.valid
+        },
         { title: 'Only released cards', value: noUnreleasedCards }
     ];
 

@@ -13,6 +13,7 @@ const windows = [
     { name: 'taxation', label: 'Taxation phase' }
 ];
 
+// eslint-disable-next-line react/display-name
 const ActionWindowOptions = ({ formProps }) => {
     const retWindows = useMemo(() => {
         return windows.map((window) => {
@@ -30,13 +31,15 @@ const ActionWindowOptions = ({ formProps }) => {
 
     return (
         <Panel title='Action window defaults'>
-            <p className='text-sm'>
-                If an option is selected here, you will always be prompted if you want to take an
-                action in that window. If an option is not selected, you will receive no prompts for
-                that window. For some windows (e.g. dominance) this could mean the whole window is
-                skipped.
-            </p>
-            <div className='mt-2 grid sm:grid-cols-2 lg:grid-cols-3 gap-2'>{retWindows}</div>
+            <div className='flex flex-col gap-2'>
+                <p className='text-sm'>
+                    If an option is selected here, you will always be prompted if you want to take
+                    an action in that window. If an option is not selected, you will receive no
+                    prompts for that window. For some windows (e.g. dominance) this could mean the
+                    whole window is skipped.
+                </p>
+                <div className='grid sm:grid-cols-2 lg:grid-cols-3 gap-2'>{retWindows}</div>
+            </div>
         </Panel>
     );
 };

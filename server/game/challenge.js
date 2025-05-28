@@ -31,7 +31,7 @@ class Challenge {
     }
 
     singlePlayerDefender() {
-        let dummyPlayer = new Player(
+        const dummyPlayer = new Player(
             '',
             Settings.getUserWithDefaultsSet({ name: 'Dummy Player' }),
             false,
@@ -52,6 +52,12 @@ class Challenge {
         this.attackingPlayer.trackChallenge(this);
         this.defendingPlayer.trackChallenge(this);
         this.isInitiated = true;
+    }
+
+    redirectChallengeTo(player) {
+        this.defendingPlayer = player;
+        this.initiatedAgainstPlayer = player;
+        this.initiationActions = [];
     }
 
     declareAttackers(attackers) {
@@ -169,10 +175,6 @@ class Challenge {
 
     addInitiationAction(action, properties) {
         this.initiationActions.push({ action, properties });
-    }
-
-    clearInitiationActions() {
-        this.initiationActions = [];
     }
 
     calculateStrength() {

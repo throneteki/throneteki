@@ -15,6 +15,9 @@ import BlankBg from './assets/img/bgs/blank.png';
 import StandardBg from './assets/img/bgs/background.png';
 import WinterBg from './assets/img/bgs/background2.png';
 import LoadingSpinner from './Components/Site/LoadingSpinner';
+import CardHover from './Components/Images/CardHover';
+import ErrorMessage from './Components/Site/ErrorMessage';
+import classNames from 'classnames';
 
 const backgrounds = {
     none: BlankBg,
@@ -70,8 +73,6 @@ const Application = () => {
         }
     }, [data, dispatch]);
 
-    let gameBoardVisible = currentGame && currentGame.started;
-
     let component = router.resolvePath({
         pathname: path,
         user: user,
@@ -82,18 +83,19 @@ const Application = () => {
         component = (
             <AlertPanel
                 variant='danger'
-                message='Your browser does not provide the required functionality for this site to work.  Please upgrade your browser.  The site works best with a recet version of Chrome, Safari or Firefox'
+                message='Your browser does not provide the required functionality for this site to work. Please upgrade your browser. The site works best with a recet version of Chrome, Safari or Firefox.'
             />
         );
     } else if (cannotLoad) {
         component = (
             <AlertPanel
                 variant='danger'
-                message='This site requires the ability to store cookies and local site data to function.  Please enable these features to use the site.'
+                message='This site requires the ability to store cookies and local site data to function. Please enable these features to use the site.'
             />
         );
     }
 
+    const gameBoardVisible = currentGame && currentGame.started && component.key === 'gameboard';
     useEffect(() => {
         if (gameBoardVisible && user) {
             const settings = user.settings;
@@ -109,35 +111,36 @@ const Application = () => {
         }
     }, [gameBoardVisible, user]);
 
+    const containerClass = classNames('container h-full relative z-0', {
+        'max-w-full': gameBoardVisible
+    });
     return (
-        <div>
+        <>
             <NavBar />
             <main role='main'>
                 <div
-                    className='absolute bottom-0 left-0 right-0 top-12 bg-cover bg-center bg-no-repeat'
+                    className='absolute bottom-0 left-0 right-0 top-[3rem] bg-cover bg-center bg-no-repeat overflow-y-auto'
                     ref={bgRef}
                 >
                     <Sentry.ErrorBoundary
                         fallback={
-                            <div className='w-full h-full flex justify-center items-center'>
-                                <div className='text-center'>
-                                    <h1 className='text-large'>Unexpected Error</h1>
-                                    <p>Report has been automatically submitted</p>
-                                </div>
-                            </div>
+                            <ErrorMessage
+                                title='Unexpected Error'
+                                message='Report has been automatically submitted'
+                            />
                         }
                     >
-                        {isLoading ? (
-                            <div className='w-full h-full flex justify-center items-center'>
+                        <CardHover>
+                            {isLoading ? (
                                 <LoadingSpinner size='lg' />
-                            </div>
-                        ) : (
-                            <div className='container'>{component}</div>
-                        )}
+                            ) : (
+                                <div className={containerClass}>{component}</div>
+                            )}
+                        </CardHover>
                     </Sentry.ErrorBoundary>
                 </div>
             </main>
-        </div>
+        </>
     );
 };
 

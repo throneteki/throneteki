@@ -9,14 +9,12 @@ describe('the PlayerOrderPrompt', function () {
         this.player1 = jasmine.createSpyObj('player1', [
             'setPrompt',
             'cancelPrompt',
-            'startClock',
-            'stopClock'
+            'setIsActivePrompt'
         ]);
         this.player2 = jasmine.createSpyObj('player1', [
             'setPrompt',
             'cancelPrompt',
-            'startClock',
-            'stopClock'
+            'setIsActivePrompt'
         ]);
 
         this.game.getPlayers.and.returnValue([this.player1, this.player2]);

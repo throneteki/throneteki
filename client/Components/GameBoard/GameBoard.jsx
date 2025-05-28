@@ -1,26 +1,29 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 import LoadingSpinner from '../Site/LoadingSpinner';
 
-import PlayerStats from './PlayerStats';
-import CardZoom from './CardZoom';
 import GameChat from './GameChat';
 import GameConfigurationModal from './GameConfigurationModal';
-import { useGetCardsQuery } from '../../redux/middleware/api';
 import { navigate } from '../../redux/reducers/navigation';
 import {
     sendCardClickedMessage,
+    sendCardMenuItemClickedMessage,
+    sendCardSizeChangeMessage,
+    sendDragDropMessage,
     sendGameChatMessage,
     sendToggleDupesMessage,
     sendToggleKeywordSettingMessage,
-    sendToggleMuteSpectatorsMessage,
     sendTogglePromptedActionWindowMessage,
     sendToggleTimerSetting
 } from '../../redux/reducers/game';
-import GameBoardLayout from './GameBoardLayout';
 
-import './GameBoard.css';
+import { DndContext, DragOverlay, MouseSensor, TouchSensor, useSensor } from '@dnd-kit/core';
+import { ItemTypes } from '../../constants';
+import CardImage from '../Images/CardImage';
+import ErrorMessage from '../Site/ErrorMessage';
+import JoustGameBoardLayout from './GameBoardLayouts/JoustGameBoardLayout';
+import MeleeGameBoardLayout from './GameBoardLayouts/MeleeGameBoardLayout';
 
 const placeholderPlayer = {
     activePlot: null,
@@ -40,7 +43,6 @@ const placeholderPlayer = {
     numDrawCards: 0,
     selectedPlot: null,
     stats: null,
-    title: null,
     user: null
 };
 
@@ -54,33 +56,28 @@ const GameBoard = () => {
     const dispatch = useDispatch();
     const currentGame = useSelector((state) => state.lobby.currentGame);
     const user = useSelector((state) => state.auth.user);
-    const { data: cards, isLoading } = useGetCardsQuery();
 
-    const [cardToZoom, setCardToZoom] = useState(undefined);
-    const [showMessages, setShowMessages] = useState(true);
-    const [newMessages, setNewMessages] = useState(0);
+    const [showGameChat, setShowGameChat] = useState(window.innerWidth > 768);
+    const [unreadMessages, setUnreadMessages] = useState(0);
     const [showModal, setShowModal] = useState(false);
-    const [lastMessageCount, setLastMessageCount] = useState(0);
 
-    const onMessagesClick = useCallback(() => {
-        setShowMessages(!showMessages);
+    const [draggingDetail, setDraggingDetail] = useState(null);
 
-        if (!showMessages) {
-            setNewMessages(0);
-            setLastMessageCount(currentGame?.messages.length);
+    const mouseSensor = useSensor(MouseSensor, {
+        activationConstraint: {
+            distance: 10
         }
-    }, [currentGame?.messages.length, showMessages]);
+    });
 
-    useEffect(() => {
-        let currentMessageCount = currentGame ? currentGame.messages.length : 0;
-
-        if (showMessages) {
-            setLastMessageCount(currentMessageCount);
-            setNewMessages(0);
-        } else {
-            setNewMessages(currentMessageCount - lastMessageCount);
+    // TODO: Create a custom touch sensor to allow for distance, delay & tolerance to work together (as TouchSensor does not support all 3 used together)
+    // Distance is required to ensure press + hold shows the card hover
+    // Delay is required to ensure a swipe gesture will scroll, such as scrolling down the draw deck window
+    // Tolerance is a nice-to-have, but can probably be 0
+    const touchSensor = useSensor(TouchSensor, {
+        activationConstraint: {
+            distance: 10
         }
-    }, [currentGame, lastMessageCount, showMessages]);
+    });
 
     const onCardClick = useCallback(
         (card) => {
@@ -90,19 +87,31 @@ const GameBoard = () => {
         [dispatch]
     );
 
-    let thisPlayer = useMemo(() => {
-        return defaultPlayerInfo(
-            currentGame?.players[user?.username] || Object.values(currentGame.players)[0]
-        );
-    }, [currentGame?.players, user?.username]);
+    const onMenuItemClick = useCallback(
+        (card, menuItem) => dispatch(sendCardMenuItemClickedMessage(card.uuid, menuItem)),
+        [dispatch]
+    );
 
-    let otherPlayer = useMemo(() => {
-        return defaultPlayerInfo(
-            Object.values(currentGame.players).find((player) => player.name !== thisPlayer.name)
-        );
-    }, [currentGame?.players, thisPlayer?.name]);
+    const thisPlayer = useMemo(
+        () =>
+            defaultPlayerInfo(
+                currentGame?.players[user?.username] || Object.values(currentGame?.players)[0]
+            ),
+        [currentGame?.players, user?.username]
+    );
 
-    if (!currentGame || !cards || !currentGame.started) {
+    const otherPlayers = useMemo(() => {
+        const others = Object.values(currentGame?.players).filter(
+            (player) => player.name !== thisPlayer.name
+        );
+        return others.length > 0
+            ? others.map(defaultPlayerInfo)
+            : Array.from({ length: (currentGame?.maxPlayers || 2) - 1 }, (_, index) =>
+                  defaultPlayerInfo({ seatNo: index + 2 })
+              );
+    }, [currentGame?.maxPlayers, currentGame?.players, thisPlayer.name]);
+
+    if (!currentGame || !currentGame.started) {
         return <LoadingSpinner label={'Waiting for server...'} />;
     }
 
@@ -111,98 +120,125 @@ const GameBoard = () => {
         return <LoadingSpinner label={'You are not logged in, redirecting...'} />;
     }
 
-    if (!thisPlayer) {
+    if (!currentGame.players || currentGame.players.length === 0) {
         return <LoadingSpinner label={'Waiting for game to have players or close...'} />;
     }
+    const boardClass = classNames('flex h-full overflow-x-hidden', {
+        'cursor-select': thisPlayer && thisPlayer.selectCard
+    });
 
-    const boardClass = classNames(
-        'absolute top-0 bottom-0 right-0 left-0 flex justify-between flex-col',
-        {
-            'select-cursor': thisPlayer && thisPlayer.selectCard
-        }
-    );
+    let gameBoard = null;
+    if (currentGame.gameFormat === 'joust') {
+        gameBoard = (
+            <JoustGameBoardLayout
+                thisPlayer={thisPlayer}
+                otherPlayer={otherPlayers[0]}
+                onCardClick={onCardClick}
+                onMenuItemClick={onMenuItemClick}
+                onSettingsClick={() => setShowModal(!showModal)}
+                onChatToggle={() => setShowGameChat(!showGameChat)}
+                unreadMessages={unreadMessages}
+                isDragging={!!draggingDetail}
+            />
+        );
+    } else if (currentGame.gameFormat === 'melee') {
+        gameBoard = (
+            <MeleeGameBoardLayout
+                thisPlayer={thisPlayer}
+                otherPlayers={otherPlayers}
+                onCardClick={onCardClick}
+                onMenuItemClick={onMenuItemClick}
+                onSettingsClick={() => setShowModal(!showModal)}
+                onChatToggle={() => setShowGameChat(!showGameChat)}
+                unreadMessages={unreadMessages}
+                isDragging={!!draggingDetail}
+            />
+        );
+    } else {
+        return (
+            <ErrorMessage
+                title={'Failed to load game board'}
+                message={`Board for ${currentGame.gameFormat} format is not yet implemented`}
+            />
+        );
+    }
 
     return (
-        <div className={boardClass}>
-            {showModal && (
-                <GameConfigurationModal
-                    onClose={() => setShowModal(false)}
-                    keywordSettings={thisPlayer.keywordSettings}
-                    onKeywordSettingToggle={(option, value) =>
-                        dispatch(sendToggleKeywordSettingMessage(option, value))
-                    }
-                    onPromptDupesToggle={(value) => dispatch(sendToggleDupesMessage(value))}
-                    onPromptedActionWindowToggle={(option, value) =>
-                        dispatch(sendTogglePromptedActionWindowMessage(option, value))
-                    }
-                    onTimerSettingToggle={(option, value) =>
-                        dispatch(sendToggleTimerSetting(option, value))
-                    }
-                    promptDupes={thisPlayer.promptDupes}
-                    promptedActionWindows={thisPlayer.promptedActionWindows}
-                    timerSettings={thisPlayer.timerSettings}
-                />
-            )}
-            <div>
-                <PlayerStats
-                    showControls={false}
-                    stats={otherPlayer.stats}
-                    user={otherPlayer.user}
-                    firstPlayer={otherPlayer.firstPlayer}
-                />
-            </div>
-            <div className='flex flex-shrink flex-grow basis-0 overflow-hidden'>
-                <GameBoardLayout
-                    thisPlayer={thisPlayer}
-                    otherPlayer={otherPlayer}
-                    onCardClick={onCardClick}
-                    onMouseOver={setCardToZoom}
-                    onMouseOut={() => setCardToZoom(undefined)}
-                />
-                {cardToZoom && (
-                    <CardZoom
-                        imageUrl={'/img/cards/' + cardToZoom.code + '.png'}
-                        orientation={
-                            cardToZoom
-                                ? cardToZoom.type === 'plot'
-                                    ? 'horizontal'
-                                    : 'vertical'
-                                : 'vertical'
-                        }
-                        show={!!cardToZoom}
-                        cardName={cardToZoom ? cardToZoom.name : null}
-                        card={cardToZoom ? cards[cardToZoom.code] : null}
-                    />
-                )}
-                {showMessages && (
-                    <div className='relative flex flex-col items-end overflow-hidden min-w-72 max-w-72'>
-                        <div className='relative w-full flex-1 flex flex-col overflow-y-hidden'>
-                            <GameChat
-                                messages={currentGame.messages}
-                                onCardMouseOut={() => setCardToZoom(undefined)}
-                                onCardMouseOver={setCardToZoom}
-                                onSendChat={(message) => dispatch(sendGameChatMessage(message))}
-                                muted={!thisPlayer && currentGame.muteSpectators}
-                            />
-                        </div>
-                    </div>
-                )}
-            </div>
-            <div>
-                <PlayerStats
-                    stats={thisPlayer.stats}
-                    showControls={!!thisPlayer && thisPlayer.user?.username === user?.username}
-                    showMessages
-                    user={thisPlayer.user}
-                    firstPlayer={thisPlayer.firstPlayer}
-                    onSettingsClick={() => setShowModal(!showModal)}
-                    onMessagesClick={onMessagesClick}
-                    numMessages={newMessages}
-                    muteSpectators={currentGame.muteSpectators}
-                    onMuteClick={() => dispatch(sendToggleMuteSpectatorsMessage())}
+        <>
+            <div className={boardClass}>
+                <div className='overflow-auto basis-full'>
+                    <DndContext
+                        sensors={[mouseSensor, touchSensor]}
+                        onDragStart={(event) => {
+                            const card = event.active.data.current?.card;
+                            if (card) {
+                                const orientation = event.active.data.current?.orientation;
+                                setDraggingDetail({ card, orientation });
+                            }
+                        }}
+                        onDragEnd={(event) => {
+                            if (!event.over || event.active.data.current.type !== ItemTypes.CARD) {
+                                return;
+                            }
+                            setDraggingDetail(null);
+                            dispatch(
+                                sendDragDropMessage(
+                                    event.active.data.current.card.uuid,
+                                    event.active.data.current.source,
+                                    event.over.data.current.source
+                                )
+                            );
+                        }}
+                    >
+                        {gameBoard}
+                        <DragOverlay className={'opacity-50'} dropAnimation={null}>
+                            {draggingDetail && (
+                                <CardImage
+                                    size={thisPlayer.cardSize}
+                                    code={draggingDetail.card.code || 'cardback'}
+                                    orientation={
+                                        (draggingDetail.card.type !== 'plot' &&
+                                            draggingDetail.orientation === 'horizontal') ||
+                                        draggingDetail.card.kneeled
+                                            ? 'rotated'
+                                            : draggingDetail.orientation
+                                    }
+                                />
+                            )}
+                        </DragOverlay>
+                    </DndContext>
+                </div>
+                <GameChat
+                    className='shrink-0 grow-0'
+                    isOpen={showGameChat}
+                    onClose={() => setShowGameChat(false)}
+                    onUnreadMessagesChange={setUnreadMessages}
+                    messages={currentGame.messages}
+                    onSendChat={(message) => dispatch(sendGameChatMessage(message))}
+                    muted={!thisPlayer && currentGame.muteSpectators}
                 />
             </div>
-        </div>
+            <GameConfigurationModal
+                isOpen={showModal}
+                onClose={() => setShowModal(false)}
+                keywordSettings={thisPlayer.keywordSettings}
+                onKeywordSettingToggle={(option, value) =>
+                    dispatch(sendToggleKeywordSettingMessage(option, value))
+                }
+                onPromptDupesToggle={(value) => dispatch(sendToggleDupesMessage(value))}
+                onPromptedActionWindowToggle={(option, value) =>
+                    dispatch(sendTogglePromptedActionWindowMessage(option, value))
+                }
+                onTimerSettingToggle={(option, value) =>
+                    dispatch(sendToggleTimerSetting(option, value))
+                }
+                onCardSizeSettingChange={(value) => dispatch(sendCardSizeChangeMessage(value))}
+                promptDupes={thisPlayer.promptDupes}
+                promptedActionWindows={thisPlayer.promptedActionWindows}
+                timerSettings={thisPlayer.timerSettings}
+                cardSizeSetting={thisPlayer.cardSize}
+            />
+        </>
     );
 };
 

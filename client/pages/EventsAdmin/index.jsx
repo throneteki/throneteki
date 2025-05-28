@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import Panel from '../../Components/Site/Panel';
 import {
@@ -19,6 +19,7 @@ import {
 } from '@heroui/react';
 import LoadingSpinner from '../../Components/Site/LoadingSpinner';
 import { toast } from 'react-toastify';
+import Page from '../Page';
 
 const EventsAdmin = () => {
     const dispatch = useDispatch();
@@ -54,99 +55,105 @@ const EventsAdmin = () => {
         [deleteDraftCube]
     );
 
-    const renderedDraftCubes = useMemo(() => {
-        {
-            draftCubes &&
-                draftCubes.map((draftCube) => (
-                    <tr key={`draft-cube:${draftCubes.name}`}>
-                        <td>{draftCube.name}</td>
-                        <td>
-                            <button
-                                className='btn btn-primary'
-                                onClick={() =>
-                                    dispatch(navigate(`/events/draft-cubes/${draftCube._id}`))
-                                }
-                            >
-                                Edit
-                            </button>
-                            <button
-                                className='btn btn-danger'
-                                onClick={() => handleDeleteDraftCubeClick(draftCube._id)}
-                            >
-                                Delete{' '}
-                                {isDeleteDraftCubeLoading && (
-                                    <span className='spinner button-spinner' />
-                                )}
-                            </button>
-                        </td>
-                    </tr>
-                ));
-        }
-    }, [dispatch, draftCubes, handleDeleteDraftCubeClick, isDeleteDraftCubeLoading]);
-
     if (isEventsLoading || isDraftCubesLoading) {
         return <LoadingSpinner label='Loading events...' />;
     }
 
     return (
-        <div className='w-full'>
+        <Page>
             <Panel title='Events administration'>
-                <div>
-                    <Button color='primary' onPress={() => dispatch(navigate('/events/add'))}>
+                <div className='flex flex-col gap-2'>
+                    <Button
+                        color='primary'
+                        className='self-start'
+                        onPress={() => dispatch(navigate('/events/add'))}
+                    >
                         Add event
                     </Button>
+                    <Table isStriped>
+                        <TableHeader>
+                            <TableColumn>Event</TableColumn>
+                            <TableColumn>Action</TableColumn>
+                        </TableHeader>
+                        <TableBody>
+                            {events.map((event, index) => (
+                                <TableRow key={index}>
+                                    <TableCell>{event.name}</TableCell>
+                                    <TableCell>
+                                        <div className='flex gap-2'>
+                                            <Button
+                                                color='primary'
+                                                onPress={() =>
+                                                    dispatch(navigate(`/events/${event._id}`))
+                                                }
+                                            >
+                                                Edit
+                                            </Button>
+                                            <Button
+                                                color='danger'
+                                                isLoading={isDeleteEventLoading}
+                                                onPress={() => handleDeleteClick(event._id)}
+                                            >
+                                                Delete
+                                            </Button>
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
                 </div>
-                <Table isStriped>
-                    <TableHeader>
-                        <TableColumn>Event</TableColumn>
-                        <TableColumn>Action</TableColumn>
-                    </TableHeader>
-                    <TableBody>
-                        {events.map((event, index) => (
-                            <TableRow key={index}>
-                                <TableCell>{event.name}</TableCell>
-                                <TableCell>
-                                    <div className='flex gap-2'>
-                                        <Button
-                                            color='primary'
-                                            onPress={() =>
-                                                dispatch(navigate(`/events/${event._id}`))
-                                            }
-                                        >
-                                            Edit
-                                        </Button>
-                                        <Button
-                                            color='danger'
-                                            isLoading={isDeleteEventLoading}
-                                            onPress={() => handleDeleteClick(event._id)}
-                                        >
-                                            Delete
-                                        </Button>
-                                    </div>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
             </Panel>
             <Panel title='Draft Cubes'>
-                <a
-                    className='btn btn-primary'
-                    onClick={() => dispatch(navigate('/events/draft-cubes/add'))}
-                >
-                    Add draft cube
-                </a>
-                <table className='table table-striped'>
-                    <thead>
-                        <tr>
-                            <th className='col-sm-2'>Draft Cube</th>
-                            <th className='col-sm-2'>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>{renderedDraftCubes}</tbody>
-                </table>
+                <div className='flex flex-col gap-2'>
+                    <Button
+                        color='primary'
+                        className='self-start'
+                        onPress={() => dispatch(navigate('/events/draft-cubes/add'))}
+                    >
+                        Add draft cube
+                    </Button>
+                    <Table isStriped>
+                        <TableHeader>
+                            <TableColumn>Draft Cube</TableColumn>
+                            <TableColumn>Action</TableColumn>
+                        </TableHeader>
+                        <TableBody>
+                            {draftCubes.map((draftCube, index) => (
+                                <TableRow key={index}>
+                                    <TableCell>{draftCube.name}</TableCell>
+                                    <TableCell>
+                                        <div className='flex gap-2'>
+                                            <Button
+                                                color='primary'
+                                                onPress={() =>
+                                                    dispatch(
+                                                        navigate(
+                                                            `/events/draft-cubes/${draftCube._id}`
+                                                        )
+                                                    )
+                                                }
+                                            >
+                                                Edit
+                                            </Button>
+                                            <Button
+                                                color='danger'
+                                                isLoading={isDeleteDraftCubeLoading}
+                                                onPress={() =>
+                                                    handleDeleteDraftCubeClick(draftCube._id)
+                                                }
+                                            >
+                                                Delete
+                                            </Button>
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </div>
             </Panel>
-        </div>
+        </Page>
     );
 };
 
