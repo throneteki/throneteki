@@ -11,6 +11,7 @@ import { Button, Input, Link } from '@heroui/react';
 import { Formik } from 'formik';
 import { toast } from 'react-toastify';
 import NavigationLink from '../Components/Site/NavigationLink';
+import Page from './Page';
 
 const Login = () => {
     const dispatch = useDispatch();
@@ -43,8 +44,8 @@ const Login = () => {
     });
 
     return (
-        <div className='md:mx-auto md:w-4/5 lg:w-2/5 mx-2'>
-            <Panel className='mt-1' title='Login'>
+        <Page size='small'>
+            <Panel title='Login'>
                 <Formik
                     initialValues={{ username: '', password: '' }}
                     validationSchema={schema}
@@ -84,7 +85,7 @@ const Login = () => {
                     )}
                 </Formik>
             </Panel>
-        </div>
+        </Page>
     );
 };
 

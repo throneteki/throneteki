@@ -9,6 +9,7 @@ import { Formik } from 'formik';
 import { Button, Input, Link, Switch } from '@heroui/react';
 import { toast } from 'react-toastify';
 import NavigationLink from '../Components/Site/NavigationLink';
+import Page from './Page';
 
 const Register = () => {
     const dispatch = useDispatch();
@@ -61,12 +62,12 @@ const Register = () => {
     });
 
     return (
-        <div className='md:mx-auto md:w-4/5 lg:w-2/5 mx-2'>
+        <Page size='small'>
             <Panel title='Register an account'>
                 <p>
                     We require information from you in order to service your access to the site.
                     Please see the{' '}
-                    <Link href='/privacy' as={NavigationLink}>
+                    <Link href='/privacy' as={NavigationLink} size='sm'>
                         privacy policy
                     </Link>{' '}
                     for details on why we need this information and what we do with it. Please pay
@@ -114,6 +115,15 @@ const Register = () => {
                                         {...formProps.getFieldProps('passwordAgain')}
                                     />
                                 </div>
+                                <p className='text-sm'>
+                                    This website uses{' '}
+                                    <Link href='https://gravatar.com/' size='sm'>
+                                        Gravatar
+                                    </Link>{' '}
+                                    to update user avatars, and can be enabled/disabled in settings
+                                    at any time. For this to work, please ensure you enable below,
+                                    and your Gravatar email matches the above.
+                                </p>
                                 <Switch
                                     {...formProps.getFieldProps('enableGravatar')}
                                     onValueChange={(value) =>
@@ -135,7 +145,7 @@ const Register = () => {
                     </Formik>
                 </div>
             </Panel>
-        </div>
+        </Page>
     );
 };
 

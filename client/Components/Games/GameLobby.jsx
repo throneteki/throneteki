@@ -76,12 +76,10 @@ const GameLobby = ({ gameId }) => {
     }, [currentGame, dispatch, gameId, games]);
 
     return (
-        <Page>
-            <div ref={topRef}>
-                {newGame && <NewGame quickJoin={quickJoin} onClosed={() => setNewGame(false)} />}
-                {currentGame?.started === false && <PendingGame />}
-                {passwordGame && <PasswordGame />}
-            </div>
+        <Page ref={topRef}>
+            {newGame && <NewGame quickJoin={quickJoin} onClosed={() => setNewGame(false)} />}
+            {currentGame?.started === false && <PendingGame />}
+            {passwordGame && <PasswordGame />}
             <Panel title={'Current Games'}>
                 {!user && (
                     <div className='mb-2 text-center'>

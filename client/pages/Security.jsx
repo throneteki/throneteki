@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import moment from 'moment';
 
-import AlertPanel from '../Components/Site/AlertPanel';
+import AlertPanel, { AlertType } from '../Components/Site/AlertPanel';
 import Panel from '../Components/Site/Panel';
 import { useGetUserSessionsQuery, useRemoveSessionMutation } from '../redux/middleware/api';
 import {
@@ -19,6 +19,7 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { toast } from 'react-toastify';
 import ConfirmDialog from '../Components/Site/ConfirmDialog';
 import LoadingSpinner from '../Components/Site/LoadingSpinner';
+import Page from './Page';
 
 const Security = () => {
     const user = useSelector((state) => state.auth.user);
@@ -32,10 +33,10 @@ const Security = () => {
 
     return (
         <>
-            <div className='m-2 lg:w-2/3 lg:mx-auto profile'>
+            <Page>
                 {error && (
                     <AlertPanel
-                        type='error'
+                        variant={AlertType.Danger}
                         message={error.data?.message || 'An error occured fetching session details'}
                     />
                 )}
@@ -86,11 +87,11 @@ const Security = () => {
                         </div>
                     )}
                 </Panel>
-            </div>
+            </Page>
             <ConfirmDialog
                 isOpen={!!removingSession}
                 message={
-                    'Are you sure you want to remove this session?  It will be logged out and any games in progress may be abandonded.'
+                    'Are you sure you want to remove this session? It will be logged out and any games in progress may be abandonded.'
                 }
                 onOpenChange={(open) => !open && setRemovingSession(null)}
                 onCancel={() => setRemovingSession(null)}

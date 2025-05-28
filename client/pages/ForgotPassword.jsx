@@ -1,6 +1,5 @@
 import React, { useState, useCallback } from 'react';
 import HCaptcha from '@hcaptcha/react-hcaptcha';
-import AlertPanel from '../Components/Site/AlertPanel';
 import Panel from '../Components/Site/Panel';
 
 import { useForgotPasswordMutation } from '../redux/middleware/api';
@@ -31,13 +30,14 @@ const ForgotPassword = () => {
     }, [forgotPassword, username, captcha]);
     const siteKey = import.meta.env.VITE_HCAPTCHA_SITE_KEY;
     return (
-        <Page>
+        <Page size='small'>
             <Panel title='Forgot password'>
                 <div className='flex flex-col gap-2'>
-                    <AlertPanel
-                        variant='info'
-                        message='Please enter your username and click the submit button to start the password recovery process.'
-                    />
+                    <p>
+                        Please enter your username and click the submit button to start the password
+                        recovery process. If the username exists, the email for that account will be
+                        emailed with instructions on how to reset your password.
+                    </p>
                     <Input
                         label={'Username'}
                         name='username'

@@ -1,12 +1,13 @@
 import React, { useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
-import AlertPanel from '../Components/Site/AlertPanel';
 import Panel from '../Components/Site/Panel';
 import { navigate } from '../redux/reducers/navigation';
 import { useResetPasswordMutation } from '../redux/middleware/api';
 import { Button, Input } from '@heroui/react';
 import { toast } from 'react-toastify';
+import ErrorMessage from '../Components/Site/ErrorMessage';
+import Page from './Page';
 
 const ResetPassword = ({ id, token }) => {
     const dispatch = useDispatch();
@@ -34,29 +35,39 @@ const ResetPassword = ({ id, token }) => {
 
     if (!id || !token) {
         return (
-            <AlertPanel
-                type='error'
-                message='This page is not intended to be viewed directly. Please click on the link in your email to reset your password.'
-            />
+            <Page className='h-full'>
+                <ErrorMessage
+                    title='This page is not intended to be viewed directly'
+                    message='Please click on the link in your email to reset your password.'
+                />
+            </Page>
         );
     }
 
     return (
-        <div>
-            <div className='w-2/5 mx-auto'>
-                <Panel title='Reset password'>
+        <Page size='small'>
+            <Panel title='Reset password'>
+                <div className='flex flex-col gap-2'>
+                    <p>
+                        Please provide your new password, and click submit to finalise your reset.
+                    </p>
                     <Input
                         name='password'
                         label='New password'
                         type='password'
                         onValueChange={setPassword}
                     />
-                    <Button onPress={onSubmit} loading={isLoading}>
+                    <Button
+                        className='sm:self-start'
+                        onPress={onSubmit}
+                        loading={isLoading}
+                        color='primary'
+                    >
                         Submit
                     </Button>
-                </Panel>
-            </div>
-        </div>
+                </div>
+            </Panel>
+        </Page>
     );
 };
 

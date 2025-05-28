@@ -69,7 +69,7 @@ const ContextMenu = ({ onPress = () => true }) => {
                     Leave Game
                 </Link>
             );
-            if (currentGame.players[user.username]) {
+            if (currentGame.players[user?.username]) {
                 menuOptions.unshift(
                     <Link onPress={onConcedeClick} className={menuItemClass}>
                         Concede
@@ -91,7 +91,7 @@ const ContextMenu = ({ onPress = () => true }) => {
 
             // If the current user is a player and the number of spectators changed, then display a warning next to the Spectators popup in the navbar
             if (
-                currentGame.players[user.username] &&
+                currentGame.players[user?.username] &&
                 currentGame.spectators.length !== lastSpectatorCount
             ) {
                 setShowSpectatorWarning(true);

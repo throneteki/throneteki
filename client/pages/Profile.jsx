@@ -17,6 +17,7 @@ import Background2 from '../assets/img/bgs/background2.png';
 import { setUser } from '../redux/reducers/auth';
 import { toast } from 'react-toastify';
 import CardSizeSettings from '../Components/Profile/CardSizeSettings';
+import Page from './Page';
 
 const backgrounds = [
     { name: 'none', label: 'None', imageUrl: BlankBg },
@@ -112,7 +113,7 @@ const Profile = () => {
     };
 
     return (
-        <div className='m-2 lg:w-3/4 mb-5 lg:mx-auto'>
+        <Page>
             <Formik
                 initialValues={initialValues}
                 validationSchema={schema}
@@ -188,7 +189,7 @@ const Profile = () => {
                     </form>
                 )}
             </Formik>
-        </div>
+        </Page>
     );
 };
 

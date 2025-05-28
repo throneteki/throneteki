@@ -21,6 +21,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { toast } from 'react-toastify';
 import LoadingSpinner from '../Components/Site/LoadingSpinner';
+import Page from './Page';
 
 const BlockList = () => {
     const user = useSelector((state) => state.auth.user);
@@ -109,7 +110,7 @@ const BlockList = () => {
     }
 
     return (
-        <div className='m-2 lg:w-2/3 lg:mx-auto'>
+        <Page>
             <Panel title='Block list'>
                 <div className='flex flex-col gap-2'>
                     <p>
@@ -149,7 +150,7 @@ const BlockList = () => {
                     </div>
                 </div>
             </Panel>
-        </div>
+        </Page>
     );
 };
 

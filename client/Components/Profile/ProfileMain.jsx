@@ -93,9 +93,8 @@ const ProfileMain = ({ user, formProps }) => {
                             <Switch
                                 {...formProps.getFieldProps('enableGravatar')}
                                 isSelected={formProps.values.enableGravatar}
-                                className='h-full'
                             >
-                                Enable Gravatar integration
+                                Enable Gravatar
                             </Switch>
                         </div>
                     </div>
