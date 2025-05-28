@@ -166,7 +166,7 @@ const GameBoard = () => {
     return (
         <>
             <div className={boardClass}>
-                <div className='overflow-auto basis-[100%]'>
+                <div className='overflow-auto basis-full'>
                     <DndContext
                         sensors={[mouseSensor, touchSensor]}
                         onDragStart={(event) => {

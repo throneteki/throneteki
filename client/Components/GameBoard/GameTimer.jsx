@@ -17,28 +17,32 @@ const GameTimer = ({ className, player, isMe, side }) => {
         },
         className
     );
+    const chessClock = currentGame.useChessClocks && player.chessClock && (
+        <ChessClock
+            username={player.user.username}
+            side={side}
+            active={player.chessClock.active}
+            paused={player.chessClock.paused}
+            timerStart={player.chessClock.timerStart}
+            timeLeft={player.chessClock.timeLeft}
+            delayLeft={player.chessClock.delayLeft}
+        />
+    );
+    const gameClock = currentGame.useGameTimeLimit && isMe && (
+        <TimeLimitClock
+            active={currentGame.timeLimit.active}
+            paused={currentGame.timeLimit.paused}
+            timerStart={currentGame.timeLimit.timerStart}
+            timeLeft={currentGame.timeLimit.timeLeft}
+        />
+    );
     return (
-        <div className={wrapperClassName}>
-            {currentGame.useChessClocks && player.chessClock && (
-                <ChessClock
-                    username={player.user.username}
-                    side={side}
-                    active={player.chessClock.active}
-                    paused={player.chessClock.paused}
-                    timerStart={player.chessClock.timerStart}
-                    timeLeft={player.chessClock.timeLeft}
-                    delayLeft={player.chessClock.delayLeft}
-                />
-            )}
-            {currentGame.useGameTimeLimit && isMe && (
-                <TimeLimitClock
-                    active={currentGame.timeLimit.active}
-                    paused={currentGame.timeLimit.paused}
-                    timerStart={currentGame.timeLimit.timerStart}
-                    timeLeft={currentGame.timeLimit.timeLeft}
-                />
-            )}
-        </div>
+        (chessClock || gameClock) && (
+            <div className={wrapperClassName}>
+                {chessClock}
+                {gameClock}
+            </div>
+        )
     );
 };
 

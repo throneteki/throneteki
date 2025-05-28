@@ -102,7 +102,7 @@ const JoustGameBoardLayout = ({
         ]
     );
     return (
-        <div className='min-h-full grid grid-cols-1 grid-rows-[repeat(2,auto)]'>
+        <div className='min-h-full w-max grid grid-cols-1 grid-rows-[repeat(2,auto)]'>
             {renderPlayerBoard(otherPlayer, 'top')}
             {renderPlayerBoard(thisPlayer, 'bottom')}
         </div>
