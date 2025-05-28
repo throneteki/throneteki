@@ -170,19 +170,7 @@ const ActivePlayerPrompt = ({
         });
     }, [controls, cards, handleLookupValueSelected]);
 
-    let promptTitleElement;
-
-    if (promptTitle) {
-        promptTitleElement = (
-            <div className='font-normal text-xs md:text-small lg:text-medium text-center border-1 border-default-200 bg-black/65 py-1'>
-                {promptTitle}
-            </div>
-        );
-    }
-
-    let timer = null;
-
-    let promptTextElement = [];
+    const promptTextElement = [];
     if (promptText && promptText.includes('\n')) {
         let split = promptText.split('\n');
         for (let token of split) {
@@ -191,10 +179,6 @@ const ActivePlayerPrompt = ({
         }
     } else {
         promptTextElement.push(promptText);
-    }
-
-    if (timerStartTime) {
-        timer = <AbilityTimer startTime={timerStartTime} limit={timerLimit} />;
     }
 
     if (isLoading) {
@@ -209,7 +193,7 @@ const ActivePlayerPrompt = ({
 
     return (
         <div className={className}>
-            {timer}
+            {timerStartTime && <AbilityTimer startTime={timerStartTime} limit={timerLimit} />}
             <div
                 className={
                     'relative text-xs md:text-small lg:text-medium font-bold text-center uppercase border-1 border-default-200 bg-secondary-200 py-1 rounded-t-md mx-0 mb-0'
@@ -217,7 +201,11 @@ const ActivePlayerPrompt = ({
             >
                 {`${phase} phase`}
             </div>
-            {promptTitleElement}
+            {promptTitle && (
+                <div className='font-normal text-xs md:text-small lg:text-medium text-center border-1 border-default-200 bg-black/65 py-1'>
+                    {promptTitle}
+                </div>
+            )}
             <div className='text-center'>
                 <div className='relative border-1 border-default-200 bg-black/65 rounded-b-md'>
                     <p className='my-1 mx-2 text-xs md:text-small'>{promptTextElement}</p>
