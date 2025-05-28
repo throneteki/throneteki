@@ -93,7 +93,7 @@
         "tailwindcss": "^3.4.6",
         "underscore": "^1.13.1",
         "uuid": "^3.1.0",
-        "vite": "^5.2.11",
+        "vite": "^6.3.5",
         "vite-express": "^0.16.0",
         "winston": "^3.11.0",
         "winston-daily-rotate-file": "^4.7.1",
@@ -130,6 +130,6 @@
         "selenium-webdriver": "^4.0.0-alpha.1",
         "socket.io-client": "^4.7.5",
         "vite-plugin-commonjs": "^0.10.1",
-        "vite-plugin-static-copy": "^1.0.4"
+        "vite-plugin-static-copy": "^3.0.0"
     }
 }
