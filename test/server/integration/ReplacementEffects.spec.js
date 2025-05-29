@@ -2,7 +2,10 @@ describe('replacement effects', function () {
     integration(function () {
         describe('when a replacement effect is applied', function () {
             beforeEach(function () {
-                const deck1 = this.buildDeck('thenightswatch', ['A Noble Cause', 'Benjen Stark']);
+                const deck1 = this.buildDeck('thenightswatch', [
+                    'A Noble Cause',
+                    'Benjen Stark (Core)'
+                ]);
                 const deck2 = this.buildDeck('lannister', [
                     'A Noble Cause',
                     'Chella Daughter of Cheyk'

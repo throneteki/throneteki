@@ -132,13 +132,13 @@ const GameBoard = () => {
             <JoustGameBoardLayout
                 thisPlayer={thisPlayer}
                 otherPlayer={otherPlayers[0]}
+                userPlayer={userPlayer}
                 onCardClick={onCardClick}
                 onMenuItemClick={onMenuItemClick}
                 onSettingsClick={() => setShowModal(!showModal)}
                 onChatToggle={() => setShowGameChat(!showGameChat)}
                 unreadMessages={unreadMessages}
                 isDragging={!!draggingDetail}
-                cardSize={userPlayer.cardSize}
             />
         );
     } else if (currentGame.gameFormat === 'melee') {
@@ -146,13 +146,13 @@ const GameBoard = () => {
             <MeleeGameBoardLayout
                 thisPlayer={thisPlayer}
                 otherPlayers={otherPlayers}
+                userPlayer={userPlayer}
                 onCardClick={onCardClick}
                 onMenuItemClick={onMenuItemClick}
                 onSettingsClick={() => setShowModal(!showModal)}
                 onChatToggle={() => setShowGameChat(!showGameChat)}
                 unreadMessages={unreadMessages}
                 isDragging={!!draggingDetail}
-                cardSize={userPlayer.cardSize}
             />
         );
     } else {

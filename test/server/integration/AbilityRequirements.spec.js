@@ -51,7 +51,7 @@ describe('ability requirements', function () {
                 const deck1 = this.buildDeck('lannister', [
                     'A Noble Cause',
                     'Cersei Lannister (Core)',
-                    'Lannisport',
+                    'Lannisport (Core)',
                     'Maester at the Rock',
                     'Without His Beard'
                 ]);

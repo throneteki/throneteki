@@ -10,13 +10,13 @@ import SideBoardPanel from '../SideBoardPanel';
 const JoustGameBoardLayout = ({
     thisPlayer,
     otherPlayer,
+    userPlayer,
     onCardClick,
     onMenuItemClick,
     onSettingsClick,
     onChatToggle,
     unreadMessages,
-    isDragging,
-    cardSize
+    isDragging
 }) => {
     const dispatch = useDispatch();
 
@@ -64,7 +64,7 @@ const JoustGameBoardLayout = ({
                         spectating={!thisPlayer}
                         title={player.title}
                         side={side}
-                        cardSize={cardSize}
+                        cardSize={userPlayer.cardSize}
                         plotDeck={player.cardPiles.plotDeck}
                         plotDiscard={player.cardPiles.plotDiscard}
                         activePlot={player.activePlot}
@@ -79,11 +79,11 @@ const JoustGameBoardLayout = ({
                             onCardClick={onCardClick}
                             onMenuItemClick={onMenuItemClick}
                             rowDirection={side === 'bottom' ? 'default' : 'reverse'}
-                            cardSize={cardSize}
+                            cardSize={userPlayer.cardSize}
                         />
                         <SideBoardPanel
                             player={player}
-                            thisPlayer={thisPlayer}
+                            userPlayer={userPlayer}
                             isMe={isMe}
                             side={side}
                         />
@@ -92,15 +92,15 @@ const JoustGameBoardLayout = ({
             );
         },
         [
-            dispatch,
-            isDragging,
-            onCardClick,
-            onChatToggle,
-            onMenuItemClick,
-            onSettingsClick,
             thisPlayer,
+            userPlayer,
+            onSettingsClick,
+            onChatToggle,
             unreadMessages,
-            cardSize
+            onCardClick,
+            onMenuItemClick,
+            isDragging,
+            dispatch
         ]
     );
     return (

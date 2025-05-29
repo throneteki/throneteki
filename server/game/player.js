@@ -90,7 +90,6 @@ class Player extends Spectator {
             this.chessClock = new ChessClock(this, game.chessClockTimeLimit, game.chessClockDelay);
         }
 
-        this.promptState = new PlayerPromptState();
         this.mustShowPlotSelection = [];
     }
 
@@ -1338,14 +1337,6 @@ class Player extends Spectator {
         return this.promptState.getCardSelectionState(card);
     }
 
-    currentPrompt() {
-        return this.promptState.getState();
-    }
-
-    setPrompt(prompt) {
-        this.promptState.setPrompt(prompt);
-    }
-
     cancelPrompt() {
         this.promptState.cancelPrompt();
     }
@@ -1397,12 +1388,12 @@ class Player extends Spectator {
     }
 
     getState(activePlayer) {
-        let isActivePlayer = activePlayer === this;
-        let promptState = isActivePlayer
+        const isActivePlayer = activePlayer === this;
+        const promptState = isActivePlayer
             ? this.promptState.getState()
             : { isActivePrompt: this.promptState.getState().isActivePrompt };
-        let isActivePrompt = this.promptState.isActivePrompt;
-        let fullDiscardPile = this.discardPile.concat(this.beingPlayed);
+        const isActivePrompt = this.promptState.isActivePrompt;
+        const fullDiscardPile = this.discardPile.concat(this.beingPlayed);
 
         let plots = [];
 
@@ -1422,7 +1413,11 @@ class Player extends Spectator {
             plots = this.getSummaryForCardList(this.plotDeck, activePlayer);
         }
 
-        let state = {
+        return {
+            id: this.id,
+            name: this.name,
+            cardSize: this.cardSize,
+            ...promptState,
             seatNo: this.seatNo,
             activePlot: this.activePlot ? this.activePlot.getSummary(activePlayer) : undefined,
             agendas: this.agendas
@@ -1446,11 +1441,9 @@ class Player extends Spectator {
             disconnected: !!this.disconnectedAt,
             faction: this.faction.getSummary(activePlayer),
             firstPlayer: this.firstPlayer,
-            id: this.id,
             keywordSettings: this.keywordSettings,
             left: this.left,
             numDrawCards: this.drawDeck.length,
-            name: this.name,
             numPlotCards: this.plotDeck.length,
             phase: this.game.currentPhase,
             selectedPlot: this.selectedPlot
@@ -1463,15 +1456,12 @@ class Player extends Spectator {
             showDeck: this.showDeck,
             stats: this.getStats(isActivePlayer),
             timerSettings: this.timerSettings,
-            cardSize: this.cardSize,
             title: this.title ? this.title.getSummary(activePlayer) : undefined,
             user: {
                 username: this.user.username
             },
             ...(this.game.useChessClocks && { chessClock: this.chessClock.getState() })
         };
-
-        return Object.assign(state, promptState);
     }
 }
 
