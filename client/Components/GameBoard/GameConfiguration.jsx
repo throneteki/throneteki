@@ -15,6 +15,7 @@ const windows = [
 ];
 
 const GameConfiguration = ({
+    isSpectating,
     actionWindows,
     keywordSettings,
     promptDupes,
@@ -35,6 +36,7 @@ const GameConfiguration = ({
                     }
                     name={'promptedActionWindows.' + window.name}
                     isSelected={actionWindows[window.name]}
+                    isDisabled={isSpectating}
                 >
                     {window.label}
                 </Switch>
@@ -56,6 +58,7 @@ const GameConfiguration = ({
                             }
                             name='timerSettings.events'
                             isSelected={timerSettings.events}
+                            isDisabled={isSpectating}
                         >
                             {'Show timer for events'}
                         </Switch>
@@ -65,6 +68,7 @@ const GameConfiguration = ({
                             }
                             name='timerSettings.abilities'
                             isSelected={timerSettings.abilities}
+                            isDisabled={isSpectating}
                         >
                             {'Show timer for card abilities'}
                         </Switch>
@@ -94,6 +98,7 @@ const GameConfiguration = ({
                             }
                             name='keywordSettings.chooseOrder'
                             isSelected={keywordSettings.chooseOrder}
+                            isDisabled={isSpectating}
                         >
                             {'Choose order of keywords'}
                         </Switch>
@@ -104,6 +109,7 @@ const GameConfiguration = ({
                             }
                             name='keywordSettings.chooseCards'
                             isSelected={keywordSettings.chooseCards}
+                            isDisabled={isSpectating}
                         >
                             {'Make keywords optional'}
                         </Switch>
@@ -113,6 +119,7 @@ const GameConfiguration = ({
                             }
                             name='promptDupes'
                             isSelected={promptDupes}
+                            isDisabled={isSpectating}
                         >
                             {'Prompt before using dupes to save'}
                         </Switch>

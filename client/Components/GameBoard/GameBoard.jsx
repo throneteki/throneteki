@@ -92,24 +92,22 @@ const GameBoard = () => {
         [dispatch]
     );
 
-    const thisPlayer = useMemo(
-        () =>
-            defaultPlayerInfo(
-                currentGame?.players[user?.username] || Object.values(currentGame?.players)[0]
-            ),
-        [currentGame?.players, user?.username]
-    );
+    const { thisPlayer, otherPlayers, userPlayer } = useMemo(() => {
+        const players = Object.values(currentGame?.players);
+        const thisPlayer = defaultPlayerInfo(currentGame?.players[user?.username] || players[0]);
+        const others = players.filter((player) => player.name !== thisPlayer.name);
+        // Fill with fake players if there are no others
+        const otherPlayers =
+            others.length > 0
+                ? others.map(defaultPlayerInfo)
+                : Array.from({ length: (currentGame?.maxPlayers || 2) - 1 }, (_, index) =>
+                      defaultPlayerInfo({ seatNo: index + 2 })
+                  );
 
-    const otherPlayers = useMemo(() => {
-        const others = Object.values(currentGame?.players).filter(
-            (player) => player.name !== thisPlayer.name
-        );
-        return others.length > 0
-            ? others.map(defaultPlayerInfo)
-            : Array.from({ length: (currentGame?.maxPlayers || 2) - 1 }, (_, index) =>
-                  defaultPlayerInfo({ seatNo: index + 2 })
-              );
-    }, [currentGame?.maxPlayers, currentGame?.players, thisPlayer.name]);
+        const allPlayers = players.concat(currentGame?.spectators);
+        const userPlayer = allPlayers.find((p) => p.name === user?.username);
+        return { thisPlayer, otherPlayers, userPlayer };
+    }, [currentGame?.maxPlayers, currentGame?.players, currentGame?.spectators, user?.username]);
 
     if (!currentGame || !currentGame.started) {
         return <LoadingSpinner label={'Waiting for server...'} />;
@@ -123,6 +121,7 @@ const GameBoard = () => {
     if (!currentGame.players || currentGame.players.length === 0) {
         return <LoadingSpinner label={'Waiting for game to have players or close...'} />;
     }
+
     const boardClass = classNames('flex h-full overflow-x-hidden', {
         'cursor-select': thisPlayer && thisPlayer.selectCard
     });
@@ -133,6 +132,7 @@ const GameBoard = () => {
             <JoustGameBoardLayout
                 thisPlayer={thisPlayer}
                 otherPlayer={otherPlayers[0]}
+                userPlayer={userPlayer}
                 onCardClick={onCardClick}
                 onMenuItemClick={onMenuItemClick}
                 onSettingsClick={() => setShowModal(!showModal)}
@@ -146,6 +146,7 @@ const GameBoard = () => {
             <MeleeGameBoardLayout
                 thisPlayer={thisPlayer}
                 otherPlayers={otherPlayers}
+                userPlayer={userPlayer}
                 onCardClick={onCardClick}
                 onMenuItemClick={onMenuItemClick}
                 onSettingsClick={() => setShowModal(!showModal)}
@@ -220,6 +221,7 @@ const GameBoard = () => {
             </div>
             <GameConfigurationModal
                 isOpen={showModal}
+                isSpectating={user.username !== thisPlayer.name}
                 onClose={() => setShowModal(false)}
                 keywordSettings={thisPlayer.keywordSettings}
                 onKeywordSettingToggle={(option, value) =>
@@ -236,7 +238,7 @@ const GameBoard = () => {
                 promptDupes={thisPlayer.promptDupes}
                 promptedActionWindows={thisPlayer.promptedActionWindows}
                 timerSettings={thisPlayer.timerSettings}
-                cardSizeSetting={thisPlayer.cardSize}
+                cardSizeSetting={userPlayer.cardSize}
             />
         </>
     );

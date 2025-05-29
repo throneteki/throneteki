@@ -10,6 +10,7 @@ import SideBoardPanel from '../SideBoardPanel';
 const JoustGameBoardLayout = ({
     thisPlayer,
     otherPlayer,
+    userPlayer,
     onCardClick,
     onMenuItemClick,
     onSettingsClick,
@@ -63,7 +64,7 @@ const JoustGameBoardLayout = ({
                         spectating={!thisPlayer}
                         title={player.title}
                         side={side}
-                        cardSize={thisPlayer.cardSize}
+                        cardSize={userPlayer.cardSize}
                         plotDeck={player.cardPiles.plotDeck}
                         plotDiscard={player.cardPiles.plotDiscard}
                         activePlot={player.activePlot}
@@ -78,11 +79,11 @@ const JoustGameBoardLayout = ({
                             onCardClick={onCardClick}
                             onMenuItemClick={onMenuItemClick}
                             rowDirection={side === 'bottom' ? 'default' : 'reverse'}
-                            cardSize={thisPlayer.cardSize}
+                            cardSize={userPlayer.cardSize}
                         />
                         <SideBoardPanel
                             player={player}
-                            thisPlayer={thisPlayer}
+                            userPlayer={userPlayer}
                             isMe={isMe}
                             side={side}
                         />
@@ -91,18 +92,19 @@ const JoustGameBoardLayout = ({
             );
         },
         [
-            dispatch,
-            isDragging,
-            onCardClick,
-            onChatToggle,
-            onMenuItemClick,
-            onSettingsClick,
             thisPlayer,
-            unreadMessages
+            userPlayer,
+            onSettingsClick,
+            onChatToggle,
+            unreadMessages,
+            onCardClick,
+            onMenuItemClick,
+            isDragging,
+            dispatch
         ]
     );
     return (
-        <div className='min-h-full w-max grid grid-cols-1 grid-rows-[repeat(2,auto)]'>
+        <div className='min-h-full min-w-max grid grid-cols-1 grid-rows-[repeat(2,auto)]'>
             {renderPlayerBoard(otherPlayer, 'top')}
             {renderPlayerBoard(thisPlayer, 'bottom')}
         </div>

@@ -5,7 +5,7 @@ import { sendButtonClickedMessage } from '../../redux/reducers/game';
 import classNames from 'classnames';
 import { useDispatch } from 'react-redux';
 
-const SideBoardPanel = ({ collapsable, player, thisPlayer, isMe, side }) => {
+const SideBoardPanel = ({ collapsable, player, userPlayer, isMe, side }) => {
     const dispatch = useDispatch();
 
     // Side panel must be treated differently for the 2 left-most boards, and for top/bottom
@@ -24,10 +24,10 @@ const SideBoardPanel = ({ collapsable, player, thisPlayer, isMe, side }) => {
             {isMe && (
                 <ActivePlayerPrompt
                     className='pointer-events-auto'
-                    buttons={thisPlayer.buttons}
-                    controls={thisPlayer.controls}
-                    promptText={thisPlayer.menuTitle}
-                    promptTitle={thisPlayer.promptTitle}
+                    buttons={userPlayer.buttons}
+                    controls={userPlayer.controls}
+                    promptText={userPlayer.menuTitle}
+                    promptTitle={userPlayer.promptTitle}
                     onButtonClick={(button) =>
                         dispatch(
                             sendButtonClickedMessage(
@@ -38,8 +38,7 @@ const SideBoardPanel = ({ collapsable, player, thisPlayer, isMe, side }) => {
                             )
                         )
                     }
-                    user={player.user}
-                    phase={thisPlayer.phase}
+                    phase={player.phase}
                     // timerLimit={this.props.timerLimit}
                     // timerStartTime={this.props.timerStartTime}
                     // stopAbilityTimer={this.props.stopAbilityTimer}

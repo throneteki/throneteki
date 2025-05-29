@@ -935,7 +935,7 @@ class Game extends EventEmitter {
     }
 
     cardSizeChange(playerName, value) {
-        var player = this.getPlayerByName(playerName);
+        var player = this.getPlayersAndSpectators()[playerName];
         if (!player) {
             return;
         }
@@ -1562,12 +1562,7 @@ class Game extends EventEmitter {
                 players: playerState,
                 messages: this.gameChat.messages,
                 showHand: this.showHand,
-                spectators: this.getSpectators().map((spectator) => {
-                    return {
-                        id: spectator.id,
-                        name: spectator.name
-                    };
-                }),
+                spectators: this.getSpectators().map((spectator) => spectator.getState()),
                 started: this.started,
                 winner: this.winner ? this.winner.name : undefined,
                 gameFormat: this.gameFormat,

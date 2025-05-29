@@ -141,7 +141,7 @@ describe('Tyrion Lannister', function () {
                     'Fealty',
                     'Banner of the Kraken',
                     'Late Summer Feast',
-                    'Moqorro',
+                    'Moqorro (DitD)',
                     'Tyrion Lannister (TB)'
                 ]);
                 this.player1.selectDeck(deck);

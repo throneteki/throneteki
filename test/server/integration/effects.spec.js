@@ -146,7 +146,7 @@ describe('effects', function () {
                         'Trading with the Pentoshi',
                         'Maester Caleotte',
                         'Maester Aemon (Core)',
-                        'Benjen Stark',
+                        'Benjen Stark (Core)',
                         'Dragonglass Dagger'
                     ]);
                     this.player1.selectDeck(deck);

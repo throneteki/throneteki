@@ -10,6 +10,7 @@ import SideBoardPanel from '../SideBoardPanel';
 const MeleeGameBoardLayout = ({
     thisPlayer,
     otherPlayers,
+    userPlayer,
     onCardClick,
     onMenuItemClick,
     onSettingsClick,
@@ -67,7 +68,7 @@ const MeleeGameBoardLayout = ({
                         title={player.title}
                         side={side}
                         sideNo={sideNo}
-                        cardSize={thisPlayer.cardSize}
+                        cardSize={userPlayer.cardSize}
                         plotDeck={player.cardPiles.plotDeck}
                         plotDiscard={player.cardPiles.plotDiscard}
                         activePlot={player.activePlot}
@@ -82,11 +83,11 @@ const MeleeGameBoardLayout = ({
                             onCardClick={onCardClick}
                             onMenuItemClick={onMenuItemClick}
                             rowDirection={side === 'bottom' ? 'default' : 'reverse'}
-                            cardSize={thisPlayer.cardSize}
+                            cardSize={userPlayer.cardSize}
                         />
                         <SideBoardPanel
                             player={player}
-                            thisPlayer={thisPlayer}
+                            userPlayer={userPlayer}
                             isMe={isMe}
                             side={side}
                             collapsable={!hasSidePanel}
@@ -103,6 +104,7 @@ const MeleeGameBoardLayout = ({
             onMenuItemClick,
             onSettingsClick,
             thisPlayer,
+            userPlayer,
             unreadMessages
         ]
     );
@@ -166,7 +168,7 @@ const MeleeGameBoardLayout = ({
     }, [otherPlayers, thisPlayer, renderPlayerBoard]);
 
     return (
-        <div className='min-h-full w-max grid grid-flow-col auto-cols-auto grid-rows-[repeat(2,auto)]'>
+        <div className='min-h-full min-w-max grid grid-flow-col auto-cols-auto grid-rows-[repeat(2,auto)]'>
             {playerBoardsGrid}
         </div>
     );
