@@ -88,10 +88,7 @@ const ChatArea = forwardRef(function ChatArea(
     return (
         <div className={classNames('flex flex-col', className, classNamesProp?.wrapper)}>
             <div
-                className={classNames(
-                    'flex-1 overflow-y-auto scroll-smooth',
-                    classNamesProp?.messages
-                )}
+                className={classNames('flex-1 overflow-y-auto', classNamesProp?.messages)}
                 ref={messagesRef}
                 onScroll={onScroll}
             >
