@@ -333,7 +333,12 @@ const Card = ({
                     code={imageCode}
                     orientation={card.type === 'plot' ? 'horizontal' : 'vertical'}
                 />
-                {!hideTokens && <CardCounters counters={getCountersForCard(card)} />}
+                {!hideTokens && (
+                    <CardCounters
+                        counters={getCountersForCard(card)}
+                        isParentKneeled={card.kneeled}
+                    />
+                )}
                 {isFaceup && getAlertStatus()}
             </div>
         );
