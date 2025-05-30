@@ -1027,6 +1027,7 @@ class Lobby {
             syncGame.createdAt = game.startedAt;
             syncGame.started = game.started;
             syncGame.gameType = game.gameType;
+            syncGame.gameFormat = game.gameFormat;
             syncGame.password = game.password;
             syncGame.restrictedList = game.restrictedList;
 
