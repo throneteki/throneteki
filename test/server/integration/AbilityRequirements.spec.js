@@ -98,8 +98,6 @@ describe('ability requirements', function () {
 
                 this.player1.triggerAbility('Without His Beard');
                 this.player1.clickPrompt('3');
-                // Skip order of discarded cards
-                this.player2.clickPrompt('Done');
                 this.player1.triggerAbility('Maester at the Rock');
                 this.player1.triggerAbility('Lannisport');
 
