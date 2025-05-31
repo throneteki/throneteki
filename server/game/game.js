@@ -727,7 +727,7 @@ class Game extends EventEmitter {
             let valueGetter;
             switch (stat) {
                 case 'claim':
-                    if (!player.activePlot.claim.setValue) {
+                    if (player.activePlot.claim.setValue === undefined) {
                         effect = Effects.modifyClaim(value);
                     } else {
                         effect = Effects.setClaim(Math.max(player.getClaim() + value, 0));
@@ -735,7 +735,7 @@ class Game extends EventEmitter {
                     valueGetter = () => player.getClaim();
                     break;
                 case 'initiative':
-                    if (!player.activePlot.initiative.setValue) {
+                    if (player.activePlot.initiative.setValue === undefined) {
                         effect = Effects.modifyInitiative(value);
                     } else {
                         effect = Effects.setInitiative(Math.max(player.getInitiative() + value, 0));
@@ -743,7 +743,7 @@ class Game extends EventEmitter {
                     valueGetter = () => player.getInitiative();
                     break;
                 case 'reserve':
-                    if (!player.activePlot.reserve.setValue) {
+                    if (player.activePlot.reserve.setValue === undefined) {
                         effect = Effects.modifyReserve(value);
                     } else {
                         effect = Effects.setReserve(Math.max(player.getReserve() + value, 0));

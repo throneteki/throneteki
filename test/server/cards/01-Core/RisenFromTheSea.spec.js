@@ -6,7 +6,8 @@ describe('Risen from the Sea', function () {
                 'Asha Greyjoy (Core)',
                 'Theon Greyjoy (Core)',
                 'Drowned Men',
-                'Risen from the Sea'
+                'Risen from the Sea',
+                'Iron Fleet Scout'
             ]);
             const deck2 = this.buildDeck('targaryen', [
                 'A Noble Cause',
@@ -23,6 +24,7 @@ describe('Risen from the Sea', function () {
             this.character = this.player1.findCardByName('Theon Greyjoy', 'hand');
             this.noAttachmentCharacter = this.player1.findCardByName('Drowned Men', 'hand');
             this.event = this.player1.findCardByName('Risen from the Sea', 'hand');
+            this.strBoostLocation = this.player1.findCardByName('Iron Fleet Scout', 'hand');
 
             this.player1.clickCard(this.character);
             this.player1.clickCard(this.noAttachmentCharacter);
@@ -121,7 +123,7 @@ describe('Risen from the Sea', function () {
 
             describe('when that character could reach 1 STR but cannot because it disallows attachments', function () {
                 beforeEach(function () {
-                    this.noAttachmentCharacter.modifyStrength(1);
+                    this.player1.dragCard(this.strBoostLocation, 'play area');
                     this.player2.clickCard(this.noAttachmentCharacter);
                 });
 
