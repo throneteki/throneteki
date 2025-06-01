@@ -344,7 +344,8 @@ describe('burn effects', function () {
                 let targ = this.buildDeck('targaryen', [
                     'Drogon (Core)',
                     'Dracarys!',
-                    'A Noble Cause'
+                    'A Noble Cause',
+                    'Shadow of the East'
                 ]);
 
                 this.player1.selectDeck(stark);
@@ -359,9 +360,11 @@ describe('burn effects', function () {
 
                 this.drogon = this.player2.findCardByName('Drogon (Core)', 'hand');
                 this.dracarys = this.player2.findCardByName('Dracarys!', 'hand');
+                this.shadow = this.player2.findCardByName('Shadow of the East', 'hand');
 
                 this.player1.clickCard(this.edmure);
                 this.player2.clickCard(this.drogon);
+                this.player2.clickCard(this.shadow);
 
                 this.completeSetup();
                 this.selectFirstPlayer(this.player1);
@@ -413,6 +416,154 @@ describe('burn effects', function () {
                 this.player2.clickCard(this.drogon);
 
                 expect(this.edmure.location).toBe('dead pile');
+            });
+
+            it('should immediately kill when the strength is reduced to 0 due to a strength set effect being removed within a challenge', function () {
+                this.player1.clickCard(this.strangler);
+                this.player1.clickCard(this.edmure);
+                this.completeMarshalPhase();
+                this.player1.clickPrompt('Military');
+                this.player1.clickCard(this.edmure);
+                this.player1.clickPrompt('done');
+                this.player1.clickPrompt('pass');
+
+                this.player2.clickCard(this.dracarys);
+                this.player2.clickCard(this.drogon);
+                this.player2.clickCard(this.edmure);
+
+                this.player1.clickPrompt('pass');
+
+                this.player2.clickCard(this.shadow);
+                this.player2.clickCard(this.strangler);
+
+                expect(this.edmure.location).toBe('dead pile');
+            });
+        });
+
+        describe('interacting with expiring effects', function () {
+            beforeEach(function () {
+                let burnDeck = this.buildDeck('targaryen', [
+                    'Blood of the Dragon',
+                    'A Noble Cause',
+                    'A Dragon Is No Slave',
+                    'Consuming Flames',
+                    'Targaryen Loyalist',
+                    'Strangler',
+                    'The Roseroad'
+                ]);
+
+                let targetDeck = this.buildDeck('tyrell', [
+                    'At the Palace of Sorrows (R)',
+                    'A Noble Cause',
+                    'Courtesan of the Rose',
+                    'Hedge Knight',
+                    'Gates of the Moon',
+                    '"Lord Renly\'s Ride"'
+                ]);
+
+                this.player2.selectDeck(burnDeck);
+                this.player1.selectDeck(targetDeck);
+
+                this.startGame();
+                this.keepStartingHands();
+
+                this.consumingFlames = this.player2.findCardByName('Consuming Flames', 'hand');
+                this.reduction = this.player2.findCardByName('A Dragon Is No Slave', 'hand');
+                this.targChud = this.player2.findCardByName('Targaryen Loyalist', 'hand');
+                this.strangler = this.player2.findCardByName('Strangler', 'hand');
+                this.roseroad = this.player2.findCardByName('The Roseroad', 'hand');
+
+                this.gates = this.player1.findCardByName('Gates of the Moon', 'hand');
+                this.courtesan = this.player1.findCardByName('Courtesan of the Rose', 'hand');
+                this.knight = this.player1.findCardByName('Hedge Knight', 'hand');
+                this.strengthBoost = this.player1.findCardByName('"Lord Renly\'s Ride"', 'hand');
+
+                this.player2.clickCard(this.targChud);
+                this.player2.clickCard(this.roseroad);
+                this.player1.clickCard(this.courtesan);
+                this.player1.dragCard(this.knight, 'dead pile');
+                this.player1.clickCard(this.gates);
+                this.completeSetup();
+            });
+
+            it('should not kill due to simultaneous expirations of reduction and boost at the end of a phase', function () {
+                this.player2.selectPlot('Blood of the Dragon');
+                this.player1.selectPlot('A Noble Cause');
+
+                this.selectFirstPlayer(this.player1);
+
+                this.player1.clickPrompt('Done');
+                this.player2.clickPrompt('Done');
+
+                expect(this.game.currentPhase).toBe('challenge');
+
+                this.player1.clickCard(this.strengthBoost);
+                this.player1.clickCard(this.courtesan);
+
+                expect(this.courtesan.getStrength()).toBe(3);
+
+                this.player2.clickCard(this.reduction);
+                this.player2.clickCard(this.courtesan);
+
+                expect(this.courtesan.getStrength()).toBe(1);
+
+                this.player1.clickPrompt('Done');
+                this.player2.clickPrompt('Done');
+
+                expect(this.courtesan.location).toBe('play area');
+                expect(this.game.currentPhase).toBe('plot');
+            });
+
+            it('should not kill when one set effect is replaced by another', function () {
+                this.player2.selectPlot('Blood of the Dragon');
+                this.player1.selectPlot('At the Palace of Sorrows (R)');
+
+                this.selectFirstPlayer(this.player1);
+
+                expect(this.courtesan.getStrength()).toBe(3);
+                this.player1.clickPrompt('Done');
+                this.player2.clickCard(this.strangler);
+                this.player2.clickCard(this.courtesan);
+
+                this.player2.clickPrompt('Done');
+
+                this.player1.clickPrompt('power');
+                this.player1.clickCard(this.courtesan);
+                this.player1.clickPrompt('Done');
+                expect(this.courtesan.getStrength()).toBe(1);
+
+                this.player1.clickPrompt('Pass');
+
+                this.player2.clickCard(this.consumingFlames);
+                this.player2.clickCard(this.reduction);
+                this.player2.clickCard(this.courtesan);
+
+                expect(this.courtesan.getStrength()).toBe(1);
+
+                this.player1.clickPrompt('Pass');
+                this.player2.clickPrompt('Pass');
+
+                this.player2.clickPrompt('Done');
+
+                this.player1.clickPrompt('Pass');
+                this.player2.clickPrompt('Pass');
+
+                this.player1.clickPrompt('Apply Claim');
+
+                expect(this.courtesan.location).toBe('play area');
+                expect(this.courtesan.getStrength()).toBe(3);
+            });
+
+            it('should not kill due to simultaneous change of plots', function () {
+                this.player2.selectPlot('Blood of the Dragon');
+                this.player1.selectPlot('At the Palace of Sorrows (R)');
+
+                this.selectFirstPlayer(this.player1);
+
+                this.completeMarshalPhase();
+                this.completeChallengesPhase();
+                expect(this.game.currentPhase).toBe('plot');
+                expect(this.targChud.location).toBe('play area');
             });
         });
     });
