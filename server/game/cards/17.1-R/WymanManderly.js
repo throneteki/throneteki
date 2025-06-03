@@ -14,7 +14,7 @@ class WymanManderly extends DrawCard {
                     !card.kneeled &&
                     GameActions.kill({ card }).allow()
             },
-            message: '{player} uses {source} to sacrifice {target}',
+            message: '{player} uses {source} to kill {target}',
             handler: (context) => {
                 this.game.resolveGameAction(
                     GameActions.kill((context) => ({ card: context.target })),
