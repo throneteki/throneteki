@@ -17,10 +17,7 @@ describe('Uneasy Truce', function () {
 
         it('should prevent a player gaining power outside of challenges when the trigger is a multiple-choice action', function () {
             //TODO - rework choices so choices that have no effect are disabled
-            this.player1.clickPrompt('Gain 1 Power');
-            expect(this.player1Object.getTotalPower()).toBe(0);
-            this.player2.clickPrompt('Gain 1 Power');
-            expect(this.player2Object.getTotalPower()).toBe(0);
+            expect(this.player1).toHaveDisabledPromptButton('Gain 1 power');
         });
     });
 });

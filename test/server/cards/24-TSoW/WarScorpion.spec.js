@@ -48,7 +48,7 @@ describe("War Scorpion", function () {
             this.player1.clickPrompt('Done');
             this.player2.clickMenu('War Scorpion', 'Remove attacker from challenge');
             this.player2.clickCard(this.army);
-            expect(this.army.inChallenge).toBe(false);
+            expect(this.player2).toHaveDisabledPromptButton('Kill');
         });
     });
 });
