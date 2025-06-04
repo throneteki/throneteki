@@ -12,7 +12,6 @@ import BestowPrompt from './gamesteps/bestowprompt.js';
 import AllowedChallenges from './AllowedChallenges.js';
 import PlayableLocation from './playablelocation.js';
 import PlayActionPrompt from './gamesteps/playactionprompt.js';
-import PlayerPromptState from './playerpromptstate.js';
 import MinMaxProperty from './PropertyTypes/MinMaxProperty.js';
 import ReferenceCountedSetProperty from './PropertyTypes/ReferenceCountedSetProperty.js';
 import GoldSource from './GoldSource.js';
@@ -1245,6 +1244,17 @@ class Player extends Spectator {
                 originalPile.filter((c) => c.uuid !== card.uuid)
             );
         }
+    }
+
+    leave() {
+        this.left = true;
+    }
+
+    eliminate() {
+        this.eliminated = true;
+        this.setPrompt({
+            menuTitle: 'You have been eliminated'
+        });
     }
 
     getIncome() {

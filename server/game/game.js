@@ -181,7 +181,7 @@ class Game extends EventEmitter {
     }
 
     getPlayers() {
-        return this.getAllPlayers().filter((player) => !player.eliminated);
+        return this.getAllPlayers().filter((player) => !player.eliminated && !player.left);
     }
 
     getNumberOfPlayers() {
@@ -616,10 +616,10 @@ class Game extends EventEmitter {
                 '{0} is eliminated from the game because their draw deck is empty',
                 player
             );
-            player.eliminated = true;
+            player.eliminate();
         }
 
-        let remainingPlayers = players.filter((player) => !player.eliminated);
+        const remainingPlayers = players.filter((player) => !player.eliminated);
 
         // If the first player is eliminated, the next non-eliminated player in order becomes first player
         if (players[0].eliminated && remainingPlayers.length > 1) {
@@ -829,9 +829,9 @@ class Game extends EventEmitter {
         }
 
         this.addAlert('info', '{0} concedes', player);
-        player.eliminated = true;
+        player.eliminate();
 
-        let remainingPlayers = this.getPlayers().filter((player) => !player.eliminated);
+        const remainingPlayers = this.getPlayers();
 
         if (remainingPlayers.length === 1) {
             this.recordWinner(remainingPlayers[0], 'concede');
@@ -1409,9 +1409,9 @@ class Game extends EventEmitter {
             delete this.playersAndSpectators[playerName];
         } else {
             this.addAlert('info', '{0} has left the game', player);
-            player.left = true;
+            player.leave();
 
-            if (!this.finishedAt) {
+            if (this.getPlayers().length < 2 && !this.finishedAt) {
                 this.finishedAt = new Date();
             }
         }
@@ -1639,7 +1639,10 @@ class Game extends EventEmitter {
                 };
             }),
             muteSpectators: this.muteSpectators,
-            restrictedList: this.restrictedList,
+            restrictedList: this.restrictedList && {
+                name: this.restrictedList.name,
+                cardSet: this.restrictedList.cardSet
+            },
             useChessClocks: this.useChessClocks
         };
     }
