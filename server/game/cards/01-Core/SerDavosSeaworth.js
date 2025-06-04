@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SerDavosSeaworth extends DrawCard {
     setupCardAbilities() {
@@ -6,17 +7,13 @@ class SerDavosSeaworth extends DrawCard {
             when: {
                 onCharacterKilled: (event) => event.card === this
             },
+            message:
+                '{player} uses {source} to return {source} to their hand instead of placing him in their dead pile',
             handler: (context) => {
-                this.game.addMessage(
-                    '{0} uses {1} to return {1} to their hand instead of their dead pile',
-                    this.controller,
-                    this,
-                    this
+                context.event.replaceChildEvent(
+                    'onCardPlaced',
+                    GameActions.returnCardToHand({ card: this }).createEvent()
                 );
-                context.replaceHandler(() => {
-                    context.event.cardStateWhenKilled = this.createSnapshot();
-                    this.controller.moveCard(this, 'hand');
-                });
             }
         });
     }

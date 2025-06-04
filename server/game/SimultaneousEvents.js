@@ -1,8 +1,17 @@
 import { flatten } from '../Array.js';
+
+/**
+ * A Simultaneous Event groups multiple events into a single window without affecting eachother.
+ * - Cancelling this event will cancel all children events, but cancelling a child event will not cancel any others.
+ * - Child events will intentionally have no parent.
+ * - This event will be "resolved" if all child events resolved successfully.
+ * - This event will be "cancelled" if all child events were cancelled.
+ */
 class SimultaneousEvents {
     constructor() {
         this.childEvents = [];
         this.postHandlers = [];
+        this.order = 0;
     }
 
     get activeChildEvents() {
@@ -37,15 +46,13 @@ class SimultaneousEvents {
         }
     }
 
-    checkExecuteValidity() {
-        for (let event of this.childEvents) {
-            event.checkExecuteValidity();
-        }
-    }
-
     executeHandler() {
-        for (let event of this.activeChildEvents.sort((a, b) => a.order - b.order)) {
-            event.executeHandler();
+        // Execute as concurrent events so they can be ordered appropriately at the highest level
+        this.queue = this.getConcurrentEvents().sort((a, b) => a.order - b.order);
+
+        for (let event of this.queue) {
+            event.createSnapshot();
+            event.handler(event);
         }
     }
 
