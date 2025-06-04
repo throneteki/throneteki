@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheReader extends DrawCard {
     setupCardAbilities(ability) {
@@ -13,11 +14,12 @@ class TheReader extends DrawCard {
             },
             limit: ability.limit.perPhase(1),
             choices: {
-                'Draw 1 card': () => {
-                    if (this.controller.canDraw()) {
-                        this.controller.drawCardsToHand(1);
-                        this.game.addMessage('{0} uses {1} to draw 1 card', this.controller, this);
-                    }
+                'Draw 1 card': {
+                    message: '{player} uses {source} to draw 1 card',
+                    gameAction: GameActions.drawCards((context) => ({
+                        player: context.player,
+                        amount: 1
+                    }))
                 },
                 'Discard 3 cards': () => {
                     this.game.addMessage(

@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class GreatKraken extends DrawCard {
     setupCardAbilities(ability) {
@@ -13,21 +14,19 @@ class GreatKraken extends DrawCard {
             },
             limit: ability.limit.perRound(2),
             choices: {
-                'Draw 1 card': () => {
-                    if (this.controller.canDraw()) {
-                        this.controller.drawCardsToHand(1);
-                        this.game.addMessage('{0} uses {1} to draw 1 card', this.controller, this);
-                    }
+                'Draw 1 card': {
+                    message: '{player} uses {source} to draw 1 card',
+                    gameAction: GameActions.drawCards((context) => ({
+                        player: context.player,
+                        amount: 1
+                    }))
                 },
-                'Gain 1 power': () => {
-                    if (this.controller.canGainFactionPower()) {
-                        this.game.addPower(this.controller, 1);
-                        this.game.addMessage(
-                            '{0} uses {1} to gain 1 power for their faction',
-                            this.controller,
-                            this
-                        );
-                    }
+                'Gain 1 power': {
+                    message: '{player} uses {source} to gain 1 power for their faction',
+                    gameAction: GameActions.gainPower((context) => ({
+                        card: context.player.faction,
+                        amount: 1
+                    }))
                 }
             }
         });
