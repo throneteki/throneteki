@@ -112,11 +112,14 @@ const NavBar = () => {
                                 variant='flat'
                                 className='font-[PoppinsMedium] text-secondary'
                                 title={menuItem.title}
+                                disabledKeys={children
+                                    .filter((childItem) => childItem.path === path)
+                                    .map((childItem) => childItem.title)}
                             >
-                                {children.map((childItem, index) =>
+                                {children.map((childItem) =>
                                     childItem.path ? (
                                         <DropdownItem
-                                            key={index}
+                                            key={childItem.title}
                                             classNames={{ base: 'flex' }}
                                             onPointerDown={() => setIsMenuOpen(false)}
                                         >
@@ -146,6 +149,7 @@ const NavBar = () => {
                             size='lg'
                             as={NavigationLink}
                             href={menuItem.path}
+                            isDisabled={menuItem.path === path}
                         >
                             {menuItem.title}
                         </Link>
@@ -153,7 +157,7 @@ const NavBar = () => {
                 );
             });
         },
-        [dropdownOpenStatus, filterMenuItems, user]
+        [dropdownOpenStatus, filterMenuItems, user, path]
     );
 
     let leftMenu = useMemo(() => {
