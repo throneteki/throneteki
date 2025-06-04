@@ -445,6 +445,8 @@ class GameServer {
             this.gameSocket.send('GAMECLOSED', { game: game.id });
         }
 
+        game.continue();
+
         this.sendGameState(game);
     }
 

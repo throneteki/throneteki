@@ -6,6 +6,7 @@ class ChooseTitlePrompt extends BaseStep {
 
         this.titlePool = titlePool;
         this.remainingPlayers = game.getPlayersInFirstPlayerOrder();
+        this.remainingTitles = titlePool.getCardsForSelection();
         this.selections = [];
     }
 
@@ -14,12 +15,8 @@ class ChooseTitlePrompt extends BaseStep {
             return true;
         }
 
-        if (this.selections.length === 0) {
-            this.remainingTitles = this.titlePool.getCardsForSelection();
-        }
-
         if (this.remainingPlayers.length !== 0) {
-            let currentPlayer = this.remainingPlayers.shift();
+            const currentPlayer = this.remainingPlayers.shift();
             this.promptForTitle(currentPlayer);
             return false;
         }
@@ -28,7 +25,7 @@ class ChooseTitlePrompt extends BaseStep {
     }
 
     promptForTitle(player) {
-        let buttons = this.remainingTitles.map((title) => {
+        const buttons = this.remainingTitles.map((title) => {
             return { method: 'chooseTitle', card: title };
         });
         this.game.promptWithMenu(player, this, {

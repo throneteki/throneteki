@@ -60,8 +60,12 @@ class UiPrompt extends BaseStep {
     }
 
     continue() {
-        var completed = this.isComplete();
+        const player = this.getPlayer();
+        if (player && (player.left || player.eliminated)) {
+            this.complete();
+        }
 
+        const completed = this.isComplete();
         if (completed) {
             this.clearPrompts();
             this.onCompleted();

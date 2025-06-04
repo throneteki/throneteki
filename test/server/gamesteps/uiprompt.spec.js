@@ -23,6 +23,8 @@ describe('the UiPrompt', function () {
         this.waitingPrompt = {};
 
         this.prompt = new UiPrompt(this.game);
+        spyOn(this.prompt, 'getPlayer').and.returnValue(this.player2);
+        spyOn(this.prompt, 'complete');
         spyOn(this.prompt, 'activePrompt').and.returnValue(this.activePrompt);
         spyOn(this.prompt, 'waitingPrompt').and.returnValue(this.waitingPrompt);
         spyOn(this.prompt, 'activeCondition').and.callFake((player) => {
@@ -59,6 +61,28 @@ describe('the UiPrompt', function () {
 
             it('should return false', function () {
                 expect(this.prompt.continue()).toBe(false);
+            });
+
+            describe('and the prompted player leaves', function () {
+                beforeEach(function () {
+                    this.player2.left = true;
+                    this.prompt.continue();
+                });
+
+                it('should complete the prompt', function () {
+                    expect(this.prompt.complete).toHaveBeenCalled();
+                });
+            });
+
+            describe('and the prompted player is eliminated', function () {
+                beforeEach(function () {
+                    this.player2.eliminated = true;
+                    this.prompt.continue();
+                });
+
+                it('should complete the prompt', function () {
+                    expect(this.prompt.complete).toHaveBeenCalled();
+                });
             });
         });
 
