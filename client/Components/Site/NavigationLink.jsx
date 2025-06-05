@@ -1,8 +1,8 @@
-import React, { useCallback } from 'react';
+import React, { forwardRef, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { navigate } from '../../redux/reducers/navigation';
 
-const NavigationLink = ({ href, className, children }) => {
+const NavigationLink = forwardRef(function NavigationLink({ href, className, children }, ref) {
     const dispatch = useDispatch();
 
     const onPointerDown = useCallback(
@@ -14,10 +14,16 @@ const NavigationLink = ({ href, className, children }) => {
     );
 
     return (
-        <a className={className} href={href} onClick={onPointerDown} onPointerDown={onPointerDown}>
+        <a
+            className={className}
+            href={href}
+            onClick={onPointerDown}
+            onPointerDown={onPointerDown}
+            ref={ref}
+        >
             {children}
         </a>
     );
-};
+});
 
 export default NavigationLink;

@@ -21,7 +21,7 @@ const ProfileDropdown = ({ user, menu }) => {
             </DropdownTrigger>
             <DropdownMenu variant='flat'>
                 {menu.map((mi) => (
-                    <DropdownItem key={mi.title}>
+                    <DropdownItem key={mi.title} textValue={mi.title}>
                         <NavItem className='w-full' size='md' path={mi.path}>
                             {mi.title}
                         </NavItem>

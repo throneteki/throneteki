@@ -30,8 +30,6 @@ const PendingGameAlerter = ({ game, user }) => {
 
                 for (const newPlayer of newPlayers) {
                     const joinMessage = `${newPlayer.name} has joined your game`;
-                    // Always toast
-                    toast.info(joinMessage);
 
                     // Send browser notification, if able
                     if (window.Notification && Notification.permission === 'granted') {
@@ -41,6 +39,9 @@ const PendingGameAlerter = ({ game, user }) => {
                         });
 
                         setTimeout(() => windowNotification.close(), 5000);
+                    } else {
+                        // Otherwise, just send a toast
+                        toast.info(joinMessage);
                     }
                 }
             }

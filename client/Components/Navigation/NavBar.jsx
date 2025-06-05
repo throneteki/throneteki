@@ -115,6 +115,7 @@ const NavBar = () => {
                                             key={childItem.title}
                                             classNames={{ base: 'flex' }}
                                             onPointerDown={() => setIsMenuOpen(false)}
+                                            textValue={childItem.title}
                                         >
                                             <NavItem
                                                 className='w-full'
