@@ -120,16 +120,16 @@ function setCardModifier(propName) {
             apply: function (card, context) {
                 context[propName] = context[propName] || {};
                 context[propName][card.uuid] = calculate(card, context) || 0;
-                card[propName].setValue = context[propName][card.uuid];
+                card[propName].addSetValue(context.effectObject, context[propName][card.uuid]);
             },
             reapply: function (card, context) {
                 const newValue = calculate(card, context) || 0;
                 context[propName][card.uuid] = newValue;
-                card[propName].setValue = newValue;
+                card[propName].addSetValue(context.effectObject, newValue);
             },
             unapply: function (card, context) {
-                card[propName].setValue = context[propName][card.uuid];
                 delete context[propName][card.uuid];
+                card[propName].removeSetValue(context.effectObject);
             },
             isStateDependent
         };
@@ -285,11 +285,11 @@ const Effects = {
                 card.getType() === 'character' && card.getStrength() > value
                     ? 'decreaseStrength'
                     : 'increaseStrength',
-            apply: function (card) {
-                card.strengthSet = value;
+            apply: function (card, context) {
+                card.setStrength(context.effectObject, value);
             },
-            unapply: function (card) {
-                card.strengthSet = undefined;
+            unapply: function (card, context) {
+                card.removeSetStrengthEffect(context.effectObject);
             }
         };
     },
