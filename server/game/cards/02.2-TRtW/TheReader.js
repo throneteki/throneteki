@@ -21,15 +21,20 @@ class TheReader extends DrawCard {
                         amount: 1
                     }))
                 },
-                'Discard 3 cards': () => {
-                    this.game.addMessage(
-                        "{0} uses {1} to discard the top 3 cards from each opponent's deck",
-                        this.controller,
-                        this
-                    );
-                    for (let opponent of this.game.getOpponents(this.controller)) {
-                        opponent.discardFromDraw(3);
-                    }
+                'Discard 3 cards': {
+                    message:
+                        "{player} uses {source} to discard the top 3 cards from each opponent's deck",
+                    gameAction: GameActions.simultaneously((context) =>
+                        this.game.getOpponents(context.player).map((opponent) =>
+                            GameActions.discardTopCards({
+                                player: opponent,
+                                amount: 3,
+                                source: context.source
+                            }).thenExecute((event) => {
+                                this.game.addMessage('{player} discards {topCards}', event);
+                            })
+                        )
+                    )
                 }
             }
         });
