@@ -49,7 +49,7 @@ class Game extends EventEmitter {
         this.instance = details.instance;
         this.event = details.event;
         this.eventName = details.event && details.event.name;
-        this.restrictedList = {
+        this.restrictedList = details.restrictedList && {
             _id: details.restrictedList._id,
             name: details.restrictedList.name,
             cardSet: details.restrictedList.cardSet

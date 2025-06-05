@@ -13,7 +13,7 @@ class PendingGame {
         this.id = uuid.v1();
         this.name = details.name;
         this.event = details.event || { _id: 'none' };
-        this.restrictedList = {
+        this.restrictedList = details.restrictedList && {
             _id: details.restrictedList._id,
             name: details.restrictedList.name,
             cardSet: details.restrictedList.cardSet
