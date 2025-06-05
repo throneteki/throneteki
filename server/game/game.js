@@ -49,7 +49,11 @@ class Game extends EventEmitter {
         this.instance = details.instance;
         this.event = details.event;
         this.eventName = details.event && details.event.name;
-        this.restrictedList = details.restrictedList;
+        this.restrictedList = {
+            _id: details.restrictedList._id,
+            name: details.restrictedList.name,
+            cardSet: details.restrictedList.cardSet
+        };
         this.allCards = [];
         this.attachmentValidityCheck = new AttachmentValidityCheck(this);
         this.effectEngine = new EffectEngine(this);
@@ -95,9 +99,7 @@ class Game extends EventEmitter {
         this.titlePool = new TitlePool(this, options.titleCardData || []);
         this.cardData = options.cardData || [];
         this.packData = options.packData || [];
-        this.restrictedListData = this.restrictedList
-            ? [this.restrictedList]
-            : options.restrictedListData || [];
+        this.restrictedListData = options.restrictedListData || [];
         this.remainingPhases = [];
         this.skipPhase = {};
         this.cardVisibility = new CardVisibility(this);
