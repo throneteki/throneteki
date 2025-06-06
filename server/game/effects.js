@@ -94,16 +94,15 @@ function dynamicCardModifier(propName) {
             apply: function (card, context) {
                 context[propName] = context[propName] || {};
                 context[propName][card.uuid] = calculate(card, context) || 0;
-                card[propName].modifier += context[propName][card.uuid];
+                card[propName].addModifier(context.effect, context[propName][card.uuid]);
             },
             reapply: function (card, context) {
-                const currentValue = context[propName][card.uuid];
                 const newValue = calculate(card, context) || 0;
                 context[propName][card.uuid] = newValue;
-                card[propName].modifier += newValue - currentValue;
+                card[propName].changeModifier(context.effect, newValue);
             },
             unapply: function (card, context) {
-                card[propName].modifier -= context[propName][card.uuid];
+                card[propName].removeModifier(context.effect);
                 delete context[propName][card.uuid];
             },
             isStateDependent
@@ -270,11 +269,11 @@ const Effects = {
     modifyStrength: function (value) {
         return {
             gameAction: value < 0 ? 'decreaseStrength' : 'increaseStrength',
-            apply: function (card) {
-                card.modifyStrength(value, true);
+            apply: function (card, context) {
+                card.addStrengthModifier(context.effect, value, true);
             },
-            unapply: function (card) {
-                card.modifyStrength(-value, false);
+            unapply: function (card, context) {
+                card.removeStrengthModifier(context.effect, false);
             },
             order: value >= 0 ? 0 : 1000
         };
@@ -363,18 +362,15 @@ const Effects = {
                 context.dynamicStrength = context.dynamicStrength || {};
                 context.dynamicStrength[card.uuid] = calculate(card, context) || 0;
                 let value = context.dynamicStrength[card.uuid];
-                card.modifyStrength(value, true);
+                card.addStrengthModifier(context.effect, value, true);
             },
             reapply: function (card, context) {
-                let currentStrength = context.dynamicStrength[card.uuid];
                 let newStrength = calculate(card, context) || 0;
                 context.dynamicStrength[card.uuid] = newStrength;
-                let value = newStrength - currentStrength;
-                card.modifyStrength(value, true);
+                card.changeStrengthModifier(context.effect, newStrength, true);
             },
             unapply: function (card, context) {
-                let value = context.dynamicStrength[card.uuid];
-                card.modifyStrength(-value, false);
+                card.removeStrengthModifier(context.effect, false);
                 delete context.dynamicStrength[card.uuid];
             },
             isStateDependent: true

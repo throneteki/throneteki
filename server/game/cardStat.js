@@ -3,16 +3,13 @@ class CardStat {
         this.printedValue = printedValue;
         this.baseValue = this.printedValue;
         this.modifiers = [];
-        // TODO: Improve modifiers so that other cards apply a "PlotStatModifier" which is collected here & used in calculate
-        //       Would make affecting that modified stat (eg. Rains of Autumn) much simpler
-        this._modifier = 0;
         this.setValues = [];
         this.multipliers = [];
     }
 
     calculate(boostValue = 0) {
         if (this.setValues.length == 0) {
-            let modifiedValue = this._modifier + this.baseValue + boostValue;
+            let modifiedValue = this.modifier + this.baseValue + boostValue;
             let multipliedValue = Math.round(this.multiplier * modifiedValue);
             return Math.max(0, multipliedValue);
         }
@@ -21,18 +18,17 @@ class CardStat {
 
     get setValue() {
         if (this.setValues.length == 0) {
-            return undefined;
+            return null;
         } else {
             return this.setValues[this.setValues.length - 1].val;
         }
     }
 
-    set modifier(value) {
-        this._modifier = value;
-    }
-
     get modifier() {
-        return this._modifier;
+        return this.modifiers.reduce(
+            (accumulatedValue, currentObject) => accumulatedValue + currentObject.val,
+            0
+        );
     }
 
     get multiplier() {
@@ -40,6 +36,20 @@ class CardStat {
             (accumulatedValue, currentObject) => accumulatedValue * currentObject.val,
             1
         );
+    }
+
+    addModifier(effect, newValue) {
+        this.modifiers.push({ effect: effect, val: newValue });
+    }
+
+    removeModifier(effect) {
+        this.modifiers = this.modifiers.filter((record) => record.effect != effect);
+    }
+
+    changeModifier(effect, newValue) {
+        this.modifiers
+            .filter((record) => record.effect === effect)
+            .forEach((record) => (record.val = newValue));
     }
 
     addMultiplier(effect, newValue) {
@@ -60,8 +70,8 @@ class CardStat {
 
     clone() {
         let clonedStat = new CardStat(this.printedValue);
-        clonedStat.modifier = this._modifier;
-        this.multipliers.forEach((mult) => clonedStat.addSetValue(mult.effect, mult.val));
+        this.modifiers.forEach((mod) => clonedStat.addModifier(mod.effect, mod.val));
+        this.multipliers.forEach((mult) => clonedStat.addMultiplier(mult.effect, mult.val));
         this.setValues.forEach((setVal) => clonedStat.addSetValue(setVal.effect, setVal.val));
         return clonedStat;
     }
