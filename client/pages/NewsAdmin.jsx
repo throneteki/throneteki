@@ -42,6 +42,8 @@ const NewsAdmin = () => {
     const onSaveClick = useCallback(async () => {
         try {
             await saveNews({ id: selectedItem._id, text: newsText }).unwrap();
+            setSelectedItem(null);
+            setNewsText('');
 
             toast.success('News edited successfully.');
         } catch (err) {
@@ -104,29 +106,38 @@ const NewsAdmin = () => {
         <Page>
             {error && <AlertPanel variant='danger' message={error} />}
             <Panel title='News administration'>
-                <div className='h-[400px]'>
-                    <ReactTable
-                        buttons={buttons}
-                        columns={columns}
-                        dataLoadFn={() => ({
-                            data: news,
-                            isLoading: isLoading,
-                            isError: false
-                        })}
-                        onRowClick={(row) => {
-                            setSelectedItem(row.original);
-                            setNewsText(row.original.text);
-                        }}
-                        onRowSelectionChange={(ids) =>
-                            setSelectedIds(ids.map((r) => r.original._id))
-                        }
-                        selectedRows={selectedRows}
-                    />
+                <div className='flex flex-col gap-1'>
+                    <p>Add a new news item below, or click an existing one to edit it.</p>
+                    <div className='h-[400px]'>
+                        <ReactTable
+                            buttons={buttons}
+                            columns={columns}
+                            dataLoadFn={() => ({
+                                data: news,
+                                isLoading: isLoading,
+                                isError: false
+                            })}
+                            onRowClick={(row) => {
+                                setSelectedItem(row.original);
+                                setNewsText(row.original.text);
+                            }}
+                            onRowSelectionChange={(ids) =>
+                                setSelectedIds(ids.map((r) => r.original._id))
+                            }
+                            selectedRows={selectedRows}
+                        />
+                    </div>
                 </div>
             </Panel>
-            <Panel title='Add new news item'>
+            <Panel
+                title={
+                    selectedItem
+                        ? `Edit existing news item by ${selectedItem.poster}`
+                        : 'Add new news item'
+                }
+            >
                 <Textarea
-                    label={selectedItem ? 'News text' : 'Enter new news item'}
+                    label={selectedItem ? 'Updated news text' : 'Enter new news text'}
                     onValueChange={setNewsText}
                     value={newsText}
                 />
@@ -138,8 +149,9 @@ const NewsAdmin = () => {
                                 color='primary'
                                 isLoading={isSaveLoading}
                                 onPress={onSaveClick}
+                                isDisabled={newsText === ''}
                             >
-                                Save
+                                Overwrite & Save
                             </Button>
                             <Button
                                 className='mt-2'

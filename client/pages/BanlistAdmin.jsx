@@ -87,7 +87,7 @@ const BanlistAdmin = () => {
     return (
         <Page>
             <Panel title='Banlist administration'>
-                <Table isStriped>
+                <Table isStriped aria-label='Ban List Table'>
                     <TableHeader>
                         <TableColumn className='col-sm-2'>Ip</TableColumn>
                         <TableColumn className='col-sm-2'>Added</TableColumn>

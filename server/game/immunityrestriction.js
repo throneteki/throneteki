@@ -1,5 +1,8 @@
-class ImmunityRestriction {
+import Restriction from './restriction.js';
+
+class ImmunityRestriction extends Restriction {
     constructor(cardCondition, immunitySource) {
+        super('immunity');
         this.cardCondition = cardCondition;
         this.immunitySource = immunitySource;
     }

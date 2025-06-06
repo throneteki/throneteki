@@ -686,8 +686,10 @@ class BaseCard {
 
     allowGameAction(actionType, context) {
         let currentAbilityContext = context || this.game.currentAbilityContext;
-        return !this.abilityRestrictions.some((restriction) =>
-            restriction.isMatch(actionType, currentAbilityContext)
+        return !this.abilityRestrictions.some(
+            (restriction) =>
+                !this.losesAspects.contains(restriction.name) &&
+                restriction.isMatch(actionType, currentAbilityContext)
         );
     }
 

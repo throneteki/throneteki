@@ -15,7 +15,6 @@ const TimerSettings = ({ formProps }) => {
                     lot of Treachery).
                 </p>
                 <div>
-                    <label className='font-bold'>Window timeout (seconds)</label>
                     <div className='flex items-center gap-2'>
                         <Slider
                             color='primary'
@@ -24,6 +23,7 @@ const TimerSettings = ({ formProps }) => {
                             defaultValue={formProps.values.windowTimer}
                             value={formProps.values.windowTimer}
                             onChange={(value) => formProps.setFieldValue('windowTimer', value)}
+                            label='Window timeout (seconds)'
                         />
                         <Input
                             className='w-24'

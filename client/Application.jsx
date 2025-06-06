@@ -18,6 +18,7 @@ import LoadingSpinner from './Components/Site/LoadingSpinner';
 import CardHover from './Components/Images/CardHover';
 import ErrorMessage from './Components/Site/ErrorMessage';
 import classNames from 'classnames';
+import PendingGameAlerter from './Components/Games/PendingGameAlerter';
 
 const backgrounds = {
     none: BlankBg,
@@ -137,6 +138,9 @@ const Application = () => {
                                 <div className={containerClass}>{component}</div>
                             )}
                         </CardHover>
+                        {currentGame?.started === false && (
+                            <PendingGameAlerter game={currentGame} user={user} />
+                        )}
                     </Sentry.ErrorBoundary>
                 </div>
             </main>

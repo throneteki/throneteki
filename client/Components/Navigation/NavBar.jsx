@@ -12,7 +12,6 @@ import {
     DropdownMenu,
     DropdownTrigger,
     Image,
-    Link,
     Navbar,
     NavbarBrand,
     NavbarContent,
@@ -28,10 +27,10 @@ import NavigationLink from '../Site/NavigationLink';
 import ConfirmDialog from '../Site/ConfirmDialog';
 import { sendLeaveGameMessage } from '../../redux/reducers/game';
 import FullScreenButton from './FullScreenButton';
+import NavItem from './NavItem';
 
 const NavBar = () => {
     const dispatch = useDispatch();
-    const { path } = useSelector((state) => state.navigation);
     const { user } = useSelector((state) => state.auth);
     const {
         connected: lobbySocketConnected,
@@ -93,10 +92,7 @@ const NavBar = () => {
                             }}
                         >
                             <DropdownTrigger>
-                                <Link
-                                    className='flex gap-1 cursor-pointer font-[PoppinsMedium] text-secondary transition-colors duration-500 ease-in-out hover:text-white'
-                                    size='lg'
-                                >
+                                <NavItem className='flex gap-1'>
                                     {menuItem.title}
                                     <FontAwesomeIcon
                                         icon={
@@ -105,7 +101,7 @@ const NavBar = () => {
                                                 : faChevronDown
                                         }
                                     />
-                                </Link>
+                                </NavItem>
                             </DropdownTrigger>
                             <DropdownMenu
                                 id={`nav-${menuItem.title}`}
@@ -113,20 +109,21 @@ const NavBar = () => {
                                 className='font-[PoppinsMedium] text-secondary'
                                 title={menuItem.title}
                             >
-                                {children.map((childItem, index) =>
+                                {children.map((childItem) =>
                                     childItem.path ? (
                                         <DropdownItem
-                                            key={index}
+                                            key={childItem.title}
                                             classNames={{ base: 'flex' }}
                                             onPointerDown={() => setIsMenuOpen(false)}
+                                            textValue={childItem.title}
                                         >
-                                            <Link
+                                            <NavItem
                                                 className='w-full'
-                                                as={NavigationLink}
-                                                href={childItem.path}
+                                                size='md'
+                                                path={childItem.path}
                                             >
                                                 {childItem.title}
-                                            </Link>
+                                            </NavItem>
                                         </DropdownItem>
                                     ) : null
                                 )}
@@ -141,14 +138,9 @@ const NavBar = () => {
 
                 return (
                     <NavbarMenuItem key={index} onPointerDown={() => setIsMenuOpen(false)}>
-                        <Link
-                            className='w-full font-[PoppinsMedium] text-secondary transition-colors duration-500 ease-in-out hover:text-white'
-                            size='lg'
-                            as={NavigationLink}
-                            href={menuItem.path}
-                        >
+                        <NavItem className='w-full' path={menuItem.path}>
                             {menuItem.title}
-                        </Link>
+                        </NavItem>
                     </NavbarMenuItem>
                 );
             });
