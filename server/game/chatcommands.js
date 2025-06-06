@@ -287,7 +287,7 @@ class ChatCommands {
                 card.getType() === 'character',
             onSelect: (p, card) => {
                 if (typeof card.strengthSet === 'number') {
-                    card.strengthSet = num;
+                    card.setStrength(card.uuid, num);
                 } else {
                     card.strengthModifier = num - card.getPrintedStrength();
                 }

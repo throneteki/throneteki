@@ -1,5 +1,5 @@
 import KingsOfSummer from '../../../../server/game/cards/04.2-CtA/KingsOfSummer.js';
-import { PlotStat } from '../../../../server/game/plotcard.js';
+import CardStat from '../../../../server/game/cardstat.js';
 
 describe('Kings Of Summer', function () {
     beforeEach(function () {
@@ -7,14 +7,14 @@ describe('Kings Of Summer', function () {
 
         this.plot1 = jasmine.createSpyObj('plot1', ['hasTrait']);
         // TODO: Add these as PlotStats (so KingsOfSummer effect works properly)
-        this.plot1.income = new PlotStat(0);
-        this.plot1.reserve = new PlotStat(0);
+        this.plot1.income = new CardStat(0);
+        this.plot1.reserve = new CardStat(0);
         this.plot2 = jasmine.createSpyObj('plot2', ['hasTrait']);
-        this.plot2.income = new PlotStat(0);
-        this.plot2.reserve = new PlotStat(0);
+        this.plot2.income = new CardStat(0);
+        this.plot2.reserve = new CardStat(0);
         this.plot3 = jasmine.createSpyObj('plot3', ['hasTrait']);
-        this.plot3.income = new PlotStat(0);
-        this.plot3.reserve = new PlotStat(0);
+        this.plot3.income = new CardStat(0);
+        this.plot3.reserve = new CardStat(0);
 
         this.plot1.hasTrait.and.callFake((trait) => {
             return trait === 'Summer';
