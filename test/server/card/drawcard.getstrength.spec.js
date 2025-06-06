@@ -12,12 +12,17 @@ describe('DrawCard', function () {
                 uuid: 1111
             }
         };
+        this.testEffect2 = {
+            source: {
+                uuid: 2222
+            }
+        };
     });
 
     describe('getStrength()', function () {
         describe('when the strength has been modified', function () {
             beforeEach(function () {
-                this.card.modifyStrength(1);
+                this.card.addStrengthModifier(this.testEffect1, 1);
             });
 
             it('should return the modified strength', function () {
@@ -27,7 +32,7 @@ describe('DrawCard', function () {
 
         describe('when the strength has been modified below 0', function () {
             beforeEach(function () {
-                this.card.modifyStrength(-4);
+                this.card.addStrengthModifier(this.testEffect1, -4);
             });
 
             it('should return 0', function () {
@@ -38,7 +43,7 @@ describe('DrawCard', function () {
         describe('when the strength has been multiplied', function () {
             beforeEach(function () {
                 this.card.modifyStrengthMultiplier(this.testEffect1, 2);
-                this.card.modifyStrength(1);
+                this.card.addStrengthModifier(this.testEffect2, 1);
             });
 
             it('should return the strength multiplied after addition/subtraction modifiers have been applied', function () {
@@ -58,7 +63,7 @@ describe('DrawCard', function () {
 
         describe('when requesting printed strength', function () {
             beforeEach(function () {
-                this.card.modifyStrength(1);
+                this.card.addStrengthModifier(this.testEffect2, 1);
                 this.card.modifyStrengthMultiplier(this.testEffect1, 2);
             });
 
