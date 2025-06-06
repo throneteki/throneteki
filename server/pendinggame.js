@@ -13,11 +13,7 @@ class PendingGame {
         this.id = uuid.v1();
         this.name = details.name;
         this.event = details.event || { _id: 'none' };
-        this.restrictedList = details.restrictedList && {
-            _id: details.restrictedList._id,
-            name: details.restrictedList.name,
-            cardSet: details.restrictedList.cardSet
-        };
+        this.restrictedList = details.restrictedList;
         this.allowSpectators = details.allowSpectators;
         this.showHand = details.showHand;
         this.gamePrivate = details.gamePrivate;
@@ -406,7 +402,11 @@ class PendingGame {
             node: this.node ? this.node.identity : undefined,
             owner: this.owner.username,
             players: playerSummaries,
-            restrictedList: this.restrictedList,
+            restrictedList: this.restrictedList && {
+                _id: this.restrictedList._id,
+                name: this.restrictedList.name,
+                cardSet: this.restrictedList.cardSet
+            },
             showHand: this.showHand,
             started: this.started,
             spectators: _.map(this.spectators, (spectator) => {
