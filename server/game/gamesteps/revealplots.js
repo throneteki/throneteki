@@ -61,7 +61,8 @@ class RevealPlots extends BaseStep {
         });
 
         for (let plot of plots) {
-            event.addChildEvent(new Event('onPlotRevealed', { plot: plot }));
+            let plotRevealedEvent = new Event('onPlotRevealed', { plot: plot });
+            event.addChildEvent(plotRevealedEvent);
         }
 
         return event;
