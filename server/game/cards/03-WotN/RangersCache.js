@@ -1,4 +1,5 @@
 import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class RangersCache extends PlotCard {
     setupCardAbilities() {
@@ -9,27 +10,19 @@ class RangersCache extends PlotCard {
                     (this.controller.canGainGold() || this.controller.canDraw())
             },
             choices: {
-                'Gain 3 gold': () => {
-                    if (this.controller.canGainGold()) {
-                        let gold = this.game.addGold(this.controller, 3);
-                        this.game.addMessage(
-                            '{0} uses {1} to gain {2} gold',
-                            this.controller,
-                            this,
-                            gold
-                        );
-                    }
+                'Gain 3 gold': {
+                    message: '{player} uses {source} to gain 3 gold',
+                    gameAction: GameActions.gainGold((context) => ({
+                        player: context.player,
+                        amount: 3
+                    }))
                 },
-                'Draw 2 cards': () => {
-                    if (this.controller.canDraw()) {
-                        let cards = this.controller.drawCardsToHand(2).length;
-                        this.game.addMessage(
-                            '{0} uses {1} to draw {2} card',
-                            this.controller,
-                            this,
-                            cards
-                        );
-                    }
+                'Draw 2 cards': {
+                    message: '{player} uses {source} to draw 2 cards',
+                    gameAction: GameActions.drawCards((context) => ({
+                        player: context.player,
+                        amount: 2
+                    }))
                 }
             }
         });
