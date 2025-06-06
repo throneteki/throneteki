@@ -120,17 +120,16 @@ function setCardModifier(propName) {
             apply: function (card, context) {
                 context[propName] = context[propName] || {};
                 context[propName][card.uuid] = calculate(card, context) || 0;
-                card[propName].setValue = context[propName][card.uuid];
+                card[propName].setTheValue(context.source.uuid, context[propName][card.uuid]);
             },
             reapply: function (card, context) {
                 const newValue = calculate(card, context) || 0;
                 context[propName][card.uuid] = newValue;
-                card[propName].setValue = newValue;
+                card[propName].setTheValue(context.source.uuid, newValue);
             },
             unapply: function (card, context) {
-                card[propName].setValue = context[propName][card.uuid];
                 delete context[propName][card.uuid];
-                card[propName].setValue = null;
+                card[propName].removeSetEffect(context.source.uuid);
             },
             isStateDependent
         };
