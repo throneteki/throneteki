@@ -1,18 +1,19 @@
 import BaseCard from './basecard.js';
 import CardWhenRevealed from './cardwhenrevealed.js';
+import CardStat from './cardstat.js';
 
 class PlotCard extends BaseCard {
     constructor(owner, cardData) {
         super(owner, cardData);
 
         const printedIncome = this.getPrintedNumberFor(this.cardData.plotStats?.income);
-        this.income = new PlotStat(printedIncome);
+        this.income = new CardStat(printedIncome);
         const printedInitiative = this.getPrintedNumberFor(this.cardData.plotStats?.initiative);
-        this.initiative = new PlotStat(printedInitiative);
+        this.initiative = new CardStat(printedInitiative);
         const printedClaim = this.getPrintedNumberFor(this.cardData.plotStats?.claim);
-        this.claim = new PlotStat(printedClaim);
+        this.claim = new CardStat(printedClaim);
         const printedReserve = this.getPrintedNumberFor(this.cardData.plotStats?.reserve);
-        this.reserve = new PlotStat(printedReserve);
+        this.reserve = new CardStat(printedReserve);
     }
 
     whenRevealed(properties) {
@@ -54,40 +55,4 @@ class PlotCard extends BaseCard {
         this.selected = false;
     }
 }
-
-export class PlotStat {
-    constructor(printedValue) {
-        this.printedValue = printedValue;
-        this.baseValue = this.printedValue;
-        this.modifiers = [];
-        // TODO: Improve modifiers so that other cards apply a "PlotStatModifier" which is collected here & used in calculate
-        //       Would make affecting that modified stat (eg. Rains of Autumn) much simpler
-        this.modifier = 0;
-        this.setValues = [];
-    }
-
-    calculate() {
-        if (typeof this.setValue !== 'number') {
-            return Math.max(this.baseValue + this.modifier, 0);
-        }
-        return this.setValue;
-    }
-
-    get setValue() {
-        if (this.setValues.length == 0) {
-            return null;
-        } else {
-            return this.setValues[this.setValues.length - 1].val;
-        }
-    }
-
-    setTheValue(sourceUuid, newValue) {
-        this.setValues.push({ source: sourceUuid, val: newValue });
-    }
-
-    removeSetEffect(sourceUuid) {
-        this.setValues = this.setValues.filter((record) => record.source != sourceUuid);
-    }
-}
-
 export default PlotCard;

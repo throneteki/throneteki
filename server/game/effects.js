@@ -285,11 +285,11 @@ const Effects = {
                 card.getType() === 'character' && card.getStrength() > value
                     ? 'decreaseStrength'
                     : 'increaseStrength',
-            apply: function (card) {
-                card.strengthSet = value;
+            apply: function (card, context) {
+                card.setStrength(context.source.uuid, value);
             },
-            unapply: function (card) {
-                card.strengthSet = undefined;
+            unapply: function (card, context) {
+                card.removeSetStrengthEffect(context.source.uuid);
             }
         };
     },
