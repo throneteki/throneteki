@@ -137,7 +137,7 @@ const BlockList = () => {
                     <div>
                         <h3 className='font-bold pb-2'>Users Blocked</h3>
                         {
-                            <Table isStriped>
+                            <Table isStriped aria-label='Block List Table'>
                                 <TableHeader>
                                     <TableColumn>Username</TableColumn>
                                     <TableColumn>Actions</TableColumn>

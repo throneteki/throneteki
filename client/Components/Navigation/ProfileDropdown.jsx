@@ -1,6 +1,6 @@
 import React from 'react';
-import { Avatar, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Link } from '@heroui/react';
-import NavigationLink from '../Site/NavigationLink';
+import { Avatar, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from '@heroui/react';
+import NavItem from './NavItem';
 
 const ProfileDropdown = ({ user, menu }) => {
     if (!user) {
@@ -19,12 +19,12 @@ const ProfileDropdown = ({ user, menu }) => {
                     src={`/img/avatar/${user.username}.png`}
                 />
             </DropdownTrigger>
-            <DropdownMenu variant='flat' className='font-[PoppinsMedium] text-secondary'>
+            <DropdownMenu variant='flat'>
                 {menu.map((mi) => (
-                    <DropdownItem key={mi.title}>
-                        <Link className='w-full' href={mi.path} as={NavigationLink}>
+                    <DropdownItem key={mi.title} textValue={mi.title}>
+                        <NavItem className='w-full' size='md' path={mi.path}>
                             {mi.title}
-                        </Link>
+                        </NavItem>
                     </DropdownItem>
                 ))}
             </DropdownMenu>

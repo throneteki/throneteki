@@ -26,7 +26,7 @@ class CrownRegent extends TitleCard {
                         this.game.currentChallengeStep.redirectChallengeTo(opponent);
                         this.game.addMessage(
                             '{0} has chosen to redirect the challenge to {1}',
-                            context.player,
+                            challenge.initiatingPlayer,
                             opponent
                         );
                     },

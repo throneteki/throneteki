@@ -50,7 +50,7 @@ const Security = () => {
                                 on the website. If you see any unexpected activity on your account,
                                 remove the session and consider changing your password.
                             </p>
-                            <Table isStriped>
+                            <Table isStriped aria-label='Security Table'>
                                 <TableHeader>
                                     <TableColumn>IP Address</TableColumn>
                                     <TableColumn>Last Used</TableColumn>
