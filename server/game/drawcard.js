@@ -216,7 +216,13 @@ class DrawCard extends BaseCard {
         this.strength.removeSetValue(effect);
         let changedAmount = this.getStrength() - strengthBefore;
 
-        this.raiseStrengthChangeEvent(changedAmount, applying);
+        //TODO
+        //Prior to the rework of card stats, a burn check was not carried out on expiration of a set strength effect
+        //most relevant cases were caught by a burn check at the end of a challenge
+        //adding this exposes an issue with simultaneous effects when Blood of the Dragon and At the Palace of Sorrows expire
+        //keep this commented out to maintain previous functionality until a more thorough fix for simultaneous strength changes from multiple cards
+        //is implemented.
+        //this.raiseStrengthChangeEvent(changedAmount, applying);
     }
 
     addStrengthModifier(effect, amount, applying = true) {

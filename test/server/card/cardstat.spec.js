@@ -25,7 +25,7 @@ describe('CardStat', function () {
     });
 
     it('should report undefined for set value when there is no set value', function () {
-        expect(this.testStat.setValue).toBe(undefined);
+        expect(this.testStat.setValue).toBe(null);
     });
 
     it('should override the printed value with a set value', function () {
@@ -65,7 +65,7 @@ describe('CardStat', function () {
         expect(this.testStat.setValue).toBe(2);
         this.testStat.removeSetValue(this.testEffect1);
         expect(this.testStat.calculate()).toBe(3);
-        expect(this.testStat.setValue).toBe(undefined);
+        expect(this.testStat.setValue).toBe(null);
     });
 
     it('should allow a modifier to be removed based on the causing effect', function () {
