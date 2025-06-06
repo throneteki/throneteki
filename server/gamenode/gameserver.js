@@ -162,19 +162,18 @@ class GameServer {
     }
 
     clearStaleAndFinishedGames() {
-        // 20 minutes
         const timeout = 20 * 60 * 1000;
 
-        const staleGames = Object.values(this.games).filter(
+        let staleGames = Object.values(this.games).filter(
             (game) => game.finishedAt && Date.now() - game.finishedAt > timeout
         );
-        for (const game of staleGames) {
+        for (let game of staleGames) {
             logger.info('closed finished game %s due to inactivity', game.id);
             this.closeGame(game);
         }
 
-        const emptyGames = Object.values(this.games).filter((game) => game.isEmpty());
-        for (const game of emptyGames) {
+        let emptyGames = Object.values(this.games).filter((game) => game.isEmpty());
+        for (let game of emptyGames) {
             logger.info('closed empty game %s', game.id);
             this.closeGame(game);
         }

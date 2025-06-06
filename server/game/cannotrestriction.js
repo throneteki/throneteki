@@ -1,8 +1,5 @@
-import Restriction from './restriction.js';
-
-class CannotRestriction extends Restriction {
+class CannotRestriction {
     constructor(type, condition) {
-        super('cannot');
         this.type = type;
         this.condition = condition;
     }

@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Panel from '../Site/Panel';
 import Messages from '../GameBoard/Messages';
 import SelectDeckModal from './SelectDeckModal';
@@ -13,6 +13,8 @@ import {
 } from '../../redux/reducers/lobby';
 import { navigate } from '../../redux/reducers/navigation';
 
+import ChargeMp3 from '../../assets/sound/charge.mp3';
+import ChargeOgg from '../../assets/sound/charge.ogg';
 import { Button, Link, Snippet } from '@heroui/react';
 import GameTypeInfo from './GameTypeInfo';
 import AlertPanel, { AlertType } from '../Site/AlertPanel';
@@ -23,12 +25,15 @@ import ChatArea from '../Site/ChatArea';
 
 const PendingGame = () => {
     const dispatch = useDispatch();
+    const [waitingPlayerNames, setWaitingPlayerNames] = useState([]);
     const [waiting, setWaiting] = useState(false);
     const [showModal, setShowModal] = useState(false);
 
     const { connecting, host } = useSelector((state) => state.game);
     const { currentGame, gameError } = useSelector((state) => state.lobby);
     const user = useSelector((state) => state.auth.user);
+
+    const notificationRef = useRef(null);
 
     const getGameStatus = useCallback(() => {
         if (gameError) {
@@ -70,6 +75,48 @@ const PendingGame = () => {
         waiting
     ]);
 
+    useEffect(() => {
+        if (!user) {
+            return;
+        }
+
+        const players = Object.values(currentGame.players);
+
+        if (
+            notificationRef.current &&
+            waitingPlayerNames.length !== players.length &&
+            currentGame.owner === user.username
+        ) {
+            const newPlayers = players.filter(
+                (p) => !waitingPlayerNames.some((pn) => pn === p.name)
+            );
+
+            if (newPlayers.some((p) => p.name !== user.username)) {
+                const promise = notificationRef.current.play();
+                if (promise !== undefined) {
+                    promise.catch(() => {}).then(() => {});
+                }
+
+                if (window.Notification && Notification.permission === 'granted') {
+                    for (const newPlayer of newPlayers) {
+                        const windowNotification = new Notification('The Iron Throne', {
+                            body: `${newPlayer.name} has joined your game`,
+                            icon: `/img/avatar/${newPlayer.username}.png`
+                        });
+
+                        setTimeout(() => windowNotification.close(), 5000);
+                    }
+                }
+            }
+
+            if (connecting || gameError) {
+                setWaiting(false);
+            }
+
+            setWaitingPlayerNames(players.map((p) => p.name));
+        }
+    }, [user, currentGame, connecting, gameError, waitingPlayerNames]);
+
     const canStartGame = () => {
         if (!user || !currentGame || currentGame.owner !== user.username || connecting) {
             return false;
@@ -102,6 +149,10 @@ const PendingGame = () => {
     const gameFormatLabel = GameFormats.find((gf) => gf.name === currentGame.gameFormat).label;
     return (
         <div className='flex flex-col gap-2'>
+            <audio ref={notificationRef}>
+                <source src={ChargeMp3} type='audio/mpeg' />
+                <source src={ChargeOgg} type='audio/ogg' />
+            </audio>
             <Panel
                 title={createGameTitle(
                     currentGame.name,

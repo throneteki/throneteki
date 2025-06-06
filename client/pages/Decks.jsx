@@ -47,7 +47,7 @@ const Decks = () => {
                             label={'Game mode'}
                             className='md:w-2/6'
                             onChange={(e) => setRestrictedList(e.target.value)}
-                            selectedKeys={restrictedList ? new Set([restrictedList]) : []}
+                            selectedKeys={restrictedList ? new Set([restrictedList]) : null}
                         >
                             {restrictedLists?.map((rl) => (
                                 <SelectItem key={rl._id} value={rl._id}>

@@ -217,7 +217,6 @@ function ReactTable({
                     disallowEmptySelection
                     selectedKeys={new Set([table.getState().pagination.pageSize.toString()])}
                     classNames={{ base: 'sm:order-first', trigger: 'h-9' }}
-                    aria-label='Page Select'
                 >
                     {[10, 25, 50].map((pageSize) => (
                         <SelectItem key={pageSize.toString()} value={pageSize}>
@@ -248,7 +247,6 @@ function ReactTable({
                 classNames={tableClassNames}
                 as={TableWrapper}
                 ref={tableRef}
-                aria-label='Generic Table'
             >
                 <TableHeader>
                     {table.getHeaderGroups()[0].headers.map((header) =>

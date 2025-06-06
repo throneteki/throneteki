@@ -200,9 +200,7 @@ describe('BaseCard', function () {
             beforeEach(function () {
                 this.game.currentAbilityContext = { context: 1 };
                 this.restrictionSpy1 = jasmine.createSpyObj('restriction', ['isMatch']);
-                this.restrictionSpy1.name = 'restriction1';
                 this.restrictionSpy2 = jasmine.createSpyObj('restriction', ['isMatch']);
-                this.restrictionSpy2.name = 'restriction2';
                 this.card.addAbilityRestriction(this.restrictionSpy1);
                 this.card.addAbilityRestriction(this.restrictionSpy2);
             });
@@ -232,21 +230,6 @@ describe('BaseCard', function () {
 
                 it('should return false', function () {
                     expect(this.card.allowGameAction('kill')).toBe(false);
-                });
-            });
-
-            describe('but a restriction type is lost', function () {
-                beforeEach(function () {
-                    this.card.loseAspect('restriction1');
-                });
-
-                it('should skip that restriction type', function () {
-                    this.card.allowGameAction('kill');
-                    expect(this.restrictionSpy1.isMatch).not.toHaveBeenCalled();
-                    expect(this.restrictionSpy2.isMatch).toHaveBeenCalledWith(
-                        'kill',
-                        this.game.currentAbilityContext
-                    );
                 });
             });
         });

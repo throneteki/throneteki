@@ -57,7 +57,7 @@ const NodeAdmin = () => {
                         <LoadingSpinner />
                     ) : (
                         <>
-                            <Table isStriped aria-label='Nodes Table'>
+                            <Table isStriped>
                                 <TableHeader>
                                     <TableColumn>Node Name</TableColumn>
                                     <TableColumn>Num Games</TableColumn>

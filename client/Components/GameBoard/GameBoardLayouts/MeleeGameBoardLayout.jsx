@@ -34,7 +34,6 @@ const MeleeGameBoardLayout = ({
             return (
                 <div key={`seat_${player.seatNo}`} className={wrapperClassName}>
                     <PlayerStats
-                        className={isActivePrompt && 'bg-blue-300/15 border-blue-300/5'}
                         showControls={isMe}
                         stats={player.stats}
                         user={player.user}

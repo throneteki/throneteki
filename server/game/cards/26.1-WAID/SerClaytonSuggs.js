@@ -12,7 +12,7 @@ class SerClaytonSuggs extends DrawCard {
                 'Give +1 STR': (context) => {
                     this.untilEndOfPhase((ability) => ({
                         match: context.event.target || context.event.card,
-                        effect: ability.effects.modifyStrength(1)
+                        effect: ability.effects.modifyStrength(2)
                     }));
 
                     this.game.addMessage(

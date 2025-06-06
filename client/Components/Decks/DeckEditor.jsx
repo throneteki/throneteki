@@ -262,7 +262,6 @@ const DeckEditor = ({ deck, onBackClick }) => {
                                 defaultSelectedKeys={['0']}
                                 selectedKeys={[count.toString()]}
                                 classNames={{ trigger: 'h-8 min-h-8' }}
-                                aria-label='Qty'
                             >
                                 {[...Array(max).keys()].map((digit) => (
                                     <SelectItem key={digit.toString()} textValue={digit.toString()}>
@@ -394,7 +393,7 @@ const DeckEditor = ({ deck, onBackClick }) => {
                             }}
                         >
                             {(faction) => (
-                                <SelectItem key={faction.value} textValue={faction.name}>
+                                <SelectItem key={faction.value}>
                                     <div className='flex gap-2 items-center'>
                                         <CardImage size='small' code={faction.value} />
                                         <div>{faction.name}</div>

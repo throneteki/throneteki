@@ -70,7 +70,7 @@ const EventsAdmin = () => {
                     >
                         Add event
                     </Button>
-                    <Table isStriped aria-label='Events Table'>
+                    <Table isStriped>
                         <TableHeader>
                             <TableColumn>Event</TableColumn>
                             <TableColumn>Action</TableColumn>
@@ -113,7 +113,7 @@ const EventsAdmin = () => {
                     >
                         Add draft cube
                     </Button>
-                    <Table isStriped aria-label='Draft Cube Table'>
+                    <Table isStriped>
                         <TableHeader>
                             <TableColumn>Draft Cube</TableColumn>
                             <TableColumn>Action</TableColumn>

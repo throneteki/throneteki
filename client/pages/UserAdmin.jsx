@@ -28,7 +28,6 @@ const defaultPermissions = {
     canManageNodes: false,
     canModerateChat: false,
     canManageMotd: false,
-    canManageBanlist: false,
     canManageEvents: false,
     isAdmin: false,
     isContributor: false,
@@ -177,7 +176,7 @@ const UserAdmin = () => {
                     )}
                     {currentUser && currentUser.tokens && (
                         <Panel title='Sessions'>
-                            <Table isStriped aria-label='Users Table'>
+                            <Table isStriped>
                                 <TableHeader>
                                     <TableColumn>IP Address</TableColumn>
                                     <TableColumn>Last Used</TableColumn>
@@ -245,7 +244,7 @@ const UserAdmin = () => {
     useEffect(() => {
         if (data) {
             setCurrentUser(data.user);
-            setPermissions({ ...defaultPermissions, ...data.user.permissions });
+            setPermissions(data.user.permissions);
             setDisabled(data.user.disabled);
             setVerified(data.user.verified);
         }

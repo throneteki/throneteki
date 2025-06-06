@@ -302,14 +302,12 @@ class Lobby {
     }
 
     clearStalePendingGames() {
-        // 15 minutes per player beyond the first (eg. 4 players = 45 minutes)
-        const timeoutFunc = (game) => Math.max(1, game.maxPlayers - 1) * 15 * 60 * 1000;
-
-        const staleGames = Object.values(this.games).filter(
-            (game) => !game.started && Date.now() - game.createdAt > timeoutFunc(game)
+        const timeout = 15 * 60 * 1000;
+        let staleGames = Object.values(this.games).filter(
+            (game) => !game.started && Date.now() - game.createdAt > timeout
         );
 
-        for (const game of staleGames) {
+        for (let game of staleGames) {
             logger.info('closed pending game %s due to inactivity', game.id);
             delete this.games[game.id];
         }
