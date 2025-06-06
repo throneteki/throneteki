@@ -63,7 +63,7 @@ export class PlotStat {
         // TODO: Improve modifiers so that other cards apply a "PlotStatModifier" which is collected here & used in calculate
         //       Would make affecting that modified stat (eg. Rains of Autumn) much simpler
         this.modifier = 0;
-        this.setValue = null;
+        this.setValues = [];
     }
 
     calculate() {
@@ -71,6 +71,22 @@ export class PlotStat {
             return Math.max(this.baseValue + this.modifier, 0);
         }
         return this.setValue;
+    }
+
+    get setValue() {
+        if (this.setValues.length == 0) {
+            return null;
+        } else {
+            return this.setValues[this.setValues.length - 1].val;
+        }
+    }
+
+    setTheValue(sourceUuid, newValue) {
+        this.setValues.push({ source: sourceUuid, val: newValue });
+    }
+
+    removeSetEffect(sourceUuid) {
+        this.setValues = this.setValues.filter((record) => record.source != sourceUuid);
     }
 }
 
