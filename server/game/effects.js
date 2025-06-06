@@ -130,6 +130,7 @@ function setCardModifier(propName) {
             unapply: function (card, context) {
                 card[propName].setValue = context[propName][card.uuid];
                 delete context[propName][card.uuid];
+                card[propName].setValue = null;
             },
             isStateDependent
         };
