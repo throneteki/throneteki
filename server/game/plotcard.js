@@ -67,7 +67,7 @@ export class PlotStat {
     }
 
     calculate() {
-        if (this.setValue === null) {
+        if (typeof this.setValue !== 'number') {
             return Math.max(this.baseValue + this.modifier, 0);
         }
         return this.setValue;
