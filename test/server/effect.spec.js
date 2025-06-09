@@ -72,7 +72,6 @@ describe('Effect', function () {
                 it('should apply the effect to the matching card', function () {
                     expect(this.effectDefinition.apply).toHaveBeenCalledWith(this.matchingCard, {
                         game: this.gameSpy,
-                        source: this.sourceSpy,
                         effect: this.effect
                     });
                     expect(this.effectDefinition.apply).not.toHaveBeenCalledWith(
@@ -122,7 +121,6 @@ describe('Effect', function () {
             it('should apply the effect to the matching card', function () {
                 expect(this.effectDefinition.apply).toHaveBeenCalledWith(this.matchingCard, {
                     game: this.gameSpy,
-                    source: this.sourceSpy,
                     effect: this.effect
                 });
                 expect(this.effectDefinition.apply).not.toHaveBeenCalledWith(
@@ -452,7 +450,6 @@ describe('Effect', function () {
             it('should unapply the effect', function () {
                 expect(this.effectDefinition.unapply).toHaveBeenCalledWith(this.target, {
                     game: this.gameSpy,
-                    source: this.sourceSpy,
                     effect: this.effect
                 });
             });
@@ -480,7 +477,6 @@ describe('Effect', function () {
                 it('should unapply the effect from existing targets', function () {
                     expect(this.effectDefinition.unapply).toHaveBeenCalledWith(this.target, {
                         game: this.gameSpy,
-                        source: this.sourceSpy,
                         effect: this.effect
                     });
                 });
@@ -556,7 +552,6 @@ describe('Effect', function () {
                 it('should apply the effect to new targets', function () {
                     expect(this.effectDefinition.apply).toHaveBeenCalledWith(this.newTarget, {
                         game: this.gameSpy,
-                        source: this.sourceSpy,
                         effect: this.effect
                     });
                 });
@@ -578,7 +573,6 @@ describe('Effect', function () {
         it('should unapply the effect from existing targets', function () {
             expect(this.effectDefinition.unapply).toHaveBeenCalledWith(this.target, {
                 game: this.gameSpy,
-                source: this.sourceSpy,
                 effect: this.effect
             });
         });
