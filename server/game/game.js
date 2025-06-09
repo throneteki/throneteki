@@ -1413,6 +1413,7 @@ class Game extends EventEmitter {
             this.addAlert('info', '{0} has left the game', player);
             player.leave();
 
+            this.checkWinAndLossConditions();
             if (this.getPlayers().length < 2 && !this.finishedAt) {
                 this.finishedAt = new Date();
             }
