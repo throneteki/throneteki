@@ -71,7 +71,7 @@ class ChessClock {
             if (timeRemaining === 0) {
                 this.stop();
                 this.player.game.addAlert('warning', "{0}'s clock has run out", this.player);
-                this.player.eliminate();
+                this.player.game.eliminate(this.player);
                 // Check if there is only one non-eliminated player remaining. If so, they win!
                 const remainingPlayers = this.player.game.getPlayers();
                 if (remainingPlayers.length === 1) {
