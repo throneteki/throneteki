@@ -15,19 +15,17 @@ class DeclareDefenders extends GameAction {
         };
         return this.event('onDefendersDeclared', eventParams, (event) => {
             for (let card of event.cards) {
-                const defendEventParams = { card, challenge: event.challenge };
-                event.thenAttachEvent(
-                    this.event('onDeclaredAsDefender', defendEventParams, (defendEvent) => {
-                        if (
-                            !defendEvent.card.kneeled &&
-                            defendEvent.card.kneelsAsDefender(defendEvent.challenge.challengeType)
-                        ) {
-                            defendEvent.thenAttachEvent(
-                                KneelCard.createEvent({ card: defendEvent.card })
-                            );
-                        }
-                    })
-                );
+                const declareAsDefenderEvent = this.event('onDeclaredAsDefender', {
+                    card,
+                    challenge: event.challenge
+                });
+                if (!card.kneeled && card.kneelsAsDefender(event.challenge.challengeType)) {
+                    event.thenAttachEvent(
+                        this.atomic(declareAsDefenderEvent, KneelCard.createEvent({ card }))
+                    );
+                } else {
+                    event.thenAttachEvent(declareAsDefenderEvent);
+                }
             }
         });
     }

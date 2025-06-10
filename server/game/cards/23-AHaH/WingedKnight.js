@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class WingedKnight extends DrawCard {
     setupCardAbilities(ability) {
@@ -12,10 +13,10 @@ class WingedKnight extends DrawCard {
                 args: { character: (context) => context.event.card }
             },
             handler: (context) => {
-                context.replaceHandler(() => {
-                    context.event.cardStateWhenKilled = context.event.card.createSnapshot();
-                    this.controller.moveCard(context.event.card, 'out of game');
-                });
+                context.event.replaceChildEvent(
+                    'onCardPlaced',
+                    GameActions.removeFromGame({ card: context.event.card }).createEvent()
+                );
             }
         });
     }

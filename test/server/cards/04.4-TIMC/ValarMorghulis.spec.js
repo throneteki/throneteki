@@ -65,6 +65,9 @@ describe('Valar Morghulis', function () {
 
         describe('when multiple characters die', function () {
             beforeEach(function () {
+                // Enable ordering prompt
+                this.game.disableOrderPrompt = false;
+
                 const deck = this.buildDeck('tyrell', [
                     'Valar Morghulis',
                     'A Noble Cause',

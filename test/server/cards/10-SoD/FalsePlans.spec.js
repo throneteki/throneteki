@@ -52,9 +52,6 @@ describe('False Plans', function () {
                 this.player2.clickPrompt('Apply Claim');
 
                 this.player1.triggerAbility('False Plans');
-
-                // Skip order of discarded cards
-                this.player2.clickPrompt('Done');
             });
 
             it('should discard 2 cards from the opponent', function () {

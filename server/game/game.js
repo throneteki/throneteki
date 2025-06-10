@@ -29,7 +29,6 @@ import TitlePool from './TitlePool.js';
 import Event from './event.js';
 import NullEvent from './NullEvent.js';
 import AtomicEvent from './AtomicEvent.js';
-import GroupedCardEvent from './GroupedCardEvent.js';
 import SimultaneousEvents from './SimultaneousEvents.js';
 import ChooseGoldSourceAmounts from './gamesteps/ChooseGoldSourceAmounts.js';
 import DropCommand from './ServerCommands/DropCommand.js';
@@ -1152,6 +1151,9 @@ class Game extends EventEmitter {
         return this.abilityWindowStack.length !== 0;
     }
 
+    /**
+     * Raises a singular event to appear in the next prompt.
+     */
     raiseEvent(eventName, params, handler) {
         if (!handler) {
             handler = () => true;
@@ -1180,33 +1182,15 @@ class Game extends EventEmitter {
     }
 
     /**
-     * Raises the same event across multiple cards as well as a wrapping plural
-     * version of the event that lists all cards.
+     * Resolves a single event, which will open as a window in the next prompt.
      */
-    raiseSimultaneousEvent(cards, properties) {
-        let event = new GroupedCardEvent(
-            properties.eventName,
-            Object.assign({ cards: cards }, properties.params),
-            properties.handler,
-            properties.postHandler
-        );
-        for (let card of cards) {
-            let perCardParams = Object.assign({ card: card }, properties.params);
-            let childEvent = new Event(
-                properties.perCardEventName,
-                perCardParams,
-                properties.perCardHandler
-            );
-            event.addChildEvent(childEvent);
-        }
-
-        this.queueStep(new EventWindow(this, event, () => this.postEventCalculations()));
-    }
-
     resolveEvent(event) {
         this.queueStep(new EventWindow(this, event, () => this.postEventCalculations()));
     }
 
+    /**
+     * Resolves a game action by creating & resolving its event built with the given properties.
+     */
     resolveGameAction(action, props) {
         if (!action.allow(props)) {
             return new NullEvent();

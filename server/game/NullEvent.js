@@ -2,7 +2,8 @@ class NullEvent {
     constructor() {
         this.attachedEvents = [];
         this.cancelled = false;
-        this.invalid = false;
+        this.order = 0;
+        this.handler = () => true;
     }
 
     get resolved() {
@@ -21,11 +22,11 @@ class NullEvent {
         this.cancelled = true;
     }
 
+    replaceChildEvent() {}
+
     replaceHandler() {}
 
-    checkExecuteValidity() {
-        this.invalid = true;
-    }
+    createSnapshot() {}
 
     executeHandler() {}
 

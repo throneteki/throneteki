@@ -60,7 +60,7 @@ const OrderableEventFunc = {
                         const orderedCards = selectedCards.reverse();
                         for (let order in orderedCards) {
                             const event = cardsToEvents.get(orderedCards[order]);
-                            event.order = order;
+                            event.order = parseInt(order) + 1; // Start order index at 1
                         }
                         return true;
                     },
@@ -75,11 +75,14 @@ const OrderableEventFunc = {
 
 const InterruptWindowOrder = {
     orderConcurrentEvents: function (game, event) {
+        if (game.disableOrderPrompt) {
+            return;
+        }
         // Prompt for any simultaneous events which can be ordered
         for (const eventName of Object.keys(OrderableEventFunc)) {
             const orderableEvents = event
                 .getConcurrentEvents()
-                .filter((event) => event.name === eventName && event.orderable && !event.invalid);
+                .filter((event) => event.name === eventName && event.orderable && !event.cancelled);
             if (orderableEvents.length > 0) {
                 OrderableEventFunc[eventName](game, orderableEvents);
             }

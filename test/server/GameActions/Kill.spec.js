@@ -3,8 +3,7 @@ import Kill from '../../../server/game/GameActions/Kill.js';
 describe('Kill', function () {
     beforeEach(function () {
         this.cardSpy = jasmine.createSpyObj('card', ['allowGameAction', 'getType']);
-        this.playerSpy = jasmine.createSpyObj('player', ['moveCard']);
-        this.props = { card: this.cardSpy, player: this.playerSpy };
+        this.props = { card: this.cardSpy };
     });
 
     describe('allow()', function () {
@@ -53,36 +52,36 @@ describe('Kill', function () {
 
     describe('createEvent()', function () {
         beforeEach(function () {
-            const events = Kill.createEvent(this.props).getConcurrentEvents();
-            this.killEvent = events.find((event) => event.name === 'onCharacterKilled');
-            this.leaveEvent = events.find((event) => event.name === 'onCardLeftPlay');
+            this.cardSpy.location = 'play area';
+            this.concurrentEvents = Kill.createEvent(this.props).getConcurrentEvents();
         });
 
-        it('creates a onCharacterKilled event', function () {
-            expect(this.killEvent.name).toBe('onCharacterKilled');
-            expect(this.killEvent.card).toBe(this.cardSpy);
-            expect(this.killEvent.player).toBe(this.playerSpy);
-            expect(this.killEvent.allowSave).toBe(true);
-            expect(this.killEvent.isBurn).toBe(false);
-            expect(this.killEvent.snapshotName).toBe('cardStateWhenKilled');
+        it('creates an onCharacterKilled event', function () {
+            const eventObj = {
+                name: 'onCharacterKilled',
+                card: this.cardSpy,
+                allowSave: true,
+                isBurn: false,
+                snapshotName: 'cardStateWhenKilled'
+            };
+            expect(this.concurrentEvents).toContain(jasmine.objectContaining(eventObj));
         });
 
-        it('creates an onCardLeftPlay event', function () {
-            expect(this.leaveEvent.name).toBe('onCardLeftPlay');
-            expect(this.leaveEvent.card).toBe(this.cardSpy);
+        it('creates a concurrent onCardPlaced event', function () {
+            const eventObj = {
+                name: 'onCardPlaced',
+                card: this.cardSpy,
+                location: 'dead pile'
+            };
+            expect(this.concurrentEvents).toContain(jasmine.objectContaining(eventObj));
         });
 
-        describe('the event handler', function () {
-            beforeEach(function () {
-                this.killEvent.executeHandler();
-            });
-
-            it('moves the card to the dead pile', function () {
-                const placeEvent = this.killEvent.attachedEvents[0];
-                expect(placeEvent.name).toBe('onCardPlaced');
-                expect(placeEvent.card).toBe(this.cardSpy);
-                expect(placeEvent.location).toBe('dead pile');
-            });
+        it('creates a concurrent onCardLeftPlay event', function () {
+            const eventObj = {
+                name: 'onCardLeftPlay',
+                card: this.cardSpy
+            };
+            expect(this.concurrentEvents).toContain(jasmine.objectContaining(eventObj));
         });
     });
 });

@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Missandei extends DrawCard {
     setupCardAbilities() {
@@ -10,15 +11,13 @@ class Missandei extends DrawCard {
                     ['draw deck', 'hand'].includes(event.originalLocation)
             },
             location: ['hand', 'draw deck'],
+            message:
+                '{player} uses {source} to put {source} into play instead of placing her their discard pile',
             handler: (context) => {
-                this.game.addMessage(
-                    '{0} uses {1} to put {1} into play instead of placing in their discard pile',
-                    this.controller,
-                    this
+                context.event.replaceChildEvent(
+                    'onCardPlaced',
+                    GameActions.putIntoPlay({ card: this }).createEvent()
                 );
-                context.event.replaceHandler(() => {
-                    this.controller.putIntoPlay(this);
-                });
             }
         });
     }
