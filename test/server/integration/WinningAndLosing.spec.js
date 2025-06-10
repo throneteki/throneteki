@@ -33,7 +33,7 @@ describe('Winning and losing', function () {
                 });
 
                 it('eliminates the player', function () {
-                    expect(this.player3Object.eliminated).toBe(true);
+                    expect(this.player3Object.eliminated).toBe('decked');
                 });
 
                 it('does not prompt eliminated players further', function () {
@@ -144,7 +144,7 @@ describe('Winning and losing', function () {
                     this.player3.selectTitle('Master of Laws');
 
                     // Player 2 is eliminated early
-                    expect(this.player2Object.eliminated).toBe(true);
+                    expect(this.player2Object.eliminated).toBe('decked');
 
                     this.completeMarshalPhase();
                     this.completeChallengesPhase();

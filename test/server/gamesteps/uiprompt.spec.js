@@ -76,7 +76,7 @@ describe('the UiPrompt', function () {
 
             describe('and the prompted player is eliminated', function () {
                 beforeEach(function () {
-                    this.player2.eliminated = true;
+                    this.player2.eliminated = 'decked';
                     this.prompt.continue();
                 });
 

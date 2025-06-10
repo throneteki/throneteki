@@ -1241,31 +1241,6 @@ class Player extends Spectator {
         }
     }
 
-    processRemoval() {
-        // Make person to their left First Player
-        if (this.firstPlayer) {
-            const [thisPlayer, newFirstPlayer] = this.game.getPlayersInFirstPlayerOrder();
-            if (newFirstPlayer) {
-                newFirstPlayer.firstPlayer = true;
-                this.game.addMessage('{0} is now the first player', newFirstPlayer);
-            }
-            thisPlayer.firstPlayer = false;
-        }
-    }
-
-    leave() {
-        this.processRemoval();
-        this.left = true;
-    }
-
-    eliminate() {
-        this.processRemoval();
-        this.eliminated = true;
-        this.setPrompt({
-            menuTitle: 'You have been eliminated'
-        });
-    }
-
     getIncome() {
         return this.activePlot ? this.activePlot.getIncome() : 0;
     }

@@ -107,6 +107,8 @@ class Game extends EventEmitter {
         this.prizedKeywordListener = new PrizedKeywordListener(this);
         this.muteSpectators = details.muteSpectators;
 
+        this.finalStandings = [];
+
         let players = Object.values(details.players || {});
 
         if (details.randomSeats) {
@@ -572,6 +574,10 @@ class Game extends EventEmitter {
             return;
         }
 
+        // First player is saved here & remains for the win condition checks
+        // Eg. If first player is decked, and 2 opponents reach 15 power in the
+        // same simultaneous action, the decked player should be choosing the winner
+        const firstPlayer = this.getFirstPlayer();
         let players = this.getPlayersInFirstPlayerOrder();
 
         if (players.length === 0) {
@@ -591,17 +597,17 @@ class Game extends EventEmitter {
                     'info',
                     '{0} will be eliminated because their draw decks are empty. {1} chooses the winner because they are first player',
                     deckedPlayers,
-                    players[0]
+                    firstPlayer
                 );
                 this.queueStep(
-                    new ChoosePlayerPrompt(this, players[0], {
+                    new ChoosePlayerPrompt(this, firstPlayer, {
                         activePromptTitle: 'Select the winning player',
                         condition: (player) => potentialWinners.includes(player),
                         onSelect: (chosenPlayer) => {
                             this.addAlert(
                                 'info',
                                 '{0} chooses {1} to win the game',
-                                players[0],
+                                firstPlayer,
                                 chosenPlayer
                             );
                             this.recordWinner(chosenPlayer, 'decked');
@@ -613,26 +619,17 @@ class Game extends EventEmitter {
         }
 
         for (let player of deckedPlayers) {
-            this.addAlert(
-                'info',
-                '{0} is eliminated from the game because their draw deck is empty',
-                player
-            );
-            player.eliminate();
+            this.eliminate(player, 'decked');
         }
 
         const remainingPlayers = players.filter((player) => !player.eliminated);
-
-        // If the first player is eliminated, the next non-eliminated player in order becomes first player
-        if (players[0].eliminated && remainingPlayers.length > 1) {
-            this.setFirstPlayer(remainingPlayers[0]);
-        }
 
         if (remainingPlayers.length === 1) {
             let lastPlayer = remainingPlayers[0];
 
             if (lastPlayer.canWinGame()) {
-                this.recordWinner(lastPlayer, 'decked');
+                // Save the most recent elimination reason as the win reason
+                this.recordWinner(lastPlayer, this.finalStandings[0]?.eliminated);
             } else {
                 this.recordDraw(lastPlayer);
             }
@@ -644,7 +641,6 @@ class Game extends EventEmitter {
         if (potentialWinners.length === 1) {
             this.recordWinner(potentialWinners[0], 'power');
         } else if (potentialWinners.length > 1) {
-            const firstPlayer = this.getFirstPlayer();
             this.addAlert(
                 'info',
                 '{0} have reached 15 power. {1} chooses the winner because they are first player',
@@ -667,6 +663,16 @@ class Game extends EventEmitter {
                 })
             );
         }
+        // Check if first player token should be passed to their left
+        if (
+            firstPlayer &&
+            (firstPlayer.eliminated || firstPlayer.left) &&
+            remainingPlayers.length > 1
+        ) {
+            remainingPlayers[0].firstPlayer = true;
+            this.addAlert('info', '{0} is now the first player', remainingPlayers[0]);
+            firstPlayer.firstPlayer = false;
+        }
     }
 
     recordDraw(lastPlayer) {
@@ -685,7 +691,7 @@ class Game extends EventEmitter {
 
         this.router.gameWon(this, this.winReason, this.winner);
         for (const player of this.getAllPlayers()) {
-            player.eliminated = false;
+            delete player.eliminated;
         }
         this.queueStep(new GameWonPrompt(this, null));
     }
@@ -703,7 +709,7 @@ class Game extends EventEmitter {
 
         this.router.gameWon(this, reason, winner);
         for (const player of this.getAllPlayers()) {
-            player.eliminated = false;
+            delete player.eliminated;
         }
         this.queueStep(new GameWonPrompt(this, winner));
     }
@@ -824,20 +830,36 @@ class Game extends EventEmitter {
     }
 
     concede(playerName) {
-        var player = this.getPlayerByName(playerName);
+        const player = this.getPlayerByName(playerName);
 
         if (!player) {
             return;
         }
 
-        this.addAlert('info', '{0} concedes', player);
-        player.eliminate();
+        this.eliminate(player, 'concede');
+        this.postEventCalculations();
+    }
 
-        const remainingPlayers = this.getPlayers();
-
-        if (remainingPlayers.length === 1) {
-            this.recordWinner(remainingPlayers[0], 'concede');
+    eliminate(player, reason) {
+        switch (reason) {
+            case 'time':
+                this.addAlert('info', "{0}'s clock has run out, and has been eliminated", player);
+                break;
+            case 'decked':
+                this.addAlert('info', "{0}'s draw deck is empty, and has been eliminated", player);
+                break;
+            case 'concede':
+                this.addAlert('info', '{0} concedes', player);
+                break;
+            default:
+                this.addAlert('info', '{0} has been eliminated', player);
         }
+
+        player.eliminated = reason;
+        this.finalStandings.shift(player);
+        player.setPrompt({
+            menuTitle: 'You have been eliminated'
+        });
     }
 
     selectDeck(playerName, deck) {
@@ -1401,7 +1423,7 @@ class Game extends EventEmitter {
     }
 
     leave(playerName) {
-        let player = this.playersAndSpectators[playerName];
+        const player = this.playersAndSpectators[playerName];
 
         if (!player) {
             return;
@@ -1411,9 +1433,9 @@ class Game extends EventEmitter {
             delete this.playersAndSpectators[playerName];
         } else {
             this.addAlert('info', '{0} has left the game', player);
-            player.leave();
+            player.left = true;
 
-            this.checkWinAndLossConditions();
+            this.postEventCalculations();
             if (this.getPlayers().length < 2 && !this.finishedAt) {
                 this.finishedAt = new Date();
             }
