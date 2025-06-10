@@ -45,6 +45,12 @@ class PlayerOrderPrompt extends UiPrompt {
         return player === this.currentPlayer;
     }
 
+    checkPlayer() {
+        if (this.currentPlayer && (this.currentPlayer.left || this.currentPlayer.eliminated)) {
+            this.completePlayer();
+        }
+    }
+
     continue() {
         this.skipPlayers();
         return super.continue();

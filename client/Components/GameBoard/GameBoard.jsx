@@ -223,7 +223,7 @@ const GameBoard = () => {
                 isOpen={showModal}
                 isSpectating={user.username !== thisPlayer.name}
                 onClose={() => setShowModal(false)}
-                keywordSettings={thisPlayer.keywordSettings}
+                keywordSettings={userPlayer.keywordSettings}
                 onKeywordSettingToggle={(option, value) =>
                     dispatch(sendToggleKeywordSettingMessage(option, value))
                 }
@@ -235,9 +235,9 @@ const GameBoard = () => {
                     dispatch(sendToggleTimerSetting(option, value))
                 }
                 onCardSizeSettingChange={(value) => dispatch(sendCardSizeChangeMessage(value))}
-                promptDupes={thisPlayer.promptDupes}
-                promptedActionWindows={thisPlayer.promptedActionWindows}
-                timerSettings={thisPlayer.timerSettings}
+                promptDupes={userPlayer.promptDupes}
+                promptedActionWindows={userPlayer.promptedActionWindows}
+                timerSettings={userPlayer.timerSettings}
                 cardSizeSetting={userPlayer.cardSize}
             />
         </>
