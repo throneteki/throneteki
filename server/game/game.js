@@ -631,7 +631,6 @@ class Game extends EventEmitter {
             let lastPlayer = remainingPlayers[0];
 
             if (lastPlayer.canWinGame()) {
-                // Save the most recent elimination reason as the win reason
                 this.recordWinner(lastPlayer, 'decked');
             } else {
                 this.recordDraw(lastPlayer);
