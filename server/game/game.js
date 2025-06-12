@@ -568,7 +568,7 @@ class Game extends EventEmitter {
     }
 
     checkWinAndLossConditions() {
-        if (this.currentPhase === 'setup' || this.winner) {
+        if (this.currentPhase === 'setup' || this.winner || this.disableWinning) {
             return;
         }
 
@@ -590,7 +590,7 @@ class Game extends EventEmitter {
                 this.recordDraw(deckedPlayers);
             } else if (potentialWinners.length === 1) {
                 this.recordWinner(potentialWinners[0], 'decked');
-            } else if (!this.disableWonPrompt) {
+            } else {
                 this.addAlert(
                     'info',
                     '{0} will be eliminated because their draw decks are empty. {1} chooses the winner because they are first player',
@@ -1407,10 +1407,11 @@ class Game extends EventEmitter {
     }
 
     removePlayer(player) {
-        // Move first player to left if there are more than 2 remaining players (ie. there will
+        // Considering this method is called before a player is left/eliminated,
+        // move first player to left only if there are 2 or more remaining players (ie. there will
         // be 1 or more players remaining after this player has been removed)
         const remainingPlayers = this.getPlayersInFirstPlayerOrder();
-        if (player.firstPlayer && remainingPlayers.length > 2) {
+        if (player.firstPlayer && remainingPlayers.length >= 2) {
             this.setFirstPlayer(remainingPlayers[1]);
             this.addAlert('info', '{0} has become the first player', remainingPlayers[1]);
         }

@@ -1,10 +1,5 @@
 describe('Winning and losing', function () {
-    integration({ gameFormat: 'melee' }, function () {
-        beforeEach(function () {
-            // Enable losing / winning prompts
-            this.game.disableWonPrompt = false;
-        });
-
+    integration({ gameFormat: 'melee', disableWinning: false }, function () {
         describe('losing the game', function () {
             describe('when a player draws their last card', function () {
                 beforeEach(function () {
