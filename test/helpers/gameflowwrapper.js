@@ -42,13 +42,14 @@ class GameFlowWrapper {
             noTitleSetAside: true,
             maxPlayers: options.maxPlayers || numOfPlayers,
             players: this.generatePlayerDetails(numOfPlayers),
-            useGameTimeLimit: options.useGameTimeLimit || false,
+            useGameTimeLimit: options.useGameTimeLimit ?? false,
             gameTimeLimit: options.gameTimeLimit
         };
         this.game = new Game(details, { router: gameRouter, titleCardData: titleCardData });
         this.game.started = true;
-        this.game.disableWonPrompt = true;
-        this.game.disableRevealAcknowledgement = true;
+
+        this.game.disableWinning = options.disableWinning ?? true;
+        this.game.disableRevealAcknowledgement = options.disableRevealAcknowledgement ?? true;
 
         this.allPlayers = this.game
             .getPlayers()

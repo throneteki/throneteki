@@ -781,6 +781,8 @@ describe('take control', function () {
 
         describe('taking control of a card with power', function () {
             beforeEach(function () {
+                this.game.disableWinning = false;
+
                 const deck = this.buildDeck('greyjoy', [
                     'A Noble Cause',
                     // Add enough cards so that a winner isn't chosen by the players being decked

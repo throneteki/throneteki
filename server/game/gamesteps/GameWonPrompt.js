@@ -9,7 +9,7 @@ class GameWonPrompt extends AllPlayerPrompt {
     }
 
     completionCondition(player) {
-        return !!this.clickedButton[player.name] || this.game.disableWonPrompt;
+        return !!this.clickedButton[player.name];
     }
 
     activePrompt() {
