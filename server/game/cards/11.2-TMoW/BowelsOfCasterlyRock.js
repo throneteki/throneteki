@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class BowelsOfCasterlyRock extends DrawCard {
     setupCardAbilities(ability) {
@@ -8,15 +9,19 @@ class BowelsOfCasterlyRock extends DrawCard {
             },
             limit: ability.limit.perPhase(1),
             choices: {
-                'Gain 2 gold': (context) => {
-                    this.game.addGold(context.player, 2);
-                    this.game.addMessage('{0} uses {1} to gain 2 gold', context.player, this);
+                'Gain 2 gold': {
+                    message: '{player} uses {source} to gain 2 gold',
+                    gameAction: GameActions.gainGold((context) => ({
+                        player: context.player,
+                        amount: 2
+                    }))
                 },
-                'Draw 1 card': (context) => {
-                    if (context.player.canDraw()) {
-                        context.player.drawCardsToHand(1);
-                        this.game.addMessage('{0} uses {1} to draw 1 card', context.player, this);
-                    }
+                'Draw 1 card': {
+                    message: '{player} uses {source} to draw 1 card',
+                    gameAction: GameActions.drawCards((context) => ({
+                        player: context.player,
+                        amount: 1
+                    }))
                 }
             }
         });
