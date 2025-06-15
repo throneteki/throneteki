@@ -38,12 +38,11 @@ describe("Lysa's Letter", function () {
             expect(this.player1Object.getClaim()).toBe(1);
         });
 
-        //TODO: The issue exposed by this test is to be addressed in a separate PR - restore the test then
-        // it('should keep the claim at 0 if another set claim effect is applied before the appropriate challenge', function () {
-        //     this.unopposedChallenge(this.player1, 'Intrigue', this.luwin);
-        //     this.player2.clickCard(this.burning);
-        //     this.player1.clickPrompt('Apply Claim');
-        //     expect(this.player1Object.getClaim()).toBe(0);
-        // });
+        it('should keep the claim at 0 if another set claim effect is applied before the appropriate challenge', function () {
+            this.unopposedChallenge(this.player1, 'Intrigue', this.luwin);
+            this.player2.clickCard(this.burning);
+            this.player1.clickPrompt('Apply Claim');
+            expect(this.player1Object.getClaim()).toBe(0);
+        });
     });
 });

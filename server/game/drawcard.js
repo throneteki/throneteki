@@ -2,6 +2,7 @@ import BaseCard from './basecard.js';
 import CardMatcher from './CardMatcher.js';
 import ReferenceCountedSetProperty from './PropertyTypes/ReferenceCountedSetProperty.js';
 import StandardPlayActions from './PlayActions/StandardActions.js';
+import CardStat from './cardStat.js';
 
 const Icons = ['military', 'intrigue', 'power'];
 
@@ -12,9 +13,7 @@ class DrawCard extends BaseCard {
         this.dupes = [];
         this.attachments = [];
         this.childCards = [];
-        this.strengthModifier = 0;
-        this.strengthMultiplier = 1;
-        this.strengthSet = undefined;
+        this.strength = new CardStat(this.getPrintedStrength());
         this.dominanceStrengthModifier = 0;
         this.dominanceOptions = new ReferenceCountedSetProperty();
         this.kneeled = false;
@@ -43,9 +42,7 @@ class DrawCard extends BaseCard {
         clone.kneeled = this.kneeled;
         clone.parent = this.parent;
         clone.power = this.power;
-        clone.strengthModifier = this.strengthModifier;
-        clone.strengthMultiplier = this.strengthMultiplier;
-        clone.strengthSet = this.strengthSet;
+        clone.strength = this.strength.clone();
         clone.tokens = Object.assign({}, this.tokens);
         clone.traits = this.traits.clone();
 
@@ -202,35 +199,92 @@ class DrawCard extends BaseCard {
         return this.location === 'shadows' ? this.controller.shadows.indexOf(this) + 1 : null;
     }
 
-    modifyStrength(amount, applying = true) {
-        this.strengthModifier += amount;
+    get strengthSet() {
+        return this.strength.setValue;
+    }
 
-        if (!this.strengthSet) {
-            let params = {
-                card: this,
-                amount: amount,
-                applying: applying
-            };
-            this.game.raiseEvent('onCardStrengthChanged', params, () => {
-                if (this.isBurning && this.getStrength() <= 0) {
-                    this.game.killCharacter(this, { allowSave: false, isBurn: true });
-                }
-            });
+    setStrength(effect, newStrength, applying = true) {
+        let strengthBefore = this.getStrength();
+        this.strength.addSetValue(effect, newStrength);
+        let changedAmount = this.getStrength() - strengthBefore;
+
+        this.raiseStrengthChangeEvent(changedAmount, applying);
+    }
+
+    removeSetStrengthEffect(effect, applying = false) {
+        let strengthBefore = this.getStrength();
+        this.strength.removeSetValue(effect);
+        let changedAmount = this.getStrength() - strengthBefore;
+
+        //TODO
+        //Prior to the rework of card stats, a burn check was not carried out on expiration of a set strength effect
+        //most relevant cases were caught by a burn check at the end of a challenge
+        //adding this exposes an issue with simultaneous effects when Blood of the Dragon and At the Palace of Sorrows expire
+        //keep this commented out to maintain previous functionality until a more thorough fix for simultaneous strength changes from multiple cards
+        //is implemented.
+        //this.raiseStrengthChangeEvent(changedAmount, applying);
+    }
+
+    addStrengthModifier(effect, amount, applying = true) {
+        let strengthBefore = this.getStrength();
+        this.strength.addModifier(effect, amount);
+        let changedAmount = this.getStrength() - strengthBefore;
+
+        if (this.strengthSet === null) {
+            this.raiseStrengthChangeEvent(changedAmount, applying);
         }
     }
 
-    modifyStrengthMultiplier(amount, applying = true) {
+    changeStrengthModifier(effect, amount, applying = true) {
         let strengthBefore = this.getStrength();
+        this.strength.changeModifier(effect, amount);
+        let changedAmount = this.getStrength() - strengthBefore;
 
-        this.strengthMultiplier *= amount;
-
-        if (!this.strengthSet) {
-            this.game.raiseEvent('onCardStrengthChanged', {
-                card: this,
-                amount: this.getStrength() - strengthBefore,
-                applying: applying
-            });
+        if (this.strengthSet === null) {
+            this.raiseStrengthChangeEvent(changedAmount, applying);
         }
+    }
+
+    removeStrengthModifier(effect, applying = false) {
+        let strengthBefore = this.getStrength();
+        this.strength.removeModifier(effect);
+        let changedAmount = this.getStrength() - strengthBefore;
+
+        if (this.strengthSet === null) {
+            this.raiseStrengthChangeEvent(changedAmount, applying);
+        }
+    }
+
+    modifyStrengthMultiplier(effect, amount, applying = true) {
+        let strengthBefore = this.getStrength();
+        this.strength.addMultiplier(effect, amount);
+        let changedAmount = this.getStrength() - strengthBefore;
+        if (this.strengthSet === null) {
+            this.raiseStrengthChangeEvent(changedAmount, applying);
+        }
+    }
+
+    removeStrengthMultiplier(effect, applying = false) {
+        let strengthBefore = this.getStrength();
+        this.strength.removeMultiplier(effect);
+
+        let changedAmount = this.getStrength() - strengthBefore;
+        if (this.strengthSet === null) {
+            this.raiseStrengthChangeEvent(changedAmount, applying);
+        }
+    }
+
+    raiseStrengthChangeEvent(amount, applying) {
+        let params = {
+            card: this,
+            amount: amount,
+            applying: applying
+        };
+        this.game.raiseEvent('onCardStrengthChanged', params, () => {
+            if (this.isBurning && this.getStrength() <= 0) {
+                this.game.killCharacter(this, { allowSave: false, isBurn: true });
+            }
+        });
     }
 
     getPrintedStrength() {
@@ -252,13 +306,7 @@ class DrawCard extends BaseCard {
             return baseStrength;
         }
 
-        if (typeof this.strengthSet === 'number') {
-            return this.strengthSet;
-        }
-
-        let modifiedStrength = this.strengthModifier + baseStrength + boostValue;
-        let multipliedStrength = Math.round(this.strengthMultiplier * modifiedStrength);
-        return Math.max(0, multipliedStrength);
+        return this.strength.calculate(boostValue);
     }
 
     modifyDominanceStrength(amount) {

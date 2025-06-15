@@ -94,16 +94,15 @@ function dynamicCardModifier(propName) {
             apply: function (card, context) {
                 context[propName] = context[propName] || {};
                 context[propName][card.uuid] = calculate(card, context) || 0;
-                card[propName].modifier += context[propName][card.uuid];
+                card[propName].addModifier(context.effect, context[propName][card.uuid]);
             },
             reapply: function (card, context) {
-                const currentValue = context[propName][card.uuid];
                 const newValue = calculate(card, context) || 0;
                 context[propName][card.uuid] = newValue;
-                card[propName].modifier += newValue - currentValue;
+                card[propName].changeModifier(context.effect, newValue);
             },
             unapply: function (card, context) {
-                card[propName].modifier -= context[propName][card.uuid];
+                card[propName].removeModifier(context.effect);
                 delete context[propName][card.uuid];
             },
             isStateDependent
@@ -120,17 +119,16 @@ function setCardModifier(propName) {
             apply: function (card, context) {
                 context[propName] = context[propName] || {};
                 context[propName][card.uuid] = calculate(card, context) || 0;
-                card[propName].setValue = context[propName][card.uuid];
+                card[propName].addSetValue(context.effect, context[propName][card.uuid]);
             },
             reapply: function (card, context) {
                 const newValue = calculate(card, context) || 0;
                 context[propName][card.uuid] = newValue;
-                card[propName].setValue = newValue;
+                card[propName].addSetValue(context.effect, newValue);
             },
             unapply: function (card, context) {
-                card[propName].setValue = context[propName][card.uuid];
                 delete context[propName][card.uuid];
-                card[propName].setValue = null;
+                card[propName].removeSetValue(context.effect);
             },
             isStateDependent
         };
@@ -271,11 +269,11 @@ const Effects = {
     modifyStrength: function (value) {
         return {
             gameAction: value < 0 ? 'decreaseStrength' : 'increaseStrength',
-            apply: function (card) {
-                card.modifyStrength(value, true);
+            apply: function (card, context) {
+                card.addStrengthModifier(context.effect, value, true);
             },
-            unapply: function (card) {
-                card.modifyStrength(-value, false);
+            unapply: function (card, context) {
+                card.removeStrengthModifier(context.effect, false);
             },
             order: value >= 0 ? 0 : 1000
         };
@@ -286,21 +284,21 @@ const Effects = {
                 card.getType() === 'character' && card.getStrength() > value
                     ? 'decreaseStrength'
                     : 'increaseStrength',
-            apply: function (card) {
-                card.strengthSet = value;
+            apply: function (card, context) {
+                card.setStrength(context.effect, value);
             },
-            unapply: function (card) {
-                card.strengthSet = undefined;
+            unapply: function (card, context) {
+                card.removeSetStrengthEffect(context.effect);
             }
         };
     },
     modifyStrengthMultiplier: function (value) {
         return {
-            apply: function (card) {
-                card.modifyStrengthMultiplier(value, true);
+            apply: function (card, context) {
+                card.modifyStrengthMultiplier(context.effect, value, true);
             },
-            unapply: function (card) {
-                card.modifyStrengthMultiplier(1.0 / value, false);
+            unapply: function (card, context) {
+                card.removeStrengthMultiplier(context.effect, false);
             }
         };
     },
@@ -364,18 +362,15 @@ const Effects = {
                 context.dynamicStrength = context.dynamicStrength || {};
                 context.dynamicStrength[card.uuid] = calculate(card, context) || 0;
                 let value = context.dynamicStrength[card.uuid];
-                card.modifyStrength(value, true);
+                card.addStrengthModifier(context.effect, value, true);
             },
             reapply: function (card, context) {
-                let currentStrength = context.dynamicStrength[card.uuid];
                 let newStrength = calculate(card, context) || 0;
                 context.dynamicStrength[card.uuid] = newStrength;
-                let value = newStrength - currentStrength;
-                card.modifyStrength(value, true);
+                card.changeStrengthModifier(context.effect, newStrength, true);
             },
             unapply: function (card, context) {
-                let value = context.dynamicStrength[card.uuid];
-                card.modifyStrength(-value, false);
+                card.removeStrengthModifier(context.effect, false);
                 delete context.dynamicStrength[card.uuid];
             },
             isStateDependent: true
@@ -624,8 +619,8 @@ const Effects = {
             card.modifyToken(Tokens.poison, 1);
             context.game.addMessage(
                 '{0} uses {1} to place 1 poison token on {2}',
-                context.source.controller,
-                context.source,
+                context.effect.source.controller,
+                context.effect.source,
                 card
             );
         },
@@ -635,8 +630,8 @@ const Effects = {
                 card.controller.killCharacter(card);
                 context.game.addMessage(
                     '{0} uses {1} to kill {2} at the end of the phase',
-                    context.source.controller,
-                    context.source,
+                    context.effect.source.controller,
+                    context.effect.source,
                     card
                 );
             }
@@ -681,9 +676,9 @@ const Effects = {
                     card.controller.discardCard(card, allowSave);
                     context.game.addMessage(
                         '{0} discards {1} at the end of the phase because of {2}',
-                        context.source.controller,
+                        context.effect.source.controller,
                         card,
-                        context.source
+                        context.effect.source
                     );
                 }
             }
@@ -701,9 +696,9 @@ const Effects = {
                     card.controller.killCharacter(card, allowSave);
                     context.game.addMessage(
                         '{0} kills {1} at the end of the phase because of {2}',
-                        context.source.controller,
+                        context.effect.source.controller,
                         card,
-                        context.source
+                        context.effect.source
                     );
                 }
             }
@@ -755,9 +750,9 @@ const Effects = {
                     card.owner.moveCard(card, 'dead pile');
                     context.game.addMessage(
                         "{0} moves {1} to its owner's dead pile at the end of the phase because of {2}",
-                        context.source.controller,
+                        context.effect.source.controller,
                         card,
-                        context.source
+                        context.effect.source
                     );
                 }
             }
@@ -782,9 +777,9 @@ const Effects = {
                     );
                     context.game.addMessage(
                         "{0} places {1} on the bottom of its owner's deck at the end of the phase because of {2}",
-                        context.source.controller,
+                        context.effect.source.controller,
                         card,
-                        context.source
+                        context.effect.source
                     );
                 }
             }
@@ -807,10 +802,10 @@ const Effects = {
                     card.controller.returnCardToHand(card, allowSave);
                     context.game.addMessage(
                         '{0} returns {1} to hand at the end of the {2} because of {3}',
-                        context.source.controller,
+                        context.effect.source.controller,
                         card,
                         duration,
-                        context.source
+                        context.effect.source
                     );
                 }
             }
@@ -838,10 +833,10 @@ const Effects = {
                         card.controller.returnCardToHand(card, allowSave);
                         context.game.addMessage(
                             '{0} returns {1} to hand at the end of the {2} because of {3}',
-                            context.source.controller,
+                            context.effect.source.controller,
                             card,
                             duration,
-                            context.source
+                            context.effect.source
                         );
                     }
                 }
@@ -868,7 +863,7 @@ const Effects = {
                         '{0} shuffles {1} into their deck at the end of the phase because of {2}',
                         card.owner,
                         card,
-                        context.source
+                        context.effect.source
                     );
                 }
             }
@@ -892,7 +887,7 @@ const Effects = {
                         '{0} removes {1} from the game at the end of the phase because of {2}',
                         card.owner,
                         card,
-                        context.source
+                        context.effect.source
                     );
                 }
             }
@@ -916,7 +911,7 @@ const Effects = {
                     context.game.addMessage(
                         '{0} is put into play because of {1}',
                         card,
-                        context.source
+                        context.effect.source
                     );
                     delete context.removeFromGame[card.uuid];
                 }
@@ -939,7 +934,7 @@ const Effects = {
     immuneTo: function (cardCondition) {
         return {
             apply: function (card, context) {
-                const restriction = new ImmunityRestriction(cardCondition, context.source);
+                const restriction = new ImmunityRestriction(cardCondition, context.effect.source);
                 context.immuneTo = context.immuneTo || {};
                 context.immuneTo[card.uuid] = restriction;
                 card.addAbilityRestriction(restriction);
@@ -956,16 +951,16 @@ const Effects = {
             apply: function (card, context) {
                 let finalController =
                     typeof newController === 'function' ? newController() : newController;
-                context.game.takeControl(finalController, card, context.source);
+                context.game.takeControl(finalController, card, context.effect.source);
                 context.game.addMessage(
                     '{0} uses {1} to take control of {2}',
-                    context.source.controller,
-                    context.source,
+                    context.effect.source.controller,
+                    context.effect.source,
                     card
                 );
             },
             unapply: function (card, context) {
-                context.game.revertControl(card, context.source);
+                context.game.revertControl(card, context.effect.source);
             }
         };
     },
@@ -1216,10 +1211,10 @@ const Effects = {
         return {
             targetType: 'player',
             apply: function (player, context) {
-                context.source.minCost = value;
+                context.effect.source.minCost = value;
             },
             unapply: function (player, context) {
-                context.source.minCost = 0;
+                context.effect.source.minCost = 0;
             }
         };
     },
@@ -1475,7 +1470,7 @@ const Effects = {
             targetType: 'player',
             apply: function (player, context) {
                 context.reducers = context.reducers || [];
-                var reducer = new CostReducer(context.game, context.source, properties);
+                var reducer = new CostReducer(context.game, context.effect.source, properties);
                 context.reducers.push(reducer);
                 player.addCostReducer(reducer);
             },
@@ -1493,10 +1488,10 @@ const Effects = {
             targetType: 'player',
             apply: function (player, context) {
                 context.reducers = context.reducers || [];
-                let reducer = new CostReducer(context.game, context.source, {
+                let reducer = new CostReducer(context.game, context.effect.source, {
                     playingTypes: playingTypes,
                     amount: amount,
-                    match: (card) => card === context.source
+                    match: (card) => card === context.effect.source
                 });
                 context.reducers.push(reducer);
                 player.addCostReducer(reducer);
@@ -1766,7 +1761,7 @@ const Effects = {
                         player,
                         revealWithMessage: false,
                         highlight: false,
-                        source: context.source
+                        source: context.effect.source
                     }),
                     context
                 );
@@ -1787,7 +1782,7 @@ const Effects = {
                             player,
                             revealWithMessage: false,
                             highlight: false,
-                            source: context.source
+                            source: context.effect.source
                         }),
                         context
                     );
@@ -1832,7 +1827,7 @@ const Effects = {
                             player,
                             revealWithMessage: false,
                             highlight: false,
-                            source: context.source
+                            source: context.effect.source
                         }),
                         context
                     );
@@ -1859,7 +1854,7 @@ const Effects = {
                             player,
                             revealWithMessage: false,
                             highlight: false,
-                            source: context.source
+                            source: context.effect.source
                         }),
                         context
                     );
@@ -1896,7 +1891,7 @@ const Effects = {
                             GameActions.placeCardUnderneath({
                                 card,
                                 player,
-                                parentCard: context.source,
+                                parentCard: context.effect.source,
                                 facedown: true
                             })
                         )
@@ -1905,13 +1900,13 @@ const Effects = {
             },
             unapply: function (player, context) {
                 player.discardCards(player.hand);
-                for (const card of context.source.underneath) {
+                for (const card of context.effect.source.underneath) {
                     player.moveCard(card, 'hand');
                 }
                 context.game.addMessage(
                     '{0} discards their hand and returns each card under {1} to their hand',
                     player,
-                    context.source
+                    context.effect.source
                 );
             }
         };
@@ -1919,8 +1914,8 @@ const Effects = {
     placeCardUnderneath: function (unapplyFunc = null) {
         return {
             apply: function (card, context) {
-                context.source.controller.removeCardFromPile(card);
-                context.source.addChildCard(card, 'underneath');
+                context.effect.source.controller.removeCardFromPile(card);
+                context.effect.source.addChildCard(card, 'underneath');
                 card.facedown = true;
             },
             unapply: function (card, context) {
@@ -1933,15 +1928,15 @@ const Effects = {
 
                 if (
                     card.location === 'underneath' &&
-                    context.source.childCards.some((childCard) => childCard === card)
+                    context.effect.source.childCards.some((childCard) => childCard === card)
                 ) {
-                    context.source.controller.discardCard(card);
+                    context.effect.source.controller.discardCard(card);
 
                     context.game.addMessage(
                         '{0} discards {1} from under {2}',
-                        context.source.controller,
+                        context.effect.source.controller,
                         card,
-                        context.source
+                        context.effect.source
                     );
                 }
             }
