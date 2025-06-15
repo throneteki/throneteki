@@ -453,17 +453,13 @@ class GameServer {
             return;
         }
 
-        const allowedCommands = new Set(
-            Object.keys(game).filter((k) => typeof game[k] === 'function')
-        );
-
         this.runAndCatchErrors(game, () => {
             if (command === 'leavegame') {
                 this.onLeaveGame(socket);
-            } else if (allowedCommands.has(command)) {
-                game[command](socket.user.username, ...args);
-            } else {
+            } else if (!game[command] || !_.isFunction(game[command])) {
                 return;
+            } else {
+                game[command](socket.user.username, ...args);
             }
 
             if (!game.isEmpty()) {
