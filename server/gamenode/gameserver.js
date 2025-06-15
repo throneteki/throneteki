@@ -444,32 +444,31 @@ class GameServer {
             delete this.games[game.id];
 
             this.gameSocket.send('GAMECLOSED', { game: game.id });
-        } else {
-            game.continue();
         }
-
-        this.sendGameState(game);
     }
 
     onGameMessage(socket, command, ...args) {
         var game = this.findGameForUser(socket.user.username);
-
         if (!game) {
             return;
         }
 
-        if (command === 'leavegame') {
-            return this.onLeaveGame(socket);
-        }
-
-        if (!game[command] || !_.isFunction(game[command])) {
-            return;
-        }
+        const allowedCommands = new Set(
+            Object.keys(game).filter((k) => typeof game[k] === 'function')
+        );
 
         this.runAndCatchErrors(game, () => {
-            game[command](socket.user.username, ...args);
+            if (command === 'leavegame') {
+                this.onLeaveGame(socket);
+            } else if (allowedCommands.has(command)) {
+                game[command](socket.user.username, ...args);
+            } else {
+                return;
+            }
 
-            game.continue();
+            if (!game.isEmpty()) {
+                game.continue();
+            }
 
             this.sendGameState(game);
         });
