@@ -1,4 +1,5 @@
 import AgendaCard from '../../agendacard.js';
+import GameActions from '../../GameActions/index.js';
 
 class ValyrianSteel extends AgendaCard {
     setupCardAbilities(ability) {
@@ -42,17 +43,19 @@ class ValyrianSteel extends AgendaCard {
                     (this.controller.canDraw() || this.controller.canGainGold())
             },
             choices: {
-                'Gain 1 gold': (context) => {
-                    if (context.player.canGainGold()) {
-                        this.game.addGold(context.player, 1);
-                        this.game.addMessage('{0} uses {1} to gain 1 gold', context.player, this);
-                    }
+                'Gain 1 gold': {
+                    message: '{player} uses {source} to gain 1 gold',
+                    gameAction: GameActions.gainGold((context) => ({
+                        player: context.player,
+                        amount: 1
+                    }))
                 },
-                'Draw 1 card': (context) => {
-                    if (context.player.canDraw()) {
-                        context.player.drawCardsToHand(1);
-                        this.game.addMessage('{0} uses {1} to draw 1 card', context.player, this);
-                    }
+                'Draw 1 card': {
+                    message: '{player} uses {source} to draw 1 card',
+                    gameAction: GameActions.drawCards((context) => ({
+                        player: context.player,
+                        amount: 1
+                    }))
                 }
             },
             limit: ability.limit.perPhase(1)
