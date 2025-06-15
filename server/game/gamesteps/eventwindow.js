@@ -70,6 +70,12 @@ class EventWindow extends BaseStep {
 
         if (this.event.getConcurrentEvents().some((event) => event.name === 'onPlotRevealed')) {
             this.openAbilityWindow('whenrevealed');
+            this.event
+                .getConcurrentEvents()
+                .filter((event) => event.name === 'onPlotRevealed')
+                .forEach((event) =>
+                    this.game.queueSimpleStep(() => event.plot.controller.recyclePlots())
+                );
         }
     }
 }

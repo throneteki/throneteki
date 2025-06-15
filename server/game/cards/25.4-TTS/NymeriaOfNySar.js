@@ -51,11 +51,6 @@ class NymeriaOfNySar extends DrawCard {
     trigger(context) {
         context.player.selectedPlot = context.target;
         this.game.queueStep(new RevealPlots(this.game, [context.target]));
-        this.game.queueStep(
-            new SimpleStep(this.game, () => {
-                context.player.recyclePlots();
-            })
-        );
     }
 }
 
