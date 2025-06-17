@@ -10,7 +10,7 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
         this.cancelTimer = new CancelTimer(this.event, this.abilityType);
         this.forceWindowPerPlayer = {};
 
-        for (let player of game.getPlayersInFirstPlayerOrder()) {
+        for (const player of game.getPlayersInFirstPlayerOrder()) {
             if (this.cancelTimer.isEnabled(player)) {
                 this.forceWindowPerPlayer[player.name] = true;
             }
@@ -25,9 +25,7 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
 
         this.gatherChoices();
 
-        this.players = this.filterChoicelessPlayers(
-            this.players || this.game.getPlayersInFirstPlayerOrder()
-        );
+        this.players = this.filterPlayers(this.players || this.game.getPlayersInFirstPlayerOrder());
 
         if (
             this.players.length === 0 ||
@@ -41,11 +39,15 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
         return false;
     }
 
-    filterChoicelessPlayers(players) {
+    /**
+     * Filters out players who are no longer playing, have cancelled their timer, or have no valid choices
+     */
+    filterPlayers(players) {
         return players.filter(
             (player) =>
-                this.cancelTimer.isEnabled(player) ||
-                this.abilityChoices.some((abilityChoice) => abilityChoice.player === player)
+                !(player.left || player.eliminated) &&
+                (this.cancelTimer.isEnabled(player) ||
+                    this.abilityChoices.some((abilityChoice) => abilityChoice.player === player))
         );
     }
 
