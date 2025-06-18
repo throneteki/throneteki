@@ -183,7 +183,7 @@ class Game extends EventEmitter {
     }
 
     getPlayers() {
-        return this.getAllPlayers().filter((player) => !player.eliminated && !player.left);
+        return this.getAllPlayers().filter((player) => player.isPlaying());
     }
 
     getNumberOfPlayers() {
@@ -232,10 +232,24 @@ class Game extends EventEmitter {
     }
 
     setFirstPlayer(firstPlayer) {
-        for (let player of this.getAllPlayers()) {
+        for (const player of this.getAllPlayers()) {
             player.firstPlayer = player === firstPlayer;
         }
         this.raiseEvent('onFirstPlayerDetermined', { player: firstPlayer });
+    }
+
+    checkFirstPlayer() {
+        // Find first player from all players, not just remaining
+        let firstPlayer = this.getAllPlayers().find((p) => p.firstPlayer);
+        const remainingPlayers = this.getPlayers();
+        if (firstPlayer && !firstPlayer.isPlaying() && remainingPlayers.length > 0) {
+            // Search remaining players for next player to their left
+            firstPlayer =
+                remainingPlayers.find((player) => player.seatNo > firstPlayer.seatNo) ||
+                remainingPlayers[0];
+            this.addAlert('info', '{0} has become the first player', remainingPlayers[1]);
+            this.setFirstPlayer(firstPlayer);
+        }
     }
 
     getOpponents(player) {
@@ -839,11 +853,11 @@ class Game extends EventEmitter {
     }
 
     eliminate(player) {
-        this.removePlayer(player);
         player.eliminated = true;
         player.setPrompt({
             menuTitle: 'You have been eliminated'
         });
+        this.checkFirstPlayer();
     }
 
     selectDeck(playerName, deck) {
@@ -1390,31 +1404,26 @@ class Game extends EventEmitter {
         return true;
     }
 
-    isEmpty() {
+    isEmpty(includeSpectators = true) {
         return Object.values(this.playersAndSpectators).every((player) => {
-            if (player.left || player.id === 'TBA') {
+            if (player.isSpectator()) {
+                return !includeSpectators;
+            }
+
+            // Player has left the game
+            if (player.left) {
                 return true;
             }
 
-            if (!player.disconnectedAt) {
-                return false;
+            // Player has disconnected for longer than 30 seconds
+            if (player.disconnectedAt) {
+                const difference = moment().diff(moment(player.disconnectedAt), 'seconds');
+                return difference > 30;
             }
 
-            let difference = moment().diff(moment(player.disconnectedAt), 'seconds');
-
-            return difference > 30;
+            // Player is still within the game
+            return false;
         });
-    }
-
-    removePlayer(player) {
-        // Considering this method is called before a player is left/eliminated,
-        // move first player to left only if there are 2 or more remaining players (ie. there will
-        // be 1 or more players remaining after this player has been removed)
-        const remainingPlayers = this.getPlayersInFirstPlayerOrder();
-        if (player.firstPlayer && remainingPlayers.length >= 2) {
-            this.setFirstPlayer(remainingPlayers[1]);
-            this.addAlert('info', '{0} has become the first player', remainingPlayers[1]);
-        }
     }
 
     leave(playerName) {
@@ -1428,15 +1437,15 @@ class Game extends EventEmitter {
             delete this.playersAndSpectators[playerName];
         } else {
             this.addAlert('info', '{0} has left the game', player);
-            this.removePlayer(player);
             player.left = true;
+            this.checkFirstPlayer();
 
             if (this.getPlayers().length < 2 && !this.finishedAt) {
                 this.finishedAt = new Date();
             }
         }
 
-        if (this.isEmpty()) {
+        if (this.isEmpty(false)) {
             if (this.timeLimit) {
                 this.timeLimit.stop();
             }

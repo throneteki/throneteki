@@ -7,8 +7,8 @@ class SeizeTheInitiative extends DrawCard {
                 onPhaseEnded: (event) => event.phase === 'marshal' && !this.controller.firstPlayer
             },
             handler: () => {
-                this.game.setFirstPlayer(this.controller);
                 this.game.addMessage('{0} plays {1} to become first player', this.controller, this);
+                this.game.setFirstPlayer(this.controller);
             }
         });
     }

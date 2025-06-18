@@ -109,6 +109,10 @@ class Player extends Spectator {
         return false;
     }
 
+    isPlaying() {
+        return !this.isSpectator() && !this.left && !this.eliminated;
+    }
+
     anyCardsInPlay(predicateOrMatcher) {
         const predicate =
             typeof predicateOrMatcher === 'function'

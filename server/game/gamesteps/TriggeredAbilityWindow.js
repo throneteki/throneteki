@@ -45,7 +45,7 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
     filterPlayers(players) {
         return players.filter(
             (player) =>
-                !(player.left || player.eliminated) &&
+                player.isPlaying() &&
                 (this.cancelTimer.isEnabled(player) ||
                     this.abilityChoices.some((abilityChoice) => abilityChoice.player === player))
         );

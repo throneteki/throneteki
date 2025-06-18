@@ -462,7 +462,7 @@ class GameServer {
                 game[command](socket.user.username, ...args);
             }
 
-            if (!game.isEmpty()) {
+            if (!game.isEmpty(false)) {
                 game.continue();
             }
 
