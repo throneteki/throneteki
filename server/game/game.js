@@ -678,6 +678,8 @@ class Game extends EventEmitter {
                     }
                 })
             );
+        } else {
+            this.checkFirstPlayer();
         }
     }
 

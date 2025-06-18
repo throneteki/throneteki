@@ -2,7 +2,8 @@ import Game from '../../../server/game/game.js';
 
 describe('Game', function () {
     function createPlayerSpy(props) {
-        let spy = jasmine.createSpyObj(props.name, ['isSpectator']);
+        let spy = jasmine.createSpyObj(props.name, ['isSpectator', 'isPlaying']);
+        spy.isPlaying.and.returnValue(true);
         Object.assign(spy, { id: props.id, firstPlayer: props.firstPlayer });
         return spy;
     }
