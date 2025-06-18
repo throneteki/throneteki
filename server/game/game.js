@@ -849,6 +849,8 @@ class Game extends EventEmitter {
 
         if (remainingPlayers.length === 1) {
             this.recordWinner(remainingPlayers[0], 'concede');
+        } else {
+            this.checkFirstPlayer();
         }
     }
 
@@ -857,7 +859,6 @@ class Game extends EventEmitter {
         player.setPrompt({
             menuTitle: 'You have been eliminated'
         });
-        this.checkFirstPlayer();
     }
 
     selectDeck(playerName, deck) {
