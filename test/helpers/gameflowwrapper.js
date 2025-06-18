@@ -64,7 +64,8 @@ class GameFlowWrapper {
         return range(1, numOfPlayers + 1).map((i) => {
             return {
                 id: i.toString(),
-                user: Settings.getUserWithDefaultsSet({ username: `player${i}` })
+                user: Settings.getUserWithDefaultsSet({ username: `player${i}` }),
+                seatNo: i
             };
         });
     }

@@ -76,6 +76,8 @@ class ChessClock {
                 const remainingPlayers = this.player.game.getPlayers();
                 if (remainingPlayers.length === 1) {
                     this.player.game.recordWinner(remainingPlayers[0], 'time');
+                } else {
+                    this.player.game.checkFirstPlayer();
                 }
                 // Re-sends the game state to clients due to time expiring
                 this.player.game.timeExpired();

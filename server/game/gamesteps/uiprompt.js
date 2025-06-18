@@ -61,7 +61,7 @@ class UiPrompt extends BaseStep {
 
     checkPlayer() {
         const player = this.getPlayer();
-        if (player && (player.left || player.eliminated)) {
+        if (player && !player.isPlaying()) {
             this.complete();
         }
     }

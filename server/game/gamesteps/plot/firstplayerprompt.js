@@ -52,8 +52,8 @@ class FirstPlayerPrompt extends UIPrompt {
             return;
         }
 
-        this.game.setFirstPlayer(firstPlayer);
         this.game.addMessage('{0} has selected {1} to be the first player', player, firstPlayer);
+        this.game.setFirstPlayer(firstPlayer);
 
         this.complete();
     }
