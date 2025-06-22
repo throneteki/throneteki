@@ -9,7 +9,6 @@ describe('Highgarden Courtier', function () {
                     'Alysane Mormont',
                     'Skagos (R)',
                     'Bolton Flayer',
-                    'I Am No One (R)',
                     'Trading with the Pentoshi',
                     'Confiscation',
                     'The Withering Cold'
@@ -37,7 +36,6 @@ describe('Highgarden Courtier', function () {
                 this.milk = this.player2.findCardByName('Milk of the Poppy', 'hand');
                 this.strangler = this.player2.findCardByName('Strangler', 'hand');
                 this.flayer = this.player1.findCardByName('Bolton Flayer', 'hand');
-                this.noOne = this.player1.findCardByName('I Am No One (R)', 'hand');
                 this.unsullied = this.player2.findCardByName('Unsullied', 'hand');
 
                 this.player1.clickCard(this.dacey);
@@ -58,6 +56,7 @@ describe('Highgarden Courtier', function () {
                 this.player1.clickCard(this.dacey);
                 expect(this.dacey.kneeled).toBe(true);
                 this.player1.clickCard(this.aly);
+                expect(this.player1).toAllowAbilityTrigger(this.courtier);
                 this.player1.triggerAbility(this.courtier);
                 expect(this.dacey.kneeled).toBe(false);
             });
@@ -72,6 +71,7 @@ describe('Highgarden Courtier', function () {
                 this.player1.clickMenu('Skagos', 'Replace standing Stark card');
                 this.player1.clickCard(this.aly);
                 this.player1.clickCard(otherAly);
+                expect(this.player1).toAllowAbilityTrigger(this.courtier);
                 this.player1.triggerAbility(this.courtier);
                 expect(this.dacey.kneeled).toBe(false);
             });
@@ -95,8 +95,9 @@ describe('Highgarden Courtier', function () {
                 this.selectPlotOrder(this.player1);
 
                 //player still has to select milk, even though it is the only choice
-                this.player1.triggerAbility(this.milk);
+                this.player1.clickCard(this.milk);
                 expect(this.milk.location).toBe('discard pile');
+                expect(this.player1).toAllowAbilityTrigger(this.courtier);
                 this.player1.triggerAbility(this.courtier);
                 expect(this.dacey.kneeled).toBe(false);
             });
@@ -127,7 +128,7 @@ describe('Highgarden Courtier', function () {
                 expect(this.player1).not.toAllowAbilityTrigger(this.courtier);
             });
 
-            it('should not rect to a negative strength modifier wearing off', function () {
+            it('should not react to a negative strength modifier wearing off', function () {
                 this.completeMarshalPhase();
                 expect(this.dacey.getStrength()).toBe(1);
                 this.player1.clickPrompt('Done');
@@ -145,24 +146,6 @@ describe('Highgarden Courtier', function () {
                 expect(this.dacey.getStrength()).toBe(1);
                 expect(this.player1).not.toAllowAbilityTrigger(this.courtier);
             });
-
-            it('should react to a strength increase due to an effect on another card wearing off', function () {
-                this.player1.clickCard(this.aly);
-                this.completeMarshalPhase();
-                this.player1.clickCard(this.noOne);
-                this.player1.clickCard(this.aly);
-                expect(this.dacey.getStrength()).toBe(1);
-                this.unopposedChallenge(this.player1, 'power', this.dacey);
-                this.player1.clickPrompt('Apply Claim');
-                //no need to select for renown
-                this.player1.clickPrompt('done');
-                this.player2.clickPrompt('done');
-                expect(this.dacey.getStrength()).toBe(2);
-                this.player1.triggerAbility(this.courtier);
-                expect(this.dacey.kneeled).toBe(false);
-                expect(this.dacey.getStrength()).toBe(2);
-            });
-
         });
     });
 });

@@ -8,7 +8,7 @@ class CardStat {
     }
 
     calculate(boostValue = 0) {
-        if (this.setValues.length == 0) {
+        if (typeof this.setValue !== 'number') {
             let modifiedValue = this.modifier + this.baseValue + boostValue;
             let multipliedValue = Math.round(this.multiplier * modifiedValue);
             return Math.max(0, multipliedValue);

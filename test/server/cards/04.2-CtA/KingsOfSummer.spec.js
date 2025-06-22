@@ -6,7 +6,6 @@ describe('Kings Of Summer', function () {
         this.gameSpy = jasmine.createSpyObj('game', ['addMessage', 'getPlayers', 'on']);
 
         this.plot1 = jasmine.createSpyObj('plot1', ['hasTrait']);
-        // TODO: Add these as PlotStats (so KingsOfSummer effect works properly)
         this.plot1.income = new CardStat(0);
         this.plot1.reserve = new CardStat(0);
         this.plot2 = jasmine.createSpyObj('plot2', ['hasTrait']);

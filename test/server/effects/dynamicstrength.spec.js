@@ -77,7 +77,7 @@ describe('Effects.dynamicStrength', function () {
             this.effect.apply(this.card2, this.context);
         });
 
-        it('should remove the modifier associated with the effeect from the card', function () {
+        it('should remove the modifier associated with the effect from the card', function () {
             this.effect.unapply(this.card1, this.context);
             this.effect.unapply(this.card2, this.context);
             expect(this.card1.removeStrengthModifier).toHaveBeenCalledWith(this.effect, false);
