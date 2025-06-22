@@ -39,8 +39,9 @@ import GameActions from './GameActions/index.js';
 import EndRound from './GameActions/EndRound.js';
 import TimeLimit from './timeLimit.js';
 import PrizedKeywordListener from './PrizedKeywordListener.js';
-import GameWonPrompt from './gamesteps/GameWonPrompt.js';
+import GameOverPrompt from './gamesteps/GameOverPrompt.js';
 import shuffle from 'lodash.shuffle';
+import TextHelper from './TextHelper.js';
 
 class Game extends EventEmitter {
     constructor(details, options = {}) {
@@ -106,6 +107,8 @@ class Game extends EventEmitter {
         this.winnerOfDominanceInLastRound = undefined;
         this.prizedKeywordListener = new PrizedKeywordListener(this);
         this.muteSpectators = details.muteSpectators;
+
+        this.eliminated = [];
 
         let players = Object.values(details.players || {});
 
@@ -590,136 +593,190 @@ class Game extends EventEmitter {
         // Eg. If first player is decked, and 2 opponents reach 15 power in the
         // same simultaneous action, the decked player should be choosing the winner
         const firstPlayer = this.getFirstPlayer();
-        let players = this.getPlayersInFirstPlayerOrder();
+        let remainingPlayers = this.getPlayersInFirstPlayerOrder();
 
-        if (players.length === 0) {
+        if (remainingPlayers.length === 0) {
             return;
         }
 
-        let deckedPlayers = players.filter((player) => player.drawDeck.length === 0);
+        // Collect players who are being eliminated, with first on the list being first eliminated
+        const eliminating = [];
 
-        if (deckedPlayers.length === players.length) {
-            const potentialWinners = deckedPlayers.filter((player) => player.canWinGame());
-            if (potentialWinners.length === 0) {
-                this.recordDraw(deckedPlayers);
-            } else if (potentialWinners.length === 1) {
-                this.recordWinner(potentialWinners[0], 'decked');
-            } else {
+        // Step 1: Mark all players with no cards in their draw deck for elimination
+        this.queueSimpleStep(() => {
+            const deckedPlayers = remainingPlayers.filter((player) => player.drawDeck.length === 0);
+            if (deckedPlayers.length > 1) {
                 this.addAlert(
                     'info',
-                    '{0} will be eliminated because their draw decks are empty. {1} chooses the winner because they are first player',
+                    '{0} will be eliminated because their draw decks are empty. {1} chooses the order of elimination because they are first player',
                     deckedPlayers,
                     firstPlayer
                 );
-                this.queueStep(
-                    new ChoosePlayerPrompt(this, firstPlayer, {
-                        activePromptTitle: 'Select the winning player',
-                        condition: (player) => potentialWinners.includes(player),
-                        onSelect: (chosenPlayer) => {
-                            this.addAlert(
-                                'info',
-                                '{0} chooses {1} to win the game',
-                                firstPlayer,
-                                chosenPlayer
-                            );
-                            this.recordWinner(chosenPlayer, 'decked');
-                        }
-                    })
-                );
-            }
-            return;
-        }
-
-        for (let player of deckedPlayers) {
-            this.addAlert(
-                'info',
-                '{0} is eliminated from the game because their draw deck is empty',
-                player
-            );
-            this.eliminate(player);
-        }
-
-        const remainingPlayers = players.filter((player) => !player.eliminated);
-
-        if (remainingPlayers.length === 1) {
-            let lastPlayer = remainingPlayers[0];
-
-            if (lastPlayer.canWinGame()) {
-                this.recordWinner(lastPlayer, 'decked');
+                for (let i = 0; i < deckedPlayers.length; i++) {
+                    this.queueStep(
+                        new ChoosePlayerPrompt(this, firstPlayer, {
+                            activePromptTitle: 'Select player to eliminate',
+                            condition: (player) =>
+                                deckedPlayers.includes(player) &&
+                                !eliminating.some(({ player: p }) => p === player),
+                            onSelect: (chosenPlayer) => {
+                                eliminating.push({ player: chosenPlayer, reason: 'decked' });
+                            }
+                        })
+                    );
+                }
             } else {
-                this.recordDraw(lastPlayer);
+                eliminating.push(...deckedPlayers.map((player) => ({ player, reason: 'decked' })));
             }
-        }
+        });
 
-        let potentialWinners = remainingPlayers.filter(
-            (player) => player.getTotalPower() >= 15 && player.canWinGame()
-        );
-        if (potentialWinners.length === 1) {
-            this.recordWinner(potentialWinners[0], 'power');
-        } else if (potentialWinners.length > 1) {
-            this.addAlert(
-                'info',
-                '{0} have reached 15 power. {1} chooses the winner because they are first player',
-                potentialWinners,
-                firstPlayer
+        // Step 2: Eliminate players (with reason)
+        this.queueSimpleStep(() => {
+            for (const { player, reason } of eliminating) {
+                this.eliminate(player, reason);
+            }
+        });
+
+        // Step 3: Check if there are one or fewer remaining players
+        this.queueSimpleStep(() => {
+            // Update remaining players after eliminations
+            remainingPlayers = this.getPlayersInFirstPlayerOrder();
+            if (remainingPlayers.length === 1) {
+                // When only 1 player remains, the game is over
+                const remainingPlayer = remainingPlayers[0];
+                if (remainingPlayer.canWinGame()) {
+                    this.recordResults('lastRemaining', remainingPlayer);
+                } else {
+                    this.resordResults('draw');
+                }
+            } else if (remainingPlayers.length === 0) {
+                // Get the first eliminating player who can win, in order selected earlier by first player
+                const winner = eliminating
+                    .reverse()
+                    .find(({ player }) => player.canWinGame())?.player;
+                if (winner) {
+                    this.recordResults('lastRemaining', winner);
+                } else {
+                    this.resordResults('draw');
+                }
+            }
+        });
+
+        // Step 4: Check for players on 15 power
+        this.queueSimpleStep(() => {
+            if (this.winner) {
+                return;
+            }
+            const potentialWinners = remainingPlayers.filter(
+                (player) => player.getTotalPower() >= 15 && player.canWinGame()
             );
-            this.queueStep(
-                new ChoosePlayerPrompt(this, firstPlayer, {
-                    activePromptTitle: 'Select the winning player',
-                    condition: (player) => potentialWinners.includes(player),
-                    onSelect: (chosenPlayer) => {
-                        this.addAlert(
-                            'info',
-                            '{0} chooses {1} to win the game',
-                            firstPlayer,
-                            chosenPlayer
-                        );
-                        this.recordWinner(chosenPlayer, 'power');
-                    }
-                })
-            );
-        } else {
+            if (potentialWinners.length === 1) {
+                this.recordResults('power', potentialWinners[0]);
+            } else if (potentialWinners.length > 1) {
+                const winningOrder = [];
+                this.addAlert(
+                    'info',
+                    '{0} have reached 15 power. {1} chooses {2} because they are first player',
+                    potentialWinners,
+                    firstPlayer,
+                    potentialWinners === 2 ? 'who wins' : 'the winning order'
+                );
+                for (let i = 0; i < potentialWinners.length; i++) {
+                    const message =
+                        i === 0
+                            ? 'Select the winning player'
+                            : `Select player for ${TextHelper.ordinal(i + 1)} place`;
+                    this.queueStep(
+                        new ChoosePlayerPrompt(this, firstPlayer, {
+                            activePromptTitle: message,
+                            condition: (player) =>
+                                potentialWinners.includes(player) && !winningOrder.includes(player),
+                            onSelect: (chosenPlayer) => {
+                                winningOrder.push(chosenPlayer);
+                            }
+                        })
+                    );
+                }
+                this.queueSimpleStep(() => {
+                    this.recordResults('power', ...winningOrder);
+                });
+            }
+        });
+
+        // Step 5: Check First Player
+        this.queueSimpleStep(() => {
+            if (this.winner) {
+                return;
+            }
             this.checkFirstPlayer();
-        }
+        });
     }
 
-    recordDraw(lastPlayer) {
+    recordResults(reason, ...standings) {
         if (this.winner) {
             return;
         }
 
-        this.addAlert(
-            'info',
-            'The game ends in a draw because {0} cannot win the game',
-            lastPlayer
-        );
-        this.winner = { name: 'DRAW' };
-        this.finishedAt = new Date();
-        this.winReason = 'draw';
-
-        this.router.gameWon(this, this.winReason, this.winner);
-        for (const player of this.getAllPlayers()) {
-            player.eliminated = false;
-        }
-        this.queueStep(new GameWonPrompt(this, null));
-    }
-
-    recordWinner(winner, reason) {
-        if (this.winner) {
-            return;
+        if (this.useGameTimeLimit) {
+            this.timeLimit.stop();
         }
 
-        this.addAlert('success', '{0} has won the game', winner);
+        const winner = standings[0];
+        if (!winner) {
+            this.addAlert('info', 'Nobody wins the game');
+            this.winner = { name: 'DRAW' };
+        } else {
+            this.standings = new Map();
 
-        this.winner = winner;
+            let position = 1;
+            for (const player of standings) {
+                this.standings.set(position++, [player]);
+            }
+
+            // Get non-eliminated players who are not in provided standings
+            const remaining = this.getPlayers().filter((player) => !standings.includes(player));
+
+            const powerGroups = remaining.reduce((groups, player) => {
+                const powerTotal = player.getTotalPower();
+                const group = groups.get(powerTotal) || [];
+                group.push(player);
+                groups.set(powerTotal, group);
+                return groups;
+            }, new Map());
+
+            for (const powerTotal of [...powerGroups.keys()].sort((a, b) => a - b)) {
+                const players = powerGroups.get(powerTotal);
+                this.standings.set(position, players);
+                position += players.length;
+            }
+
+            for (const { player } of this.eliminated.reverse()) {
+                this.standings.set(position++, [player]);
+            }
+
+            for (const [position, players] of this.standings.entries()) {
+                if (position === 1) {
+                    this.addAlert('success', '{0} has won the game', players);
+                } else {
+                    this.addAlert('info', '{0} placed {1}', players, TextHelper.ordinal(position));
+                }
+            }
+
+            this.winner = winner;
+        }
+
         this.finishedAt = new Date();
         this.winReason = reason;
-
         this.router.gameWon(this, reason, winner);
-        for (const player of this.getAllPlayers()) {
-            player.eliminated = false;
-        }
-        this.queueStep(new GameWonPrompt(this, winner));
+        this.queueStep(new GameOverPrompt(this, winner));
+    }
+
+    eliminate(player, reason) {
+        player.eliminated = true;
+        player.setPrompt({
+            menuTitle: 'You have been eliminated'
+        });
+        this.eliminated.push({ player, reason });
     }
 
     changeStat(playerName, stat, value) {
@@ -846,21 +903,6 @@ class Game extends EventEmitter {
 
         this.addAlert('info', '{0} concedes', player);
         this.eliminate(player);
-
-        const remainingPlayers = this.getPlayers();
-
-        if (remainingPlayers.length === 1) {
-            this.recordWinner(remainingPlayers[0], 'concede');
-        } else {
-            this.checkFirstPlayer();
-        }
-    }
-
-    eliminate(player) {
-        player.eliminated = true;
-        player.setPrompt({
-            menuTitle: 'You have been eliminated'
-        });
     }
 
     selectDeck(playerName, deck) {
@@ -1727,10 +1769,10 @@ class Game extends EventEmitter {
         for (const rule of rules) {
             remainingPlayers = remainingPlayers.filter((player) => rule(player));
             if (remainingPlayers.length === 1) {
-                this.recordWinner(remainingPlayers[0], 'time');
+                this.recordResults('time', remainingPlayers[0]);
                 return;
             } else if (remainingPlayers.length === 0) {
-                this.recordDraw('No one');
+                this.recordResults('draw');
                 return;
             }
         }
@@ -1738,7 +1780,7 @@ class Game extends EventEmitter {
         this.addAlert(
             'After checking for every tie breaker rule to determine the winner of the game, no winner could be determined. This should not have happened. Please report this to the developers as it is likely a bug.'
         );
-        this.recordDraw('No one');
+        this.recordResults('draw');
     }
 
     toggleMuteSpectators(playerName) {

@@ -100,8 +100,12 @@ describe('Winning and losing', function () {
                     this.player3.selectTitle('Master of Laws');
                 });
 
-                it('the remaining player wins the game', function () {
-                    expect(this.game.winner).toBe(this.player2Object);
+                it('the remaining player wins the game, and first player chooses the order of elimination', function () {
+                    expect(this.player1).toHavePrompt('Select player to eliminate');
+                    this.player1.clickPrompt('player3');
+                    expect(this.game.standings.get(1)).toContain(this.player2Object);
+                    expect(this.game.standings.get(2)).toContain(this.player1Object);
+                    expect(this.game.standings.get(3)).toContain(this.player3Object);
                 });
             });
 
@@ -155,8 +159,8 @@ describe('Winning and losing', function () {
                 });
 
                 it('has the first player choose the winner', function () {
-                    expect(this.player1).toHavePrompt('Select the winning player');
-                    this.player1.clickPrompt('player3');
+                    expect(this.player1).toHavePrompt('Select player to eliminate');
+                    this.player1.clickPrompt('player1');
 
                     expect(this.game.winner).toBe(this.player3Object);
                 });
@@ -200,7 +204,53 @@ describe('Winning and losing', function () {
                 });
             });
 
-            describe('when a multiple players reach 15 power simultaneously', function () {
+            describe('when a single player reaches 15 power, and player with second highest power is eliminated', function () {
+                beforeEach(function () {
+                    const losingDeck = this.buildDeck('stark', [
+                        'A Noble Cause',
+                        'A Game of Thrones',
+                        { name: 'Hedge Knight', count: 9 }
+                    ]);
+                    const deck = this.buildDeck('stark', [
+                        'A Noble Cause',
+                        'A Game of Thrones',
+                        { name: 'Hedge Knight', count: 60 }
+                    ]);
+                    this.player1.selectDeck(deck);
+                    this.player2.selectDeck(losingDeck);
+                    this.player3.selectDeck(deck);
+                    this.startGame();
+                    this.keepStartingHands();
+
+                    this.completeSetup();
+
+                    // Set player 1 to 14 power and select plot that will give them gold to win dominance
+                    this.player1Object.faction.power = 14;
+                    // Set player 2 to have more power than player 3, and then eliminate player 2 (decked)
+                    this.player2Object.faction.power = 13;
+                    this.player3Object.faction.power = 12;
+                    this.player1.selectPlot('A Noble Cause');
+                    this.player2.selectPlot('A Game of Thrones');
+                    this.player3.selectPlot('A Game of Thrones');
+
+                    this.selectFirstPlayer(this.player1);
+
+                    this.player1.selectTitle('Master of Ships');
+                    this.player2.selectTitle('Master of Whispers');
+                    this.player3.selectTitle('Master of Laws');
+
+                    this.completeMarshalPhase();
+                    this.completeChallengesPhase();
+                });
+
+                it('wins the game for the 15 power player, and the eliminated player comes last', function () {
+                    expect(this.game.standings.get(1)).toContain(this.player1Object);
+                    expect(this.game.standings.get(2)).toContain(this.player3Object);
+                    expect(this.game.standings.get(3)).toContain(this.player2Object);
+                });
+            });
+
+            describe('when multiple players reach 15 power simultaneously', function () {
                 beforeEach(function () {
                     const deck = this.buildDeck('stark', [
                         'Valar Morghulis',
@@ -217,6 +267,7 @@ describe('Winning and losing', function () {
                     this.completeSetup();
 
                     this.player1Object.faction.power = 14;
+                    this.player2Object.faction.power = 14;
                     this.player3Object.faction.power = 14;
                     this.player1.selectPlot('Valar Morghulis');
                     this.player2.selectPlot('A Noble Cause');
@@ -224,16 +275,18 @@ describe('Winning and losing', function () {
 
                     this.selectFirstPlayer(this.player2);
 
-                    this.player2.clickPrompt('Draw 2 cards');
+                    this.player2.clickPrompt('Gain 1 power');
                     this.player3.clickPrompt('Gain 1 power');
                     this.player1.clickPrompt('Gain 1 power');
                 });
 
-                it('wins the game for that player', function () {
+                it('allows first player to choose the winning player order', function () {
                     expect(this.player2).toHavePrompt('Select the winning player');
+                    this.player2.clickPrompt('player2');
+                    expect(this.player2).toHavePrompt('Select player for 2nd place');
                     this.player2.clickPrompt('player3');
 
-                    expect(this.game.winner).toBe(this.player3Object);
+                    expect(this.game.winner).toBe(this.player2Object);
                 });
             });
         });

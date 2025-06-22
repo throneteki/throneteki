@@ -33,6 +33,14 @@ const TextHelper = {
      */
     capitalizeFirst: function (text) {
         return text.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
+    },
+    /**
+     * Returns the ordinal of the number provided (eg. 2 = 2nd)
+     */
+    ordinal(n) {
+        var s = ['th', 'st', 'nd', 'rd'];
+        var v = n % 100;
+        return n + (s[(v - 20) % 10] || s[v] || s[0]);
     }
 };
 
