@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TyrionLannister extends DrawCard {
     setupCardAbilities(ability) {
@@ -9,28 +10,19 @@ class TyrionLannister extends DrawCard {
             cost: ability.costs.returnToHand((card) => this.isAttackingClansman(card)),
             limit: ability.limit.perPhase(2),
             choices: {
-                'Draw 2 cards': (context) => {
-                    if (this.controller.canDraw()) {
-                        this.controller.drawCardsToHand(2);
-                        this.game.addMessage(
-                            '{0} uses {1} to return {2} to their hand to draw 2 cards',
-                            this.controller,
-                            this,
-                            context.costs.returnToHand
-                        );
-                    }
+                'Draw 2 cards': {
+                    message: '{player} uses {source} to draw 2 cards',
+                    gameAction: GameActions.drawCards((context) => ({
+                        player: context.player,
+                        amount: 2
+                    }))
                 },
-                'Gain 3 gold': (context) => {
-                    if (this.controller.canGainGold()) {
-                        let gold = this.game.addGold(this.controller, 3);
-                        this.game.addMessage(
-                            '{0} uses {1} to return {2} to their hand to gain {3} gold',
-                            this.controller,
-                            this,
-                            context.costs.returnToHand,
-                            gold
-                        );
-                    }
+                'Gain 3 gold': {
+                    message: '{player} uses {source} to gain 3 gold',
+                    gameAction: GameActions.gainGold((context) => ({
+                        player: context.player,
+                        amount: 3
+                    }))
                 },
                 'Raise claim by 1': (context) => {
                     this.untilEndOfChallenge((ability) => ({
