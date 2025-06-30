@@ -13,6 +13,7 @@ class LysasLetter extends DrawCard {
             choosePlayer: () => true,
             handler: (context) => {
                 this.chosenPlayer = context.chosenPlayer;
+                // TODO: Add "chooseChallengeIcon" as a pre-handler choice, as this should be known prior to cancel windows
                 this.game.promptWithMenu(context.player, this, {
                     activePrompt: {
                         menuTitle: 'Select a challenge type',
