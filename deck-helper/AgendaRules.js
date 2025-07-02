@@ -324,6 +324,20 @@ const agendaRules = {
             }
         ]
     },
+    // The Small Council
+    26040: {
+        mayInclude: (card) =>
+            card.type === 'character' && hasTrait(card, 'Small Council') && !card.loyal,
+        rules: [
+            {
+                message: 'Must contain 7 or more different Small Council characters',
+                condition: (deck) =>
+                    deck.countDrawCards(
+                        (card) => card.type === 'character' && hasTrait(card, 'Small Council')
+                    ) >= 7
+            }
+        ]
+    },
     // Draft Agendas
     // The Power of Wealth
     '00001': {
