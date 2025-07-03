@@ -287,7 +287,7 @@ const DeckList = ({
 
                         toast.success('Deck imported successfully');
                     } catch (err) {
-                        toast.error('An error occurred adding deck');
+                        toast.error('An error occurred while importing deck');
                     }
                 }}
                 isLoading={isAddLoading}

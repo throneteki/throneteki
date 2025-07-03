@@ -221,32 +221,20 @@ const DeckEditor = ({ deck, onBackClick }) => {
                     const count = deckCard?.count || 0;
 
                     const setCardQuantity = (code, quantity) => {
-                        const newDeckCards = [];
-                        let found = false;
-
-                        for (const deckCard of deckCards) {
-                            const newDeckCard = Object.assign({}, deckCard);
-
-                            if (deckCard.card.code === code) {
-                                found = true;
-
-                                newDeckCard.count = quantity;
-                            }
-
-                            if (newDeckCard.count > 0) {
-                                newDeckCards.push(newDeckCard);
-                            }
+                        const newDeckCards = [...deckCards];
+                        const dcIndex = newDeckCards.findIndex(({ card }) => card.code === code);
+                        if (dcIndex < 0 && quantity === 0) {
+                            return;
                         }
-
-                        if (!found) {
-                            const newCard = {
-                                card: cardsByCode[code],
-                                count: quantity
-                            };
-
-                            newDeckCards.push(newCard);
+                        if (dcIndex >= 0) {
+                            if (quantity === 0) {
+                                newDeckCards.splice(dcIndex, 1);
+                            } else {
+                                newDeckCards[dcIndex].count = quantity;
+                            }
+                        } else {
+                            newDeckCards.push({ card: cardsByCode[code], count: quantity });
                         }
-
                         setDeckCards(newDeckCards);
                     };
                     return (
@@ -331,22 +319,24 @@ const DeckEditor = ({ deck, onBackClick }) => {
         );
     }
 
-    const onSaveClick = async (andClose) => {
+    const onSaveClick = async (andClose, savingDeck = deckToSave) => {
         try {
-            deckToSave._id
-                ? await saveDeck(deckToSave).unwrap()
-                : await addDeck(deckToSave).unwrap();
+            savingDeck._id
+                ? await saveDeck(savingDeck).unwrap()
+                : await addDeck(savingDeck).unwrap();
 
-            toast.success(`Deck ${deckToSave._id ? 'saved' : 'added'} successfully.`);
+            toast.success(`Deck ${savingDeck._id ? 'saved' : 'added'} successfully.`);
 
             if (andClose) {
                 dispatch(navigate('/decks'));
             }
+            return true;
         } catch (err) {
             toast.error(
-                `An error occured ${deckToSave._id ? 'saving' : 'adding'}  the deck. Please try again later`
+                `An error occured ${savingDeck._id ? 'saving' : 'adding'}  the deck. Please try again later`
             );
         }
+        return false;
     };
 
     return (
@@ -504,26 +494,24 @@ const DeckEditor = ({ deck, onBackClick }) => {
                     isOpen={showImportModal}
                     onOpenChange={(open) => setShowImportModal(open)}
                     submitLabel='Submit & Save'
-                    onProcessed={async (deck) => {
-                        try {
-                            setFaction(deck.faction);
-                            setDeckName(deck.name);
+                    onProcessed={async (newDeck) => {
+                        newDeck._id = deck._id;
+                        const success = await onSaveClick(false, newDeck);
+                        if (success) {
+                            setFaction(newDeck.faction);
+                            setDeckName(newDeck.name);
                             setDeckCards(
-                                (deck.agenda ? [{ card: deck.agenda, count: 1 }] : [])
-                                    .concat(deck.drawCards || [])
-                                    .concat(deck.plotCards || [])
+                                (newDeck.agenda ? [{ card: newDeck.agenda, count: 1 }] : [])
+                                    .concat(newDeck.drawCards || [])
+                                    .concat(newDeck.plotCards || [])
                                     .concat(
-                                        deck.bannerCards?.map((bc) => ({
+                                        newDeck.bannerCards?.map((bc) => ({
                                             card: bc,
                                             count: 1
                                         })) || []
                                     )
                             );
-                            toast.success('Deck changes imported successfully');
-                            await onSaveClick(false);
                             setShowImportModal(false);
-                        } catch (err) {
-                            toast.error('An error occurred importing deck changes');
                         }
                     }}
                     message={
