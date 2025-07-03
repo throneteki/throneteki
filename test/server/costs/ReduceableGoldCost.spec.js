@@ -13,12 +13,17 @@ describe('ReduceableGoldCost', function () {
             'getAmbushCost',
             'getCost',
             'getMinCost',
-            'getShadowCost'
+            'getShadowCost',
+            'xValueDefinition'
         ]);
         this.cardSpy.getAmbushCost.and.returnValue(0);
         this.cardSpy.getCost.and.returnValue(0);
         this.cardSpy.getMinCost.and.returnValue(0);
         this.cardSpy.getShadowCost.and.returnValue(0);
+        this.cardSpy.xValueDefinition = jasmine.createSpyObj('xValue', [
+            'getMaxValue',
+            'getMinValue'
+        ]);
         this.context = {
             costs: {},
             game: this.gameSpy,
@@ -107,6 +112,36 @@ describe('ReduceableGoldCost', function () {
 
             it('should return false', function () {
                 expect(this.cost.canPay(this.context)).toBe(false);
+            });
+        });
+
+        describe('when the card costs X', function () {
+            beforeEach(function () {
+                this.cardSpy.getCost.and.returnValue('X');
+            });
+
+            describe('when the player has enough gold for the min value after reduction', function () {
+                beforeEach(function () {
+                    this.cardSpy.xValueDefinition.getMinValue.and.returnValue(6);
+                    this.playerSpy.getSpendableGold.and.returnValue(5);
+                    this.playerSpy.getCostReduction.and.returnValue(1);
+                });
+
+                it('returns true', function () {
+                    expect(this.cost.canPay(this.context)).toBe(true);
+                });
+            });
+
+            describe('when the player does not have enough gold for the min value after reduction', function () {
+                beforeEach(function () {
+                    this.cardSpy.xValueDefinition.getMinValue.and.returnValue(7);
+                    this.playerSpy.getSpendableGold.and.returnValue(5);
+                    this.playerSpy.getCostReduction.and.returnValue(1);
+                });
+
+                it('returns false', function () {
+                    expect(this.cost.canPay(this.context)).toBe(false);
+                });
             });
         });
     });
@@ -200,6 +235,23 @@ describe('ReduceableGoldCost', function () {
                         this.cardSpy
                     );
                 });
+            });
+        });
+
+        describe('when the cost is X', function () {
+            beforeEach(function () {
+                this.cardSpy.getCost.and.returnValue('X');
+            });
+
+            it('should spend the players gold', function () {
+                this.context.xValue = 5;
+                this.playerSpy.getCostReduction.and.returnValue(1);
+
+                this.cost.pay(this.context);
+
+                expect(this.gameSpy.spendGold).toHaveBeenCalledWith(
+                    jasmine.objectContaining({ amount: 4, playingType: 'playing-type' })
+                );
             });
         });
     });
