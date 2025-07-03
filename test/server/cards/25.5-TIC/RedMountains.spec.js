@@ -3,6 +3,7 @@ describe('Red Mountains', function () {
         beforeEach(function () {
             const deck = this.buildDeck('martell', [
                 'Trading with the Pentoshi',
+                'A Game of Thrones',
                 'Arianne Martell (Core)',
                 'Obara Sand (SoD)',
                 'Edric Dayne (Core)',
@@ -21,15 +22,16 @@ describe('Red Mountains', function () {
             this.player2.clickCard(this.obara);
 
             this.completeSetup();
-
-            this.selectFirstPlayer(this.player2);
-            this.selectPlotOrder(this.player1);
-            this.player2.clickCard(this.arianne);
-            this.completeMarshalPhase();
         });
 
         describe('when triggered before challenges', function () {
             beforeEach(function () {
+                this.player1.selectPlot('Trading with the Pentoshi');
+                this.player2.selectPlot('Trading with the Pentoshi');
+                this.selectFirstPlayer(this.player2);
+                this.selectPlotOrder(this.player1);
+                this.player2.clickCard(this.arianne);
+                this.completeMarshalPhase();
                 this.player1.clickMenu(this.redMountains, 'Force military challenge');
             });
 
@@ -81,8 +83,19 @@ describe('Red Mountains', function () {
 
         describe('when triggered after a military challenge', function () {
             beforeEach(function () {
+                this.player1.selectPlot('Trading with the Pentoshi');
+                this.player2.selectPlot('Trading with the Pentoshi');
+                this.selectFirstPlayer(this.player2);
+                this.selectPlotOrder(this.player1);
+                this.player2.clickCard(this.arianne);
+                this.player2.clickCard(this.edric);
+                this.completeMarshalPhase();
+
                 this.unopposedChallenge(this.player2, 'military', this.obara);
+                this.player2.clickPrompt('Continue');
                 this.player1.clickMenu(this.redMountains, 'Force military challenge');
+                this.player2.clickMenu(this.edric, 'Give icon');
+                this.player2.clickPrompt('Military');
             });
 
             it('should allow the opponent to initiate intrigue or power', function () {
@@ -92,6 +105,41 @@ describe('Red Mountains', function () {
 
             it('should allow the opponent to pass challenges', function () {
                 expect(this.player2).not.toHaveDisabledPromptButton('Done');
+            });
+        });
+
+        describe('when military challenges are prevented by a plot', function () {
+            beforeEach(function () {
+                this.player2.selectPlot('Trading with the Pentoshi');
+                this.player1.selectPlot('A Game of Thrones');
+                this.selectFirstPlayer(this.player2);
+                this.player2.clickCard(this.arianne);
+                this.completeMarshalPhase();
+            });
+
+            it('should allow the opponent to initiate intrigue or skip challenges', function () {
+                this.player1.clickMenu(this.redMountains, 'Force military challenge');
+
+                expect(this.player2).not.toHaveDisabledPromptButton('Intrigue');
+                expect(this.player2).not.toHaveDisabledPromptButton('Done');
+                expect(this.player2).toHaveDisabledPromptButton('Military');
+                expect(this.player2).toHaveDisabledPromptButton('Power');
+            });
+
+            it('should only affect the next challenge', function () {
+                this.player1.clickMenu(this.redMountains, 'Force military challenge');
+
+                this.unopposedChallenge(this.player2, 'intrigue', this.arianne);
+                this.player2.clickPrompt('Continue');
+                expect(this.player2).not.toHaveDisabledPromptButton('Power');
+            });
+
+            it('should still have effect if triggered after the plot condition has been fulfilled', function () {
+                this.unopposedChallenge(this.player2, 'intrigue', this.arianne);
+                this.player2.clickPrompt('Continue');
+                this.player1.clickMenu(this.redMountains, 'Force military challenge');
+                expect(this.player2).toHaveDisabledPromptButton('Power');
+                expect(this.player2).toHaveDisabledPromptButton('Done');
             });
         });
     });
