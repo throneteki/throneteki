@@ -32,7 +32,7 @@ class TheShavepate extends DrawCard {
                     '{0} uses {1} and pays {2} gold to put {3} into play from their discard pile',
                     context.player,
                     this,
-                    context.goldCost,
+                    context.costs.gold,
                     context.target
                 );
             },

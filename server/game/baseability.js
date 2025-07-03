@@ -27,6 +27,7 @@ class BaseAbility {
     constructor(properties) {
         this.cost = this.buildCost(properties.cost);
         this.targets = this.buildTargets(properties);
+        this.payingPlayer = properties.payingPlayer || ((context) => context.player);
         this.choosePlayerDefinition = AbilityChoosePlayerDefinition.create(properties);
         this.limit = properties.limit;
         this.message = AbilityMessage.create(properties.message);
@@ -105,6 +106,7 @@ class BaseAbility {
      * @returns {Boolean}
      */
     canPayCosts(context) {
+        context.payingPlayer = this.payingPlayer(context);
         return this.executeWithTemporaryContext(context, 'cost', () =>
             this.cost.every((cost) => cost.canPay(context))
         );

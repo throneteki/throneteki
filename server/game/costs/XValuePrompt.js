@@ -2,18 +2,17 @@ import range from 'lodash.range';
 import BaseStep from '../gamesteps/basestep.js';
 
 class XValuePrompt extends BaseStep {
-    constructor(min, max, context, reduction = 0) {
+    constructor(min, max, context) {
         super();
 
         this.min = min;
         this.max = max;
         this.context = context;
-        this.reduction = reduction;
     }
 
     continue() {
-        if (this.min > this.max) {
-            this.resolveCost(this.max);
+        if (this.min >= this.max) {
+            this.resolveCost(this.context.player, this.max);
             return;
         }
 
@@ -50,7 +49,6 @@ class XValuePrompt extends BaseStep {
         }
 
         this.context.xValue = xValue;
-        this.context.goldCost = Math.max(xValue - this.reduction, 0);
 
         return true;
     }

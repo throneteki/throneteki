@@ -31,7 +31,6 @@ describe('Gifts for the Widow', function () {
                 // Play Gifts for the Widow during the draw phase action window
                 // when neither player has gold
                 this.player1.clickCard('Gifts for the Widow', 'hand');
-                this.player1.selectValue('0');
                 this.player1.clickCard(this.attachment);
                 this.player1.clickCard(this.character);
             });

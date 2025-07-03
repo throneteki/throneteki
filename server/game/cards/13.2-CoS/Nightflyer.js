@@ -2,41 +2,35 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Nightflyer extends DrawCard {
-    setupCardAbilities(ability) {
+    setupCardAbilities() {
         this.plotModifiers({
             initiative: 1
         });
+
+        this.xValue({ min: () => 0, max: () => this.maxLocationCost() });
 
         this.reaction({
             when: {
                 onCardOutOfShadows: (event) => event.card === this
             },
-            cost: ability.costs.payXGold(
-                () => this.minLocationCost(),
-                () => this.maxLocationCost()
-            ),
             target: {
                 activePromptTitle: 'Select a location',
                 cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.getType() === 'location' &&
-                    (context.xValue === undefined || card.getPrintedCost() <= context.xValue),
+                    card.getPrintedCost() <= context.event.xValue,
                 gameAction: 'discard'
             },
             message: {
                 format: '{player} uses {source} and pays {xValue} gold to discard {target} from play',
                 args: {
-                    xValue: (context) => context.xValue
+                    xValue: (context) => context.event.xValue
                 }
             },
             handler: (context) => {
                 this.game.resolveGameAction(GameActions.discardCard({ card: context.target }));
             }
         });
-    }
-
-    minLocationCost() {
-        return Math.min(...this.getLocationCosts());
     }
 
     maxLocationCost() {

@@ -3,14 +3,12 @@ import GameActions from '../../GameActions/index.js';
 import TextHelper from '../../TextHelper.js';
 
 class GrowingAmbition extends DrawCard {
-    setupCardAbilities(ability) {
+    setupCardAbilities() {
+        this.xValue({ min: () => 1, max: (context) => context.player.drawDeck.length });
+
         this.action({
             title: 'Search deck',
             phase: 'challenge',
-            cost: ability.costs.payXGold(
-                () => 1,
-                () => this.controller.drawDeck.length
-            ),
             message: {
                 format: '{player} plays {source} to search their deck for {amount} cards',
                 args: { amount: (context) => context.xValue }

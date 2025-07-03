@@ -1,7 +1,12 @@
 import DrawCard from '../../drawcard.js';
 
 class Loot extends DrawCard {
-    setupCardAbilities(ability) {
+    setupCardAbilities() {
+        this.xValue({
+            min: () => 1,
+            max: (context) => this.getLoserDeckSize(context.event.challenge)
+        });
+
         this.reaction({
             when: {
                 afterChallenge: (event) =>
@@ -9,11 +14,7 @@ class Loot extends DrawCard {
                     event.challenge.isUnopposed() &&
                     this.getLoserDeckSize(event.challenge) >= 1
             },
-            cost: ability.costs.payXGold(
-                () => 1,
-                (context) => this.getLoserDeckSize(context.event.challenge),
-                (context) => context.event.challenge.loser
-            ),
+            payingPlayer: (context) => context.event.challenge.loser,
             handler: (context) => {
                 let opponent = context.event.challenge.loser;
                 opponent.discardFromDraw(context.xValue);
@@ -21,7 +22,7 @@ class Loot extends DrawCard {
                     "{0} plays {1} and pays {2} gold from {3}'s gold pool to discard the top {2} cards from {3}'s deck",
                     this.controller,
                     this,
-                    context.goldCost,
+                    context.costs.gold,
                     opponent
                 );
             }

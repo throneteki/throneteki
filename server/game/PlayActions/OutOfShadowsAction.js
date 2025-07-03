@@ -35,7 +35,7 @@ class OutOfShadowsAction extends BaseAbility {
             position,
             context.costs.gold
         );
-        context.player.putIntoPlay(context.source, 'outOfShadows');
+        context.player.putIntoPlay(context.source, 'outOfShadows', { xValue: context.xValue });
     }
 }
 

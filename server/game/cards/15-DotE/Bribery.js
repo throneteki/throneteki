@@ -2,12 +2,13 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Bribery extends DrawCard {
-    setupCardAbilities(ability) {
+    setupCardAbilities() {
+        this.xValue({
+            min: () => this.getMinXValue(),
+            max: () => 99
+        });
+
         this.action({
-            cost: ability.costs.payXGold(
-                () => this.getMinXValue(),
-                () => 99
-            ),
             target: {
                 cardCondition: (card, context) =>
                     card.isMatch({ location: 'play area', type: 'character' }) &&
