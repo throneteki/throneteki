@@ -74,12 +74,6 @@ class ReduceableGoldCost {
         }
     }
 
-    getReducedCost(playingType, card) {
-        let baseCost = this.getBaseCost(playingType, card);
-        let reducedCost = baseCost - this.getCostReduction(playingType, card);
-        return Math.max(reducedCost, card.getMinCost());
-    }
-
     getBaseCost(playingType, card) {
         if (playingType === 'marshalIntoShadows') {
             return MarshalIntoShadowsCost;

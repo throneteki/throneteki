@@ -1,28 +1,39 @@
-import Costs from '../../../server/game/costs.js';
+import ReduceableGoldCost from '../../../server/game/costs/ReduceableGoldCost.js';
 
-describe('Costs.payReduceableGoldCost', function () {
+describe('ReduceableGoldCost', function () {
     beforeEach(function () {
         this.gameSpy = jasmine.createSpyObj('game', ['addMessage', 'spendGold']);
         this.playerSpy = jasmine.createSpyObj('player', [
             'getDuplicateInPlay',
-            'getReducedCost',
+            'getCostReduction',
             'getSpendableGold',
             'markUsedReducers'
         ]);
-        this.cardSpy = { card: 1 };
+        this.cardSpy = jasmine.createSpyObj('card', [
+            'getAmbushCost',
+            'getCost',
+            'getMinCost',
+            'getShadowCost'
+        ]);
+        this.cardSpy.getAmbushCost.and.returnValue(0);
+        this.cardSpy.getCost.and.returnValue(0);
+        this.cardSpy.getMinCost.and.returnValue(0);
+        this.cardSpy.getShadowCost.and.returnValue(0);
         this.context = {
             costs: {},
             game: this.gameSpy,
             player: this.playerSpy,
+            payingPlayer: this.playerSpy,
             source: this.cardSpy
         };
-        this.cost = Costs.payReduceableGoldCost('playing-type');
+        this.cost = new ReduceableGoldCost({ playingType: 'playing-type' });
     });
 
     describe('canPay()', function () {
         beforeEach(function () {
-            this.playerSpy.getSpendableGold.and.returnValue(6);
-            this.playerSpy.getReducedCost.and.returnValue(4);
+            this.cardSpy.getCost.and.returnValue(0);
+            this.playerSpy.getSpendableGold.and.returnValue(0);
+            this.playerSpy.getCostReduction.and.returnValue(0);
         });
 
         it('should check that the player can spend the amount of gold', function () {
@@ -32,13 +43,16 @@ describe('Costs.payReduceableGoldCost', function () {
             );
         });
 
-        it('should return true when all criteria are met', function () {
+        it('should return true when the player has enough gold after reducing the cost', function () {
+            this.cardSpy.getCost.and.returnValue(8);
+            this.playerSpy.getSpendableGold.and.returnValue(6);
+            this.playerSpy.getCostReduction.and.returnValue(2);
             expect(this.cost.canPay(this.context)).toBe(true);
         });
 
         it('should check the cost properly', function () {
             this.cost.canPay(this.context);
-            expect(this.playerSpy.getReducedCost).toHaveBeenCalledWith(
+            expect(this.playerSpy.getCostReduction).toHaveBeenCalledWith(
                 'playing-type',
                 this.cardSpy
             );
@@ -47,11 +61,14 @@ describe('Costs.payReduceableGoldCost', function () {
         describe('when there is a duplicate in play', function () {
             beforeEach(function () {
                 this.playerSpy.getDuplicateInPlay.and.returnValue({});
+                this.cardSpy.getCost.and.returnValue(9);
+                this.playerSpy.getSpendableGold.and.returnValue(6);
+                this.playerSpy.getCostReduction.and.returnValue(0);
             });
 
             describe('and the play type is marshal', function () {
                 beforeEach(function () {
-                    this.cost = Costs.payReduceableGoldCost('marshal');
+                    this.cost = new ReduceableGoldCost({ playingType: 'marshal' });
                 });
 
                 it('should return true regardless of gold', function () {
@@ -62,16 +79,20 @@ describe('Costs.payReduceableGoldCost', function () {
 
             describe('and the play type is not marshal', function () {
                 beforeEach(function () {
-                    this.cost = Costs.payReduceableGoldCost('ambush');
+                    this.cost = new ReduceableGoldCost({ playingType: 'ambush' });
                 });
 
                 it('should return true if there is enough gold gold', function () {
+                    this.cardSpy.getAmbushCost.and.returnValue(6);
                     this.playerSpy.getSpendableGold.and.returnValue(6);
+                    this.playerSpy.getCostReduction.and.returnValue(0);
                     expect(this.cost.canPay(this.context)).toBe(true);
                 });
 
                 it('should return false if there is not enough gold gold', function () {
-                    this.playerSpy.getSpendableGold.and.returnValue(3);
+                    this.cardSpy.getAmbushCost.and.returnValue(6);
+                    this.playerSpy.getSpendableGold.and.returnValue(5);
+                    this.playerSpy.getCostReduction.and.returnValue(0);
                     expect(this.cost.canPay(this.context)).toBe(false);
                 });
             });
@@ -79,7 +100,9 @@ describe('Costs.payReduceableGoldCost', function () {
 
         describe('when there is not enough gold', function () {
             beforeEach(function () {
-                this.playerSpy.getSpendableGold.and.returnValue(3);
+                this.cardSpy.getCost.and.returnValue(9);
+                this.playerSpy.getSpendableGold.and.returnValue(6);
+                this.playerSpy.getCostReduction.and.returnValue(2);
             });
 
             it('should return false', function () {
@@ -90,8 +113,9 @@ describe('Costs.payReduceableGoldCost', function () {
 
     describe('pay()', function () {
         beforeEach(function () {
+            this.cardSpy.getCost.and.returnValue(6);
             this.playerSpy.getSpendableGold.and.returnValue(6);
-            this.playerSpy.getReducedCost.and.returnValue(3);
+            this.playerSpy.getCostReduction.and.returnValue(3);
         });
 
         describe('when there is no duplicate in play', function () {
@@ -128,7 +152,7 @@ describe('Costs.payReduceableGoldCost', function () {
 
             describe('and the play type is marshal', function () {
                 beforeEach(function () {
-                    this.cost = Costs.payReduceableGoldCost('marshal');
+                    this.cost = new ReduceableGoldCost({ playingType: 'marshal' });
                     this.cost.pay(this.context);
                 });
 
@@ -151,7 +175,8 @@ describe('Costs.payReduceableGoldCost', function () {
 
             describe('and the play type is not marshal', function () {
                 beforeEach(function () {
-                    this.cost = Costs.payReduceableGoldCost('ambush');
+                    this.cardSpy.getAmbushCost.and.returnValue(6);
+                    this.cost = new ReduceableGoldCost({ playingType: 'ambush' });
                     this.cost.pay(this.context);
                 });
 
