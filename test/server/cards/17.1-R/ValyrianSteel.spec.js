@@ -95,7 +95,6 @@ describe('Valyrian Steel', function () {
 
                 this.player1.clickCard(this.waterGardens);
                 this.player1.clickMenu('Valyrian Steel', 'Put attachment into play');
-                this.player1.selectValue(1);
                 this.player1.clickCard(this.attachment);
                 this.player1.clickCard(this.character);
             });
