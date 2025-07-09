@@ -33,6 +33,7 @@ class PendingGame {
         } else if (this.gameFormat === 'melee') {
             this.maxPlayers = details.maxPlayers || 4;
             this.randomSeats = details.randomSeats;
+            this.allowMultipleWinners = details.allowMultipleWinners;
         }
     }
 
@@ -393,6 +394,7 @@ class PendingGame {
             gameType: this.gameType,
             maxPlayers: this.maxPlayers,
             randomSeats: this.randomSeats,
+            allowMultipleWinners: this.allowMultipleWinners,
             event: this.event,
             full: Object.values(this.players).length >= this.maxPlayers,
             id: this.id,
@@ -461,6 +463,7 @@ class PendingGame {
             players,
             maxPlayers: this.maxPlayers,
             randomSeats: this.randomSeats,
+            allowMultipleWinners: this.allowMultipleWinners,
             restrictedList: this.restrictedList,
             showHand: this.showHand,
             spectators,

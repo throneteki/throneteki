@@ -3,6 +3,7 @@ import EventWindow from '../../../server/game/gamesteps/eventwindow.js';
 describe('EventWindow', function () {
     beforeEach(function () {
         this.gameSpy = jasmine.createSpyObj('game', [
+            'refreshGameState',
             'openAbilityWindow',
             'openInterruptWindowForAttachedEvents',
             'saveWithDupe'

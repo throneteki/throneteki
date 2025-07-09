@@ -20,7 +20,7 @@ class UiPrompt extends BaseStep {
     }
 
     setPrompt() {
-        for (let player of this.game.getPlayers()) {
+        for (let player of this.getPromptablePlayers()) {
             if (this.activeCondition(player)) {
                 player.setPrompt(this.addDefaultCommandToButtons(this.activePrompt(player)));
                 player.setIsActivePrompt(true);
@@ -61,9 +61,11 @@ class UiPrompt extends BaseStep {
 
     checkPlayer() {
         const player = this.getPlayer();
-        if (player && !player.isPlaying()) {
+        if (!player?.isPlaying()) {
             this.complete();
+            return false;
         }
+        return true;
     }
 
     continue() {
@@ -81,7 +83,7 @@ class UiPrompt extends BaseStep {
     }
 
     clearPrompts() {
-        for (let player of this.game.getPlayers()) {
+        for (let player of this.getPromptablePlayers()) {
             player.cancelPrompt();
         }
     }
@@ -104,6 +106,12 @@ class UiPrompt extends BaseStep {
      */
     getPlayer() {
         return undefined;
+    }
+    /**
+     * Explicitly gets which players can recieve this prompt, and can be overridden in sub classes
+     */
+    getPromptablePlayers() {
+        return this.game.getPlayers();
     }
 }
 

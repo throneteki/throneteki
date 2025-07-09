@@ -2,7 +2,7 @@ import Game from '../../../server/game/game.js';
 
 describe('Game', function () {
     beforeEach(function () {
-        this.gameRouter = jasmine.createSpyObj('gameRouter', ['playerLeft']);
+        this.gameRouter = jasmine.createSpyObj('gameRouter', ['playerLeft', 'gameOver']);
         this.game = new Game(
             { allowSpectators: true, owner: {}, maxPlayers: 2 },
             { router: this.gameRouter }
@@ -117,7 +117,6 @@ describe('Game', function () {
 
                 describe('and the game has not finished', function () {
                     beforeEach(function () {
-                        this.game.finishedAt = undefined;
                         this.game.leave('foo');
                     });
 
@@ -126,8 +125,12 @@ describe('Game', function () {
                         expect(this.game.playersAndSpectators['foo'].left).toBe(true);
                     });
 
-                    it('should set the finishedAt property', function () {
-                        expect(this.game.finishedAt).toBeDefined();
+                    it('should eliminate that player', function () {
+                        expect(this.game.playersAndSpectators['foo'].eliminated).toBe(true);
+                    });
+
+                    it('should end the game', function () {
+                        expect(this.game.isGameOver).toBe(true);
                     });
                 });
             });

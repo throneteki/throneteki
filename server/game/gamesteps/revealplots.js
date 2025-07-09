@@ -55,8 +55,13 @@ class RevealPlots extends BaseStep {
             this.game.addSimultaneousEffects(this.getPlotEffects(plots));
             if (this.needsFirstPlayerChoice()) {
                 this.game.raiseEvent('onCompareInitiative', {});
-                this.game.queueStep(new SimpleStep(this.game, () => this.determineInitiative()));
-                this.game.queueStep(() => new FirstPlayerPrompt(this.game, this.initiativeWinner));
+                const initiativeSteps = [
+                    () => new SimpleStep(this.game, () => this.determineInitiative()),
+                    () => new FirstPlayerPrompt(this.game, this.initiativeWinner, initiativeSteps)
+                ];
+                for (const step of initiativeSteps) {
+                    this.game.queueStep(step);
+                }
             }
         });
 

@@ -41,7 +41,8 @@ import TimeLimit from './timeLimit.js';
 import PrizedKeywordListener from './PrizedKeywordListener.js';
 import GameOverPrompt from './gamesteps/GameOverPrompt.js';
 import shuffle from 'lodash.shuffle';
-import TextHelper from './TextHelper.js';
+import StartRound from './GameActions/StartRound.js';
+import GameOverHandler from './GameOverConditions/GameOverHandler.js';
 
 class Game extends EventEmitter {
     constructor(details, options = {}) {
@@ -108,7 +109,8 @@ class Game extends EventEmitter {
         this.prizedKeywordListener = new PrizedKeywordListener(this);
         this.muteSpectators = details.muteSpectators;
 
-        this.eliminated = [];
+        this.allowMultipleWinners = options.allowMultipleWinners || false;
+        this.gameOverHandler = new GameOverHandler(this);
 
         let players = Object.values(details.players || {});
 
@@ -140,6 +142,10 @@ class Game extends EventEmitter {
         this.router = options.router;
 
         this.pushAbilityContext({ resolutionStage: 'framework' });
+    }
+
+    get isGameOver() {
+        return this.gameOverHandler.isGameOver;
     }
 
     isPlaytesting() {
@@ -220,6 +226,11 @@ class Game extends EventEmitter {
         return matchAndAfter.concat(beforeMatch);
     }
 
+    getPlayerToLeftOf(player) {
+        const players = this.getPlayers();
+        return players.find((p) => p.seatNo > player.seatNo) || players[0];
+    }
+
     getPlayersAndSpectators() {
         return this.playersAndSpectators;
     }
@@ -239,20 +250,6 @@ class Game extends EventEmitter {
             player.firstPlayer = player === firstPlayer;
         }
         this.raiseEvent('onFirstPlayerDetermined', { player: firstPlayer });
-    }
-
-    checkFirstPlayer() {
-        // Find first player from all players, not just remaining
-        let firstPlayer = this.getAllPlayers().find((p) => p.firstPlayer);
-        const remainingPlayers = this.getPlayers();
-        if (firstPlayer && !firstPlayer.isPlaying() && remainingPlayers.length > 0) {
-            // Search remaining players for next player to their left
-            firstPlayer =
-                remainingPlayers.find((player) => player.seatNo > firstPlayer.seatNo) ||
-                remainingPlayers[0];
-            this.addAlert('info', '{0} has become the first player', remainingPlayers[1]);
-            this.setFirstPlayer(firstPlayer);
-        }
     }
 
     getOpponents(player) {
@@ -584,199 +581,16 @@ class Game extends EventEmitter {
         player.modifyGold(-appliedAmount);
     }
 
-    checkWinAndLossConditions() {
-        if (this.currentPhase === 'setup' || this.winner || this.disableWinning) {
-            return;
-        }
+    recordResults(winners, reason, finishedAt) {
+        const winner = !winners || winners.length > 1 ? winners : winners[0];
+        this.results = {
+            winner,
+            winReason: reason,
+            finishedAt
+        };
 
-        // First player is saved here & remains for the win condition checks
-        // Eg. If first player is decked, and 2 opponents reach 15 power in the
-        // same simultaneous action, the decked player should be choosing the winner
-        const firstPlayer = this.getFirstPlayer();
-        let remainingPlayers = this.getPlayersInFirstPlayerOrder();
-
-        if (remainingPlayers.length === 0) {
-            return;
-        }
-
-        // Collect players who are being eliminated, with first on the list being first eliminated
-        const eliminating = [];
-
-        // Step 1: Mark all players with no cards in their draw deck for elimination
-        this.queueSimpleStep(() => {
-            const deckedPlayers = remainingPlayers.filter((player) => player.drawDeck.length === 0);
-            if (deckedPlayers.length > 1) {
-                this.addAlert(
-                    'info',
-                    '{0} will be eliminated because their draw decks are empty. {1} chooses the order of elimination because they are first player',
-                    deckedPlayers,
-                    firstPlayer
-                );
-                for (let i = 0; i < deckedPlayers.length; i++) {
-                    this.queueStep(
-                        new ChoosePlayerPrompt(this, firstPlayer, {
-                            activePromptTitle: 'Select player to eliminate',
-                            condition: (player) =>
-                                deckedPlayers.includes(player) &&
-                                !eliminating.some(({ player: p }) => p === player),
-                            onSelect: (chosenPlayer) => {
-                                eliminating.push({ player: chosenPlayer, reason: 'decked' });
-                            }
-                        })
-                    );
-                }
-            } else {
-                eliminating.push(...deckedPlayers.map((player) => ({ player, reason: 'decked' })));
-            }
-        });
-
-        // Step 2: Eliminate players (with reason)
-        this.queueSimpleStep(() => {
-            for (const { player, reason } of eliminating) {
-                this.eliminate(player, reason);
-            }
-        });
-
-        // Step 3: Check if there are one or fewer remaining players
-        this.queueSimpleStep(() => {
-            // Update remaining players after eliminations
-            remainingPlayers = this.getPlayersInFirstPlayerOrder();
-            if (remainingPlayers.length === 1) {
-                // When only 1 player remains, the game is over
-                const remainingPlayer = remainingPlayers[0];
-                if (remainingPlayer.canWinGame()) {
-                    this.recordResults('lastRemaining', remainingPlayer);
-                } else {
-                    this.resordResults('draw');
-                }
-            } else if (remainingPlayers.length === 0) {
-                // Get the first eliminating player who can win, in order selected earlier by first player
-                const winner = eliminating
-                    .reverse()
-                    .find(({ player }) => player.canWinGame())?.player;
-                if (winner) {
-                    this.recordResults('lastRemaining', winner);
-                } else {
-                    this.resordResults('draw');
-                }
-            }
-        });
-
-        // Step 4: Check for players on 15 power
-        this.queueSimpleStep(() => {
-            if (this.winner) {
-                return;
-            }
-            const potentialWinners = remainingPlayers.filter(
-                (player) => player.getTotalPower() >= 15 && player.canWinGame()
-            );
-            if (potentialWinners.length === 1) {
-                this.recordResults('power', potentialWinners[0]);
-            } else if (potentialWinners.length > 1) {
-                const winningOrder = [];
-                this.addAlert(
-                    'info',
-                    '{0} have reached 15 power. {1} chooses {2} because they are first player',
-                    potentialWinners,
-                    firstPlayer,
-                    potentialWinners === 2 ? 'who wins' : 'the winning order'
-                );
-                for (let i = 0; i < potentialWinners.length; i++) {
-                    const message =
-                        i === 0
-                            ? 'Select the winning player'
-                            : `Select player for ${TextHelper.ordinal(i + 1)} place`;
-                    this.queueStep(
-                        new ChoosePlayerPrompt(this, firstPlayer, {
-                            activePromptTitle: message,
-                            condition: (player) =>
-                                potentialWinners.includes(player) && !winningOrder.includes(player),
-                            onSelect: (chosenPlayer) => {
-                                winningOrder.push(chosenPlayer);
-                            }
-                        })
-                    );
-                }
-                this.queueSimpleStep(() => {
-                    this.recordResults('power', ...winningOrder);
-                });
-            }
-        });
-
-        // Step 5: Check First Player
-        this.queueSimpleStep(() => {
-            if (this.winner) {
-                return;
-            }
-            this.checkFirstPlayer();
-        });
-    }
-
-    recordResults(reason, ...standings) {
-        if (this.winner) {
-            return;
-        }
-
-        if (this.useGameTimeLimit) {
-            this.timeLimit.stop();
-        }
-
-        const winner = standings[0];
-        if (!winner) {
-            this.addAlert('info', 'Nobody wins the game');
-            this.winner = { name: 'DRAW' };
-        } else {
-            this.standings = new Map();
-
-            let position = 1;
-            for (const player of standings) {
-                this.standings.set(position++, [player]);
-            }
-
-            // Get non-eliminated players who are not in provided standings
-            const remaining = this.getPlayers().filter((player) => !standings.includes(player));
-
-            const powerGroups = remaining.reduce((groups, player) => {
-                const powerTotal = player.getTotalPower();
-                const group = groups.get(powerTotal) || [];
-                group.push(player);
-                groups.set(powerTotal, group);
-                return groups;
-            }, new Map());
-
-            for (const powerTotal of [...powerGroups.keys()].sort((a, b) => a - b)) {
-                const players = powerGroups.get(powerTotal);
-                this.standings.set(position, players);
-                position += players.length;
-            }
-
-            for (const { player } of this.eliminated.reverse()) {
-                this.standings.set(position++, [player]);
-            }
-
-            for (const [position, players] of this.standings.entries()) {
-                if (position === 1) {
-                    this.addAlert('success', '{0} has won the game', players);
-                } else {
-                    this.addAlert('info', '{0} placed {1}', players, TextHelper.ordinal(position));
-                }
-            }
-
-            this.winner = winner;
-        }
-
-        this.finishedAt = new Date();
-        this.winReason = reason;
-        this.router.gameWon(this, reason, winner);
-        this.queueStep(new GameOverPrompt(this, winner));
-    }
-
-    eliminate(player, reason) {
-        player.eliminated = true;
-        player.setPrompt({
-            menuTitle: 'You have been eliminated'
-        });
-        this.eliminated.push({ player, reason });
+        this.router.gameOver(this);
+        this.queueStep(new GameOverPrompt(this, this.results.winner));
     }
 
     changeStat(playerName, stat, value) {
@@ -834,7 +648,6 @@ class Game extends EventEmitter {
                 match: target,
                 effect: effect
             }));
-            this.postEventCalculations();
             this.addAlert(
                 'danger',
                 '{0} sets {1} to {2} ({3})',
@@ -843,6 +656,7 @@ class Game extends EventEmitter {
                 valueGetter(),
                 (value > 0 ? '+' : '') + value
             );
+            this.refreshGameState();
             return;
         }
 
@@ -901,8 +715,7 @@ class Game extends EventEmitter {
             return;
         }
 
-        this.addAlert('info', '{0} concedes', player);
-        this.eliminate(player);
+        this.gameOverHandler.playerConceded(player);
     }
 
     selectDeck(playerName, deck) {
@@ -1078,12 +891,14 @@ class Game extends EventEmitter {
         // Reset phases to the standard game flow.
         this.remainingPhases = Phases.names();
 
-        this.raiseEvent('onBeginRound');
+        this.queueStep(
+            new SimpleStep(this, () => this.resolveGameAction(StartRound, { game: this }))
+        );
         this.queueSimpleStep(() => {
             // Loop through individual phases, queuing them one at a time. This
             // will allow additional phases to be added.
             if (this.remainingPhases.length !== 0) {
-                let phase = this.remainingPhases.shift();
+                const phase = this.remainingPhases.shift();
                 this.queueStep(Phases.createStep(phase, this));
                 return false;
             }
@@ -1187,7 +1002,7 @@ class Game extends EventEmitter {
             groupedEvent.addChildEvent(attachedEvent);
         }
 
-        this.queueStep(new InterruptWindow(this, groupedEvent, () => this.postEventCalculations()));
+        this.queueStep(new InterruptWindow(this, groupedEvent));
     }
 
     registerAbility(ability, context) {
@@ -1217,7 +1032,7 @@ class Game extends EventEmitter {
         }
         let event = new Event(eventName, params, handler);
 
-        this.queueStep(new EventWindow(this, event, () => this.postEventCalculations()));
+        this.queueStep(new EventWindow(this, event));
     }
 
     /**
@@ -1235,7 +1050,7 @@ class Game extends EventEmitter {
             );
             event.addChildEvent(childEvent);
         }
-        this.queueStep(new EventWindow(this, event, () => this.postEventCalculations()));
+        this.queueStep(new EventWindow(this, event));
     }
 
     /**
@@ -1259,11 +1074,11 @@ class Game extends EventEmitter {
             event.addChildEvent(childEvent);
         }
 
-        this.queueStep(new EventWindow(this, event, () => this.postEventCalculations()));
+        this.queueStep(new EventWindow(this, event));
     }
 
     resolveEvent(event) {
-        this.queueStep(new EventWindow(this, event, () => this.postEventCalculations()));
+        this.queueStep(new EventWindow(this, event));
     }
 
     resolveGameAction(action, props) {
@@ -1277,15 +1092,22 @@ class Game extends EventEmitter {
     }
 
     /**
-     * Function that executes after the handler for each Event has executed. In
-     * terms of overall engine it is useful for things that require regular
-     * checks, such as state dependent effects, attachment validity, and others.
+     * Function that refreshes all game-state dependent effects, and performs
+     * routine validity & game over checks.
      */
-    postEventCalculations() {
+    refreshGameState() {
         this.effectEngine.recalculateDirtyTargets();
         this.effectEngine.reapplyStateDependentEffects();
         this.attachmentValidityCheck.enforceValidity();
-        this.checkWinAndLossConditions();
+        this.gameOverHandler.checkConditions();
+    }
+
+    timeLimitExpired() {
+        this.gameOverHandler.gameTimeLimitExpired();
+    }
+
+    chessClockExpired(player) {
+        this.gameOverHandler.playerChessClockExpired(player);
     }
 
     isPhaseSkipped(name) {
@@ -1482,22 +1304,11 @@ class Game extends EventEmitter {
             delete this.playersAndSpectators[playerName];
         } else {
             this.addAlert('info', '{0} has left the game', player);
+            // To ensure game over handler behaves as expected, we eliminate a player who leaves mid-game (without conceding)
+            if (!this.isGameOver && !player.eliminated) {
+                this.gameOverHandler.eliminate(player, 'left');
+            }
             player.left = true;
-            this.checkFirstPlayer();
-
-            if (this.getPlayers().length < 2 && !this.finishedAt) {
-                this.finishedAt = new Date();
-            }
-        }
-
-        if (this.isEmpty(false)) {
-            if (this.timeLimit) {
-                this.timeLimit.stop();
-            }
-
-            if (!player.isSpectator()) {
-                player.setIsActivePrompt(false);
-            }
         }
     }
 
@@ -1601,6 +1412,9 @@ class Game extends EventEmitter {
                 faction: player.faction.name || player.faction.value,
                 agendas: player.agendas ? player.agendas.map((agenda) => agenda.name) : undefined,
                 power: player.getTotalPower(),
+                standing: player.standing,
+                eliminated: player.eliminated,
+                eliminatedReason: player.eliminatedReason,
                 playtested: this.isPlaytesting()
                     ? player.preparedDeck.allCards
                           .filter((card) => !!card.version)
@@ -1614,9 +1428,7 @@ class Game extends EventEmitter {
             gameId: this.id,
             startedAt: this.startedAt,
             players: players,
-            winner: this.winner ? this.winner.name : undefined,
-            winReason: this.winReason,
-            finishedAt: this.finishedAt
+            ...(this.results || {})
         };
     }
 
@@ -1719,68 +1531,6 @@ class Game extends EventEmitter {
             },
             useChessClocks: this.useChessClocks
         };
-    }
-
-    determineWinnerAfterTimeLimitExpired() {
-        //find out the highest power total among all players left
-        const highestPowerTotal = this.getPlayers().reduce((highestPowerTotal, player) => {
-            if (highestPowerTotal < player.getTotalPower()) {
-                highestPowerTotal = player.getTotalPower();
-            }
-            return highestPowerTotal;
-        }, 0);
-        //find out the highest number of cards left in a draw deck among the remaining players
-        const mostCardsLeftInDrawDeck = this.getPlayers().reduce(
-            (mostCardsLeftInDrawDeck, player) => {
-                if (mostCardsLeftInDrawDeck < player.drawDeck.length) {
-                    mostCardsLeftInDrawDeck = player.drawDeck.length;
-                }
-                return mostCardsLeftInDrawDeck;
-            },
-            0
-        );
-        //find out the smallest number of characters in a dead pile among the remaining players
-        const smallestNumberOfCharsInDeadPile = this.getPlayers().reduce(
-            (smallestNumberOfCharsInDeadPile, player) => {
-                if (smallestNumberOfCharsInDeadPile > player.deadPile.length) {
-                    smallestNumberOfCharsInDeadPile = player.deadPile.length;
-                }
-                return smallestNumberOfCharsInDeadPile;
-            },
-            1000
-        );
-
-        const rules = [
-            (player) => player.canWinGame(),
-            (player) => player.getTotalPower() >= highestPowerTotal,
-            (player) => player.drawDeck.length >= mostCardsLeftInDrawDeck,
-            (player) => {
-                if (this.winnerOfDominanceInLastRound) {
-                    return player.name === this.winnerOfDominanceInLastRound.name;
-                }
-                //if no one won dom, then this rule should not filter any players
-                return true;
-            },
-            (player) => player.deadPile.length <= smallestNumberOfCharsInDeadPile,
-            (player) => player.firstPlayer
-        ];
-
-        let remainingPlayers = this.getPlayers();
-        for (const rule of rules) {
-            remainingPlayers = remainingPlayers.filter((player) => rule(player));
-            if (remainingPlayers.length === 1) {
-                this.recordResults('time', remainingPlayers[0]);
-                return;
-            } else if (remainingPlayers.length === 0) {
-                this.recordResults('draw');
-                return;
-            }
-        }
-        //this should not be reached as it means after filtering the players with every rule there are still multiple players left
-        this.addAlert(
-            'After checking for every tie breaker rule to determine the winner of the game, no winner could be determined. This should not have happened. Please report this to the developers as it is likely a bug.'
-        );
-        this.recordResults('draw');
     }
 
     toggleMuteSpectators(playerName) {

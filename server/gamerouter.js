@@ -205,7 +205,7 @@ class GameRouter extends EventEmitter {
                     logger.error('PONG received for unknown worker');
                 }
                 break;
-            case 'GAMEWIN':
+            case 'GAMEOVER':
                 this.gameService.update(message.arg.game);
                 break;
             case 'REMATCH':

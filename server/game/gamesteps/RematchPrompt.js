@@ -41,6 +41,10 @@ class RematchPrompt extends AllPlayerPrompt {
         return true;
     }
 
+    getPromptablePlayers() {
+        return this.game.getAllPlayers().filter((player) => !player.left);
+    }
+
     onCompleted() {
         if (this.cancelled) {
             return;

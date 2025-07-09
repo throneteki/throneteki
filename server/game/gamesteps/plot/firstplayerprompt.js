@@ -1,10 +1,11 @@
 import UIPrompt from '../uiprompt.js';
 
 class FirstPlayerPrompt extends UIPrompt {
-    constructor(game, player) {
+    constructor(game, player, reprocessSteps = []) {
         super(game);
 
         this.player = player;
+        this.reprocessSteps = reprocessSteps;
     }
 
     activeCondition(player) {
@@ -56,6 +57,16 @@ class FirstPlayerPrompt extends UIPrompt {
         this.game.setFirstPlayer(firstPlayer);
 
         this.complete();
+    }
+
+    checkPlayer() {
+        const checkPlayer = super.checkPlayer();
+        if (!checkPlayer) {
+            for (const step of this.reprocessSteps) {
+                this.game.queueStep(step);
+            }
+        }
+        return checkPlayer;
     }
 
     getPlayer() {

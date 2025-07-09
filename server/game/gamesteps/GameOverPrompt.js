@@ -38,13 +38,6 @@ class GameOverPrompt extends AllPlayerPrompt {
         return { menuTitle: 'Waiting for opponent to choose to continue' };
     }
 
-    isComplete() {
-        return this.game
-            .getAllPlayers()
-            .filter((player) => !player.left)
-            .every((player) => this.completionCondition(player));
-    }
-
     onMenuCommand(player, arg) {
         let message = arg === 'continue' ? 'to continue' : 'a rematch';
         this.game.addMessage('{0} would like {1}', player, message);
@@ -58,6 +51,10 @@ class GameOverPrompt extends AllPlayerPrompt {
         }
 
         return true;
+    }
+
+    getPromptablePlayers() {
+        return this.game.getAllPlayers().filter((player) => !player.left);
     }
 }
 

@@ -1420,6 +1420,10 @@ class Player extends Spectator {
             timerSettings: this.timerSettings,
             keywordSettings: this.keywordSettings,
             ...promptState,
+            isPlaying: this.isPlaying(),
+            left: this.left,
+            eliminated: !!this.eliminated,
+            disconnected: !!this.disconnectedAt,
             seatNo: this.seatNo,
             activePlot: this.activePlot ? this.activePlot.getSummary(activePlayer) : undefined,
             agendas: this.agendas
@@ -1440,10 +1444,8 @@ class Player extends Spectator {
                 shadows: this.getSummaryForCardList(this.shadows, activePlayer)
             },
             isActivePrompt,
-            disconnected: !!this.disconnectedAt,
             faction: this.faction.getSummary(activePlayer),
             firstPlayer: this.firstPlayer,
-            left: this.left,
             numDrawCards: this.drawDeck.length,
             numPlotCards: this.plotDeck.length,
             phase: this.game.currentPhase,

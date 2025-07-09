@@ -1,7 +1,7 @@
 import moment from 'moment';
 
 class ChessClock {
-    constructor(player, timeLimitInMinutes, delay, startEvent = 'onSetupFinished') {
+    constructor(player, timeLimitInMinutes, delay) {
         this.player = player;
         this.enabled = false; // Clocks are disabled until start event hit
         this.active = false; // Clock is active when that player has the current window
@@ -11,7 +11,8 @@ class ChessClock {
         this.timerStart = null;
         this.paused = false;
 
-        this.player.game.on(startEvent, () => (this.enabled = true));
+        this.player.game.on('onSetupFinished', () => (this.enabled = true));
+        this.player.game.on('onGameOver', () => (this.enabled = false));
     }
 
     togglePause() {
@@ -30,7 +31,7 @@ class ChessClock {
     }
 
     start() {
-        if (!this.enabled) {
+        if (!this.enabled || this.paused) {
             return;
         }
         if (!this.active) {
@@ -48,7 +49,7 @@ class ChessClock {
     }
 
     stop() {
-        if (!this.enabled) {
+        if (!this.enabled || this.paused) {
             return;
         }
         if (this.active) {
@@ -70,11 +71,7 @@ class ChessClock {
             const { timeRemaining } = this.calculateTimeLeft();
             if (timeRemaining === 0) {
                 this.stop();
-                this.player.game.addAlert('warning', "{0}'s clock has run out", this.player);
-                this.player.game.eliminate(this.player, 'time');
-                this.player.game.checkWinAndLossConditions();
-                // Re-sends the game state to clients due to time expiring
-                this.player.game.timeExpired();
+                this.game.chessClockExpired(this.player);
 
                 clearInterval(this.timer);
                 delete this.timer;

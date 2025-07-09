@@ -10,13 +10,12 @@ class TaxationPhase extends Phase {
             new SimpleStep(game, () => this.returnGold()),
             () => new DiscardToReservePrompt(game),
             new SimpleStep(game, () => this.returnTitleCards()),
-            new ActionWindow(game, 'After reserve check', 'taxation'),
-            new SimpleStep(game, () => this.roundEnded())
+            new ActionWindow(game, 'After reserve check', 'taxation')
         ]);
     }
 
     returnGold() {
-        for (let player of this.game.getPlayersInFirstPlayerOrder()) {
+        for (const player of this.game.getPlayersInFirstPlayerOrder()) {
             if (!player.doesNotReturnUnspentGold) {
                 this.game.returnGoldToTreasury({ player: player, amount: player.gold });
             }
@@ -28,26 +27,9 @@ class TaxationPhase extends Phase {
             return;
         }
 
-        for (let player of this.game.getPlayers()) {
+        for (const player of this.game.getPlayers()) {
             this.game.titlePool.returnToPool(player, player.title);
         }
-    }
-
-    roundEnded() {
-        this.game.raiseEvent('onRoundEnded');
-
-        let players = this.game.getPlayers();
-        let playerPower = players
-            .map((player) => `${player.name}: ${player.getTotalPower()}`)
-            .join(', ');
-
-        this.game.round++;
-
-        this.game.addAlert('endofround', 'End of round {0}', this.game.round);
-        this.game.addMessage(playerPower);
-        this.game.addAlert('startofround', 'Round {0}', this.game.round + 1);
-
-        this.game.checkForTimeExpired();
     }
 }
 
