@@ -8,6 +8,7 @@ import InitiatingKeywordsWindow from '../InitiatingKeywordsWindow.js';
 import ResolutionKeywordsWindow from '../ResolutionKeywordsWindow.js';
 import InitiateChallenge from '../../GameActions/InitiateChallenge.js';
 import DeclareDefenders from '../../GameActions/DeclareDefenders.js';
+import { Flags } from '../../Constants/index.js';
 
 class ChallengeFlow extends BaseStep {
     constructor(game, challenge) {
@@ -221,7 +222,7 @@ class ChallengeFlow extends BaseStep {
 
     challengeBonusPower() {
         if (this.challenge.isUnopposed() && this.challenge.isAttackerTheWinner()) {
-            if (this.challenge.winner.cannotGainChallengeBonus) {
+            if (this.challenge.winner.hasFlag(Flags.player.cannotGainChallengeBonus)) {
                 this.game.addMessage(
                     '{0} won the challenge unopposed but cannot gain challenge bonuses',
                     this.challenge.winner

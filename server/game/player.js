@@ -19,7 +19,7 @@ import GameActions from './GameActions/index.js';
 import RemoveFromGame from './GameActions/RemoveFromGame.js';
 import SacrificeCard from './GameActions/SacrificeCard.js';
 import ChessClock from './ChessClock.js';
-import { DrawPhaseCards, SetupGold } from './Constants/index.js';
+import { DrawPhaseCards, Flags, SetupGold } from './Constants/index.js';
 
 class Player extends Spectator {
     constructor(id, user, owner, game, seatNo) {
@@ -61,9 +61,6 @@ class Player extends Spectator {
         this.maxGoldGain = new MinMaxProperty({ defaultMin: 0, defaultMax: undefined });
         this.drawnCards = 0;
         this.maxCardDraw = new MinMaxProperty({ defaultMin: 0, defaultMax: undefined });
-        this.doesNotReturnUnspentGold = false;
-        this.cannotGainChallengeBonus = false;
-        this.cannotWinGame = false;
         this.triggerRestrictions = [];
         this.playCardRestrictions = [];
         this.putIntoShadowsRestrictions = [];
@@ -393,7 +390,7 @@ class Player extends Spectator {
     }
 
     canWinGame() {
-        return !this.cannotWinGame;
+        return !this.hasFlag(Flags.player.cannotWinGame);
     }
 
     addAllowedChallenge(allowedChallenge) {
@@ -1267,7 +1264,7 @@ class Player extends Spectator {
 
     canGainRivalBonus(opponent) {
         return (
-            !this.cannotGainChallengeBonus &&
+            !this.hasFlag(Flags.player.cannotGainChallengeBonus) &&
             this.isRival(opponent) &&
             !this.bonusesFromRivals.has(opponent)
         );

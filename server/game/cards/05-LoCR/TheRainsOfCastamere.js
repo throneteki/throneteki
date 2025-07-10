@@ -1,5 +1,6 @@
 import AgendaCard from '../../agendacard.js';
 import RevealPlots from '../../gamesteps/revealplots.js';
+import { Flags } from '../../Constants/index.js';
 
 class TheRainsOfCastamere extends AgendaCard {
     constructor(owner, cardData) {
@@ -15,7 +16,7 @@ class TheRainsOfCastamere extends AgendaCard {
                     event.challenge.challengeType === 'intrigue' &&
                     event.challenge.winner === this.owner &&
                     event.challenge.strengthDifference >= 5 &&
-                    !this.owner.hasFlag('cannotRevealPlot')
+                    !this.owner.hasFlag(Flags.player.cannotRevealPlot)
             },
             cost: ability.costs.kneelFactionCard(),
             target: {
@@ -33,7 +34,7 @@ class TheRainsOfCastamere extends AgendaCard {
         this.action({
             title: 'Manually trigger',
             cost: ability.costs.kneelFactionCard(),
-            condition: () => !this.owner.hasFlag('cannotRevealPlot'),
+            condition: () => !this.owner.hasFlag(Flags.player.cannotRevealPlot),
             target: {
                 type: 'select',
                 activePromptTitle: 'Select a plot',

@@ -10,7 +10,7 @@ import CannotRestriction from './cannotrestriction.js';
 import ChallengeRestriction from './ChallengeRestriction.js';
 import ImmunityRestriction from './immunityrestriction.js';
 import GoldSource from './GoldSource.js';
-import { Tokens } from './Constants/index.js';
+import { Flags, Tokens } from './Constants/index.js';
 import ForcedChallenge from './ForcedChallenge.js';
 
 function cannotEffect(type) {
@@ -25,6 +25,20 @@ function cannotEffect(type) {
             }
         };
     };
+}
+
+function modifyPlayerFlagEffect(flag) {
+    return function () {
+        return {
+            targetType: 'player',
+            apply: function (player) {
+                player.flags.add(flag);
+            },
+            unapply: function (player) {
+                player.flags.remove(flag);
+            }
+        };
+    }
 }
 
 function losesAspectEffect(aspect) {
@@ -381,17 +395,7 @@ const Effects = {
         return Effects.dynamicStrength(negatedCalculate, 'decreaseStrength');
     },
     doesNotContributeStrength: challengeOptionEffect('doesNotContributeStrength'),
-    doesNotReturnUnspentGold: function () {
-        return {
-            targetType: 'player',
-            apply: function (player) {
-                player.doesNotReturnUnspentGold = true;
-            },
-            unapply: function (player) {
-                player.doesNotReturnUnspentGold = false;
-            }
-        };
-    },
+    doesNotReturnUnspentGold: modifyPlayerFlagEffect(Flags.player.doesNotReturnUnspentGold),
     modifyKeywordTriggerAmount: function (keyword, value) {
         return {
             apply: function (card) {
@@ -1071,28 +1075,8 @@ const Effects = {
             }
         };
     },
-    cannotGainChallengeBonus: function () {
-        return {
-            targetType: 'player',
-            apply: function (player) {
-                player.cannotGainChallengeBonus = true;
-            },
-            unapply: function (player) {
-                player.cannotGainChallengeBonus = false;
-            }
-        };
-    },
-    cannotWinGame: function () {
-        return {
-            targetType: 'player',
-            apply: function (player) {
-                player.cannotWinGame = true;
-            },
-            unapply: function (player) {
-                player.cannotWinGame = false;
-            }
-        };
-    },
+    cannotGainChallengeBonus: modifyPlayerFlagEffect(Flags.player.cannotGainChallengeBonus),
+    cannotWinGame: modifyPlayerFlagEffect(Flags.player.cannotWinGame),
     cannotTriggerCardAbilities: function (restriction = () => true) {
         return {
             targetType: 'player',
@@ -1297,17 +1281,7 @@ const Effects = {
             }
         };
     },
-    cannotWinChallenge: function () {
-        return {
-            targetType: 'player',
-            apply: function (player) {
-                player.cannotWinChallenge = true;
-            },
-            unapply: function (player) {
-                player.cannotWinChallenge = false;
-            }
-        };
-    },
+    cannotWinChallenge: modifyPlayerFlagEffect(Flags.player.cannotWinChallenge),
     choosesWinnerForInitiativeTies: function () {
         return {
             targetType: 'player',
@@ -1418,28 +1392,8 @@ const Effects = {
             }
         };
     },
-    cannotBeFirstPlayer: function () {
-        return {
-            targetType: 'player',
-            apply: function (player) {
-                player.flags.add('cannotBeFirstPlayer');
-            },
-            unapply: function (player) {
-                player.flags.remove('cannotBeFirstPlayer');
-            }
-        };
-    },
-    cannotGainDominancePower: function () {
-        return {
-            targetType: 'player',
-            apply: function (player) {
-                player.flags.add('cannotGainDominancePower');
-            },
-            unapply: function (player) {
-                player.flags.remove('cannotGainDominancePower');
-            }
-        };
-    },
+    cannotBeFirstPlayer: modifyPlayerFlagEffect(Flags.player.cannotBeFirstPlayer),
+    cannotGainDominancePower: modifyPlayerFlagEffect(Flags.player.cannotGainDominancePower),
     canSelectAsFirstPlayer: function (condition) {
         return {
             targetType: 'player',
@@ -1869,17 +1823,7 @@ const Effects = {
             isStateDependent: true
         };
     },
-    cannotRevealPlot: function () {
-        return {
-            targetType: 'player',
-            apply: function (player) {
-                player.flags.add('cannotRevealPlot');
-            },
-            unapply: function (player) {
-                player.flags.remove('cannotRevealPlot');
-            }
-        };
-    },
+    cannotRevealPlot: modifyPlayerFlagEffect(Flags.player.cannotRevealPlot),
     //Meereen only effect
     removeCardsFromHand: function () {
         return {

@@ -1,4 +1,5 @@
 import UIPrompt from '../uiprompt.js';
+import { Flags } from '../../Constants/index.js';
 
 class FirstPlayerPrompt extends UIPrompt {
     constructor(game, player, reprocess = () => true) {
@@ -25,7 +26,7 @@ class FirstPlayerPrompt extends UIPrompt {
         let opponents = this.game.getPlayers().filter((player) => player !== this.player);
         let firstPlayerChoices = [this.player].concat(opponents);
         let validChoices = firstPlayerChoices.filter(
-            (player) => !player.hasFlag('cannotBeFirstPlayer')
+            (player) => !player.hasFlag(Flags.player.cannotBeFirstPlayer)
         );
 
         if (validChoices.length === 0) {

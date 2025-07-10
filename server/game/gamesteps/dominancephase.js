@@ -3,6 +3,7 @@ import SimpleStep from './simplestep.js';
 import ActionWindow from './actionwindow.js';
 import ChoosePlayerPrompt from './ChoosePlayerPrompt.js';
 import GameActions from '../GameActions/index.js';
+import { Flags } from '../Constants/index.js';
 
 class DominancePhase extends Phase {
     constructor(game) {
@@ -82,7 +83,10 @@ class DominancePhase extends Phase {
                     this.game.winnerOfDominanceInLastRound = event.winner;
 
                     const action = GameActions.gainPower({ card: event.winner.faction, amount: 1 });
-                    if (action.allow() && !event.winner.hasFlag('cannotGainDominancePower')) {
+                    if (
+                        action.allow() &&
+                        !event.winner.hasFlag(Flags.player.cannotGainDominancePower)
+                    ) {
                         if (event.chosenBy) {
                             this.game.addMessage(
                                 '{0} gains 1 power for their faction due to {1} choosing them to win dominance',

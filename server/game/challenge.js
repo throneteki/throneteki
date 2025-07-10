@@ -3,6 +3,7 @@ import EventRegistrar from './eventregistrar.js';
 import Settings from '../settings.js';
 import ChallengeMatcher from './ChallengeMatcher.js';
 import { ChallengeContributions } from './ChallengeContributions.js';
+import { Flags } from './Constants/index.js';
 
 class Challenge {
     constructor(game, properties) {
@@ -245,7 +246,7 @@ class Challenge {
             {
                 condition: () =>
                     this.attackerStrength >= this.defenderStrength &&
-                    this.attackingPlayer.cannotWinChallenge,
+                    this.attackingPlayer.hasFlag(Flags.player.cannotWinChallenge),
                 message:
                     'There is no winner or loser for this challenge because the attacker cannot win'
             },
@@ -258,7 +259,7 @@ class Challenge {
             {
                 condition: () =>
                     this.defenderStrength > this.attackerStrength &&
-                    this.defendingPlayer.cannotWinChallenge,
+                    this.defendingPlayer.hasFlag(Flags.player.cannotWinChallenge),
                 message:
                     'There is no winner or loser for this challenge because the defender cannot win'
             },
