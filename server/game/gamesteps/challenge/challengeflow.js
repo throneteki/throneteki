@@ -66,7 +66,7 @@ class ChallengeFlow extends BaseStep {
             attacking: true,
             challenge: this.challenge,
             cannotCancel: this.challenge.declareDefendersFirst,
-            mustBeDeclaredOption: 'mustBeDeclaredAsAttacker',
+            mustBeDeclaredOption: Flags.challengeOptions.mustBeDeclaredAsAttacker,
             limitsProperty: 'attackerLimits',
             activePromptTitle: 'Select challenge attackers',
             waitingPromptTitle: 'Waiting for opponent to select attackers',
@@ -111,7 +111,7 @@ class ChallengeFlow extends BaseStep {
         return new ChooseParticipantsPrompt(this.game, this.challenge.defendingPlayer, {
             attacking: false,
             challenge: this.challenge,
-            mustBeDeclaredOption: 'mustBeDeclaredAsDefender',
+            mustBeDeclaredOption: Flags.challengeOptions.mustBeDeclaredAsDefender,
             limitsProperty: 'defenderLimits',
             activePromptTitle: 'Select defenders',
             waitingPromptTitle: 'Waiting for opponent to defend',

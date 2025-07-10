@@ -54,6 +54,7 @@ class BaseCard {
         this.name = cardData.name;
         this.facedown = false;
         this.keywords = new KeywordsProperty();
+        this.flags = new ReferenceCountedSetProperty();
         this.traits = new ReferenceCountedSetProperty();
         this.blanks = new ReferenceCountedSetProperty();
         this.losesAspects = new ReferenceCountedSetProperty();
@@ -327,6 +328,7 @@ class BaseCard {
         clone.blanks = this.blanks.clone();
         clone.controllerStack = [...this.controllerStack];
         clone.factions = this.factions.clone();
+        clone.flags = this.flags.clone();
         clone.location = this.location;
         clone.losesAspects = this.losesAspects.clone();
         clone.keywords = this.keywords.clone();
@@ -387,6 +389,10 @@ class BaseCard {
     restoreAspect(aspect) {
         this.losesAspects.remove(aspect);
         this.markAsDirty();
+    }
+
+    hasFlag(flag) {
+        return this.flags.contains(flag);
     }
 
     hasKeyword(keyword) {
