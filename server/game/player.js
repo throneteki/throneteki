@@ -19,7 +19,7 @@ import GameActions from './GameActions/index.js';
 import RemoveFromGame from './GameActions/RemoveFromGame.js';
 import SacrificeCard from './GameActions/SacrificeCard.js';
 import ChessClock from './ChessClock.js';
-import { DrawPhaseCards, MarshalIntoShadowsCost, SetupGold } from './Constants/index.js';
+import { DrawPhaseCards, SetupGold } from './Constants/index.js';
 
 class Player extends Spectator {
     constructor(id, user, owner, game, seatNo) {

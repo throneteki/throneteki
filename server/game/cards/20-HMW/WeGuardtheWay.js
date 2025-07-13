@@ -5,7 +5,12 @@ class WeGuardtheWay extends DrawCard {
     setupCardAbilities() {
         this.xValue({
             min: () => 1,
-            max: () => this.game.getNumberOfCardsInPlay(card => card.getType() === 'character' && (card.hasTrait('Guard') || card.hasTrait('House Yronwood')))
+            max: () =>
+                this.game.getNumberOfCardsInPlay(
+                    (card) =>
+                        card.getType() === 'character' &&
+                        (card.hasTrait('Guard') || card.hasTrait('House Yronwood'))
+                )
         });
 
         this.action({
