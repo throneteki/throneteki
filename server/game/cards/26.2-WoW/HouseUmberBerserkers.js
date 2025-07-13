@@ -2,7 +2,7 @@ import DrawCard from '../../drawcard.js';
 
 class HouseUmberBerserkers extends DrawCard {
     setupCardAbilities() {
-        this.xValue({ value: () => Math.max(this.controller.getNumberOfUsedPlots(), 1) });
+        this.xValue({ value: (context) => Math.max(context.player.getNumberOfUsedPlots(), 1) });
     }
 }
 
