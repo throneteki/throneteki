@@ -4,7 +4,7 @@ import SimpleStep from './simplestep.js';
 import InterruptWindowOrder from './InterruptWindowOrder.js';
 
 class InterruptWindow extends BaseStep {
-    constructor(game, event, postHandlerFunc = () => true) {
+    constructor(game, event) {
         super(game);
 
         this.event = event;
@@ -21,7 +21,6 @@ class InterruptWindow extends BaseStep {
             new SimpleStep(game, () => this.executePostHandler()),
             new SimpleStep(game, () => this.openWindowForAttachedEvents())
         ]);
-        this.postHandlerFunc = postHandlerFunc;
     }
 
     queueStep(step) {
@@ -109,7 +108,7 @@ class InterruptWindow extends BaseStep {
         }
 
         this.event.executePostHandler();
-        this.postHandlerFunc();
+        this.game.refreshGameState();
     }
 }
 

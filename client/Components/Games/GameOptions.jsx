@@ -26,7 +26,6 @@ const GameOptions = ({ formProps, isDisabled }) => {
                                 classNames={{ label: 'text-sm' }}
                                 name={option.name}
                                 onChange={formProps.handleChange}
-                                value='true'
                                 isSelected={formProps.values[option.name]}
                                 isDisabled={isDisabled}
                             >

@@ -96,7 +96,8 @@ const NewGame = ({
         chessClockTimeLimit: 30,
         chessClockDelay: 5,
         maxPlayers: 4,
-        randomSeats: true
+        randomSeats: true,
+        allowMultipleWinners: false
     };
 
     if (!connected) {
@@ -233,11 +234,21 @@ const NewGame = ({
                                                     classNames={{ label: 'text-sm' }}
                                                     name={'randomSeats'}
                                                     onChange={formProps.handleChange}
-                                                    value='true'
                                                     isSelected={formProps.values.randomSeats}
                                                     isDisabled={usingEventOptions}
                                                 >
                                                     Random Seats
+                                                </Switch>
+                                                <Switch
+                                                    classNames={{ label: 'text-sm' }}
+                                                    name={'allowMultipleWinners'}
+                                                    onChange={formProps.handleChange}
+                                                    isSelected={
+                                                        formProps.values.allowMultipleWinners
+                                                    }
+                                                    isDisabled={usingEventOptions}
+                                                >
+                                                    Allow Multiple Winners
                                                 </Switch>
                                             </div>
                                         </div>

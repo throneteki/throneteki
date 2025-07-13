@@ -1,14 +1,23 @@
 import moment from 'moment';
 
 class TimeLimit {
-    constructor(game, timeLimitInMinutes, startEvent = 'onSetupFinished') {
+    constructor(game, timeLimitInMinutes) {
         this.game = game;
+        this.enabled = false;
         this.active = false;
         this.timeLeft = timeLimitInMinutes * 60;
         this.timerStart = null;
         this.paused = false;
 
-        this.game.on(startEvent, () => this.start());
+        this.game.on('onSetupFinished', () => {
+            this.enabled = true;
+            this.start();
+        });
+
+        this.game.on('onGameOver', () => {
+            this.stop();
+            this.enabled = false;
+        });
     }
 
     get isTimeLimitReached() {
@@ -16,6 +25,9 @@ class TimeLimit {
     }
 
     togglePause() {
+        if (!this.enabled) {
+            return;
+        }
         this.paused = !this.paused;
         if (this.paused) {
             this.stop();
@@ -25,6 +37,9 @@ class TimeLimit {
     }
 
     start() {
+        if (!this.enabled) {
+            return;
+        }
         if (!this.active) {
             this.active = true;
             this.timerStart = new Date();
@@ -36,6 +51,9 @@ class TimeLimit {
     }
 
     stop() {
+        if (!this.enabled) {
+            return;
+        }
         if (this.active) {
             this.active = false;
             clearInterval(this.timer);
@@ -45,16 +63,12 @@ class TimeLimit {
     }
 
     checkForTimeLimitReached() {
-        if (this.active && this.timer && this.timeLeft > 0) {
+        if (this.enabled && this.active && this.timer && this.timeLeft > 0) {
             const timeLeft = this.calculateTimeLeft();
             if (timeLeft === 0) {
                 this.stop();
-                this.game.addAlert(
-                    'warning',
-                    'Time up. The game will end after the current round has finished'
-                );
-                // Re-sends the game state to clients due to time expiring
-                this.game.timeExpired();
+                this.enabled = false;
+                this.game.timeLimitExpired();
 
                 clearInterval(this.timer);
                 delete this.timer;

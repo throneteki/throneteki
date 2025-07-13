@@ -25,7 +25,7 @@ const defaultNumOfPlayers = {
 class GameFlowWrapper {
     constructor(options) {
         const gameRouter = jasmine.createSpyObj('gameRouter', [
-            'gameWon',
+            'gameOver',
             'handleError',
             'playerLeft'
         ]);
@@ -135,6 +135,14 @@ class GameFlowWrapper {
     completeTaxationPhase() {
         this.guardCurrentPhase('taxation');
         this.eachPlayerInFirstPlayerOrder((player) => player.clickPrompt('Done'));
+    }
+
+    completeRound() {
+        if (this.game.currentPhase === 'marshal') { this.completeMarshalPhase() }
+        if (this.game.currentPhase === 'challenge') { this.completeChallengesPhase() }
+        if (this.game.currentPhase === 'dominance') { this.completeDominancePhase() }
+        if (this.game.currentPhase === 'standing') { this.completeStandingPhase() }
+        if (this.game.currentPhase === 'taxation') { this.completeTaxationPhase() }
     }
 
     skipActionWindow() {

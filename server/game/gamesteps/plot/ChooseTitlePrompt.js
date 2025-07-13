@@ -11,10 +11,6 @@ class ChooseTitlePrompt extends BaseStep {
     }
 
     continue() {
-        if (!this.game.isMelee) {
-            return true;
-        }
-
         if (this.remainingPlayers.length !== 0) {
             const currentPlayer = this.remainingPlayers.shift();
             this.promptForTitle(currentPlayer);

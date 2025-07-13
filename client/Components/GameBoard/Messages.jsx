@@ -62,30 +62,25 @@ const Messages = ({ messages }) => {
             if (key === 'alert') {
                 const message = formatMessageText(fragment.message);
                 switch (fragment.type) {
+                    case 'startofround':
                     case 'endofround':
-                    case 'phasestart':
-                        // eslint-disable-next-line no-var
-                        var sepClass = classNames('font-bold text-foreground', {
-                            'text-md': fragment.type === 'phasestart',
+                    case 'phasestart': {
+                        const className = classNames('font-bold text-foreground', {
+                            'text-large': fragment.type === 'startofround',
+                            'text-medium': fragment.type === 'phasestart',
                             capitalize: fragment.type === 'phasestart'
                         });
                         messages.push(
-                            <div className={sepClass} key={index++}>
-                                <hr className={'mb-4 mt-2 border-primary ' + fragment.type} />
-                                {message}
+                            <div className={className} key={index++}>
+                                <hr className='border-primary' />
+                                <div className='my-3'>{message}</div>
                                 {fragment.type === 'phasestart' && (
-                                    <hr className='mt-4 border-primary' />
+                                    <hr className='border-primary' />
                                 )}
                             </div>
                         );
                         break;
-                    case 'startofround':
-                        messages.push(
-                            <div className={'separator font-bold ' + fragment.type} key={index++}>
-                                {message}
-                            </div>
-                        );
-                        break;
+                    }
                     case 'success':
                     case 'info':
                     case 'danger':

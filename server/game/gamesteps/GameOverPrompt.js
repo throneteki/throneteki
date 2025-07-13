@@ -1,7 +1,7 @@
 import AllPlayerPrompt from './allplayerprompt.js';
 import RematchPrompt from './RematchPrompt.js';
 
-class GameWonPrompt extends AllPlayerPrompt {
+class GameOverPrompt extends AllPlayerPrompt {
     constructor(game, winner) {
         super(game);
         this.winner = winner;
@@ -13,7 +13,7 @@ class GameWonPrompt extends AllPlayerPrompt {
     }
 
     activePrompt() {
-        var buttons = [
+        const buttons = [
             { arg: 'continue', text: 'Continue Playing' },
             { arg: 'rematch', text: 'Rematch' }
         ];
@@ -26,11 +26,10 @@ class GameWonPrompt extends AllPlayerPrompt {
         }
 
         return {
-            promptTitle: 'Game Won',
-            menuTitle:
-                this.winner === null
-                    ? 'Game ends in a draw'
-                    : this.winner.name + ' has won the game!',
+            promptTitle: this.winner ? 'Game Won' : 'Game Over',
+            menuTitle: this.winner
+                ? this.winner.name + ' has won the game!'
+                : 'Game has ended without a winner',
             buttons
         };
     }
@@ -53,6 +52,10 @@ class GameWonPrompt extends AllPlayerPrompt {
 
         return true;
     }
+
+    getPromptablePlayers() {
+        return this.game.getAllPlayers().filter((player) => !player.left);
+    }
 }
 
-export default GameWonPrompt;
+export default GameOverPrompt;

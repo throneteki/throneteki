@@ -14,7 +14,7 @@ class PlotPhase extends Phase {
             new SimpleStep(game, () => this.announceForcedPlotSelection()),
             new SimpleStep(game, () => this.choosePlots()),
             () => new RevealPlots(game, this.getSelectedPlots()),
-            () => new ChooseTitlePrompt(game, game.titlePool),
+            new SimpleStep(game, () => this.chooseTitles()),
             new ActionWindow(this.game, 'After plots revealed', 'plot')
         ]);
     }
@@ -53,6 +53,12 @@ class PlotPhase extends Phase {
     recyclePlots() {
         for (const player of this.game.getPlayers()) {
             player.recyclePlots();
+        }
+    }
+
+    chooseTitles() {
+        if (this.game.isMelee) {
+            this.game.queueStep(new ChooseTitlePrompt(this.game, this.game.titlePool));
         }
     }
 

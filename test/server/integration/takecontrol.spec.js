@@ -827,7 +827,7 @@ describe('take control', function () {
 
             it('should immediately win the game', function () {
                 expect(this.location).toBeControlledBy(this.player1);
-                expect(this.game.winner).toBe(this.player1Object);
+                expect(this.game.results.winner).toBe(this.player1Object);
             });
         });
     });

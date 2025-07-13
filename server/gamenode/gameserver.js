@@ -226,11 +226,9 @@ class GameServer {
         next();
     }
 
-    gameWon(game, reason, winner) {
-        this.gameSocket.send('GAMEWIN', {
-            game: game.getSaveState(),
-            winner: winner.name,
-            reason: reason
+    gameOver(game) {
+        this.gameSocket.send('GAMEOVER', {
+            game: game.getSaveState()
         });
     }
 

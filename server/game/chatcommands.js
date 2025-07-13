@@ -298,7 +298,6 @@ class ChatCommands {
                     match: card,
                     effect: effect
                 }));
-                this.game.postEventCalculations();
                 this.game.addAlert(
                     'danger',
                     '{0} uses the /strength command to set the strength of {1} to {2}',
@@ -306,6 +305,7 @@ class ChatCommands {
                     card,
                     num
                 );
+                this.game.refreshGameState();
                 return true;
             }
         });
