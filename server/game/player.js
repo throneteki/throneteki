@@ -507,31 +507,6 @@ class Player extends Spectator {
         return reduction;
     }
 
-    getReducedCost(playingType, card) {
-        let baseCost = this.getBaseCost(playingType, card);
-        let reducedCost = baseCost - this.getCostReduction(playingType, card);
-        return Math.max(reducedCost, card.getMinCost());
-    }
-
-    getBaseCost(playingType, card) {
-        if (playingType === 'marshalIntoShadows') {
-            return MarshalIntoShadowsCost;
-        }
-
-        if (
-            playingType === 'outOfShadows' ||
-            (playingType === 'play' && card.location === 'shadows')
-        ) {
-            return card.getShadowCost();
-        }
-
-        if (playingType === 'ambush') {
-            return card.getAmbushCost();
-        }
-
-        return card.getCost();
-    }
-
     markUsedReducers(playingType, card) {
         var matchingReducers = this.costReducers.filter((reducer) =>
             reducer.canReduce(playingType, card)
@@ -758,7 +733,12 @@ class Player extends Spectator {
 
             if (needsShadowEvent) {
                 event.addChildEvent(
-                    new Event('onCardOutOfShadows', { player: this, card: card, type: 'card' })
+                    new Event('onCardOutOfShadows', {
+                        player: this,
+                        card: card,
+                        type: 'card',
+                        xValue: options.xValue
+                    })
                 );
             }
 

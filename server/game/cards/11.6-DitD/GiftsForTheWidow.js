@@ -2,13 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class GiftsForTheWidow extends DrawCard {
-    setupCardAbilities(ability) {
+    setupCardAbilities() {
+        this.xValue({ min: () => 0, max: () => 99 });
+
         this.action({
             title: 'Search for attachment',
-            cost: ability.costs.payXGold(
-                () => 0,
-                () => 99
-            ),
             message: {
                 format: '{player} plays {source} to search their deck for an attachment with printed cost {xValue} or lower',
                 args: { xValue: (context) => context.xValue }

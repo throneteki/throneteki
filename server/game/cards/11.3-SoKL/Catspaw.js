@@ -24,7 +24,7 @@ class Catspaw extends DrawCard {
                     "{0} uses {1} and pays {2} gold to return {3} to {4}'s hand",
                     context.player,
                     this,
-                    context.goldCost,
+                    context.costs.gold,
                     context.target,
                     context.target.owner
                 );
