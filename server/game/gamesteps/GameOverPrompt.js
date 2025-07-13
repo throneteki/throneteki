@@ -1,3 +1,4 @@
+import TextHelper from '../TextHelper.js';
 import AllPlayerPrompt from './allplayerprompt.js';
 import RematchPrompt from './RematchPrompt.js';
 
@@ -25,10 +26,19 @@ class GameOverPrompt extends AllPlayerPrompt {
             });
         }
 
+        const getWinnerName = () => {
+            return Array.isArray(this.winner)
+                ? TextHelper.formatList(
+                      this.winner.map((w) => w.name),
+                      'and'
+                  )
+                : this.winner.name;
+        };
+
         return {
             promptTitle: this.winner ? 'Game Won' : 'Game Over',
             menuTitle: this.winner
-                ? this.winner.name + ' has won the game!'
+                ? getWinnerName() + ' has won the game!'
                 : 'Game has ended without a winner',
             buttons
         };

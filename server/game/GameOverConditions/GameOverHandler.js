@@ -258,7 +258,7 @@ class GameOverHandler {
             for (const [standing, players] of Object.entries(standings)) {
                 if (standing === '1') {
                     this.game.addAlert('success', '{0} has won the game', players);
-                } else {
+                } else if (this.game.isMelee) {
                     this.game.addAlert(
                         'info',
                         '{0} placed {1}',

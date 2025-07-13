@@ -68,7 +68,7 @@ describe('Valyrian Steel', function () {
                 const deck = this.buildDeck('lannister', [
                     'Valyrian Steel (R)',
                     'A Noble Cause', 'A Storm of Swords', 'Valar Morghulis',
-                    'Hedge Knight', 'Little Bird', 'The Water Gardens'
+                    'Hedge Knight', 'Little Bird (Core)', 'The Water Gardens'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);

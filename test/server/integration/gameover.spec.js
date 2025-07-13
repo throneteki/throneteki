@@ -29,7 +29,7 @@ describe('Game Over', function () {
                 });
 
                 it('wins the game for that player', function () {
-                    expect(this.game.results.winner).toBe(this.player1Object);
+                    expect(this.game.results.winner).toBe(this.player1Object.name);
                 });
             });
 
@@ -66,7 +66,7 @@ describe('Game Over', function () {
                     expect(this.player1).toHavePrompt('Select next action');
                     this.player1.clickPrompt('player2 wins');
 
-                    expect(this.game.results.winner).toBe(this.player2Object);
+                    expect(this.game.results.winner).toBe(this.player2Object.name);
                 });
             });
 
@@ -93,7 +93,7 @@ describe('Game Over', function () {
 
                     it('they are eliminated, and the other player wins', function () {
                         expect(this.player2Object.eliminated).toBe(true);
-                        expect(this.game.results.winner).toBe(this.player1Object);
+                        expect(this.game.results.winner).toBe(this.player1Object.name);
                     });
                 });
 
@@ -118,7 +118,7 @@ describe('Game Over', function () {
 
                     it('they are eliminated, and the other player wins', function () {
                         expect(this.player2Object.eliminated).toBe(true);
-                        expect(this.game.results.winner).toBe(this.player1Object);
+                        expect(this.game.results.winner).toBe(this.player1Object.name);
                     });
                 });
             });
@@ -143,7 +143,7 @@ describe('Game Over', function () {
                     expect(this.player1).toHavePrompt('Select next action');
                     this.player1.clickPrompt('player1 is eliminated');
 
-                    expect(this.game.results.winner).toBe(this.player2Object);
+                    expect(this.game.results.winner).toBe(this.player2Object.name);
                 });
             });
 
@@ -172,7 +172,7 @@ describe('Game Over', function () {
                     this.player2Object.faction.power = 4;
                     this.triggerTimerGameEnd();
 
-                    expect(this.game.results.winner).toBe(this.player1Object);
+                    expect(this.game.results.winner).toBe(this.player1Object.name);
                 });
 
                 describe('and power is tied', function () {
@@ -180,7 +180,7 @@ describe('Game Over', function () {
                         this.player1Object.moveCard(this.player1Object.drawDeck[0], 'hand');
                         this.triggerTimerGameEnd();
 
-                        expect(this.game.results.winner).toBe(this.player2Object);
+                        expect(this.game.results.winner).toBe(this.player2Object.name);
                     });
 
                     describe('and both players have the same number of cards in deck', function () {
@@ -188,7 +188,7 @@ describe('Game Over', function () {
                             this.game.winnerOfDominanceInLastRound = this.player2Object;
                             this.triggerTimerGameEnd();
 
-                            expect(this.game.results.winner).toBe(this.player2Object);
+                            expect(this.game.results.winner).toBe(this.player2Object.name);
                         });
 
                         describe('and no players won dominance in the final round', function () {
@@ -199,7 +199,7 @@ describe('Game Over', function () {
                                 );
                                 this.triggerTimerGameEnd();
 
-                                expect(this.game.results.winner).toBe(this.player2Object);
+                                expect(this.game.results.winner).toBe(this.player2Object.name);
                             });
 
                             describe('and both players have the same number of characters in their dead pile', function () {
@@ -207,7 +207,7 @@ describe('Game Over', function () {
                                     // Player 1 was set as first player at start of round
                                     this.triggerTimerGameEnd();
 
-                                    expect(this.game.results.winner).toBe(this.player1Object);
+                                    expect(this.game.results.winner).toBe(this.player1Object.name);
                                 });
                             });
                         });
@@ -265,7 +265,7 @@ describe('Game Over', function () {
                 });
 
                 it('they win the game', function () {
-                    expect(this.game.results.winner).toBe(this.player1Object);
+                    expect(this.game.results.winner).toBe(this.player1Object.name);
                 });
 
                 it('other remaining players are ranked by power total', function () {
@@ -312,7 +312,7 @@ describe('Game Over', function () {
                     expect(this.player1).toHavePrompt('Select next action');
                     this.player1.clickPrompt('player2 wins');
 
-                    expect(this.game.results.winner).toBe(this.player2Object);
+                    expect(this.game.results.winner).toBe(this.player2Object.name);
                 });
 
                 it('other remaining players are ranked by total power', function () {
@@ -474,7 +474,7 @@ describe('Game Over', function () {
                     this.player3Object.faction.power = 3;
                     this.triggerTimerGameEnd();
 
-                    expect(this.game.results.winner).toBe(this.player1Object);
+                    expect(this.game.results.winner).toBe(this.player1Object.name);
                 });
 
                 describe('and power is tied between multiple players', function () {
@@ -490,8 +490,8 @@ describe('Game Over', function () {
                         });
 
                         it('those players win the game', function () {
-                            expect(this.game.results.winner).toContain(this.player1Object);
-                            expect(this.game.results.winner).toContain(this.player2Object);
+                            expect(this.game.results.winner).toContain(this.player1Object.name);
+                            expect(this.game.results.winner).toContain(this.player2Object.name);
                         });
 
                         it('the remaining players standings are adjusted to account for those winners', function () {
@@ -509,7 +509,7 @@ describe('Game Over', function () {
                             this.player1Object.moveCard(this.player1Object.drawDeck[0], 'hand');
                             this.triggerTimerGameEnd();
 
-                            expect(this.game.results.winner).toBe(this.player2Object);
+                            expect(this.game.results.winner).toBe(this.player2Object.name);
                         });
 
                         describe('and players have the same number of cards in deck', function () {
@@ -517,7 +517,7 @@ describe('Game Over', function () {
                                 this.game.winnerOfDominanceInLastRound = this.player2Object;
                                 this.triggerTimerGameEnd();
 
-                                expect(this.game.results.winner).toBe(this.player2Object);
+                                expect(this.game.results.winner).toBe(this.player2Object.name);
                             });
 
                             describe('and no players won dominance in the final round', function () {
@@ -528,7 +528,7 @@ describe('Game Over', function () {
                                     );
                                     this.triggerTimerGameEnd();
 
-                                    expect(this.game.results.winner).toBe(this.player1Object);
+                                    expect(this.game.results.winner).toBe(this.player1Object.name);
                                 });
 
                                 describe('and players have the same number of characters in their dead pile', function () {
@@ -536,7 +536,9 @@ describe('Game Over', function () {
                                         // Player 1 was set as first player at start of round
                                         this.triggerTimerGameEnd();
 
-                                        expect(this.game.results.winner).toBe(this.player1Object);
+                                        expect(this.game.results.winner).toBe(
+                                            this.player1Object.name
+                                        );
                                     });
 
                                     // Note: This is a community made rule, as FFG has no ruling for this rare scenario
@@ -550,7 +552,7 @@ describe('Game Over', function () {
                                             this.triggerTimerGameEnd();
 
                                             expect(this.game.results.winner).toBe(
-                                                this.player1Object
+                                                this.player1Object.name
                                             );
                                         });
                                     });
@@ -567,7 +569,7 @@ describe('Game Over', function () {
                             });
 
                             it('the next highest power total player wins', function () {
-                                expect(this.game.results.winner).toBe(this.player3Object);
+                                expect(this.game.results.winner).toBe(this.player3Object.name);
                             });
 
                             it('those players will be placed 2nd', function () {
