@@ -1,6 +1,5 @@
 import DrawCard from '../../drawcard.js';
 import RevealPlots from '../../gamesteps/revealplots.js';
-import SimpleStep from '../../gamesteps/simplestep.js';
 
 class NymeriaOfNySar extends DrawCard {
     setupCardAbilities(ability) {
