@@ -673,6 +673,7 @@ class Game extends EventEmitter {
                 target[stat],
                 (value > 0 ? '+' : '') + value
             );
+            this.refreshGameState();
         }
     }
 

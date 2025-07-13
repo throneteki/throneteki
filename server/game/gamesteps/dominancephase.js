@@ -14,29 +14,36 @@ class DominancePhase extends Phase {
     }
 
     determineDominance() {
-        let result = { player: undefined, totalTied: false, difference: undefined };
+        const result = { player: undefined, totalTied: false, difference: undefined };
 
         result.playerDominance = this.game.getPlayersInFirstPlayerOrder().map((player) => {
             return { player: player, dominance: player.getDominance() };
         });
-        var distinctSorted = [
+        const distinctSorted = [
             ...new Set(result.playerDominance.map((p) => p.dominance).sort((a, b) => b - a))
         ];
-        var potentialWinners = result.playerDominance.filter(
+        const potentialWinners = result.playerDominance.filter(
             (p) => p.dominance === distinctSorted[0]
         );
+        for (const playerDominance of result.playerDominance) {
+            this.game.addMessage(
+                '{0} has {1} for dominance',
+                playerDominance.player,
+                playerDominance.dominance
+            );
+        }
 
         result.totalTied = potentialWinners.length > 1;
 
         if (result.totalTied) {
             result.difference = 0;
             this.game.addMessage('There was a tie for dominance');
-            let choosingPlayer = this.game
+            const choosingPlayer = this.game
                 .getPlayers()
                 .find((player) => player.choosesWinnerForDominanceTies);
             if (choosingPlayer) {
                 // If a player can choose winner for ties, prompt
-                let prompt = new ChoosePlayerPrompt(this.game, choosingPlayer, {
+                const prompt = new ChoosePlayerPrompt(this.game, choosingPlayer, {
                     condition: (player) => potentialWinners.map((pw) => pw.player).includes(player),
                     activePromptTitle: 'Choose player to win dominance',
                     waitingPromptTitle: 'Waiting for opponent to choose dominance winner',
@@ -66,15 +73,10 @@ class DominancePhase extends Phase {
     }
 
     determineWinner(result) {
-        let playerDominance = result.playerDominance.map((p) => p.dominance);
-        delete result.playerDominance;
-        this.dominanceResult = result;
-
         this.game.raiseEvent(
             'onDominanceDetermined',
             { winner: result.player, difference: result.difference, chosenBy: result.chosenBy },
             (event) => {
-                const comparisonString = playerDominance.join(' vs ');
                 if (event.winner) {
                     // Save the winner of dominance on the game object in order to use this information in determining the winner of the game after the time limit has expired
                     this.game.winnerOfDominanceInLastRound = event.winner;
@@ -83,28 +85,25 @@ class DominancePhase extends Phase {
                     if (action.allow() && !event.winner.hasFlag('cannotGainDominancePower')) {
                         if (event.chosenBy) {
                             this.game.addMessage(
-                                '{0} gains 1 power for their faction due to {1} choosing them to win dominance ({2})',
+                                '{0} gains 1 power for their faction due to {1} choosing them to win dominance',
                                 event.winner,
-                                event.chosenBy,
-                                comparisonString
+                                event.chosenBy
                             );
                         } else {
                             this.game.addMessage(
-                                '{0} gains 1 power for their faction for winning dominance ({1})',
-                                event.winner,
-                                comparisonString
+                                '{0} gains 1 power for their faction for winning dominance',
+                                event.winner
                             );
                         }
                         this.game.resolveGameAction(action);
                     } else {
                         this.game.addMessage(
-                            '{0} wins dominance, but cannot gain power for their faction ({1})',
-                            event.winner,
-                            comparisonString
+                            '{0} wins dominance, but cannot gain power for their faction',
+                            event.winner
                         );
                     }
                 } else {
-                    this.game.addMessage('No one wins dominance ({0})', comparisonString);
+                    this.game.addMessage('No one wins dominance');
                 }
             }
         );

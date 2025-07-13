@@ -13,13 +13,13 @@ class EndRound extends GameAction {
         return this.event('onRoundEnded', { game }, (event) => {
             event.game.addAlert('endofround', 'End of round {0}', event.game.round);
 
-            const playerPower = event.game
+            const playersInPowerOrder = event.game
                 .getPlayers()
-                .sort((a, b) => a.getTotalPower() - b.getTotalPower())
-                .map((player) => `${player.name}: ${player.getTotalPower()}`)
-                .join(', ');
+                .sort((a, b) => b.getTotalPower() - a.getTotalPower());
 
-            event.game.addMessage(playerPower);
+            for (const player of playersInPowerOrder) {
+                event.game.addMessage('{0} has {1} total power', player, player.getTotalPower());
+            }
 
             event.thenAttachEvent(this.event('onAtEndOfRound', { game: event.game }));
         });
