@@ -220,7 +220,7 @@ class GameOverHandler {
         if (winners.length === 0) {
             this.game.addAlert('info', 'Nobody wins the game');
             // Important: Each player detail will not contain "standing" if all players lose/draw
-            this.game.recordResults({ name: 'DRAW' }, reason, finishedAt);
+            this.game.recordResults([{ name: 'DRAW' }], reason, finishedAt);
         } else {
             const standings = {};
 
@@ -258,7 +258,7 @@ class GameOverHandler {
             for (const [standing, players] of Object.entries(standings)) {
                 if (standing === '1') {
                     this.game.addAlert('success', '{0} has won the game', players);
-                } else {
+                } else if (this.game.isMelee) {
                     this.game.addAlert(
                         'info',
                         '{0} placed {1}',

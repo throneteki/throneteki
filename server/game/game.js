@@ -582,7 +582,8 @@ class Game extends EventEmitter {
     }
 
     recordResults(winners, reason, finishedAt) {
-        const winner = !winners || winners.length > 1 ? winners : winners[0];
+        const winner =
+            !winners || winners.length > 1 ? winners?.map((w) => w.name) : winners[0].name;
         this.results = {
             winner,
             winReason: reason,
@@ -590,7 +591,7 @@ class Game extends EventEmitter {
         };
 
         this.router.gameOver(this);
-        this.queueStep(new GameOverPrompt(this, this.results.winner));
+        this.queueStep(new GameOverPrompt(this, winners));
     }
 
     changeStat(playerName, stat, value) {

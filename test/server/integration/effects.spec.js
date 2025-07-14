@@ -393,7 +393,7 @@ describe('effects', function () {
                 // Since Winter Festival should have brought Player 1's total
                 // power up to 15 just before the character dies, a winner should
                 // be recorded.
-                expect(this.game.results.winner.name).toBe(this.player1Object.name);
+                expect(this.game.results.winner).toBe(this.player1Object.name);
 
                 // Character should not be dead yet (during won prompt)
                 expect(this.character.location).toBe('play area');

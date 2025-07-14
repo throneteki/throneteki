@@ -1,10 +1,11 @@
+import TextHelper from '../TextHelper.js';
 import AllPlayerPrompt from './allplayerprompt.js';
 import RematchPrompt from './RematchPrompt.js';
 
 class GameOverPrompt extends AllPlayerPrompt {
-    constructor(game, winner) {
+    constructor(game, winners) {
         super(game);
-        this.winner = winner;
+        this.winners = winners;
         this.clickedButton = {};
     }
 
@@ -26,9 +27,12 @@ class GameOverPrompt extends AllPlayerPrompt {
         }
 
         return {
-            promptTitle: this.winner ? 'Game Won' : 'Game Over',
-            menuTitle: this.winner
-                ? this.winner.name + ' has won the game!'
+            promptTitle: this.winners ? 'Game Won' : 'Game Over',
+            menuTitle: this.winners
+                ? TextHelper.formatList(
+                      this.winners.map((w) => w.name),
+                      'and'
+                  ) + ' has won the game!'
                 : 'Game has ended without a winner',
             buttons
         };
