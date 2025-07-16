@@ -1369,9 +1369,8 @@ class Game extends EventEmitter {
     }
 
     rematch() {
-        if (!this.finishedAt) {
-            this.finishedAt = new Date();
-            this.winReason = 'rematch';
+        if (!this.isGameOver) {
+            this.gameOverHandler.gameOver('rematch');
         }
 
         this.router.rematch(this);

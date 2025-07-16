@@ -119,7 +119,7 @@ class SelectPlotPrompt extends AllPlayerPrompt {
     }
 
     continue() {
-        for (let player of this.game.getPlayers()) {
+        for (let player of this.getPromptablePlayers()) {
             if (!this.completionCondition(player)) {
                 this.highlightSelectableCards(player);
             }

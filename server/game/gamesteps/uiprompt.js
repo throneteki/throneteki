@@ -79,7 +79,7 @@ class UiPrompt extends BaseStep {
             this.setPrompt();
         }
 
-        return completed;
+        return completed && !this.game.isEmpty(false);
     }
 
     clearPrompts() {

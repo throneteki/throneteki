@@ -110,7 +110,7 @@ class Player extends Spectator {
     }
 
     isPlaying() {
-        return !this.isSpectator() && !this.left && !this.eliminated;
+        return !this.isSpectator() && !this.left && (!this.eliminated || this.game.isPostGameOver);
     }
 
     anyCardsInPlay(predicateOrMatcher) {
