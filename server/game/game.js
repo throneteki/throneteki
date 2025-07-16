@@ -883,12 +883,6 @@ class Game extends EventEmitter {
         }
     }
 
-    checkForTimeExpired() {
-        if (this.useGameTimeLimit && this.timeLimit.isTimeLimitReached && !this.finishedAt) {
-            this.determineWinnerAfterTimeLimitExpired();
-        }
-    }
-
     beginRound() {
         // Reset phases to the standard game flow.
         this.remainingPhases = Phases.names();
@@ -1308,7 +1302,7 @@ class Game extends EventEmitter {
             this.addAlert('info', '{0} has left the game', player);
             // To ensure game over handler behaves as expected, we eliminate a player who leaves mid-game (without conceding)
             if (!this.isGameOver && !player.eliminated) {
-                this.gameOverHandler.eliminate(player, 'left');
+                this.gameOverHandler.playerLeft(player);
             }
             player.left = true;
         }
@@ -1348,10 +1342,7 @@ class Game extends EventEmitter {
             this.addAlert('danger', '{0} has failed to connect to the game', player);
 
             player.disconnectedAt = new Date();
-
-            if (!this.finishedAt) {
-                this.finishedAt = new Date();
-            }
+            this.gameOverHandler.playerDisconnected(player);
         }
     }
 
@@ -1376,8 +1367,8 @@ class Game extends EventEmitter {
         this.router.rematch(this);
     }
 
-    timeExpired() {
-        this.emit('onTimeExpired');
+    sendGameState() {
+        this.emit('sendGameState');
     }
 
     activatePersistentEffects() {

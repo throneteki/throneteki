@@ -256,7 +256,7 @@ class GameServer {
             packData: this.packData,
             restrictedListData: this.restrictedListData
         });
-        game.on('onTimeExpired', () => {
+        game.on('sendGameState', () => {
             this.sendGameState(game);
         });
         this.games[pendingGame.id] = game;

@@ -67,11 +67,10 @@ class TimeLimit {
             const timeLeft = this.calculateTimeLeft();
             if (timeLeft === 0) {
                 this.stop();
-                this.enabled = false;
                 this.game.timeLimitExpired();
-
-                clearInterval(this.timer);
-                delete this.timer;
+                this.enabled = false;
+                // Game state needs to explicitly be sent, as this method was triggered by a server-side timer
+                this.game.sendGameState();
             }
         }
     }

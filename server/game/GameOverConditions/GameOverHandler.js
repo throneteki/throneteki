@@ -68,6 +68,10 @@ class GameOverHandler {
     }
 
     processActions(firstPlayer, actions) {
+        if (this.isGameOver) {
+            return;
+        }
+
         // Create function to process a chosen action
         const processFunc = (action) => {
             action.handler(action.player);
@@ -83,25 +87,23 @@ class GameOverHandler {
             }
         };
 
-        if (!this.game.isGameOver) {
-            if (actions.length === 1) {
-                processFunc(actions[0]);
-            } else if (actions.length > 1) {
-                this.game.promptWithMenu(firstPlayer, context, {
-                    activePrompt: {
-                        menuTitle: 'Select next action',
-                        buttons: actions.map((action, index) => ({
-                            arg: index,
-                            text: action.text,
-                            method: 'selectAction'
-                        }))
-                    },
-                    waitingPromptTitle: `Waiting for ${firstPlayer.name} to choose order`,
-                    source: this
-                });
-            } else {
-                this.checkGameContinue();
-            }
+        if (actions.length === 1) {
+            processFunc(actions[0]);
+        } else if (actions.length > 1) {
+            this.game.promptWithMenu(firstPlayer, context, {
+                activePrompt: {
+                    menuTitle: 'Select next action',
+                    buttons: actions.map((action, index) => ({
+                        arg: index,
+                        text: action.text,
+                        method: 'selectAction'
+                    }))
+                },
+                waitingPromptTitle: `Waiting for ${firstPlayer.name} to choose order`,
+                source: this
+            });
+        } else {
+            this.checkGameContinue();
         }
         return;
     }
@@ -133,13 +135,29 @@ class GameOverHandler {
     }
 
     playerChessClockExpired(player) {
-        this.game.addAlert('info', "{0}'s chess clock has run out", player);
-        this.eliminate(player, 'time');
+        if (!player.eliminated) {
+            this.game.addAlert('info', "{0}'s chess clock has run out", player);
+            this.eliminate(player, 'time');
+        }
     }
 
     playerConceded(player) {
-        this.game.addAlert('info', '{0} concedes', player);
-        this.eliminate(player, 'concede');
+        if (!player.eliminated) {
+            this.game.addAlert('info', '{0} concedes', player);
+            this.eliminate(player, 'concede');
+        }
+    }
+
+    playerLeft(player) {
+        if (!player.eliminated) {
+            this.eliminate(player, 'left');
+        }
+    }
+
+    playerDisconnected(player) {
+        if (!player.eliminated) {
+            this.eliminate(player, 'disconnected');
+        }
     }
 
     eliminate(player, reason) {
@@ -156,6 +174,7 @@ class GameOverHandler {
         player.eliminated = true;
         player.eliminatedReason = reason;
         player.setIsActivePrompt(false);
+        this.game.emit('onPlayerEliminated', { player, reason });
 
         // Certain processes only happen if the game continues
         if (this.checkGameContinue(reason)) {
@@ -199,7 +218,8 @@ class GameOverHandler {
             const [player] = remainingPlayers;
             // Player cannot be blocked from winning if final opponent concedes
             if (player && (player.canWinGame() || reason === 'concede')) {
-                this.gameOver('remaining', player);
+                // If the game over trigger was the final opponent conceding, then reason is 'concede'
+                this.gameOver(reason === 'concede' ? reason : 'remaining', player);
             } else {
                 this.gameOver();
             }
