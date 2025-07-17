@@ -2,6 +2,16 @@ import moment from 'moment';
 import WaitForPlayerPrompt from './WaitForPlayerPrompt.js';
 import TextHelper from '../TextHelper.js';
 
+/**
+ * Handles the disconnection & reconnection logic for all in-game players (not spectators).
+ *
+ * Logic for handling a disconnected player is slightly different for each game format:
+ * - Joust: Players will have X seconds to reconnect. Following that, the opponent can leave without penalty, resulting in a concluded game with no winner.
+ * - Melee: Players will have X seconds to reconnect. Following that, opponents will vote to wait an additional X seconds, or eliminate them.
+ *          Eliminations must be a unanimous vote, and re-votes keep happening until they reconnect or are voted for elimination.
+ *
+ * X is configurable, but defaulted to 30 seconds
+ */
 class DisconnectHandler {
     constructor(game, waitSeconds = 30) {
         this.game = game;
