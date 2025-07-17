@@ -1403,7 +1403,9 @@ class Player extends Spectator {
             isPlaying: this.isPlaying(),
             left: this.left,
             eliminated: !!this.eliminated,
-            disconnected: !!this.disconnectedAt,
+            disconnected: this.game.isDisconnected(this),
+            longDisconnected: this.game.isLongDisconnected(this),
+            canSafelyLeave: this.game.canSafelyLeave(this),
             seatNo: this.seatNo,
             activePlot: this.activePlot ? this.activePlot.getSummary(activePlayer) : undefined,
             agendas: this.agendas

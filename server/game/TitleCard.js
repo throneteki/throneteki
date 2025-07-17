@@ -8,6 +8,7 @@ class TitleCard extends BaseCard {
         this.supporterNames = this.supporterNames || [];
         this.rivalNames = this.rivalNames || [];
         this.isContributing = false;
+        this.location = 'title pool';
     }
 
     supports(...values) {

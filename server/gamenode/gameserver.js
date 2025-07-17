@@ -96,7 +96,8 @@ class GameServer {
                 return {
                     name: player.name,
                     left: player.left,
-                    disconnected: !!player.disconnectedAt,
+                    disconnected: player.disconnected,
+                    longDisconnected: player.longDisconnected,
                     id: player.id,
                     spectator: player.isSpectator()
                 };
@@ -204,7 +205,7 @@ class GameServer {
 
     sendGameState(game) {
         _.each(game.getPlayersAndSpectators(), (player) => {
-            if (player.left || player.disconnectedAt || !player.socket) {
+            if (player.left || game.isDisconnected(player) || !player.socket) {
                 return;
             }
 
@@ -363,7 +364,7 @@ class GameServer {
         player.lobbyId = player.id;
         player.id = socket.id;
         player.connectionSucceeded = true;
-        if (player.disconnectedAt) {
+        if (game.isDisconnected(player)) {
             logger.info("user '%s' reconnected to game", socket.user.username);
             game.reconnect(socket, player.name);
         }
@@ -371,10 +372,6 @@ class GameServer {
         socket.joinChannel(game.id);
 
         player.socket = socket;
-
-        if (!player.isSpectator(player) && !player.disconnectedAt) {
-            game.addAlert('info', '{0} has connected to the game server', player);
-        }
 
         this.sendGameState(game);
 

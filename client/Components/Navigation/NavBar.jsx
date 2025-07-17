@@ -258,7 +258,7 @@ const NavBar = () => {
             </Navbar>
             <ConfirmDialog
                 isOpen={showConfirmLeave}
-                message='Your game is not finished, are you sure you want to leave?'
+                message='Your game is not finished, and you will automatically concede when leaving. Are you sure you want to leave?'
                 onOpenChange={setShowConfirmLeave}
                 onCancel={() => setShowConfirmLeave(false)}
                 onOk={async () => {

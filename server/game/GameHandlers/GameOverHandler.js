@@ -149,13 +149,16 @@ class GameOverHandler {
     }
 
     playerLeft(player) {
-        if (!player.eliminated) {
+        if (this.game.canSafelyLeave(player)) {
+            this.gameOver();
+        } else if (!player.eliminated) {
             this.eliminate(player, 'left');
         }
     }
 
     playerDisconnected(player) {
         if (!player.eliminated) {
+            this.game.addAlert('info', '{0} has been eliminated', player);
             this.eliminate(player, 'disconnected');
         }
     }

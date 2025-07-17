@@ -41,7 +41,8 @@ class Spectator {
             timerSettings: this.timerSettings,
             keywordSettings: this.keywordSettings,
             promptedActionWindows: this.promptedActionWindows,
-            ...promptState
+            ...promptState,
+            canSafelyLeave: this.game.canSafelyLeave(this)
         };
     }
 }
