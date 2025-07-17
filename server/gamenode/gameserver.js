@@ -380,6 +380,8 @@ class GameServer {
         if (game.isDisconnected(player)) {
             logger.info("user '%s' reconnected to game", socket.user.username);
             game.reconnect(socket, player.name);
+        } else {
+            game.addAlert('info', '{0} has connected to the game server', player);
         }
 
         socket.joinChannel(game.id);
