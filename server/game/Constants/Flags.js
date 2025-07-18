@@ -13,6 +13,10 @@ export const Flags = Object.freeze({
         mustBeDeclaredAsAttacker: 'challengeOptions.mustBeDeclaredAsAttacker',
         mustBeDeclaredAsDefender: 'challengeOptions.mustBeDeclaredAsDefender'
     }),
+    dominanceOptions: Object.freeze({
+        contributesWhileKneeling: 'dominanceOptions.contributesWhileKneeling',
+        doesNotContribute: 'dominanceOptions.doesNotContribute'
+    }),
     player: Object.freeze({
         cannotBeFirstPlayer: 'player.cannotBeFirstPlayer',
         cannotGainChallengeBonus: 'player.cannotGainChallengeBonus',

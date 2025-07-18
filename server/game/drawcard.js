@@ -16,7 +16,6 @@ class DrawCard extends BaseCard {
         this.childCards = [];
         this.strength = new CardStat(this.getPrintedStrength());
         this.dominanceStrengthModifier = 0;
-        this.dominanceOptions = new ReferenceCountedSetProperty();
         this.kneeled = false;
         this.inChallenge = false;
         this.isContributing = false;
@@ -317,8 +316,8 @@ class DrawCard extends BaseCard {
     getDominanceStrength() {
         let baseStrength =
             this.getType() === 'character' &&
-            (!this.kneeled || this.dominanceOptions.contains('contributesWhileKneeling')) &&
-            !this.dominanceOptions.contains('doesNotContribute')
+            (!this.kneeled || this.hasFlag(Flags.dominanceOptions.contributesWhileKneeling)) &&
+            !this.hasFlag(Flags.dominanceOptions.doesNotContribute)
                 ? this.getStrength()
                 : 0;
 

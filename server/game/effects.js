@@ -77,10 +77,10 @@ function dominanceOptionEffect(key) {
     return function () {
         return {
             apply: function (card) {
-                card.dominanceOptions.add(key);
+                card.flags.add(key);
             },
             unapply: function (card) {
-                card.dominanceOptions.remove(key);
+                card.flags.remove(key);
             }
         };
     };
@@ -938,8 +938,10 @@ const Effects = {
             }
         };
     },
-    doesNotContributeToDominance: dominanceOptionEffect('doesNotContribute'),
-    contributesToDominanceWhileKneeling: dominanceOptionEffect('contributesWhileKneeling'),
+    doesNotContributeToDominance: dominanceOptionEffect(Flags.dominanceOptions.doesNotContribute),
+    contributesToDominanceWhileKneeling: dominanceOptionEffect(
+        Flags.dominanceOptions.contributesWhileKneeling
+    ),
     doesNotContributeToPowerTotal: powerOptionEffect('doesNotContribute'),
     optionalStandDuringStanding: function () {
         return {
