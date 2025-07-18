@@ -56,7 +56,6 @@ class BaseCard {
         this.keywords = new KeywordsProperty();
         this.flags = new ReferenceCountedSetProperty();
         this.traits = new ReferenceCountedSetProperty();
-        this.losesAspects = new ReferenceCountedSetProperty();
         this.controllerStack = [];
         this.eventsForRegistration = [];
         this.keywordSources = [];
@@ -327,7 +326,6 @@ class BaseCard {
         clone.factions = this.factions.clone();
         clone.flags = this.flags.clone();
         clone.location = this.location;
-        clone.losesAspects = this.losesAspects.clone();
         clone.keywords = this.keywords.clone();
         clone.parent = this.parent;
         clone.power = this.power;
@@ -378,22 +376,12 @@ class BaseCard {
         this.controllerStack = this.controllerStack.filter((control) => control.source !== source);
     }
 
-    loseAspect(aspect) {
-        this.losesAspects.add(aspect);
-        this.markAsDirty();
-    }
-
-    restoreAspect(aspect) {
-        this.losesAspects.remove(aspect);
-        this.markAsDirty();
-    }
-
     hasFlag(flag) {
         return this.flags.contains(flag);
     }
 
     hasKeyword(keyword) {
-        if (this.losesAspects.contains('keywords')) {
+        if (this.hasFlag(Flags.losesAspect.keywords)) {
             return false;
         }
 
@@ -421,7 +409,7 @@ class BaseCard {
     }
 
     hasTrait(trait) {
-        if (this.losesAspects.contains('traits')) {
+        if (this.hasFlag(Flags.losesAspect.traits)) {
             return false;
         }
 
@@ -431,19 +419,19 @@ class BaseCard {
     isFaction(faction) {
         let normalizedFaction = faction.toLowerCase();
 
-        if (this.losesAspects.contains('factions')) {
+        if (this.hasFlag(Flags.losesAspect.allFactions)) {
             return normalizedFaction === 'neutral';
         }
 
         if (normalizedFaction === 'neutral') {
             return ValidFactions.every(
-                (f) => !this.factions.contains(f) || this.losesAspects.contains(`factions.${f}`)
+                (f) => !this.factions.contains(f) || this.hasFlag(Flags.losesAspect.faction(f))
             );
         }
 
         return (
             this.factions.contains(normalizedFaction) &&
-            !this.losesAspects.contains(`factions.${normalizedFaction}`)
+            !this.hasFlag(Flags.losesAspect.faction(normalizedFaction))
         );
     }
 
@@ -696,7 +684,7 @@ class BaseCard {
         let currentAbilityContext = context || this.game.currentAbilityContext;
         return !this.abilityRestrictions.some(
             (restriction) =>
-                !this.losesAspects.contains(restriction.name) &&
+                !this.hasFlag(restriction.name) &&
                 restriction.isMatch(actionType, currentAbilityContext)
         );
     }
@@ -726,7 +714,7 @@ class BaseCard {
     }
 
     getTraits() {
-        if (this.losesAspects.contains('traits')) {
+        if (this.hasFlag(Flags.losesAspect.traits)) {
             return [];
         }
 

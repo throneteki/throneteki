@@ -21,6 +21,15 @@ export const Flags = Object.freeze({
         contributesWhileKneeling: 'dominanceOptions.contributesWhileKneeling',
         doesNotContribute: 'dominanceOptions.doesNotContribute'
     }),
+    losesAspect: Object.freeze({
+        allFactions: 'losesAspect.allFactions',
+        faction: function (factionName) {
+            return `losesAspect.factions.${factionName}`;
+        },
+        keywords: 'losesAspect.keywords',
+        immunity: 'loseAspect.immunity',
+        traits: 'losesAspect.traits'
+    }),
     player: Object.freeze({
         cannotBeFirstPlayer: 'player.cannotBeFirstPlayer',
         cannotGainChallengeBonus: 'player.cannotGainChallengeBonus',

@@ -45,10 +45,12 @@ function losesAspectEffect(aspect) {
     return function () {
         return {
             apply: function (card) {
-                card.loseAspect(aspect);
+                card.flags.add(aspect);
+                card.markAsDirty();
             },
             unapply: function (card) {
-                card.restoreAspect(aspect);
+                card.flags.remove(aspect);
+                card.markAsDirty();
             }
         };
     };
@@ -570,12 +572,12 @@ const Effects = {
             }
         };
     },
-    losesAllFactions: losesAspectEffect('factions'),
-    losesAllKeywords: losesAspectEffect('keywords'),
-    losesAllTraits: losesAspectEffect('traits'),
-    losesAllImmunities: losesAspectEffect('immunity'),
+    losesAllFactions: losesAspectEffect(Flags.losesAspect.allFactions),
+    losesAllKeywords: losesAspectEffect(Flags.losesAspect.keywords),
+    losesAllTraits: losesAspectEffect(Flags.losesAspect.traits),
+    losesAllImmunities: losesAspectEffect(Flags.losesAspect.immunity),
     loseFaction: function (faction) {
-        return losesAspectEffect(`factions.${faction.toLowerCase()}`)();
+        return losesAspectEffect(Flags.losesAspect.faction(faction.toLowerCase()))();
     },
     addTrait: function (trait) {
         return {
