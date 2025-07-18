@@ -6,7 +6,7 @@
 	"postCreateCommand": {
 		"npm": "npm install",
 		"createConfig": "cp -n config/default.json5 config/local.json5",
-		"submodule": "git submodule init"
+		"submodule": "git config --global --add safe.directory /workspaces/throneteki && git submodule init"
 	},
 	"postStartCommand": {
 		"fetchData": "node server/scripts/fetchdata.js && node server/scripts/importstandalonedecks.js"
