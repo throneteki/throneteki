@@ -377,11 +377,13 @@ class GameServer {
         player.lobbyId = player.id;
         player.id = socket.id;
         player.connectionSucceeded = true;
-        if (game.isDisconnected(player)) {
-            logger.info("user '%s' reconnected to game", socket.user.username);
-            game.reconnect(socket, player.name);
-        } else {
-            game.addAlert('info', '{0} has connected to the game server', player);
+        if (!player.isSpectator()) {
+            if (game.isDisconnected(player)) {
+                logger.info("user '%s' reconnected to game", socket.user.username);
+                game.reconnect(socket, player.name);
+            } else {
+                game.addAlert('info', '{0} has connected to the game server', player);
+            }
         }
 
         socket.joinChannel(game.id);

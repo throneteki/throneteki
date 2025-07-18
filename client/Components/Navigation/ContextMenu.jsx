@@ -14,8 +14,8 @@ const ContextMenu = ({ onPress = () => true }) => {
     const [showSpectatorWarning, setShowSpectatorWarning] = useState(false);
 
     const onLeaveClick = useCallback(() => {
-        const all = { ...currentGame.players, ...currentGame.spectators };
-        if (user && !all[user.username].canSafelyLeave) {
+        const all = Object.values({ ...currentGame.players, ...currentGame.spectators });
+        if (user && all.some((a) => a.name === user.username && !a.canSafelyLeave)) {
             onPress(true);
 
             return;
