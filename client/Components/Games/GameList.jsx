@@ -11,7 +11,7 @@ import {
 } from '../../redux/reducers/lobby';
 import { toast } from 'react-toastify';
 
-const GameList = ({ gameFilter, games, onJoinOrWatch }) => {
+const GameList = ({ gameFilter, games, onJoinOrWatch = () => true }) => {
     const dispatch = useDispatch();
     const currentGame = useSelector((state) => state.lobby.currentGame);
     const user = useSelector((state) => state.auth.user);

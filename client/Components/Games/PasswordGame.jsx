@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, forwardRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import AlertPanel from '../Site/AlertPanel';
@@ -10,7 +10,7 @@ import {
 } from '../../redux/reducers/lobby';
 import { Button, Input } from '@heroui/react';
 
-const PasswordGame = () => {
+const PasswordGame = forwardRef(function PasswordGame(_, ref) {
     const [password, setPassword] = useState('');
     const dispatch = useDispatch();
     const { passwordJoinType, passwordGame, passwordError } = useSelector((state) => state.lobby);
@@ -36,7 +36,7 @@ const PasswordGame = () => {
 
     return (
         <div>
-            <Panel title={passwordGame.name}>
+            <Panel title={passwordGame.name} ref={ref}>
                 <div className='flex gap-2 flex-col'>
                     {passwordError ? (
                         <AlertPanel variant='danger'>{passwordError}</AlertPanel>
@@ -64,6 +64,6 @@ const PasswordGame = () => {
             </Panel>
         </div>
     );
-};
+});
 
 export default PasswordGame;

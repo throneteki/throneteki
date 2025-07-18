@@ -12,11 +12,9 @@ const titles = [
 class TitlePool {
     constructor(game, cardData) {
         this.game = game;
-        this.cards = titles.map((titleClass) => {
-            const title = new titleClass({ game: game }, cardData[titleClass.code] || {});
-            title.moveTo('title pool');
-            return title;
-        });
+        this.cards = titles.map(
+            (titleClass) => new titleClass({ game: game }, cardData[titleClass.code] || {})
+        );
     }
 
     getCardsForSelection() {

@@ -13,7 +13,12 @@ describe('the SelectCardPrompt', function () {
     }
 
     beforeEach(function () {
-        this.game = jasmine.createSpyObj('game', ['getPlayers', 'getNumberOfPlayers', 'allCards']);
+        this.game = jasmine.createSpyObj('game', [
+            'getPlayers',
+            'getNumberOfPlayers',
+            'allCards',
+            'isEmpty'
+        ]);
         this.player = jasmine.createSpyObj('player1', [
             'setPrompt',
             'cancelPrompt',

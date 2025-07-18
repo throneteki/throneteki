@@ -46,7 +46,7 @@ class GameOverPrompt extends AllPlayerPrompt {
         let message = arg === 'continue' ? 'to continue' : 'a rematch';
         this.game.addMessage('{0} would like {1}', player, message);
 
-        this.clickedButton[player.name] = true;
+        this.clickedButton[player.name] = arg;
 
         if (arg === 'rematch') {
             this.game.queueStep(new RematchPrompt(this.game, player));
@@ -55,6 +55,13 @@ class GameOverPrompt extends AllPlayerPrompt {
         }
 
         return true;
+    }
+
+    onCompleted() {
+        const responses = Object.values(this.clickedButton);
+        if (responses.every((r) => r === 'continue')) {
+            this.game.isPostGameOver = true;
+        }
     }
 
     getPromptablePlayers() {

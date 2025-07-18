@@ -41,6 +41,20 @@ const TextHelper = {
         var s = ['th', 'st', 'nd', 'rd'];
         var v = n % 100;
         return n + (s[(v - 20) % 10] || s[v] || s[0]);
+    },
+    duration(sec) {
+        const totalSeconds = Math.floor(sec);
+
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+
+        if (minutes > 0 && seconds > 0) {
+            return `${minutes} minute${minutes !== 1 ? 's' : ''} and ${seconds} second${seconds !== 1 ? 's' : ''}`;
+        } else if (minutes > 0) {
+            return `${minutes} minute${minutes !== 1 ? 's' : ''}`;
+        } else {
+            return `${seconds} second${seconds !== 1 ? 's' : ''}`;
+        }
     }
 };
 

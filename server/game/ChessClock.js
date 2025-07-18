@@ -12,6 +12,11 @@ class ChessClock {
         this.paused = false;
 
         this.player.game.on('onSetupFinished', () => (this.enabled = true));
+        this.player.game.on('onPlayerEliminated', ({ player, reason }) => {
+            if (player === this.player && reason !== 'time') {
+                this.enabled = false;
+            }
+        });
         this.player.game.on('onGameOver', () => (this.enabled = false));
     }
 
@@ -72,9 +77,9 @@ class ChessClock {
             if (timeRemaining === 0) {
                 this.stop();
                 this.game.chessClockExpired(this.player);
-
-                clearInterval(this.timer);
-                delete this.timer;
+                this.enabled = false;
+                // Game state needs to explicitly be sent, as this method was triggered by a server-side timer
+                this.game.sendGameState();
             }
         }
     }

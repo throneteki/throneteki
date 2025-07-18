@@ -13,38 +13,9 @@ const ContextMenu = ({ onPress = () => true }) => {
     const [lastSpectatorCount, setLastSpectatorCount] = useState(0);
     const [showSpectatorWarning, setShowSpectatorWarning] = useState(false);
 
-    const isGameActive = useMemo(() => {
-        if (!currentGame || !user) {
-            return false;
-        }
-
-        if (currentGame.winner) {
-            return false;
-        }
-
-        let thisPlayer = currentGame.players[user.username];
-        if (!thisPlayer) {
-            thisPlayer = Object.values(currentGame.players)[0];
-        }
-
-        let otherPlayer = Object.values(currentGame.players).find((player) => {
-            return player.name !== thisPlayer.name;
-        });
-
-        if (!otherPlayer) {
-            return false;
-        }
-
-        if (otherPlayer.disconnected || otherPlayer.left) {
-            return false;
-        }
-
-        return true;
-    }, [currentGame, user]);
-
     const onLeaveClick = useCallback(() => {
-        const spectating = user && currentGame && !currentGame.players[user.username];
-        if (!spectating && isGameActive) {
+        const all = Object.values({ ...currentGame.players, ...currentGame.spectators });
+        if (user && all.some((a) => a.name === user.username && !a.canSafelyLeave)) {
             onPress(true);
 
             return;
@@ -52,7 +23,7 @@ const ContextMenu = ({ onPress = () => true }) => {
 
         onPress(false);
         dispatch(sendLeaveGameMessage());
-    }, [currentGame, dispatch, isGameActive, onPress, user]);
+    }, [currentGame, dispatch, onPress, user]);
 
     const onConcedeClick = useCallback(() => {
         onPress(false);

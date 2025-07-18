@@ -739,12 +739,12 @@ class ChatCommands {
     }
 
     rematch(player) {
-        if (this.game.finishedAt) {
+        if (this.game.isGameOver) {
             this.game.addAlert('info', '{0} is requesting a rematch', player);
         } else {
             this.game.addAlert(
                 'danger',
-                '{0} is requesting a rematch.  The current game is not finished',
+                '{0} is requesting a rematch. The current game is not finished',
                 player
             );
         }

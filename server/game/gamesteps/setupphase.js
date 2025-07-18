@@ -1,3 +1,4 @@
+import sample from 'lodash.sample';
 import Phase from './phase.js';
 import SimpleStep from './simplestep.js';
 import KeepOrMulliganPrompt from './setup/keepormulliganprompt.js';
@@ -12,6 +13,7 @@ class SetupPhase extends Phase {
         this.initialise([
             new SimpleStep(game, () => this.announceFactionAndAgenda()),
             new SimpleStep(game, () => this.prepareDecks()),
+            new SimpleStep(game, () => this.randomFirstPlayer()),
             new SimpleStep(game, () => this.turnOnEffects()),
             new SimpleStep(game, () => this.drawSetupHand()),
             new KeepOrMulliganPrompt(game),
@@ -22,6 +24,7 @@ class SetupPhase extends Phase {
             new CheckAttachmentsPrompt(game),
             new SimpleStep(game, () => game.activatePersistentEffects())
         ]);
+        this.sampleFunc = sample;
     }
 
     announceFactionAndAgenda() {
@@ -42,6 +45,12 @@ class SetupPhase extends Phase {
         }
         this.game.gatherAllCards();
         this.game.raiseEvent('onDecksPrepared');
+    }
+
+    randomFirstPlayer() {
+        const firstPlayer = this.sampleFunc(this.game.getPlayers());
+        this.game.addMessage('{0} has been randomly selected to be first player', firstPlayer);
+        this.game.setFirstPlayer(firstPlayer);
     }
 
     turnOnEffects() {

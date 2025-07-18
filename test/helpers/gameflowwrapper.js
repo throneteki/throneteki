@@ -41,9 +41,7 @@ class GameFlowWrapper {
             gameFormat: options.gameFormat,
             noTitleSetAside: true,
             maxPlayers: options.maxPlayers || numOfPlayers,
-            players: this.generatePlayerDetails(numOfPlayers),
-            useGameTimeLimit: options.useGameTimeLimit ?? false,
-            gameTimeLimit: options.gameTimeLimit
+            players: this.generatePlayerDetails(numOfPlayers)
         };
         this.game = new Game(details, { router: gameRouter, titleCardData: titleCardData });
         this.game.started = true;

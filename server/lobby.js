@@ -856,16 +856,20 @@ class Lobby {
             name: game.name,
             event: game.event,
             restrictedList: game.restrictedList,
-            spectators: game.allowSpectators,
+            allowSpectators: game.allowSpectators,
             showHand: game.showHand,
+            gamePrivate: game.gamePrivate,
             gameFormat: game.gameFormat,
             gameType: game.gameType,
-            gamePrivate: game.gamePrivate,
             useGameTimeLimit: game.useGameTimeLimit,
             gameTimeLimit: game.gameTimeLimit,
+            muteSpectators: game.muteSpectators,
             useChessClocks: game.useChessClocks,
             chessClockTimeLimit: game.chessClockTimeLimit,
-            chessClockDelay: game.chessClockDelay
+            chessClockDelay: game.chessClockDelay,
+            maxPlayers: game.maxPlayers,
+            randomSeats: game.randomSeats,
+            allowMultipleWinners: game.allowMultipleWinners
         });
         newGame.rematch = true;
 
@@ -887,7 +891,7 @@ class Lobby {
         socket.joinChannel(newGame.id);
         this.sendGameState(newGame);
 
-        let promises = [this.onSelectDeck(socket, newGame.id, owner.deck._id)];
+        let promises = [this.onSelectDeck(socket, owner.deck._id)];
 
         for (let player of Object.values(game.getPlayers()).filter(
             (player) => player.name !== newGame.owner.username
@@ -902,7 +906,7 @@ class Lobby {
             }
 
             newGame.join(socket.id, player.user);
-            promises.push(this.onSelectDeck(socket, newGame.id, player.deck._id));
+            promises.push(this.onSelectDeck(socket, player.deck._id));
         }
 
         for (let spectator of game.getSpectators()) {
@@ -1020,7 +1024,7 @@ class Lobby {
             }
 
             let syncGame = new PendingGame(new User(owner.user), game.instance, {
-                spectators: game.allowSpectators,
+                allowSpectators: game.allowSpectators,
                 name: game.name,
                 event: game.event
             });

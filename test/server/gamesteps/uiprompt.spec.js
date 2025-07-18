@@ -15,7 +15,7 @@ describe('the UiPrompt', function () {
         ]);
         this.player2.isPlaying = () => !this.player2.eliminated && !this.player2.left;
 
-        this.game = jasmine.createSpyObj('game', ['getPlayers']);
+        this.game = jasmine.createSpyObj('game', ['getPlayers', 'isEmpty']);
         this.game.getPlayers.and.returnValue([this.player1, this.player2]);
 
         this.activePrompt = {

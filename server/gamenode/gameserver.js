@@ -12,6 +12,7 @@ import GameSocket from './gamesocket.js';
 import Game from '../game/game.js';
 import Socket from '../socket.js';
 import ConfigService from '../services/ConfigService.js';
+import TextHelper from '../game/TextHelper.js';
 
 if (config.sentryDsn) {
     Sentry.init({
@@ -96,7 +97,8 @@ class GameServer {
                 return {
                     name: player.name,
                     left: player.left,
-                    disconnected: !!player.disconnectedAt,
+                    disconnected: player.disconnected,
+                    longDisconnected: player.longDisconnected,
                     id: player.id,
                     spectator: player.isSpectator()
                 };
@@ -164,19 +166,31 @@ class GameServer {
     clearStaleAndFinishedGames() {
         // 20 minutes
         const timeout = 20 * 60 * 1000;
+        // 1 minute remaining
+        const warning = 1 * 60 * 1000;
 
-        const staleGames = Object.values(this.games).filter(
-            (game) => game.finishedAt && Date.now() - game.finishedAt > timeout
-        );
-        for (const game of staleGames) {
-            logger.info('closed finished game %s due to inactivity', game.id);
-            this.closeGame(game);
-        }
+        for (const game of Object.values(this.games)) {
+            // Sends a warning to game before closing due to timeout
+            if (game.finishedAt && Date.now() - game.finishedAt > timeout - warning) {
+                game.addAlert(
+                    'warning',
+                    'Game will close in {0}!',
+                    TextHelper.duration(warning / 1000)
+                );
+                return;
+            }
 
-        const emptyGames = Object.values(this.games).filter((game) => game.isEmpty());
-        for (const game of emptyGames) {
-            logger.info('closed empty game %s', game.id);
-            this.closeGame(game);
+            if (game.finishedAt && Date.now() - game.finishedAt > timeout) {
+                game.addAlert('warning', 'Game is closing');
+                logger.info('closed finished game %s due to inactivity', game.id);
+                this.closeGame(game);
+                return;
+            }
+
+            if (game.isEmpty()) {
+                logger.info('closed empty game %s', game.id);
+                this.closeGame(game);
+            }
         }
     }
 
@@ -204,7 +218,7 @@ class GameServer {
 
     sendGameState(game) {
         _.each(game.getPlayersAndSpectators(), (player) => {
-            if (player.left || player.disconnectedAt || !player.socket) {
+            if (player.left || game.isDisconnected(player) || !player.socket) {
                 return;
             }
 
@@ -256,7 +270,7 @@ class GameServer {
             packData: this.packData,
             restrictedListData: this.restrictedListData
         });
-        game.on('onTimeExpired', () => {
+        game.on('sendGameState', () => {
             this.sendGameState(game);
         });
         this.games[pendingGame.id] = game;
@@ -363,18 +377,18 @@ class GameServer {
         player.lobbyId = player.id;
         player.id = socket.id;
         player.connectionSucceeded = true;
-        if (player.disconnectedAt) {
-            logger.info("user '%s' reconnected to game", socket.user.username);
-            game.reconnect(socket, player.name);
+        if (!player.isSpectator()) {
+            if (game.isDisconnected(player)) {
+                logger.info("user '%s' reconnected to game", socket.user.username);
+                game.reconnect(socket, player.name);
+            } else {
+                game.addAlert('info', '{0} has connected to the game server', player);
+            }
         }
 
         socket.joinChannel(game.id);
 
         player.socket = socket;
-
-        if (!player.isSpectator(player) && !player.disconnectedAt) {
-            game.addAlert('info', '{0} has connected to the game server', player);
-        }
 
         this.sendGameState(game);
 
