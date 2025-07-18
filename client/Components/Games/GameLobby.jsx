@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import GameFilter from './GameFilter';
 import GameList from './GameList';
@@ -37,8 +37,6 @@ const GameLobby = ({ gameId }) => {
     const games = useSelector((state) => state.lobby.games);
     const passwordGame = useSelector((state) => state.lobby.passwordGame);
 
-    const topRef = useRef(null);
-
     useEffect(() => {
         const filter = localStorage.getItem('gameFilter');
         if (filter) {
@@ -75,11 +73,23 @@ const GameLobby = ({ gameId }) => {
         }
     }, [currentGame, dispatch, gameId, games]);
 
+    // Manages the auto-scrolling, depending on which ref just appeared
+    const scrollRef = (node, block = 'start') => {
+        if (node !== null) {
+            node.scrollIntoView({
+                behavior: 'smooth',
+                block
+            });
+        }
+    };
+
     return (
-        <Page ref={topRef}>
-            {newGame && <NewGame quickJoin={quickJoin} onClosed={() => setNewGame(false)} />}
-            {currentGame?.started === false && <PendingGame />}
-            {passwordGame && <PasswordGame />}
+        <Page>
+            {newGame && (
+                <NewGame quickJoin={quickJoin} onClosed={() => setNewGame(false)} ref={scrollRef} />
+            )}
+            {currentGame?.started === false && <PendingGame ref={(n) => scrollRef(n, 'center')} />}
+            {passwordGame && <PasswordGame ref={scrollRef} />}
             <Panel title={'Current Games'}>
                 {!user && (
                     <div className='mb-2 text-center'>
@@ -117,16 +127,7 @@ const GameLobby = ({ gameId }) => {
                                 one.
                             </AlertPanel>
                         ) : (
-                            <GameList
-                                games={games}
-                                gameFilter={currentFilter}
-                                onJoinOrWatch={() =>
-                                    topRef.current?.scrollIntoView({
-                                        behavior: 'smooth',
-                                        block: 'end'
-                                    })
-                                }
-                            />
+                            <GameList games={games} gameFilter={currentFilter} />
                         )}
                     </div>
                 </div>

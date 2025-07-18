@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { forwardRef, useCallback, useState } from 'react';
 import Panel from '../Site/Panel';
 import Messages from '../GameBoard/Messages';
 import SelectDeckModal from './SelectDeckModal';
@@ -21,7 +21,7 @@ import LoadingSpinner from '../Site/LoadingSpinner';
 import { GameFormats } from '../../constants';
 import ChatArea from '../Site/ChatArea';
 
-const PendingGame = () => {
+const PendingGame = forwardRef(function PendingGame(_, ref) {
     const dispatch = useDispatch();
     const [waiting, setWaiting] = useState(false);
     const [showModal, setShowModal] = useState(false);
@@ -172,7 +172,7 @@ const PendingGame = () => {
                     </div>
                 </div>
             </Panel>
-            <div>
+            <div ref={ref}>
                 <PendingGamePlayers
                     currentGame={currentGame}
                     user={user}
@@ -212,6 +212,6 @@ const PendingGame = () => {
             )}
         </div>
     );
-};
+});
 
 export default PendingGame;

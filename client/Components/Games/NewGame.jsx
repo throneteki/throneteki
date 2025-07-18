@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { Formik } from 'formik';
 import { Button, Input, Select, SelectItem, Switch } from '@heroui/react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,13 +14,10 @@ import { GameFormats } from '../../constants';
 
 const GameNameMaxLength = 64;
 
-const NewGame = ({
-    quickJoin = false,
-    defaultGameType,
-    defaultPrivate,
-    defaultTimeLimit,
-    onClosed
-}) => {
+const NewGame = forwardRef(function NewGame(
+    { quickJoin = false, defaultGameType, defaultPrivate, defaultTimeLimit, onClosed },
+    ref
+) {
     const dispatch = useDispatch();
     const { data: restrictedLists } = useGetRestrictedListQuery({});
 
@@ -110,7 +107,7 @@ const NewGame = ({
     }
     const canStart = gameFormat && restrictedList;
     return (
-        <Panel title={quickJoin ? 'Quick Join' : 'New game'}>
+        <Panel title={quickJoin ? 'Quick Join' : 'New game'} ref={ref}>
             <Formik
                 validationSchema={schema}
                 onSubmit={(values) => {
@@ -270,6 +267,6 @@ const NewGame = ({
             </Formik>
         </Panel>
     );
-};
+});
 
 export default NewGame;
