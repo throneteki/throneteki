@@ -12,7 +12,7 @@ import GameActions from './GameActions/index.js';
 import KeywordsProperty from './PropertyTypes/KeywordsProperty.js';
 import ReferenceCountedSetProperty from './PropertyTypes/ReferenceCountedSetProperty.js';
 import XValueDefinition from './XValueDefinition.js';
-import { Tokens } from './Constants/index.js';
+import { Flags, Tokens } from './Constants/index.js';
 
 const ValidKeywords = [
     'ambush',
@@ -56,7 +56,6 @@ class BaseCard {
         this.keywords = new KeywordsProperty();
         this.flags = new ReferenceCountedSetProperty();
         this.traits = new ReferenceCountedSetProperty();
-        this.blanks = new ReferenceCountedSetProperty();
         this.losesAspects = new ReferenceCountedSetProperty();
         this.controllerStack = [];
         this.eventsForRegistration = [];
@@ -324,7 +323,6 @@ class BaseCard {
     createSnapshot() {
         let clone = new BaseCard(this.owner, this.cardData);
 
-        clone.blanks = this.blanks.clone();
         clone.controllerStack = [...this.controllerStack];
         clone.factions = this.factions.clone();
         clone.flags = this.flags.clone();
@@ -629,11 +627,11 @@ class BaseCard {
     }
 
     isFullBlank() {
-        return this.blanks.contains('full');
+        return this.hasFlag(Flags.blanks.full);
     }
 
     isBlankExcludingTraits() {
-        return this.blanks.contains('excludingTraits');
+        return this.hasFlag(Flags.blanks.excludingTraits);
     }
 
     isAttacking() {
@@ -686,7 +684,7 @@ class BaseCard {
 
     setBlank(type) {
         let before = this.isAnyBlank();
-        this.blanks.add(type);
+        this.flags.add(type);
         let after = this.isAnyBlank();
 
         if (!before && after) {
@@ -762,7 +760,7 @@ class BaseCard {
 
     clearBlank(type) {
         let before = this.isAnyBlank();
-        this.blanks.remove(type);
+        this.flags.remove(type);
         let after = this.isAnyBlank();
 
         if (before && !after) {

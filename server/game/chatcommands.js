@@ -2,7 +2,7 @@ import TextHelper from './TextHelper.js';
 import CancelChallengePrompt from './gamesteps/CancelChallengePrompt.js';
 import Deck from './Deck.js';
 import RematchPrompt from './gamesteps/RematchPrompt.js';
-import { Tokens } from './Constants/index.js';
+import { Flags, Tokens } from './Constants/index.js';
 import Effects from './effects.js';
 
 class ChatCommands {
@@ -123,7 +123,7 @@ class ChatCommands {
             waitingPromptTitle: 'Waiting for opponent to blank card',
             cardCondition: (card) => card.location === 'play area' && card.controller === player,
             onSelect: (p, card) => {
-                card.setBlank('full');
+                card.setBlank(Flags.blanks.full);
 
                 this.game.addAlert('danger', '{0} uses the /blank command to blank {1}', p, card);
                 return true;

@@ -1,4 +1,8 @@
 export const Flags = Object.freeze({
+    blanks: Object.freeze({
+        excludingTraits: 'blanks.excludingTraits',
+        full: 'blanks.full'
+    }),
     challengeOptions: Object.freeze({
         canBeDeclaredWhileKneeling: 'challengeOptions.canBeDeclaredWhileKneeling',
         canBeDeclaredWithoutIcon: 'challengeOptions.canBeDeclaredWithoutIcon',

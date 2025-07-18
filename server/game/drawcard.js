@@ -29,7 +29,6 @@ class DrawCard extends BaseCard {
         let clone = new DrawCard(this.owner, this.cardData);
 
         clone.attachments = this.attachments.map((attachment) => attachment.createSnapshot());
-        clone.blanks = this.blanks.clone();
         clone.childCards = this.childCards.map((card) => card.createSnapshot());
         clone.controllerStack = [...this.controllerStack];
         clone.dupes = this.dupes.map((dupe) => dupe.createSnapshot());

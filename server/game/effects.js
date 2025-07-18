@@ -620,18 +620,18 @@ const Effects = {
     },
     blankExcludingTraits: {
         apply: function (card) {
-            card.setBlank('excludingTraits');
+            card.setBlank(Flags.blanks.excludingTraits);
         },
         unapply: function (card) {
-            card.clearBlank('excludingTraits');
+            card.clearBlank(Flags.blanks.excludingTraits);
         }
     },
     fullBlank: {
         apply: function (card) {
-            card.setBlank('full');
+            card.setBlank(Flags.blanks.full);
         },
         unapply: function (card) {
-            card.clearBlank('full');
+            card.clearBlank(Flags.blanks.full);
         }
     },
     poison: {
