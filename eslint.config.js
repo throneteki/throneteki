@@ -49,6 +49,12 @@ export default [
                     varsIgnorePattern: '^_',
                     caughtErrorsIgnorePattern: '^_'
                 }
+            ],
+            'prettier/prettier': [
+                'error',
+                {
+                    endOfLine: 'auto'
+                }
             ]
         },
         settings: {

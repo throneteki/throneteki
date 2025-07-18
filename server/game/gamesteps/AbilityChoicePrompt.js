@@ -38,14 +38,16 @@ class AbilityChoicePrompt extends BaseStep {
                     card: choice.card,
                     mapCard: true,
                     method: 'chooseAbilityChoice',
-                    disabled: () => !choice.gameAction.allow(this.context)
+                    disabled: () =>
+                        !choice.gameAction.allow(this.context) || !choice.condition(this.context)
                 };
             }
             return {
                 text: choice.text,
                 arg: choice.text,
                 method: 'chooseAbilityChoice',
-                disabled: () => !choice.gameAction.allow(this.context)
+                disabled: () =>
+                    !choice.gameAction.allow(this.context) || !choice.condition(this.context)
             };
         });
 
