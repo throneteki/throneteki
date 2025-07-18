@@ -13,7 +13,7 @@ class RevealTopCards extends GameAction {
 
     canChangeGameState({ amount = 1, player, context }) {
         player = player || context.player;
-        return amount > 0 && player.drawDeck.length >= amount;
+        return amount > 0 && player.drawDeck.length > 0;
     }
 
     createEvent({
