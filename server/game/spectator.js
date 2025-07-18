@@ -42,7 +42,7 @@ class Spectator {
             keywordSettings: this.keywordSettings,
             promptedActionWindows: this.promptedActionWindows,
             ...promptState,
-            canSafelyLeave: this.game.canSafelyLeave(this)
+            canSafelyLeave: true
         };
     }
 }
