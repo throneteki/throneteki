@@ -90,10 +90,10 @@ function powerOptionEffect(key) {
     return function () {
         return {
             apply: function (card) {
-                card.powerOptions.add(key);
+                card.flags.add(key);
             },
             unapply: function (card) {
-                card.powerOptions.remove(key);
+                card.flags.remove(key);
             }
         };
     };
@@ -942,7 +942,7 @@ const Effects = {
     contributesToDominanceWhileKneeling: dominanceOptionEffect(
         Flags.dominanceOptions.contributesWhileKneeling
     ),
-    doesNotContributeToPowerTotal: powerOptionEffect('doesNotContribute'),
+    doesNotContributeToPowerTotal: powerOptionEffect(Flags.powerOptions.doesNotContribute),
     optionalStandDuringStanding: function () {
         return {
             apply: function (card) {

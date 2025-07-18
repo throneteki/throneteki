@@ -1062,7 +1062,9 @@ class Player extends Spectator {
             if (card.controller !== this) {
                 return memo;
             }
-            let cardPower = card.powerOptions.contains('doesNotContribute') ? 0 : card.getPower();
+            let cardPower = card.hasFlag(Flags.powerOptions.doesNotContribute)
+                ? 0
+                : card.getPower();
             return memo + cardPower;
         }, 0);
     }

@@ -58,7 +58,6 @@ class BaseCard {
         this.traits = new ReferenceCountedSetProperty();
         this.blanks = new ReferenceCountedSetProperty();
         this.losesAspects = new ReferenceCountedSetProperty();
-        this.powerOptions = new ReferenceCountedSetProperty();
         this.controllerStack = [];
         this.eventsForRegistration = [];
         this.keywordSources = [];

@@ -25,5 +25,8 @@ export const Flags = Object.freeze({
         cannotWinChallenge: 'player.cannotWinChallenge',
         cannotWinGame: 'player.cannotWinGame',
         doesNotReturnUnspentGold: 'player.doesNotReturnUnspentGold'
+    }),
+    powerOptions: Object.freeze({
+        doesNotContribute: 'powerOptions.doesNotContribute'
     })
 });
