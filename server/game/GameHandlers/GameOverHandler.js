@@ -237,6 +237,9 @@ class GameOverHandler {
      * @param  {...Player} winners the players who have won the game (if multiple players can win the game)
      */
     gameOver(reason = 'draw', ...winners) {
+        if (this.isGameOver) {
+            return;
+        }
         const finishedAt = new Date();
         this.isGameOver = true;
 

@@ -170,21 +170,26 @@ class GameServer {
         const warning = 1 * 60 * 1000;
 
         for (const game of Object.values(this.games)) {
-            // Sends a warning to game before closing due to timeout
-            if (game.finishedAt && Date.now() - game.finishedAt > timeout - warning) {
-                game.addAlert(
-                    'warning',
-                    'Game will close in {0}!',
-                    TextHelper.duration(warning / 1000)
-                );
-                return;
-            }
-
-            if (game.finishedAt && Date.now() - game.finishedAt > timeout) {
-                game.addAlert('warning', 'Game is closing');
-                logger.info('closed finished game %s due to inactivity', game.id);
-                this.closeGame(game);
-                return;
+            if (game.finishedAt) {
+                const timeElapsed = Date.now() - game.finishedAt;
+                if (timeElapsed > timeout) {
+                    game.addAlert('warning', 'Game has closed');
+                    logger.info('closed finished game %s due to inactivity', game.id);
+                    this.sendGameState(game);
+                    this.closeGame(game);
+                    return;
+                }
+                // Sends a warning to game before closing due to timeout
+                if (timeElapsed > timeout - warning) {
+                    const timeRemaining = timeout - timeElapsed;
+                    game.addAlert(
+                        'warning',
+                        'Game will close in {0}',
+                        TextHelper.duration(timeRemaining / 1000)
+                    );
+                    this.sendGameState(game);
+                    return;
+                }
             }
 
             if (game.isEmpty()) {
