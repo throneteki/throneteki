@@ -39,6 +39,11 @@ export const Flags = Object.freeze({
         cannotWinGame: 'player.cannotWinGame',
         doesNotReturnUnspentGold: 'player.doesNotReturnUnspentGold'
     }),
+    plotModifiers: Object.freeze({
+        cannotProvide: function (modifier) {
+            return `plotModifiers.cannotProvide.${modifier}`;
+        }
+    }),
     powerOptions: Object.freeze({
         doesNotContribute: 'powerOptions.doesNotContribute'
     })

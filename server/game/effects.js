@@ -374,12 +374,13 @@ const Effects = {
     setReserve: setCardModifier('reserve'),
     setBaseReserve: setBaseCardModifier('reserve'),
     preventPlotModifier: function (modifier) {
+        const flag = Flags.plotModifiers.cannotProvide(modifier);
         return {
             apply: function (card) {
-                card.canProvidePlotModifier[modifier] = false;
+                card.flags.add(flag);
             },
             unapply: function (card) {
-                card.canProvidePlotModifier[modifier] = true;
+                card.flags.remove(flag);
             }
         };
     },

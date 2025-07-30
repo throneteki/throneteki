@@ -64,13 +64,6 @@ class BaseCard {
         this.tokens = {};
         this.printedPlotModifiers = {};
 
-        this.canProvidePlotModifier = {
-            gold: true,
-            initiative: true,
-            reserve: true,
-            claim: true
-        };
-
         this.abilityRestrictions = [];
         this.events = new EventRegistrar(this.game, this);
 
@@ -132,7 +125,7 @@ class BaseCard {
             if (value) {
                 printed[statName] = value;
                 this.persistentEffect({
-                    condition: () => this.canProvidePlotModifier[statName],
+                    condition: () => !this.hasFlag(Flags.plotModifiers.cannotProvide(statName)),
                     match: (card) => card.controller.activePlot === card,
                     targetController: 'current',
                     effect: plotStatEffects[statName](value)
