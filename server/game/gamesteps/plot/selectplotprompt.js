@@ -112,7 +112,7 @@ class SelectPlotPrompt extends AllPlayerPrompt {
                 card.getType() === 'plot' &&
                 card.location === 'plot deck' &&
                 card.controller === player &&
-                !card.notConsideredToBeInPlotDeck
+                !card.hasFlag(Flags.card.notConsideredToBeInPlotDeck)
         );
 
         player.selectCard = true;

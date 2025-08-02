@@ -1,6 +1,8 @@
 import AtomicEvent from '../AtomicEvent.js';
 import BestowPrompt from '../gamesteps/bestowprompt.js';
 import Event from '../event.js';
+import { Flags } from '../Constants/index.js';
+
 const orderableLocatons = ['draw deck', 'shadows', 'discard pile', 'dead pile'];
 
 class MoveCardEventGenerator {
@@ -144,7 +146,9 @@ class MoveCardEventGenerator {
                 });
                 event.card.takeControl(player);
                 event.card.kneeled =
-                    (playingType !== 'setup' && !!event.card.entersPlayKneeled) || !!kneeled;
+                    (playingType !== 'setup' &&
+                        !!event.card.hasFlag(Flags.card.entersPlayKneeled)) ||
+                    !!kneeled;
 
                 if (!isDupe && !isSetupAttachment) {
                     event.card.applyPersistentEffects();

@@ -208,7 +208,9 @@ class Player extends Spectator {
     }
 
     getPlots() {
-        return this.plotDeck.filter((plot) => !plot.notConsideredToBeInPlotDeck);
+        return this.plotDeck.filter(
+            (plot) => !plot.hasFlag(Flags.card.notConsideredToBeInPlotDeck)
+        );
     }
 
     addGoldSource(source) {
@@ -710,7 +712,8 @@ class Player extends Spectator {
             });
             card.takeControl(this);
             card.kneeled =
-                (playingType !== 'setup' && !!card.entersPlayKneeled) || !!options.kneeled;
+                (playingType !== 'setup' && !!card.hasFlag(Flags.card.entersPlayKneeled)) ||
+                !!options.kneeled;
 
             if (!dupeCard && !isSetupAttachment) {
                 card.applyPersistentEffects();
@@ -789,7 +792,9 @@ class Player extends Spectator {
     }
 
     recyclePlots() {
-        const plots = this.plotDeck.filter((plot) => !plot.notConsideredToBeInPlotDeck);
+        const plots = this.plotDeck.filter(
+            (plot) => !plot.hasFlag(Flags.card.notConsideredToBeInPlotDeck)
+        );
         if (plots.length === 0) {
             for (const plot of this.plotDiscard) {
                 this.moveCard(plot, 'plot deck');

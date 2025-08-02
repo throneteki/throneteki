@@ -190,10 +190,10 @@ const Effects = {
     entersPlayKneeled: function () {
         return {
             apply: function (card) {
-                card.entersPlayKneeled = true;
+                card.flags.add(Flags.card.entersPlayKneeled);
             },
             unapply: function (card) {
-                card.entersPlayKneeled = false;
+                card.flags.remove(Flags.card.entersPlayKneeled);
             }
         };
     },
@@ -949,10 +949,10 @@ const Effects = {
     optionalStandDuringStanding: function () {
         return {
             apply: function (card) {
-                card.optionalStandDuringStanding = true;
+                card.flags.add(Flags.standingOptions.optionalStand);
             },
             unapply: function (card) {
-                card.optionalStandDuringStanding = false;
+                card.flags.remove(Flags.standingOptions.optionalStand);
             }
         };
     },
@@ -1631,10 +1631,10 @@ const Effects = {
     notConsideredToBeInPlotDeck: function () {
         return {
             apply: function (card) {
-                card.notConsideredToBeInPlotDeck = true;
+                card.flags.add(Flags.card.notConsideredToBeInPlotDeck);
             },
             unapply: function (card) {
-                card.notConsideredToBeInPlotDeck = false;
+                card.flags.remove(Flags.card.notConsideredToBeInPlotDeck);
             }
         };
     },

@@ -3,6 +3,10 @@ export const Flags = Object.freeze({
         excludingTraits: Symbol('blanks.excludingTraits'),
         full: Symbol('blanks.full')
     }),
+    card: Object.freeze({
+        entersPlayKneeled: Symbol('card.entersPlayKneeled'),
+        notConsideredToBeInPlotDeck: Symbol('card.notConsideredToBeInPlotDeck')
+    }),
     challengeOptions: Object.freeze({
         canBeDeclaredWhileKneeling: Symbol('challengeOptions.canBeDeclaredWhileKneeling'),
         canBeDeclaredWithoutIcon: Symbol('challengeOptions.canBeDeclaredWithoutIcon'),
@@ -46,5 +50,8 @@ export const Flags = Object.freeze({
     }),
     powerOptions: Object.freeze({
         doesNotContribute: Symbol('powerOptions.doesNotContribute')
+    }),
+    standingOptions: Object.freeze({
+        optionalStand: Symbol('standingOptions.optionalStand')
     })
 });
