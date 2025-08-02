@@ -27,78 +27,40 @@ function cannotEffect(type) {
     };
 }
 
-function modifyPlayerFlagEffect(flag) {
-    return function () {
-        return {
-            targetType: 'player',
-            apply: function (player) {
-                player.flags.add(flag);
-            },
-            unapply: function (player) {
-                player.flags.remove(flag);
-            }
-        };
-    };
-}
-
 function losesAspectEffect(aspect) {
-    return function () {
+    return modifyFlagEffect(aspect, { handler: (target) => target.markAsDirty() });
+}
+
+function challengeOptionEffect(flag) {
+    return modifyFlagEffect(flag, {
+        handler: (_target, context) => context.game.currentChallenge?.calculateStrength()
+    });
+}
+
+function modifyFlagEffect(flagOrFunc, options = {}) {
+    return function (...args) {
+        const { handler = () => {}, targetType = 'card' } = options;
+        const flag = flagOrFunc instanceof Function ? flagOrFunc(...args) : flagOrFunc;
         return {
-            apply: function (card) {
-                card.flags.add(aspect);
-                card.markAsDirty();
+            targetType,
+            apply: function (target, context) {
+                target.flags.add(flag);
+                handler(target, context);
             },
-            unapply: function (card) {
-                card.flags.remove(aspect);
-                card.markAsDirty();
+            unapply: function (target, context) {
+                target.flags.remove(flag);
+                handler(target, context);
             }
         };
     };
 }
 
-function challengeOptionEffect(key) {
-    return function () {
-        return {
-            apply: function (card, context) {
-                card.flags.add(key);
-                if (context.game.currentChallenge) {
-                    context.game.currentChallenge.calculateStrength();
-                }
-            },
-            unapply: function (card, context) {
-                card.flags.remove(key);
-                if (context.game.currentChallenge) {
-                    context.game.currentChallenge.calculateStrength();
-                }
-            }
-        };
-    };
+function modifyPlayerFlagEffect(flag) {
+    return modifyFlagEffect(flag, { targetType: 'player' });
 }
 
-function dominanceOptionEffect(key) {
-    return function () {
-        return {
-            apply: function (card) {
-                card.flags.add(key);
-            },
-            unapply: function (card) {
-                card.flags.remove(key);
-            }
-        };
-    };
-}
-
-function powerOptionEffect(key) {
-    return function () {
-        return {
-            apply: function (card) {
-                card.flags.add(key);
-            },
-            unapply: function (card) {
-                card.flags.remove(key);
-            }
-        };
-    };
+function modifyGameFlagEffect(flag) {
+    return modifyFlagEffect(flag, { targetType: 'game' });
 }
 
 function dynamicCardModifier(propName) {
@@ -187,16 +149,7 @@ const Effects = {
             }
         };
     },
-    entersPlayKneeled: function () {
-        return {
-            apply: function (card) {
-                card.flags.add(Flags.card.entersPlayKneeled);
-            },
-            unapply: function (card) {
-                card.flags.remove(Flags.card.entersPlayKneeled);
-            }
-        };
-    },
+    entersPlayKneeled: modifyFlagEffect(Flags.card.entersPlayKneeled),
     setCardType: function (type) {
         return {
             apply: function (card) {
@@ -373,17 +326,9 @@ const Effects = {
     modifyReserve: dynamicCardModifier('reserve'),
     setReserve: setCardModifier('reserve'),
     setBaseReserve: setBaseCardModifier('reserve'),
-    preventPlotModifier: function (modifier) {
-        const flag = Flags.plotModifiers.cannotProvide(modifier);
-        return {
-            apply: function (card) {
-                card.flags.add(flag);
-            },
-            unapply: function (card) {
-                card.flags.remove(flag);
-            }
-        };
-    },
+    preventPlotModifier: modifyFlagEffect((modifier) =>
+        Flags.plotModifiers.cannotProvide(modifier)
+    ),
     dynamicStrength: function (calculate, gameAction = 'increaseStrength') {
         return {
             gameAction: gameAction,
@@ -941,21 +886,12 @@ const Effects = {
             }
         };
     },
-    doesNotContributeToDominance: dominanceOptionEffect(Flags.dominanceOptions.doesNotContribute),
-    contributesToDominanceWhileKneeling: dominanceOptionEffect(
+    doesNotContributeToDominance: modifyFlagEffect(Flags.dominanceOptions.doesNotContribute),
+    contributesToDominanceWhileKneeling: modifyFlagEffect(
         Flags.dominanceOptions.contributesWhileKneeling
     ),
-    doesNotContributeToPowerTotal: powerOptionEffect(Flags.powerOptions.doesNotContribute),
-    optionalStandDuringStanding: function () {
-        return {
-            apply: function (card) {
-                card.flags.add(Flags.standingOptions.optionalStand);
-            },
-            unapply: function (card) {
-                card.flags.remove(Flags.standingOptions.optionalStand);
-            }
-        };
-    },
+    doesNotContributeToPowerTotal: modifyFlagEffect(Flags.powerOptions.doesNotContribute),
+    optionalStandDuringStanding: modifyFlagEffect(Flags.standingOptions.optionalStand),
     immuneTo: function (cardCondition) {
         return {
             apply: function (card, context) {
@@ -1617,27 +1553,8 @@ const Effects = {
             }
         };
     },
-    skipPhase: function (name) {
-        return {
-            targetType: 'game',
-            apply: function (game) {
-                game.flags.add(Flags.game.skipPhase(name));
-            },
-            unapply: function (game) {
-                game.flags.remove(Flags.game.skipPhase(name));
-            }
-        };
-    },
-    notConsideredToBeInPlotDeck: function () {
-        return {
-            apply: function (card) {
-                card.flags.add(Flags.card.notConsideredToBeInPlotDeck);
-            },
-            unapply: function (card) {
-                card.flags.remove(Flags.card.notConsideredToBeInPlotDeck);
-            }
-        };
-    },
+    skipPhase: modifyGameFlagEffect((name) => Flags.game.skipPhase(name)),
+    notConsideredToBeInPlotDeck: modifyFlagEffect(Flags.card.notConsideredToBeInPlotDeck),
     mustRevealPlot: function (card) {
         return {
             targetType: 'player',
