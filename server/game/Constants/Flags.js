@@ -25,6 +25,11 @@ export const Flags = Object.freeze({
         contributesWhileKneeling: Symbol('dominanceOptions.contributesWhileKneeling'),
         doesNotContribute: Symbol('dominanceOptions.doesNotContribute'),
     }),
+    game: Object.freeze({
+        skipPhase: function (phase) {
+            return Symbol.for(`game.skipPhase.${phase}`);
+        }
+    }),
     losesAspect: Object.freeze({
         allFactions: Symbol('losesAspect.allFactions'),
         faction: function (factionName) {

@@ -1621,10 +1621,10 @@ const Effects = {
         return {
             targetType: 'game',
             apply: function (game) {
-                game.skipPhase[name] = true;
+                game.flags.add(Flags.game.skipPhase(name));
             },
             unapply: function (game) {
-                game.skipPhase[name] = false;
+                game.flags.remove(Flags.game.skipPhase(name));
             }
         };
     },
