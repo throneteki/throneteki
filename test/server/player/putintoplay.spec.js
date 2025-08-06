@@ -20,6 +20,7 @@ describe('Player', function () {
         this.cardSpy = jasmine.createSpyObj('card', [
             'getPrintedType',
             'getCost',
+            'hasFlag',
             'isBestow',
             'isUnique',
             'applyPersistentEffects',

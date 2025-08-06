@@ -1,4 +1,5 @@
 import AllPlayerPrompt from '../allplayerprompt.js';
+import { Flags } from '../../Constants/index.js';
 
 class SelectPlotPrompt extends AllPlayerPrompt {
     completionCondition(player) {
@@ -17,7 +18,7 @@ class SelectPlotPrompt extends AllPlayerPrompt {
             }
         }
 
-        return !!player.selectedPlot || player.hasFlag('cannotRevealPlot');
+        return !!player.selectedPlot || player.hasFlag(Flags.player.cannotRevealPlot);
     }
 
     activePrompt(player) {
@@ -41,7 +42,7 @@ class SelectPlotPrompt extends AllPlayerPrompt {
     }
 
     waitingPrompt(player) {
-        if (player.mustRevealPlot || player.hasFlag('cannotRevealPlot')) {
+        if (player.mustRevealPlot || player.hasFlag(Flags.player.cannotRevealPlot)) {
             return {
                 menuTitle: 'Waiting for opponent(s) to select plot'
             };
@@ -111,7 +112,7 @@ class SelectPlotPrompt extends AllPlayerPrompt {
                 card.getType() === 'plot' &&
                 card.location === 'plot deck' &&
                 card.controller === player &&
-                !card.notConsideredToBeInPlotDeck
+                !card.hasFlag(Flags.card.notConsideredToBeInPlotDeck)
         );
 
         player.selectCard = true;

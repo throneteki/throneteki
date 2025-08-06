@@ -8,6 +8,7 @@ import InitiatingKeywordsWindow from '../InitiatingKeywordsWindow.js';
 import ResolutionKeywordsWindow from '../ResolutionKeywordsWindow.js';
 import InitiateChallenge from '../../GameActions/InitiateChallenge.js';
 import DeclareDefenders from '../../GameActions/DeclareDefenders.js';
+import { Flags } from '../../Constants/index.js';
 
 class ChallengeFlow extends BaseStep {
     constructor(game, challenge) {
@@ -65,7 +66,7 @@ class ChallengeFlow extends BaseStep {
             attacking: true,
             challenge: this.challenge,
             cannotCancel: this.challenge.declareDefendersFirst,
-            mustBeDeclaredOption: 'mustBeDeclaredAsAttacker',
+            mustBeDeclaredOption: Flags.challengeOptions.mustBeDeclaredAsAttacker,
             limitsProperty: 'attackerLimits',
             activePromptTitle: 'Select challenge attackers',
             waitingPromptTitle: 'Waiting for opponent to select attackers',
@@ -110,7 +111,7 @@ class ChallengeFlow extends BaseStep {
         return new ChooseParticipantsPrompt(this.game, this.challenge.defendingPlayer, {
             attacking: false,
             challenge: this.challenge,
-            mustBeDeclaredOption: 'mustBeDeclaredAsDefender',
+            mustBeDeclaredOption: Flags.challengeOptions.mustBeDeclaredAsDefender,
             limitsProperty: 'defenderLimits',
             activePromptTitle: 'Select defenders',
             waitingPromptTitle: 'Waiting for opponent to defend',
@@ -221,7 +222,7 @@ class ChallengeFlow extends BaseStep {
 
     challengeBonusPower() {
         if (this.challenge.isUnopposed() && this.challenge.isAttackerTheWinner()) {
-            if (this.challenge.winner.cannotGainChallengeBonus) {
+            if (this.challenge.winner.hasFlag(Flags.player.cannotGainChallengeBonus)) {
                 this.game.addMessage(
                     '{0} won the challenge unopposed but cannot gain challenge bonuses',
                     this.challenge.winner

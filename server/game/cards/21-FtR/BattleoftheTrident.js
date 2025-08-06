@@ -1,6 +1,7 @@
 import AgendaCard from '../../agendacard.js';
 import RevealPlots from '../../gamesteps/revealplots.js';
 import SimpleStep from '../../gamesteps/simplestep.js';
+import { Flags } from '../../Constants/index.js';
 
 class BattleoftheTrident extends AgendaCard {
     setupCardAbilities(ability) {
@@ -13,7 +14,7 @@ class BattleoftheTrident extends AgendaCard {
                     event.challenge.attackers.some(
                         (attacker) => attacker.hasTrait('Army') || attacker.hasTrait('Commander')
                     ) &&
-                    !this.owner.hasFlag('cannotRevealPlot')
+                    !this.owner.hasFlag(Flags.player.cannotRevealPlot)
             },
             cost: ability.costs.kneelFactionCard(),
             target: {
@@ -33,7 +34,7 @@ class BattleoftheTrident extends AgendaCard {
         this.action({
             title: 'Manually trigger',
             cost: ability.costs.kneelFactionCard(),
-            condition: () => !this.owner.hasFlag('cannotRevealPlot'),
+            condition: () => !this.owner.hasFlag(Flags.player.cannotRevealPlot),
             target: {
                 type: 'select',
                 activePromptTitle: 'Select a plot',

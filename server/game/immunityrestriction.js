@@ -1,8 +1,9 @@
+import { Flags } from './Constants/index.js';
 import Restriction from './restriction.js';
 
 class ImmunityRestriction extends Restriction {
     constructor(cardCondition, immunitySource) {
-        super('immunity');
+        super(Flags.losesAspect.immunity);
         this.cardCondition = cardCondition;
         this.immunitySource = immunitySource;
     }

@@ -3,6 +3,7 @@ import Phase from './phase.js';
 import SimpleStep from './simplestep.js';
 import ActionWindow from './actionwindow.js';
 import GameActions from '../GameActions/index.js';
+import { Flags } from '../Constants/Flags.js';
 
 class StandingPhase extends Phase {
     constructor(game) {
@@ -79,8 +80,8 @@ class StandingPhase extends Phase {
     }
 
     selectOptionalCards(cardsToStand, player) {
-        let optionalStandCards = cardsToStand.automatic.filter(
-            (card) => card.optionalStandDuringStanding
+        let optionalStandCards = cardsToStand.automatic.filter((card) =>
+            card.hasFlag(Flags.standingOptions.optionalStand)
         );
 
         if (optionalStandCards.length === 0) {
@@ -88,7 +89,7 @@ class StandingPhase extends Phase {
         }
 
         cardsToStand.automatic = cardsToStand.automatic.filter(
-            (card) => !card.optionalStandDuringStanding
+            (card) => !card.hasFlag(Flags.standingOptions.optionalStand)
         );
 
         this.game.promptForSelect(player, {

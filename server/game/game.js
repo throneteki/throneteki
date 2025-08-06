@@ -39,10 +39,12 @@ import EndRound from './GameActions/EndRound.js';
 import TimeLimit from './timeLimit.js';
 import PrizedKeywordListener from './PrizedKeywordListener.js';
 import GameOverPrompt from './gamesteps/GameOverPrompt.js';
+import ReferenceCountedSetProperty from './PropertyTypes/ReferenceCountedSetProperty.js';
 import shuffle from 'lodash.shuffle';
 import StartRound from './GameActions/StartRound.js';
 import GameOverHandler from './GameHandlers/GameOverHandler.js';
 import DisconnectHandler from './GameHandlers/DisconnectHandler.js';
+import { Flags } from './Constants/index.js';
 
 class Game extends EventEmitter {
     constructor(details, options = {}) {
@@ -59,6 +61,7 @@ class Game extends EventEmitter {
         this.allCards = [];
         this.attachmentValidityCheck = new AttachmentValidityCheck(this);
         this.effectEngine = new EffectEngine(this);
+        this.flags = new ReferenceCountedSetProperty();
         this.playersAndSpectators = {};
         this.playerPlots = {};
         this.playerCards = {};
@@ -103,7 +106,6 @@ class Game extends EventEmitter {
         this.packData = options.packData || [];
         this.restrictedListData = options.restrictedListData || [];
         this.remainingPhases = [];
-        this.skipPhase = {};
         this.cardVisibility = new CardVisibility(this);
         this.winnerOfDominanceInLastRound = undefined;
         this.prizedKeywordListener = new PrizedKeywordListener(this);
@@ -1109,7 +1111,7 @@ class Game extends EventEmitter {
     }
 
     isPhaseSkipped(name) {
-        return !!this.skipPhase[name];
+        return this.flags.contains(Flags.game.skipPhase(name));
     }
 
     saveWithDupe(card) {

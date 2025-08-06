@@ -5,6 +5,7 @@ import {
     ValueContribution,
     CharacterStrengthContribution
 } from '../../../server/game/ChallengeContributions.js';
+import { Flags } from '../../../server/game/Constants/index.js';
 
 describe('Challenge', function () {
     beforeEach(function () {
@@ -173,7 +174,9 @@ describe('Challenge', function () {
 
                     describe('then cannot contribute its STR towards the challenge', function () {
                         beforeEach(function () {
-                            this.targetCard.challengeOptions.add('doesNotContributeStrength');
+                            this.targetCard.flags.add(
+                                Flags.challengeOptions.doesNotContributeStrength
+                            );
                             this.challenge.calculateStrength();
                         });
 
@@ -371,7 +374,7 @@ describe('Challenge', function () {
 
                 describe('then cannot contribute its STR towards the challenge', function () {
                     beforeEach(function () {
-                        this.targetCard.challengeOptions.add('doesNotContributeStrength');
+                        this.targetCard.flags.add(Flags.challengeOptions.doesNotContributeStrength);
                         this.challenge.calculateStrength();
                     });
 

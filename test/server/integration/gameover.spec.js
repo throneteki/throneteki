@@ -1,3 +1,5 @@
+import { Flags } from '../../../server/game/Constants/index.js';
+
 describe('Game Over', function () {
     integration({ gameFormat: 'joust', disableWinning: false }, function () {
         describe('Joust', function () {
@@ -216,8 +218,8 @@ describe('Game Over', function () {
 
                 describe('and both players cannot win', function () {
                     beforeEach(function () {
-                        this.player1Object.cannotWinGame = true;
-                        this.player2Object.cannotWinGame = true;
+                        this.player1Object.flags.add(Flags.player.cannotWinGame);
+                        this.player2Object.flags.add(Flags.player.cannotWinGame);
 
                         this.triggerTimerGameEnd();
                     });
@@ -562,8 +564,8 @@ describe('Game Over', function () {
 
                         describe('and those players cannot win', function () {
                             beforeEach(function () {
-                                this.player1Object.cannotWinGame = true;
-                                this.player2Object.cannotWinGame = true;
+                                this.player1Object.flags.add(Flags.player.cannotWinGame);
+                                this.player2Object.flags.add(Flags.player.cannotWinGame);
 
                                 this.triggerTimerGameEnd();
                             });
@@ -583,9 +585,9 @@ describe('Game Over', function () {
 
                 describe('and all players cannot win', function () {
                     beforeEach(function () {
-                        this.player1Object.cannotWinGame = true;
-                        this.player2Object.cannotWinGame = true;
-                        this.player3Object.cannotWinGame = true;
+                        this.player1Object.flags.add(Flags.player.cannotWinGame);
+                        this.player2Object.flags.add(Flags.player.cannotWinGame);
+                        this.player3Object.flags.add(Flags.player.cannotWinGame);
 
                         this.triggerTimerGameEnd();
                     });

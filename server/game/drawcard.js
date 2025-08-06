@@ -3,6 +3,7 @@ import CardMatcher from './CardMatcher.js';
 import ReferenceCountedSetProperty from './PropertyTypes/ReferenceCountedSetProperty.js';
 import StandardPlayActions from './PlayActions/StandardActions.js';
 import CardStat from './cardStat.js';
+import { Flags } from './Constants/index.js';
 
 const Icons = ['military', 'intrigue', 'power'];
 
@@ -15,13 +16,11 @@ class DrawCard extends BaseCard {
         this.childCards = [];
         this.strength = new CardStat(this.getPrintedStrength());
         this.dominanceStrengthModifier = 0;
-        this.dominanceOptions = new ReferenceCountedSetProperty();
         this.kneeled = false;
         this.inChallenge = false;
         this.isContributing = false;
         this.inDanger = false;
         this.saved = false;
-        this.challengeOptions = new ReferenceCountedSetProperty();
         this.minCost = 0;
         this.eventPlacementLocation = 'discard pile';
     }
@@ -30,14 +29,13 @@ class DrawCard extends BaseCard {
         let clone = new DrawCard(this.owner, this.cardData);
 
         clone.attachments = this.attachments.map((attachment) => attachment.createSnapshot());
-        clone.blanks = this.blanks.clone();
         clone.childCards = this.childCards.map((card) => card.createSnapshot());
         clone.controllerStack = [...this.controllerStack];
         clone.dupes = this.dupes.map((dupe) => dupe.createSnapshot());
         clone.factions = this.factions.clone();
+        clone.flags = this.flags.clone();
         clone.icons = this.icons.clone();
         clone.location = this.location;
-        clone.losesAspects = this.losesAspects.clone();
         clone.keywords = this.keywords.clone();
         clone.kneeled = this.kneeled;
         clone.parent = this.parent;
@@ -316,8 +314,8 @@ class DrawCard extends BaseCard {
     getDominanceStrength() {
         let baseStrength =
             this.getType() === 'character' &&
-            (!this.kneeled || this.dominanceOptions.contains('contributesWhileKneeling')) &&
-            !this.dominanceOptions.contains('doesNotContribute')
+            (!this.kneeled || this.hasFlag(Flags.dominanceOptions.contributesWhileKneeling)) &&
+            !this.hasFlag(Flags.dominanceOptions.doesNotContribute)
                 ? this.getStrength()
                 : 0;
 
@@ -476,15 +474,21 @@ class DrawCard extends BaseCard {
     }
 
     kneelsAsAttacker(challengeType) {
-        const keys = ['doesNotKneelAsAttacker.any', `doesNotKneelAsAttacker.${challengeType}`];
+        const flags = [
+            Flags.challengeOptions.doesNotKneelAsAttacker('any'),
+            Flags.challengeOptions.doesNotKneelAsAttacker(challengeType)
+        ];
 
-        return keys.every((key) => !this.challengeOptions.contains(key));
+        return flags.every((flag) => !this.hasFlag(flag));
     }
 
     kneelsAsDefender(challengeType) {
-        const keys = ['doesNotKneelAsDefender.any', `doesNotKneelAsDefender.${challengeType}`];
+        const flags = [
+            Flags.challengeOptions.doesNotKneelAsDefender('any'),
+            Flags.challengeOptions.doesNotKneelAsDefender(challengeType)
+        ];
 
-        return keys.every((key) => !this.challengeOptions.contains(key));
+        return flags.every((flag) => !this.hasFlag(flag));
     }
 
     canParticipate({ attacking, challengeType }) {
@@ -501,14 +505,14 @@ class DrawCard extends BaseCard {
             (attacking && !this.kneeled && !this.kneelsAsAttacker(challengeType)) ||
             (!attacking && !this.kneeled && !this.kneelsAsDefender(challengeType)) ||
             (!this.kneeled && this.allowGameAction('kneel')) ||
-            (this.kneeled && this.challengeOptions.contains('canBeDeclaredWhileKneeling'));
+            (this.kneeled && this.hasFlag(Flags.challengeOptions.canBeDeclaredWhileKneeling));
 
         return (
             this.canParticipateInChallenge() &&
             this.location === 'play area' &&
             canKneelForChallenge &&
             (this.hasIcon(challengeType) ||
-                this.challengeOptions.contains('canBeDeclaredWithoutIcon'))
+                this.hasFlag(Flags.challengeOptions.canBeDeclaredWithoutIcon))
         );
     }
 

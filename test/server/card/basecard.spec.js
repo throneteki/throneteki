@@ -1,4 +1,5 @@
 import BaseCard from '../../../server/game/basecard.js';
+import { Flags } from '../../../server/game/Constants/index.js';
 
 describe('BaseCard', function () {
     beforeEach(function () {
@@ -237,7 +238,8 @@ describe('BaseCard', function () {
 
             describe('but a restriction type is lost', function () {
                 beforeEach(function () {
-                    this.card.loseAspect('restriction1');
+                    this.card.flags.add('restriction1');
+                    this.card.markAsDirty();
                 });
 
                 it('should skip that restriction type', function () {
@@ -288,7 +290,7 @@ describe('BaseCard', function () {
 
         describe('when the card loses all factions', function () {
             beforeEach(function () {
-                this.card.loseAspect('factions');
+                this.card.flags.add(Flags.losesAspect.allFactions);
             });
 
             it('should return true for neutral', function () {
@@ -299,7 +301,7 @@ describe('BaseCard', function () {
         describe('when the card loses a specific faction', function () {
             beforeEach(function () {
                 this.card.addFaction('lannister');
-                this.card.loseAspect('factions.stark');
+                this.card.flags.add(Flags.losesAspect.faction('stark'));
             });
 
             it('should return false for the faction lost', function () {
@@ -311,7 +313,7 @@ describe('BaseCard', function () {
             });
 
             it('should read as neutral if it has lost all its specific factions', function () {
-                this.card.loseAspect('factions.lannister');
+                this.card.flags.add(Flags.losesAspect.faction('lannister'));
 
                 expect(this.card.isFaction('neutral')).toBe(true);
             });

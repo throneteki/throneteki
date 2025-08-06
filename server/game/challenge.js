@@ -3,6 +3,7 @@ import EventRegistrar from './eventregistrar.js';
 import Settings from '../settings.js';
 import ChallengeMatcher from './ChallengeMatcher.js';
 import { ChallengeContributions } from './ChallengeContributions.js';
+import { Flags } from './Constants/index.js';
 
 class Challenge {
     constructor(game, properties) {
@@ -15,7 +16,6 @@ class Challenge {
         this.isInitiated = properties.isInitiated || false;
         this.initiatedChallengeType = properties.challengeType;
         this.challengeType = properties.challengeType;
-        this.declareDefendersFirst = false;
         this.number = properties.number;
         this.totalNumber = properties.totalNumber;
         this.attackers = [];
@@ -28,6 +28,10 @@ class Challenge {
         this.initiationActions = [];
         this.events = new EventRegistrar(game, this);
         this.registerEvents(['onCardLeftPlay']);
+    }
+
+    get declareDefendersFirst() {
+        return this.game.flags.contains(Flags.game.declareDefendersBeforeAttackers);
     }
 
     singlePlayerDefender() {
@@ -245,7 +249,7 @@ class Challenge {
             {
                 condition: () =>
                     this.attackerStrength >= this.defenderStrength &&
-                    this.attackingPlayer.cannotWinChallenge,
+                    this.attackingPlayer.hasFlag(Flags.player.cannotWinChallenge),
                 message:
                     'There is no winner or loser for this challenge because the attacker cannot win'
             },
@@ -258,7 +262,7 @@ class Challenge {
             {
                 condition: () =>
                     this.defenderStrength > this.attackerStrength &&
-                    this.defendingPlayer.cannotWinChallenge,
+                    this.defendingPlayer.hasFlag(Flags.player.cannotWinChallenge),
                 message:
                     'There is no winner or loser for this challenge because the defender cannot win'
             },
