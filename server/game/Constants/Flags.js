@@ -19,16 +19,17 @@ export const Flags = Object.freeze({
         },
         ignoresAssaultLocationCost: Symbol('challengeOptions.ignoresAssaultLocationCost'),
         mustBeDeclaredAsAttacker: Symbol('challengeOptions.mustBeDeclaredAsAttacker'),
-        mustBeDeclaredAsDefender: Symbol('challengeOptions.mustBeDeclaredAsDefender'),
+        mustBeDeclaredAsDefender: Symbol('challengeOptions.mustBeDeclaredAsDefender')
     }),
     dominanceOptions: Object.freeze({
         contributesWhileKneeling: Symbol('dominanceOptions.contributesWhileKneeling'),
-        doesNotContribute: Symbol('dominanceOptions.doesNotContribute'),
+        doesNotContribute: Symbol('dominanceOptions.doesNotContribute')
     }),
     game: Object.freeze({
         skipPhase: function (phase) {
             return Symbol.for(`game.skipPhase.${phase}`);
-        }
+        },
+        declareDefendersBeforeAttackers: Symbol('game.declareDefendersBeforeAttackers')
     }),
     losesAspect: Object.freeze({
         allFactions: Symbol('losesAspect.allFactions'),

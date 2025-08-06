@@ -209,21 +209,9 @@ const Effects = {
     mustBeDeclaredAsDefender: challengeOptionEffect(
         Flags.challengeOptions.mustBeDeclaredAsDefender
     ),
-    declareDefendersBeforeAttackers: function () {
-        return {
-            targetType: 'player',
-            apply: function (player, context) {
-                if (context.game.currentChallenge) {
-                    context.game.currentChallenge.declareDefendersFirst = true;
-                }
-            },
-            unapply: function (player, context) {
-                if (context.game.currentChallenge) {
-                    context.game.currentChallenge.declareDefendersFirst = false;
-                }
-            }
-        };
-    },
+    declareDefendersBeforeAttackers: modifyGameFlagEffect(
+        Flags.game.declareDefendersBeforeAttackers
+    ),
     restrictAttachmentsTo: function (trait) {
         return Effects.addKeyword(`No attachments except <i>${trait}</i>`);
     },

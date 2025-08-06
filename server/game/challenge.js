@@ -16,7 +16,6 @@ class Challenge {
         this.isInitiated = properties.isInitiated || false;
         this.initiatedChallengeType = properties.challengeType;
         this.challengeType = properties.challengeType;
-        this.declareDefendersFirst = false;
         this.number = properties.number;
         this.totalNumber = properties.totalNumber;
         this.attackers = [];
@@ -29,6 +28,10 @@ class Challenge {
         this.initiationActions = [];
         this.events = new EventRegistrar(game, this);
         this.registerEvents(['onCardLeftPlay']);
+    }
+
+    get declareDefendersFirst() {
+        return this.game.flags.contains(Flags.game.declareDefendersBeforeAttackers);
     }
 
     singlePlayerDefender() {
