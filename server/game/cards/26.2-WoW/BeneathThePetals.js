@@ -34,10 +34,11 @@ class BeneathThePetals extends DrawCard {
             }
         });
         this.interrupt({
-            location: ['draw deck'],
             when: {
                 onCardRevealed: (event) => event.card == this && event.card.location === 'draw deck'
             },
+            ignoreEventCosts: true,
+            location: 'draw deck',
             message: '{player} places {source} in shadows and gains 1 gold',
             gameAction: GameActions.simultaneously([
                 GameActions.placeCard({ card: this, location: 'shadows' }),

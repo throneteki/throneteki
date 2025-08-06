@@ -9,7 +9,9 @@ class JoffreysCrossbow extends DrawCard {
         this.persistentEffect({
             condition: () =>
                 this.game.isDuringChallenge({ challengeType: 'military' }) &&
+                this.parent &&
                 this.parent.isAttacking(),
+            targetController: 'any',
             match: (card) => card.getType() === 'character' && card.isUnique(),
             effect: ability.effects.mustChooseAsClaim()
         });

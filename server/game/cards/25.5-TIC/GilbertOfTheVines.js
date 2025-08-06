@@ -2,14 +2,11 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class GilbertOfTheVines extends DrawCard {
-    setupCardAbilities(ability) {
+    setupCardAbilities() {
+        this.xValue({ min: () => 1, max: () => this.controller.drawDeck.length });
         this.action({
             title: 'Reveal top X cards of your deck',
             phase: 'challenge',
-            cost: ability.costs.payXGold(
-                () => 1,
-                (context) => context.player.drawDeck.length
-            ),
             message: {
                 format: '{player} plays {source} to reveal the top {amount} cards of their deck',
                 args: { amount: (context) => context.xValue }

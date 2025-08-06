@@ -169,7 +169,7 @@ const MeleeGameBoardLayout = ({
     }, [otherPlayers, thisPlayer, renderPlayerBoard]);
 
     return (
-        <div className='min-h-full min-w-max grid grid-flow-col auto-cols-auto grid-rows-[repeat(2,auto)]'>
+        <div className='min-h-full min-w-max grid grid-flow-col auto-cols-auto grid-rows-[repeat(2,1fr)]'>
             {playerBoardsGrid}
         </div>
     );
