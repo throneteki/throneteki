@@ -80,11 +80,11 @@ class AllowedChallenges {
         return this.forcedChallenges.some(
             (forcedChallenge) =>
                 forcedChallenge.isMatch(challengeType, opponent) &&
-                this.hasCardsToInitiate(forcedChallenge.challengeType)
+                this.canInitiate(forcedChallenge.challengeType, opponent)
         );
     }
 
-    canInitiate(challengeType, opponent) {
+    canInitiate(challengeType, opponent, isForced = false) {
         if (this.player.isSupporter(opponent)) {
             return false;
         }
@@ -97,15 +97,22 @@ class AllowedChallenges {
             return false;
         }
 
-        const forcableChallenges = this.forcedChallenges.filter(
-            (forcedChallenge) =>
-                !forcedChallenge.satisfied && this.hasCardsToInitiate(forcedChallenge.challengeType)
-        );
-
-        if (forcableChallenges.length > 0) {
-            return forcableChallenges.some((forcedChallenge) =>
-                forcedChallenge.isMatch(challengeType, opponent)
+        if (!isForced) {
+            const forcableChallenges = this.forcedChallenges.filter(
+                (forcedChallenge) =>
+                    !forcedChallenge.satisfied &&
+                    this.player.game
+                        .getOpponents(this.player)
+                        .some((opponent) =>
+                            this.canInitiate(forcedChallenge.challengeType, opponent, true)
+                        )
             );
+
+            if (forcableChallenges.length > 0) {
+                return forcableChallenges.some((forcedChallenge) =>
+                    forcedChallenge.isMatch(challengeType, opponent)
+                );
+            }
         }
 
         return this.allowedChallenges.some(
