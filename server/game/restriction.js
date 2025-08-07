@@ -3,6 +3,10 @@ class Restriction {
         this.name = name;
     }
 
+    isActive() {
+        return true;
+    }
+
     isMatch() {
         return false;
     }

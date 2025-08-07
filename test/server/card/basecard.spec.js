@@ -200,10 +200,12 @@ describe('BaseCard', function () {
         describe('when there are restrictions', function () {
             beforeEach(function () {
                 this.game.currentAbilityContext = { context: 1 };
-                this.restrictionSpy1 = jasmine.createSpyObj('restriction', ['isMatch']);
+                this.restrictionSpy1 = jasmine.createSpyObj('restriction', ['isMatch', 'isActive']);
                 this.restrictionSpy1.name = 'restriction1';
-                this.restrictionSpy2 = jasmine.createSpyObj('restriction', ['isMatch']);
+                this.restrictionSpy1.isActive.and.returnValue(true);
+                this.restrictionSpy2 = jasmine.createSpyObj('restriction', ['isMatch', 'isActive']);
                 this.restrictionSpy2.name = 'restriction2';
+                this.restrictionSpy2.isActive.and.returnValue(true);
                 this.card.addAbilityRestriction(this.restrictionSpy1);
                 this.card.addAbilityRestriction(this.restrictionSpy2);
             });
@@ -239,6 +241,12 @@ describe('BaseCard', function () {
             describe('but a restriction type is lost', function () {
                 beforeEach(function () {
                     this.card.flags.add('restriction1');
+                    this.restrictionSpy1.isActive.and.callFake(
+                        (card) => !card.hasFlag('restriction1')
+                    );
+                    this.restrictionSpy2.isActive.and.callFake(
+                        (card) => !card.hasFlag('restriction2')
+                    );
                     this.card.markAsDirty();
                 });
 
