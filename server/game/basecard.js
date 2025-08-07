@@ -677,8 +677,7 @@ class BaseCard {
         let currentAbilityContext = context || this.game.currentAbilityContext;
         return !this.abilityRestrictions.some(
             (restriction) =>
-                !this.hasFlag(restriction.name) &&
-                restriction.isMatch(actionType, currentAbilityContext)
+                restriction.isActive(this) && restriction.isMatch(actionType, currentAbilityContext)
         );
     }
 
