@@ -76,15 +76,15 @@ class AllowedChallenges {
         }
     }
 
-    mustInitiate(challengeType, opponent, opponents) {
+    mustInitiate(challengeType, opponent) {
         return this.forcedChallenges.some(
             (forcedChallenge) =>
                 forcedChallenge.isMatch(challengeType, opponent) &&
-                this.canInitiate(forcedChallenge.challengeType, opponent, opponents)
+                this.canInitiate(forcedChallenge.challengeType, opponent)
         );
     }
 
-    canInitiate(challengeType, opponent, opponents) {
+    canInitiate(challengeType, opponent, isForced = false) {
         if (this.player.isSupporter(opponent)) {
             return false;
         }
@@ -97,39 +97,28 @@ class AllowedChallenges {
             return false;
         }
 
-        const forcableChallenges = this.forcedChallenges.filter(
-            (forcedChallenge) =>
-                !forcedChallenge.satisfied &&
-                this.hasCardsToInitiate(forcedChallenge.challengeType) &&
-                opponents.some((anOpponent) =>
-                    this.hasLegalOptionToInitiate(forcedChallenge.challengeType, anOpponent)
-                )
-        );
-
-        if (forcableChallenges.length > 0) {
-            return forcableChallenges.some((forcedChallenge) =>
-                forcedChallenge.isMatch(challengeType, opponent)
+        if (!isForced) {
+            const forcableChallenges = this.forcedChallenges.filter(
+                (forcedChallenge) =>
+                    !forcedChallenge.satisfied &&
+                    this.player.game
+                        .getOpponents(this.player)
+                        .some((opponent) =>
+                            this.canInitiate(forcedChallenge.challengeType, opponent, true)
+                        )
             );
+
+            if (forcableChallenges.length > 0) {
+                return forcableChallenges.some((forcedChallenge) =>
+                    forcedChallenge.isMatch(challengeType, opponent)
+                );
+            }
         }
 
         return this.allowedChallenges.some(
             (allowedChallenge) =>
                 allowedChallenge.isMatch(challengeType, opponent) &&
                 this.hasCardsToInitiate(allowedChallenge.challengeType)
-        );
-    }
-
-    hasLegalOptionToInitiate(challengeType, opponent) {
-        if (this.player.isSupporter(opponent)) {
-            return false;
-        }
-
-        if (this.restrictions.some((restriction) => restriction.isMatch(challengeType, opponent))) {
-            return false;
-        }
-
-        return this.allowedChallenges.some((allowedChallenge) =>
-            allowedChallenge.isMatch(challengeType, opponent)
         );
     }
 

@@ -364,12 +364,12 @@ class Player extends Spectator {
         );
     }
 
-    canInitiateChallenge(challengeType, opponent, opponents) {
-        return this.challenges.canInitiate(challengeType, opponent, opponents);
+    canInitiateChallenge(challengeType, opponent) {
+        return this.challenges.canInitiate(challengeType, opponent);
     }
 
-    mustInitiateChallenge(challengeType, opponent, opponents) {
-        return this.challenges.mustInitiate(challengeType, opponent, opponents);
+    mustInitiateChallenge(challengeType, opponent) {
+        return this.challenges.mustInitiate(challengeType, opponent);
     }
 
     canGainGold() {

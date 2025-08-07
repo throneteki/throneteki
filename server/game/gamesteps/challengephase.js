@@ -57,12 +57,10 @@ class ChallengePhase extends Phase {
         const opponents = this.game.getOpponents(player);
 
         if (opponents.length === 0) {
-            return player.canInitiateChallenge(challengeType, null, [null]);
+            return player.canInitiateChallenge(challengeType, null);
         }
 
-        return opponents.some((opponent) =>
-            player.canInitiateChallenge(challengeType, opponent, opponents)
-        );
+        return opponents.some((opponent) => player.canInitiateChallenge(challengeType, opponent));
     }
 
     mustInitiateChallenge(player) {
@@ -74,7 +72,7 @@ class ChallengePhase extends Phase {
 
         return ChallengeTypes.all.some((challengeType) =>
             opponents.some((opponent) =>
-                player.mustInitiateChallenge(challengeType.value, opponent, opponents)
+                player.mustInitiateChallenge(challengeType.value, opponent)
             )
         );
     }
@@ -88,7 +86,7 @@ class ChallengePhase extends Phase {
         }
 
         this.game.promptForOpponentChoice(attackingPlayer, {
-            enabled: (opponent) => attackingPlayer.canInitiateChallenge(challengeType, opponent, opponents),
+            enabled: (opponent) => attackingPlayer.canInitiateChallenge(challengeType, opponent),
             onSelect: (opponent) => {
                 this.initiateChallenge(attackingPlayer, opponent, challengeType);
             },
@@ -101,8 +99,7 @@ class ChallengePhase extends Phase {
     }
 
     initiateChallenge(attackingPlayer, defendingPlayer, challengeType) {
-        let opponents = this.game.getOpponents(attackingPlayer);
-        if (!attackingPlayer.canInitiateChallenge(challengeType, defendingPlayer, opponents)) {
+        if (!attackingPlayer.canInitiateChallenge(challengeType, defendingPlayer)) {
             this.game.queueSimpleStep(() => this.promptForChallenge());
             return;
         }
