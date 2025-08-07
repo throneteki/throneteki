@@ -147,7 +147,8 @@ const agendaRules = {
     },
     // Kingdom of Shadows
     13079: {
-        mayInclude: (card) => !card.loyal && hasKeyword(card, /Shadow \((\d+|X)\)/)
+        mayInclude: (card) =>
+            !card.loyal && card.type === 'character' && hasKeyword(card, /Shadow \((\d+|X)\)/)
     },
     // The White Book
     13099: {
@@ -209,7 +210,8 @@ const agendaRules = {
     },
     // Kingdom of Shadows (Redesign)
     17148: {
-        mayInclude: (card) => !card.loyal && hasKeyword(card, /Shadow \((\d+|X)\)/)
+        mayInclude: (card) =>
+            !card.loyal && card.type === 'character' && hasKeyword(card, /Shadow \((\d+|X)\)/)
     },
     // Sea of Blood (Redesign)
     17149: {
