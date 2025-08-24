@@ -543,6 +543,16 @@ const Effects = {
             }
         };
     },
+    setLoyal: function (loyal) {
+        return {
+            apply: function (card, context) {
+                card.setLoyal(loyal, context.source);
+            },
+            unapply: function (card, context) {
+                card.clearLoyal(context.source);
+            }
+        };
+    },
     burn: {
         apply: function (card) {
             card.setIsBurning(true);
