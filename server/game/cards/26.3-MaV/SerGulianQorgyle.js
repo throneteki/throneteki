@@ -1,7 +1,7 @@
 import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
-class SerGuilianQorgyle extends DrawCard {
+class SerGulianQorgyle extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
@@ -33,6 +33,6 @@ class SerGuilianQorgyle extends DrawCard {
     }
 }
 
-SerGuilianQorgyle.code = '26049';
+SerGulianQorgyle.code = '26049';
 
-export default SerGuilianQorgyle;
+export default SerGulianQorgyle;
