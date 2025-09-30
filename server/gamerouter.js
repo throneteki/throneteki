@@ -15,12 +15,13 @@ class GameRouter extends EventEmitter {
         this.gameService = new GameService(db);
 
         this.subscriber = redis.createClient(configService.getValue('redisUrl'));
+        this.keyPrefix = configService.getValue('redisKeyPrefix');
         this.publisher = this.subscriber.duplicate();
 
         this.subscriber.on('error', this.onError);
         this.publisher.on('error', this.onError);
 
-        this.subscriber.subscribe('nodemessage');
+        this.subscriber.subscribe(`${this.keyPrefix}:nodemessage`);
         this.subscriber.on('message', this.onMessage.bind(this));
         this.subscriber.on('subscribe', () => {
             this.sendCommand('allnodes', 'LOBBYHELLO');
@@ -154,6 +155,7 @@ class GameRouter extends EventEmitter {
 
     // Events
     onMessage(channel, msg) {
+        channel = channel.replace(`${this.keyPrefix}:`, '');
         if (channel !== 'nodemessage') {
             logger.warn(`Message '${msg}' received for unknown channel ${channel}`);
             return;

@@ -16,6 +16,7 @@ class GameSocket extends EventEmitter {
 
         this.nodeName = process.env.SERVER || configService.getValue('nodeIdentity');
 
+        this.keyPrefix = configService.getValue('redisKeyPrefix');
         this.redis = redis.createClient(configService.getValue('redisUrl'));
         this.subscriber = this.redis.duplicate();
         this.publisher = this.redis.duplicate();
@@ -23,8 +24,8 @@ class GameSocket extends EventEmitter {
         this.subscriber.on('error', this.onError);
         this.publisher.on('error', this.onError);
 
-        this.subscriber.subscribe(this.nodeName);
-        this.subscriber.subscribe('allnodes');
+        this.subscriber.subscribe(`${this.keyPrefix}:${this.nodeName}`);
+        this.subscriber.subscribe(`${this.keyPrefix}:allnodes`);
         this.subscriber.on('subscribe', this.onConnect.bind(this));
         this.subscriber.on('message', this.onMessage.bind(this));
     }
@@ -47,7 +48,7 @@ class GameSocket extends EventEmitter {
             return;
         }
 
-        this.publisher.publish('nodemessage', data);
+        this.publisher.publish(`${this.keyPrefix}:nodemessage`, data);
     }
 
     onError(err) {
@@ -55,7 +56,7 @@ class GameSocket extends EventEmitter {
     }
 
     onConnect(channel) {
-        if (channel === 'allnodes') {
+        if (channel === `${this.keyPrefix}:allnodes`) {
             this.emit('onGameSync', this.onGameSync.bind(this));
         }
     }
@@ -75,6 +76,7 @@ class GameSocket extends EventEmitter {
     }
 
     onMessage(channel, msg) {
+        channel = channel.replace(`${this.keyPrefix}:`, '');
         if (channel !== 'allnodes' && channel !== this.nodeName) {
             logger.warn(`Message '${msg}' received for unknown channel ${channel}`);
             return;
