@@ -1,5 +1,4 @@
 import { createLogger, format, transports } from 'winston';
-import 'winston-daily-rotate-file';
 import fs from 'fs';
 
 const __dirname = import.meta.dirname;
@@ -7,12 +6,6 @@ const __dirname = import.meta.dirname;
 if (!fs.existsSync(__dirname + '/logs/')) {
     fs.mkdirSync(__dirname + '/logs/');
 }
-
-let rotate = new transports.DailyRotateFile({
-    filename: __dirname + '/logs/throneteki-%DATE%.log',
-    datePattern: 'YYYY-MM-DD',
-    zippedArchive: true
-});
 
 const prettyJson = format.printf((info) => {
     if (info.meta && info.meta instanceof Error) {
@@ -44,8 +37,7 @@ const logger = createLogger({
                 format.simple(),
                 prettyJson
             )
-        }),
-        rotate
+        })
     ]
 });
 

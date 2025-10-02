@@ -11,10 +11,14 @@ jobs:
         runs-on: self-hosted
         environment: ${{ inputs.environment }}
         steps:
-            - name: Pull latest lobby image
-              run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/throneteki-lobby
-            - name: Stop and remove lobby image
-              continue-on-error: true
-              run: docker stop ${{ vars.CONTAINER_NAME }} && docker rm ${{ vars.CONTAINER_NAME }}
-            - name: Run new lobby image
-              run: docker run --restart unless-stopped -d -p ${{ vars.LOBBY_PORT }}:80 --network ${{ vars.NETWORK_NAME }} -v ${{ vars.CARDS_PATH }}:/usr/src/app/public/img/cards -v ${{ vars.AVATAR_PATH }}:/usr/src/app/public/img/avatar -v ${{ vars.LOG_PATH }}:/usr/src/app/server/logs --name ${{ vars.CONTAINER_NAME }} --env DEBUG="monk:*, mongo:*" --env NODE_CONFIG='{"env":"production","sentryDsn":"${{ secrets.SENTRY_DSN }}","captchaKey":"${{ secrets.CAPTHCA_KEY }}","minLobbyChatTime":3600,"dbPath":"${{ secrets.DB_PATH }}","cookieLifetime":604800000,"redisUrl":"${{ secrets.REDIS_URL }}","secret":"${{ secrets.SECRET }}","emailKey":"${{ secrets.EMAIL_KEY }}","emailBlockKey":"${{ secrets.EMAIL_BLOCK_KEY }}","port":80,"hmacSecret":"${{ secrets.HMAC }}","requireActivation":false,"patreonCallbackUrl":"${{ vars.PATREON_CALLBACK_URL }}","patreonClientId":"${{ secrets.PATREON_CLIENTID }}","patreonSecret":"${{ secrets.PATREON_SECRET }}"}' ${{ secrets.DOCKERHUB_USERNAME }}/throneteki-lobby:latest
+            - name: Checkout repo
+              uses: actions/checkout@v3
+
+            - name: Apply dev Lobby manifests
+              run: |
+                  kubectl apply -f infrastructure/dev/lobby.yaml -n throneteki-dev
+                  kubectl apply -f infrastructure/dev/ingress.yaml -n throneteki-dev
+
+            - name: Verify rollout
+              run: |
+                  kubectl rollout status deployment/throneteki-lobby -n throneteki-dev

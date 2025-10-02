@@ -96,7 +96,6 @@
         "vite": "^5.2.11",
         "vite-express": "^0.16.0",
         "winston": "^3.11.0",
-        "winston-daily-rotate-file": "^4.7.1",
         "yup": "^1.4.0"
     },
     "devDependencies": {

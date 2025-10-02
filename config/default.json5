@@ -17,6 +17,7 @@
     appName: 'The Iron Throne',
 
     redisUrl: 'redis://redis/',
+    redisKeyPrefix: 'local',
     origin: 'http://localhost:4000',
     minLobbyChatTime: 0, // The time (in seconds) an account has to be registered before it can chat in the lobby
     nodeIdentity: 'node1',
