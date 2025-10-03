@@ -27,8 +27,8 @@ jobs:
                   echo "Deploying to namespace: $NAMESPACE"
 
                   # Apply manifests
-                  kubectl apply -f infrastructure/${{ github.event.inputs.environment | lower }}/lobby.yaml -n $NAMESPACE
-                  kubectl apply -f infrastructure/${{ github.event.inputs.environment | lower }}/ingress.yaml -n $NAMESPACE
+                  kubectl apply -f infrastructure/$NAMESPACE/lobby.yaml -n $NAMESPACE
+                  kubectl apply -f infrastructure/$NAMESPACE/ingress.yaml -n $NAMESPACE
 
                   # Verify rollout
                   kubectl rollout status deployment/throneteki-lobby -n $NAMESPACE
