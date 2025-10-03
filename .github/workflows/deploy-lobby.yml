@@ -6,6 +6,7 @@ on:
                 type: environment
                 description: Select the environment
                 default: Production
+
 jobs:
     deploy:
         runs-on: self-hosted
@@ -14,11 +15,20 @@ jobs:
             - name: Checkout repo
               uses: actions/checkout@v3
 
-            - name: Apply dev Lobby manifests
+            - name: Apply Lobby manifests
               run: |
-                  kubectl apply -f infrastructure/dev/lobby.yaml -n throneteki-dev
-                  kubectl apply -f infrastructure/dev/ingress.yaml -n throneteki-dev
+                  # Determine namespace
+                  if [ "${{ github.event.inputs.environment }}" = "Production" ]; then
+                    NAMESPACE="throneteki"
+                  else
+                    NAMESPACE="throneteki-$(echo "${{ github.event.inputs.environment }}" | tr '[:upper:]' '[:lower:]')"
+                  fi
 
-            - name: Verify rollout
-              run: |
-                  kubectl rollout status deployment/throneteki-lobby -n throneteki-dev
+                  echo "Deploying to namespace: $NAMESPACE"
+
+                  # Apply manifests
+                  kubectl apply -f infrastructure/${{ github.event.inputs.environment | lower }}/lobby.yaml -n $NAMESPACE
+                  kubectl apply -f infrastructure/${{ github.event.inputs.environment | lower }}/ingress.yaml -n $NAMESPACE
+
+                  # Verify rollout
+                  kubectl rollout status deployment/throneteki-lobby -n $NAMESPACE
