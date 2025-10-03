@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: throneteki-lobby
+    namespace: throneteki-playtesting
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: throneteki-lobby
+    template:
+        metadata:
+            labels:
+                app: throneteki-lobby
+        spec:
+            containers:
+                - name: throneteki-lobby
+                  image: cryogen/throneteki-lobby:latest
+                  ports:
+                      - containerPort: 80
+                  env:
+                      - name: NODE_CONFIG
+                        valueFrom:
+                            secretKeyRef:
+                                name: throneteki-lobby-secret
+                                key: node_config
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: throneteki-lobby
+    namespace: throneteki-playtesting
+spec:
+    selector:
+        app: throneteki-lobby
+    ports:
+        - port: 80
+          targetPort: 80
+          protocol: TCP
