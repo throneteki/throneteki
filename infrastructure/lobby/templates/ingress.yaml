@@ -5,9 +5,9 @@ metadata:
     # prettier-ignore
     namespace: {{ .Values.namespace }}
     annotations:
-        kubernetes.io/ingress.class: 'traefik'
         cert-manager.io/cluster-issuer: 'letsencrypt-prod'
 spec:
+    ingressClassName: traefik
     rules:
 {{- if eq .Values.environment "production" }}
         - host: throneteki.net

@@ -48,7 +48,7 @@ jobs:
                     cookieLifetime: 604800000
                     redisPrefix: "$ENV"
                     redisUrl: "${{ secrets.REDIS_URL }}"
-                    secret: "${{ secrets.APP_SECRET }}"
+                    secret: "${{ secrets.SECRET }}"
                     emailKey: "${{ secrets.EMAIL_KEY }}"
                     emailBlockKey: "${{ secrets.EMAIL_BLOCK_KEY }}"
                     port: 80
