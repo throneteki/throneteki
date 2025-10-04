@@ -1,64 +1,48 @@
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
 metadata:
     name: throneteki-lobby
     # prettier-ignore
     namespace: {{ .Values.namespace }}
-    annotations:
-        cert-manager.io/cluster-issuer: 'letsencrypt-prod'
 spec:
-    ingressClassName: traefik
-    rules:
+    entryPoints:
+        - web
+        - websecure
+    routes:
 {{- if eq .Values.environment "production" }}
-        - host: throneteki.net
-          http:
-              paths:
-                  - path: /
-                    pathType: Prefix
-                    backend:
-                        service:
-                            name: throneteki-lobby
-                            port:
-                                number: 80
-        - host: theironthrone.net
-          http:
-              paths:
-                  - path: /
-                    pathType: Prefix
-                    backend:
-                        service:
-                            name: throneteki-lobby
-                            port:
-                                number: 80
+        - match: Host(`throneteki.net`) || Host(`theironthrone.net`)
+          kind: Rule
+          services:
+              - name: throneteki-lobby
+                port: 80
     tls:
-        - hosts:
-              - throneteki.net
-              - theironthrone.net
-          secretName: throneteki-lobby-tls
+        secretName: throneteki-lobby-tls
 {{- else }}
-        - host: {{ .Values.environment }}.throneteki.net
-          http:
-              paths:
-                  - path: /
-                    pathType: Prefix
-                    backend:
-                        service:
-                            name: throneteki-lobby
-                            port:
-                                number: 80
-        - host: {{ .Values.environment }}.theironthrone.net
-          http:
-              paths:
-                  - path: /
-                    pathType: Prefix
-                    backend:
-                        service:
-                            name: throneteki-lobby
-                            port:
-                                number: 80
+        - match: Host(`{{ .Values.environment }}.throneteki.net`) || Host(`{{ .Values.environment }}.theironthrone.net`)
+          kind: Rule
+          services:
+              - name: throneteki-lobby
+                port: 80
     tls:
-        - hosts:
-              - {{ .Values.environment }}.throneteki.net
-              - {{ .Values.environment }}.theironthrone.net
-          secretName: throneteki-lobby-{{ .Values.environment }}-tls
+        secretName: throneteki-lobby-{{ .Values.environment }}-tls
+{{- end }}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+    name: throneteki-lobby-cert
+    # prettier-ignore
+    namespace: {{ .Values.namespace }}
+spec:
+    secretName: throneteki-lobby-{{ .Values.environment }}-tls
+    issuerRef:
+        name: letsencrypt-prod
+        kind: ClusterIssuer
+    dnsNames:
+{{- if eq .Values.environment "production" }}
+        - throneteki.net
+        - theironthrone.net
+{{- else }}
+        - {{ .Values.environment }}.throneteki.net
+        - {{ .Values.environment }}.theironthrone.net
 {{- end }}
