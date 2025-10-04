@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+    name: game-node
+    namespace: { { .Values.namespace } }
+spec:
+    serviceName: game-node
+    replicas: { { .Values.replicaCount } }
+    selector:
+        matchLabels:
+            app: game-node
+    template:
+        metadata:
+            labels:
+                app: game-node
+        spec:
+            containers:
+                - name: throneteki-node
+                  image: '{{ .Values.image.repository }}:{{ .Values.image.tag }}'
+                  ports:
+                      - containerPort: 80
+                  env:
+                      - name: NODE_IDENTITY
+                        valueFrom:
+                            fieldRef:
+                                fieldPath: metadata.name

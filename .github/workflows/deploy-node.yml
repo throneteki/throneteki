@@ -1,20 +1,35 @@
-name: Deploy Node
+name: Deploy Game Nodes
 on:
     workflow_dispatch:
         inputs:
             environment:
                 type: environment
                 description: Select the environment
-                default: ProductionNode1
+                default: Production
+
 jobs:
     deploy:
         runs-on: self-hosted
         environment: ${{ inputs.environment }}
         steps:
-            - name: Pull latest node image
-              run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/throneteki-node
-            - name: Stop and remove node image
-              continue-on-error: true
-              run: docker stop ${{ vars.CONTAINER_NAME }} && docker rm ${{ vars.CONTAINER_NAME }}
-            - name: Run new node image
-              run: docker run --restart unless-stopped -d -p ${{ vars.PORT }}:80 --network ${{ vars.NETWORK_NAME }} -v ${{ vars.LOG_PATH }}:/app/node/server/logs --name ${{ vars.CONTAINER_NAME }} --env NODE_CONFIG='{"env":"production","sentryDsn":"${{ secrets.SENTRY_DSN }}","redisUrl":"${{ secrets.REDIS_URL }}","secret":"${{ secrets.SECRET }}","nodeIdentity":"${{ vars.NODE_NAME }}","socketioPort":80,"host":"${{ vars.HOSTNAME }}", "origin":"http://${{ vars.HOSTNAME }}:* https://${{ vars.HOSTNAME }}:*"}' ${{ secrets.DOCKERHUB_USERNAME }}/throneteki-node:latest
+            - name: Checkout repo
+              uses: actions/checkout@v3
+
+            - name: Deploy Game Nodes
+              run: |
+                  # Determine namespace
+                  if [ "${{ github.event.inputs.environment }}" = "Production" ]; then
+                    NAMESPACE="throneteki"
+                    REPLICAS=2
+                  else
+                    ENV=$(echo "${{ github.event.inputs.environment }}" | tr '[:upper:]' '[:lower:]')
+                    NAMESPACE="throneteki-$ENV"
+                    REPLICAS=1
+                  fi
+
+                  echo "Deploying to namespace: $NAMESPACE with $REPLICAS replicas"
+
+                  helm upgrade --install game-node ./infrastructure/node \
+                    --set namespace=$NAMESPACE \
+                    --set replicaCount=$REPLICAS \
+                    -n $NAMESPACE

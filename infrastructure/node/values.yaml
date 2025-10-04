@@ -1,0 +1,8 @@
+replicaCount: 1
+namespace: throneteki-development
+
+image:
+    repository: cryogen/throneteki-node
+    tag: latest
+
+resources: {}

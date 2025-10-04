@@ -1,0 +1,18 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: game-node
+  namespace: {{ .Values.namespace }}
+spec:
+  entryPoints:
+    - web
+    - websecure
+  routes:
+  {{- range $i, $e := until (.Values.replicaCount | int) }}
+    - match: PathPrefix(`/node{{$i}}/socket.io`)
+      kind: Rule
+      services:
+        - name: game-node-{{$i}}
+          kind: Service
+          port: 80
+  {{- end }}
