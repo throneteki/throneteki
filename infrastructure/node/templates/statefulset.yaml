@@ -16,6 +16,7 @@ spec:
             labels:
                 app: game-node
             annotations:
+                #prettier-ignore
                 checksum/secret: {{ .Values.nodeConfig | toJson | sha256sum }}
         spec:
             containers:
