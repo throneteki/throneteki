@@ -66,4 +66,4 @@ jobs:
                   # Clean up secrets file
                   rm /tmp/node-secrets.yaml
 
-                  kubectl rollout status statefulset/game-node -n $NAMESPACE
+                  kubectl rollout status statefulset/node -n $NAMESPACE
