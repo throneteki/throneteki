@@ -1,8 +1,8 @@
-replicaCount: 1
 namespace: throneteki-development
+environment: development
 
 image:
-    repository: cryogen/throneteki-node
+    repository: cryogen/throneteki-lobby
     tag: latest
 
 # Node configuration - should be passed from GitHub secrets during deployment

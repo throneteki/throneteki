@@ -17,19 +17,40 @@ jobs:
 
             - name: Deploy Game Nodes
               run: |
-                  # Determine namespace
+                  # Determine namespace and replicas based on environment
+                  ENV=$(echo "${{ github.event.inputs.environment }}" | tr '[:upper:]' '[:lower:]')
+                  
                   if [ "${{ github.event.inputs.environment }}" = "Production" ]; then
                     NAMESPACE="throneteki"
                     REPLICAS=2
                   else
-                    ENV=$(echo "${{ github.event.inputs.environment }}" | tr '[:upper:]' '[:lower:]')
                     NAMESPACE="throneteki-$ENV"
                     REPLICAS=1
                   fi
 
-                  echo "Deploying to namespace: $NAMESPACE with $REPLICAS replicas"
+                  echo "Deploying to namespace: $NAMESPACE with $REPLICAS replicas for environment: $ENV"
+
+                  # Create values file with secrets
+                  cat > /tmp/node-secrets.yaml <<EOF
+                  nodeConfig:
+                    env: "${{ vars.NODE_ENV || 'production' }}"
+                    instance:
+                      type: "$ENV"
+                    sentryDsn: "${{ secrets.SENTRY_DSN }}"
+                    dbPath: "${{ secrets.DB_PATH }}"
+                    redisPrefix: "$ENV"
+                    redisUrl: "${{ secrets.REDIS_URL }}"
+                    secret: "${{ secrets.APP_SECRET }}"
+                    hmacSecret: "${{ secrets.HMAC_SECRET }}"
+                    lobbyUrl: "${{ vars.LOBBY_URL }}"
+                  EOF
 
                   helm upgrade --install game-node ./infrastructure/node \
                     --set namespace=$NAMESPACE \
                     --set replicaCount=$REPLICAS \
+                    --set environment=$ENV \
+                    -f /tmp/node-secrets.yaml \
                     -n $NAMESPACE
+
+                  # Clean up secrets file
+                  rm /tmp/node-secrets.yaml

@@ -26,3 +26,8 @@ spec:
                         valueFrom:
                             fieldRef:
                                 fieldPath: metadata.name
+                      - name: NODE_CONFIG
+                        valueFrom:
+                            secretKeyRef:
+                                name: throneteki-node-secret
+                                key: node_config

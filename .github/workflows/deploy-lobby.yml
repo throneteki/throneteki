@@ -15,20 +15,58 @@ jobs:
             - name: Checkout repo
               uses: actions/checkout@v3
 
-            - name: Apply Lobby manifests
+            - name: Deploy Lobby
               run: |
-                  # Determine namespace
+                  # Determine namespace and environment based on environment
+                  ENV=$(echo "${{ github.event.inputs.environment }}" | tr '[:upper:]' '[:lower:]')
+
                   if [ "${{ github.event.inputs.environment }}" = "Production" ]; then
                     NAMESPACE="throneteki"
+                    APP_NAME="The Iron Throne"
+                  elif [ "${{ github.event.inputs.environment }}" = "Playtesting" ]; then
+                    NAMESPACE="throneteki-$ENV"
+                    APP_NAME="The Iron Throne Playtesting"
                   else
-                    NAMESPACE="throneteki-$(echo "${{ github.event.inputs.environment }}" | tr '[:upper:]' '[:lower:]')"
+                    NAMESPACE="throneteki-$ENV"
+                    APP_NAME="The Iron Throne"
                   fi
 
-                  echo "Deploying to namespace: $NAMESPACE"
+                  echo "Deploying lobby to namespace: $NAMESPACE for environment: $ENV"
 
-                  # Apply manifests
-                  kubectl apply -f infrastructure/$NAMESPACE/lobby.yaml -n $NAMESPACE
-                  kubectl apply -f infrastructure/$NAMESPACE/ingress.yaml -n $NAMESPACE
+                  # Create values file with secrets
+                  cat > /tmp/lobby-secrets.yaml <<EOF
+                  nodeConfig:
+                    env: "'production'"
+                    instance:
+                      type: "$ENV"
+                      reviewFormId: "${{ secrets.REVIEWS_FORM_ID }}"
+                    appName: "$APP_NAME"
+                    sentryDsn: "${{ secrets.SENTRY_DSN }}"
+                    captchaKey: "${{ secrets.CAPTCHA_KEY }}"
+                    minLobbyChatTime: 3600
+                    dbPath: "${{ secrets.DB_PATH }}"
+                    cookieLifetime: 604800000
+                    redisPrefix: "$ENV"
+                    redisUrl: "${{ secrets.REDIS_URL }}"
+                    secret: "${{ secrets.APP_SECRET }}"
+                    emailKey: "${{ secrets.EMAIL_KEY }}"
+                    emailBlockKey: "${{ secrets.EMAIL_BLOCK_KEY }}"
+                    port: 80
+                    hmacSecret: "${{ secrets.HMAC_SECRET }}"
+                    requireActivation: false
+                    patreonCallbackUrl: "${{ secrets.PATREON_CALLBACK_URL }}"
+                    patreonClientId: "${{ secrets.PATREON_CLIENT_ID }}"
+                    patreonSecret: "${{ secrets.PATREON_SECRET }}"
+                  EOF
+
+                  helm upgrade --install throneteki-lobby ./infrastructure/lobby \
+                    --set namespace=$NAMESPACE \
+                    --set environment=$ENV \
+                    -f /tmp/lobby-secrets.yaml \
+                    -n $NAMESPACE
+
+                  # Clean up secrets file
+                  rm /tmp/lobby-secrets.yaml
 
                   # Verify rollout
                   kubectl rollout status deployment/throneteki-lobby -n $NAMESPACE

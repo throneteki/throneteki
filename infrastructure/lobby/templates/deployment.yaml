@@ -2,7 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
     name: throneteki-lobby
-    namespace: throneteki-playtesting
+    # prettier-ignore
+    namespace: {{ .Values.namespace }}
 spec:
     replicas: 1
     selector:
@@ -15,7 +16,7 @@ spec:
         spec:
             containers:
                 - name: throneteki-lobby
-                  image: cryogen/throneteki-lobby:latest
+                  image: '{{ .Values.image.repository }}:{{ .Values.image.tag }}'
                   ports:
                       - containerPort: 80
                   env:
@@ -24,16 +25,3 @@ spec:
                             secretKeyRef:
                                 name: throneteki-lobby-secret
                                 key: node_config
----
-apiVersion: v1
-kind: Service
-metadata:
-    name: throneteki-lobby
-    namespace: throneteki-playtesting
-spec:
-    selector:
-        app: throneteki-lobby
-    ports:
-        - port: 80
-          targetPort: 80
-          protocol: TCP

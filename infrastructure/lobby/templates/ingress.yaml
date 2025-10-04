@@ -1,0 +1,64 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+    name: throneteki-lobby
+    # prettier-ignore
+    namespace: {{ .Values.namespace }}
+    annotations:
+        kubernetes.io/ingress.class: 'traefik'
+        cert-manager.io/cluster-issuer: 'letsencrypt-prod'
+spec:
+    rules:
+{{- if eq .Values.environment "production" }}
+        - host: throneteki.net
+          http:
+              paths:
+                  - path: /
+                    pathType: Prefix
+                    backend:
+                        service:
+                            name: throneteki-lobby
+                            port:
+                                number: 80
+        - host: theironthrone.net
+          http:
+              paths:
+                  - path: /
+                    pathType: Prefix
+                    backend:
+                        service:
+                            name: throneteki-lobby
+                            port:
+                                number: 80
+    tls:
+        - hosts:
+              - throneteki.net
+              - theironthrone.net
+          secretName: throneteki-lobby-tls
+{{- else }}
+        - host: {{ .Values.environment }}.throneteki.net
+          http:
+              paths:
+                  - path: /
+                    pathType: Prefix
+                    backend:
+                        service:
+                            name: throneteki-lobby
+                            port:
+                                number: 80
+        - host: {{ .Values.environment }}.theironthrone.net
+          http:
+              paths:
+                  - path: /
+                    pathType: Prefix
+                    backend:
+                        service:
+                            name: throneteki-lobby
+                            port:
+                                number: 80
+    tls:
+        - hosts:
+              - {{ .Values.environment }}.throneteki.net
+              - {{ .Values.environment }}.theironthrone.net
+          secretName: throneteki-lobby-{{ .Values.environment }}-tls
+{{- end }}

@@ -9,7 +9,11 @@ spec:
     - websecure
   routes:
   {{- range $i, $e := until (.Values.replicaCount | int) }}
-    - match: PathPrefix(`/node{{$i}}/socket.io`)
+  {{- if eq $.Values.environment "production" }}
+    - match: (Host(`throneteki.net`) || Host(`theironthrone.net`)) && PathPrefix(`/node{{$i}}/socket.io`)
+  {{- else }}
+    - match: (Host(`{{ $.Values.environment }}.throneteki.net`) || Host(`{{ $.Values.environment }}.theironthrone.net`)) && PathPrefix(`/node{{$i}}/socket.io`)
+  {{- end }}
       kind: Rule
       services:
         - name: game-node-{{$i}}
