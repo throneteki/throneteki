@@ -13,6 +13,8 @@ spec:
         metadata:
             labels:
                 app: throneteki-lobby
+            annotations:
+                checksum/secret: {{ .Values.nodeConfig | toJson | sha256sum }}
         spec:
             containers:
                 - name: throneteki-lobby
