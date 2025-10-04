@@ -50,9 +50,10 @@ jobs:
                     dbPath: "${{ secrets.DB_PATH }}"
                     redisPrefix: "$ENV"
                     redisUrl: "${{ secrets.REDIS_URL }}"
-                    secret: "${{ secrets.APP_SECRET }}"
+                    secret: "${{ secrets.SECRET }}"
                     hmacSecret: "${{ secrets.HMAC_SECRET }}"
                     lobbyUrl: "${{ vars.LOBBY_URL }}"
+                    socketioPort: 80
                   EOF
 
                   helm upgrade --install game-node ./infrastructure/node \

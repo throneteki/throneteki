@@ -62,17 +62,22 @@ class GameSocket extends EventEmitter {
     }
 
     onGameSync(games) {
-        this.send('HELLO', {
+        const helloData = {
             maxGames: config.maxGames,
             version: this.version,
-            address: this.listenAddress,
             port:
                 process.env.NODE_ENV === 'production'
                     ? 80
                     : process.env.PORT || config.socketioPort,
             protocol: this.protocol,
             games: games
-        });
+        };
+
+        if (this.listenAddress) {
+            helloData.address = this.listenAddress;
+        }
+
+        this.send('HELLO', helloData);
     }
 
     onMessage(channel, msg) {

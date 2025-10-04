@@ -215,7 +215,9 @@ const lobbyMiddleware = (store) => {
             }, 5000);
 
             socket.on(LobbyMessage.HandOff, (details) => {
-                let url = '//' + details.address;
+                let url = details.address
+                    ? '//' + details.address
+                    : '//' + window.location.hostname;
                 let standardPorts = [80, 443];
                 let state = store.getState();
 

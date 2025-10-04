@@ -36,7 +36,7 @@ class GameServer {
             this.protocol = 'http';
         }
 
-        this.host = process.env.HOST || config.host;
+        this.host = process.env.HOST || config.host || undefined;
 
         this.gameSocket = new GameSocket(
             this.configService,
