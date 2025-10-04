@@ -23,15 +23,22 @@ jobs:
                   if [ "${{ github.event.inputs.environment }}" = "Production" ]; then
                     NAMESPACE="throneteki"
                     APP_NAME="The Iron Throne"
+                    ENV_SUBDOMAIN="production"
+                  elif [ "${{ github.event.inputs.environment }}" = "Development" ]; then
+                    NAMESPACE="throneteki-development"
+                    APP_NAME="The Iron Throne"
+                    ENV_SUBDOMAIN="dev"
                   elif [ "${{ github.event.inputs.environment }}" = "Playtesting" ]; then
-                    NAMESPACE="throneteki-$ENV"
+                    NAMESPACE="throneteki-playtesting"
                     APP_NAME="The Iron Throne Playtesting"
+                    ENV_SUBDOMAIN="playtesting"
                   else
                     NAMESPACE="throneteki-$ENV"
                     APP_NAME="The Iron Throne"
+                    ENV_SUBDOMAIN="$ENV"
                   fi
 
-                  echo "Deploying lobby to namespace: $NAMESPACE for environment: $ENV"
+                  echo "Deploying lobby to namespace: $NAMESPACE for environment: $ENV_SUBDOMAIN"
 
                   # Create values file with secrets
                   cat > /tmp/lobby-secrets.yaml <<EOF
@@ -61,7 +68,7 @@ jobs:
 
                   helm upgrade --install throneteki-lobby ./infrastructure/lobby \
                     --set namespace=$NAMESPACE \
-                    --set environment=$ENV \
+                    --set environment=$ENV_SUBDOMAIN \
                     -f /tmp/lobby-secrets.yaml \
                     -n $NAMESPACE
 

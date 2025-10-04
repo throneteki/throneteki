@@ -19,16 +19,26 @@ jobs:
               run: |
                   # Determine namespace and replicas based on environment
                   ENV=$(echo "${{ github.event.inputs.environment }}" | tr '[:upper:]' '[:lower:]')
-                  
+
                   if [ "${{ github.event.inputs.environment }}" = "Production" ]; then
                     NAMESPACE="throneteki"
                     REPLICAS=2
+                    ENV_SUBDOMAIN="production"
+                  elif [ "${{ github.event.inputs.environment }}" = "Development" ]; then
+                    NAMESPACE="throneteki-development"
+                    REPLICAS=1
+                    ENV_SUBDOMAIN="dev"
+                  elif [ "${{ github.event.inputs.environment }}" = "Playtesting" ]; then
+                    NAMESPACE="throneteki-playtesting"
+                    REPLICAS=1
+                    ENV_SUBDOMAIN="playtesting"
                   else
                     NAMESPACE="throneteki-$ENV"
                     REPLICAS=1
+                    ENV_SUBDOMAIN="$ENV"
                   fi
 
-                  echo "Deploying to namespace: $NAMESPACE with $REPLICAS replicas for environment: $ENV"
+                  echo "Deploying to namespace: $NAMESPACE with $REPLICAS replicas for environment: $ENV_SUBDOMAIN"
 
                   # Create values file with secrets
                   cat > /tmp/node-secrets.yaml <<EOF
@@ -48,7 +58,7 @@ jobs:
                   helm upgrade --install game-node ./infrastructure/node \
                     --set namespace=$NAMESPACE \
                     --set replicaCount=$REPLICAS \
-                    --set environment=$ENV \
+                    --set environment=$ENV_SUBDOMAIN \
                     -f /tmp/node-secrets.yaml \
                     -n $NAMESPACE
 
