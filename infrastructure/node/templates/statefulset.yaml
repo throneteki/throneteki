@@ -30,7 +30,7 @@ spec:
                       - -c
                       - |
                           export SERVER=$(echo $POD_NAME | sed 's/-//')
-                          exec node /usr/src/app/server/gamenode/index.js
+                          exec node /app/node/server/gamenode/index.js
                   ports:
                       - containerPort: 80
                   env:
