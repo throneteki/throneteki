@@ -2,10 +2,12 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
     name: game-node
-    namespace: { { .Values.namespace } }
+    # prettier-ignore
+    namespace: {{ .Values.namespace }}
 spec:
     serviceName: game-node
-    replicas: { { .Values.replicaCount } }
+    # prettier-ignore
+    replicas: {{ .Values.replicaCount }}
     selector:
         matchLabels:
             app: game-node
