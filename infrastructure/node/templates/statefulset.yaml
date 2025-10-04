@@ -22,6 +22,7 @@ spec:
             containers:
                 - name: throneteki-node
                   image: '{{ .Values.image.repository }}:{{ .Values.image.tag }}'
+                  imagePullPolicy: Always
                   ports:
                       - containerPort: 80
                   env:

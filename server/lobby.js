@@ -622,14 +622,20 @@ class Lobby {
             { expiresIn: '5m' }
         );
 
-        socket.send('handoff', {
-            address: gameNode.address,
+        const handoffData = {
             port: gameNode.port,
             protocol: gameNode.protocol,
             name: gameNode.identity,
             authToken: authToken,
             gameId: gameId
-        });
+        };
+
+        // Only include address if it's defined
+        if (gameNode.address) {
+            handoffData.address = gameNode.address;
+        }
+
+        socket.send('handoff', handoffData);
     }
 
     onWatchGame(socket, gameId, password) {
