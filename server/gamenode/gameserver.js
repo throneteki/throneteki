@@ -66,7 +66,7 @@ class GameServer {
             }
 
             logger.info(
-                `==> Listening on ${that.protocol}://${that.host}:${process.env.PORT || config.socketioPort}/.`
+                `==> Listening on ${that.protocol}://${that.host || 'localhost'}:${process.env.PORT || config.socketioPort}/.`
             );
         });
 
