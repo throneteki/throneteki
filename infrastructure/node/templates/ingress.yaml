@@ -16,7 +16,6 @@ spec:
   {{- end }}
       kind: Rule
       services:
-        - name: node-{{$i}}.node
-          kind: Service
+        - name: node-{{$i}}
           port: 80
   {{- end }}

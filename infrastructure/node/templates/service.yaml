@@ -11,3 +11,22 @@ spec:
     ports:
         - port: 80
           name: socketio
+---
+{{- range $i, $e := until (.Values.replicaCount | int) }}
+apiVersion: v1
+kind: Service
+metadata:
+    name: node-{{$i}}
+    # prettier-ignore
+    namespace: {{ $.Values.namespace }}
+spec:
+    selector:
+        app: game-node
+        statefulset.kubernetes.io/pod-name: node-{{$i}}
+    ports:
+        - port: 80
+          targetPort: 80
+          protocol: TCP
+          name: socketio
+---
+{{- end }}
