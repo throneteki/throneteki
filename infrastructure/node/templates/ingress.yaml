@@ -16,7 +16,7 @@ spec:
   {{- end }}
       kind: Rule
       services:
-        - name: game-node-{{$i}}
+        - name: node-{{$i}}.node
           kind: Service
           port: 80
   {{- end }}

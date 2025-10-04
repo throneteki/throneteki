@@ -74,8 +74,10 @@ class GameServer {
             perMessageDeflate: false
         };
 
-        if (process.env.NODE_ENV !== 'production') {
-            options.path = '/' + (process.env.SERVER || config.nodeIdentity) + '/socket.io';
+        // Always set path based on node identity for routing
+        const nodeIdentity = process.env.SERVER || config.nodeIdentity;
+        if (nodeIdentity) {
+            options.path = '/' + nodeIdentity + '/socket.io';
         }
 
         const corsOrigin = config.origin;

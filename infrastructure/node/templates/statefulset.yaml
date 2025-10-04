@@ -1,11 +1,11 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-    name: game-node
+    name: node
     # prettier-ignore
     namespace: {{ .Values.namespace }}
 spec:
-    serviceName: game-node
+    serviceName: node
     # prettier-ignore
     replicas: {{ .Values.replicaCount }}
     selector:
@@ -18,6 +18,8 @@ spec:
             annotations:
                 #prettier-ignore
                 checksum/secret: {{ .Values.nodeConfig | toJson | sha256sum }}
+                #prettier-ignore
+                checksum/image: {{ .Values.image.tag | sha256sum }}
         spec:
             containers:
                 - name: throneteki-node
@@ -26,7 +28,9 @@ spec:
                   ports:
                       - containerPort: 80
                   env:
-                      - name: NODE_IDENTITY
+                      - name: NODE_ENV
+                        value: "production"
+                      - name: SERVER
                         valueFrom:
                             fieldRef:
                                 fieldPath: metadata.name

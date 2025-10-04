@@ -16,6 +16,8 @@ spec:
             annotations:
                 #prettier-ignore
                 checksum/secret: {{ .Values.nodeConfig | toJson | sha256sum }}
+                #prettier-ignore
+                checksum/image: {{ .Values.image.tag | sha256sum }}
         spec:
             containers:
                 - name: throneteki-lobby
