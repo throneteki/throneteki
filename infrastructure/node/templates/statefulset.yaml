@@ -25,12 +25,18 @@ spec:
                 - name: throneteki-node
                   image: '{{ .Values.image.repository }}:{{ .Values.image.tag }}'
                   imagePullPolicy: Always
+                  command: ["/bin/sh"]
+                  args:
+                    - -c
+                    - |
+                      export SERVER=$(echo $POD_NAME | sed 's/-//')
+                      exec node /usr/src/app/server/gamenode/index.js
                   ports:
                       - containerPort: 80
                   env:
                       - name: NODE_ENV
                         value: 'production'
-                      - name: SERVER
+                      - name: POD_NAME
                         valueFrom:
                             fieldRef:
                                 fieldPath: metadata.name
