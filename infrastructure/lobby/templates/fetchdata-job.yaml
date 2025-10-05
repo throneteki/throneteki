@@ -46,14 +46,7 @@ spec:
                   volumeMounts:
                       - name: card-images
                         mountPath: /usr/src/app/public/img/cards
-                      - name: throneteki-json-data
-                        mountPath: /usr/src/app/throneteki-json-data
-                        readOnly: true
             volumes:
                 - name: card-images
                   persistentVolumeClaim:
                       claimName: throneteki-card-images
-                - name: throneteki-json-data
-                  configMap:
-                      name: throneteki-json-data
-                      optional: true
