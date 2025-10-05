@@ -29,18 +29,11 @@ spec:
                 #prettier-ignore
                 deployTime: {{ .Values.deployTime | default "0" | quote }}
         spec:
-            # Extended grace period to allow games to finish (2 hours)
             terminationGracePeriodSeconds: 7200
             containers:
                 - name: throneteki-node
                   image: '{{ .Values.image.repository }}:{{ .Values.image.tag }}'
                   imagePullPolicy: Always
-                  command: ['/bin/sh']
-                  args:
-                      - -c
-                      - |
-                          export SERVER=$(echo $POD_NAME | sed 's/-//')
-                          exec node /app/node/server/gamenode/index.js
                   ports:
                       - containerPort: 80
                         name: http
@@ -58,7 +51,6 @@ spec:
                             secretKeyRef:
                                 name: throneteki-node-secret
                                 key: node_config
-                  # Readiness probe: pod becomes "not ready" when draining (stops receiving new games)
                   readinessProbe:
                       httpGet:
                           path: /health/ready
@@ -66,9 +58,7 @@ spec:
                       initialDelaySeconds: 10
                       periodSeconds: 5
                       failureThreshold: 1
-                      # Don't fail on startup if endpoint doesn't exist (backwards compatibility)
                       successThreshold: 1
-                  # Liveness probe: pod is killed if it becomes unresponsive
                   livenessProbe:
                       httpGet:
                           path: /health/alive
@@ -76,59 +66,3 @@ spec:
                       initialDelaySeconds: 30
                       periodSeconds: 10
                       failureThreshold: 3
-                  # PreStop hook: wait for games to finish before shutdown
-                  lifecycle:
-                      preStop:
-                          exec:
-                              command:
-                                  - /bin/sh
-                                  - -c
-                                  - |
-                                      # Signal the node to stop accepting new games
-                                      touch /tmp/draining
-
-                                      # Log to a file we can check
-                                      exec > /tmp/prestop.log 2>&1
-                                      echo "PreStop hook started at $(date)"
-
-                                      # Check if health endpoint exists (for backwards compatibility)
-                                      if ! wget -q --spider http://localhost:9000/health/games 2>/dev/null; then
-                                        echo "Health endpoint not available (old version). Waiting 30 seconds then exiting."
-                                        sleep 30
-                                        pkill -TERM node
-                                        exit 0
-                                      fi
-
-                                      # Wait for all games to finish (check every 10 seconds)
-                                      # Maximum wait: 90 minutes (540 checks)
-                                      MAX_WAIT=540
-                                      COUNTER=0
-
-                                      while [ $COUNTER -lt $MAX_WAIT ]; do
-                                        # Check if health endpoint reports zero games
-                                        GAMES=$(wget -q -O- http://localhost:9000/health/games 2>/dev/null || echo "error")
-                                        
-                                        if [ "$GAMES" = "error" ]; then
-                                          echo "Health endpoint failed. Assuming old version, exiting."
-                                          pkill -TERM node
-                                          exit 0
-                                        fi
-                                        
-                                        # Trim whitespace and check if zero
-                                        GAMES_TRIMMED=$(echo "$GAMES" | tr -d '[:space:]')
-                                        echo "Game count: '$GAMES_TRIMMED' (raw: '$GAMES')"
-                                        
-                                        if [ "$GAMES_TRIMMED" -eq 0 ] 2>/dev/null; then
-                                          echo "All games finished. Shutting down gracefully."
-                                          pkill -TERM node
-                                          exit 0
-                                        fi
-                                        
-                                        echo "Waiting for $GAMES_TRIMMED games to finish... ($COUNTER/$MAX_WAIT)"
-                                        sleep 10
-                                        COUNTER=$((COUNTER + 1))
-                                      done
-
-                                      echo "Maximum wait time (90 minutes) exceeded. Forcing shutdown."
-                                      pkill -TERM node
-                                      exit 0

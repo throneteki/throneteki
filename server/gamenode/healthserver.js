@@ -1,6 +1,5 @@
 import http from 'http';
 import logger from '../log.js';
-import fs from 'fs';
 
 class HealthServer {
     constructor(gameServer, port = 9000) {
@@ -8,14 +7,53 @@ class HealthServer {
         this.port = port;
         this.isDraining = false;
         this.server = null;
-        this.drainingFile = '/tmp/draining';
+        this.drainCheckInterval = null;
 
-        if (fs.existsSync(this.drainingFile)) {
-            this.isDraining = true;
-            logger.info('Draining file detected on startup - node is in draining mode');
+        // Set up SIGTERM handler
+        this.setupSignalHandlers();
+    }
+
+    setupSignalHandlers() {
+        process.on('SIGTERM', () => {
+            logger.info('Received SIGTERM - starting graceful shutdown');
+            this.startDraining();
+        });
+    }
+
+    startDraining() {
+        if (this.isDraining) {
+            return;
         }
 
-        this.watchDrainingFile();
+        this.isDraining = true;
+        logger.info('Node is now draining - will not accept new games');
+
+        // Notify game socket to report draining status to lobby
+        if (this.gameServer && this.gameServer.gameSocket) {
+            this.gameServer.gameSocket.setDraining(true);
+        }
+
+        // Start checking for game completion
+        this.drainCheckInterval = setInterval(() => {
+            const numGames = this.getNumGames();
+            logger.info(`Draining: ${numGames} games still active`);
+
+            if (numGames === 0) {
+                logger.info('All games finished. Shutting down now.');
+                clearInterval(this.drainCheckInterval);
+                process.exit(0);
+            }
+        }, 10000); // Check every 10 seconds
+
+        // Safety timeout: force exit after 90 minutes
+        setTimeout(
+            () => {
+                logger.warn('Drain timeout (90 minutes) exceeded. Forcing shutdown.');
+                clearInterval(this.drainCheckInterval);
+                process.exit(1);
+            },
+            90 * 60 * 1000
+        );
     }
 
     start() {
@@ -77,24 +115,10 @@ class HealthServer {
         return Object.keys(this.gameServer.games).length;
     }
 
-    watchDrainingFile() {
-        setInterval(() => {
-            const exists = fs.existsSync(this.drainingFile);
-            if (exists && !this.isDraining) {
-                logger.info('Draining file detected - marking node as draining');
-                this.isDraining = true;
-                this.notifyGameSocketDraining();
-            }
-        }, 1000);
-    }
-
-    notifyGameSocketDraining() {
-        if (this.gameServer && this.gameServer.gameSocket) {
-            this.gameServer.gameSocket.setDraining(true);
-        }
-    }
-
     stop() {
+        if (this.drainCheckInterval) {
+            clearInterval(this.drainCheckInterval);
+        }
         if (this.server) {
             this.server.close();
         }
