@@ -267,7 +267,7 @@ class GameRouter extends EventEmitter {
         }
 
         try {
-            this.publisher.publish(channel, objectStr);
+            this.publisher.publish(`${this.keyPrefix}:${channel}`, objectStr);
         } catch (err) {
             logger.error(err);
         }
