@@ -7,7 +7,7 @@ metadata:
     namespace: {{ .Values.namespace }}
 spec:
     accessModes:
-        - ReadWriteMany # Allows multiple pods to read/write
+        - ReadWriteOnce
     # prettier-ignore
     storageClassName: {{ .Values.storage.className | default "local-path" }}
     resources:
@@ -24,7 +24,7 @@ metadata:
     namespace: {{ .Values.namespace }}
 spec:
     accessModes:
-        - ReadWriteMany # Allows multiple pods to read/write
+        - ReadWriteOnce
     # prettier-ignore
     storageClassName: {{ .Values.storage.className | default "local-path" }}
     resources:
