@@ -40,6 +40,10 @@ jobs:
 
                   echo "Deploying lobby to namespace: $NAMESPACE for environment: $ENV_SUBDOMAIN"
 
+                  # Generate a unique deployment timestamp to force pod updates
+                  DEPLOY_TIME=$(date +%s)
+                  echo "Deployment timestamp: $DEPLOY_TIME"
+
                   # Create values file with secrets
                   cat > /tmp/lobby-secrets.yaml <<EOF
                   nodeConfig:
@@ -69,6 +73,7 @@ jobs:
                   helm upgrade --install throneteki-lobby ./infrastructure/lobby \
                     --set namespace=$NAMESPACE \
                     --set environment=$ENV_SUBDOMAIN \
+                    --set deployTime=$DEPLOY_TIME \
                     -f /tmp/lobby-secrets.yaml \
                     -n $NAMESPACE
 
