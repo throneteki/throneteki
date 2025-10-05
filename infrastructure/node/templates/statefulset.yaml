@@ -82,12 +82,12 @@ spec:
                                   - |
                                       # Signal the node to stop accepting new games
                                       touch /tmp/draining
-                                      
+
                                       # Wait for all games to finish (check every 10 seconds)
                                       # Maximum wait: 90 minutes (540 checks)
                                       MAX_WAIT=540
                                       COUNTER=0
-                                      
+
                                       while [ $COUNTER -lt $MAX_WAIT ]; do
                                         # Check if health endpoint reports zero games
                                         GAMES=$(wget -q -O- http://localhost:9000/health/games 2>/dev/null || echo "1")
@@ -101,6 +101,6 @@ spec:
                                         sleep 10
                                         COUNTER=$((COUNTER + 1))
                                       done
-                                      
+
                                       echo "Maximum wait time (90 minutes) exceeded. Forcing shutdown."
                                       exit 0
