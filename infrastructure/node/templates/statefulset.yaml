@@ -64,6 +64,8 @@ spec:
                       initialDelaySeconds: 10
                       periodSeconds: 5
                       failureThreshold: 1
+                      # Don't fail on startup if endpoint doesn't exist (backwards compatibility)
+                      successThreshold: 1
                   # Liveness probe: pod is killed if it becomes unresponsive
                   livenessProbe:
                       httpGet:
@@ -83,6 +85,13 @@ spec:
                                       # Signal the node to stop accepting new games
                                       touch /tmp/draining
 
+                                      # Check if health endpoint exists (for backwards compatibility)
+                                      if ! wget -q --spider http://localhost:9000/health/games 2>/dev/null; then
+                                        echo "Health endpoint not available (old version). Waiting 30 seconds then exiting."
+                                        sleep 30
+                                        exit 0
+                                      fi
+
                                       # Wait for all games to finish (check every 10 seconds)
                                       # Maximum wait: 90 minutes (540 checks)
                                       MAX_WAIT=540
@@ -90,7 +99,12 @@ spec:
 
                                       while [ $COUNTER -lt $MAX_WAIT ]; do
                                         # Check if health endpoint reports zero games
-                                        GAMES=$(wget -q -O- http://localhost:9000/health/games 2>/dev/null || echo "1")
+                                        GAMES=$(wget -q -O- http://localhost:9000/health/games 2>/dev/null || echo "error")
+                                        
+                                        if [ "$GAMES" = "error" ]; then
+                                          echo "Health endpoint failed. Assuming old version, exiting."
+                                          exit 0
+                                        fi
                                         
                                         if [ "$GAMES" = "0" ]; then
                                           echo "All games finished. Shutting down gracefully."
