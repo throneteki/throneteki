@@ -109,14 +109,15 @@ spec:
                                         fi
                                         
                                         # Trim whitespace and check if zero
-                                        GAMES=$(echo "$GAMES" | tr -d '[:space:]')
+                                        GAMES_TRIMMED=$(echo "$GAMES" | tr -d '[:space:]')
+                                        echo "Game count: '$GAMES_TRIMMED' (raw: '$GAMES')"
                                         
-                                        if [ "$GAMES" = "0" ]; then
+                                        if [ "$GAMES_TRIMMED" -eq 0 ] 2>/dev/null; then
                                           echo "All games finished. Shutting down gracefully."
                                           exit 0
                                         fi
                                         
-                                        echo "Waiting for $GAMES games to finish... ($COUNTER/$MAX_WAIT)"
+                                        echo "Waiting for $GAMES_TRIMMED games to finish... ($COUNTER/$MAX_WAIT)"
                                         sleep 10
                                         COUNTER=$((COUNTER + 1))
                                       done

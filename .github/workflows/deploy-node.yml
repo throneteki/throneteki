@@ -44,6 +44,21 @@ jobs:
                   DEPLOY_TIME=$(date +%s)
                   echo "Deployment timestamp: $DEPLOY_TIME"
 
+                  # Get current replica count before deployment
+                  CURRENT_REPLICAS=$(kubectl get statefulset node -n $NAMESPACE -o jsonpath='{.spec.replicas}' 2>/dev/null || echo "0")
+                  echo "Current replicas: $CURRENT_REPLICAS"
+
+                  # Calculate temporary replica count for zero-downtime deployment
+                  if [ "$CURRENT_REPLICAS" = "0" ]; then
+                    # First deployment - just deploy normally
+                    TEMP_REPLICAS=$REPLICAS
+                  else
+                    # Scale up to have both old and new pods
+                    TEMP_REPLICAS=$((CURRENT_REPLICAS + REPLICAS))
+                  fi
+
+                  echo "Will deploy with $TEMP_REPLICAS replicas, then scale to $REPLICAS"
+
                   # Create values file with secrets
                   cat > /tmp/node-secrets.yaml <<EOF
                   nodeConfig:
@@ -60,9 +75,10 @@ jobs:
                     socketioPort: 80
                   EOF
 
+                  # Deploy with temporary higher replica count
                   helm upgrade --install game-node ./infrastructure/node \
                     --set namespace=$NAMESPACE \
-                    --set replicaCount=$REPLICAS \
+                    --set replicaCount=$TEMP_REPLICAS \
                     --set environment=$ENV_SUBDOMAIN \
                     --set deployTime=$DEPLOY_TIME \
                     -f /tmp/node-secrets.yaml \
@@ -71,25 +87,29 @@ jobs:
                   # Clean up secrets file
                   rm /tmp/node-secrets.yaml
 
-                  CURRENT_REPLICAS=$(kubectl get statefulset node -n $NAMESPACE -o jsonpath='{.spec.replicas}')
-                  TEMP_REPLICAS=$((CURRENT_REPLICAS + REPLICAS))
+                  if [ "$CURRENT_REPLICAS" != "0" ]; then
+                    # Wait for new pods to be ready
+                    echo "Waiting for new pods to be ready..."
+                    for i in $(seq $CURRENT_REPLICAS $((TEMP_REPLICAS - 1))); do
+                      kubectl wait --for=condition=ready pod/node-$i -n $NAMESPACE --timeout=5m || true
+                    done
 
-                  echo "Scaling to $TEMP_REPLICAS replicas for zero-downtime deployment..."
-                  kubectl scale statefulset node -n $NAMESPACE --replicas=$TEMP_REPLICAS
+                    # Delete old pods (they will drain gracefully)
+                    echo "Deleting old pods to trigger graceful draining..."
+                    for i in $(seq 0 $((CURRENT_REPLICAS - 1))); do
+                      echo "Deleting node-$i..."
+                      kubectl delete pod node-$i -n $NAMESPACE --wait=false
+                    done
 
-                  echo "Waiting for new pods to be ready..."
-                  kubectl wait --for=condition=ready pod -l app=game-node -n $NAMESPACE --timeout=5m --all
+                    # Give old pods time to enter draining state
+                    echo "Waiting for old pods to start draining..."
+                    sleep 15
 
-                  echo "Deleting old pods..."
-                  for i in $(seq 0 $((CURRENT_REPLICAS - 1))); do
-                    echo "Deleting node-$i (will drain gracefully)..."
-                    kubectl delete pod node-$i -n $NAMESPACE --wait=false
-                  done
+                    # Scale down to desired replica count
+                    # This will keep the higher-numbered (newer) pods
+                    echo "Scaling to final replica count: $REPLICAS"
+                    kubectl patch statefulset node -n $NAMESPACE -p "{\"spec\":{\"replicas\":$REPLICAS}}"
+                  fi
 
-                  sleep 10
-
-                  echo "Scaling back to $REPLICAS replicas..."
-                  kubectl scale statefulset node -n $NAMESPACE --replicas=$REPLICAS
-
-                  # Wait for rollout to complete
-                  kubectl rollout status statefulset/node -n $NAMESPACE --timeout=10m
+                  # Wait for final state
+                  kubectl rollout status statefulset/node -n $NAMESPACE --timeout=120m
