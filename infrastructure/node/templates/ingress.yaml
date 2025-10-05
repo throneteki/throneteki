@@ -10,12 +10,12 @@ spec:
   routes:
   {{- range $i, $e := until (.Values.replicaCount | int) }}
   {{- if eq $.Values.environment "production" }}
-    - match: (Host(`throneteki.net`) || Host(`theironthrone.net`)) && PathPrefix(`/node{{$i}}/socket.io`)
+    - match: (Host(`throneteki.net`) || Host(`theironthrone.net`)) && PathPrefix(`/node-{{$i}}/socket.io`)
   {{- else }}
-    - match: (Host(`{{ $.Values.environment }}.throneteki.net`) || Host(`{{ $.Values.environment }}.theironthrone.net`)) && PathPrefix(`/node{{$i}}/socket.io`)
+    - match: (Host(`{{ $.Values.environment }}.throneteki.net`) || Host(`{{ $.Values.environment }}.theironthrone.net`)) && PathPrefix(`/node-{{$i}}/socket.io`)
   {{- end }}
       kind: Rule
       services:
-        - name: node{{$i}}
+        - name: node-{{$i}}
           port: 80
   {{- end }}
