@@ -13,6 +13,7 @@ import Game from '../game/game.js';
 import Socket from '../socket.js';
 import ConfigService from '../services/ConfigService.js';
 import TextHelper from '../game/TextHelper.js';
+import HealthServer from './healthserver.js';
 
 if (config.sentryDsn) {
     Sentry.init({
@@ -91,6 +92,9 @@ class GameServer {
         this.io.on('connection', this.onConnection.bind(this));
 
         setInterval(() => this.clearStaleAndFinishedGames(), 30 * 1000);
+
+        this.healthServer = new HealthServer(this);
+        this.healthServer.start();
     }
 
     debugDump() {

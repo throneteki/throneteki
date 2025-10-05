@@ -8,6 +8,12 @@ spec:
     serviceName: node
     # prettier-ignore
     replicas: {{ .Values.replicaCount }}
+    # Rolling update strategy: create new pods before terminating old ones
+    updateStrategy:
+        type: RollingUpdate
+        rollingUpdate:
+            partition: 0
+    podManagementPolicy: Parallel
     selector:
         matchLabels:
             app: game-node
@@ -21,6 +27,8 @@ spec:
                 #prettier-ignore
                 checksum/image: {{ .Values.image.tag | sha256sum }}
         spec:
+            # Extended grace period to allow games to finish (2 hours)
+            terminationGracePeriodSeconds: 7200
             containers:
                 - name: throneteki-node
                   image: '{{ .Values.image.repository }}:{{ .Values.image.tag }}'
@@ -33,6 +41,9 @@ spec:
                           exec node /app/node/server/gamenode/index.js
                   ports:
                       - containerPort: 80
+                        name: http
+                      - containerPort: 9000
+                        name: health
                   env:
                       - name: NODE_ENV
                         value: 'production'
@@ -45,3 +56,51 @@ spec:
                             secretKeyRef:
                                 name: throneteki-node-secret
                                 key: node_config
+                  # Readiness probe: pod becomes "not ready" when draining (stops receiving new games)
+                  readinessProbe:
+                      httpGet:
+                          path: /health/ready
+                          port: 9000
+                      initialDelaySeconds: 10
+                      periodSeconds: 5
+                      failureThreshold: 1
+                  # Liveness probe: pod is killed if it becomes unresponsive
+                  livenessProbe:
+                      httpGet:
+                          path: /health/alive
+                          port: 9000
+                      initialDelaySeconds: 30
+                      periodSeconds: 10
+                      failureThreshold: 3
+                  # PreStop hook: wait for games to finish before shutdown
+                  lifecycle:
+                      preStop:
+                          exec:
+                              command:
+                                  - /bin/sh
+                                  - -c
+                                  - |
+                                      # Signal the node to stop accepting new games
+                                      touch /tmp/draining
+                                      
+                                      # Wait for all games to finish (check every 10 seconds)
+                                      # Maximum wait: 90 minutes (540 checks)
+                                      MAX_WAIT=540
+                                      COUNTER=0
+                                      
+                                      while [ $COUNTER -lt $MAX_WAIT ]; do
+                                        # Check if health endpoint reports zero games
+                                        GAMES=$(wget -q -O- http://localhost:9000/health/games 2>/dev/null || echo "1")
+                                        
+                                        if [ "$GAMES" = "0" ]; then
+                                          echo "All games finished. Shutting down gracefully."
+                                          exit 0
+                                        fi
+                                        
+                                        echo "Waiting for $GAMES games to finish... ($COUNTER/$MAX_WAIT)"
+                                        sleep 10
+                                        COUNTER=$((COUNTER + 1))
+                                      done
+                                      
+                                      echo "Maximum wait time (90 minutes) exceeded. Forcing shutdown."
+                                      exit 0
