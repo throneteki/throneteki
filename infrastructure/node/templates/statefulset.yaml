@@ -95,6 +95,7 @@ spec:
                                       if ! wget -q --spider http://localhost:9000/health/games 2>/dev/null; then
                                         echo "Health endpoint not available (old version). Waiting 30 seconds then exiting."
                                         sleep 30
+                                        pkill -TERM node
                                         exit 0
                                       fi
 
@@ -109,6 +110,7 @@ spec:
                                         
                                         if [ "$GAMES" = "error" ]; then
                                           echo "Health endpoint failed. Assuming old version, exiting."
+                                          pkill -TERM node
                                           exit 0
                                         fi
                                         
@@ -118,6 +120,7 @@ spec:
                                         
                                         if [ "$GAMES_TRIMMED" -eq 0 ] 2>/dev/null; then
                                           echo "All games finished. Shutting down gracefully."
+                                          pkill -TERM node
                                           exit 0
                                         fi
                                         
@@ -127,4 +130,5 @@ spec:
                                       done
 
                                       echo "Maximum wait time (90 minutes) exceeded. Forcing shutdown."
+                                      pkill -TERM node
                                       exit 0
