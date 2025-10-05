@@ -17,34 +17,34 @@ jobs:
 
             - name: Deploy Game Nodes
               run: |
-                  # Determine namespace and replicas based on environment
                   ENV=$(echo "${{ github.event.inputs.environment }}" | tr '[:upper:]' '[:lower:]')
 
                   if [ "${{ github.event.inputs.environment }}" = "Production" ]; then
                     NAMESPACE="throneteki"
                     REPLICAS=2
+                    SCALE_INCREMENT=2
                     ENV_SUBDOMAIN="production"
                   elif [ "${{ github.event.inputs.environment }}" = "Development" ]; then
                     NAMESPACE="throneteki-development"
                     REPLICAS=1
+                    SCALE_INCREMENT=1
                     ENV_SUBDOMAIN="dev"
                   elif [ "${{ github.event.inputs.environment }}" = "Playtesting" ]; then
                     NAMESPACE="throneteki-playtesting"
                     REPLICAS=1
+                    SCALE_INCREMENT=1
                     ENV_SUBDOMAIN="playtesting"
                   else
                     NAMESPACE="throneteki-$ENV"
                     REPLICAS=1
+                    SCALE_INCREMENT=1
                     ENV_SUBDOMAIN="$ENV"
                   fi
 
-                  echo "Deploying to namespace: $NAMESPACE with $REPLICAS replicas for environment: $ENV_SUBDOMAIN"
-
-                  # Generate a unique deployment timestamp to force pod updates
+                  echo "Deploying to $NAMESPACE ($REPLICAS replicas)"
                   DEPLOY_TIME=$(date +%s)
                   echo "Deployment timestamp: $DEPLOY_TIME"
 
-                  # Create values file with secrets
                   cat > /tmp/node-secrets.yaml <<EOF
                   nodeConfig:
                     env: "${{ vars.NODE_ENV || 'production' }}"
@@ -60,7 +60,6 @@ jobs:
                     socketioPort: 80
                   EOF
 
-                  # Deploy with Helm - this updates the StatefulSet spec
                   helm upgrade --install game-node ./infrastructure/node \
                     --set namespace=$NAMESPACE \
                     --set replicaCount=$REPLICAS \
@@ -69,20 +68,51 @@ jobs:
                     -f /tmp/node-secrets.yaml \
                     -n $NAMESPACE
 
-                  # Clean up secrets file
                   rm /tmp/node-secrets.yaml
 
-                  echo "Triggering rolling update by deleting pods one by one..."
+                  echo "Starting graceful rollout..."
 
-                  # Delete and wait for each pod to be replaced
-                  for i in $(seq 0 $((REPLICAS - 1))); do
-                    echo "Deleting node-$i to trigger recreation with new spec..."
-                    kubectl delete pod node-$i -n $NAMESPACE
-                    
-                    echo "Waiting for node-$i to be recreated and ready..."
-                    kubectl wait --for=condition=ready pod/node-$i -n $NAMESPACE --timeout=120m
-                    
-                    echo "node-$i updated successfully"
+                  NEW_REPLICAS=$((REPLICAS + SCALE_INCREMENT))
+                  echo "Scaling up to $NEW_REPLICAS replicas..."
+                  kubectl scale statefulset node -n $NAMESPACE --replicas=$NEW_REPLICAS
+
+                  for i in $(seq $REPLICAS $((NEW_REPLICAS - 1))); do
+                    NEW_POD="node-$i"
+                    echo "Waiting for $NEW_POD to become ready..."
+                    kubectl wait --for=condition=ready pod/$NEW_POD -n $NAMESPACE --timeout=30m
+                    echo "$NEW_POD is ready."
                   done
 
-                  echo "All pods updated successfully"
+                  OLD_PODS=$(kubectl get pods -n $NAMESPACE -l app=game-node -o jsonpath='{.items[*].metadata.name}' | tr ' ' '\n' | sort | head -n $REPLICAS)
+                  echo "Old pods: $OLD_PODS"
+
+                  echo "Sending SIGTERM to all old pods to start draining..."
+                  for POD in $OLD_PODS; do
+                    echo "Signaling $POD..."
+                    kubectl exec -n $NAMESPACE $POD -- /bin/sh -c "kill -TERM \$(pidof node)" || true
+                  done
+
+                  echo "Waiting for all old pods to drain..."
+                  for POD in $OLD_PODS; do
+                    echo "Monitoring $POD..."
+                    ATTEMPTS=0
+                    while [ $ATTEMPTS -lt 540 ]; do
+                      GAMES=$(kubectl exec -n $NAMESPACE $POD -- wget -q -O- http://localhost:9000/health/games 2>/dev/null || echo "error")
+                      if [ "$GAMES" = "error" ]; then
+                        echo "$POD: Health check failed; assuming node shutting down."
+                        break
+                      fi
+                      if [ "$GAMES" = "0" ]; then
+                        echo "$POD: All games finished."
+                        break
+                      fi
+                      echo "$POD: Still running $GAMES games... ($ATTEMPTS/540)"
+                      ATTEMPTS=$((ATTEMPTS + 1))
+                      sleep 10
+                    done
+                  done
+
+                  echo "Scaling back down to $REPLICAS replicas..."
+                  kubectl scale statefulset node -n $NAMESPACE --replicas=$REPLICAS
+
+                  echo "Graceful rollout complete!"
