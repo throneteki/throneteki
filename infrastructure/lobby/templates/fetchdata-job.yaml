@@ -9,7 +9,8 @@ metadata:
         'helm.sh/hook-weight': '1'
         'helm.sh/hook-delete-policy': before-hook-creation
 spec:
-    ttlSecondsAfterFinished: 300
+    ttlSecondsAfterFinished: 300 # Auto-cleanup after 5 minutes
+    activeDeadlineSeconds: 3600 # Allow up to 1 hour for initial fetch
     template:
         metadata:
             labels:
