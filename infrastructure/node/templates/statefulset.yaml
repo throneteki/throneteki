@@ -108,6 +108,9 @@ spec:
                                           exit 0
                                         fi
                                         
+                                        # Trim whitespace and check if zero
+                                        GAMES=$(echo "$GAMES" | tr -d '[:space:]')
+                                        
                                         if [ "$GAMES" = "0" ]; then
                                           echo "All games finished. Shutting down gracefully."
                                           exit 0

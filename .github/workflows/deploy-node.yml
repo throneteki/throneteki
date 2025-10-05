@@ -71,5 +71,25 @@ jobs:
                   # Clean up secrets file
                   rm /tmp/node-secrets.yaml
 
+                  CURRENT_REPLICAS=$(kubectl get statefulset node -n $NAMESPACE -o jsonpath='{.spec.replicas}')
+                  TEMP_REPLICAS=$((CURRENT_REPLICAS + REPLICAS))
+
+                  echo "Scaling to $TEMP_REPLICAS replicas for zero-downtime deployment..."
+                  kubectl scale statefulset node -n $NAMESPACE --replicas=$TEMP_REPLICAS
+
+                  echo "Waiting for new pods to be ready..."
+                  kubectl wait --for=condition=ready pod -l app=game-node -n $NAMESPACE --timeout=5m --all
+
+                  echo "Deleting old pods..."
+                  for i in $(seq 0 $((CURRENT_REPLICAS - 1))); do
+                    echo "Deleting node-$i (will drain gracefully)..."
+                    kubectl delete pod node-$i -n $NAMESPACE --wait=false
+                  done
+
+                  sleep 10
+
+                  echo "Scaling back to $REPLICAS replicas..."
+                  kubectl scale statefulset node -n $NAMESPACE --replicas=$REPLICAS
+
                   # Wait for rollout to complete
                   kubectl rollout status statefulset/node -n $NAMESPACE --timeout=10m
