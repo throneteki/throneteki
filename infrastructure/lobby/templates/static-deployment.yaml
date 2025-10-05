@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: throneteki-static
+    # prettier-ignore
+    namespace: {{ .Values.namespace }}
+spec:
+    replicas: 2
+    selector:
+        matchLabels:
+            app: throneteki-static
+    template:
+        metadata:
+            labels:
+                app: throneteki-static
+        spec:
+            containers:
+                - name: nginx
+                  image: nginx:alpine
+                  ports:
+                      - containerPort: 80
+                  volumeMounts:
+                      - name: nginx-config
+                        mountPath: /etc/nginx/nginx.conf
+                        subPath: nginx.conf
+                      - name: card-images
+                        mountPath: /usr/share/nginx/html/img/cards
+                        readOnly: true
+                      - name: avatars
+                        mountPath: /usr/share/nginx/html/img/avatar
+                        readOnly: true
+            volumes:
+                - name: nginx-config
+                  configMap:
+                      name: throneteki-static-nginx-config
+                - name: card-images
+                  persistentVolumeClaim:
+                      claimName: throneteki-card-images
+                - name: avatars
+                  persistentVolumeClaim:
+                      claimName: throneteki-avatars
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: throneteki-static
+    # prettier-ignore
+    namespace: {{ .Values.namespace }}
+spec:
+    selector:
+        app: throneteki-static
+    ports:
+        - port: 80
+          targetPort: 80
+          protocol: TCP
+          name: http

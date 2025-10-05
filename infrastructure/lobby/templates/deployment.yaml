@@ -33,3 +33,10 @@ spec:
                             secretKeyRef:
                                 name: throneteki-lobby-secret
                                 key: node_config
+                  volumeMounts:
+                      - name: avatars
+                        mountPath: /usr/src/app/public/img/avatar
+            volumes:
+                - name: avatars
+                  persistentVolumeClaim:
+                      claimName: throneteki-avatars

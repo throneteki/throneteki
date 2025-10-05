@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+    name: throneteki-card-images
+    # prettier-ignore
+    namespace: {{ .Values.namespace }}
+spec:
+    accessModes:
+        - ReadWriteMany
+    storageClassName: { { .Values.storage.className | default "local-path" } }
+    resources:
+        requests:
+            storage: { { .Values.storage.cardImages | default "5Gi" } }
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+    name: throneteki-avatars
+    # prettier-ignore
+    namespace: {{ .Values.namespace }}
+spec:
+    accessModes:
+        - ReadWriteMany
+    storageClassName: { { .Values.storage.className | default "local-path" } }
+    resources:
+        requests:
+            storage: { { .Values.storage.avatars | default "1Gi" } }

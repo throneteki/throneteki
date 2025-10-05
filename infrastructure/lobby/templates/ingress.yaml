@@ -10,22 +10,53 @@ spec:
         - websecure
     routes:
 {{- if eq .Values.environment "production" }}
+        - match: (Host(`throneteki.net`) || Host(`theironthrone.net`)) && (PathPrefix(`/img/cards/`) || PathPrefix(`/img/avatar/`))
+          kind: Rule
+          priority: 20
+          services:
+              - name: throneteki-static
+                port: 80
+          middlewares:
+              - name: static-cache-headers
         - match: Host(`throneteki.net`) || Host(`theironthrone.net`)
           kind: Rule
+          priority: 10
           services:
               - name: throneteki-lobby
                 port: 80
-    tls:
-        secretName: throneteki-lobby-tls
 {{- else }}
+        - match: (Host(`{{ .Values.environment }}.throneteki.net`) || Host(`{{ .Values.environment }}.theironthrone.net`)) && (PathPrefix(`/img/cards/`) || PathPrefix(`/img/avatar/`))
+          kind: Rule
+          priority: 20
+          services:
+              - name: throneteki-static
+                port: 80
+          middlewares:
+              - name: static-cache-headers
         - match: Host(`{{ .Values.environment }}.throneteki.net`) || Host(`{{ .Values.environment }}.theironthrone.net`)
           kind: Rule
+          priority: 10
           services:
               - name: throneteki-lobby
                 port: 80
+{{- end }}
     tls:
+{{- if eq .Values.environment "production" }}
+        secretName: throneteki-lobby-tls
+{{- else }}
         secretName: throneteki-lobby-{{ .Values.environment }}-tls
 {{- end }}
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+    name: static-cache-headers
+    # prettier-ignore
+    namespace: {{ .Values.namespace }}
+spec:
+    headers:
+        customResponseHeaders:
+            Cache-Control: "public, max-age=604800" # 7 days
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
