@@ -63,7 +63,7 @@ jobs:
                     emailKey: "${{ secrets.EMAIL_KEY }}"
                     emailBlockKey: "${{ secrets.EMAIL_BLOCK_KEY }}"
                     port: 80
-                    hmacSecret: "${{ secrets.HMAC_SECRET }}"
+                    hmacSecret: "${{ secrets.HMAC }}"
                     requireActivation: false
                     patreonCallbackUrl: "${{ secrets.PATREON_CALLBACK_URL }}"
                     patreonClientId: "${{ secrets.PATREON_CLIENT_ID }}"

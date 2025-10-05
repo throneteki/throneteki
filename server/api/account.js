@@ -105,41 +105,33 @@ export const init = function (server, options) {
         wrapAsync(async (req, res, next) => {
             let message = validateUserName(req.body.username);
             if (message) {
-                res.status(400).send({ success: false, message: message });
-
-                return next();
+                return res.status(400).send({ success: false, message: message });
             }
 
             message = validateEmail(req.body.email);
             if (message) {
-                res.status(400).send({ success: false, message: message });
-                return next();
+                return res.status(400).send({ success: false, message: message });
             }
 
             message = validatePassword(req.body.password);
             if (message) {
-                res.status(400).send({ success: false, message: message });
-                return next();
+                return res.status(400).send({ success: false, message: message });
             }
 
             let user = await userService.getUserByEmail(req.body.email);
             if (user) {
-                res.status(400).send({
+                return res.status(400).send({
                     success: false,
                     message: 'An account with that email already exists, please use another'
                 });
-
-                return next();
             }
 
             user = await userService.getUserByUsername(req.body.username);
             if (user) {
-                res.status(400).send({
+                return res.status(400).send({
                     success: false,
                     message: 'An account with that name already exists, please choose another'
                 });
-
-                return next();
             }
 
             let domain = req.body.email.substring(req.body.email.lastIndexOf('@') + 1);
@@ -162,13 +154,11 @@ export const init = function (server, options) {
                             domain,
                             req.body.username
                         );
-                        res.status(400).send({
+                        return res.status(400).send({
                             success: false,
                             message:
                                 'One time use email services are not permitted on this site.  Please use a real email address'
                         });
-
-                        return next();
                     }
                 } catch (err) {
                     logger.warn('Could not valid email address %s %s', domain, err);
@@ -254,37 +244,31 @@ export const init = function (server, options) {
 
             let user = await userService.getUserById(req.body.id);
             if (!user) {
-                res.send({
+                return res.send({
                     success: false,
                     message:
                         'An error occured activating your account, check the url you have entered and try again.'
                 });
-
-                return next();
             }
 
             if (!user.activationToken) {
                 logger.error('Got unexpected activate request for user %s', user.username);
 
-                res.send({
+                return res.send({
                     success: false,
                     message:
                         'An error occured activating your account, check the url you have entered and try again.'
                 });
-
-                return next();
             }
 
             let now = moment();
             if (user.activationTokenExpiry < now) {
-                res.send({
+                logger.error('Token expired %s', user.username);
+
+                return res.send({
                     success: false,
                     message: 'The activation token you have provided has expired.'
                 });
-
-                logger.error('Token expired %s', user.username);
-
-                return next();
             }
 
             let hmac = crypto.createHmac('sha512', configService.getValue('hmacSecret'));
@@ -295,13 +279,11 @@ export const init = function (server, options) {
             if (resetToken !== req.body.token) {
                 logger.error('Invalid activation token', user.username, req.body.token);
 
-                res.send({
+                return res.send({
                     success: false,
                     message:
                         'An error occured activating your account, check the url you have entered and try again.'
                 });
-
-                return next();
             }
 
             await userService.activateUser(user);
@@ -393,15 +375,11 @@ export const init = function (server, options) {
         '/api/account/login',
         wrapAsync(async (req, res, next) => {
             if (!req.body.username) {
-                res.send({ success: false, message: 'Username must be specified' });
-
-                return next();
+                return res.send({ success: false, message: 'Username must be specified' });
             }
 
             if (!req.body.password) {
-                res.send({ success: false, message: 'Password must be specified' });
-
-                return next();
+                return res.send({ success: false, message: 'Password must be specified' });
             }
 
             let user = await userService.getUserByUsername(req.body.username);
@@ -471,48 +449,36 @@ export const init = function (server, options) {
         '/api/account/token',
         wrapAsync(async (req, res, next) => {
             if (!req.body.token) {
-                res.send({ success: false, message: 'Refresh token must be specified' });
-
-                return next();
+                return res.send({ success: false, message: 'Refresh token must be specified' });
             }
 
             let token = req.body.token;
 
             let user = await userService.getUserByUsername(token.username);
             if (!user) {
-                res.send({ success: false, message: 'Invalid refresh token' });
-
-                return next();
+                return res.send({ success: false, message: 'Invalid refresh token' });
             }
 
             if (user.username !== token.username) {
                 logger.error(
                     `Username ${user.username} did not match token username ${token.username}`
                 );
-                res.send({ success: false, message: 'Invalid refresh token' });
-
-                return next();
+                return res.send({ success: false, message: 'Invalid refresh token' });
             }
 
             let refreshToken = user.tokens.find((t) => {
                 return t._id.toString() === token.id;
             });
             if (!refreshToken) {
-                res.send({ success: false, message: 'Invalid refresh token' });
-
-                return next();
+                return res.send({ success: false, message: 'Invalid refresh token' });
             }
 
             if (!userService.verifyRefreshToken(user.username, refreshToken)) {
-                res.send({ success: false, message: 'Invalid refresh token' });
-
-                return next();
+                return res.send({ success: false, message: 'Invalid refresh token' });
             }
 
             if (user.disabled) {
-                res.send({ success: false, message: 'Invalid refresh token' });
-
-                return next();
+                return res.send({ success: false, message: 'Invalid refresh token' });
             }
 
             let userObj = user.getWireSafeDetails();
@@ -543,37 +509,33 @@ export const init = function (server, options) {
 
             let user = await userService.getUserById(req.body.id);
             if (!user) {
-                res.send({
+                logger.error('Got unexpected reset request for user %s', user.username);
+
+                return res.send({
                     success: false,
                     message:
                         'An error occured resetting your password, check the url you have entered and try again.'
                 });
-
-                return next();
             }
 
             if (!user.resetToken) {
                 logger.error('Got unexpected reset request for user %s', user.username);
 
-                res.send({
+                return res.send({
                     success: false,
                     message:
                         'An error occured resetting your password, check the url you have entered and try again.'
                 });
-
-                return next();
             }
 
             let now = moment();
             if (user.tokenExpires < now) {
-                res.send({
+                logger.error('Token expired %s', user.username);
+
+                return res.send({
                     success: false,
                     message: 'The reset token you have provided has expired.'
                 });
-
-                logger.error('Token expired %s', user.username);
-
-                return next();
             }
 
             let hmac = crypto.createHmac('sha512', configService.getValue('hmacSecret'));
@@ -584,13 +546,11 @@ export const init = function (server, options) {
             if (resetToken !== req.body.token) {
                 logger.error('Invalid reset token %s %s', user.username, req.body.token);
 
-                res.send({
+                return res.send({
                     success: false,
                     message:
                         'An error occured resetting your password, check the url you have entered and try again.'
                 });
-
-                return next();
             }
 
             resetUser = user;
