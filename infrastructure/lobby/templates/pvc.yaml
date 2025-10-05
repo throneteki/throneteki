@@ -1,3 +1,4 @@
+# Persistent Volume Claim for card images - shared across all environments
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -6,12 +7,15 @@ metadata:
     namespace: {{ .Values.namespace }}
 spec:
     accessModes:
-        - ReadWriteMany
-    storageClassName: { { .Values.storage.className | default "local-path" } }
+        - ReadWriteMany # Allows multiple pods to read/write
+    # prettier-ignore
+    storageClassName: {{ .Values.storage.className | default "local-path" }}
     resources:
         requests:
-            storage: { { .Values.storage.cardImages | default "5Gi" } }
+            # prettier-ignore
+            storage: {{ .Values.storage.cardImages | default "50Gi" }}
 ---
+# Persistent Volume Claim for user avatars - shared across all environments
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -20,8 +24,10 @@ metadata:
     namespace: {{ .Values.namespace }}
 spec:
     accessModes:
-        - ReadWriteMany
-    storageClassName: { { .Values.storage.className | default "local-path" } }
+        - ReadWriteMany # Allows multiple pods to read/write
+    # prettier-ignore
+    storageClassName: {{ .Values.storage.className | default "local-path" }}
     resources:
         requests:
-            storage: { { .Values.storage.avatars | default "1Gi" } }
+            # prettier-ignore
+            storage: {{ .Values.storage.avatars | default "10Gi" }}
