@@ -87,6 +87,10 @@ spec:
                                       # Signal the node to stop accepting new games
                                       touch /tmp/draining
 
+                                      # Log to a file we can check
+                                      exec > /tmp/prestop.log 2>&1
+                                      echo "PreStop hook started at $(date)"
+
                                       # Check if health endpoint exists (for backwards compatibility)
                                       if ! wget -q --spider http://localhost:9000/health/games 2>/dev/null; then
                                         echo "Health endpoint not available (old version). Waiting 30 seconds then exiting."

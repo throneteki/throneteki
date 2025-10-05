@@ -44,21 +44,6 @@ jobs:
                   DEPLOY_TIME=$(date +%s)
                   echo "Deployment timestamp: $DEPLOY_TIME"
 
-                  # Get current replica count before deployment
-                  CURRENT_REPLICAS=$(kubectl get statefulset node -n $NAMESPACE -o jsonpath='{.spec.replicas}' 2>/dev/null || echo "0")
-                  echo "Current replicas: $CURRENT_REPLICAS"
-
-                  # Calculate temporary replica count for zero-downtime deployment
-                  if [ "$CURRENT_REPLICAS" = "0" ]; then
-                    # First deployment - just deploy normally
-                    TEMP_REPLICAS=$REPLICAS
-                  else
-                    # Scale up to have both old and new pods
-                    TEMP_REPLICAS=$((CURRENT_REPLICAS + REPLICAS))
-                  fi
-
-                  echo "Will deploy with $TEMP_REPLICAS replicas, then scale to $REPLICAS"
-
                   # Create values file with secrets
                   cat > /tmp/node-secrets.yaml <<EOF
                   nodeConfig:
@@ -75,10 +60,10 @@ jobs:
                     socketioPort: 80
                   EOF
 
-                  # Deploy with temporary higher replica count
+                  # Deploy with Helm - this updates the StatefulSet spec
                   helm upgrade --install game-node ./infrastructure/node \
                     --set namespace=$NAMESPACE \
-                    --set replicaCount=$TEMP_REPLICAS \
+                    --set replicaCount=$REPLICAS \
                     --set environment=$ENV_SUBDOMAIN \
                     --set deployTime=$DEPLOY_TIME \
                     -f /tmp/node-secrets.yaml \
@@ -87,29 +72,17 @@ jobs:
                   # Clean up secrets file
                   rm /tmp/node-secrets.yaml
 
-                  if [ "$CURRENT_REPLICAS" != "0" ]; then
-                    # Wait for new pods to be ready
-                    echo "Waiting for new pods to be ready..."
-                    for i in $(seq $CURRENT_REPLICAS $((TEMP_REPLICAS - 1))); do
-                      kubectl wait --for=condition=ready pod/node-$i -n $NAMESPACE --timeout=5m || true
-                    done
+                  echo "Triggering rolling update by deleting pods one by one..."
 
-                    # Delete old pods (they will drain gracefully)
-                    echo "Deleting old pods to trigger graceful draining..."
-                    for i in $(seq 0 $((CURRENT_REPLICAS - 1))); do
-                      echo "Deleting node-$i..."
-                      kubectl delete pod node-$i -n $NAMESPACE --wait=false
-                    done
+                  # Delete and wait for each pod to be replaced
+                  for i in $(seq 0 $((REPLICAS - 1))); do
+                    echo "Deleting node-$i to trigger recreation with new spec..."
+                    kubectl delete pod node-$i -n $NAMESPACE
+                    
+                    echo "Waiting for node-$i to be recreated and ready..."
+                    kubectl wait --for=condition=ready pod/node-$i -n $NAMESPACE --timeout=120m
+                    
+                    echo "node-$i updated successfully"
+                  done
 
-                    # Give old pods time to enter draining state
-                    echo "Waiting for old pods to start draining..."
-                    sleep 15
-
-                    # Scale down to desired replica count
-                    # This will keep the higher-numbered (newer) pods
-                    echo "Scaling to final replica count: $REPLICAS"
-                    kubectl patch statefulset node -n $NAMESPACE -p "{\"spec\":{\"replicas\":$REPLICAS}}"
-                  fi
-
-                  # Wait for final state
-                  kubectl rollout status statefulset/node -n $NAMESPACE --timeout=120m
+                  echo "All pods updated successfully"
