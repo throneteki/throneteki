@@ -340,6 +340,23 @@ const agendaRules = {
             }
         ]
     },
+    // Trading with Braavos
+    26080: {
+        mayInclude: (card) => card.type === 'location' && hasTrait(card, 'Warship') && !card.loyal,
+        rules: [
+            {
+                message: 'Cannot include more than 1 copy of each non-limited location',
+                condition: (deck) => {
+                    const locations = deck.drawCards.filter(
+                        (cardQuantity) =>
+                            cardQuantity.card.type === 'location' &&
+                            !hasKeyword(cardQuantity.card, /Limited/)
+                    );
+                    return locations.every((location) => location.count <= 1);
+                }
+            }
+        ]
+    },
     // Draft Agendas
     // The Power of Wealth
     '00001': {

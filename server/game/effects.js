@@ -12,6 +12,7 @@ import ImmunityRestriction from './immunityrestriction.js';
 import GoldSource from './GoldSource.js';
 import { Flags, Tokens } from './Constants/index.js';
 import ForcedChallenge from './ForcedChallenge.js';
+import { flatten } from 'underscore';
 
 function cannotEffect(type) {
     return function (predicate) {
@@ -157,6 +158,27 @@ const Effects = {
             },
             unapply: function (card) {
                 card.setCardType(undefined);
+            }
+        };
+    },
+    cannotBeCanceled: function (abilityFunc = () => true) {
+        return {
+            apply: function (card, context) {
+                // Get all abilities of this card and apply cannotBeCancelled to those which match function
+                const abilities = flatten(Object.values(card.abilities));
+                for (const ability of abilities) {
+                    if (abilityFunc(ability)) {
+                        ability.setCannotBeCanceled(true, context.source);
+                    }
+                }
+            },
+            unapply: function (card, context) {
+                const abilities = flatten(Object.values(card.abilities));
+                for (const ability of abilities) {
+                    if (abilityFunc(ability)) {
+                        ability.clearCannotBeCanceled(true, context.source);
+                    }
+                }
             }
         };
     },
@@ -346,6 +368,17 @@ const Effects = {
         Flags.challengeOptions.doesNotContributeStrength
     ),
     doesNotReturnUnspentGold: modifyPlayerFlagEffect(Flags.player.doesNotReturnUnspentGold),
+    reduceNumberOfUnspentGoldReturned: function (value) {
+        return {
+            targetType: 'player',
+            apply: function (player) {
+                player.amountUnspentGoldToKeep += value;
+            },
+            unapply: function (player) {
+                player.amountUnspentGoldToKeep -= value;
+            }
+        };
+    },
     modifyKeywordTriggerAmount: function (keyword, value) {
         return {
             apply: function (card) {
@@ -1030,6 +1063,17 @@ const Effects = {
             }
         };
     },
+    setMaxPowerGain: function (max) {
+        return {
+            targetType: 'player',
+            apply: function (player) {
+                player.maxPowerGain.setMax(max);
+            },
+            unapply: function (player) {
+                player.maxPowerGain.removeMax(max);
+            }
+        };
+    },
     cannotGainChallengeBonus: modifyPlayerFlagEffect(Flags.player.cannotGainChallengeBonus),
     cannotWinGame: modifyPlayerFlagEffect(Flags.player.cannotWinGame),
     cannotTriggerCardAbilities: function (restriction = () => true) {
@@ -1537,6 +1581,17 @@ const Effects = {
                 delete context.dynamicUsedPlotsWithTrait[player.name];
             },
             isStateDependent: true
+        };
+    },
+    modifyHandCount: function (value) {
+        return {
+            targetType: 'player',
+            apply: function (player) {
+                player.handCountModifier += value;
+            },
+            unapply: function (player) {
+                player.handCountModifier -= value;
+            }
         };
     },
     mustChooseAsClaim: function () {

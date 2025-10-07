@@ -8,7 +8,7 @@ class RuleByDegree extends PlotCard {
         this.whenRevealed({
             target: {
                 choosingPlayer: (player) =>
-                    player.hand.length > 4 && player.hand.length === this.getHighestHandSize(),
+                    player.hand.length > 4 && player.getHandCount() === this.getHighestHandSize(),
                 activePromptTitle: 'Select 4 cards to keep',
                 mode: 'exactly',
                 cardCondition: (card, context) =>

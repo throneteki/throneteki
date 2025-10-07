@@ -54,7 +54,7 @@ class TheDornishmansWife extends DrawCard {
     }
 
     opponentHasMoreCardsInHand(opponent) {
-        return opponent.hand.length > this.controller.hand.length;
+        return opponent.getHandCount() > this.controller.getHandCount();
     }
 
     opponentControlsMoreCharacters(opponent) {

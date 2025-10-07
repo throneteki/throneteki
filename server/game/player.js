@@ -55,12 +55,16 @@ class Player extends Spectator {
         this.playableLocations = this.createDefaultPlayableLocations();
         this.usedPlotsModifier = 0;
         this.usedPlotsModifierByTrait = new ReferenceCountedSetProperty();
+        this.handCountModifier = 0;
         this.attackerLimits = new MinMaxProperty({ defaultMin: 0, defaultMax: 0 });
         this.defenderLimits = new MinMaxProperty({ defaultMin: 0, defaultMax: 0 });
         this.gainedGold = 0;
         this.maxGoldGain = new MinMaxProperty({ defaultMin: 0, defaultMax: undefined });
         this.drawnCards = 0;
         this.maxCardDraw = new MinMaxProperty({ defaultMin: 0, defaultMax: undefined });
+        this.gainedPower = 0;
+        this.maxPowerGain = new MinMaxProperty({ defaultMin: 0, defaultMax: undefined });
+        this.amountUnspentGoldToKeep = 0;
         this.triggerRestrictions = [];
         this.playCardRestrictions = [];
         this.putIntoShadowsRestrictions = [];
@@ -211,6 +215,10 @@ class Player extends Spectator {
         return this.plotDeck.filter(
             (plot) => !plot.hasFlag(Flags.card.notConsideredToBeInPlotDeck)
         );
+    }
+
+    getHandCount() {
+        return Math.max(0, this.hand.length + this.handCountModifier);
     }
 
     addGoldSource(source) {
@@ -1246,7 +1254,7 @@ class Player extends Spectator {
     }
 
     isBelowReserve() {
-        return this.hand.length <= this.getReserve();
+        return this.getHandCount() <= this.getReserve();
     }
 
     isRival(opponent) {

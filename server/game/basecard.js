@@ -490,6 +490,20 @@ class BaseCard {
         return this.power;
     }
 
+    getPowerToGain(amount) {
+        if (amount < 0) {
+            return 0;
+        }
+        if (this.controller.maxPowerGain.getMax() !== undefined) {
+            return Math.min(
+                amount,
+                this.controller.maxPowerGain.getMax() - this.controller.gainedPower
+            );
+        }
+
+        return amount;
+    }
+
     modifyPower(power) {
         let action =
             power > 0

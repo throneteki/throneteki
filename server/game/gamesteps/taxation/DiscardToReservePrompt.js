@@ -23,7 +23,7 @@ class DiscardToReservePrompt extends BaseStep {
     }
 
     promptPlayerToDiscard(currentPlayer) {
-        let overReserve = currentPlayer.hand.length - currentPlayer.getReserve();
+        let overReserve = currentPlayer.getHandCount() - currentPlayer.getReserve();
         this.game.promptForSelect(currentPlayer, {
             ordered: true,
             mode: 'exactly',

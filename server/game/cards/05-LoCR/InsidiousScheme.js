@@ -13,7 +13,7 @@ class InsidiousScheme extends DrawCard {
             },
             handler: (context) => {
                 let opponent = context.event.challenge.loser;
-                let cards = opponent.hand.length === 0 ? 4 : 2;
+                let cards = opponent.getHandCount() === 0 ? 4 : 2;
                 cards = this.controller.drawCardsToHand(cards).length;
 
                 this.game.addMessage(
