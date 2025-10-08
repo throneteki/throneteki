@@ -483,7 +483,7 @@ class BaseCard {
     }
 
     canGainPower() {
-        return this.allowGameAction('gainPower');
+        return GameActions.gainPower({ card: this }).allow();
     }
 
     getPower() {
@@ -528,6 +528,10 @@ class BaseCard {
         for (let effect of this.getPersistentEffects()) {
             this.game.addEffect(this, effect);
         }
+    }
+
+    getTriggeredAbilities() {
+        return [...this.abilities.actions, ...this.abilities.reactions];
     }
 
     leavesPlay() {}

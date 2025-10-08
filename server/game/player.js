@@ -793,6 +793,7 @@ class Player extends Spectator {
 
         this.gainedGold = 0;
         this.drawnCards = 0;
+        this.gainedPower = 0;
 
         this.limitedPlayed = 0;
 

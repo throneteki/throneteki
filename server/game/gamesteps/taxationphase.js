@@ -23,7 +23,7 @@ class TaxationPhase extends Phase {
             const amountToKeep = player.gold - amountToReturn;
             if (amountToKeep > 0) {
                 this.game.addMessage(
-                    '{0} keeps {1} unspent gold, and returns {2} to the treasury',
+                    '{0} keeps {1} unspent gold and returns {2} to the treasury',
                     player,
                     amountToKeep,
                     amountToReturn > 0 ? amountToReturn : 'none'

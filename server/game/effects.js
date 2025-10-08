@@ -12,7 +12,6 @@ import ImmunityRestriction from './immunityrestriction.js';
 import GoldSource from './GoldSource.js';
 import { Flags, Tokens } from './Constants/index.js';
 import ForcedChallenge from './ForcedChallenge.js';
-import { flatten } from 'underscore';
 
 function cannotEffect(type) {
     return function (predicate) {
@@ -164,20 +163,13 @@ const Effects = {
     cannotBeCanceled: function (abilityFunc = () => true) {
         return {
             apply: function (card, context) {
-                // Get all abilities of this card and apply cannotBeCancelled to those which match function
-                const abilities = flatten(Object.values(card.abilities));
-                for (const ability of abilities) {
-                    if (abilityFunc(ability)) {
-                        ability.setCannotBeCanceled(true, context.source);
-                    }
+                for (const ability of card.getTriggeredAbilities().filter(abilityFunc)) {
+                    ability.setCannotBeCanceled(true, context.source);
                 }
             },
             unapply: function (card, context) {
-                const abilities = flatten(Object.values(card.abilities));
-                for (const ability of abilities) {
-                    if (abilityFunc(ability)) {
-                        ability.clearCannotBeCanceled(true, context.source);
-                    }
+                for (const ability of card.getTriggeredAbilities().filter(abilityFunc)) {
+                    ability.clearCannotBeCanceled(true, context.source);
                 }
             }
         };

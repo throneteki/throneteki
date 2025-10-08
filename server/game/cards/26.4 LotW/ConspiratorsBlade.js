@@ -5,6 +5,7 @@ class ConspiratorsBlade extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.parent && this.parent.isParticipating(),
+            targetLocation: 'any',
             match: (card) => card.getType() === 'event' && card.controller === this.controller,
             effect: ability.effects.cannotBeCanceled()
         });

@@ -24,7 +24,7 @@ class StackProperty {
         if (this.stack.length === 0) {
             return this.default;
         }
-        return this.stack[this.stack.length - 1];
+        return this.stack[this.stack.length - 1].value;
     }
 
     clone() {
