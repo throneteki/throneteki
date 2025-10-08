@@ -24,7 +24,7 @@ class AboveTheRest extends DrawCard {
                 card: context.aggregate.card,
                 amount: 1
             })).then((context) => ({
-                condition: () => context.parentcontext.aggregate.card.hasTrait('House Tully'),
+                condition: () => context.aggregate.card.hasTrait('House Tully'),
                 message: {
                     format: 'Then, {player} stands {character}',
                     args: { character: (context) => context.parentContext.aggregate.card }

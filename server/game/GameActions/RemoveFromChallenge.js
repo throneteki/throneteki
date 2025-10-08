@@ -14,10 +14,11 @@ class RemoveFromChallenge extends GameAction {
         return card.isParticipating();
     }
 
-    createEvent({ card }) {
+    createEvent({ card, reason = 'ability' }) {
         const challenge = card.game.currentChallenge;
         const eventProps = {
             card,
+            reason,
             challenge: challenge,
             isAttacking: challenge.isAttacking(card),
             isDeclared: challenge.isDeclared(card),
