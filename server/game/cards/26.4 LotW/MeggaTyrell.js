@@ -7,9 +7,11 @@ class MeggaTyrell extends DrawCard {
             when: {
                 onRemovedFromChallenge: {
                     aggregateBy: (event) => ({
+                        reason: event.reason,
                         cardType: event.card.getType()
                     }),
-                    condition: (aggregate) => aggregate.cardType === 'character'
+                    condition: (aggregate) =>
+                        aggregate.cardType === 'character' && aggregate.reason === 'ability'
                 }
             },
             message: '{player} uses {source} to gain 1 power for their faction',
