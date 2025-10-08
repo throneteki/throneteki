@@ -4,14 +4,14 @@ class TheWarOfTheFiveKings extends PlotCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,
-            effect: ability.effects.modifyClaim(() => this.getNumberOfRivals().length)
+            effect: ability.effects.modifyClaim(() => this.getNumberOfRivals())
         });
     }
 
     getNumberOfRivals() {
         return this.game
             .getOpponents(this.controller)
-            .map((player) => player.isRival(this.controller));
+            .filter((player) => player.isRival(this.controller)).length;
     }
 }
 

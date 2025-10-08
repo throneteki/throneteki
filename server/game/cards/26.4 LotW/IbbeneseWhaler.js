@@ -5,7 +5,7 @@ class IbbeneseWhaler extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetController: 'current',
-            effect: ability.effects.reduceFirstCardCostEachRound('marshalIntoShadows', 1)
+            effect: ability.effects.reduceFirstMarshaledCardIntoShadowsEachRound(1)
         });
         this.action({
             title: 'Draw cards',

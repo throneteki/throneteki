@@ -160,15 +160,15 @@ const Effects = {
             }
         };
     },
-    cannotBeCanceled: function (abilityFunc = () => true) {
+    cannotBeCanceled: function () {
         return {
             apply: function (card, context) {
-                for (const ability of card.getTriggeredAbilities().filter(abilityFunc)) {
+                for (const ability of card.getTriggeredAbilities()) {
                     ability.setCannotBeCanceled(true, context.source);
                 }
             },
             unapply: function (card, context) {
-                for (const ability of card.getTriggeredAbilities().filter(abilityFunc)) {
+                for (const ability of card.getTriggeredAbilities()) {
                     ability.clearCannotBeCanceled(true, context.source);
                 }
             }
@@ -1498,6 +1498,9 @@ const Effects = {
     },
     reduceFirstMarshalledOrPlayedCardCostEachRound: function (amount, match) {
         return this.reduceFirstCardCostEachRound(['marshal', 'play'], amount, match);
+    },
+    reduceFirstMarshaledCardIntoShadowsEachRound: function (amount, match) {
+        return this.reduceFirstCardCostEachRound('marshalIntoShadows', amount, match);
     },
     reduceFirstOutOfShadowsCardCostEachRound: function (amount, match) {
         return this.reduceFirstCardCostEachRound(['outOfShadows'], amount, match);
