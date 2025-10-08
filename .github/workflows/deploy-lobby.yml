@@ -6,7 +6,6 @@ on:
                 type: environment
                 description: Select the environment
                 default: Production
-
 jobs:
     deploy:
         runs-on: self-hosted
