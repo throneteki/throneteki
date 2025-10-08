@@ -14,10 +14,16 @@ class StackProperty {
     }
 
     remove(value, source) {
-        const tracking = this.stack.findIndex((t) => t.value === value && t.source === source);
+        const tracking = this.stack.findIndex(
+            (t) => (!value || t.value === value) && t.source === source
+        );
         if (tracking >= 0) {
             this.stack.splice(tracking, 1);
         }
+    }
+
+    clear() {
+        this.stack = [];
     }
 
     get() {
