@@ -56,7 +56,7 @@ jobs:
                     minLobbyChatTime: 3600
                     dbPath: "${{ secrets.DB_PATH }}"
                     cookieLifetime: 604800000
-                    redisPrefix: "$ENV"
+                    redisKeyPrefix: "$ENV"
                     redisUrl: "${{ secrets.REDIS_URL }}"
                     secret: "${{ secrets.SECRET }}"
                     emailKey: "${{ secrets.EMAIL_KEY }}"
