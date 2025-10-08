@@ -160,6 +160,20 @@ const Effects = {
             }
         };
     },
+    cannotBeCanceled: function () {
+        return {
+            apply: function (card, context) {
+                for (const ability of card.getTriggeredAbilities()) {
+                    ability.setCannotBeCanceled(true, context.source);
+                }
+            },
+            unapply: function (card, context) {
+                for (const ability of card.getTriggeredAbilities()) {
+                    ability.clearCannotBeCanceled(true, context.source);
+                }
+            }
+        };
+    },
     cannotBeDeclaredAsAttacker: cannotEffect('declareAsAttacker'),
     cannotBeDeclaredAsDefender: cannotEffect('declareAsDefender'),
     cannotParticipate: cannotEffect('participateInChallenge'),
@@ -346,6 +360,17 @@ const Effects = {
         Flags.challengeOptions.doesNotContributeStrength
     ),
     doesNotReturnUnspentGold: modifyPlayerFlagEffect(Flags.player.doesNotReturnUnspentGold),
+    reduceNumberOfUnspentGoldReturned: function (value) {
+        return {
+            targetType: 'player',
+            apply: function (player) {
+                player.amountUnspentGoldToKeep += value;
+            },
+            unapply: function (player) {
+                player.amountUnspentGoldToKeep -= value;
+            }
+        };
+    },
     modifyKeywordTriggerAmount: function (keyword, value) {
         return {
             apply: function (card) {
@@ -1030,6 +1055,17 @@ const Effects = {
             }
         };
     },
+    setMaxPowerGain: function (max) {
+        return {
+            targetType: 'player',
+            apply: function (player) {
+                player.maxPowerGain.setMax(max);
+            },
+            unapply: function (player) {
+                player.maxPowerGain.removeMax(max);
+            }
+        };
+    },
     cannotGainChallengeBonus: modifyPlayerFlagEffect(Flags.player.cannotGainChallengeBonus),
     cannotWinGame: modifyPlayerFlagEffect(Flags.player.cannotWinGame),
     cannotTriggerCardAbilities: function (restriction = () => true) {
@@ -1463,6 +1499,9 @@ const Effects = {
     reduceFirstMarshalledOrPlayedCardCostEachRound: function (amount, match) {
         return this.reduceFirstCardCostEachRound(['marshal', 'play'], amount, match);
     },
+    reduceFirstMarshaledCardIntoShadowsEachRound: function (amount, match) {
+        return this.reduceFirstCardCostEachRound('marshalIntoShadows', amount, match);
+    },
     reduceFirstOutOfShadowsCardCostEachRound: function (amount, match) {
         return this.reduceFirstCardCostEachRound(['outOfShadows'], amount, match);
     },
@@ -1537,6 +1576,17 @@ const Effects = {
                 delete context.dynamicUsedPlotsWithTrait[player.name];
             },
             isStateDependent: true
+        };
+    },
+    modifyHandCount: function (value) {
+        return {
+            targetType: 'player',
+            apply: function (player) {
+                player.handCountModifier += value;
+            },
+            unapply: function (player) {
+                player.handCountModifier -= value;
+            }
         };
     },
     mustChooseAsClaim: function () {

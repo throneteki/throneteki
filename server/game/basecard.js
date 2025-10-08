@@ -13,6 +13,7 @@ import KeywordsProperty from './PropertyTypes/KeywordsProperty.js';
 import ReferenceCountedSetProperty from './PropertyTypes/ReferenceCountedSetProperty.js';
 import XValueDefinition from './XValueDefinition.js';
 import { Flags, Tokens } from './Constants/index.js';
+import StackProperty from './PropertyTypes/StackProperty.js';
 
 const ValidKeywords = [
     'ambush',
@@ -56,8 +57,8 @@ class BaseCard {
         this.keywords = new KeywordsProperty();
         this.flags = new ReferenceCountedSetProperty();
         this.traits = new ReferenceCountedSetProperty();
-        this.controllerStack = [];
-        this.loyalStack = [];
+        this.controllerStack = new StackProperty(this.owner);
+        this.loyalStack = new StackProperty(!!this.cardData.loyal);
         this.eventsForRegistration = [];
         this.keywordSources = [];
 
@@ -316,8 +317,8 @@ class BaseCard {
     createSnapshot() {
         let clone = new BaseCard(this.owner, this.cardData);
 
-        clone.controllerStack = [...this.controllerStack];
-        clone.loyalStack = [...this.loyalStack];
+        clone.controllerStack = this.controllerStack.clone();
+        clone.loyalStack = this.loyalStack.clone();
         clone.factions = this.factions.clone();
         clone.flags = this.flags.clone();
         clone.location = this.location;
@@ -343,32 +344,20 @@ class BaseCard {
     }
 
     get controller() {
-        if (this.controllerStack.length === 0) {
-            return this.owner;
-        }
-
-        return this.controllerStack[this.controllerStack.length - 1].controller;
+        return this.controllerStack.get();
     }
 
     takeControl(controller, source) {
         if (!source && controller === this.owner) {
-            // On permanent take control by the original owner, revert all take
-            // control effects
-            this.controllerStack = [];
+            this.controllerStack.clear();
             return;
         }
 
-        let tracking = { controller: controller, source: source };
-        if (!source) {
-            // Clear all other take control effects for permanent control
-            this.controllerStack = [tracking];
-        } else {
-            this.controllerStack.push(tracking);
-        }
+        this.controllerStack.set(controller, source);
     }
 
     revertControl(source) {
-        this.controllerStack = this.controllerStack.filter((control) => control.source !== source);
+        this.controllerStack.remove(null, source);
     }
 
     hasFlag(flag) {
@@ -458,24 +447,15 @@ class BaseCard {
     }
 
     isLoyal() {
-        if (this.loyalStack.length === 0) {
-            return !!this.cardData.loyal;
-        }
-
-        return this.loyalStack[this.loyalStack.length - 1];
+        return this.loyalStack.get();
     }
 
     setLoyal(loyal, source) {
-        const tracking = { loyal, source };
-        if (!source) {
-            this.loyalStack = [tracking];
-        } else {
-            this.loyalStack.push(tracking);
-        }
+        this.loyalStack.set(loyal, source);
     }
 
     clearLoyal(source) {
-        this.loyalStack = this.loyalStack.filter((loyalty) => loyalty.source !== source);
+        this.loyalStack.remove(null, source);
     }
 
     canBeSaved() {
@@ -483,11 +463,25 @@ class BaseCard {
     }
 
     canGainPower() {
-        return this.allowGameAction('gainPower');
+        return GameActions.gainPower({ card: this }).allow();
     }
 
     getPower() {
         return this.power;
+    }
+
+    getPowerToGain(amount) {
+        if (amount < 0) {
+            return 0;
+        }
+        if (this.controller.maxPowerGain.getMax() !== undefined) {
+            return Math.min(
+                amount,
+                this.controller.maxPowerGain.getMax() - this.controller.gainedPower
+            );
+        }
+
+        return amount;
     }
 
     modifyPower(power) {
@@ -514,6 +508,10 @@ class BaseCard {
         for (let effect of this.getPersistentEffects()) {
             this.game.addEffect(this, effect);
         }
+    }
+
+    getTriggeredAbilities() {
+        return [...this.abilities.actions, ...this.abilities.reactions];
     }
 
     leavesPlay() {}

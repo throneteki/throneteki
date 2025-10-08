@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class GoldenTooth extends DrawCard {
     setupCardAbilities(ability) {
@@ -6,23 +7,17 @@ class GoldenTooth extends DrawCard {
             title: 'Gain gold',
             condition: () => this.controller.canGainGold(),
             cost: ability.costs.kneelSelf(),
-            handler: () => {
-                let gold = this.opponentHasEmptyHand() ? 3 : 1;
-                gold = this.game.addGold(this.controller, gold);
-
-                this.game.addMessage(
-                    '{0} kneels {1} to gain {2} gold',
-                    this.controller,
-                    this,
-                    gold
-                );
-            }
+            message: {
+                format: '{player} kneels {source} to gain {amount} gold',
+                args: { amount: () => this.getAmount() }
+            },
+            gameAction: GameActions.gainGold(() => ({ amount: this.getAmount() }))
         });
     }
 
-    opponentHasEmptyHand() {
+    getAmount() {
         let opponents = this.game.getOpponents(this.controller);
-        return opponents.some((opponent) => opponent.hand.length === 0);
+        return opponents.some((opponent) => opponent.hasNoCardsInHand()) ? 3 : 1;
     }
 }
 

@@ -7,7 +7,7 @@ class SerBarristanSelmy extends DrawCard {
                 afterChallenge: (event) =>
                     event.challenge.winner === this.controller &&
                     this.isParticipating() &&
-                    this.controller.hand.length < event.challenge.loser.hand.length
+                    this.controller.getHandCount() < event.challenge.loser.getHandCount()
             },
             handler: () => {
                 this.controller.standCard(this);

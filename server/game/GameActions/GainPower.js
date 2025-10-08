@@ -7,22 +7,26 @@ class GainPower extends GameAction {
     }
 
     message({ card, amount = 1, context }) {
+        const actualAmount = card.getPowerToGain(amount);
         if (card.getType() === 'faction') {
             return Message.fragment(
                 `gains {amount} power on ${context.player !== card.controller ? "{player}'s" : 'their'} faction card`,
-                { amount, player: card.controller }
+                { amount: actualAmount, player: card.controller }
             );
         }
 
-        return Message.fragment('gains {amount} power on {card}', { amount, card });
+        return Message.fragment('gains {amount} power on {card}', { amount: actualAmount, card });
     }
 
     canChangeGameState({ card, amount = 1 }) {
-        return ['active plot', 'faction', 'play area'].includes(card.location) && amount > 0;
+        const actualAmount = card.getPowerToGain(amount);
+        return ['active plot', 'faction', 'play area'].includes(card.location) && actualAmount > 0;
     }
 
     createEvent({ card, amount = 1, reason = 'ability' }) {
-        return this.event('onCardPowerGained', { card, power: amount, reason }, (event) => {
+        const actualAmount = card.getPowerToGain(amount);
+        return this.event('onCardPowerGained', { card, power: actualAmount, reason }, (event) => {
+            event.card.controller.gainedPower += event.power;
             event.card.power += event.power;
         });
     }

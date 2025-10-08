@@ -21,7 +21,7 @@ class DaggersInTheDark extends DrawCard {
                 let loser = context.event.challenge.loser;
                 let target = context.target;
 
-                if (!this.playerHas2Characters(loser)) {
+                if (!this.playerHas2Characters(loser) || context.ability.cannotBeCanceled) {
                     this.resolveKill(target);
                     return;
                 }

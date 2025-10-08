@@ -16,8 +16,8 @@ class CerseisAttendant extends DrawCard {
         }
 
         return (
-            (this.isAttacking() && challenge.defendingPlayer.hand.length === 0) ||
-            (this.isDefending() && challenge.attackingPlayer.hand.length === 0)
+            (this.isAttacking() && challenge.defendingPlayer.getHandCount() === 0) ||
+            (this.isDefending() && challenge.attackingPlayer.getHandCount() === 0)
         );
     }
 }
