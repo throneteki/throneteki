@@ -129,6 +129,6 @@
         "selenium-webdriver": "^4.0.0-alpha.1",
         "socket.io-client": "^4.7.5",
         "vite-plugin-commonjs": "^0.10.1",
-        "vite-plugin-static-copy": "^1.0.4"
+        "vite-plugin-static-copy": "^2.3.2"
     }
 }
