@@ -58,13 +58,15 @@ jobs:
                       REPO="$FULL_IMAGE"
                       TAG="latest"
                     fi
-                    HELM_IMAGE_FLAGS="--set-string image.repository=\"$REPO\" --set-string image.tag=\"$TAG\""
+                    HELM_IMAGE_FLAGS="--set-string image.repository=$REPO --set-string image.tag=$TAG"
                   else
                     if [ -n "${{ vars.NODE_IMAGE_REPO }}" ]; then
-                      HELM_IMAGE_FLAGS+=" --set-string image.repository=\"${{ vars.NODE_IMAGE_REPO }}\""
+                      REPO="${{ vars.NODE_IMAGE_REPO }}"
+                      HELM_IMAGE_FLAGS+=" --set-string image.repository=$REPO"
                     fi
                     if [ -n "${{ vars.NODE_IMAGE_TAG }}" ]; then
-                      HELM_IMAGE_FLAGS+=" --set-string image.tag=\"${{ vars.NODE_IMAGE_TAG }}\""
+                      TAG="${{ vars.NODE_IMAGE_TAG }}"
+                      HELM_IMAGE_FLAGS+=" --set-string image.tag=$TAG"
                     fi
                   fi
 

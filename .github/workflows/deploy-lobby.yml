@@ -51,20 +51,22 @@ jobs:
                   if [ -n "${{ vars.LOBBY_IMAGE }}" ]; then
                     FULL_IMAGE="${{ vars.LOBBY_IMAGE }}"
                     REPO="${FULL_IMAGE%:*}"
-                    TAG="${FULL_IMAGE#*:}"
+                      TAG="${FULL_IMAGE#*:}"
                     # If no tag provided, default to 'latest'
                     if [ "$REPO" = "$TAG" ]; then
                       REPO="$FULL_IMAGE"
                       TAG="latest"
                     fi
-                    HELM_IMAGE_FLAGS="--set-string image.repository=\"$REPO\" --set-string image.tag=\"$TAG\""
+                    HELM_IMAGE_FLAGS="--set-string image.repository=$REPO --set-string image.tag=$TAG"
                   else
                     # Fallback to separate repo/tag vars if provided
                     if [ -n "${{ vars.LOBBY_IMAGE_REPO }}" ]; then
-                      HELM_IMAGE_FLAGS+=" --set-string image.repository=\"${{ vars.LOBBY_IMAGE_REPO }}\""
+                      REPO="${{ vars.LOBBY_IMAGE_REPO }}"
+                      HELM_IMAGE_FLAGS+=" --set-string image.repository=$REPO"
                     fi
                     if [ -n "${{ vars.LOBBY_IMAGE_TAG }}" ]; then
-                      HELM_IMAGE_FLAGS+=" --set-string image.tag=\"${{ vars.LOBBY_IMAGE_TAG }}\""
+                      TAG="${{ vars.LOBBY_IMAGE_TAG }}"
+                      HELM_IMAGE_FLAGS+=" --set-string image.tag=$TAG"
                     fi
                   fi
 
