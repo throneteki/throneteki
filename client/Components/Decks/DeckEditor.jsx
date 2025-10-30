@@ -230,7 +230,10 @@ const DeckEditor = ({ deck, onBackClick }) => {
                             if (quantity === 0) {
                                 newDeckCards.splice(dcIndex, 1);
                             } else {
-                                newDeckCards[dcIndex].count = quantity;
+                                newDeckCards[dcIndex] = {
+                                    ...newDeckCards[dcIndex],
+                                    count: quantity
+                                };
                             }
                         } else {
                             newDeckCards.push({ card: cardsByCode[code], count: quantity });
