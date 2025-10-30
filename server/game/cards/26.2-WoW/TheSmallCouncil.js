@@ -30,7 +30,10 @@ class TheSmallCouncil extends AgendaCard {
                                 trait: ['King', 'Queen']
                             }),
                         message: 'Then, {player} draws 1 card',
-                        gameAction: GameActions.drawCards({ amount: 1 })
+                        gameAction: GameActions.drawCards((context) => ({
+                            player: context.player,
+                            amount: 1
+                        }))
                     }),
                     context
                 );
