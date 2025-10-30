@@ -11,7 +11,10 @@ class GoldenTooth extends DrawCard {
                 format: '{player} kneels {source} to gain {amount} gold',
                 args: { amount: () => this.getAmount() }
             },
-            gameAction: GameActions.gainGold(() => ({ amount: this.getAmount() }))
+            gameAction: GameActions.gainGold((context) => ({
+                player: context.player,
+                amount: this.getAmount()
+            }))
         });
     }
 
