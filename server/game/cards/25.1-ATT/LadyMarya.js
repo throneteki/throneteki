@@ -23,7 +23,8 @@ class LadyMarya extends DrawCard {
                     }) &&
                     event.challenge
                         .getWinnerCards()
-                        .some((card) => card.hasTrait('Captain') || card.hasTrait('Smuggler'))
+                        .some((card) => card.hasTrait('Captain') || card.hasTrait('Smuggler')) &&
+                    event.challenge.loser.drawDeck.length > 0
             },
             cost: ability.costs.kneelSelf(),
             message: {
