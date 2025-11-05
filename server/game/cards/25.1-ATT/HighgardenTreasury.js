@@ -9,7 +9,7 @@ class HighgardenTreasury extends DrawCard {
             },
             limit: ability.limit.perRound(3),
             message: '{player} uses {source} to gain 1 gold',
-            gameAction: GameActions.gainGold({ player: this.controller, amount: 1 })
+            gameAction: GameActions.gainGold((context) => ({ player: context.player, amount: 1 }))
         });
     }
 }

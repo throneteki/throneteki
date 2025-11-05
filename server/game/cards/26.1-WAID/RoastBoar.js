@@ -14,7 +14,7 @@ class RoastBoar extends DrawCard {
             },
             cost: ability.costs.sacrificeSelf(),
             message: '{player} sacrifices {source} to draw 3 cards',
-            gameAction: GameActions.drawCards({ amount: 3 })
+            gameAction: GameActions.drawCards((context) => ({ player: context.player, amount: 3 }))
         });
     }
 }
