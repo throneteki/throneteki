@@ -665,6 +665,12 @@ class BaseCard {
     }
 
     setCardType(cardType) {
+        // If a participating character changes type, it should no longer participate
+        if (this.getType() !== cardType && this.isParticipating()) {
+            this.game.resolveGameAction(
+                GameActions.removeFromChallenge({ card: this, reason: 'effect' })
+            );
+        }
         this.cardTypeSet = cardType;
     }
 

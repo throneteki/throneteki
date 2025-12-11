@@ -19,15 +19,24 @@ class ChooseGoldSourceAmounts extends BaseStep {
             }
 
             this.currentSource = this.sources.shift();
-            let currentAvailable = this.currentSource.gold;
-            let maxAmount = Math.min(this.remainingAmount, currentAvailable);
-            let minAmount = Math.max(0, this.remainingAmount - this.getMaxRemainingAvailable());
+            const currentAvailable = this.currentSource.gold;
+            const goldMultiplier = this.currentSource.goldMultiplier ?? 1;
+            const maxAmount = Math.ceil(
+                Math.min(this.remainingAmount, currentAvailable) / goldMultiplier
+            );
+            const minAmount = Math.ceil(
+                Math.max(0, this.remainingAmount - this.getMaxRemainingAvailable()) / goldMultiplier
+            );
 
             if (this.sources.length > 0 && minAmount !== maxAmount) {
                 let buttons = range(minAmount, maxAmount + 1)
                     .reverse()
                     .map((amount) => {
-                        return { text: amount.toString(), method: 'payGold', arg: amount };
+                        return {
+                            text: amount.toString(),
+                            method: 'payGold',
+                            arg: amount * goldMultiplier
+                        };
                     });
                 this.game.promptWithMenu(this.player, this, {
                     activePrompt: {
@@ -38,7 +47,7 @@ class ChooseGoldSourceAmounts extends BaseStep {
                 return false;
             }
 
-            this.payGold(this.player, maxAmount);
+            this.payGold(this.player, maxAmount * goldMultiplier);
         }
     }
 
@@ -47,8 +56,10 @@ class ChooseGoldSourceAmounts extends BaseStep {
     }
 
     payGold(player, amount) {
-        this.remainingAmount -= amount;
-        this.currentSource.modifyGold(-amount);
+        if (amount > 0) {
+            this.remainingAmount -= amount;
+            this.currentSource.modifyGold(-amount, player);
+        }
 
         if (this.remainingAmount === 0) {
             this.callback();
