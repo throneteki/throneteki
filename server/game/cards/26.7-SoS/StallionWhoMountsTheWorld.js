@@ -15,6 +15,7 @@ class StallionWhoMountsTheWorld extends DrawCard {
                 '{player} plays {source} and kneels their faction card to search their deck for a Dothraki character',
             gameAction: GameActions.ifCondition({
                 condition: (context) =>
+                    context.ability.cannotBeCanceled ||
                     context.event.challenge.loser.getNumberOfCardsInPlay({
                         type: 'character',
                         cardCondition: (card) => GameActions.kill({ card }).allow()
@@ -68,7 +69,7 @@ class StallionWhoMountsTheWorld extends DrawCard {
     }
 
     killSelectedCharacters(opponent, cards) {
-        this.game.addMessage('{0} chooses to kill {1} for {2}', opponent, cards, this);
+        this.game.addMessage('{0} kills {1} to cancel {2}', opponent, cards, this);
         this.game.resolveGameAction(
             GameActions.simultaneously(cards.map((card) => GameActions.kill({ card })))
         );
@@ -82,6 +83,6 @@ class StallionWhoMountsTheWorld extends DrawCard {
 }
 
 StallionWhoMountsTheWorld.code = '26584';
-StallionWhoMountsTheWorld.version = '1.0.1';
+StallionWhoMountsTheWorld.version = '1.0.2';
 
 export default StallionWhoMountsTheWorld;
