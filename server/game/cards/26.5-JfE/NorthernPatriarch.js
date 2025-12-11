@@ -62,7 +62,7 @@ class NorthernPatriarch extends DrawCard {
                     context.event.cancel();
                 })
             }),
-            max: ability.limit.perRound(1)
+            limit: ability.limit.perRound(1)
         });
     }
 
