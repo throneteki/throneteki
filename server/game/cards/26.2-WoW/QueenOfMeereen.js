@@ -25,27 +25,34 @@ class QueenOfMeereen extends DrawCard {
                         this.game.resolveGameAction(
                             GameActions.simultaneously(
                                 cards.map((card) => GameActions.discardCard({ card, context }))
-                            ).then(() => {
-                                const reduction = cards.length * 2;
-                                this.untilEndOfPhase((ability) => ({
-                                    targetController: 'current',
-                                    effect: ability.effects.reduceNextMarshalledAmbushedOrOutOfShadowsCardCost(
-                                        reduction
-                                    )
-                                }));
-                                this.game.addMessage(
-                                    '{0} discards {1} to reduce the cost of the next card they marshal, ambush or bring out of shadows this phase by {2}',
-                                    player,
-                                    cards,
-                                    reduction
-                                );
-                            })
+                            ).then({
+                                message: {
+                                    format: '{player} discards {cards} to reduce the cost of the next card they marshal, ambush or bring out of shadows this phase by {amount}',
+                                    args: {
+                                        cards: () => cards,
+                                        amount: () => this.getAmount(cards)
+                                    }
+                                },
+                                handler: () => {
+                                    this.untilEndOfPhase((ability) => ({
+                                        targetController: 'current',
+                                        effect: ability.effects.reduceNextMarshalledAmbushedOrOutOfShadowsCardCost(
+                                            this.getAmount(cards)
+                                        )
+                                    }));
+                                }
+                            }),
+                            context
                         );
                         return true;
                     }
                 });
             }
         });
+    }
+
+    getAmount(cards) {
+        return cards.length * 2;
     }
 }
 
