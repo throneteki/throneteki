@@ -12,6 +12,7 @@ import ImmunityRestriction from './immunityrestriction.js';
 import GoldSource from './GoldSource.js';
 import { Flags, Tokens } from './Constants/index.js';
 import ForcedChallenge from './ForcedChallenge.js';
+import PowerAsGoldSource from './PowerAsGoldSource.js';
 
 function cannotEffect(type) {
     return function (predicate) {
@@ -1154,6 +1155,21 @@ const Effects = {
                 let goldSource = context.canSpendGold[card.uuid];
                 card.controller.removeGoldSource(goldSource);
                 delete context.canSpendGold[card.uuid];
+            }
+        };
+    },
+    canSpendPowerAsGold: function (allowSpendingFunc) {
+        return {
+            apply: function (card, context) {
+                let goldSource = new PowerAsGoldSource(card, allowSpendingFunc);
+                context.canSpendPowerAsGold = context.canSpendPowerAsGold || {};
+                context.canSpendPowerAsGold[card.uuid] = goldSource;
+                context.source.controller.addGoldSource(goldSource);
+            },
+            unapply: function (card, context) {
+                let goldSource = context.canSpendPowerAsGold[card.uuid];
+                context.source.controller.removeGoldSource(goldSource);
+                delete context.canSpendPowerAsGold[card.uuid];
             }
         };
     },
