@@ -590,6 +590,9 @@ const Effects = {
     killByStrength: function (value) {
         return [Effects.burn, Effects.modifyStrength(value)];
     },
+    killByDynamicStrength: function (calculate) {
+        return [Effects.burn, Effects.dynamicDecreaseStrength(calculate)];
+    },
     blankExcludingTraits: {
         apply: function (card) {
             card.setBlank(Flags.blanks.excludingTraits);
