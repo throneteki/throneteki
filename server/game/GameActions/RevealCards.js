@@ -74,7 +74,7 @@ class RevealCards extends GameAction {
         source,
         context
     }) {
-        context.revealingPlayer = player;
+        context.revealingPlayer = player || context.player;
         const allPlayers = context.game.getPlayers();
         const eventParams = {
             player,
@@ -98,8 +98,9 @@ class RevealCards extends GameAction {
             //       Search GameAction likely needs edits for that. Once done, remove 'revealWithMessage'
             if (event.revealWithMessage) {
                 let abilityMessage = AbilityMessage.create({
-                    format: '{player} {revealAction}',
+                    format: '{revealPlayer} {revealAction}',
                     args: {
+                        revealPlayer: () => event.player,
                         revealAction: (context) => this.message({ player: event.player, context })
                     }
                 });
