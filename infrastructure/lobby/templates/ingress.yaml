@@ -10,7 +10,7 @@ spec:
         - websecure
     routes:
 {{- if eq .Values.environment "production" }}
-        - match: (Host(`throneteki.net`) || Host(`theironthrone.net`)) && (PathPrefix(`/img/cards/`) || PathPrefix(`/img/avatar/`))
+        - match: (Host(`throneteki.net`) || Host(`theironthrone.net`)) || Host(`www.theironthrone.net`)) && (PathPrefix(`/img/cards/`) || PathPrefix(`/img/avatar/`))
           kind: Rule
           priority: 20
           services:
@@ -18,7 +18,7 @@ spec:
                 port: 80
           middlewares:
               - name: static-cache-headers
-        - match: Host(`throneteki.net`) || Host(`theironthrone.net`)
+        - match: Host(`throneteki.net`) || Host(`theironthrone.net`) Host(`www.theironthrone.net`))
           kind: Rule
           priority: 10
           services:
@@ -77,6 +77,7 @@ spec:
 {{- if eq .Values.environment "production" }}
         - throneteki.net
         - theironthrone.net
+        - www.theironthrone.net
 {{- else }}
         - {{ .Values.environment }}.throneteki.net
         - {{ .Values.environment }}.theironthrone.net
