@@ -10,7 +10,7 @@ spec:
   routes:
   {{- range $i, $e := until 10 }}
   {{- if eq $.Values.environment "production" }}
-    - match: (Host(`throneteki.net`) || Host(`theironthrone.net`) Host(`www.theironthrone.net`))) && PathPrefix(`/node-{{$i}}/socket.io`)
+    - match: (Host(`throneteki.net`) || Host(`theironthrone.net`) Host(`www.theironthrone.net`)) && PathPrefix(`/node-{{$i}}/socket.io`)
   {{- else }}
     - match: (Host(`{{ $.Values.environment }}.throneteki.net`) || Host(`{{ $.Values.environment }}.theironthrone.net`)) && PathPrefix(`/node-{{$i}}/socket.io`)
   {{- end }}
