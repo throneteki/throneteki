@@ -18,7 +18,7 @@ spec:
                 port: 80
           middlewares:
               - name: static-cache-headers
-        - match: Host(`throneteki.net`) || Host(`theironthrone.net`) Host(`www.theironthrone.net`))
+        - match: Host(`throneteki.net`) || Host(`theironthrone.net`) || Host(`www.theironthrone.net`))
           kind: Rule
           priority: 10
           services:
