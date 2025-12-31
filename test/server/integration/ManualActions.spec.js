@@ -79,7 +79,7 @@ describe('manual actions', function () {
 
         describe('when a card cannot be discarded', function () {
             beforeEach(function () {
-                const deck = this.buildDeck('stark', ['A Noble Cause', "The God's Eye"]);
+                const deck = this.buildDeck('stark', ['A Noble Cause', "The God's Eye (FFH)"]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
                 this.startGame();

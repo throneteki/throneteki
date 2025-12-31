@@ -1,4 +1,4 @@
-describe('Vengeance for Elia', function () {
+describe('Vengeance for Elia (CoW)', function () {
     integration(function () {
         beforeEach(function () {
             const deck1 = this.buildDeck('lannister', [
@@ -9,7 +9,7 @@ describe('Vengeance for Elia', function () {
             const deck2 = this.buildDeck('martell', [
                 'A Noble Cause',
                 'Hedge Knight',
-                'Vengeance for Elia'
+                'Vengeance for Elia (CoW)'
             ]);
 
             this.player1.selectDeck(deck1);

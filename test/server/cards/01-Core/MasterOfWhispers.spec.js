@@ -133,7 +133,7 @@ describe('Master of Whispers', function () {
                 ]);
                 const opponentDeck = this.buildDeck('stark', [
                     'A Noble Cause',
-                    'Vengeance for Elia'
+                    'Vengeance for Elia (CoW)'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(opponentDeck);
