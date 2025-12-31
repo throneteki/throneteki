@@ -259,6 +259,11 @@ const Costs = {
      */
     discardPowerFromSelf: (amount) => CostBuilders.discardPower(amount).self(),
     /**
+     * Cost that will discard a fixed amount of power from a specific card.
+     */
+    discardPowerFromSpecific: (amount, cardFunc) =>
+        CostBuilders.discardPower(amount).specific(cardFunc),
+    /**
      * Cost that will discard a fixed amount of a passed type token from the current card.
      */
     discardTokenFromSelf: (type, amount) => CostBuilders.discardToken(type, amount).self(),

@@ -8,7 +8,7 @@ describe('effects', function () {
                     const deck = this.buildDeck('martell', [
                         'Trading with the Pentoshi',
                         'Nymeria Sand (TRtW)',
-                        'Dorea Sand',
+                        'Dorea Sand (TAK)',
                         'Hedge Knight'
                     ]);
                     this.player1.selectDeck(deck);

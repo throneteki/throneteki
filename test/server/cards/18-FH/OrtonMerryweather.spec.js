@@ -1,9 +1,9 @@
-describe('Orton Merryweather', function () {
+describe('Orton Merryweather (FH)', function () {
     integration(function () {
         beforeEach(function () {
             const deck1 = this.buildDeck('tyrell', [
                 'Marching Orders',
-                'Orton Merryweather',
+                'Orton Merryweather (FH)',
                 'Hightower Spy',
                 'Hedge Knight',
                 'Growing Strong'
