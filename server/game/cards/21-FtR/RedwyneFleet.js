@@ -4,7 +4,7 @@ import GameActions from '../../GameActions/index.js';
 class RedwyneFleet extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: (card) => card.name === 'Paxter Redwyne (Core)',
+            match: (card) => card.name === 'Paxter Redwyne',
             effect: [
                 ability.effects.addTrait('Commander'),
                 ability.effects.addIcon('military'),
