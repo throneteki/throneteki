@@ -381,6 +381,13 @@ const agendaRules = {
             }
         ]
     },
+    // Sentinels of the Realm
+    27619: {
+        mayInclude: (card) =>
+            card.type === 'character' && hasTrait(card, 'Guard') && !card.loyal,
+        rules: []
+    },
+    // Streets of King's Landing
     27620: {
         rules: [
             {

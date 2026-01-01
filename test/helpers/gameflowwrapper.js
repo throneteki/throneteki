@@ -43,7 +43,11 @@ class GameFlowWrapper {
             maxPlayers: options.maxPlayers || numOfPlayers,
             players: this.generatePlayerDetails(numOfPlayers)
         };
-        this.game = new Game(details, { router: gameRouter, titleCardData: titleCardData });
+        this.game = new Game(details, {
+            cardData: options.cardData || [],
+            router: gameRouter,
+            titleCardData: titleCardData
+        });
         this.game.started = true;
 
         this.game.disableWinning = options.disableWinning ?? true;

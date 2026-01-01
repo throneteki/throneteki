@@ -189,7 +189,7 @@ global.integration = function (options, definitions) {
 
     describe('integration', function () {
         beforeEach(function () {
-            this.flow = new GameFlowWrapper(options);
+            this.flow = new GameFlowWrapper({ ...options, cardData: deckBuilder.cards });
 
             this.game = this.flow.game;
             for (let player of this.flow.allPlayers) {

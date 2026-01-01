@@ -88,6 +88,20 @@ class PlayerInteractionWrapper {
         return !!currentPrompt && currentPrompt.menuTitle.toLowerCase() === title.toLowerCase();
     }
 
+    addCards(cards) {
+        for (const card of cards) {
+            let cardName = card;
+            let count = 1;
+            if (typeof card !== 'string') {
+                cardName = card.name;
+                count = card.count;
+            }
+            for (let i = 0; i < count; i++) {
+                this.game.chatCommands.addCard(this.player, ['', cardName]);
+            }
+        }
+    }
+
     selectDeck(deck) {
         this.game.selectDeck(this.player.name, deck);
     }

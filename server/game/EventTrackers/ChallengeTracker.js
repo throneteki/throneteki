@@ -3,6 +3,10 @@ export class ChallengeTracker {
         return new ChallengeTracker(game, 'onPhaseEnded');
     }
 
+    static forEndOfPhase(game) {
+        return new ChallengeTracker(game, 'atEndOfPhase:reaction');
+    }
+
     static forRound(game) {
         return new ChallengeTracker(game, 'onRoundEnded');
     }
