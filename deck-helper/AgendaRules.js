@@ -381,6 +381,18 @@ const agendaRules = {
             }
         ]
     },
+    27620: {
+        rules: [
+            {
+                message: 'Must contain 12 or more King\'s Landing locations',
+                condition: (deck) =>
+                    deck.countDrawCards(
+                        (card) =>
+                            card.type === 'location' && hasTrait(card, "King's Landing")
+                    ) >= 12
+            }
+        ]
+    },
     // Draft Agendas
     // The Power of Wealth
     '00001': {
