@@ -68,7 +68,7 @@ spec:
         - websecure
     routes:
 {{- if eq .Values.environment "production" }}
-        - match: (HostRegexp(`{host:(www\.)?throneteki\.net}`) || HostRegexp(`{host:(www\.)?theironthrone\.net}`)) && (PathPrefix(`/img/cards/`) || PathPrefix(`/img/avatar/`))
+        - match: (HostRegexp(`{host:throneteki\.net}`) || HostRegexp(`{host:www\.throneteki\.net}`) || HostRegexp(`{host:theironthrone\.net}`) || HostRegexp(`{host:www\.theironthrone\.net}`)) && (PathPrefix(`/img/cards/`) || PathPrefix(`/img/avatar/`))
           kind: Rule
           priority: 20
           services:
@@ -76,14 +76,14 @@ spec:
                 port: 80
           middlewares:
               - name: static-cache-headers
-        - match: HostRegexp(`{host:(www\.)?throneteki\.net}`) || HostRegexp(`{host:(www\.)?theironthrone\.net}`)
+        - match: HostRegexp(`{host:throneteki\.net}`) || HostRegexp(`{host:www\.throneteki\.net}`) || HostRegexp(`{host:theironthrone\.net}`) || HostRegexp(`{host:www\.theironthrone\.net}`)
           kind: Rule
           priority: 10
           services:
               - name: throneteki-lobby
                 port: 80
 {{- else }}
-        - match: (HostRegexp(`{host:(www\.)?{{ .Values.environment }}\.throneteki\.net}`) || HostRegexp(`{host:(www\.)?{{ .Values.environment }}\.theironthrone\.net}`)) && (PathPrefix(`/img/cards/`) || PathPrefix(`/img/avatar/`))
+        - match: (HostRegexp(`{host:{{ .Values.environment }}\.throneteki\.net}`) || HostRegexp(`{host:www\.{{ .Values.environment }}\.throneteki\.net}`) || HostRegexp(`{host:{{ .Values.environment }}\.theironthrone\.net}`) || HostRegexp(`{host:www\.{{ .Values.environment }}\.theironthrone\.net}`)) && (PathPrefix(`/img/cards/`) || PathPrefix(`/img/avatar/`))
           kind: Rule
           priority: 20
           services:
@@ -91,7 +91,7 @@ spec:
                 port: 80
           middlewares:
               - name: static-cache-headers
-        - match: HostRegexp(`{host:(www\.)?{{ .Values.environment }}\.throneteki\.net}`) || HostRegexp(`{host:(www\.)?{{ .Values.environment }}\.theironthrone\.net}`)
+        - match: HostRegexp(`{host:{{ .Values.environment }}\.throneteki\.net}`) || HostRegexp(`{host:www\.{{ .Values.environment }}\.throneteki\.net}`) || HostRegexp(`{host:{{ .Values.environment }}\.theironthrone\.net}`) || HostRegexp(`{host:www\.{{ .Values.environment }}\.theironthrone\.net}`)
           kind: Rule
           priority: 10
           services:
