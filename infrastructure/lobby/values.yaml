@@ -15,3 +15,8 @@ storage:
     avatars: 1Gi
 
 resources: {}
+
+redirectMiddleware:
+    create: true
+    names:
+        canonicalHost: redirect-canonical-host
