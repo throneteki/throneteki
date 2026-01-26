@@ -9,9 +9,9 @@ spec:
         - web
     routes:
 {{- if eq .Values.environment "production" }}
-        - match: HostRegexp(`{host:throneteki\.net}`) || HostRegexp(`{host:theironthrone\.net}`)
+        - match: Host(`throneteki.net`,`theironthrone.net`)
 {{- else }}
-        - match: HostRegexp(`{host:{{ .Values.environment }}\.throneteki\.net}`) || HostRegexp(`{host:{{ .Values.environment }}\.theironthrone\.net}`)
+        - match: Host(`{{ .Values.environment }}.throneteki.net`,`{{ .Values.environment }}.theironthrone.net`)
 {{- end }}
           kind: Rule
           priority: 100
@@ -21,9 +21,9 @@ spec:
               - name: noop@internal
                 kind: TraefikService
 {{- if eq .Values.environment "production" }}
-        - match: HostRegexp(`{host:www\.throneteki\.net}`) || HostRegexp(`{host:www\.theironthrone\.net}`)
+        - match: Host(`www.throneteki.net`,`www.theironthrone.net`)
 {{- else }}
-        - match: HostRegexp(`{host:www\.{{ .Values.environment }}\.throneteki\.net}`) || HostRegexp(`{host:www\.{{ .Values.environment }}\.theironthrone\.net}`)
+        - match: Host(`www.{{ .Values.environment }}.throneteki.net`,`www.{{ .Values.environment }}.theironthrone.net`)
 {{- end }}
           kind: Rule
           priority: 110
@@ -68,7 +68,7 @@ spec:
         - websecure
     routes:
 {{- if eq .Values.environment "production" }}
-        - match: (HostRegexp(`{host:throneteki\.net}`) || HostRegexp(`{host:www\.throneteki\.net}`) || HostRegexp(`{host:theironthrone\.net}`) || HostRegexp(`{host:www\.theironthrone\.net}`)) && (PathPrefix(`/img/cards/`) || PathPrefix(`/img/avatar/`))
+        - match: Host(`throneteki.net`,`www.throneteki.net`,`theironthrone.net`,`www.theironthrone.net`) && (PathPrefix(`/img/cards/`) || PathPrefix(`/img/avatar/`))
           kind: Rule
           priority: 20
           services:
@@ -76,14 +76,14 @@ spec:
                 port: 80
           middlewares:
               - name: static-cache-headers
-        - match: HostRegexp(`{host:throneteki\.net}`) || HostRegexp(`{host:www\.throneteki\.net}`) || HostRegexp(`{host:theironthrone\.net}`) || HostRegexp(`{host:www\.theironthrone\.net}`)
+        - match: Host(`throneteki.net`,`www.throneteki.net`,`theironthrone.net`,`www.theironthrone.net`)
           kind: Rule
           priority: 10
           services:
               - name: throneteki-lobby
                 port: 80
 {{- else }}
-        - match: (HostRegexp(`{host:{{ .Values.environment }}\.throneteki\.net}`) || HostRegexp(`{host:www\.{{ .Values.environment }}\.throneteki\.net}`) || HostRegexp(`{host:{{ .Values.environment }}\.theironthrone\.net}`) || HostRegexp(`{host:www\.{{ .Values.environment }}\.theironthrone\.net}`)) && (PathPrefix(`/img/cards/`) || PathPrefix(`/img/avatar/`))
+        - match: Host(`{{ .Values.environment }}.throneteki.net`,`www.{{ .Values.environment }}.throneteki.net`,`{{ .Values.environment }}.theironthrone.net`,`www.{{ .Values.environment }}.theironthrone.net`) && (PathPrefix(`/img/cards/`) || PathPrefix(`/img/avatar/`))
           kind: Rule
           priority: 20
           services:
@@ -91,7 +91,7 @@ spec:
                 port: 80
           middlewares:
               - name: static-cache-headers
-        - match: HostRegexp(`{host:{{ .Values.environment }}\.throneteki\.net}`) || HostRegexp(`{host:www\.{{ .Values.environment }}\.throneteki\.net}`) || HostRegexp(`{host:{{ .Values.environment }}\.theironthrone\.net}`) || HostRegexp(`{host:www\.{{ .Values.environment }}\.theironthrone\.net}`)
+        - match: Host(`{{ .Values.environment }}.throneteki.net`,`www.{{ .Values.environment }}.throneteki.net`,`{{ .Values.environment }}.theironthrone.net`,`www.{{ .Values.environment }}.theironthrone.net`)
           kind: Rule
           priority: 10
           services:
