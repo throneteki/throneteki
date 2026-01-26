@@ -8,9 +8,9 @@ spec:
     - web
   routes:
   {{- if eq $.Values.environment "production" }}
-    - match: HostRegexp(`{subdomain:(www\\.)?}throneteki.net`) || HostRegexp(`{subdomain:(www\\.)?}theironthrone.net`)
+    - match: HostRegexp(`{host:(www\\.)?throneteki\\.net}`) || HostRegexp(`{host:(www\\.)?theironthrone\\.net}`)
   {{- else }}
-    - match: HostRegexp(`{subdomain:(www\\.)?}{{ $.Values.environment }}.throneteki.net`) || HostRegexp(`{subdomain:(www\\.)?}{{ $.Values.environment }}.theironthrone.net`)
+    - match: HostRegexp(`{host:(www\\.)?{{ $.Values.environment }}\\.throneteki\\.net}`) || HostRegexp(`{host:(www\\.)?{{ $.Values.environment }}\\.theironthrone\\.net}`)
   {{- end }}
       kind: Rule
       priority: 100
@@ -30,9 +30,9 @@ spec:
     - websecure
   routes:
   {{- if eq $.Values.environment "production" }}
-    - match: HostRegexp(`{subdomain:(www\\.)}throneteki.net`) || HostRegexp(`{subdomain:(www\\.)}theironthrone.net`)
+    - match: HostRegexp(`{host:www\\.throneteki\\.net}`) || HostRegexp(`{host:www\\.theironthrone\\.net}`)
   {{- else }}
-    - match: HostRegexp(`{subdomain:(www\\.)}{{ $.Values.environment }}.throneteki.net`) || HostRegexp(`{subdomain:(www\\.)}{{ $.Values.environment }}.theironthrone.net`)
+    - match: HostRegexp(`{host:www\\.{{ $.Values.environment }}\\.throneteki\\.net}`) || HostRegexp(`{host:www\\.{{ $.Values.environment }}\\.theironthrone\\.net}`)
   {{- end }}
       kind: Rule
       priority: 100
@@ -54,9 +54,9 @@ spec:
   routes:
   {{- range $i, $e := until 10 }}
   {{- if eq $.Values.environment "production" }}
-    - match: (HostRegexp(`{subdomain:(www\\.)?}throneteki.net`) || HostRegexp(`{subdomain:(www\\.)?}theironthrone.net`)) && PathPrefix(`/node-{{$i}}/socket.io`)
+    - match: (HostRegexp(`{host:(www\\.)?throneteki\\.net}`) || HostRegexp(`{host:(www\\.)?theironthrone\\.net}`)) && PathPrefix(`/node-{{$i}}/socket.io`)
   {{- else }}
-    - match: (HostRegexp(`{subdomain:(www\\.)?}{{ $.Values.environment }}.throneteki.net`) || HostRegexp(`{subdomain:(www\\.)?}{{ $.Values.environment }}.theironthrone.net`)) && PathPrefix(`/node-{{$i}}/socket.io`)
+    - match: (HostRegexp(`{host:(www\\.)?{{ $.Values.environment }}\\.throneteki\\.net}`) || HostRegexp(`{host:(www\\.)?{{ $.Values.environment }}\\.theironthrone\\.net}`)) && PathPrefix(`/node-{{$i}}/socket.io`)
   {{- end }}
       kind: Rule
       middlewares:

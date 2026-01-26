@@ -9,9 +9,9 @@ spec:
         - web
     routes:
 {{- if eq .Values.environment "production" }}
-        - match: HostRegexp(`{subdomain:(www\\.)?}throneteki.net`) || HostRegexp(`{subdomain:(www\\.)?}theironthrone.net`)
+        - match: HostRegexp(`{host:(www\\.)?throneteki\\.net}`) || HostRegexp(`{host:(www\\.)?theironthrone\\.net}`)
 {{- else }}
-        - match: HostRegexp(`{subdomain:(www\\.)?}{{ .Values.environment }}.throneteki.net`) || HostRegexp(`{subdomain:(www\\.)?}{{ .Values.environment }}.theironthrone.net`)
+        - match: HostRegexp(`{host:(www\\.)?{{ .Values.environment }}\\.throneteki\\.net}`) || HostRegexp(`{host:(www\\.)?{{ .Values.environment }}\\.theironthrone\\.net}`)
 {{- end }}
           kind: Rule
           priority: 100
@@ -32,9 +32,9 @@ spec:
         - websecure
     routes:
 {{- if eq .Values.environment "production" }}
-        - match: HostRegexp(`{subdomain:(www\\.)}throneteki.net`) || HostRegexp(`{subdomain:(www\\.)}theironthrone.net`)
+        - match: HostRegexp(`{host:www\\.throneteki\\.net}`) || HostRegexp(`{host:www\\.theironthrone\\.net}`)
 {{- else }}
-        - match: HostRegexp(`{subdomain:(www\\.)}{{ .Values.environment }}.throneteki.net`) || HostRegexp(`{subdomain:(www\\.)}{{ .Values.environment }}.theironthrone.net`)
+        - match: HostRegexp(`{host:www\\.{{ .Values.environment }}\\.throneteki\\.net}`) || HostRegexp(`{host:www\\.{{ .Values.environment }}\\.theironthrone\\.net}`)
 {{- end }}
           kind: Rule
           priority: 100
@@ -56,7 +56,7 @@ spec:
         - websecure
     routes:
 {{- if eq .Values.environment "production" }}
-        - match: (HostRegexp(`{subdomain:(www\\.)?}throneteki.net`) || HostRegexp(`{subdomain:(www\\.)?}theironthrone.net`)) && (PathPrefix(`/img/cards/`) || PathPrefix(`/img/avatar/`))
+        - match: (HostRegexp(`{host:(www\\.)?throneteki\\.net}`) || HostRegexp(`{host:(www\\.)?theironthrone\\.net}`)) && (PathPrefix(`/img/cards/`) || PathPrefix(`/img/avatar/`))
           kind: Rule
           priority: 20
           services:
@@ -65,7 +65,7 @@ spec:
           middlewares:
               - name: static-cache-headers
               - name: {{ .Values.redirectMiddleware.names.canonicalHost }}
-        - match: HostRegexp(`{subdomain:(www\\.)?}throneteki.net`) || HostRegexp(`{subdomain:(www\\.)?}theironthrone.net`)
+        - match: HostRegexp(`{host:(www\\.)?throneteki\\.net}`) || HostRegexp(`{host:(www\\.)?theironthrone\\.net}`)
           kind: Rule
           priority: 10
           services:
@@ -74,7 +74,7 @@ spec:
           middlewares:
               - name: {{ .Values.redirectMiddleware.names.canonicalHost }}
 {{- else }}
-        - match: (HostRegexp(`{subdomain:(www\\.)?}{{ .Values.environment }}.throneteki.net`) || HostRegexp(`{subdomain:(www\\.)?}{{ .Values.environment }}.theironthrone.net`)) && (PathPrefix(`/img/cards/`) || PathPrefix(`/img/avatar/`))
+        - match: (HostRegexp(`{host:(www\\.)?{{ .Values.environment }}\\.throneteki\\.net}`) || HostRegexp(`{host:(www\\.)?{{ .Values.environment }}\\.theironthrone\\.net}`)) && (PathPrefix(`/img/cards/`) || PathPrefix(`/img/avatar/`))
           kind: Rule
           priority: 20
           services:
@@ -83,7 +83,7 @@ spec:
           middlewares:
               - name: static-cache-headers
               - name: {{ .Values.redirectMiddleware.names.canonicalHost }}
-        - match: HostRegexp(`{subdomain:(www\\.)?}{{ .Values.environment }}.throneteki.net`) || HostRegexp(`{subdomain:(www\\.)?}{{ .Values.environment }}.theironthrone.net`)
+        - match: HostRegexp(`{host:(www\\.)?{{ .Values.environment }}\\.throneteki\\.net}`) || HostRegexp(`{host:(www\\.)?{{ .Values.environment }}\\.theironthrone\\.net}`)
           kind: Rule
           priority: 10
           services:
