@@ -1,64 +1,6 @@
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
-    name: throneteki-lobby-redirect-http
-    # prettier-ignore
-    namespace: {{ .Values.namespace }}
-spec:
-    entryPoints:
-        - web
-    routes:
-{{- if eq .Values.environment "production" }}
-        - match: Host(`throneteki.net`,`theironthrone.net`)
-{{- else }}
-        - match: Host(`{{ .Values.environment }}.throneteki.net`,`{{ .Values.environment }}.theironthrone.net`)
-{{- end }}
-          kind: Rule
-          priority: 100
-          middlewares:
-              - name: {{ .Values.redirectMiddleware.names.https }}
-          services:
-              - name: noop@internal
-                kind: TraefikService
-{{- if eq .Values.environment "production" }}
-        - match: Host(`www.throneteki.net`,`www.theironthrone.net`)
-{{- else }}
-        - match: Host(`www.{{ .Values.environment }}.throneteki.net`,`www.{{ .Values.environment }}.theironthrone.net`)
-{{- end }}
-          kind: Rule
-          priority: 110
-          middlewares:
-              - name: {{ .Values.redirectMiddleware.names.canonicalHost }}
-          services:
-              - name: noop@internal
-                kind: TraefikService
----
-apiVersion: traefik.io/v1alpha1
-kind: IngressRoute
-metadata:
-    name: throneteki-lobby-redirect-www
-    # prettier-ignore
-    namespace: {{ .Values.namespace }}
-spec:
-    entryPoints:
-        - websecure
-    routes:
-{{- if eq .Values.environment "production" }}
-        - match: HostRegexp(`{host:www\.throneteki\.net}`) || HostRegexp(`{host:www\.theironthrone\.net}`)
-{{- else }}
-        - match: HostRegexp(`{host:www\.{{ .Values.environment }}\.throneteki\.net}`) || HostRegexp(`{host:www\.{{ .Values.environment }}\.theironthrone\.net}`)
-{{- end }}
-          kind: Rule
-          priority: 100
-          middlewares:
-              - name: {{ .Values.redirectMiddleware.names.canonicalHost }}
-          services:
-              - name: noop@internal
-                kind: TraefikService
----
-apiVersion: traefik.io/v1alpha1
-kind: IngressRoute
-metadata:
     name: throneteki-lobby
     # prettier-ignore
     namespace: {{ .Values.namespace }}
@@ -68,7 +10,7 @@ spec:
         - websecure
     routes:
 {{- if eq .Values.environment "production" }}
-        - match: Host(`throneteki.net`,`www.throneteki.net`,`theironthrone.net`,`www.theironthrone.net`) && (PathPrefix(`/img/cards/`) || PathPrefix(`/img/avatar/`))
+        - match: (Host(`throneteki.net`) || Host(`theironthrone.net`) || Host(`www.theironthrone.net`)) && (PathPrefix(`/img/cards/`) || PathPrefix(`/img/avatar/`))
           kind: Rule
           priority: 20
           services:
@@ -76,14 +18,14 @@ spec:
                 port: 80
           middlewares:
               - name: static-cache-headers
-        - match: Host(`throneteki.net`,`www.throneteki.net`,`theironthrone.net`,`www.theironthrone.net`)
+        - match: Host(`throneteki.net`) || Host(`theironthrone.net`) || Host(`www.theironthrone.net`)
           kind: Rule
           priority: 10
           services:
               - name: throneteki-lobby
                 port: 80
 {{- else }}
-        - match: Host(`{{ .Values.environment }}.throneteki.net`,`www.{{ .Values.environment }}.throneteki.net`,`{{ .Values.environment }}.theironthrone.net`,`www.{{ .Values.environment }}.theironthrone.net`) && (PathPrefix(`/img/cards/`) || PathPrefix(`/img/avatar/`))
+        - match: (Host(`{{ .Values.environment }}.throneteki.net`) || Host(`{{ .Values.environment }}.theironthrone.net`)) && (PathPrefix(`/img/cards/`) || PathPrefix(`/img/avatar/`))
           kind: Rule
           priority: 20
           services:
@@ -91,7 +33,7 @@ spec:
                 port: 80
           middlewares:
               - name: static-cache-headers
-        - match: Host(`{{ .Values.environment }}.throneteki.net`,`www.{{ .Values.environment }}.throneteki.net`,`{{ .Values.environment }}.theironthrone.net`,`www.{{ .Values.environment }}.theironthrone.net`)
+        - match: Host(`{{ .Values.environment }}.throneteki.net`) || Host(`{{ .Values.environment }}.theironthrone.net`)
           kind: Rule
           priority: 10
           services:
@@ -116,31 +58,6 @@ spec:
         customResponseHeaders:
             Cache-Control: "public, max-age=604800" # 7 days
 ---
-{{- if .Values.redirectMiddleware.create }}
-apiVersion: traefik.io/v1alpha1
-kind: Middleware
-metadata:
-    name: {{ .Values.redirectMiddleware.names.https }}
-    # prettier-ignore
-    namespace: {{ .Values.namespace }}
-spec:
-    redirectScheme:
-        scheme: https
-        permanent: true
----
-apiVersion: traefik.io/v1alpha1
-kind: Middleware
-metadata:
-    name: {{ .Values.redirectMiddleware.names.canonicalHost }}
-    # prettier-ignore
-    namespace: {{ .Values.namespace }}
-spec:
-    redirectRegex:
-        regex: ^https?://www\.(.*)
-        replacement: https://$1
-        permanent: true
-{{- end }}
----
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
@@ -159,12 +76,9 @@ spec:
     dnsNames:
 {{- if eq .Values.environment "production" }}
         - throneteki.net
-        - www.throneteki.net
         - theironthrone.net
         - www.theironthrone.net
 {{- else }}
         - {{ .Values.environment }}.throneteki.net
-        - www.{{ .Values.environment }}.throneteki.net
         - {{ .Values.environment }}.theironthrone.net
-        - www.{{ .Values.environment }}.theironthrone.net
 {{- end }}
