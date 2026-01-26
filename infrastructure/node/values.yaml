@@ -16,4 +16,5 @@ resources: {}
 redirectMiddleware:
     create: false
     names:
+        https: redirect-https
         canonicalHost: redirect-canonical-host
