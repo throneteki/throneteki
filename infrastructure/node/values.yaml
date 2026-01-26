@@ -12,3 +12,8 @@ deployTime: '0'
 nodeConfig: {}
 
 resources: {}
+
+redirectMiddleware:
+    create: false
+    names:
+        canonicalHost: redirect-canonical-host
