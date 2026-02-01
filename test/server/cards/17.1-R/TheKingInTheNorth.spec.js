@@ -29,11 +29,8 @@ describe('The King in the North', function () {
         });
 
         describe('when you trigger a location ability', function () {
-            beforeEach(function () {
-                this.player1.clickMenu(this.location, 'Gain gold');
-            });
-
             it('should not resolve', function () {
+                expect(this.player1).not.toAllowTriggerAction(this.location, 'Gain gold');
                 expect(this.player1Object.gold).toBe(5);
             });
         });
@@ -52,10 +49,13 @@ describe('The King in the North', function () {
         describe('when you trigger a non-king/queen character ability', function () {
             beforeEach(function () {
                 this.player1.clickCard(this.nonKing);
-                this.player1.clickMenu(this.nonKing, 'Discard a card to gain 1 gold');
             });
 
             it('should not resolve', function () {
+                expect(this.player1).not.toAllowTriggerAction(
+                    this.nonKing,
+                    'Discard a card to gain 1 gold'
+                );
                 expect(this.player1).toHavePrompt('Marshal your cards');
                 expect(this.player1Object.gold).toBe(3);
             });
@@ -63,7 +63,7 @@ describe('The King in the North', function () {
 
         describe('when you trigger a king ability', function () {
             beforeEach(function () {
-                this.player1.clickCard(this.king);
+                this.player1.dragCard(this.king, 'play area');
                 this.player1.clickMenu(this.king, 'Put character into play');
             });
 
