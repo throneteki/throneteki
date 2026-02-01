@@ -196,6 +196,10 @@ class PlayerInteractionWrapper {
             throw new Error(`Card ${card.name} does not have a menu item "${menuText}"`);
         }
 
+        if (items[0].disabled) {
+            throw new Error(`Menu item "${menuText}" for ${card.name} is disabled`);
+        }
+
         this.game.menuItemClick(this.player.name, card.uuid, items[0]);
         this.game.continue();
         this.checkUnserializableGameState();

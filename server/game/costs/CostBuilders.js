@@ -7,6 +7,7 @@ import DiscardPowerCost from './DiscardPowerCost.js';
 import DiscardTokenCost from './DiscardTokenCost.js';
 import KillCost from './KillCost.js';
 import KneelCost from './KneelCost.js';
+import PlaceCardUnderneathCost from './PlaceCardUnderneathCost.js';
 import PlaceInDeadPileFromHandCost from './PlaceInDeadPileFromHandCost.js';
 import PlaceOnBottomCost from './PlaceOnBottomCost.js';
 import PutIntoPlayCost from './PutIntoPlayCost.js';
@@ -58,6 +59,12 @@ const CostBuilders = {
         selectMultiple: (number) => `Select ${number} cards to kneel`,
         selectAny: 'Select any number of cards to kneel'
     }),
+    placeCardUnderneath: function (parentCardFunc) {
+        return new CostBuilder(new PlaceCardUnderneathCost(parentCardFunc), {
+            select: 'Select card to place underneath',
+            selectMultiple: (number) => `Select ${number} cards to place underneath`
+        });
+    },
     placeInDeadPileFromHand: new CostBuilder(new PlaceInDeadPileFromHandCost(), {
         select: 'Select card to place into dead pile',
         selectMultiple: (number) => `Select ${number} cards to place into dead pile`

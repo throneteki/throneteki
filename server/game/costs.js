@@ -120,6 +120,11 @@ const Costs = {
      */
     placeOnBottomFromHand: (condition) => CostBuilders.placeOnBottomFromHand.select(condition),
     /**
+     * Cost that requires placing a card from hand underneath another card.
+     * @param {function} parentCardFunc - Function that returns the parent card to place underneath.
+     */
+    placeCardUnderneath: (parentCardFunc) => CostBuilders.placeCardUnderneath(parentCardFunc),
+    /**
      * Cost that reveals a specific card passed into the function
      */
     revealSpecific: (cardFunc) => CostBuilders.reveal.specific(cardFunc),
