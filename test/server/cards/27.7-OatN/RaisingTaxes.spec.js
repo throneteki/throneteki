@@ -1,3 +1,6 @@
+// Generated with Claude Code - claude-opus-4-5-20251101
+// - 2026-02-01: Updated to use new test helpers (setupCards)
+
 describe('Raising Taxes', function () {
     integration(function () {
         beforeEach(function () {
@@ -12,9 +15,8 @@ describe('Raising Taxes', function () {
 
             this.alayaya = this.player2.findCardByName('Alayaya', 'hand');
 
-            this.player1.clickCard(this.tyrion);
-
-            this.player2.clickCard(this.alayaya);
+            this.player1.setupCards(this.tyrion);
+            this.player2.setupCards(this.alayaya);
 
             this.completeSetup();
         });

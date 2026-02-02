@@ -1,5 +1,6 @@
 // Generated with Claude Code - claude-opus-4-5-20251101
 // - 2026-01-26: Implement Blood Magic
+// - 2026-02-01: Updated to use new test helpers (setupCards)
 
 describe('Blood Magic', function () {
     integration(function () {
@@ -8,10 +9,9 @@ describe('Blood Magic', function () {
                 'Blood Magic',
                 'Daenerys Targaryen (Core)',
                 'Viserys Targaryen (Core)',
-                'Khal Drogo (Core)',
-                'Handmaiden'
+                'Khal Drogo (Core)'
             ]);
-            const deck2 = this.buildDeck('lannister', ['A Noble Cause', 'Hedge Knight']);
+            const deck2 = this.buildDeck('lannister', ['A Noble Cause']);
             this.player1.selectDeck(deck1);
             this.player2.selectDeck(deck2);
             this.startGame();
@@ -20,10 +20,8 @@ describe('Blood Magic', function () {
             this.dany = this.player1.findCardByName('Daenerys Targaryen', 'hand');
             this.viserys = this.player1.findCardByName('Viserys Targaryen', 'hand');
             this.drogo = this.player1.findCardByName('Khal Drogo', 'hand');
-            this.handmaiden = this.player1.findCardByName('Handmaiden', 'hand');
 
-            this.player1.clickCard(this.dany);
-            this.player1.clickCard(this.viserys);
+            this.player1.setupCards([this.dany, this.viserys]);
 
             this.completeSetup();
 
@@ -66,8 +64,7 @@ describe('Blood Magic', function () {
             beforeEach(function () {
                 const deck1 = this.buildDeck('targaryen', [
                     'Blood Magic',
-                    'Viserys Targaryen (Core)',
-                    'Handmaiden'
+                    'Viserys Targaryen (Core)'
                 ]);
                 const deck2 = this.buildDeck('lannister', ['A Noble Cause']);
                 this.player1.selectDeck(deck1);
@@ -76,9 +73,8 @@ describe('Blood Magic', function () {
                 this.keepStartingHands();
 
                 this.viserys = this.player1.findCardByName('Viserys Targaryen', 'hand');
-                this.handmaiden = this.player1.findCardByName('Handmaiden', 'hand');
 
-                this.player1.clickCard(this.viserys);
+                this.player1.setupCards(this.viserys);
 
                 this.completeSetup();
 

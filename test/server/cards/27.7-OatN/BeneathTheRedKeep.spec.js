@@ -1,16 +1,14 @@
+// Generated with Claude Code - claude-opus-4-5-20251101
+// - 2026-02-01: Updated to use new test helpers (initiateChallenge, declareDefenders, applyClaim, setupCards)
+
 describe('Beneath the Red Keep', function () {
     integration(function () {
         beforeEach(function () {
             const deck1 = this.buildDeck('lannister', [
                 'Beneath the Red Keep',
-                'Cersei Lannister (LoCR)',
-                'Hedge Knight'
+                'Cersei Lannister (LoCR)'
             ]);
-            const deck2 = this.buildDeck('stark', [
-                'A Noble Cause',
-                'Arya Stark (Core)',
-                'Hedge Knight'
-            ]);
+            const deck2 = this.buildDeck('stark', ['A Noble Cause', 'Arya Stark (Core)']);
             this.player1.selectDeck(deck1);
             this.player2.selectDeck(deck2);
             this.startGame();
@@ -20,9 +18,8 @@ describe('Beneath the Red Keep', function () {
 
             this.arya = this.player2.findCardByName('Arya Stark', 'hand');
 
-            this.player1.clickCard(this.cersei);
-
-            this.player2.clickCard(this.arya);
+            this.player1.setupCards(this.cersei);
+            this.player2.setupCards(this.arya);
 
             this.completeSetup();
 
@@ -31,17 +28,11 @@ describe('Beneath the Red Keep', function () {
             this.completeMarshalPhase();
 
             // Initiate an intrigue challenge against player 2
-            this.player1.clickPrompt('Intrigue');
-            this.player1.clickCard(this.cersei);
-            this.player1.clickPrompt('Done');
-
+            this.player1.initiateChallenge({ type: 'intrigue', attackers: this.cersei });
             this.skipActionWindow();
-
-            this.player2.clickPrompt('Done');
-
+            this.player2.declareDefenders([]);
             this.skipActionWindow();
-
-            this.player1.clickPrompt('Apply Claim');
+            this.player1.applyClaim();
         });
 
         describe('when Beneath the Red Keep is active', function () {
@@ -67,8 +58,7 @@ describe('Beneath the Red Keep', function () {
                 this.keepStartingHands();
 
                 this.septon = this.player1.findCardByName('Scheming Septon', 'hand');
-                this.player1.clickCard(this.septon);
-                this.player1.clickPrompt('Setup');
+                this.player1.setupCards(this.septon);
 
                 this.completeSetup();
 

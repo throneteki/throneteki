@@ -1,10 +1,12 @@
+// Generated with Claude Code - claude-opus-4-5-20251101
+// - 2026-02-01: Updated to use new test helpers (initiateChallenge, declareDefenders, applyClaim, selectClaimTarget, setupCards)
+
 describe('Battle of the Bells', function () {
     integration(function () {
         beforeEach(function () {
             const deck1 = this.buildDeck('baratheon', [
                 'Battle of the Bells',
-                'Robert Baratheon (Core)',
-                'Hedge Knight'
+                'Robert Baratheon (Core)'
             ]);
             const deck2 = this.buildDeck('tyrell', [
                 'A Noble Cause',
@@ -21,9 +23,8 @@ describe('Battle of the Bells', function () {
             this.margaery = this.player2.findCardByName('Margaery Tyrell', 'hand');
             this.arborKnight = this.player2.findCardByName('Arbor Knight', 'hand');
 
-            this.player1.clickCard(this.robert);
-
-            this.player2.clickCard(this.margaery);
+            this.player1.setupCards(this.robert);
+            this.player2.setupCards(this.margaery);
 
             this.completeSetup();
 
@@ -72,8 +73,8 @@ describe('Battle of the Bells', function () {
                 this.robb = this.player2.findCardByName('Robb Stark', 'hand');
                 this.sansa = this.player2.findCardByName('Sansa Stark', 'hand');
 
-                this.player1.clickCard(this.robert);
-                this.player2.clickCard(this.robb);
+                this.player1.setupCards(this.robert);
+                this.player2.setupCards(this.robb);
                 this.player2.dragCard(this.sansa, 'play area');
 
                 this.completeSetup();
@@ -86,19 +87,12 @@ describe('Battle of the Bells', function () {
                 this.robb.kneeled = true;
 
                 // Initiate a military challenge to kill Sansa
-                this.player1.clickPrompt('Military');
-                this.player1.clickCard(this.robert);
-                this.player1.clickPrompt('Done');
-
+                this.player1.initiateChallenge({ type: 'military', attackers: this.robert });
                 this.skipActionWindow();
-
-                this.player2.clickPrompt('Done');
-
+                this.player2.declareDefenders([]);
                 this.skipActionWindow();
-
-                // Apply claim - kill Sansa
-                this.player1.clickPrompt('Apply Claim');
-                this.player2.clickCard(this.sansa);
+                this.player1.applyClaim();
+                this.player2.selectClaimTarget(this.sansa);
             });
 
             it('should still allow abilities that trigger on other events', function () {

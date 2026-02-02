@@ -1,3 +1,6 @@
+// Generated with Claude Code - claude-opus-4-5-20251101
+// - 2026-02-01: Updated to use new test helpers (setupCards)
+
 describe('Into the Lists', function () {
     integration(function () {
         beforeEach(function () {
@@ -6,11 +9,7 @@ describe('Into the Lists', function () {
                 'Randyll Tarly (Core)',
                 'Hedge Knight'
             ]);
-            const deck2 = this.buildDeck('stark', [
-                'A Noble Cause',
-                'Eddard Stark (Core)',
-                'Bran Stark (Core)'
-            ]);
+            const deck2 = this.buildDeck('stark', ['A Noble Cause', 'Eddard Stark (Core)']);
             this.player1.selectDeck(deck1);
             this.player2.selectDeck(deck2);
             this.startGame();
@@ -20,13 +19,9 @@ describe('Into the Lists', function () {
             this.knight = this.player1.findCardByName('Hedge Knight', 'hand');
 
             this.eddard = this.player2.findCardByName('Eddard Stark', 'hand');
-            this.bran = this.player2.findCardByName('Bran Stark', 'hand');
 
-            this.player1.clickCard(this.randyll);
-            this.player1.clickCard(this.knight);
-
-            this.player2.clickCard(this.eddard);
-            this.player2.clickCard(this.bran);
+            this.player1.setupCards([this.randyll, this.knight]);
+            this.player2.setupCards(this.eddard);
 
             this.completeSetup();
 
@@ -88,8 +83,8 @@ describe('Into the Lists', function () {
                 this.knight1 = this.player1.findCardByName('Hedge Knight', 'hand');
                 this.knight2 = this.player2.findCardByName('Hedge Knight', 'hand');
 
-                this.player1.clickCard(this.knight1);
-                this.player2.clickCard(this.knight2);
+                this.player1.setupCards(this.knight1);
+                this.player2.setupCards(this.knight2);
 
                 this.completeSetup();
 
@@ -120,7 +115,7 @@ describe('Into the Lists', function () {
 
                 this.randyll = this.player1.findCardByName('Randyll Tarly', 'hand');
 
-                this.player1.clickCard(this.randyll);
+                this.player1.setupCards(this.randyll);
 
                 this.completeSetup();
 
@@ -150,8 +145,8 @@ describe('Into the Lists', function () {
                 this.knight = this.player1.findCardByName('Hedge Knight', 'hand');
                 this.bran = this.player2.findCardByName('Bran Stark', 'hand');
 
-                this.player1.clickCard(this.knight);
-                this.player2.clickCard(this.bran);
+                this.player1.setupCards(this.knight);
+                this.player2.setupCards(this.bran);
 
                 this.completeSetup();
 
