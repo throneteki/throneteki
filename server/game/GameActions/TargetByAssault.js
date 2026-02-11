@@ -1,3 +1,4 @@
+import { Flags } from '../Constants/index.js';
 import GameAction from './GameAction.js';
 import KneelCard from './KneelCard.js';
 
@@ -11,7 +12,7 @@ class TargetByAssault extends GameAction {
             card.controller === challenge.defendingPlayer &&
             card.location === 'play area' &&
             card.getType() === 'location' &&
-            (source.challengeOptions.contains('ignoresAssaultLocationCost') ||
+            (source.hasFlag(Flags.challengeOptions.ignoresAssaultLocationCost) ||
                 card.getPrintedCost() < source.getPrintedCost())
         );
     }

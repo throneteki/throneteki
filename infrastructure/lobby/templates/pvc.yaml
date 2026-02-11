@@ -1,0 +1,33 @@
+# Persistent Volume Claim for card images - shared across all environments
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+    name: throneteki-card-images
+    # prettier-ignore
+    namespace: {{ .Values.namespace }}
+spec:
+    accessModes:
+        - ReadWriteOnce
+    # prettier-ignore
+    storageClassName: {{ .Values.storage.className | default "local-path" }}
+    resources:
+        requests:
+            # prettier-ignore
+            storage: {{ .Values.storage.cardImages | default "50Gi" }}
+---
+# Persistent Volume Claim for user avatars - shared across all environments
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+    name: throneteki-avatars
+    # prettier-ignore
+    namespace: {{ .Values.namespace }}
+spec:
+    accessModes:
+        - ReadWriteOnce
+    # prettier-ignore
+    storageClassName: {{ .Values.storage.className | default "local-path" }}
+    resources:
+        requests:
+            # prettier-ignore
+            storage: {{ .Values.storage.avatars | default "10Gi" }}

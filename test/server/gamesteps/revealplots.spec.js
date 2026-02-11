@@ -2,20 +2,19 @@ import RevealPlots from '../../../server/game/gamesteps/revealplots.js';
 
 describe('RevealPlots', function () {
     beforeEach(function () {
-        this.gameSpy = jasmine.createSpyObj('game', ['addMessage', 'getPlayers', 'raiseEvent']);
+        this.gameSpy = jasmine.createSpyObj('game', [
+            'addMessage',
+            'getPlayers',
+            'raiseEvent',
+            'queueStep'
+        ]);
         this.phase = new RevealPlots(this.gameSpy, []);
     });
 
     describe('getInitiativeResult()', function () {
         beforeEach(function () {
-            this.player1Spy = jasmine.createSpyObj('player', [
-                'getInitiative',
-                'getTotalPower'
-            ]);
-            this.player2Spy = jasmine.createSpyObj('player', [
-                'getInitiative',
-                'getTotalPower'
-            ]);
+            this.player1Spy = jasmine.createSpyObj('player', ['getInitiative', 'getTotalPower']);
+            this.player2Spy = jasmine.createSpyObj('player', ['getInitiative', 'getTotalPower']);
             this.gameSpy.getPlayers.and.returnValue([this.player1Spy, this.player2Spy]);
         });
 
@@ -61,7 +60,28 @@ describe('RevealPlots', function () {
                     })
                 );
             });
-            // TODO: Add scenario to choose winner from tie
+        });
+
+        describe('when initiative is tied and a player can choose the winner', function () {
+            beforeEach(function () {
+                this.player1Spy.getInitiative.and.returnValue(5);
+                this.player1Spy.getTotalPower.and.returnValue(3);
+                this.player1Spy.choosesWinnerForInitiativeTies = true;
+
+                this.player2Spy.getInitiative.and.returnValue(5);
+                this.player2Spy.getTotalPower.and.returnValue(5);
+
+                this.phase.determineInitiative();
+            });
+
+            it('should prompt the player to choose the winner', function () {
+                expect(this.gameSpy.queueStep).toHaveBeenCalledWith(
+                    jasmine.objectContaining({
+                        player: this.player1Spy,
+                        activePromptTitle: 'Choose player to win initiative'
+                    })
+                );
+            });
         });
 
         describe('when initiative and power are tied', function () {

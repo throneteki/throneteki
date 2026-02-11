@@ -25,13 +25,13 @@ class RematchPrompt extends AllPlayerPrompt {
 
     waitingPrompt() {
         return {
-            menuTitle: 'Waiting for opponent to agree to rematch'
+            menuTitle: 'Waiting for opponent(s) to agree to rematch'
         };
     }
 
     onMenuCommand(player, arg) {
         if (arg === 'yes') {
-            this.game.addAlert('info', '{0} agrees to a rematch, setting it up now', player);
+            this.game.addAlert('info', '{0} agrees to a rematch', player);
             this.completedPlayers.add(player);
         } else {
             this.game.addAlert('info', '{0} would not like a rematch', player);
@@ -39,6 +39,10 @@ class RematchPrompt extends AllPlayerPrompt {
         }
 
         return true;
+    }
+
+    getPromptablePlayers() {
+        return this.game.getAllPlayers().filter((player) => !player.left);
     }
 
     onCompleted() {

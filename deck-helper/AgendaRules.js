@@ -147,7 +147,8 @@ const agendaRules = {
     },
     // Kingdom of Shadows
     13079: {
-        mayInclude: (card) => !card.loyal && hasKeyword(card, /Shadow \(\d+\)/)
+        mayInclude: (card) =>
+            !card.loyal && card.type === 'character' && hasKeyword(card, /Shadow \((\d+|X)\)/)
     },
     // The White Book
     13099: {
@@ -209,7 +210,8 @@ const agendaRules = {
     },
     // Kingdom of Shadows (Redesign)
     17148: {
-        mayInclude: (card) => !card.loyal && hasKeyword(card, /Shadow \(\d+\)/)
+        mayInclude: (card) =>
+            !card.loyal && card.type === 'character' && hasKeyword(card, /Shadow \((\d+|X)\)/)
     },
     // Sea of Blood (Redesign)
     17149: {
@@ -320,6 +322,37 @@ const agendaRules = {
                         }
                     }
                     return Array.from(factionCounts.values()).every((count) => count <= 3);
+                }
+            }
+        ]
+    },
+    // The Small Council
+    26040: {
+        mayInclude: (card) =>
+            card.type === 'character' && hasTrait(card, 'Small Council') && !card.loyal,
+        rules: [
+            {
+                message: 'Must contain 7 or more different Small Council characters',
+                condition: (deck) =>
+                    deck.countDrawCards(
+                        (card) => card.type === 'character' && hasTrait(card, 'Small Council')
+                    ) >= 7
+            }
+        ]
+    },
+    // Trading with Braavos
+    26080: {
+        mayInclude: (card) => card.type === 'location' && hasTrait(card, 'Warship') && !card.loyal,
+        rules: [
+            {
+                message: 'Cannot include more than 1 copy of each non-limited location',
+                condition: (deck) => {
+                    const locations = deck.drawCards.filter(
+                        (cardQuantity) =>
+                            cardQuantity.card.type === 'location' &&
+                            !hasKeyword(cardQuantity.card, /Limited/)
+                    );
+                    return locations.every((location) => location.count <= 1);
                 }
             }
         ]

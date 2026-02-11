@@ -33,7 +33,9 @@ class SerDavenLannister extends DrawCard {
                 condition: (context) =>
                     context.game
                         .getOpponents(context.player)
-                        .every((opponent) => opponent.hand.length < context.player.hand.length),
+                        .every(
+                            (opponent) => opponent.getHandCount() < context.player.getHandCount()
+                        ),
                 message: 'Then, {player} draws 1 card',
                 gameAction: GameActions.drawCards((context) => ({
                     amount: 1,

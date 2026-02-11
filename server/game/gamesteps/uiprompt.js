@@ -15,18 +15,18 @@ class UiPrompt extends BaseStep {
     complete() {
         this.completed = true;
         if (this.getPlayer()) {
-            this.getPlayer().stopClock();
+            this.getPlayer().setIsActivePrompt(false);
         }
     }
 
     setPrompt() {
-        for (let player of this.game.getPlayers()) {
+        for (let player of this.getPromptablePlayers()) {
             if (this.activeCondition(player)) {
                 player.setPrompt(this.addDefaultCommandToButtons(this.activePrompt(player)));
-                player.startClock();
+                player.setIsActivePrompt(true);
             } else {
                 player.setPrompt(this.addDefaultCommandToButtons(this.waitingPrompt(player)));
-                player.stopClock();
+                player.setIsActivePrompt(false);
             }
         }
     }
@@ -59,9 +59,19 @@ class UiPrompt extends BaseStep {
         return { menuTitle: 'Waiting for opponent' };
     }
 
-    continue() {
-        var completed = this.isComplete();
+    checkPlayer() {
+        const player = this.getPlayer();
+        if (!player?.isPlaying()) {
+            this.complete();
+            return false;
+        }
+        return true;
+    }
 
+    continue() {
+        this.checkPlayer();
+
+        const completed = this.isComplete();
         if (completed) {
             this.clearPrompts();
             this.onCompleted();
@@ -69,11 +79,11 @@ class UiPrompt extends BaseStep {
             this.setPrompt();
         }
 
-        return completed;
+        return completed && !this.game.isEmpty(false);
     }
 
     clearPrompts() {
-        for (let player of this.game.getPlayers()) {
+        for (let player of this.getPromptablePlayers()) {
             player.cancelPrompt();
         }
     }
@@ -96,6 +106,12 @@ class UiPrompt extends BaseStep {
      */
     getPlayer() {
         return undefined;
+    }
+    /**
+     * Explicitly gets which players can recieve this prompt, and can be overridden in sub classes
+     */
+    getPromptablePlayers() {
+        return this.game.getPlayers();
     }
 }
 

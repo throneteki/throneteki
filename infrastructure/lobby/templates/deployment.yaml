@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: throneteki-lobby
+    # prettier-ignore
+    namespace: {{ .Values.namespace }}
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: throneteki-lobby
+    template:
+        metadata:
+            labels:
+                app: throneteki-lobby
+            annotations:
+                #prettier-ignore
+                checksum/secret: {{ .Values.nodeConfig | toJson | sha256sum }}
+                #prettier-ignore
+                checksum/image: {{ .Values.image.tag | sha256sum }}
+                #prettier-ignore
+                deployTime: {{ .Values.deployTime | default "0" | quote }}
+        spec:
+            containers:
+                - name: throneteki-lobby
+                  image: '{{ .Values.image.repository }}:{{ .Values.image.tag }}'
+                  imagePullPolicy: Always
+                  ports:
+                      - containerPort: 80
+                  env:
+                      - name: NODE_CONFIG
+                        valueFrom:
+                            secretKeyRef:
+                                name: throneteki-lobby-secret
+                                key: node_config
+                  volumeMounts:
+                      - name: avatars
+                        mountPath: /usr/src/app/public/img/avatar
+            volumes:
+                - name: avatars
+                  persistentVolumeClaim:
+                      claimName: throneteki-avatars

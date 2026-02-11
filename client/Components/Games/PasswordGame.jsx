@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, forwardRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import AlertPanel from '../Site/AlertPanel';
@@ -10,7 +10,7 @@ import {
 } from '../../redux/reducers/lobby';
 import { Button, Input } from '@heroui/react';
 
-const PasswordGame = () => {
+const PasswordGame = forwardRef(function PasswordGame(_, ref) {
     const [password, setPassword] = useState('');
     const dispatch = useDispatch();
     const { passwordJoinType, passwordGame, passwordError } = useSelector((state) => state.lobby);
@@ -30,28 +30,22 @@ const PasswordGame = () => {
         dispatch(cancelPasswordJoin());
     }, [dispatch]);
 
-    const onPasswordChange = useCallback((event) => {
-        setPassword(event.target.value);
-    }, []);
-
     if (!passwordGame) {
         return null;
     }
 
     return (
         <div>
-            <Panel title={passwordGame.name}>
+            <Panel title={passwordGame.name} ref={ref}>
                 <div className='flex gap-2 flex-col'>
                     {passwordError ? (
-                        <div>
-                            <AlertPanel variant='danger' message={passwordError} />
-                        </div>
+                        <AlertPanel variant='danger'>{passwordError}</AlertPanel>
                     ) : null}
                     <div className='game-password'>
                         <Input
                             autoComplete='off'
                             type='password'
-                            onChange={onPasswordChange}
+                            onValueChange={setPassword}
                             value={password}
                             label='Game password'
                             placeholder='Enter the password'
@@ -62,7 +56,7 @@ const PasswordGame = () => {
                         <Button color='primary' onPress={onJoinClick}>
                             {passwordJoinType}
                         </Button>
-                        <Button color='primary' onPress={onCancelClick}>
+                        <Button color='default' onPress={onCancelClick}>
                             Cancel
                         </Button>
                     </div>
@@ -70,6 +64,6 @@ const PasswordGame = () => {
             </Panel>
         </div>
     );
-};
+});
 
 export default PasswordGame;

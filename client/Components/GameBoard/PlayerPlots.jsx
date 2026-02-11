@@ -2,15 +2,12 @@ import React, { useCallback } from 'react';
 
 import CardPile from './CardPile';
 import Droppable from './Droppable';
-import { getCardDimensions } from '../../util';
 import classNames from 'classnames';
 
 const PlayerPlots = ({
     plotDiscard,
     onCardClick,
     onMenuItemClick,
-    onCardMouseOut,
-    onCardMouseOver,
     cardSize,
     isMe,
     activePlot,
@@ -28,10 +25,9 @@ const PlayerPlots = ({
                 cards={plotDiscard}
                 className={'plot'}
                 numColumns={4}
+                numRows={2.2}
                 onCardClick={onCardClick}
                 onMenuItemClick={onMenuItemClick}
-                onMouseOut={onCardMouseOut}
-                onMouseOver={onCardMouseOver}
                 orientation='horizontal'
                 size={cardSize}
                 source='revealed plots'
@@ -53,9 +49,8 @@ const PlayerPlots = ({
                 hiddenTopCard={!showSelectedPlot}
                 disablePopup={!isMe}
                 numColumns={4}
+                numRows={2.2}
                 onCardClick={onCardClick}
-                onMouseOut={onCardMouseOut}
-                onMouseOver={onCardMouseOver}
                 orientation='horizontal'
                 source='plot deck'
                 title='Plots'
@@ -69,17 +64,15 @@ const PlayerPlots = ({
         );
 
         const plotClass = classNames('rounded-md', {
-            'absolute bottom-0': direction !== 'reverse',
-            'z-50': plotsInFront
+            'absolute bottom-0': direction !== 'reverse'
         });
 
         const usedClass = classNames('rounded-md', {
             'absolute bottom-0': direction === 'reverse',
-            'shadow-[0_0_5px_0] shadow-black': !!activePlot,
-            'z-50': !plotsInFront
+            'shadow-[0_0_5px_0] shadow-black': !!activePlot
         });
 
-        let piles = [
+        const piles = [
             <div key='plotdeck' className={plotClass}>
                 {isMe ? (
                     <Droppable source='plot deck'>{plotDeckElement}</Droppable>
@@ -96,13 +89,11 @@ const PlayerPlots = ({
             </div>
         ];
 
-        return piles;
+        return plotsInFront ? piles.reverse() : piles;
     }, [
         plotDiscard,
         onCardClick,
         onMenuItemClick,
-        onCardMouseOut,
-        onCardMouseOver,
         cardSize,
         isMe,
         activePlot,
@@ -112,10 +103,8 @@ const PlayerPlots = ({
         direction
     ]);
 
-    const height = getCardDimensions(cardSize).height;
-
     return (
-        <div className={'relative flex flex-col'} style={{ height }}>
+        <div className='relative flex flex-col'>
             <div className=' inner-border absolute border-2 border-default-100/55 bg-black/55 w-full h-full rounded-md' />
             {renderPlotPiles()}
         </div>

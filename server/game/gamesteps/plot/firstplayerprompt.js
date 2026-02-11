@@ -1,10 +1,12 @@
 import UIPrompt from '../uiprompt.js';
+import { Flags } from '../../Constants/index.js';
 
 class FirstPlayerPrompt extends UIPrompt {
-    constructor(game, player) {
+    constructor(game, player, reprocess = () => true) {
         super(game);
 
         this.player = player;
+        this.reprocess = reprocess;
     }
 
     activeCondition(player) {
@@ -24,7 +26,7 @@ class FirstPlayerPrompt extends UIPrompt {
         let opponents = this.game.getPlayers().filter((player) => player !== this.player);
         let firstPlayerChoices = [this.player].concat(opponents);
         let validChoices = firstPlayerChoices.filter(
-            (player) => !player.hasFlag('cannotBeFirstPlayer')
+            (player) => !player.hasFlag(Flags.player.cannotBeFirstPlayer)
         );
 
         if (validChoices.length === 0) {
@@ -52,10 +54,18 @@ class FirstPlayerPrompt extends UIPrompt {
             return;
         }
 
-        this.game.setFirstPlayer(firstPlayer);
         this.game.addMessage('{0} has selected {1} to be the first player', player, firstPlayer);
+        this.game.setFirstPlayer(firstPlayer);
 
         this.complete();
+    }
+
+    checkPlayer() {
+        const checkPlayer = super.checkPlayer();
+        if (!checkPlayer) {
+            this.reprocess();
+        }
+        return checkPlayer;
     }
 
     getPlayer() {

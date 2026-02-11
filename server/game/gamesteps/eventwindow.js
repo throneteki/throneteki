@@ -4,20 +4,19 @@ import SimpleStep from './simplestep.js';
 import InterruptWindow from './InterruptWindow.js';
 
 class EventWindow extends BaseStep {
-    constructor(game, event, postHandlerFunc = () => true) {
+    constructor(game, event) {
         super(game);
 
         this.event = event;
         this.pipeline = new GamePipeline();
         this.pipeline.initialise([
-            new InterruptWindow(game, event, postHandlerFunc),
+            new InterruptWindow(game, event),
             new SimpleStep(game, () => this.emitBaseEvent()),
             new SimpleStep(game, () => this.openWhenRevealedWindow()),
             new SimpleStep(game, () => this.openAbilityWindow('forcedreaction')),
             new SimpleStep(game, () => this.openAbilityWindow('reaction')),
-            new SimpleStep(game, () => this.postHandlerFunc())
+            new SimpleStep(game, () => this.game.refreshGameState())
         ]);
-        this.postHandlerFunc = postHandlerFunc;
     }
 
     queueStep(step) {
@@ -70,6 +69,12 @@ class EventWindow extends BaseStep {
 
         if (this.event.getConcurrentEvents().some((event) => event.name === 'onPlotRevealed')) {
             this.openAbilityWindow('whenrevealed');
+            this.event
+                .getConcurrentEvents()
+                .filter((event) => event.name === 'onPlotRevealed')
+                .forEach((event) =>
+                    this.game.queueSimpleStep(() => event.plot.controller.recyclePlots())
+                );
         }
     }
 }

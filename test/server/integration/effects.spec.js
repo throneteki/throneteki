@@ -146,7 +146,7 @@ describe('effects', function () {
                         'Trading with the Pentoshi',
                         'Maester Caleotte',
                         'Maester Aemon (Core)',
-                        'Benjen Stark',
+                        'Benjen Stark (Core)',
                         'Dragonglass Dagger'
                     ]);
                     this.player1.selectDeck(deck);
@@ -318,6 +318,8 @@ describe('effects', function () {
 
         describe('when/until phase ends vs at end of phase', function () {
             beforeEach(function () {
+                this.game.disableWinning = false;
+
                 const deck = this.buildDeck('stark', [
                     'Sneak Attack',
                     'Winter Festival',
@@ -391,7 +393,15 @@ describe('effects', function () {
                 // Since Winter Festival should have brought Player 1's total
                 // power up to 15 just before the character dies, a winner should
                 // be recorded.
-                expect(this.game.winner.name).toBe(this.player1Object.name);
+                expect(this.game.results.winner).toBe(this.player1Object.name);
+
+                // Character should not be dead yet (during won prompt)
+                expect(this.character.location).toBe('play area');
+                expect(this.player1Object.getTotalPower()).toBe(15);
+
+                // Continue playing to resolve the poison effect
+                this.player1.clickPrompt('Continue Playing');
+                this.player2.clickPrompt('Continue Playing');
                 expect(this.character.location).toBe('dead pile');
                 expect(this.player1Object.getTotalPower()).toBe(2);
             });

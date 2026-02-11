@@ -2,8 +2,11 @@ import Game from '../../../server/game/game.js';
 
 describe('Game', function () {
     beforeEach(function () {
-        this.gameRouter = jasmine.createSpyObj('gameRouter', ['playerLeft']);
-        this.game = new Game({ allowSpectators: true, owner: {} }, { router: this.gameRouter });
+        this.gameRouter = jasmine.createSpyObj('gameRouter', ['playerLeft', 'gameOver']);
+        this.game = new Game(
+            { allowSpectators: true, owner: {}, maxPlayers: 2 },
+            { router: this.gameRouter }
+        );
     });
 
     describe('join()', function () {
@@ -109,22 +112,25 @@ describe('Game', function () {
 
             describe('when the game has started', function () {
                 beforeEach(function () {
+                    this.game.join('2', { username: 'bar', settings: {} });
                     this.game.started = true;
                 });
 
                 describe('and the game has not finished', function () {
                     beforeEach(function () {
-                        this.game.finishedAt = undefined;
                         this.game.leave('foo');
                     });
 
                     it('should mark the player as left', function () {
-                        this.game.leave('foo');
                         expect(this.game.playersAndSpectators['foo'].left).toBe(true);
                     });
 
-                    it('should set the finishedAt property', function () {
-                        expect(this.game.finishedAt).toBeDefined();
+                    it('should eliminate that player', function () {
+                        expect(this.game.playersAndSpectators['foo'].eliminated).toBe(true);
+                    });
+
+                    it('should end the game', function () {
+                        expect(this.game.isGameOver).toBe(true);
                     });
                 });
             });
@@ -156,22 +162,111 @@ describe('Game', function () {
         describe('when the user is a player', function () {
             beforeEach(function () {
                 this.game.join('1', { username: 'foo', settings: {} });
+                this.game.join('2', { username: 'bar', settings: {} });
+                this.player1 = this.game.playersAndSpectators['foo'];
+                this.player2 = this.game.playersAndSpectators['bar'];
             });
 
             it('should mark the player as disconnected', function () {
-                this.game.disconnect('foo');
-                expect(this.game.playersAndSpectators['foo'].disconnectedAt).not.toBe(undefined);
+                this.game.disconnect(this.player1.name);
+                expect(this.game.isDisconnected(this.player1)).toBe(true);
+            });
+
+            it('should initially wait for the player to reconnect', function () {
+                spyOn(this.game.disconnectHandler, 'waitForReconnect').and.callFake(() => true);
+                this.game.disconnect(this.player1.name);
+                expect(this.game.disconnectHandler.waitForReconnect).toHaveBeenCalledWith(
+                    this.player1,
+                    jasmine.any(Function)
+                );
+            });
+
+            it('should not allow opponents to leave safely', function () {
+                expect(this.game.canSafelyLeave(this.player2)).toBe(false);
+            });
+
+            describe('and they have disconnected beyond the wait period', function () {
+                beforeEach(function () {
+                    // Call "handler" without waiting
+                    spyOn(this.game.disconnectHandler, 'waitForReconnect').and.callFake(
+                        (player, handler) => handler(player)
+                    );
+                });
+
+                it('should mark the player as long disconnected', function () {
+                    this.game.disconnect(this.player1.name);
+                    expect(this.game.isLongDisconnected(this.player1)).toBe(true);
+                });
+
+                describe('and it is joust', function () {
+                    beforeEach(function () {
+                        this.game.gameFormat = 'joust';
+                        this.game.started = true;
+
+                        this.game.disconnect(this.player1.name);
+                    });
+
+                    it('should allow the opponent to safely leave without auto-conceding', function () {
+                        expect(this.game.canSafelyLeave(this.player2)).toBe(true);
+                    });
+                });
+
+                describe('and it is melee', function () {
+                    beforeEach(function () {
+                        this.game.gameFormat = 'melee';
+                        this.game.maxPlayers = 3;
+                        this.game.join('2', { username: 'bar', settings: {} });
+                        this.game.join('3', { username: 'baz', settings: {} });
+                        this.player2 = this.game.playersAndSpectators['bar'];
+                        this.player3 = this.game.playersAndSpectators['baz'];
+                        // Populate player decks so they are not auto-eliminated
+                        for (const player of [this.player1, this.player2, this.player3]) {
+                            player.drawCards = [
+                                { name: 'card1' },
+                                { name: 'card2' },
+                                { name: 'card3' }
+                            ];
+                        }
+                        this.game.started = true;
+
+                        this.game.disconnect(this.player1.name);
+                    });
+
+                    it('should not allow opponents to safely leave without auto-conceding', function () {
+                        expect(this.game.canSafelyLeave(this.player2)).toBe(false);
+                        expect(this.game.canSafelyLeave(this.player3)).toBe(false);
+                    });
+                    it('should allow the opponents to vote on waiting or eliminating that player', function () {
+                        expect(this.player2).toHavePrompt('Wait for foo?');
+                        expect(this.player2).toHavePromptButton('Yes');
+                        expect(this.player2).toHavePromptButton('No (Eliminate)');
+                        expect(this.player3).toHavePrompt('Wait for foo?');
+                        expect(this.player3).toHavePromptButton('Yes');
+                        expect(this.player3).toHavePromptButton('No (Eliminate)');
+                    });
+
+                    describe('and all but 1 player has left', function () {
+                        beforeEach(function () {
+                            this.game.disconnect(this.player2.name);
+                        });
+
+                        it('should not allow last opponent to leave without auto-conceding', function () {
+                            expect(this.game.canSafelyLeave(this.player3)).toBe(false);
+                        });
+                    });
+                });
             });
         });
 
         describe('when the user is a spectator', function () {
             beforeEach(function () {
                 this.game.watch('1', { username: 'foo', settings: {} });
-                this.game.disconnect('foo');
+                this.spectator1 = this.game.playersAndSpectators['foo'];
+                this.game.disconnect(this.spectator1.name);
             });
 
             it('should delete the spectator', function () {
-                expect(this.game.playersAndSpectators['foo']).toBeUndefined();
+                expect(this.game.playersAndSpectators[this.spectator1.name]).toBeUndefined();
             });
         });
     });
@@ -179,6 +274,7 @@ describe('Game', function () {
     describe('reconnect()', function () {
         beforeEach(function () {
             this.game.join('1', { username: 'foo', settings: {} });
+            this.player1 = this.game.playersAndSpectators['foo'];
             this.game.disconnect('foo');
             this.game.reconnect({ id: '2' }, 'foo');
         });
@@ -192,7 +288,7 @@ describe('Game', function () {
         });
 
         it('should mark the player as no longer disconnected', function () {
-            expect(this.game.playersAndSpectators['foo'].disconnectedAt).toBe(undefined);
+            expect(this.game.isDisconnected(this.player1)).toBe(false);
         });
     });
 
@@ -226,10 +322,27 @@ describe('Game', function () {
                 expect(this.game.isEmpty()).toBe(false);
             });
 
-            it('should return true if everyone has left or disconnected', function () {
+            it('should return true if everyone has left', function () {
                 this.game.leave('foo');
                 this.game.leave('bar');
                 this.game.leave('baz');
+                expect(this.game.isEmpty()).toBe(true);
+            });
+
+            it('should return false if everyone has disconnected for a short period of time', function () {
+                this.game.disconnect('foo');
+                this.game.disconnect('bar');
+                this.game.disconnect('baz');
+                expect(this.game.isEmpty()).toBe(false);
+            });
+
+            it('should return true if everyone has disconnected for a long period of time', function () {
+                spyOn(this.game.disconnectHandler, 'waitForReconnect').and.callFake(
+                    (player, handler) => handler(player)
+                );
+                this.game.disconnect('foo');
+                this.game.disconnect('bar');
+                this.game.disconnect('baz');
                 expect(this.game.isEmpty()).toBe(true);
             });
         });

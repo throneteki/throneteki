@@ -7,15 +7,12 @@ class AcknowledgeRevealCardsPrompt extends UiPrompt {
         this.cards = cards;
         this.revealLocations = [...new Set(cards.map((card) => card.location))];
         this.revealers = player ? [player] : [...new Set(cards.map((card) => card.controller))];
-        this.acknowledgers = this.game
-            .getPlayers()
-            .filter((player) => cards.some((card) => card.controller !== player));
+        this.acknowledged = new Set(this.revealers);
         this.source = source;
-        this.clickedButton = {};
     }
 
     activeCondition(player) {
-        return this.acknowledgers.includes(player) && !this.completionCondition(player);
+        return !this.completionCondition(player);
     }
 
     activePrompt() {
@@ -33,19 +30,19 @@ class AcknowledgeRevealCardsPrompt extends UiPrompt {
     }
 
     onMenuCommand(player) {
-        this.clickedButton[player.name] = true;
+        this.acknowledged.add(player);
 
         return true;
     }
 
     completionCondition(player) {
-        return !!this.clickedButton[player.name];
+        return this.acknowledged.has(player);
     }
 
     isComplete() {
         return (
             this.game.disableRevealAcknowledgement ||
-            this.acknowledgers.every((acknowledger) => this.completionCondition(acknowledger))
+            this.game.getPlayers().every((player) => this.completionCondition(player))
         );
     }
 

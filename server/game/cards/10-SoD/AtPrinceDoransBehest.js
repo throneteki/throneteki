@@ -1,5 +1,6 @@
 import RevealPlots from '../../gamesteps/revealplots.js';
 import PlotCard from '../../plotcard.js';
+import { Flags } from '../../Constants/index.js';
 
 class AtPrinceDoransBehest extends PlotCard {
     setupCardAbilities() {
@@ -10,7 +11,7 @@ class AtPrinceDoransBehest extends PlotCard {
                 cardCondition: (card, context) =>
                     card.location === 'plot deck' &&
                     card.controller === context.player &&
-                    !card.notConsideredToBeInPlotDeck,
+                    !card.hasFlag(Flags.card.notConsideredToBeInPlotDeck),
                 cardType: 'plot'
             },
             handler: (context) => {

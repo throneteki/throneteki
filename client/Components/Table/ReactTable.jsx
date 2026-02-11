@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useMemo, useState } from 'react';
+import React, { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
 import {
     flexRender,
     getCoreRowModel,
@@ -8,7 +8,6 @@ import {
     getSortedRowModel
 } from '@tanstack/react-table';
 
-import TablePagination from './TablePagination';
 import LoadingSpinner from '../Site/LoadingSpinner';
 import {
     faArrowDownLong,
@@ -21,6 +20,7 @@ import FaIconButton from '../Site/FaIconButton';
 import {
     Button,
     Input,
+    Pagination,
     Popover,
     PopoverContent,
     PopoverTrigger,
@@ -59,20 +59,23 @@ function ReactTable({
     onRowSelectionChange,
     onPageChanged,
     startPageNumber = 0,
-    selectedRows = new Set([]),
-    remote = false
+    selectedRows,
+    remote = false,
+    classNames,
+    isStriped = true
 }) {
+    const tableRef = useRef(null);
     const [pagination, setPagination] = useState({
         pageIndex: startPageNumber,
         pageSize: 10
     });
     const [sorting, setSorting] = useState(defaultSort);
     const [columnFilters, setColumnFilters] = useState([]);
-    const [rowSelection, setRowSelection] = useState(selectedRows);
+    const [rowSelection, setRowSelection] = useState(selectedRows || new Set([]));
     const [isFilterPopOverOpen, setFilterPopOverOpen] = useState({});
 
     useEffect(() => {
-        setRowSelection(selectedRows);
+        setRowSelection(selectedRows || new Set([]));
     }, [selectedRows]);
 
     const fetchDataOptions = {
@@ -145,28 +148,27 @@ function ReactTable({
     const topContent = useMemo(
         () => (
             <div className='flex justify-between'>
-                <div className='flex'>
+                <div className='flex gap-2 flex-wrap'>
                     {buttons.map((b) => (
                         <Button
-                            className='mr-2'
                             key={b.label}
                             color={b.color}
                             endContent={b.icon}
-                            onPress={b.onClick}
+                            onPress={b.onPress}
                             isDisabled={b.disabled}
                             isLoading={b.isLoading}
                         >
                             {b.label}
                         </Button>
                     ))}
+                    {refetch && (
+                        <FaIconButton
+                            color='default'
+                            icon={faRefresh}
+                            onPress={() => refetch()}
+                        ></FaIconButton>
+                    )}
                 </div>
-                {refetch && (
-                    <FaIconButton
-                        color='default'
-                        icon={faRefresh}
-                        onClick={() => refetch()}
-                    ></FaIconButton>
-                )}
             </div>
         ),
         [buttons, refetch]
@@ -198,65 +200,99 @@ function ReactTable({
     const totalCount = remote ? response?.totalCount : response[dataProperty]?.length || 0;
 
     const tableFooter = (
-        <div className='mt-3 flex flex-col'>
-            <div className='flex'>
-                <div className='flex justify-start'>
-                    <Select
-                        className='mr-2 w-20'
-                        labelPlacement='outside'
-                        onChange={(e) => {
-                            table.setPageSize(parseInt(e.target.value));
-                        }}
-                        disallowEmptySelection
-                        selectedKeys={new Set([table.getState().pagination.pageSize.toString()])}
-                    >
-                        {[10, 25, 50].map((pageSize) => (
-                            <SelectItem key={pageSize.toString()} value={pageSize}>
-                                {pageSize.toString()}
-                            </SelectItem>
-                        ))}
-                    </Select>
-                </div>
-                <TablePagination
-                    currentPage={table.getState().pagination.pageIndex + 1}
-                    pageCount={table.getPageCount()}
-                    setCurrentPage={(page) => table.setPageIndex(page - 1)}
+        <div className='flex flex-col'>
+            <div className='flex flex-wrap gap-1 items-center'>
+                <Pagination
+                    className='w-full sm:w-auto'
+                    total={pageCount}
+                    showControls
+                    initialPage={table.getState().pagination.pageIndex + 1}
+                    onChange={(page) => table.setPageIndex(page - 1)}
                 />
-            </div>
-            <div className='flex justify-start mt-2'>
-                Page {currPage} of {pageCount} ({totalCount} items)
+                <Select
+                    className='w-20 sm:order-first'
+                    onChange={(e) => {
+                        table.setPageSize(parseInt(e.target.value));
+                    }}
+                    disallowEmptySelection
+                    selectedKeys={new Set([table.getState().pagination.pageSize.toString()])}
+                    classNames={{ base: 'sm:order-first', trigger: 'h-9' }}
+                    aria-label='Page Select'
+                >
+                    {[10, 25, 50].map((pageSize) => (
+                        <SelectItem key={pageSize.toString()} value={pageSize}>
+                            {pageSize.toString()}
+                        </SelectItem>
+                    ))}
+                </Select>
+                <span className='w-52 sm:w-full'>
+                    Page {currPage} of {pageCount} ({totalCount} items)
+                </span>
             </div>
         </div>
     );
-
+    const tableClassNames = { ...{ base: 'h-full' }, ...classNames };
     return (
         <>
             <Table
-                isStriped
+                isStriped={isStriped}
                 isHeaderSticky
                 showSelectionCheckboxes
                 selectionMode={disableSelection ? 'none' : 'multiple'}
                 selectedKeys={rowSelection}
                 onSelectionChange={setRowSelection}
+                onRowAction={(key) => onRowClick && onRowClick(table.getRowModel().rows[key])}
                 topContent={topContent}
                 bottomContent={tableFooter}
                 removeWrapper
-                classNames={{ base: 'h-full' }}
+                classNames={tableClassNames}
                 as={TableWrapper}
+                ref={tableRef}
+                aria-label='Generic Table'
             >
                 <TableHeader>
                     {table.getHeaderGroups()[0].headers.map((header) =>
                         header.isPlaceholder ? null : (
                             <TableColumn
+                                className={header.column.columnDef.meta?.className}
                                 key={header.id}
                                 width={header.column.columnDef.meta?.colWidth}
                                 allowsSorting={false}
                             >
-                                <div className='flex flex-col'>
+                                {/* // Filter column via built-in input */}
+                                {header.column.getCanFilter() &&
+                                !header.column.columnDef.meta?.groupingFilter ? (
+                                    <div className='flex items-center'>
+                                        <FontAwesomeIcon icon={faSearch} />
+                                        <Input
+                                            className='select-text'
+                                            onPointerDown={(e) => {
+                                                // Something steals focus, probably the parent, without this code
+                                                e.target.focus();
+                                                e.stopPropagation();
+                                                e.preventDefault();
+                                            }}
+                                            onKeyDown={() => {
+                                                // Something is preventing space key from changing value; overriding this event fixes it
+                                                return;
+                                            }}
+                                            onValueChange={header.column.setFilterValue}
+                                            onClear={() => header.column.setFilterValue('')}
+                                            value={header.column.getFilterValue() || ''}
+                                            size='sm'
+                                            isClearable
+                                            label={header.column.columnDef.header}
+                                            classNames={{
+                                                inputWrapper: 'px-2',
+                                                label: 'text-tiny'
+                                            }}
+                                        />
+                                    </div>
+                                ) : (
                                     <div
-                                        className='flex gap-1'
+                                        className='flex gap-1 items-center'
                                         role={header.column.getCanSort() ? 'button' : ''}
-                                        onClick={header.column.getToggleSortingHandler()}
+                                        onPointerDown={header.column.getToggleSortingHandler()}
                                     >
                                         <span className='flex-grow-1'>
                                             {flexRender(
@@ -266,78 +302,42 @@ function ReactTable({
                                         </span>
                                         {
                                             {
-                                                asc: (
-                                                    <div>
-                                                        {' '}
-                                                        <FontAwesomeIcon icon={faArrowUpLong} />
-                                                    </div>
-                                                ),
-                                                desc: (
-                                                    <div>
-                                                        {' '}
-                                                        <FontAwesomeIcon icon={faArrowDownLong} />
-                                                    </div>
-                                                )
+                                                asc: <FontAwesomeIcon icon={faArrowUpLong} />,
+                                                desc: <FontAwesomeIcon icon={faArrowDownLong} />
                                             }[header.column.getIsSorted()]
                                         }
-                                    </div>
-                                    {header.column.getCanFilter() &&
-                                        !header.column.columnDef.meta?.groupingFilter && (
-                                            <Input
-                                                className='select-text'
-                                                onClick={(e) => {
-                                                    // Something steals focus, probably the parent, without this code
-                                                    e.target.focus();
-                                                    e.stopPropagation();
-                                                    e.preventDefault();
-                                                }}
-                                                onChange={(e) =>
-                                                    header.column.setFilterValue(e.target.value)
-                                                }
-                                                onClear={() => header.column.setFilterValue('')}
-                                                value={header.column.getFilterValue() || ''}
-                                                size='sm'
-                                                isClearable
-                                                startContent={
-                                                    <div>
-                                                        <FontAwesomeIcon icon={faSearch} />
-                                                    </div>
-                                                }
-                                            />
-                                        )}
-                                </div>
-                                {header.column.columnDef.meta?.groupingFilter && (
-                                    <Popover
-                                        placement='right'
-                                        isOpen={isFilterPopOverOpen[header.id]}
-                                        onOpenChange={(open) => {
-                                            isFilterPopOverOpen[header.id] = open;
-
-                                            const newState = Object.assign({}, isFilterPopOverOpen);
-
-                                            setFilterPopOverOpen(newState);
-                                        }}
-                                    >
-                                        <PopoverTrigger>
-                                            <FontAwesomeIcon className='ml-1' icon={faFilter} />
-                                        </PopoverTrigger>
-                                        <PopoverContent>
-                                            {header.column.columnDef.meta?.groupingFilter(
-                                                header.getContext().table,
-                                                () => {
-                                                    isFilterPopOverOpen[header.id] =
-                                                        !isFilterPopOverOpen[header.id];
-
-                                                    const newState = Object.assign(
-                                                        {},
-                                                        isFilterPopOverOpen
-                                                    );
-
-                                                    setFilterPopOverOpen(newState);
-                                                }
+                                        {/* // Filter column via custom grouping filter */}
+                                        {header.column.getCanFilter() &&
+                                            header.column.columnDef.meta?.groupingFilter && (
+                                                <Popover
+                                                    isOpen={isFilterPopOverOpen[header.id]}
+                                                    onOpenChange={(open) => {
+                                                        isFilterPopOverOpen[header.id] = open;
+                                                        setFilterPopOverOpen({
+                                                            ...isFilterPopOverOpen
+                                                        });
+                                                    }}
+                                                    offset={20}
+                                                    portalContainer={tableRef.current}
+                                                >
+                                                    <PopoverTrigger>
+                                                        <FontAwesomeIcon icon={faFilter} />
+                                                    </PopoverTrigger>
+                                                    <PopoverContent>
+                                                        {header.column.columnDef.meta?.groupingFilter(
+                                                            header.getContext().table,
+                                                            () => {
+                                                                isFilterPopOverOpen[header.id] =
+                                                                    !isFilterPopOverOpen[header.id];
+                                                                setFilterPopOverOpen({
+                                                                    ...isFilterPopOverOpen
+                                                                });
+                                                            }
+                                                        )}
+                                                    </PopoverContent>
+                                                </Popover>
                                             )}
-                                        </PopoverContent>
-                                    </Popover>
+                                    </div>
                                 )}
                             </TableColumn>
                         )
@@ -355,9 +355,12 @@ function ReactTable({
                     }
                 >
                     {table.getRowModel().rows.map((row) => (
-                        <TableRow key={row.id} onClick={() => onRowClick && onRowClick(row)}>
+                        <TableRow key={row.id}>
                             {row.getVisibleCells().map((cell) => (
-                                <TableCell key={cell.id}>
+                                <TableCell
+                                    key={cell.id}
+                                    className={cell.column.columnDef.meta?.className}
+                                >
                                     <div>
                                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                     </div>

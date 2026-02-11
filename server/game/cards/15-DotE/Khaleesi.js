@@ -12,16 +12,14 @@ class Khaleesi extends DrawCard {
             },
             cost: ability.costs.kneelSelf(),
             choices: {
-                'Stand attached character': () => {
-                    if (this.parent.allowGameAction('stand')) {
-                        this.game.resolveGameAction(GameActions.standCard({ card: this.parent }));
-                        this.game.addMessage(
-                            '{0} kneels {1} to stand {2}',
-                            this.controller,
-                            this,
-                            this.parent
-                        );
-                    }
+                'Stand attached character': {
+                    message: {
+                        format: '{player} kneels {costs.kneel} to stand {parent}',
+                        args: { parent: () => this.parent }
+                    },
+                    gameAction: GameActions.standCard((context) => ({
+                        card: context.source.parent
+                    }))
                 },
                 'Raise claim': () => {
                     this.untilEndOfChallenge((ability) => ({

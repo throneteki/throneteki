@@ -6,7 +6,7 @@ class TheQueensAssassin extends DrawCard {
             when: {
                 onCardEntersPlay: (event) => event.card === this && event.playingType === 'ambush'
             },
-            chooseOpponent: (opponent) => opponent.hand.length < this.controller.hand.length,
+            chooseOpponent: (opponent) => opponent.getHandCount() < this.controller.getHandCount(),
             handler: (context) => {
                 this.game.promptForSelect(context.opponent, {
                     source: this,

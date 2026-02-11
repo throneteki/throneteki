@@ -56,7 +56,7 @@ export const init = function (server, options) {
                 return res.status(403).send({ message: 'Forbidden' });
             }
 
-            const { name, packDefinitions, starterDeck } = req.body.draftCube;
+            const { name, packDefinitions, starterDeck } = req.body;
             const draftCube = { name, packDefinitions, starterDeck };
 
             const errors = validate(draftCube);
@@ -87,7 +87,7 @@ export const init = function (server, options) {
                 return res.status(403).send({ message: 'Forbidden' });
             }
 
-            const { name, packDefinitions, starterDeck } = req.body.draftCube;
+            const { name, packDefinitions, starterDeck } = req.body;
             const draftCube = {
                 id: req.params.id,
                 name,

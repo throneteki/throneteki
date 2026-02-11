@@ -5,17 +5,17 @@ describe('the UiPrompt', function () {
         this.player1 = jasmine.createSpyObj('player', [
             'setPrompt',
             'cancelPrompt',
-            'startClock',
-            'stopClock'
+            'setIsActivePrompt'
         ]);
+        this.player1.isPlaying = () => !this.player1.eliminated && !this.player1.left;
         this.player2 = jasmine.createSpyObj('player', [
             'setPrompt',
             'cancelPrompt',
-            'startClock',
-            'stopClock'
+            'setIsActivePrompt'
         ]);
+        this.player2.isPlaying = () => !this.player2.eliminated && !this.player2.left;
 
-        this.game = jasmine.createSpyObj('game', ['getPlayers']);
+        this.game = jasmine.createSpyObj('game', ['getPlayers', 'isEmpty']);
         this.game.getPlayers.and.returnValue([this.player1, this.player2]);
 
         this.activePrompt = {
@@ -25,6 +25,8 @@ describe('the UiPrompt', function () {
         this.waitingPrompt = {};
 
         this.prompt = new UiPrompt(this.game);
+        spyOn(this.prompt, 'getPlayer').and.returnValue(this.player2);
+        spyOn(this.prompt, 'complete');
         spyOn(this.prompt, 'activePrompt').and.returnValue(this.activePrompt);
         spyOn(this.prompt, 'waitingPrompt').and.returnValue(this.waitingPrompt);
         spyOn(this.prompt, 'activeCondition').and.callFake((player) => {
@@ -61,6 +63,28 @@ describe('the UiPrompt', function () {
 
             it('should return false', function () {
                 expect(this.prompt.continue()).toBe(false);
+            });
+
+            describe('and the prompted player leaves', function () {
+                beforeEach(function () {
+                    this.player2.left = true;
+                    this.prompt.continue();
+                });
+
+                it('should complete the prompt', function () {
+                    expect(this.prompt.complete).toHaveBeenCalled();
+                });
+            });
+
+            describe('and the prompted player is eliminated', function () {
+                beforeEach(function () {
+                    this.player2.eliminated = true;
+                    this.prompt.continue();
+                });
+
+                it('should complete the prompt', function () {
+                    expect(this.prompt.complete).toHaveBeenCalled();
+                });
             });
         });
 

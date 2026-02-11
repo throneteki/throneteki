@@ -1,5 +1,4 @@
 import EventEmitter from 'events';
-import moment from 'moment';
 import AttachmentValidityCheck from './AttachmentValidityCheck.js';
 import ChatCommands from './chatcommands.js';
 import GameChat from './gamechat.js';
@@ -39,7 +38,13 @@ import GameActions from './GameActions/index.js';
 import EndRound from './GameActions/EndRound.js';
 import TimeLimit from './timeLimit.js';
 import PrizedKeywordListener from './PrizedKeywordListener.js';
-import GameWonPrompt from './gamesteps/GameWonPrompt.js';
+import GameOverPrompt from './gamesteps/GameOverPrompt.js';
+import ReferenceCountedSetProperty from './PropertyTypes/ReferenceCountedSetProperty.js';
+import shuffle from 'lodash.shuffle';
+import StartRound from './GameActions/StartRound.js';
+import GameOverHandler from './GameHandlers/GameOverHandler.js';
+import DisconnectHandler from './GameHandlers/DisconnectHandler.js';
+import { Flags } from './Constants/index.js';
 
 class Game extends EventEmitter {
     constructor(details, options = {}) {
@@ -48,10 +53,15 @@ class Game extends EventEmitter {
         this.instance = details.instance;
         this.event = details.event;
         this.eventName = details.event && details.event.name;
-        this.restrictedList = details.restrictedList;
+        this.restrictedList = details.restrictedList && {
+            _id: details.restrictedList._id,
+            name: details.restrictedList.name,
+            cardSet: details.restrictedList.cardSet
+        };
         this.allCards = [];
         this.attachmentValidityCheck = new AttachmentValidityCheck(this);
         this.effectEngine = new EffectEngine(this);
+        this.flags = new ReferenceCountedSetProperty();
         this.playersAndSpectators = {};
         this.playerPlots = {};
         this.playerCards = {};
@@ -67,15 +77,21 @@ class Game extends EventEmitter {
         this.playStarted = false;
         this.createdAt = new Date();
         this.useGameTimeLimit = details.useGameTimeLimit;
-        this.gameTimeLimit = details.gameTimeLimit;
-        this.timeLimit = new TimeLimit(this, this.gameTimeLimit);
+        if (this.useGameTimeLimit) {
+            this.gameTimeLimit = details.gameTimeLimit;
+            this.timeLimit = new TimeLimit(this, this.gameTimeLimit);
+        }
         this.useChessClocks = details.useChessClocks;
-        this.chessClockTimeLimit = details.chessClockTimeLimit;
-        this.chessClockDelay = details.chessClockDelay;
+        if (this.useChessClocks) {
+            this.chessClockTimeLimit = details.chessClockTimeLimit;
+            this.chessClockDelay = details.chessClockDelay;
+        }
         this.clockPaused = false;
         this.savedGameId = details.savedGameId;
         this.gamePrivate = details.gamePrivate;
+        this.gameFormat = details.gameFormat ?? 'joust';
         this.gameType = details.gameType;
+        this.maxPlayers = details.maxPlayers;
         this.abilityContextStack = [];
         this.abilityWindowStack = [];
         this.password = details.password;
@@ -84,31 +100,40 @@ class Game extends EventEmitter {
             isApplying: false,
             type: undefined
         };
-        this.isMelee = !!details.isMelee;
         this.noTitleSetAside = !!details.noTitleSetAside;
         this.titlePool = new TitlePool(this, options.titleCardData || []);
         this.cardData = options.cardData || [];
         this.packData = options.packData || [];
-        this.restrictedListData = this.restrictedList
-            ? [this.restrictedList]
-            : options.restrictedListData || [];
+        this.restrictedListData = options.restrictedListData || [];
         this.remainingPhases = [];
-        this.skipPhase = {};
         this.cardVisibility = new CardVisibility(this);
         this.winnerOfDominanceInLastRound = undefined;
         this.prizedKeywordListener = new PrizedKeywordListener(this);
         this.muteSpectators = details.muteSpectators;
 
-        for (let player of Object.values(details.players || {})) {
+        this.allowMultipleWinners = options.allowMultipleWinners || false;
+        this.gameOverHandler = new GameOverHandler(this);
+        this.disconnectHandler = new DisconnectHandler(this, 30);
+
+        let players = Object.values(details.players || {});
+
+        if (details.randomSeats) {
+            // Randomise players & use new index as seatNo
+            players = shuffle(players);
+            players.forEach((player, index) => (player.seatNo = index + 1));
+        }
+
+        for (const player of players) {
             this.playersAndSpectators[player.user.username] = new Player(
                 player.id,
                 player.user,
                 this.owner === player.user.username,
-                this
+                this,
+                player.seatNo
             );
         }
 
-        for (let spectator of Object.values(details.spectators || {})) {
+        for (const spectator of Object.values(details.spectators || {})) {
             this.playersAndSpectators[spectator.user.username] = new Spectator(
                 spectator.id,
                 spectator.user
@@ -122,8 +147,20 @@ class Game extends EventEmitter {
         this.pushAbilityContext({ resolutionStage: 'framework' });
     }
 
+    get isGameOver() {
+        return this.gameOverHandler.isGameOver;
+    }
+
     isPlaytesting() {
         return this.instance && this.instance.type === 'playtesting';
+    }
+
+    get isJoust() {
+        return this.gameFormat === 'joust';
+    }
+
+    get isMelee() {
+        return this.gameFormat === 'melee';
     }
 
     reportError(e) {
@@ -152,11 +189,13 @@ class Game extends EventEmitter {
     }
 
     getAllPlayers() {
-        return Object.values(this.playersAndSpectators).filter((player) => !player.isSpectator());
+        return Object.values(this.playersAndSpectators)
+            .filter((player) => !player.isSpectator())
+            .sort((a, b) => a.seatNo - b.seatNo);
     }
 
     getPlayers() {
-        return this.getAllPlayers().filter((player) => !player.eliminated);
+        return this.getAllPlayers().filter((player) => player.isPlaying());
     }
 
     getNumberOfPlayers() {
@@ -190,6 +229,11 @@ class Game extends EventEmitter {
         return matchAndAfter.concat(beforeMatch);
     }
 
+    getPlayerToLeftOf(player) {
+        const players = this.getPlayers();
+        return players.find((p) => p.seatNo > player.seatNo) || players[0];
+    }
+
     getPlayersAndSpectators() {
         return this.playersAndSpectators;
     }
@@ -205,7 +249,7 @@ class Game extends EventEmitter {
     }
 
     setFirstPlayer(firstPlayer) {
-        for (let player of this.getAllPlayers()) {
+        for (const player of this.getAllPlayers()) {
             player.firstPlayer = player === firstPlayer;
         }
         this.raiseEvent('onFirstPlayerDetermined', { player: firstPlayer });
@@ -540,145 +584,18 @@ class Game extends EventEmitter {
         player.modifyGold(-appliedAmount);
     }
 
-    checkWinAndLossConditions() {
-        if (this.currentPhase === 'setup' || this.winner) {
-            return;
-        }
+    recordResults(winners, reason, finishedAt) {
+        const winner =
+            !winners || winners.length > 1 ? winners?.map((w) => w.name) : winners[0].name;
+        this.results = {
+            winner,
+            winReason: reason,
+            finishedAt
+        };
+        this.finishedAt = this.results.finishedAt;
 
-        let players = this.getPlayersInFirstPlayerOrder();
-
-        if (players.length === 0) {
-            return;
-        }
-
-        let deckedPlayers = players.filter((player) => player.drawDeck.length === 0);
-
-        if (deckedPlayers.length === players.length) {
-            const potentialWinners = deckedPlayers.filter((player) => player.canWinGame());
-            if (potentialWinners.length === 0) {
-                this.recordDraw(deckedPlayers);
-            } else if (potentialWinners.length === 1) {
-                this.recordWinner(potentialWinners[0], 'decked');
-            } else if (!this.disableWonPrompt) {
-                this.addAlert(
-                    'info',
-                    '{0} will be eliminated because their draw decks are empty. {1} chooses the winner because they are first player',
-                    deckedPlayers,
-                    players[0]
-                );
-                this.queueStep(
-                    new ChoosePlayerPrompt(this, players[0], {
-                        activePromptTitle: 'Select the winning player',
-                        condition: (player) => potentialWinners.includes(player),
-                        onSelect: (chosenPlayer) => {
-                            this.addAlert(
-                                'info',
-                                '{0} chooses {1} to win the game',
-                                players[0],
-                                chosenPlayer
-                            );
-                            this.recordWinner(chosenPlayer, 'decked');
-                        }
-                    })
-                );
-            }
-            return;
-        }
-
-        for (let player of deckedPlayers) {
-            this.addAlert(
-                'info',
-                '{0} is eliminated from the game because their draw deck is empty',
-                player
-            );
-            player.eliminated = true;
-        }
-
-        let remainingPlayers = players.filter((player) => !player.eliminated);
-
-        // If the first player is eliminated, the next non-eliminated player in order becomes first player
-        if (players[0].eliminated && remainingPlayers.length > 1) {
-            this.setFirstPlayer(remainingPlayers[0]);
-        }
-
-        if (remainingPlayers.length === 1) {
-            let lastPlayer = remainingPlayers[0];
-
-            if (lastPlayer.canWinGame()) {
-                this.recordWinner(lastPlayer, 'decked');
-            } else {
-                this.recordDraw(lastPlayer);
-            }
-        }
-
-        let potentialWinners = remainingPlayers.filter(
-            (player) => player.getTotalPower() >= 15 && player.canWinGame()
-        );
-        if (potentialWinners.length === 1) {
-            this.recordWinner(potentialWinners[0], 'power');
-        } else if (potentialWinners.length > 1) {
-            const firstPlayer = this.getFirstPlayer();
-            this.addAlert(
-                'info',
-                '{0} have reached 15 power. {1} chooses the winner because they are first player',
-                potentialWinners,
-                firstPlayer
-            );
-            this.queueStep(
-                new ChoosePlayerPrompt(this, firstPlayer, {
-                    activePromptTitle: 'Select the winning player',
-                    condition: (player) => potentialWinners.includes(player),
-                    onSelect: (chosenPlayer) => {
-                        this.addAlert(
-                            'info',
-                            '{0} chooses {1} to win the game',
-                            firstPlayer,
-                            chosenPlayer
-                        );
-                        this.recordWinner(chosenPlayer, 'power');
-                    }
-                })
-            );
-        }
-    }
-
-    recordDraw(lastPlayer) {
-        if (this.winner) {
-            return;
-        }
-
-        this.addAlert(
-            'info',
-            'The game ends in a draw because {0} cannot win the game',
-            lastPlayer
-        );
-        this.winner = { name: 'DRAW' };
-        this.finishedAt = new Date();
-        this.winReason = 'draw';
-
-        this.router.gameWon(this, this.winReason, this.winner);
-        for (const player of this.getAllPlayers()) {
-            player.eliminated = false;
-        }
-        this.queueStep(new GameWonPrompt(this, null));
-    }
-
-    recordWinner(winner, reason) {
-        if (this.winner) {
-            return;
-        }
-
-        this.addAlert('success', '{0} has won the game', winner);
-
-        this.winner = winner;
-        this.finishedAt = new Date();
-        this.winReason = reason;
-
-        this.router.gameWon(this, reason, winner);
-        for (const player of this.getAllPlayers()) {
-            player.eliminated = false;
-        }
-        this.queueStep(new GameWonPrompt(this, winner));
+        this.router.gameOver(this);
+        this.queueStep(new GameOverPrompt(this, winners));
     }
 
     changeStat(playerName, stat, value) {
@@ -702,7 +619,7 @@ class Game extends EventEmitter {
             let valueGetter;
             switch (stat) {
                 case 'claim':
-                    if (!player.activePlot.claim.setValue) {
+                    if (typeof player.activePlot.claim.setValue !== 'number') {
                         effect = Effects.modifyClaim(value);
                     } else {
                         effect = Effects.setClaim(Math.max(player.getClaim() + value, 0));
@@ -710,7 +627,7 @@ class Game extends EventEmitter {
                     valueGetter = () => player.getClaim();
                     break;
                 case 'initiative':
-                    if (!player.activePlot.initiative.setValue) {
+                    if (typeof player.activePlot.initiative.setValue !== 'number') {
                         effect = Effects.modifyInitiative(value);
                     } else {
                         effect = Effects.setInitiative(Math.max(player.getInitiative() + value, 0));
@@ -718,7 +635,7 @@ class Game extends EventEmitter {
                     valueGetter = () => player.getInitiative();
                     break;
                 case 'reserve':
-                    if (!player.activePlot.reserve.setValue) {
+                    if (typeof player.activePlot.reserve.setValue !== 'number') {
                         effect = Effects.modifyReserve(value);
                     } else {
                         effect = Effects.setReserve(Math.max(player.getReserve() + value, 0));
@@ -736,7 +653,6 @@ class Game extends EventEmitter {
                 match: target,
                 effect: effect
             }));
-            this.postEventCalculations();
             this.addAlert(
                 'danger',
                 '{0} sets {1} to {2} ({3})',
@@ -745,6 +661,7 @@ class Game extends EventEmitter {
                 valueGetter(),
                 (value > 0 ? '+' : '') + value
             );
+            this.refreshGameState();
             return;
         }
 
@@ -761,6 +678,7 @@ class Game extends EventEmitter {
                 target[stat],
                 (value > 0 ? '+' : '') + value
             );
+            this.refreshGameState();
         }
     }
 
@@ -797,20 +715,13 @@ class Game extends EventEmitter {
     }
 
     concede(playerName) {
-        var player = this.getPlayerByName(playerName);
+        const player = this.getPlayerByName(playerName);
 
         if (!player) {
             return;
         }
 
-        this.addAlert('info', '{0} concedes', player);
-        player.eliminated = true;
-
-        let remainingPlayers = this.getPlayers().filter((player) => !player.eliminated);
-
-        if (remainingPlayers.length === 1) {
-            this.recordWinner(remainingPlayers[0], 'concede');
-        }
+        this.gameOverHandler.playerConceded(player);
     }
 
     selectDeck(playerName, deck) {
@@ -909,6 +820,15 @@ class Game extends EventEmitter {
         player.timerSettings[settingName] = toggle;
     }
 
+    cardSizeChange(playerName, value) {
+        var player = this.getPlayersAndSpectators()[playerName];
+        if (!player) {
+            return;
+        }
+
+        player.cardSize = value;
+    }
+
     toggleKeywordSetting(playerName, settingName, toggle) {
         var player = this.getPlayerByName(playerName);
         if (!player) {
@@ -967,22 +887,18 @@ class Game extends EventEmitter {
         }
     }
 
-    checkForTimeExpired() {
-        if (this.timeLimit.isTimeLimitReached && !this.finishedAt) {
-            this.determineWinnerAfterTimeLimitExpired();
-        }
-    }
-
     beginRound() {
         // Reset phases to the standard game flow.
         this.remainingPhases = Phases.names();
 
-        this.raiseEvent('onBeginRound');
+        this.queueStep(
+            new SimpleStep(this, () => this.resolveGameAction(StartRound, { game: this }))
+        );
         this.queueSimpleStep(() => {
             // Loop through individual phases, queuing them one at a time. This
             // will allow additional phases to be added.
             if (this.remainingPhases.length !== 0) {
-                let phase = this.remainingPhases.shift();
+                const phase = this.remainingPhases.shift();
                 this.queueStep(Phases.createStep(phase, this));
                 return false;
             }
@@ -1086,7 +1002,7 @@ class Game extends EventEmitter {
             groupedEvent.addChildEvent(attachedEvent);
         }
 
-        this.queueStep(new InterruptWindow(this, groupedEvent, () => this.postEventCalculations()));
+        this.queueStep(new InterruptWindow(this, groupedEvent));
     }
 
     registerAbility(ability, context) {
@@ -1116,7 +1032,7 @@ class Game extends EventEmitter {
         }
         let event = new Event(eventName, params, handler);
 
-        this.queueStep(new EventWindow(this, event, () => this.postEventCalculations()));
+        this.queueStep(new EventWindow(this, event));
     }
 
     /**
@@ -1134,7 +1050,7 @@ class Game extends EventEmitter {
             );
             event.addChildEvent(childEvent);
         }
-        this.queueStep(new EventWindow(this, event, () => this.postEventCalculations()));
+        this.queueStep(new EventWindow(this, event));
     }
 
     /**
@@ -1158,11 +1074,11 @@ class Game extends EventEmitter {
             event.addChildEvent(childEvent);
         }
 
-        this.queueStep(new EventWindow(this, event, () => this.postEventCalculations()));
+        this.queueStep(new EventWindow(this, event));
     }
 
     resolveEvent(event) {
-        this.queueStep(new EventWindow(this, event, () => this.postEventCalculations()));
+        this.queueStep(new EventWindow(this, event));
     }
 
     resolveGameAction(action, props) {
@@ -1176,19 +1092,26 @@ class Game extends EventEmitter {
     }
 
     /**
-     * Function that executes after the handler for each Event has executed. In
-     * terms of overall engine it is useful for things that require regular
-     * checks, such as state dependent effects, attachment validity, and others.
+     * Function that refreshes all game-state dependent effects, and performs
+     * routine validity & game over checks.
      */
-    postEventCalculations() {
+    refreshGameState() {
         this.effectEngine.recalculateDirtyTargets();
         this.effectEngine.reapplyStateDependentEffects();
         this.attachmentValidityCheck.enforceValidity();
-        this.checkWinAndLossConditions();
+        this.gameOverHandler.checkConditions();
+    }
+
+    timeLimitExpired() {
+        this.gameOverHandler.gameTimeLimitExpired();
+    }
+
+    chessClockExpired(player) {
+        this.gameOverHandler.playerChessClockExpired(player);
     }
 
     isPhaseSkipped(name) {
-        return !!this.skipPhase[name];
+        return this.flags.contains(Flags.game.skipPhase(name));
     }
 
     saveWithDupe(card) {
@@ -1334,7 +1257,7 @@ class Game extends EventEmitter {
     }
 
     join(socketId, user) {
-        if (this.started || this.getPlayers().length === 2) {
+        if (this.started || this.getPlayers().length === this.maxPlayers) {
             return false;
         }
 
@@ -1348,24 +1271,29 @@ class Game extends EventEmitter {
         return true;
     }
 
-    isEmpty() {
+    isEmpty(includeSpectators = true) {
         return Object.values(this.playersAndSpectators).every((player) => {
-            if (player.left || player.id === 'TBA') {
+            if (player.isSpectator()) {
+                return !includeSpectators;
+            }
+
+            // Player has left the game
+            if (player.left) {
                 return true;
             }
 
-            if (!player.disconnectedAt) {
-                return false;
+            // Player has disconnected longer than wait time
+            if (this.isLongDisconnected(player)) {
+                return true;
             }
 
-            let difference = moment().diff(moment(player.disconnectedAt), 'seconds');
-
-            return difference > 30;
+            // Player is still within the game
+            return false;
         });
     }
 
     leave(playerName) {
-        let player = this.playersAndSpectators[playerName];
+        const player = this.playersAndSpectators[playerName];
 
         if (!player) {
             return;
@@ -1375,22 +1303,27 @@ class Game extends EventEmitter {
             delete this.playersAndSpectators[playerName];
         } else {
             this.addAlert('info', '{0} has left the game', player);
+            // Handle player leaving, in case game over needs to be triggered
+            this.gameOverHandler.playerLeft(player);
             player.left = true;
-
-            if (!this.finishedAt) {
-                this.finishedAt = new Date();
-            }
         }
+    }
 
-        if (this.isEmpty()) {
-            if (this.timeLimit) {
-                this.timeLimit.stop();
-            }
+    /** Whether this player can leave the game without automatically conceding */
+    canSafelyLeave(player) {
+        return (
+            !player.isPlaying() ||
+            this.isGameOver ||
+            !this.disconnectHandler.mustWaitForReconnections(player)
+        );
+    }
 
-            if (!player.isSpectator()) {
-                player.stopClock();
-            }
-        }
+    isDisconnected(player) {
+        return this.disconnectHandler.isDisconnected(player);
+    }
+
+    isLongDisconnected(player) {
+        return this.disconnectHandler.isLongDisconnected(player);
     }
 
     disconnect(playerName) {
@@ -1403,12 +1336,7 @@ class Game extends EventEmitter {
         if (player.isSpectator()) {
             delete this.playersAndSpectators[playerName];
         } else {
-            this.addAlert(
-                'warning',
-                '{0} has disconnected.  The game will wait up to 30 seconds for them to reconnect',
-                player
-            );
-            player.disconnectedAt = new Date();
+            this.disconnectHandler.disconnected(player);
         }
 
         player.socket = undefined;
@@ -1424,13 +1352,7 @@ class Game extends EventEmitter {
         if (player.isSpectator() || !this.started) {
             delete this.playersAndSpectators[playerName];
         } else {
-            this.addAlert('danger', '{0} has failed to connect to the game', player);
-
-            player.disconnectedAt = new Date();
-
-            if (!this.finishedAt) {
-                this.finishedAt = new Date();
-            }
+            this.disconnectHandler.failedConnection(player);
         }
     }
 
@@ -1442,22 +1364,19 @@ class Game extends EventEmitter {
 
         player.id = socket.id;
         player.socket = socket;
-        player.disconnectedAt = undefined;
-
-        this.addAlert('info', '{0} has reconnected', player);
+        this.disconnectHandler.reconnected(player);
     }
 
     rematch() {
-        if (!this.finishedAt) {
-            this.finishedAt = new Date();
-            this.winReason = 'rematch';
+        if (!this.isGameOver) {
+            this.gameOverHandler.gameOver('rematch');
         }
 
         this.router.rematch(this);
     }
 
-    timeExpired() {
-        this.emit('onTimeExpired');
+    sendGameState() {
+        this.emit('sendGameState');
     }
 
     activatePersistentEffects() {
@@ -1476,8 +1395,7 @@ class Game extends EventEmitter {
     pauseClock() {
         this.clockPaused = !this.clockPaused;
         if (this.useChessClocks) {
-            let players = this.getPlayers();
-            for (let player of players) {
+            for (const player of this.getPlayers()) {
                 player.togglePauseChessClock();
             }
         }
@@ -1488,12 +1406,15 @@ class Game extends EventEmitter {
     }
 
     getSaveState() {
-        var players = this.getPlayers().map((player) => {
+        var players = this.getAllPlayers().map((player) => {
             return {
                 name: player.name,
                 faction: player.faction.name || player.faction.value,
                 agendas: player.agendas ? player.agendas.map((agenda) => agenda.name) : undefined,
                 power: player.getTotalPower(),
+                standing: player.standing,
+                eliminated: player.eliminated,
+                eliminatedReason: player.eliminatedReason,
                 playtested: this.isPlaytesting()
                     ? player.preparedDeck.allCards
                           .filter((card) => !!card.version)
@@ -1507,9 +1428,7 @@ class Game extends EventEmitter {
             gameId: this.id,
             startedAt: this.startedAt,
             players: players,
-            winner: this.winner ? this.winner.name : undefined,
-            winReason: this.winReason,
-            finishedAt: this.finishedAt
+            ...(this.results || {})
         };
     }
 
@@ -1522,36 +1441,31 @@ class Game extends EventEmitter {
                 playerState[player.name] = player.getState(activePlayer);
             }
 
-            let timeLimitState = undefined;
-            if (this.useGameTimeLimit) {
-                timeLimitState = this.timeLimit.getState();
-            }
-            this.timeLimit.checkForTimeLimitReached();
-
             return {
                 id: this.id,
-                isMelee: this.isMelee,
                 name: this.name,
                 owner: this.owner,
                 players: playerState,
                 messages: this.gameChat.messages,
                 showHand: this.showHand,
-                spectators: this.getSpectators().map((spectator) => {
-                    return {
-                        id: spectator.id,
-                        name: spectator.name
-                    };
-                }),
+                spectators: this.getSpectators().map((spectator) => spectator.getState()),
                 started: this.started,
-                winner: this.winner ? this.winner.name : undefined,
+                gameOver: this.isGameOver,
+                winner: this.results?.winner?.name,
+                gameFormat: this.gameFormat,
+                maxPlayers: this.maxPlayers,
                 cancelPromptUsed: this.cancelPromptUsed,
                 useGameTimeLimit: this.useGameTimeLimit,
-                gameTimeLimit: this.gameTimeLimit,
-                timeLimit: timeLimitState,
+                ...(this.useGameTimeLimit && {
+                    gameTimeLimit: this.gameTimeLimit,
+                    timeLimit: this.timeLimit.getState()
+                }),
                 muteSpectators: this.muteSpectators,
                 useChessClocks: this.useChessClocks,
-                chessClockTimeLimit: this.chessClockTimeLimit,
-                chessClockDelay: this.chessClockDelay
+                ...(this.useChessClocks && {
+                    chessClockTimeLimit: this.chessClockTimeLimit,
+                    chessClockDelay: this.chessClockDelay
+                })
             };
         }
 
@@ -1584,7 +1498,8 @@ class Game extends EventEmitter {
                 left: player.left,
                 name: player.name,
                 owner: player.owner,
-                user: options.fullData && player.user
+                user: options.fullData && player.user,
+                seatNo: player.seatNo
             };
         }
 
@@ -1592,9 +1507,10 @@ class Game extends EventEmitter {
             allowSpectators: this.allowSpectators,
             createdAt: this.createdAt,
             gamePrivate: this.gamePrivate,
+            gameFormat: this.gameFormat,
+            maxPlayers: this.maxPlayers,
             gameType: this.gameType,
             id: this.id,
-            isMelee: this.isMelee,
             messages: this.gameChat.messages,
             name: this.name,
             owner: this.owner,
@@ -1602,6 +1518,7 @@ class Game extends EventEmitter {
             showHand: this.showHand,
             started: this.started,
             startedAt: this.startedAt,
+            finishedAt: this.finishedAt,
             spectators: this.getSpectators().map((spectator) => {
                 return {
                     id: spectator.id,
@@ -1610,71 +1527,12 @@ class Game extends EventEmitter {
                 };
             }),
             muteSpectators: this.muteSpectators,
-            restrictedList: this.restrictedList,
+            restrictedList: this.restrictedList && {
+                name: this.restrictedList.name,
+                cardSet: this.restrictedList.cardSet
+            },
             useChessClocks: this.useChessClocks
         };
-    }
-
-    determineWinnerAfterTimeLimitExpired() {
-        //find out the highest power total among all players left
-        const highestPowerTotal = this.getPlayers().reduce((highestPowerTotal, player) => {
-            if (highestPowerTotal < player.getTotalPower()) {
-                highestPowerTotal = player.getTotalPower();
-            }
-            return highestPowerTotal;
-        }, 0);
-        //find out the highest number of cards left in a draw deck among the remaining players
-        const mostCardsLeftInDrawDeck = this.getPlayers().reduce(
-            (mostCardsLeftInDrawDeck, player) => {
-                if (mostCardsLeftInDrawDeck < player.drawDeck.length) {
-                    mostCardsLeftInDrawDeck = player.drawDeck.length;
-                }
-                return mostCardsLeftInDrawDeck;
-            },
-            0
-        );
-        //find out the smallest number of characters in a dead pile among the remaining players
-        const smallestNumberOfCharsInDeadPile = this.getPlayers().reduce(
-            (smallestNumberOfCharsInDeadPile, player) => {
-                if (smallestNumberOfCharsInDeadPile > player.deadPile.length) {
-                    smallestNumberOfCharsInDeadPile = player.deadPile.length;
-                }
-                return smallestNumberOfCharsInDeadPile;
-            },
-            1000
-        );
-
-        const rules = [
-            (player) => player.canWinGame(),
-            (player) => player.getTotalPower() >= highestPowerTotal,
-            (player) => player.drawDeck.length >= mostCardsLeftInDrawDeck,
-            (player) => {
-                if (this.winnerOfDominanceInLastRound) {
-                    return player.name === this.winnerOfDominanceInLastRound.name;
-                }
-                //if no one won dom, then this rule should not filter any players
-                return true;
-            },
-            (player) => player.deadPile.length <= smallestNumberOfCharsInDeadPile,
-            (player) => player.firstPlayer
-        ];
-
-        let remainingPlayers = this.getPlayers();
-        for (const rule of rules) {
-            remainingPlayers = remainingPlayers.filter((player) => rule(player));
-            if (remainingPlayers.length === 1) {
-                this.recordWinner(remainingPlayers[0], 'time');
-                return;
-            } else if (remainingPlayers.length === 0) {
-                this.recordDraw('No one');
-                return;
-            }
-        }
-        //this should not be reached as it means after filtering the players with every rule there are still multiple players left
-        this.addAlert(
-            'After checking for every tie breaker rule to determine the winner of the game, no winner could be determined. This should not have happened. Please report this to the developers as it is likely a bug.'
-        );
-        this.recordDraw('No one');
     }
 
     toggleMuteSpectators(playerName) {

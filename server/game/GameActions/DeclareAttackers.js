@@ -1,3 +1,4 @@
+import { Flags } from '../Constants/index.js';
 import GameAction from './GameAction.js';
 import KneelCard from './KneelCard.js';
 
@@ -41,14 +42,14 @@ class DeclareAttackers extends GameAction {
         let canKneelForChallenge =
             (!card.kneeled && !card.kneelsAsAttacker(challenge.challengeType)) ||
             (!card.kneeled && card.allowGameAction('kneel')) ||
-            (card.kneeled && card.challengeOptions.contains('canBeDeclaredWhileKneeling'));
+            (card.kneeled && card.hasFlag(Flags.challengeOptions.canBeDeclaredWhileKneeling));
 
         return (
             card.canParticipateInChallenge() &&
             card.location === 'play area' &&
             canKneelForChallenge &&
             (card.hasIcon(challenge.challengeType) ||
-                card.challengeOptions.contains('canBeDeclaredWithoutIcon'))
+                card.hasFlag(Flags.challengeOptions.canBeDeclaredWithoutIcon))
         );
     }
 }

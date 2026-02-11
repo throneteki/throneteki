@@ -2,16 +2,17 @@ import DrawCard from '../../drawcard.js';
 import TextHelper from '../../TextHelper.js';
 
 class RitualOfRhllor extends DrawCard {
-    setupCardAbilities(ability) {
+    setupCardAbilities() {
+        this.xValue({
+            min: () => 1,
+            max: () => this.getNumberOfStandingRhllor()
+        });
+
         this.reaction({
             when: {
                 onDominanceDetermined: (event) =>
                     this.controller === event.winner && this.getNumberOfStandingRhllor() >= 1
             },
-            cost: ability.costs.payXGold(
-                () => 1,
-                () => this.getNumberOfStandingRhllor()
-            ),
             handler: (context) => {
                 let xValue = context.xValue;
                 this.game.promptForSelect(this.controller, {
@@ -26,7 +27,7 @@ class RitualOfRhllor extends DrawCard {
                         card.hasTrait("R'hllor") &&
                         card.getType() === 'character',
                     onSelect: (player, cards) =>
-                        this.targetsSelected(player, cards, context.goldCost)
+                        this.targetsSelected(player, cards, context.costs.gold)
                 });
             }
         });

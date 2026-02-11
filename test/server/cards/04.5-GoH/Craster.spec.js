@@ -10,7 +10,7 @@ describe('Craster', function () {
             ]);
             const deck2 = this.buildDeck('thenightswatch', [
                 'Valar Morghulis',
-                'Benjen Stark',
+                'Benjen Stark (Core)',
                 'Steward at the Wall',
                 'Old Forest Hunter'
             ]);

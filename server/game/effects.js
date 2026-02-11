@@ -10,12 +10,13 @@ import CannotRestriction from './cannotrestriction.js';
 import ChallengeRestriction from './ChallengeRestriction.js';
 import ImmunityRestriction from './immunityrestriction.js';
 import GoldSource from './GoldSource.js';
-import { Tokens } from './Constants/index.js';
+import { Flags, Tokens } from './Constants/index.js';
 import ForcedChallenge from './ForcedChallenge.js';
+import PowerAsGoldSource from './PowerAsGoldSource.js';
 
 function cannotEffect(type) {
     return function (predicate) {
-        let restriction = new CannotRestriction(type, predicate);
+        const restriction = new CannotRestriction(type, predicate);
         return {
             apply: function (card) {
                 card.addAbilityRestriction(restriction);
@@ -28,61 +29,39 @@ function cannotEffect(type) {
 }
 
 function losesAspectEffect(aspect) {
-    return function () {
+    return modifyFlagEffect(aspect, { handler: (target) => target.markAsDirty() });
+}
+
+function challengeOptionEffect(flag) {
+    return modifyFlagEffect(flag, {
+        handler: (_target, context) => context.game.currentChallenge?.calculateStrength()
+    });
+}
+
+function modifyFlagEffect(flagOrFunc, options = {}) {
+    return function (...args) {
+        const { handler = () => {}, targetType = 'card' } = options;
+        const flag = flagOrFunc instanceof Function ? flagOrFunc(...args) : flagOrFunc;
         return {
-            apply: function (card) {
-                card.loseAspect(aspect);
+            targetType,
+            apply: function (target, context) {
+                target.flags.add(flag);
+                handler(target, context);
             },
-            unapply: function (card) {
-                card.restoreAspect(aspect);
+            unapply: function (target, context) {
+                target.flags.remove(flag);
+                handler(target, context);
             }
         };
     };
 }
 
-function challengeOptionEffect(key) {
-    return function () {
-        return {
-            apply: function (card, context) {
-                card.challengeOptions.add(key);
-                if (context.game.currentChallenge) {
-                    context.game.currentChallenge.calculateStrength();
-                }
-            },
-            unapply: function (card, context) {
-                card.challengeOptions.remove(key);
-                if (context.game.currentChallenge) {
-                    context.game.currentChallenge.calculateStrength();
-                }
-            }
-        };
-    };
+function modifyPlayerFlagEffect(flag) {
+    return modifyFlagEffect(flag, { targetType: 'player' });
 }
 
-function dominanceOptionEffect(key) {
-    return function () {
-        return {
-            apply: function (card) {
-                card.dominanceOptions.add(key);
-            },
-            unapply: function (card) {
-                card.dominanceOptions.remove(key);
-            }
-        };
-    };
-}
-
-function powerOptionEffect(key) {
-    return function () {
-        return {
-            apply: function (card) {
-                card.powerOptions.add(key);
-            },
-            unapply: function (card) {
-                card.powerOptions.remove(key);
-            }
-        };
-    };
+function modifyGameFlagEffect(flag) {
+    return modifyFlagEffect(flag, { targetType: 'game' });
 }
 
 function dynamicCardModifier(propName) {
@@ -94,16 +73,15 @@ function dynamicCardModifier(propName) {
             apply: function (card, context) {
                 context[propName] = context[propName] || {};
                 context[propName][card.uuid] = calculate(card, context) || 0;
-                card[propName].modifier += context[propName][card.uuid];
+                card[propName].addModifier(context.effect, context[propName][card.uuid]);
             },
             reapply: function (card, context) {
-                const currentValue = context[propName][card.uuid];
                 const newValue = calculate(card, context) || 0;
                 context[propName][card.uuid] = newValue;
-                card[propName].modifier += newValue - currentValue;
+                card[propName].changeModifier(context.effect, newValue);
             },
             unapply: function (card, context) {
-                card[propName].modifier -= context[propName][card.uuid];
+                card[propName].removeModifier(context.effect);
                 delete context[propName][card.uuid];
             },
             isStateDependent
@@ -120,16 +98,16 @@ function setCardModifier(propName) {
             apply: function (card, context) {
                 context[propName] = context[propName] || {};
                 context[propName][card.uuid] = calculate(card, context) || 0;
-                card[propName].setValue = context[propName][card.uuid];
+                card[propName].addSetValue(context.effect, context[propName][card.uuid]);
             },
             reapply: function (card, context) {
                 const newValue = calculate(card, context) || 0;
                 context[propName][card.uuid] = newValue;
-                card[propName].setValue = newValue;
+                card[propName].addSetValue(context.effect, newValue);
             },
             unapply: function (card, context) {
-                card[propName].setValue = context[propName][card.uuid];
                 delete context[propName][card.uuid];
+                card[propName].removeSetValue(context.effect);
             },
             isStateDependent
         };
@@ -172,16 +150,7 @@ const Effects = {
             }
         };
     },
-    entersPlayKneeled: function () {
-        return {
-            apply: function (card) {
-                card.entersPlayKneeled = true;
-            },
-            unapply: function (card) {
-                card.entersPlayKneeled = false;
-            }
-        };
-    },
+    entersPlayKneeled: modifyFlagEffect(Flags.card.entersPlayKneeled),
     setCardType: function (type) {
         return {
             apply: function (card) {
@@ -192,14 +161,32 @@ const Effects = {
             }
         };
     },
+    cannotBeCanceled: function () {
+        return {
+            apply: function (card, context) {
+                for (const ability of card.getTriggeredAbilities()) {
+                    ability.setCannotBeCanceled(true, context.source);
+                }
+            },
+            unapply: function (card, context) {
+                for (const ability of card.getTriggeredAbilities()) {
+                    ability.clearCannotBeCanceled(true, context.source);
+                }
+            }
+        };
+    },
     cannotBeDeclaredAsAttacker: cannotEffect('declareAsAttacker'),
     cannotBeDeclaredAsDefender: cannotEffect('declareAsDefender'),
     cannotParticipate: cannotEffect('participateInChallenge'),
     doesNotKneelAsAttacker: function ({ challengeType = 'any' } = {}) {
-        return challengeOptionEffect(`doesNotKneelAsAttacker.${challengeType}`)();
+        return challengeOptionEffect(
+            Flags.challengeOptions.doesNotKneelAsAttacker(challengeType)
+        )();
     },
     doesNotKneelAsDefender: function ({ challengeType = 'any' } = {}) {
-        return challengeOptionEffect(`doesNotKneelAsDefender.${challengeType}`)();
+        return challengeOptionEffect(
+            Flags.challengeOptions.doesNotKneelAsDefender(challengeType)
+        )();
     },
     consideredToBeAttacking: function () {
         return {
@@ -225,25 +212,21 @@ const Effects = {
             isStateDependent: true
         };
     },
-    canBeDeclaredWithoutIcon: challengeOptionEffect('canBeDeclaredWithoutIcon'),
-    canBeDeclaredWhileKneeling: challengeOptionEffect('canBeDeclaredWhileKneeling'),
-    mustBeDeclaredAsAttacker: challengeOptionEffect('mustBeDeclaredAsAttacker'),
-    mustBeDeclaredAsDefender: challengeOptionEffect('mustBeDeclaredAsDefender'),
-    declareDefendersBeforeAttackers: function () {
-        return {
-            targetType: 'player',
-            apply: function (player, context) {
-                if (context.game.currentChallenge) {
-                    context.game.currentChallenge.declareDefendersFirst = true;
-                }
-            },
-            unapply: function (player, context) {
-                if (context.game.currentChallenge) {
-                    context.game.currentChallenge.declareDefendersFirst = false;
-                }
-            }
-        };
-    },
+    canBeDeclaredWithoutIcon: challengeOptionEffect(
+        Flags.challengeOptions.canBeDeclaredWithoutIcon
+    ),
+    canBeDeclaredWhileKneeling: challengeOptionEffect(
+        Flags.challengeOptions.canBeDeclaredWhileKneeling
+    ),
+    mustBeDeclaredAsAttacker: challengeOptionEffect(
+        Flags.challengeOptions.mustBeDeclaredAsAttacker
+    ),
+    mustBeDeclaredAsDefender: challengeOptionEffect(
+        Flags.challengeOptions.mustBeDeclaredAsDefender
+    ),
+    declareDefendersBeforeAttackers: modifyGameFlagEffect(
+        Flags.game.declareDefendersBeforeAttackers
+    ),
     restrictAttachmentsTo: function (trait) {
         return Effects.addKeyword(`No attachments except <i>${trait}</i>`);
     },
@@ -270,11 +253,11 @@ const Effects = {
     modifyStrength: function (value) {
         return {
             gameAction: value < 0 ? 'decreaseStrength' : 'increaseStrength',
-            apply: function (card) {
-                card.modifyStrength(value, true);
+            apply: function (card, context) {
+                card.addStrengthModifier(context.effect, value, true);
             },
-            unapply: function (card) {
-                card.modifyStrength(-value, false);
+            unapply: function (card, context) {
+                card.removeStrengthModifier(context.effect, false);
             },
             order: value >= 0 ? 0 : 1000
         };
@@ -285,21 +268,21 @@ const Effects = {
                 card.getType() === 'character' && card.getStrength() > value
                     ? 'decreaseStrength'
                     : 'increaseStrength',
-            apply: function (card) {
-                card.strengthSet = value;
+            apply: function (card, context) {
+                card.setStrength(context.effect, value);
             },
-            unapply: function (card) {
-                card.strengthSet = undefined;
+            unapply: function (card, context) {
+                card.removeSetStrengthEffect(context.effect);
             }
         };
     },
     modifyStrengthMultiplier: function (value) {
         return {
-            apply: function (card) {
-                card.modifyStrengthMultiplier(value, true);
+            apply: function (card, context) {
+                card.modifyStrengthMultiplier(context.effect, value, true);
             },
-            unapply: function (card) {
-                card.modifyStrengthMultiplier(1.0 / value, false);
+            unapply: function (card, context) {
+                card.removeStrengthMultiplier(context.effect, false);
             }
         };
     },
@@ -346,16 +329,9 @@ const Effects = {
     modifyReserve: dynamicCardModifier('reserve'),
     setReserve: setCardModifier('reserve'),
     setBaseReserve: setBaseCardModifier('reserve'),
-    preventPlotModifier: function (modifier) {
-        return {
-            apply: function (card) {
-                card.canProvidePlotModifier[modifier] = false;
-            },
-            unapply: function (card) {
-                card.canProvidePlotModifier[modifier] = true;
-            }
-        };
-    },
+    preventPlotModifier: modifyFlagEffect((modifier) =>
+        Flags.plotModifiers.cannotProvide(modifier)
+    ),
     dynamicStrength: function (calculate, gameAction = 'increaseStrength') {
         return {
             gameAction: gameAction,
@@ -363,18 +339,15 @@ const Effects = {
                 context.dynamicStrength = context.dynamicStrength || {};
                 context.dynamicStrength[card.uuid] = calculate(card, context) || 0;
                 let value = context.dynamicStrength[card.uuid];
-                card.modifyStrength(value, true);
+                card.addStrengthModifier(context.effect, value, true);
             },
             reapply: function (card, context) {
-                let currentStrength = context.dynamicStrength[card.uuid];
                 let newStrength = calculate(card, context) || 0;
                 context.dynamicStrength[card.uuid] = newStrength;
-                let value = newStrength - currentStrength;
-                card.modifyStrength(value, true);
+                card.changeStrengthModifier(context.effect, newStrength, true);
             },
             unapply: function (card, context) {
-                let value = context.dynamicStrength[card.uuid];
-                card.modifyStrength(-value, false);
+                card.removeStrengthModifier(context.effect, false);
                 delete context.dynamicStrength[card.uuid];
             },
             isStateDependent: true
@@ -384,15 +357,18 @@ const Effects = {
         let negatedCalculate = (card, context) => -(calculate(card, context) || 0);
         return Effects.dynamicStrength(negatedCalculate, 'decreaseStrength');
     },
-    doesNotContributeStrength: challengeOptionEffect('doesNotContributeStrength'),
-    doesNotReturnUnspentGold: function () {
+    doesNotContributeStrength: challengeOptionEffect(
+        Flags.challengeOptions.doesNotContributeStrength
+    ),
+    doesNotReturnUnspentGold: modifyPlayerFlagEffect(Flags.player.doesNotReturnUnspentGold),
+    reduceNumberOfUnspentGoldReturned: function (value) {
         return {
             targetType: 'player',
             apply: function (player) {
-                player.doesNotReturnUnspentGold = true;
+                player.amountUnspentGoldToKeep += value;
             },
             unapply: function (player) {
-                player.doesNotReturnUnspentGold = false;
+                player.amountUnspentGoldToKeep -= value;
             }
         };
     },
@@ -406,7 +382,9 @@ const Effects = {
             }
         };
     },
-    ignoresAssaultLocationCost: challengeOptionEffect('ignoresAssaultLocationCost'),
+    ignoresAssaultLocationCost: challengeOptionEffect(
+        Flags.challengeOptions.ignoresAssaultLocationCost
+    ),
     addIcon: function (icon) {
         return {
             apply: function (card, context) {
@@ -554,11 +532,12 @@ const Effects = {
             }
         };
     },
-    losesAllFactions: losesAspectEffect('factions'),
-    losesAllKeywords: losesAspectEffect('keywords'),
-    losesAllTraits: losesAspectEffect('traits'),
+    losesAllFactions: losesAspectEffect(Flags.losesAspect.allFactions),
+    losesAllKeywords: losesAspectEffect(Flags.losesAspect.keywords),
+    losesAllTraits: losesAspectEffect(Flags.losesAspect.traits),
+    losesAllImmunities: losesAspectEffect(Flags.losesAspect.immunity),
     loseFaction: function (faction) {
-        return losesAspectEffect(`factions.${faction.toLowerCase()}`)();
+        return losesAspectEffect(Flags.losesAspect.faction(faction.toLowerCase()))();
     },
     addTrait: function (trait) {
         return {
@@ -590,6 +569,16 @@ const Effects = {
             }
         };
     },
+    setLoyal: function (loyal) {
+        return {
+            apply: function (card, context) {
+                card.setLoyal(loyal, context.source);
+            },
+            unapply: function (card, context) {
+                card.clearLoyal(context.source);
+            }
+        };
+    },
     burn: {
         apply: function (card) {
             card.setIsBurning(true);
@@ -601,20 +590,23 @@ const Effects = {
     killByStrength: function (value) {
         return [Effects.burn, Effects.modifyStrength(value)];
     },
+    killByDynamicStrength: function (calculate) {
+        return [Effects.burn, Effects.dynamicDecreaseStrength(calculate)];
+    },
     blankExcludingTraits: {
         apply: function (card) {
-            card.setBlank('excludingTraits');
+            card.setBlank(Flags.blanks.excludingTraits);
         },
         unapply: function (card) {
-            card.clearBlank('excludingTraits');
+            card.clearBlank(Flags.blanks.excludingTraits);
         }
     },
     fullBlank: {
         apply: function (card) {
-            card.setBlank('full');
+            card.setBlank(Flags.blanks.full);
         },
         unapply: function (card) {
-            card.clearBlank('full');
+            card.clearBlank(Flags.blanks.full);
         }
     },
     poison: {
@@ -921,29 +913,22 @@ const Effects = {
             }
         };
     },
-    doesNotContributeToDominance: dominanceOptionEffect('doesNotContribute'),
-    contributesToDominanceWhileKneeling: dominanceOptionEffect('contributesWhileKneeling'),
-    doesNotContributeToPowerTotal: powerOptionEffect('doesNotContribute'),
-    optionalStandDuringStanding: function () {
-        return {
-            apply: function (card) {
-                card.optionalStandDuringStanding = true;
-            },
-            unapply: function (card) {
-                card.optionalStandDuringStanding = false;
-            }
-        };
-    },
+    doesNotContributeToDominance: modifyFlagEffect(Flags.dominanceOptions.doesNotContribute),
+    contributesToDominanceWhileKneeling: modifyFlagEffect(
+        Flags.dominanceOptions.contributesWhileKneeling
+    ),
+    doesNotContributeToPowerTotal: modifyFlagEffect(Flags.powerOptions.doesNotContribute),
+    optionalStandDuringStanding: modifyFlagEffect(Flags.standingOptions.optionalStand),
     immuneTo: function (cardCondition) {
         return {
             apply: function (card, context) {
-                let restriction = new ImmunityRestriction(cardCondition, context.source);
+                const restriction = new ImmunityRestriction(cardCondition, context.source);
                 context.immuneTo = context.immuneTo || {};
                 context.immuneTo[card.uuid] = restriction;
                 card.addAbilityRestriction(restriction);
             },
             unapply: function (card, context) {
-                let restriction = context.immuneTo[card.uuid];
+                const restriction = context.immuneTo[card.uuid];
                 card.removeAbilityRestriction(restriction);
                 delete context.immuneTo[card.uuid];
             }
@@ -1074,28 +1059,19 @@ const Effects = {
             }
         };
     },
-    cannotGainChallengeBonus: function () {
+    setMaxPowerGain: function (max) {
         return {
             targetType: 'player',
             apply: function (player) {
-                player.cannotGainChallengeBonus = true;
+                player.maxPowerGain.setMax(max);
             },
             unapply: function (player) {
-                player.cannotGainChallengeBonus = false;
+                player.maxPowerGain.removeMax(max);
             }
         };
     },
-    cannotWinGame: function () {
-        return {
-            targetType: 'player',
-            apply: function (player) {
-                player.cannotWinGame = true;
-            },
-            unapply: function (player) {
-                player.cannotWinGame = false;
-            }
-        };
-    },
+    cannotGainChallengeBonus: modifyPlayerFlagEffect(Flags.player.cannotGainChallengeBonus),
+    cannotWinGame: modifyPlayerFlagEffect(Flags.player.cannotWinGame),
     cannotTriggerCardAbilities: function (restriction = () => true) {
         return {
             targetType: 'player',
@@ -1182,6 +1158,21 @@ const Effects = {
                 let goldSource = context.canSpendGold[card.uuid];
                 card.controller.removeGoldSource(goldSource);
                 delete context.canSpendGold[card.uuid];
+            }
+        };
+    },
+    canSpendPowerAsGold: function (allowSpendingFunc) {
+        return {
+            apply: function (card, context) {
+                let goldSource = new PowerAsGoldSource(card, allowSpendingFunc);
+                context.canSpendPowerAsGold = context.canSpendPowerAsGold || {};
+                context.canSpendPowerAsGold[card.uuid] = goldSource;
+                context.source.controller.addGoldSource(goldSource);
+            },
+            unapply: function (card, context) {
+                let goldSource = context.canSpendPowerAsGold[card.uuid];
+                context.source.controller.removeGoldSource(goldSource);
+                delete context.canSpendPowerAsGold[card.uuid];
             }
         };
     },
@@ -1300,17 +1291,7 @@ const Effects = {
             }
         };
     },
-    cannotWinChallenge: function () {
-        return {
-            targetType: 'player',
-            apply: function (player) {
-                player.cannotWinChallenge = true;
-            },
-            unapply: function (player) {
-                player.cannotWinChallenge = false;
-            }
-        };
-    },
+    cannotWinChallenge: modifyPlayerFlagEffect(Flags.player.cannotWinChallenge),
     choosesWinnerForInitiativeTies: function () {
         return {
             targetType: 'player',
@@ -1421,28 +1402,8 @@ const Effects = {
             }
         };
     },
-    cannotBeFirstPlayer: function () {
-        return {
-            targetType: 'player',
-            apply: function (player) {
-                player.flags.add('cannotBeFirstPlayer');
-            },
-            unapply: function (player) {
-                player.flags.remove('cannotBeFirstPlayer');
-            }
-        };
-    },
-    cannotGainDominancePower: function () {
-        return {
-            targetType: 'player',
-            apply: function (player) {
-                player.flags.add('cannotGainDominancePower');
-            },
-            unapply: function (player) {
-                player.flags.remove('cannotGainDominancePower');
-            }
-        };
-    },
+    cannotBeFirstPlayer: modifyPlayerFlagEffect(Flags.player.cannotBeFirstPlayer),
+    cannotGainDominancePower: modifyPlayerFlagEffect(Flags.player.cannotGainDominancePower),
     canSelectAsFirstPlayer: function (condition) {
         return {
             targetType: 'player',
@@ -1557,6 +1518,9 @@ const Effects = {
     reduceFirstMarshalledOrPlayedCardCostEachRound: function (amount, match) {
         return this.reduceFirstCardCostEachRound(['marshal', 'play'], amount, match);
     },
+    reduceFirstMarshaledCardIntoShadowsEachRound: function (amount, match) {
+        return this.reduceFirstCardCostEachRound('marshalIntoShadows', amount, match);
+    },
     reduceFirstOutOfShadowsCardCostEachRound: function (amount, match) {
         return this.reduceFirstCardCostEachRound(['outOfShadows'], amount, match);
     },
@@ -1633,6 +1597,17 @@ const Effects = {
             isStateDependent: true
         };
     },
+    modifyHandCount: function (value) {
+        return {
+            targetType: 'player',
+            apply: function (player) {
+                player.handCountModifier += value;
+            },
+            unapply: function (player) {
+                player.handCountModifier -= value;
+            }
+        };
+    },
     mustChooseAsClaim: function () {
         return {
             apply: function (card) {
@@ -1645,27 +1620,8 @@ const Effects = {
             }
         };
     },
-    skipPhase: function (name) {
-        return {
-            targetType: 'game',
-            apply: function (game) {
-                game.skipPhase[name] = true;
-            },
-            unapply: function (game) {
-                game.skipPhase[name] = false;
-            }
-        };
-    },
-    notConsideredToBeInPlotDeck: function () {
-        return {
-            apply: function (card) {
-                card.notConsideredToBeInPlotDeck = true;
-            },
-            unapply: function (card) {
-                card.notConsideredToBeInPlotDeck = false;
-            }
-        };
-    },
+    skipPhase: modifyGameFlagEffect((name) => Flags.game.skipPhase(name)),
+    notConsideredToBeInPlotDeck: modifyFlagEffect(Flags.card.notConsideredToBeInPlotDeck),
     mustRevealPlot: function (card) {
         return {
             targetType: 'player',
@@ -1677,16 +1633,14 @@ const Effects = {
             }
         };
     },
-    applyClaimToMultipleOpponents: function (claimType) {
+    applyClaimToAnyOpponents: function (claimType) {
         return {
             targetType: 'player',
             apply: function (player) {
-                player.multipleOpponentClaim.push(claimType);
+                player.anyOpponentsClaim.push(claimType);
             },
             unapply: function (player) {
-                player.multipleOpponentClaim = player.multipleOpponentClaim.filter(
-                    (c) => c === claimType
-                );
+                player.anyOpponentsClaim = player.anyOpponentsClaim.filter((c) => c !== claimType);
             }
         };
     },
@@ -1874,17 +1828,7 @@ const Effects = {
             isStateDependent: true
         };
     },
-    cannotRevealPlot: function () {
-        return {
-            targetType: 'player',
-            apply: function (player) {
-                player.flags.add('cannotRevealPlot');
-            },
-            unapply: function (player) {
-                player.flags.remove('cannotRevealPlot');
-            }
-        };
-    },
+    cannotRevealPlot: modifyPlayerFlagEffect(Flags.player.cannotRevealPlot),
     //Meereen only effect
     removeCardsFromHand: function () {
         return {

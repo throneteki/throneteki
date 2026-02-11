@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock, faPauseCircle } from '@fortawesome/free-solid-svg-icons';
+import classNames from 'classnames';
 
 const formatTime = (seconds) => {
-    if (!seconds) {
+    if (!seconds && seconds !== 0) {
         return null;
     }
     const momentTime = moment.utc(seconds * 1000);
@@ -12,7 +13,7 @@ const formatTime = (seconds) => {
     return momentTime.format(format);
 };
 
-const TimeLimitClock = ({ active, paused, timerStart, timeLeft: timeLeftProp }) => {
+const TimeLimitClock = ({ className, active, paused, timerStart, timeLeft: timeLeftProp }) => {
     const [timer, setTimer] = useState(null);
     const [timeLeft, setTimeLeft] = useState(timeLeftProp);
 
@@ -45,18 +46,17 @@ const TimeLimitClock = ({ active, paused, timerStart, timeLeft: timeLeftProp }) 
         };
     }, [active, paused, timerStart, timeLeftProp, timer]);
 
-    let icon = null;
+    const icon = paused ? <FontAwesomeIcon icon={faPauseCircle} /> : null;
 
-    if (paused) {
-        icon = <FontAwesomeIcon icon={faPauseCircle} />;
-    } else if (active) {
-        icon = <FontAwesomeIcon icon={faClock} />;
-    }
-
+    const wrapperClassName = classNames(
+        'flex items-center gap-2 w-fit bg-black/40 rounded-md px-2 py-1 text-2xl',
+        className
+    );
     return (
-        <div className='flex items-center gap-2'>
+        <div className={wrapperClassName}>
+            <FontAwesomeIcon icon={faClock} />
             <div className='text-3xl'>{formatTime(timeLeft)}</div>
-            <div className='text-xl w-5'>{icon}</div>
+            {icon && <div className='w-5'>{icon}</div>}
         </div>
     );
 };

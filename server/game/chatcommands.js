@@ -2,7 +2,8 @@ import TextHelper from './TextHelper.js';
 import CancelChallengePrompt from './gamesteps/CancelChallengePrompt.js';
 import Deck from './Deck.js';
 import RematchPrompt from './gamesteps/RematchPrompt.js';
-import { Tokens } from './Constants/index.js';
+import { Flags, Tokens } from './Constants/index.js';
+import Effects from './effects.js';
 
 class ChatCommands {
     constructor(game) {
@@ -122,7 +123,7 @@ class ChatCommands {
             waitingPromptTitle: 'Waiting for opponent to blank card',
             cardCondition: (card) => card.location === 'play area' && card.controller === player,
             onSelect: (p, card) => {
-                card.setBlank('full');
+                card.setBlank(Flags.blanks.full);
 
                 this.game.addAlert('danger', '{0} uses the /blank command to blank {1}', p, card);
                 return true;
@@ -286,11 +287,17 @@ class ChatCommands {
                 card.controller === player &&
                 card.getType() === 'character',
             onSelect: (p, card) => {
+                let effect;
                 if (typeof card.strengthSet === 'number') {
-                    card.strengthSet = num;
+                    effect = Effects.setStrength(num);
                 } else {
-                    card.strengthModifier = num - card.getPrintedStrength();
+                    effect = Effects.modifyStrength(num - card.getStrength());
                 }
+                card.lastingEffect(() => ({
+                    condition: () => card.location === 'play area',
+                    match: card,
+                    effect: effect
+                }));
                 this.game.addAlert(
                     'danger',
                     '{0} uses the /strength command to set the strength of {1} to {2}',
@@ -298,6 +305,7 @@ class ChatCommands {
                     card,
                     num
                 );
+                this.game.refreshGameState();
                 return true;
             }
         });
@@ -731,12 +739,12 @@ class ChatCommands {
     }
 
     rematch(player) {
-        if (this.game.finishedAt) {
+        if (this.game.isGameOver) {
             this.game.addAlert('info', '{0} is requesting a rematch', player);
         } else {
             this.game.addAlert(
                 'danger',
-                '{0} is requesting a rematch.  The current game is not finished',
+                '{0} is requesting a rematch. The current game is not finished',
                 player
             );
         }

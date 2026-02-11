@@ -40,7 +40,7 @@ class PoorFellows extends DrawCard {
 
     gainsPower() {
         this.modifyPower(1);
-        this.game.addMessage('{0} gains 1 power on {2}', this.controller, this);
+        this.game.addMessage('{0} gains 1 power on {1}', this.controller, this);
         return true;
     }
 

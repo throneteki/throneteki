@@ -8,9 +8,9 @@ class SiegePreparations extends PlotCard {
             phase: 'dominance',
             condition: () =>
                 this.controller.canDraw() &&
-                this.controller.getReserve() > this.controller.hand.length,
+                this.controller.getReserve() > this.controller.getHandCount(),
             handler: (context) => {
-                let cardsToDraw = context.player.getReserve() - context.player.hand.length;
+                let cardsToDraw = context.player.getReserve() - context.player.getHandCount();
                 let numDrawn = context.player.drawCardsToHand(cardsToDraw).length;
                 this.game.addMessage(
                     '{0} uses {1} to draw {2}',

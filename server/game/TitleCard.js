@@ -7,6 +7,8 @@ class TitleCard extends BaseCard {
         this.dominanceStrengthModifier = 0;
         this.supporterNames = this.supporterNames || [];
         this.rivalNames = this.rivalNames || [];
+        this.isContributing = false;
+        this.location = 'title pool';
     }
 
     supports(...values) {
@@ -39,6 +41,13 @@ class TitleCard extends BaseCard {
 
     getDominanceStrength() {
         return this.dominanceStrengthModifier;
+    }
+
+    getSummary(activePlayer) {
+        return {
+            ...super.getSummary(activePlayer),
+            isContributing: this.isContributing
+        };
     }
 }
 

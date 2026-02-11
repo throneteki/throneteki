@@ -3,29 +3,36 @@ import GameConfiguration from './GameConfiguration';
 import { Modal, ModalBody, ModalContent, ModalHeader } from '@heroui/react';
 
 const GameConfigurationModal = ({
+    isOpen,
+    isSpectating,
     keywordSettings,
     onClose,
     onKeywordSettingToggle,
     onPromptDupesToggle,
     onPromptedActionWindowToggle,
     onTimerSettingToggle,
+    onCardSizeSettingChange,
     promptDupes,
     promptedActionWindows,
-    timerSettings
+    timerSettings,
+    cardSizeSetting
 }) => {
     return (
         <>
-            <Modal isOpen={true} onClose={onClose} size='lg'>
+            <Modal isOpen={isOpen} onClose={onClose} size='lg' scrollBehavior='inside'>
                 <ModalContent>
                     <ModalHeader>{'Game Configuration'}</ModalHeader>
                     <ModalBody>
                         <GameConfiguration
+                            isSpectating={isSpectating}
                             actionWindows={promptedActionWindows}
                             keywordSettings={keywordSettings}
                             promptDupes={promptDupes}
                             timerSettings={timerSettings}
+                            cardSizeSetting={cardSizeSetting}
                             onKeywordSettingToggle={onKeywordSettingToggle}
                             onTimerSettingToggle={onTimerSettingToggle}
+                            onCardSizeSettingChange={onCardSizeSettingChange}
                             onActionWindowToggle={onPromptedActionWindowToggle}
                             onPromptDupesToggle={onPromptDupesToggle}
                         />

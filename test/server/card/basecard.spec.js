@@ -1,4 +1,5 @@
 import BaseCard from '../../../server/game/basecard.js';
+import { Flags } from '../../../server/game/Constants/index.js';
 
 describe('BaseCard', function () {
     beforeEach(function () {
@@ -199,8 +200,12 @@ describe('BaseCard', function () {
         describe('when there are restrictions', function () {
             beforeEach(function () {
                 this.game.currentAbilityContext = { context: 1 };
-                this.restrictionSpy1 = jasmine.createSpyObj('restriction', ['isMatch']);
-                this.restrictionSpy2 = jasmine.createSpyObj('restriction', ['isMatch']);
+                this.restrictionSpy1 = jasmine.createSpyObj('restriction', ['isMatch', 'isActive']);
+                this.restrictionSpy1.name = 'restriction1';
+                this.restrictionSpy1.isActive.and.returnValue(true);
+                this.restrictionSpy2 = jasmine.createSpyObj('restriction', ['isMatch', 'isActive']);
+                this.restrictionSpy2.name = 'restriction2';
+                this.restrictionSpy2.isActive.and.returnValue(true);
                 this.card.addAbilityRestriction(this.restrictionSpy1);
                 this.card.addAbilityRestriction(this.restrictionSpy2);
             });
@@ -230,6 +235,28 @@ describe('BaseCard', function () {
 
                 it('should return false', function () {
                     expect(this.card.allowGameAction('kill')).toBe(false);
+                });
+            });
+
+            describe('but a restriction type is lost', function () {
+                beforeEach(function () {
+                    this.card.flags.add('restriction1');
+                    this.restrictionSpy1.isActive.and.callFake(
+                        (card) => !card.hasFlag('restriction1')
+                    );
+                    this.restrictionSpy2.isActive.and.callFake(
+                        (card) => !card.hasFlag('restriction2')
+                    );
+                    this.card.markAsDirty();
+                });
+
+                it('should skip that restriction type', function () {
+                    this.card.allowGameAction('kill');
+                    expect(this.restrictionSpy1.isMatch).not.toHaveBeenCalled();
+                    expect(this.restrictionSpy2.isMatch).toHaveBeenCalledWith(
+                        'kill',
+                        this.game.currentAbilityContext
+                    );
                 });
             });
         });
@@ -271,7 +298,7 @@ describe('BaseCard', function () {
 
         describe('when the card loses all factions', function () {
             beforeEach(function () {
-                this.card.loseAspect('factions');
+                this.card.flags.add(Flags.losesAspect.allFactions);
             });
 
             it('should return true for neutral', function () {
@@ -282,7 +309,7 @@ describe('BaseCard', function () {
         describe('when the card loses a specific faction', function () {
             beforeEach(function () {
                 this.card.addFaction('lannister');
-                this.card.loseAspect('factions.stark');
+                this.card.flags.add(Flags.losesAspect.faction('stark'));
             });
 
             it('should return false for the faction lost', function () {
@@ -294,7 +321,7 @@ describe('BaseCard', function () {
             });
 
             it('should read as neutral if it has lost all its specific factions', function () {
-                this.card.loseAspect('factions.lannister');
+                this.card.flags.add(Flags.losesAspect.faction('lannister'));
 
                 expect(this.card.isFaction('neutral')).toBe(true);
             });

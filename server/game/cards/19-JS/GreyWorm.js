@@ -5,8 +5,8 @@ class GreyWorm extends DrawCard {
         this.persistentEffect({
             condition: () =>
                 this.game.currentChallenge &&
-                this.controller.hand.length <
-                    this.game.currentChallenge.attackingPlayer.hand.length,
+                this.controller.getHandCount() <
+                    this.game.currentChallenge.attackingPlayer.getHandCount(),
             match: this,
             effect: ability.effects.doesNotKneelAsDefender()
         });

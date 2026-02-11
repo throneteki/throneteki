@@ -781,6 +781,8 @@ describe('take control', function () {
 
         describe('taking control of a card with power', function () {
             beforeEach(function () {
+                this.game.disableWinning = false;
+
                 const deck = this.buildDeck('greyjoy', [
                     'A Noble Cause',
                     // Add enough cards so that a winner isn't chosen by the players being decked
@@ -825,7 +827,7 @@ describe('take control', function () {
 
             it('should immediately win the game', function () {
                 expect(this.location).toBeControlledBy(this.player1);
-                expect(this.game.winner).toBe(this.player1Object);
+                expect(this.game.results.winner).toBe(this.player1Object.name);
             });
         });
     });

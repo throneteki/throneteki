@@ -19,7 +19,7 @@ export default [
         }
     },
     {
-        files: ['client/**/*.jsx', 'server/**/*.js', 'test/server/**/*.js'],
+        files: ['client/**/*.jsx', 'client/**/*.js', 'server/**/*.js', 'test/server/**/*.js'],
         ignores: ['coverage'],
         languageOptions: {
             ...reactRecommended.languageOptions,
@@ -48,6 +48,12 @@ export default [
                     argsIgnorePattern: '^_',
                     varsIgnorePattern: '^_',
                     caughtErrorsIgnorePattern: '^_'
+                }
+            ],
+            'prettier/prettier': [
+                'error',
+                {
+                    endOfLine: 'auto'
                 }
             ]
         },

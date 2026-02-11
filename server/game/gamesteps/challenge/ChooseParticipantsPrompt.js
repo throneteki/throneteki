@@ -52,10 +52,7 @@ class ChooseParticipantsPrompt extends BaseStep {
     }
 
     isRequiredParticipant(card) {
-        return (
-            this.canParticipate(card) &&
-            card.challengeOptions.contains(this.properties.mustBeDeclaredOption)
-        );
+        return this.canParticipate(card) && card.hasFlag(this.properties.mustBeDeclaredOption);
     }
 
     getPromptTitle() {

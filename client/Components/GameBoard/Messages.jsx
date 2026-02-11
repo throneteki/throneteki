@@ -3,15 +3,14 @@ import classNames from 'classnames';
 import { useSelector } from 'react-redux';
 import { Avatar, Link } from '@heroui/react';
 
-import CardZoom from './CardZoom';
 import AlertPanel from '../Site/AlertPanel';
 
 import CardBackImage from '../../assets/img/cardback.png';
 import GoldImage from '../../assets/img/stats/gold.png';
 
-import './Messages.css';
 import { Constants, ThronesIcons } from '../../constants';
 import ThronesIcon from './ThronesIcon';
+import CardHoverable from '../Images/CardHoverable';
 
 const tokens = {
     card: { className: 'h-4 w-3 inline', imageSrc: CardBackImage },
@@ -19,7 +18,7 @@ const tokens = {
     gold: { className: 'h-3 w-3 inline mt-1', imageSrc: GoldImage }
 };
 
-const Messages = ({ messages, onCardMouseOut, onCardMouseOver }) => {
+const Messages = ({ messages }) => {
     const currentGame = useSelector((state) => state.lobby.currentGame);
 
     const owner = currentGame.players[currentGame.owner];
@@ -63,30 +62,25 @@ const Messages = ({ messages, onCardMouseOut, onCardMouseOver }) => {
             if (key === 'alert') {
                 const message = formatMessageText(fragment.message);
                 switch (fragment.type) {
+                    case 'startofround':
                     case 'endofround':
-                    case 'phasestart':
-                        // eslint-disable-next-line no-var
-                        var sepClass = classNames('font-bold text-foreground', {
-                            'text-md': fragment.type === 'phasestart',
+                    case 'phasestart': {
+                        const className = classNames('font-bold text-foreground', {
+                            'text-large': fragment.type === 'startofround',
+                            'text-medium': fragment.type === 'phasestart',
                             capitalize: fragment.type === 'phasestart'
                         });
                         messages.push(
-                            <div className={sepClass} key={index++}>
-                                <hr className={'mb-4 mt-2 border-primary ' + fragment.type} />
-                                {message}
+                            <div className={className} key={index++}>
+                                <hr className='border-primary' />
+                                <div className='my-3'>{message}</div>
                                 {fragment.type === 'phasestart' && (
-                                    <hr className='mt-4 border-primary' />
+                                    <hr className='border-primary' />
                                 )}
                             </div>
                         );
                         break;
-                    case 'startofround':
-                        messages.push(
-                            <div className={'separator font-bold ' + fragment.type} key={index++}>
-                                {message}
-                            </div>
-                        );
-                        break;
+                    }
                     case 'success':
                     case 'info':
                     case 'danger':
@@ -111,34 +105,10 @@ const Messages = ({ messages, onCardMouseOut, onCardMouseOver }) => {
                         {fragment.label}
                     </Link>
                 );
-            } else if (fragment.image && fragment.label) {
-                messages.push(
-                    <span
-                        key={index++}
-                        className='cursor-pointer text-secondary hover:text-info'
-                        onMouseOver={onCardMouseOver.bind(this, {
-                            image: <CardZoom imageUrl={`/img/cards/${fragment.code}.png`} />,
-                            size: 'normal'
-                        })}
-                        onMouseOut={() => onCardMouseOut && onCardMouseOut(fragment)}
-                    >
-                        {fragment.label}
-                    </span>
-                );
             } else if (fragment.code && fragment.label) {
                 messages.push(
-                    <span
-                        key={index++}
-                        className='cursor-pointer text-secondary hover:text-info'
-                        onMouseOver={() =>
-                            onCardMouseOver({
-                                code: fragment.code,
-                                name: fragment.label || fragment.name
-                            })
-                        }
-                        onMouseOut={() => onCardMouseOut && onCardMouseOut(fragment)}
-                    >
-                        {fragment.label}
+                    <span key={index++} className='cursor-pointer text-secondary hover:text-info'>
+                        <CardHoverable code={fragment.code}>{fragment.label}</CardHoverable>
                     </span>
                 );
             } else if (fragment.name && fragment.argType === 'player') {
@@ -149,13 +119,13 @@ const Messages = ({ messages, onCardMouseOut, onCardMouseOver }) => {
                             showFallback
                             className='w-6 h-6 text-tiny'
                         />
-                        <span key={index++} className={Constants.ColourClassByRole[fragment.role]}>
+                        <span key={index++} className={Constants.ColorClassByRole[fragment.role]}>
                             {fragment.name}
                         </span>
                     </div>
                 );
             } else if (fragment.argType === 'nonAvatarPlayer') {
-                const roleClass = Constants.ColourClassByRole[fragment.role?.toLowerCase()];
+                const roleClass = Constants.ColorClassByRole[fragment.role?.toLowerCase()];
                 const userClass = classNames('username font-bold', roleClass);
 
                 messages.push(
@@ -180,10 +150,9 @@ const Messages = ({ messages, onCardMouseOut, onCardMouseOver }) => {
 
     const renderMessages = () => {
         return messages.map((message, index) => {
-            const className = classNames('break-words leading-[1.15rem] text-gray-300', '', {
-                'this-player': message.activePlayer && message.activePlayer == owner.name,
-                'other-player': message.activePlayer && message.activePlayer !== owner.name,
-                'chat-bubble': Object.values(message.message).some(
+            // TODO: Re-add chat bubble triangles (left for this player, right for others)
+            const className = classNames('break-words leading-[1.15rem] text-gray-300', {
+                'p-2 bg-default rounded-md': Object.values(message.message).some(
                     (m) => m.name && m.argType === 'player'
                 )
             });

@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
-import AlertPanel from '../Components/Site/AlertPanel';
 import { navigate } from '../redux/reducers/navigation';
 import { useLinkPatreonMutation } from '../redux/middleware/api';
 import { toast } from 'react-toastify';
+import Page from './Page';
+import LoadingSpinner from '../Components/Site/LoadingSpinner';
+import ErrorMessage from '../Components/Site/ErrorMessage';
 
 const Patreon = ({ code }) => {
     const dispatch = useDispatch();
@@ -27,7 +29,7 @@ const Patreon = ({ code }) => {
             dispatch(navigate('/profile'));
 
             toast.success(
-                'Your account was linked successfully.  Sending you back to the profile page'
+                'Your account was linked successfully. Sending you back to the profile page'
             );
         };
 
@@ -36,14 +38,19 @@ const Patreon = ({ code }) => {
 
     if (!code) {
         return (
-            <AlertPanel
-                variant='danger'
-                message='This page is not intended to be viewed directly.  Please click on one of the links at the top of the page or your browser back button to return to the site.'
-            />
+            <Page className='h-full'>
+                <ErrorMessage
+                    title='This page is not intended to be viewed directly'
+                    message='Please click on one of the links at the top of the page or your browser back button to return to the site.'
+                />
+            </Page>
         );
     }
-
-    return <div>{isLoading && <div>Please wait while we verify your details..</div>}</div>;
+    return (
+        <Page className='h-full'>
+            {isLoading && <LoadingSpinner label='Please wait while we verify your details...' />}
+        </Page>
+    );
 };
 
 export default Patreon;

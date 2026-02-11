@@ -37,7 +37,6 @@ describe('Melee at Bitterbridge', function () {
         describe("when it's played with cost 1", function () {
             beforeEach(function () {
                 this.player1.clickCard(this.melee);
-                this.player1.selectValue('1');
                 this.player1.clickCard(this.fossoway);
                 this.player1.clickPrompt('Done');
 

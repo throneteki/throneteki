@@ -92,7 +92,13 @@ class KeywordsProperty {
 
         return matches
             .filter((match) => !!match)
-            .map((match) => (isNaN(match[1]) ? 0 : parseInt(match[1])));
+            .map((match) => {
+                if (match[1] === 'x') {
+                    return 'X';
+                }
+
+                return isNaN(match[1]) ? 0 : parseInt(match[1]);
+            });
     }
 
     safeReduce(values, func) {

@@ -14,27 +14,27 @@ class HeirToTheIronThrone extends PlotCard {
                 message: '{player} {gameAction}',
                 gameAction: GameActions.putIntoPlay((context) => ({
                     card: context.searchTarget
-                })).then({
-                    condition: (context) =>
-                        context.parentContext.searchTarget.location === 'play area',
-                    activePromptTitle: 'Select character to sacrifice',
-                    target: {
-                        cardCondition: {
-                            type: 'character',
-                            trait: ['Lord', 'Lady'],
-                            location: 'play area',
-                            controller: 'current'
-                        },
-                        gameAction: 'sacrifice'
+                }))
+            }).then({
+                condition: (context) =>
+                    context.parentContext.searchTarget?.location === 'play area',
+                activePromptTitle: 'Select character to sacrifice',
+                target: {
+                    cardCondition: {
+                        type: 'character',
+                        trait: ['Lord', 'Lady'],
+                        location: 'play area',
+                        controller: 'current'
                     },
-                    message: 'Then, {player} sacrifices {target}',
-                    handler: (context) => {
-                        this.game.resolveGameAction(
-                            GameActions.sacrificeCard((context) => ({ card: context.target })),
-                            context
-                        );
-                    }
-                })
+                    gameAction: 'sacrifice'
+                },
+                message: 'Then, {player} sacrifices {target}',
+                handler: (context) => {
+                    this.game.resolveGameAction(
+                        GameActions.sacrificeCard((context) => ({ card: context.target })),
+                        context
+                    );
+                }
             })
         });
     }

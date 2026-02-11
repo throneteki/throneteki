@@ -16,6 +16,7 @@ import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import LoadingSpinner from '../Components/Site/LoadingSpinner';
 import { toast } from 'react-toastify';
 import ConfirmDialog from '../Components/Site/ConfirmDialog';
+import Page from './Page';
 
 const NewsAdmin = () => {
     const { data: news, isLoading, error } = useGetAllNewsQuery();
@@ -41,6 +42,8 @@ const NewsAdmin = () => {
     const onSaveClick = useCallback(async () => {
         try {
             await saveNews({ id: selectedItem._id, text: newsText }).unwrap();
+            setSelectedItem(null);
+            setNewsText('');
 
             toast.success('News edited successfully.');
         } catch (err) {
@@ -90,7 +93,7 @@ const NewsAdmin = () => {
             label: 'Delete',
             disabled: selectedIds.length === 0,
             isLoading: isDeleteLoading,
-            onClick: () => {
+            onPress: () => {
                 setShowConfirm(true);
             }
         }
@@ -100,71 +103,79 @@ const NewsAdmin = () => {
         return <LoadingSpinner label='Loading news...' />;
     }
     return (
-        <div className='lg:w-5/6 mx-auto'>
+        <Page>
             {error && <AlertPanel variant='danger' message={error} />}
             <Panel title='News administration'>
-                <div className='h-[400px]'>
-                    <ReactTable
-                        buttons={buttons}
-                        columns={columns}
-                        dataLoadFn={() => ({
-                            data: news,
-                            isLoading: isLoading,
-                            isError: false
-                        })}
-                        onRowClick={(row) => {
-                            setSelectedItem(row.original);
-                            setNewsText(row.original.text);
-                        }}
-                        onRowSelectionChange={(ids) =>
-                            setSelectedIds(ids.map((r) => r.original._id))
-                        }
-                        selectedRows={selectedRows}
-                    />
+                <div className='flex flex-col gap-1'>
+                    <p>Add a new news item below, or click an existing one to edit it.</p>
+                    <div className='h-[400px]'>
+                        <ReactTable
+                            buttons={buttons}
+                            columns={columns}
+                            dataLoadFn={() => ({
+                                data: news,
+                                isLoading: isLoading,
+                                isError: false
+                            })}
+                            onRowClick={(row) => {
+                                setSelectedItem(row.original);
+                                setNewsText(row.original.text);
+                            }}
+                            onRowSelectionChange={(ids) =>
+                                setSelectedIds(ids.map((r) => r.original._id))
+                            }
+                            selectedRows={selectedRows}
+                        />
+                    </div>
                 </div>
             </Panel>
-            <div className='mt-2'>
-                <Panel title='Add new news item'>
-                    <Textarea
-                        label={selectedItem ? 'News text' : 'Enter new news item'}
-                        onValueChange={setNewsText}
-                        value={newsText}
-                    />
-                    <div>
-                        {selectedItem ? (
-                            <div>
-                                <Button
-                                    className='mr-2 mt-2'
-                                    color='primary'
-                                    isLoading={isSaveLoading}
-                                    onPress={onSaveClick}
-                                >
-                                    Save
-                                </Button>
-                                <Button
-                                    className='mt-2'
-                                    color='default'
-                                    onPress={() => {
-                                        setSelectedItem(null);
-                                        setNewsText('');
-                                    }}
-                                >
-                                    Cancel
-                                </Button>
-                            </div>
-                        ) : (
+            <Panel
+                title={
+                    selectedItem
+                        ? `Edit existing news item by ${selectedItem.poster}`
+                        : 'Add new news item'
+                }
+            >
+                <Textarea
+                    label={selectedItem ? 'Updated news text' : 'Enter new news text'}
+                    onValueChange={setNewsText}
+                    value={newsText}
+                />
+                <div>
+                    {selectedItem ? (
+                        <div>
+                            <Button
+                                className='mr-2 mt-2'
+                                color='primary'
+                                isLoading={isSaveLoading}
+                                onPress={onSaveClick}
+                                isDisabled={newsText === ''}
+                            >
+                                Overwrite & Save
+                            </Button>
                             <Button
                                 className='mt-2'
-                                color='primary'
-                                isLoading={isAddLoading}
-                                onPress={() => onAddNewsClick(newsText)}
+                                color='default'
+                                onPress={() => {
+                                    setSelectedItem(null);
+                                    setNewsText('');
+                                }}
                             >
-                                Add
+                                Cancel
                             </Button>
-                        )}
-                    </div>
-                </Panel>
-            </div>
+                        </div>
+                    ) : (
+                        <Button
+                            className='mt-2'
+                            color='primary'
+                            isLoading={isAddLoading}
+                            onPress={() => onAddNewsClick(newsText)}
+                        >
+                            Add
+                        </Button>
+                    )}
+                </div>
+            </Panel>
             <ConfirmDialog
                 isOpen={showConfirm}
                 message={`Are you sure you want to delete ${
@@ -188,7 +199,7 @@ const NewsAdmin = () => {
                     }
                 }}
             />
-        </div>
+        </Page>
     );
 };
 

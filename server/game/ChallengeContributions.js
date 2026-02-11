@@ -1,3 +1,5 @@
+import { Flags } from './Constants/index.js';
+
 export class ChallengeContributions {
     constructor() {
         this.contributions = [];
@@ -102,13 +104,7 @@ export class CharacterStrengthContribution {
     }
 
     isActive() {
-        if (
-            this.isLatest &&
-            !(
-                this.card.challengeOptions &&
-                this.card.challengeOptions.contains('doesNotContributeStrength')
-            )
-        ) {
+        if (this.isLatest && !this.card.hasFlag(Flags.challengeOptions.doesNotContributeStrength)) {
             return true;
         }
         return false;

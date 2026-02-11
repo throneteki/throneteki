@@ -6,32 +6,22 @@ class ChooseTitlePrompt extends BaseStep {
 
         this.titlePool = titlePool;
         this.remainingPlayers = game.getPlayersInFirstPlayerOrder();
+        this.remainingTitles = titlePool.getCardsForSelection();
         this.selections = [];
     }
 
     continue() {
-        if (!this.game.isMelee) {
-            return true;
-        }
-
-        if (this.selections.length === 0) {
-            this.remainingTitles = this.titlePool.getCardsForSelection();
-        }
-
         if (this.remainingPlayers.length !== 0) {
-            let currentPlayer = this.remainingPlayers.shift();
+            const currentPlayer = this.remainingPlayers.shift();
             this.promptForTitle(currentPlayer);
             return false;
         }
 
-        for (let selection of this.selections) {
-            this.titlePool.chooseFromPool(selection.player, selection.title);
-            this.game.addMessage('{0} selects {1}', selection.player, selection.title);
-        }
+        this.titlePool.announceTitles(this.selections);
     }
 
     promptForTitle(player) {
-        let buttons = this.remainingTitles.map((title) => {
+        const buttons = this.remainingTitles.map((title) => {
             return { method: 'chooseTitle', card: title };
         });
         this.game.promptWithMenu(player, this, {
@@ -44,14 +34,16 @@ class ChooseTitlePrompt extends BaseStep {
     }
 
     chooseTitle(player, titleId) {
-        let title = this.remainingTitles.find((title) => title.uuid === titleId);
+        const title = this.remainingTitles.find((title) => title.uuid === titleId);
 
         if (!title) {
             return false;
         }
 
+        this.titlePool.chooseFromPool(player, title);
         this.remainingTitles = this.remainingTitles.filter((t) => t !== title);
         this.selections.push({ player: player, title: title });
+        this.game.addMessage('{0} has selected their title', player);
 
         return true;
     }

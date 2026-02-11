@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
-import Link from '../Site/Link';
 import ContextMenu from './ContextMenu';
 import ServerStatus from './ServerStatus';
 
@@ -13,7 +12,6 @@ import {
     DropdownMenu,
     DropdownTrigger,
     Image,
-    Link as NextUiLink,
     Navbar,
     NavbarBrand,
     NavbarContent,
@@ -25,9 +23,14 @@ import { LeftMenu, ProfileMenu, RightMenu } from '../../menus';
 import ProfileDropdown from './ProfileDropdown';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
+import NavigationLink from '../Site/NavigationLink';
+import ConfirmDialog from '../Site/ConfirmDialog';
+import { sendLeaveGameMessage } from '../../redux/reducers/game';
+import FullScreenButton from './FullScreenButton';
+import NavItem from './NavItem';
 
 const NavBar = () => {
-    const { path } = useSelector((state) => state.navigation);
+    const dispatch = useDispatch();
     const { user } = useSelector((state) => state.auth);
     const {
         connected: lobbySocketConnected,
@@ -42,6 +45,8 @@ const NavBar = () => {
         responseTime: gameResponse
     } = useSelector((state) => state.game);
 
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [showConfirmLeave, setShowConfirmLeave] = useState(false);
     const [dropdownOpenStatus, setDropdownOpenStatus] = useState({});
 
     const userCanSeeMenu = (menuItem, user) => {
@@ -87,10 +92,7 @@ const NavBar = () => {
                             }}
                         >
                             <DropdownTrigger>
-                                <NextUiLink
-                                    className='flex gap-1 cursor-pointer font-[PoppinsMedium] text-secondary transition-colors duration-500 ease-in-out hover:text-white'
-                                    size='lg'
-                                >
+                                <NavItem className='flex gap-1'>
                                     {menuItem.title}
                                     <FontAwesomeIcon
                                         icon={
@@ -99,7 +101,7 @@ const NavBar = () => {
                                                 : faChevronDown
                                         }
                                     />
-                                </NextUiLink>
+                                </NavItem>
                             </DropdownTrigger>
                             <DropdownMenu
                                 id={`nav-${menuItem.title}`}
@@ -107,14 +109,21 @@ const NavBar = () => {
                                 className='font-[PoppinsMedium] text-secondary'
                                 title={menuItem.title}
                             >
-                                {children.map((childItem, index) =>
+                                {children.map((childItem) =>
                                     childItem.path ? (
-                                        <DropdownItem key={index} classNames={{ base: 'flex' }}>
-                                            <span className='flex'>
-                                                <Link className='w-full' href={childItem.path}>
-                                                    {childItem.title}
-                                                </Link>
-                                            </span>
+                                        <DropdownItem
+                                            key={childItem.title}
+                                            classNames={{ base: 'flex' }}
+                                            onPointerDown={() => setIsMenuOpen(false)}
+                                            textValue={childItem.title}
+                                        >
+                                            <NavItem
+                                                className='w-full'
+                                                size='md'
+                                                path={childItem.path}
+                                            >
+                                                {childItem.title}
+                                            </NavItem>
                                         </DropdownItem>
                                     ) : null
                                 )}
@@ -128,15 +137,10 @@ const NavBar = () => {
                 }
 
                 return (
-                    <NavbarMenuItem key={index}>
-                        <Link
-                            className='w-full font-[PoppinsMedium] text-secondary transition-colors duration-500 ease-in-out hover:text-white'
-                            size='lg'
-                            as={Link}
-                            href={menuItem.path}
-                        >
+                    <NavbarMenuItem key={index} onPointerDown={() => setIsMenuOpen(false)}>
+                        <NavItem className='w-full' path={menuItem.path}>
                             {menuItem.title}
-                        </Link>
+                        </NavItem>
                     </NavbarMenuItem>
                 );
             });
@@ -159,81 +163,109 @@ const NavBar = () => {
     ) : null;
 
     return (
-        <Navbar isBordered height='3rem' maxWidth='full'>
-            <NavbarContent className='lg:hidden' justify='start'>
-                <NavbarMenuToggle />
-            </NavbarContent>
-            <NavbarContent className='pr-3 lg:hidden' justify='center'>
-                <NavbarBrand as={Link} href='/'>
-                    <img
-                        src={SmallHeaderIcon}
-                        width='32'
-                        height='32'
-                        className='inline-block align-top'
-                        alt='The Iron Throne Logo'
-                    />
-                </NavbarBrand>
-            </NavbarContent>
-            <NavbarContent className='lg:hidden' justify='end'>
-                {rightMenu}
-                <ProfileDropdown menu={ProfileMenu} user={user} />
-            </NavbarContent>
+        <>
+            <Navbar
+                isBordered
+                height='3rem'
+                maxWidth='full'
+                isMenuOpen={isMenuOpen}
+                className='z-0'
+            >
+                <NavbarContent className='lg:hidden' justify='start'>
+                    <NavbarMenuToggle onChange={(isOpen) => setIsMenuOpen(isOpen)} />
+                </NavbarContent>
+                <NavbarContent className='lg:hidden' justify='center'>
+                    <NavbarBrand as={NavigationLink} href='/'>
+                        <img
+                            src={SmallHeaderIcon}
+                            width='32'
+                            height='32'
+                            className='inline-block align-top'
+                            alt='The Iron Throne Logo'
+                        />
+                    </NavbarBrand>
+                </NavbarContent>
+                <NavbarContent className='lg:hidden' justify='end'>
+                    {rightMenu}
+                    <FullScreenButton />
+                    <ProfileDropdown menu={ProfileMenu} user={user} />
+                </NavbarContent>
 
-            <NavbarMenu>
-                {leftMenu}
-                {!currentGame?.started && numGames}
-                {currentGame?.started ? (
-                    <ServerStatus
-                        connected={gameConnected}
-                        connecting={gameConnecting}
-                        serverType='Game server'
-                        responseTime={gameResponse}
+                <NavbarMenu>
+                    {leftMenu}
+                    {!currentGame?.started && numGames}
+                    {currentGame?.started ? (
+                        <ServerStatus
+                            connected={gameConnected}
+                            connecting={gameConnecting}
+                            serverType='Game server'
+                            responseTime={gameResponse}
+                        />
+                    ) : (
+                        <ServerStatus
+                            connected={lobbySocketConnected}
+                            connecting={lobbySocketConnecting}
+                            serverType='Lobby'
+                            responseTime={lobbyResponse}
+                        />
+                    )}
+                    <ContextMenu
+                        onPress={(showConfirmLeave) => {
+                            setIsMenuOpen(false);
+                            setShowConfirmLeave(showConfirmLeave);
+                        }}
                     />
-                ) : (
-                    <ServerStatus
-                        connected={lobbySocketConnected}
-                        connecting={lobbySocketConnecting}
-                        serverType='Lobby'
-                        responseTime={lobbyResponse}
-                    />
-                )}
-                <ContextMenu />
-            </NavbarMenu>
+                </NavbarMenu>
 
-            <NavbarContent className='hidden lg:flex' justify='start'>
-                {leftMenu}
-            </NavbarContent>
-            <NavbarContent className='hidden lg:flex' justify='center'>
-                <NavbarBrand as={Link} href='/'>
-                    <Image
-                        src={currentGame?.started ? SmallHeaderIcon : HeaderIcon}
-                        style={{ height: '48px' }}
-                        alt='The Iron Throne Logo'
+                <NavbarContent className='hidden lg:flex' justify='start'>
+                    {leftMenu}
+                </NavbarContent>
+                <NavbarContent className='hidden lg:flex' justify='center'>
+                    <NavbarBrand as={NavigationLink} href='/'>
+                        <Image
+                            src={currentGame?.started ? SmallHeaderIcon : HeaderIcon}
+                            style={{ height: '48px' }}
+                            alt='The Iron Throne Logo'
+                        />
+                    </NavbarBrand>
+                </NavbarContent>
+                <NavbarContent className='hidden lg:flex' justify='end'>
+                    <ContextMenu
+                        onPress={(showConfirmLeave) => {
+                            setIsMenuOpen(false);
+                            setShowConfirmLeave(showConfirmLeave);
+                        }}
                     />
-                </NavbarBrand>
-            </NavbarContent>
-            <NavbarContent className='hidden lg:flex' justify='end'>
-                <ContextMenu />
-                {!currentGame?.started && numGames}
-                {currentGame?.started ? (
-                    <ServerStatus
-                        connected={gameConnected}
-                        connecting={gameConnecting}
-                        serverType='Game server'
-                        responseTime={gameResponse}
-                    />
-                ) : (
-                    <ServerStatus
-                        connected={lobbySocketConnected}
-                        connecting={lobbySocketConnecting}
-                        serverType='Lobby'
-                        responseTime={lobbyResponse}
-                    />
-                )}
-                {rightMenu}
-                <ProfileDropdown menu={ProfileMenu} user={user} />
-            </NavbarContent>
-        </Navbar>
+                    {!currentGame?.started && numGames}
+                    {currentGame?.started ? (
+                        <ServerStatus
+                            connected={gameConnected}
+                            connecting={gameConnecting}
+                            serverType='Game server'
+                            responseTime={gameResponse}
+                        />
+                    ) : (
+                        <ServerStatus
+                            connected={lobbySocketConnected}
+                            connecting={lobbySocketConnecting}
+                            serverType='Lobby'
+                            responseTime={lobbyResponse}
+                        />
+                    )}
+                    {rightMenu}
+                    <ProfileDropdown menu={ProfileMenu} user={user} />
+                </NavbarContent>
+            </Navbar>
+            <ConfirmDialog
+                isOpen={showConfirmLeave}
+                message='Your game is not finished, and you will automatically concede when leaving. Are you sure you want to leave?'
+                onOpenChange={setShowConfirmLeave}
+                onCancel={() => setShowConfirmLeave(false)}
+                onOk={async () => {
+                    dispatch(sendLeaveGameMessage());
+                }}
+            />
+        </>
     );
 };
 

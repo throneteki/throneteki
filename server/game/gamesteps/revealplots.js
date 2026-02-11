@@ -1,6 +1,5 @@
 import sample from 'lodash.sample';
 import BaseStep from './basestep.js';
-import SimpleStep from './simplestep.js';
 import FirstPlayerPrompt from './plot/firstplayerprompt.js';
 import ChoosePlayerPrompt from './ChoosePlayerPrompt.js';
 import Event from '../event.js';
@@ -54,14 +53,15 @@ class RevealPlots extends BaseStep {
         let event = new Event('onPlotsRevealed', { plots: plots }, () => {
             this.game.addSimultaneousEffects(this.getPlotEffects(plots));
             if (this.needsFirstPlayerChoice()) {
-                this.game.raiseEvent('onCompareInitiative', {});
-                this.game.queueStep(new SimpleStep(this.game, () => this.determineInitiative()));
-                this.game.queueStep(() => new FirstPlayerPrompt(this.game, this.initiativeWinner));
+                this.game.raiseEvent('onCompareInitiative', { plots }, () => {
+                    this.game.queueSimpleStep(() => this.determineInitiative());
+                });
             }
         });
 
         for (let plot of plots) {
-            event.addChildEvent(new Event('onPlotRevealed', { plot: plot }));
+            let plotRevealedEvent = new Event('onPlotRevealed', { plot: plot });
+            event.addChildEvent(plotRevealedEvent);
         }
 
         return event;
@@ -80,7 +80,8 @@ class RevealPlots extends BaseStep {
     }
 
     needsFirstPlayerChoice() {
-        return this.game.getPlayers().every((player) => !player.firstPlayer);
+        const players = this.game.getPlayers();
+        return players.length > 0 && players.every((player) => !player.firstPlayer);
     }
 
     determineInitiative() {
@@ -177,7 +178,12 @@ class RevealPlots extends BaseStep {
                 this.game.addMessage('{0} won initiative', event.winner);
             }
 
-            this.initiativeWinner = event.winner;
+            // Prompt for first player, allowing for dominance to re-determine if prompted player leaves
+            this.game.queueStep(
+                new FirstPlayerPrompt(this.game, event.winner, () =>
+                    this.game.queueSimpleStep(() => this.determineInitiative())
+                )
+            );
         });
     }
 }

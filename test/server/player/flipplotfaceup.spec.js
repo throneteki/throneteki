@@ -10,7 +10,8 @@ describe('Player', function () {
         this.selectedPlotSpy = jasmine.createSpyObj('plot', [
             'createSnapshot',
             'moveTo',
-            'applyPersistentEffects'
+            'applyPersistentEffects',
+            'hasFlag'
         ]);
         this.selectedPlotSpy.uuid = '111';
         this.selectedPlotSpy.location = 'plot deck';
@@ -19,7 +20,8 @@ describe('Player', function () {
         this.anotherPlotSpy = jasmine.createSpyObj('plot', [
             'createSnapshot',
             'moveTo',
-            'applyPersistentEffects'
+            'applyPersistentEffects',
+            'hasFlag'
         ]);
         this.anotherPlotSpy.uuid = '222';
         this.anotherPlotSpy.location = 'plot deck';

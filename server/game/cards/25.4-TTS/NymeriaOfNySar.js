@@ -1,6 +1,6 @@
 import DrawCard from '../../drawcard.js';
 import RevealPlots from '../../gamesteps/revealplots.js';
-import SimpleStep from '../../gamesteps/simplestep.js';
+import { Flags } from '../../Constants/index.js';
 
 class NymeriaOfNySar extends DrawCard {
     setupCardAbilities(ability) {
@@ -15,7 +15,7 @@ class NymeriaOfNySar extends DrawCard {
                 afterChallenge: (event) =>
                     event.challenge.winner === this.controller &&
                     event.challenge.strengthDifference >= 5 &&
-                    !this.controller.hasFlag('cannotRevealPlot')
+                    !this.controller.hasFlag(Flags.player.cannotRevealPlot)
             },
             cost: ability.costs.kneelSelf(),
             target: {
@@ -34,7 +34,7 @@ class NymeriaOfNySar extends DrawCard {
         this.action({
             title: 'Manually trigger',
             cost: ability.costs.kneelSelf(),
-            condition: () => !this.controller.hasFlag('cannotRevealPlot'),
+            condition: () => !this.controller.hasFlag(Flags.player.cannotRevealPlot),
             target: {
                 type: 'select',
                 activePromptTitle: 'Select a plot',
@@ -51,11 +51,6 @@ class NymeriaOfNySar extends DrawCard {
     trigger(context) {
         context.player.selectedPlot = context.target;
         this.game.queueStep(new RevealPlots(this.game, [context.target]));
-        this.game.queueStep(
-            new SimpleStep(this.game, () => {
-                context.player.recyclePlots();
-            })
-        );
     }
 }
 

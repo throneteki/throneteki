@@ -5,12 +5,22 @@ import {
     ValueContribution,
     CharacterStrengthContribution
 } from '../../../server/game/ChallengeContributions.js';
+import { Flags } from '../../../server/game/Constants/index.js';
 
 describe('Challenge', function () {
     beforeEach(function () {
-        this.gameSpy = jasmine.createSpyObj('game', ['applyGameAction', 'on', 'raiseEvent']);
+        this.gameSpy = jasmine.createSpyObj('game', [
+            'applyGameAction',
+            'on',
+            'raiseEvent',
+            'resolveGameAction'
+        ]);
         this.gameSpy.applyGameAction.and.callFake((type, card, handler) => {
             handler(card);
+        });
+        this.gameSpy.resolveGameAction.and.callFake((action) => {
+            const event = action.createEvent(action.propertyFactory);
+            event.handler(event);
         });
 
         this.attackingPlayer = new Player(
@@ -34,6 +44,7 @@ describe('Challenge', function () {
             defendingPlayer: this.defendingPlayer,
             challengeType: 'military'
         });
+        this.gameSpy.currentChallenge = this.challenge;
 
         spyOn(this.attackerCard, 'getStrength').and.returnValue(5);
         spyOn(this.defenderCard, 'getStrength').and.returnValue(5);
@@ -173,7 +184,9 @@ describe('Challenge', function () {
 
                     describe('then cannot contribute its STR towards the challenge', function () {
                         beforeEach(function () {
-                            this.targetCard.challengeOptions.add('doesNotContributeStrength');
+                            this.targetCard.flags.add(
+                                Flags.challengeOptions.doesNotContributeStrength
+                            );
                             this.challenge.calculateStrength();
                         });
 
@@ -371,7 +384,7 @@ describe('Challenge', function () {
 
                 describe('then cannot contribute its STR towards the challenge', function () {
                     beforeEach(function () {
-                        this.targetCard.challengeOptions.add('doesNotContributeStrength');
+                        this.targetCard.flags.add(Flags.challengeOptions.doesNotContributeStrength);
                         this.challenge.calculateStrength();
                     });
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import GameFilter from './GameFilter';
 import GameList from './GameList';
@@ -16,11 +16,14 @@ import {
     sendWatchGameMessage
 } from '../../redux/reducers/lobby';
 import { setUrl } from '../../redux/reducers/navigation';
+import Page from '../../pages/Page';
 
 const filterDefaults = {
     ['beginner']: true,
     ['casual']: true,
-    ['competitive']: true
+    ['competitive']: true,
+    ['joust']: true,
+    ['melee']: true
 };
 
 const GameLobby = ({ gameId }) => {
@@ -33,8 +36,6 @@ const GameLobby = ({ gameId }) => {
     const currentGame = useSelector((state) => state.lobby.currentGame);
     const games = useSelector((state) => state.lobby.games);
     const passwordGame = useSelector((state) => state.lobby.passwordGame);
-
-    const topRef = useRef(null);
 
     useEffect(() => {
         const filter = localStorage.getItem('gameFilter');
@@ -72,13 +73,23 @@ const GameLobby = ({ gameId }) => {
         }
     }, [currentGame, dispatch, gameId, games]);
 
+    // Manages the auto-scrolling, depending on which ref just appeared
+    const scrollRef = (node, block = 'start') => {
+        if (node !== null) {
+            node.scrollIntoView({
+                behavior: 'smooth',
+                block
+            });
+        }
+    };
+
     return (
-        <div className='m-2 lg:mx-auto lg:w-4/5 flex flex-col gap-2'>
-            <div ref={topRef}>
-                {newGame && <NewGame quickJoin={quickJoin} onClosed={() => setNewGame(false)} />}
-                {currentGame?.started === false && <PendingGame />}
-                {passwordGame && <PasswordGame />}
-            </div>
+        <Page>
+            {newGame && (
+                <NewGame quickJoin={quickJoin} onClosed={() => setNewGame(false)} ref={scrollRef} />
+            )}
+            {currentGame?.started === false && <PendingGame ref={(n) => scrollRef(n, 'center')} />}
+            {passwordGame && <PasswordGame ref={scrollRef} />}
             <Panel title={'Current Games'}>
                 {!user && (
                     <div className='mb-2 text-center'>
@@ -87,19 +98,17 @@ const GameLobby = ({ gameId }) => {
                         </AlertPanel>
                     </div>
                 )}
-                <div className='flex gap-2'>
-                    <div className='flex flex-col'>
-                        <GameButtons
-                            onNewGame={() => {
-                                setQuickJoin(false);
-                                setNewGame(true);
-                            }}
-                            onQuickJoin={() => {
-                                setQuickJoin(true);
-                                setNewGame(true);
-                            }}
-                        />
-                    </div>
+                <div className='flex gap-2 lg:flex-row flex-col'>
+                    <GameButtons
+                        onNewGame={() => {
+                            setQuickJoin(false);
+                            setNewGame(true);
+                        }}
+                        onQuickJoin={() => {
+                            setQuickJoin(true);
+                            setNewGame(true);
+                        }}
+                    />
                     <div className='flex-1'>
                         <GameFilter
                             filter={currentFilter}
@@ -118,16 +127,12 @@ const GameLobby = ({ gameId }) => {
                                 one.
                             </AlertPanel>
                         ) : (
-                            <GameList
-                                games={games}
-                                gameFilter={currentFilter}
-                                onJoinOrWatchClick={() => topRef.current?.scrollIntoView(false)}
-                            />
+                            <GameList games={games} gameFilter={currentFilter} />
                         )}
                     </div>
                 </div>
             </Panel>
-        </div>
+        </Page>
     );
 };
 

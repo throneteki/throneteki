@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import { Flags } from '../../Constants/index.js';
 
 class TasteTheBlood extends DrawCard {
     setupCardAbilities(ability) {
@@ -17,7 +18,8 @@ class TasteTheBlood extends DrawCard {
             target: {
                 activePromptTitle: 'Select a plot',
                 cardCondition: (card) =>
-                    card.location === 'revealed plots' && !card.notConsideredToBeInPlotDeck,
+                    card.location === 'revealed plots' &&
+                    !card.hasFlag(Flags.card.notConsideredToBeInPlotDeck),
                 cardType: 'plot'
             },
             cost: ability.costs.kneelFactionCard(),

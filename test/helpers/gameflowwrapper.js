@@ -17,29 +17,37 @@ function createTitleCardLookup(cards) {
         }, {});
 }
 
+const defaultNumOfPlayers = {
+    melee: 3,
+    joust: 2
+}
+
 class GameFlowWrapper {
     constructor(options) {
-        let gameRouter = jasmine.createSpyObj('gameRouter', [
-            'gameWon',
+        const gameRouter = jasmine.createSpyObj('gameRouter', [
+            'gameOver',
             'handleError',
             'playerLeft'
         ]);
         gameRouter.handleError.and.callFake((game, error) => {
             throw error;
         });
-        let details = {
+        const numOfPlayers = options.numOfPlayers || defaultNumOfPlayers[options.gameFormat || 'joust'];
+        const details = {
             name: "player1's game",
             id: 12345,
             owner: { username: 'player1' },
             saveGameId: 12345,
-            isMelee: !!options.isMelee,
+            gameFormat: options.gameFormat,
             noTitleSetAside: true,
-            players: this.generatePlayerDetails(options.numOfPlayers || (options.isMelee ? 3 : 2))
+            maxPlayers: options.maxPlayers || numOfPlayers,
+            players: this.generatePlayerDetails(numOfPlayers)
         };
         this.game = new Game(details, { router: gameRouter, titleCardData: titleCardData });
         this.game.started = true;
-        this.game.disableWonPrompt = true;
-        this.game.disableRevealAcknowledgement = true;
+
+        this.game.disableWinning = options.disableWinning ?? true;
+        this.game.disableRevealAcknowledgement = options.disableRevealAcknowledgement ?? true;
 
         this.allPlayers = this.game
             .getPlayers()
@@ -54,7 +62,8 @@ class GameFlowWrapper {
         return range(1, numOfPlayers + 1).map((i) => {
             return {
                 id: i.toString(),
-                user: Settings.getUserWithDefaultsSet({ username: `player${i}` })
+                user: Settings.getUserWithDefaultsSet({ username: `player${i}` }),
+                seatNo: i
             };
         });
     }
@@ -124,6 +133,14 @@ class GameFlowWrapper {
     completeTaxationPhase() {
         this.guardCurrentPhase('taxation');
         this.eachPlayerInFirstPlayerOrder((player) => player.clickPrompt('Done'));
+    }
+
+    completeRound() {
+        if (this.game.currentPhase === 'marshal') { this.completeMarshalPhase() }
+        if (this.game.currentPhase === 'challenge') { this.completeChallengesPhase() }
+        if (this.game.currentPhase === 'dominance') { this.completeDominancePhase() }
+        if (this.game.currentPhase === 'standing') { this.completeStandingPhase() }
+        if (this.game.currentPhase === 'taxation') { this.completeTaxationPhase() }
     }
 
     skipActionWindow() {

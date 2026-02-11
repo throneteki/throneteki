@@ -3,6 +3,8 @@ import EventRegistrar from './eventregistrar.js';
 import Settings from '../settings.js';
 import ChallengeMatcher from './ChallengeMatcher.js';
 import { ChallengeContributions } from './ChallengeContributions.js';
+import { Flags } from './Constants/index.js';
+import GameActions from './GameActions/index.js';
 
 class Challenge {
     constructor(game, properties) {
@@ -15,7 +17,6 @@ class Challenge {
         this.isInitiated = properties.isInitiated || false;
         this.initiatedChallengeType = properties.challengeType;
         this.challengeType = properties.challengeType;
-        this.declareDefendersFirst = false;
         this.number = properties.number;
         this.totalNumber = properties.totalNumber;
         this.attackers = [];
@@ -30,8 +31,12 @@ class Challenge {
         this.registerEvents(['onCardLeftPlay']);
     }
 
+    get declareDefendersFirst() {
+        return this.game.flags.contains(Flags.game.declareDefendersBeforeAttackers);
+    }
+
     singlePlayerDefender() {
-        let dummyPlayer = new Player(
+        const dummyPlayer = new Player(
             '',
             Settings.getUserWithDefaultsSet({ name: 'Dummy Player' }),
             false,
@@ -52,6 +57,12 @@ class Challenge {
         this.attackingPlayer.trackChallenge(this);
         this.defendingPlayer.trackChallenge(this);
         this.isInitiated = true;
+    }
+
+    redirectChallengeTo(player) {
+        this.defendingPlayer = player;
+        this.initiatedAgainstPlayer = player;
+        this.initiationActions = [];
     }
 
     declareAttackers(attackers) {
@@ -86,30 +97,8 @@ class Challenge {
         this.addDefenders([defender]);
     }
 
-    removeFromChallenge(card) {
-        if (!this.isParticipating(card)) {
-            return;
-        }
-        const eventProps = {
-            card,
-            challenge: this,
-            isAttacking: this.isAttacking(card),
-            isDeclared: this.isDeclared(card),
-            isDefending: this.isDefending(card)
-        };
-
-        this.attackers = this.attackers.filter((c) => c !== card);
-        this.declaredAttackers = this.declaredAttackers.filter((c) => c !== card);
-        this.defenders = this.defenders.filter((c) => c !== card);
-        this.declaredDefenders = this.declaredDefenders.filter((c) => c !== card);
-
-        card.inChallenge = false;
-
-        this.challengeContributions.removeParticipants([card]);
-
-        this.calculateStrength();
-
-        this.game.raiseEvent('onRemovedFromChallenge', eventProps);
+    removeFromChallenge(card, reason) {
+        this.game.resolveGameAction(GameActions.removeFromChallenge({ card, reason }));
     }
 
     markAsParticipating(cards) {
@@ -169,10 +158,6 @@ class Challenge {
 
     addInitiationAction(action, properties) {
         this.initiationActions.push({ action, properties });
-    }
-
-    clearInitiationActions() {
-        this.initiationActions = [];
     }
 
     calculateStrength() {
@@ -243,7 +228,7 @@ class Challenge {
             {
                 condition: () =>
                     this.attackerStrength >= this.defenderStrength &&
-                    this.attackingPlayer.cannotWinChallenge,
+                    this.attackingPlayer.hasFlag(Flags.player.cannotWinChallenge),
                 message:
                     'There is no winner or loser for this challenge because the attacker cannot win'
             },
@@ -256,7 +241,7 @@ class Challenge {
             {
                 condition: () =>
                     this.defenderStrength > this.attackerStrength &&
-                    this.defendingPlayer.cannotWinChallenge,
+                    this.defendingPlayer.hasFlag(Flags.player.cannotWinChallenge),
                 message:
                     'There is no winner or loser for this challenge because the defender cannot win'
             },
@@ -310,7 +295,7 @@ class Challenge {
     }
 
     onCardLeftPlay(event) {
-        this.removeFromChallenge(event.card);
+        this.removeFromChallenge(event.card, 'onCardLeftPlay');
         this.challengeContributions.clear([event.card]);
     }
 

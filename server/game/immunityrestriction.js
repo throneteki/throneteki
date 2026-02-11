@@ -1,7 +1,15 @@
-class ImmunityRestriction {
+import { Flags } from './Constants/index.js';
+import Restriction from './restriction.js';
+
+class ImmunityRestriction extends Restriction {
     constructor(cardCondition, immunitySource) {
+        super('immunity');
         this.cardCondition = cardCondition;
         this.immunitySource = immunitySource;
+    }
+
+    isActive(card) {
+        return !card.hasFlag(Flags.losesAspect.immunity);
     }
 
     isMatch(type, abilityContext) {

@@ -11,9 +11,7 @@ class FistOfTheFirstMen extends DrawCard {
 
     hasHigherReserveThanOpponent() {
         let opponents = this.game.getOpponents(this.controller);
-        return opponents.some(
-            (opponent) => this.controller.getReserve() > opponent.getReserve()
-        );
+        return opponents.some((opponent) => this.controller.getReserve() > opponent.getReserve());
     }
 }
 

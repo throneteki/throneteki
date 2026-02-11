@@ -4,20 +4,20 @@ class ReferenceCountedSetProperty {
     }
 
     add(value) {
-        let lowerCaseValue = value.toLowerCase();
-        let currentCount = this.referenceCounts.get(lowerCaseValue) || 0;
-        this.referenceCounts.set(lowerCaseValue, currentCount + 1);
+        const normalizedValue = this.normalizeValue(value);
+        let currentCount = this.referenceCounts.get(normalizedValue) || 0;
+        this.referenceCounts.set(normalizedValue, currentCount + 1);
     }
 
     remove(value) {
-        let lowerCaseValue = value.toLowerCase();
-        let currentCount = this.referenceCounts.get(lowerCaseValue) || 0;
-        this.referenceCounts.set(lowerCaseValue, currentCount - 1);
+        const normalizedValue = this.normalizeValue(value);
+        let currentCount = this.referenceCounts.get(normalizedValue) || 0;
+        this.referenceCounts.set(normalizedValue, currentCount - 1);
     }
 
     contains(value) {
-        let lowerCaseValue = value.toLowerCase();
-        let currentCount = this.referenceCounts.get(lowerCaseValue) || 0;
+        const normalizedValue = this.normalizeValue(value);
+        let currentCount = this.referenceCounts.get(normalizedValue) || 0;
         return currentCount > 0;
     }
 
@@ -56,9 +56,17 @@ class ReferenceCountedSetProperty {
     }
 
     getCountForReference(value) {
-        let lowerCaseValue = value.toLowerCase();
-        let currentCount = this.referenceCounts.get(lowerCaseValue) || 0;
+        const normalizedValue = this.normalizeValue(value);
+        let currentCount = this.referenceCounts.get(normalizedValue) || 0;
         return currentCount;
+    }
+
+    normalizeValue(value) {
+        if (typeof value === 'symbol') {
+            return value;
+        }
+
+        return value.toLowerCase();
     }
 }
 

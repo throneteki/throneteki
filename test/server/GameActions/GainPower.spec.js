@@ -3,11 +3,12 @@ import GainPower from '../../../server/game/GameActions/GainPower.js';
 describe('GainPower', function () {
     beforeEach(function () {
         this.gameSpy = jasmine.createSpyObj('game', ['']);
-        this.cardSpy = jasmine.createSpyObj('card', ['allowGameAction']);
-        this.cardSpy.controller = 'PLAYER_OBJ';
+        this.cardSpy = jasmine.createSpyObj('card', ['allowGameAction', 'getPowerToGain']);
+        this.cardSpy.controller = { gainedPower: 0 };
         this.cardSpy.game = this.gameSpy;
         this.cardSpy.power = 0;
         this.props = { card: this.cardSpy, amount: 3 };
+        this.cardSpy.getPowerToGain.and.returnValue(3);
     });
 
     describe('allow()', function () {

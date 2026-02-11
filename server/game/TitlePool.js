@@ -12,17 +12,19 @@ const titles = [
 class TitlePool {
     constructor(game, cardData) {
         this.game = game;
-        this.cards = titles.map((titleClass) => {
-            let title = new titleClass({ game: game }, cardData[titleClass.code] || {});
-            title.moveTo('title pool');
-            return title;
-        });
+        this.cards = titles.map(
+            (titleClass) => new titleClass({ game: game }, cardData[titleClass.code] || {})
+        );
     }
 
     getCardsForSelection() {
-        let amount = this.amountToSetAside();
-        let shuffledPool = shuffle(this.cards);
-
+        const amount = this.amountToSetAside();
+        const shuffledPool = shuffle(this.cards);
+        this.game.addMessage(
+            'Titles have been shuffled, and {0} {1} been removed at random',
+            amount,
+            amount === 1 ? 'has' : 'have'
+        );
         return shuffledPool.slice(0, this.cards.length - amount);
     }
 
@@ -31,7 +33,7 @@ class TitlePool {
             return 0;
         }
 
-        let players = this.game.getPlayers();
+        const players = this.game.getPlayers();
 
         if (players.length >= 6) {
             return 0;
@@ -49,7 +51,7 @@ class TitlePool {
 
         card.takeControl(player, this);
         card.moveTo('title');
-        card.applyPersistentEffects();
+        card.facedown = true;
         player.title = card;
     }
 
@@ -61,6 +63,29 @@ class TitlePool {
         card.revertControl(this);
         card.moveTo('title pool');
         player.title = null;
+    }
+
+    announceTitles(selections) {
+        const players = this.game.getPlayers();
+
+        for (const selection of selections) {
+            selection.title.facedown = false;
+            selection.title.applyPersistentEffects();
+
+            const supports = players.filter((player) =>
+                selection.title.supporterNames.includes(player.title.name)
+            );
+            const rivals = players.filter((player) =>
+                selection.title.rivalNames.includes(player.title.name)
+            );
+            this.game.addMessage(
+                '{0} is {1}, supports {2}, and rivals {3}',
+                selection.player,
+                selection.title,
+                supports.length > 0 ? supports : 'no one',
+                rivals.length > 0 ? rivals : 'no one'
+            );
+        }
     }
 }
 
