@@ -397,22 +397,6 @@ const Costs = {
             }
         };
     },
-    giveGold: function (amount, opponentFunc) {
-        return {
-            canPay: function (context) {
-                return context.player.gold >= amount;
-            },
-            pay: function (context) {
-                let opponentObj = opponentFunc && opponentFunc(context);
-                context.game.transferGold({
-                    from: context.player,
-                    to: opponentObj,
-                    amount,
-                    activePlayer: context.player
-                });
-            }
-        };
-    },
     /**
      * Cost in which the player must give another player a fixed, non-reduceable amount of gold.
      */
