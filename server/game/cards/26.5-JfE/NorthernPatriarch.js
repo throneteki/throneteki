@@ -31,7 +31,7 @@ class NorthernPatriarch extends DrawCard {
             gameAction: GameActions.ifCondition({
                 condition: (context) => this.hasCardsWithPower(context.event.source.controller),
                 thenAction: GameActions.genericHandler((context) => {
-                    this.game.promptForSelect(context.event.souce.controller, {
+                    this.game.promptForSelect(context.event.source.controller, {
                         source: this,
                         activePromptTitle: 'Select a card to move power from',
                         numCards: 1,

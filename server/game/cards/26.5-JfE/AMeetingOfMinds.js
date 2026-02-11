@@ -1,6 +1,6 @@
-import DrawCard from '../../drawcard.js';
+import PlotCard from '../../plotcard.js';
 
-class AMeetingOfMinds extends DrawCard {
+class AMeetingOfMinds extends PlotCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) => card.getType() === 'character' && card.hasTrait('Small Council'),

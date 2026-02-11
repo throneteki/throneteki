@@ -29,7 +29,7 @@ class TheShadowTower extends DrawCard {
                     })).then({
                         condition: (context) =>
                             context.event.cards[0].isMatch({ type: 'character', unique: false }) &&
-                            context.event.revealed.length > 0,
+                            context.parentContext.revealed.length > 0,
                         message: '{player} {gameAction}',
                         gameAction: GameActions.putIntoPlay((context) => ({
                             card: context.event.cards[0],

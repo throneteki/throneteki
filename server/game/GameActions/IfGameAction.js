@@ -12,7 +12,7 @@ class IfGameAction extends GameAction {
     }
 
     buildAction(action) {
-        if (!action.gameAction) {
+        if (!action.gameAction || action instanceof GameAction) {
             return {
                 gameAction: action,
                 message: AbilityMessage.create(null)

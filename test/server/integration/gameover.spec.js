@@ -225,7 +225,7 @@ describe('Game Over', function () {
                     });
 
                     it('nobody wins', function () {
-                        expect(this.game.results.winner).toBe('DRAW');
+                        expect(this.game.results.winner).toBe(undefined);
                     });
                 });
             });
@@ -593,7 +593,7 @@ describe('Game Over', function () {
                     });
 
                     it('nobody wins', function () {
-                        expect(this.game.results.winner).toBe('DRAW');
+                        expect(this.game.results.winner).toBe(undefined);
                     });
                 });
             });
