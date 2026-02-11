@@ -19,7 +19,7 @@ class NightfortBuilder extends DrawCard {
                 message: '{player} {gameAction}',
                 gameAction: GameActions.drawSpecific((context) => ({
                     player: context.player,
-                    cards: context.event.revealed
+                    cards: context.parentContext.revealed
                 }))
             })
         });

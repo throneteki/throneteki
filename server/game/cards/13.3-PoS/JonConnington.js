@@ -22,10 +22,10 @@ class JonConnington extends DrawCard {
                             context.event.cards[0].isMatch({
                                 printedCostOrLower: 4,
                                 not: { type: 'event' }
-                            }) && context.event.revealed.length > 0,
+                            }) && context.parentContext.revealed.length > 0,
                         message: '{player} {gameAction}',
                         gameAction: GameActions.putIntoPlay((context) => ({
-                            card: context.event.revealed[0]
+                            card: context.parentContext.revealed[0]
                         }))
                     }),
                     context

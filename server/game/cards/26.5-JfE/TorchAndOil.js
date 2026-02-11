@@ -27,20 +27,20 @@ class TorchAndOil extends DrawCard {
                 gameAction: GameActions.ifCondition({
                     condition: (context) =>
                         context.event.cards[0].isMatch({ type: 'character' }) &&
-                        context.event.revealed.length > 0,
+                        context.parentContext.revealed.length > 0,
                     thenAction: GameActions.may({
                         title: `Sacrifice to discard and stand?`,
                         message: {
                             format: '{player} chooses to sacrifice {source} to discard {card} and stand {parent}',
                             args: {
-                                card: (context) => context.event.revealed[0],
+                                card: (context) => context.parentContext.revealed[0],
                                 parent: (context) => context.cardStateWhenInitiated.parent
                             }
                         },
                         gameAction: GameActions.sacrificeCard({ card: this }).then({
                             gameAction: GameActions.simultaneously([
                                 GameActions.discardCard((context) => ({
-                                    card: context.parentContext.event.revealed[0]
+                                    card: context.parentcontext.parentContext.revealed[0]
                                 })),
                                 GameActions.standCard((context) => ({
                                     card: context.parentContext.cardStateWhenInitiated.parent

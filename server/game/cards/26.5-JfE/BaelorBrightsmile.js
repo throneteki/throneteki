@@ -14,15 +14,16 @@ class BaelorBrightsmile extends DrawCard {
             gameAction: GameActions.revealTopCards((context) => ({
                 player: context.player
             })).then({
-                condition: (context) => context.event.revealed.length > 0,
+                condition: (context) => context.parentContext.revealed.length > 0,
                 gameAction: GameActions.may({
-                    title: (context) => `Place ${context.event.revealed[0].name} as duplicate?`,
+                    title: (context) =>
+                        `Place ${context.parentContext.revealed[0].name} as duplicate?`,
                     message: {
                         format: '{player} places {revealed} under {source} as a duplicate',
-                        args: { revealed: (context) => context.event.revealed[0] }
+                        args: { revealed: (context) => context.parentContext.revealed[0] }
                     },
                     gameAction: GameActions.genericHandler((context) => {
-                        const dupe = context.event.revealed[0];
+                        const dupe = context.parentContext.revealed[0];
                         this.controller.removeCardFromPile(dupe);
                         this.addDuplicate(dupe);
                         dupe.facedown = true;
