@@ -1,0 +1,60 @@
+{
+    // ---------------------------------------------------------------
+    // Throneteki Production Configuration
+    //
+    // Copy this file and fill in the values for your deployment.
+    // At minimum you MUST change: secret, hmacSecret, and origin.
+    // ---------------------------------------------------------------
+
+    env: 'production',
+
+    // REQUIRED: Change these to long, random strings (e.g. 64+ chars).
+    // You can generate one with:  openssl rand -hex 32
+    secret: 'CHANGE_ME_jwt_secret',
+    hmacSecret: 'CHANGE_ME_hmac_secret',
+
+    // Database - these match the Docker service names in docker-compose.yml
+    dbPath: 'mongodb://mongo:27017/throneteki',
+    redisUrl: 'redis://redis/',
+    redisKeyPrefix: 'prod',
+
+    // REQUIRED: Set this to your public URL (how users reach the site)
+    // Examples: 'https://play.example.com' or 'http://your-server-ip'
+    origin: 'http://localhost',
+
+    appName: 'The Iron Throne',
+
+    // Game node identity - must match the SERVER env var in docker-compose.yml
+    nodeIdentity: 'node1',
+
+    // Socket.io port for the game node (must match the PORT env var for gamenode)
+    socketioPort: 5000,
+
+    // Set to true to require email activation for new accounts
+    requireActiviation: false,
+
+    // Minimum account age (seconds) before a user can chat in the lobby
+    minLobbyChatTime: 0,
+
+    // ---------------------------------------------------------------
+    // Optional: External Services
+    // ---------------------------------------------------------------
+
+    // hCaptcha secret key (server-side) for bot protection on registration
+    // captchaKey: 'your-hcaptcha-secret-key',
+
+    // SendGrid API key for sending account activation/password reset emails
+    // emailKey: 'your-sendgrid-api-key',
+
+    // Sentry DSN for error tracking
+    // sentryDsn: 'https://your-sentry-dsn',
+
+    // SSL certificates for game node (optional - nginx handles SSL termination)
+    // keyPath: '/path/to/privkey.pem',
+    // certPath: '/path/to/fullchain.pem',
+
+    // Instance metadata passed into each game (optional)
+    // instance: {
+    //     type: 'production'
+    // },
+}

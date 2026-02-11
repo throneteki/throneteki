@@ -1,0 +1,7 @@
+# Actual environment file with secrets
+.env
+
+# SSL certificates
+nginx/ssl/*.pem
+nginx/ssl/*.key
+nginx/ssl/*.crt
