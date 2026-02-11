@@ -11,34 +11,39 @@ class TorchAndOil extends DrawCard {
             },
             cost: ability.costs.kneelSelf(),
             message: {
-                format: '{player} kneels {costs.kneel} to reveal a {action} by {opponent}',
+                format: '{player} kneels {costs.kneel} to reveal a {action} by {controller}',
                 args: {
                     action: (context) =>
                         context.event.name === 'onCardDrawn'
                             ? 'card drawn'
                             : 'card marshaled into shadows',
-                    opponent: (context) => context.event.player
+                    controller: (context) => context.event.card.controller
                 }
             },
             gameAction: GameActions.revealCards((context) => ({
                 cards: [context.event.card],
                 player: context.event.player
             })).then({
-                message: '{player} {gameAction}',
                 gameAction: GameActions.ifCondition({
                     condition: (context) =>
                         context.event.cards[0].isMatch({ type: 'character' }) &&
                         context.event.revealed.length > 0,
                     thenAction: GameActions.may({
                         title: `Sacrifice to discard and stand?`,
-                        message: '{player} {gameAction}',
+                        message: {
+                            format: '{player} chooses to sacrifice {source} to discard {card} and stand {parent}',
+                            args: {
+                                card: (context) => context.event.revealed[0],
+                                parent: (context) => context.cardStateWhenInitiated.parent
+                            }
+                        },
                         gameAction: GameActions.sacrificeCard({ card: this }).then({
                             gameAction: GameActions.simultaneously([
                                 GameActions.discardCard((context) => ({
-                                    card: context.event.revealed[0]
+                                    card: context.parentContext.event.revealed[0]
                                 })),
-                                GameActions.standCard(() => ({
-                                    card: this.parent
+                                GameActions.standCard((context) => ({
+                                    card: context.parentContext.cardStateWhenInitiated.parent
                                 }))
                             ])
                         })
