@@ -9,7 +9,9 @@ class CandleInTheDark extends DrawCard {
             canCancel: true,
             when: {
                 onCardAbilityInitiated: (event) =>
-                    event.ability.isTriggeredAbility() && event.source.isShadow()
+                    event.ability.isTriggeredAbility() &&
+                    event.source.isShadow &&
+                    event.source.isShadow()
             },
             cost: ability.costs.kneelParent(),
             message: {
