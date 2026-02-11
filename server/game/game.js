@@ -108,6 +108,7 @@ class Game extends EventEmitter {
         this.remainingPhases = [];
         this.cardVisibility = new CardVisibility(this);
         this.winnerOfDominanceInLastRound = undefined;
+        this.triggerOnLosing = {};
         this.prizedKeywordListener = new PrizedKeywordListener(this);
         this.muteSpectators = details.muteSpectators;
 

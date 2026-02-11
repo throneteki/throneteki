@@ -24,41 +24,38 @@ class RevealCards extends GameAction {
         });
     }
 
-    message({ player, context }) {
+    message({ player, cards, context }) {
         player = player || context.player;
-        if (context.revealed) {
-            let controllers = [...new Set(context.revealed.map((card) => card.controller))];
-            let controllerGroups = controllers.map((controller) => ({
-                player: controller,
-                cards: context.revealed.filter((card) => card.controller === controller),
-                locations: [
-                    ...new Set(
-                        context.revealed
-                            .filter((card) => card.controller === controller)
-                            .map((card) => card.location)
-                    )
-                ]
-            }));
+        const controllers = [...new Set(cards.map((card) => card.controller))];
+        const controllerGroups = controllers.map((controller) => ({
+            player: controller,
+            cards: cards.filter((card) => card.controller === controller),
+            locations: [
+                ...new Set(
+                    cards
+                        .filter((card) => card.controller === controller)
+                        .map((card) => card.location)
+                )
+            ]
+        }));
 
-            if (player) {
-                // Single player revealing all of the cards (theirs & opponents)
-                let messageFragments = controllerGroups.map((group) =>
-                    Message.fragment(
-                        `{cards} from ${group.player === player ? 'their' : "{player}'s"} {locations}`,
-                        group
-                    )
-                );
-                return Message.fragment('reveals {messageFragments}', { messageFragments });
-            }
-            // Each player reveals their own cards individually
-            return controllerGroups.map((group) =>
-                Message.fragment('reveals {cards} from their {locations}', {
-                    cards: group.cards,
-                    locations: group.locations
-                })
+        if (player) {
+            // Single player revealing all of the cards (theirs & opponents)
+            const messageFragments = controllerGroups.map((group) =>
+                Message.fragment(
+                    `{cards} from ${group.player === player ? 'their' : "{player}'s"} {locations}`,
+                    group
+                )
             );
+            return Message.fragment('reveals {messageFragments}', { messageFragments });
         }
-        return '';
+        // Each player reveals their own cards individually
+        return controllerGroups.map((group) =>
+            Message.fragment('reveals {cards} from their {locations}', {
+                cards: group.cards,
+                locations: group.locations
+            })
+        );
     }
 
     allow({ cards, context }) {
@@ -75,7 +72,6 @@ class RevealCards extends GameAction {
         context
     }) {
         context.revealingPlayer = player || context.player;
-        const allPlayers = context.game.getPlayers();
         const eventParams = {
             player,
             cards,
@@ -85,15 +81,15 @@ class RevealCards extends GameAction {
         };
         return this.event('onCardsRevealed', eventParams, (event) => {
             const whileRevealedGameAction = whileRevealed || this.defaultWhileRevealed;
-            const revealFunc = (card) => event.revealed.includes(card);
+            // Immune cards should still be visible, but not trigger a reveal event
+            const visible = event.cards;
+            const revealing = visible.filter((card) => !this.isImmune({ card, context }));
 
-            event.revealed = context.revealed = event.cards.filter(
-                (card) => !this.isImmune({ card, context })
-            );
+            // Make all valid targets visible + highlighted before actual reveal for cards with 'onCardRevealed' interrupts (eg. Alla Tyrell, Sweetrobin, etc.)
+            context.preRevealFunc = (card) => visible.includes(card);
+            context.game.cardVisibility.addRule(context.preRevealFunc);
+            this.highlightCards(visible, context);
 
-            // Make cards visible & print reveal message before 'onCardRevealed' to account for any reveal interrupts (eg. Alla Tyrell)
-            context.game.cardVisibility.addRule(revealFunc);
-            this.highlightRevealedCards(event, event.revealed, allPlayers);
             // TODO: Maybe remove these messages entirely, and ensure that reveal messages is only handled by the message function (eg. '{player} {gameAction}').
             //       Search GameAction likely needs edits for that. Once done, remove 'revealWithMessage'
             if (event.revealWithMessage) {
@@ -101,13 +97,15 @@ class RevealCards extends GameAction {
                     format: '{revealPlayer} {revealAction}',
                     args: {
                         revealPlayer: () => event.player,
-                        revealAction: (context) => this.message({ player: event.player, context })
+                        revealAction: (context) =>
+                            this.message({ player: event.player, cards: revealing, context })
                     }
                 });
                 abilityMessage.output(context.game, context);
             }
 
-            for (let card of event.revealed) {
+            context.revealed = [];
+            for (const card of revealing) {
                 const revealEventParams = {
                     card,
                     cardStateWhenRevealed: card.createSnapshot(),
@@ -116,59 +114,64 @@ class RevealCards extends GameAction {
                 };
 
                 event.thenAttachEvent(
-                    this.event('onCardRevealed', revealEventParams, (revealEvent) => {
-                        if (
-                            revealEvent.card.location !== revealEvent.cardStateWhenRevealed.location
-                        ) {
-                            event.revealed = context.revealed = context.revealed.filter(
-                                (reveal) => reveal !== card
-                            );
-                            for (let player of allPlayers) {
-                                player.setSelectableCards(event.revealed);
-                            }
-                        }
+                    this.event('onCardRevealed', revealEventParams, (event) => {
+                        context.revealed.push(event.card);
                     })
                 );
             }
-            let finalEvent = event;
+
+            // Clear all pre-reveals, and re-reveal actually revealed cards.
+            // Eg. A triggered "Alla Tyrell" will be pre-revealed, but not re-revealed
+            event.thenAttachEvent(
+                this.event('__PLACEHOLDER_EVENT__', {}, () => {
+                    // Disable pre-reveals
+                    context.game.cardVisibility.removeRule(context.preRevealFunc);
+                    delete context.preRevealFunc;
+
+                    // Enable actually revealed
+                    context.revealFunc = (card) => context.revealed.includes(card);
+                    context.game.cardVisibility.addRule(context.revealFunc);
+                    this.highlightCards(context.revealed, context);
+                })
+            );
             // Only create whileRevealed if cards are being highlighted. Otherwise, they are likely passively revealed
             if (event.highlight) {
-                finalEvent = whileRevealedGameAction.createEvent(context);
-                event.thenAttachEvent(finalEvent);
+                event.thenAttachEvent(whileRevealedGameAction.createEvent(context));
             }
 
-            finalEvent.thenExecute(() => {
-                this.hideRevealedCards(event, allPlayers);
-                context.game.cardVisibility.removeRule(revealFunc);
+            // Finally, clear all regularly revealed cards
+            event.thenExecute(() => {
+                context.game.cardVisibility.removeRule(context.revealFunc);
+                this.clearHighlightedCards(context);
+                delete context.revealFunc;
             });
         });
     }
 
-    highlightRevealedCards(event, cards, players) {
-        if (event.highlight) {
-            event.preRevealSelections = {};
-            for (let player of players) {
-                event.preRevealSelections[player.name] = {
+    highlightCards(cards, context) {
+        for (const player of context.game.getPlayers()) {
+            if (!context.playerSelections || !context.playerSelections[player.name]) {
+                context.playerSelections = context.playerSelections ?? {};
+                context.playerSelections[player.name] = {
                     selectedCards: player.getSelectedCards(),
                     selectableCards: player.getSelectableCards()
                 };
-
-                player.clearSelectedCards();
-                player.clearSelectableCards();
-                player.setSelectableCards(cards);
             }
+            player.clearSelectedCards();
+            player.clearSelectableCards();
+            player.setSelectableCards(cards);
         }
     }
 
-    hideRevealedCards(event, players) {
-        if (event.highlight) {
-            for (let player of players) {
+    clearHighlightedCards(context) {
+        if (context.playerSelections) {
+            for (const player of context.game.getPlayers()) {
                 player.clearSelectedCards();
                 player.clearSelectableCards();
-                player.setSelectedCards(event.preRevealSelections[player.name].selectedCards);
-                player.setSelectableCards(event.preRevealSelections[player.name].selectableCards);
+                player.setSelectedCards(context.playerSelections[player.name].selectedCards);
+                player.setSelectableCards(context.playerSelections[player.name].selectableCards);
             }
-            event.preRevealSelections = null;
+            delete context.playerSelections;
         }
     }
 }

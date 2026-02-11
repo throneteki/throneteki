@@ -23,7 +23,7 @@ class MaesterHarmune extends DrawCard {
                     condition: (context) => context.event.cards[0].getType() === 'character',
                     thenAction: GameActions.simultaneously([
                         GameActions.discardCard((context) => ({
-                            card: context.event.revealed[0]
+                            card: context.parentContext.revealed[0]
                         })),
                         GameActions.drawCards((context) => ({
                             player: context.player,

@@ -371,6 +371,30 @@ const Costs = {
         };
     },
     /**
+     * Cost in which the player must give another player a fixed, non-reduceable amount of gold.
+     */
+    giveGold: function (amount, opponentFunc) {
+        return {
+            canPay: function (context) {
+                return (
+                    context.player.getSpendableGold({
+                        player: context.player,
+                        playingType: 'ability'
+                    }) >= amount
+                );
+            },
+            pay: function (context) {
+                let opponentObj = opponentFunc && opponentFunc(context);
+                context.game.transferGold({
+                    from: context.player,
+                    to: opponentObj,
+                    amount,
+                    activePlayer: context.player
+                });
+            }
+        };
+    },
+    /**
      * Reducable cost where the player gets prompted to pay from a passed minimum up to the lesser of two values:
      * the passed maximum and the player's.
      */

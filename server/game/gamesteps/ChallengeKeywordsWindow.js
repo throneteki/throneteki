@@ -9,10 +9,10 @@ class ChallengeKeywordsWindow extends BaseStep {
         this.resolvedAbilities = [];
     }
 
-    buildContexts(cards, player) {
+    buildContexts(cards) {
         return cards.map((card) => {
             let context = new AbilityContext({
-                player,
+                player: card.controller,
                 game: this.game,
                 challenge: this.challenge,
                 source: card

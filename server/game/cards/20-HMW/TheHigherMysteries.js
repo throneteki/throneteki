@@ -12,11 +12,11 @@ class TheHigherMysteries extends DrawCard {
             gameAction: GameActions.revealTopCards((context) => ({
                 player: context.player
             })).then({
-                condition: (context) => context.event.revealed.length > 0,
+                condition: (context) => context.parentContext.revealed.length > 0,
                 message: '{player} {gameAction}',
                 gameAction: GameActions.putIntoPlay((context) => ({
                     player: context.player,
-                    card: context.event.revealed[0]
+                    card: context.parentContext.revealed[0]
                 }))
             })
         });

@@ -1037,6 +1037,17 @@ const Effects = {
     cannotTarget: cannotEffect('target'),
     cannotTargetUsingAssault: cannotEffect('assault'),
     cannotTargetUsingStealth: cannotEffect('stealth'),
+    triggerChallengeKeywordOnLosing: function (keyword) {
+        return {
+            targetType: 'game',
+            apply: function (game) {
+                game.triggerOnLosing[keyword] = true;
+            },
+            unapply: function (game) {
+                game.triggerOnLosing[keyword] = false;
+            }
+        };
+    },
     setMaxGoldGain: function (max) {
         return {
             targetType: 'player',

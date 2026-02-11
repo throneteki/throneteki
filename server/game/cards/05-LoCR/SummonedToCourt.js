@@ -24,7 +24,7 @@ class SummonedToCourt extends PlotCard {
                         gameAction: GameActions.simultaneously((context) =>
                             // Get the lowest cost characters that were revealed, but filter out any characters who are not still in reveal location (eg. Alla Tyrell or Sweetrobin)
                             this.getLowestCostCharacters(context.event.cards)
-                                .filter((card) => context.event.revealed.includes(card))
+                                .filter((card) => context.parentContext.revealed.includes(card))
                                 .map((character) =>
                                     GameActions.may({
                                         player: character.controller,

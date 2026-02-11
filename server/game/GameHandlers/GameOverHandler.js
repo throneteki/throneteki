@@ -150,8 +150,15 @@ class GameOverHandler {
 
     playerLeft(player) {
         if (this.game.canSafelyLeave(player)) {
-            this.gameOver();
+            // When final player leaves a game with opponent long disconnected, it ends in a draw
+            const connectedOpponents = this.game
+                .getOpponents(player)
+                .filter((opponent) => !this.game.isLongDisconnected(opponent));
+            if (connectedOpponents.length === 0) {
+                this.gameOver();
+            }
         } else if (!player.eliminated) {
+            this.game.addAlert('info', '{0} has been eliminated', player);
             this.eliminate(player, 'left');
         }
     }
@@ -195,8 +202,12 @@ class GameOverHandler {
             }
             this.game.resolveGameAction(
                 GameActions.simultaneously([
-                    ...removeFromGame.map((card) => GameActions.removeFromGame({ card })),
-                    ...discardFromPlay.map((card) => GameActions.discardCard({ card }))
+                    ...removeFromGame.map((card) =>
+                        GameActions.removeFromGame({ card, allowSave: false })
+                    ),
+                    ...discardFromPlay.map((card) =>
+                        GameActions.discardCard({ card, allowSave: false })
+                    )
                 ])
             );
 
@@ -246,7 +257,7 @@ class GameOverHandler {
         if (winners.length === 0) {
             this.game.addAlert('info', 'Nobody wins the game');
             // Important: Each player detail will not contain "standing" if all players lose/draw
-            this.game.recordResults([{ name: 'DRAW' }], reason, finishedAt);
+            this.game.recordResults(undefined, reason, finishedAt);
         } else {
             const standings = {};
 

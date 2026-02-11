@@ -7,10 +7,7 @@ const resolutionKeywords = ['insight', 'intimidate', 'pillage', 'renown'];
 class ResolutionKeywordsWindow extends ChallengeKeywordsWindow {
     constructor(game, challenge) {
         super(game, challenge);
-        this.winnerCardsWithContext = this.buildContexts(
-            challenge.getWinnerCards(),
-            this.challenge.winner
-        );
+        this.cardsWithContext = this.buildContexts(challenge.getParticipants());
         this.firstPlayer = game.getFirstPlayer();
         this.remainingKeywords = resolutionKeywords;
     }
@@ -66,34 +63,49 @@ class ResolutionKeywordsWindow extends ChallengeKeywordsWindow {
 
     applyKeyword(keyword) {
         let ability = GameKeywords[keyword];
-        let participantsWithKeyword = this.winnerCardsWithContext.filter((participant) =>
-            ability.canResolve(participant.context)
+        let participantsWithKeyword = this.cardsWithContext.filter(
+            (participant) =>
+                this.playerCanApply(participant.context, keyword) &&
+                ability.canResolve(participant.context)
         );
+        let players = [
+            ...new Set(participantsWithKeyword.map((participant) => participant.card.controller))
+        ];
 
         if (participantsWithKeyword.length === 0) {
             return;
         }
 
-        if (this.challenge.winner.keywordSettings.chooseCards) {
-            let cards = participantsWithKeyword.map((participant) => participant.card);
-            this.game.promptForSelect(this.challenge.winner, {
-                mode: 'unlimited',
-                ordered: true,
-                activePromptTitle: 'Select ' + keyword + ' cards',
-                cardCondition: (card) => cards.includes(card),
-                onSelect: (player, selectedCards) => {
-                    let finalParticipants = selectedCards.map((card) =>
-                        participantsWithKeyword.find((participant) => participant.card === card)
-                    );
+        for (const player of players) {
+            if (player.keywordSettings.chooseCards) {
+                let cards = participantsWithKeyword.map((participant) => participant.card);
+                this.game.promptForSelect(player, {
+                    mode: 'unlimited',
+                    ordered: true,
+                    activePromptTitle: 'Select ' + keyword + ' cards',
+                    cardCondition: (card) => cards.includes(card),
+                    onSelect: (player, selectedCards) => {
+                        let finalParticipants = selectedCards.map((card) =>
+                            participantsWithKeyword.find((participant) => participant.card === card)
+                        );
 
-                    this.resolveAbility(ability, finalParticipants);
+                        this.resolveAbility(ability, finalParticipants);
 
-                    return true;
-                }
-            });
-        } else {
-            this.resolveAbility(ability, participantsWithKeyword);
+                        return true;
+                    }
+                });
+            } else {
+                this.resolveAbility(ability, participantsWithKeyword);
+            }
         }
+    }
+
+    playerCanApply(context, keyword) {
+        const triggerablePlayer = context.game.triggerOnLosing[keyword]
+            ? context.challenge.loser
+            : context.challenge.winner;
+
+        return context.player === triggerablePlayer;
     }
 }
 

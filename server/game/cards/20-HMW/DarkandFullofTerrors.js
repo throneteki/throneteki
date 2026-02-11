@@ -18,7 +18,7 @@ class DarkandFullofTerrors extends DrawCard {
             },
             message: '{player} plays {source} to put {target} into shadow',
             handler: (context) => {
-                context.player.putIntoShadows(context.target, false, () => {
+                context.player.putIntoShadows(context.target, true, () => {
                     context.target.modifyToken(Tokens.shadow, 1);
 
                     this.lastingEffect((ability) => ({
