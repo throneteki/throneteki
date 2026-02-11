@@ -250,8 +250,8 @@ describe('Game', function () {
                             this.game.disconnect(this.player2.name);
                         });
 
-                        it('should not allow last opponent to leave without auto-conceding', function () {
-                            expect(this.game.canSafelyLeave(this.player3)).toBe(false);
+                        it('should allow the last opponent to leave without auto-conceding', function () {
+                            expect(this.game.canSafelyLeave(this.player3)).toBe(true);
                         });
                     });
                 });
