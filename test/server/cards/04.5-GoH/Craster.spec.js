@@ -65,11 +65,13 @@ describe('Craster', function () {
                 beforeEach(function () {
                     // Clear plot phase by passing on the action window.
                     this.skipActionWindow();
-
-                    this.player1.clickMenu(this.craster, 'Sacrifice to resurrect');
                 });
 
                 it('should not resurrect any cards', function () {
+                    expect(this.player1).not.toAllowTriggerAction(
+                        this.craster,
+                        'Sacrifice to resurrect'
+                    );
                     expect(this.character.location).toBe('dead pile');
                     expect(this.opponentCharacter.location).toBe('dead pile');
                     expect(this.benjen.location).not.toBe('play area');
