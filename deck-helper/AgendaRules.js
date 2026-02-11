@@ -381,6 +381,40 @@ const agendaRules = {
             }
         ]
     },
+    // Sight of the Three-Eyed Crow
+    27618: {
+        rules: [
+            {
+                message: 'Cannot include more than 1 copy of each card by title',
+                condition: (deck) => {
+                    const allCards = deck.drawCards.concat(deck.plotCards);
+                    const cardNames = allCards.map((cardQuantity) => cardQuantity.card.name);
+                    return cardNames.every((cardName) => {
+                        return deck.countCards((card) => card.name === cardName) <= 1;
+                    });
+                }
+            }
+        ]
+    },
+    // Sentinels of the Realm
+    27619: {
+        mayInclude: (card) =>
+            card.type === 'character' && hasTrait(card, 'Guard') && !card.loyal,
+        rules: []
+    },
+    // Streets of King's Landing
+    27620: {
+        rules: [
+            {
+                message: 'Must contain 12 or more King\'s Landing locations',
+                condition: (deck) =>
+                    deck.countDrawCards(
+                        (card) =>
+                            card.type === 'location' && hasTrait(card, "King's Landing")
+                    ) >= 12
+            }
+        ]
+    },
     // Draft Agendas
     // The Power of Wealth
     '00001': {

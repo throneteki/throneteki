@@ -21,6 +21,7 @@ class DeckBuilder {
             for (let card of pack.cards) {
                 card.packCode = pack.code;
                 card.releaseDate = pack.releaseDate;
+                card.label = `${card.name} (${card.packCode})`;
                 cards[card.code] = card;
             }
         }
