@@ -122,28 +122,32 @@ class RevealCards extends GameAction {
 
             // Clear all pre-reveals, and re-reveal actually revealed cards.
             // Eg. A triggered "Alla Tyrell" will be pre-revealed, but not re-revealed
-            event.thenAttachEvent(
-                this.event('__PLACEHOLDER_EVENT__', {}, () => {
-                    // Disable pre-reveals
-                    context.game.cardVisibility.removeRule(context.preRevealFunc);
-                    delete context.preRevealFunc;
+            const visibleEvent = this.event('__PLACEHOLDER_EVENT__', {}, () => {
+                // Disable pre-reveals
+                context.game.cardVisibility.removeRule(context.preRevealFunc);
+                delete context.preRevealFunc;
 
-                    // Enable actually revealed
-                    context.revealFunc = (card) => context.revealed.includes(card);
-                    context.game.cardVisibility.addRule(context.revealFunc);
-                    this.highlightCards(context.revealed, context);
-                })
-            );
+                // Enable actually revealed
+                context.revealFunc = (card) => context.revealed.includes(card);
+                context.game.cardVisibility.addRule(context.revealFunc);
+                this.highlightCards(context.revealed, context);
+            });
+            event.thenAttachEvent(visibleEvent);
+
             // Only create whileRevealed if cards are being highlighted. Otherwise, they are likely passively revealed
             if (event.highlight) {
-                event.thenAttachEvent(whileRevealedGameAction.createEvent(context));
+                visibleEvent.thenExecute(() => {
+                    context.game.resolveGameAction(whileRevealedGameAction, context);
+                });
             }
 
             // Finally, clear all regularly revealed cards
-            event.thenExecute(() => {
-                context.game.cardVisibility.removeRule(context.revealFunc);
-                this.clearHighlightedCards(context);
-                delete context.revealFunc;
+            visibleEvent.thenExecute(() => {
+                context.game.queueSimpleStep(() => {
+                    context.game.cardVisibility.removeRule(context.revealFunc);
+                    this.clearHighlightedCards(context);
+                    delete context.revealFunc;
+                });
             });
         });
     }
