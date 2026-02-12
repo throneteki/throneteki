@@ -21,6 +21,6 @@ ENV NODE_ENV production
 
 COPY . /usr/src/app
 
-RUN npm run build
+RUN NODE_OPTIONS="--max-old-space-size=4096" npm run build
 
 CMD [ "node", "." ]
