@@ -20,7 +20,7 @@
 
     // REQUIRED: Set this to your public URL (how users reach the site)
     // Examples: 'https://play.example.com' or 'http://your-server-ip'
-    origin: 'http://localhost',
+    origin: 'https://play.dragonstoneforge.com',
 
     appName: 'The Iron Throne',
 
