@@ -18,17 +18,14 @@ class WeLightTheWay extends DrawCard {
                 );
                 context.player.putIntoShadows(this.topCard, false, () => {
                     this.topCard.modifyToken(Tokens.shadow, 1);
-
-                    if (!this.topCard.isShadow()) {
-                        this.lastingEffect((ability) => ({
-                            condition: () => this.topCard.location === 'shadows',
-                            targetLocation: 'any',
-                            match: this.topCard,
-                            effect: ability.effects.addKeyword(
-                                `Shadow (${this.topCard.getPrintedCost()})`
-                            )
-                        }));
-                    }
+                    this.lastingEffect((ability) => ({
+                        condition: () => this.topCard.location === 'shadows',
+                        targetLocation: 'any',
+                        match: this.topCard,
+                        effect: ability.effects.addKeyword(
+                            `Shadow (${this.topCard.translateXValue(this.topCard.getPrintedCost())})`
+                        )
+                    }));
                 });
             }
         });
