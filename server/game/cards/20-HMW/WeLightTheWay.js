@@ -23,7 +23,7 @@ class WeLightTheWay extends DrawCard {
                         targetLocation: 'any',
                         match: this.topCard,
                         effect: ability.effects.addKeyword(
-                            `Shadow (${this.topCard.getPrintedCost()})`
+                            `Shadow (${this.topCard.translateXValue(this.topCard.getPrintedCost())})`
                         )
                     }));
                 });
