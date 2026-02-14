@@ -18,7 +18,7 @@ class ReznakMoReznak extends DrawCard {
                 this.modifyGold(1);
 
                 if (
-                    this.gold >= this.discarded.getPrintedCost() &&
+                    this.gold >= this.discarded.translateXValue(this.discarded.getPrintedCost()) &&
                     context.player.canPutIntoPlay(this.discarded) &&
                     this.discarded.location === 'discard pile'
                 ) {
