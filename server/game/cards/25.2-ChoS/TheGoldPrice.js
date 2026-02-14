@@ -62,12 +62,17 @@ class PayOrSacrificePrompt {
     }
 
     resolve() {
-        if (this.player.getSpendableGold() >= this.card.getPrintedCost()) {
+        if (
+            this.player.getSpendableGold() >= this.card.translateXValue(this.card.getPrintedCost())
+        ) {
             this.game.promptWithMenu(this.player, this, {
                 activePrompt: {
                     menuTitle: `Keep ${this.card.name}?`,
                     buttons: [
-                        { text: `Pay ${this.card.getPrintedCost()} gold`, method: 'resolvePay' },
+                        {
+                            text: `Pay ${this.card.translateXValue(this.card.getPrintedCost())} gold`,
+                            method: 'resolvePay'
+                        },
                         { text: 'Sacrifice', method: 'resolveSacrifice' }
                     ]
                 },
@@ -82,11 +87,14 @@ class PayOrSacrificePrompt {
         this.game.addMessage(
             '{0} pays {1} to keep {2} for {3}',
             this.player,
-            this.card.getPrintedCost(),
+            this.card.translateXValue(this.card.getPrintedCost()),
             this.card,
             this.source
         );
-        this.game.spendGold({ amount: this.card.getPrintedCost(), player: this.player });
+        this.game.spendGold({
+            amount: this.card.translateXValue(this.card.getPrintedCost()),
+            player: this.player
+        });
         return true;
     }
 
