@@ -5,11 +5,11 @@ import TextHelper from '../../TextHelper.js';
 
 class SentinelsOfTheRealm extends AgendaCard {
     setupCardAbilities(ability) {
-        this.challengeTracker = ChallengeTracker.forEndOfPhase(this.game);
+        this.tracker = ChallengeTracker.forPhase(this.game);
 
         const drawAmount = (context) => {
             const challengeTypes = new Set(
-                this.challengeTracker
+                this.tracker
                     .filter({ initiatedAgainstPlayer: context.player })
                     .map((challenge) => challenge.challengeType)
             );
@@ -23,12 +23,9 @@ class SentinelsOfTheRealm extends AgendaCard {
             effect: ability.effects.doesNotContributeStrength()
         });
 
-        this.reaction({
+        this.interrupt({
             when: {
-                onPhaseEnded: (event, context) =>
-                    event.phase === 'challenge' &&
-                    context.player.canDraw() &&
-                    drawAmount(context) > 0
+                onPhaseEnded: (event) => event.phase === 'challenge'
             },
             message: {
                 format: '{player} uses {source} to draw {amount}',

@@ -1238,7 +1238,7 @@ const Effects = {
             }
         };
     },
-    contributeCharacterStrength: function (card) {
+    contributeCharacterStrength: function (cardFunc) {
         let contribution = null;
         return {
             targetType: 'player',
@@ -1248,6 +1248,7 @@ const Effects = {
                     return;
                 }
 
+                const card = typeof cardFunc === 'function' ? cardFunc(context) : cardFunc;
                 contribution = new CharacterStrengthContribution(player, card);
                 challenge.addContribution(contribution);
             },
