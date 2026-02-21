@@ -1,0 +1,37 @@
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
+
+class StarrySepta extends DrawCard {
+    setupCardAbilities(ability) {
+        this.interrupt({
+            canCancel: true,
+            when: {
+                //Restrict triggering on own character abilities to forced triggered abilities
+                onCardAbilityInitiated: (event) =>
+                    event.source.getType() === 'character' &&
+                    event.ability.isTriggeredAbility() &&
+                    (event.ability.isForcedAbility() || event.source.controller !== this.controller)
+            },
+            cost: ability.costs.revealCards(
+                3,
+                (card) =>
+                    card.getType() === 'character' &&
+                    card.isFaction('tyrell') &&
+                    card.location === 'hand'
+            ),
+            message: {
+                format: '{player} uses {source} and reveals {costs.reveal} to cancel {character}',
+                args: { character: (context) => context.event.source }
+            },
+            limit: ability.limit.perRound(1),
+            gameAction: GameActions.genericHandler((context) => {
+                context.event.cancel();
+            })
+        });
+    }
+}
+
+StarrySepta.code = '27590';
+StarrySepta.version = '1.0.0';
+
+export default StarrySepta;
