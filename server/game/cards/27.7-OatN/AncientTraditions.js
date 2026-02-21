@@ -7,7 +7,7 @@ class AncientTraditions extends DrawCard {
             effect: ability.effects.modifyStrength(1)
         });
         this.whileAttached({
-            condition: () => this.parent.hasTrait('Old Gods'),
+            match: (card) => card.hasTrait('Old Gods'),
             effect: ability.effects.immuneTo((card) => card.controller !== this.controller)
         });
     }
