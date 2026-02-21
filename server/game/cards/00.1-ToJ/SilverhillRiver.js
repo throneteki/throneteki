@@ -27,6 +27,6 @@ class SilverhillRiver extends DrawCard {
     }
 }
 
-SilverhillRiver.code = '00170';
+SilverhillRiver.code = '00171';
 
 export default SilverhillRiver;

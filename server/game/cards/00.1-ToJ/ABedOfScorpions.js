@@ -27,6 +27,6 @@ class ABedOfScorpions extends DrawCard {
     }
 }
 
-ABedOfScorpions.code = '00195';
+ABedOfScorpions.code = '00196';
 
 export default ABedOfScorpions;

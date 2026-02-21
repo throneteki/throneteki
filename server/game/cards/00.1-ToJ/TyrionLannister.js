@@ -35,6 +35,6 @@ class TyrionLannister extends DrawCard {
     }
 }
 
-TyrionLannister.code = '00251';
+TyrionLannister.code = '00255';
 
 export default TyrionLannister;
