@@ -16,7 +16,7 @@ class TheWall extends DrawCard {
             },
             cost: ability.costs.kneelSelf(),
             message: {
-                format: '{player} kneels {cost.kneel} to prevent {characters} from standing this phase',
+                format: '{player} kneels {costs.kneel} to prevent {characters} from standing this phase',
                 args: { characters: () => this.getCharactersWithLowestStr() }
             },
             gameAction: GameActions.genericHandler(() => {
