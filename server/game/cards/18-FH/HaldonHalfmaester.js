@@ -13,9 +13,9 @@ class HaldonHalfmaester extends DrawCard {
             gameAction: GameActions.revealTopCards((context) => ({
                 player: context.player
             })).then({
-                condition: (context) => context.event.revealed.length > 0,
+                condition: (context) => context.parentContext.revealed.length > 0,
                 handler: (context) => {
-                    let topCard = context.event.revealed[0];
+                    let topCard = context.parentContext.revealed[0];
                     //place 1 gold on card of the same type
                     if (
                         ['character', 'location', 'attachment'].includes(topCard.getType()) &&
@@ -44,19 +44,19 @@ class HaldonHalfmaester extends DrawCard {
         const gameAction = GameActions.simultaneously([
             GameActions.ifCondition({
                 condition: (context) =>
-                    context.event.revealed.some((card) => card.isMatch({ type: 'event' })),
+                    context.parentContext.revealed.some((card) => card.isMatch({ type: 'event' })),
                 thenAction: GameActions.drawSpecific((context) => ({
                     player: context.player,
-                    cards: context.event.revealed
+                    cards: context.parentContext.revealed
                 }))
             }),
             GameActions.ifCondition({
                 condition: (context) =>
-                    context.event.revealed.some((card) =>
+                    context.parentContext.revealed.some((card) =>
                         card.isMatch({ name: 'Aegon Targaryen' })
                     ),
                 thenAction: GameActions.putIntoPlay((context) => ({
-                    card: context.event.revealed.filter((card) =>
+                    card: context.parentContext.revealed.filter((card) =>
                         card.isMatch({ name: 'Aegon Targaryen' })
                     )[0]
                 }))

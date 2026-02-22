@@ -1,3 +1,6 @@
+// Generated with Claude Code - claude-opus-4-5-20251101
+// - 2026-02-01: Added assertPhase, assertPrompt helpers; refactored unopposedChallenge to use new player helpers
+
 /* global jasmine */
 
 import range from 'lodash.range';
@@ -43,7 +46,11 @@ class GameFlowWrapper {
             maxPlayers: options.maxPlayers || numOfPlayers,
             players: this.generatePlayerDetails(numOfPlayers)
         };
-        this.game = new Game(details, { router: gameRouter, titleCardData: titleCardData });
+        this.game = new Game(details, {
+            cardData: options.cardData || [],
+            router: gameRouter,
+            titleCardData: titleCardData
+        });
         this.game.started = true;
 
         this.game.disableWinning = options.disableWinning ?? true;
@@ -176,15 +183,39 @@ class GameFlowWrapper {
     unopposedChallenge(player, type, participant) {
         var opponent = this.allPlayers.find((p) => p !== player);
 
-        player.clickPrompt(type);
-        player.clickCard(participant, 'play area');
-        player.clickPrompt('Done');
+        player.initiateChallenge({ type: type.toLowerCase(), attackers: participant });
 
         this.skipActionWindow();
 
-        opponent.clickPrompt('Done');
+        opponent.declareDefenders([]);
 
         this.skipActionWindow();
+    }
+
+    /**
+     * Assert the game is in the expected phase.
+     * @param {string} expectedPhase - Expected phase name
+     */
+    assertPhase(expectedPhase) {
+        if (this.game.currentPhase !== expectedPhase) {
+            throw new Error(
+                `Expected to be in ${expectedPhase} phase but was in ${this.game.currentPhase}`
+            );
+        }
+    }
+
+    /**
+     * Assert a player has a specific prompt.
+     * @param {object} player - Player wrapper to check
+     * @param {string} promptTitle - Expected prompt title (case-insensitive)
+     */
+    assertPrompt(player, promptTitle) {
+        if (!player.hasPrompt(promptTitle)) {
+            throw new Error(
+                `Expected ${player.name} to have prompt "${promptTitle}". ` +
+                    `Current prompt: ${player.formatPrompt()}`
+            );
+        }
     }
 }
 

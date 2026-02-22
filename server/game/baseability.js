@@ -4,6 +4,7 @@ import AbilityMessage from './AbilityMessage.js';
 import AbilityTarget from './AbilityTarget.js';
 import ChooseGameAction from './GameActions/ChooseGameAction.js';
 import HandlerGameActionWrapper from './GameActions/HandlerGameActionWrapper.js';
+import StackProperty from './PropertyTypes/StackProperty.js';
 
 /**
  * Base class representing an ability that can be done by the player. This
@@ -31,7 +32,7 @@ class BaseAbility {
         this.choosePlayerDefinition = AbilityChoosePlayerDefinition.create(properties);
         this.limit = properties.limit;
         this.message = AbilityMessage.create(properties.message);
-        this.cannotBeCanceled = !!properties.cannotBeCanceled;
+        this.cannotBeCanceledStack = new StackProperty(!!properties.cannotBeCanceled);
         this.abilitySourceType = properties.abilitySourceType || 'card';
         this.gameAction = this.buildGameAction(properties);
     }
@@ -298,6 +299,18 @@ class BaseAbility {
 
     shouldHideSourceInMessage() {
         return false;
+    }
+
+    get cannotBeCanceled() {
+        return this.cannotBeCanceledStack.get();
+    }
+
+    setCannotBeCanceled(value, source) {
+        this.cannotBeCanceledStack.set(value, source);
+    }
+
+    clearCannotBeCanceled(value, source) {
+        this.cannotBeCanceledStack.remove(value, source);
     }
 }
 

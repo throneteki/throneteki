@@ -14,6 +14,7 @@ class QueenOfTheSevenKingdoms extends DrawCard {
             target: {
                 cardCondition: (card) => card.isParticipating()
             },
+            limit: ability.limit.perPhase(1),
             handler: (context) => {
                 context.target.controller.standCard(context.target);
                 this.game.currentChallenge.removeFromChallenge(context.target);

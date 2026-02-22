@@ -161,6 +161,20 @@ const Effects = {
             }
         };
     },
+    cannotBeCanceled: function () {
+        return {
+            apply: function (card, context) {
+                for (const ability of card.getTriggeredAbilities()) {
+                    ability.setCannotBeCanceled(true, context.source);
+                }
+            },
+            unapply: function (card, context) {
+                for (const ability of card.getTriggeredAbilities()) {
+                    ability.clearCannotBeCanceled(true, context.source);
+                }
+            }
+        };
+    },
     cannotBeDeclaredAsAttacker: cannotEffect('declareAsAttacker'),
     cannotBeDeclaredAsDefender: cannotEffect('declareAsDefender'),
     cannotParticipate: cannotEffect('participateInChallenge'),
@@ -347,7 +361,7 @@ const Effects = {
         Flags.challengeOptions.doesNotContributeStrength
     ),
     doesNotReturnUnspentGold: modifyPlayerFlagEffect(Flags.player.doesNotReturnUnspentGold),
-    raiseAmountUnspentGoldToKeep: function (value) {
+    reduceNumberOfUnspentGoldReturned: function (value) {
         return {
             targetType: 'player',
             apply: function (player) {
@@ -1224,7 +1238,7 @@ const Effects = {
             }
         };
     },
-    contributeCharacterStrength: function (card) {
+    contributeCharacterStrength: function (cardFunc) {
         let contribution = null;
         return {
             targetType: 'player',
@@ -1234,6 +1248,7 @@ const Effects = {
                     return;
                 }
 
+                const card = typeof cardFunc === 'function' ? cardFunc(context) : cardFunc;
                 contribution = new CharacterStrengthContribution(player, card);
                 challenge.addContribution(contribution);
             },
@@ -1536,6 +1551,9 @@ const Effects = {
     reduceFirstMarshalledOrPlayedCardCostEachRound: function (amount, match) {
         return this.reduceFirstCardCostEachRound(['marshal', 'play'], amount, match);
     },
+    reduceFirstMarshaledCardIntoShadowsEachRound: function (amount, match) {
+        return this.reduceFirstCardCostEachRound('marshalIntoShadows', amount, match);
+    },
     reduceFirstOutOfShadowsCardCostEachRound: function (amount, match) {
         return this.reduceFirstCardCostEachRound(['outOfShadows'], amount, match);
     },
@@ -1621,10 +1639,10 @@ const Effects = {
         return {
             targetType: 'player',
             apply: function (player) {
-                player.handModifier += value;
+                player.handCountModifier += value;
             },
             unapply: function (player) {
-                player.handModifier -= value;
+                player.handCountModifier -= value;
             }
         };
     },

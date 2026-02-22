@@ -96,12 +96,18 @@ class DisconnectHandler {
             return duration.asSeconds();
         };
 
+        const votingPlayers = this.game
+            .getPlayers()
+            .filter((player) => !this.game.isDisconnected(player));
         this.game.addAlert(
             'warning',
-            '{0} has been disconnected for more than {1}. You may vote to wait an additional {2} for them to reconnect or eliminate them (must be unanimous)',
+            votingPlayers.length > 1
+                ? '{0} has been disconnected for more than {1}. Remaining players may vote to wait an additional {2} for them to reconnect or eliminate them (must be unanimous)'
+                : `{0} as been disconnected for more than {1}. {3} may choose to wait an additional {2} for them to reconnect, eliminate them. They may also leave at any time to conclude with no winner`,
             player,
             TextHelper.duration(disconnectedSeconds()),
-            TextHelper.duration(this.waitSeconds)
+            TextHelper.duration(this.waitSeconds),
+            votingPlayers[0]
         );
         const waitFunc = () => {
             this.game.addAlert(
@@ -138,15 +144,9 @@ class DisconnectHandler {
 
     /** Whether a player is in a state where they must wait for an opponent to reconnect, mostly for checking if they can safely leave the game */
     mustWaitForReconnections(player) {
-        if (this.game.isJoust) {
-            return !this.game
-                .getOpponents(player)
-                .every((opponent) => this.isLongDisconnected(opponent));
-        }
-        if (this.game.isMelee) {
-            return true;
-        }
-        return false;
+        return !this.game
+            .getOpponents(player)
+            .every((opponent) => this.isLongDisconnected(opponent));
     }
 }
 

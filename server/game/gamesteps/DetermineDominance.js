@@ -60,7 +60,7 @@ class DetermineDominance extends BaseStep {
                 // Otherwise, nobody wins dominance
                 this.determineWinner(result);
             }
-        } else {
+        } else if (potentialWinners.length > 0) {
             result.player = potentialWinners[0].player;
             result.difference =
                 distinctSorted[0] - (distinctSorted.length > 1 ? distinctSorted[1] : 0);

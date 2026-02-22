@@ -11,7 +11,7 @@ describe('False Plans', function () {
                 'Heads on Spikes',
                 'House Dayne Knight',
                 'House Dayne Knight',
-                'Vengeance for Elia'
+                'Vengeance for Elia (CoW)'
             ]);
 
             this.player1.selectDeck(deck1);

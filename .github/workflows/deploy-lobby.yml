@@ -11,10 +11,101 @@ jobs:
         runs-on: self-hosted
         environment: ${{ inputs.environment }}
         steps:
-            - name: Pull latest lobby image
-              run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/throneteki-lobby
-            - name: Stop and remove lobby image
-              continue-on-error: true
-              run: docker stop ${{ vars.CONTAINER_NAME }} && docker rm ${{ vars.CONTAINER_NAME }}
-            - name: Run new lobby image
-              run: docker run --restart unless-stopped -d -p ${{ vars.LOBBY_PORT }}:80 --network ${{ vars.NETWORK_NAME }} -v ${{ vars.CARDS_PATH }}:/usr/src/app/public/img/cards -v ${{ vars.AVATAR_PATH }}:/usr/src/app/public/img/avatar -v ${{ vars.LOG_PATH }}:/usr/src/app/server/logs --name ${{ vars.CONTAINER_NAME }} --env DEBUG="monk:*, mongo:*" --env NODE_CONFIG='{"env":"production","sentryDsn":"${{ secrets.SENTRY_DSN }}","captchaKey":"${{ secrets.CAPTHCA_KEY }}","minLobbyChatTime":3600,"dbPath":"${{ secrets.DB_PATH }}","cookieLifetime":604800000,"redisUrl":"${{ secrets.REDIS_URL }}","secret":"${{ secrets.SECRET }}","emailKey":"${{ secrets.EMAIL_KEY }}","emailBlockKey":"${{ secrets.EMAIL_BLOCK_KEY }}","port":80,"hmacSecret":"${{ secrets.HMAC }}","requireActivation":false,"patreonCallbackUrl":"${{ vars.PATREON_CALLBACK_URL }}","patreonClientId":"${{ secrets.PATREON_CLIENTID }}","patreonSecret":"${{ secrets.PATREON_SECRET }}"}' ${{ secrets.DOCKERHUB_USERNAME }}/throneteki-lobby:latest
+            - name: Checkout repo
+              uses: actions/checkout@v3
+
+            - name: Deploy Lobby
+              run: |
+                  # Determine namespace and environment based on environment
+                  ENV=$(echo "${{ github.event.inputs.environment }}" | tr '[:upper:]' '[:lower:]')
+
+                  if [ "${{ github.event.inputs.environment }}" = "Production" ]; then
+                    NAMESPACE="throneteki"
+                    APP_NAME="The Iron Throne"
+                    ENV_SUBDOMAIN="production"
+                  elif [ "${{ github.event.inputs.environment }}" = "Development" ]; then
+                    NAMESPACE="throneteki-development"
+                    APP_NAME="The Iron Throne"
+                    ENV_SUBDOMAIN="dev"
+                  elif [ "${{ github.event.inputs.environment }}" = "Playtesting" ]; then
+                    NAMESPACE="throneteki-playtesting"
+                    APP_NAME="The Iron Throne Playtesting"
+                    ENV_SUBDOMAIN="playtesting"
+                  else
+                    NAMESPACE="throneteki-$ENV"
+                    APP_NAME="The Iron Throne"
+                    ENV_SUBDOMAIN="$ENV"
+                  fi
+
+                  echo "Deploying lobby to namespace: $NAMESPACE for environment: $ENV_SUBDOMAIN"
+
+                  # Generate a unique deployment timestamp to force pod updates
+                  DEPLOY_TIME=$(date +%s)
+                  echo "Deployment timestamp: $DEPLOY_TIME"
+
+                  # Optional image override from GitHub env/vars
+                  # Supported:
+                  #   LOBBY_IMAGE (full image e.g., ghcr.io/org/app:tag)
+                  #   LOBBY_IMAGE_REPO and/or LOBBY_IMAGE_TAG
+                  HELM_IMAGE_FLAGS=""
+                  if [ -n "${{ vars.LOBBY_IMAGE }}" ]; then
+                    FULL_IMAGE="${{ vars.LOBBY_IMAGE }}"
+                    REPO="${FULL_IMAGE%:*}"
+                      TAG="${FULL_IMAGE#*:}"
+                    # If no tag provided, default to 'latest'
+                    if [ "$REPO" = "$TAG" ]; then
+                      REPO="$FULL_IMAGE"
+                      TAG="latest"
+                    fi
+                    HELM_IMAGE_FLAGS="--set-string image.repository=$REPO --set-string image.tag=$TAG"
+                  else
+                    # Fallback to separate repo/tag vars if provided
+                    if [ -n "${{ vars.LOBBY_IMAGE_REPO }}" ]; then
+                      REPO="${{ vars.LOBBY_IMAGE_REPO }}"
+                      HELM_IMAGE_FLAGS+=" --set-string image.repository=$REPO"
+                    fi
+                    if [ -n "${{ vars.LOBBY_IMAGE_TAG }}" ]; then
+                      TAG="${{ vars.LOBBY_IMAGE_TAG }}"
+                      HELM_IMAGE_FLAGS+=" --set-string image.tag=$TAG"
+                    fi
+                  fi
+
+                  # Create values file with secrets
+                  cat > /tmp/lobby-secrets.yaml <<EOF
+                  nodeConfig:
+                    env: "'production'"
+                    instance:
+                      type: "$ENV"
+                      reviewFormId: "${{ secrets.REVIEWS_FORM_ID }}"
+                    appName: "$APP_NAME"
+                    sentryDsn: "${{ secrets.SENTRY_DSN }}"
+                    captchaKey: "${{ secrets.CAPTCHA_KEY }}"
+                    minLobbyChatTime: 3600
+                    dbPath: "${{ secrets.DB_PATH }}"
+                    cookieLifetime: 604800000
+                    redisKeyPrefix: "$ENV"
+                    redisUrl: "${{ secrets.REDIS_URL }}"
+                    secret: "${{ secrets.SECRET }}"
+                    emailKey: "${{ secrets.EMAIL_KEY }}"
+                    emailBlockKey: "${{ secrets.EMAIL_BLOCK_KEY }}"
+                    port: 80
+                    hmacSecret: "${{ secrets.HMAC }}"
+                    requireActivation: false
+                    patreonCallbackUrl: "${{ secrets.PATREON_CALLBACK_URL }}"
+                    patreonClientId: "${{ secrets.PATREON_CLIENT_ID }}"
+                    patreonSecret: "${{ secrets.PATREON_SECRET }}"
+                  EOF
+
+                  helm upgrade --install throneteki-lobby ./infrastructure/lobby \
+                    --set namespace=$NAMESPACE \
+                    --set environment=$ENV_SUBDOMAIN \
+                    --set deployTime=$DEPLOY_TIME \
+                    $HELM_IMAGE_FLAGS \
+                    -f /tmp/lobby-secrets.yaml \
+                    -n $NAMESPACE
+
+                  # Clean up secrets file
+                  rm /tmp/lobby-secrets.yaml
+
+                  # Verify rollout
+                  kubectl rollout status deployment/throneteki-lobby -n $NAMESPACE

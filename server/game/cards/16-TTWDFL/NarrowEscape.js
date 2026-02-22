@@ -23,8 +23,8 @@ class NarrowEscape extends DrawCard {
         });
     }
 
-    promptForCancel() {
-        if (this.remainingOpponents.length === 0) {
+    promptForCancel(context) {
+        if (this.remainingOpponents.length === 0 || context.ability.cannotBeCanceled) {
             this.resolvePutIntoPlay();
             return true;
         }

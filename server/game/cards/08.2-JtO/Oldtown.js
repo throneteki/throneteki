@@ -30,7 +30,7 @@ class Oldtown extends DrawCard {
                 thenAction: GameActions.simultaneously([
                     GameActions.drawSpecific((context) => ({
                         player: context.player,
-                        cards: context.event.revealed
+                        cards: context.parentContext.revealed
                     })),
                     GameActions.gainPower((context) => ({
                         card: context.player.faction,

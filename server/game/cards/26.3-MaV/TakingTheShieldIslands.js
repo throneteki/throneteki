@@ -29,30 +29,30 @@ class TakingTheShieldIslands extends DrawCard {
                     cardCondition: (card) =>
                         card.location === 'hand' &&
                         card.controller === context.event.challenge.loser,
-                    onSelect: (player, cards) => this.onCardsSelected(player, cards)
+                    onSelect: (player, cards) => this.onCardsSelected(player, cards, context)
                 });
             }
         });
     }
 
-    onCardsSelected(player, cards) {
-        this.game.resolveGameAction(
-            GameActions.simultaneously(
-                cards.map((card) =>
-                    GameActions.placeCard({
-                        card,
-                        player,
-                        location: 'draw deck'
-                    })
-                )
-            )
-        );
+    onCardsSelected(player, cards, context) {
+        const placeAction = (card) =>
+            GameActions.placeCard({
+                card,
+                player,
+                location: 'draw deck'
+            });
+        if (Array.isArray(cards)) {
+            this.game.resolveGameAction(GameActions.simultaneously(cards.map(placeAction)));
+        } else {
+            placeAction(cards);
+        }
         this.game.addMessage(
-            "{0} then uses {1} to place {2} on top of {3}'s deck",
+            "{0} then uses {1} to place {2} card(s) on top of {3}'s deck",
             player,
             this,
-            cards,
-            cards[0].controller
+            this.getAmount(context),
+            context.event.challenge.loser
         );
 
         return true;

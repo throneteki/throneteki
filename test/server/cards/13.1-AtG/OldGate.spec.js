@@ -72,10 +72,13 @@ describe('Old Gate', function () {
         describe('can not sacrifice Old Gate to draw 2 cards with other characters than stark', function () {
             beforeEach(function () {
                 this.player1.clickPrompt('Done');
-                this.player2.clickMenu(this.oldGate2, 'Sacrifice to draw 2 cards');
             });
 
             it('should not move Old Gate to discard pile and 0 cards to hand', function () {
+                expect(this.player2).not.toAllowTriggerAction(
+                    this.oldGate2,
+                    'Sacrifice to draw 2 cards'
+                );
                 expect(this.oldGate2.location).toBe('play area');
                 expect(this.player2Object.hand.length).toBe(0);
             });

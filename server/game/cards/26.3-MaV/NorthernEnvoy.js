@@ -7,6 +7,10 @@ class NorthernEnvoy extends DrawCard {
             when: {
                 onCardEntersPlay: (event) => event.card === this
             },
+            message: {
+                format: "{player} uses {source} to reveal the top 10 cards of {opponent}'s deck",
+                args: { opponent: (context) => context.opponent }
+            },
             chooseOpponent: true,
             handler: (context) => {
                 this.game.resolveGameAction(
@@ -46,11 +50,15 @@ class NorthernEnvoy extends DrawCard {
                             })
                         })
                     }).then({
-                        message: '{player} {gameAction}',
+                        message: {
+                            format: '{revealPlayer} {gameAction}',
+                            args: { revealPlayer: (context) => context.parentContext.opponent }
+                        },
                         gameAction: GameActions.shuffle((context) => ({
                             player: context.parentContext.opponent
                         }))
-                    })
+                    }),
+                    context
                 );
             }
         });

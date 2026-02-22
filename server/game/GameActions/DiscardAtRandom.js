@@ -35,7 +35,7 @@ class DiscardAtRandom extends GameAction {
 
         for (const card of cards) {
             let childEvent = discardEvent(card);
-            childEvent.params.isRandom = true;
+            childEvent.params.isRandom = childEvent.isRandom = true;
             event.addChildEvent(childEvent);
         }
 

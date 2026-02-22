@@ -13,6 +13,7 @@ import Game from '../game/game.js';
 import Socket from '../socket.js';
 import ConfigService from '../services/ConfigService.js';
 import TextHelper from '../game/TextHelper.js';
+import HealthServer from './healthserver.js';
 
 if (config.sentryDsn) {
     Sentry.init({
@@ -36,7 +37,7 @@ class GameServer {
             this.protocol = 'http';
         }
 
-        this.host = process.env.HOST || config.host;
+        this.host = process.env.HOST || config.host || undefined;
 
         this.gameSocket = new GameSocket(
             this.configService,
@@ -66,7 +67,7 @@ class GameServer {
             }
 
             logger.info(
-                `==> Listening on ${that.protocol}://${that.host}:${process.env.PORT || config.socketioPort}/.`
+                `==> Listening on ${that.protocol}://${that.host || 'localhost'}:${process.env.PORT || config.socketioPort}/.`
             );
         });
 
@@ -74,8 +75,10 @@ class GameServer {
             perMessageDeflate: false
         };
 
-        if (process.env.NODE_ENV !== 'production') {
-            options.path = '/' + (process.env.SERVER || config.nodeIdentity) + '/socket.io';
+        // Always set path based on node identity for routing
+        const nodeIdentity = process.env.SERVER || config.nodeIdentity;
+        if (nodeIdentity) {
+            options.path = '/' + nodeIdentity + '/socket.io';
         }
 
         const corsOrigin = config.origin;
@@ -89,6 +92,9 @@ class GameServer {
         this.io.on('connection', this.onConnection.bind(this));
 
         setInterval(() => this.clearStaleAndFinishedGames(), 30 * 1000);
+
+        this.healthServer = new HealthServer(this);
+        this.healthServer.start();
     }
 
     debugDump() {

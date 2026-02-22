@@ -1,0 +1,5 @@
+apiVersion: v2
+name: throneteki-lobby
+description: Deployment for Throneteki lobby server
+version: 0.1.0
+appVersion: 'latest'

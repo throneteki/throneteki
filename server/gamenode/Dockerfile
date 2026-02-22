@@ -12,4 +12,4 @@ COPY package-lock.json /app/node/
 RUN npm install
 COPY . /app/node
 
-CMD [ "npm", "run", "gamenode" ]
+CMD [ "node", "./server/gamenode/index.js" ]

@@ -4,7 +4,7 @@ class DesmeraRedwyne extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onRemovedFromChallenge: (event) => event.card.location === 'play area'
+                onRemovedFromChallenge: (event) => event.reason === 'ability'
             },
             cost: ability.costs.payGold(1),
             choices: {

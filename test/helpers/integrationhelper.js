@@ -148,6 +148,28 @@ var customMatchers = {
             }
         };
     },
+    toAllowTriggerAction: function (util, customEqualityMatchers) {
+        return {
+            compare: function (actual, card, menuText) {
+                let result = {};
+
+                const items = card.getMenu(actual.player);
+
+                result.pass = items.some(
+                    (item) =>
+                        util.equals(item.text, menuText, customEqualityMatchers) && !item.disabled
+                );
+
+                if (result.pass) {
+                    result.message = `Expected ${actual.name} not to be allowed to trigger "${menuText}" on ${card.name} but it is.`;
+                } else {
+                    result.message = `Expected ${actual.name} to be allowed to trigger "${menuText}" on ${card.name} but it isn't.`;
+                }
+
+                return result;
+            }
+        };
+    },
     toAllowSelect: function (util, customEqualityMatchers) {
         return {
             compare: function (actual, expected) {
@@ -189,7 +211,7 @@ global.integration = function (options, definitions) {
 
     describe('integration', function () {
         beforeEach(function () {
-            this.flow = new GameFlowWrapper(options);
+            this.flow = new GameFlowWrapper({ ...options, cardData: deckBuilder.cards });
 
             this.game = this.flow.game;
             for (let player of this.flow.allPlayers) {

@@ -55,7 +55,7 @@ class Player extends Spectator {
         this.playableLocations = this.createDefaultPlayableLocations();
         this.usedPlotsModifier = 0;
         this.usedPlotsModifierByTrait = new ReferenceCountedSetProperty();
-        this.handModifier = 0;
+        this.handCountModifier = 0;
         this.attackerLimits = new MinMaxProperty({ defaultMin: 0, defaultMax: 0 });
         this.defenderLimits = new MinMaxProperty({ defaultMin: 0, defaultMax: 0 });
         this.gainedGold = 0;
@@ -218,7 +218,7 @@ class Player extends Spectator {
     }
 
     getHandCount() {
-        return Math.max(0, this.hand.length + this.handModifier);
+        return Math.max(0, this.hand.length + this.handCountModifier);
     }
 
     addGoldSource(source) {
@@ -1255,7 +1255,7 @@ class Player extends Spectator {
     }
 
     isBelowReserve() {
-        return this.hand.length <= this.getReserve();
+        return this.getHandCount() <= this.getReserve();
     }
 
     isRival(opponent) {

@@ -15,9 +15,9 @@ class RevealCost {
             GameActions.revealCards({
                 cards,
                 player: context.player,
-                revealWithMessage: false,
-                context
-            })
+                revealWithMessage: false
+            }),
+            context
         );
     }
 }

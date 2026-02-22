@@ -17,8 +17,9 @@ class PowerAsGoldSource {
         return this.allowSpendingFunc(spendParams);
     }
 
-    modifyGold(amount) {
+    modifyGold(amount, player) {
         let powerAmount = Math.ceil(amount / this.goldMultiplier);
+        this.card.game.addMessage('{0} uses {1} power on {2}', player, -powerAmount, this.card);
         this.card.modifyPower(powerAmount);
     }
 }

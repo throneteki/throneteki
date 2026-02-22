@@ -33,6 +33,6 @@ class SerGulianQorgyle extends DrawCard {
     }
 }
 
-SerGulianQorgyle.code = '26049';
+SerGulianQorgyle.code = '26047';
 
 export default SerGulianQorgyle;

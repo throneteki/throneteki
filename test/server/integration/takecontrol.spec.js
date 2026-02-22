@@ -11,8 +11,8 @@ describe('take control', function () {
                 const deck2 = this.buildDeck('tyrell', [
                     'Sneak Attack',
                     'Confiscation',
-                    'Paxter Redwyne',
-                    'Paxter Redwyne'
+                    'Paxter Redwyne (Core)',
+                    'Paxter Redwyne (Core)'
                 ]);
                 this.player1.selectDeck(deck1);
                 this.player2.selectDeck(deck2);

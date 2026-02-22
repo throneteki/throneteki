@@ -56,7 +56,7 @@ describe('replacement effects', function () {
                 ]);
                 const deck2 = this.buildDeck('lannister', [
                     'A Noble Cause',
-                    'Vengeance for Elia',
+                    'Vengeance for Elia (CoW)',
                     'Hedge Knight',
                     'Hedge Knight'
                 ]);

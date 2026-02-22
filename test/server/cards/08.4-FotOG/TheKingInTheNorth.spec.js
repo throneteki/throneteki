@@ -32,11 +32,8 @@ describe('The King in the North', function () {
 
         describe("when you don't control a King character", function () {
             describe('when you trigger a location ability', function () {
-                beforeEach(function () {
-                    this.player1.clickMenu(this.location, 'Gain gold');
-                });
-
                 it('should not resolve', function () {
+                    expect(this.player1).not.toAllowTriggerAction(this.location, 'Gain gold');
                     expect(this.player1Object.gold).toBe(5);
                 });
             });
@@ -55,11 +52,8 @@ describe('The King in the North', function () {
 
         describe("when your opponent doesn't control a King character", function () {
             describe('when they trigger a location ability', function () {
-                beforeEach(function () {
-                    this.player2.clickMenu(this.location2, 'Gain gold');
-                });
-
                 it('should not resolve', function () {
+                    expect(this.player2).not.toAllowTriggerAction(this.location2, 'Gain gold');
                     expect(this.player2Object.gold).toBe(0);
                 });
             });
