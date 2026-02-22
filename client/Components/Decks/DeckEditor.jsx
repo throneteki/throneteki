@@ -220,6 +220,11 @@ const DeckEditor = ({ deck, onBackClick }) => {
                     );
                     const count = deckCard?.count || 0;
 
+                    // show the dropdown either on small screens or if the deck limit is larger than 3 (e.g. for draft cards)
+                    const showDropdown = max > 4;
+                    const dropdownClass = showDropdown ? '' : 'sm:hidden';
+                    const buttonsClass = showDropdown ? 'hidden' : 'max-sm:hidden';
+
                     const setCardQuantity = (code, quantity) => {
                         const newDeckCards = [...deckCards];
                         const dcIndex = newDeckCards.findIndex(({ card }) => card.code === code);
@@ -243,7 +248,7 @@ const DeckEditor = ({ deck, onBackClick }) => {
                     return (
                         <>
                             <Select
-                                className='sm:hidden'
+                                className={dropdownClass}
                                 onChange={(e) =>
                                     setCardQuantity(
                                         info.row.original.code,
@@ -261,7 +266,7 @@ const DeckEditor = ({ deck, onBackClick }) => {
                                     </SelectItem>
                                 ))}
                             </Select>
-                            <ButtonGroup className='max-sm:hidden'>
+                            <ButtonGroup className={buttonsClass}>
                                 {[...Array(max).keys()].map((digit) => (
                                     <SmallButton
                                         size='xs'
