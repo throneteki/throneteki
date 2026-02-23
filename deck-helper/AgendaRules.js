@@ -492,7 +492,7 @@ const agendaRules = {
                             }
                         }
                     }
-                    return traitsInDeck.length <= 1;
+                    return traitsInDeck.length > 0;
                 }
             }
         ]
