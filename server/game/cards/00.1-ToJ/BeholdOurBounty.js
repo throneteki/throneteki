@@ -15,7 +15,7 @@ class BeholdOurBounty extends DrawCard {
                     effect: ability.effects.modifyClaim(1)
                 }));
                 this.game.addMessage(
-                    '{0} uses {1} to return {2} to their hand to raise their claim by 1',
+                    '{0} uses {1} and returns {2} to their hand to raise their claim by 1',
                     context.player,
                     this,
                     context.costs.returnToHand

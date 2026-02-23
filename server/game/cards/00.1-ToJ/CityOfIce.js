@@ -8,7 +8,7 @@ class CityOfIce extends PlotCard {
                     event.challenge.attackingPlayer === event.challenge.winner
             },
             player: () =>
-                this.hasTwoUsedCityPlots(this.controller) &&
+                this.hasUsedCityPlots(this.controller) &&
                 this.game.currentChallenge.winner === this.controller
                     ? this.controller
                     : this.game.currentChallenge.winner,
@@ -19,7 +19,7 @@ class CityOfIce extends PlotCard {
                     card.location === 'play area' &&
                     card.isAttacking()
             },
-            limit: ability.limit.perPhase(2),
+            limit: ability.limit.perPhase(this.controller.getNumberOfUsedPlotsByTrait('City')),
             handler: (context) => {
                 context.target.modifyPower(1);
                 this.game.addMessage(
@@ -32,8 +32,8 @@ class CityOfIce extends PlotCard {
         });
     }
 
-    hasTwoUsedCityPlots(player) {
-        return player.getNumberOfUsedPlotsByTrait('City') > 1;
+    hasUsedCityPlots(player) {
+        return player.getNumberOfUsedPlotsByTrait('City') > 0;
     }
 }
 

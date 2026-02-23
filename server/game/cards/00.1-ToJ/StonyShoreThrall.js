@@ -7,7 +7,7 @@ class StonyShoreThrall extends DrawCard {
             when: {
                 onCardEntersPlay: () => this.game.currentPhase === 'challenge'
             },
-            cost: ability.costs.kneelSelf(),
+            limit: ability.limit.perRound(1),
             chooseOpponent: true,
             handler: (context) => {
                 this.lastingEffect((ability) => ({

@@ -1,8 +1,8 @@
 import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
-class WanderingKnight extends DrawCard {
-    setupCardAbilities(ability) {
+class MaesterOfTheEyrie extends DrawCard {
+    setupCardAbilities() {
         this.reaction({
             when: {
                 afterChallenge: (event) =>
@@ -91,6 +91,6 @@ class WanderingKnight extends DrawCard {
     }
 }
 
-WanderingKnight.code = '00351';
+MaesterOfTheEyrie.code = '00346';
 
-export default WanderingKnight;
+export default MaesterOfTheEyrie;

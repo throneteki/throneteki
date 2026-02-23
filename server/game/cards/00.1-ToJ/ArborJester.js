@@ -5,7 +5,7 @@ class ArborJester extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardOutOfShadows: (event) => event.card === this
+                onCardEntersPlay: (event) => event.card === this
             },
             target: {
                 cardCondition: (card) =>

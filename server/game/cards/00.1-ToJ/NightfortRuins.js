@@ -12,10 +12,13 @@ class NightfortRuins extends DrawCard {
                 this.game.isDuringChallenge({ challengeType: 'power' }) &&
                 this.controller.anyCardsInPlay(
                     (card) => card.isParticipating() && card.getType() === 'character'
-                ) &&
-                !this.kneeled,
-            effect: ability.effects.contributeStrength(this, this.tokens[Tokens.gold])
+                ),
+            effect: ability.effects.dynamicContributeStrength(() => this.getGoldAmount(), this)
         });
+    }
+
+    getGoldAmount() {
+        return this.hasToken(Tokens.gold) ? this.tokens[Tokens.gold] : 0;
     }
 }
 
