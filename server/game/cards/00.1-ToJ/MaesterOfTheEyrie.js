@@ -8,24 +8,14 @@ class MaesterOfTheEyrie extends DrawCard {
                 afterChallenge: (event) =>
                     event.challenge.winner === this.controller && this.isAttacking()
             },
-            message: '{player} uses {source} to reveal the top 3 cards from their deck',
+            message: '{player} uses {source} to look at the top 3 cards from their deck',
             handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.revealTopCards((context) => ({
-                        player: context.player,
-                        amount: 3,
-                        whileRevealed: GameActions.genericHandler((context) => {
-                            const numRevealed = context.revealed.length;
-                            if (numRevealed > 0) {
-                                this.cardsPlaced = 0;
-                                this.mode = 'bottom';
-
-                                this.promptToPlaceNextCard();
-                            }
-                        })
-                    })),
-                    context
-                );
+                this.remainingCards = this.controller.searchDrawDeck(3);
+                this.cardsPlaced = 0;
+                this.cardsOnBottom = [];
+                this.mode = 'bottom';
+                this.context = context;
+                this.promptToPlaceNextCard();
             }
         });
     }
@@ -45,7 +35,7 @@ class MaesterOfTheEyrie extends DrawCard {
                 menuTitle:
                     this.mode === 'top'
                         ? 'Choose card to place on top of deck'
-                        : 'Choose card to place on bottom of deck',
+                        : 'Choose card to reveal and place on bottom of deck',
                 buttons: buttons
             },
             source: this
@@ -60,21 +50,30 @@ class MaesterOfTheEyrie extends DrawCard {
         }
 
         this.remainingCards = this.remainingCards.filter((card) => card.uuid !== cardId);
-        this.selectedPlayer.moveCard(card, 'draw deck', { bottom: this.mode === 'bottom' });
+        this.controller.moveCard(card, 'draw deck', { bottom: this.mode === 'bottom' });
         this.cardsPlaced += 1;
 
-        if (this.mode === 'bottom' && this.cardsPlaced >= 3) {
-            this.placeTop();
-        } else if (this.remainingCards.length > 0) {
+        if (this.mode === 'bottom') {
+            this.cardsOnBottom.push(card);
+        }
+
+        if (this.remainingCards.length > 0) {
             this.promptToPlaceNextCard();
         }
 
         if (this.remainingCards.length === 0) {
             this.game.addMessage(
-                "{0} places {1} cards on the bottom of {2}'s deck and the rest on top",
+                "{0} places {1} on the bottom of {2}'s deck and the rest on top",
                 this.controller,
-                this.cardsOnBottom,
-                this.selectedPlayer
+                this.getBottomString(),
+                this.controller
+            );
+            this.game.resolveGameAction(
+                GameActions.revealCards((context) => ({
+                    cards: this.cardsOnBottom,
+                    player: player
+                })),
+                this.context
             );
         }
 
@@ -82,12 +81,18 @@ class MaesterOfTheEyrie extends DrawCard {
     }
 
     placeTop() {
-        this.cardsOnBottom = this.cardsPlaced;
         this.mode = 'top';
         this.cardsPlaced = 0;
         this.promptToPlaceNextCard();
 
         return true;
+    }
+
+    getBottomString() {
+        if (this.cardsOnBottom.length > 0) {
+            return '{this.cardsOnBottom.length} cards';
+        }
+        return 'no cards';
     }
 }
 
