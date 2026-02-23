@@ -1,14 +1,24 @@
 import PlotCard from '../../plotcard.js';
 
 class CityOfIce extends PlotCard {
+    constructor(owner, cardData) {
+        super(owner, cardData);
+
+        this.registerEvents(['onPhaseStarted']);
+    }
+
+    onPhaseStarted() {
+        this.triggerCount = 0;
+    }
+
     setupCardAbilities(ability) {
         this.reaction({
             when: {
                 afterChallenge: (event) =>
-                    event.challenge.attackingPlayer === event.challenge.winner
+                    this.triggerCount < this.controller.getNumberOfUsedPlotsByTrait('City') &&
+                    event.challenge.winner === this.controller
             },
             player: () =>
-                this.hasUsedCityPlots(this.controller) &&
                 this.game.currentChallenge.winner === this.controller
                     ? this.controller
                     : this.game.currentChallenge.winner,
@@ -19,8 +29,8 @@ class CityOfIce extends PlotCard {
                     card.location === 'play area' &&
                     card.isAttacking()
             },
-            limit: ability.limit.perPhase(this.controller.getNumberOfUsedPlotsByTrait('City')),
             handler: (context) => {
+                this.triggerCount++;
                 context.target.modifyPower(1);
                 this.game.addMessage(
                     '{0} uses {1} to have {2} gain 1 power',
