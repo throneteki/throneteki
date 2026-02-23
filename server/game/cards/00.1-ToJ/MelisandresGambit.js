@@ -22,6 +22,7 @@ class MelisandresGambit extends PlotCard {
                         card !== context.target &&
                         card.controller === this.controller &&
                         card.getType() === 'character' &&
+                        card.name !== context.target[0].name &&
                         ['discard pile', 'dead pile'].includes(card.location) &&
                         this.controller.canPutIntoPlay(card);
 
@@ -29,7 +30,7 @@ class MelisandresGambit extends PlotCard {
                         this.game.promptForSelect(this.controller, {
                             source: this,
                             cardCondition: this.targetPredicate,
-                            onSelect: (card) => this.onCardSelected(card),
+                            onSelect: (player, card) => this.onCardSelected(player, card),
                             onCancel: () => this.cancelSelection()
                         });
                     }
@@ -54,14 +55,9 @@ class MelisandresGambit extends PlotCard {
         return true;
     }
 
-    onCardSelected(card) {
-        this.selections.push({ player: this.controller, card: card });
-        this.game.addMessage(
-            '{0} selects {1} to put into play with {2}',
-            this.controller,
-            card,
-            this
-        );
+    onCardSelected(player, card) {
+        player.putIntoPlay(card);
+        this.game.addMessage('{0} selects {1} to put into play with {2}', player, card, this);
 
         return true;
     }

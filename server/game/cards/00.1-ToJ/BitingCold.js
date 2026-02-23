@@ -15,7 +15,7 @@ class BitingCold extends PlotCard {
                 if (charactersToMove.length > 0) {
                     this.game.resolveGameAction(
                         GameActions.simultaneously((context) =>
-                            this.toBeMoved(context).map((card) =>
+                            charactersToMove.map((card) =>
                                 GameActions.returnCardToDeck({
                                     card,
                                     bottom: true,

@@ -4,6 +4,10 @@ import { Tokens } from '../../Constants/index.js';
 
 class HotPie extends DrawCard {
     setupCardAbilities(ability) {
+        this.persistentEffect({
+            match: this,
+            effect: ability.effects.immuneTo((card) => card.hasTrait('Omen'))
+        });
         this.action({
             title: 'Bake a Pie',
             cost: ability.costs.kneelSelf(),
