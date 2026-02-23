@@ -90,7 +90,7 @@ class MaesterOfTheEyrie extends DrawCard {
 
     getBottomString() {
         if (this.cardsOnBottom.length > 0) {
-            return '{this.cardsOnBottom.length} cards';
+            return `${this.cardsOnBottom.length} cards`;
         }
         return 'no cards';
     }
