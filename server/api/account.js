@@ -85,6 +85,21 @@ function validatePassword(password) {
 
 const DefaultEmailHash = crypto.createHash('md5').update('noreply@theironthrone.net').digest('hex');
 
+function getRequestIp(req) {
+    let ip = req.ip || req.get('x-real-ip') || req.headers['x-forwarded-for'];
+
+    if (Array.isArray(ip)) {
+        [ip] = ip;
+    }
+
+    if (typeof ip === 'string') {
+        [ip] = ip.split(',');
+        ip = ip.trim();
+    }
+
+    return ip || req.socket?.remoteAddress || req.connection?.remoteAddress;
+}
+
 export const init = function (server, options) {
     userService = ServiceFactory.userService(options.db, configService);
     let banlistService = ServiceFactory.banlistService(options.db);
@@ -181,10 +196,7 @@ export const init = function (server, options) {
                 newUser.activationTokenExpiry = formattedExpiration;
             }
 
-            let ip = req.get('x-real-ip');
-            if (!ip) {
-                ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-            }
+            let ip = getRequestIp(req);
             try {
                 let lookup = await banlistService.getEntryByIp(ip);
                 if (lookup) {
@@ -420,10 +432,7 @@ export const init = function (server, options) {
             let authToken = jwt.sign(userObj, configService.getValue('secret'), {
                 expiresIn: '5m'
             });
-            let ip = req.get('x-real-ip');
-            if (!ip) {
-                ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-            }
+            let ip = getRequestIp(req);
 
             let refreshToken = await userService.addRefreshToken(user.username, authToken, ip);
             if (!refreshToken) {
@@ -483,10 +492,7 @@ export const init = function (server, options) {
 
             let userObj = user.getWireSafeDetails();
 
-            let ip = req.get('x-real-ip');
-            if (!ip) {
-                ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-            }
+            let ip = getRequestIp(req);
 
             let authToken = jwt.sign(userObj, configService.getValue('secret'), {
                 expiresIn: '5m'

@@ -24,6 +24,7 @@ class Server {
     async init(options) {
         this.userService = ServiceFactory.userService(options.db, this.configService);
         this.server = http.Server(app);
+        app.set('trust proxy', true);
 
         if (!this.isDeveloping) {
             Sentry.init({
