@@ -149,6 +149,18 @@ class Lobby {
         return userList;
     }
 
+    isUserRestricted(user) {
+        if (!user || user.trustState !== 'restricted') {
+            return false;
+        }
+
+        if (!user.restrictedUntil) {
+            return true;
+        }
+
+        return new Date(user.restrictedUntil).getTime() > Date.now();
+    }
+
     handshake(ioSocket, next) {
         if (ioSocket.handshake.auth.token && ioSocket.handshake.auth.token !== 'undefined') {
             jwt.verify(
@@ -468,6 +480,14 @@ class Lobby {
     }
 
     onNewGame(socket, gameDetails) {
+        if (this.isUserRestricted(socket.user)) {
+            socket.send(
+                'gameerror',
+                'This account is temporarily restricted and cannot create new games.'
+            );
+            return;
+        }
+
         let existingGame = this.findGameForUser(socket.user.username);
         if (existingGame) {
             return;
@@ -551,6 +571,14 @@ class Lobby {
     }
 
     onJoinGame(socket, gameId, password) {
+        if (this.isUserRestricted(socket.user)) {
+            socket.send(
+                'gameerror',
+                'This account is temporarily restricted and cannot join games.'
+            );
+            return;
+        }
+
         let existingGame = this.findGameForUser(socket.user.username);
         if (existingGame) {
             return;
@@ -696,6 +724,11 @@ class Lobby {
     }
 
     async onLobbyChat(socket, message) {
+        if (this.isUserRestricted(socket.user)) {
+            socket.send('nochat');
+            return;
+        }
+
         if (
             Date.now() - socket.user.registered <
             this.configService.getValue('minLobbyChatTime') * 1000
