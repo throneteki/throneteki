@@ -1,4 +1,5 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
+import HCaptcha from '@hcaptcha/react-hcaptcha';
 import { useDispatch } from 'react-redux';
 import * as yup from 'yup';
 
@@ -10,12 +11,16 @@ import { Button, Input, Link, Switch } from '@heroui/react';
 import { toast } from 'react-toastify';
 import NavigationLink from '../Components/Site/NavigationLink';
 import Page from './Page';
+import ErrorMessage from '../Components/Site/ErrorMessage';
 
 const Register = () => {
     const dispatch = useDispatch();
+    const [challengeRequired, setChallengeRequired] = useState(false);
+    const [captcha, setCaptcha] = useState('');
 
     const [preflightRegister] = usePreflightRegisterMutation();
     const [registerAccount, { isLoading }] = useRegisterAccountMutation();
+    const siteKey = import.meta.env.VITE_HCAPTCHA_SITE_KEY;
 
     const onRegister = useCallback(
         async (state) => {
@@ -28,10 +33,24 @@ const Register = () => {
                 const preflight = await preflightRegister({
                     username: state.username,
                     email: state.email,
+                    captcha,
                     fingerprint,
                     platform: fingerprint.platform,
                     timezone: fingerprint.timezone
                 }).unwrap();
+
+                setChallengeRequired(!!preflight.challengeRequired);
+
+                if (preflight.challengeRequired && !captcha) {
+                    if (!siteKey) {
+                        toast.error(
+                            'Captcha verification is required for this registration, but it is not available right now.'
+                        );
+                    } else {
+                        toast.error('Please complete the captcha before registering.');
+                    }
+                    return;
+                }
 
                 if (!preflight.canProceed) {
                     toast.error(
@@ -47,6 +66,7 @@ const Register = () => {
                     password: state.password,
                     email: state.email,
                     enableGravatar: state.enableGravatar,
+                    captcha,
                     fingerprint,
                     platform: fingerprint.platform,
                     timezone: fingerprint.timezone
@@ -73,7 +93,7 @@ const Register = () => {
                 );
             }
         },
-        [dispatch, preflightRegister, registerAccount]
+        [captcha, dispatch, preflightRegister, registerAccount, siteKey]
     );
 
     const schema = yup.object({
@@ -167,6 +187,16 @@ const Register = () => {
                                 >
                                     Enable Gravatar
                                 </Switch>
+                                {challengeRequired ? (
+                                    siteKey ? (
+                                        <HCaptcha sitekey={siteKey} onVerify={setCaptcha} />
+                                    ) : (
+                                        <ErrorMessage
+                                            title='Failed to load Captcha'
+                                            message='Captcha is required for this registration but the site key is missing.'
+                                        />
+                                    )
+                                ) : null}
                                 <Button
                                     className='sm:self-start'
                                     isLoading={isLoading}

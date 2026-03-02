@@ -111,6 +111,47 @@ function getSignupFingerprint(req) {
     };
 }
 
+async function verifyCaptchaToken(captcha) {
+    const captchaKey = configService.getValue('captchaKey');
+
+    if (!captchaKey) {
+        logger.warn('Captcha verification requested but captchaKey is not configured');
+        return {
+            success: false,
+            message: 'Captcha verification is temporarily unavailable. Please try again later.'
+        };
+    }
+
+    if (!captcha) {
+        return {
+            success: false,
+            message: 'Please complete the captcha correctly'
+        };
+    }
+
+    const params = new URLSearchParams();
+    params.append('secret', captchaKey);
+    params.append('response', captcha);
+
+    let response = await fetch('https://api.hcaptcha.com/siteverify', {
+        method: 'POST',
+        headers: { 'content-type': 'application/x-www-form-urlencoded' },
+        body: params
+    });
+
+    let answer = await response.json();
+
+    if (!answer.success) {
+        logger.warn('Failed captcha %s', answer);
+        return {
+            success: false,
+            message: 'Please complete the captcha correctly'
+        };
+    }
+
+    return { success: true };
+}
+
 export const init = function (server, options) {
     userService = ServiceFactory.userService(options.db, configService);
     let banlistService = ServiceFactory.banlistService(options.db);
@@ -187,6 +228,16 @@ export const init = function (server, options) {
                             : 'We could not complete this registration request. Please contact support if you believe this is an error.',
                     data: response
                 });
+            }
+
+            if (assessment.challengeRequired && req.body.captcha) {
+                const captchaResult = await verifyCaptchaToken(req.body.captcha);
+                if (!captchaResult.success) {
+                    return res.status(400).send({
+                        success: false,
+                        message: captchaResult.message
+                    });
+                }
             }
 
             return res.send({ success: true, data: response });
@@ -306,6 +357,16 @@ export const init = function (server, options) {
                     message:
                         'We could not complete this registration request. Please contact support if you believe this is an error.'
                 });
+            }
+
+            if (assessment.challengeRequired) {
+                const captchaResult = await verifyCaptchaToken(req.body.captcha);
+                if (!captchaResult.success) {
+                    return res.status(400).send({
+                        success: false,
+                        message: captchaResult.message
+                    });
+                }
             }
 
             let newUser = {
@@ -749,23 +810,11 @@ export const init = function (server, options) {
         wrapAsync(async (req, res) => {
             let resetToken;
 
-            const params = new URLSearchParams();
-            params.append('secret', configService.getValue('captchaKey'));
-            params.append('response', req.body.captcha);
-
-            let response = await fetch('https://api.hcaptcha.com/siteverify', {
-                method: 'POST',
-                headers: { 'content-type': 'application/x-www-form-urlencoded' },
-                body: params
-            });
-
-            let answer = await response.json();
-
-            if (!answer.success) {
-                logger.warn('Failed captcha %s', answer);
+            const captchaResult = await verifyCaptchaToken(req.body.captcha);
+            if (!captchaResult.success) {
                 return res.send({
                     success: false,
-                    message: 'Please complete the captcha correctly'
+                    message: captchaResult.message
                 });
             }
 
