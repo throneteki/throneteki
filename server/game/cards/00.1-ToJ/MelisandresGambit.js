@@ -1,5 +1,4 @@
 import PlotCard from '../../plotcard.js';
-import GameActions from '../../GameActions/index.js';
 
 class MelisandresGambit extends PlotCard {
     setupCardAbilities() {
