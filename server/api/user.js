@@ -145,9 +145,7 @@ export const init = function (server, options) {
             }
 
             if (user.trustState !== 'restricted') {
-                return res
-                    .status(409)
-                    .send({ message: 'User is not in a restricted trust state' });
+                return res.status(409).send({ message: 'User is not in a restricted trust state' });
             }
 
             await abuseService.unrestrictUser(user, {
