@@ -9,6 +9,7 @@ import {
     useGetUserAbuseProfileQuery,
     useGetUserQuery,
     useRestrictUserMutation,
+    useUnrestrictUserMutation,
     useSaveUserMutation
 } from '../redux/middleware/api';
 import { sendClearUserSessions } from '../redux/reducers/lobby';
@@ -73,6 +74,7 @@ const UserAdmin = () => {
     });
     const [saveUser, { isLoading: isSaveLoading }] = useSaveUserMutation();
     const [restrictUser, { isLoading: isRestrictLoading }] = useRestrictUserMutation();
+    const [unrestrictUser, { isLoading: isUnrestrictLoading }] = useUnrestrictUserMutation();
     const [blockUserCluster, { isLoading: isBlockClusterLoading }] = useBlockUserClusterMutation();
     const [addAbuseBlock, { isLoading: isBlockAddLoading }] = useAddAbuseBlockMutation();
 
@@ -119,6 +121,22 @@ const UserAdmin = () => {
             toast.error(err.message || 'An error occured restricting the user.');
         }
     }, [currentUser, restrictUser]);
+
+    const onUnrestrictClick = useCallback(async () => {
+        if (!currentUser) {
+            return;
+        }
+
+        try {
+            await unrestrictUser({
+                username: currentUser.username,
+                reason: 'Unrestricted from user admin'
+            }).unwrap();
+            toast.success('User unrestricted successfully.');
+        } catch (err) {
+            toast.error(err.message || 'An error occured unrestricting the user.');
+        }
+    }, [currentUser, unrestrictUser]);
 
     const onBlockClusterClick = useCallback(async () => {
         if (!currentUser) {
@@ -256,6 +274,15 @@ const UserAdmin = () => {
                                     >
                                         Restrict 7 days
                                     </Button>
+                                    {abuseProfile?.trustState === 'restricted' && (
+                                        <Button
+                                            color='success'
+                                            isLoading={isUnrestrictLoading}
+                                            onPress={onUnrestrictClick}
+                                        >
+                                            Unrestrict
+                                        </Button>
+                                    )}
                                     <Button
                                         color='danger'
                                         isLoading={isBlockClusterLoading}
@@ -390,10 +417,12 @@ const UserAdmin = () => {
         isBlockAddLoading,
         isBlockClusterLoading,
         isRestrictLoading,
+        isUnrestrictLoading,
         isSaveLoading,
         onBlockClusterClick,
         onClearClick,
         onLinkedUserClick,
+        onUnrestrictClick,
         onRestrictClick,
         onSaveClick,
         retPermissions,

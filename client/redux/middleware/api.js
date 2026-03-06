@@ -349,6 +349,17 @@ export const apiSlice = createApi({
                 TagTypes.User
             ]
         }),
+        unrestrictUser: builder.mutation({
+            query: ({ username, reason }) => ({
+                url: `/user/${username}/unrestrict`,
+                method: 'POST',
+                body: { reason }
+            }),
+            invalidatesTags: (_result, _error, arg) => [
+                { type: TagTypes.User, id: `${arg.username}-abuse` },
+                TagTypes.User
+            ]
+        }),
         blockUserCluster: builder.mutation({
             query: ({ username, reason }) => ({
                 url: `/user/${username}/block-cluster`,
@@ -562,6 +573,7 @@ export const {
     useGetUserAbuseProfileQuery,
     useSaveUserMutation,
     useRestrictUserMutation,
+    useUnrestrictUserMutation,
     useBlockUserClusterMutation,
     useAddNewsMutation,
     useDeleteNewsMutation,

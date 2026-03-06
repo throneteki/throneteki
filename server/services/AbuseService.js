@@ -585,6 +585,31 @@ class AbuseService {
         return restrictedUntil;
     }
 
+    async unrestrictUser(user, { actor, reason }) {
+        const nextFlags = (user.riskFlags || []).filter(
+            (flag) => flag !== 'manual_restriction' && flag !== 'restricted'
+        );
+
+        await this.updateUserState(user.username, {
+            trustState: 'trusted',
+            restrictedUntil: null,
+            evasionReviewRequired: false,
+            riskFlags: nextFlags,
+            modNotes: reason || user.modNotes || null
+        });
+
+        await this.logEvent({
+            type: 'restriction_applied',
+            username: user.username,
+            userId: user._id,
+            ip: user.lastLoginIp || user.registerIpNormalized || user.registerIp,
+            outcome: 'allowed',
+            signals: ['manual_unrestriction'],
+            scoreDelta: 0,
+            createdBy: actor
+        });
+    }
+
     async blockCluster(user, { actor, reason }) {
         const blocksToCreate = [
             {

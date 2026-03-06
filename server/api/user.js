@@ -132,6 +132,34 @@ export const init = function (server, options) {
     );
 
     server.post(
+        '/api/user/:username/unrestrict',
+        passport.authenticate('jwt', { session: false }),
+        wrapAsync(async (req, res) => {
+            if (!req.user.permissions || !req.user.permissions.canManageUsers) {
+                return res.status(403);
+            }
+
+            let user = await userService.getUserByUsername(req.params.username);
+            if (!user) {
+                return res.status(404).send({ message: 'Not found' });
+            }
+
+            if (user.trustState !== 'restricted') {
+                return res
+                    .status(409)
+                    .send({ message: 'User is not in a restricted trust state' });
+            }
+
+            await abuseService.unrestrictUser(user, {
+                actor: req.user.username,
+                reason: req.body.reason
+            });
+
+            return res.send({ success: true });
+        })
+    );
+
+    server.post(
         '/api/user/:username/block-cluster',
         passport.authenticate('jwt', { session: false }),
         wrapAsync(async (req, res) => {
