@@ -65,6 +65,30 @@ class User {
         return this.userData.verified;
     }
 
+    get trustState() {
+        return this.userData.trustState || 'trusted';
+    }
+
+    get riskFlags() {
+        return this.userData.riskFlags || [];
+    }
+
+    get riskScore() {
+        return this.userData.riskScore || 0;
+    }
+
+    get restrictedUntil() {
+        return this.userData.restrictedUntil;
+    }
+
+    get emailDomain() {
+        return this.userData.emailDomain;
+    }
+
+    get modNotes() {
+        return this.userData.modNotes;
+    }
+
     get registered() {
         return this.userData.registered;
     }

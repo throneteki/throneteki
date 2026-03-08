@@ -63,8 +63,8 @@ class UserService extends EventEmitter {
     addUser(user) {
         return this.users
             .insert(user)
-            .then(() => {
-                return user;
+            .then((insertedUser) => {
+                return insertedUser;
             })
             .catch((err) => {
                 logger.error('Error adding user %s %s', err, user);
@@ -74,15 +74,27 @@ class UserService extends EventEmitter {
     }
 
     update(user) {
+        const emailDomain =
+            user.emailDomain ||
+            (user.email && user.email.includes('@')
+                ? user.email.substring(user.email.lastIndexOf('@') + 1).toLowerCase()
+                : undefined);
         var toSet = {
             email: user.email,
+            emailDomain: emailDomain,
             enableGravatar: user.enableGravatar,
             settings: user.settings,
             promptedActionWindows: user.promptedActionWindows,
             permissions: user.permissions,
             verified: user.verified,
             disabled: user.disabled,
-            patreon: user.patreon
+            patreon: user.patreon,
+            riskFlags: user.riskFlags || [],
+            riskScore: user.riskScore || 0,
+            trustState: user.trustState || 'trusted',
+            restrictedUntil: user.restrictedUntil,
+            evasionReviewRequired: !!user.evasionReviewRequired,
+            modNotes: user.modNotes || null
         };
 
         if (user.password && user.password !== '') {

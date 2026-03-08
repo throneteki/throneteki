@@ -3,9 +3,9 @@ import moment from 'moment';
 
 import Panel from '../Components/Site/Panel';
 import {
-    useAddBanListEntryMutation,
-    useGetBanListQuery,
-    useRemoveBanListEntryMutation
+    useAddAbuseBlockMutation,
+    useGetAbuseBlocksQuery,
+    useRemoveAbuseBlockMutation
 } from '../redux/middleware/api';
 import {
     Button,
@@ -22,92 +22,117 @@ import { toast } from 'react-toastify';
 import Page from './Page';
 
 const BanlistAdmin = () => {
-    const { data: banList, isLoading } = useGetBanListQuery();
-    const [addBanListEntry, { isLoading: isAddLoading }] = useAddBanListEntryMutation();
-    const [removeBanListEntry, { isLoading: isRemoveLoading }] = useRemoveBanListEntryMutation();
-    const [banListText, setBanListText] = useState('');
+    const { data: abuseBlocks, isLoading } = useGetAbuseBlocksQuery();
+    const [addAbuseBlock, { isLoading: isAddLoading }] = useAddAbuseBlockMutation();
+    const [removeAbuseBlock, { isLoading: isRemoveLoading }] = useRemoveAbuseBlockMutation();
+    const [scope, setScope] = useState('ip');
+    const [value, setValue] = useState('');
+    const [reason, setReason] = useState('');
 
     const onAddBanlistClick = useCallback(async () => {
         try {
-            await addBanListEntry(banListText).unwrap();
+            await addAbuseBlock({ scope, value, reason }).unwrap();
 
-            toast.success('Ban list entry added successfully.');
+            toast.success('Abuse block added successfully.');
+            setValue('');
+            setReason('');
         } catch (err) {
             toast.error(
                 err.data?.message ||
-                    'An error occured adding the ban list entry. Please try again later.'
+                    'An error occured adding the abuse block. Please try again later.'
             );
         }
-    }, [addBanListEntry, banListText]);
+    }, [addAbuseBlock, reason, scope, value]);
 
     const onDeleteBanlistClick = useCallback(
         async (id) => {
             try {
-                await removeBanListEntry(id).unwrap();
+                await removeAbuseBlock(id).unwrap();
 
-                toast.success('Ban list entry deleted successfully.');
+                toast.success('Abuse block deactivated successfully.');
             } catch (err) {
                 toast.error(
                     err.data?.message ||
-                        'An error occured deleting the ban list entry. Please try again later.'
+                        'An error occured deactivating the abuse block. Please try again later.'
                 );
             }
         },
-        [removeBanListEntry]
+        [removeAbuseBlock]
     );
 
     const renderedBanlist = useMemo(
         () =>
-            banList &&
-            banList.map((ban) => {
+            abuseBlocks &&
+            abuseBlocks.map((ban) => {
                 return (
                     <TableRow key={ban._id}>
-                        <TableCell>{ban.ip}</TableCell>
-                        <TableCell>{moment(ban.added).format('YYYY-MM-DD')}</TableCell>
-                        <TableCell>{ban.addedBy}</TableCell>
+                        <TableCell>{ban.scope}</TableCell>
+                        <TableCell>{ban.value || ban.ip}</TableCell>
+                        <TableCell>{ban.reason || '-'}</TableCell>
+                        <TableCell>
+                            {moment(ban.createdAt || ban.added).format('YYYY-MM-DD')}
+                        </TableCell>
+                        <TableCell>{ban.createdBy || ban.user}</TableCell>
+                        <TableCell>
+                            {ban.expiresAt ? moment(ban.expiresAt).format('YYYY-MM-DD') : 'Never'}
+                        </TableCell>
+                        <TableCell>{ban.active === false ? 'Inactive' : 'Active'}</TableCell>
                         <TableCell>
                             <Button
                                 isLoading={isRemoveLoading}
                                 color='danger'
+                                isDisabled={ban.active === false}
                                 onPress={() => onDeleteBanlistClick(ban._id)}
                             >
-                                Delete
+                                Deactivate
                             </Button>
                         </TableCell>
                     </TableRow>
                 );
             }),
-        [banList, isRemoveLoading, onDeleteBanlistClick]
+        [abuseBlocks, isRemoveLoading, onDeleteBanlistClick]
     );
 
     if (isLoading) {
-        return <LoadingSpinner label={'Loading banlist...'}></LoadingSpinner>;
+        return <LoadingSpinner label={'Loading abuse blocks...'}></LoadingSpinner>;
     }
 
     return (
         <Page>
-            <Panel title='Banlist administration'>
+            <Panel title='Abuse block administration'>
                 <Table isStriped aria-label='Ban List Table'>
                     <TableHeader>
-                        <TableColumn className='col-sm-2'>Ip</TableColumn>
-                        <TableColumn className='col-sm-2'>Added</TableColumn>
-                        <TableColumn className='col-sm-3'>Added By</TableColumn>
+                        <TableColumn>Scope</TableColumn>
+                        <TableColumn>Value</TableColumn>
+                        <TableColumn>Reason</TableColumn>
+                        <TableColumn>Added</TableColumn>
+                        <TableColumn>Added By</TableColumn>
+                        <TableColumn>Expires</TableColumn>
+                        <TableColumn>Status</TableColumn>
                         <TableColumn className='col-sm-2'>Action</TableColumn>
                     </TableHeader>
                     <TableBody>{renderedBanlist}</TableBody>
                 </Table>
             </Panel>
-            <Panel title='Add new ip'>
+            <Panel title='Add new abuse block'>
                 <div className='flex flex-col md:flex-row gap-2 items-center'>
-                    <Input
-                        label='Add ip address'
-                        value={banListText}
-                        onValueChange={setBanListText}
-                    />
+                    <select
+                        className='border rounded-medium p-3 w-full md:w-auto'
+                        value={scope}
+                        onChange={(event) => setScope(event.target.value)}
+                    >
+                        <option value='ip'>Exact IP</option>
+                        <option value='subnet'>Subnet</option>
+                        <option value='fingerprint'>Fingerprint</option>
+                        <option value='email_domain'>Email Domain</option>
+                    </select>
+                    <Input label='Value' value={value} onValueChange={setValue} />
+                    <Input label='Reason' value={reason} onValueChange={setReason} />
                     <Button
                         isLoading={isAddLoading}
                         className='max-md:self-start'
                         color='primary'
+                        isDisabled={!value}
                         onPress={onAddBanlistClick}
                     >
                         Add

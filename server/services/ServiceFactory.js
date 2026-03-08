@@ -3,6 +3,7 @@ import PatreonService from './PatreonService.js';
 import ConfigService from './ConfigService.js';
 import UserService from './UserService.js';
 import BanlistService from './BanlistService.js';
+import AbuseService from './AbuseService.js';
 import EventService from './EventService.js';
 import DraftCubeService from './DraftCubeService.js';
 
@@ -48,6 +49,13 @@ export default {
         }
 
         return services.banlistService;
+    },
+    abuseService: (db, configService) => {
+        if (!services.abuseService) {
+            services.abuseService = new AbuseService(db, configService);
+        }
+
+        return services.abuseService;
     },
     eventService: (db) => {
         if (!services.eventService) {

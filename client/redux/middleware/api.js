@@ -1,5 +1,3 @@
-/* global URLSearchParams */
-
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { accountLoggedIn } from '../reducers/auth';
 import { sendAuthenticateMessage } from '../reducers/lobby';
@@ -17,6 +15,7 @@ const TagTypes = {
     BlockList: 'BlockList',
     User: 'User',
     BanList: 'BanList',
+    AbuseBlock: 'AbuseBlock',
     DraftCube: 'DraftCube'
 };
 
@@ -327,6 +326,10 @@ export const apiSlice = createApi({
                 ...(result.data || []).map(({ id }) => ({ type: TagTypes.User, id }))
             ]
         }),
+        getUserAbuseProfile: builder.query({
+            query: (username) => `/user/${username}/abuse-profile`,
+            providesTags: (_result, _error, arg) => [{ type: TagTypes.User, id: `${arg}-abuse` }]
+        }),
         saveUser: builder.mutation({
             query: (user) => ({
                 url: `/user/${user.username}`,
@@ -334,6 +337,40 @@ export const apiSlice = createApi({
                 body: user
             }),
             invalidatesTags: (result, error, arg) => [{ type: TagTypes.User, id: arg.id }]
+        }),
+        restrictUser: builder.mutation({
+            query: ({ username, days = 7, reason }) => ({
+                url: `/user/${username}/restrict`,
+                method: 'POST',
+                body: { days, reason }
+            }),
+            invalidatesTags: (_result, _error, arg) => [
+                { type: TagTypes.User, id: `${arg.username}-abuse` },
+                TagTypes.User
+            ]
+        }),
+        unrestrictUser: builder.mutation({
+            query: ({ username, reason }) => ({
+                url: `/user/${username}/unrestrict`,
+                method: 'POST',
+                body: { reason }
+            }),
+            invalidatesTags: (_result, _error, arg) => [
+                { type: TagTypes.User, id: `${arg.username}-abuse` },
+                TagTypes.User
+            ]
+        }),
+        blockUserCluster: builder.mutation({
+            query: ({ username, reason }) => ({
+                url: `/user/${username}/block-cluster`,
+                method: 'POST',
+                body: { reason }
+            }),
+            invalidatesTags: (_result, _error, arg) => [
+                TagTypes.AbuseBlock,
+                { type: TagTypes.User, id: `${arg.username}-abuse` },
+                TagTypes.User
+            ]
         }),
         addNews: builder.mutation({
             query: (newsText) => ({
@@ -379,6 +416,28 @@ export const apiSlice = createApi({
                 method: 'DELETE'
             }),
             invalidatesTags: [TagTypes.BanList]
+        }),
+        getAbuseBlocks: builder.query({
+            query: () => '/abuse-blocks',
+            providesTags: (result = { data: [] }) => [
+                TagTypes.AbuseBlock,
+                ...(result.data || []).map(({ _id }) => ({ type: TagTypes.AbuseBlock, _id }))
+            ]
+        }),
+        addAbuseBlock: builder.mutation({
+            query: (block) => ({
+                url: '/abuse-blocks',
+                method: 'POST',
+                body: block
+            }),
+            invalidatesTags: [TagTypes.AbuseBlock]
+        }),
+        removeAbuseBlock: builder.mutation({
+            query: (id) => ({
+                url: `/abuse-blocks/${id}`,
+                method: 'DELETE'
+            }),
+            invalidatesTags: [TagTypes.AbuseBlock]
         }),
         getDraftCubes: builder.query({
             query: () => '/draft-cubes',
@@ -438,6 +497,13 @@ export const apiSlice = createApi({
                 url: '/account/register',
                 method: 'POST',
                 body: account
+            })
+        }),
+        preflightRegister: builder.mutation({
+            query: (details) => ({
+                url: '/account/preflight-register',
+                method: 'POST',
+                body: details
             })
         }),
         activateAccount: builder.mutation({
@@ -504,13 +570,20 @@ export const {
     useRemoveBlockListEntryMutation,
     useLogoutAccountMutation,
     useGetUserQuery,
+    useGetUserAbuseProfileQuery,
     useSaveUserMutation,
+    useRestrictUserMutation,
+    useUnrestrictUserMutation,
+    useBlockUserClusterMutation,
     useAddNewsMutation,
     useDeleteNewsMutation,
     useSaveNewsMutation,
     useGetBanListQuery,
     useAddBanListEntryMutation,
     useRemoveBanListEntryMutation,
+    useGetAbuseBlocksQuery,
+    useAddAbuseBlockMutation,
+    useRemoveAbuseBlockMutation,
     useGetDraftCubesQuery,
     useGetDraftCubeQuery,
     useSaveDraftCubeMutation,
@@ -518,6 +591,7 @@ export const {
     useGetEventQuery,
     useDeleteEventMutation,
     useRegisterAccountMutation,
+    usePreflightRegisterMutation,
     useActivateAccountMutation,
     useForgotPasswordMutation,
     useResetPasswordMutation,

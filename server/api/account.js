@@ -13,6 +13,7 @@ const configService = ServiceFactory.configService();
 const appName = configService.getValue('appName');
 
 let userService;
+let abuseService;
 
 function hashPassword(password, rounds) {
     return new Promise((resolve, reject) => {
@@ -85,9 +86,76 @@ function validatePassword(password) {
 
 const DefaultEmailHash = crypto.createHash('md5').update('noreply@theironthrone.net').digest('hex');
 
+function getRequestIp(req) {
+    let ip = req.ip || req.get('x-real-ip') || req.headers['x-forwarded-for'];
+
+    if (Array.isArray(ip)) {
+        [ip] = ip;
+    }
+
+    if (typeof ip === 'string') {
+        [ip] = ip.split(',');
+        ip = ip.trim();
+    }
+
+    return ip || req.socket?.remoteAddress || req.connection?.remoteAddress;
+}
+
+function getSignupFingerprint(req) {
+    return {
+        userAgent: req.headers['user-agent'],
+        language: req.headers['accept-language'],
+        timezone: req.body.timezone,
+        platform: req.body.platform,
+        fingerprint: req.body.fingerprint
+    };
+}
+
+async function verifyCaptchaToken(captcha) {
+    const captchaKey = configService.getValue('captchaKey');
+
+    if (!captchaKey) {
+        logger.warn('Captcha verification requested but captchaKey is not configured');
+        return {
+            success: false,
+            message: 'Captcha verification is temporarily unavailable. Please try again later.'
+        };
+    }
+
+    if (!captcha) {
+        return {
+            success: false,
+            message: 'Please complete the captcha correctly'
+        };
+    }
+
+    const params = new URLSearchParams();
+    params.append('secret', captchaKey);
+    params.append('response', captcha);
+
+    let response = await fetch('https://api.hcaptcha.com/siteverify', {
+        method: 'POST',
+        headers: { 'content-type': 'application/x-www-form-urlencoded' },
+        body: params
+    });
+
+    let answer = await response.json();
+
+    if (!answer.success) {
+        logger.warn('Failed captcha %s', answer);
+        return {
+            success: false,
+            message: 'Please complete the captcha correctly'
+        };
+    }
+
+    return { success: true };
+}
+
 export const init = function (server, options) {
     userService = ServiceFactory.userService(options.db, configService);
     let banlistService = ServiceFactory.banlistService(options.db);
+    abuseService = ServiceFactory.abuseService(options.db, configService);
     let patreonService = ServiceFactory.patreonService(
         configService.getValue('patreonClientId'),
         configService.getValue('patreonSecret'),
@@ -101,8 +169,84 @@ export const init = function (server, options) {
     }
 
     server.post(
+        '/api/account/preflight-register',
+        wrapAsync(async (req, res) => {
+            let message = validateEmail(req.body.email);
+            if (message) {
+                return res.status(400).send({ success: false, message });
+            }
+
+            const assessment = await abuseService.assessRegistrationAttempt({
+                ip: getRequestIp(req),
+                email: req.body.email,
+                username: req.body.username,
+                fingerprint: getSignupFingerprint(req)
+            });
+
+            const canProceed = !assessment.blocked && assessment.cooldownRemainingMs <= 0;
+            const response = {
+                canProceed,
+                challengeRequired: assessment.challengeRequired,
+                cooldownRemainingMs: assessment.cooldownRemainingMs,
+                trustState: assessment.trustState,
+                restrictedUntil: assessment.restrictedUntil,
+                reviewMessage:
+                    assessment.trustState === 'restricted'
+                        ? 'This account will have limited permissions until it has established trust.'
+                        : undefined
+            };
+
+            await abuseService.logEvent({
+                type: 'registration_attempt',
+                username: req.body.username,
+                ip: assessment.ip,
+                subnet: assessment.subnet,
+                fingerprintHash: assessment.fingerprintHash,
+                emailDomain: assessment.emailDomain,
+                outcome: canProceed
+                    ? assessment.trustState === 'restricted'
+                        ? 'restricted'
+                        : assessment.challengeRequired
+                          ? 'challenged'
+                          : 'allowed'
+                    : 'blocked',
+                signals: [
+                    `ip:${assessment.ip}`,
+                    assessment.subnet ? `subnet:${assessment.subnet}` : undefined,
+                    ...assessment.riskFlags
+                ].filter(Boolean),
+                scoreDelta: assessment.riskScore
+            });
+
+            if (!canProceed) {
+                const status = assessment.cooldownRemainingMs > 0 ? 429 : 403;
+                return res.status(status).send({
+                    success: false,
+                    message:
+                        assessment.cooldownRemainingMs > 0
+                            ? 'Too many recent registration attempts. Please try again later.'
+                            : 'We could not complete this registration request. Please contact support if you believe this is an error.',
+                    data: response
+                });
+            }
+
+            if (assessment.challengeRequired && req.body.captcha) {
+                const captchaResult = await verifyCaptchaToken(req.body.captcha);
+                if (!captchaResult.success) {
+                    return res.status(400).send({
+                        success: false,
+                        message: captchaResult.message
+                    });
+                }
+            }
+
+            return res.send({ success: true, data: response });
+        })
+    );
+
+    server.post(
         '/api/account/register',
-        wrapAsync(async (req, res, next) => {
+        wrapAsync(async (req, res) => {
             let message = validateUserName(req.body.username);
             if (message) {
                 return res.status(400).send({ success: false, message: message });
@@ -165,10 +309,86 @@ export const init = function (server, options) {
                 }
             }
 
-            let passwordHash = await hashPassword(req.body.password, 10);
-
             let requireActivation = configService.getValue('requireActivation');
+            let passwordHash = await hashPassword(req.body.password, 10);
+            let ip = getRequestIp(req);
+            const assessment = await abuseService.assessRegistrationAttempt({
+                ip,
+                email: req.body.email,
+                username: req.body.username,
+                fingerprint: getSignupFingerprint(req)
+            });
 
+            await abuseService.logEvent({
+                type: 'registration_attempt',
+                username: req.body.username,
+                ip: assessment.ip,
+                subnet: assessment.subnet,
+                fingerprintHash: assessment.fingerprintHash,
+                emailDomain: assessment.emailDomain,
+                outcome:
+                    assessment.cooldownRemainingMs > 0
+                        ? 'blocked'
+                        : assessment.blocked
+                          ? 'blocked'
+                          : assessment.trustState === 'restricted'
+                            ? 'restricted'
+                            : assessment.challengeRequired
+                              ? 'challenged'
+                              : 'allowed',
+                signals: [
+                    `ip:${assessment.ip}`,
+                    assessment.subnet ? `subnet:${assessment.subnet}` : undefined,
+                    ...assessment.riskFlags
+                ].filter(Boolean),
+                scoreDelta: assessment.riskScore
+            });
+
+            if (assessment.cooldownRemainingMs > 0) {
+                return res.status(429).send({
+                    success: false,
+                    message: 'Too many recent registration attempts. Please try again later.'
+                });
+            }
+
+            if (assessment.blocked) {
+                return res.status(403).send({
+                    success: false,
+                    message:
+                        'We could not complete this registration request. Please contact support if you believe this is an error.'
+                });
+            }
+
+            if (assessment.challengeRequired) {
+                const captchaResult = await verifyCaptchaToken(req.body.captcha);
+                if (!captchaResult.success) {
+                    return res.status(400).send({
+                        success: false,
+                        message: captchaResult.message
+                    });
+                }
+            }
+
+            let newUser = {
+                password: passwordHash,
+                registered: new Date(),
+                username: req.body.username,
+                email: req.body.email,
+                emailDomain: assessment.emailDomain,
+                enableGravatar: req.body.enableGravatar,
+                verified: !requireActivation,
+                registerIp: ip,
+                registerIpNormalized: assessment.ip,
+                registerSubnet: assessment.subnet,
+                lastLoginIp: assessment.ip,
+                lastLoginSubnet: assessment.subnet,
+                signupFingerprintHash: assessment.fingerprintHash,
+                riskFlags: assessment.riskFlags,
+                riskScore: assessment.riskScore,
+                trustState: assessment.trustState,
+                restrictedUntil: assessment.restrictedUntil,
+                evasionReviewRequired: assessment.trustState === 'restricted'
+            };
             if (requireActivation) {
                 let expiration = moment().add(7, 'days');
                 let formattedExpiration = expiration.format('YYYYMMDD-HH:mm:ss');
@@ -181,10 +401,6 @@ export const init = function (server, options) {
                 newUser.activationTokenExpiry = formattedExpiration;
             }
 
-            let ip = req.get('x-real-ip');
-            if (!ip) {
-                ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-            }
             try {
                 let lookup = await banlistService.getEntryByIp(ip);
                 if (lookup) {
@@ -203,16 +419,6 @@ export const init = function (server, options) {
                 });
             }
 
-            let newUser = {
-                password: passwordHash,
-                registered: new Date(),
-                username: req.body.username,
-                email: req.body.email,
-                enableGravatar: req.body.enableGravatar,
-                verified: !requireActivation,
-                registerIp: ip
-            };
-
             user = await userService.addUser(newUser);
             if (requireActivation) {
                 let url = `${req.protocol}://${req.get('host')}/activation?id=${user._id}&token=${newUser.activationToken}`;
@@ -225,7 +431,18 @@ export const init = function (server, options) {
                 await sendEmail(user.email, `${appName} - Account activation`, emailText);
             }
 
-            res.send({ success: true, data: requireActivation });
+            res.send({
+                success: true,
+                data: {
+                    requiresVerification: requireActivation,
+                    trustState: newUser.trustState,
+                    restrictedUntil: newUser.restrictedUntil,
+                    reviewMessage:
+                        newUser.trustState === 'restricted'
+                            ? 'Your account was created with limited permissions while it is reviewed.'
+                            : undefined
+                }
+            });
 
             await downloadAvatar(user);
         })
@@ -233,7 +450,7 @@ export const init = function (server, options) {
 
     server.post(
         '/api/account/activate',
-        wrapAsync(async (req, res, next) => {
+        wrapAsync(async (req, res) => {
             if (!req.body.id || !req.body.token) {
                 return res.status(400).send({ success: false, message: 'Invalid parameters' });
             }
@@ -373,7 +590,7 @@ export const init = function (server, options) {
 
     server.post(
         '/api/account/login',
-        wrapAsync(async (req, res, next) => {
+        wrapAsync(async (req, res) => {
             if (!req.body.username) {
                 return res.send({ success: false, message: 'Username must be specified' });
             }
@@ -415,15 +632,32 @@ export const init = function (server, options) {
                 });
             }
 
+            const loginAssessment = await abuseService.assessLoginAttempt(user, {
+                ip: getRequestIp(req),
+                fingerprint: getSignupFingerprint(req)
+            });
+            await abuseService.logEvent({
+                type: 'login_attempt',
+                username: user.username,
+                userId: user._id,
+                ip: loginAssessment.ip,
+                subnet: loginAssessment.subnet,
+                fingerprintHash: loginAssessment.fingerprintHash,
+                emailDomain: user.emailDomain,
+                outcome: loginAssessment.blocked ? 'blocked' : 'allowed',
+                signals: loginAssessment.linkedUsers.flatMap((linkedUser) => linkedUser.evidence)
+            });
+
+            if (loginAssessment.blocked) {
+                return res.send({ success: false, message: 'Invalid username/password' });
+            }
+
             let userObj = user.getWireSafeDetails();
 
             let authToken = jwt.sign(userObj, configService.getValue('secret'), {
                 expiresIn: '5m'
             });
-            let ip = req.get('x-real-ip');
-            if (!ip) {
-                ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-            }
+            let ip = loginAssessment.ip;
 
             let refreshToken = await userService.addRefreshToken(user.username, authToken, ip);
             if (!refreshToken) {
@@ -442,12 +676,17 @@ export const init = function (server, options) {
                     refreshToken: refreshToken
                 }
             });
+
+            await abuseService.updateUserSessionMetadata(user.username, {
+                ip: loginAssessment.ip,
+                subnet: loginAssessment.subnet
+            });
         })
     );
 
     server.post(
         '/api/account/token',
-        wrapAsync(async (req, res, next) => {
+        wrapAsync(async (req, res) => {
             if (!req.body.token) {
                 return res.send({ success: false, message: 'Refresh token must be specified' });
             }
@@ -481,18 +720,21 @@ export const init = function (server, options) {
                 return res.send({ success: false, message: 'Invalid refresh token' });
             }
 
+            if (user.trustState === 'banned_evasion_review') {
+                return res.send({ success: false, message: 'Invalid refresh token' });
+            }
+
             let userObj = user.getWireSafeDetails();
 
-            let ip = req.get('x-real-ip');
-            if (!ip) {
-                ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-            }
+            let ip = getRequestIp(req);
+            let subnet = abuseService.getSubnet(ip);
 
             let authToken = jwt.sign(userObj, configService.getValue('secret'), {
                 expiresIn: '5m'
             });
 
             await userService.updateRefreshTokenUsage(refreshToken.id, ip);
+            await abuseService.updateUserSessionMetadata(user.username, { ip, subnet });
 
             res.send({ success: true, data: { user: userObj, token: authToken } });
         })
@@ -500,7 +742,7 @@ export const init = function (server, options) {
 
     server.post(
         '/api/account/password-reset-finish',
-        wrapAsync(async (req, res, next) => {
+        wrapAsync(async (req, res) => {
             let resetUser;
 
             if (!req.body.id || !req.body.token || !req.body.newPassword) {
@@ -568,23 +810,11 @@ export const init = function (server, options) {
         wrapAsync(async (req, res) => {
             let resetToken;
 
-            const params = new URLSearchParams();
-            params.append('secret', configService.getValue('captchaKey'));
-            params.append('response', req.body.captcha);
-
-            let response = await fetch('https://api.hcaptcha.com/siteverify', {
-                method: 'POST',
-                headers: { 'content-type': 'application/x-www-form-urlencoded' },
-                body: params
-            });
-
-            let answer = await response.json();
-
-            if (!answer.success) {
-                logger.warn('Failed captcha %s', answer);
+            const captchaResult = await verifyCaptchaToken(req.body.captcha);
+            if (!captchaResult.success) {
                 return res.send({
                     success: false,
-                    message: 'Please complete the captcha correctly'
+                    message: captchaResult.message
                 });
             }
 

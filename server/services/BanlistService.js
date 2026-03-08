@@ -43,6 +43,14 @@ class BanlistService {
                 throw new Error('Error occured adding banlist entry');
             });
     }
+
+    async removeBanlistEntry(id) {
+        return this.banlist.remove({ _id: id }).catch((err) => {
+            logger.error('Error removing banlist entry %s %s', err, id);
+
+            throw new Error('Error occured removing banlist entry');
+        });
+    }
 }
 
 export default BanlistService;
