@@ -9,15 +9,30 @@
     hmacSecret: 'somethingevenmoresecret',
 
     //captchaKey: 'captchaKey',
-    //emailKey: 'emailKey',
+    awsSesRegion: 'eu-west-1',
+    //awsAccessKeyId: 'AKIA...',
+    //awsSecretAccessKey: '...',
+    emailFrom: 'The Iron Throne <noreply@theironthrone.net>',
+    //emailReplyTo: 'support@example.com',
 
     dbPath: 'mongodb://mongo:27017/throneteki',
     // This is the host/port of the Zero MQ server which does the node load balancing
-    requireActiviation: false,
+    requireActivation: false,
     appName: 'The Iron Throne',
 
     redisUrl: 'redis://redis/',
     redisKeyPrefix: 'local',
+    //ipQualityScoreKey: 'api-key',
+    //proxyCheckKey: 'api-key',
+    ipQualityScoreCacheTtlSeconds: 2592000,
+    ipQualityScoreUnknownCacheTtlSeconds: 900,
+    proxyCheckCacheTtlSeconds: 2592000,
+    proxyCheckUnknownCacheTtlSeconds: 900,
+    disposableEmailCacheTtlSeconds: 15552000,
+    disposableEmailUnknownCacheTtlSeconds: 900,
+    maintenanceCleanupIntervalMs: 21600000,
+    refreshTokenRetentionDays: 30,
+    sessionHistoryRetentionDays: 180,
     origin: 'http://localhost:4000',
     minLobbyChatTime: 0, // The time (in seconds) an account has to be registered before it can chat in the lobby
     nodeIdentity: 'node1',

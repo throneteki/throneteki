@@ -20,8 +20,11 @@ async function runServer() {
     let server = new Server(process.env.NODE_ENV !== 'production');
     let httpServer = await server.init(options);
     let lobby = new Lobby(httpServer, options);
+    let userService = ServiceFactory.userService(options.db, configService);
+    let maintenanceService = ServiceFactory.maintenanceService(userService, configService);
 
     await lobby.init();
+    maintenanceService.start();
 
     pmx.action('status', (reply) => {
         var status = lobby.getStatus();

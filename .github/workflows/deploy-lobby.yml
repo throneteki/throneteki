@@ -86,8 +86,23 @@ jobs:
                     redisKeyPrefix: "$ENV"
                     redisUrl: "${{ secrets.REDIS_URL }}"
                     secret: "${{ secrets.SECRET }}"
-                    emailKey: "${{ secrets.EMAIL_KEY }}"
+                    awsSesRegion: "${{ vars.AWS_SES_REGION || 'eu-west-1' }}"
+                    awsAccessKeyId: "${{ secrets.AWS_ACCESS_KEY_ID }}"
+                    awsSecretAccessKey: "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+                    emailFrom: "${{ vars.EMAIL_FROM || 'The Iron Throne <noreply@theironthrone.net>' }}"
+                    emailReplyTo: "${{ vars.EMAIL_REPLY_TO }}"
                     emailBlockKey: "${{ secrets.EMAIL_BLOCK_KEY }}"
+                    ipQualityScoreKey: "${{ secrets.IP_QUALITY_SCORE_KEY }}"
+                    proxyCheckKey: "${{ secrets.PROXY_CHECK_KEY }}"
+                    ipQualityScoreCacheTtlSeconds: ${{ vars.IP_QUALITY_SCORE_CACHE_TTL_SECONDS || 2592000 }}
+                    ipQualityScoreUnknownCacheTtlSeconds: ${{ vars.IP_QUALITY_SCORE_UNKNOWN_CACHE_TTL_SECONDS || 900 }}
+                    proxyCheckCacheTtlSeconds: ${{ vars.PROXY_CHECK_CACHE_TTL_SECONDS || 2592000 }}
+                    proxyCheckUnknownCacheTtlSeconds: ${{ vars.PROXY_CHECK_UNKNOWN_CACHE_TTL_SECONDS || 900 }}
+                    disposableEmailCacheTtlSeconds: ${{ vars.DISPOSABLE_EMAIL_CACHE_TTL_SECONDS || 15552000 }}
+                    disposableEmailUnknownCacheTtlSeconds: ${{ vars.DISPOSABLE_EMAIL_UNKNOWN_CACHE_TTL_SECONDS || 900 }}
+                    maintenanceCleanupIntervalMs: ${{ vars.MAINTENANCE_CLEANUP_INTERVAL_MS || 21600000 }}
+                    refreshTokenRetentionDays: ${{ vars.REFRESH_TOKEN_RETENTION_DAYS || 30 }}
+                    sessionHistoryRetentionDays: ${{ vars.SESSION_HISTORY_RETENTION_DAYS || 180 }}
                     port: 80
                     hmacSecret: "${{ secrets.HMAC }}"
                     requireActivation: false

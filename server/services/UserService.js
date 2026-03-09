@@ -15,6 +15,28 @@ class UserService extends EventEmitter {
         this.configService = configService;
     }
 
+    parseStoredDate(value) {
+        if (!value) {
+            return undefined;
+        }
+
+        if (value instanceof Date) {
+            return Number.isNaN(value.getTime()) ? undefined : value;
+        }
+
+        if (typeof value === 'number') {
+            let numericDate = new Date(value);
+            return Number.isNaN(numericDate.getTime()) ? undefined : numericDate;
+        }
+
+        let parsedDate = moment(value, [moment.ISO_8601, 'YYYYMMDD-HH:mm:ss'], true);
+        if (!parsedDate.isValid()) {
+            return undefined;
+        }
+
+        return parsedDate.toDate();
+    }
+
     getUserByUsername(username) {
         return this.users
             .find({
@@ -128,11 +150,21 @@ class UserService extends EventEmitter {
             });
     }
 
-    setResetToken(user, token, tokenExpiration) {
+    setResetToken(user, tokenHash, tokenExpiration) {
         return this.users
             .update(
                 { username: user.username },
-                { $set: { resetToken: token, tokenExpires: tokenExpiration } }
+                {
+                    $set: {
+                        resetTokenHash: tokenHash,
+                        tokenExpires: tokenExpiration,
+                        resetTokenVersion: 2,
+                        resetTokenIssuedAt: new Date()
+                    },
+                    $unset: {
+                        resetToken: ''
+                    }
+                }
             )
             .catch((err) => {
                 logger.error(err);
@@ -155,7 +187,15 @@ class UserService extends EventEmitter {
         return this.users
             .update(
                 { username: user.username },
-                { $set: { resetToken: undefined, tokenExpires: undefined } }
+                {
+                    $unset: {
+                        resetToken: '',
+                        resetTokenHash: '',
+                        tokenExpires: '',
+                        resetTokenVersion: '',
+                        resetTokenIssuedAt: ''
+                    }
+                }
             )
             .catch((err) => {
                 logger.error(err);
@@ -164,15 +204,71 @@ class UserService extends EventEmitter {
             });
     }
 
+    async deleteExpiredUnverifiedAccounts({ email, username } = {}) {
+        let identifiers = [];
+
+        if (email) {
+            identifiers.push({
+                email: { $regex: new RegExp('^' + escapeRegex(email.toLowerCase()) + '$', 'i') }
+            });
+        }
+
+        if (username) {
+            identifiers.push({
+                username: {
+                    $regex: new RegExp('^' + escapeRegex(username.toLowerCase()) + '$', 'i')
+                }
+            });
+        }
+
+        try {
+            let query = { verified: false };
+            if (identifiers.length > 0) {
+                query.$or = identifiers;
+            }
+
+            let pendingUsers = await this.users.find(query);
+
+            let expiredUsers = pendingUsers.filter((user) => {
+                if (!user.activationTokenExpiry) {
+                    return false;
+                }
+
+                let expiry = this.parseStoredDate(user.activationTokenExpiry);
+                return !!expiry && expiry.getTime() <= Date.now();
+            });
+
+            if (expiredUsers.length === 0) {
+                return 0;
+            }
+
+            await Promise.all(
+                expiredUsers.map((user) => {
+                    return this.users.remove({ _id: user._id });
+                })
+            );
+
+            return expiredUsers.length;
+        } catch (err) {
+            logger.error('Error deleting expired unverified accounts %s', err);
+            return 0;
+        }
+    }
+
     activateUser(user) {
         return this.users
             .update(
                 { username: user.username },
                 {
                     $set: {
-                        activationToken: undefined,
-                        activationExpiry: undefined,
                         verified: true
+                    },
+                    $unset: {
+                        activationToken: '',
+                        activationTokenHash: '',
+                        activationTokenExpiry: '',
+                        activationTokenIssuedAt: '',
+                        activationTokenVersion: ''
                     }
                 }
             )
@@ -181,6 +277,98 @@ class UserService extends EventEmitter {
 
                 throw new Error('Error activating user');
             });
+    }
+
+    async cleanupRefreshTokens() {
+        let refreshTokenRetentionDays =
+            this.configService.getValue('refreshTokenRetentionDays') || 30;
+        let cutoff = Date.now() - refreshTokenRetentionDays * 24 * 60 * 60 * 1000;
+        let removedTokens = 0;
+        let users = [];
+
+        try {
+            users = await this.users.find({ tokens: { $exists: true, $ne: [] } });
+        } catch (err) {
+            logger.error('Error fetching users for session cleanup %s', err);
+            return 0;
+        }
+
+        await Promise.all(
+            users.map(async (user) => {
+                let originalTokens = user.tokens || [];
+                let filteredTokens = originalTokens.filter((token) => {
+                    let exp = this.parseStoredDate(token.exp);
+                    if (exp && exp.getTime() <= Date.now()) {
+                        removedTokens += 1;
+                        return false;
+                    }
+
+                    let lastUsed = this.parseStoredDate(token.lastUsed);
+                    if (lastUsed && lastUsed.getTime() < cutoff) {
+                        removedTokens += 1;
+                        return false;
+                    }
+
+                    return true;
+                });
+
+                if (filteredTokens.length === originalTokens.length) {
+                    return;
+                }
+
+                await this.users.update({ _id: user._id }, { $set: { tokens: filteredTokens } });
+            })
+        );
+
+        return removedTokens;
+    }
+
+    async cleanupLegacySessions() {
+        let sessionHistoryRetentionDays =
+            this.configService.getValue('sessionHistoryRetentionDays') || 180;
+        let cutoff = Date.now() - sessionHistoryRetentionDays * 24 * 60 * 60 * 1000;
+        let sessions = [];
+
+        try {
+            sessions = await this.sessions.find({});
+        } catch (err) {
+            logger.error('Error fetching legacy sessions for cleanup %s', err);
+            return 0;
+        }
+
+        let expiredSessions = sessions.filter((session) => {
+            let candidates = [
+                session.lastUsed,
+                session.updatedAt,
+                session.expires,
+                session.expiresAt,
+                session.exp,
+                session.createdAt
+            ];
+
+            let latestKnownDate = candidates
+                .map((value) => this.parseStoredDate(value))
+                .filter(Boolean)
+                .sort((left, right) => right.getTime() - left.getTime())[0];
+
+            if (!latestKnownDate) {
+                return false;
+            }
+
+            return latestKnownDate.getTime() < cutoff;
+        });
+
+        if (expiredSessions.length === 0) {
+            return 0;
+        }
+
+        await Promise.all(
+            expiredSessions.map((session) => {
+                return this.sessions.remove({ _id: session._id });
+            })
+        );
+
+        return expiredSessions.length;
     }
 
     clearUserSessions(username) {

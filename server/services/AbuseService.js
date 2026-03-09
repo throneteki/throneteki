@@ -349,7 +349,7 @@ class AbuseService {
         return 'trusted';
     }
 
-    async assessRegistrationAttempt({ ip, email, fingerprint, username }) {
+    async assessRegistrationAttempt({ ip, email, fingerprint, username, externalRisk }) {
         const normalizedIp = this.normalizeIp(ip);
         const subnet = this.getSubnet(normalizedIp);
         const emailDomain = this.getEmailDomain(email);
@@ -435,15 +435,25 @@ class AbuseService {
             );
         }
 
+        if (externalRisk) {
+            riskFlags.push(...(externalRisk.riskFlags || []));
+            riskScore += externalRisk.riskScoreDelta || 0;
+
+            if (externalRisk.denyRegistration) {
+                riskFlags.push('external_registration_deny');
+            }
+        }
+
         const hasHardBlock = matchingBlocks.some(
             (block) => block.scope === 'ip' || block.scope === 'fingerprint'
         );
-        const trustState = hasHardBlock
+        const hasExternalHardBlock = !!externalRisk?.denyRegistration;
+        const trustState = hasHardBlock || hasExternalHardBlock
             ? 'banned_evasion_review'
             : this.determineTrustState(riskScore);
         const challengeRequired = riskScore >= 30 && riskScore < 60;
         const restrictedUntil = trustState === 'restricted' ? this.getRestrictionExpiry() : null;
-        const blocked = hasHardBlock || riskScore >= 90;
+        const blocked = hasHardBlock || hasExternalHardBlock || riskScore >= 90;
 
         return {
             username,
@@ -451,7 +461,7 @@ class AbuseService {
             subnet,
             emailDomain,
             fingerprintHash,
-            riskFlags,
+            riskFlags: [...new Set(riskFlags)],
             riskScore,
             trustState,
             challengeRequired,
