@@ -105,7 +105,7 @@ jobs:
                     sessionHistoryRetentionDays: ${{ vars.SESSION_HISTORY_RETENTION_DAYS || 180 }}
                     port: 80
                     hmacSecret: "${{ secrets.HMAC }}"
-                    requireActivation: false
+                    requireActivation: ${{ vars.REQUIRE_ACTIVATION || false }}
                     patreonCallbackUrl: "${{ secrets.PATREON_CALLBACK_URL }}"
                     patreonClientId: "${{ secrets.PATREON_CLIENT_ID }}"
                     patreonSecret: "${{ secrets.PATREON_SECRET }}"
