@@ -106,7 +106,11 @@ class ProxyCheckService {
         try {
             let response = await fetch(requestUrl);
             if (!response.ok) {
-                logger.warn('Proxycheck lookup failed with status %s for %s', response.status, requestUrl);
+                logger.warn(
+                    'Proxycheck lookup failed with status %s for %s',
+                    response.status,
+                    requestUrl
+                );
                 return await this.cacheResponse(cacheKey, { success: false }, true);
             }
 
@@ -114,7 +118,10 @@ class ProxyCheckService {
             let result = this.extractLookupResult(payload);
 
             if (!result?.success) {
-                logger.warn('Proxycheck lookup returned unsuccessful response %s', JSON.stringify(payload));
+                logger.warn(
+                    'Proxycheck lookup returned unsuccessful response %s',
+                    JSON.stringify(payload)
+                );
                 return await this.cacheResponse(cacheKey, { success: false }, true);
             }
 

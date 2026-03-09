@@ -47,7 +47,10 @@ class DisposableEmailService {
     }
 
     normalizeEmailDomain(email) {
-        return email.substring(email.lastIndexOf('@') + 1).trim().toLowerCase();
+        return email
+            .substring(email.lastIndexOf('@') + 1)
+            .trim()
+            .toLowerCase();
     }
 
     getLocalDisposableEmailVerdict(domain) {

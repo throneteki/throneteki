@@ -107,13 +107,20 @@ class IPQualityScoreService {
             let response = await fetch(`https://ipqualityscore.com/api/json/${requestPath}`);
 
             if (!response.ok) {
-                logger.warn('IPQS lookup failed with status %s for %s', response.status, requestPath);
+                logger.warn(
+                    'IPQS lookup failed with status %s for %s',
+                    response.status,
+                    requestPath
+                );
                 return await this.cacheResponse(cacheKey, { success: false }, true);
             }
 
             let payload = await response.json();
             if (payload.success === false) {
-                logger.warn('IPQS lookup returned unsuccessful response %s', JSON.stringify(payload));
+                logger.warn(
+                    'IPQS lookup returned unsuccessful response %s',
+                    JSON.stringify(payload)
+                );
             }
 
             return await this.cacheResponse(cacheKey, payload, payload.success === false);

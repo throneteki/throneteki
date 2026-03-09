@@ -448,9 +448,10 @@ class AbuseService {
             (block) => block.scope === 'ip' || block.scope === 'fingerprint'
         );
         const hasExternalHardBlock = !!externalRisk?.denyRegistration;
-        const trustState = hasHardBlock || hasExternalHardBlock
-            ? 'banned_evasion_review'
-            : this.determineTrustState(riskScore);
+        const trustState =
+            hasHardBlock || hasExternalHardBlock
+                ? 'banned_evasion_review'
+                : this.determineTrustState(riskScore);
         const challengeRequired = riskScore >= 30 && riskScore < 60;
         const restrictedUntil = trustState === 'restricted' ? this.getRestrictionExpiry() : null;
         const blocked = hasHardBlock || hasExternalHardBlock || riskScore >= 90;
