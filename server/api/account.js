@@ -270,7 +270,7 @@ async function verifyCaptchaToken(captcha) {
     let answer = await response.json();
 
     if (!answer.success) {
-        logger.warn('Failed captcha %s', answer);
+        logger.warn('Failed captcha %s', JSON.stringify(answer));
         return {
             success: false,
             message: 'Please complete the captcha correctly'
