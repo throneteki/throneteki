@@ -25,12 +25,20 @@ class User {
         return this.userData.activationToken;
     }
 
+    get activationTokenHash() {
+        return this.userData.activationTokenHash;
+    }
+
     get activationTokenExpiry() {
         return this.userData.activationTokenExpiry;
     }
 
     get resetToken() {
         return this.userData.resetToken;
+    }
+
+    get resetTokenHash() {
+        return this.userData.resetTokenHash;
     }
 
     get tokenExpires() {

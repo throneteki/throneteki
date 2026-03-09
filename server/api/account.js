@@ -4,7 +4,6 @@ import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import moment from 'moment';
 import _ from 'underscore';
-import sendgrid from '@sendgrid/mail';
 import logger from '../log.js';
 import { wrapAsync } from '../util.js';
 import { writeFile } from 'fs/promises';
@@ -14,6 +13,38 @@ const appName = configService.getValue('appName');
 
 let userService;
 let abuseService;
+let disposableEmailService;
+let ipQualityScoreService;
+let proxyCheckService;
+let emailService;
+const ActivationTokenLifetimeDays = 7;
+const ResetTokenLifetimeHours = 4;
+
+function mergeExternalRisk(...risks) {
+    return risks.reduce(
+        (mergedRisk, risk) => {
+            if (!risk) {
+                return mergedRisk;
+            }
+
+            return {
+                denyRegistration: mergedRisk.denyRegistration || !!risk.denyRegistration,
+                riskFlags: [...new Set(mergedRisk.riskFlags.concat(risk.riskFlags || []))],
+                riskScoreDelta: mergedRisk.riskScoreDelta + (risk.riskScoreDelta || 0),
+                findings: {
+                    ...mergedRisk.findings,
+                    ...(risk.findings || {})
+                }
+            };
+        },
+        {
+            denyRegistration: false,
+            riskFlags: [],
+            riskScoreDelta: 0,
+            findings: {}
+        }
+    );
+}
 
 function hashPassword(password, rounds) {
     return new Promise((resolve, reject) => {
@@ -27,17 +58,114 @@ function hashPassword(password, rounds) {
     });
 }
 
-function sendEmail(address, subject, email) {
-    const message = {
-        to: address,
-        from: 'The Iron Throne <noreply@theironthrone.net>',
-        subject: subject,
-        text: email
-    };
+function hashActivationToken(token) {
+    return crypto
+        .createHmac('sha256', configService.getValue('hmacSecret'))
+        .update(token)
+        .digest('hex');
+}
 
-    return sendgrid.send(message).catch((err) => {
-        logger.error('Unable to send email %s', err);
-    });
+function createActivationToken() {
+    let token = crypto.randomBytes(32).toString('hex');
+
+    return {
+        token,
+        tokenHash: hashActivationToken(token),
+        expiresAt: moment().add(ActivationTokenLifetimeDays, 'days').toDate()
+    };
+}
+
+function createResetToken() {
+    let token = crypto.randomBytes(32).toString('hex');
+
+    return {
+        token,
+        tokenHash: hashActivationToken(token),
+        expiresAt: moment().add(ResetTokenLifetimeHours, 'hours').toDate()
+    };
+}
+
+function getActivationExpiryDate(user) {
+    if (!user?.activationTokenExpiry) {
+        return undefined;
+    }
+
+    let parsedExpiry = moment(
+        user.activationTokenExpiry,
+        [moment.ISO_8601, 'YYYYMMDD-HH:mm:ss'],
+        true
+    );
+
+    if (!parsedExpiry.isValid()) {
+        return undefined;
+    }
+
+    return parsedExpiry.toDate();
+}
+
+function getLegacyActivationToken(user) {
+    if (!user?.activationTokenExpiry) {
+        return undefined;
+    }
+
+    let expiry = user.activationTokenExpiry;
+    if (expiry instanceof Date) {
+        expiry = moment(expiry).format('YYYYMMDD-HH:mm:ss');
+    }
+
+    return crypto
+        .createHmac('sha512', configService.getValue('hmacSecret'))
+        .update(`ACTIVATE ${user.username} ${expiry}`)
+        .digest('hex');
+}
+
+function getResetExpiryDate(user) {
+    if (!user?.tokenExpires) {
+        return undefined;
+    }
+
+    let parsedExpiry = moment(user.tokenExpires, [moment.ISO_8601, 'YYYYMMDD-HH:mm:ss'], true);
+
+    if (!parsedExpiry.isValid()) {
+        return undefined;
+    }
+
+    return parsedExpiry.toDate();
+}
+
+function getLegacyResetToken(user) {
+    if (!user?.tokenExpires) {
+        return undefined;
+    }
+
+    let expiry = user.tokenExpires;
+    if (expiry instanceof Date) {
+        expiry = moment(expiry).format('YYYYMMDD-HH:mm:ss');
+    }
+
+    return crypto
+        .createHmac('sha512', configService.getValue('hmacSecret'))
+        .update(`RESET ${user.username} ${expiry}`)
+        .digest('hex');
+}
+
+function tokensMatch(left, right) {
+    if (!left || !right) {
+        return false;
+    }
+
+    let leftBuffer = Buffer.from(left);
+    let rightBuffer = Buffer.from(right);
+
+    if (leftBuffer.length !== rightBuffer.length) {
+        return false;
+    }
+
+    return crypto.timingSafeEqual(leftBuffer, rightBuffer);
+}
+
+function shouldExposeActivationToken() {
+    return configService.getValue('env') !== 'production';
 }
 
 function validateUserName(username) {
@@ -156,17 +284,16 @@ export const init = function (server, options) {
     userService = ServiceFactory.userService(options.db, configService);
     let banlistService = ServiceFactory.banlistService(options.db);
     abuseService = ServiceFactory.abuseService(options.db, configService);
+    disposableEmailService = ServiceFactory.disposableEmailService(configService);
+    ipQualityScoreService = ServiceFactory.ipQualityScoreService(configService);
+    proxyCheckService = ServiceFactory.proxyCheckService(configService);
+    emailService = ServiceFactory.emailService(configService);
     let patreonService = ServiceFactory.patreonService(
         configService.getValue('patreonClientId'),
         configService.getValue('patreonSecret'),
         userService,
         configService.getValue('patreonCallbackUrl')
     );
-    let emailKey = configService.getValue('emailKey');
-
-    if (emailKey) {
-        sendgrid.setApiKey(emailKey);
-    }
 
     server.post(
         '/api/account/preflight-register',
@@ -176,11 +303,22 @@ export const init = function (server, options) {
                 return res.status(400).send({ success: false, message });
             }
 
+            let ip = getRequestIp(req);
+            let externalRisk = mergeExternalRisk(
+                await ipQualityScoreService.assessRegistration({
+                    email: req.body.email
+                }),
+                await proxyCheckService.assessRegistration({
+                    ip
+                })
+            );
+
             const assessment = await abuseService.assessRegistrationAttempt({
-                ip: getRequestIp(req),
+                ip,
                 email: req.body.email,
                 username: req.body.username,
-                fingerprint: getSignupFingerprint(req)
+                fingerprint: getSignupFingerprint(req),
+                externalRisk
             });
 
             const canProceed = !assessment.blocked && assessment.cooldownRemainingMs <= 0;
@@ -262,6 +400,11 @@ export const init = function (server, options) {
                 return res.status(400).send({ success: false, message: message });
             }
 
+            await userService.deleteExpiredUnverifiedAccounts({
+                email: req.body.email,
+                username: req.body.username
+            });
+
             let user = await userService.getUserByEmail(req.body.email);
             if (user) {
                 return res.status(400).send({
@@ -278,45 +421,52 @@ export const init = function (server, options) {
                 });
             }
 
-            let domain = req.body.email.substring(req.body.email.lastIndexOf('@') + 1);
-
-            let emailBlockKey = configService.getValue('emailBlockKey');
-            if (emailBlockKey) {
-                try {
-                    let response = await fetch(
-                        `http://check.block-disposable-email.com/easyapi/json/${emailBlockKey}/${domain}`
-                    );
-                    let answer = response.json();
-
-                    if (answer.request_status !== 'success') {
-                        logger.warn('Failed to check email address %s', answer);
-                    }
-
-                    if (answer.domain_status === 'block') {
-                        logger.warn(
-                            'Blocking %s from registering the account %s',
-                            domain,
-                            req.body.username
-                        );
-                        return res.status(400).send({
-                            success: false,
-                            message:
-                                'One time use email services are not permitted on this site.  Please use a real email address'
-                        });
-                    }
-                } catch (err) {
-                    logger.warn('Could not valid email address %s %s', domain, err);
-                }
+            let emailRisk = await disposableEmailService.evaluateRegistrationEmail(req.body.email);
+            if (emailRisk.verdict === 'deny') {
+                logger.warn(
+                    'Blocking %s from registering the account %s due to %s',
+                    emailRisk.domain,
+                    req.body.username,
+                    emailRisk.source
+                );
+                return res.status(400).send({
+                    success: false,
+                    message:
+                        'One time use email services are not permitted on this site.  Please use a real email address'
+                });
             }
 
             let requireActivation = configService.getValue('requireActivation');
             let passwordHash = await hashPassword(req.body.password, 10);
             let ip = getRequestIp(req);
+            let externalRisk = mergeExternalRisk(
+                await ipQualityScoreService.assessRegistration({
+                    email: req.body.email
+                }),
+                await proxyCheckService.assessRegistration({
+                    ip
+                })
+            );
+
+            if (externalRisk.denyRegistration) {
+                logger.warn(
+                    'Blocking %s from registering the account %s due to ipqs',
+                    req.body.email,
+                    req.body.username
+                );
+                return res.status(400).send({
+                    success: false,
+                    message:
+                        'One time use email services are not permitted on this site.  Please use a real email address'
+                });
+            }
+
             const assessment = await abuseService.assessRegistrationAttempt({
                 ip,
                 email: req.body.email,
                 username: req.body.username,
-                fingerprint: getSignupFingerprint(req)
+                fingerprint: getSignupFingerprint(req),
+                externalRisk
             });
 
             await abuseService.logEvent({
@@ -369,6 +519,7 @@ export const init = function (server, options) {
                 }
             }
 
+            let activationTokenValue;
             let newUser = {
                 password: passwordHash,
                 registered: new Date(),
@@ -390,15 +541,13 @@ export const init = function (server, options) {
                 evasionReviewRequired: assessment.trustState === 'restricted'
             };
             if (requireActivation) {
-                let expiration = moment().add(7, 'days');
-                let formattedExpiration = expiration.format('YYYYMMDD-HH:mm:ss');
-                let hmac = crypto.createHmac('sha512', configService.getValue('hmacSecret'));
-
-                let activationToken = hmac
-                    .update(`ACTIVATE ${req.body.username} ${formattedExpiration}`)
-                    .digest('hex');
-                newUser.activationToken = activationToken;
-                newUser.activationTokenExpiry = formattedExpiration;
+                let activationToken = createActivationToken();
+                newUser.activationTokenHash = activationToken.tokenHash;
+                newUser.activationTokenExpiry = activationToken.expiresAt;
+                newUser.activationTokenVersion = 2;
+                newUser.activationTokenIssuedAt = new Date();
+                newUser.activationToken = undefined;
+                activationTokenValue = activationToken.token;
             }
 
             try {
@@ -421,20 +570,28 @@ export const init = function (server, options) {
 
             user = await userService.addUser(newUser);
             if (requireActivation) {
-                let url = `${req.protocol}://${req.get('host')}/activation?id=${user._id}&token=${newUser.activationToken}`;
+                let url = `${req.protocol}://${req.get('host')}/activation?id=${user._id}&token=${activationTokenValue}`;
                 let emailText =
                     `Hi,\n\nSomeone, hopefully you, has requested an account to be created on ${appName} (${req.protocol}://${req.get('host')}).  If this was you, click this link ${url} to complete the process.\n\n` +
                     'If you did not request this please disregard this email.\n' +
                     'Kind regards,\n\n' +
                     `${appName} team`;
 
-                await sendEmail(user.email, `${appName} - Account activation`, emailText);
+                await emailService.sendEmail(
+                    user.email,
+                    `${appName} - Account activation`,
+                    emailText
+                );
             }
 
             res.send({
                 success: true,
                 data: {
                     requiresVerification: requireActivation,
+                    activationToken:
+                        requireActivation && shouldExposeActivationToken()
+                            ? activationTokenValue
+                            : undefined,
                     trustState: newUser.trustState,
                     restrictedUntil: newUser.restrictedUntil,
                     reviewMessage:
@@ -468,7 +625,7 @@ export const init = function (server, options) {
                 });
             }
 
-            if (!user.activationToken) {
+            if (!user.activationToken && !user.activationTokenHash) {
                 logger.error('Got unexpected activate request for user %s', user.username);
 
                 return res.send({
@@ -478,8 +635,8 @@ export const init = function (server, options) {
                 });
             }
 
-            let now = moment();
-            if (user.activationTokenExpiry < now) {
+            let activationExpiry = getActivationExpiryDate(user);
+            if (!activationExpiry || activationExpiry.getTime() <= Date.now()) {
                 logger.error('Token expired %s', user.username);
 
                 return res.send({
@@ -488,12 +645,13 @@ export const init = function (server, options) {
                 });
             }
 
-            let hmac = crypto.createHmac('sha512', configService.getValue('hmacSecret'));
-            let resetToken = hmac
-                .update('ACTIVATE ' + user.username + ' ' + user.activationTokenExpiry)
-                .digest('hex');
+            let hashedToken = hashActivationToken(req.body.token);
+            let expectedToken =
+                user.activationTokenHash ||
+                (user.activationToken ? getLegacyActivationToken(user) : undefined);
+            let providedToken = user.activationTokenHash ? hashedToken : req.body.token;
 
-            if (resetToken !== req.body.token) {
+            if (!tokensMatch(expectedToken, providedToken)) {
                 logger.error('Invalid activation token', user.username, req.body.token);
 
                 return res.send({
@@ -743,14 +901,34 @@ export const init = function (server, options) {
     server.post(
         '/api/account/password-reset-finish',
         wrapAsync(async (req, res) => {
-            let resetUser;
-
             if (!req.body.id || !req.body.token || !req.body.newPassword) {
+                return res.send({ success: false, message: 'Invalid parameters' });
+            }
+
+            if (!req.body.id.match(/^[a-f\d]{24}$/i)) {
                 return res.send({ success: false, message: 'Invalid parameters' });
             }
 
             let user = await userService.getUserById(req.body.id);
             if (!user) {
+                logger.error('Got unexpected reset request for unknown user %s', req.body.id);
+
+                return res.send({
+                    success: false,
+                    message:
+                        'An error occured resetting your password, check the url you have entered and try again.'
+                });
+            }
+
+            let passwordMessage = validatePassword(req.body.newPassword);
+            if (passwordMessage) {
+                return res.send({
+                    success: false,
+                    message: passwordMessage
+                });
+            }
+
+            if (!user.resetToken && !user.resetTokenHash) {
                 logger.error('Got unexpected reset request for user %s', user.username);
 
                 return res.send({
@@ -760,18 +938,8 @@ export const init = function (server, options) {
                 });
             }
 
-            if (!user.resetToken) {
-                logger.error('Got unexpected reset request for user %s', user.username);
-
-                return res.send({
-                    success: false,
-                    message:
-                        'An error occured resetting your password, check the url you have entered and try again.'
-                });
-            }
-
-            let now = moment();
-            if (user.tokenExpires < now) {
+            let resetExpiry = getResetExpiryDate(user);
+            if (!resetExpiry || resetExpiry.getTime() <= Date.now()) {
                 logger.error('Token expired %s', user.username);
 
                 return res.send({
@@ -780,12 +948,12 @@ export const init = function (server, options) {
                 });
             }
 
-            let hmac = crypto.createHmac('sha512', configService.getValue('hmacSecret'));
-            let resetToken = hmac
-                .update('RESET ' + user.username + ' ' + user.tokenExpires)
-                .digest('hex');
+            let hashedToken = hashActivationToken(req.body.token);
+            let expectedToken =
+                user.resetTokenHash || (user.resetToken ? getLegacyResetToken(user) : undefined);
+            let providedToken = user.resetTokenHash ? hashedToken : req.body.token;
 
-            if (resetToken !== req.body.token) {
+            if (!tokensMatch(expectedToken, providedToken)) {
                 logger.error('Invalid reset token %s %s', user.username, req.body.token);
 
                 return res.send({
@@ -795,11 +963,9 @@ export const init = function (server, options) {
                 });
             }
 
-            resetUser = user;
-
             let passwordHash = await hashPassword(req.body.newPassword, 10);
-            await userService.setPassword(resetUser, passwordHash);
-            await userService.clearResetToken(resetUser);
+            await userService.setPassword(user, passwordHash);
+            await userService.clearResetToken(user);
 
             res.send({ success: true });
         })
@@ -808,8 +974,6 @@ export const init = function (server, options) {
     server.post(
         '/api/account/password-reset',
         wrapAsync(async (req, res) => {
-            let resetToken;
-
             const captchaResult = await verifyCaptchaToken(req.body.captcha);
             if (!captchaResult.success) {
                 return res.send({
@@ -827,21 +991,17 @@ export const init = function (server, options) {
                 return;
             }
 
-            let expiration = moment().add(4, 'hours');
-            let formattedExpiration = expiration.format('YYYYMMDD-HH:mm:ss');
-            let hmac = crypto.createHmac('sha512', configService.getValue('hmacSecret'));
+            let resetToken = createResetToken();
 
-            resetToken = hmac.update(`RESET ${user.username} ${formattedExpiration}`).digest('hex');
-
-            await userService.setResetToken(user, resetToken, formattedExpiration);
-            let url = `${req.protocol}://${req.get('host')}/reset-password?id=${user._id}&token=${resetToken}`;
+            await userService.setResetToken(user, resetToken.tokenHash, resetToken.expiresAt);
+            let url = `${req.protocol}://${req.get('host')}/reset-password?id=${user._id}&token=${resetToken.token}`;
             let emailText =
                 `Hi,\n\nSomeone, hopefully you, has requested their password on ${appName} (${req.protocol}://${req.get('host')}) to be reset.  If this was you, click this link ${url} to complete the process.\n\n` +
                 'If you did not request this reset, do not worry, your account has not been affected and your password has not been changed, just ignore this email.\n' +
                 'Kind regards,\n\n' +
                 `${appName} team`;
 
-            await sendEmail(user.email, `${appName} - Password reset`, emailText);
+            await emailService.sendEmail(user.email, `${appName} - Password reset`, emailText);
         })
     );
 
