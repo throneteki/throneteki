@@ -1,7 +1,8 @@
-import React, { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { navigate } from '../redux/reducers/navigation';
+import { setUser } from '../redux/reducers/auth';
 import { useLinkPatreonMutation } from '../redux/middleware/api';
 import { toast } from 'react-toastify';
 import Page from './Page';
@@ -10,33 +11,57 @@ import ErrorMessage from '../Components/Site/ErrorMessage';
 
 const Patreon = ({ code }) => {
     const dispatch = useDispatch();
+    const { user, token } = useSelector((state) => state.auth);
     const [linkPatreon, { isLoading }] = useLinkPatreonMutation();
+    const oauthCode = code || new URLSearchParams(window.location.search).get('code') || undefined;
+    const hasLinkedRef = useRef(false);
 
     useEffect(() => {
-        if (!code) {
+        if (!oauthCode || !token || hasLinkedRef.current) {
             return;
         }
 
+        let completedCode;
+        try {
+            completedCode = window.sessionStorage.getItem('patreonLinkedCode');
+        } catch {
+            completedCode = undefined;
+        }
+
+        if (completedCode === oauthCode) {
+            dispatch(navigate('/profile'));
+            return;
+        }
+
+        hasLinkedRef.current = true;
+
         const doLink = async () => {
             try {
-                await linkPatreon(code).unwrap();
+                let response = await linkPatreon(oauthCode).unwrap();
+                if (response?.user) {
+                    dispatch(setUser(response.user));
+                }
             } catch (err) {
+                hasLinkedRef.current = false;
                 toast.error(err.message || 'An error occurred linking your account');
 
                 return;
             }
 
-            dispatch(navigate('/profile'));
+            try {
+                window.sessionStorage.setItem('patreonLinkedCode', oauthCode);
+            } catch (err) {
+                void err;
+            }
 
-            toast.success(
-                'Your account was linked successfully. Sending you back to the profile page'
-            );
+            toast.success('Your account was linked successfully');
+            dispatch(navigate('/profile'));
         };
 
         doLink();
-    }, [code, dispatch, linkPatreon]);
+    }, [dispatch, linkPatreon, oauthCode, token, user]);
 
-    if (!code) {
+    if (!oauthCode) {
         return (
             <Page className='h-full'>
                 <ErrorMessage

@@ -14,6 +14,9 @@
     //awsSecretAccessKey: '...',
     emailFrom: 'The Iron Throne <noreply@theironthrone.net>',
     //emailReplyTo: 'support@example.com',
+    //patreonClientId: 'your-client-id',
+    //patreonSecret: 'your-client-secret',
+    //patreonCallbackUrl: 'http://localhost:4000/patreon',
 
     dbPath: 'mongodb://mongo:27017/throneteki',
     // This is the host/port of the Zero MQ server which does the node load balancing

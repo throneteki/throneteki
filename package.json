@@ -74,7 +74,6 @@
         "next-themes": "^0.3.0",
         "passport": "^0.6.0",
         "passport-jwt": "^4.0.0",
-        "patreon": "^0.4.1",
         "pluralize": "^7.0.0",
         "pmx": "^1.6.7",
         "postcss": "^8.4.40",
