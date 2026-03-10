@@ -1,10 +1,11 @@
 import crypto from 'crypto';
 import logger from '../log.js';
 
-const RegistrationAttemptWindowMs = 24 * 60 * 60 * 1000;
+const RegistrationAttemptWindowMs = 60 * 60 * 1000;
 const RegistrationCooldownMs = 15 * 60 * 1000;
 const RegistrationCooldownThreshold = 3;
 const RestrictionWindowMs = 7 * 24 * 60 * 60 * 1000;
+const DefaultRegistrationEventRetentionDays = 30;
 
 class AbuseService {
     constructor(db, configService) {
@@ -199,6 +200,33 @@ class AbuseService {
         }
     }
 
+    async cleanupOldRegistrationEvents() {
+        const retentionDays =
+            this.configService.getValue('registrationEventRetentionDays') ||
+            DefaultRegistrationEventRetentionDays;
+        const cutoff = new Date(Date.now() - retentionDays * 24 * 60 * 60 * 1000);
+
+        try {
+            const result = await this.abuseEvents.remove({
+                type: { $in: ['registration_attempt', 'registration_preflight'] },
+                createdAt: { $lt: cutoff }
+            });
+
+            if (typeof result === 'number') {
+                return result;
+            }
+
+            if (Array.isArray(result)) {
+                return result.length;
+            }
+
+            return result?.deletedCount || 0;
+        } catch (err) {
+            logger.error('Error cleaning old registration events %s', err);
+            return 0;
+        }
+    }
+
     async findRegistrationAttempts({ ip, subnet }) {
         const windowStart = new Date(Date.now() - RegistrationAttemptWindowMs);
         let attempts = [];
@@ -220,6 +248,24 @@ class AbuseService {
                 (subnet && attempt.signals && attempt.signals.includes(`subnet:${subnet}`))
             );
         });
+    }
+
+    getRecentCooldownAttempts(attempts) {
+        let sortedAttempts = [...attempts].sort(
+            (left, right) => new Date(left.createdAt).getTime() - new Date(right.createdAt).getTime()
+        );
+        let recentAttempts = [];
+
+        for (let attempt of sortedAttempts) {
+            let attemptTime = new Date(attempt.createdAt).getTime();
+            recentAttempts = recentAttempts.filter(
+                (recentAttempt) =>
+                    attemptTime - new Date(recentAttempt.createdAt).getTime() < RegistrationCooldownMs
+            );
+            recentAttempts.push(attempt);
+        }
+
+        return recentAttempts;
     }
 
     buildLinkedEvidence(users, predicate, label) {
@@ -414,20 +460,15 @@ class AbuseService {
         }
 
         const recentAttempts = await this.findRegistrationAttempts({ ip: normalizedIp, subnet });
-        const cooldownTriggered = recentAttempts.length >= RegistrationCooldownThreshold;
+        const cooldownAttempts = this.getRecentCooldownAttempts(recentAttempts);
+        const cooldownTriggered = cooldownAttempts.length >= RegistrationCooldownThreshold;
         let cooldownRemainingMs = 0;
 
         if (cooldownTriggered) {
             riskFlags.push('registration_cooldown');
             riskScore += 20;
 
-            const latestAttempt = recentAttempts.reduce((latest, attempt) => {
-                if (!latest) {
-                    return attempt;
-                }
-
-                return new Date(attempt.createdAt) > new Date(latest.createdAt) ? attempt : latest;
-            }, null);
+            const latestAttempt = cooldownAttempts[cooldownAttempts.length - 1];
 
             cooldownRemainingMs = Math.max(
                 0,

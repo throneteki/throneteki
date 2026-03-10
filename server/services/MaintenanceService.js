@@ -3,8 +3,9 @@ import logger from '../log.js';
 const DefaultCleanupIntervalMs = 6 * 60 * 60 * 1000;
 
 class MaintenanceService {
-    constructor(userService, configService) {
+    constructor(userService, abuseService, configService) {
         this.userService = userService;
+        this.abuseService = abuseService;
         this.configService = configService;
         this.cleanupIntervalMs =
             configService.getValue('maintenanceCleanupIntervalMs') || DefaultCleanupIntervalMs;
@@ -40,12 +41,14 @@ class MaintenanceService {
         let expiredUnverifiedAccounts = await this.userService.deleteExpiredUnverifiedAccounts();
         let removedRefreshTokens = await this.userService.cleanupRefreshTokens();
         let removedLegacySessions = await this.userService.cleanupLegacySessions();
+        let removedRegistrationEvents = await this.abuseService.cleanupOldRegistrationEvents();
 
         logger.info(
-            'Maintenance cleanup complete: expired_unverified=%s refresh_tokens=%s legacy_sessions=%s',
+            'Maintenance cleanup complete: expired_unverified=%s refresh_tokens=%s legacy_sessions=%s registration_events=%s',
             expiredUnverifiedAccounts,
             removedRefreshTokens,
-            removedLegacySessions
+            removedLegacySessions,
+            removedRegistrationEvents
         );
     }
 }

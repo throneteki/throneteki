@@ -104,9 +104,13 @@ export default {
 
         return services.proxyCheckService;
     },
-    maintenanceService: (userService, configService) => {
+    maintenanceService: (userService, abuseService, configService) => {
         if (!services.maintenanceService) {
-            services.maintenanceService = new MaintenanceService(userService, configService);
+            services.maintenanceService = new MaintenanceService(
+                userService,
+                abuseService,
+                configService
+            );
         }
 
         return services.maintenanceService;

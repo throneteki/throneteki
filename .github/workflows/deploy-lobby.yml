@@ -101,13 +101,14 @@ jobs:
                     disposableEmailCacheTtlSeconds: ${{ vars.DISPOSABLE_EMAIL_CACHE_TTL_SECONDS || 15552000 }}
                     disposableEmailUnknownCacheTtlSeconds: ${{ vars.DISPOSABLE_EMAIL_UNKNOWN_CACHE_TTL_SECONDS || 900 }}
                     maintenanceCleanupIntervalMs: ${{ vars.MAINTENANCE_CLEANUP_INTERVAL_MS || 21600000 }}
+                    registrationEventRetentionDays: ${{ vars.REGISTRATION_EVENT_RETENTION_DAYS || 30 }}
                     refreshTokenRetentionDays: ${{ vars.REFRESH_TOKEN_RETENTION_DAYS || 30 }}
                     sessionHistoryRetentionDays: ${{ vars.SESSION_HISTORY_RETENTION_DAYS || 180 }}
                     port: 80
                     hmacSecret: "${{ secrets.HMAC }}"
                     requireActivation: ${{ vars.REQUIRE_ACTIVATION || false }}
-                    patreonCallbackUrl: "${{ secrets.PATREON_CALLBACK_URL }}"
-                    patreonClientId: "${{ secrets.PATREON_CLIENT_ID }}"
+                    patreonCallbackUrl: "${{ vars.PATREON_CALLBACK_URL }}"
+                    patreonClientId: "${{ secrets.PATREON_CLIENTID }}"
                     patreonSecret: "${{ secrets.PATREON_SECRET }}"
                   EOF
 

@@ -31,6 +31,7 @@
     disposableEmailCacheTtlSeconds: 15552000,
     disposableEmailUnknownCacheTtlSeconds: 900,
     maintenanceCleanupIntervalMs: 21600000,
+    registrationEventRetentionDays: 30,
     refreshTokenRetentionDays: 30,
     sessionHistoryRetentionDays: 180,
     origin: 'http://localhost:4000',

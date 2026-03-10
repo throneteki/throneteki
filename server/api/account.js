@@ -335,7 +335,7 @@ export const init = function (server, options) {
             };
 
             await abuseService.logEvent({
-                type: 'registration_attempt',
+                type: 'registration_preflight',
                 username: req.body.username,
                 ip: assessment.ip,
                 subnet: assessment.subnet,

@@ -21,7 +21,12 @@ async function runServer() {
     let httpServer = await server.init(options);
     let lobby = new Lobby(httpServer, options);
     let userService = ServiceFactory.userService(options.db, configService);
-    let maintenanceService = ServiceFactory.maintenanceService(userService, configService);
+    let abuseService = ServiceFactory.abuseService(options.db, configService);
+    let maintenanceService = ServiceFactory.maintenanceService(
+        userService,
+        abuseService,
+        configService
+    );
 
     await lobby.init();
     maintenanceService.start();
