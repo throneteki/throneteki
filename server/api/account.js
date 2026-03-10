@@ -368,16 +368,6 @@ export const init = function (server, options) {
                 });
             }
 
-            if (assessment.challengeRequired && req.body.captcha) {
-                const captchaResult = await verifyCaptchaToken(req.body.captcha);
-                if (!captchaResult.success) {
-                    return res.status(400).send({
-                        success: false,
-                        message: captchaResult.message
-                    });
-                }
-            }
-
             return res.send({ success: true, data: response });
         })
     );
