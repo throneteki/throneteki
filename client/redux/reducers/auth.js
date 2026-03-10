@@ -1,4 +1,3 @@
-/* global localStorage */
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
@@ -60,7 +59,27 @@ const authSlice = createSlice({
             }
         ),
         setUser(state, action) {
-            state.user = action.payload;
+            if (!action.payload) {
+                state.user = action.payload;
+                return;
+            }
+
+            state.user = {
+                ...(state.user || {}),
+                ...action.payload,
+                permissions: {
+                    ...((state.user && state.user.permissions) || {}),
+                    ...((action.payload && action.payload.permissions) || {})
+                },
+                settings: {
+                    ...((state.user && state.user.settings) || {}),
+                    ...((action.payload && action.payload.settings) || {})
+                }
+            };
+
+            if (Object.prototype.hasOwnProperty.call(action.payload, 'patreon')) {
+                state.user.patreon = action.payload.patreon;
+            }
         }
     })
 });

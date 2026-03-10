@@ -705,28 +705,21 @@ export const init = function (server, options) {
                 return res.send({ success: true, data: userDetails });
             }
 
-            userDetails.patreon = await patreonService.getPatreonStatusForUser(user);
+            userDetails.patreon = await patreonService.getPatreonStateForUser(user);
 
-            if (userDetails.patreon === 'none') {
+            if (!userDetails.patreon) {
                 delete userDetails.patreon;
-
-                let ret = await patreonService.refreshTokenForUser(user);
-                if (!ret) {
-                    return res.send({ success: true, data: userDetails });
-                }
-
-                userDetails.patreon = await patreonService.getPatreonStatusForUser(user);
-
-                if (userDetails.patreon === 'none') {
-                    return res.send({ success: true, data: userDetails });
-                }
+                return res.send({ success: true, data: userDetails });
             }
 
-            if (userDetails.patreon === 'pledged' && !userDetails.permissions.isSupporter) {
+            if (userDetails.patreon.status === 'pledged' && !userDetails.permissions.isSupporter) {
                 await userService.setSupporterStatus(user.username, true);
                 // eslint-disable-next-line require-atomic-updates
                 userDetails.permissions.isSupporter = req.user.permissions.isSupporter = true;
-            } else if (userDetails.patreon !== 'pledged' && userDetails.permissions.isSupporter) {
+            } else if (
+                userDetails.patreon.status !== 'pledged' &&
+                userDetails.permissions.isSupporter
+            ) {
                 await userService.setSupporterStatus(user.username, false);
                 // eslint-disable-next-line require-atomic-updates
                 userDetails.permissions.isSupporter = req.user.permissions.isSupporter = false;
@@ -1252,19 +1245,22 @@ export const init = function (server, options) {
                 });
             }
 
-            let status = await patreonService.getPatreonStatusForUser(user);
+            let patreonState = await patreonService.getPatreonStateForUser(user);
 
-            if (status === 'pledged' && !user.permissions.isSupporter) {
+            if (patreonState?.status === 'pledged' && !user.permissions.isSupporter) {
                 await userService.setSupporterStatus(user.username, true);
                 // eslint-disable-next-line require-atomic-updates
                 user.permissions.isSupporter = req.user.permissions.isSupporter = true;
-            } else if (status !== 'pledged' && user.permissions.isSupporter) {
+            } else if (patreonState?.status !== 'pledged' && user.permissions.isSupporter) {
                 await userService.setSupporterStatus(user.username, false);
                 // eslint-disable-next-line require-atomic-updates
                 user.permissions.isSupporter = req.user.permissions.isSupporter = false;
             }
 
-            return res.send({ success: true });
+            let userDetails = user.getWireSafeDetails();
+            userDetails.patreon = patreonState;
+
+            return res.send({ success: true, data: { user: userDetails } });
         })
     );
 
@@ -1289,7 +1285,15 @@ export const init = function (server, options) {
                 });
             }
 
-            return res.send({ success: true });
+            if (user.permissions.isSupporter) {
+                await userService.setSupporterStatus(user.username, false);
+            }
+
+            let userDetails = user.getWireSafeDetails();
+            userDetails.permissions.isSupporter = false;
+            userDetails.patreon = null;
+
+            return res.send({ success: true, data: { user: userDetails } });
         })
     );
 };
