@@ -90,6 +90,7 @@
         "sass": "^1.74.1",
         "screenfull": "^6.0.2",
         "socket.io": "^4.7.5",
+        "sugarss": "^5.0.1",
         "tailwindcss": "^3.4.6",
         "underscore": "^1.13.1",
         "uuid": "^3.1.0",
