@@ -252,7 +252,8 @@ class AbuseService {
 
     getRecentCooldownAttempts(attempts) {
         let sortedAttempts = [...attempts].sort(
-            (left, right) => new Date(left.createdAt).getTime() - new Date(right.createdAt).getTime()
+            (left, right) =>
+                new Date(left.createdAt).getTime() - new Date(right.createdAt).getTime()
         );
         let recentAttempts = [];
 
@@ -260,7 +261,8 @@ class AbuseService {
             let attemptTime = new Date(attempt.createdAt).getTime();
             recentAttempts = recentAttempts.filter(
                 (recentAttempt) =>
-                    attemptTime - new Date(recentAttempt.createdAt).getTime() < RegistrationCooldownMs
+                    attemptTime - new Date(recentAttempt.createdAt).getTime() <
+                    RegistrationCooldownMs
             );
             recentAttempts.push(attempt);
         }
