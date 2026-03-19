@@ -507,10 +507,10 @@ export const apiSlice = createApi({
             })
         }),
         activateAccount: builder.mutation({
-            query: (token) => ({
+            query: (details) => ({
                 url: '/account/activate',
                 method: 'POST',
-                body: { token }
+                body: details
             })
         }),
         forgotPassword: builder.mutation({
