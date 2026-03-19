@@ -123,4 +123,45 @@ describe('AbuseService', function () {
         expect(assessment.trustState).toBe('new');
         expect(assessment.riskFlags).toContain('repeated_disabled_subnet_match');
     });
+
+    it('should not trigger registration cooldown until the fifth recent attempt', async function () {
+        const now = Date.now();
+        const recentAttemptTimes = [12, 9, 6, 3].map(
+            (minutesAgo) => new Date(now - minutesAgo * 60 * 1000)
+        );
+
+        for (const createdAt of recentAttemptTimes) {
+            await this.collections.abuse_events.insert({
+                type: 'registration_attempt',
+                ip: '10.0.0.33',
+                subnet: '10.0.0.0/24',
+                createdAt
+            });
+        }
+
+        const fourthAttemptAssessment = await this.service.assessRegistrationAttempt({
+            ip: '10.0.0.33',
+            email: 'test@example.com',
+            username: 'newuser'
+        });
+
+        expect(fourthAttemptAssessment.cooldownRemainingMs).toBe(0);
+        expect(fourthAttemptAssessment.riskFlags).not.toContain('registration_cooldown');
+
+        await this.collections.abuse_events.insert({
+            type: 'registration_attempt',
+            ip: '10.0.0.33',
+            subnet: '10.0.0.0/24',
+            createdAt: new Date(now - 1 * 60 * 1000)
+        });
+
+        const fifthAttemptAssessment = await this.service.assessRegistrationAttempt({
+            ip: '10.0.0.33',
+            email: 'test@example.com',
+            username: 'newuser'
+        });
+
+        expect(fifthAttemptAssessment.cooldownRemainingMs).toBeGreaterThan(0);
+        expect(fifthAttemptAssessment.riskFlags).toContain('registration_cooldown');
+    });
 });

@@ -3,7 +3,7 @@ import logger from '../log.js';
 
 const RegistrationAttemptWindowMs = 60 * 60 * 1000;
 const RegistrationCooldownMs = 15 * 60 * 1000;
-const RegistrationCooldownThreshold = 3;
+const RegistrationCooldownThreshold = 5;
 const RestrictionWindowMs = 7 * 24 * 60 * 60 * 1000;
 const DefaultRegistrationEventRetentionDays = 30;
 

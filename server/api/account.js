@@ -239,6 +239,50 @@ function getSignupFingerprint(req) {
     };
 }
 
+function summarizeLinkedUsers(linkedUsers = []) {
+    return linkedUsers.map((linkedUser) => ({
+        userId: linkedUser.user?._id?.toString?.() || linkedUser.user?._id,
+        username: linkedUser.user?.username,
+        disabled: !!linkedUser.user?.disabled,
+        trustState: linkedUser.user?.trustState || 'trusted',
+        evidence: linkedUser.evidence || []
+    }));
+}
+
+function logRegistrationAssessment(stage, assessment, externalRisk, extra = {}) {
+    logger.info({
+        event: 'registration_abuse_assessment',
+        stage,
+        username: assessment.username,
+        ip: assessment.ip,
+        subnet: assessment.subnet,
+        emailDomain: assessment.emailDomain,
+        riskScore: assessment.riskScore,
+        trustState: assessment.trustState,
+        blocked: assessment.blocked,
+        challengeRequired: assessment.challengeRequired,
+        cooldownRemainingMs: assessment.cooldownRemainingMs,
+        restrictedUntil: assessment.restrictedUntil,
+        riskFlags: assessment.riskFlags,
+        matchingBlocks: (assessment.matchingBlocks || []).map((block) => ({
+            scope: block.scope,
+            reason: block.reason,
+            legacy: !!block.legacy,
+            expiresAt: block.expiresAt || null
+        })),
+        linkedUsers: summarizeLinkedUsers(assessment.linkedUsers),
+        externalRisk: externalRisk
+            ? {
+                  denyRegistration: !!externalRisk.denyRegistration,
+                  riskFlags: externalRisk.riskFlags || [],
+                  riskScoreDelta: externalRisk.riskScoreDelta || 0,
+                  findings: externalRisk.findings || {}
+              }
+            : undefined,
+        ...extra
+    });
+}
+
 async function verifyCaptchaToken(captcha) {
     const captchaKey = configService.getValue('captchaKey');
 
@@ -319,6 +363,9 @@ export const init = function (server, options) {
                 username: req.body.username,
                 fingerprint: getSignupFingerprint(req),
                 externalRisk
+            });
+            logRegistrationAssessment('preflight', assessment, externalRisk, {
+                canProceed: !assessment.blocked && assessment.cooldownRemainingMs <= 0
             });
 
             const canProceed = !assessment.blocked && assessment.cooldownRemainingMs <= 0;
@@ -439,11 +486,16 @@ export const init = function (server, options) {
             );
 
             if (externalRisk.denyRegistration) {
-                logger.warn(
-                    'Blocking %s from registering the account %s due to ipqs',
-                    req.body.email,
-                    req.body.username
-                );
+                logger.warn({
+                    event: 'registration_external_deny',
+                    username: req.body.username,
+                    emailDomain: abuseService.getEmailDomain(req.body.email),
+                    ip,
+                    denyRegistration: true,
+                    riskFlags: externalRisk.riskFlags || [],
+                    riskScoreDelta: externalRisk.riskScoreDelta || 0,
+                    findings: externalRisk.findings || {}
+                });
                 return res.status(400).send({
                     success: false,
                     message:
@@ -458,6 +510,7 @@ export const init = function (server, options) {
                 fingerprint: getSignupFingerprint(req),
                 externalRisk
             });
+            logRegistrationAssessment('register', assessment, externalRisk);
 
             await abuseService.logEvent({
                 type: 'registration_attempt',
@@ -492,6 +545,16 @@ export const init = function (server, options) {
             }
 
             if (assessment.blocked) {
+                logger.warn({
+                    event: 'registration_blocked',
+                    username: assessment.username,
+                    ip: assessment.ip,
+                    subnet: assessment.subnet,
+                    emailDomain: assessment.emailDomain,
+                    riskScore: assessment.riskScore,
+                    trustState: assessment.trustState,
+                    riskFlags: assessment.riskFlags
+                });
                 return res.status(403).send({
                     success: false,
                     message:
@@ -500,8 +563,23 @@ export const init = function (server, options) {
             }
 
             if (assessment.challengeRequired) {
+                logger.info({
+                    event: 'registration_captcha_required',
+                    username: assessment.username,
+                    ip: assessment.ip,
+                    riskScore: assessment.riskScore,
+                    riskFlags: assessment.riskFlags
+                });
                 const captchaResult = await verifyCaptchaToken(req.body.captcha);
                 if (!captchaResult.success) {
+                    logger.warn({
+                        event: 'registration_captcha_failed',
+                        username: assessment.username,
+                        ip: assessment.ip,
+                        riskScore: assessment.riskScore,
+                        riskFlags: assessment.riskFlags,
+                        message: captchaResult.message
+                    });
                     return res.status(400).send({
                         success: false,
                         message: captchaResult.message
@@ -559,6 +637,19 @@ export const init = function (server, options) {
             }
 
             user = await userService.addUser(newUser);
+            logger.info({
+                event: 'registration_completed',
+                userId: user?._id?.toString?.() || user?._id,
+                username: newUser.username,
+                ip: assessment.ip,
+                subnet: assessment.subnet,
+                emailDomain: assessment.emailDomain,
+                trustState: newUser.trustState,
+                riskScore: newUser.riskScore,
+                riskFlags: newUser.riskFlags,
+                restrictedUntil: newUser.restrictedUntil || null,
+                requiresVerification: requireActivation
+            });
             if (requireActivation) {
                 let url = `${req.protocol}://${req.get('host')}/activation?id=${user._id}&token=${activationTokenValue}`;
                 let emailText =

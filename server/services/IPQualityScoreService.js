@@ -65,8 +65,7 @@ class IPQualityScoreService {
             if (typeof emailResult.fraud_score === 'number') {
                 if (emailResult.fraud_score >= 90) {
                     riskFlags.push('ipqs_email_fraud_score_90');
-                    riskScoreDelta += 50;
-                    denyRegistration = true;
+                    riskScoreDelta += 35;
                 } else if (emailResult.fraud_score >= 85) {
                     riskFlags.push('ipqs_email_fraud_score_85');
                     riskScoreDelta += 35;
