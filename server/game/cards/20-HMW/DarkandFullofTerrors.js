@@ -26,7 +26,7 @@ class DarkandFullofTerrors extends DrawCard {
                         targetLocation: 'any',
                         match: context.target,
                         effect: ability.effects.addKeyword(
-                            `Shadow (${context.target.getPrintedCost()})`
+                            `Shadow (${context.target.translateXValue(context.target.getPrintedCost())})`
                         )
                     }));
                 });
