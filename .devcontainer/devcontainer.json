@@ -4,7 +4,7 @@
 	"workspaceFolder": "/workspaces/throneteki",
 	"remoteUser": "root",
 	"postCreateCommand": {
-		"npm": "npm install",
+		"npm": "npm install && npm rebuild",
 		"createConfig": "cp -n config/default.json5 config/local.json5",
 		"submodule": "git config --global --add safe.directory /workspaces/throneteki && git submodule init"
 	},
@@ -17,7 +17,7 @@
 				"dbaeumer.vscode-eslint"
 			],
 			"settings": {
-				"eslint.experimental.useFlatConfig": true,
+				"eslint.useFlatConfig": true,
 				"eslint.workingDirectories": [
 					{
 						"mode": "auto"
