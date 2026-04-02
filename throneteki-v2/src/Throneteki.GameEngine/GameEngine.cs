@@ -14,17 +14,20 @@ namespace Throneteki.GameEngine;
 public sealed class GameEngine : IGameEngine
 {
     private readonly DrawPhase _drawPhase = new();
-    private readonly PlotPhase _plotPhase = new();
+    private readonly PlotPhase _plotPhase;
     private readonly MarshallingPhase _marshallingPhase;
     private readonly ChallengesPhase _challengesPhase;
-    private readonly DominancePhase _dominancePhase = new();
+    private readonly DominancePhase _dominancePhase;
     private readonly StandingPhase _standingPhase = new();
-    private readonly TaxationPhase _taxationPhase = new();
+    private readonly TaxationPhase _taxationPhase;
 
     public GameEngine(ICardCatalog? catalog = null)
     {
+        _plotPhase = new PlotPhase(catalog);
         _marshallingPhase = new MarshallingPhase(catalog);
         _challengesPhase = new ChallengesPhase(catalog);
+        _dominancePhase = new DominancePhase(catalog);
+        _taxationPhase = new TaxationPhase(catalog);
     }
 
     /// <summary>Process a command against the current game state.</summary>

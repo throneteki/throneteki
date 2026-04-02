@@ -2,19 +2,31 @@ using System.Collections.Immutable;
 using Throneteki.Domain.Commands;
 using Throneteki.Domain.Enums;
 using Throneteki.Domain.Events;
+using Throneteki.Domain.Interfaces;
 using Throneteki.Domain.Models.GameAggregate;
 
 namespace Throneteki.GameEngine.Phases;
 
 /// <summary>
-/// Plot Phase: Both players secretly select a plot card, then simultaneously reveal.
-/// After revelation the engine advances to the Draw phase.
+/// Plot Phase (rules step 1, Joust format):
+/// 1.1 Round begins. Plot phase begins.
+/// 1.2 Choose plots (simultaneous, secret selection).
+/// 1.3 Reveal plots:
+///     I.   Compare initiative values.
+///     II.  Higher initiative player chooses first player.
+///     III. Resolve "When Revealed" abilities (first player first).
+/// (1.4 Melee only — skipped for Joust.)
+/// ACTION WINDOW
+/// 1.5 Plot phase ends. Advance to Draw phase.
 /// </summary>
 public sealed class PlotPhase
 {
+    private readonly ICardCatalog? _catalog;
+
+    public PlotPhase(ICardCatalog? catalog = null) => _catalog = catalog;
+
     /// <summary>
-    /// Called when the engine enters the Plot phase (SystemAdvanceCommand).
-    /// Emits PhaseStartedEvent and a PromptIssuedEvent for each player.
+    /// Step 1.1-1.2: Enter plot phase and prompt both players to select plots.
     /// </summary>
     public IReadOnlyList<GameEvent> Enter(GameState state)
     {
@@ -40,9 +52,8 @@ public sealed class PlotPhase
     }
 
     /// <summary>
-    /// Called when a player submits a SelectPlotCommand.
-    /// Returns invalid if the chosen card is not in the player's plot deck.
-    /// If both players have now selected, triggers revelation and advances to Draw.
+    /// Step 1.2 (continued): Player selects a plot.
+    /// When both have selected → Step 1.3: reveal, initiative, first player, when-revealed.
     /// </summary>
     public (bool IsValid, string? Error, IReadOnlyList<GameEvent> Events) SelectPlot(
         GameState state, SelectPlotCommand command)
@@ -58,27 +69,57 @@ public sealed class PlotPhase
 
         events.Add(new PlotSelectedEvent(player.PlayerId, chosenPlot.InstanceId) { SequenceNumber = seq++ });
 
-        // Determine if the other player has already selected
         var otherPlayer = state.Players.FirstOrDefault(p => p.PlayerId != command.PlayerId);
         bool otherHasSelected = otherPlayer?.SelectedPlot != null;
 
         if (otherHasSelected)
         {
-            // Both players have now selected — reveal both plots
+            // Step 1.3: Both selected — reveal plots simultaneously
             foreach (var p in state.Players)
             {
-                Guid revealedId;
-                if (p.PlayerId == command.PlayerId)
-                    revealedId = command.CardInstanceId;
-                else
-                    revealedId = p.SelectedPlot!.InstanceId;
-
+                Guid revealedId = p.PlayerId == command.PlayerId
+                    ? command.CardInstanceId
+                    : p.SelectedPlot!.InstanceId;
                 events.Add(new PlotRevealedEvent(p.PlayerId, revealedId) { SequenceNumber = seq++ });
             }
 
+            // Step 1.3.I: Compare initiative
+            int p1Initiative = GetInitiative(state.Players[0], command);
+            int p2Initiative = GetInitiative(state.Players[1], command);
+
+            // Step 1.3.II: Higher initiative chooses first player
+            // (Simplified: higher initiative becomes first player; ties go to current first player)
+            Guid initiativeWinnerId;
+            if (p1Initiative > p2Initiative)
+                initiativeWinnerId = state.Players[0].PlayerId;
+            else if (p2Initiative > p1Initiative)
+                initiativeWinnerId = state.Players[1].PlayerId;
+            else
+                initiativeWinnerId = state.Players.FirstOrDefault(p => p.IsFirstPlayer)?.PlayerId
+                    ?? state.Players[0].PlayerId;
+
+            events.Add(new InitiativeWonEvent(initiativeWinnerId) { SequenceNumber = seq++ });
+            events.Add(new FirstPlayerDeterminedEvent(initiativeWinnerId) { SequenceNumber = seq++ });
+
+            // Step 1.3.III: "When Revealed" abilities would be resolved here
+            // (handled by the ability resolver in the full engine)
+
+            // Step 1.5 → Advance to Draw phase
             events.Add(new PhaseStartedEvent(GamePhase.Draw) { SequenceNumber = seq++ });
         }
 
         return (true, null, events);
+    }
+
+    private int GetInitiative(PlayerState player, SelectPlotCommand currentCommand)
+    {
+        // Get the plot card that this player selected (may be SelectedPlot or the one being selected now)
+        var plotCard = player.SelectedPlot;
+        if (plotCard == null && player.PlayerId == currentCommand.PlayerId)
+            plotCard = player.PlotDeck.FirstOrDefault(c => c.InstanceId == currentCommand.CardInstanceId);
+
+        if (plotCard == null) return 0;
+        var def = _catalog?.TryGet(plotCard.CardCode);
+        return def?.Initiative ?? 0;
     }
 }
