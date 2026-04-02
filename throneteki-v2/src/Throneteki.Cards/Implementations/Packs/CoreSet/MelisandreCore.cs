@@ -16,12 +16,22 @@ public sealed class MelisandreCore : CardScript
 {
     protected override IEnumerable<CardAbilityDefinition> DeclareAbilities()
     {
-        // Reaction: when a R'hllor card enters play or R'hllor event is played,
+        // Reaction: when controller marshals a R'hllor card or plays a R'hllor event,
         // kneel a standing character (limit 1/round)
+        // Note: R'hllor trait check on the triggering card requires catalog lookup.
+        // The trigger filter should verify:
+        //   - The marshalled/played card belongs to the controller
+        //   - The marshalled/played card has the R'hllor trait
         yield return AbilityBuilder.Reaction("melisandre-kneel")
             .Describe("Reaction: After you marshal/play a R'hllor card, kneel a character. (Limit 1/round.)")
             .OnEvent<CardMarshalledEvent>((e, _) => true)
             .LimitPerRound(1)
+            .When(ctx =>
+            {
+                var trigger = (CardMarshalledEvent)ctx.TriggeringEvent!;
+                // Must be controller's card; R'hllor trait check requires catalog
+                return trigger.PlayerId == ctx.ControllingPlayerId;
+            })
             .TargetCard((state, source, target) =>
                 target.Location == CardLocation.PlayArea &&
                 !target.Kneeled)

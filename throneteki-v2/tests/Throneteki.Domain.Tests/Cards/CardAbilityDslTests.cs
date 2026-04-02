@@ -127,11 +127,10 @@ public class CardAbilityDslTests
     }
 
     [Fact]
-    public void Registry_VanillaCard_HasNoAbilities()
+    public void Registry_UnknownCard_ReturnsNull()
     {
         var registry = CardScriptRegistry.BuildDefault();
-        var script = registry.Get("01001"); // A Game of Thrones (plot, no text)
-        Assert.Empty(script.Abilities);
+        Assert.Null(registry.TryGet("99999"));
     }
 
     [Fact]

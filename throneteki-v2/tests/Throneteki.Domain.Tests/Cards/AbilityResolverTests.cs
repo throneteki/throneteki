@@ -89,8 +89,10 @@ public class AbilityResolverTests
     [Fact]
     public void Registry_DiscoversCoreSetCards()
     {
-        Assert.True(_registry.HasScript("01001")); // A Game of Thrones
+        Assert.True(_registry.HasScript("01001")); // A Clash of Kings
+        Assert.True(_registry.HasScript("01003")); // A Game of Thrones
         Assert.True(_registry.HasScript("01013")); // Heads on Spikes
+        Assert.True(_registry.HasScript("01038")); // The Iron Throne
         Assert.True(_registry.HasScript("01041")); // Put to the Sword
         Assert.True(_registry.HasScript("01048")); // Robert Baratheon
         Assert.True(_registry.HasScript("01087")); // Jaime Lannister
@@ -98,7 +100,7 @@ public class AbilityResolverTests
         Assert.True(_registry.HasScript("01137")); // The Wall
         Assert.True(_registry.HasScript("01141")); // Arya Stark
         Assert.True(_registry.HasScript("01143")); // Catelyn Stark
+        Assert.True(_registry.HasScript("01144")); // Eddard Stark
         Assert.True(_registry.HasScript("01160")); // Daenerys Targaryen
-        Assert.True(_registry.HasScript("01163")); // Iron Throne
     }
 }
