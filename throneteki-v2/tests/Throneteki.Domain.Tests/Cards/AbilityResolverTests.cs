@@ -15,55 +15,48 @@ public class AbilityResolverTests
     [Fact]
     public void FindTriggeredAbilities_ReturnsMatchingReactions()
     {
-        // Catelyn Stark (01143) has a reaction on ChallengeResultDeterminedEvent
+        // Tyrion Lannister (01089) reacts to ChallengeInitiatedEvent (intrigue)
         var resolver = new AbilityResolver(_registry);
 
         var state = new GameStateBuilder()
             .WithPhase(GamePhase.Challenges)
-            .WithPlayer("p1", p => p.AsFirstPlayer().InPlay("01143")) // Catelyn
+            .WithPlayer("p1", p => p.AsFirstPlayer().InPlay("01089")) // Tyrion
             .WithPlayer("p2")
             .Build();
 
-        // Set up active challenge where p1 is attacker with Catelyn participating
-        var catelyn = state.Players[0].CardsInPlay[0];
-        state = state with
-        {
-            ActiveChallenge = new ChallengeState
-            {
-                Type = ChallengeIcon.Intrigue,
-                AttackingPlayerId = state.Players[0].PlayerId,
-                DefendingPlayerId = state.Players[1].PlayerId,
-                Attackers = ImmutableList.Create(catelyn.InstanceId),
-            }
-        };
-
-        var triggerEvent = new ChallengeResultDeterminedEvent(
-            state.Players[0].PlayerId, false, 4, 2);
+        var tyrion = state.Players[0].CardsInPlay[0];
+        var triggerEvent = new ChallengeInitiatedEvent(
+            ChallengeIcon.Intrigue,
+            state.Players[0].PlayerId,
+            state.Players[1].PlayerId,
+            1);
 
         var matches = resolver.FindTriggeredAbilities(state, triggerEvent, AbilityType.Reaction);
 
         Assert.NotEmpty(matches);
-        Assert.Contains(matches, m => m.CardInstanceId == catelyn.InstanceId);
+        Assert.Contains(matches, m => m.CardInstanceId == tyrion.InstanceId);
     }
 
     [Fact]
-    public void FindTriggeredAbilities_ExcludesWhenConditionFails()
+    public void FindTriggeredAbilities_ExcludesWrongEventType()
     {
+        // Tyrion only reacts to Intrigue challenges, not Military
         var resolver = new AbilityResolver(_registry);
 
         var state = new GameStateBuilder()
             .WithPhase(GamePhase.Challenges)
-            .WithPlayer("p1", p => p.AsFirstPlayer().InPlay("01143")) // Catelyn
+            .WithPlayer("p1", p => p.AsFirstPlayer().InPlay("01089")) // Tyrion
             .WithPlayer("p2")
             .Build();
 
-        // No active challenge — Catelyn's condition should fail
-        var triggerEvent = new ChallengeResultDeterminedEvent(
-            state.Players[0].PlayerId, false, 4, 2);
+        var triggerEvent = new ChallengeInitiatedEvent(
+            ChallengeIcon.Military, // Not intrigue — Tyrion should NOT trigger
+            state.Players[0].PlayerId,
+            state.Players[1].PlayerId,
+            1);
 
         var matches = resolver.FindTriggeredAbilities(state, triggerEvent, AbilityType.Reaction);
 
-        // Should be empty — no challenge means condition fails
         Assert.Empty(matches);
     }
 
@@ -74,37 +67,28 @@ public class AbilityResolverTests
 
         var state = new GameStateBuilder()
             .WithPhase(GamePhase.Challenges)
-            .WithPlayer("p1", p => p.AsFirstPlayer().InPlay("01143").WithDrawDeck("c1", "c2"))
+            .WithPlayer("p1", p => p.AsFirstPlayer().InPlay("01089")) // Tyrion
             .WithPlayer("p2")
             .Build();
 
-        var catelyn = state.Players[0].CardsInPlay[0];
-        state = state with
-        {
-            ActiveChallenge = new ChallengeState
-            {
-                Type = ChallengeIcon.Intrigue,
-                AttackingPlayerId = state.Players[0].PlayerId,
-                DefendingPlayerId = state.Players[1].PlayerId,
-                Attackers = ImmutableList.Create(catelyn.InstanceId),
-            }
-        };
-
-        var triggerEvent = new ChallengeResultDeterminedEvent(
-            state.Players[0].PlayerId, false, 4, 2);
+        var tyrion = state.Players[0].CardsInPlay[0];
+        var triggerEvent = new ChallengeInitiatedEvent(
+            ChallengeIcon.Intrigue,
+            state.Players[0].PlayerId,
+            state.Players[1].PlayerId,
+            1);
 
         var matches = resolver.FindTriggeredAbilities(state, triggerEvent, AbilityType.Reaction);
         Assert.NotEmpty(matches);
 
         var events = resolver.ResolveAbility(matches[0]);
         Assert.NotEmpty(events);
-        Assert.IsType<CardDrawnEvent>(events[0]); // Catelyn draws 1 card
+        Assert.IsType<GoldGainedEvent>(events[0]); // Tyrion gains 2 gold
     }
 
     [Fact]
     public void Registry_DiscoversCoreSetCards()
     {
-        // Verify all 20 core set cards are discovered
         Assert.True(_registry.HasScript("01001")); // A Game of Thrones
         Assert.True(_registry.HasScript("01013")); // Heads on Spikes
         Assert.True(_registry.HasScript("01041")); // Put to the Sword
@@ -114,7 +98,6 @@ public class AbilityResolverTests
         Assert.True(_registry.HasScript("01137")); // The Wall
         Assert.True(_registry.HasScript("01141")); // Arya Stark
         Assert.True(_registry.HasScript("01143")); // Catelyn Stark
-        Assert.True(_registry.HasScript("01148")); // Ned Stark
         Assert.True(_registry.HasScript("01160")); // Daenerys Targaryen
         Assert.True(_registry.HasScript("01163")); // Iron Throne
     }

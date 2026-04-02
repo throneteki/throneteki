@@ -67,6 +67,7 @@ public sealed class PlayerStateBuilder
     public PlayerStateBuilder(string username) => _username = username;
 
     public PlayerStateBuilder WithGold(int gold) { _gold = gold; return this; }
+    public PlayerStateBuilder WithFactionPower(int power) { _factionPower = power; return this; }
     public PlayerStateBuilder AsFirstPlayer() { _isFirstPlayer = true; return this; }
 
     public PlayerStateBuilder WithDrawDeck(params string[] cardCodes)

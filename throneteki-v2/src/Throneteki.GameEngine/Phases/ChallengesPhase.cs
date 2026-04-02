@@ -4,6 +4,7 @@ using Throneteki.Domain.Enums;
 using Throneteki.Domain.Events;
 using Throneteki.Domain.Interfaces;
 using Throneteki.Domain.Models.GameAggregate;
+using Throneteki.GameEngine.Keywords;
 
 namespace Throneteki.GameEngine.Phases;
 
@@ -159,16 +160,29 @@ public sealed class ChallengesPhase
 
         if (attackerWins && unopposed)
         {
-            // Attacker gains 1 power for unopposed
             events.Add(new PowerGainedEvent(challenge.AttackingPlayerId, PowerTargetType.Player, 1, "Unopposed challenge")
                 { SequenceNumber = seq++ });
         }
 
-        // Kneel attackers (all declared attackers kneel regardless)
+        // Resolve keywords (Renown, Insight, Intimidate, Pillage)
+        var resultEvent = new ChallengeResultDeterminedEvent(winnerId, unopposed, winStr, loseStr);
+        var attackerKw = GatherKeywords(state, challenge.Attackers);
+        var defenderKw = GatherKeywords(state, challenge.Defenders);
+        var keywordEvents = KeywordResolver.ResolvePostChallenge(state, resultEvent, attackerKw, defenderKw);
+        events.AddRange(keywordEvents);
+
+        // Resolve claim (Military kills, Intrigue discards, Power moves)
+        if (attackerWins)
+        {
+            int claimValue = GetClaimValue(state, challenge.AttackingPlayerId);
+            var claimEvents = ClaimResolver.ResolveClaim(state, challenge.Type, claimValue);
+            events.AddRange(claimEvents);
+        }
+
+        // Kneel attackers
         foreach (var cardId in challenge.Attackers)
             events.Add(new CardKneeledEvent(cardId, "Attacked") { SequenceNumber = seq++ });
 
-        // Prompt next action (attacker can initiate another challenge or pass)
         var attacker = state.GetPlayer(challenge.AttackingPlayerId);
         events.Add(ChallengePrompt(attacker, seq++));
 
@@ -216,8 +230,30 @@ public sealed class ChallengesPhase
     }
 
     private static int ChallengesCompletedThisRound(GameState state) =>
-        // Simple count: track via active challenge number or default to 0
         state.ActiveChallenge?.ChallengeNumber ?? 0;
+
+    private ImmutableHashSet<Keyword> GatherKeywords(GameState state, ImmutableList<Guid> cardIds)
+    {
+        var keywords = ImmutableHashSet.CreateBuilder<Keyword>();
+        foreach (var id in cardIds)
+        {
+            var card = state.FindCard(id);
+            if (card == null) continue;
+            var def = _catalog?.TryGet(card.CardCode);
+            if (def?.Keywords != null)
+                foreach (var kw in def.Keywords)
+                    keywords.Add(kw);
+        }
+        return keywords.ToImmutable();
+    }
+
+    private int GetClaimValue(GameState state, Guid attackerId)
+    {
+        var attacker = state.GetPlayer(attackerId);
+        if (attacker.ActivePlot == null) return 1;
+        var plotDef = _catalog?.TryGet(attacker.ActivePlot.CardCode);
+        return plotDef?.Claim ?? 1;
+    }
 
     private static PromptIssuedEvent ChallengePrompt(PlayerState player, int seq) =>
         new PromptIssuedEvent(player.PlayerId, new PromptState
