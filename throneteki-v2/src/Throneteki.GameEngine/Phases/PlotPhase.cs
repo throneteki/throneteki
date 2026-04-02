@@ -87,16 +87,26 @@ public sealed class PlotPhase
             int p1Initiative = GetInitiative(state.Players[0], command);
             int p2Initiative = GetInitiative(state.Players[1], command);
 
-            // Step 1.3.II: Higher initiative chooses first player
-            // (Simplified: higher initiative becomes first player; ties go to current first player)
+            // Step 1.3.II: Higher initiative chooses first player.
+            // Tiebreak: player with lowest total power wins initiative.
+            // If still tied: random (simplified to player order).
             Guid initiativeWinnerId;
             if (p1Initiative > p2Initiative)
                 initiativeWinnerId = state.Players[0].PlayerId;
             else if (p2Initiative > p1Initiative)
                 initiativeWinnerId = state.Players[1].PlayerId;
             else
-                initiativeWinnerId = state.Players.FirstOrDefault(p => p.IsFirstPlayer)?.PlayerId
-                    ?? state.Players[0].PlayerId;
+            {
+                // Tiebreak: lowest total power
+                int p1Power = state.Players[0].TotalPower;
+                int p2Power = state.Players[1].TotalPower;
+                if (p1Power < p2Power)
+                    initiativeWinnerId = state.Players[0].PlayerId;
+                else if (p2Power < p1Power)
+                    initiativeWinnerId = state.Players[1].PlayerId;
+                else
+                    initiativeWinnerId = state.Players[0].PlayerId; // True tie: first in list
+            }
 
             events.Add(new InitiativeWonEvent(initiativeWinnerId) { SequenceNumber = seq++ });
             events.Add(new FirstPlayerDeterminedEvent(initiativeWinnerId) { SequenceNumber = seq++ });

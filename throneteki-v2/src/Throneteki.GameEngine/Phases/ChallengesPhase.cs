@@ -149,9 +149,14 @@ public sealed class ChallengesPhase
         int attackStr = ComputeStrength(state, challenge.Attackers, challenge.Type);
         int defStr = ComputeStrength(state, challenge.Defenders, challenge.Type);
 
-        bool attackerWins = attackStr > defStr;
+        // Rules: Attacker wins ties (attacker STR >= defender STR).
+        // Exception: if attacker STR is 0, there is no winner.
         bool unopposed = challenge.Defenders.Count == 0;
-        Guid? winnerId = attackerWins ? challenge.AttackingPlayerId : (defStr > attackStr ? challenge.DefendingPlayerId : (Guid?)null);
+        bool attackerWins = attackStr > 0 && attackStr >= defStr;
+        bool defenderWins = !attackerWins && defStr > attackStr;
+        Guid? winnerId = attackerWins ? challenge.AttackingPlayerId
+            : defenderWins ? challenge.DefendingPlayerId
+            : (Guid?)null;
         int winStr = attackerWins ? attackStr : defStr;
         int loseStr = attackerWins ? defStr : attackStr;
 
