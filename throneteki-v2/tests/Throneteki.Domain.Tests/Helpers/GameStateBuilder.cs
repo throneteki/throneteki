@@ -67,6 +67,7 @@ public sealed class PlayerStateBuilder
     public PlayerStateBuilder(string username) => _username = username;
 
     public PlayerStateBuilder WithGold(int gold) { _gold = gold; return this; }
+    public PlayerStateBuilder WithFactionPower(int power) { _factionPower = power; return this; }
     public PlayerStateBuilder AsFirstPlayer() { _isFirstPlayer = true; return this; }
 
     public PlayerStateBuilder WithDrawDeck(params string[] cardCodes)
@@ -91,10 +92,24 @@ public sealed class PlayerStateBuilder
         return this;
     }
 
+    public PlayerStateBuilder InPlayExact(CardInstance card)
+    {
+        _cardsInPlay.Add(card);
+        return this;
+    }
+
     public PlayerStateBuilder WithPlotDeck(params string[] cardCodes)
     {
         foreach (var code in cardCodes)
             _plotDeck.Add(MakeCard(code, CardLocation.PlotDeck));
+        return this;
+    }
+
+    private CardInstance? _activePlot;
+
+    public PlayerStateBuilder WithActivePlot(string cardCode)
+    {
+        _activePlot = MakeCard(cardCode, CardLocation.ActivePlot);
         return this;
     }
 
@@ -118,6 +133,7 @@ public sealed class PlayerStateBuilder
         Hand = _hand.ToImmutableList(),
         CardsInPlay = _cardsInPlay.ToImmutableList(),
         PlotDeck = _plotDeck.ToImmutableList(),
+        ActivePlot = _activePlot,
         Faction = MakeCard("faction", CardLocation.PlayArea),
     };
 }
@@ -129,8 +145,11 @@ public sealed class CardInstanceBuilder(string code, CardLocation location, Guid
     private bool _kneeled;
     private readonly List<Guid> _duplicates = new();
 
+    private int _strengthModifier;
+
     public CardInstanceBuilder WithId(Guid id) { _id = id; return this; }
     public CardInstanceBuilder WithPower(int power) { _power = power; return this; }
+    public CardInstanceBuilder WithStrengthModifier(int mod) { _strengthModifier = mod; return this; }
     public CardInstanceBuilder Kneeled() { _kneeled = true; return this; }
 
     public CardInstanceBuilder WithDuplicate(string dupeCode = "")
@@ -148,6 +167,7 @@ public sealed class CardInstanceBuilder(string code, CardLocation location, Guid
         Location = location,
         Power = _power,
         Kneeled = _kneeled,
+        StrengthModifier = _strengthModifier,
         Duplicates = _duplicates.ToImmutableList(),
     };
 }
