@@ -59,6 +59,9 @@ public record PowerMovedEvent(Guid FromCardId, Guid ToCardId, int Amount) : Game
 public record TokenAddedEvent(Guid CardInstanceId, string TokenType, int Amount) : GameEvent;
 public record TokenRemovedEvent(Guid CardInstanceId, string TokenType, int Amount) : GameEvent;
 
+// ── Marshalling phase ───────────────────────────────────────────────────────
+public record MarshallingDoneEvent(Guid PlayerId) : GameEvent;
+
 // ── Plot phase ──────────────────────────────────────────────────────────────
 public record PlotSelectedEvent(Guid PlayerId, Guid CardInstanceId) : GameEvent;
 public record PlotRevealedEvent(Guid PlayerId, Guid CardInstanceId) : GameEvent;

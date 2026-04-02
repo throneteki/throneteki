@@ -36,6 +36,12 @@ public sealed class GameStateProjector : IGameStateProjector
         PowerGainedEvent e => ApplyPowerGained(state, e),
         PowerLostEvent e => ApplyPowerLost(state, e),
 
+        // ── Marshalling phase ─────────────────────────────────────────────────
+        MarshallingDoneEvent e => state.UpdatePlayer(e.PlayerId, p => p with { PassedChallenges = true }),
+
+        // ── Challenges phase ──────────────────────────────────────────────────
+        ChallengePassedEvent e => state.UpdatePlayer(e.PlayerId, p => p with { PassedChallenges = true }),
+
         // ── Plot phase ────────────────────────────────────────────────────────
         PlotSelectedEvent e => state.UpdatePlayer(e.PlayerId, p =>
         {
@@ -47,7 +53,11 @@ public sealed class GameStateProjector : IGameStateProjector
         FirstPlayerDeterminedEvent e => state with { FirstPlayerId = e.PlayerId },
 
         // ── Phase / round ─────────────────────────────────────────────────────
-        PhaseStartedEvent e => state with { Phase = e.Phase },
+        PhaseStartedEvent e => (state with
+        {
+            Phase = e.Phase,
+            ActiveChallenge = null,
+        }).UpdateAllPlayers(p => p with { PassedChallenges = false }),
         PhaseEndedEvent => state,
         RoundStartedEvent e => state with { RoundNumber = e.RoundNumber },
         PhaseContextUpdatedEvent e => state with

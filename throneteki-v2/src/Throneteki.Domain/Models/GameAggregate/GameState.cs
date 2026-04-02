@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Linq;
 using Throneteki.Domain.Enums;
 
 namespace Throneteki.Domain.Models.GameAggregate;
@@ -71,6 +72,9 @@ public sealed record GameState
 
     public GameState UpdatePlayer(Guid playerId, Func<PlayerState, PlayerState> update) =>
         this with { Players = Players.Replace(GetPlayer(playerId), update(GetPlayer(playerId))) };
+
+    public GameState UpdateAllPlayers(Func<PlayerState, PlayerState> update) =>
+        this with { Players = Players.Select(update).ToImmutableList() };
 
     public GameState UpdateCard(Guid instanceId, Func<CardInstance, CardInstance> update)
     {
