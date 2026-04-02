@@ -10,7 +10,7 @@ namespace Throneteki.Cards.Implementations.Packs.CoreSet;
 /// Ported from: server/game/cards/01-Core/EddardStark.js
 /// </summary>
 [CardDefinition("01144")]
-public sealed class NedStark : CardScript
+public sealed class EddardStark : CardScript
 {
     protected override IEnumerable<CardAbilityDefinition> DeclareAbilities()
     {
