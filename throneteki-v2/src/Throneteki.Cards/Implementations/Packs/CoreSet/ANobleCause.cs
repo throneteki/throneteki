@@ -4,7 +4,7 @@ using Throneteki.Domain.Events;
 namespace Throneteki.Cards.Implementations.Packs.CoreSet;
 
 /// <summary>
-/// A Noble Cause (01004) — Plot. Income 3, Initiative 6, Claim 1, Reserve 6.
+/// A Noble Cause (01004) — Plot. Income 5, Initiative 0, Claim 1, Reserve 6.
 /// Persistent: Reduce the cost of the first Lord or Lady character you marshal
 /// each round by 2.
 /// Ported from: server/game/cards/01-Core/ANobleCause.js

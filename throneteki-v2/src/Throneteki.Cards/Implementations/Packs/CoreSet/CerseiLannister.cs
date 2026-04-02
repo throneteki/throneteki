@@ -4,7 +4,7 @@ using Throneteki.Domain.Events;
 namespace Throneteki.Cards.Implementations.Packs.CoreSet;
 
 /// <summary>
-/// Cersei Lannister (01084) — 5 cost, 4 STR, Intrigue + Power icons. Lannister, Lady, Queen.
+/// Cersei Lannister (01084) — 4 cost, 4 STR, Intrigue + Power icons. Lannister, Lady, Queen.
 /// Persistent: While Cersei is attacking in an Intrigue challenge, your active plot card
 /// gains +1 claim.
 /// Ported from: server/game/cards/01-Core/CerseiLannister.js

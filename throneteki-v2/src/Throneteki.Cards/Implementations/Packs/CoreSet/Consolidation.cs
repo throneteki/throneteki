@@ -6,7 +6,7 @@ using Throneteki.Domain.Models.GameAggregate;
 namespace Throneteki.Cards.Implementations.Packs.CoreSet;
 
 /// <summary>
-/// Consolidation of Power (01062) — 0 cost event.
+/// Consolidation of Power (01062) — 1 cost event.
 /// Action (Marshalling): Kneel any number of characters you control with total
 ///                       STR 4 or less. Then choose one of those characters to gain 1 power.
 /// Ported from: server/game/cards/01-Core/ConsolidationOfPower.js
@@ -30,6 +30,7 @@ public sealed class ConsolidationOfPower : CardScript
         // TODO: Should be multi-target (up to 4 total STR), then second prompt for power
         yield return AbilityBuilder.Action("consolidation-kneel-gain")
             .Describe("Action: Kneel characters with total STR ≤ 4. One of them gains 1 power.")
+            .Costs(1)
             .DuringPhase(GamePhase.Marshalling)
             .TargetCard((state, source, target) =>
                 target.Location == CardLocation.PlayArea &&

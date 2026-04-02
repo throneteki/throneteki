@@ -4,7 +4,7 @@ using Throneteki.Domain.Events;
 namespace Throneteki.Cards.Implementations.Packs.CoreSet;
 
 /// <summary>
-/// Stannis Baratheon (01052) — 5 cost, 4 STR, Military + Power icons. Baratheon, King, Lord.
+/// Stannis Baratheon (01052) — 6 cost, 5 STR, Military + Power icons. Baratheon, King, Lord.
 /// Persistent: Each player cannot stand more than 2 characters during the Standing phase.
 /// Ported from: server/game/cards/01-Core/StannisBaratheon.js
 /// </summary>

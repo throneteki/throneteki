@@ -4,7 +4,7 @@ using Throneteki.Domain.Events;
 namespace Throneteki.Cards.Implementations.Packs.CoreSet;
 
 /// <summary>
-/// Marching Orders (01016) — Plot. Income 0, Initiative 0, Claim 2, Reserve 4.
+/// Marching Orders (01016) — Plot. Income 9, Initiative 3, Claim 1, Reserve 4.
 /// Persistent: You cannot marshal locations or attachments. You cannot play events.
 /// Ported from: server/game/cards/01-Core/MarchingOrders.js
 /// </summary>

@@ -5,7 +5,7 @@ using Throneteki.Domain.Events;
 namespace Throneteki.Cards.Implementations.Packs.CoreSet;
 
 /// <summary>
-/// A Clash of Kings (01001) — Plot. Income 4, Initiative 3, Claim 1, Reserve 7.
+/// A Clash of Kings (01001) — Plot. Income 4, Initiative 9, Claim 1, Reserve 6.
 /// Reaction: After you win a Power challenge, move 1 power from the losing player's
 /// faction card to your own.
 /// Ported from: server/game/cards/01-Core/AClashOfKings.js

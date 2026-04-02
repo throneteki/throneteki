@@ -4,7 +4,7 @@ using Throneteki.Domain.Events;
 namespace Throneteki.Cards.Implementations.Packs.CoreSet;
 
 /// <summary>
-/// Robert Baratheon (01048) — 7 cost, STR X, Military + Power icons. Baratheon, King, Lord.
+/// Robert Baratheon (01048) — 7 cost, 5 STR, Military + Power icons. Baratheon, King, Lord.
 /// Persistent: Robert gains +1 STR for each other kneeled character in play.
 /// Ported from: server/game/cards/01-Core/RobertBaratheon.js
 /// </summary>

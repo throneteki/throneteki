@@ -6,7 +6,7 @@ using Throneteki.Domain.Models.GameAggregate;
 namespace Throneteki.Cards.Implementations.Packs.CoreSet;
 
 /// <summary>
-/// Margaery Tyrell (01181) — 5 cost, 4 STR, Intrigue + Power icons. Tyrell, Lady.
+/// Margaery Tyrell (01181) — 3 cost, 3 STR, Intrigue + Power icons. Tyrell, Lady.
 /// Action (Challenges phase): Kneel Margaery to choose a character. That character
 /// gets +3 STR until end of phase.
 /// Ported from: server/game/cards/01-Core/MargaeryTyrell.js

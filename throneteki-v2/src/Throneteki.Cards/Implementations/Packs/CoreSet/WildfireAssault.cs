@@ -5,7 +5,7 @@ using Throneteki.Domain.Events;
 namespace Throneteki.Cards.Implementations.Packs.CoreSet;
 
 /// <summary>
-/// Wildfire Assault (01026) — Plot. Income 4, Initiative 0, Claim 1, Reserve 6.
+/// Wildfire Assault (01026) — Plot. Income 4, Initiative 7, Claim 1, Reserve 6.
 /// When Revealed: Each player chooses up to 3 characters they control.
 ///                Kill each character not chosen (allowSave: false).
 /// Ported from: server/game/cards/01-Core/WildfireAssault.js

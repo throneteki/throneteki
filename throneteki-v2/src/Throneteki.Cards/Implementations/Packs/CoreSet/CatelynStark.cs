@@ -4,7 +4,7 @@ using Throneteki.Domain.Events;
 namespace Throneteki.Cards.Implementations.Packs.CoreSet;
 
 /// <summary>
-/// Catelyn Stark (01143) — 5 cost, 4 STR, Intrigue + Power icons. Stark, Lady.
+/// Catelyn Stark (01143) — 4 cost, 4 STR, Intrigue + Power icons. Stark, Lady.
 /// Persistent: While Catelyn is participating in a challenge, the opponent cannot
 /// trigger card abilities.
 /// Ported from: server/game/cards/01-Core/CatelynStark.js

@@ -4,7 +4,7 @@ using Throneteki.Domain.Events;
 namespace Throneteki.Cards.Implementations.Packs.CoreSet;
 
 /// <summary>
-/// Daenerys Targaryen (01160) — 7 cost, 5 STR, Military + Intrigue + Power icons.
+/// Daenerys Targaryen (01160) — 7 cost, 5 STR, Intrigue + Power icons.
 /// Targaryen, Lady, Queen.
 /// Persistent: While Daenerys is standing, each participating opponent character
 /// gets -1 STR.

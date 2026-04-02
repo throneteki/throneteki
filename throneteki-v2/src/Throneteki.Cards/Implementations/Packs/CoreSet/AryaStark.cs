@@ -5,7 +5,7 @@ using Throneteki.Domain.Events;
 namespace Throneteki.Cards.Implementations.Packs.CoreSet;
 
 /// <summary>
-/// Arya Stark (01141) — 2 cost, 2 STR, Intrigue icon. Stark, Lady.
+/// Arya Stark (01141) — 3 cost, 2 STR, Power icon. Stark, Lady.
 /// Persistent: While Arya has a duplicate, she gains a Military icon.
 /// Reaction: After Arya enters play, place the top card of your deck on her as a duplicate.
 /// Ported from: server/game/cards/01-Core/AryaStark.js

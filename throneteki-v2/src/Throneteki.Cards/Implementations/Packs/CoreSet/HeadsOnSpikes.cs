@@ -5,7 +5,7 @@ using Throneteki.Domain.Events;
 namespace Throneteki.Cards.Implementations.Packs.CoreSet;
 
 /// <summary>
-/// Heads on Spikes (01013) — Plot. Income 4, Initiative 2, Claim 1, Reserve 6.
+/// Heads on Spikes (01013) — Plot. Income 4, Initiative 6, Claim 1, Reserve 6.
 /// When Revealed: Discard 1 card at random from your opponent's hand. If it is a
 ///                character, place it in its owner's dead pile (not discard) and gain
 ///                2 power for your faction.

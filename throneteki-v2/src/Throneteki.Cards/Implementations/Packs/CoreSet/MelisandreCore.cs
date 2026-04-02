@@ -6,7 +6,7 @@ using Throneteki.Domain.Models.GameAggregate;
 namespace Throneteki.Cards.Implementations.Packs.CoreSet;
 
 /// <summary>
-/// Melisandre (01047) — 6 cost, 4 STR, Intrigue + Power icons. Baratheon, R'hllor, Lady.
+/// Melisandre (01047) — 5 cost, 4 STR, Intrigue + Power icons. Baratheon, R'hllor, Lady.
 /// Reaction: After you marshal a card with the R'hllor trait, or after you play an event
 /// with the R'hllor trait, choose and kneel a character. (Limit once per round.)
 /// Ported from: server/game/cards/01-Core/Melisandre.js

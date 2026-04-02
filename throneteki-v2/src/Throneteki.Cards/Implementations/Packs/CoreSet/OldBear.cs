@@ -6,7 +6,7 @@ using Throneteki.Domain.Models.GameAggregate;
 namespace Throneteki.Cards.Implementations.Packs.CoreSet;
 
 /// <summary>
-/// Old Bear Mormont (01126) — 6 cost, 5 STR, Military + Intrigue icons.
+/// Old Bear Mormont (01126) — 7 cost, 6 STR, Military + Power icons.
 /// Night's Watch, Commander, Lord.
 /// Persistent: While you control The Wall, Old Bear does not kneel as a defender.
 /// Interrupt: When the challenges phase ends, if you did not lose a challenge as the

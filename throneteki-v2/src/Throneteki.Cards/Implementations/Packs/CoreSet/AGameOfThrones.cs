@@ -4,7 +4,7 @@ using Throneteki.Domain.Events;
 namespace Throneteki.Cards.Implementations.Packs.CoreSet;
 
 /// <summary>
-/// A Game of Thrones (01003) — Plot. Income 4, Initiative 7, Claim 1, Reserve 6.
+/// A Game of Thrones (01003) — Plot. Income 4, Initiative 2, Claim 1, Reserve 6.
 /// Persistent: Players cannot initiate Military or Power challenges until they have
 /// won an Intrigue challenge that phase.
 /// Ported from: server/game/cards/01-Core/AGameOfThrones.js

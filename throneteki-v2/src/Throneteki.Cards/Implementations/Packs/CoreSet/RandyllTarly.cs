@@ -4,7 +4,7 @@ using Throneteki.Domain.Events;
 namespace Throneteki.Cards.Implementations.Packs.CoreSet;
 
 /// <summary>
-/// Randyll Tarly (01183) — 6 cost, 6 STR, Military + Power icons. Tyrell, Lord.
+/// Randyll Tarly (01183) — 6 cost, 5 STR, Military + Power icons. Tyrell, Lord.
 /// Renown keyword.
 /// Reaction: After Randyll Tarly's STR is increased, stand him. (Limit 2 per phase.)
 /// Ported from: server/game/cards/01-Core/RandyllTarly.js

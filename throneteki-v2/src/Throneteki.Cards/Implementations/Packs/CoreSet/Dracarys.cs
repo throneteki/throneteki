@@ -6,7 +6,7 @@ using Throneteki.Domain.Models.GameAggregate;
 namespace Throneteki.Cards.Implementations.Packs.CoreSet;
 
 /// <summary>
-/// Dracarys! (01176) — Targaryen event.
+/// Dracarys! (01176) — 1 cost Targaryen event.
 /// Action: During a challenge, kneel a card you control named Daenerys Targaryen or
 ///         a Dragon-trait character you control. Choose a participating character.
 ///         That character gets -4 STR until end of phase. If its STR is 0, kill it.

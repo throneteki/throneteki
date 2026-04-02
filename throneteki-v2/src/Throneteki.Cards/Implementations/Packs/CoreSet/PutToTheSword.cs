@@ -6,7 +6,7 @@ using Throneteki.Domain.Models.GameAggregate;
 namespace Throneteki.Cards.Implementations.Packs.CoreSet;
 
 /// <summary>
-/// Put to the Sword (01041) — 1 cost event.
+/// Put to the Sword (01041) — 2 cost event.
 /// Reaction: After you win a Military challenge by 5 or more STR as the attacking
 ///           player, choose a character the losing player controls. Kill that character.
 ///           (Max 1 per challenge.)
@@ -29,7 +29,7 @@ public sealed class PutToTheSword : CardScript
     {
         yield return AbilityBuilder.Reaction("put-to-the-sword-kill")
             .Describe("Reaction: After winning Military by 5+ STR as attacker, kill a character. (Max 1/challenge.)")
-            .Costs(1)
+            .Costs(2)
             .LimitPerRound(1) // TODO: Should be max perChallenge(1)
             .OnEvent<ChallengeResultDeterminedEvent>((e, state) =>
                 state.ActiveChallenge?.Type == ChallengeIcon.Military &&
