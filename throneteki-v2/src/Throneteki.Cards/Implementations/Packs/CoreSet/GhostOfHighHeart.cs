@@ -2,9 +2,8 @@ using Throneteki.Cards.Abilities;
 using Throneteki.Domain.Enums;
 using Throneteki.Domain.Events;
 using Throneteki.Domain.Models.GameAggregate;
-using Throneteki.GameEngine.Effects;
 
-namespace Throneteki.Cards.Implementations.Attachments;
+namespace Throneteki.Cards.Implementations.Packs.CoreSet;
 
 /// <summary>
 /// Ghost of High Heart (01046) — Attachment, 2 cost.

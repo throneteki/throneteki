@@ -3,7 +3,7 @@ using Throneteki.Domain.Enums;
 using Throneteki.Domain.Events;
 using Throneteki.Domain.Models.GameAggregate;
 
-namespace Throneteki.Cards.Implementations.Agendas;
+namespace Throneteki.Cards.Implementations.Packs.CoreSet;
 
 /// <summary>
 /// The Rains of Castamere (agenda) — Lannister agenda.

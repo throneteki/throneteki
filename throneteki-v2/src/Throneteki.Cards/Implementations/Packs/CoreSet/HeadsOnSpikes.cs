@@ -2,7 +2,7 @@ using Throneteki.Cards.Abilities;
 using Throneteki.Domain.Events;
 using Throneteki.Domain.Models.GameAggregate;
 
-namespace Throneteki.Cards.Implementations.Plots;
+namespace Throneteki.Cards.Implementations.Packs.CoreSet;
 
 /// <summary>
 /// Heads on Spikes (01013) — Income 4, Initiative 2, Claim 1, Reserve 6.

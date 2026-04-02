@@ -1,6 +1,6 @@
 using Throneteki.Cards.Abilities;
 
-namespace Throneteki.Cards.Implementations.Plots;
+namespace Throneteki.Cards.Implementations.Packs.CoreSet;
 
 /// <summary>
 /// A Game of Thrones (01001) — Income 5, Initiative 4, Claim 1, Reserve 6.

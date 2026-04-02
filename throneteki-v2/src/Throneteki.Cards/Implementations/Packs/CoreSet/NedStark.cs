@@ -3,7 +3,7 @@ using Throneteki.Domain.Enums;
 using Throneteki.Domain.Events;
 using Throneteki.Domain.Models.GameAggregate;
 
-namespace Throneteki.Cards.Implementations.Characters;
+namespace Throneteki.Cards.Implementations.Packs.CoreSet;
 
 /// <summary>
 /// Eddard Stark (01148) — Stark character, 6 cost, 5 STR, Military + Power icons.

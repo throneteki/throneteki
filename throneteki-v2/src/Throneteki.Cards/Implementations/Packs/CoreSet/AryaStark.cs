@@ -3,7 +3,7 @@ using Throneteki.Domain.Enums;
 using Throneteki.Domain.Events;
 using Throneteki.Domain.Models.GameAggregate;
 
-namespace Throneteki.Cards.Implementations.Characters;
+namespace Throneteki.Cards.Implementations.Packs.CoreSet;
 
 /// <summary>
 /// Arya Stark (01141) — 2 cost, 2 STR, Intrigue icon.

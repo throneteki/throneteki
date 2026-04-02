@@ -1,7 +1,7 @@
 using Throneteki.Cards.Abilities;
 using Throneteki.Domain.Events;
 
-namespace Throneteki.Cards.Implementations.Events;
+namespace Throneteki.Cards.Implementations.Packs.CoreSet;
 
 /// <summary>
 /// The Hand's Judgment (01064) — Neutral event.
