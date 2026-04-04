@@ -9,7 +9,7 @@ import {
     useGetPacksQuery
 } from '../../redux/middleware/api';
 import AlertPanel from '../Site/AlertPanel';
-import { processThronesDbDeckText } from './DeckHelper';
+import { processDeckText } from './DeckHelper';
 import LoadingSpinner from '../Site/LoadingSpinner';
 import { toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
@@ -31,11 +31,11 @@ const ImportDeck = () => {
 
     const processDeck = async () => {
         try {
-            const deck = processThronesDbDeckText(factions, packs, cards, deckText);
+            const deck = processDeckText(factions, packs, cards, deckText);
 
             if (!deck) {
                 toast.error(
-                    'There was an error processing your deck. Please ensure you have pasted a ThronesDb deck plain text export'
+                    'There was an error processing your deck. Please ensure you have pasted a plain text export from ThronesDB, card name export from Draftmancer, or a plain card list.'
                 );
 
                 return;

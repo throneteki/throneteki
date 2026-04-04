@@ -4,7 +4,7 @@ import {
     useGetFactionsQuery,
     useGetPacksQuery
 } from '../../redux/middleware/api';
-import { processThronesDbDeckText } from './DeckHelper';
+import { processDeckText } from './DeckHelper';
 import {
     Button,
     Link,
@@ -13,6 +13,7 @@ import {
     ModalContent,
     ModalFooter,
     ModalHeader,
+    Switch,
     Textarea
 } from '@heroui/react';
 import LoadingSpinner from '../Site/LoadingSpinner';
@@ -29,6 +30,7 @@ const ImportDeckModal = ({
 }) => {
     const [deckText, setDeckText] = useState('');
     const [isProcessing, setIsProcessing] = useState(false);
+    const [isDraftpool, setIsDraftpool] = useState(false);
 
     const {
         data: factions,
@@ -43,9 +45,7 @@ const ImportDeckModal = ({
             <ModalContent>
                 {(onClose) => (
                     <>
-                        <ModalHeader className='flex flex-col gap-1'>
-                            Import from ThronesDb
-                        </ModalHeader>
+                        <ModalHeader className='flex flex-col gap-1'>Import Decklist</ModalHeader>
                         <ModalBody>
                             <div className='flex flex-col gap-2'>
                                 {(isFactionsError || isCardsError || isPacksError) && (
@@ -59,13 +59,34 @@ const ImportDeckModal = ({
                                 ) : (
                                     <>
                                         <span>{message}</span>
-                                        <span>
-                                            Open your deck on{' '}
-                                            <Link href='https://thronesdb.com'>ThronesDB</Link>,
-                                            copy the plain text export from{' '}
-                                            <strong>Actions {'>'} Plain Text</strong>, and paste it
-                                            below.
-                                        </span>
+                                        <Switch
+                                            id='importDraftPool'
+                                            onValueChange={(isSelected) =>
+                                                setIsDraftpool(isSelected)
+                                            }
+                                            isSelected={isDraftpool}
+                                        >
+                                            {'Import as draft pool'}
+                                        </Switch>
+                                        {isDraftpool ? (
+                                            <span>
+                                                After building your deck on{' '}
+                                                <Link href='https://draftmancer.com'>
+                                                    Draftmancer
+                                                </Link>
+                                                , copy the list by clicking on{' '}
+                                                <strong>Export {'>'} Card Names</strong>, and paste
+                                                it below.
+                                            </span>
+                                        ) : (
+                                            <span>
+                                                Open your deck on{' '}
+                                                <Link href='https://thronesdb.com'>ThronesDB</Link>,
+                                                copy the plain text export from{' '}
+                                                <strong>Actions {'>'} Plain Text</strong>, and paste
+                                                it below.
+                                            </span>
+                                        )}
                                         <Textarea
                                             minRows={20}
                                             value={deckText}
@@ -85,15 +106,16 @@ const ImportDeckModal = ({
                                 isLoading={isProcessing || isLoading}
                                 onPress={async () => {
                                     setIsProcessing(true);
-                                    const deck = processThronesDbDeckText(
+                                    const deck = processDeckText(
                                         factions,
                                         packs,
                                         cards,
-                                        deckText
+                                        deckText,
+                                        isDraftpool
                                     );
                                     if (!deck) {
                                         toast.error(
-                                            'There was an error processing your deck. Please ensure you have pasted a plain text export from ThronesDB.'
+                                            'There was an error processing your deck. Please ensure you have pasted a plain text export from ThronesDB, card name export from Draftmancer, or a plain card list.'
                                         );
                                     } else {
                                         await onProcessed(deck);
