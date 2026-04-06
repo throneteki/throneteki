@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     useGetCardsQuery,
     useGetFactionsQuery,
     useGetPacksQuery
 } from '../../redux/middleware/api';
 import { processDeckText } from './DeckHelper';
+import { GameFormats } from '../../constants';
 import {
     Button,
     Link,
@@ -13,6 +14,8 @@ import {
     ModalContent,
     ModalFooter,
     ModalHeader,
+    Select,
+    SelectItem,
     Switch,
     Textarea
 } from '@heroui/react';
@@ -31,6 +34,8 @@ const ImportDeckModal = ({
     const [deckText, setDeckText] = useState('');
     const [isProcessing, setIsProcessing] = useState(false);
     const [isDraftpool, setIsDraftpool] = useState(false);
+    const [gameFormat, setGameFormat] = useState(GameFormats[0].name);
+    const [gameVariant, setGameVariant] = useState(GameFormats[0].variants[0].name);
 
     const {
         data: factions,
@@ -39,6 +44,13 @@ const ImportDeckModal = ({
     } = useGetFactionsQuery({});
     const { data: cards, isLoading: isCardsLoading, isError: isCardsError } = useGetCardsQuery({});
     const { data: packs, isLoading: isPacksLoading, isError: isPacksError } = useGetPacksQuery({});
+
+    useEffect(() => {
+        if (!gameFormat) {
+            setGameFormat(GameFormats[0].name);
+            setGameVariant(GameFormats[0].variants[0].name);
+        }
+    }, [gameFormat, setGameFormat]);
 
     return (
         <Modal placement={placement} {...modalProps}>
@@ -59,11 +71,51 @@ const ImportDeckModal = ({
                                 ) : (
                                     <>
                                         <span>{message}</span>
+                                        <div className='flex gap-2'>
+                                            <Select
+                                                label={'Game format'}
+                                                className='md:w-2/6'
+                                                onChange={(e) => {
+                                                    setGameFormat(e.target.value);
+                                                    setGameVariant(
+                                                        GameFormats.find(
+                                                            (gf) => gf.name === e.target.value
+                                                        )?.variants[0].name || ''
+                                                    );
+                                                }}
+                                                selectedKeys={new Set([gameFormat])}
+                                                isDisabled={isDraftpool}
+                                            >
+                                                {GameFormats.map((gf) => (
+                                                    <SelectItem key={gf.name} value={gf.name}>
+                                                        {gf.label}
+                                                    </SelectItem>
+                                                ))}
+                                            </Select>
+                                            <Select
+                                                label={'Game variant'}
+                                                className='md:w-2/6'
+                                                onChange={(e) => setGameVariant(e.target.value)}
+                                                selectedKeys={new Set([gameVariant])}
+                                            >
+                                                {GameFormats.find(
+                                                    (gf) => gf.name === gameFormat
+                                                )?.variants.map((gv) => (
+                                                    <SelectItem key={gv.name} value={gv.name}>
+                                                        {gv.label}
+                                                    </SelectItem>
+                                                )) || []}
+                                            </Select>
+                                        </div>
                                         <Switch
                                             id='importDraftPool'
-                                            onValueChange={(isSelected) =>
-                                                setIsDraftpool(isSelected)
-                                            }
+                                            onValueChange={(isSelected) => {
+                                                setIsDraftpool(isSelected);
+                                                if (isSelected) {
+                                                    setGameFormat('draft');
+                                                    setGameVariant('towerofjoy');
+                                                }
+                                            }}
                                             isSelected={isDraftpool}
                                         >
                                             {'Import as draft pool'}
@@ -111,6 +163,8 @@ const ImportDeckModal = ({
                                         packs,
                                         cards,
                                         deckText,
+                                        gameFormat,
+                                        gameVariant,
                                         isDraftpool
                                     );
                                     if (!deck) {

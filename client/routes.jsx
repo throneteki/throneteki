@@ -27,7 +27,6 @@ import Patreon from './pages/Patreon';
 import BanlistAdmin from './pages/BanlistAdmin';
 import EventsAdmin from './pages/EventsAdmin';
 import DraftingTable from './Components/Drafting/DraftingTable';
-import ImportDeck from './Components/Decks/ImportDeck';
 import EventEditor from './pages/EventsAdmin/EventEditor';
 import DraftCubeEditor from './pages/EventsAdmin/DraftCubeEditor';
 
@@ -47,7 +46,6 @@ const routes = [
         path: '/decks/edit/:id([a-f\\d]{24})',
         action: (context) => <EditDeck key='editdeck' deckId={context.params.id} />
     },
-    { path: '/decks/import', action: () => <ImportDeck key='importdeck' /> },
     { path: '/forgot', action: () => <ForgotPassword key='forgotpassword' /> },
     { path: '/how-to-play', action: () => <HowToPlay key='howtoplay' /> },
     { path: '/login', action: () => <Login key='login' /> },
