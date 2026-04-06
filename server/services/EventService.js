@@ -43,12 +43,17 @@ class EventService {
     }
 
     async update(event) {
-        const { id, ...properties } = event;
+        const { _id, ...properties } = event;
 
-        return this.events.update({ _id: id }, { $set: properties }).catch((err) => {
-            logger.error('Unable to update event %s', err);
-            throw new Error('Unable to update event');
-        });
+        return this.events
+            .update({ _id }, { $set: properties })
+            .then(() => {
+                return event;
+            })
+            .catch((err) => {
+                logger.error('Unable to update event %s', err);
+                throw new Error('Unable to update event');
+            });
     }
 
     async delete(id) {

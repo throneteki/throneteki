@@ -4,35 +4,43 @@ import ServiceFactory from '../services/ServiceFactory.js';
 
 function extractEventFromRequest(req) {
     const {
-        banned,
-        defaultRestrictedList,
-        draftOptions,
-        eventGameOptions,
-        format,
         name,
-        pods,
-        restricted,
-        restrictSpectators,
-        useDefaultRestrictedList,
+        format,
+        variant,
+        legality,
+        lockDecks,
         useEventGameOptions,
-        validSpectators,
-        lockDecks
+        spectators,
+        muteSpectators,
+        showHand,
+        useGameTimeLimit,
+        gameTimeLimit,
+        useChessClocks,
+        chessClockTimeLimit,
+        checkClockDelay,
+        password,
+        validTableCreators,
+        validSpectators
     } = req.body;
     return {
-        id: req.params.id,
-        banned,
-        defaultRestrictedList,
-        draftOptions,
-        eventGameOptions,
-        format,
+        _id: req.params.id,
         name,
-        pods,
-        restricted,
-        restrictSpectators,
-        useDefaultRestrictedList,
+        format,
+        variant,
+        legality,
+        lockDecks,
         useEventGameOptions,
-        validSpectators,
-        lockDecks
+        spectators,
+        muteSpectators,
+        showHand,
+        useGameTimeLimit,
+        gameTimeLimit,
+        useChessClocks,
+        chessClockTimeLimit,
+        checkClockDelay,
+        password,
+        validTableCreators,
+        validSpectators
     };
 }
 

@@ -29,7 +29,6 @@ import EventsAdmin from './pages/EventsAdmin';
 import DraftingTable from './Components/Drafting/DraftingTable';
 import ImportDeck from './Components/Decks/ImportDeck';
 import EventEditor from './pages/EventsAdmin/EventEditor';
-import DraftCubeEditor from './pages/EventsAdmin/DraftCubeEditor';
 
 const routes = [
     { path: '/', action: () => <Lobby key='lobby' /> },
@@ -98,13 +97,6 @@ const routes = [
     {
         path: '/events/:id',
         action: (context) => <EventEditor eventId={context.params.id} key='eventsedit' />
-    },
-    { path: '/events/draft-cubes/add', action: () => <DraftCubeEditor key='draftcubesadd' /> },
-    {
-        path: '/events/draft-cubes/:id',
-        action: (context) => (
-            <DraftCubeEditor draftCubeId={context.params.id} key='draftcubesedit' />
-        )
     }
 ];
 

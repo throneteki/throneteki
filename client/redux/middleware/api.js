@@ -439,43 +439,13 @@ export const apiSlice = createApi({
             }),
             invalidatesTags: [TagTypes.AbuseBlock]
         }),
-        getDraftCubes: builder.query({
-            query: () => '/draft-cubes',
-            providesTags: (result = { data: [] }) => [
-                TagTypes.DraftCube,
-                ...(result.data || []).map(({ _id }) => ({ type: TagTypes.DraftCube, _id }))
-            ]
-        }),
-        getDraftCube: builder.query({
-            query: (draftCubeId) => {
-                return {
-                    url: `/draft-cubes/${draftCubeId}`
-                };
-            },
-            providesTags: (_result, _error, arg) => [{ type: TagTypes.DraftCube, _id: arg }]
-        }),
-        saveDraftCube: builder.mutation({
-            query: (draftCube) => ({
-                url: `/draft-cubes/${draftCube._id || ''}`,
-                method: draftCube._id ? 'PUT' : 'POST',
-                body: draftCube
-            }),
-            invalidatesTags: (result, error, arg) => [{ type: TagTypes.DraftCube, _id: arg._id }]
-        }),
-        deleteDraftCube: builder.mutation({
-            query: (draftCubeId) => ({
-                url: `/draft-cubes/${draftCubeId}`,
-                method: 'DELETE'
-            }),
-            invalidatesTags: [TagTypes.DraftCube]
-        }),
         saveEvent: builder.mutation({
             query: (event) => ({
                 url: `/events/${event._id || ''}`,
                 method: event._id ? 'PUT' : 'POST',
                 body: event
             }),
-            invalidatesTags: (result, error, arg) => [{ type: TagTypes.Event, _id: arg._id }]
+            invalidatesTags: (result, error, arg) => [{ type: TagTypes.Event, id: arg.id }]
         }),
         getEvent: builder.query({
             query: (eventId) => {
@@ -483,7 +453,7 @@ export const apiSlice = createApi({
                     url: `/events/${eventId}`
                 };
             },
-            providesTags: (_result, _error, arg) => [{ type: TagTypes.Event, _id: arg }]
+            providesTags: (_result, _error, arg) => [{ type: TagTypes.Event, id: arg }]
         }),
         deleteEvent: builder.mutation({
             query: (eventId) => ({
@@ -584,9 +554,6 @@ export const {
     useGetAbuseBlocksQuery,
     useAddAbuseBlockMutation,
     useRemoveAbuseBlockMutation,
-    useGetDraftCubesQuery,
-    useGetDraftCubeQuery,
-    useSaveDraftCubeMutation,
     useSaveEventMutation,
     useGetEventQuery,
     useDeleteEventMutation,
@@ -596,7 +563,6 @@ export const {
     useForgotPasswordMutation,
     useResetPasswordMutation,
     useLinkPatreonMutation,
-    useDeleteDraftCubeMutation,
     useRemoveMessageMutation,
     useDeleteDecksMutation
 } = apiSlice;
