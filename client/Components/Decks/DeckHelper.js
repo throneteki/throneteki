@@ -1,5 +1,7 @@
 import { lookupCardByName } from './DeckParser';
 
+const ALLIANCE_CODE = '06018';
+
 export function deckStatusLabel(status) {
     if (!status) {
         return null;
@@ -59,7 +61,7 @@ const parseCardCount = (line) => {
 };
 
 const addCard = (list, card, number, isDraftpool = false) => {
-    let existingCard = list.find((item) => item.card === card);
+    let existingCard = list.find((item) => item === card.code);
     if (existingCard) {
         existingCard.count += number;
         existingCard.count = isDraftpool
@@ -67,18 +69,42 @@ const addCard = (list, card, number, isDraftpool = false) => {
             : Math.min(existingCard.count, card.deckLimit);
     } else {
         const count = isDraftpool ? number : Math.min(number, card.deckLimit);
-        list.push({ count: count, card: card });
+        list.push({ cardcode: card.code, count: count });
     }
 };
 
-export const processDeckText = (factions, packs, cards, deckText, isDraftpool = false) => {
+export const processDeckText = (
+    factions,
+    packs,
+    cards,
+    deckText,
+    gameFormat,
+    gameVariant,
+    isDraftpool = false
+) => {
     return (
-        processThronesDbDeckText(factions, packs, cards, deckText, isDraftpool) ??
-        processPlainDeckText(factions, packs, cards, deckText, isDraftpool)
+        processThronesDbDeckText(
+            factions,
+            packs,
+            cards,
+            deckText,
+            gameFormat,
+            gameVariant,
+            isDraftpool
+        ) ??
+        processPlainDeckText(factions, packs, cards, deckText, gameFormat, gameVariant, isDraftpool)
     );
 };
 
-const processThronesDbDeckText = (factions, packs, cards, deckText, isDraftpool = false) => {
+const processThronesDbDeckText = (
+    factions,
+    packs,
+    cards,
+    deckText,
+    gameFormat,
+    gameVariant,
+    isDraftpool = false
+) => {
     let split = deckText.split('\n');
     let deckName, faction, agenda, bannerCards;
 
@@ -124,9 +150,9 @@ const processThronesDbDeckText = (factions, packs, cards, deckText, isDraftpool 
                     packs: packs
                 });
                 if (newAgenda) {
-                    agenda = newAgenda;
+                    agenda = newAgenda.code;
                     if (isDraftpool) {
-                        addCard(pool, agenda, 1, isDraftpool);
+                        addCard(pool, newAgenda, 1, isDraftpool);
                     }
                 }
 
@@ -139,7 +165,7 @@ const processThronesDbDeckText = (factions, packs, cards, deckText, isDraftpool 
                             packs: packs
                         });
                         if (banner) {
-                            banners.push(banner);
+                            banners.push(banner.code);
                             if (isDraftpool) {
                                 addCard(pool, banner, 1, isDraftpool);
                             }
@@ -178,11 +204,21 @@ const processThronesDbDeckText = (factions, packs, cards, deckText, isDraftpool 
         bannerCards: bannerCards,
         plotCards: plotCards,
         drawCards: drawCards,
+        format: gameFormat,
+        variant: gameVariant,
         pool: pool
     };
 };
 
-const processPlainDeckText = (factions, packs, cards, deckText, isDraftpool = false) => {
+const processPlainDeckText = (
+    factions,
+    packs,
+    cards,
+    deckText,
+    gameFormat,
+    gameVariant,
+    isDraftpool = false
+) => {
     let split = deckText.split('\n');
     let faction, agenda, bannerCards;
     let sideboard = false;
@@ -190,7 +226,7 @@ const processPlainDeckText = (factions, packs, cards, deckText, isDraftpool = fa
     const plotCards = [];
     const drawCards = [];
     const pool = [];
-    const agendaCards = new Map();
+    const agendaCards = [];
 
     for (const line of split) {
         if (line.trim() === '') {
@@ -231,7 +267,7 @@ const processPlainDeckText = (factions, packs, cards, deckText, isDraftpool = fa
                 }
                 switch (card.type) {
                     case 'agenda':
-                        agendaCards.set(card.name, card);
+                        agendaCards.push(card);
                         break;
                     case 'plot':
                         addCard(plotCards, card, count, isDraftpool);
@@ -247,24 +283,27 @@ const processPlainDeckText = (factions, packs, cards, deckText, isDraftpool = fa
         return null;
     }
 
-    const alliance = agendaCards.get('Alliance');
-    if (agendaCards.size === 1) {
-        agenda = agendaCards.values().next().value;
-    } else if (agendaCards.size > 1 && alliance) {
-        agenda = alliance;
-        agendaCards.delete(alliance.name);
-        bannerCards = Array.from(agendaCards.values());
-    } else if (agendaCards.size > 1) {
+    const alliance = agendaCards.includes(ALLIANCE_CODE);
+    if (agendaCards.length === 1) {
+        agenda = agendaCards[0];
+    } else if (agendaCards.length > 1 && alliance) {
+        agenda = ALLIANCE_CODE;
+        bannerCards = agendaCards.filter((card) => card.code !== ALLIANCE_CODE);
+    } else if (agendaCards.length > 1) {
         return null;
     }
 
+    var name = `${faction.name} ${agenda ? '- ' + agenda.name + ' ' : ''} (Imported Deck)`;
+
     return {
-        name: 'Imported Deck',
+        name: name,
         faction: faction,
-        agenda: agenda,
+        agenda: agenda.code,
         bannerCards: bannerCards,
         plotCards: plotCards,
         drawCards: drawCards,
+        format: gameFormat,
+        variant: gameVariant,
         pool: pool
     };
 };
