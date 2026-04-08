@@ -92,6 +92,8 @@ class Game extends EventEmitter {
         this.gameFormat = details.gameFormat ?? 'joust';
         this.gameType = details.gameType;
         this.maxPlayers = details.maxPlayers;
+        this.soloMode = details.soloMode || false;
+        this.soloActingPlayer = null;
         this.abilityContextStack = [];
         this.abilityWindowStack = [];
         this.password = details.password;
@@ -1439,7 +1441,11 @@ class Game extends EventEmitter {
 
         if (this.started) {
             for (let player of this.getAllPlayers()) {
-                playerState[player.name] = player.getState(activePlayer);
+                // In solo mode generate each player's state from their own perspective
+                // so prompts are fully visible for both sides.
+                // Card visibility is handled separately by CardVisibility.isSoloModeRule.
+                const statePlayer = this.soloMode ? player : activePlayer;
+                playerState[player.name] = player.getState(statePlayer);
             }
 
             return {
@@ -1449,6 +1455,8 @@ class Game extends EventEmitter {
                 players: playerState,
                 messages: this.gameChat.messages,
                 showHand: this.showHand,
+                soloMode: this.soloMode,
+                soloActingPlayer: this.soloActingPlayer,
                 spectators: this.getSpectators().map((spectator) => spectator.getState()),
                 started: this.started,
                 gameOver: this.isGameOver,

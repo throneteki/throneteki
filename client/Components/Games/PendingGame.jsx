@@ -9,6 +9,7 @@ import {
     sendChatMessage,
     sendLeaveGameMessage,
     sendSelectDeckMessage,
+    sendSelectSoloDeckMessage,
     sendStartGameMessage
 } from '../../redux/reducers/lobby';
 import { navigate } from '../../redux/reducers/navigation';
@@ -25,6 +26,7 @@ const PendingGame = forwardRef(function PendingGame(_, ref) {
     const dispatch = useDispatch();
     const [waiting, setWaiting] = useState(false);
     const [showModal, setShowModal] = useState(false);
+    const [showSoloModal, setShowSoloModal] = useState(false);
 
     const { connecting, host } = useSelector((state) => state.game);
     const { currentGame, gameError } = useSelector((state) => state.lobby);
@@ -43,7 +45,7 @@ const PendingGame = forwardRef(function PendingGame(_, ref) {
             return 'Waiting for lobby server...';
         }
 
-        if (Object.values(currentGame.players).length < 2) {
+        if (!currentGame.soloMode && Object.values(currentGame.players).length < 2) {
             return 'Waiting for players...';
         }
 
@@ -177,6 +179,7 @@ const PendingGame = forwardRef(function PendingGame(_, ref) {
                     currentGame={currentGame}
                     user={user}
                     onSelectDeck={() => setShowModal(true)}
+                    onSelectSoloDeck={() => setShowSoloModal(true)}
                 />
             </div>
             {currentGame.spectators.length > 0 && (
@@ -205,6 +208,17 @@ const PendingGame = forwardRef(function PendingGame(_, ref) {
                     onDeckSelected={(deck) => {
                         setShowModal(false);
                         dispatch(sendSelectDeckMessage(deck._id));
+                    }}
+                    gameFormat={currentGame.gameFormat}
+                    restrictedList={currentGame.restrictedList?._id}
+                />
+            )}
+            {showSoloModal && (
+                <SelectDeckModal
+                    onClose={() => setShowSoloModal(false)}
+                    onDeckSelected={(deck) => {
+                        setShowSoloModal(false);
+                        dispatch(sendSelectSoloDeckMessage(deck._id));
                     }}
                     gameFormat={currentGame.gameFormat}
                     restrictedList={currentGame.restrictedList?._id}

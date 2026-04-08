@@ -94,7 +94,8 @@ const NewGame = forwardRef(function NewGame(
         chessClockDelay: 5,
         maxPlayers: 4,
         randomSeats: true,
-        allowMultipleWinners: false
+        allowMultipleWinners: false,
+        soloMode: false
     };
 
     if (!connected) {
@@ -253,6 +254,16 @@ const NewGame = forwardRef(function NewGame(
                                 </>
                             )}
                             {<GameTypes formProps={formProps} isDisabled={usingEventOptions} />}
+                            {!quickJoin && gameFormat === 'joust' && (
+                                <Switch
+                                    classNames={{ label: 'text-sm' }}
+                                    name={'soloMode'}
+                                    onChange={formProps.handleChange}
+                                    isSelected={formProps.values.soloMode}
+                                >
+                                    Practice Mode (play both sides)
+                                </Switch>
+                            )}
                             <div className='flex gap-2'>
                                 <Button color='success' type='submit' isDisabled={!canStart}>
                                     Start

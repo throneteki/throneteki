@@ -25,6 +25,7 @@ import {
     receiveLobbyMessages,
     sendNewGameMessage,
     sendSelectDeckMessage,
+    sendSelectSoloDeckMessage,
     sendLeaveGameMessage,
     sendStartGameMessage,
     receiveGameError,
@@ -249,6 +250,8 @@ const lobbyMiddleware = (store) => {
             socket.emit(LobbyMessage.NewGame, action.payload);
         } else if (sendSelectDeckMessage.match(action)) {
             socket.emit(LobbyMessage.SelectDeck, action.payload);
+        } else if (sendSelectSoloDeckMessage.match(action)) {
+            socket.emit('selectdeck2', action.payload);
         } else if (sendLeaveGameMessage.match(action)) {
             socket.emit(LobbyMessage.LeaveGame, action.payload);
         } else if (sendStartGameMessage.match(action)) {

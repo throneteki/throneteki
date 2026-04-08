@@ -366,6 +366,7 @@ class Lobby {
         socket.registerEvent('startgame', this.onStartGame.bind(this));
         socket.registerEvent('chat', this.onPendingGameChat.bind(this));
         socket.registerEvent('selectdeck', this.onSelectDeck.bind(this));
+        socket.registerEvent('selectdeck2', this.onSelectSoloDeck.bind(this));
         socket.registerEvent('connectfailed', this.onConnectFailed.bind(this));
         socket.registerEvent('removegame', this.onRemoveGame.bind(this));
         socket.registerEvent('clearsessions', this.onClearSessions.bind(this));
@@ -560,6 +561,10 @@ class Lobby {
                     ...gameDetails
                 });
                 game.newGame(socket.id, socket.user, gameDetails.password, true);
+
+                if (gameDetails.soloMode) {
+                    game.addSoloPlayer(socket.id, socket.user);
+                }
 
                 socket.joinChannel(game.id);
                 this.sendGameState(game);
@@ -775,6 +780,40 @@ class Lobby {
                 });
 
                 game.selectDeck(socket.user.username, formattedDeck);
+
+                this.sendGameState(game);
+            })
+            .catch((err) => {
+                logger.info(err);
+
+                return;
+            });
+    }
+
+    onSelectSoloDeck(socket, deckId) {
+        let game = this.findGameForUser(socket.user.username);
+        if (!game || !game.soloMode) {
+            return;
+        }
+
+        return Promise.all([
+            this.cardService.getAllCards(),
+            this.cardService.getAllPacks(),
+            this.deckService.getById(deckId)
+        ])
+            .then((results) => {
+                let [cards, packs, deck] = results;
+                let formattedDeck = formatDeckAsFullCards(deck, { cards: cards });
+
+                formattedDeck.status = validateDeck(formattedDeck, {
+                    packs: packs,
+                    gameFormats: [game.gameFormat],
+                    restrictedLists: [game.restrictedList],
+                    includeExtendedStatus: false
+                });
+
+                const soloBotName = PendingGame.getSoloBotName(socket.user.username);
+                game.selectDeck(soloBotName, formattedDeck);
 
                 this.sendGameState(game);
             })

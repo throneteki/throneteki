@@ -18,7 +18,8 @@ class CardVisibility {
         this.rules = [
             (card) => this.isPublicRule(card),
             (card, player) => this.isControllerRule(card, player),
-            (card, player) => this.isSpectatorRule(card, player)
+            (card, player) => this.isSpectatorRule(card, player),
+            (card) => this.isSoloModeRule(card)
         ];
     }
 
@@ -48,6 +49,11 @@ class CardVisibility {
             player.isSpectator() &&
             ['hand', 'shadows'].includes(card.location)
         );
+    }
+
+    isSoloModeRule(card) {
+        // In solo mode all hidden locations are visible — no hidden information
+        return this.game.soloMode && ['hand', 'shadows', 'draw deck'].includes(card.location);
     }
 }
 

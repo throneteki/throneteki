@@ -12,6 +12,7 @@ import {
     sendCardSizeChangeMessage,
     sendDragDropMessage,
     sendGameChatMessage,
+    sendSwitchSoloPerspectiveMessage,
     sendToggleDupesMessage,
     sendToggleKeywordSettingMessage,
     sendTogglePromptedActionWindowMessage,
@@ -139,6 +140,11 @@ const GameBoard = () => {
                 onChatToggle={() => setShowGameChat(!showGameChat)}
                 unreadMessages={unreadMessages}
                 isDragging={!!draggingDetail}
+                soloMode={currentGame.soloMode}
+                soloActingPlayer={currentGame.soloActingPlayer}
+                onSwitchSoloPerspective={(playerName) =>
+                    dispatch(sendSwitchSoloPerspectiveMessage(playerName))
+                }
             />
         );
     } else if (currentGame.gameFormat === 'melee') {

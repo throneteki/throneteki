@@ -22,6 +22,7 @@ import {
     sendTogglePromptedActionWindowMessage,
     sendToggleTimerSetting,
     sendCardSizeChangeMessage,
+    sendSwitchSoloPerspectiveMessage,
     startGameConnecting
 } from '../reducers/game';
 import { receiveClearGameState, receiveGameState } from '../reducers/lobby';
@@ -189,6 +190,8 @@ const gameMiddleware = (store) => {
             dispatch(gameDisconnected());
         } else if (sendConcedeMessage.match(action)) {
             socket.emit('game', GameMessage.Concede);
+        } else if (sendSwitchSoloPerspectiveMessage.match(action)) {
+            socket.emit('game', 'switchSoloPerspective', action.payload);
         }
 
         next(action);
