@@ -4,12 +4,14 @@ import Panel from '../Site/Panel';
 import DeckStatus from '../Decks/DeckStatus';
 import { Constants } from '../../constants';
 
-const PendingGamePlayers = ({ currentGame, user, onSelectDeck }) => {
+const PendingGamePlayers = ({ currentGame, user, onSelectDeck, onSelectSoloDeck }) => {
     return (
         <Panel title={'Players'}>
             <div className='flex flex-col gap-2'>
                 {Object.values(currentGame.players).map((player, index) => {
                     const playerIsMe = player && player.name === user?.username;
+                    const isSoloVirtualPlayer =
+                        currentGame.soloMode && !playerIsMe;
 
                     let deckButton = null;
                     let status = null;
@@ -21,19 +23,29 @@ const PendingGamePlayers = ({ currentGame, user, onSelectDeck }) => {
                                     {player.deck.name}
                                 </Button>
                             );
+                        } else if (isSoloVirtualPlayer) {
+                            deckButton = (
+                                <Button className='text-wrap' onPress={onSelectSoloDeck}>
+                                    {player.deck.name}
+                                </Button>
+                            );
                         } else {
                             deckButton = <Button isDisabled>Deck Selected</Button>;
                         }
 
                         status = (
                             <DeckStatus
-                                showDeckDetails={playerIsMe}
+                                showDeckDetails={playerIsMe || isSoloVirtualPlayer}
                                 status={player.deck.status[currentGame.restrictedList._id]}
                                 gameFormat={currentGame.gameFormat}
                             />
                         );
                     } else if (player && playerIsMe) {
                         deckButton = <Button onPress={onSelectDeck}>Select Deck</Button>;
+                    } else if (player && isSoloVirtualPlayer) {
+                        deckButton = (
+                            <Button onPress={onSelectSoloDeck}>Select Opponent Deck</Button>
+                        );
                     }
                     const userClass =
                         'username' +

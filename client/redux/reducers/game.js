@@ -73,7 +73,11 @@ const gameSlice = createSlice({
             () => {}
         ),
         sendLeaveGameMessage: () => {},
-        sendConcedeMessage: () => {}
+        sendConcedeMessage: () => {},
+        sendSwitchSoloPerspectiveMessage: create.preparedReducer(
+            (playerName) => ({ payload: playerName }),
+            () => {}
+        )
     })
 });
 
@@ -99,7 +103,8 @@ export const {
     sendToggleMuteSpectatorsMessage,
     sendChangeStatMessage,
     sendLeaveGameMessage,
-    sendConcedeMessage
+    sendConcedeMessage,
+    sendSwitchSoloPerspectiveMessage
 } = gameSlice.actions;
 
 export default gameSlice.reducer;

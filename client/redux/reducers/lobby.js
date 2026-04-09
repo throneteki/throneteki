@@ -169,10 +169,17 @@ const lobbySlice = createSlice({
                     return;
                 }
 
+                // In solo mode the real player is always present; allow the state
+                // even if the active player name is the virtual second player.
+                const isSoloOwner =
+                    state.currentGame?.soloMode &&
+                    Object.keys(state.currentGame.players).some((name) => name === username);
+
                 if (
                     !state.currentGame ||
-                    !state.currentGame.players[username] ||
-                    state.currentGame.players[username].left
+                    (!state.currentGame.players[username] ||
+                        state.currentGame.players[username].left) &&
+                    !isSoloOwner
                 ) {
                     state.currentGame = undefined;
                     state.newGame = false;
@@ -192,6 +199,7 @@ const lobbySlice = createSlice({
         },
         sendNewGameMessage: () => {},
         sendSelectDeckMessage: () => {},
+        sendSelectSoloDeckMessage: () => {},
         sendStartGameMessage: () => {},
         sendLeaveGameMessage: () => {},
         sendChatMessage: () => {},
@@ -251,6 +259,7 @@ export const {
     clearChatStatus,
     sendNewGameMessage,
     sendSelectDeckMessage,
+    sendSelectSoloDeckMessage,
     sendStartGameMessage,
     sendLeaveGameMessage,
     sendChatMessage,

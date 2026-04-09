@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 import PlayerStats from '../PlayerStats';
 import classNames from 'classnames';
 import SideBoardPanel from '../SideBoardPanel';
+import { Button } from '@heroui/react';
 
 const JoustGameBoardLayout = ({
     thisPlayer,
@@ -16,13 +17,16 @@ const JoustGameBoardLayout = ({
     onSettingsClick,
     onChatToggle,
     unreadMessages,
-    isDragging
+    isDragging,
+    soloMode,
+    soloActingPlayer,
+    onSwitchSoloPerspective
 }) => {
     const dispatch = useDispatch();
 
     const renderPlayerBoard = useCallback(
         (player, side) => {
-            const isMe = thisPlayer && player === thisPlayer;
+            const isMe = soloMode ? true : thisPlayer && player === thisPlayer;
 
             const wrapperClassName = classNames('flex flex-grow', {
                 'flex-col': side === 'top',
@@ -86,6 +90,9 @@ const JoustGameBoardLayout = ({
                             userPlayer={userPlayer}
                             isMe={isMe}
                             side={side}
+                            soloMode={soloMode}
+                            soloActingPlayer={soloActingPlayer}
+                            actingPlayerName={player.user?.username}
                         />
                     </div>
                 </div>
@@ -100,12 +107,37 @@ const JoustGameBoardLayout = ({
             onCardClick,
             onMenuItemClick,
             isDragging,
+            soloMode,
+            soloActingPlayer,
             dispatch
         ]
     );
+
+    const switchSideLabel =
+        soloActingPlayer === thisPlayer?.user?.username
+            ? `Switch to ${otherPlayer?.name || 'Player 2'}`
+            : `Switch to ${thisPlayer?.name || 'Player 1'}`;
+
+    const switchTarget =
+        soloActingPlayer === thisPlayer?.user?.username
+            ? otherPlayer?.user?.username
+            : thisPlayer?.user?.username;
+
     return (
         <div className='min-h-full min-w-max grid grid-cols-1 grid-rows-[repeat(2,1fr)]'>
             {renderPlayerBoard(otherPlayer, 'top')}
+            {soloMode && (
+                <div className='flex justify-center items-center py-1 bg-black/30'>
+                    <Button
+                        size='sm'
+                        color='warning'
+                        variant='flat'
+                        onPress={() => onSwitchSoloPerspective && onSwitchSoloPerspective(switchTarget)}
+                    >
+                        {switchSideLabel}
+                    </Button>
+                </div>
+            )}
             {renderPlayerBoard(thisPlayer, 'bottom')}
         </div>
     );

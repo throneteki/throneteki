@@ -228,11 +228,18 @@ class GameServer {
     }
 
     sendGameState(game) {
+        const sentSockets = new Set();
         _.each(game.getPlayersAndSpectators(), (player) => {
             if (player.left || game.isDisconnected(player) || !player.socket) {
                 return;
             }
 
+            // In solo mode both players share one socket — send state only once
+            if (sentSockets.has(player.socket)) {
+                return;
+            }
+
+            sentSockets.add(player.socket);
             player.socket.send('gamestate', game.getState(player.name));
         });
     }
@@ -401,6 +408,22 @@ class GameServer {
 
         player.socket = socket;
 
+        // In solo mode, also attach the socket to the virtual second player
+        if (game.soloMode) {
+            const soloBotName = Object.keys(game.playersAndSpectators).find(
+                (name) =>
+                    name !== socket.user.username &&
+                    !game.playersAndSpectators[name].isSpectator()
+            );
+            if (soloBotName) {
+                const soloPlayer = game.playersAndSpectators[soloBotName];
+                if (soloPlayer) {
+                    soloPlayer.socket = socket;
+                    soloPlayer.connectionSucceeded = true;
+                }
+            }
+        }
+
         this.sendGameState(game);
 
         socket.registerEvent('game', this.onGameMessage.bind(this));
@@ -479,10 +502,18 @@ class GameServer {
         this.runAndCatchErrors(game, () => {
             if (command === 'leavegame') {
                 this.onLeaveGame(socket);
+            } else if (command === 'switchSoloPerspective') {
+                if (game.soloMode) {
+                    game.soloActingPlayer = args[0] || socket.user.username;
+                }
             } else if (!game[command] || !_.isFunction(game[command])) {
                 return;
             } else {
-                game[command](socket.user.username, ...args);
+                const actingPlayer =
+                    game.soloMode
+                        ? game.soloActingPlayer || socket.user.username
+                        : socket.user.username;
+                game[command](actingPlayer, ...args);
             }
 
             if (!game.isEmpty(false)) {

@@ -28,6 +28,11 @@ class PendingGame {
         this.chessClockTimeLimit = details.chessClockTimeLimit;
         this.chessClockDelay = details.chessClockDelay;
         this.started = false;
+        this.soloMode = details.soloMode || false;
+        if (this.soloMode) {
+            this.gamePrivate = true;
+        }
+
         if (this.gameFormat === 'joust') {
             this.maxPlayers = 2;
         } else if (this.gameFormat === 'melee') {
@@ -35,6 +40,10 @@ class PendingGame {
             this.randomSeats = details.randomSeats;
             this.allowMultipleWinners = details.allowMultipleWinners;
         }
+    }
+
+    static getSoloBotName(username) {
+        return `${username} (2)`;
     }
 
     // Getters
@@ -121,6 +130,22 @@ class PendingGame {
             name: user.username,
             user: user
         };
+    }
+
+    addSoloPlayer(id, user) {
+        const soloBotName = PendingGame.getSoloBotName(user.username);
+        const soloUser = {
+            username: soloBotName,
+            settings: user.settings,
+            promptedActionWindows: user.promptedActionWindows,
+            blockList: [],
+            permissions: user.permissions,
+            role: user.role,
+            hasUserBlocked: () => false,
+            getDetails: () => ({ ...user.getDetails(), username: soloBotName }),
+            getWireSafeDetails: () => ({ ...user.getWireSafeDetails(), username: soloBotName })
+        };
+        this.addPlayer(id, soloUser);
     }
 
     newGame(id, user, password, join) {
@@ -410,6 +435,7 @@ class PendingGame {
                 cardSet: this.restrictedList.cardSet
             },
             showHand: this.showHand,
+            soloMode: this.soloMode,
             started: this.started,
             spectators: _.map(this.spectators, (spectator) => {
                 return {
@@ -466,6 +492,7 @@ class PendingGame {
             allowMultipleWinners: this.allowMultipleWinners,
             restrictedList: this.restrictedList,
             showHand: this.showHand,
+            soloMode: this.soloMode,
             spectators,
             useGameTimeLimit: this.useGameTimeLimit,
             gameTimeLimit: this.gameTimeLimit,
