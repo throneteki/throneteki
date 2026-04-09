@@ -490,6 +490,28 @@ class GameServer {
             delete this.games[game.id];
 
             this.gameSocket.send('GAMECLOSED', { game: game.id });
+        } else if (game.soloMode && !isSpectator) {
+            // In solo mode the bot player shares the real player's socket and is never
+            // independently disconnected, so it must be cleaned up explicitly.
+            const soloBot = game.getAllPlayers().find((p) => p.name !== socket.user.username);
+            if (soloBot) {
+                // If the game already concluded (including via the leave above), use a short
+                // delay so any post-game state is sent before teardown. Otherwise wait the
+                // full reconnect window so an accidental leave can be recovered.
+                const delay = game.isGameOver
+                    ? 2000
+                    : game.disconnectHandler.waitSeconds * 1000;
+                setTimeout(() => {
+                    if (!this.games[game.id]) {
+                        return;
+                    }
+                    soloBot.left = true;
+                    if (game.isEmpty(false)) {
+                        delete this.games[game.id];
+                        this.gameSocket.send('GAMECLOSED', { game: game.id });
+                    }
+                }, delay);
+            }
         }
     }
 
