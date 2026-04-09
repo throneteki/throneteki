@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import PlayerRow from '../PlayerRow';
 import PlayerBoard from '../PlayerBoard';
 import { sendShowDrawDeckMessage, sendShuffleDeckMessage } from '../../../redux/reducers/game';
@@ -123,8 +123,29 @@ const JoustGameBoardLayout = ({
             ? otherPlayer?.user?.username
             : thisPlayer?.user?.username;
 
+    const gridStyle = useMemo(() => {
+        if (!soloMode) {
+            return { gridTemplateRows: 'repeat(2, 1fr)' };
+        }
+
+        const isThisPlayerActing = soloActingPlayer === thisPlayer?.user?.username;
+        const isOtherPlayerActing = soloActingPlayer === otherPlayer?.user?.username;
+
+        if (isThisPlayerActing) {
+            return { gridTemplateRows: '2fr auto 3fr' };
+        } else if (isOtherPlayerActing) {
+            return { gridTemplateRows: '3fr auto 2fr' };
+        }
+        return { gridTemplateRows: '1fr auto 1fr' };
+    }, [soloMode, soloActingPlayer, thisPlayer?.user?.username, otherPlayer?.user?.username]);
+
     return (
-        <div className='min-h-full min-w-max grid grid-cols-1 grid-rows-[repeat(2,1fr)]'>
+        <div
+            className={classNames('min-h-full min-w-max grid grid-cols-1', {
+                'transition-[grid-template-rows] duration-300 ease-in-out': soloMode
+            })}
+            style={gridStyle}
+        >
             {renderPlayerBoard(otherPlayer, 'top')}
             {soloMode && (
                 <div className='flex justify-center items-center py-1 bg-black/30'>
