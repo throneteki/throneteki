@@ -52,8 +52,11 @@ class CardVisibility {
     }
 
     isSoloModeRule(card) {
-        // In solo mode all hidden locations are visible — no hidden information
-        return this.game.soloMode && ['hand', 'shadows', 'draw deck'].includes(card.location);
+        if (!this.game.soloMode) return false;
+        if (!['hand', 'shadows'].includes(card.location)) return false;
+        // Only expose the acting player's hand/shadows; draw deck stays hidden via isControllerRule
+        const soloActingPlayer = this.game.getPlayerByName(this.game.soloActingPlayer);
+        return !soloActingPlayer || card.controller === soloActingPlayer;
     }
 }
 

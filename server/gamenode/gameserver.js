@@ -520,6 +520,14 @@ class GameServer {
                 game.continue();
             }
 
+            if (game.soloMode) {
+                const players = game.getAllPlayers();
+                const activePromptPlayer = players.find((p) => p.promptState.isActivePrompt);
+                if (activePromptPlayer && activePromptPlayer.name !== game.soloActingPlayer) {
+                    game.soloActingPlayer = activePromptPlayer.name;
+                }
+            }
+
             this.sendGameState(game);
         });
     }
