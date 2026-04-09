@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import PlayerRow from '../PlayerRow';
 import PlayerBoard from '../PlayerBoard';
 import { sendShowDrawDeckMessage, sendShuffleDeckMessage } from '../../../redux/reducers/game';
@@ -123,33 +123,31 @@ const JoustGameBoardLayout = ({
             ? otherPlayer?.user?.username
             : thisPlayer?.user?.username;
 
-    const gridStyle = useMemo(() => {
-        if (!soloMode) {
-            return { gridTemplateRows: 'repeat(2, 1fr)' };
-        }
-
-        const isThisPlayerActing = soloActingPlayer === thisPlayer?.user?.username;
-        const isOtherPlayerActing = soloActingPlayer === otherPlayer?.user?.username;
-
-        if (isThisPlayerActing) {
-            return { gridTemplateRows: '2fr auto 3fr' };
-        } else if (isOtherPlayerActing) {
-            return { gridTemplateRows: '3fr auto 2fr' };
-        }
-        return { gridTemplateRows: '1fr auto 1fr' };
-    }, [soloMode, soloActingPlayer, thisPlayer?.user?.username, otherPlayer?.user?.username]);
+    // In solo mode the active player's half gets flex-grow 3, the inactive half gets 2 (60/40).
+    // flex-grow IS reliably animatable across browsers, unlike grid-template-rows with fr units.
+    const isThisPlayerActing = soloMode && soloActingPlayer === thisPlayer?.user?.username;
+    const isOtherPlayerActing = soloMode && soloActingPlayer === otherPlayer?.user?.username;
 
     return (
-        <div
-            className={classNames('min-h-full min-w-max grid grid-cols-1', {
-                'transition-[grid-template-rows] duration-300 ease-in-out': soloMode
-            })}
-            style={gridStyle}
-        >
-            {renderPlayerBoard(otherPlayer, 'top')}
+        // relative so the absolute-positioned switch button is contained here
+        <div className='min-h-full min-w-max relative flex flex-col'>
+            <div
+                style={{ flexGrow: isOtherPlayerActing ? 3 : 2, flexShrink: 1, flexBasis: 0 }}
+                className={soloMode ? 'transition-all duration-300 ease-in-out' : ''}
+            >
+                {renderPlayerBoard(otherPlayer, 'top')}
+            </div>
+            <div
+                style={{ flexGrow: isThisPlayerActing ? 3 : 2, flexShrink: 1, flexBasis: 0 }}
+                className={soloMode ? 'transition-all duration-300 ease-in-out' : ''}
+            >
+                {renderPlayerBoard(thisPlayer, 'bottom')}
+            </div>
             {soloMode && (
-                <div className='flex justify-center items-center py-1 bg-black/30'>
+                // Absolutely positioned over the split line — takes no layout space.
+                <div className='absolute inset-x-0 top-1/2 -translate-y-1/2 z-50 flex justify-center pointer-events-none'>
                     <Button
+                        className='pointer-events-auto'
                         size='sm'
                         color='warning'
                         variant='flat'
@@ -159,7 +157,6 @@ const JoustGameBoardLayout = ({
                     </Button>
                 </div>
             )}
-            {renderPlayerBoard(thisPlayer, 'bottom')}
         </div>
     );
 };
