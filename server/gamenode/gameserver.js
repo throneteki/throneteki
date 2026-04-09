@@ -522,6 +522,8 @@ class GameServer {
         }
 
         this.runAndCatchErrors(game, () => {
+            let gameCommandRan = false;
+
             if (command === 'leavegame') {
                 this.onLeaveGame(socket);
             } else if (command === 'switchSoloPerspective') {
@@ -536,13 +538,16 @@ class GameServer {
                         ? game.soloActingPlayer || socket.user.username
                         : socket.user.username;
                 game[command](actingPlayer, ...args);
+                gameCommandRan = true;
             }
 
             if (!game.isEmpty(false)) {
                 game.continue();
             }
 
-            if (game.soloMode) {
+            // Only auto-switch perspective after a real game command, not after a manual
+            // switchSoloPerspective — otherwise the auto-switch would immediately undo it.
+            if (game.soloMode && gameCommandRan) {
                 const players = game.getAllPlayers();
                 const activePromptPlayer = players.find((p) => p.promptState.isActivePrompt);
                 if (activePromptPlayer && activePromptPlayer.name !== game.soloActingPlayer) {
