@@ -35,6 +35,7 @@ import FactionFilter from '../Table/FactionFilter';
 import CardTypeFilter from '../Table/CardTypeFilter';
 import ImportDeckModal from './ImportDeckModal';
 import ThronesIcon from '../GameBoard/ThronesIcon';
+import PoolInfo from './PoolInfo';
 
 const SmallButton = extendVariants(Button, {
     variants: {
@@ -114,7 +115,10 @@ const DeckEditor = ({ deck, onBackClick }) => {
             agenda: deck.agenda && cardsByCode[deck.agenda.code],
             bannerCards: [],
             plotCards: [],
-            drawCards: []
+            drawCards: [],
+            pool: deck.pool,
+            format: currentGameFormat,
+            variant: currentGameVariant
         };
 
         saveDeck.bannerCards = deckCards
@@ -151,12 +155,15 @@ const DeckEditor = ({ deck, onBackClick }) => {
         currentRestrictedList,
         deck._id,
         deck.agenda,
+        deck.pool,
         deckCards,
         deckName,
         faction.value,
         factionsByCode,
         packs,
-        restrictedLists
+        restrictedLists,
+        currentGameFormat,
+        currentGameVariant
     ]);
 
     const columns = useMemo(
@@ -511,6 +518,7 @@ const DeckEditor = ({ deck, onBackClick }) => {
                                         currentGameVariant || GameFormats[0].variants[0].name
                                     }
                                 />
+                                <PoolInfo isPool={!!deck.pool} />
                             </div>
                         </CardBody>
                     </Card>
@@ -582,7 +590,7 @@ const DeckEditor = ({ deck, onBackClick }) => {
                                         })) || []
                                     )
                             );
-                            //TODO BD add pool logic here
+                            deck.pool = newDeck.pool;
                             setShowImportModal(false);
                         }
                     }}
