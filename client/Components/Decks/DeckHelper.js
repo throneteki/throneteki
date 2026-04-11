@@ -223,9 +223,9 @@ const processPlainDeckText = (
     let faction, agenda, bannerCards;
     let sideboard = false;
 
+    const pool = isDraftpool ? [] : undefined;
     const plotCards = [];
     const drawCards = [];
-    const pool = [];
     const agendaCards = [];
 
     for (const line of split) {

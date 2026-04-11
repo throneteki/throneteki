@@ -103,12 +103,20 @@ const DeckEditor = ({ deck, onBackClick }) => {
         }
     }, [deck.pool, cards]);
 
+    const convertToCardCodes = (cardList) => {
+        return cardList?.map((cardQuantity) => ({
+            cardcode: cardQuantity.card.code,
+            count: cardQuantity.count
+        }));
+    };
+
     const deckToSave = useMemo(() => {
         if (!factionsByCode || !cardsByCode || !packs || !currentRestrictedList) {
             return {};
         }
 
-        const saveDeck = {
+        // we need the full card objects for deck validation
+        const fullCardsDeck = {
             _id: deck._id,
             name: deckName,
             faction: factionsByCode[faction.value],
@@ -116,34 +124,38 @@ const DeckEditor = ({ deck, onBackClick }) => {
             bannerCards: [],
             plotCards: [],
             drawCards: [],
-            pool: deck.pool,
+            pool: undefined,
             format: currentGameFormat,
             variant: currentGameVariant
         };
 
-        saveDeck.bannerCards = deckCards
+        fullCardsDeck.bannerCards = deckCards
             .filter((dc) => dc.card.code !== deck.agenda?.code && dc.card.type === 'agenda')
             .map((c) => c.card);
 
-        for (const deckCard of deckCards.filter(
-            (dc) => cardsByCode[dc.card.code].type === 'plot'
-        )) {
-            saveDeck.plotCards.push(deckCard);
-        }
+        fullCardsDeck.plotCards = deckCards.filter((dc) => dc.card.type === 'plot');
 
-        for (const deckCard of deckCards.filter(
-            (dc) =>
-                cardsByCode[dc.card.code].type !== 'plot' &&
-                cardsByCode[dc.card.code].type !== 'agenda'
-        )) {
-            saveDeck.drawCards.push(deckCard);
-        }
+        fullCardsDeck.drawCards = deckCards.filter(
+            (dc) => dc.card.type !== 'plot' && dc.card.type !== 'agenda'
+        );
+
+        fullCardsDeck.pool = deck.pool?.map((pc) => ({ card: pc.card, count: pc.count }));
+
+        // only card codes are saved in the db
+        const saveDeck = {
+            ...fullCardsDeck,
+            agenda: fullCardsDeck.agenda?.code,
+            bannerCards: fullCardsDeck.bannerCards.map((card) => card.code),
+            plotCards: convertToCardCodes(fullCardsDeck.plotCards),
+            drawCards: convertToCardCodes(fullCardsDeck.drawCards),
+            pool: convertToCardCodes(fullCardsDeck.pool)
+        };
 
         if (!saveDeck.status) {
             saveDeck.status = {};
         }
 
-        saveDeck.status = validateDeck(saveDeck, {
+        saveDeck.status = validateDeck(fullCardsDeck, {
             packs: packs,
             gameFormats: GameFormats.map((gf) => gf.name),
             restrictedLists
@@ -457,7 +469,7 @@ const DeckEditor = ({ deck, onBackClick }) => {
                                 );
                             }}
                             selectedKeys={new Set([currentGameFormat])}
-                            isDisabled={deck.isDraftpool}
+                            isDisabled={!!deck.pool}
                         >
                             {GameFormats.map((gf) => (
                                 <SelectItem key={gf.name} value={gf.name}>
@@ -470,7 +482,7 @@ const DeckEditor = ({ deck, onBackClick }) => {
                             className='w-full md:w-1/2'
                             onChange={(e) => setCurrentGameVariant(e.target.value)}
                             selectedKeys={new Set([currentGameVariant])}
-                            isDisabled={deck.isDraftpool}
+                            isDisabled={!!deck.pool}
                         >
                             {GameFormats.find((gf) => gf.name === currentGameFormat)?.variants?.map(
                                 (gv) => (

@@ -35,7 +35,7 @@ export function formatDeckAsFullCards(deck, data) {
     newDeck.bannerCards = (deck.bannerCards || []).map((cardcode) => data.cards[cardcode]);
     newDeck.drawCards = processCardCounts(deck.drawCards || [], data.cards);
     newDeck.plotCards = processCardCounts(deck.plotCards || [], data.cards);
-    newDeck.pool = processCardCounts(deck.pool || [], data.cards);
+    newDeck.pool = deck.pool ? processCardCounts(deck.pool, data.cards) : undefined;
 
     const wrappedDeck = new DeckWrapper(newDeck);
 
