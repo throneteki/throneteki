@@ -61,7 +61,7 @@ const parseCardCount = (line) => {
 };
 
 const addCard = (list, card, number, isDraftpool = false) => {
-    let existingCard = list.find((item) => item === card.code);
+    let existingCard = list.find((item) => item.cardcode === card.code);
     if (existingCard) {
         existingCard.count += number;
         existingCard.count = isDraftpool
@@ -298,7 +298,7 @@ const processPlainDeckText = (
     return {
         name: name,
         faction: faction,
-        agenda: agenda.code,
+        agenda: agenda?.code,
         bannerCards: bannerCards,
         plotCards: plotCards,
         drawCards: drawCards,
