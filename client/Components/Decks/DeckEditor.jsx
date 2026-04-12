@@ -125,8 +125,8 @@ const DeckEditor = ({ deck, onBackClick }) => {
             plotCards: [],
             drawCards: [],
             pool: undefined,
-            format: currentGameFormat,
-            variant: currentGameVariant
+            format: deck.format,
+            variant: deck.variant
         };
 
         fullCardsDeck.bannerCards = deckCards
@@ -168,14 +168,14 @@ const DeckEditor = ({ deck, onBackClick }) => {
         deck._id,
         deck.agenda,
         deck.pool,
+        deck.format,
+        deck.variant,
         deckCards,
         deckName,
         faction.value,
         factionsByCode,
         packs,
-        restrictedLists,
-        currentGameFormat,
-        currentGameVariant
+        restrictedLists
     ]);
 
     const columns = useMemo(
@@ -469,7 +469,7 @@ const DeckEditor = ({ deck, onBackClick }) => {
                                 );
                             }}
                             selectedKeys={new Set([currentGameFormat])}
-                            isDisabled={!!deck.pool}
+                            isDisabled={!!deck.format}
                         >
                             {GameFormats.map((gf) => (
                                 <SelectItem key={gf.name} value={gf.name}>
@@ -482,7 +482,7 @@ const DeckEditor = ({ deck, onBackClick }) => {
                             className='w-full md:w-1/2'
                             onChange={(e) => setCurrentGameVariant(e.target.value)}
                             selectedKeys={new Set([currentGameVariant])}
-                            isDisabled={!!deck.pool}
+                            isDisabled={!!deck.variant}
                         >
                             {GameFormats.find((gf) => gf.name === currentGameFormat)?.variants?.map(
                                 (gv) => (

@@ -758,14 +758,9 @@ class Lobby {
             return;
         }
 
-        return Promise.all([
-            this.cardService.getAllCards(),
-            this.cardService.getAllPacks(),
-            this.deckService.getById(deckId)
-        ])
+        return Promise.all([this.cardService.getAllPacks(), this.deckService.getById(deckId)])
             .then((results) => {
-                let [cards, packs, deck] = results;
-                let formattedDeck = formatDeckAsFullCards(deck, { cards: cards });
+                let [packs, formattedDeck] = results;
 
                 formattedDeck.status = validateDeck(formattedDeck, {
                     packs: packs,
