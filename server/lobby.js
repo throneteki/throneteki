@@ -529,29 +529,20 @@ class Lobby {
 
         return Promise.all([eventResult, restrictedListsResult]).then(
             ([event, restrictedLists]) => {
-                const defaultRestrictedList = restrictedLists[0];
                 let restrictedList;
-
-                //when there is no event chosen for the game, use the restricted list that was chosen or the default restricted list (first one in the list)
-                if (gameDetails.eventId === 'none') {
-                    restrictedList =
-                        restrictedLists.find(
-                            (restrictedList) => restrictedList._id === gameDetails.restrictedListId
-                        ) || defaultRestrictedList;
-                    //when there is an event chosen for the game, check if the event uses a custom or a default restricted list
+                if (gameDetails.gameLegality === 'custom') {
+                    restrictedList = event.legality;
+                } else if (gameDetails.gameLegality === 'latest') {
+                    restrictedList = restrictedLists.find(
+                        (rl) =>
+                            rl.format === gameDetails.gameFormat &&
+                            rl.variant === gameDetails.gameVariant &&
+                            rl.active
+                    );
                 } else {
-                    if (event.useDefaultRestrictedList && event.defaultRestrictedList) {
-                        restrictedList =
-                            restrictedLists.find(
-                                (restrictedList) =>
-                                    restrictedList.name === event.defaultRestrictedList
-                            ) || defaultRestrictedList;
-                    } else {
-                        restrictedList =
-                            restrictedLists.find(
-                                (restrictedList) => restrictedList.name === event.name
-                            ) || defaultRestrictedList;
-                    }
+                    restrictedList = restrictedLists.find(
+                        (l) => l._id === gameDetails.gameLegality
+                    );
                 }
 
                 let game = new PendingGame(socket.user, this.instance, {
@@ -1073,6 +1064,7 @@ class Lobby {
             syncGame.started = game.started;
             syncGame.gameType = game.gameType;
             syncGame.gameFormat = game.gameFormat;
+            syncGame.gameVariant = game.gameVariant;
             syncGame.password = game.password;
             syncGame.restrictedList = game.restrictedList;
 

@@ -18,6 +18,7 @@ class PendingGame {
         this.showHand = details.showHand;
         this.gamePrivate = details.gamePrivate;
         this.gameFormat = details.gameFormat;
+        this.gameVariant = details.gameVariant;
         this.gameType = details.gameType;
         this.createdAt = new Date();
         this.gameChat = new GameChat();
@@ -72,6 +73,7 @@ class PendingGame {
         return {
             gameId: this.id,
             gameFormat: this.gameFormat,
+            gameVariant: this.gameVariant,
             gameType: this.gameType,
             players: players,
             startedAt: this.createdAt
@@ -391,6 +393,7 @@ class PendingGame {
             createdAt: this.createdAt,
             gamePrivate: this.gamePrivate,
             gameFormat: this.gameFormat,
+            gameVariant: this.gameVariant,
             gameType: this.gameType,
             maxPlayers: this.maxPlayers,
             randomSeats: this.randomSeats,
@@ -407,7 +410,8 @@ class PendingGame {
             restrictedList: this.restrictedList && {
                 _id: this.restrictedList._id,
                 name: this.restrictedList.name,
-                cardSet: this.restrictedList.cardSet
+                format: this.restrictedList.format,
+                variant: this.restrictedList.variant
             },
             showHand: this.showHand,
             started: this.started,
@@ -456,6 +460,7 @@ class PendingGame {
             event: this.event,
             gamePrivate: this.gamePrivate,
             gameFormat: this.gameFormat,
+            gameVariant: this.gameVariant,
             gameType: this.gameType,
             id: this.id,
             name: this.name,

@@ -2,8 +2,6 @@ import React, { forwardRef, useCallback, useState } from 'react';
 import Panel from '../Site/Panel';
 import Messages from '../GameBoard/Messages';
 import SelectDeckModal from './SelectDeckModal';
-import { cardSetLabel } from '../Decks/DeckHelper';
-import { createGameTitle } from './GameHelper';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     sendChatMessage,
@@ -99,16 +97,11 @@ const PendingGame = forwardRef(function PendingGame(_, ref) {
 
         return <LoadingSpinner label='You must be logged in to play, redirecting...' />;
     }
-    const gameFormatLabel = GameFormats.find((gf) => gf.name === currentGame.gameFormat).label;
+    const format = GameFormats.find((gf) => gf.name === currentGame.gameFormat);
+    const variant = format.variants.find((v) => v.name === currentGame.gameVariant);
     return (
         <div className='flex flex-col gap-2'>
-            <Panel
-                title={createGameTitle(
-                    currentGame.name,
-                    currentGame.event.name,
-                    currentGame.restrictedList.cardSet
-                )}
-            >
+            <Panel title={currentGame.name}>
                 <div className='flex flex-col gap-2'>
                     <div>
                         {currentGame.event.name && (
@@ -117,17 +110,14 @@ const PendingGame = forwardRef(function PendingGame(_, ref) {
                             </p>
                         )}
                         <p>
-                            <strong>Format:</strong> {gameFormatLabel}
+                            <strong>Format:</strong> {format.label}
                         </p>
                         <p>
-                            <strong>Restricted List:</strong> {currentGame.restrictedList.name}
+                            <strong>Variant:</strong> {variant.label}
                         </p>
-                        {currentGame.event.format !== 'draft' && (
-                            <p>
-                                <strong>Cards:</strong>{' '}
-                                {cardSetLabel(currentGame.restrictedList.cardSet)}
-                            </p>
-                        )}
+                        <p>
+                            <strong>Legality:</strong> {currentGame.restrictedList.name}
+                        </p>
                     </div>
                     <div className='flex gap-2 flex-wrap'>
                         <div className='flex gap-1'>
@@ -206,8 +196,9 @@ const PendingGame = forwardRef(function PendingGame(_, ref) {
                         setShowModal(false);
                         dispatch(sendSelectDeckMessage(deck._id));
                     }}
-                    gameFormat={currentGame.gameFormat}
-                    restrictedList={currentGame.restrictedList?._id}
+                    format={currentGame.gameFormat}
+                    variant={currentGame.gameVariant}
+                    legality={currentGame.gameLegality}
                 />
             )}
         </div>

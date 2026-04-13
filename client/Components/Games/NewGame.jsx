@@ -1,16 +1,20 @@
-import React, { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
-import { Formik } from 'formik';
+import React from 'react';
+import { forwardRef, useCallback, useMemo, useState } from 'react';
+import { Formik, getIn, useFormikContext } from 'formik';
 import { Button, Input, Select, SelectItem, Switch } from '@heroui/react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as yup from 'yup';
 
 import GameOptions from './GameOptions';
 import GameTypes from './GameTypes';
-import { useGetRestrictedListQuery } from '../../redux/middleware/api';
+import { useGetEventsQuery } from '../../redux/middleware/api';
 import Panel from '../Site/Panel';
 import { sendNewGameMessage } from '../../redux/reducers/lobby';
 import AlertPanel, { AlertType } from '../Site/AlertPanel';
 import { GameFormats } from '../../constants';
+import FormatSelect from './FormatSelect';
+import VariantSelect from './VariantSelect';
+import LegalitySelect from './LegalitySelect';
 
 const GameNameMaxLength = 64;
 
@@ -19,64 +23,67 @@ const NewGame = forwardRef(function NewGame(
     ref
 ) {
     const dispatch = useDispatch();
-    const { data: restrictedLists } = useGetRestrictedListQuery({});
-
     const connected = useSelector((state) => state.lobby.connected);
     const user = useSelector((state) => state.auth.user);
-    const [gameFormat, setGameFormat] = useState('joust');
-    const [restrictedList, setRestrictedList] = useState(restrictedLists?.[0]._id);
-    const [usingEventOptions, setUsingEventOptions] = useState(false);
-
-    useEffect(() => {
-        if (!restrictedList && restrictedLists?.length) {
-            setRestrictedList(restrictedLists[0]._id);
-        }
-    }, [restrictedList, restrictedLists]);
-
-    const restrictedListsById = useMemo(() => {
-        return restrictedLists?.reduce((acc, rl) => {
-            acc[rl._id] = rl;
-            return acc;
-        }, {});
-    }, [restrictedLists]);
-
-    const syncGameOptions = useCallback(
-        (formProps, restirctedListId) => {
-            const restrictedList = restrictedListsById[restirctedListId];
-            if (restrictedList.useEventGameOptions) {
-                formProps.setFieldValue('gameType', 'competitive');
-                for (const [key, value] of Object.entries(restrictedList.eventGameOptions)) {
-                    formProps.setFieldValue(key, value);
-                }
-                setUsingEventOptions(true);
-            } else {
-                setUsingEventOptions(false);
-            }
-        },
-        [restrictedListsById]
-    );
 
     const schema = yup.object({
         name: yup
             .string()
             .required('You must specify a name for the game')
             .max(GameNameMaxLength, `Game name must be less than ${GameNameMaxLength} characters`),
-        password: yup.string().optional(),
+        gameFormat: yup.string().required(),
+        gameVariant: yup.string().required(),
+        gameLegality: yup.string().required(),
+        gameType: yup.string().required(),
+        gamePrivate: yup.boolean(),
+        spectators: yup.boolean().default(false),
+        muteSpectators: yup.boolean().default(false),
+        showHand: yup.boolean().default(false),
+        useGameTimeLimit: yup.boolean().default(false),
         gameTimeLimit: yup
             .number()
+            .integer('Must be a whole number')
             .min(10, 'Games must be at least 10 minutes long')
-            .max(120, 'Games must be less than 2 hours'),
-        chessClockTimeLimit: yup.number().min(1, 'Clock must be at least 1 minute long'),
-        chessClockDelay: yup.number().min(0, 'Delay cannot be less than 0').optional(),
-        gameFormat: yup.string().required(),
-        gameType: yup.string().required(),
+            .max(120, 'Games must be less than 2 hours')
+            .when('useGameTimeLimit', {
+                is: true,
+                then: (s) => s.required('Game time limit is required'),
+                otherwise: (s) => s.nullable().default(null)
+            }),
+        useChessClocks: yup.boolean().default(false),
+        chessClockTimeLimit: yup
+            .number()
+            .integer('Must be a whole number')
+            .min(1, 'Clock must be at least 1 minute long')
+            .when('useChessClocks', {
+                is: true,
+                then: (s) => s.required('Chess clock time limit is required'),
+                otherwise: (s) => s.nullable().default(null)
+            }),
+        chessClockDelay: yup
+            .number()
+            .min(0, 'Delay cannot be less than 0')
+            .when('useChessClocks', {
+                is: true,
+                then: (s) => s.required('Chess clock delay is required'),
+                otherwise: (s) => s.nullable().default(null)
+            }),
+        password: yup.string().nullable().optional(),
         maxPlayers: yup.number().when('gameFormat', {
-            is: () => gameFormat === 'melee',
+            is: 'melee',
             then: (s) =>
                 s
                     .required('You must specify a number of players')
                     .min(2, 'Melee must have at least 2 players')
                     .max(8, 'Melee cannot have more than 8 players')
+        }),
+        randomSeats: yup.boolean().when('gameFormat', {
+            is: 'melee',
+            then: (s) => s.required()
+        }),
+        allowMultipleWinners: yup.boolean().when('gameFormat', {
+            is: 'melee',
+            then: (s) => s.required()
         })
     });
 
@@ -105,168 +112,234 @@ const NewGame = forwardRef(function NewGame(
             </AlertPanel>
         );
     }
-    const canStart = gameFormat && restrictedList;
     return (
         <Panel title={quickJoin ? 'Quick Join' : 'New game'} ref={ref}>
             <Formik
                 validationSchema={schema}
                 onSubmit={(values) => {
-                    const newGame = Object.assign({}, values, {
-                        restrictedList: restrictedListsById[restrictedList],
-                        gameFormat
-                    });
-
-                    dispatch(sendNewGameMessage(newGame));
+                    dispatch(sendNewGameMessage(values));
                 }}
                 initialValues={initialValues}
             >
-                {(formProps) => (
-                    <form
-                        onSubmit={(event) => {
-                            event.preventDefault();
-
-                            formProps.handleSubmit(event);
-                        }}
-                    >
-                        <div className='flex flex-col gap-2'>
-                            {quickJoin && (
-                                <AlertPanel variant={AlertType.Info}>
-                                    Select the type of game you&apos;d like to play and either
-                                    you&apos;ll join the next one available, or one will be created
-                                    for you with default options.
-                                </AlertPanel>
-                            )}
-                            {!quickJoin && (
-                                <>
-                                    <div className='flex flex-col gap-2 w-full lg:grid lg:grid-cols-2'>
-                                        <div>
-                                            <Input
-                                                label='Name'
-                                                endContent={
-                                                    <span>
-                                                        {GameNameMaxLength -
-                                                            formProps.values.name.length}
-                                                    </span>
-                                                }
-                                                type='text'
-                                                placeholder='Game Name'
-                                                maxLength={GameNameMaxLength}
-                                                {...formProps.getFieldProps('name')}
-                                                isInvalid={
-                                                    formProps.errors.name && formProps.touched.name
-                                                }
-                                                errorMessage={formProps.errors.name}
-                                            />
-                                        </div>
-                                        <div>
-                                            <Input
-                                                autoComplete='off'
-                                                label='Password'
-                                                type='password'
-                                                placeholder={'Enter a password'}
-                                                {...formProps.getFieldProps('password')}
-                                            />
-                                        </div>
-                                        <div>
-                                            <Select
-                                                label={'Format'}
-                                                selectedKeys={new Set([gameFormat])}
-                                                onChange={(e) => {
-                                                    setGameFormat(e.target.value);
-                                                }}
-                                                disallowEmptySelection={true}
-                                            >
-                                                {GameFormats?.map((gm) => (
-                                                    <SelectItem key={gm.name} value={gm.name}>
-                                                        {`${gm.label}${gm.experimental ? ' (Experimental)' : ''}`}
-                                                    </SelectItem>
-                                                ))}
-                                            </Select>
-                                        </div>
-                                        <div>
-                                            <Select
-                                                label={'Mode'}
-                                                selectedKeys={new Set([restrictedList])}
-                                                onChange={(e) => {
-                                                    setRestrictedList(e.target.value);
-                                                    syncGameOptions(formProps, e.target.value);
-                                                }}
-                                            >
-                                                {restrictedLists?.map((rl) => (
-                                                    <SelectItem key={rl._id} value={rl._id}>
-                                                        {rl.name}
-                                                    </SelectItem>
-                                                ))}
-                                            </Select>
-                                        </div>
-                                    </div>
-                                    {GameFormats.find((f) => f.name === gameFormat)
-                                        ?.experimental && (
-                                        <AlertPanel
-                                            variant='warning'
-                                            message={`The ${gameFormat} format is experimental and may not work as expected. Please report any issues to the developers on Github.`}
-                                        />
-                                    )}
-                                    <GameOptions
-                                        formProps={formProps}
-                                        isDisabled={usingEventOptions}
-                                    />
-                                    {gameFormat === 'melee' && (
-                                        <div>
-                                            <div className='font-bold'>Melee Options</div>
-                                            <div className='flex gap-2'>
-                                                <Input
-                                                    label={'Max. players'}
-                                                    className='max-w-32'
-                                                    type='number'
-                                                    {...formProps.getFieldProps('maxPlayers')}
-                                                    isInvalid={
-                                                        formProps.errors.maxPlayers &&
-                                                        formProps.touched.maxPlayers
-                                                    }
-                                                    errorMessage={formProps.errors.maxPlayers}
-                                                    isDisabled={usingEventOptions}
-                                                />
-                                                <Switch
-                                                    classNames={{ label: 'text-sm' }}
-                                                    name={'randomSeats'}
-                                                    onChange={formProps.handleChange}
-                                                    isSelected={formProps.values.randomSeats}
-                                                    isDisabled={usingEventOptions}
-                                                >
-                                                    Random Seats
-                                                </Switch>
-                                                <Switch
-                                                    classNames={{ label: 'text-sm' }}
-                                                    name={'allowMultipleWinners'}
-                                                    onChange={formProps.handleChange}
-                                                    isSelected={
-                                                        formProps.values.allowMultipleWinners
-                                                    }
-                                                    isDisabled={usingEventOptions}
-                                                >
-                                                    Allow Multiple Winners
-                                                </Switch>
-                                            </div>
-                                        </div>
-                                    )}
-                                </>
-                            )}
-                            {<GameTypes formProps={formProps} isDisabled={usingEventOptions} />}
-                            <div className='flex gap-2'>
-                                <Button color='success' type='submit' isDisabled={!canStart}>
-                                    Start
-                                </Button>
-                                <Button color='primary' onPress={() => onClosed && onClosed()}>
-                                    Cancel
-                                </Button>
-                            </div>
-                        </div>
-                    </form>
-                )}
+                <NewGameForm quickJoin={quickJoin} onClosed={onClosed} />
             </Formik>
         </Panel>
     );
 });
+
+const NewGameForm = ({ quickJoin, onClosed = () => true }) => {
+    const {
+        values,
+        errors,
+        touched,
+        isSubmitting,
+        handleChange,
+        getFieldProps,
+        setFieldValue,
+        handleSubmit
+    } = useFormikContext();
+    const { data: events } = useGetEventsQuery();
+    const [event, setEvent] = useState();
+
+    const handleFormatChange = useCallback(
+        (newFormat) => {
+            setFieldValue('gameFormat', newFormat);
+        },
+        [setFieldValue]
+    );
+
+    const handleVariantChange = useCallback(
+        (newVariant) => {
+            setFieldValue('gameVariant', newVariant);
+        },
+        [setFieldValue]
+    );
+
+    const handleLegalityChange = useCallback(
+        (newLegality) => {
+            setFieldValue('gameLegality', newLegality);
+        },
+        [setFieldValue]
+    );
+
+    const handleEventChange = useCallback(
+        (newEventId) => {
+            const newEvent = events.find((e) => e._id === newEventId);
+            setEvent(newEvent);
+            if (newEvent) {
+                setFieldValue('eventId', newEventId);
+                setFieldValue('gameFormat', newEvent.format);
+                setFieldValue('gameVariant', newEvent.variant);
+                const legality =
+                    typeof newEvent.legality === 'object' ? 'custom' : newEvent.legality;
+                setFieldValue('gameLegality', legality);
+
+                // Sync game options
+                if (newEvent.useEventGameOptions) {
+                    setFieldValue('gameType', 'competitive');
+                    for (const [key, value] of Object.entries(newEvent.eventGameOptions)) {
+                        setFieldValue(key, value);
+                    }
+                }
+            }
+        },
+        [events, setFieldValue]
+    );
+
+    const getValidationProps = useCallback(
+        (fieldName) => {
+            const error = getIn(errors, fieldName);
+            const touch = getIn(touched, fieldName);
+
+            return {
+                isInvalid: !!touch && !!error,
+                errorMessage: error
+            };
+        },
+        [errors, touched]
+    );
+
+    const canStart = useMemo(
+        () => values.gameFormat && values.gameVariant && values.gameLegality,
+        [values.gameFormat, values.gameLegality, values.gameVariant]
+    );
+
+    return (
+        <form
+            onSubmit={async (event) => {
+                event.preventDefault();
+
+                handleSubmit(event);
+            }}
+        >
+            <div className='flex flex-col gap-2'>
+                {quickJoin && (
+                    <AlertPanel variant={AlertType.Info}>
+                        Select the type of game you&apos;d like to play and either you&apos;ll join
+                        the next one available, or one will be created for you with default options.
+                    </AlertPanel>
+                )}
+                {!quickJoin && (
+                    <>
+                        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2'>
+                            <Input
+                                label='Name'
+                                endContent={<span>{GameNameMaxLength - values.name.length}</span>}
+                                type='text'
+                                placeholder='Game Name'
+                                maxLength={GameNameMaxLength}
+                                {...getFieldProps('name')}
+                                {...getValidationProps('name')}
+                            />
+                            <Input
+                                autoComplete='off'
+                                label='Password'
+                                type='password'
+                                placeholder={'Enter a password'}
+                                {...getFieldProps('password')}
+                                isDisabled={!!event}
+                            />
+                            {/* TODO: Make a custom selector for events */}
+                            <Select
+                                label='Event'
+                                onChange={(e) => {
+                                    handleEventChange(e.target.value);
+                                }}
+                            >
+                                {events?.map((e) => (
+                                    <SelectItem key={e._id} value={e._id} textValue=''>
+                                        {e.name}
+                                    </SelectItem>
+                                ))}
+                            </Select>
+                            <FormatSelect
+                                label='Format'
+                                selected={values.gameFormat}
+                                onSelected={handleFormatChange}
+                                {...getValidationProps('gameFormat')}
+                                disallowEmptySelection
+                                isDisabled={!!event}
+                            />
+                            <VariantSelect
+                                label='Variant'
+                                format={values.gameFormat}
+                                selected={values.gameVariant}
+                                onSelected={handleVariantChange}
+                                {...getValidationProps('gameVariant')}
+                                disallowEmptySelection
+                                isDisabled={!!event}
+                            />
+                            <LegalitySelect
+                                label='Legality'
+                                format={values.gameFormat}
+                                variant={values.gameVariant}
+                                selected={values.gameLegality}
+                                onSelected={handleLegalityChange}
+                                {...getValidationProps('gameLegality')}
+                                disallowEmptySelection
+                                isDisabled={!!event}
+                                allowCustom={typeof event?.legality === 'object'}
+                            />
+                        </div>
+                        {GameFormats.find((f) => f.name === values.gameFormat)?.experimental && (
+                            <AlertPanel
+                                variant='warning'
+                                message={`The ${values.gameFormat} format is experimental and may not work as expected. Please report any issues to the developers on Github.`}
+                            />
+                        )}
+                        <GameOptions isDisabled={event?.useEventGameOptions} />
+                        {values.gameFormat === 'melee' && (
+                            <div>
+                                <div className='font-bold'>Melee Options</div>
+                                <div className='flex gap-2'>
+                                    <Input
+                                        label={'Max. players'}
+                                        className='max-w-32'
+                                        type='number'
+                                        {...getFieldProps('maxPlayers')}
+                                        {...getValidationProps('maxPlayers')}
+                                        isDisabled={event?.useEventGameOptions}
+                                    />
+                                    <Switch
+                                        classNames={{ label: 'text-sm' }}
+                                        name={'randomSeats'}
+                                        onChange={handleChange}
+                                        isSelected={values.randomSeats}
+                                        isDisabled={event?.useEventGameOptions}
+                                    >
+                                        Random Seats
+                                    </Switch>
+                                    <Switch
+                                        classNames={{ label: 'text-sm' }}
+                                        name={'allowMultipleWinners'}
+                                        onChange={handleChange}
+                                        isSelected={values.allowMultipleWinners}
+                                        isDisabled={event?.useEventGameOptions}
+                                    >
+                                        Allow Multiple Winners
+                                    </Switch>
+                                </div>
+                            </div>
+                        )}
+                    </>
+                )}
+                {<GameTypes isDisabled={event?.useEventGameOptions} />}
+                <div className='flex gap-2'>
+                    <Button
+                        color='success'
+                        type='submit'
+                        isDisabled={!canStart}
+                        isLoading={isSubmitting}
+                    >
+                        Start
+                    </Button>
+                    <Button color='primary' onPress={() => onClosed()}>
+                        Cancel
+                    </Button>
+                </div>
+            </div>
+        </form>
+    );
+};
 
 export default NewGame;

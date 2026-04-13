@@ -10,6 +10,13 @@ function extractEventFromRequest(req) {
         legality,
         lockDecks,
         useEventGameOptions,
+        eventGameOptions,
+        validTableCreators,
+        validSpectators
+    } = req.body;
+
+    const {
+        password,
         spectators,
         muteSpectators,
         showHand,
@@ -17,11 +24,10 @@ function extractEventFromRequest(req) {
         gameTimeLimit,
         useChessClocks,
         chessClockTimeLimit,
-        checkClockDelay,
-        password,
-        validTableCreators,
-        validSpectators
-    } = req.body;
+        chessClockDelay,
+        randomSeats,
+        allowMultipleWinners
+    } = eventGameOptions;
     return {
         _id: req.params.id,
         name,
@@ -30,15 +36,19 @@ function extractEventFromRequest(req) {
         legality,
         lockDecks,
         useEventGameOptions,
-        spectators,
-        muteSpectators,
-        showHand,
-        useGameTimeLimit,
-        gameTimeLimit,
-        useChessClocks,
-        chessClockTimeLimit,
-        checkClockDelay,
-        password,
+        eventGameOptions: {
+            password,
+            spectators,
+            muteSpectators,
+            showHand,
+            useGameTimeLimit,
+            gameTimeLimit,
+            useChessClocks,
+            chessClockTimeLimit,
+            chessClockDelay,
+            randomSeats,
+            allowMultipleWinners
+        },
         validTableCreators,
         validSpectators
     };

@@ -20,17 +20,6 @@ export function deckStatusLabel(status) {
     return 'Legal';
 }
 
-export function cardSetLabel(cardSet) {
-    switch (cardSet) {
-        case 'redesign':
-            return 'Standard';
-        case 'original':
-            return 'Valyrian';
-    }
-
-    return 'Unknown';
-}
-
 const parseCardLine = (packs, cards, line) => {
     const pattern = /^(\d+)x?\s+(.+)$/;
 
