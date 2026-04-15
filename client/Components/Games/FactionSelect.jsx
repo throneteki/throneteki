@@ -1,11 +1,12 @@
 import React from 'react';
 import { Select, SelectItem } from '@heroui/react';
-import { GameFormats } from '../../constants';
+import { Constants } from '../../constants';
+import ThronesIcon from '../GameBoard/ThronesIcon';
 
-const FormatSelect = ({
+const FactionSelect = ({
     className,
     style,
-    label = 'Format',
+    label = 'Faction',
     selected,
     onSelected,
     isInvalid,
@@ -28,14 +29,23 @@ const FormatSelect = ({
             isDisabled={isDisabled}
             className={className}
             style={style}
+            renderValue={([f]) => (
+                <div className='flex gap-2 items-center'>
+                    <ThronesIcon icon={f.key} />
+                    <div>{f.textValue}</div>
+                </div>
+            )}
         >
-            {GameFormats.map((f) => (
-                <SelectItem key={f.name} value={f.name}>
-                    {f.label}
+            {Constants.Factions.map((f) => (
+                <SelectItem key={f.value} value={f.value} textValue={f.name}>
+                    <div className='flex gap-2 items-center'>
+                        <ThronesIcon icon={f.value} />
+                        <div>{f.name}</div>
+                    </div>
                 </SelectItem>
             ))}
         </Select>
     );
 };
 
-export default FormatSelect;
+export default FactionSelect;

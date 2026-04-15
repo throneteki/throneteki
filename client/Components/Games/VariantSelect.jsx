@@ -4,6 +4,8 @@ import { GameFormats } from '../../constants';
 import { useEffect, useMemo } from 'react';
 
 const VariantSelect = ({
+    className,
+    style,
     label = 'Variant',
     format,
     selected,
@@ -37,6 +39,8 @@ const VariantSelect = ({
             isInvalid={isInvalid}
             errorMessage={errorMessage}
             disallowEmptySelection={disallowEmptySelection}
+            className={className}
+            style={style}
         >
             {variants.map((v) => (
                 <SelectItem key={v.name} value={v.name}>

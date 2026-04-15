@@ -195,20 +195,6 @@ export const apiSlice = createApi({
                 ...(result.data || [].map(({ code }) => ({ type: TagTypes.Pack, code })))
             ]
         }),
-        getFactions: builder.query({
-            query: () => '/factions',
-            providesTags: (result = { data: [] }) => [
-                TagTypes.Faction,
-                ...(result.data || [].map(({ code }) => ({ type: TagTypes.Faction, code })))
-            ],
-            transformResponse: (response) => {
-                return response.reduce((acc, faction) => {
-                    acc[faction.value] = faction;
-
-                    return acc;
-                }, {});
-            }
-        }),
         addDeck: builder.mutation({
             query: (deck) => ({
                 url: '/decks/',
@@ -524,7 +510,6 @@ export const {
     useVerifyAuthenticationQuery,
     useLoginAccountMutation,
     useGetPacksQuery,
-    useGetFactionsQuery,
     useAddDeckMutation,
     useDeleteDeckMutation,
     useGetDeckQuery,

@@ -4,6 +4,8 @@ import { useEffect, useMemo } from 'react';
 import { useGetRestrictedListQuery } from '../../redux/middleware/api';
 
 const LegalitySelect = ({
+    className,
+    style,
     label = 'Legality',
     format,
     variant,
@@ -67,6 +69,8 @@ const LegalitySelect = ({
             errorMessage={errorMessage}
             disallowEmptySelection={disallowEmptySelection}
             isLoading={isLoading}
+            className={className}
+            style={style}
         >
             {legalities.map((l) => (
                 <SelectItem

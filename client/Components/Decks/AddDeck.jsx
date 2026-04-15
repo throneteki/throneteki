@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import DeckEditor from './DeckEditor';
 import Panel from '../Site/Panel';
-import AgendaSelect from './AgendaSelect';
-import FactionSelect from './FactionSelect';
+import AgendaSelectStep from './AgendaSelectStep';
+import FactionSelectStep from './FactionSelectStep';
 
 const AddDeck = () => {
     const [selectedFaction, setFaction] = useState();
@@ -29,14 +29,14 @@ const AddDeck = () => {
                                 }}
                             />
                         ) : (
-                            <AgendaSelect
+                            <AgendaSelectStep
                                 onBackClick={() => setFaction(undefined)}
                                 onNextClick={(agendas) => setAgendas(agendas)}
                             />
                         )}
                     </div>
                 ) : (
-                    <FactionSelect onSelect={(faction) => setFaction(faction)} />
+                    <FactionSelectStep onSelect={(faction) => setFaction(faction)} />
                 )}
             </Panel>
         </div>

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { BannersForFaction, Constants, GameFormats } from '../../constants';
+import { BannersForFaction, Constants } from '../../constants';
 import ReactTable from '../Table/ReactTable';
 import DeckSummary from './DeckSummary';
 import AlertPanel from '../Site/AlertPanel';
@@ -18,24 +18,22 @@ import LoadingSpinner from '../Site/LoadingSpinner';
 import {
     useAddDeckMutation,
     useGetCardsQuery,
-    useGetFactionsQuery,
     useGetPacksQuery,
-    useGetRestrictedListQuery,
     useSaveDeckMutation
 } from '../../redux/middleware/api';
 import { navigate } from '../../redux/reducers/navigation';
 import { useDispatch } from 'react-redux';
-import { validateDeck } from '../../../deck-helper';
-import RestrictedListDropdown from './RestrictedListDropdown';
-import DeckStatus from './DeckStatus';
 import { toast } from 'react-toastify';
 import CardHoverable from '../Images/CardHoverable';
-import CardImage from '../Images/CardImage';
 import FactionFilter from '../Table/FactionFilter';
 import CardTypeFilter from '../Table/CardTypeFilter';
 import ImportDeckModal from './ImportDeckModal';
 import ThronesIcon from '../GameBoard/ThronesIcon';
 import PoolInfo from './PoolInfo';
+import FormatSelect from '../Games/FormatSelect';
+import VariantSelect from '../Games/VariantSelect';
+import LegalitySelect from '../Games/LegalitySelect';
+import FactionSelect from '../Games/FactionSelect';
 
 const SmallButton = extendVariants(Button, {
     variants: {
@@ -51,12 +49,6 @@ const DeckEditor = ({ deck, onBackClick }) => {
     const [addDeck, { isLoading: isAddLoading }] = useAddDeckMutation();
     const [saveDeck, { isLoading: isSaveLoading }] = useSaveDeckMutation();
     const { data: packs } = useGetPacksQuery();
-    const { data: restrictedLists } = useGetRestrictedListQuery();
-    const {
-        data: factions,
-        isLoading: isFactionsLoading,
-        isError: isFactionsError
-    } = useGetFactionsQuery({});
     const [factionFilter, setFactionFilter] = useState(
         [deck.faction.value]
             .concat(['neutral'])
@@ -76,19 +68,14 @@ const DeckEditor = ({ deck, onBackClick }) => {
             .concat(deck.bannerCards?.map((bc) => ({ card: bc, count: 1 })) || [])
     );
     const [deckName, setDeckName] = useState(deck.name);
-    const [faction, setFaction] = useState(deck.faction);
+    const [faction, setFaction] = useState(deck.faction?.value);
     const [showImportModal, setShowImportModal] = useState(false);
     const [pageNumber, setPageNumber] = useState(0);
 
-    const [currentGameFormat, setCurrentGameFormat] = useState(deck.format || GameFormats[0].name);
-    const [currentGameVariant, setCurrentGameVariant] = useState(
-        deck.variant || GameFormats[0].variants[0].name
-    );
-    const [currentRestrictedList, setCurrentRestrictedList] = useState(
-        restrictedLists && restrictedLists[0]
-    );
+    const [gameFormat, setGameFormat] = useState(deck.format ?? 'joust');
+    const [gameVariant, setGameVariant] = useState(null);
+    const [gameLegality, setGameLegality] = useState(null);
     const [cardsByCode, setCardsByCode] = useState(cards);
-    const factionsByCode = factions;
 
     useEffect(() => {
         if (deck.pool && cards) {
@@ -111,15 +98,15 @@ const DeckEditor = ({ deck, onBackClick }) => {
     };
 
     const deckToSave = useMemo(() => {
-        if (!factionsByCode || !cardsByCode || !packs || !currentRestrictedList) {
-            return {};
+        if (!cardsByCode || !packs) {
+            return null;
         }
 
         // we need the full card objects for deck validation
         const fullCardsDeck = {
             _id: deck._id,
             name: deckName,
-            faction: factionsByCode[faction.value],
+            faction: Constants.Factions.find((f) => f.value === faction),
             agenda: deck.agenda && cardsByCode[deck.agenda.code],
             bannerCards: [],
             plotCards: [],
@@ -155,27 +142,24 @@ const DeckEditor = ({ deck, onBackClick }) => {
             saveDeck.status = {};
         }
 
-        saveDeck.status = validateDeck(fullCardsDeck, {
-            packs: packs,
-            gameFormats: GameFormats.map((gf) => gf.name),
-            restrictedLists
-        });
+        // saveDeck.status = validateDeck(fullCardsDeck, {
+        //     packs: packs,
+        //     gameFormats: GameFormats.map((gf) => gf.name),
+        //     restrictedLists
+        // });
 
         return saveDeck;
     }, [
         cardsByCode,
-        currentRestrictedList,
+        packs,
         deck._id,
         deck.agenda,
-        deck.pool,
         deck.format,
         deck.variant,
-        deckCards,
+        deck.pool,
         deckName,
-        faction.value,
-        factionsByCode,
-        packs,
-        restrictedLists
+        deckCards,
+        faction
     ]);
 
     const columns = useMemo(
@@ -351,31 +335,12 @@ const DeckEditor = ({ deck, onBackClick }) => {
     }, [cards, deck.pool]);
 
     useEffect(() => {
-        setFaction(deck.faction);
-    }, [deck.faction]);
+        setFaction(deck.faction.value);
+    }, [deck.faction?.value]);
 
-    useEffect(() => {
-        if (!currentGameFormat) {
-            const formatName =
-                GameFormats.find((gf) => gf.name === deck.format)?.name || GameFormats[0].name;
-            setCurrentGameFormat(formatName);
-            const gameFormat = GameFormats.find((gf) => gf.name === formatName);
-            setCurrentGameVariant(
-                gameFormat.variants.find((gv) => gv.name === deck.variant)?.name ||
-                    gameFormat.variants[0].name
-            );
-        }
-    }, [currentGameFormat, deck.format, deck.variant]);
-
-    useEffect(() => {
-        if (!currentRestrictedList && restrictedLists) {
-            setCurrentRestrictedList(restrictedLists[0]);
-        }
-    }, [currentRestrictedList, restrictedLists]);
-
-    if (isLoading || isFactionsLoading || !packs || !currentRestrictedList) {
+    if (isLoading || !packs) {
         return <LoadingSpinner />;
-    } else if (isError || isFactionsError) {
+    } else if (isError) {
         return (
             <AlertPanel variant='danger'>
                 An error occurred loading data from the server. Please try again later.
@@ -427,112 +392,84 @@ const DeckEditor = ({ deck, onBackClick }) => {
             </div>
             <div className='columns-1 xl:columns-2 gap-4'>
                 <div className='flex flex-col gap-2 break-inside-avoid'>
-                    <div className='flex max-md:flex-wrap gap-2'>
+                    <div className='flex gap-2'>
                         <Input
-                            className='w-full md:w-2/3'
-                            placeholder={'Enter a name'}
+                            className='md:basis-2/3'
+                            placeholder='Enter a name'
                             value={deckName}
                             onValueChange={setDeckName}
-                            label={'Deck Name'}
+                            label='Deck Name'
                         />
-                        <Select
-                            className='w-full md:w-1/3'
-                            items={Constants.Factions}
+                        <FactionSelect
+                            className='md:basis-1/3'
                             label='Faction'
-                            selectedKeys={new Set([faction.value])}
-                            onChange={(e) => setFaction(e.target)}
-                            renderValue={(items) => {
-                                return items.map((item) => (
-                                    <div key={item.key}>{item.data.name}</div>
-                                ));
-                            }}
-                        >
-                            {(faction) => (
-                                <SelectItem key={faction.value} textValue={faction.name}>
-                                    <div className='flex gap-2 items-center'>
-                                        <CardImage size='small' code={faction.value} />
-                                        <div>{faction.name}</div>
-                                    </div>
-                                </SelectItem>
-                            )}
-                        </Select>
+                            selected={faction}
+                            onSelected={setFaction}
+                            disallowEmptySelection
+                        />
                     </div>
-                    <div className='flex max-md:flex-wrap gap-2'>
-                        <Select
-                            label={'Game format'}
-                            className='w-full md:w-1/2'
-                            onChange={(e) => {
-                                setCurrentGameFormat(e.target.value);
-                                setCurrentGameVariant(
-                                    GameFormats.find((gf) => gf.name === e.target.value)
-                                        ?.variants[0].name
-                                );
-                            }}
-                            selectedKeys={new Set([currentGameFormat])}
+                    <div className='flex flex-col md:flex-row gap-2'>
+                        <FormatSelect
+                            label='Format'
+                            selected={gameFormat}
+                            onSelected={setGameFormat}
                             isDisabled={!!deck.format}
-                        >
-                            {GameFormats.map((gf) => (
-                                <SelectItem key={gf.name} value={gf.name}>
-                                    {gf.label}
-                                </SelectItem>
-                            ))}
-                        </Select>
-                        <Select
-                            label={'Game variant'}
-                            className='w-full md:w-1/2'
-                            onChange={(e) => setCurrentGameVariant(e.target.value)}
-                            selectedKeys={new Set([currentGameVariant])}
-                            isDisabled={!!deck.variant}
-                        >
-                            {GameFormats.find((gf) => gf.name === currentGameFormat)?.variants?.map(
-                                (gv) => (
-                                    <SelectItem key={gv.name} value={gv.name}>
-                                        {gv.label}
-                                    </SelectItem>
-                                )
-                            )}
-                        </Select>
-                        <RestrictedListDropdown
-                            className='w-full md:w-1/2'
-                            currentRestrictedList={currentRestrictedList}
-                            onChange={(restrictedList) => {
-                                setCurrentRestrictedList(restrictedList);
-                            }}
-                            restrictedLists={restrictedLists}
+                            disallowEmptySelection
+                            className='md:basis-1/3'
+                        />
+                        <VariantSelect
+                            label='Variant'
+                            format={gameFormat}
+                            selected={gameVariant}
+                            onSelected={setGameVariant}
+                            disallowEmptySelection
+                            className='md:basis-1/3'
+                        />
+                        <LegalitySelect
+                            label='Legality'
+                            format={gameFormat}
+                            variant={gameVariant}
+                            selected={gameLegality}
+                            onSelected={setGameLegality}
+                            className='md:basis-1/3'
                         />
                     </div>
                     <Card>
-                        <CardBody>
-                            <div className='flex'>
-                                <dl className='grid grid-cols-2 gap-2'>
-                                    <dt className='font-bold'>Plot cards:</dt>
-                                    <dd>
-                                        {deckToSave.plotCards.reduce(
-                                            (acc, card) => acc + card.count,
-                                            0
-                                        )}
-                                    </dd>
-                                    <dt className='font-bold'>Draw cards:</dt>
-                                    <dd>
-                                        {deckToSave.drawCards.reduce(
-                                            (acc, card) => acc + card.count,
-                                            0
-                                        )}
-                                    </dd>
-                                </dl>
-                            </div>
-                            <div className='flex gap-2 items-center'>
-                                <div className='font-bold'>Validity:</div>
-                                <DeckStatus
-                                    status={deckToSave.status[currentRestrictedList._id]}
-                                    gameFormat={currentGameFormat || GameFormats[0].name}
-                                    gameVariant={
-                                        currentGameVariant || GameFormats[0].variants[0].name
-                                    }
-                                />
-                                <PoolInfo isPool={!!deck.pool} />
-                            </div>
-                        </CardBody>
+                        {deckToSave ? (
+                            <CardBody>
+                                <div className='flex'>
+                                    <dl className='grid grid-cols-2 gap-2'>
+                                        <dt className='font-bold'>Plot cards:</dt>
+                                        <dd>
+                                            {deckToSave.plotCards.reduce(
+                                                (acc, card) => acc + card.count,
+                                                0
+                                            )}
+                                        </dd>
+                                        <dt className='font-bold'>Draw cards:</dt>
+                                        <dd>
+                                            {deckToSave.drawCards.reduce(
+                                                (acc, card) => acc + card.count,
+                                                0
+                                            )}
+                                        </dd>
+                                    </dl>
+                                </div>
+                                <div className='flex gap-2 items-center'>
+                                    <div className='font-bold'>Validity:</div>
+                                    {/* <DeckStatus
+                                        status={deckToSave.status[currentRestrictedList._id]}
+                                        gameFormat={currentGameFormat || GameFormats[0].name}
+                                        gameVariant={
+                                            currentGameVariant || GameFormats[0].variants[0].name
+                                        }
+                                    /> */}
+                                    <PoolInfo isPool={!!deck.pool} />
+                                </div>
+                            </CardBody>
+                        ) : (
+                            <LoadingSpinner />
+                        )}
                     </Card>
                     <CardTypeFilter
                         className='self-start'
@@ -577,7 +514,7 @@ const DeckEditor = ({ deck, onBackClick }) => {
                         name: deckName,
                         deckCards: deckCards,
                         poolCards: deck.pool ? cardsMemo.data : undefined,
-                        faction: factionsByCode[deck.faction.code]
+                        faction: Constants.Factions.find((f) => f.value === faction)
                     }}
                 />
 
@@ -589,7 +526,7 @@ const DeckEditor = ({ deck, onBackClick }) => {
                         newDeck._id = deck._id;
                         const success = await onSaveClick(false, newDeck);
                         if (success) {
-                            setFaction(newDeck.faction);
+                            setFaction(newDeck.faction?.value);
                             setDeckName(newDeck.name);
                             setDeckCards(
                                 (newDeck.agenda ? [{ card: newDeck.agenda, count: 1 }] : [])
