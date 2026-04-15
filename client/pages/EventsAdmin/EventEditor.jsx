@@ -14,6 +14,7 @@ import * as yup from 'yup';
 import FormatSelect from '../../Components/Games/FormatSelect';
 import VariantSelect from '../../Components/Games/VariantSelect';
 import LegalitySelect from '../../Components/Games/LegalitySelect';
+import GameTypes from '../../Components/Games/GameTypes';
 
 const schema = yup.object({
     name: yup.string().required('Event name is required'),
@@ -61,7 +62,7 @@ const schema = yup.object({
                     then: (s) => s.required('Chess clock delay is required'),
                     otherwise: (s) => s.nullable().default(null)
                 }),
-            password: yup.string().nullable().optional(),
+            password: yup.string(),
             maxPlayers: yup.number().when('format', {
                 is: 'melee',
                 then: (s) =>
@@ -116,17 +117,23 @@ const EventEditor = ({ eventId }) => {
             format: event?.format ?? 'joust',
             variant: event?.variant,
             legality: typeof event?.legality === 'object' ? 'custom' : event?.legality,
+            gameType: 'competitive',
             customLegality: typeof event?.legality === 'object' ? event.legality : null,
             lockDecks: event?.lockDecks ?? false,
             useEventGameOptions: event?.useEventGameOptions ?? false,
-            eventGameOptions: event?.eventGameOptions ?? {
-                spectators: false,
-                muteSpectators: false,
-                showHand: false,
-                useGameTimeLimit: false,
-                useChessClocks: false,
-                randomSeats: false,
-                allowMultipleWinners: false
+            eventGameOptions: {
+                password: event?.eventGameOptions?.password ?? '',
+                gamePrivate: event?.eventGameOptions?.gamePrivate ?? false,
+                spectators: event?.eventGameOptions?.spectators ?? false,
+                muteSpectators: event?.eventGameOptions?.muteSpectators ?? false,
+                showHand: event?.eventGameOptions?.showHand ?? false,
+                useGameTimeLimit: event?.eventGameOptions?.useGameTimeLimit ?? false,
+                useChessClocks: event?.eventGameOptions?.useChessClocks ?? false,
+                randomSeats: event?.eventGameOptions?.randomSeats ?? false,
+                allowMultipleWinners: event?.eventGameOptions?.allowMultipleWinners ?? false,
+                gameTimeLimit: event?.eventGameOptions?.gameTimeLimit ?? '',
+                checkClockTimeLimit: event?.eventGameOptions?.checkClockTimeLimit ?? '',
+                checkClockDelay: event?.eventGameOptions?.checkClockDelay ?? ''
             },
             restrictTableCreators: !!event?.validTableCreators,
             validTableCreators: event?.validTableCreators ?? [],
@@ -222,15 +229,16 @@ const EventEditorForm = ({ isNew, isSaving, dispatch }) => {
     const handleLegalityChange = useCallback(
         (newLegality) => {
             setFieldValue('legality', newLegality);
-            if (newLegality !== 'custom') {
-                setFieldValue('customLegality', null);
-            }
+            setFieldValue(
+                'customLegality',
+                newLegality !== 'custom' ? null : (values.customLegality ?? {})
+            );
         },
-        [setFieldValue]
+        [setFieldValue, values.customLegality]
     );
 
     const handleSetCustomLegality = useCallback(
-        (val) => setFieldValue('customLegality', { name: 'Custom', ...val }),
+        (newCustomLegality) => setFieldValue('customLegality', newCustomLegality),
         [setFieldValue]
     );
 
@@ -306,8 +314,8 @@ const EventEditorForm = ({ isNew, isSaving, dispatch }) => {
                                 Lock decks for this event
                             </Switch>
                             <div>
-                                Locks in the first deck a player chooses &amp; plays under this
-                                event - future games will force the same deck to be chosen.
+                                Deck selections & edits will be locked after a player starts their
+                                first game with this event.
                             </div>
                         </div>
                         <div className='flex flex-col gap-1'>
@@ -321,6 +329,7 @@ const EventEditorForm = ({ isNew, isSaving, dispatch }) => {
                             <div>Forces specific game options for games under this event.</div>
                         </div>
                     </div>
+                    <GameTypes />
                 </div>
             </Panel>
 

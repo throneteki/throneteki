@@ -1,13 +1,12 @@
 import React from 'react';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 import { Formik, getIn, useFormikContext } from 'formik';
-import { Button, Input, Select, SelectItem, Switch } from '@heroui/react';
+import { Button, Input, Switch } from '@heroui/react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as yup from 'yup';
 
 import GameOptions from './GameOptions';
 import GameTypes from './GameTypes';
-import { useGetEventsQuery } from '../../redux/middleware/api';
 import Panel from '../Site/Panel';
 import { sendNewGameMessage } from '../../redux/reducers/lobby';
 import AlertPanel, { AlertType } from '../Site/AlertPanel';
@@ -15,6 +14,7 @@ import { GameFormats } from '../../constants';
 import FormatSelect from './FormatSelect';
 import VariantSelect from './VariantSelect';
 import LegalitySelect from './LegalitySelect';
+import EventSelect from './EventSelect';
 
 const GameNameMaxLength = 64;
 
@@ -90,6 +90,7 @@ const NewGame = forwardRef(function NewGame(
     const initialValues = {
         name: `${user?.username}'s game`,
         password: '',
+        eventId: null,
         allowSpectators: true,
         gameFormat: 'joust',
         gameType: defaultGameType || 'casual',
@@ -138,8 +139,8 @@ const NewGameForm = ({ quickJoin, onClosed = () => true }) => {
         setFieldValue,
         handleSubmit
     } = useFormikContext();
-    const { data: events } = useGetEventsQuery();
-    const [event, setEvent] = useState();
+    const [isEventGameOptions, setIsEventGameOptions] = useState(false);
+    const [userCachedOptions, setUserCachedOptions] = useState();
 
     const handleFormatChange = useCallback(
         (newFormat) => {
@@ -156,34 +157,46 @@ const NewGameForm = ({ quickJoin, onClosed = () => true }) => {
     );
 
     const handleLegalityChange = useCallback(
-        (newLegality) => {
-            setFieldValue('gameLegality', newLegality);
+        (newLegalityId) => {
+            setFieldValue('gameLegality', newLegalityId);
         },
         [setFieldValue]
     );
 
     const handleEventChange = useCallback(
-        (newEventId) => {
-            const newEvent = events.find((e) => e._id === newEventId);
-            setEvent(newEvent);
+        (newEvent) => {
+            const isUsingEventGameOptions = newEvent?.useEventGameOptions ?? false;
+            setIsEventGameOptions(isUsingEventGameOptions);
             if (newEvent) {
-                setFieldValue('eventId', newEventId);
-                setFieldValue('gameFormat', newEvent.format);
-                setFieldValue('gameVariant', newEvent.variant);
-                const legality =
-                    typeof newEvent.legality === 'object' ? 'custom' : newEvent.legality;
-                setFieldValue('gameLegality', legality);
-
-                // Sync game options
-                if (newEvent.useEventGameOptions) {
-                    setFieldValue('gameType', 'competitive');
-                    for (const [key, value] of Object.entries(newEvent.eventGameOptions)) {
-                        setFieldValue(key, value);
-                    }
+                if (!userCachedOptions) {
+                    setUserCachedOptions({ ...values });
                 }
+                const gameOptions = {
+                    ...userCachedOptions,
+                    eventId: newEvent._id,
+                    gameFormat: newEvent.format,
+                    gameVariant: newEvent.variant,
+                    gameLegality:
+                        typeof newEvent.legality === 'object' ? 'custom' : newEvent.legality,
+                    gameType: newEvent.gameType,
+                    ...(newEvent.useEventGameOptions ? newEvent.eventGameOptions : {})
+                };
+
+                // Override with event options
+                for (const [key, value] of Object.entries(gameOptions)) {
+                    setFieldValue(key, value);
+                }
+            } else if (userCachedOptions) {
+                for (const [key, value] of Object.entries({
+                    eventId: undefined,
+                    ...userCachedOptions
+                })) {
+                    setFieldValue(key, value);
+                }
+                setUserCachedOptions(undefined);
             }
         },
-        [events, setFieldValue]
+        [setFieldValue, userCachedOptions, values]
     );
 
     const getValidationProps = useCallback(
@@ -237,28 +250,22 @@ const NewGameForm = ({ quickJoin, onClosed = () => true }) => {
                                 type='password'
                                 placeholder={'Enter a password'}
                                 {...getFieldProps('password')}
-                                isDisabled={!!event}
+                                isDisabled={isEventGameOptions}
                             />
-                            {/* TODO: Make a custom selector for events */}
-                            <Select
+                            <EventSelect
                                 label='Event'
-                                onChange={(e) => {
-                                    handleEventChange(e.target.value);
-                                }}
-                            >
-                                {events?.map((e) => (
-                                    <SelectItem key={e._id} value={e._id} textValue=''>
-                                        {e.name}
-                                    </SelectItem>
-                                ))}
-                            </Select>
+                                placeholder='None'
+                                selected={values.eventId}
+                                onSelected={handleEventChange}
+                                {...getValidationProps('eventId')}
+                            />
                             <FormatSelect
                                 label='Format'
                                 selected={values.gameFormat}
                                 onSelected={handleFormatChange}
                                 {...getValidationProps('gameFormat')}
                                 disallowEmptySelection
-                                isDisabled={!!event}
+                                isDisabled={!!values.eventId}
                             />
                             <VariantSelect
                                 label='Variant'
@@ -267,7 +274,7 @@ const NewGameForm = ({ quickJoin, onClosed = () => true }) => {
                                 onSelected={handleVariantChange}
                                 {...getValidationProps('gameVariant')}
                                 disallowEmptySelection
-                                isDisabled={!!event}
+                                isDisabled={!!values.eventId}
                             />
                             <LegalitySelect
                                 label='Legality'
@@ -277,8 +284,8 @@ const NewGameForm = ({ quickJoin, onClosed = () => true }) => {
                                 onSelected={handleLegalityChange}
                                 {...getValidationProps('gameLegality')}
                                 disallowEmptySelection
-                                isDisabled={!!event}
-                                allowCustom={typeof event?.legality === 'object'}
+                                isDisabled={!!values.eventId}
+                                allowCustom={!!values.eventId}
                             />
                         </div>
                         {GameFormats.find((f) => f.name === values.gameFormat)?.experimental && (
@@ -287,7 +294,7 @@ const NewGameForm = ({ quickJoin, onClosed = () => true }) => {
                                 message={`The ${values.gameFormat} format is experimental and may not work as expected. Please report any issues to the developers on Github.`}
                             />
                         )}
-                        <GameOptions isDisabled={event?.useEventGameOptions} />
+                        <GameOptions isDisabled={isEventGameOptions} />
                         {values.gameFormat === 'melee' && (
                             <div>
                                 <div className='font-bold'>Melee Options</div>
@@ -298,14 +305,14 @@ const NewGameForm = ({ quickJoin, onClosed = () => true }) => {
                                         type='number'
                                         {...getFieldProps('maxPlayers')}
                                         {...getValidationProps('maxPlayers')}
-                                        isDisabled={event?.useEventGameOptions}
+                                        isDisabled={isEventGameOptions}
                                     />
                                     <Switch
                                         classNames={{ label: 'text-sm' }}
                                         name={'randomSeats'}
                                         onChange={handleChange}
                                         isSelected={values.randomSeats}
-                                        isDisabled={event?.useEventGameOptions}
+                                        isDisabled={isEventGameOptions}
                                     >
                                         Random Seats
                                     </Switch>
@@ -314,7 +321,7 @@ const NewGameForm = ({ quickJoin, onClosed = () => true }) => {
                                         name={'allowMultipleWinners'}
                                         onChange={handleChange}
                                         isSelected={values.allowMultipleWinners}
-                                        isDisabled={event?.useEventGameOptions}
+                                        isDisabled={isEventGameOptions}
                                     >
                                         Allow Multiple Winners
                                     </Switch>
@@ -323,7 +330,7 @@ const NewGameForm = ({ quickJoin, onClosed = () => true }) => {
                         )}
                     </>
                 )}
-                {<GameTypes isDisabled={event?.useEventGameOptions} />}
+                <GameTypes isDisabled={!!values.eventId} />
                 <div className='flex gap-2'>
                     <Button
                         color='success'

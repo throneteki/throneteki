@@ -36,6 +36,7 @@ class PendingGame {
             this.randomSeats = details.randomSeats;
             this.allowMultipleWinners = details.allowMultipleWinners;
         }
+        this.deckService = details.deckService;
     }
 
     // Getters
@@ -102,7 +103,7 @@ class PendingGame {
         this.gameChat.addMessage(...arguments);
     }
 
-    addPlayer(id, user) {
+    async addPlayer(id, user) {
         if (!user) {
             logger.error('Tried to add a player to a game that did not have a user object');
             return;
@@ -115,6 +116,17 @@ class PendingGame {
             owner: this.owner.username === user.username,
             seatNo: Object.values(this.players || {}).length + 1
         };
+
+        // Force deck selection if deck used for locked event
+        if (this.event?.lockDecks) {
+            const lockedDeck = await this.deckService.getDeckForEvent(
+                user.username,
+                this.event._id.toString()
+            );
+            if (lockedDeck) {
+                this.selectDeck(user.username, lockedDeck);
+            }
+        }
     }
 
     addSpectator(id, user) {
@@ -125,13 +137,13 @@ class PendingGame {
         };
     }
 
-    newGame(id, user, password, join) {
+    async newGame(id, user, password, join) {
         if (password) {
             this.password = crypto.createHash('md5').update(password).digest('hex');
         }
 
         if (join) {
-            this.addPlayer(id, user);
+            await this.addPlayer(id, user);
         }
     }
 
@@ -139,7 +151,7 @@ class PendingGame {
         return _.contains(this.owner.blockList, user.username.toLowerCase());
     }
 
-    join(id, user, password) {
+    async join(id, user, password) {
         if (_.size(this.players) === this.maxPlayers || this.started) {
             return 'Game full';
         }
@@ -155,7 +167,7 @@ class PendingGame {
         }
 
         this.addMessage('{0} has joined the game', user.username);
-        this.addPlayer(id, user);
+        await this.addPlayer(id, user);
 
         if (!this.isOwner(this.owner.username)) {
             let otherPlayer = Object.values(this.players).find(
@@ -284,7 +296,7 @@ class PendingGame {
         player.deck.selected = true;
 
         this.setupFaction(player, deck.faction);
-        this.setupAgendas(player, deck.agenda, ...deck.bannerCards);
+        this.setupAgendas(player, deck.agenda, ...(deck.bannerCards ?? []));
     }
 
     // interrogators
@@ -353,7 +365,9 @@ class PendingGame {
                 deck = {
                     name: player.deck.name,
                     selected: player.deck.selected,
-                    status: player.deck.status
+                    status: player.deck.status,
+                    locked: player.deck.locked,
+                    faction: player.deck.faction
                 };
             } else if (player.deck) {
                 deck = { selected: player.deck.selected, status: player.deck.status };

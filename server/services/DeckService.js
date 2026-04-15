@@ -58,7 +58,7 @@ class DeckService {
         return this.decks
             .findOne({ name })
             .then((deck) => {
-                deck.locked = deck.eventId ? true : false; // lock the deck from further changes if the eventId is set //TODO refactor this when draft is finished
+                deck.locked = !!deck.eventId; // lock the deck from further changes if the eventId is set //TODO refactor this when draft is finished
                 return deck;
             })
             .catch((err) => {
@@ -282,12 +282,37 @@ class DeckService {
     }
 
     async userAlreadyHasDeckForEvent(username, eventId) {
-        let deckForEventAlreadyExists = await this.decks
-            .findOne({ username: username, eventId: eventId })
+        return !!this.getDeckForEvent(username, eventId);
+    }
+
+    async getDeckForEvent(username, eventId) {
+        const deck = await this.decks
+            .findOne({ username, eventId })
+            .then((deck) => {
+                if (deck) {
+                    deck.locked = true;
+                }
+                return deck;
+            })
             .catch(() => {
                 throw new Error(`Unable to fetch deck with parameters ${username} and ${eventId}`);
             });
-        return !!deckForEventAlreadyExists;
+        return deck;
+    }
+
+    async useDeckForEvent(deckId, eventId) {
+        const deck = await this.getById(deckId);
+
+        //if the eventId is set on the deck, check if the user already has a deck with the same eventId
+        if (deck.eventId) {
+            //if a deck for the event already exists, do not update the deck
+            if (await this.userAlreadyHasDeckForEvent(deck.username, deck.eventId)) {
+                throw new Error(
+                    `User ${deck.username} already has a deck configured for event ${deck.eventId}`
+                );
+            }
+        }
+        return this.decks.update({ _id: deckId }, { $set: { eventId } });
     }
 }
 

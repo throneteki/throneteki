@@ -3,7 +3,7 @@ import { Modal, ModalBody, ModalContent, ModalHeader, Tab, Tabs } from '@heroui/
 import DeckList from '../Decks/DeckList';
 import { useGetDecksQuery, useGetStandaloneDecksQuery } from '../../redux/middleware/api';
 
-const SelectDeckModal = ({ onClose, onDeckSelected, gameFormat, restrictedList }) => {
+const SelectDeckModal = ({ isOpen, onClose, onDeckSelected, gameFormat, restrictedList }) => {
     const deckTabs = [
         { title: 'My Decks', dataQuery: useGetDecksQuery },
         { title: 'Standalone Decks', dataQuery: useGetStandaloneDecksQuery }
@@ -11,7 +11,7 @@ const SelectDeckModal = ({ onClose, onDeckSelected, gameFormat, restrictedList }
     return (
         <Modal
             className='max-h-screen'
-            isOpen={true}
+            isOpen={isOpen}
             onClose={onClose}
             size='5xl'
             scrollBehavior='inside'

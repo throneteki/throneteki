@@ -8,6 +8,7 @@ function extractEventFromRequest(req) {
         format,
         variant,
         legality,
+        gameType,
         lockDecks,
         useEventGameOptions,
         eventGameOptions,
@@ -15,40 +16,30 @@ function extractEventFromRequest(req) {
         validSpectators
     } = req.body;
 
-    const {
-        password,
-        spectators,
-        muteSpectators,
-        showHand,
-        useGameTimeLimit,
-        gameTimeLimit,
-        useChessClocks,
-        chessClockTimeLimit,
-        chessClockDelay,
-        randomSeats,
-        allowMultipleWinners
-    } = eventGameOptions;
     return {
         _id: req.params.id,
         name,
         format,
         variant,
         legality,
+        gameType,
         lockDecks,
         useEventGameOptions,
-        eventGameOptions: {
-            password,
-            spectators,
-            muteSpectators,
-            showHand,
-            useGameTimeLimit,
-            gameTimeLimit,
-            useChessClocks,
-            chessClockTimeLimit,
-            chessClockDelay,
-            randomSeats,
-            allowMultipleWinners
-        },
+        eventGameOptions: useEventGameOptions
+            ? {
+                  password: eventGameOptions.password,
+                  spectators: eventGameOptions.spectators,
+                  muteSpectators: eventGameOptions.muteSpectators,
+                  showHand: eventGameOptions.showHand,
+                  useGameTimeLimit: eventGameOptions.useGameTimeLimit,
+                  gameTimeLimit: eventGameOptions.gameTimeLimit,
+                  useChessClocks: eventGameOptions.useChessClocks,
+                  chessClockTimeLimit: eventGameOptions.chessClockTimeLimit,
+                  chessClockDelay: eventGameOptions.chessClockDelay,
+                  randomSeats: eventGameOptions.randomSeats,
+                  allowMultipleWinners: eventGameOptions.allowMultipleWinners
+              }
+            : null,
         validTableCreators,
         validSpectators
     };

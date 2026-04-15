@@ -4,7 +4,7 @@ import { Radio, RadioGroup } from '@heroui/react';
 import { GameTypes as gameTypes } from '../../constants';
 import { useFormikContext } from 'formik';
 
-const GameTypes = ({ isDisabled }) => {
+const GameTypes = ({ isDisabled = false }) => {
     const { values, setFieldValue } = useFormikContext();
     return (
         <div className='flex flex-col gap-2'>

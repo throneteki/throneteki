@@ -96,8 +96,14 @@ const Game = ({
             <hr />
             <div className={rowClass}>
                 <div className={gameHeaderClass}>
-                    <span className='capitalize'>({`${game.gameType} ${game.gameFormat}`})</span>
-                    <span className='text-white leading-normal self-start'>
+                    <span>
+                        {game.event?.name ? (
+                            <span>({game.event.name})</span>
+                        ) : (
+                            <span className='capitalize'>{`(${game.gameType} ${game.gameFormat})`}</span>
+                        )}
+                    </span>
+                    <span className='text-white leading-normal'>
                         <b>{game.name}</b>
                     </span>
                     <span>{`[${formattedTime}]`}</span>

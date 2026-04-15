@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import Panel from '../../Components/Site/Panel';
 import {
     Autocomplete,
@@ -29,35 +29,44 @@ const CustomLegalityEditor = ({ format, variant, legality: initial, setLegality 
 
     const [importSelect, setImportSelect] = useState();
 
-    const [restricted, setRestricted] = useState(initial?.restricted || []);
-    const [banned, setBanned] = useState(initial?.banned || []);
-    const [pods, setPods] = useState(initial?.pods || []);
+    const [restricted, setRestricted] = useState(initial?.restricted ?? []);
+    const [banned, setBanned] = useState(initial?.banned ?? []);
+    const [pods, setPods] = useState(initial?.pods ?? []);
     const [draftPod, setDraftPod] = useState([]);
 
     const [cardToAdd, setCardToAdd] = useState();
 
+    useEffect(() => {
+        setLegality({
+            name: 'Custom',
+            restricted: initial?.restricted ?? [],
+            banned: initial?.banned ?? [],
+            pods: initial?.pods ?? []
+        });
+    }, [initial?.banned, initial?.pods, initial?.restricted, setLegality]);
+
     const setRestrictedAndSync = useCallback(
-        (val, currentBanned = banned, currentPods = pods) => {
+        (val) => {
             setRestricted(val);
-            setLegality({ restricted: val, banned: currentBanned, pods: currentPods });
+            setLegality((prev) => ({ restricted: val, ...prev }));
         },
-        [banned, pods, setLegality]
+        [setLegality]
     );
 
     const setBannedAndSync = useCallback(
-        (val, currentRestricted = restricted, currentPods = pods) => {
+        (val) => {
             setBanned(val);
-            setLegality({ restricted: currentRestricted, banned: val, pods: currentPods });
+            setLegality((prev) => ({ banned: val, ...prev }));
         },
-        [pods, restricted, setLegality]
+        [setLegality]
     );
 
     const setPodsAndSync = useCallback(
-        (val, currentRestricted = restricted, currentBanned = banned) => {
+        (val) => {
             setPods(val);
-            setLegality({ restricted: currentRestricted, banned: currentBanned, pods: val });
+            setLegality((prev) => ({ pods: val, ...prev }));
         },
-        [banned, restricted, setLegality]
+        [setLegality]
     );
 
     const compareByFactionNameRelease = useCallback(
