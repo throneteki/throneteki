@@ -16,6 +16,7 @@ export function formatDeckAsFullCards(deck, data) {
         eventId: deck.eventId,
         locked: deck.locked,
         format: deck.format,
+        variant: deck.variant,
         name: deck.name,
         username: deck.username,
         lastUpdated: deck.lastUpdated,
@@ -28,13 +29,13 @@ export function formatDeckAsFullCards(deck, data) {
     }
 
     if (deck.agenda) {
-        newDeck.agenda = data.cards[deck.agenda.code];
+        newDeck.agenda = data.cards[deck.agenda];
     }
 
-    newDeck.bannerCards = (deck.bannerCards || []).map((card) => data.cards[card.code]);
-    newDeck.draftedCards = deck.draftedCards || [];
+    newDeck.bannerCards = (deck.bannerCards || []).map((cardcode) => data.cards[cardcode]);
     newDeck.drawCards = processCardCounts(deck.drawCards || [], data.cards);
     newDeck.plotCards = processCardCounts(deck.plotCards || [], data.cards);
+    newDeck.pool = deck.pool ? processCardCounts(deck.pool, data.cards) : undefined;
 
     const wrappedDeck = new DeckWrapper(newDeck);
 
@@ -48,7 +49,7 @@ function processCardCounts(cardCounts, cardData) {
     let cardCountsWithData = cardCounts.map((cardCount) => {
         return {
             count: cardCount.count,
-            card: cardCount.card.custom ? cardCount.card : cardData[cardCount.card.code]
+            card: cardData[cardCount.cardcode]
         };
     });
 

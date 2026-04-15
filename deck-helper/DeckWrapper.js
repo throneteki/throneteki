@@ -7,7 +7,9 @@ class DeckWrapper {
         this.eventId = rawDeck.eventId;
         this.faction = rawDeck.faction;
         this.format = rawDeck.format || 'joust';
+        this.variant = rawDeck.variant || 'standard';
         this.plotCards = rawDeck.plotCards;
+        this.pool = rawDeck.pool;
 
         this.agendas = [this.agenda, ...this.bannerCards].filter((agenda) => !!agenda);
 

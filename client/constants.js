@@ -4,8 +4,35 @@ export const ItemTypes = {
 };
 
 export const GameFormats = [
-    { name: 'joust', label: 'Joust', defaultMaxPlayers: 2 },
-    { name: 'melee', label: 'Melee', defaultMaxPlayers: 4, experimental: true }
+    {
+        name: 'joust',
+        label: 'Joust',
+        defaultMaxPlayers: 2,
+        variants: [
+            { name: 'standard', label: 'Standard' } //,
+            // { name: 'handoftheking', label: 'Hand of the King' }
+        ]
+    },
+    {
+        name: 'melee',
+        label: 'Melee',
+        defaultMaxPlayers: 4,
+        variants: [
+            { name: 'standard', label: 'Standard' } //,
+            // { name: 'kingsmoot', label: 'Kingsmoot' }
+        ],
+        experimental: true
+    },
+    {
+        name: 'draft',
+        label: 'Draft',
+        defaultMaxPlayers: 2,
+        variants: [
+            // { name: 'valyrian', label: 'Valyrian' },
+            { name: 'towerofjoy', label: 'Tower of Joy' }
+        ],
+        experimental: true
+    }
 ];
 
 export const GameTypes = [

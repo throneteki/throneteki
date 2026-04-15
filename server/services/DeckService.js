@@ -213,9 +213,12 @@ class DeckService {
         let properties = {
             username: deck.username,
             name: deck.name,
+            format: deck.format,
+            variant: deck.variant,
             plotCards: deck.plotCards,
             bannerCards: deck.bannerCards,
             drawCards: deck.drawCards,
+            pool: deck.pool,
             eventId: deck.eventId,
             faction: deck.faction,
             agenda: deck.agenda,
@@ -228,9 +231,12 @@ class DeckService {
     createStandalone(deck) {
         let properties = {
             name: deck.name,
+            format: deck.format,
+            variant: deck.variant,
             plotCards: deck.plotCards,
             bannerCards: deck.bannerCards,
             drawCards: deck.drawCards,
+            pool: deck.pool,
             faction: deck.faction,
             agenda: deck.agenda,
             lastUpdated: deck.lastUpdated,
@@ -259,9 +265,12 @@ class DeckService {
 
         let properties = {
             name: deck.name,
+            format: deck.format,
+            variant: deck.variant,
             plotCards: deck.plotCards,
             drawCards: deck.drawCards,
             bannerCards: deck.bannerCards,
+            pool: deck.pool,
             faction: deck.faction,
             eventId: deck.eventId,
             agenda: deck.agenda,

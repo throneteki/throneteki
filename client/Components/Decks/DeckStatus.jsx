@@ -12,10 +12,20 @@ import {
 import classNames from 'classnames';
 import { GameFormats } from '../../constants';
 
-const DeckStatus = ({ className, showDeckDetails = true, compact = false, status, gameFormat }) => {
+const DeckStatus = ({
+    className,
+    showDeckDetails = true,
+    compact = false,
+    status,
+    gameFormat,
+    gameVariant
+}) => {
     const [pointerType, setPointerType] = useState(false);
     const formatStatus = status[gameFormat];
-    const formatLabel = GameFormats.find((gf) => gf.name === gameFormat).label;
+    const format = GameFormats.find((gf) => gf.name === gameFormat);
+    const variant = format?.variants?.find((gv) => gv.name === gameVariant);
+    const formatLabel = format?.label;
+    const variantLabel = variant ? `${variant.label} ` : '';
 
     const statusInfo = (status) => {
         const label = deckStatusLabel(status) || 'Loading...';
@@ -76,7 +86,8 @@ const DeckStatus = ({ className, showDeckDetails = true, compact = false, status
                     <span className={`text-${info.color} flex flex-row gap-1 items-center`}>
                         {info.icon}
                         <b>
-                            {info.label} ({formatLabel})
+                            {info.label} ({variantLabel}
+                            {formatLabel})
                         </b>
                     </span>
                     <Divider />
