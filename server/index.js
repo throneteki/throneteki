@@ -3,7 +3,6 @@ import Lobby from './lobby.js';
 import pmx from 'pmx';
 import monk from 'monk';
 import ServiceFactory from './services/ServiceFactory.js';
-import CardService from './services/CardService.js';
 
 let configService = ServiceFactory.configService();
 
@@ -16,7 +15,7 @@ async function runServer() {
         options.db = db;
     });
 
-    options.cardService = new CardService(options.db);
+    options.cardService = ServiceFactory.cardService(options.db);
     let server = new Server(process.env.NODE_ENV !== 'production');
     let httpServer = await server.init(options);
     let lobby = new Lobby(httpServer, options);

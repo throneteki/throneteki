@@ -1,38 +1,17 @@
-class RestrictedList {
+class LegalityList {
     constructor(rules) {
         this.rules = rules;
     }
 
-    validate(deck, format = 'joust') {
+    validate(deck) {
         const cards = deck.getUniqueCards();
-        // Accounts for events, which do not have a specified format (yet)
-        // TODO: When events contain a format, move its chosen RL into "formats[thechosenformat]" instead of checking if formats does not exist
-        const formatRules = this.rules.formats
-            ? this.rules.formats[format]
-            : {
-                  restricted: this.rules.restricted,
-                  banned: this.rules.banned,
-                  pods: this.rules.pods
-              };
-
-        if (!formatRules && format === 'draft') {
-            return {
-                name: 'Tower of Joy',
-                valid: true,
-                version: ''
-            };
-        }
 
         const restrictedCardsOnList = cards.filter((card) =>
-            formatRules.restricted.includes(card.code)
+            this.rules.restricted.includes(card.code)
         );
-        const bannedCardsOnList = cards.filter((card) => formatRules.banned.includes(card.code));
+        const bannedCardsOnList = cards.filter((card) => this.rules.banned.includes(card.code));
 
         const errors = [];
-
-        if (format === 'draft' && deck.eventId !== this.rules._id) {
-            errors.push(`${this.rules.name} - Deck was not created for this event`);
-        }
 
         if (restrictedCardsOnList.length > 1) {
             errors.push(
@@ -46,7 +25,7 @@ class RestrictedList {
             );
         }
 
-        const formatPods = formatRules.pods || [];
+        const formatPods = this.rules.pods || [];
         const poddedCardsOnList = [];
         for (let i = 0; i < formatPods.length; i++) {
             const pod = formatPods[i];
@@ -109,4 +88,4 @@ class RestrictedList {
     }
 }
 
-export default RestrictedList;
+export default LegalityList;

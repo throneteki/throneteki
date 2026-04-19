@@ -1,10 +1,19 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Avatar, Button, Divider } from '@heroui/react';
 import Panel from '../Site/Panel';
 import DeckStatus from '../Decks/DeckStatus';
 import { Constants } from '../../constants';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faLock, faUnlock } from '@fortawesome/free-solid-svg-icons';
 
 const PendingGamePlayers = ({ currentGame, user, onSelectDeck }) => {
+    const isDeckLocked = useMemo(() => {
+        const currentPlayer = Object.values(currentGame.players).find(
+            (player) => player && player.name === user?.username
+        );
+        return currentGame.event?.lockDecks && currentPlayer.deck && currentPlayer.deck.locked;
+    }, [currentGame.event?.lockDecks, currentGame.players, user?.username]);
+
     return (
         <Panel title={'Players'}>
             <div className='flex flex-col gap-2'>
@@ -15,9 +24,17 @@ const PendingGamePlayers = ({ currentGame, user, onSelectDeck }) => {
                     let status = null;
 
                     if (player && player.deck?.selected) {
+                        const startContent = currentGame.event?.lockDecks ? (
+                            <FontAwesomeIcon icon={isDeckLocked ? faLock : faUnlock} />
+                        ) : null;
                         if (playerIsMe) {
                             deckButton = (
-                                <Button className='text-wrap' onPress={onSelectDeck}>
+                                <Button
+                                    className='text-wrap'
+                                    onPress={onSelectDeck}
+                                    isDisabled={isDeckLocked}
+                                    startContent={startContent}
+                                >
                                     {player.deck.name}
                                 </Button>
                             );
@@ -25,15 +42,13 @@ const PendingGamePlayers = ({ currentGame, user, onSelectDeck }) => {
                             deckButton = <Button isDisabled>Deck Selected</Button>;
                         }
 
-                        status = (
-                            <DeckStatus
-                                showDeckDetails={playerIsMe}
-                                status={player.deck.status[currentGame.restrictedList._id]}
-                                gameFormat={currentGame.gameFormat}
-                            />
-                        );
+                        status = <DeckStatus showDeckDetails={playerIsMe} deck={player.deck} />;
                     } else if (player && playerIsMe) {
-                        deckButton = <Button onPress={onSelectDeck}>Select Deck</Button>;
+                        deckButton = (
+                            <Button onPress={onSelectDeck} isDisabled={isDeckLocked}>
+                                Select Deck
+                            </Button>
+                        );
                     }
                     const userClass =
                         'username' +

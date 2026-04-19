@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
-import {
-    useGetCardsQuery,
-    useGetFactionsQuery,
-    useGetPacksQuery
-} from '../../redux/middleware/api';
+import { useGetCardsQuery, useGetPacksQuery } from '../../redux/middleware/api';
 import { processDeckText } from './DeckHelper';
-import { GameFormats } from '../../constants';
+import { Constants, GameFormats } from '../../constants';
 import {
     Button,
     Link,
@@ -36,11 +32,6 @@ const ImportDeckModal = ({
     const [isDraftpool, setIsDraftpool] = useState(false);
     const [gameVariant, setGameVariant] = useState(GameFormats[0].variants[0].name);
 
-    const {
-        data: factions,
-        isLoading: isFactionsLoading,
-        isError: isFactionsError
-    } = useGetFactionsQuery({});
     const { data: cards, isLoading: isCardsLoading, isError: isCardsError } = useGetCardsQuery({});
     const { data: packs, isLoading: isPacksLoading, isError: isPacksError } = useGetPacksQuery({});
 
@@ -52,13 +43,13 @@ const ImportDeckModal = ({
                         <ModalHeader className='flex flex-col gap-1'>Import Decklist</ModalHeader>
                         <ModalBody>
                             <div className='flex flex-col gap-2'>
-                                {(isFactionsError || isCardsError || isPacksError) && (
+                                {(isCardsError || isPacksError) && (
                                     <AlertPanel
                                         variant='danger'
                                         message='An error occured loading the card data. Please try again later'
                                     />
                                 )}
-                                {isFactionsLoading || isCardsLoading || isPacksLoading ? (
+                                {isCardsLoading || isPacksLoading ? (
                                     <LoadingSpinner />
                                 ) : (
                                     <>
@@ -132,7 +123,7 @@ const ImportDeckModal = ({
                                 onPress={async () => {
                                     setIsProcessing(true);
                                     const deck = processDeckText(
-                                        factions,
+                                        Constants.Factions,
                                         packs,
                                         cards,
                                         deckText,

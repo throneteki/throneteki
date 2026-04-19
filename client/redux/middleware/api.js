@@ -141,7 +141,11 @@ export const apiSlice = createApi({
                         pageSize: loadOptions.pageSize,
                         pageNumber: loadOptions.pageIndex,
                         sorting: loadOptions.sorting,
-                        filters: loadOptions.columnFilters
+                        filters: loadOptions.columnFilters,
+                        format: loadOptions.format,
+                        variant: loadOptions.variant,
+                        legality: loadOptions.legality,
+                        eventId: loadOptions.eventId
                     }
                 };
             },
@@ -158,7 +162,11 @@ export const apiSlice = createApi({
                         pageSize: loadOptions.pageSize,
                         pageNumber: loadOptions.pageIndex,
                         sorting: loadOptions.sorting,
-                        filters: loadOptions.columnFilters
+                        filters: loadOptions.columnFilters,
+                        format: loadOptions.format,
+                        variant: loadOptions.variant,
+                        legality: loadOptions.legality,
+                        eventId: loadOptions.eventId
                     }
                 };
             },
@@ -195,20 +203,6 @@ export const apiSlice = createApi({
                 ...(result.data || [].map(({ code }) => ({ type: TagTypes.Pack, code })))
             ]
         }),
-        getFactions: builder.query({
-            query: () => '/factions',
-            providesTags: (result = { data: [] }) => [
-                TagTypes.Faction,
-                ...(result.data || [].map(({ code }) => ({ type: TagTypes.Faction, code })))
-            ],
-            transformResponse: (response) => {
-                return response.reduce((acc, faction) => {
-                    acc[faction.value] = faction;
-
-                    return acc;
-                }, {});
-            }
-        }),
         addDeck: builder.mutation({
             query: (deck) => ({
                 url: '/decks/',
@@ -235,9 +229,15 @@ export const apiSlice = createApi({
             invalidatesTags: [TagTypes.Deck]
         }),
         getDeck: builder.query({
-            query: (deckId) => {
+            query: (loadOptions) => {
                 return {
-                    url: `/decks/${deckId}`
+                    url: `/decks/${loadOptions.deckId}`,
+                    params: {
+                        format: loadOptions.format,
+                        variant: loadOptions.variant,
+                        legality: loadOptions.legality,
+                        eventId: loadOptions.eventId
+                    }
                 };
             },
             providesTags: (_result, _error, arg) => [{ type: TagTypes.Deck, _id: arg }]
@@ -439,43 +439,13 @@ export const apiSlice = createApi({
             }),
             invalidatesTags: [TagTypes.AbuseBlock]
         }),
-        getDraftCubes: builder.query({
-            query: () => '/draft-cubes',
-            providesTags: (result = { data: [] }) => [
-                TagTypes.DraftCube,
-                ...(result.data || []).map(({ _id }) => ({ type: TagTypes.DraftCube, _id }))
-            ]
-        }),
-        getDraftCube: builder.query({
-            query: (draftCubeId) => {
-                return {
-                    url: `/draft-cubes/${draftCubeId}`
-                };
-            },
-            providesTags: (_result, _error, arg) => [{ type: TagTypes.DraftCube, _id: arg }]
-        }),
-        saveDraftCube: builder.mutation({
-            query: (draftCube) => ({
-                url: `/draft-cubes/${draftCube._id || ''}`,
-                method: draftCube._id ? 'PUT' : 'POST',
-                body: draftCube
-            }),
-            invalidatesTags: (result, error, arg) => [{ type: TagTypes.DraftCube, _id: arg._id }]
-        }),
-        deleteDraftCube: builder.mutation({
-            query: (draftCubeId) => ({
-                url: `/draft-cubes/${draftCubeId}`,
-                method: 'DELETE'
-            }),
-            invalidatesTags: [TagTypes.DraftCube]
-        }),
         saveEvent: builder.mutation({
             query: (event) => ({
                 url: `/events/${event._id || ''}`,
                 method: event._id ? 'PUT' : 'POST',
                 body: event
             }),
-            invalidatesTags: (result, error, arg) => [{ type: TagTypes.Event, _id: arg._id }]
+            invalidatesTags: (result, error, arg) => [{ type: TagTypes.Event, id: arg.id }]
         }),
         getEvent: builder.query({
             query: (eventId) => {
@@ -483,7 +453,7 @@ export const apiSlice = createApi({
                     url: `/events/${eventId}`
                 };
             },
-            providesTags: (_result, _error, arg) => [{ type: TagTypes.Event, _id: arg }]
+            providesTags: (_result, _error, arg) => [{ type: TagTypes.Event, id: arg }]
         }),
         deleteEvent: builder.mutation({
             query: (eventId) => ({
@@ -554,7 +524,6 @@ export const {
     useVerifyAuthenticationQuery,
     useLoginAccountMutation,
     useGetPacksQuery,
-    useGetFactionsQuery,
     useAddDeckMutation,
     useDeleteDeckMutation,
     useGetDeckQuery,
@@ -584,9 +553,6 @@ export const {
     useGetAbuseBlocksQuery,
     useAddAbuseBlockMutation,
     useRemoveAbuseBlockMutation,
-    useGetDraftCubesQuery,
-    useGetDraftCubeQuery,
-    useSaveDraftCubeMutation,
     useSaveEventMutation,
     useGetEventQuery,
     useDeleteEventMutation,
@@ -596,7 +562,6 @@ export const {
     useForgotPasswordMutation,
     useResetPasswordMutation,
     useLinkPatreonMutation,
-    useDeleteDraftCubeMutation,
     useRemoveMessageMutation,
     useDeleteDecksMutation
 } = apiSlice;

@@ -12,7 +12,9 @@ import Page from '../../pages/Page';
 const EditDeckPage = ({ deckId }) => {
     const dispatch = useDispatch();
 
-    const { data, isLoading, isError, isSuccess } = useGetDeckQuery(deckId);
+    const { data, isLoading, isError, isSuccess } = useGetDeckQuery({
+        deckId
+    });
 
     let content;
 

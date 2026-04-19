@@ -2,7 +2,6 @@ import cards from './cards/index.js';
 import DrawCard from './drawcard.js';
 import PlotCard from './plotcard.js';
 import AgendaCard from './agendacard.js';
-import Factions from './Factions.js';
 
 class Deck {
     constructor(data) {
@@ -11,13 +10,12 @@ class Deck {
 
     createFactionCard(player) {
         if (this.data.faction) {
-            let factionData = Factions.find((faction) => faction.value === this.data.faction.value);
             return new DrawCard(player, {
                 code: this.data.faction.value,
                 type: 'faction',
                 faction: this.data.faction.value,
-                name: factionData && factionData.name,
-                label: factionData && factionData.name
+                name: this.data.faction.name,
+                label: this.data.faction.name
             });
         }
 

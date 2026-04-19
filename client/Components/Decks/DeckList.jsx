@@ -6,6 +6,7 @@ import {
     faDownload,
     faFileCirclePlus,
     faHeart,
+    faLock,
     faTrashAlt
 } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as faHeartRegular } from '@fortawesome/free-regular-svg-icons';
@@ -29,11 +30,13 @@ import { Constants } from '../../constants';
 import ImportDeckModal from './ImportDeckModal';
 
 const DeckList = ({
+    format,
+    variant,
+    legality,
+    eventId,
     deckLoadFn = useGetDecksQuery,
     onDeckSelected,
-    readOnly,
-    gameFormat = 'joust',
-    restrictedList
+    readOnly
 }) => {
     const dispatch = useDispatch();
 
@@ -51,7 +54,14 @@ const DeckList = ({
                 accessorKey: 'name',
                 header: 'Name',
                 cell: (info) => {
-                    return <span className='cursor-pointer'>{info.getValue()}</span>;
+                    return (
+                        <span className='cursor-pointer flex gap-2 items-center'>
+                            {info.getValue()}
+                            {info.row.original.locked && (
+                                <FontAwesomeIcon className='ml-auto' icon={faLock} />
+                            )}
+                        </span>
+                    );
                 },
                 meta: {
                     colWidth: '50%',
@@ -137,15 +147,9 @@ const DeckList = ({
                 accessorKey: 'status',
                 cell: (info) => (
                     <div className='justify-content-center flex'>
-                        {restrictedList && gameFormat && (
-                            <div onPointerDown={(e) => e.stopPropagation()}>
-                                <DeckStatus
-                                    compact={'max-md'}
-                                    status={info.row.original.status[restrictedList]}
-                                    gameFormat={gameFormat}
-                                />
-                            </div>
-                        )}
+                        <div onPointerDown={(e) => e.stopPropagation()}>
+                            <DeckStatus compact='max-md' deck={info.row.original} />
+                        </div>
                     </div>
                 ),
                 header: 'Validity',
@@ -197,7 +201,7 @@ const DeckList = ({
                 enableColumnFilter: false
             }
         ],
-        [factionFilter, gameFormat, readOnly, restrictedList, toggleFavourite]
+        [factionFilter, readOnly, toggleFavourite]
     );
     const buttons = readOnly
         ? []
@@ -229,6 +233,7 @@ const DeckList = ({
             <ReactTable
                 buttons={buttons}
                 dataLoadFn={deckLoadFn}
+                dataLoadArg={{ format, variant, legality, eventId }}
                 defaultColumnFilters={{
                     'faction.name': Constants.Factions.filter(({ value }) =>
                         factionFilter.includes(value)

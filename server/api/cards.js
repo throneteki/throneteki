@@ -1,8 +1,7 @@
-import CardService from '../services/CardService.js';
-import Factions from '../game/Factions.js';
+import ServiceFactory from '../services/ServiceFactory.js';
 
 export const init = function (server, options) {
-    let cardService = new CardService(options.db);
+    let cardService = ServiceFactory.cardService(options.db);
 
     server.get('/api/cards', function (req, res, next) {
         cardService
@@ -24,10 +23,6 @@ export const init = function (server, options) {
             .catch((err) => {
                 return next(err);
             });
-    });
-
-    server.get('/api/factions', function (req, res) {
-        res.send({ success: true, data: Factions });
     });
 
     server.get('/api/restricted-list', function (req, res, next) {

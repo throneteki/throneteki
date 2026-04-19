@@ -11,6 +11,8 @@ import IPQualityScoreService from './IPQualityScoreService.js';
 import ProxyCheckService from './ProxyCheckService.js';
 import MaintenanceService from './MaintenanceService.js';
 import EmailService from './EmailService.js';
+import CardService from './CardService.js';
+import DeckService from './DeckService.js';
 
 let services = {};
 
@@ -68,6 +70,20 @@ export default {
         }
 
         return services.abuseService;
+    },
+    cardService: (db) => {
+        if (!services.cardService) {
+            services.cardService = new CardService(db);
+        }
+
+        return services.cardService;
+    },
+    deckService: (db) => {
+        if (!services.deckService) {
+            services.deckService = new DeckService(db);
+        }
+
+        return services.deckService;
     },
     eventService: (db) => {
         if (!services.eventService) {

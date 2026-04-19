@@ -6,7 +6,7 @@ import { useGetCardsQuery } from '../../redux/middleware/api';
 import LoadingSpinner from '../Site/LoadingSpinner';
 import CardHoverable from '../Images/CardHoverable';
 
-const AgendaSelect = ({ onBackClick, onNextClick }) => {
+const AgendaSelectStep = ({ onBackClick, onNextClick }) => {
     const { data, isLoading, isError } = useGetCardsQuery({});
     const [selectedAgendas, setAgendas] = useState([]);
     const agendas = useMemo(() => {
@@ -96,4 +96,4 @@ const AgendaSelect = ({ onBackClick, onNextClick }) => {
     );
 };
 
-export default AgendaSelect;
+export default AgendaSelectStep;

@@ -1,7 +1,9 @@
 import React from 'react';
 import { Input, Switch } from '@heroui/react';
+import { useFormikContext } from 'formik';
 
-const GameOptions = ({ formProps, isDisabled }) => {
+const GameOptions = ({ isDisabled }) => {
+    const { values, errors, touched, handleChange, getFieldProps } = useFormikContext();
     const options = [
         { name: 'allowSpectators', label: 'Allow spectators' },
         { name: 'showHand', label: 'Show hands to spectators' },
@@ -25,8 +27,8 @@ const GameOptions = ({ formProps, isDisabled }) => {
                                 className='mb-2'
                                 classNames={{ label: 'text-sm' }}
                                 name={option.name}
-                                onChange={formProps.handleChange}
-                                isSelected={formProps.values[option.name]}
+                                onChange={handleChange}
+                                isSelected={values[option.name]}
                                 isDisabled={isDisabled}
                             >
                                 {option.label}
@@ -36,7 +38,7 @@ const GameOptions = ({ formProps, isDisabled }) => {
                 </div>
             </div>
             <div className='flex flex-row gap-2 flex-wrap'>
-                {formProps.values.useGameTimeLimit && (
+                {values.useGameTimeLimit && (
                     <div>
                         <span className='relative text-foreground-500'>Time Limit</span>
                         <div className='flex gap-2'>
@@ -44,18 +46,15 @@ const GameOptions = ({ formProps, isDisabled }) => {
                                 label={'Limit (minutes)'}
                                 className='max-w-32'
                                 type='number'
-                                {...formProps.getFieldProps('gameTimeLimit')}
-                                isInvalid={
-                                    formProps.errors.gameTimeLimit &&
-                                    formProps.touched.gameTimeLimit
-                                }
-                                errorMessage={formProps.errors.gameTimeLimit}
+                                {...getFieldProps('gameTimeLimit')}
+                                isInvalid={errors.gameTimeLimit && touched.gameTimeLimit}
+                                errorMessage={errors.gameTimeLimit}
                                 isDisabled={isDisabled}
                             />
                         </div>
                     </div>
                 )}
-                {formProps.values.useChessClocks && (
+                {values.useChessClocks && (
                     <div>
                         <span className='relative text-foreground-500'>Chess Clock</span>
                         <div className='flex gap-2'>
@@ -63,24 +62,20 @@ const GameOptions = ({ formProps, isDisabled }) => {
                                 label={'Limit (minutes)'}
                                 className='max-w-32'
                                 type='number'
-                                {...formProps.getFieldProps('chessClockTimeLimit')}
+                                {...getFieldProps('chessClockTimeLimit')}
                                 isInvalid={
-                                    formProps.errors.chessClockTimeLimit &&
-                                    formProps.touched.chessClockTimeLimit
+                                    errors.chessClockTimeLimit && touched.chessClockTimeLimit
                                 }
-                                errorMessage={formProps.errors.chessClockTimeLimit}
+                                errorMessage={errors.chessClockTimeLimit}
                                 isDisabled={isDisabled}
                             />
                             <Input
                                 label={'Delay (seconds)'}
                                 className='max-w-32'
                                 type='number'
-                                {...formProps.getFieldProps('chessClockDelay')}
-                                isInvalid={
-                                    formProps.errors.chessClockDelay &&
-                                    formProps.touched.chessClockDelay
-                                }
-                                errorMessage={formProps.errors.chessClockDelay}
+                                {...getFieldProps('chessClockDelay')}
+                                isInvalid={errors.chessClockDelay && touched.chessClockDelay}
+                                errorMessage={errors.chessClockDelay}
                                 isDisabled={isDisabled}
                             />
                         </div>
