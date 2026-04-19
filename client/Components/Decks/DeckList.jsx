@@ -6,6 +6,7 @@ import {
     faDownload,
     faFileCirclePlus,
     faHeart,
+    faLock,
     faTrashAlt
 } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as faHeartRegular } from '@fortawesome/free-regular-svg-icons';
@@ -53,7 +54,14 @@ const DeckList = ({
                 accessorKey: 'name',
                 header: 'Name',
                 cell: (info) => {
-                    return <span className='cursor-pointer'>{info.getValue()}</span>;
+                    return (
+                        <span className='cursor-pointer flex gap-2 items-center'>
+                            {info.getValue()}
+                            {info.row.original.locked && (
+                                <FontAwesomeIcon className='ml-auto' icon={faLock} />
+                            )}
+                        </span>
+                    );
                 },
                 meta: {
                     colWidth: '50%',

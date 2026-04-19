@@ -18,6 +18,7 @@ import LoadingSpinner from '../Site/LoadingSpinner';
 import {
     useAddDeckMutation,
     useGetCardsQuery,
+    useGetEventQuery,
     useGetPacksQuery,
     useSaveDeckMutation
 } from '../../redux/middleware/api';
@@ -36,6 +37,8 @@ import LegalitySelect from '../Games/LegalitySelect';
 import FactionSelect from '../Games/FactionSelect';
 import DeckStatus from './DeckStatus';
 import { validateDeck } from '../../../deck-helper';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faLock } from '@fortawesome/free-solid-svg-icons';
 
 const SmallButton = extendVariants(Button, {
     variants: {
@@ -51,6 +54,7 @@ const DeckEditor = ({ deck, onBackClick }) => {
     const [addDeck, { isLoading: isAddLoading }] = useAddDeckMutation();
     const [saveDeck, { isLoading: isSaveLoading }] = useSaveDeckMutation();
     const { data: packs } = useGetPacksQuery();
+    const { data: lockedEvent } = useGetEventQuery(deck.eventId, { skip: !deck.eventId });
     const [factionFilter, setFactionFilter] = useState(
         [deck.faction.value]
             .concat(['neutral'])
@@ -92,6 +96,14 @@ const DeckEditor = ({ deck, onBackClick }) => {
             setCardsByCode(cards);
         }
     }, [deck.pool, cards]);
+
+    useEffect(() => {
+        if (lockedEvent) {
+            setGameFormat(lockedEvent.format);
+            setGameVariant(lockedEvent.variant);
+            setGameLegality(lockedEvent.legality);
+        }
+    }, [lockedEvent]);
 
     const convertToCardCodes = (cardList) => {
         return cardList?.map((cardQuantity) => ({
@@ -384,6 +396,7 @@ const DeckEditor = ({ deck, onBackClick }) => {
                 <Button
                     color='primary'
                     isLoading={isAddLoading || isSaveLoading}
+                    isDisabled={deck.locked}
                     onPress={() => onSaveClick(true)}
                 >
                     Save & Close
@@ -391,11 +404,14 @@ const DeckEditor = ({ deck, onBackClick }) => {
                 <Button
                     color='primary'
                     isLoading={isAddLoading || isSaveLoading}
+                    isDisabled={deck.locked}
                     onPress={() => onSaveClick(false)}
                 >
                     Save
                 </Button>
-                <Button onPress={() => setShowImportModal(true)}>Import</Button>
+                <Button onPress={() => setShowImportModal(true)} isDisabled={deck.locked}>
+                    Import
+                </Button>
             </div>
             <div className='columns-1 xl:columns-2 gap-4'>
                 <div className='flex flex-col gap-2 break-inside-avoid'>
@@ -406,6 +422,7 @@ const DeckEditor = ({ deck, onBackClick }) => {
                             value={deckName}
                             onValueChange={setDeckName}
                             label='Deck Name'
+                            isDisabled={deck.locked}
                         />
                         <FactionSelect
                             className='md:basis-1/3'
@@ -413,6 +430,7 @@ const DeckEditor = ({ deck, onBackClick }) => {
                             selected={faction}
                             onSelected={setFaction}
                             disallowEmptySelection
+                            isDisabled={deck.locked}
                         />
                     </div>
                     <div className='flex flex-col md:flex-row gap-2'>
@@ -420,7 +438,7 @@ const DeckEditor = ({ deck, onBackClick }) => {
                             label='Format'
                             selected={gameFormat}
                             onSelected={setGameFormat}
-                            isDisabled={!!deck.format}
+                            isDisabled={!!deck.format || deck.locked}
                             disallowEmptySelection
                             className='md:basis-1/3'
                         />
@@ -429,6 +447,7 @@ const DeckEditor = ({ deck, onBackClick }) => {
                             format={gameFormat}
                             selected={gameVariant}
                             onSelected={setGameVariant}
+                            isDisabled={!!deck.variant || deck.locked}
                             disallowEmptySelection
                             className='md:basis-1/3'
                         />
@@ -441,6 +460,7 @@ const DeckEditor = ({ deck, onBackClick }) => {
                                 setGameLegality(legality);
                                 setGameLegalityObj(legalityObj);
                             }}
+                            isDisabled={deck.locked}
                             className='md:basis-1/3'
                         />
                     </div>
@@ -475,42 +495,66 @@ const DeckEditor = ({ deck, onBackClick }) => {
                             <LoadingSpinner />
                         )}
                     </Card>
-                    <CardTypeFilter
-                        className='self-start'
-                        filter={typeFilter}
-                        setFilter={setTypeFilter}
-                        types={Constants.CardTypes.filter(({ value }) => value !== 'title')}
-                    />
-                    <FactionFilter
-                        className='self-start'
-                        filter={factionFilter}
-                        setFilter={setFactionFilter}
-                        factions={Constants.Factions.concat({ name: 'Neutral', value: 'neutral' })}
-                    />
-                    <div className='min-h-96 h-[50vh]'>
-                        <ReactTable
-                            dataLoadFn={() => ({
-                                data: cardsMemo,
-                                isLoading: false,
-                                isError: false
-                            })}
-                            defaultColumnFilters={{ type: typeFilter, faction: factionFilter }}
-                            defaultSort={[
-                                {
-                                    id: 'type',
-                                    desc: true
-                                }
-                            ]}
-                            disableSelection
-                            columns={columns}
-                            startPageNumber={pageNumber}
-                            onPageChanged={(page) => setPageNumber(page)}
-                            classNames={{
-                                td: 'max-sm:px-2',
-                                th: 'max-sm:px-2'
-                            }}
-                        />
-                    </div>
+                    {!deck.locked ? (
+                        <>
+                            <CardTypeFilter
+                                className='self-start'
+                                filter={typeFilter}
+                                setFilter={setTypeFilter}
+                                types={Constants.CardTypes.filter(({ value }) => value !== 'title')}
+                            />
+                            <FactionFilter
+                                className='self-start'
+                                filter={factionFilter}
+                                setFilter={setFactionFilter}
+                                factions={Constants.Factions.concat({
+                                    name: 'Neutral',
+                                    value: 'neutral'
+                                })}
+                            />
+                            <div className='min-h-96 h-[50vh]'>
+                                <ReactTable
+                                    dataLoadFn={() => ({
+                                        data: cardsMemo,
+                                        isLoading: false,
+                                        isError: false
+                                    })}
+                                    defaultColumnFilters={{
+                                        type: typeFilter,
+                                        faction: factionFilter
+                                    }}
+                                    defaultSort={[
+                                        {
+                                            id: 'type',
+                                            desc: true
+                                        }
+                                    ]}
+                                    disableSelection
+                                    columns={columns}
+                                    startPageNumber={pageNumber}
+                                    onPageChanged={(page) => setPageNumber(page)}
+                                    classNames={{
+                                        td: 'max-sm:px-2',
+                                        th: 'max-sm:px-2'
+                                    }}
+                                />
+                            </div>
+                        </>
+                    ) : (
+                        <AlertPanel
+                            variant='warning'
+                            title={
+                                <span>
+                                    <FontAwesomeIcon icon={faLock} /> Deck Locked
+                                </span>
+                            }
+                            size='md'
+                        >
+                            This deck has been used/locked for{' '}
+                            {lockedEvent ? <b>{lockedEvent.name}</b> : 'an event'}, and cannot be
+                            edited or deleted.
+                        </AlertPanel>
+                    )}
                 </div>
                 <DeckSummary
                     className='break-inside-avoid'
