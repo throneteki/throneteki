@@ -6,8 +6,8 @@ class DeckWrapper {
         this.drawCards = rawDeck.drawCards;
         this.eventId = rawDeck.eventId;
         this.faction = rawDeck.faction;
-        this.format = rawDeck.format ?? 'joust';
-        this.variant = rawDeck.variant ?? 'standard';
+        this.format = rawDeck.format;
+        this.variant = rawDeck.variant;
         this.plotCards = rawDeck.plotCards;
         this.pool = rawDeck.pool;
 
