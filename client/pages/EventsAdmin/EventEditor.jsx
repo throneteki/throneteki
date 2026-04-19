@@ -132,8 +132,8 @@ const EventEditor = ({ eventId }) => {
                 randomSeats: event?.eventGameOptions?.randomSeats ?? false,
                 allowMultipleWinners: event?.eventGameOptions?.allowMultipleWinners ?? false,
                 gameTimeLimit: event?.eventGameOptions?.gameTimeLimit ?? '',
-                checkClockTimeLimit: event?.eventGameOptions?.checkClockTimeLimit ?? '',
-                checkClockDelay: event?.eventGameOptions?.checkClockDelay ?? ''
+                chessClockTimeLimit: event?.eventGameOptions?.chessClockTimeLimit ?? '',
+                chessClockDelay: event?.eventGameOptions?.chessClockDelay ?? ''
             },
             restrictTableCreators: !!event?.validTableCreators,
             validTableCreators: event?.validTableCreators ?? [],
