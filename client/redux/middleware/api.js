@@ -141,7 +141,11 @@ export const apiSlice = createApi({
                         pageSize: loadOptions.pageSize,
                         pageNumber: loadOptions.pageIndex,
                         sorting: loadOptions.sorting,
-                        filters: loadOptions.columnFilters
+                        filters: loadOptions.columnFilters,
+                        format: loadOptions.format,
+                        variant: loadOptions.variant,
+                        legality: loadOptions.legality,
+                        eventId: loadOptions.eventId
                     }
                 };
             },
@@ -158,7 +162,11 @@ export const apiSlice = createApi({
                         pageSize: loadOptions.pageSize,
                         pageNumber: loadOptions.pageIndex,
                         sorting: loadOptions.sorting,
-                        filters: loadOptions.columnFilters
+                        filters: loadOptions.columnFilters,
+                        format: loadOptions.format,
+                        variant: loadOptions.variant,
+                        legality: loadOptions.legality,
+                        eventId: loadOptions.eventId
                     }
                 };
             },
@@ -221,9 +229,15 @@ export const apiSlice = createApi({
             invalidatesTags: [TagTypes.Deck]
         }),
         getDeck: builder.query({
-            query: (deckId) => {
+            query: (loadOptions) => {
                 return {
-                    url: `/decks/${deckId}`
+                    url: `/decks/${loadOptions.deckId}`,
+                    params: {
+                        format: loadOptions.format,
+                        variant: loadOptions.variant,
+                        legality: loadOptions.legality,
+                        eventId: loadOptions.eventId
+                    }
                 };
             },
             providesTags: (_result, _error, arg) => [{ type: TagTypes.Deck, _id: arg }]

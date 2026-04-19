@@ -34,6 +34,8 @@ import FormatSelect from '../Games/FormatSelect';
 import VariantSelect from '../Games/VariantSelect';
 import LegalitySelect from '../Games/LegalitySelect';
 import FactionSelect from '../Games/FactionSelect';
+import DeckStatus from './DeckStatus';
+import { validateDeck } from '../../../deck-helper';
 
 const SmallButton = extendVariants(Button, {
     variants: {
@@ -75,6 +77,7 @@ const DeckEditor = ({ deck, onBackClick }) => {
     const [gameFormat, setGameFormat] = useState(deck.format ?? 'joust');
     const [gameVariant, setGameVariant] = useState(null);
     const [gameLegality, setGameLegality] = useState(null);
+    const [gameLegalityObj, setGameLegalityObj] = useState(null);
     const [cardsByCode, setCardsByCode] = useState(cards);
 
     useEffect(() => {
@@ -142,11 +145,12 @@ const DeckEditor = ({ deck, onBackClick }) => {
             saveDeck.status = {};
         }
 
-        // saveDeck.status = validateDeck(fullCardsDeck, {
-        //     packs: packs,
-        //     gameFormats: GameFormats.map((gf) => gf.name),
-        //     restrictedLists
-        // });
+        saveDeck.status = validateDeck(fullCardsDeck, {
+            packs: packs,
+            format: gameFormat,
+            variant: gameVariant,
+            legality: gameLegalityObj
+        });
 
         return saveDeck;
     }, [
@@ -159,6 +163,9 @@ const DeckEditor = ({ deck, onBackClick }) => {
         deck.pool,
         deckName,
         deckCards,
+        gameFormat,
+        gameVariant,
+        gameLegalityObj,
         faction
     ]);
 
@@ -430,7 +437,10 @@ const DeckEditor = ({ deck, onBackClick }) => {
                             format={gameFormat}
                             variant={gameVariant}
                             selected={gameLegality}
-                            onSelected={setGameLegality}
+                            onSelected={(legality, legalityObj) => {
+                                setGameLegality(legality);
+                                setGameLegalityObj(legalityObj);
+                            }}
                             className='md:basis-1/3'
                         />
                     </div>
@@ -457,13 +467,7 @@ const DeckEditor = ({ deck, onBackClick }) => {
                                 </div>
                                 <div className='flex gap-2 items-center'>
                                     <div className='font-bold'>Validity:</div>
-                                    {/* <DeckStatus
-                                        status={deckToSave.status[currentRestrictedList._id]}
-                                        gameFormat={currentGameFormat || GameFormats[0].name}
-                                        gameVariant={
-                                            currentGameVariant || GameFormats[0].variants[0].name
-                                        }
-                                    /> */}
+                                    <DeckStatus deck={deckToSave} />
                                     <PoolInfo isPool={!!deck.pool} />
                                 </div>
                             </CardBody>

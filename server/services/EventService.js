@@ -1,15 +1,13 @@
 import logger from '../log.js';
-import DeckService from './DeckService.js';
-import CardService from './CardService.js';
+import ServiceFactory from './ServiceFactory.js';
 class EventService {
     constructor(db) {
         this.events = db.get('events');
-        this.cardService = new CardService(db);
-        this.deckService = new DeckService(db, this.cardService);
+        this.db = db;
     }
 
     async init() {
-        await this.deckService.init();
+        await ServiceFactory.deckService(this.db).init();
     }
 
     async getEvents() {
@@ -57,7 +55,7 @@ class EventService {
     }
 
     async delete(id) {
-        await this.deckService.removeEventIdAndUnlockDecks(id);
+        await ServiceFactory.deckService(this.db).removeEventIdAndUnlockDecks(id);
         return this.events.remove({ _id: id });
     }
 }

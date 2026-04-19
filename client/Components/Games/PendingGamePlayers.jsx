@@ -42,13 +42,7 @@ const PendingGamePlayers = ({ currentGame, user, onSelectDeck }) => {
                             deckButton = <Button isDisabled>Deck Selected</Button>;
                         }
 
-                        status = (
-                            <DeckStatus
-                                showDeckDetails={playerIsMe}
-                                status={player.deck.status[currentGame.restrictedList._id]}
-                                gameFormat={currentGame.gameFormat}
-                            />
-                        );
+                        status = <DeckStatus showDeckDetails={playerIsMe} deck={player.deck} />;
                     } else if (player && playerIsMe) {
                         deckButton = (
                             <Button onPress={onSelectDeck} isDisabled={isDeckLocked}>

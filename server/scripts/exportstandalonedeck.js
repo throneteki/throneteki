@@ -3,15 +3,12 @@
 const monk = require('monk');
 const ServiceFactory = require('../services/ServiceFactory.js');
 
-const CardService = require('../services/CardService');
-const DeckService = require('../services/DeckService');
-
 class ExportStandaloneDecks {
     constructor() {
         let configService = ServiceFactory.configService();
         this.db = monk(configService.getValue('dbPath'));
-        this.cardService = new CardService(this.db);
-        this.deckService = new DeckService(this.db, this.cardService);
+        this.cardService = ServiceFactory.cardService(this.db);
+        this.deckService = ServiceFactory.deckService(this.db);
     }
 
     async export(name) {

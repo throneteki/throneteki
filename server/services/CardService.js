@@ -75,6 +75,23 @@ class CardService {
         });
     }
 
+    async processLegality(format, variant, legality) {
+        if (!legality) {
+            return legality;
+        }
+        // Custom legality (return itself)
+        if (typeof legality === 'object') {
+            return legality;
+        }
+        const lists = await this.getRestrictedList();
+        // Latest (active) legality
+        if (legality === 'latest') {
+            return lists.find((l) => l.format === format && l.variant === variant && l.active);
+        }
+        // Specific legality by Id
+        return lists.find((l) => l._id === legality);
+    }
+
     compileLists(lists) {
         // Sort by newest first
         const sorted = lists.sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -95,7 +112,10 @@ class CardService {
                     date: legality.date,
                     issuer: legality.issuer,
                     official: true,
-                    active: false, // Actually set in setActiveLists
+                    active: false, // Actually set in setActiveLists,
+                    restricted: [],
+                    pods: [],
+                    banned: [],
                     ...details
                 };
                 compiled.push(data);

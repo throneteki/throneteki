@@ -2,14 +2,10 @@ import { Server as socketio } from 'socket.io';
 import Socket from './socket.js';
 import jwt from 'jsonwebtoken';
 import _ from 'underscore';
-import { validateDeck, formatDeckAsFullCards } from '../deck-helper/index.js';
 import logger from './log.js';
 import PendingGame from './pendinggame.js';
 import GameRouter from './gamerouter.js';
 import ServiceFactory from './services/ServiceFactory.js';
-import DeckService from './services/DeckService.js';
-import CardService from './services/CardService.js';
-import EventService from './services/EventService.js';
 import User from './models/User.js';
 import { sortBy } from './Array.js';
 
@@ -22,9 +18,9 @@ class Lobby {
         this.games = {};
         this.configService = options.configService || ServiceFactory.configService();
         this.messageService = options.messageService || ServiceFactory.messageService(options.db);
-        this.cardService = options.cardService || new CardService(options.db);
-        this.deckService = options.deckService || new DeckService(options.db, this.cardService);
-        this.eventService = options.eventService || new EventService(options.db);
+        this.cardService = options.cardService || ServiceFactory.cardService(options.db);
+        this.deckService = options.deckService || ServiceFactory.deckService(options.db);
+        this.eventService = options.eventService || ServiceFactory.eventService(options.db);
         this.userService =
             options.userService || ServiceFactory.userService(options.db, this.configService);
         this.router = options.router || new GameRouter(options.db);
@@ -750,32 +746,21 @@ class Lobby {
         }
     }
 
-    onSelectDeck(socket, deckId) {
-        let game = this.findGameForUser(socket.user.username);
+    async onSelectDeck(socket, deckId) {
+        const game = this.findGameForUser(socket.user.username);
         if (!game) {
             return;
         }
 
-        return Promise.all([this.cardService.getAllPacks(), this.deckService.getById(deckId)])
-            .then((results) => {
-                let [packs, formattedDeck] = results;
+        const deck = await this.deckService.getById(deckId, {
+            format: game.gameFormat,
+            variant: game.gameVariant,
+            legality: game.restrictedList,
+            eventId: game.event?._id
+        });
+        game.selectDeck(socket.user.username, deck);
 
-                formattedDeck.status = validateDeck(formattedDeck, {
-                    packs: packs,
-                    gameFormats: [game.gameFormat],
-                    restrictedLists: [game.restrictedList],
-                    includeExtendedStatus: false
-                });
-
-                game.selectDeck(socket.user.username, formattedDeck);
-
-                this.sendGameState(game);
-            })
-            .catch((err) => {
-                logger.info(err);
-
-                return;
-            });
+        this.sendGameState(game);
     }
 
     onConnectFailed(socket) {

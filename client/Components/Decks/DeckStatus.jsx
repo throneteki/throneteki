@@ -12,20 +12,12 @@ import {
 import classNames from 'classnames';
 import { GameFormats } from '../../constants';
 
-const DeckStatus = ({
-    className,
-    showDeckDetails = true,
-    compact = false,
-    status,
-    gameFormat,
-    gameVariant
-}) => {
+const DeckStatus = ({ className, showDeckDetails = true, compact = false, deck }) => {
     const [pointerType, setPointerType] = useState(false);
-    const formatStatus = status[gameFormat];
-    const format = GameFormats.find((gf) => gf.name === gameFormat);
-    const variant = format?.variants?.find((gv) => gv.name === gameVariant);
-    const formatLabel = format?.label;
-    const variantLabel = variant ? `${variant.label} ` : '';
+    const status = deck.status;
+    const formatInfo = GameFormats.find((gf) => gf.name === status.format);
+    const formatLabel = formatInfo?.label;
+    const variantLabel = formatInfo?.variants?.find((gv) => gv.name === status.variant)?.label;
 
     const statusInfo = (status) => {
         const label = deckStatusLabel(status) || 'Loading...';
@@ -55,7 +47,7 @@ const DeckStatus = ({
         return { label, icon, color };
     };
 
-    const info = statusInfo(formatStatus);
+    const info = statusInfo(status);
 
     const wrapperClass = useMemo(
         () =>
@@ -75,6 +67,10 @@ const DeckStatus = ({
         labelClass = `${compact}:hidden`;
     }
 
+    if (!status || !status.format || !status.variant || !status.legality) {
+        return null;
+    }
+
     return (
         <Tooltip
             placement={'right'}
@@ -86,15 +82,14 @@ const DeckStatus = ({
                     <span className={`text-${info.color} flex flex-row gap-1 items-center`}>
                         {info.icon}
                         <b>
-                            {info.label} ({variantLabel}
-                            {formatLabel})
+                            {info.label} ({variantLabel} {formatLabel})
                         </b>
                     </span>
                     <Divider />
-                    <DeckStatusSummary status={formatStatus} />
-                    {showDeckDetails && formatStatus.extendedStatus?.length > 0 && (
+                    <DeckStatusSummary status={status} />
+                    {showDeckDetails && status.extendedStatus?.length > 0 && (
                         <ul className='flex flex-col gap-1'>
-                            {formatStatus.extendedStatus.map((error, index) => (
+                            {status.extendedStatus.map((error, index) => (
                                 <li key={index}>
                                     <Divider />
                                     {error}

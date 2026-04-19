@@ -29,11 +29,13 @@ import { Constants } from '../../constants';
 import ImportDeckModal from './ImportDeckModal';
 
 const DeckList = ({
+    format,
+    variant,
+    legality,
+    eventId,
     deckLoadFn = useGetDecksQuery,
     onDeckSelected,
-    readOnly,
-    gameFormat = 'joust',
-    restrictedList
+    readOnly
 }) => {
     const dispatch = useDispatch();
 
@@ -137,15 +139,9 @@ const DeckList = ({
                 accessorKey: 'status',
                 cell: (info) => (
                     <div className='justify-content-center flex'>
-                        {restrictedList && gameFormat && (
-                            <div onPointerDown={(e) => e.stopPropagation()}>
-                                <DeckStatus
-                                    compact={'max-md'}
-                                    status={info.row.original.status[restrictedList]}
-                                    gameFormat={gameFormat}
-                                />
-                            </div>
-                        )}
+                        <div onPointerDown={(e) => e.stopPropagation()}>
+                            <DeckStatus compact='max-md' deck={info.row.original} />
+                        </div>
                     </div>
                 ),
                 header: 'Validity',
@@ -197,7 +193,7 @@ const DeckList = ({
                 enableColumnFilter: false
             }
         ],
-        [factionFilter, gameFormat, readOnly, restrictedList, toggleFavourite]
+        [factionFilter, readOnly, toggleFavourite]
     );
     const buttons = readOnly
         ? []
@@ -229,6 +225,7 @@ const DeckList = ({
             <ReactTable
                 buttons={buttons}
                 dataLoadFn={deckLoadFn}
+                dataLoadArg={{ format, variant, legality, eventId }}
                 defaultColumnFilters={{
                     'faction.name': Constants.Factions.filter(({ value }) =>
                         factionFilter.includes(value)

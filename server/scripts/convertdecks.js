@@ -1,60 +1,103 @@
 /*eslint no-console:0 */
-const monk = require('monk');
-const _ = require('underscore');
-const ServiceFactory = require('../services/ServiceFactory.js');
+import monk from 'monk';
+import ServiceFactory from '../services/ServiceFactory.js';
 
-let configService = ServiceFactory.configService();
-let db = monk(configService.getValue('dbPath'));
+const configService = ServiceFactory.configService();
+const db = monk(configService.getValue('dbPath'));
+const dbDecks = db.get('decks');
 
-let dbDecks = db.get('decks');
+const CHUNK_SIZE = 1000;
 
-const convertDecks = async () => {
-    let count = await dbDecks.count({});
-    console.info(count, 'decks to process');
-    let numberProcessed = 0;
-    let chunkSize = 5000;
+const convertDeck = (deck) => {
+    const updates = {};
 
-    while (numberProcessed < count) {
-        let decks = await dbDecks.find({}, { limit: chunkSize, skip: numberProcessed });
-        console.info('loaded', _.size(decks), 'decks');
-        for (let deck of decks) {
-            if (deck.agenda && typeof deck.agenda !== 'string') {
-                deck.agenda = deck.agenda.code;
-            }
-            if (deck.bannerCards && _.any(deck.bannerCards, (card) => typeof card !== 'string')) {
-                deck.bannerCards = _.map(deck.bannerCards, (card) => {
-                    return card.code;
-                });
-            }
-            if (
-                deck.plotCards &&
-                _.any(
-                    deck.plotCards,
-                    (cardQuantity) => typeof cardQuantity.cardcode === 'undefined'
-                )
-            ) {
-                deck.plotCards = _.map(deck.plotCards, (cardQuantity) => {
-                    return { cardcode: cardQuantity.card.code, count: cardQuantity.count };
-                });
-            }
-            if (
-                deck.drawCards &&
-                _.any(
-                    deck.drawCards,
-                    (cardQuantity) => typeof cardQuantity.cardcode === 'undefined'
-                )
-            ) {
-                deck.drawCards = _.map(deck.drawCards, (cardQuantity) => {
-                    return { cardcode: cardQuantity.card.code, count: cardQuantity.count };
-                });
-            }
-        }
-
-        numberProcessed += _.size(decks);
-        console.info('processed', numberProcessed, 'decks');
+    if (deck.agenda && typeof deck.agenda !== 'string') {
+        updates.agenda = deck.agenda.code;
     }
 
-    db.close();
+    if (deck.bannerCards?.some((card) => typeof card !== 'string')) {
+        updates.bannerCards = deck.bannerCards.map((card) => card.code);
+    }
+
+    if (deck.plotCards?.some((cq) => cq.cardcode === undefined)) {
+        updates.plotCards = deck.plotCards.map((cq) => ({
+            cardcode: cq.card.code,
+            count: cq.count
+        }));
+    }
+
+    if (deck.drawCards?.some((cq) => cq.cardcode === undefined)) {
+        updates.drawCards = deck.drawCards.map((cq) => ({
+            cardcode: cq.card.code,
+            count: cq.count
+        }));
+    }
+
+    return Object.keys(updates).length > 0 ? { id: deck._id, updates } : null;
+};
+
+const convertDecks = async () => {
+    const startTime = Date.now();
+    console.log(`[${new Date().toLocaleTimeString()}] Starting deck conversion...`);
+
+    const count = await dbDecks.count({});
+    console.log(
+        `[${new Date().toLocaleTimeString()}] Found ${count.toLocaleString()} decks to process`
+    );
+
+    let numberProcessed = 0;
+    let totalUpdated = 0;
+    let totalSkipped = 0;
+    let lastId = null;
+    let chunk = 0;
+
+    while (numberProcessed < count) {
+        chunk++;
+        const chunkStart = Date.now();
+
+        const query = lastId ? { _id: { $gt: lastId } } : {};
+        const decks = await dbDecks.find(query, { limit: CHUNK_SIZE, sort: { _id: 1 } });
+
+        if (decks.length === 0) {
+            console.log(`[${new Date().toLocaleTimeString()}] No more decks found, stopping early`);
+            break;
+        }
+
+        const mapped = decks.map(convertDeck);
+        const bulkOps = mapped.filter(Boolean).map(({ id, updates }) => ({
+            updateOne: {
+                filter: { _id: id },
+                update: { $set: updates }
+            }
+        }));
+
+        const skipped = mapped.filter((d) => d === null).length;
+        totalSkipped += skipped;
+
+        if (bulkOps.length > 0) {
+            await dbDecks.bulkWrite(bulkOps);
+        }
+
+        totalUpdated += bulkOps.length;
+        lastId = decks[decks.length - 1]._id;
+        numberProcessed += decks.length;
+
+        const chunkMs = Date.now() - chunkStart;
+        const percent = ((numberProcessed / count) * 100).toFixed(1);
+        console.log(
+            `[${new Date().toLocaleTimeString()}] Chunk ${chunk}: ${numberProcessed.toLocaleString()} / ${count.toLocaleString()} (${percent}%) — updated: ${bulkOps.length}, skipped: ${skipped} — chunk took ${chunkMs}ms`
+        );
+    }
+
+    const totalMs = Date.now() - startTime;
+    const totalSecs = (totalMs / 1000).toFixed(1);
+    console.log(`\n[${new Date().toLocaleTimeString()}] Conversion complete`);
+    console.log(`  Total processed : ${numberProcessed.toLocaleString()}`);
+    console.log(`  Total updated   : ${totalUpdated.toLocaleString()}`);
+    console.log(`  Total skipped   : ${totalSkipped.toLocaleString()}`);
+    console.log(`  Time taken      : ${totalSecs}s`);
+
+    await db.close();
 };
 
 convertDecks();

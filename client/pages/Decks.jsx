@@ -44,8 +44,9 @@ const Decks = () => {
                         />
                     </div>
                     <DeckList
-                        gameFormat={format}
-                        restrictedList={null}
+                        format={format}
+                        variant={variant}
+                        legality={legality}
                         onDeckSelected={(deck) => dispatch(navigate(`/decks/edit/${deck._id}/`))}
                     />
                 </div>

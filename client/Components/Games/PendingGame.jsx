@@ -212,9 +212,7 @@ const PendingGame = forwardRef(function PendingGame(_, ref) {
                         dispatch(sendSelectDeckMessage(deck._id));
                     }
                 }}
-                format={currentGame.gameFormat}
-                variant={currentGame.gameVariant}
-                legality={currentGame.gameLegality}
+                game={currentGame}
             />
             {
                 <Modal isOpen={!!confirmingDeck} onClose={() => setConfirmingDeck(undefined)}>

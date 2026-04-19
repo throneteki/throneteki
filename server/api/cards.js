@@ -1,7 +1,7 @@
-import CardService from '../services/CardService.js';
+import ServiceFactory from '../services/ServiceFactory.js';
 
 export const init = function (server, options) {
-    let cardService = new CardService(options.db);
+    let cardService = ServiceFactory.cardService(options.db);
 
     server.get('/api/cards', function (req, res, next) {
         cardService

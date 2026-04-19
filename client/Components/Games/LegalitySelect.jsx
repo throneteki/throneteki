@@ -19,7 +19,15 @@ const LegalitySelect = ({
 }) => {
     const { data, isLoading } = useGetRestrictedListQuery();
     const handleChange = (e) => {
-        onSelected(e.target.value);
+        let legalityObj = null;
+        if (e.target.value === 'latest') {
+            legalityObj = data.find(
+                (rl) => rl.format === format && rl.variant === variant && rl.active
+            );
+        } else {
+            legalityObj = data.find((rl) => rl._id === e.target.value);
+        }
+        onSelected(e.target.value, legalityObj);
     };
     const legalities = useMemo(() => {
         if (!format || !variant || !data) {
@@ -46,16 +54,19 @@ const LegalitySelect = ({
     useEffect(() => {
         // If legality no longer exists after data is updated, default it to latest, custom, or undefined
         let legality = legalities?.find((rl) => rl._id === selected);
+        let legalityObj = data?.find((rl) => rl._id === selected);
         if (!legality) {
-            const hasActive = data?.some(
+            const activeLegality = data?.find(
                 (rl) => rl.format === format && rl.variant === variant && rl.active
             );
-            if (hasActive) {
+            if (activeLegality) {
                 legality = 'latest';
+                legalityObj = activeLegality;
             } else if (allowCustom) {
                 legality = 'custom';
+                legalityObj = null;
             }
-            onSelected(legality);
+            onSelected(legality, legalityObj);
         }
     }, [allowCustom, data, format, legalities, onSelected, selected, variant]);
 
