@@ -6,8 +6,12 @@ class EventService {
         this.db = db;
     }
 
+    get deckService() {
+        return ServiceFactory.deckService(this.db);
+    }
+
     async init() {
-        await ServiceFactory.deckService(this.db).init();
+        await this.deckService.init();
     }
 
     async getEvents() {
@@ -55,7 +59,7 @@ class EventService {
     }
 
     async delete(id) {
-        await ServiceFactory.deckService(this.db).removeEventIdAndUnlockDecks(id);
+        await this.deckService.removeEventIdAndUnlockDecks(id);
         return this.events.remove({ _id: id });
     }
 }

@@ -1,6 +1,4 @@
 import DeckValidator from './DeckValidator.js';
-export { formatDeckAsFullCards } from './formatDeckAsFullCards.js';
-export { formatDeckAsShortCards } from './formatDeckAsShortCards.js';
 
 export const validateDeck = (deck, options) => {
     const { packs, format, variant, legality, customRules, includeExtendedStatus = true } = options;

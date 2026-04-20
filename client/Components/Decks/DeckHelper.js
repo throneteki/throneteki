@@ -1,6 +1,5 @@
+import { Constants } from '../../constants';
 import { lookupCardByName } from './DeckParser';
-
-const ALLIANCE_CODE = '06018';
 
 export function deckStatusLabel(status) {
     if (!status) {
@@ -272,12 +271,12 @@ const processPlainDeckText = (
         return null;
     }
 
-    const alliance = agendaCards.includes(ALLIANCE_CODE);
+    const alliance = agendaCards.includes(Constants.CardCodes.Alliance);
     if (agendaCards.length === 1) {
         agenda = agendaCards[0];
     } else if (agendaCards.length > 1 && alliance) {
-        agenda = ALLIANCE_CODE;
-        bannerCards = agendaCards.filter((card) => card.code !== ALLIANCE_CODE);
+        agenda = Constants.CardCodes.Alliance;
+        bannerCards = agendaCards.filter((card) => card.code !== Constants.CardCodes.Alliance);
     } else if (agendaCards.length > 1) {
         return null;
     }

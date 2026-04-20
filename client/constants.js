@@ -95,7 +95,10 @@ export const Constants = {
         { name: 'Attachment', value: 'attachment' },
         { name: 'Location', value: 'location' },
         { name: 'Event', value: 'event' }
-    ]
+    ],
+    CardCodes: {
+        Alliance: '06018'
+    }
 };
 
 for (const faction of Object.values(Constants.Factions)) {

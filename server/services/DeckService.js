@@ -1,4 +1,3 @@
-import { formatDeckAsFullCards } from '../../deck-helper/formatDeckAsFullCards.js';
 import { validateDeck } from '../../deck-helper/index.js';
 import logger from '../log.js';
 import ServiceFactory from './ServiceFactory.js';
@@ -9,37 +8,36 @@ class DeckService {
         this.db = db;
     }
 
+    get cardService() {
+        return ServiceFactory.cardService(this.db);
+    }
+
+    get eventService() {
+        return ServiceFactory.eventService(this.db);
+    }
+
     async init() {
-        this.packs = await ServiceFactory.cardService(this.db).getAllPacks();
-        this.cards = await ServiceFactory.cardService(this.db).getAllCards();
+        this.packs = await this.cardService.getAllPacks();
+        this.cards = await this.cardService.getAllCards();
     }
 
     processDeck = async (deck, options = {}) => {
         deck.locked = !!deck.eventId;
-        const formattedDeck = formatDeckAsFullCards(deck, {
-            cards: this.cards,
-            factions: this.factions
-        });
-
-        formattedDeck.status = {};
+        deck.status = {};
 
         let { eventId, format, variant, legality } = options;
         if (eventId && eventId !== 'none') {
-            const event = await ServiceFactory.eventService(this.db).getEventById(eventId);
+            const event = await this.eventService.getEventById(eventId);
             format = event.format;
             variant = event.variant;
             legality = event.legality;
         }
 
-        legality = await ServiceFactory.cardService(this.db).processLegality(
-            format,
-            variant,
-            legality
-        );
+        legality = await this.cardService.processLegality(format, variant, legality);
         // Only validate if all required parameters were provided
         // Note: Sometimes, deck validation is not needed, such as fetching deck id for deck update
         if (format && variant && legality) {
-            formattedDeck.status = validateDeck(formattedDeck, {
+            deck.status = validateDeck(deck, {
                 packs: this.packs,
                 format,
                 variant,
@@ -47,7 +45,7 @@ class DeckService {
             });
         }
 
-        return formattedDeck;
+        return deck;
     };
 
     async getById(id, options = {}) {
