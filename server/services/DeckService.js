@@ -1,3 +1,4 @@
+import { formatDeckAsFullCards } from '../../deck-helper/formatDeckAsFullCards.js';
 import { validateDeck } from '../../deck-helper/index.js';
 import logger from '../log.js';
 import ServiceFactory from './ServiceFactory.js';
@@ -37,7 +38,8 @@ class DeckService {
         // Only validate if all required parameters were provided
         // Note: Sometimes, deck validation is not needed, such as fetching deck id for deck update
         if (format && variant && legality) {
-            deck.status = validateDeck(deck, {
+            const fullDeck = formatDeckAsFullCards(deck, { cards: this.cards });
+            deck.status = validateDeck(fullDeck, {
                 packs: this.packs,
                 format,
                 variant,

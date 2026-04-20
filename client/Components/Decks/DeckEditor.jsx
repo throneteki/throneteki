@@ -17,9 +17,7 @@ import {
 import LoadingSpinner from '../Site/LoadingSpinner';
 import {
     useAddDeckMutation,
-    useGetCardsQuery,
     useGetEventQuery,
-    useGetPacksQuery,
     useSaveDeckMutation
 } from '../../redux/middleware/api';
 import { navigate } from '../../redux/reducers/navigation';
@@ -48,12 +46,10 @@ const SmallButton = extendVariants(Button, {
     }
 });
 
-const DeckEditor = ({ deck, onBackClick }) => {
+const DeckEditor = ({ deck, cards, packs, onBackClick }) => {
     const dispatch = useDispatch();
-    const { data: cards, isLoading, isError } = useGetCardsQuery({});
     const [addDeck, { isLoading: isAddLoading }] = useAddDeckMutation();
     const [saveDeck, { isLoading: isSaveLoading }] = useSaveDeckMutation();
-    const { data: packs } = useGetPacksQuery();
     const { data: lockedEvent } = useGetEventQuery(deck.eventId, { skip: !deck.eventId });
     const [factionFilter, setFactionFilter] = useState(
         [deck.faction.value]
@@ -356,16 +352,6 @@ const DeckEditor = ({ deck, onBackClick }) => {
     useEffect(() => {
         setFaction(deck.faction.value);
     }, [deck.faction?.value]);
-
-    if (isLoading || !packs) {
-        return <LoadingSpinner />;
-    } else if (isError) {
-        return (
-            <AlertPanel variant='danger'>
-                An error occurred loading data from the server. Please try again later.
-            </AlertPanel>
-        );
-    }
 
     const onSaveClick = async (andClose, savingDeck = deckToSave) => {
         try {
