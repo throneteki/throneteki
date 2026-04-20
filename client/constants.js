@@ -8,29 +8,20 @@ export const GameFormats = [
         name: 'joust',
         label: 'Joust',
         defaultMaxPlayers: 2,
-        variants: [
-            { name: 'standard', label: 'Standard' } //,
-            // { name: 'handoftheking', label: 'Hand of the King' }
-        ]
+        variants: [{ name: 'standard', label: 'Standard' }]
     },
     {
         name: 'melee',
         label: 'Melee',
         defaultMaxPlayers: 4,
-        variants: [
-            { name: 'standard', label: 'Standard' } //,
-            // { name: 'kingsmoot', label: 'Kingsmoot' }
-        ],
+        variants: [{ name: 'standard', label: 'Standard' }],
         experimental: true
     },
     {
         name: 'draft',
         label: 'Draft',
         defaultMaxPlayers: 2,
-        variants: [
-            // { name: 'valyrian', label: 'Valyrian' },
-            { name: 'towerofjoy', label: 'Tower of Joy' }
-        ],
+        variants: [{ name: 'towerofjoy', label: 'Tower of Joy' }],
         experimental: true
     }
 ];
