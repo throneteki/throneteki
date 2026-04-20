@@ -445,7 +445,7 @@ export const apiSlice = createApi({
                 method: event._id ? 'PUT' : 'POST',
                 body: event
             }),
-            invalidatesTags: (result, error, arg) => [{ type: TagTypes.Event, id: arg.id }]
+            invalidatesTags: (result, error, arg) => [{ type: TagTypes.Event, _id: arg._id }]
         }),
         getEvent: builder.query({
             query: (eventId) => {
@@ -453,7 +453,7 @@ export const apiSlice = createApi({
                     url: `/events/${eventId}`
                 };
             },
-            providesTags: (_result, _error, arg) => [{ type: TagTypes.Event, id: arg }]
+            providesTags: (_result, _error, arg) => [{ type: TagTypes.Event, _id: arg }]
         }),
         deleteEvent: builder.mutation({
             query: (eventId) => ({

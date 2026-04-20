@@ -29,9 +29,11 @@ class DeckService {
         let { eventId, format, variant, legality } = options;
         if (eventId && eventId !== 'none') {
             const event = await this.eventService.getEventById(eventId);
-            format = event.format;
-            variant = event.variant;
-            legality = event.legality;
+            if (event) {
+                format = event.format;
+                variant = event.variant;
+                legality = event.legality;
+            }
         }
 
         legality = await this.cardService.processLegality(format, variant, legality);
@@ -300,7 +302,7 @@ class DeckService {
     }
 
     async userAlreadyHasDeckForEvent(username, eventId) {
-        return !!this.getDeckForEvent(username, eventId);
+        return !!(await this.getDeckForEvent(username, eventId));
     }
 
     async getDeckForEvent(username, eventId) {
@@ -324,14 +326,11 @@ class DeckService {
     async useDeckForEvent(deckId, eventId) {
         const deck = await this.getById(deckId);
 
-        //if the eventId is set on the deck, check if the user already has a deck with the same eventId
-        if (deck.eventId) {
-            //if a deck for the event already exists, do not update the deck
-            if (await this.userAlreadyHasDeckForEvent(deck.username, deck.eventId)) {
-                throw new Error(
-                    `User ${deck.username} already has a deck configured for event ${deck.eventId}`
-                );
-            }
+        //if a deck for the event already exists, do not update the deck
+        if (await this.userAlreadyHasDeckForEvent(deck.username, eventId)) {
+            throw new Error(
+                `User ${deck.username} already has a deck configured for event ${eventId}`
+            );
         }
         return this.decks.update({ _id: deckId }, { $set: { eventId } });
     }
