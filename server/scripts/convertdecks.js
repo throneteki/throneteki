@@ -9,11 +9,7 @@ const dbDecks = db.get('decks');
 const CHUNK_SIZE = 1000;
 
 const convertDeck = (deck) => {
-    const updates = {
-        bannerCards: [],
-        plotCards: [],
-        drawCards: []
-    };
+    const updates = {};
 
     if (deck.agenda && typeof deck.agenda !== 'string') {
         updates.agenda = deck.agenda.code;
