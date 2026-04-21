@@ -118,7 +118,7 @@ const DeckEditor = ({ deck, cards, packs, onBackClick }) => {
             _id: deck._id,
             name: deckName,
             faction: Constants.Factions.find((f) => f.value === faction),
-            agenda: deck.agenda && cardsByCode[deck.agenda.code],
+            agenda: undefined,
             bannerCards: [],
             plotCards: [],
             drawCards: [],
@@ -127,9 +127,15 @@ const DeckEditor = ({ deck, cards, packs, onBackClick }) => {
             variant: deck.variant
         };
 
-        fullCardsDeck.bannerCards = deckCards
-            .filter((dc) => dc.card.code !== deck.agenda?.code && dc.card.type === 'agenda')
-            .map((c) => c.card);
+        const agendas = deckCards.filter((dc) => dc.card.type === 'agenda').map((c) => c.card);
+
+        const alliance = agendas.find((a) => a.code === Constants.CardCodes.Alliance);
+        if (alliance) {
+            fullCardsDeck.agenda = alliance;
+            fullCardsDeck.bannerCards = agendas.filter((a) => a.code !== fullCardsDeck.agenda.code);
+        } else {
+            fullCardsDeck.agenda = agendas[0];
+        }
 
         fullCardsDeck.plotCards = deckCards.filter((dc) => dc.card.type === 'plot');
 
@@ -165,7 +171,6 @@ const DeckEditor = ({ deck, cards, packs, onBackClick }) => {
         cardsByCode,
         packs,
         deck._id,
-        deck.agenda,
         deck.format,
         deck.variant,
         deck.pool,
