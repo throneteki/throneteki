@@ -75,20 +75,20 @@ class CardService {
         });
     }
 
-    async processLegality(format, variant, legality) {
+    async processLegality(format, variant, legality, event) {
         if (!legality) {
             return legality;
         }
-        // Custom legality (return itself)
-        if (typeof legality === 'object') {
-            return legality;
+        // Custom legality (only for events)
+        if (legality === 'custom' && !!event) {
+            return event.customLegality;
         }
         const lists = await this.getRestrictedList();
         // Latest (active) legality
         if (legality === 'latest') {
             return lists.find((l) => l.format === format && l.variant === variant && l.active);
         }
-        // Specific legality by Id
+        // Specific legality by Id (or null if none found)
         return lists.find((l) => l._id === legality);
     }
 

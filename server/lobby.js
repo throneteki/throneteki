@@ -527,7 +527,7 @@ class Lobby {
             async ([event, restrictedLists]) => {
                 let restrictedList;
                 if (gameDetails.gameLegality === 'custom') {
-                    restrictedList = event.legality;
+                    restrictedList = event.customLegality;
                 } else if (gameDetails.gameLegality === 'latest') {
                     restrictedList = restrictedLists.find(
                         (rl) =>

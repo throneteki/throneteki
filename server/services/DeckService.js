@@ -27,8 +27,9 @@ class DeckService {
         deck.status = {};
 
         let { eventId, format, variant, legality } = options;
+        let event = null;
         if (eventId && eventId !== 'none') {
-            const event = await this.eventService.getEventById(eventId);
+            event = await this.eventService.getEventById(eventId);
             if (event) {
                 format = event.format;
                 variant = event.variant;
@@ -36,16 +37,21 @@ class DeckService {
             }
         }
 
-        legality = await this.cardService.processLegality(format, variant, legality);
+        const legalityObj = await this.cardService.processLegality(
+            format,
+            variant,
+            legality,
+            event
+        );
         // Only validate if all required parameters were provided
         // Note: Sometimes, deck validation is not needed, such as fetching deck id for deck update
-        if (format && variant && legality) {
+        if (format && variant && legalityObj) {
             const fullDeck = formatDeckAsFullCards(deck, { cards: this.cards });
             deck.status = validateDeck(fullDeck, {
                 packs: this.packs,
                 format,
                 variant,
-                legality
+                legality: legalityObj
             });
         }
 

@@ -61,8 +61,7 @@ const NewGameForm = ({ quickJoin, onClosed = () => true }) => {
                     eventId: newEvent._id,
                     gameFormat: newEvent.format,
                     gameVariant: newEvent.variant,
-                    gameLegality:
-                        typeof newEvent.legality === 'object' ? 'custom' : newEvent.legality,
+                    gameLegality: newEvent.legality,
                     gameType: newEvent.gameType,
                     ...(newEvent.useEventGameOptions ? newEvent.eventGameOptions : {})
                 };

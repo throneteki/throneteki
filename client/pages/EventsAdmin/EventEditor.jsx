@@ -111,9 +111,9 @@ const EventEditor = ({ eventId }) => {
             name: event?.name ?? '',
             format: event?.format ?? 'joust',
             variant: event?.variant,
-            legality: typeof event?.legality === 'object' ? 'custom' : event?.legality,
+            legality: event?.legality,
             gameType: 'competitive',
-            customLegality: typeof event?.legality === 'object' ? event.legality : null,
+            customLegality: event?.customLegality,
             lockDecks: event?.lockDecks ?? false,
             useEventGameOptions: event?.useEventGameOptions ?? false,
             eventGameOptions: {
@@ -139,10 +139,9 @@ const EventEditor = ({ eventId }) => {
 
     const handleSubmit = useCallback(
         async (values) => {
-            const { customLegality, restrictTableCreators, restrictSpectators, ...rest } = values;
+            const { restrictTableCreators, restrictSpectators, ...rest } = values;
             const newEvent = {
                 ...rest,
-                legality: values.legality === 'custom' ? customLegality : values.legality,
                 validTableCreators: restrictTableCreators ? values.validTableCreators : undefined,
                 validSpectators: restrictSpectators ? values.validSpectators : undefined
             };

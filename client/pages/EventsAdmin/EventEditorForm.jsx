@@ -274,7 +274,7 @@ const EventEditorForm = ({ isNew, isSaving, dispatch }) => {
                                 <Textarea
                                     label='Valid Creators'
                                     rows='10'
-                                    value={values.validTableCreators?.join('\n') ?? ''}
+                                    defaultValue={values.validTableCreators?.join('\n') ?? ''}
                                     onValueChange={(value) =>
                                         setFieldValue('validTableCreators', getUsernameList(value))
                                     }
@@ -300,7 +300,7 @@ const EventEditorForm = ({ isNew, isSaving, dispatch }) => {
                                 <Textarea
                                     label='Valid Spectators'
                                     rows='10'
-                                    value={values.validSpectators?.join('\n') ?? ''}
+                                    defaultValue={values.validSpectators?.join('\n') ?? ''}
                                     onValueChange={(value) =>
                                         setFieldValue('validSpectators', getUsernameList(value))
                                     }

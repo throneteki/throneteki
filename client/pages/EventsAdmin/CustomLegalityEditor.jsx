@@ -21,7 +21,7 @@ import {
 import ThronesIcon from '../../Components/GameBoard/ThronesIcon';
 import CardHoverable from '../../Components/Images/CardHoverable';
 
-const CustomLegalityEditor = ({ format, variant, legality: initial, setLegality }) => {
+const CustomLegalityEditor = ({ format, variant, legality, setLegality }) => {
     const { data: restrictedLists, isLoading: isRLLoading } = useGetRestrictedListQuery();
     const { data: cards, isLoading: isCardsLoading } = useGetCardsQuery();
     const { data: packs, isLoading: isPacksLoading } = useGetPacksQuery();
@@ -29,9 +29,9 @@ const CustomLegalityEditor = ({ format, variant, legality: initial, setLegality 
 
     const [importSelect, setImportSelect] = useState();
 
-    const [restricted, setRestricted] = useState(initial?.restricted ?? []);
-    const [banned, setBanned] = useState(initial?.banned ?? []);
-    const [pods, setPods] = useState(initial?.pods ?? []);
+    const [restricted, setRestricted] = useState(legality?.restricted ?? []);
+    const [banned, setBanned] = useState(legality?.banned ?? []);
+    const [pods, setPods] = useState(legality?.pods ?? []);
     const [draftPod, setDraftPod] = useState([]);
 
     const [cardToAdd, setCardToAdd] = useState();
@@ -39,34 +39,34 @@ const CustomLegalityEditor = ({ format, variant, legality: initial, setLegality 
     useEffect(() => {
         setLegality({
             name: 'Custom',
-            restricted: initial?.restricted ?? [],
-            banned: initial?.banned ?? [],
-            pods: initial?.pods ?? []
+            restricted: legality?.restricted ?? [],
+            banned: legality?.banned ?? [],
+            pods: legality?.pods ?? []
         });
-    }, [initial?.banned, initial?.pods, initial?.restricted, setLegality]);
+    }, [legality?.banned, legality?.pods, legality?.restricted, setLegality]);
 
     const setRestrictedAndSync = useCallback(
         (val) => {
             setRestricted(val);
-            setLegality((prev) => ({ restricted: val, ...prev }));
+            setLegality({ ...legality, restricted: val });
         },
-        [setLegality]
+        [legality, setLegality]
     );
 
     const setBannedAndSync = useCallback(
         (val) => {
             setBanned(val);
-            setLegality((prev) => ({ banned: val, ...prev }));
+            setLegality({ ...legality, banned: val });
         },
-        [setLegality]
+        [legality, setLegality]
     );
 
     const setPodsAndSync = useCallback(
         (val) => {
             setPods(val);
-            setLegality((prev) => ({ pods: val, ...prev }));
+            setLegality({ ...legality, pods: val });
         },
-        [setLegality]
+        [legality, setLegality]
     );
 
     const compareByFactionNameRelease = useCallback(
