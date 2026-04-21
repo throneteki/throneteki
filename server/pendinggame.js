@@ -94,7 +94,7 @@ class PendingGame {
             return;
         }
 
-        player.agendas = [agenda, ...additional].map((agenda) => ({ cardData: agenda }));
+        player.agendas = [agenda, ...additional].map((agenda) => ({ cardData: { code: agenda } }));
     }
 
     // Actions
@@ -376,7 +376,7 @@ class PendingGame {
 
             //the agenda and faction should only be sent to the client if
             //1. the game is NOT private
-            //2. the game hasn´t started yet
+            //2. the game has started
             //3. agenda and faction are actually not undefined
             let agendas = [undefined];
             if (!this.gamePrivate && this.started && player.agendas) {
