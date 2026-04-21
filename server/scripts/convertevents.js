@@ -9,7 +9,7 @@ const dbEvents = db.get('events');
 const CHUNK_SIZE = 1000;
 
 const convertEvent = (event) => {
-    if (event.format !== undefined) {
+    if (event.format && event.variant && event.legality) {
         return null;
     }
 
