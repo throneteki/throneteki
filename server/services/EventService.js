@@ -1,11 +1,13 @@
 import logger from '../log.js';
-import DeckService from './DeckService.js';
-import CardService from './CardService.js';
+import ServiceFactory from './ServiceFactory.js';
 class EventService {
     constructor(db) {
         this.events = db.get('events');
-        this.cardService = new CardService(db);
-        this.deckService = new DeckService(db, this.cardService);
+        this.db = db;
+    }
+
+    get deckService() {
+        return ServiceFactory.deckService(this.db);
     }
 
     async init() {
@@ -43,12 +45,17 @@ class EventService {
     }
 
     async update(event) {
-        const { id, ...properties } = event;
+        const { _id, ...properties } = event;
 
-        return this.events.update({ _id: id }, { $set: properties }).catch((err) => {
-            logger.error('Unable to update event %s', err);
-            throw new Error('Unable to update event');
-        });
+        return this.events
+            .update({ _id }, { $set: properties })
+            .then(() => {
+                return event;
+            })
+            .catch((err) => {
+                logger.error('Unable to update event %s', err);
+                throw new Error('Unable to update event');
+            });
     }
 
     async delete(id) {

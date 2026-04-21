@@ -1,45 +1,65 @@
-import { GameFormats } from '../../client/constants.js';
 import { formatDeckAsFullCards } from '../../deck-helper/formatDeckAsFullCards.js';
 import { validateDeck } from '../../deck-helper/index.js';
 import logger from '../log.js';
+import ServiceFactory from './ServiceFactory.js';
 
 class DeckService {
-    constructor(db, cardService) {
+    constructor(db) {
         this.decks = db.get('decks');
-        this.cardService = cardService;
+        this.db = db;
+    }
+
+    get cardService() {
+        return ServiceFactory.cardService(this.db);
+    }
+
+    get eventService() {
+        return ServiceFactory.eventService(this.db);
     }
 
     async init() {
         this.packs = await this.cardService.getAllPacks();
-        this.gameFormats = GameFormats.map((gf) => gf.name);
-        this.restrictedLists = await this.cardService.getRestrictedList();
         this.cards = await this.cardService.getAllCards();
     }
 
-    processDeck = (deck) => {
-        let formattedDeck = formatDeckAsFullCards(deck, {
-            cards: this.cards,
-            factions: this.factions
-        });
-        //copy over the locked properties from the server deck object
-        formattedDeck.lockedForEditing = deck.lockedForEditing;
-        formattedDeck.lockedForDeletion = deck.lockedForDeletion;
+    processDeck = async (deck, options = {}) => {
+        deck.locked = !!deck.eventId;
+        deck.status = {};
 
-        formattedDeck.status = {};
+        let { eventId, format, variant, legality } = options;
+        let event = null;
+        if (eventId && eventId !== 'none') {
+            event = await this.eventService.getEventById(eventId);
+            if (event) {
+                format = event.format;
+                variant = event.variant;
+                legality = event.legality;
+            }
+        }
 
-        formattedDeck.status = validateDeck(formattedDeck, {
-            packs: this.packs,
-            gameFormats: this.gameFormats,
-            restrictedLists: this.restrictedLists
-        });
+        const legalityObj = await this.cardService.processLegality(
+            format,
+            variant,
+            legality,
+            event
+        );
+        // Only validate if all required parameters were provided
+        // Note: Sometimes, deck validation is not needed, such as fetching deck id for deck update
+        if (format && variant && legalityObj) {
+            const fullDeck = formatDeckAsFullCards(deck, { cards: this.cards });
+            deck.status = validateDeck(fullDeck, {
+                packs: this.packs,
+                format,
+                variant,
+                legality: legalityObj
+            });
+        }
 
-        return formattedDeck;
+        return deck;
     };
 
-    async getById(id) {
+    async getById(id, options = {}) {
         try {
-            this.restrictedLists = await this.cardService.getRestrictedList();
-
             const deck = await this.decks.findOne({ _id: id });
             if (!deck) {
                 return null;
@@ -47,7 +67,7 @@ class DeckService {
 
             deck.locked = !!deck.eventId; // lock the deck from further changes if the eventId is set //TODO refactor this when draft is finished
 
-            return this.processDeck(deck);
+            return await this.processDeck(deck, options);
         } catch (err) {
             logger.error('Unable to fetch deck %s', err);
             throw new Error('Unable to fetch deck ' + id);
@@ -58,7 +78,7 @@ class DeckService {
         return this.decks
             .findOne({ name })
             .then((deck) => {
-                deck.locked = deck.eventId ? true : false; // lock the deck from further changes if the eventId is set //TODO refactor this when draft is finished
+                deck.locked = !!deck.eventId; // lock the deck from further changes if the eventId is set //TODO refactor this when draft is finished
                 return deck;
             })
             .catch((err) => {
@@ -81,8 +101,6 @@ class DeckService {
         const pageSize = parseInt(options.pageSize, 10) || 10;
 
         filter.push({ id: 'username', value: username });
-
-        this.restrictedLists = await this.cardService.getRestrictedList();
 
         const baseMatch = {
             $and: filter.map((curr) => {
@@ -125,21 +143,15 @@ class DeckService {
             return { success: true, data: [], totalCount: 0, page, pageSize };
         }
 
-        const decks = Object.assign(
-            { totalCount: dbDecks[0].metadata[0].totalCount, page, pageSize },
-            {
-                success: true,
-                data: dbDecks[0].data.map((deck) => {
-                    deck.locked = !!deck.eventId;
-
-                    deck = this.processDeck(deck);
-
-                    return deck;
-                })
-            }
-        );
-
-        return decks;
+        const processedDecks = [];
+        for (const deck of dbDecks[0].data) {
+            const processedDeck = await this.processDeck(deck, options);
+            processedDecks.push(processedDeck);
+        }
+        return {
+            ...{ totalCount: dbDecks[0].metadata[0].totalCount, page, pageSize },
+            ...{ success: true, data: processedDecks }
+        };
     }
 
     removeEventIdAndUnlockDecks(eventId) {
@@ -190,12 +202,17 @@ class DeckService {
             }
         ]);
 
+        const processedDecks = [];
+        for (const deck of dbDecks[0].data) {
+            const processedDeck = await this.processDeck(deck, options);
+            processedDecks.push(processedDeck);
+        }
         return {
             totalCount: dbDecks[0].metadata[0].totalCount,
             page,
             pageSize,
             success: true,
-            data: dbDecks[0].data.map((deck) => this.processDeck(deck))
+            data: processedDecks
         };
     }
 
@@ -213,9 +230,12 @@ class DeckService {
         let properties = {
             username: deck.username,
             name: deck.name,
+            format: deck.format,
+            variant: deck.variant,
             plotCards: deck.plotCards,
             bannerCards: deck.bannerCards,
             drawCards: deck.drawCards,
+            pool: deck.pool,
             eventId: deck.eventId,
             faction: deck.faction,
             agenda: deck.agenda,
@@ -228,9 +248,12 @@ class DeckService {
     createStandalone(deck) {
         let properties = {
             name: deck.name,
+            format: deck.format,
+            variant: deck.variant,
             plotCards: deck.plotCards,
             bannerCards: deck.bannerCards,
             drawCards: deck.drawCards,
+            pool: deck.pool,
             faction: deck.faction,
             agenda: deck.agenda,
             lastUpdated: deck.lastUpdated,
@@ -259,9 +282,12 @@ class DeckService {
 
         let properties = {
             name: deck.name,
+            format: deck.format,
+            variant: deck.variant,
             plotCards: deck.plotCards,
             drawCards: deck.drawCards,
             bannerCards: deck.bannerCards,
+            pool: deck.pool,
             faction: deck.faction,
             eventId: deck.eventId,
             agenda: deck.agenda,
@@ -282,12 +308,37 @@ class DeckService {
     }
 
     async userAlreadyHasDeckForEvent(username, eventId) {
-        let deckForEventAlreadyExists = await this.decks
-            .findOne({ username: username, eventId: eventId })
-            .catch(() => {
-                throw new Error(`Unable to fetch deck with parameters ${username} and ${eventId}`);
+        return !!(await this.getDeckForEvent(username, eventId));
+    }
+
+    async getDeckForEvent(username, eventId) {
+        try {
+            const deck = await this.decks.findOne({ username, eventId });
+
+            if (!deck) {
+                return null;
+            }
+
+            deck.locked = true;
+
+            return await this.processDeck(deck, {
+                eventId
             });
-        return !!deckForEventAlreadyExists;
+        } catch (err) {
+            throw new Error(`Unable to fetch deck with parameters ${username} and ${eventId}`);
+        }
+    }
+
+    async useDeckForEvent(deckId, eventId) {
+        const deck = await this.getById(deckId);
+
+        //if a deck for the event already exists, do not update the deck
+        if (await this.userAlreadyHasDeckForEvent(deck.username, eventId)) {
+            throw new Error(
+                `User ${deck.username} already has a deck configured for event ${eventId}`
+            );
+        }
+        return this.decks.update({ _id: deckId }, { $set: { eventId } });
     }
 }
 

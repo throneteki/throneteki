@@ -1,3 +1,4 @@
+import { Constants } from '../../constants';
 import { lookupCardByName } from './DeckParser';
 
 export function deckStatusLabel(status) {
@@ -20,18 +21,22 @@ export function deckStatusLabel(status) {
     return 'Legal';
 }
 
-export function cardSetLabel(cardSet) {
-    switch (cardSet) {
-        case 'redesign':
-            return 'Standard';
-        case 'original':
-            return 'Valyrian';
+const parseCardLine = (packs, cards, line) => {
+    const { count, name } = parseCardCount(line);
+    if (!count || count === 0 || !name) {
+        return { count: 0 };
     }
 
-    return 'Unknown';
-}
+    const card = lookupCardByName({
+        cardName: name,
+        cards: Object.values(cards),
+        packs: packs
+    });
 
-const parseCardLine = (packs, cards, line) => {
+    return { count: count, card: card };
+};
+
+const parseCardCount = (line) => {
     const pattern = /^(\d+)x?\s+(.+)$/;
 
     const match = line.trim().match(pattern);
@@ -40,27 +45,58 @@ const parseCardLine = (packs, cards, line) => {
     }
 
     const count = parseInt(match[1]);
-    const card = lookupCardByName({
-        cardName: match[2],
-        cards: Object.values(cards),
-        packs: packs
-    });
-
-    return { count: count, card: card };
+    return { count: count, name: match[2] };
 };
 
-const addCard = (list, card, number) => {
-    const cardCode = parseInt(card.code);
-    if (list[cardCode]) {
-        list[cardCode].count += number;
+const addCard = (list, card, number, isDraftpool = false) => {
+    let existingCard = list.find((item) => item.cardcode === card.code);
+    if (existingCard) {
+        existingCard.count += number;
+        existingCard.count = isDraftpool
+            ? existingCard.count
+            : Math.min(existingCard.count, card.deckLimit);
     } else {
-        list.push({ count: number, card: card });
+        const count = isDraftpool ? number : Math.min(number, card.deckLimit);
+        list.push({ cardcode: card.code, count: count });
     }
 };
 
-export const processThronesDbDeckText = (factions, packs, cards, deckText) => {
+export const processDeckText = (
+    factions,
+    packs,
+    cards,
+    deckText,
+    gameFormat,
+    gameVariant,
+    isDraftpool = false
+) => {
+    return (
+        processThronesDbDeckText(
+            factions,
+            packs,
+            cards,
+            deckText,
+            gameFormat,
+            gameVariant,
+            isDraftpool
+        ) ??
+        processPlainDeckText(factions, packs, cards, deckText, gameFormat, gameVariant, isDraftpool)
+    );
+};
+
+const processThronesDbDeckText = (
+    factions,
+    packs,
+    cards,
+    deckText,
+    gameFormat,
+    gameVariant,
+    isDraftpool = false
+) => {
     let split = deckText.split('\n');
     let deckName, faction, agenda, bannerCards;
+
+    const pool = isDraftpool ? [] : undefined;
 
     const headerMark = split.findIndex((line) => line.match(/^Packs:/));
     if (headerMark >= 0) {
@@ -102,7 +138,10 @@ export const processThronesDbDeckText = (factions, packs, cards, deckText) => {
                     packs: packs
                 });
                 if (newAgenda) {
-                    agenda = newAgenda;
+                    agenda = newAgenda.code;
+                    if (isDraftpool) {
+                        addCard(pool, newAgenda, 1, isDraftpool);
+                    }
                 }
 
                 if (rawBanners) {
@@ -114,7 +153,10 @@ export const processThronesDbDeckText = (factions, packs, cards, deckText) => {
                             packs: packs
                         });
                         if (banner) {
-                            banners.push(banner);
+                            banners.push(banner.code);
+                            if (isDraftpool) {
+                                addCard(pool, banner, 1, isDraftpool);
+                            }
                         }
                     }
 
@@ -132,7 +174,10 @@ export const processThronesDbDeckText = (factions, packs, cards, deckText) => {
     for (const line of split) {
         const { card, count } = parseCardLine(packs, cards, line);
         if (card) {
-            addCard(card.type === 'plot' ? plotCards : drawCards, card, count);
+            addCard(card.type === 'plot' ? plotCards : drawCards, card, count, isDraftpool);
+            if (isDraftpool) {
+                addCard(pool, card, count, isDraftpool);
+            }
         }
     }
 
@@ -144,8 +189,109 @@ export const processThronesDbDeckText = (factions, packs, cards, deckText) => {
         name: deckName,
         faction: faction,
         agenda: agenda,
-        bannerCards: bannerCards,
+        bannerCards: bannerCards ?? [],
         plotCards: plotCards,
-        drawCards: drawCards
+        drawCards: drawCards,
+        format: gameFormat,
+        variant: gameVariant,
+        pool: pool
+    };
+};
+
+const processPlainDeckText = (
+    factions,
+    packs,
+    cards,
+    deckText,
+    gameFormat,
+    gameVariant,
+    isDraftpool = false
+) => {
+    let split = deckText.split('\n');
+    let faction, agenda, bannerCards;
+    let sideboard = false;
+
+    const pool = isDraftpool ? [] : undefined;
+    const plotCards = [];
+    const drawCards = [];
+    const agendaCards = [];
+
+    for (const line of split) {
+        if (line.trim() === '') {
+            if (isDraftpool) {
+                // when importing a draft pool, after the first empty line, treat all cards as sideboard cards
+                // any additional cards are not included in the deck, only the pool
+                sideboard = true;
+            }
+            continue;
+        }
+
+        let { count, name } = parseCardCount(line);
+        if (!count || count === 0 || !name) {
+            count = 1;
+            name = line.trim();
+        }
+        const newFaction = Object.values(factions).find(
+            (faction) => faction.name.localeCompare(name, 'en', { sensitivity: 'base' }) === 0
+        );
+        if (!sideboard && newFaction) {
+            if (faction) {
+                return null; // Faction already set, invalid deck
+            }
+            console.log(`Setting faction: ${newFaction.name}`);
+            faction = newFaction;
+        } else {
+            const card = lookupCardByName({
+                cardName: name,
+                cards: Object.values(cards),
+                packs: packs
+            });
+            if (card) {
+                if (isDraftpool) {
+                    addCard(pool, card, count, isDraftpool); // include all cards in the pool when importing a draft pool
+                    if (sideboard) {
+                        continue; // don't include sideboard (draft pool) cards in the deck
+                    }
+                }
+                switch (card.type) {
+                    case 'agenda':
+                        agendaCards.push(card);
+                        break;
+                    case 'plot':
+                        addCard(plotCards, card, count, isDraftpool);
+                        break;
+                    default:
+                        addCard(drawCards, card, count, isDraftpool);
+                }
+            }
+        }
+    }
+
+    if (!faction || !faction.value) {
+        return null;
+    }
+
+    const alliance = agendaCards.includes(Constants.CardCodes.Alliance);
+    if (agendaCards.length === 1) {
+        agenda = agendaCards[0];
+    } else if (agendaCards.length > 1 && alliance) {
+        agenda = Constants.CardCodes.Alliance;
+        bannerCards = agendaCards.filter((card) => card.code !== Constants.CardCodes.Alliance);
+    } else if (agendaCards.length > 1) {
+        return null;
+    }
+
+    var name = `${faction.name} ${agenda ? '- ' + agenda.name + ' ' : ''} (Imported Deck)`;
+
+    return {
+        name: name,
+        faction: faction,
+        agenda: agenda?.code,
+        bannerCards: bannerCards ?? [],
+        plotCards: plotCards,
+        drawCards: drawCards,
+        format: gameFormat,
+        variant: gameVariant,
+        pool: pool
     };
 };

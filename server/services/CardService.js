@@ -2,14 +2,20 @@ import fs from 'fs';
 import path from 'path';
 import moment from 'moment';
 import logger from '../log.js';
+import startCase from 'lodash.startcase';
 
 const __dirname = import.meta.dirname;
+
+const defaultVariant = {
+    joust: 'standard',
+    melee: 'standard',
+    draft: 'valyrian'
+};
 
 class CardService {
     constructor(db) {
         this.cards = db.get('cards');
         this.packs = db.get('packs');
-        this.events = db.get('events');
     }
 
     replaceCards(cards) {
@@ -60,68 +66,87 @@ class CardService {
                     if (err) {
                         return reject(err);
                     }
+                    const jsonData = JSON.parse(data);
+                    const lists = this.compileLists(jsonData);
 
-                    const officialLists = this.convertOfficialListToNewFormat(
-                        JSON.parse(data)
-                    ).sort((a, b) => {
-                        // default to redesigned versions of cards.
-                        if (a.cardSet === 'original' && b.cardSet !== 'original') {
-                            return 1;
-                        }
-
-                        return a.date > b.date ? -1 : 1;
-                    });
-
-                    this.events
-                        .find({})
-                        .then((events) => {
-                            resolve(officialLists.concat(events));
-                        })
-                        .catch((err) => {
-                            logger.info(`Unable to load events: ${err}`);
-                            resolve(officialLists);
-                        });
+                    resolve(lists);
                 }
             );
         });
     }
 
-    convertOfficialListToNewFormat(versions) {
-        const cardSets = [...new Set(versions.map((version) => version.cardSet))];
-        return cardSets.map((cardSet) => {
-            const activeVersion = this.getActiveVersion(versions, cardSet);
-            const formats = activeVersion.formats.reduce((acc, format) => {
-                acc[format.name] = {
-                    restricted: format.restricted,
-                    banned: activeVersion.bannedCards.concat(format.banned || []),
-                    pods: format.pods
-                };
-                return acc;
-            }, {});
-            return {
-                _id: activeVersion.code,
-                name: activeVersion.name,
-                date: activeVersion.date,
-                issuer: activeVersion.issuer,
-                cardSet: activeVersion.cardSet,
-                version: activeVersion.version,
-                official: true,
-                formats
-            };
-        });
+    async processLegality(format, variant, legality, event) {
+        if (!legality) {
+            return legality;
+        }
+        // Custom legality (only for events)
+        if (legality === 'custom' && !!event) {
+            return event.customLegality;
+        }
+        const lists = await this.getRestrictedList();
+        // Latest (active) legality
+        if (legality === 'latest') {
+            return lists.find((l) => l.format === format && l.variant === variant && l.active);
+        }
+        // Specific legality by Id (or null if none found)
+        return lists.find((l) => l._id === legality);
     }
 
-    getActiveVersion(versions, cardSet) {
-        const now = moment();
-        const versionsForCardset = versions.filter((version) => version.cardSet === cardSet);
-        return versionsForCardset.reduce((max, list) => {
-            let effectiveDate = moment(list.date, 'YYYY-MM-DD');
-            if (effectiveDate <= now && effectiveDate > moment(max.date, 'YYYY-MM-DD')) {
-                return list;
+    compileLists(lists) {
+        // Sort by newest first
+        const sorted = lists.sort((a, b) => new Date(b.date) - new Date(a.date));
+        const compiled = [];
+        for (const legality of sorted) {
+            for (const list of legality.formats) {
+                const { name: lName, variant: lVariant, ...details } = list;
+                const format = lName;
+                const variant = lVariant ?? defaultVariant[format];
+                const version = legality.version;
+                const name = `${startCase(`${format} ${variant}`)} ${version}`;
+                const data = {
+                    _id: `${legality.code}_${format}_${variant}`,
+                    format,
+                    variant,
+                    name,
+                    version,
+                    date: legality.date,
+                    issuer: legality.issuer,
+                    official: true,
+                    active: false, // Actually set in setActiveLists,
+                    restricted: [],
+                    pods: [],
+                    banned: [],
+                    ...details
+                };
+                compiled.push(data);
             }
+        }
 
-            return max;
-        });
+        this.setActiveLists(compiled);
+
+        return compiled;
+    }
+    setActiveLists(compiled) {
+        const today = moment().startOf('day');
+
+        const closest = {};
+
+        for (const item of compiled) {
+            const date = moment(item.date, 'YYYY-MM-DD');
+
+            if (!date.isSameOrBefore(today)) continue;
+
+            const key = `${item.format}__${item.variant}`;
+            if (!closest[key] || date.isAfter(moment(closest[key].date, 'YYYY-MM-DD'))) {
+                closest[key] = item;
+            }
+        }
+
+        for (const item of Object.values(closest)) {
+            item.active = true;
+        }
+
+        return compiled;
     }
 }
 

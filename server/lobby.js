@@ -2,14 +2,10 @@ import { Server as socketio } from 'socket.io';
 import Socket from './socket.js';
 import jwt from 'jsonwebtoken';
 import _ from 'underscore';
-import { validateDeck, formatDeckAsFullCards } from '../deck-helper/index.js';
 import logger from './log.js';
 import PendingGame from './pendinggame.js';
 import GameRouter from './gamerouter.js';
 import ServiceFactory from './services/ServiceFactory.js';
-import DeckService from './services/DeckService.js';
-import CardService from './services/CardService.js';
-import EventService from './services/EventService.js';
 import User from './models/User.js';
 import { sortBy } from './Array.js';
 
@@ -22,9 +18,9 @@ class Lobby {
         this.games = {};
         this.configService = options.configService || ServiceFactory.configService();
         this.messageService = options.messageService || ServiceFactory.messageService(options.db);
-        this.cardService = options.cardService || new CardService(options.db);
-        this.deckService = options.deckService || new DeckService(options.db, this.cardService);
-        this.eventService = options.eventService || new EventService(options.db);
+        this.cardService = options.cardService || ServiceFactory.cardService(options.db);
+        this.deckService = options.deckService || ServiceFactory.deckService(options.db);
+        this.eventService = options.eventService || ServiceFactory.eventService(options.db);
         this.userService =
             options.userService || ServiceFactory.userService(options.db, this.configService);
         this.router = options.router || new GameRouter(options.db);
@@ -479,7 +475,7 @@ class Lobby {
         }
     }
 
-    onNewGame(socket, gameDetails) {
+    async onNewGame(socket, gameDetails) {
         if (this.isUserRestricted(socket.user)) {
             socket.send(
                 'gameerror',
@@ -505,7 +501,7 @@ class Lobby {
             );
 
             if (gameToJoin) {
-                let message = gameToJoin.join(socket.id, socket.user);
+                let message = await gameToJoin.join(socket.id, socket.user);
                 if (message) {
                     socket.send('passworderror', message);
 
@@ -528,38 +524,30 @@ class Lobby {
                 : this.eventService.getEventById(gameDetails.eventId);
 
         return Promise.all([eventResult, restrictedListsResult]).then(
-            ([event, restrictedLists]) => {
-                const defaultRestrictedList = restrictedLists[0];
+            async ([event, restrictedLists]) => {
                 let restrictedList;
-
-                //when there is no event chosen for the game, use the restricted list that was chosen or the default restricted list (first one in the list)
-                if (gameDetails.eventId === 'none') {
-                    restrictedList =
-                        restrictedLists.find(
-                            (restrictedList) => restrictedList._id === gameDetails.restrictedListId
-                        ) || defaultRestrictedList;
-                    //when there is an event chosen for the game, check if the event uses a custom or a default restricted list
+                if (gameDetails.gameLegality === 'custom') {
+                    restrictedList = event.customLegality;
+                } else if (gameDetails.gameLegality === 'latest') {
+                    restrictedList = restrictedLists.find(
+                        (rl) =>
+                            rl.format === gameDetails.gameFormat &&
+                            rl.variant === gameDetails.gameVariant &&
+                            rl.active
+                    );
                 } else {
-                    if (event.useDefaultRestrictedList && event.defaultRestrictedList) {
-                        restrictedList =
-                            restrictedLists.find(
-                                (restrictedList) =>
-                                    restrictedList.name === event.defaultRestrictedList
-                            ) || defaultRestrictedList;
-                    } else {
-                        restrictedList =
-                            restrictedLists.find(
-                                (restrictedList) => restrictedList.name === event.name
-                            ) || defaultRestrictedList;
-                    }
+                    restrictedList = restrictedLists.find(
+                        (l) => l._id === gameDetails.gameLegality
+                    );
                 }
 
                 let game = new PendingGame(socket.user, this.instance, {
                     event,
                     restrictedList,
-                    ...gameDetails
+                    ...gameDetails,
+                    deckService: this.deckService
                 });
-                game.newGame(socket.id, socket.user, gameDetails.password, true);
+                await game.newGame(socket.id, socket.user, gameDetails.password, true);
 
                 socket.joinChannel(game.id);
                 this.sendGameState(game);
@@ -570,7 +558,7 @@ class Lobby {
         );
     }
 
-    onJoinGame(socket, gameId, password) {
+    async onJoinGame(socket, gameId, password) {
         if (this.isUserRestricted(socket.user)) {
             socket.send(
                 'gameerror',
@@ -589,7 +577,7 @@ class Lobby {
             return;
         }
 
-        let message = game.join(socket.id, socket.user, password);
+        let message = await game.join(socket.id, socket.user, password);
         if (message) {
             socket.send('passworderror', message);
             return;
@@ -601,7 +589,7 @@ class Lobby {
         this.broadcastGameMessage('updategame', game);
     }
 
-    onStartGame(socket) {
+    async onStartGame(socket) {
         let game = this.findGameForUser(socket.user.username);
 
         if (!game || game.started) {
@@ -634,6 +622,12 @@ class Lobby {
         for (let player of Object.values(game.getPlayersAndSpectators())) {
             let socket = this.sockets[player.id];
 
+            if (game.event?.lockDecks && !player.deck.eventId) {
+                await this.deckService.useDeckForEvent(
+                    player.deck._id.toString(),
+                    game.event._id.toString()
+                );
+            }
             if (!socket || !socket.user) {
                 logger.error(`Wanted to handoff to ${player.name}, but couldn't find a socket`);
                 continue;
@@ -752,37 +746,21 @@ class Lobby {
         }
     }
 
-    onSelectDeck(socket, deckId) {
-        let game = this.findGameForUser(socket.user.username);
+    async onSelectDeck(socket, deckId) {
+        const game = this.findGameForUser(socket.user.username);
         if (!game) {
             return;
         }
 
-        return Promise.all([
-            this.cardService.getAllCards(),
-            this.cardService.getAllPacks(),
-            this.deckService.getById(deckId)
-        ])
-            .then((results) => {
-                let [cards, packs, deck] = results;
-                let formattedDeck = formatDeckAsFullCards(deck, { cards: cards });
+        const deck = await this.deckService.getById(deckId, {
+            format: game.gameFormat,
+            variant: game.gameVariant,
+            legality: game.restrictedList,
+            eventId: game.event?._id
+        });
+        game.selectDeck(socket.user.username, deck);
 
-                formattedDeck.status = validateDeck(formattedDeck, {
-                    packs: packs,
-                    gameFormats: [game.gameFormat],
-                    restrictedLists: [game.restrictedList],
-                    includeExtendedStatus: false
-                });
-
-                game.selectDeck(socket.user.username, formattedDeck);
-
-                this.sendGameState(game);
-            })
-            .catch((err) => {
-                logger.info(err);
-
-                return;
-            });
+        this.sendGameState(game);
     }
 
     onConnectFailed(socket) {
@@ -880,7 +858,7 @@ class Lobby {
         this.broadcastGameMessage('removegame', game);
     }
 
-    onGameRematch(oldGame) {
+    async onGameRematch(oldGame) {
         let gameId = oldGame.gameId;
         let game = this.games[gameId];
 
@@ -908,7 +886,8 @@ class Lobby {
             chessClockDelay: game.chessClockDelay,
             maxPlayers: game.maxPlayers,
             randomSeats: game.randomSeats,
-            allowMultipleWinners: game.allowMultipleWinners
+            allowMultipleWinners: game.allowMultipleWinners,
+            deckService: this.deckService
         });
         newGame.rematch = true;
 
@@ -925,7 +904,7 @@ class Lobby {
         }
 
         this.games[newGame.id] = newGame;
-        newGame.newGame(socket.id, socket.user, null, true);
+        await newGame.newGame(socket.id, socket.user, null, true);
 
         socket.joinChannel(newGame.id);
         this.sendGameState(newGame);
@@ -944,7 +923,7 @@ class Lobby {
                 continue;
             }
 
-            newGame.join(socket.id, player.user);
+            await newGame.join(socket.id, player.user);
             promises.push(this.onSelectDeck(socket, player.deck._id));
         }
 
@@ -1065,7 +1044,8 @@ class Lobby {
             let syncGame = new PendingGame(new User(owner.user), game.instance, {
                 allowSpectators: game.allowSpectators,
                 name: game.name,
-                event: game.event
+                event: game.event,
+                deckService: this.deckService
             });
             syncGame.id = game.id;
             syncGame.node = this.router.workers[nodeName];
@@ -1073,6 +1053,7 @@ class Lobby {
             syncGame.started = game.started;
             syncGame.gameType = game.gameType;
             syncGame.gameFormat = game.gameFormat;
+            syncGame.gameVariant = game.gameVariant;
             syncGame.password = game.password;
             syncGame.restrictedList = game.restrictedList;
 

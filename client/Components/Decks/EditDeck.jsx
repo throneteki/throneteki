@@ -1,19 +1,36 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import DeckEditor from './DeckEditor';
 import AlertPanel from '../Site/AlertPanel';
 import Panel from '../Site/Panel';
 import { useDispatch } from 'react-redux';
 import { navigate } from '../../redux/reducers/navigation';
-import { useGetDeckQuery } from '../../redux/middleware/api';
+import { useGetCardsQuery, useGetDeckQuery, useGetPacksQuery } from '../../redux/middleware/api';
 import LoadingSpinner from '../Site/LoadingSpinner';
 import Page from '../../pages/Page';
+import { formatDeckAsFullCards } from '../../../deck-helper/formatDeckAsFullCards';
 
 const EditDeckPage = ({ deckId }) => {
     const dispatch = useDispatch();
 
-    const { data, isLoading, isError, isSuccess } = useGetDeckQuery(deckId);
+    const {
+        data: deck,
+        isLoading: isLoadingDeck,
+        isError: isErrorDeck
+    } = useGetDeckQuery({
+        deckId
+    });
+    const { data: cards, isLoading: isLoadingCards, isErrorCards } = useGetCardsQuery({});
+    const { data: packs, isLoading: isLoadingPacks, isErrorPacks } = useGetPacksQuery();
 
+    const isLoading = useMemo(
+        () => isLoadingDeck || isLoadingCards || isLoadingPacks,
+        [isLoadingCards, isLoadingDeck, isLoadingPacks]
+    );
+    const isError = useMemo(
+        () => isErrorDeck || isErrorCards || isErrorPacks,
+        [isErrorCards, isErrorDeck, isErrorPacks]
+    );
     let content;
 
     if (isLoading) {
@@ -21,16 +38,24 @@ const EditDeckPage = ({ deckId }) => {
     } else if (isError) {
         content = (
             <AlertPanel variant='danger'>
-                {'An error occured loading your deck. Please try again later.'}
+                An error occured loading your deck. Please try again later.
             </AlertPanel>
         );
-    } else if (isSuccess) {
-        content = <DeckEditor deck={data} onBackClick={() => dispatch(navigate('/decks'))} />;
+    } else {
+        const editingDeck = formatDeckAsFullCards(deck, { cards });
+        content = (
+            <DeckEditor
+                deck={editingDeck}
+                cards={cards}
+                packs={packs}
+                onBackClick={() => dispatch(navigate('/decks'))}
+            />
+        );
     }
 
     return (
         <Page>
-            <Panel title={data?.name}>{content}</Panel>
+            <Panel title={deck?.name}>{content}</Panel>
         </Page>
     );
 };

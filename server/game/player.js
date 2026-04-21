@@ -461,7 +461,7 @@ class Player extends Spectator {
     }
 
     prepareDecks() {
-        var deck = new Deck(this.deck);
+        var deck = new Deck(this.deck, this.game.cardData);
         var preparedDeck = deck.prepare(this);
         this.plotDeck = preparedDeck.plotCards;
         this.agendas = preparedDeck.agendas;
@@ -483,7 +483,7 @@ class Player extends Spectator {
     }
 
     createFactionAndAgendas() {
-        let deck = new Deck(this.deck);
+        let deck = new Deck(this.deck, this.game.cardData);
         this.faction = deck.createFactionCard(this);
         this.agendas = deck.createAgendaCards(this);
     }

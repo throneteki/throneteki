@@ -4,8 +4,26 @@ export const ItemTypes = {
 };
 
 export const GameFormats = [
-    { name: 'joust', label: 'Joust', defaultMaxPlayers: 2 },
-    { name: 'melee', label: 'Melee', defaultMaxPlayers: 4, experimental: true }
+    {
+        name: 'joust',
+        label: 'Joust',
+        defaultMaxPlayers: 2,
+        variants: [{ name: 'standard', label: 'Standard' }]
+    },
+    {
+        name: 'melee',
+        label: 'Melee',
+        defaultMaxPlayers: 4,
+        variants: [{ name: 'standard', label: 'Standard' }],
+        experimental: true
+    },
+    {
+        name: 'draft',
+        label: 'Draft',
+        defaultMaxPlayers: 2,
+        variants: [{ name: 'towerofjoy', label: 'Tower of Joy' }],
+        experimental: true
+    }
 ];
 
 export const GameTypes = [
@@ -68,7 +86,10 @@ export const Constants = {
         { name: 'Attachment', value: 'attachment' },
         { name: 'Location', value: 'location' },
         { name: 'Event', value: 'event' }
-    ]
+    ],
+    CardCodes: {
+        Alliance: '06018'
+    }
 };
 
 for (const faction of Object.values(Constants.Factions)) {
