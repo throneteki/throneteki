@@ -2,10 +2,11 @@ import cards from './cards/index.js';
 import DrawCard from './drawcard.js';
 import PlotCard from './plotcard.js';
 import AgendaCard from './agendacard.js';
+import { formatDeckAsFullCards } from '../../deck-helper/formatDeckAsFullCards.js';
 
 class Deck {
-    constructor(data) {
-        this.data = data;
+    constructor(data, cards) {
+        this.data = data && cards ? formatDeckAsFullCards(data, { cards }) : undefined;
     }
 
     createFactionCard(player) {
