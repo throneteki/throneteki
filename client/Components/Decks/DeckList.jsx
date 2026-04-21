@@ -105,8 +105,10 @@ const DeckList = ({
                         agendas.push(agenda);
                     }
 
-                    for (const agenda of info.row.original.bannerCards) {
-                        agendas.push(agenda);
+                    if (info.row.original.bannerCards) {
+                        for (const agenda of info.row.original.bannerCards) {
+                            agendas.push(agenda);
+                        }
                     }
 
                     const content =

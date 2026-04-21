@@ -36,7 +36,6 @@ class PendingGame {
             this.randomSeats = details.randomSeats;
             this.allowMultipleWinners = details.allowMultipleWinners;
         }
-        this.deckService = details.deckService;
     }
 
     // Getters
@@ -103,7 +102,7 @@ class PendingGame {
         this.gameChat.addMessage(...arguments);
     }
 
-    async addPlayer(id, user) {
+    async addPlayer(id, user, deckService) {
         if (!user) {
             logger.error('Tried to add a player to a game that did not have a user object');
             return;
@@ -119,7 +118,7 @@ class PendingGame {
 
         // Force deck selection if deck used for locked event
         if (this.event?.lockDecks) {
-            const lockedDeck = await this.deckService.getDeckForEvent(
+            const lockedDeck = await deckService.getDeckForEvent(
                 user.username,
                 this.event._id.toString()
             );
@@ -137,13 +136,13 @@ class PendingGame {
         };
     }
 
-    async newGame(id, user, password, join) {
+    async newGame(id, user, password, join, deckService) {
         if (password) {
             this.password = crypto.createHash('md5').update(password).digest('hex');
         }
 
         if (join) {
-            await this.addPlayer(id, user);
+            await this.addPlayer(id, user, deckService);
         }
     }
 
@@ -151,7 +150,7 @@ class PendingGame {
         return _.contains(this.owner.blockList, user.username.toLowerCase());
     }
 
-    async join(id, user, password) {
+    async join(id, user, password, deckService) {
         if (_.size(this.players) === this.maxPlayers || this.started) {
             return 'Game full';
         }
@@ -167,7 +166,7 @@ class PendingGame {
         }
 
         this.addMessage('{0} has joined the game', user.username);
-        await this.addPlayer(id, user);
+        await this.addPlayer(id, user, deckService);
 
         if (!this.isOwner(this.owner.username)) {
             let otherPlayer = Object.values(this.players).find(
