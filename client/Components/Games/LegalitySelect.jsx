@@ -55,14 +55,14 @@ const LegalitySelect = ({
         // If legality no longer exists after data is updated, default it to latest, custom, or undefined
         let legality = legalities?.find((rl) => rl._id === selected);
         let legalityObj = data?.find((rl) => rl._id === selected);
-        if (!legalityObj) {
+        if (!legality) {
             const activeLegality = data?.find(
                 (rl) => rl.format === format && rl.variant === variant && rl.active
             );
             if (activeLegality) {
                 legality = 'latest';
                 legalityObj = activeLegality;
-            } else if (allowCustom) {
+            } else if (legalities?.some((rl) => rl._id === 'custom')) {
                 legality = 'custom';
                 legalityObj = null;
             }
