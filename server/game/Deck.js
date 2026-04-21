@@ -6,7 +6,7 @@ import { formatDeckAsFullCards } from '../../deck-helper/formatDeckAsFullCards.j
 
 class Deck {
     constructor(data, cards) {
-        this.data = data && cards ? formatDeckAsFullCards(data, { cards }) : undefined;
+        this.data = formatDeckAsFullCards(data, { cards });
     }
 
     createFactionCard(player) {
