@@ -489,7 +489,7 @@ const DeckEditor = ({ deck, cards, packs, onBackClick }) => {
                                         <div className='font-bold'>Validity:</div>
                                         <div className='flex gap-1'>
                                             <DeckStatus deck={deckToSave} />
-                                            <PoolInfo isPool={true} />
+                                            <PoolInfo isPool={!!deck.pool} />
                                         </div>
                                     </div>
                                 </div>
