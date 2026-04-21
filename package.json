@@ -63,7 +63,7 @@
         "globals": "^15.2.0",
         "jasmine": "^5.1.0",
         "jest": "^29.7.0",
-        "jimp": "^0.22.12",
+        "jimp": "^1.6.1",
         "jsonwebtoken": "^9.0.2",
         "lodash.range": "^3.2.0",
         "lodash.sample": "^4.2.1",
