@@ -453,28 +453,45 @@ const DeckEditor = ({ deck, cards, packs, onBackClick }) => {
                     <Card>
                         {deckToSave ? (
                             <CardBody>
-                                <div className='flex'>
-                                    <dl className='grid grid-cols-2 gap-2'>
-                                        <dt className='font-bold'>Plot cards:</dt>
-                                        <dd>
-                                            {deckToSave.plotCards.reduce(
-                                                (acc, card) => acc + card.count,
-                                                0
-                                            )}
-                                        </dd>
-                                        <dt className='font-bold'>Draw cards:</dt>
-                                        <dd>
-                                            {deckToSave.drawCards.reduce(
-                                                (acc, card) => acc + card.count,
-                                                0
-                                            )}
-                                        </dd>
-                                    </dl>
-                                </div>
-                                <div className='flex gap-2 items-center'>
-                                    <div className='font-bold'>Validity:</div>
-                                    <DeckStatus deck={deckToSave} />
-                                    <PoolInfo isPool={!!deck.pool} />
+                                <div className='flex gap-4'>
+                                    <div>
+                                        <div className='space-x-1'>
+                                            <span className='font-bold'>Plot cards:</span>
+                                            <span>
+                                                {deckToSave.plotCards.reduce(
+                                                    (acc, card) => acc + card.count,
+                                                    0
+                                                )}
+                                            </span>
+                                        </div>
+                                        <div className='space-x-1'>
+                                            <span className='font-bold'>Draw cards:</span>
+                                            <span>
+                                                {deckToSave.drawCards.reduce(
+                                                    (acc, card) => acc + card.count,
+                                                    0
+                                                )}
+                                            </span>
+                                        </div>
+                                        {!!deck.pool && (
+                                            <div className='space-x-1'>
+                                                <span className='font-bold'>Cards in pool:</span>
+                                                <span>
+                                                    {deck.pool.reduce(
+                                                        (acc, card) => acc + card.count,
+                                                        0
+                                                    )}
+                                                </span>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className='space-y-1'>
+                                        <div className='font-bold'>Validity:</div>
+                                        <div className='flex gap-1'>
+                                            <DeckStatus deck={deckToSave} />
+                                            <PoolInfo isPool={true} />
+                                        </div>
+                                    </div>
                                 </div>
                             </CardBody>
                         ) : (
@@ -483,21 +500,25 @@ const DeckEditor = ({ deck, cards, packs, onBackClick }) => {
                     </Card>
                     {!deck.locked ? (
                         <>
-                            <CardTypeFilter
-                                className='self-start'
-                                filter={typeFilter}
-                                setFilter={setTypeFilter}
-                                types={Constants.CardTypes.filter(({ value }) => value !== 'title')}
-                            />
-                            <FactionFilter
-                                className='self-start'
-                                filter={factionFilter}
-                                setFilter={setFactionFilter}
-                                factions={Constants.Factions.concat({
-                                    name: 'Neutral',
-                                    value: 'neutral'
-                                })}
-                            />
+                            <div className='flex flex-wrap gap-2'>
+                                <CardTypeFilter
+                                    className='self-start'
+                                    filter={typeFilter}
+                                    setFilter={setTypeFilter}
+                                    types={Constants.CardTypes.filter(
+                                        ({ value }) => value !== 'title'
+                                    )}
+                                />
+                                <FactionFilter
+                                    className='self-start'
+                                    filter={factionFilter}
+                                    setFilter={setFactionFilter}
+                                    factions={Constants.Factions.concat({
+                                        name: 'Neutral',
+                                        value: 'neutral'
+                                    })}
+                                />
+                            </div>
                             <div className='min-h-96 h-[50vh]'>
                                 <ReactTable
                                     dataLoadFn={() => ({
