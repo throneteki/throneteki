@@ -38,9 +38,11 @@ class MoveCardEventGenerator {
             });
         }
 
-        return this.createReturnCardToHandEvent({ card: attachment }).thenExecute(() => {
-            attachment.isBeingRemoved = false;
-        });
+        return this.createReturnCardToHandEvent({ card: attachment, allowSave: false }).thenExecute(
+            () => {
+                attachment.isBeingRemoved = false;
+            }
+        );
     }
 
     createDiscardCardEvent({
