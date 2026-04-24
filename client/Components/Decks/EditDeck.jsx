@@ -8,7 +8,6 @@ import { navigate } from '../../redux/reducers/navigation';
 import { useGetCardsQuery, useGetDeckQuery, useGetPacksQuery } from '../../redux/middleware/api';
 import LoadingSpinner from '../Site/LoadingSpinner';
 import Page from '../../pages/Page';
-import { formatDeckAsFullCards } from '../../../deck-helper/formatDeckAsFullCards';
 
 const EditDeckPage = ({ deckId }) => {
     const dispatch = useDispatch();
@@ -42,10 +41,9 @@ const EditDeckPage = ({ deckId }) => {
             </AlertPanel>
         );
     } else {
-        const editingDeck = formatDeckAsFullCards(deck, { cards });
         content = (
             <DeckEditor
-                deck={editingDeck}
+                deck={deck}
                 cards={cards}
                 packs={packs}
                 onBackClick={() => dispatch(navigate('/decks'))}

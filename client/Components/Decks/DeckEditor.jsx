@@ -37,6 +37,7 @@ import DeckStatus from './DeckStatus';
 import { validateDeck } from '../../../deck-helper';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLock } from '@fortawesome/free-solid-svg-icons';
+import { formatDeckAsFullCards } from '../../../deck-helper/formatDeckAsFullCards';
 
 const SmallButton = extendVariants(Button, {
     variants: {
@@ -46,7 +47,8 @@ const SmallButton = extendVariants(Button, {
     }
 });
 
-const DeckEditor = ({ deck, cards, packs, onBackClick }) => {
+const DeckEditor = ({ deck: initial, cards, packs, onBackClick }) => {
+    const deck = useMemo(() => formatDeckAsFullCards(initial, { cards }), [cards, initial]);
     const dispatch = useDispatch();
     const [addDeck, { isLoading: isAddLoading }] = useAddDeckMutation();
     const [saveDeck, { isLoading: isSaveLoading }] = useSaveDeckMutation();
@@ -335,7 +337,7 @@ const DeckEditor = ({ deck, cards, packs, onBackClick }) => {
 
     const cardsMemo = useMemo(() => {
         if (!cards) {
-            return {};
+            return { data: [] };
         }
         if (deck.pool) {
             const poolCards = deck.pool.map((cardCount) => {
@@ -586,20 +588,24 @@ const DeckEditor = ({ deck, cards, packs, onBackClick }) => {
                         newDeck._id = deck._id;
                         const success = await onSaveClick(false, newDeck);
                         if (success) {
-                            setFaction(newDeck.faction?.value);
-                            setDeckName(newDeck.name);
+                            const formattedDeck = formatDeckAsFullCards(newDeck, { cards });
+                            setFaction(formattedDeck.faction?.value);
+                            setDeckName(formattedDeck.name);
                             setDeckCards(
-                                (newDeck.agenda ? [{ card: newDeck.agenda, count: 1 }] : [])
-                                    .concat(newDeck.drawCards || [])
-                                    .concat(newDeck.plotCards || [])
+                                (formattedDeck.agenda
+                                    ? [{ card: formattedDeck.agenda, count: 1 }]
+                                    : []
+                                )
+                                    .concat(formattedDeck.drawCards || [])
+                                    .concat(formattedDeck.plotCards || [])
                                     .concat(
-                                        newDeck.bannerCards?.map((bc) => ({
+                                        formattedDeck.bannerCards?.map((bc) => ({
                                             card: bc,
                                             count: 1
                                         })) || []
                                     )
                             );
-                            deck.pool = newDeck.pool;
+                            deck.pool = formattedDeck.pool;
                             setShowImportModal(false);
                         }
                     }}
