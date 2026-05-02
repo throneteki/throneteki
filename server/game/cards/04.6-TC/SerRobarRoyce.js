@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SerRobarRoyce extends DrawCard {
     setupCardAbilities(ability) {
@@ -9,28 +10,16 @@ class SerRobarRoyce extends DrawCard {
                     this.allowGameAction('gainPower')
             },
             limit: ability.limit.perPhase(1),
-            handler: () => {
-                this.modifyPower(1),
-                    this.game.addMessage(
-                        '{0} uses {1} to gain a power on {1}',
-                        this.controller,
-                        this
-                    );
-            }
+            message: '{player} uses {source} to gain a power on {source}',
+            gameAction: GameActions.gainPower({ card: this, amount: 1 })
         });
 
         this.forcedReaction({
             when: {
                 onPlotsRevealed: (event) => event.plots.some((plot) => plot.hasTrait('Winter'))
             },
-            handler: () => {
-                this.controller.kneelCard(this),
-                    this.game.addMessage(
-                        '{0} is forced by {1} to kneel {1}',
-                        this.controller,
-                        this
-                    );
-            }
+            message: '{player} is firced by {source} to kneel {source}',
+            gameAction: GameActions.kneelCard({ card: this })
         });
     }
 }

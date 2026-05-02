@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SandSteed extends DrawCard {
     setupCardAbilities() {
@@ -8,25 +9,20 @@ class SandSteed extends DrawCard {
                 card.attachments.every(
                     (attachment) => attachment === this || attachment.name !== 'Sand Steed'
                 )
-        ),
-            this.reaction({
-                when: {
-                    onCardPlaced: (event) =>
-                        event.card.hasTrait('Summer') &&
-                        event.location === 'revealed plots' &&
-                        event.player === this.controller &&
-                        this.parent.allowGameAction('gainPower')
-                },
-                handler: (context) => {
-                    this.parent.modifyPower(1);
-                    this.game.addMessage(
-                        '{0} uses {1} to gain 1 power on {2}',
-                        context.player,
-                        this,
-                        this.parent
-                    );
-                }
-            });
+        );
+        this.reaction({
+            when: {
+                onCardPlaced: (event) =>
+                    event.card.hasTrait('Summer') &&
+                    event.location === 'revealed plots' &&
+                    event.player === this.controller
+            },
+            message: {
+                format: '{player} uses {source} to gain power on {parent}',
+                args: { parent: () => this.parent }
+            },
+            gameAction: GameActions.gainPower(() => ({ card: this.parent, amount: 1 }))
+        });
     }
 }
 
