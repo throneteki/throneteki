@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Gendry extends DrawCard {
     setupCardAbilities() {
@@ -7,14 +8,8 @@ class Gendry extends DrawCard {
                 onDominanceDetermined: (event) =>
                     this.controller === event.winner && this.allowGameAction('gainPower')
             },
-            handler: () => {
-                this.modifyPower(1),
-                    this.game.addMessage(
-                        '{0} uses {1} to gain a power on {1}',
-                        this.controller,
-                        this
-                    );
-            }
+            message: '{player} uses {source} to gain power on {source}',
+            gameAction: GameActions.gainPower({ card: this, amount: 1 })
         });
 
         this.forcedReaction({
