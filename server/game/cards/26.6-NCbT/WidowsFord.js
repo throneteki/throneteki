@@ -29,7 +29,7 @@ class WidowsFord extends DrawCard {
                         targetLocation: 'any',
                         match: context.event.card,
                         effect: ability.effects.addKeyword(
-                            `Shadow (${context.event.card.getPrintedCost()})`
+                            `Shadow (${context.event.card.translateXValue(context.event.card.getPrintedCost())})`
                         )
                     }));
                 })
