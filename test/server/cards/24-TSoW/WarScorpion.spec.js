@@ -1,15 +1,15 @@
-describe("War Scorpion", function () {
+describe('War Scorpion', function () {
     integration(function () {
         beforeEach(function () {
             const arrynDeck = this.buildDeck('Stark', [
                 'A Noble Cause',
-                'Knights of the Vale',
+                'Knights of the Vale (AHaH)',
                 'The Eyrie (CoW)'
             ]);
             const martellDeck = this.buildDeck('Martell', [
                 'A Noble Cause',
                 'Scorpion Knight',
-                'War Scorpion'
+                'War Scorpion (TSoW)'
             ]);
 
             this.player1.selectDeck(arrynDeck);

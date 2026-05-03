@@ -4,7 +4,7 @@ describe('Dynamic keyword sources', function () {
             beforeEach(function () {
                 const deck = this.buildDeck('stark', [
                     'Trading with the Pentoshi',
-                    'Shagwell',
+                    'Shagwell (HMW)',
                     'Patchface',
                     'Moon Boy',
                     'Maester Wendamyr'

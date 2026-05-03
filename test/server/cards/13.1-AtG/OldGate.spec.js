@@ -10,7 +10,7 @@ describe('Old Gate', function () {
                 'A Noble Cause',
                 'Old Gate',
                 'Bran Stark (Core)',
-                'Hot Pie'
+                'Hot Pie (FFH)'
             ]);
             this.player1.selectDeck(deck1);
             this.player2.selectDeck(deck2);

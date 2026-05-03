@@ -3,9 +3,9 @@ describe("King Robb's Bannermen", function () {
         beforeEach(function () {
             const deck1 = this.buildDeck('stark', [
                 'Trading with the Pentoshi',
-                "King Robb's Bannermen",
+                "King Robb's Bannermen (TSoW)",
                 'Robb Stark (AtSK)',
-                "Brynden's Outriders",
+                "Brynden's Outriders (FtR)",
                 'The Horn of Winter'
             ]);
             const deck2 = this.buildDeck('targaryen', [
