@@ -97,7 +97,10 @@ const NewGameForm = ({ quickJoin, onClosed = () => true }) => {
     );
 
     const canStart = useMemo(
-        () => values.gameFormat && values.gameVariant && values.gameLegality,
+        () =>
+            values.gameFormat &&
+            values.gameVariant &&
+            (values.gameLegality || values.gameFormat === 'draft'),
         [values.gameFormat, values.gameLegality, values.gameVariant]
     );
 
@@ -168,7 +171,7 @@ const NewGameForm = ({ quickJoin, onClosed = () => true }) => {
                                 onSelected={handleLegalityChange}
                                 {...getValidationProps('gameLegality')}
                                 disallowEmptySelection
-                                isDisabled={!!values.eventId}
+                                isDisabled={!!values.eventId || values.gameFormat === 'draft'}
                                 allowCustom={!!values.eventId}
                             />
                         </div>
