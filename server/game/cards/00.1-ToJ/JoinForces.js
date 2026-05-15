@@ -18,11 +18,9 @@ class JoinForces extends AgendaCard {
     }
 
     onDecksPrepared() {
-        // TODO BD this assumes that there is an out-of-faction card with a chosen trait in the deck
-        // and will not pick up traits from in-faction and neutral cards in the unlikely case
-        // that someone wants to play this with a mono-faction deck for the reduction effect
-        // to be thourough, we should check all cards in the deck if we don't find a trait at first
         let traitsInDeck = [];
+        let hasOutOfFactionCards = false;
+        // find common traits among non-neutral, out of faction cards in the deck
         for (const card of this.game.allCards) {
             if (
                 card.owner !== this.owner ||
@@ -32,6 +30,8 @@ class JoinForces extends AgendaCard {
             ) {
                 continue;
             }
+
+            hasOutOfFactionCards = true;
 
             let traits = card.getTraits();
             if (traitsInDeck.length === 0) {
@@ -44,14 +44,21 @@ class JoinForces extends AgendaCard {
             }
         }
 
-        if (traitsInDeck.length > 0) {
+        if (traitsInDeck.length === 1) {
             this.namedTrait = traitsInDeck[0];
-            this.game.addMessage(
-                '{0} names {1} as their trait for {2}',
-                this.controller,
-                this.capitalize(this.namedTrait),
-                this
-            );
+            this.addTraitMessage(this.controller, this.namedTrait);
+        } else if (!hasOutOfFactionCards || traitsInDeck.length > 1) {
+            // if no out of faction cards are present or if there are multiple common traits,
+            // prompt the player to choose a trait manually
+            this.game.promptWithMenu(this.owner, this, {
+                activePrompt: {
+                    menuTitle: 'Name a trait',
+                    controls: [
+                        { type: 'trait-name', command: 'menuButton', method: 'selectTraitName' }
+                    ]
+                },
+                source: this
+            });
         } else {
             this.game.addAlert(
                 'danger',
@@ -64,6 +71,22 @@ class JoinForces extends AgendaCard {
 
     capitalize(string) {
         return string.replace(/\b\w/g, (char) => char.toUpperCase());
+    }
+
+    selectTraitName(player, traitName) {
+        this.namedTrait = traitName;
+        this.addTraitMessage(player, traitName);
+
+        return true;
+    }
+
+    addTraitMessage(player, traitName) {
+        this.game.addMessage(
+            '{0} names {1} as their trait for {2}',
+            player,
+            this.capitalize(traitName),
+            this
+        );
     }
 }
 

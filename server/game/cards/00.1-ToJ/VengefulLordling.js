@@ -3,7 +3,7 @@ import GameActions from '../../GameActions/index.js';
 
 class VengefulLordling extends DrawCard {
     setupCardAbilities() {
-        this.interrupt({
+        this.reaction({
             when: {
                 afterChallenge: (event) =>
                     this.isParticipating() && event.challenge.isMatch({ loser: this.controller })

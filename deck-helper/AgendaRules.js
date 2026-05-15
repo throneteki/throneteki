@@ -436,7 +436,7 @@ const agendaRules = {
                             }
                         }
                     }
-                    return traitsInDeck.length > 0;
+                    return traitsInDeck.length > 0 || outOfFactionCards.length === 0;
                 }
             }
         ]

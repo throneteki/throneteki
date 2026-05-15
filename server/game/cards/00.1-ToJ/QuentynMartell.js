@@ -10,9 +10,10 @@ class QuentynMartell extends DrawCard {
             },
             target: {
                 cardType: 'character',
-                location: ['hand', 'discard pile'],
                 cardCondition: (card, context) =>
+                    card !== this &&
                     card.controller === context.player &&
+                    ['hand', 'shadows'].includes(card.location) &&
                     card.getPrintedStrength() < this.strengthAtInitiation &&
                     context.player.canPutIntoPlay(card)
             },

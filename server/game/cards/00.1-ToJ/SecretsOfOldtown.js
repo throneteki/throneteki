@@ -6,9 +6,7 @@ class SecretsOfOldtown extends PlotCard {
             title: 'Give an icon or trait',
             target: {
                 cardCondition: (card) =>
-                    card.location === 'play area' &&
-                    card.getType() === 'character' &&
-                    card.controller === this.controller
+                    card.location === 'play area' && card.getType() === 'character'
             },
             limit: ability.limit.perRound(1),
             handler: (context) => {

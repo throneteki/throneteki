@@ -31,7 +31,7 @@ class WolfDreams extends DrawCard {
 
     selectTraitName(player, traitName) {
         const str = 2;
-        this.untilEndOfPhase((ability) => ({
+        this.untilEndOfChallenge((ability) => ({
             match: this.context.target,
             effect: ability.effects.modifyStrength(str)
         }));
