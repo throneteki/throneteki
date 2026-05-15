@@ -17,7 +17,7 @@ describe('Haldon Halfmaester', function () {
             this.keepStartingHands();
 
             this.haldon = this.player1.findCardByName('Haldon Halfmaester');
-            this.aegon = this.player1.findCardByName('Aegon Targaryen');
+            this.aegon = this.player1.findCardByName('Aegon Targaryen (TSC)');
             [this.hedge1, this.hedge2] = this.player1.filterCardsByName('Hedge Knight', 'hand');
             this.event = this.player1.findCardByName('Bribery');
             this.player1.clickCard(this.hedge1);

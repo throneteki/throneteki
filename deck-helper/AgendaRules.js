@@ -25,6 +25,30 @@ function rulesForBanner(faction, factionName) {
     };
 }
 
+function rulesForGenericBanner(allowedBannerFactions) {
+    return {
+        mayInclude: () => true,
+        rules: [
+            {
+                message: `Cannot include cards from more than ${allowedBannerFactions} outside faction${allowedBannerFactions > 1 ? 's' : ''}`,
+                condition: (deck) => {
+                    let outOfFactionCards = deck.drawCards
+                        .concat(deck.plotCards)
+                        .filter(
+                            (cardQuantity) =>
+                                cardQuantity.card.faction !== deck.faction.value &&
+                                cardQuantity.card.faction !== 'neutral'
+                        );
+                    let factions = new Set(
+                        outOfFactionCards.map((cardQuantity) => cardQuantity.card.faction)
+                    );
+                    return factions.size <= allowedBannerFactions;
+                }
+            }
+        ]
+    };
+}
+
 /**
  * Validation rule structure is as follows. All fields are optional.
  *
@@ -359,38 +383,37 @@ const agendaRules = {
     },
     // Draft Agendas
     // The Power of Wealth
-    '00001': {
-        mayInclude: () => true,
-        rules: [
-            {
-                message: 'Cannot include cards from more than 1 outside faction',
-                condition: (deck) => {
-                    let outOfFactionCards = deck.drawCards
-                        .concat(deck.plotCards)
-                        .filter(
-                            (cardQuantity) =>
-                                cardQuantity.card.faction !== deck.faction.value &&
-                                cardQuantity.card.faction !== 'neutral'
-                        );
-                    let factions = new Set(
-                        outOfFactionCards.map((cardQuantity) => cardQuantity.card.faction)
-                    );
-                    return factions.size <= 1;
-                }
-            }
-        ]
-    },
+    '00001': rulesForGenericBanner(1),
     // Protectors of the Realm
     '00002': {
         mayInclude: (card) =>
             card.type === 'character' && (hasTrait(card, 'Knight') || hasTrait(card, 'Army'))
     },
     // Treaty
-    '00003': {
+    '00003': rulesForGenericBanner(2),
+    // Uniting the Seven Kingdoms
+    '00004': {
+        mayInclude: (card) => card.type !== 'plot'
+    },
+    // Tower of Joy Draft Agendas
+    // Sealing the Pact
+    '00362': rulesForGenericBanner(1),
+    // Unknown and Unkowable
+    '00363': rulesForGenericBanner(2),
+    // Pass Beneath the Shadow
+    '00364': {
+        mayInclude: (card) => hasKeyword(card, /Shadow \((\d+|X)\)/)
+    },
+    // Seeking Fortunes
+    '00365': {
+        mayInclude: (card) => hasKeyword(card, /Bestow \((\d+|X)\)/) || card.type === 'location'
+    },
+    // Join Forces
+    '00366': {
         mayInclude: () => true,
         rules: [
             {
-                message: 'Cannot include cards from more than 2 outside factions',
+                message: `Cannot include cards from outside factions that do not share a common trait`,
                 condition: (deck) => {
                     let outOfFactionCards = deck.drawCards
                         .concat(deck.plotCards)
@@ -399,17 +422,28 @@ const agendaRules = {
                                 cardQuantity.card.faction !== deck.faction.value &&
                                 cardQuantity.card.faction !== 'neutral'
                         );
-                    let factions = new Set(
-                        outOfFactionCards.map((cardQuantity) => cardQuantity.card.faction)
-                    );
-                    return factions.size <= 2;
+                    let traitsInDeck = [];
+                    for (const cardQuantity of outOfFactionCards) {
+                        let traits = cardQuantity.card.traits;
+                        if (traitsInDeck.length === 0) {
+                            traitsInDeck.push(...traits);
+                        } else {
+                            traitsInDeck = traitsInDeck.filter((trait) =>
+                                hasTrait(cardQuantity.card, trait)
+                            );
+                            if (traitsInDeck.length === 0) {
+                                break;
+                            }
+                        }
+                    }
+                    return traitsInDeck.length > 0 || outOfFactionCards.length === 0;
                 }
             }
         ]
     },
-    // Uniting the Seven Kingdoms
-    '00004': {
-        mayInclude: (card) => card.type !== 'plot'
+    // Desperate Hope
+    '00367': {
+        mayInclude: () => true // No restrictions
     }
 };
 

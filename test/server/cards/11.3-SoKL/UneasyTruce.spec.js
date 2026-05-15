@@ -1,7 +1,7 @@
 describe('Uneasy Truce', function () {
     integration(function () {
         beforeEach(function () {
-            const deck1 = this.buildDeck('Baratheon', ['Uneasy Truce', 'Jon Arryn']);
+            const deck1 = this.buildDeck('Baratheon', ['Uneasy Truce', 'Jon Arryn (AHaH)']);
             const deck2 = this.buildDeck('Targaryen', ['Valar Morghulis']);
 
             this.player1.selectDeck(deck1);

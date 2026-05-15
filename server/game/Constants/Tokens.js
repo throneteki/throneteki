@@ -15,6 +15,7 @@ export const Tokens = {
     vengeance: 'vengeance',
     venom: 'venom',
     tale: 'tale',
+    pie: 'pie',
     list: () => {
         return Object.values(Tokens).filter((token) => typeof token !== 'function');
     },

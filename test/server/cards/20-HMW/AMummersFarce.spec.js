@@ -4,7 +4,7 @@ describe('A Mummer´s Farce', function () {
             const deck1 = this.buildDeck('tyrell', [
                 "A Mummer's Farce",
                 'Late Summer Feast',
-                'Jinglebell',
+                'Jinglebell (HMW)',
                 'Green-Apple Knight',
                 'Green-Apple Knight',
                 'Warhammer',

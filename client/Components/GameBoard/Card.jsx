@@ -51,7 +51,8 @@ const Card = ({
         journey: 'J',
         prayer: 'R',
         tale: 'A',
-        ghost: 'H'
+        ghost: 'H',
+        pie: 'π'
     };
 
     const standardisedSize = standardiseCardSize(size);

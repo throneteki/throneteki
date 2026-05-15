@@ -1,7 +1,7 @@
 describe('Alla Tyrell', function () {
     integration(function () {
         beforeEach(function () {
-            const deck = this.buildDeck('tyrell', ['Late Summer Feast', 'Alla Tyrell', 'Oldtown']);
+            const deck = this.buildDeck('tyrell', ['Late Summer Feast', 'Alla Tyrell (BtB)', 'Oldtown']);
             this.player1.selectDeck(deck);
             this.player2.selectDeck(deck);
             this.startGame();

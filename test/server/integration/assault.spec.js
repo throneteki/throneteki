@@ -3,14 +3,14 @@ describe('assault', function () {
         beforeEach(function () {
             const deck1 = this.buildDeck('greyjoy', [
                 'Trading with the Pentoshi',
-                'The Iron Fleet',
+                'The Iron Fleet (FtR)',
                 'Dagmer Cleftjaw (TS)',
-                'Thenns',
+                'Thenns (FtR)',
                 'Foamdrinker'
             ]);
             const deck2 = this.buildDeck('thenightswatch', [
                 'Trading with the Pentoshi',
-                'Great Ranging',
+                'Great Ranging (FtR)',
                 'Old Forest Hunter',
                 'The Wall (Core)',
                 'Queenscrown',

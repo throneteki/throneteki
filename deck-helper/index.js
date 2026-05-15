@@ -1,5 +1,7 @@
 import DeckValidator from './DeckValidator.js';
 
+const draftSets = ['VDS', 'ToJ'];
+
 export const validateDeck = (deck, options) => {
     const { packs, format, variant, legality, customRules, includeExtendedStatus = true } = options;
 
@@ -11,4 +13,8 @@ export const validateDeck = (deck, options) => {
     }
 
     return result;
+};
+
+export const isDraftCard = (card) => {
+    return card && draftSets.includes(card.packCode);
 };
