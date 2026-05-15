@@ -9,7 +9,7 @@ const __dirname = import.meta.dirname;
 const defaultVariant = {
     joust: 'standard',
     melee: 'standard',
-    draft: 'valyrian'
+    draft: 'towerofjoy'
 };
 
 class CardService {
@@ -68,6 +68,7 @@ class CardService {
                     }
                     const jsonData = JSON.parse(data);
                     const lists = this.compileLists(jsonData);
+                    lists.push(this.createDraftLegality());
 
                     resolve(lists);
                 }
@@ -126,6 +127,24 @@ class CardService {
 
         return compiled;
     }
+
+    createDraftLegality() {
+        return {
+            _id: 'draft_towerofjoy',
+            format: 'draft',
+            variant: 'towerofjoy',
+            name: 'Limited',
+            version: 'Limited',
+            date: '2025-11-20',
+            issuer: 'Global Operations Team (G.O.T.)',
+            official: true,
+            active: true,
+            restricted: [],
+            pods: [],
+            banned: []
+        };
+    }
+
     setActiveLists(compiled) {
         const today = moment().startOf('day');
 

@@ -25,14 +25,7 @@ const NewGame = forwardRef(function NewGame(
             .max(GameNameMaxLength, `Game name must be less than ${GameNameMaxLength} characters`),
         gameFormat: yup.string().required(),
         gameVariant: yup.string().required(),
-        gameLegality: yup
-            .string()
-            .nullable()
-            .when('gameFormat', {
-                is: (format) => format !== 'draft',
-                then: (schema) => schema.required('You must select a legality'),
-                otherwise: (schema) => schema.notRequired()
-            }),
+        gameLegality: yup.string().required(),
         gameType: yup.string().required(),
         gamePrivate: yup.boolean(),
         spectators: yup.boolean().default(false),

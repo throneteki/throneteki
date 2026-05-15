@@ -28,7 +28,7 @@ const SelectDeckModal = ({ isOpen, onClose, onDeckSelected, game }) => {
                                     readOnly={true}
                                     format={game.gameFormat}
                                     variant={game.gameVariant}
-                                    legality={game.restrictedList?._id}
+                                    legality={game.restrictedList._id}
                                     eventId={game.event?._id}
                                 />
                             </Tab>

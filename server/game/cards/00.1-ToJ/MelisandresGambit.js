@@ -29,7 +29,8 @@ class MelisandresGambit extends PlotCard {
                         this.game.promptForSelect(this.controller, {
                             source: this,
                             cardCondition: this.targetPredicate,
-                            onSelect: (player, card) => this.onCardSelected(player, card),
+                            onSelect: (player, card) =>
+                                this.onCardSelected(player, card, context.target[0].name),
                             onCancel: () => this.cancelSelection()
                         });
                     }
@@ -54,9 +55,15 @@ class MelisandresGambit extends PlotCard {
         return true;
     }
 
-    onCardSelected(player, card) {
+    onCardSelected(player, card, killedCharacterName) {
         player.putIntoPlay(card);
-        this.game.addMessage('{0} selects {1} to put into play with {2}', player, card, this);
+        this.game.addMessage(
+            '{0} kills {1} to put {2} into play with {3}',
+            player,
+            killedCharacterName,
+            card,
+            this
+        );
 
         return true;
     }

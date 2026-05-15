@@ -28,7 +28,7 @@ class StannisBaratheon extends DrawCard {
     }
 
     isCharacter(card) {
-        return card.getType() === 'character' && card.controller === this.controller;
+        return card.getType() === 'character';
     }
 }
 

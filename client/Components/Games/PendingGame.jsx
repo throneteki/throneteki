@@ -128,10 +128,7 @@ const PendingGame = forwardRef(function PendingGame(_, ref) {
                             <strong>Variant:</strong> {variant.label}
                         </p>
                         <p>
-                            <strong>Legality:</strong>{' '}
-                            {format.name === 'draft'
-                                ? variant.label
-                                : currentGame.restrictedList.name}
+                            <strong>Legality:</strong> {currentGame.restrictedList.name}
                         </p>
                     </div>
                     <div className='flex gap-2 flex-wrap'>
