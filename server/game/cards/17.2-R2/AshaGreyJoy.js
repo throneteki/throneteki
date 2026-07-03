@@ -16,14 +16,13 @@ class AshaGreyjoy extends DrawCard {
                     amount: (context) => context.game.currentChallenge.loser.discardPile.length
                 }
             },
+            limit: ability.limit.perPhase(1),
             gameAction: GameActions.search({
                 title: 'Select a card',
                 topCards: (context) => context.game.currentChallenge.loser.discardPile.length,
-                reveal: false,
                 message: '{player} {gameAction}',
                 gameAction: GameActions.addToHand((context) => ({
-                    card: context.searchTarget,
-                    reveal: false
+                    card: context.searchTarget
                 }))
             })
         });
