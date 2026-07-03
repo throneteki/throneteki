@@ -16,7 +16,9 @@ class DaenerysTargaryen extends DrawCard {
             limit: ability.limit.perRound(3),
             target: {
                 cardCondition: (card) =>
-                    card.location === 'play area' && card.getType() === 'character'
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    card.isParticipating()
             },
             handler: (context) => {
                 this.untilEndOfPhase((ability) => ({
