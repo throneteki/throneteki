@@ -12,7 +12,7 @@ class Pyke extends DrawCard {
             when: {
                 onCardEntersPlay: (event) =>
                     event.card.controller === this.controller &&
-                    event.card.isFaction('greyjoy') &&
+                    event.card.hasTrait('warship') &&
                     event.card.getType() === 'location'
             },
             cost: ability.costs.kneelSelf(),
