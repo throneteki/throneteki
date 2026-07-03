@@ -11,7 +11,7 @@ class SerBalonSwann extends DrawCard {
                     event.card.getType() === 'character' &&
                     this.controller.canGainGold()
             },
-            limit: ability.limit.perPhase(1),
+            limit: ability.limit.perRound(1),
             handler: (context) => {
                 let gold = this.game.addGold(context.player, 2);
                 this.game.addMessage('{0} uses {1} to gain {2} gold', context.player, this, gold);
