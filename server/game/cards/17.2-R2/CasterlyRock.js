@@ -5,7 +5,7 @@ import { Tokens } from '../../Constants/index.js';
 class CasterlyRock extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => !this.kneeled,
+            condition: () => this.game.currentPhase === 'marshal' && !this.kneeled,
             match: (card) =>
                 card.controller === this.controller &&
                 card.location === 'play area' &&
@@ -22,7 +22,7 @@ class CasterlyRock extends DrawCard {
                 mode: 'upTo',
                 numCards: 3,
                 activePromptTitle: 'Select up to 3 cards',
-                cardCondition: (card) => card.location === 'play area'
+                cardCondition: (card) => card.location === 'play area' && card.isFaction('lannister')
             },
             message: '{player} kneels {source} to have {target} each gain 1 gold',
             handler: (context) => {
