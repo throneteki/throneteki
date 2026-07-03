@@ -15,6 +15,7 @@ class Goldengrove extends DrawCard {
                 cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.owner === context.player &&
+                    card.isFaction('tyrell') &&
                     (!context.costs.kneel ||
                         (card !== context.costs.kneel &&
                             card.getPrintedCost() <= context.costs.kneel.getPrintedCost()))
