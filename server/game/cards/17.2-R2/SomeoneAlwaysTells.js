@@ -4,11 +4,12 @@ class SomeoneAlwaysTells extends DrawCard {
     setupCardAbilities() {
         this.interrupt({
             canCancel: true,
+            cost: ability.costs.kneelFactionCard(),
             when: {
                 onCardAbilityInitiated: (event) =>
                     event.source.controller !== this.controller &&
                     (event.source.getType() === 'event' ||
-                        (event.source.getType() === 'plot' && event.ability.isTriggeredAbility()))
+                        (event.source.getType() === 'plot' && event.ability.isWhenRevealedAbility()))
             },
             handler: (context) => {
                 context.event.cancel();
