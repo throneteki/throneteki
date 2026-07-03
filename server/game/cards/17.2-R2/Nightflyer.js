@@ -18,6 +18,7 @@ class Nightflyer extends DrawCard {
                 cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.getType() === 'location' &&
+                    !card.isLimited() &&
                     card.getPrintedCost() <= context.event.xValue,
                 gameAction: 'discard'
             },
