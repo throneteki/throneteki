@@ -12,6 +12,7 @@ class AegonTargaryen extends DrawCard {
             gameAction: GameActions.search({
                 title: 'Select a character',
                 match: { type: 'character', trait: ['Army', 'Mercenary'] },
+                topCards: 10,
                 reveal: false,
                 message: '{player} {gameAction}',
                 gameAction: GameActions.putIntoPlay((context) => ({
