@@ -9,7 +9,7 @@ class SecretSchemes extends DrawCard {
                 this.controller.getNumberOfUsedPlots() >= 1 && this.controller.canDraw(),
             cost: ability.costs.kneelFactionCard(),
             handler: () => {
-                let cards = this.controller.getNumberOfUsedPlots();
+                let cards = Math.min(this.controller.getNumberOfUsedPlots(), 5);
                 cards = this.controller.drawCardsToHand(cards).length;
 
                 this.game.addMessage(
