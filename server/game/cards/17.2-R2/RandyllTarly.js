@@ -5,7 +5,7 @@ class RandyllTarly extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand Army or reveal top card',
-            limit: ability.limit.perPhase(2),
+            limit: ability.limit.perRound(2),
             cost: ability.costs.kneel(
                 (card) => card.getType() === 'location' && card.hasTrait('The Reach')
             ),
