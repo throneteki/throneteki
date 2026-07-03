@@ -3,10 +3,6 @@ import GameActions from '../../GameActions/index.js';
 
 class GreatRanging extends DrawCard {
     setupCardAbilities() {
-        this.plotModifiers({
-            reserve: 1
-        });
-
         this.reaction({
             when: {
                 onCardEntersPlay: (event) => event.card === this && event.playingType === 'marshal'
