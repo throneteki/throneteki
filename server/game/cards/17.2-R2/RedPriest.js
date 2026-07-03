@@ -25,7 +25,8 @@ class RedPriest extends DrawCard {
                         handler: (thenContext) => {
                             this.lastingEffect((ability) => ({
                                 until: {
-                                    onCardLeftPlay: (event) => event.card === this
+                                    onCardLeftPlay: (event) => event.card === this,
+                                    onRoundEnded: () => true
                                 },
                                 targetController: 'any',
                                 match: thenContext.target,
