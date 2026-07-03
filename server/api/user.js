@@ -4,7 +4,9 @@ import ServiceFactory from '../services/ServiceFactory.js';
 import logger from '../log.js';
 
 export const init = function (server, options) {
-    let userService = ServiceFactory.userService(options.db, ServiceFactory.configService());
+    const configService = ServiceFactory.configService();
+    let userService = ServiceFactory.userService(options.db, configService);
+    let abuseService = ServiceFactory.abuseService(options.db, configService);
 
     server.get(
         '/api/user/:username',
@@ -85,5 +87,95 @@ export const init = function (server, options) {
                     });
                 });
         }
+    );
+
+    server.get(
+        '/api/user/:username/abuse-profile',
+        passport.authenticate('jwt', { session: false }),
+        wrapAsync(async (req, res) => {
+            if (!req.user.permissions || !req.user.permissions.canManageUsers) {
+                return res.status(403);
+            }
+
+            let user = await userService.getUserByUsername(req.params.username);
+            if (!user) {
+                return res.status(404).send({ message: 'Not found' });
+            }
+
+            const profile = await abuseService.getAbuseProfile(user);
+
+            return res.send({ success: true, data: profile });
+        })
+    );
+
+    server.post(
+        '/api/user/:username/restrict',
+        passport.authenticate('jwt', { session: false }),
+        wrapAsync(async (req, res) => {
+            if (!req.user.permissions || !req.user.permissions.canManageUsers) {
+                return res.status(403);
+            }
+
+            let user = await userService.getUserByUsername(req.params.username);
+            if (!user) {
+                return res.status(404).send({ message: 'Not found' });
+            }
+
+            const restrictedUntil = await abuseService.restrictUser(user, {
+                actor: req.user.username,
+                days: req.body.days || 7,
+                reason: req.body.reason
+            });
+
+            return res.send({ success: true, data: { restrictedUntil } });
+        })
+    );
+
+    server.post(
+        '/api/user/:username/unrestrict',
+        passport.authenticate('jwt', { session: false }),
+        wrapAsync(async (req, res) => {
+            if (!req.user.permissions || !req.user.permissions.canManageUsers) {
+                return res.status(403);
+            }
+
+            let user = await userService.getUserByUsername(req.params.username);
+            if (!user) {
+                return res.status(404).send({ message: 'Not found' });
+            }
+
+            if (user.trustState !== 'restricted') {
+                return res.status(409).send({ message: 'User is not in a restricted trust state' });
+            }
+
+            await abuseService.unrestrictUser(user, {
+                actor: req.user.username,
+                reason: req.body.reason
+            });
+
+            return res.send({ success: true });
+        })
+    );
+
+    server.post(
+        '/api/user/:username/block-cluster',
+        passport.authenticate('jwt', { session: false }),
+        wrapAsync(async (req, res) => {
+            if (!req.user.permissions || !req.user.permissions.canManageUsers) {
+                return res.status(403);
+            }
+
+            let user = await userService.getUserByUsername(req.params.username);
+            if (!user) {
+                return res.status(404).send({ message: 'Not found' });
+            }
+
+            await abuseService.blockCluster(user, {
+                actor: req.user.username,
+                reason: req.body.reason
+            });
+
+            return res.send({ success: true });
+        })
     );
 };

@@ -5,6 +5,11 @@ metadata:
     # prettier-ignore
     namespace: {{ .Values.namespace }}
 spec:
+    type: {{ default "ClusterIP" .Values.service.type }}
+{{- $svcType := default "ClusterIP" .Values.service.type }}
+{{- if or (eq $svcType "LoadBalancer") (eq $svcType "NodePort") }}
+    externalTrafficPolicy: {{ default "Local" .Values.service.externalTrafficPolicy }}
+{{- end }}
     selector:
         app: throneteki-lobby
     ports:

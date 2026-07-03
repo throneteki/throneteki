@@ -1,11 +1,11 @@
 import passport from 'passport';
 import qs from 'qs';
 
-import DeckService from '../services/DeckService.js';
 import { wrapAsync } from '../util.js';
+import ServiceFactory from '../services/ServiceFactory.js';
 
 export const init = async function (server, options) {
-    let deckService = new DeckService(options.db, options.cardService);
+    const deckService = ServiceFactory.deckService(options.db);
 
     await deckService.init();
 
@@ -17,7 +17,14 @@ export const init = async function (server, options) {
                 return res.status(404).send({ message: 'No such deck' });
             }
 
-            let deck = await deckService.getById(req.params.id);
+            let { eventId, format, variant, legality } = req.query;
+
+            const deck = await deckService.getById(req.params.id, {
+                eventId,
+                format,
+                variant,
+                legality
+            });
 
             if (!deck) {
                 return res.status(404).send({ message: 'No such deck' });
@@ -47,7 +54,7 @@ export const init = async function (server, options) {
         '/api/decks/:id',
         passport.authenticate('jwt', { session: false }),
         wrapAsync(async function (req, res) {
-            let deck = await deckService.getById(req.params.id);
+            const deck = await deckService.getById(req.params.id);
 
             if (!deck) {
                 return res.status(404).send({ message: 'No such deck' });
@@ -57,7 +64,7 @@ export const init = async function (server, options) {
                 return res.status(401).send({ message: 'Unauthorized' });
             }
 
-            let data = Object.assign({ id: req.params.id }, req.body);
+            const data = Object.assign({ id: req.params.id }, req.body);
 
             await deckService.update(data);
 
@@ -69,7 +76,7 @@ export const init = async function (server, options) {
         '/api/decks',
         passport.authenticate('jwt', { session: false }),
         wrapAsync(async function (req, res) {
-            let deck = Object.assign(req.body, { username: req.user.username });
+            const deck = Object.assign(req.body, { username: req.user.username });
 
             if (!deck.name) {
                 return res.status(400).send({ message: 'Deck name is required' });
@@ -89,7 +96,7 @@ export const init = async function (server, options) {
         '/api/decks/:id/toggleFavourite',
         passport.authenticate('jwt', { session: false }),
         wrapAsync(async function (req, res) {
-            let deck = await deckService.getById(req.params.id);
+            const deck = await deckService.getById(req.params.id);
 
             if (!deck) {
                 return res.status(404).send({ message: 'No such deck' });
@@ -112,10 +119,10 @@ export const init = async function (server, options) {
         '/api/decks',
         passport.authenticate('jwt', { session: false }),
         wrapAsync(async function (req, res) {
-            let deckIds = req.body.deckIds;
+            const deckIds = req.body.deckIds;
 
             for (const deckId of deckIds) {
-                let deck = await deckService.getById(deckId);
+                const deck = await deckService.getById(deckId);
 
                 if (!deck) {
                     continue;
@@ -135,9 +142,9 @@ export const init = async function (server, options) {
         '/api/decks/:id',
         passport.authenticate('jwt', { session: false }),
         wrapAsync(async function (req, res) {
-            let id = req.params.id;
+            const id = req.params.id;
 
-            let deck = await deckService.getById(id);
+            const deck = await deckService.getById(id);
 
             if (!deck) {
                 return res.status(404).send({ success: false, message: 'No such deck' });

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import News from '../Components/News/News';
@@ -11,6 +11,9 @@ import { createSelector } from '@reduxjs/toolkit';
 import { useGetNewsQuery } from '../redux/middleware/api';
 import LoadingSpinner from '../Components/Site/LoadingSpinner';
 import Page from './Page';
+import { Button, Link } from '@heroui/react';
+
+const PatreonRelinkDismissKey = 'dismissedPatreonRelinkNotice';
 
 const Lobby = () => {
     const {
@@ -37,6 +40,54 @@ const Lobby = () => {
     const lobbyError = useSelector(getLobbyError);
 
     const motd = useSelector(getMotd);
+    const [patreonNoticeDismissed, setPatreonNoticeDismissed] = useState(false);
+
+    const patreonState = useMemo(() => {
+        if (!user?.patreon) {
+            return undefined;
+        }
+
+        if (typeof user.patreon === 'string') {
+            return {
+                status: user.patreon,
+                connected: ['linked', 'pledged'].includes(user.patreon),
+                needsRelink: false
+            };
+        }
+
+        return user.patreon;
+    }, [user]);
+
+    useEffect(() => {
+        if (!patreonState?.needsRelink) {
+            setPatreonNoticeDismissed(false);
+            try {
+                window.sessionStorage.removeItem(PatreonRelinkDismissKey);
+            } catch (err) {
+                void err;
+            }
+
+            return;
+        }
+
+        try {
+            setPatreonNoticeDismissed(
+                window.sessionStorage.getItem(PatreonRelinkDismissKey) === 'true'
+            );
+        } catch (err) {
+            void err;
+        }
+    }, [patreonState?.needsRelink]);
+
+    const dismissPatreonNotice = () => {
+        setPatreonNoticeDismissed(true);
+
+        try {
+            window.sessionStorage.setItem(PatreonRelinkDismissKey, 'true');
+        } catch (err) {
+            void err;
+        }
+    };
 
     let newsInfo = null;
     if (newsLoading) {
@@ -53,6 +104,24 @@ const Lobby = () => {
                 <AlertPanel variant={motd.motdType}>{getMessageWithLinks(motd.message)}</AlertPanel>
             )}
             {bannerNotice ? <AlertPanel message={bannerNotice} variant='danger' /> : null}
+            {patreonState?.needsRelink && !patreonNoticeDismissed ? (
+                <div className='mb-2 flex items-start gap-2'>
+                    <div className='flex-1'>
+                        <AlertPanel variant='warning'>
+                            <>
+                                {patreonState.message ||
+                                    'Your Patreon link has expired. Please relink your account.'}{' '}
+                                <Link href='/profile' size='sm'>
+                                    Open profile
+                                </Link>
+                            </>
+                        </AlertPanel>
+                    </div>
+                    <Button color='warning' variant='flat' size='sm' onPress={dismissPatreonNotice}>
+                        Dismiss
+                    </Button>
+                </div>
+            ) : null}
             <Panel className='max-h-[20vh]' title='Latest site news'>
                 {newsInfo}
             </Panel>

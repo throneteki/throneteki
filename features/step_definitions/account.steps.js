@@ -50,11 +50,15 @@ When('I set the id to an existing user not expecting validation', async function
 
     let result = await request.postToEndpoint('/account/register', this.requestBody);
     assert.isTrue(result.success);
+    this.activationToken = result.data && result.data.activationToken;
 
     let user = await fetchUser(this.requestBody.username);
     assert.isNotNull(user);
 
-    await dbUsers.update({ username: this.requestBody.username }, { '$set': { activationToken: undefined } });
+    await dbUsers.update(
+        { username: this.requestBody.username },
+        { '$set': { activationToken: undefined, activationTokenHash: undefined } }
+    );
 
     this.requestBody = { token: this.requestBody.token, id: user._id };
     this.currentUser = user;
@@ -65,6 +69,7 @@ When('I set the id to an existing user', async function () {
 
     let result = await request.postToEndpoint('/account/register', this.requestBody);
     assert.isTrue(result.success);
+    this.activationToken = result.data && result.data.activationToken;
 
     let user = await fetchUser(this.requestBody.username);
     assert.isNotNull(user);
@@ -74,13 +79,16 @@ When('I set the id to an existing user', async function () {
 });
 
 When('I set the token to expired', async function () {
-    await dbUsers.update({ username: this.currentUser.username }, { '$set': { activationTokenExpiry: moment(new Date()).add(-1, 'day') } });
+    await dbUsers.update(
+        { username: this.currentUser.username },
+        { '$set': { activationTokenExpiry: moment(new Date()).add(-1, 'day').toDate() } }
+    );
 
-    this.requestBody.token = this.currentUser.activationToken;
+    this.requestBody.token = this.activationToken;
 });
 
 When('I set the token to the correct token', async function () {
-    this.requestBody.token = this.currentUser.activationToken;
+    this.requestBody.token = this.activationToken;
 });
 
 Then('I should get a {string} failure response', function (message) {
@@ -99,7 +107,7 @@ Then('I should get a success message and an account is registered', async functi
     assert.equal(user.username, this.requestBody.username);
     assert.equal(user.email, this.requestBody.email);
     assert.isFalse(user.verified);
-    assert.isDefined(user.activationToken);
+    assert.isDefined(user.activationTokenHash);
     assert.isDefined(user.activationTokenExpiry);
 
 });
@@ -112,7 +120,8 @@ Then('The user should be activated', async function () {
     db.close();
 
     assert.isNotNull(user);
-    assert.isUndefined(user.actviationToken);
-    assert.isUndefined(user.actviationTokenExpiry);
+    assert.isUndefined(user.activationToken);
+    assert.isUndefined(user.activationTokenHash);
+    assert.isUndefined(user.activationTokenExpiry);
     assert.isTrue(user.verified);
 });

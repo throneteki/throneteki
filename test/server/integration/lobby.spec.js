@@ -79,5 +79,21 @@ describe('lobby', function () {
                 expect(Object.values(this.lobby.games).length).toBe(1);
             });
         });
+
+        describe('when the user is restricted', function () {
+            beforeEach(function () {
+                this.userSpy.trustState = 'restricted';
+                this.userSpy.restrictedUntil = new Date(Date.now() + 60 * 1000);
+                this.lobby.onNewGame(this.socketSpy, { eventId: 'none' });
+            });
+
+            it('should reject the new game', function () {
+                expect(Object.values(this.lobby.games).length).toBe(0);
+                expect(this.socketSpy.send).toHaveBeenCalledWith(
+                    'gameerror',
+                    'This account is temporarily restricted and cannot create new games.'
+                );
+            });
+        });
     });
 });

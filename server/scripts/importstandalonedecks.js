@@ -5,8 +5,6 @@ import fs from 'fs';
 import path from 'path';
 import monk from 'monk';
 import ServiceFactory from '../services/ServiceFactory.js';
-import CardService from '../services/CardService.js';
-import DeckService from '../services/DeckService.js';
 
 const __dirname = import.meta.dirname;
 
@@ -14,8 +12,8 @@ class ImportStandaloneDecks {
     constructor() {
         let configService = ServiceFactory.configService();
         this.db = monk(configService.getValue('dbPath'));
-        this.cardService = new CardService(this.db);
-        this.deckService = new DeckService(this.db, this.cardService);
+        this.cardService = ServiceFactory.cardService(this.db);
+        this.deckService = ServiceFactory.deckService(this.db);
     }
 
     async import() {

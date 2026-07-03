@@ -4,7 +4,6 @@ import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import moment from 'moment';
 import _ from 'underscore';
-import sendgrid from '@sendgrid/mail';
 import logger from '../log.js';
 import { wrapAsync } from '../util.js';
 import { writeFile } from 'fs/promises';
@@ -13,6 +12,39 @@ const configService = ServiceFactory.configService();
 const appName = configService.getValue('appName');
 
 let userService;
+let abuseService;
+let disposableEmailService;
+let ipQualityScoreService;
+let proxyCheckService;
+let emailService;
+const ActivationTokenLifetimeDays = 7;
+const ResetTokenLifetimeHours = 4;
+
+function mergeExternalRisk(...risks) {
+    return risks.reduce(
+        (mergedRisk, risk) => {
+            if (!risk) {
+                return mergedRisk;
+            }
+
+            return {
+                denyRegistration: mergedRisk.denyRegistration || !!risk.denyRegistration,
+                riskFlags: [...new Set(mergedRisk.riskFlags.concat(risk.riskFlags || []))],
+                riskScoreDelta: mergedRisk.riskScoreDelta + (risk.riskScoreDelta || 0),
+                findings: {
+                    ...mergedRisk.findings,
+                    ...(risk.findings || {})
+                }
+            };
+        },
+        {
+            denyRegistration: false,
+            riskFlags: [],
+            riskScoreDelta: 0,
+            findings: {}
+        }
+    );
+}
 
 function hashPassword(password, rounds) {
     return new Promise((resolve, reject) => {
@@ -26,17 +58,114 @@ function hashPassword(password, rounds) {
     });
 }
 
-function sendEmail(address, subject, email) {
-    const message = {
-        to: address,
-        from: 'The Iron Throne <noreply@theironthrone.net>',
-        subject: subject,
-        text: email
-    };
+function hashActivationToken(token) {
+    return crypto
+        .createHmac('sha256', configService.getValue('hmacSecret'))
+        .update(token)
+        .digest('hex');
+}
 
-    return sendgrid.send(message).catch((err) => {
-        logger.error('Unable to send email %s', err);
-    });
+function createActivationToken() {
+    let token = crypto.randomBytes(32).toString('hex');
+
+    return {
+        token,
+        tokenHash: hashActivationToken(token),
+        expiresAt: moment().add(ActivationTokenLifetimeDays, 'days').toDate()
+    };
+}
+
+function createResetToken() {
+    let token = crypto.randomBytes(32).toString('hex');
+
+    return {
+        token,
+        tokenHash: hashActivationToken(token),
+        expiresAt: moment().add(ResetTokenLifetimeHours, 'hours').toDate()
+    };
+}
+
+function getActivationExpiryDate(user) {
+    if (!user?.activationTokenExpiry) {
+        return undefined;
+    }
+
+    let parsedExpiry = moment(
+        user.activationTokenExpiry,
+        [moment.ISO_8601, 'YYYYMMDD-HH:mm:ss'],
+        true
+    );
+
+    if (!parsedExpiry.isValid()) {
+        return undefined;
+    }
+
+    return parsedExpiry.toDate();
+}
+
+function getLegacyActivationToken(user) {
+    if (!user?.activationTokenExpiry) {
+        return undefined;
+    }
+
+    let expiry = user.activationTokenExpiry;
+    if (expiry instanceof Date) {
+        expiry = moment(expiry).format('YYYYMMDD-HH:mm:ss');
+    }
+
+    return crypto
+        .createHmac('sha512', configService.getValue('hmacSecret'))
+        .update(`ACTIVATE ${user.username} ${expiry}`)
+        .digest('hex');
+}
+
+function getResetExpiryDate(user) {
+    if (!user?.tokenExpires) {
+        return undefined;
+    }
+
+    let parsedExpiry = moment(user.tokenExpires, [moment.ISO_8601, 'YYYYMMDD-HH:mm:ss'], true);
+
+    if (!parsedExpiry.isValid()) {
+        return undefined;
+    }
+
+    return parsedExpiry.toDate();
+}
+
+function getLegacyResetToken(user) {
+    if (!user?.tokenExpires) {
+        return undefined;
+    }
+
+    let expiry = user.tokenExpires;
+    if (expiry instanceof Date) {
+        expiry = moment(expiry).format('YYYYMMDD-HH:mm:ss');
+    }
+
+    return crypto
+        .createHmac('sha512', configService.getValue('hmacSecret'))
+        .update(`RESET ${user.username} ${expiry}`)
+        .digest('hex');
+}
+
+function tokensMatch(left, right) {
+    if (!left || !right) {
+        return false;
+    }
+
+    let leftBuffer = Buffer.from(left);
+    let rightBuffer = Buffer.from(right);
+
+    if (leftBuffer.length !== rightBuffer.length) {
+        return false;
+    }
+
+    return crypto.timingSafeEqual(leftBuffer, rightBuffer);
+}
+
+function shouldExposeActivationToken() {
+    return configService.getValue('env') !== 'production';
 }
 
 function validateUserName(username) {
@@ -85,24 +214,214 @@ function validatePassword(password) {
 
 const DefaultEmailHash = crypto.createHash('md5').update('noreply@theironthrone.net').digest('hex');
 
+function getRequestIp(req) {
+    let ip = req.ip || req.get('x-real-ip') || req.headers['x-forwarded-for'];
+
+    if (Array.isArray(ip)) {
+        [ip] = ip;
+    }
+
+    if (typeof ip === 'string') {
+        [ip] = ip.split(',');
+        ip = ip.trim();
+    }
+
+    return ip || req.socket?.remoteAddress || req.connection?.remoteAddress;
+}
+
+function getSignupFingerprint(req) {
+    return {
+        userAgent: req.headers['user-agent'],
+        language: req.headers['accept-language'],
+        timezone: req.body.timezone,
+        platform: req.body.platform,
+        fingerprint: req.body.fingerprint
+    };
+}
+
+function summarizeLinkedUsers(linkedUsers = []) {
+    return linkedUsers.map((linkedUser) => ({
+        userId: linkedUser.user?._id?.toString?.() || linkedUser.user?._id,
+        username: linkedUser.user?.username,
+        disabled: !!linkedUser.user?.disabled,
+        trustState: linkedUser.user?.trustState || 'trusted',
+        evidence: linkedUser.evidence || []
+    }));
+}
+
+function logRegistrationAssessment(stage, assessment, externalRisk, extra = {}) {
+    logger.info({
+        event: 'registration_abuse_assessment',
+        stage,
+        username: assessment.username,
+        ip: assessment.ip,
+        subnet: assessment.subnet,
+        emailDomain: assessment.emailDomain,
+        riskScore: assessment.riskScore,
+        trustState: assessment.trustState,
+        blocked: assessment.blocked,
+        challengeRequired: assessment.challengeRequired,
+        cooldownRemainingMs: assessment.cooldownRemainingMs,
+        restrictedUntil: assessment.restrictedUntil,
+        riskFlags: assessment.riskFlags,
+        matchingBlocks: (assessment.matchingBlocks || []).map((block) => ({
+            scope: block.scope,
+            reason: block.reason,
+            legacy: !!block.legacy,
+            expiresAt: block.expiresAt || null
+        })),
+        linkedUsers: summarizeLinkedUsers(assessment.linkedUsers),
+        externalRisk: externalRisk
+            ? {
+                  denyRegistration: !!externalRisk.denyRegistration,
+                  riskFlags: externalRisk.riskFlags || [],
+                  riskScoreDelta: externalRisk.riskScoreDelta || 0,
+                  findings: externalRisk.findings || {}
+              }
+            : undefined,
+        ...extra
+    });
+}
+
+async function verifyCaptchaToken(captcha) {
+    const captchaKey = configService.getValue('captchaKey');
+
+    if (!captchaKey) {
+        logger.warn('Captcha verification requested but captchaKey is not configured');
+        return {
+            success: false,
+            message: 'Captcha verification is temporarily unavailable. Please try again later.'
+        };
+    }
+
+    if (!captcha) {
+        return {
+            success: false,
+            message: 'Please complete the captcha correctly'
+        };
+    }
+
+    const params = new URLSearchParams();
+    params.append('secret', captchaKey);
+    params.append('response', captcha);
+
+    let response = await fetch('https://api.hcaptcha.com/siteverify', {
+        method: 'POST',
+        headers: { 'content-type': 'application/x-www-form-urlencoded' },
+        body: params
+    });
+
+    let answer = await response.json();
+
+    if (!answer.success) {
+        logger.warn('Failed captcha %s', JSON.stringify(answer));
+        return {
+            success: false,
+            message: 'Please complete the captcha correctly'
+        };
+    }
+
+    return { success: true };
+}
+
 export const init = function (server, options) {
     userService = ServiceFactory.userService(options.db, configService);
     let banlistService = ServiceFactory.banlistService(options.db);
+    abuseService = ServiceFactory.abuseService(options.db, configService);
+    disposableEmailService = ServiceFactory.disposableEmailService(configService);
+    ipQualityScoreService = ServiceFactory.ipQualityScoreService(configService);
+    proxyCheckService = ServiceFactory.proxyCheckService(configService);
+    emailService = ServiceFactory.emailService(configService);
     let patreonService = ServiceFactory.patreonService(
         configService.getValue('patreonClientId'),
         configService.getValue('patreonSecret'),
         userService,
         configService.getValue('patreonCallbackUrl')
     );
-    let emailKey = configService.getValue('emailKey');
 
-    if (emailKey) {
-        sendgrid.setApiKey(emailKey);
-    }
+    server.post(
+        '/api/account/preflight-register',
+        wrapAsync(async (req, res) => {
+            let message = validateEmail(req.body.email);
+            if (message) {
+                return res.status(400).send({ success: false, message });
+            }
+
+            let ip = getRequestIp(req);
+            let externalRisk = mergeExternalRisk(
+                await ipQualityScoreService.assessRegistration({
+                    email: req.body.email
+                }),
+                await proxyCheckService.assessRegistration({
+                    ip
+                })
+            );
+
+            const assessment = await abuseService.assessRegistrationAttempt({
+                ip,
+                email: req.body.email,
+                username: req.body.username,
+                fingerprint: getSignupFingerprint(req),
+                externalRisk
+            });
+            logRegistrationAssessment('preflight', assessment, externalRisk, {
+                canProceed: !assessment.blocked && assessment.cooldownRemainingMs <= 0
+            });
+
+            const canProceed = !assessment.blocked && assessment.cooldownRemainingMs <= 0;
+            const response = {
+                canProceed,
+                challengeRequired: assessment.challengeRequired,
+                cooldownRemainingMs: assessment.cooldownRemainingMs,
+                trustState: assessment.trustState,
+                restrictedUntil: assessment.restrictedUntil,
+                reviewMessage:
+                    assessment.trustState === 'restricted'
+                        ? 'This account will have limited permissions until it has established trust.'
+                        : undefined
+            };
+
+            await abuseService.logEvent({
+                type: 'registration_preflight',
+                username: req.body.username,
+                ip: assessment.ip,
+                subnet: assessment.subnet,
+                fingerprintHash: assessment.fingerprintHash,
+                emailDomain: assessment.emailDomain,
+                outcome: canProceed
+                    ? assessment.trustState === 'restricted'
+                        ? 'restricted'
+                        : assessment.challengeRequired
+                          ? 'challenged'
+                          : 'allowed'
+                    : 'blocked',
+                signals: [
+                    `ip:${assessment.ip}`,
+                    assessment.subnet ? `subnet:${assessment.subnet}` : undefined,
+                    ...assessment.riskFlags
+                ].filter(Boolean),
+                scoreDelta: assessment.riskScore
+            });
+
+            if (!canProceed) {
+                const status = assessment.cooldownRemainingMs > 0 ? 429 : 403;
+                return res.status(status).send({
+                    success: false,
+                    message:
+                        assessment.cooldownRemainingMs > 0
+                            ? 'Too many recent registration attempts. Please try again later.'
+                            : 'We could not complete this registration request. Please contact support if you believe this is an error.',
+                    data: response
+                });
+            }
+
+            return res.send({ success: true, data: response });
+        })
+    );
 
     server.post(
         '/api/account/register',
-        wrapAsync(async (req, res, next) => {
+        wrapAsync(async (req, res) => {
             let message = validateUserName(req.body.username);
             if (message) {
                 return res.status(400).send({ success: false, message: message });
@@ -117,6 +436,11 @@ export const init = function (server, options) {
             if (message) {
                 return res.status(400).send({ success: false, message: message });
             }
+
+            await userService.deleteExpiredUnverifiedAccounts({
+                email: req.body.email,
+                username: req.body.username
+            });
 
             let user = await userService.getUserByEmail(req.body.email);
             if (user) {
@@ -134,57 +458,166 @@ export const init = function (server, options) {
                 });
             }
 
-            let domain = req.body.email.substring(req.body.email.lastIndexOf('@') + 1);
+            let emailRisk = await disposableEmailService.evaluateRegistrationEmail(req.body.email);
+            if (emailRisk.verdict === 'deny') {
+                logger.warn(
+                    'Blocking %s from registering the account %s due to %s',
+                    emailRisk.domain,
+                    req.body.username,
+                    emailRisk.source
+                );
+                return res.status(400).send({
+                    success: false,
+                    message:
+                        'One time use email services are not permitted on this site.  Please use a real email address'
+                });
+            }
 
-            let emailBlockKey = configService.getValue('emailBlockKey');
-            if (emailBlockKey) {
-                try {
-                    let response = await fetch(
-                        `http://check.block-disposable-email.com/easyapi/json/${emailBlockKey}/${domain}`
-                    );
-                    let answer = response.json();
+            let requireActivation = configService.getValue('requireActivation');
+            let passwordHash = await hashPassword(req.body.password, 10);
+            let ip = getRequestIp(req);
+            let externalRisk = mergeExternalRisk(
+                await ipQualityScoreService.assessRegistration({
+                    email: req.body.email
+                }),
+                await proxyCheckService.assessRegistration({
+                    ip
+                })
+            );
 
-                    if (answer.request_status !== 'success') {
-                        logger.warn('Failed to check email address %s', answer);
-                    }
+            if (externalRisk.denyRegistration) {
+                logger.warn({
+                    event: 'registration_external_deny',
+                    username: req.body.username,
+                    emailDomain: abuseService.getEmailDomain(req.body.email),
+                    ip,
+                    denyRegistration: true,
+                    riskFlags: externalRisk.riskFlags || [],
+                    riskScoreDelta: externalRisk.riskScoreDelta || 0,
+                    findings: externalRisk.findings || {}
+                });
+                return res.status(400).send({
+                    success: false,
+                    message:
+                        'One time use email services are not permitted on this site.  Please use a real email address'
+                });
+            }
 
-                    if (answer.domain_status === 'block') {
-                        logger.warn(
-                            'Blocking %s from registering the account %s',
-                            domain,
-                            req.body.username
-                        );
-                        return res.status(400).send({
-                            success: false,
-                            message:
-                                'One time use email services are not permitted on this site.  Please use a real email address'
-                        });
-                    }
-                } catch (err) {
-                    logger.warn('Could not valid email address %s %s', domain, err);
+            const assessment = await abuseService.assessRegistrationAttempt({
+                ip,
+                email: req.body.email,
+                username: req.body.username,
+                fingerprint: getSignupFingerprint(req),
+                externalRisk
+            });
+            logRegistrationAssessment('register', assessment, externalRisk);
+
+            await abuseService.logEvent({
+                type: 'registration_attempt',
+                username: req.body.username,
+                ip: assessment.ip,
+                subnet: assessment.subnet,
+                fingerprintHash: assessment.fingerprintHash,
+                emailDomain: assessment.emailDomain,
+                outcome:
+                    assessment.cooldownRemainingMs > 0
+                        ? 'blocked'
+                        : assessment.blocked
+                          ? 'blocked'
+                          : assessment.trustState === 'restricted'
+                            ? 'restricted'
+                            : assessment.challengeRequired
+                              ? 'challenged'
+                              : 'allowed',
+                signals: [
+                    `ip:${assessment.ip}`,
+                    assessment.subnet ? `subnet:${assessment.subnet}` : undefined,
+                    ...assessment.riskFlags
+                ].filter(Boolean),
+                scoreDelta: assessment.riskScore
+            });
+
+            if (assessment.cooldownRemainingMs > 0) {
+                return res.status(429).send({
+                    success: false,
+                    message: 'Too many recent registration attempts. Please try again later.'
+                });
+            }
+
+            if (assessment.blocked) {
+                logger.warn({
+                    event: 'registration_blocked',
+                    username: assessment.username,
+                    ip: assessment.ip,
+                    subnet: assessment.subnet,
+                    emailDomain: assessment.emailDomain,
+                    riskScore: assessment.riskScore,
+                    trustState: assessment.trustState,
+                    riskFlags: assessment.riskFlags
+                });
+                return res.status(403).send({
+                    success: false,
+                    message:
+                        'We could not complete this registration request. Please contact support if you believe this is an error.'
+                });
+            }
+
+            if (assessment.challengeRequired) {
+                logger.info({
+                    event: 'registration_captcha_required',
+                    username: assessment.username,
+                    ip: assessment.ip,
+                    riskScore: assessment.riskScore,
+                    riskFlags: assessment.riskFlags
+                });
+                const captchaResult = await verifyCaptchaToken(req.body.captcha);
+                if (!captchaResult.success) {
+                    logger.warn({
+                        event: 'registration_captcha_failed',
+                        username: assessment.username,
+                        ip: assessment.ip,
+                        riskScore: assessment.riskScore,
+                        riskFlags: assessment.riskFlags,
+                        message: captchaResult.message
+                    });
+                    return res.status(400).send({
+                        success: false,
+                        message: captchaResult.message
+                    });
                 }
             }
 
-            let passwordHash = await hashPassword(req.body.password, 10);
-
-            let requireActivation = configService.getValue('requireActivation');
-
+            let activationTokenValue;
+            let newUser = {
+                password: passwordHash,
+                registered: new Date(),
+                username: req.body.username,
+                email: req.body.email,
+                emailDomain: assessment.emailDomain,
+                enableGravatar: req.body.enableGravatar,
+                verified: !requireActivation,
+                registerIp: ip,
+                registerIpNormalized: assessment.ip,
+                registerSubnet: assessment.subnet,
+                lastLoginIp: assessment.ip,
+                lastLoginSubnet: assessment.subnet,
+                signupFingerprintHash: assessment.fingerprintHash,
+                riskFlags: assessment.riskFlags,
+                riskScore: assessment.riskScore,
+                trustState: assessment.trustState,
+                restrictedUntil: assessment.restrictedUntil,
+                evasionReviewRequired: assessment.trustState === 'restricted'
+            };
             if (requireActivation) {
-                let expiration = moment().add(7, 'days');
-                let formattedExpiration = expiration.format('YYYYMMDD-HH:mm:ss');
-                let hmac = crypto.createHmac('sha512', configService.getValue('hmacSecret'));
-
-                let activationToken = hmac
-                    .update(`ACTIVATE ${req.body.username} ${formattedExpiration}`)
-                    .digest('hex');
-                newUser.activationToken = activationToken;
-                newUser.activationTokenExpiry = formattedExpiration;
+                let activationToken = createActivationToken();
+                newUser.activationTokenHash = activationToken.tokenHash;
+                newUser.activationTokenExpiry = activationToken.expiresAt;
+                newUser.activationTokenVersion = 2;
+                newUser.activationTokenIssuedAt = new Date();
+                newUser.activationToken = undefined;
+                activationTokenValue = activationToken.token;
             }
 
-            let ip = req.get('x-real-ip');
-            if (!ip) {
-                ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-            }
             try {
                 let lookup = await banlistService.getEntryByIp(ip);
                 if (lookup) {
@@ -203,29 +636,51 @@ export const init = function (server, options) {
                 });
             }
 
-            let newUser = {
-                password: passwordHash,
-                registered: new Date(),
-                username: req.body.username,
-                email: req.body.email,
-                enableGravatar: req.body.enableGravatar,
-                verified: !requireActivation,
-                registerIp: ip
-            };
-
             user = await userService.addUser(newUser);
+            logger.info({
+                event: 'registration_completed',
+                userId: user?._id?.toString?.() || user?._id,
+                username: newUser.username,
+                ip: assessment.ip,
+                subnet: assessment.subnet,
+                emailDomain: assessment.emailDomain,
+                trustState: newUser.trustState,
+                riskScore: newUser.riskScore,
+                riskFlags: newUser.riskFlags,
+                restrictedUntil: newUser.restrictedUntil || null,
+                requiresVerification: requireActivation
+            });
             if (requireActivation) {
-                let url = `${req.protocol}://${req.get('host')}/activation?id=${user._id}&token=${newUser.activationToken}`;
+                let url = `${req.protocol}://${req.get('host')}/activation?id=${user._id}&token=${activationTokenValue}`;
                 let emailText =
                     `Hi,\n\nSomeone, hopefully you, has requested an account to be created on ${appName} (${req.protocol}://${req.get('host')}).  If this was you, click this link ${url} to complete the process.\n\n` +
                     'If you did not request this please disregard this email.\n' +
                     'Kind regards,\n\n' +
                     `${appName} team`;
 
-                await sendEmail(user.email, `${appName} - Account activation`, emailText);
+                await emailService.sendEmail(
+                    user.email,
+                    `${appName} - Account activation`,
+                    emailText
+                );
             }
 
-            res.send({ success: true, data: requireActivation });
+            res.send({
+                success: true,
+                data: {
+                    requiresVerification: requireActivation,
+                    activationToken:
+                        requireActivation && shouldExposeActivationToken()
+                            ? activationTokenValue
+                            : undefined,
+                    trustState: newUser.trustState,
+                    restrictedUntil: newUser.restrictedUntil,
+                    reviewMessage:
+                        newUser.trustState === 'restricted'
+                            ? 'Your account was created with limited permissions while it is reviewed.'
+                            : undefined
+                }
+            });
 
             await downloadAvatar(user);
         })
@@ -233,7 +688,7 @@ export const init = function (server, options) {
 
     server.post(
         '/api/account/activate',
-        wrapAsync(async (req, res, next) => {
+        wrapAsync(async (req, res) => {
             if (!req.body.id || !req.body.token) {
                 return res.status(400).send({ success: false, message: 'Invalid parameters' });
             }
@@ -251,7 +706,7 @@ export const init = function (server, options) {
                 });
             }
 
-            if (!user.activationToken) {
+            if (!user.activationToken && !user.activationTokenHash) {
                 logger.error('Got unexpected activate request for user %s', user.username);
 
                 return res.send({
@@ -261,8 +716,8 @@ export const init = function (server, options) {
                 });
             }
 
-            let now = moment();
-            if (user.activationTokenExpiry < now) {
+            let activationExpiry = getActivationExpiryDate(user);
+            if (!activationExpiry || activationExpiry.getTime() <= Date.now()) {
                 logger.error('Token expired %s', user.username);
 
                 return res.send({
@@ -271,12 +726,13 @@ export const init = function (server, options) {
                 });
             }
 
-            let hmac = crypto.createHmac('sha512', configService.getValue('hmacSecret'));
-            let resetToken = hmac
-                .update('ACTIVATE ' + user.username + ' ' + user.activationTokenExpiry)
-                .digest('hex');
+            let hashedToken = hashActivationToken(req.body.token);
+            let expectedToken =
+                user.activationTokenHash ||
+                (user.activationToken ? getLegacyActivationToken(user) : undefined);
+            let providedToken = user.activationTokenHash ? hashedToken : req.body.token;
 
-            if (resetToken !== req.body.token) {
+            if (!tokensMatch(expectedToken, providedToken)) {
                 logger.error('Invalid activation token', user.username, req.body.token);
 
                 return res.send({
@@ -340,28 +796,21 @@ export const init = function (server, options) {
                 return res.send({ success: true, data: userDetails });
             }
 
-            userDetails.patreon = await patreonService.getPatreonStatusForUser(user);
+            userDetails.patreon = await patreonService.getPatreonStateForUser(user);
 
-            if (userDetails.patreon === 'none') {
+            if (!userDetails.patreon) {
                 delete userDetails.patreon;
-
-                let ret = await patreonService.refreshTokenForUser(user);
-                if (!ret) {
-                    return res.send({ success: true, data: userDetails });
-                }
-
-                userDetails.patreon = await patreonService.getPatreonStatusForUser(user);
-
-                if (userDetails.patreon === 'none') {
-                    return res.send({ success: true, data: userDetails });
-                }
+                return res.send({ success: true, data: userDetails });
             }
 
-            if (userDetails.patreon === 'pledged' && !userDetails.permissions.isSupporter) {
+            if (userDetails.patreon.status === 'pledged' && !userDetails.permissions.isSupporter) {
                 await userService.setSupporterStatus(user.username, true);
                 // eslint-disable-next-line require-atomic-updates
                 userDetails.permissions.isSupporter = req.user.permissions.isSupporter = true;
-            } else if (userDetails.patreon !== 'pledged' && userDetails.permissions.isSupporter) {
+            } else if (
+                userDetails.patreon.status !== 'pledged' &&
+                userDetails.permissions.isSupporter
+            ) {
                 await userService.setSupporterStatus(user.username, false);
                 // eslint-disable-next-line require-atomic-updates
                 userDetails.permissions.isSupporter = req.user.permissions.isSupporter = false;
@@ -373,7 +822,7 @@ export const init = function (server, options) {
 
     server.post(
         '/api/account/login',
-        wrapAsync(async (req, res, next) => {
+        wrapAsync(async (req, res) => {
             if (!req.body.username) {
                 return res.send({ success: false, message: 'Username must be specified' });
             }
@@ -415,15 +864,32 @@ export const init = function (server, options) {
                 });
             }
 
+            const loginAssessment = await abuseService.assessLoginAttempt(user, {
+                ip: getRequestIp(req),
+                fingerprint: getSignupFingerprint(req)
+            });
+            await abuseService.logEvent({
+                type: 'login_attempt',
+                username: user.username,
+                userId: user._id,
+                ip: loginAssessment.ip,
+                subnet: loginAssessment.subnet,
+                fingerprintHash: loginAssessment.fingerprintHash,
+                emailDomain: user.emailDomain,
+                outcome: loginAssessment.blocked ? 'blocked' : 'allowed',
+                signals: loginAssessment.linkedUsers.flatMap((linkedUser) => linkedUser.evidence)
+            });
+
+            if (loginAssessment.blocked) {
+                return res.send({ success: false, message: 'Invalid username/password' });
+            }
+
             let userObj = user.getWireSafeDetails();
 
             let authToken = jwt.sign(userObj, configService.getValue('secret'), {
                 expiresIn: '5m'
             });
-            let ip = req.get('x-real-ip');
-            if (!ip) {
-                ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-            }
+            let ip = loginAssessment.ip;
 
             let refreshToken = await userService.addRefreshToken(user.username, authToken, ip);
             if (!refreshToken) {
@@ -442,12 +908,17 @@ export const init = function (server, options) {
                     refreshToken: refreshToken
                 }
             });
+
+            await abuseService.updateUserSessionMetadata(user.username, {
+                ip: loginAssessment.ip,
+                subnet: loginAssessment.subnet
+            });
         })
     );
 
     server.post(
         '/api/account/token',
-        wrapAsync(async (req, res, next) => {
+        wrapAsync(async (req, res) => {
             if (!req.body.token) {
                 return res.send({ success: false, message: 'Refresh token must be specified' });
             }
@@ -481,18 +952,21 @@ export const init = function (server, options) {
                 return res.send({ success: false, message: 'Invalid refresh token' });
             }
 
+            if (user.trustState === 'banned_evasion_review') {
+                return res.send({ success: false, message: 'Invalid refresh token' });
+            }
+
             let userObj = user.getWireSafeDetails();
 
-            let ip = req.get('x-real-ip');
-            if (!ip) {
-                ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-            }
+            let ip = getRequestIp(req);
+            let subnet = abuseService.getSubnet(ip);
 
             let authToken = jwt.sign(userObj, configService.getValue('secret'), {
                 expiresIn: '5m'
             });
 
             await userService.updateRefreshTokenUsage(refreshToken.id, ip);
+            await abuseService.updateUserSessionMetadata(user.username, { ip, subnet });
 
             res.send({ success: true, data: { user: userObj, token: authToken } });
         })
@@ -500,15 +974,35 @@ export const init = function (server, options) {
 
     server.post(
         '/api/account/password-reset-finish',
-        wrapAsync(async (req, res, next) => {
-            let resetUser;
-
+        wrapAsync(async (req, res) => {
             if (!req.body.id || !req.body.token || !req.body.newPassword) {
+                return res.send({ success: false, message: 'Invalid parameters' });
+            }
+
+            if (!req.body.id.match(/^[a-f\d]{24}$/i)) {
                 return res.send({ success: false, message: 'Invalid parameters' });
             }
 
             let user = await userService.getUserById(req.body.id);
             if (!user) {
+                logger.error('Got unexpected reset request for unknown user %s', req.body.id);
+
+                return res.send({
+                    success: false,
+                    message:
+                        'An error occured resetting your password, check the url you have entered and try again.'
+                });
+            }
+
+            let passwordMessage = validatePassword(req.body.newPassword);
+            if (passwordMessage) {
+                return res.send({
+                    success: false,
+                    message: passwordMessage
+                });
+            }
+
+            if (!user.resetToken && !user.resetTokenHash) {
                 logger.error('Got unexpected reset request for user %s', user.username);
 
                 return res.send({
@@ -518,18 +1012,8 @@ export const init = function (server, options) {
                 });
             }
 
-            if (!user.resetToken) {
-                logger.error('Got unexpected reset request for user %s', user.username);
-
-                return res.send({
-                    success: false,
-                    message:
-                        'An error occured resetting your password, check the url you have entered and try again.'
-                });
-            }
-
-            let now = moment();
-            if (user.tokenExpires < now) {
+            let resetExpiry = getResetExpiryDate(user);
+            if (!resetExpiry || resetExpiry.getTime() <= Date.now()) {
                 logger.error('Token expired %s', user.username);
 
                 return res.send({
@@ -538,12 +1022,12 @@ export const init = function (server, options) {
                 });
             }
 
-            let hmac = crypto.createHmac('sha512', configService.getValue('hmacSecret'));
-            let resetToken = hmac
-                .update('RESET ' + user.username + ' ' + user.tokenExpires)
-                .digest('hex');
+            let hashedToken = hashActivationToken(req.body.token);
+            let expectedToken =
+                user.resetTokenHash || (user.resetToken ? getLegacyResetToken(user) : undefined);
+            let providedToken = user.resetTokenHash ? hashedToken : req.body.token;
 
-            if (resetToken !== req.body.token) {
+            if (!tokensMatch(expectedToken, providedToken)) {
                 logger.error('Invalid reset token %s %s', user.username, req.body.token);
 
                 return res.send({
@@ -553,11 +1037,9 @@ export const init = function (server, options) {
                 });
             }
 
-            resetUser = user;
-
             let passwordHash = await hashPassword(req.body.newPassword, 10);
-            await userService.setPassword(resetUser, passwordHash);
-            await userService.clearResetToken(resetUser);
+            await userService.setPassword(user, passwordHash);
+            await userService.clearResetToken(user);
 
             res.send({ success: true });
         })
@@ -566,25 +1048,11 @@ export const init = function (server, options) {
     server.post(
         '/api/account/password-reset',
         wrapAsync(async (req, res) => {
-            let resetToken;
-
-            const params = new URLSearchParams();
-            params.append('secret', configService.getValue('captchaKey'));
-            params.append('response', req.body.captcha);
-
-            let response = await fetch('https://api.hcaptcha.com/siteverify', {
-                method: 'POST',
-                headers: { 'content-type': 'application/x-www-form-urlencoded' },
-                body: params
-            });
-
-            let answer = await response.json();
-
-            if (!answer.success) {
-                logger.warn('Failed captcha %s', answer);
+            const captchaResult = await verifyCaptchaToken(req.body.captcha);
+            if (!captchaResult.success) {
                 return res.send({
                     success: false,
-                    message: 'Please complete the captcha correctly'
+                    message: captchaResult.message
                 });
             }
 
@@ -597,21 +1065,17 @@ export const init = function (server, options) {
                 return;
             }
 
-            let expiration = moment().add(4, 'hours');
-            let formattedExpiration = expiration.format('YYYYMMDD-HH:mm:ss');
-            let hmac = crypto.createHmac('sha512', configService.getValue('hmacSecret'));
+            let resetToken = createResetToken();
 
-            resetToken = hmac.update(`RESET ${user.username} ${formattedExpiration}`).digest('hex');
-
-            await userService.setResetToken(user, resetToken, formattedExpiration);
-            let url = `${req.protocol}://${req.get('host')}/reset-password?id=${user._id}&token=${resetToken}`;
+            await userService.setResetToken(user, resetToken.tokenHash, resetToken.expiresAt);
+            let url = `${req.protocol}://${req.get('host')}/reset-password?id=${user._id}&token=${resetToken.token}`;
             let emailText =
                 `Hi,\n\nSomeone, hopefully you, has requested their password on ${appName} (${req.protocol}://${req.get('host')}) to be reset.  If this was you, click this link ${url} to complete the process.\n\n` +
                 'If you did not request this reset, do not worry, your account has not been affected and your password has not been changed, just ignore this email.\n' +
                 'Kind regards,\n\n' +
                 `${appName} team`;
 
-            await sendEmail(user.email, `${appName} - Password reset`, emailText);
+            await emailService.sendEmail(user.email, `${appName} - Password reset`, emailText);
         })
     );
 
@@ -872,19 +1336,22 @@ export const init = function (server, options) {
                 });
             }
 
-            let status = await patreonService.getPatreonStatusForUser(user);
+            let patreonState = await patreonService.getPatreonStateForUser(user);
 
-            if (status === 'pledged' && !user.permissions.isSupporter) {
+            if (patreonState?.status === 'pledged' && !user.permissions.isSupporter) {
                 await userService.setSupporterStatus(user.username, true);
                 // eslint-disable-next-line require-atomic-updates
                 user.permissions.isSupporter = req.user.permissions.isSupporter = true;
-            } else if (status !== 'pledged' && user.permissions.isSupporter) {
+            } else if (patreonState?.status !== 'pledged' && user.permissions.isSupporter) {
                 await userService.setSupporterStatus(user.username, false);
                 // eslint-disable-next-line require-atomic-updates
                 user.permissions.isSupporter = req.user.permissions.isSupporter = false;
             }
 
-            return res.send({ success: true });
+            let userDetails = user.getWireSafeDetails();
+            userDetails.patreon = patreonState;
+
+            return res.send({ success: true, data: { user: userDetails } });
         })
     );
 
@@ -909,7 +1376,15 @@ export const init = function (server, options) {
                 });
             }
 
-            return res.send({ success: true });
+            if (user.permissions.isSupporter) {
+                await userService.setSupporterStatus(user.username, false);
+            }
+
+            let userDetails = user.getWireSafeDetails();
+            userDetails.permissions.isSupporter = false;
+            userDetails.patreon = null;
+
+            return res.send({ success: true, data: { user: userDetails } });
         })
     );
 };

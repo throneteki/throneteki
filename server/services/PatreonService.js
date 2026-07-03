@@ -1,67 +1,140 @@
-import patreon from 'patreon';
-const patreonAPI = patreon.patreon;
-const patreonOAuth = patreon.oauth;
-import pledgeSchema from 'patreon/dist/schemas/pledge.js';
 import logger from '../log.js';
+
+const PatreonApiBaseUrl = 'https://www.patreon.com/api/oauth2/v2';
+const PatreonTokenUrl = 'https://www.patreon.com/api/oauth2/token';
+const BrokenLinkMessage = 'Your Patreon link has expired. Please relink your Patreon account.';
 
 class PatreonService {
     constructor(clientId, secret, userService, callbackUrl) {
+        this.clientId = clientId;
+        this.secret = secret;
         this.userService = userService;
         this.callbackUrl = callbackUrl;
-
-        this.patreonOAuthClient = patreonOAuth(clientId, secret);
     }
 
-    async getPatreonStatusForUser(user) {
+    async getPatreonStateForUser(user) {
+        if (!user?.patreon?.refresh_token) {
+            return undefined;
+        }
+
+        if (user.patreon.relinkRequired) {
+            return this.buildBrokenState(user.patreon.relinkMessage);
+        }
+
+        let membershipResult = await this.fetchMembershipStatus(user.patreon.access_token);
+        if (membershipResult.success) {
+            await this.clearRelinkRequired(user);
+            return this.buildState(membershipResult.status);
+        }
+
+        if (!membershipResult.relinkRequired) {
+            return undefined;
+        }
+
+        let refreshedTokens = await this.refreshTokenForUser(user);
+        if (!refreshedTokens) {
+            return await this.markRelinkRequired(user, BrokenLinkMessage);
+        }
+
+        membershipResult = await this.fetchMembershipStatus(refreshedTokens.access_token);
+        if (membershipResult.success) {
+            return this.buildState(membershipResult.status);
+        }
+
+        if (membershipResult.relinkRequired) {
+            return await this.markRelinkRequired(user, BrokenLinkMessage);
+        }
+
+        return undefined;
+    }
+
+    buildState(status) {
+        return {
+            status,
+            connected: true,
+            needsRelink: false
+        };
+    }
+
+    buildBrokenState(message = BrokenLinkMessage) {
+        return {
+            status: 'broken',
+            connected: true,
+            needsRelink: true,
+            message
+        };
+    }
+
+    async fetchMembershipStatus(accessToken) {
         let response;
-        let patreonApiClient = patreonAPI(user.patreon.access_token);
 
         try {
-            response = await patreonApiClient('/current_user', {
-                fields: {
-                    pledge: [
-                        ...pledgeSchema.default.default_attributes,
-                        pledgeSchema.default.attributes.declined_since,
-                        pledgeSchema.default.attributes.created_at
-                    ]
+            response = await fetch(
+                `${PatreonApiBaseUrl}/identity?include=memberships&fields%5Bmember%5D=patron_status,last_charge_status,currently_entitled_amount_cents`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                        Accept: 'application/json'
+                    }
                 }
-            });
-        } catch (err) {
-            logger.error(
-                'Error getting patreon status for %s: %s',
-                user.username,
-                await this.errorStreamToString(err)
             );
-
-            return 'none';
+        } catch (err) {
+            logger.error('Error getting patreon status: %s', err);
+            return {
+                success: false,
+                relinkRequired: false
+            };
         }
 
-        let { id } = response.rawJson.data;
-        let pUser = response.store.find('user', id);
+        if (!response.ok) {
+            const payload = await this.parseResponsePayload(response);
+            logger.error('Error getting patreon status %s', JSON.stringify(payload));
 
-        if (!pUser || !pUser.pledges || pUser.pledges.length === 0) {
-            return 'linked';
+            return {
+                success: false,
+                relinkRequired: response.status === 401
+            };
         }
 
-        return 'pledged';
+        const payload = await response.json();
+        const memberships = (payload.included || []).filter((item) => item.type === 'member');
+        const isPledged = memberships.some((membership) => this.isActivePatron(membership));
+
+        return {
+            success: true,
+            status: isPledged ? 'pledged' : 'linked'
+        };
+    }
+
+    isActivePatron(membership) {
+        const attributes = membership?.attributes || {};
+
+        return (
+            attributes.patron_status === 'active_patron' ||
+            Number(attributes.currently_entitled_amount_cents || 0) > 0
+        );
     }
 
     async refreshTokenForUser(user) {
         let response;
-        try {
-            response = await this.patreonOAuthClient.refreshToken(user.patreon.refresh_token);
-        } catch (err) {
-            logger.error(
-                'Error refreshing patreon account %s',
-                await this.errorStreamToString(err)
-            );
 
+        try {
+            response = await this.requestTokens({
+                grant_type: 'refresh_token',
+                refresh_token: user.patreon.refresh_token
+            });
+        } catch (err) {
+            logger.error('Error refreshing patreon account %s', JSON.stringify(err));
             return undefined;
         }
 
         let userDetails = user.getDetails();
         // eslint-disable-next-line require-atomic-updates
-        user.patreon = userDetails.patreon = response;
+        user.patreon = userDetails.patreon = {
+            ...response,
+            relinkRequired: false,
+            relinkMessage: undefined
+        };
 
         try {
             await this.userService.update(userDetails);
@@ -73,36 +146,19 @@ class PatreonService {
         return response;
     }
 
-    errorStreamToString(err) {
-        const stream = err.response ? err.response.body : err.body;
-
-        return new Promise((resolve, reject) => {
-            let str = '';
-
-            stream.on('data', (chunk) => {
-                str += chunk;
-            });
-
-            stream.on('end', () => {
-                resolve(str);
-            });
-
-            stream.on('error', () => {
-                reject();
-            });
-        });
-    }
-
     async linkAccount(username, code) {
         let response;
+
         try {
-            response = await this.patreonOAuthClient.getTokens(code, this.callbackUrl);
+            response = await this.requestTokens({
+                grant_type: 'authorization_code',
+                code,
+                redirect_uri: this.callbackUrl
+            });
         } catch (err) {
-            logger.error('Error linking patreon account %s', await this.errorStreamToString(err));
+            logger.error('Error linking patreon account %s', JSON.stringify(err));
             return false;
         }
-
-        response.date = new Date();
 
         let user = await this.userService.getUserByUsername(username);
         if (!user) {
@@ -110,7 +166,11 @@ class PatreonService {
             return false;
         }
 
-        user.patreon = response;
+        user.patreon = {
+            ...response,
+            relinkRequired: false,
+            relinkMessage: undefined
+        };
 
         try {
             await this.userService.update(user);
@@ -120,6 +180,99 @@ class PatreonService {
         }
 
         return user;
+    }
+
+    async requestTokens(params) {
+        const body = new URLSearchParams({
+            client_id: this.clientId,
+            client_secret: this.secret,
+            ...params
+        });
+
+        if (!body.get('redirect_uri')) {
+            body.append('redirect_uri', this.callbackUrl);
+        }
+
+        const response = await fetch(PatreonTokenUrl, {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/x-www-form-urlencoded',
+                Accept: 'application/json'
+            },
+            body
+        });
+
+        const payload = await this.parseResponsePayload(response);
+        if (!response.ok) {
+            throw payload;
+        }
+
+        return {
+            access_token: payload.access_token,
+            refresh_token: payload.refresh_token,
+            expires_in: payload.expires_in,
+            scope: payload.scope,
+            token_type: payload.token_type,
+            date: new Date()
+        };
+    }
+
+    async markRelinkRequired(user, message = BrokenLinkMessage) {
+        let userDetails = user.getDetails();
+        let patreon = {
+            ...(user.patreon || {}),
+            relinkRequired: true,
+            relinkMessage: message
+        };
+
+        // eslint-disable-next-line require-atomic-updates
+        user.patreon = userDetails.patreon = patreon;
+
+        try {
+            await this.userService.update(userDetails);
+        } catch (err) {
+            logger.error(err);
+        }
+
+        return this.buildBrokenState(message);
+    }
+
+    async clearRelinkRequired(user) {
+        if (!user?.patreon?.relinkRequired && !user?.patreon?.relinkMessage) {
+            return;
+        }
+
+        let userDetails = user.getDetails();
+        let patreon = {
+            ...user.patreon,
+            relinkRequired: false,
+            relinkMessage: undefined
+        };
+
+        // eslint-disable-next-line require-atomic-updates
+        user.patreon = userDetails.patreon = patreon;
+
+        try {
+            await this.userService.update(userDetails);
+        } catch (err) {
+            logger.error(err);
+        }
+    }
+
+    async parseResponsePayload(response) {
+        const contentType = response.headers.get('content-type') || '';
+
+        if (contentType.includes('application/json')) {
+            return response.json();
+        }
+
+        const text = await response.text();
+
+        try {
+            return JSON.parse(text);
+        } catch {
+            return { message: text };
+        }
     }
 
     async unlinkAccount(username) {

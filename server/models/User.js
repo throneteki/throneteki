@@ -25,12 +25,20 @@ class User {
         return this.userData.activationToken;
     }
 
+    get activationTokenHash() {
+        return this.userData.activationTokenHash;
+    }
+
     get activationTokenExpiry() {
         return this.userData.activationTokenExpiry;
     }
 
     get resetToken() {
         return this.userData.resetToken;
+    }
+
+    get resetTokenHash() {
+        return this.userData.resetTokenHash;
     }
 
     get tokenExpires() {
@@ -63,6 +71,30 @@ class User {
 
     get verified() {
         return this.userData.verified;
+    }
+
+    get trustState() {
+        return this.userData.trustState || 'trusted';
+    }
+
+    get riskFlags() {
+        return this.userData.riskFlags || [];
+    }
+
+    get riskScore() {
+        return this.userData.riskScore || 0;
+    }
+
+    get restrictedUntil() {
+        return this.userData.restrictedUntil;
+    }
+
+    get emailDomain() {
+        return this.userData.emailDomain;
+    }
+
+    get modNotes() {
+        return this.userData.modNotes;
     }
 
     get registered() {

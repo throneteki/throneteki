@@ -3,7 +3,6 @@ import classNames from 'classnames';
 import moment from 'moment';
 
 import GamePlayerSlot from './GamePlayerSlot';
-import { createGameTitle } from './GameHelper';
 import { Button } from '@heroui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLock } from '@fortawesome/free-solid-svg-icons';
@@ -81,12 +80,6 @@ const Game = ({
     const timeDifference = Math.max(0, moment().diff(moment(game.createdAt)));
     const formattedTime = moment.utc(timeDifference).format('HH:mm');
 
-    const title = createGameTitle(
-        game.name,
-        game.event.name,
-        (game.restrictedList && game.restrictedList.cardSet) || 'redesign'
-    );
-
     const gameHeaderClass = classNames(
         'flex gap-2 justify-center content-center flex-wrap items-center text-small text-white p-1 rounded-md',
         {
@@ -103,9 +96,15 @@ const Game = ({
             <hr />
             <div className={rowClass}>
                 <div className={gameHeaderClass}>
-                    <span className='capitalize'>({`${game.gameType} ${game.gameFormat}`})</span>
-                    <span className='text-white leading-normal self-start'>
-                        <b>{title}</b>
+                    <span>
+                        {game.event?.name ? (
+                            <span>({game.event.name})</span>
+                        ) : (
+                            <span className='capitalize'>{`(${game.gameType} ${game.gameFormat})`}</span>
+                        )}
+                    </span>
+                    <span className='text-white leading-normal'>
+                        <b>{game.name}</b>
                     </span>
                     <span>{`[${formattedTime}]`}</span>
                     <span className='flex gap-1.5 items-center'>

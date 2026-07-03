@@ -5,6 +5,10 @@ image:
     repository: cryogen/throneteki-lobby
     tag: latest
 
+service:
+    type: ClusterIP
+    externalTrafficPolicy: Local
+
 deployTime: '0'
 
 nodeConfig: {}

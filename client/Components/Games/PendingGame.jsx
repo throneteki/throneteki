@@ -2,8 +2,6 @@ import React, { forwardRef, useCallback, useState } from 'react';
 import Panel from '../Site/Panel';
 import Messages from '../GameBoard/Messages';
 import SelectDeckModal from './SelectDeckModal';
-import { cardSetLabel } from '../Decks/DeckHelper';
-import { createGameTitle } from './GameHelper';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     sendChatMessage,
@@ -13,18 +11,30 @@ import {
 } from '../../redux/reducers/lobby';
 import { navigate } from '../../redux/reducers/navigation';
 
-import { Button, Link, Snippet } from '@heroui/react';
+import {
+    Button,
+    Link,
+    Modal,
+    ModalBody,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    Snippet
+} from '@heroui/react';
 import GameTypeInfo from './GameTypeInfo';
 import AlertPanel, { AlertType } from '../Site/AlertPanel';
 import PendingGamePlayers from './PendingGamePlayers';
 import LoadingSpinner from '../Site/LoadingSpinner';
 import { GameFormats } from '../../constants';
 import ChatArea from '../Site/ChatArea';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheck } from '@fortawesome/free-solid-svg-icons';
 
 const PendingGame = forwardRef(function PendingGame(_, ref) {
     const dispatch = useDispatch();
     const [waiting, setWaiting] = useState(false);
-    const [showModal, setShowModal] = useState(false);
+    const [showDecksModal, setShowDecksModal] = useState(false);
+    const [confirmingDeck, setConfirmingDeck] = useState();
 
     const { connecting, host } = useSelector((state) => state.game);
     const { currentGame, gameError } = useSelector((state) => state.lobby);
@@ -99,16 +109,11 @@ const PendingGame = forwardRef(function PendingGame(_, ref) {
 
         return <LoadingSpinner label='You must be logged in to play, redirecting...' />;
     }
-    const gameFormatLabel = GameFormats.find((gf) => gf.name === currentGame.gameFormat).label;
+    const format = GameFormats.find((gf) => gf.name === currentGame.gameFormat);
+    const variant = format.variants.find((v) => v.name === currentGame.gameVariant);
     return (
         <div className='flex flex-col gap-2'>
-            <Panel
-                title={createGameTitle(
-                    currentGame.name,
-                    currentGame.event.name,
-                    currentGame.restrictedList.cardSet
-                )}
-            >
+            <Panel title={currentGame.name}>
                 <div className='flex flex-col gap-2'>
                     <div>
                         {currentGame.event.name && (
@@ -117,17 +122,14 @@ const PendingGame = forwardRef(function PendingGame(_, ref) {
                             </p>
                         )}
                         <p>
-                            <strong>Format:</strong> {gameFormatLabel}
+                            <strong>Format:</strong> {format.label}
                         </p>
                         <p>
-                            <strong>Restricted List:</strong> {currentGame.restrictedList.name}
+                            <strong>Variant:</strong> {variant.label}
                         </p>
-                        {currentGame.event.format !== 'draft' && (
-                            <p>
-                                <strong>Cards:</strong>{' '}
-                                {cardSetLabel(currentGame.restrictedList.cardSet)}
-                            </p>
-                        )}
+                        <p>
+                            <strong>Legality:</strong> {currentGame.restrictedList.name}
+                        </p>
                     </div>
                     <div className='flex gap-2 flex-wrap'>
                         <div className='flex gap-1'>
@@ -176,7 +178,7 @@ const PendingGame = forwardRef(function PendingGame(_, ref) {
                 <PendingGamePlayers
                     currentGame={currentGame}
                     user={user}
-                    onSelectDeck={() => setShowModal(true)}
+                    onSelectDeck={() => setShowDecksModal(true)}
                 />
             </div>
             {currentGame.spectators.length > 0 && (
@@ -199,17 +201,55 @@ const PendingGame = forwardRef(function PendingGame(_, ref) {
                     <Messages messages={currentGame.messages} />
                 </ChatArea>
             </Panel>
-            {showModal && (
-                <SelectDeckModal
-                    onClose={() => setShowModal(false)}
-                    onDeckSelected={(deck) => {
-                        setShowModal(false);
+            <SelectDeckModal
+                isOpen={showDecksModal}
+                onClose={() => setShowDecksModal(false)}
+                onDeckSelected={(deck) => {
+                    if (currentGame.event?.lockDecks) {
+                        setConfirmingDeck(deck);
+                    } else {
+                        setShowDecksModal(false);
                         dispatch(sendSelectDeckMessage(deck._id));
-                    }}
-                    gameFormat={currentGame.gameFormat}
-                    restrictedList={currentGame.restrictedList?._id}
-                />
-            )}
+                    }
+                }}
+                game={currentGame}
+            />
+            {
+                <Modal isOpen={!!confirmingDeck} onClose={() => setConfirmingDeck(undefined)}>
+                    <ModalContent>
+                        <ModalHeader>Confirm Deck Selection</ModalHeader>
+                        <ModalBody>
+                            <div className='bg-default-100 p-2 rounded-lg'>
+                                <div className='text-large font-bold'>
+                                    {currentGame.event?.name ?? 'Unselected'}
+                                </div>
+                                <div className='flex gap-2 items-center'>
+                                    <FontAwesomeIcon icon={faCheck} />
+                                    <span>{confirmingDeck?.name ?? 'Unselected'}</span>
+                                </div>
+                            </div>
+                            <div>
+                                Once this game starts, your selected deck will be permanently locked
+                                for this event. You cannot swap it out or make changes for the
+                                duration of the event.
+                            </div>
+                        </ModalBody>
+                        <ModalFooter>
+                            <Button onPress={() => setConfirmingDeck(undefined)}>Back</Button>
+                            <Button
+                                color='success'
+                                onPress={() => {
+                                    dispatch(sendSelectDeckMessage(confirmingDeck._id));
+                                    setConfirmingDeck(undefined);
+                                    setShowDecksModal(false);
+                                }}
+                            >
+                                Continue
+                            </Button>
+                        </ModalFooter>
+                    </ModalContent>
+                </Modal>
+            }
         </div>
     );
 });

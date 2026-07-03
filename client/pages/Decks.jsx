@@ -1,64 +1,52 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Panel from '../Components/Site/Panel';
 import DeckList from '../Components/Decks/DeckList';
-import { useGetRestrictedListQuery } from '../redux/middleware/api';
-import { Select, SelectItem } from '@heroui/react';
 import { useDispatch } from 'react-redux';
 import { navigate } from '../redux/reducers/navigation';
 import Page from './Page';
-import { GameFormats } from '../constants';
+import FormatSelect from '../Components/Games/FormatSelect';
+import VariantSelect from '../Components/Games/VariantSelect';
+import LegalitySelect from '../Components/Games/LegalitySelect';
 
 const Decks = () => {
     const dispatch = useDispatch();
-    const { data: restrictedLists } = useGetRestrictedListQuery([]);
-
-    const [restrictedList, setRestrictedList] = useState();
-    const [gameFormat, setGameFormat] = useState(GameFormats[0].name);
-
-    useEffect(() => {
-        if (!gameFormat) {
-            setGameFormat(GameFormats[0].name);
-        }
-    }, [gameFormat, setGameFormat]);
-    useEffect(() => {
-        if (!restrictedList && restrictedLists) {
-            setRestrictedList(restrictedLists[0]._id);
-        }
-    }, [restrictedList, restrictedLists]);
+    const [format, setFormat] = useState('joust');
+    const [variant, setVariant] = useState(null);
+    const [legality, setLegality] = useState(null);
 
     return (
         <Page>
             <Panel title='Decks'>
                 <div className='flex flex-col gap-2'>
                     <div className='flex gap-2'>
-                        <Select
-                            label={'Game format'}
-                            className='md:w-2/6'
-                            onChange={(e) => setGameFormat(e.target.value)}
-                            selectedKeys={new Set([gameFormat])}
-                        >
-                            {GameFormats.map((gf) => (
-                                <SelectItem key={gf.name} value={gf.name}>
-                                    {gf.label}
-                                </SelectItem>
-                            ))}
-                        </Select>
-                        <Select
-                            label={'Game mode'}
-                            className='md:w-2/6'
-                            onChange={(e) => setRestrictedList(e.target.value)}
-                            selectedKeys={restrictedList ? new Set([restrictedList]) : []}
-                        >
-                            {restrictedLists?.map((rl) => (
-                                <SelectItem key={rl._id} value={rl._id}>
-                                    {rl.name}
-                                </SelectItem>
-                            ))}
-                        </Select>
+                        <FormatSelect
+                            label='Format'
+                            selected={format}
+                            onSelected={setFormat}
+                            disallowEmptySelection
+                            className='basis-1/3'
+                        />
+                        <VariantSelect
+                            label='Variant'
+                            format={format}
+                            selected={variant}
+                            onSelected={setVariant}
+                            disallowEmptySelection
+                            className='basis-1/3'
+                        />
+                        <LegalitySelect
+                            label='Legality'
+                            format={format}
+                            variant={variant}
+                            selected={legality}
+                            onSelected={setLegality}
+                            className='basis-1/3'
+                        />
                     </div>
                     <DeckList
-                        gameFormat={gameFormat}
-                        restrictedList={restrictedList}
+                        format={format}
+                        variant={variant}
+                        legality={legality}
                         onDeckSelected={(deck) => dispatch(navigate(`/decks/edit/${deck._id}/`))}
                     />
                 </div>

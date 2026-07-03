@@ -56,7 +56,8 @@ class Game extends EventEmitter {
         this.restrictedList = details.restrictedList && {
             _id: details.restrictedList._id,
             name: details.restrictedList.name,
-            cardSet: details.restrictedList.cardSet
+            format: details.restrictedList.format,
+            variant: details.restrictedList.variant
         };
         this.allCards = [];
         this.attachmentValidityCheck = new AttachmentValidityCheck(this);
@@ -90,6 +91,7 @@ class Game extends EventEmitter {
         this.savedGameId = details.savedGameId;
         this.gamePrivate = details.gamePrivate;
         this.gameFormat = details.gameFormat ?? 'joust';
+        this.gameVariant = details.gameVariant;
         this.gameType = details.gameType;
         this.maxPlayers = details.maxPlayers;
         this.abilityContextStack = [];
@@ -1454,6 +1456,7 @@ class Game extends EventEmitter {
                 gameOver: this.isGameOver,
                 winner: this.results?.winner?.name,
                 gameFormat: this.gameFormat,
+                gameVariant: this.gameVariant,
                 maxPlayers: this.maxPlayers,
                 cancelPromptUsed: this.cancelPromptUsed,
                 useGameTimeLimit: this.useGameTimeLimit,
@@ -1509,6 +1512,7 @@ class Game extends EventEmitter {
             createdAt: this.createdAt,
             gamePrivate: this.gamePrivate,
             gameFormat: this.gameFormat,
+            gameVariant: this.gameVariant,
             maxPlayers: this.maxPlayers,
             gameType: this.gameType,
             id: this.id,

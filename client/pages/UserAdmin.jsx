@@ -3,7 +3,15 @@ import { useSelector, useDispatch } from 'react-redux';
 import moment from 'moment';
 
 import Panel from '../Components/Site/Panel';
-import { useGetUserQuery, useSaveUserMutation } from '../redux/middleware/api';
+import {
+    useAddAbuseBlockMutation,
+    useBlockUserClusterMutation,
+    useGetUserAbuseProfileQuery,
+    useGetUserQuery,
+    useRestrictUserMutation,
+    useUnrestrictUserMutation,
+    useSaveUserMutation
+} from '../redux/middleware/api';
 import { sendClearUserSessions } from '../redux/reducers/lobby';
 import {
     Button,
@@ -61,7 +69,14 @@ const UserAdmin = () => {
     const { data, isLoading, error, refetch } = useGetUserQuery(searchUsername, {
         skip: !searchUsername
     });
+    const { data: abuseProfile } = useGetUserAbuseProfileQuery(searchUsername, {
+        skip: !searchUsername
+    });
     const [saveUser, { isLoading: isSaveLoading }] = useSaveUserMutation();
+    const [restrictUser, { isLoading: isRestrictLoading }] = useRestrictUserMutation();
+    const [unrestrictUser, { isLoading: isUnrestrictLoading }] = useUnrestrictUserMutation();
+    const [blockUserCluster, { isLoading: isBlockClusterLoading }] = useBlockUserClusterMutation();
+    const [addAbuseBlock, { isLoading: isBlockAddLoading }] = useAddAbuseBlockMutation();
 
     const [disabled, setDisabled] = useState(currentUser ? currentUser.disabled : false);
     const [verified, setVerified] = useState(currentUser ? currentUser.verified : false);
@@ -89,6 +104,77 @@ const UserAdmin = () => {
     const onClearClick = useCallback(() => {
         dispatch(sendClearUserSessions(currentUser.username));
     }, [currentUser, dispatch]);
+
+    const onRestrictClick = useCallback(async () => {
+        if (!currentUser) {
+            return;
+        }
+
+        try {
+            await restrictUser({
+                username: currentUser.username,
+                days: 7,
+                reason: 'Restricted from user admin'
+            }).unwrap();
+            toast.success('User restricted successfully.');
+        } catch (err) {
+            toast.error(err.message || 'An error occured restricting the user.');
+        }
+    }, [currentUser, restrictUser]);
+
+    const onUnrestrictClick = useCallback(async () => {
+        if (!currentUser) {
+            return;
+        }
+
+        try {
+            await unrestrictUser({
+                username: currentUser.username,
+                reason: 'Unrestricted from user admin'
+            }).unwrap();
+            toast.success('User unrestricted successfully.');
+        } catch (err) {
+            toast.error(err.message || 'An error occured unrestricting the user.');
+        }
+    }, [currentUser, unrestrictUser]);
+
+    const onBlockClusterClick = useCallback(async () => {
+        if (!currentUser) {
+            return;
+        }
+
+        try {
+            await blockUserCluster({
+                username: currentUser.username,
+                reason: 'Blocked from user admin'
+            }).unwrap();
+            toast.success('User cluster blocked successfully.');
+        } catch (err) {
+            toast.error(err.message || 'An error occured blocking the user cluster.');
+        }
+    }, [blockUserCluster, currentUser]);
+
+    const addCurrentSignalBlock = useCallback(
+        async (scope, value) => {
+            if (!value) {
+                toast.error('No value available for that block.');
+                return;
+            }
+
+            try {
+                await addAbuseBlock({
+                    scope,
+                    value,
+                    reason: `Manual ${scope} block from user admin`,
+                    sourceUserId: currentUser?._id
+                }).unwrap();
+                toast.success(`${scope} block added successfully.`);
+            } catch (err) {
+                toast.error(err.message || 'An error occured adding the abuse block.');
+            }
+        },
+        [addAbuseBlock, currentUser]
+    );
 
     const onPermissionToggle = useCallback((field, value) => {
         setPermissions((prevPermissions) => ({
@@ -157,22 +243,126 @@ const UserAdmin = () => {
                             </div>
                         </div>
                     </Panel>
-                    {data?.linkedAccounts && (
+                    {abuseProfile && (
+                        <Panel title='Abuse risk'>
+                            <div className='flex flex-col gap-2'>
+                                <dl className='grid grid-cols-2'>
+                                    <dt className='font-bold'>Risk score</dt>
+                                    <dd>{abuseProfile.riskScore}</dd>
+                                    <dt className='font-bold'>Trust state</dt>
+                                    <dd>{abuseProfile.trustState}</dd>
+                                    <dt className='font-bold'>Restricted until</dt>
+                                    <dd>
+                                        {abuseProfile.restrictedUntil
+                                            ? moment(abuseProfile.restrictedUntil).format(
+                                                  'YYYY-MM-DD HH:mm'
+                                              )
+                                            : 'Not restricted'}
+                                    </dd>
+                                    <dt className='font-bold'>Flags</dt>
+                                    <dd>
+                                        {abuseProfile.riskFlags?.length
+                                            ? abuseProfile.riskFlags.join(', ')
+                                            : 'None'}
+                                    </dd>
+                                </dl>
+                                <div className='flex flex-wrap gap-2'>
+                                    <Button
+                                        color='warning'
+                                        isLoading={isRestrictLoading}
+                                        onPress={onRestrictClick}
+                                    >
+                                        Restrict 7 days
+                                    </Button>
+                                    {abuseProfile?.trustState === 'restricted' && (
+                                        <Button
+                                            color='success'
+                                            isLoading={isUnrestrictLoading}
+                                            onPress={onUnrestrictClick}
+                                        >
+                                            Unrestrict
+                                        </Button>
+                                    )}
+                                    <Button
+                                        color='danger'
+                                        isLoading={isBlockClusterLoading}
+                                        onPress={onBlockClusterClick}
+                                    >
+                                        Block Cluster
+                                    </Button>
+                                    <Button
+                                        isLoading={isBlockAddLoading}
+                                        onPress={() =>
+                                            addCurrentSignalBlock(
+                                                'ip',
+                                                currentUser.lastLoginIp ||
+                                                    currentUser.registerIpNormalized ||
+                                                    currentUser.registerIp
+                                            )
+                                        }
+                                    >
+                                        Add Exact IP Block
+                                    </Button>
+                                    <Button
+                                        isLoading={isBlockAddLoading}
+                                        onPress={() =>
+                                            addCurrentSignalBlock(
+                                                'subnet',
+                                                currentUser.lastLoginSubnet ||
+                                                    currentUser.registerSubnet
+                                            )
+                                        }
+                                    >
+                                        Add Subnet Block
+                                    </Button>
+                                    <Button
+                                        isLoading={isBlockAddLoading}
+                                        onPress={() =>
+                                            addCurrentSignalBlock(
+                                                'fingerprint',
+                                                currentUser.signupFingerprintHash
+                                            )
+                                        }
+                                    >
+                                        Add Fingerprint Block
+                                    </Button>
+                                </div>
+                            </div>
+                        </Panel>
+                    )}
+                    {abuseProfile?.linkedAccounts?.length > 0 && (
                         <Panel title='Possibly linked accounts'>
-                            <ul className='list'>
-                                {data.linkedAccounts.map((name) => {
-                                    return (
-                                        <li key={name}>
-                                            <Link
-                                                className='cursor-pointer text-secondary-600'
-                                                onPress={() => onLinkedUserClick(name)}
-                                            >
-                                                {name}
-                                            </Link>
-                                        </li>
-                                    );
-                                })}
-                            </ul>
+                            <Table isStriped aria-label='Linked Accounts Table'>
+                                <TableHeader>
+                                    <TableColumn>Username</TableColumn>
+                                    <TableColumn>Evidence</TableColumn>
+                                    <TableColumn>Status</TableColumn>
+                                </TableHeader>
+                                <TableBody>
+                                    {(abuseProfile?.linkedAccounts || []).map((account) => {
+                                        return (
+                                            <TableRow key={account.username}>
+                                                <TableCell>
+                                                    <Link
+                                                        className='cursor-pointer text-secondary-600'
+                                                        onPress={() =>
+                                                            onLinkedUserClick(account.username)
+                                                        }
+                                                    >
+                                                        {account.username}
+                                                    </Link>
+                                                </TableCell>
+                                                <TableCell>{account.evidence.join(', ')}</TableCell>
+                                                <TableCell>
+                                                    {account.disabled
+                                                        ? 'Disabled'
+                                                        : account.trustState}
+                                                </TableCell>
+                                            </TableRow>
+                                        );
+                                    })}
+                                </TableBody>
+                            </Table>
                         </Panel>
                     )}
                     {currentUser && currentUser.tokens && (
@@ -221,11 +411,19 @@ const UserAdmin = () => {
         );
     }, [
         currentUser,
-        data?.linkedAccounts,
+        abuseProfile,
         disabled,
+        addCurrentSignalBlock,
+        isBlockAddLoading,
+        isBlockClusterLoading,
+        isRestrictLoading,
+        isUnrestrictLoading,
         isSaveLoading,
+        onBlockClusterClick,
         onClearClick,
         onLinkedUserClick,
+        onUnrestrictClick,
+        onRestrictClick,
         onSaveClick,
         retPermissions,
         user?.permissions.canManagePermissions,
@@ -265,7 +463,7 @@ const UserAdmin = () => {
                     <Button
                         color='primary'
                         onPress={onFindClick}
-                        loading={isLoading}
+                        isLoading={isLoading}
                         className='w-full md:w-auto'
                     >
                         Search

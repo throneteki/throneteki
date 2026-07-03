@@ -6,7 +6,7 @@ import { useDispatch } from 'react-redux';
 import { navigate } from '../../redux/reducers/navigation';
 import CardImage from '../Images/CardImage';
 
-const FactionSelect = ({ onSelect }) => {
+const FactionSelectStep = ({ onSelect }) => {
     const dispatch = useDispatch();
     const factions = Constants.Factions;
 
@@ -34,4 +34,4 @@ const FactionSelect = ({ onSelect }) => {
     );
 };
 
-export default FactionSelect;
+export default FactionSelectStep;

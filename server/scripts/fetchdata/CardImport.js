@@ -4,7 +4,7 @@ import fs from 'fs';
 
 import { mkdirp } from 'mkdirp';
 import path from 'path';
-import CardService from '../../services/CardService.js';
+import ServiceFactory from '../../services/ServiceFactory.js';
 
 class CardImport {
     constructor(db, dataSource, imageSource, imageDir) {
@@ -12,7 +12,7 @@ class CardImport {
         this.dataSource = dataSource;
         this.imageSource = imageSource;
         this.imageDir = imageDir;
-        this.cardService = new CardService(db);
+        this.cardService = ServiceFactory.cardService(db);
     }
 
     async import() {

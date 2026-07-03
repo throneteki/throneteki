@@ -51,4 +51,18 @@ export const init = function (server, options) {
                 });
         })
     );
+
+    server.delete(
+        '/api/banlist/:id',
+        passport.authenticate('jwt', { session: false }),
+        wrapAsync(async function (req, res) {
+            if (!req.user.permissions || !req.user.permissions.canManageBanlist) {
+                return res.status(403);
+            }
+
+            await banlistService.removeBanlistEntry(req.params.id);
+
+            return res.send({ success: true, data: { id: req.params.id } });
+        })
+    );
 };

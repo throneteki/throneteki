@@ -3,12 +3,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 
 const DeckStatusSummary = ({ status }) => {
-    const { basicRules, noUnreleasedCards, restrictedList } = status;
+    const { basicRules, noUnreleasedCards, legality } = status;
     const items = [
         { title: 'Basic deckbuilding rules', value: basicRules },
         {
-            title: `${restrictedList.name} Card Legality`,
-            value: restrictedList.valid
+            title: `${legality.name} Card Legality`,
+            value: legality.valid
         },
         { title: 'Only released cards', value: noUnreleasedCards }
     ];

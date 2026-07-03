@@ -1,13 +1,15 @@
 class DeckWrapper {
     constructor(rawDeck) {
         this.agenda = rawDeck.agenda;
-        this.bannerCards = rawDeck.bannerCards || [];
-        this.draftedCards = rawDeck.draftedCards || [];
+        this.bannerCards = rawDeck.bannerCards ?? [];
+        this.draftedCards = rawDeck.draftedCards ?? [];
         this.drawCards = rawDeck.drawCards;
         this.eventId = rawDeck.eventId;
         this.faction = rawDeck.faction;
-        this.format = rawDeck.format || 'joust';
+        this.format = rawDeck.format;
+        this.variant = rawDeck.variant;
         this.plotCards = rawDeck.plotCards;
+        this.pool = rawDeck.pool;
 
         this.agendas = [this.agenda, ...this.bannerCards].filter((agenda) => !!agenda);
 

@@ -79,12 +79,7 @@ const DeckSummaryHeader = ({ currentRestrictedList, deck, onCardMouseOut, onCard
                 </div>
                 <div className='info-row row'>
                     <span>Validity:</span>
-                    {deck.status[currentRestrictedList._id] && (
-                        <DeckStatus
-                            className='pull-right'
-                            status={deck.status[currentRestrictedList._id]}
-                        />
-                    )}
+                    <DeckStatus deck={deck} />
                 </div>
             </div>
             <div className='col-xs-2 col-sm-3 no-x-padding'>

@@ -1,4 +1,4 @@
-FROM node:latest
+FROM node:22
 RUN mkdir -p /usr/src/client
 WORKDIR /usr/src/client
 COPY package.json /usr/src/client/

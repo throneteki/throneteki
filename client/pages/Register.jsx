@@ -1,44 +1,99 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
+import HCaptcha from '@hcaptcha/react-hcaptcha';
 import { useDispatch } from 'react-redux';
 import * as yup from 'yup';
 
 import Panel from '../Components/Site/Panel';
 import { navigate } from '../redux/reducers/navigation';
-import { useRegisterAccountMutation } from '../redux/middleware/api';
+import { usePreflightRegisterMutation, useRegisterAccountMutation } from '../redux/middleware/api';
 import { Formik } from 'formik';
 import { Button, Input, Link, Switch } from '@heroui/react';
 import { toast } from 'react-toastify';
 import NavigationLink from '../Components/Site/NavigationLink';
 import Page from './Page';
+import ErrorMessage from '../Components/Site/ErrorMessage';
 
 const Register = () => {
     const dispatch = useDispatch();
+    const [challengeRequired, setChallengeRequired] = useState(false);
+    const [captcha, setCaptcha] = useState('');
 
+    const [preflightRegister] = usePreflightRegisterMutation();
     const [registerAccount, { isLoading }] = useRegisterAccountMutation();
+    const siteKey = import.meta.env.VITE_HCAPTCHA_SITE_KEY;
 
     const onRegister = useCallback(
         async (state) => {
             try {
-                await registerAccount({
+                const fingerprint = {
+                    platform: window.navigator?.platform,
+                    timezone: window.Intl?.DateTimeFormat().resolvedOptions().timeZone,
+                    language: window.navigator?.language
+                };
+                const preflight = await preflightRegister({
+                    username: state.username,
+                    email: state.email,
+                    captcha,
+                    fingerprint,
+                    platform: fingerprint.platform,
+                    timezone: fingerprint.timezone
+                }).unwrap();
+
+                setChallengeRequired(!!preflight.challengeRequired);
+
+                if (preflight.challengeRequired && !captcha) {
+                    if (!siteKey) {
+                        toast.error(
+                            'Captcha verification is required for this registration, but it is not available right now.'
+                        );
+                    } else {
+                        toast.error('Please complete the captcha before registering.');
+                    }
+                    return;
+                }
+
+                if (!preflight.canProceed) {
+                    toast.error(
+                        preflight.cooldownRemainingMs
+                            ? 'Too many recent registration attempts. Please try again later.'
+                            : 'This registration needs manual review. Please contact support.'
+                    );
+                    return;
+                }
+
+                const response = await registerAccount({
                     username: state.username,
                     password: state.password,
                     email: state.email,
-                    enableGravatar: state.enableGravatar
+                    enableGravatar: state.enableGravatar,
+                    captcha,
+                    fingerprint,
+                    platform: fingerprint.platform,
+                    timezone: fingerprint.timezone
                 }).unwrap();
 
-                toast.error(
-                    'Your account was successfully registered.  Please verify your account using the link in the email sent to the address you have provided'
+                const needsReview = response.trustState === 'restricted';
+                const requiresVerification = response.requiresVerification ?? true;
+
+                toast.success(
+                    needsReview
+                        ? 'Your account was registered with limited permissions while it is reviewed.'
+                        : requiresVerification
+                          ? 'Your account was successfully registered. Please verify it using the link sent to your email address.'
+                          : 'Your account was successfully registered.'
                 );
 
                 dispatch(navigate('/'));
             } catch (err) {
                 toast.error(
-                    err.message ||
+                    err?.data?.message ||
+                        err?.message ||
+                        err?.error ||
                         'An error occurred registering your account. Please try again later.'
                 );
             }
         },
-        [dispatch, registerAccount]
+        [captcha, dispatch, preflightRegister, registerAccount, siteKey]
     );
 
     const schema = yup.object({
@@ -132,6 +187,16 @@ const Register = () => {
                                 >
                                     Enable Gravatar
                                 </Switch>
+                                {challengeRequired ? (
+                                    siteKey ? (
+                                        <HCaptcha sitekey={siteKey} onVerify={setCaptcha} />
+                                    ) : (
+                                        <ErrorMessage
+                                            title='Failed to load Captcha'
+                                            message='Captcha is required for this registration but the site key is missing.'
+                                        />
+                                    )
+                                ) : null}
                                 <Button
                                     className='sm:self-start'
                                     isLoading={isLoading}
