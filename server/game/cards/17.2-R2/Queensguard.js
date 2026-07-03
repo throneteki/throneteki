@@ -2,12 +2,12 @@ import DrawCard from '../../drawcard.js';
 
 class Queensguard extends DrawCard {
     setupCardAbilities(ability) {
-        this.attachmentRestriction({ not: { trait: 'Lady' } });
+        this.attachmentRestriction({ faction: 'targaryen', not: { trait: 'Lady' } });
         this.action({
             title: 'Stand attached character',
             condition: () => this.parent.kneeled,
-            cost: ability.costs.discardFromHand(),
-            limit: ability.limit.perRound(3),
+            cost: ability.costs.discardFromHand((card) => card.isFaction('targaryen')),
+            limit: ability.limit.perRound(2),
             handler: (context) => {
                 context.player.standCard(this.parent);
                 this.game.addMessage(
