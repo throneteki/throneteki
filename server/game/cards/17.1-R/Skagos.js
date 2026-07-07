@@ -29,6 +29,6 @@ class Skagos extends DrawCard {
     }
 }
 
-Skagos.code = '17125';
+Skagos.code = '17025';
 
 export default Skagos;

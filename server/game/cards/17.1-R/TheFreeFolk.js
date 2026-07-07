@@ -23,6 +23,6 @@ class TheFreeFolk extends AgendaCard {
     }
 }
 
-TheFreeFolk.code = '17150';
+TheFreeFolk.code = '17050';
 
 export default TheFreeFolk;

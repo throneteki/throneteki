@@ -23,6 +23,6 @@ class SecretSchemes extends DrawCard {
     }
 }
 
-SecretSchemes.code = '17209';
+SecretSchemes.code = '17069';
 
 export default SecretSchemes;

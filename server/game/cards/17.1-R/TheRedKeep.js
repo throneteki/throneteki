@@ -27,6 +27,6 @@ class TheRedKeep extends DrawCard {
     }
 }
 
-TheRedKeep.code = '17111';
+TheRedKeep.code = '17011';
 
 export default TheRedKeep;

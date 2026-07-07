@@ -16,6 +16,6 @@ class Clydas extends DrawCard {
     }
 }
 
-Clydas.code = '17117';
+Clydas.code = '17017';
 
 export default Clydas;

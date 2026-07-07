@@ -38,6 +38,6 @@ class AllMenAreFools extends DrawCard {
     }
 }
 
-AllMenAreFools.code = '17140';
+AllMenAreFools.code = '17040';
 
 export default AllMenAreFools;

@@ -20,6 +20,6 @@ class SerBalonSwann extends DrawCard {
     }
 }
 
-SerBalonSwann.code = '17205';
+SerBalonSwann.code = '17065';
 
 export default SerBalonSwann;

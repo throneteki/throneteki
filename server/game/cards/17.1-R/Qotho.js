@@ -24,6 +24,6 @@ class Qotho extends DrawCard {
     }
 }
 
-Qotho.code = '17131';
+Qotho.code = '17031';
 
 export default Qotho;

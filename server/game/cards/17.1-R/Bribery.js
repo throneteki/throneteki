@@ -55,6 +55,6 @@ class Bribery extends DrawCard {
     }
 }
 
-Bribery.code = '17146';
+Bribery.code = '17046';
 
 export default Bribery;

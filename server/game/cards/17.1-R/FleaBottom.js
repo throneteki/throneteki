@@ -35,6 +35,6 @@ class FleaBottom extends DrawCard {
     }
 }
 
-FleaBottom.code = '17142';
+FleaBottom.code = '17042';
 
 export default FleaBottom;

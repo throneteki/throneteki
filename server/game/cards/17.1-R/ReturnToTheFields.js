@@ -35,6 +35,6 @@ class ReturnToTheFields extends PlotCard {
     }
 }
 
-ReturnToTheFields.code = '17157';
+ReturnToTheFields.code = '17057';
 
 export default ReturnToTheFields;

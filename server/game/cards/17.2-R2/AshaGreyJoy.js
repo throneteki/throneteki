@@ -29,6 +29,6 @@ class AshaGreyjoy extends DrawCard {
     }
 }
 
-AshaGreyjoy.code = '17202';
+AshaGreyjoy.code = '17062';
 
 export default AshaGreyjoy;

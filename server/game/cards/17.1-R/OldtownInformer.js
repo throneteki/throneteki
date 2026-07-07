@@ -40,6 +40,6 @@ class OldtownInformer extends DrawCard {
     }
 }
 
-OldtownInformer.code = '17138';
+OldtownInformer.code = '17038';
 
 export default OldtownInformer;

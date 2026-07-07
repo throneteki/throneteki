@@ -34,6 +34,6 @@ class NighttimeMarauders extends DrawCard {
     }
 }
 
-NighttimeMarauders.code = '17104';
+NighttimeMarauders.code = '17004';
 
 export default NighttimeMarauders;

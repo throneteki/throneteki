@@ -44,6 +44,6 @@ class Oldtown extends DrawCard {
     }
 }
 
-Oldtown.code = '17215';
+Oldtown.code = '17075';
 
 export default Oldtown;

@@ -12,6 +12,6 @@ class SelyseBaratheon extends DrawCard {
     }
 }
 
-SelyseBaratheon.code = '17101';
+SelyseBaratheon.code = '17001';
 
 export default SelyseBaratheon;

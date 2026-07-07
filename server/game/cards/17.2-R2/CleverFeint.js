@@ -33,6 +33,6 @@ class CleverFeint extends DrawCard {
     }
 }
 
-CleverFeint.code = '17207';
+CleverFeint.code = '17067';
 
 export default CleverFeint;

@@ -44,6 +44,6 @@ class Nightflyer extends DrawCard {
     }
 }
 
-Nightflyer.code = '17204';
+Nightflyer.code = '17064';
 
 export default Nightflyer;

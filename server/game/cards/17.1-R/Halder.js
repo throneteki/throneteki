@@ -36,6 +36,6 @@ class Halder extends DrawCard {
     }
 }
 
-Halder.code = '17118';
+Halder.code = '17018';
 
 export default Halder;

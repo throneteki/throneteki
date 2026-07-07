@@ -66,6 +66,6 @@ class AMissionInEssos extends DrawCard {
     }
 }
 
-AMissionInEssos.code = '17115';
+AMissionInEssos.code = '17015';
 
 export default AMissionInEssos;

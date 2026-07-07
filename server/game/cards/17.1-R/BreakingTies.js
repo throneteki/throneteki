@@ -31,6 +31,6 @@ class BreakingTies extends PlotCard {
     }
 }
 
-BreakingTies.code = '17153';
+BreakingTies.code = '17053';
 
 export default BreakingTies;

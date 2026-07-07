@@ -44,6 +44,6 @@ class Dorne extends DrawCard {
     }
 }
 
-Dorne.code = '17113';
+Dorne.code = '17013';
 
 export default Dorne;

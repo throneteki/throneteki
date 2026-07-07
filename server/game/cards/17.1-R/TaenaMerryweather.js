@@ -24,6 +24,6 @@ class TaenaMerryweather extends DrawCard {
     }
 }
 
-TaenaMerryweather.code = '17110';
+TaenaMerryweather.code = '17010';
 
 export default TaenaMerryweather;

@@ -10,6 +10,6 @@ class AtThePalaceOfSorrows extends PlotCard {
     }
 }
 
-AtThePalaceOfSorrows.code = '17156';
+AtThePalaceOfSorrows.code = '17056';
 
 export default AtThePalaceOfSorrows;

@@ -13,6 +13,6 @@ class TheKingInTheNorth extends PlotCard {
     }
 }
 
-TheKingInTheNorth.code = '17159';
+TheKingInTheNorth.code = '17059';
 
 export default TheKingInTheNorth;

@@ -8,6 +8,6 @@ class CrownOfGold extends DrawCard {
     }
 }
 
-CrownOfGold.code = '17134';
+CrownOfGold.code = '17034';
 
 export default CrownOfGold;

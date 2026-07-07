@@ -65,6 +65,6 @@ class WombOfTheWorld extends DrawCard {
     }
 }
 
-WombOfTheWorld.code = '17132';
+WombOfTheWorld.code = '17032';
 
 export default WombOfTheWorld;

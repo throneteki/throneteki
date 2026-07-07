@@ -55,6 +55,6 @@ class Yoren extends DrawCard {
     }
 }
 
-Yoren.code = '17116';
+Yoren.code = '17016';
 
 export default Yoren;

@@ -35,6 +35,6 @@ class IAmNoOne extends DrawCard {
     }
 }
 
-IAmNoOne.code = '17127';
+IAmNoOne.code = '17027';
 
 export default IAmNoOne;

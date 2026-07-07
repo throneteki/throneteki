@@ -12,6 +12,6 @@ class LittleFingersMeddling extends PlotCard {
     }
 }
 
-LittleFingersMeddling.code = '17155';
+LittleFingersMeddling.code = '17055';
 
 export default LittleFingersMeddling;

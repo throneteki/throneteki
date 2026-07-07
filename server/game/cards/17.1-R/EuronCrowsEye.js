@@ -65,6 +65,6 @@ class EuronCrowsEye extends DrawCard {
     }
 }
 
-EuronCrowsEye.code = '17103';
+EuronCrowsEye.code = '17003';
 
 export default EuronCrowsEye;

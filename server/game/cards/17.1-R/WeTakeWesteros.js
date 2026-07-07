@@ -36,6 +36,6 @@ class WeTakeWesteros extends PlotCard {
     }
 }
 
-WeTakeWesteros.code = '17109';
+WeTakeWesteros.code = '17009';
 
 export default WeTakeWesteros;

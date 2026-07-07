@@ -22,6 +22,6 @@ class TradeRoutes extends PlotCard {
     }
 }
 
-TradeRoutes.code = '17160';
+TradeRoutes.code = '17060';
 
 export default TradeRoutes;
