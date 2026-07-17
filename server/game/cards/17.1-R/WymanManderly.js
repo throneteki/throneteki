@@ -52,6 +52,6 @@ class WymanManderly extends DrawCard {
     }
 }
 
-WymanManderly.code = '17022';
+WymanManderly.code = '17122';
 
 export default WymanManderly;

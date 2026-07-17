@@ -47,6 +47,6 @@ class DrownedGodFanatic extends DrawCard {
     }
 }
 
-DrownedGodFanatic.code = '17006';
+DrownedGodFanatic.code = '17106';
 
 export default DrownedGodFanatic;

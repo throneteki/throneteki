@@ -58,6 +58,6 @@ class TheQueensRetinue extends DrawCard {
     }
 }
 
-TheQueensRetinue.code = '17037';
+TheQueensRetinue.code = '17137';
 
 export default TheQueensRetinue;

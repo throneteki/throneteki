@@ -25,6 +25,6 @@ class DoransGame extends DrawCard {
     }
 }
 
-DoransGame.code = '17014';
+DoransGame.code = '17114';
 
 export default DoransGame;

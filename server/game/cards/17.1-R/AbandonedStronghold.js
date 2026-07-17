@@ -39,6 +39,6 @@ class AbandonedStronghold extends DrawCard {
     }
 }
 
-AbandonedStronghold.code = '17020';
+AbandonedStronghold.code = '17120';
 
 export default AbandonedStronghold;

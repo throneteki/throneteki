@@ -38,6 +38,6 @@ class CasterlyRock extends DrawCard {
     }
 }
 
-CasterlyRock.code = '17066';
+CasterlyRock.code = '17166';
 
 export default CasterlyRock;

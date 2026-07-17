@@ -29,6 +29,6 @@ class TheDornishmansWife extends DrawCard {
     }
 }
 
-TheDornishmansWife.code = '17045';
+TheDornishmansWife.code = '17145';
 
 export default TheDornishmansWife;

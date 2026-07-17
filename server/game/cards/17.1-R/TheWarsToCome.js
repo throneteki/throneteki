@@ -10,6 +10,6 @@ class TheWarsToCome extends AgendaCard {
     }
 }
 
-TheWarsToCome.code = '17051';
+TheWarsToCome.code = '17151';
 
 export default TheWarsToCome;

@@ -39,6 +39,6 @@ class Goldengrove extends DrawCard {
     }
 }
 
-Goldengrove.code = '17076';
+Goldengrove.code = '17176';
 
 export default Goldengrove;

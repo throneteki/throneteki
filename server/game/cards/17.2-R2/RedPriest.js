@@ -42,6 +42,6 @@ class RedPriest extends DrawCard {
     }
 }
 
-RedPriest.code = '17061';
+RedPriest.code = '17161';
 
 export default RedPriest;

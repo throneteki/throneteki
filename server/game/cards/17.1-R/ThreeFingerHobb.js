@@ -23,6 +23,6 @@ class ThreeFingerHobb extends DrawCard {
     }
 }
 
-ThreeFingerHobb.code = '17019';
+ThreeFingerHobb.code = '17119';
 
 export default ThreeFingerHobb;

@@ -14,6 +14,6 @@ class RaiderFromPyke extends DrawCard {
     }
 }
 
-RaiderFromPyke.code = '17007';
+RaiderFromPyke.code = '17107';
 
 export default RaiderFromPyke;

@@ -29,6 +29,6 @@ class TheIronBank extends DrawCard {
     }
 }
 
-TheIronBank.code = '17043';
+TheIronBank.code = '17143';
 
 export default TheIronBank;

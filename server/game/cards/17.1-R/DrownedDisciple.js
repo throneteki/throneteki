@@ -30,6 +30,6 @@ class DrownedDisciple extends DrawCard {
     }
 }
 
-DrownedDisciple.code = '17005';
+DrownedDisciple.code = '17105';
 
 export default DrownedDisciple;

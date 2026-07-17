@@ -55,6 +55,6 @@ class MaceTyrell extends DrawCard {
     }
 }
 
-MaceTyrell.code = '17036';
+MaceTyrell.code = '17136';
 
 export default MaceTyrell;

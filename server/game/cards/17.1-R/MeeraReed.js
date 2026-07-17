@@ -37,6 +37,6 @@ class MeeraReed extends DrawCard {
     }
 }
 
-MeeraReed.code = '17023';
+MeeraReed.code = '17123';
 
 export default MeeraReed;

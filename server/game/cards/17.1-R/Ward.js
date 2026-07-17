@@ -20,6 +20,6 @@ class Ward extends DrawCard {
     }
 }
 
-Ward.code = '17026';
+Ward.code = '17126';
 
 export default Ward;

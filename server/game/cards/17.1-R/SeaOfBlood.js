@@ -48,6 +48,6 @@ class SeaOfBlood extends AgendaCard {
     }
 }
 
-SeaOfBlood.code = '17049';
+SeaOfBlood.code = '17149';
 
 export default SeaOfBlood;

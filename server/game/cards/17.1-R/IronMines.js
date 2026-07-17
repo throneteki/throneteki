@@ -25,6 +25,6 @@ class IronMines extends DrawCard {
     }
 }
 
-IronMines.code = '17008';
+IronMines.code = '17108';
 
 export default IronMines;

@@ -32,6 +32,6 @@ class TheAnnalsOfCastleBlack extends PlotCard {
     }
 }
 
-TheAnnalsOfCastleBlack.code = '17058';
+TheAnnalsOfCastleBlack.code = '17158';
 
 export default TheAnnalsOfCastleBlack;

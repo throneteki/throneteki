@@ -70,6 +70,6 @@ class ValyrianSteel extends AgendaCard {
     }
 }
 
-ValyrianSteel.code = '17052';
+ValyrianSteel.code = '17152';
 
 export default ValyrianSteel;

@@ -54,6 +54,6 @@ class DesertRaider extends DrawCard {
     }
 }
 
-DesertRaider.code = '17012';
+DesertRaider.code = '17112';
 
 export default DesertRaider;

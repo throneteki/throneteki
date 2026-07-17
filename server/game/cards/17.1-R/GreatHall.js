@@ -27,6 +27,6 @@ class GreatHall extends DrawCard {
     }
 }
 
-GreatHall.code = '17044';
+GreatHall.code = '17144';
 
 export default GreatHall;

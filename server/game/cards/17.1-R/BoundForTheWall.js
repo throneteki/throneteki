@@ -48,6 +48,6 @@ class BoundForTheWall extends DrawCard {
     }
 }
 
-BoundForTheWall.code = '17021';
+BoundForTheWall.code = '17121';
 
 export default BoundForTheWall;

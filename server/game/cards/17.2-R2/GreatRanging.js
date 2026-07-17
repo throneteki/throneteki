@@ -22,6 +22,6 @@ class GreatRanging extends DrawCard {
     }
 }
 
-GreatRanging.code = '17073';
+GreatRanging.code = '17173';
 
 export default GreatRanging;

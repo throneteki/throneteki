@@ -51,6 +51,6 @@ class Pyke extends DrawCard {
     }
 }
 
-Pyke.code = '17063';
+Pyke.code = '17163';
 
 export default Pyke;

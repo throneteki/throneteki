@@ -27,6 +27,6 @@ class UnexpectedGuile extends DrawCard {
     }
 }
 
-UnexpectedGuile.code = '17039';
+UnexpectedGuile.code = '17139';
 
 export default UnexpectedGuile;

@@ -23,6 +23,6 @@ class HizdahrZoLoraq extends DrawCard {
     }
 }
 
-HizdahrZoLoraq.code = '17030';
+HizdahrZoLoraq.code = '17130';
 
 export default HizdahrZoLoraq;

@@ -72,6 +72,6 @@ class ForcedMarch extends PlotCard {
     }
 }
 
-ForcedMarch.code = '17054';
+ForcedMarch.code = '17154';
 
 export default ForcedMarch;

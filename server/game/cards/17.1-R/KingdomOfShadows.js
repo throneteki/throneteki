@@ -18,6 +18,6 @@ class KingdomOfShadows extends AgendaCard {
     }
 }
 
-KingdomOfShadows.code = '17048';
+KingdomOfShadows.code = '17148';
 
 export default KingdomOfShadows;

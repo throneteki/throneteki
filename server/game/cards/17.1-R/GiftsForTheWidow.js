@@ -30,6 +30,6 @@ class GiftsForTheWidow extends DrawCard {
     }
 }
 
-GiftsForTheWidow.code = '17035';
+GiftsForTheWidow.code = '17135';
 
 export default GiftsForTheWidow;

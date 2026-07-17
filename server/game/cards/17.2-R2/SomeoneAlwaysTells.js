@@ -24,6 +24,6 @@ class SomeoneAlwaysTells extends DrawCard {
     }
 }
 
-SomeoneAlwaysTells.code = '17068';
+SomeoneAlwaysTells.code = '17168';
 
 export default SomeoneAlwaysTells;

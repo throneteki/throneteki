@@ -33,6 +33,6 @@ class ToTheRoseBanner extends DrawCard {
     }
 }
 
-ToTheRoseBanner.code = '17041';
+ToTheRoseBanner.code = '17141';
 
 export default ToTheRoseBanner;

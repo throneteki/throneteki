@@ -26,6 +26,6 @@ class BearIslandScout extends DrawCard {
     }
 }
 
-BearIslandScout.code = '17024';
+BearIslandScout.code = '17124';
 
 export default BearIslandScout;

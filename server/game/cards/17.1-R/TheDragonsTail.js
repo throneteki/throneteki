@@ -26,6 +26,6 @@ class TheDragonsTail extends DrawCard {
     }
 }
 
-TheDragonsTail.code = '17047';
+TheDragonsTail.code = '17147';
 
 export default TheDragonsTail;
