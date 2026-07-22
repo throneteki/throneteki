@@ -887,6 +887,7 @@ class Lobby {
             showHand: game.showHand,
             gamePrivate: game.gamePrivate,
             gameFormat: game.gameFormat,
+            gameVariant: game.gameVariant,
             gameType: game.gameType,
             useGameTimeLimit: game.useGameTimeLimit,
             gameTimeLimit: game.gameTimeLimit,
