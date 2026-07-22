@@ -11,7 +11,7 @@ describe('AlysaneMormont', function () {
                 'Marching Orders',
                 'Alysane Mormont',
                 'Bran Stark (Core)',
-                'Hot Pie'
+                'Hot Pie (FFH)'
             ]);
             this.player1.selectDeck(deck1);
             this.player2.selectDeck(deck2);

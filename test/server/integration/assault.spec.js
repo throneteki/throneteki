@@ -5,12 +5,12 @@ describe('assault', function () {
                 'Trading with the Pentoshi',
                 'The Iron Fleet',
                 'Dagmer Cleftjaw (TS)',
-                'Thenns',
+                'Thenns (FtR)',
                 'Foamdrinker'
             ]);
             const deck2 = this.buildDeck('thenightswatch', [
                 'Trading with the Pentoshi',
-                'Great Ranging',
+                'Great Ranging (FtR)',
                 'Old Forest Hunter',
                 'The Wall (Core)',
                 'Queenscrown',

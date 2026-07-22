@@ -16,6 +16,7 @@ class AlchemistApprentice extends DrawCard {
                     printedCostOrLower: 2
                 }
             },
+            limit: ability.limit.perPhase(1),
             message: "{player} kneels {costs.kneel} to return {target} to its owner's hand",
             handler: (context) => {
                 this.game.resolveGameAction(

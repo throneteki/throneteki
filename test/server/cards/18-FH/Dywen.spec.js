@@ -3,7 +3,7 @@ describe('Dywen', function () {
         beforeEach(function () {
             const deck1 = this.buildDeck('thenightswatch', [
                 'Loan from the Iron Bank',
-                'Dywen',
+                'Dywen (FH)',
                 'Jon Snow (MoD)',
                 'Sworn to the Watch'
             ]);
