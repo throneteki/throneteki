@@ -14,6 +14,7 @@ class Winterfell extends DrawCard {
             target: {
                 cardCondition: {
                     type: 'character',
+                    location: 'play area',
                     condition: (card, context) => card.controller === context.event.challenge.loser
                 }
             },
