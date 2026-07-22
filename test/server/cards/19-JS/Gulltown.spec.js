@@ -5,7 +5,7 @@ describe('Gulltown', function () {
                 'City of Wealth',
                 'Marching Orders',
                 'Marching Orders',
-                'Gulltown',
+                'Gulltown (JS)',
                 'Ricasso'
             ]);
             this.player1.selectDeck(deck1);

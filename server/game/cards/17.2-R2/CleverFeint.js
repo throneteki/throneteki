@@ -5,7 +5,7 @@ class CleverFeint extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Return cards to shadows',
-            cost: [ 
+            cost: [
                 ability.costs.kneelFactionCard(),
                 ability.costs.payXGold(
                     () => this.getMinimumCost(),
@@ -14,7 +14,7 @@ class CleverFeint extends DrawCard {
             ],
             target: {
                 mode: 'exactly',
-                numCards: context.xValue,
+                numCards: (context) => context.xValue,
                 cardCondition: (card) =>
                     card.location === 'play area' &&
                     card.controller === this.controller &&

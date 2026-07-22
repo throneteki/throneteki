@@ -1,7 +1,7 @@
 import DrawCard from '../../drawcard.js';
 
 class SomeoneAlwaysTells extends DrawCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.interrupt({
             canCancel: true,
             cost: ability.costs.kneelFactionCard(),
@@ -9,7 +9,8 @@ class SomeoneAlwaysTells extends DrawCard {
                 onCardAbilityInitiated: (event) =>
                     event.source.controller !== this.controller &&
                     (event.source.getType() === 'event' ||
-                        (event.source.getType() === 'plot' && event.ability.isWhenRevealedAbility()))
+                        (event.source.getType() === 'plot' &&
+                            event.ability.isWhenRevealedAbility()))
             },
             handler: (context) => {
                 context.event.cancel();

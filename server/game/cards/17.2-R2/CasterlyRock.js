@@ -22,7 +22,8 @@ class CasterlyRock extends DrawCard {
                 mode: 'upTo',
                 numCards: 3,
                 activePromptTitle: 'Select up to 3 cards',
-                cardCondition: (card) => card.location === 'play area' && card.isFaction('lannister')
+                cardCondition: (card) =>
+                    card.location === 'play area' && card.isFaction('lannister')
             },
             message: '{player} kneels {source} to have {target} each gain 1 gold',
             handler: (context) => {

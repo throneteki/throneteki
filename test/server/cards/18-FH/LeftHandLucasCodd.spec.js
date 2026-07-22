@@ -5,7 +5,7 @@ describe('Left-Hand Lucas Codd', function () {
         beforeEach(function () {
             const deck1 = this.buildDeck('tyrell', [
                 'Marching Orders',
-                'Left-Hand Lucas Codd',
+                'Left-Hand Lucas Codd (FH)',
                 'Hedge Knight'
             ]);
             this.player1.selectDeck(deck1);
