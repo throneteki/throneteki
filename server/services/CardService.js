@@ -76,7 +76,8 @@ class CardService {
     }
 
     async processLegality(format, variant, legality, event) {
-        if (!legality) {
+        // No legality provided, or full legality object provided
+        if (!legality || legality._id) {
             return legality;
         }
         // Custom legality (only for events)
