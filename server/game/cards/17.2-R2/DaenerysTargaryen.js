@@ -37,6 +37,6 @@ class DaenerysTargaryen extends DrawCard {
     }
 }
 
-DaenerysTargaryen.code = '17170';
+DaenerysTargaryen.code = '17171';
 
 export default DaenerysTargaryen;

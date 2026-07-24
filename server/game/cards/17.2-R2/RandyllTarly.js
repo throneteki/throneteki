@@ -70,6 +70,6 @@ class RandyllTarly extends DrawCard {
     }
 }
 
-RandyllTarly.code = '17175';
+RandyllTarly.code = '17174';
 
 export default RandyllTarly;
