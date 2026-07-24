@@ -30,6 +30,6 @@ class AegonTargaryen extends DrawCard {
     }
 }
 
-AegonTargaryen.code = '17171';
+AegonTargaryen.code = '17172';
 
 export default AegonTargaryen;

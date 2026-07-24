@@ -22,6 +22,6 @@ class Queensguard extends DrawCard {
     }
 }
 
-Queensguard.code = '17172';
+Queensguard.code = '17173';
 
 export default Queensguard;
