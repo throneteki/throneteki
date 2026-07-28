@@ -5,7 +5,6 @@ class Oldtown extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Reveal top card of deck',
-            cost: ability.costs.kneelSelf(),
             phase: 'dominance',
             message: '{player} uses and kneels {source} to name a cardtype',
             limit: ability.limit.perPhase(1),
