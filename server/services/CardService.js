@@ -98,12 +98,15 @@ class CardService {
         const sorted = lists.sort((a, b) => new Date(b.date) - new Date(a.date));
         const compiled = [];
         for (const legality of sorted) {
+            // Cards banned at legality level apply to all formats/lists
+            const legalityBanned = legality.bannedCards ?? [];
             for (const list of legality.formats) {
-                const { name: lName, variant: lVariant, ...details } = list;
+                const { name: lName, variant: lVariant, banned: listBanned, ...details } = list;
                 const format = lName;
                 const variant = lVariant ?? defaultVariant[format];
                 const version = legality.version;
                 const name = `${startCase(`${format} ${variant}`)} ${version}`;
+                const banned = [...new Set([...(listBanned ?? []), ...legalityBanned])];
                 const data = {
                     _id: `${legality.code}_${format}_${variant}`,
                     format,
@@ -116,7 +119,7 @@ class CardService {
                     active: false, // Actually set in setActiveLists,
                     restricted: [],
                     pods: [],
-                    banned: [],
+                    banned,
                     ...details
                 };
                 compiled.push(data);

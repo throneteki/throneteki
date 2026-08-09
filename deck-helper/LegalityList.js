@@ -21,7 +21,7 @@ class LegalityList {
 
         if (bannedCardsOnList.length > 0) {
             errors.push(
-                `${this.rules.name} - Contains cards on the banned list: ${bannedCardsOnList.map((card) => card.name).join(', ')}`
+                `${this.rules.name} - Contains cards on the banned list: ${bannedCardsOnList.map((card) => card.label).join(', ')}`
             );
         }
 
