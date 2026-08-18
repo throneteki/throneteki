@@ -5,6 +5,7 @@ class SecretSchemes extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Draw cards',
+            phase: 'challenge',
             condition: () =>
                 this.controller.getNumberOfUsedPlots() >= 1 && this.controller.canDraw(),
             cost: ability.costs.kneelFactionCard(),

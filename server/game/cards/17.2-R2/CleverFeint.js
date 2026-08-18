@@ -5,16 +5,17 @@ class CleverFeint extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Return cards to shadows',
+            condition: () => this.controller.anyCardsInPlay((card) => card.isShadow()),
             cost: [
                 ability.costs.kneelFactionCard(),
                 ability.costs.payXGold(
-                    () => this.getMinimumCost(),
-                    () => 99
+                    () => 1,
+                    () => this.getShadowCardCount()
                 )
             ],
             target: {
                 mode: 'exactly',
-                numCards: (context) => context.xValue,
+                numCards: (context) => context.xValue ?? 1,
                 cardCondition: (card) =>
                     card.location === 'play area' &&
                     card.controller === this.controller &&
@@ -30,6 +31,12 @@ class CleverFeint extends DrawCard {
                 );
             }
         });
+    }
+
+    getShadowCardCount() {
+        return this.game.filterCardsInPlay(
+            (card) => card.controller === this.controller && card.isShadow()
+        ).length;
     }
 }
 
