@@ -1,5 +1,6 @@
 import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
+import TextHelper from '../../TextHelper.js';
 
 class CleverFeint extends DrawCard {
     setupCardAbilities(ability) {
@@ -14,6 +15,8 @@ class CleverFeint extends DrawCard {
                 )
             ],
             target: {
+                activePromptTitle: (context) =>
+                    `Select ${TextHelper.count(context.xValue ?? 1, 'card')}`,
                 mode: 'exactly',
                 numCards: (context) => context.xValue ?? 1,
                 cardCondition: (card) =>
@@ -21,7 +24,10 @@ class CleverFeint extends DrawCard {
                     card.controller === this.controller &&
                     card.isShadow()
             },
-            message: '{player} plays {source} to return {target} to shadows',
+            message: {
+                format: '{player} plays {source}, kneels their faction card and pays {xValue} to return {target} to shadows',
+                args: { xValue: (context) => context.xValue }
+            },
             handler: (context) => {
                 this.game.resolveGameAction(
                     GameActions.simultaneously((context) =>
