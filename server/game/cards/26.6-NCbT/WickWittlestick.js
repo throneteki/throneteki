@@ -23,7 +23,9 @@ class WickWittlestick extends DrawCard {
             handler: (context) => {
                 this.game.resolveGameAction(
                     GameActions.simultaneously(
-                        context.target.map((card) => GameActions.discardCard({ card }))
+                        context.targets
+                            .getTargets()
+                            .map((card) => GameActions.discardCard({ card }))
                     ),
                     context
                 );

@@ -6,9 +6,7 @@ class SerLancelLannister extends DrawCard {
             targetController: 'any',
             condition: () => true,
             match: (card) =>
-                (card.hasTrait('Lord') || card.hasTrait('Lady')) &&
-                card.getType() === 'character' &&
-                card.getPower() > 0,
+                (card.hasTrait('Lord') || card.hasTrait('Lady')) && card.getType() === 'character',
             effect: ability.effects.doesNotContributeToPowerTotal()
         });
 

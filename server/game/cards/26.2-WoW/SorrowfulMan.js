@@ -19,6 +19,7 @@ class SorrowfulMan extends DrawCard {
                 singleController: true,
                 cardCondition: (card, context) =>
                     card.controller !== this.controller &&
+                    card.getType() === 'character' &&
                     ['discard pile', 'dead pile']
                         .filter(
                             (location) =>
@@ -42,7 +43,7 @@ class SorrowfulMan extends DrawCard {
                 const deadCard = context.target.find((card) => card.location === 'dead pile');
                 const opponent = context.target[0].controller;
                 const discardIndex = opponent.discardPile.indexOf(discardCard);
-                const deadIndex = opponent.discardPile.indexOf(discardCard);
+                const deadIndex = opponent.deadPile.indexOf(deadCard);
 
                 opponent.discardPile[discardIndex] = deadCard;
                 deadCard.moveTo('discard pile');

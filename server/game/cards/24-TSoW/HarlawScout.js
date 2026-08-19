@@ -10,7 +10,8 @@ class HarlawScout extends DrawCard {
                         controller: event.cardStateWhenDiscarded.controller,
                         source: event.source
                     }),
-                    condition: (aggregate) => aggregate.source === 'reserve'
+                    condition: (aggregate, events, context) =>
+                        aggregate.source === 'reserve' && aggregate.controller !== context.player
                 }
             },
             limit: ability.limit.perRound(2),

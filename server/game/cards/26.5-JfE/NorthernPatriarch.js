@@ -35,6 +35,7 @@ class NorthernPatriarch extends DrawCard {
                         source: this,
                         activePromptTitle: 'Select a card to move power from',
                         numCards: 1,
+                        cardType: ['attachment', 'character', 'location', 'faction'],
                         cardCondition: (card) =>
                             card.controller === context.event.source.controller && card.power > 0,
                         onSelect: (player, card) => {
@@ -43,6 +44,9 @@ class NorthernPatriarch extends DrawCard {
                                 player,
                                 card,
                                 this
+                            );
+                            this.game.resolveGameAction(
+                                GameActions.movePower({ from: card, to: this, amount: 1 })
                             );
                             return true;
                         },
@@ -67,7 +71,9 @@ class NorthernPatriarch extends DrawCard {
     }
 
     hasCardsWithPower(player) {
-        return player.getNumberOfCardsInPlay((card) => card.power > 0) > 0;
+        return (
+            player.faction.power > 0 || player.getNumberOfCardsInPlay((card) => card.power > 0) > 0
+        );
     }
 }
 

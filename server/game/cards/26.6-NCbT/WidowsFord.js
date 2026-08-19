@@ -7,9 +7,9 @@ class WidowsFord extends DrawCard {
         this.reaction({
             when: {
                 onCardPlaced: (event) =>
+                    event.card.controller === this.controller &&
                     event.card.isMatch({
                         location: 'discard pile',
-                        controller: 'current',
                         type: ['attachment', 'location']
                     })
             },

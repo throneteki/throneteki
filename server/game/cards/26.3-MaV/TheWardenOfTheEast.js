@@ -11,10 +11,10 @@ class TheWardenOfTheEast extends DrawCard {
             when: {
                 onCardRevealed: {
                     aggregateBy: (event) => ({
-                        controller: event.card.controller,
-                        isCharacter: event.card.getType() === 'character',
+                        controller: event.cardStateWhenRevealed.controller,
+                        isCharacter: event.cardStateWhenRevealed.getType() === 'character',
                         isValidLocation: ['hand', 'draw deck', 'shadows'].includes(
-                            event.card.location
+                            event.cardStateWhenRevealed.location
                         )
                     }),
                     condition: (aggregate) =>

@@ -10,7 +10,8 @@ class Kingswood extends DrawCard {
             when: {
                 onCardEntersPlay: (event) =>
                     event.playingType === 'ambush' &&
-                    event.card.isMatch({ type: 'character', controller: 'current' })
+                    event.card.controller === this.controller &&
+                    event.card.isMatch({ type: 'character' })
             },
             cost: [ability.costs.kneelSelf(), ability.costs.returnSelfToHand()],
             message:
