@@ -30,6 +30,27 @@ describe('DetermineDominance', function () {
     });
 
     describe('continue()', function () {
+        beforeEach(function () {
+            // Simulate the raised event resolving, and return the event it was populated onto.
+            this.resolveEvent = () => {
+                this.event = {};
+                const call = this.game.raiseEvent.calls
+                    .allArgs()
+                    .find((args) => args[0] === 'onDominanceDetermined');
+                call[2](this.event);
+                return this.event;
+            };
+        });
+
+        it('should raise onDominanceDetermined immediately, before calculating anything', function () {
+            this.step.continue();
+            expect(this.game.raiseEvent).toHaveBeenCalledWith(
+                'onDominanceDetermined',
+                {},
+                jasmine.any(Function)
+            );
+        });
+
         describe('when dominance strength is a tie', function () {
             beforeEach(function () {
                 this.player1.getDominance.and.returnValue(5);
@@ -38,15 +59,10 @@ describe('DetermineDominance', function () {
 
             it('should not determine a winner', function () {
                 this.step.continue();
-                expect(this.game.raiseEvent).toHaveBeenCalledWith(
-                    'onDominanceDetermined',
-                    jasmine.objectContaining({
-                        winner: undefined,
-                        difference: 0,
-                        chosenBy: undefined
-                    }),
-                    jasmine.any(Function)
-                );
+                const event = this.resolveEvent();
+                expect(event.winner).toBeUndefined();
+                expect(event.difference).toBe(0);
+                expect(event.chosenBy).toBeUndefined();
             });
 
             describe('and a player can determine ties', function () {
@@ -56,6 +72,7 @@ describe('DetermineDominance', function () {
 
                 it('should allow that player to choose the winner', function () {
                     this.step.continue();
+                    this.resolveEvent();
                     expect(this.game.queueStep).toHaveBeenCalledWith(
                         jasmine.objectContaining({
                             player: this.player1,
@@ -74,15 +91,10 @@ describe('DetermineDominance', function () {
 
             it('should determine a winner', function () {
                 this.step.continue();
-                expect(this.game.raiseEvent).toHaveBeenCalledWith(
-                    'onDominanceDetermined',
-                    jasmine.objectContaining({
-                        winner: this.player2,
-                        difference: 2,
-                        chosenBy: undefined
-                    }),
-                    jasmine.any(Function)
-                );
+                const event = this.resolveEvent();
+                expect(event.winner).toBe(this.player2);
+                expect(event.difference).toBe(2);
+                expect(event.chosenBy).toBeUndefined();
             });
         });
     });
