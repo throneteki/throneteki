@@ -1,0 +1,19 @@
+import DrawCard from '../../drawcard.js';
+
+class FleetFromTenTowers extends DrawCard {
+    setupCardAbilities(ability) {
+        this.persistentEffect({
+            condition: () =>
+                this.isAttacking() &&
+                this.game.isDuringChallenge({
+                    match: (challenge) => challenge.defendingPlayer.getReserve() <= 4
+                }),
+            match: this,
+            effect: [ability.effects.modifyStrength(3), ability.effects.addKeyword('Renown')]
+        });
+    }
+}
+
+FleetFromTenTowers.code = '00141';
+
+export default FleetFromTenTowers;

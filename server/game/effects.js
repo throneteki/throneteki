@@ -1269,6 +1269,42 @@ const Effects = {
             }
         };
     },
+    dynamicContributeStrength: function (calculate, card) {
+        let contribution = null;
+        return {
+            targetType: 'player',
+            apply: function (player, context) {
+                let challenge = context.game.currentChallenge;
+                if (!challenge) {
+                    return;
+                }
+
+                let value = calculate() || 0;
+                contribution = new ValueContribution(player, card, value);
+                challenge.addContribution(contribution);
+            },
+            reapply: function (player, context) {
+                let challenge = context.game.currentChallenge;
+                if (!challenge) {
+                    return;
+                }
+
+                let newStrength = calculate() || 0;
+                challenge.removeContribution(contribution);
+                contribution = new ValueContribution(player, card, newStrength);
+                challenge.addContribution(contribution);
+            },
+            unapply: function (player, context) {
+                let challenge = context.game.currentChallenge;
+                if (!challenge) {
+                    return;
+                }
+
+                challenge.removeContribution(contribution);
+            },
+            isStateDependent: true
+        };
+    },
     setAttackerMaximum: function (value) {
         return {
             targetType: 'player',
@@ -1496,6 +1532,9 @@ const Effects = {
     },
     reduceNextAmbushedOrPlayedCardCost: function (amount, match) {
         return this.reduceNextCardCost(['ambush', 'play'], amount, match);
+    },
+    reduceNextAmbushedOrOutOfShadowsCardCost: function (amount, match) {
+        return this.reduceNextCardCost(['ambush', 'outOfShadows'], amount, match);
     },
     reduceNextMarshalledOrPlayedCardCost: function (amount, match) {
         return this.reduceNextCardCost(['marshal', 'play'], amount, match);

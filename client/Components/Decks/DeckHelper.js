@@ -52,11 +52,13 @@ const addCard = (list, card, number, isDraftpool = false) => {
     let existingCard = list.find((item) => item.cardcode === card.code);
     if (existingCard) {
         existingCard.count += number;
-        existingCard.count = isDraftpool
-            ? existingCard.count
-            : Math.min(existingCard.count, card.deckLimit);
+        existingCard.count =
+            isDraftpool && card.type !== 'plot'
+                ? existingCard.count
+                : Math.min(existingCard.count, card.deckLimit);
     } else {
-        const count = isDraftpool ? number : Math.min(number, card.deckLimit);
+        const count =
+            isDraftpool && card.type !== 'plot' ? number : Math.min(number, card.deckLimit);
         list.push({ cardcode: card.code, count: count });
     }
 };

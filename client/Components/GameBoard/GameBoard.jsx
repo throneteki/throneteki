@@ -127,7 +127,7 @@ const GameBoard = () => {
     });
 
     let gameBoard = null;
-    if (currentGame.gameFormat === 'joust') {
+    if (['joust', 'draft'].includes(currentGame.gameFormat)) {
         gameBoard = (
             <JoustGameBoardLayout
                 thisPlayer={thisPlayer}

@@ -1,4 +1,4 @@
-describe("War Scorpion", function () {
+describe('War Scorpion', function () {
     integration(function () {
         beforeEach(function () {
             const arrynDeck = this.buildDeck('Stark', [

@@ -11,6 +11,7 @@ import DiscardFromDeckCost from './costs/DiscardFromDeckCost.js';
 import ReduceableGoldCost from './costs/ReduceableGoldCost.js';
 import { Tokens } from './Constants/index.js';
 import MovePowerFromCardCost from './costs/MovePowerFromCardCost.js';
+import MoveGoldFromCardCost from './costs/MoveGoldFromCardCost.js';
 
 const Costs = {
     /**
@@ -262,6 +263,12 @@ const Costs = {
      */
     moveTokenFromSelf: (type, amount, condition) =>
         new MoveTokenFromSelfCost(type, amount, condition),
+    /**
+     * Cost that will move a fixed amount of a gold from a card matching the passed condition predicate function
+     * to a fixed target
+     */
+    moveGoldFromCardToFixedTarget: ({ target, amount, condition }) =>
+        new MoveGoldFromCardCost({ target, amount, condition }),
     /**
      * Cost that will move a fixed amount of power from the player's faction card to a
      * destination card matching the passed condition predicate function.

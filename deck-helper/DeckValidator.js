@@ -139,10 +139,6 @@ class DeckValidator {
 
         return Object.assign({}, ...validators, combined);
     }
-
-    isDraftCard(card) {
-        return card && card.packCode === 'VDS';
-    }
 }
 
 export default DeckValidator;
