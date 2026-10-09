@@ -326,7 +326,7 @@ describe("At Prince Doran's Behest", function () {
             beforeEach(function () {
                 const behestDeck = this.buildDeck('martell', [
                     "At Prince Doran's Behest",
-                    'City Blockade',
+                    'City Blockade (FUtG)',
                     'Trading with the Pentoshi',
                     'The Red Viper (Core)',
                     'The Red Viper (Core)',

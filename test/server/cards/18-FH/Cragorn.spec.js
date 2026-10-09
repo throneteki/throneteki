@@ -3,7 +3,7 @@ describe('Cragorn', function () {
         beforeEach(function () {
             const deck1 = this.buildDeck('greyjoy', [
                 'Marching Orders',
-                'Cragorn',
+                'Cragorn (FH)',
                 'Stony Shore Raider',
                 'Throwing Axe'
             ]);

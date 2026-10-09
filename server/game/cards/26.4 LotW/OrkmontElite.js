@@ -41,7 +41,8 @@ class OrkmontElite extends DrawCard {
             GameActions.putIntoPlay({
                 player: context.player,
                 card,
-                attachmentTargets: (card) => card.controller === context.player
+                attachmentTargets: (card) =>
+                    card.controller === context.player && card.getType() === 'character'
             }).allow()
         );
     }

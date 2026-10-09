@@ -293,6 +293,10 @@ class BaseAbility {
         return false;
     }
 
+    isWhenRevealedAbility() {
+        return false;
+    }
+
     hasMax() {
         return false;
     }

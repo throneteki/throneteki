@@ -3,7 +3,7 @@ describe('Ser Emmon Cuy', function () {
         beforeEach(function () {
             const deck1 = this.buildDeck('lannister', [
                 'Time of Plenty',
-                'Ser Emmon Cuy',
+                'Ser Emmon Cuy (FH)',
                 'Hedge Knight'
             ]);
 

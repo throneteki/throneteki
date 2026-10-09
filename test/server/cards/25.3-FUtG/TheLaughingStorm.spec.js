@@ -9,7 +9,7 @@ describe('The Laughing Storm', function () {
             const deck2 = this.buildDeck('baratheon', [
                 'Taxation',
                 'The Red Keep (Core)',
-                'The Laughing Storm',
+                'The Laughing Storm (FUtG)',
                 'Bastard in Hiding',
                 'Stannis Baratheon (Core)'
             ]);

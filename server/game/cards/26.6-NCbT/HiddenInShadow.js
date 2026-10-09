@@ -20,6 +20,7 @@ class HiddenInShadow extends DrawCard {
                 onCardDiscarded: (event) =>
                     event.card === this && event.originalLocation === 'shadows'
             },
+            location: ['discard pile'],
             message: '{player} uses {source} to draw 1 card',
             gameAction: GameActions.drawCards((context) => ({ player: context.player, amount: 1 }))
         });

@@ -5,9 +5,9 @@ describe('Vargo Hoat', function () {
         beforeEach(function () {
             const deck1 = this.buildDeck('tyrell', [
                 'Marching Orders',
-                'Vargo Hoat',
+                'Vargo Hoat (FH)',
                 'Planky Town Trader',
-                'Golden Company'
+                'Golden Company (HMW)'
             ]);
             this.player1.selectDeck(deck1);
             this.player2.selectDeck(deck1);

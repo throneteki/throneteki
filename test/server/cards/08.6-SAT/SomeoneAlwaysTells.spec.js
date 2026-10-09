@@ -6,7 +6,7 @@ describe('Someone Always Tells', function () {
                 'Trading with the Pentoshi',
                 'Valar Morghulis',
                 'Tumblestone Knight',
-                'Someone Always Tells'
+                'Someone Always Tells (SAT)'
             ]);
 
             this.player1.selectDeck(deck);

@@ -41,7 +41,7 @@ class TheAgeOfHeroes extends PlotCard {
     }
 }
 
-TheAgeOfHeroes.code = '26615';
+TheAgeOfHeroes.code = '26119';
 TheAgeOfHeroes.version = '1.0.3';
 
 export default TheAgeOfHeroes;

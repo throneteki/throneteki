@@ -5,7 +5,7 @@ describe('Harwin', function () {
         beforeEach(function () {
             const deck1 = this.buildDeck('tyrell', [
                 'Marching Orders',
-                'Harwin',
+                'Harwin (FH)',
                 'Robert Baratheon (Core)'
             ]);
             this.player1.selectDeck(deck1);

@@ -2,7 +2,7 @@ describe('The Pointy End', function () {
     integration(function () {
         beforeEach(function () {
             const deck1 = this.buildDeck('tyrell', [
-                'The Pointy End',
+                'The Pointy End (FH)',
                 'Ygritte',
                 'Ygritte',
                 'Noble Lineage',

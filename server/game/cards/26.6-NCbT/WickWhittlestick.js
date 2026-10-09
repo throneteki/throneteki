@@ -1,7 +1,7 @@
 import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
-class WickWittlestick extends DrawCard {
+class WickWhittlestick extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
@@ -23,7 +23,9 @@ class WickWittlestick extends DrawCard {
             handler: (context) => {
                 this.game.resolveGameAction(
                     GameActions.simultaneously(
-                        context.target.map((card) => GameActions.discardCard({ card }))
+                        context.targets
+                            .getTargets()
+                            .map((card) => GameActions.discardCard({ card }))
                     ),
                     context
                 );
@@ -32,6 +34,6 @@ class WickWittlestick extends DrawCard {
     }
 }
 
-WickWittlestick.code = '26109';
+WickWhittlestick.code = '26109';
 
-export default WickWittlestick;
+export default WickWhittlestick;

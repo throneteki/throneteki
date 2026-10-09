@@ -40,7 +40,7 @@ class TorchAndOil extends DrawCard {
                         gameAction: GameActions.sacrificeCard({ card: this }).then({
                             gameAction: GameActions.simultaneously([
                                 GameActions.discardCard((context) => ({
-                                    card: context.parentcontext.parentContext.revealed[0]
+                                    card: context.parentContext.parentContext.revealed[0]
                                 })),
                                 GameActions.standCard((context) => ({
                                     card: context.parentContext.cardStateWhenInitiated.parent

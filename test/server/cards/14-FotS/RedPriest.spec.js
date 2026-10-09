@@ -2,7 +2,7 @@ describe('Red Priest', function () {
     integration(function () {
         describe('when enters play', function () {
             beforeEach(function () {
-                const deck1 = this.buildDeck('baratheon', ['Marching Orders', 'Red Priest']);
+                const deck1 = this.buildDeck('baratheon', ['Marching Orders', 'Red Priest (FotS)']);
                 const deck2 = this.buildDeck('lannister', [
                     'Marching Orders',
                     'Ser Jaime Lannister (Core)',

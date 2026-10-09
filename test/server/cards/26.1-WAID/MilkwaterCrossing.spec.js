@@ -4,7 +4,7 @@ describe('Milkwater Crossing', function () {
             const deck = this.buildDeck('thenightswatch', [
                 'Late Summer Feast',
                 'A Tourney for the King',
-                'Milkwater Crossing',
+                'Milkwater Crossing (WAID)',
                 'Hedge Knight',
                 'Nightmares'
             ]);

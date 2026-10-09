@@ -72,7 +72,11 @@ class KeywordsProperty {
         this.prizedValues = this.parseNumericValues('prized');
         this.ambushCost = this.safeReduce(this.ambushCosts, Math.min);
         this.bestowMax = this.safeReduce(this.bestowMaxes, Math.max);
-        this.shadowCost = this.safeReduce(this.shadowCosts, Math.min);
+        // A printed Shadow (X) always takes priority over any granted shadows amounts,
+        // as the X value is likely required to interact with the card itself
+        this.shadowCost = this.shadowCosts.includes('X')
+            ? 'X'
+            : this.safeReduce(this.shadowCosts, Math.min);
         this.prizedValue = this.prizedValues.reduce((sum, value) => sum + value, 0);
     }
 

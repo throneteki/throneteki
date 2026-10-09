@@ -3,7 +3,7 @@ describe('The King in the North', function () {
         beforeEach(function () {
             const deck = this.buildDeck('lannister', [
                 'The King in the North (FotOG)',
-                'Tommen Baratheon',
+                'Tommen Baratheon (LoCR)',
                 'Dornish Fiefdom',
                 'Hedge Knight',
                 'Tithe'
