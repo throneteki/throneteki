@@ -23,18 +23,22 @@ jobs:
                     NAMESPACE="throneteki"
                     APP_NAME="The Iron Throne"
                     ENV_SUBDOMAIN="production"
+                    ORIGIN="https://theironthrone.net"
                   elif [ "${{ github.event.inputs.environment }}" = "Development" ]; then
                     NAMESPACE="throneteki-development"
                     APP_NAME="The Iron Throne"
                     ENV_SUBDOMAIN="dev"
+                    ORIGIN="https://dev.theironthrone.net"
                   elif [ "${{ github.event.inputs.environment }}" = "Playtesting" ]; then
                     NAMESPACE="throneteki-playtesting"
                     APP_NAME="The Iron Throne Playtesting"
                     ENV_SUBDOMAIN="playtesting"
+                    ORIGIN="https://playtesting.theironthrone.net"
                   else
                     NAMESPACE="throneteki-$ENV"
                     APP_NAME="The Iron Throne"
                     ENV_SUBDOMAIN="$ENV"
+                    ORIGIN="https://$ENV.theironthrone.net"
                   fi
 
                   echo "Deploying lobby to namespace: $NAMESPACE for environment: $ENV_SUBDOMAIN"
@@ -73,7 +77,8 @@ jobs:
                   # Create values file with secrets
                   cat > /tmp/lobby-secrets.yaml <<EOF
                   nodeConfig:
-                    env: "'production'"
+                    env: "production"
+                    origin: "${{ vars.ORIGIN || '$ORIGIN' }}"
                     instance:
                       type: "$ENV"
                       reviewFormId: "${{ secrets.REVIEWS_FORM_ID }}"

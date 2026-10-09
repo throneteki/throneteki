@@ -24,7 +24,9 @@ class Server {
     async init(options) {
         this.userService = ServiceFactory.userService(options.db, this.configService);
         this.server = http.Server(app);
-        app.set('trust proxy', true);
+        // Only trust the X-Forwarded-* headers added by our own reverse proxy (Traefik), so clients
+        // can't spoof their IP address to get around bans and abuse checks
+        app.set('trust proxy', this.configService.getValue('trustProxy') ?? 1);
 
         if (!this.isDeveloping) {
             Sentry.init({
@@ -45,7 +47,7 @@ class Server {
                 this.userService
                     .getUserById(jwtPayload._id)
                     .then((user) => {
-                        if (user) {
+                        if (user && !user.disabled) {
                             return done(null, user.getWireSafeDetails());
                         }
 

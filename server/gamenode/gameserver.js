@@ -10,10 +10,12 @@ import { detectBinary } from '../util.js';
 import logger from '../log.js';
 import GameSocket from './gamesocket.js';
 import Game from '../game/game.js';
+import GameCommands from '../game/GameCommands.js';
 import Socket from '../socket.js';
 import ConfigService from '../services/ConfigService.js';
 import TextHelper from '../game/TextHelper.js';
 import HealthServer from './healthserver.js';
+import { checkSecrets } from '../configCheck.js';
 
 if (config.sentryDsn) {
     Sentry.init({
@@ -26,6 +28,7 @@ if (config.sentryDsn) {
 class GameServer {
     constructor() {
         this.configService = new ConfigService();
+        checkSecrets(this.configService, ['secret']);
         this.games = {};
 
         this.protocol = 'https';
@@ -476,13 +479,15 @@ class GameServer {
             return;
         }
 
+        if (command !== 'leavegame' && !GameCommands.isCommand(command)) {
+            return;
+        }
+
         this.runAndCatchErrors(game, () => {
             if (command === 'leavegame') {
                 this.onLeaveGame(socket);
-            } else if (!game[command] || !_.isFunction(game[command])) {
-                return;
             } else {
-                game[command](socket.user.username, ...args);
+                game.commands[command](socket.user.username, ...args);
             }
 
             if (!game.isEmpty(false)) {

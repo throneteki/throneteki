@@ -10,7 +10,7 @@ export const init = function (server, options) {
         passport.authenticate('jwt', { session: false }),
         function (req, res) {
             if (!req.user.permissions || !req.user.permissions.canModerateChat) {
-                return res.status(403);
+                return res.status(403).send({ message: 'Forbidden' });
             }
 
             messageService

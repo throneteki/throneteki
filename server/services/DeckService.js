@@ -2,6 +2,55 @@ import { formatDeckAsFullCards } from '../../deck-helper/formatDeckAsFullCards.j
 import { validateDeck } from '../../deck-helper/index.js';
 import logger from '../log.js';
 import ServiceFactory from './ServiceFactory.js';
+import { escapeRegex } from '../util.js';
+
+// The deck fields clients may filter and sort on; anything else is ignored
+const FilterableFields = ['name', 'faction.name', 'agenda.label'];
+const SortableFields = ['name', 'lastUpdated', 'isFavourite'];
+const MaxPageSize = 50;
+const MaxFilterValueLength = 100;
+
+function toRegexMatch(field, value) {
+    return {
+        [field]: {
+            $regex: escapeRegex(String(value).substring(0, MaxFilterValueLength)),
+            $options: 'i'
+        }
+    };
+}
+
+function getQueryOptions(options) {
+    const filters = [];
+    for (const filter of Array.isArray(options.filters) ? options.filters : []) {
+        if (!filter || !FilterableFields.includes(filter.id)) {
+            continue;
+        }
+
+        if (Array.isArray(filter.value)) {
+            const values = filter.value.filter((val) => val !== null && typeof val !== 'object');
+            if (values.length > 0) {
+                filters.push({ $or: values.map((val) => toRegexMatch(filter.id, val)) });
+            }
+        } else if (
+            filter.value !== undefined &&
+            filter.value !== null &&
+            typeof filter.value !== 'object'
+        ) {
+            filters.push(toRegexMatch(filter.id, filter.value));
+        }
+    }
+
+    const requestedSort = Array.isArray(options.sorting) ? options.sorting[0] : undefined;
+    const sort =
+        requestedSort && SortableFields.includes(requestedSort.id)
+            ? { [requestedSort.id]: requestedSort.desc === 'true' ? -1 : 1 }
+            : { lastUpdated: -1 };
+
+    const page = Math.max(parseInt(options.pageNumber, 10) || 1, 1);
+    const pageSize = Math.min(Math.max(parseInt(options.pageSize, 10) || 10, 1), MaxPageSize);
+
+    return { filters, sort, page, pageSize };
+}
 
 class DeckService {
     constructor(db) {
@@ -95,27 +144,10 @@ class DeckService {
     }
 
     async findByUserName(username, options = {}) {
-        const sort = options.sorting || [{ id: 'lastUpdated', desc: 'true' }];
-        const filter = options.filters || [];
-        const page = parseInt(options.pageNumber, 10) || 1;
-        const pageSize = parseInt(options.pageSize, 10) || 10;
-
-        filter.push({ id: 'username', value: username });
+        const { filters, sort, page, pageSize } = getQueryOptions(options);
 
         const baseMatch = {
-            $and: filter.map((curr) => {
-                if (Array.isArray(curr.value)) {
-                    return {
-                        $or: curr.value.map((val) => ({
-                            [curr.id]: { $regex: val, $options: 'i' }
-                        }))
-                    };
-                }
-                return {
-                    [curr.id]:
-                        curr.id === 'username' ? curr.value : { $regex: curr.value, $options: 'i' }
-                };
-            })
+            $and: [{ username }, ...filters]
         };
 
         const dbDecks = await this.decks.aggregate([
@@ -131,7 +163,7 @@ class DeckService {
                         {
                             $match: baseMatch
                         },
-                        { $sort: { [sort[0].id]: sort[0].desc === 'true' ? -1 : 1 } },
+                        { $sort: sort },
                         { $skip: (page - 1) * pageSize },
                         { $limit: pageSize }
                     ]
@@ -166,27 +198,10 @@ class DeckService {
     }
 
     async getStandaloneDecks(options = {}) {
-        const sort = options.sorting || [{ id: 'lastUpdated', desc: 'true' }];
-        const filter = options.filters || [];
-        const page = parseInt(options.pageNumber, 10) || 1;
-        const pageSize = parseInt(options.pageSize, 10) || 10;
+        const { filters, sort, page, pageSize } = getQueryOptions(options);
 
         const baseMatch = {
-            $and: [
-                { standaloneDeckId: { $exists: true } },
-                ...filter.map((curr) => {
-                    if (Array.isArray(curr.value)) {
-                        return {
-                            $or: curr.value.map((val) => ({
-                                [curr.id]: { $regex: val, $options: 'i' }
-                            }))
-                        };
-                    }
-                    return {
-                        [curr.id]: { $regex: curr.value, $options: 'i' }
-                    };
-                })
-            ]
+            $and: [{ standaloneDeckId: { $exists: true } }, ...filters]
         };
         const dbDecks = await this.decks.aggregate([
             {
@@ -194,13 +209,17 @@ class DeckService {
                     metadata: [{ $match: baseMatch }, { $count: 'totalCount' }],
                     data: [
                         { $match: baseMatch },
-                        { $sort: { [sort[0].id]: sort[0].desc === 'true' ? -1 : 1 } },
+                        { $sort: sort },
                         { $skip: (page - 1) * pageSize },
                         { $limit: pageSize }
                     ]
                 }
             }
         ]);
+
+        if (dbDecks.length === 0 || dbDecks[0].metadata.length === 0) {
+            return { success: true, data: [], totalCount: 0, page, pageSize };
+        }
 
         const processedDecks = [];
         for (const deck of dbDecks[0].data) {

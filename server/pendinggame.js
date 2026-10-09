@@ -3,6 +3,7 @@ import _ from 'underscore';
 import crypto from 'crypto';
 import logger from './log.js';
 import GameChat from './game/gamechat.js';
+import { getPublicEvent } from './util.js';
 
 class PendingGame {
     constructor(owner, instance, details) {
@@ -137,13 +138,31 @@ class PendingGame {
     }
 
     async newGame(id, user, password, join, deckService) {
-        if (password) {
+        if (password && typeof password === 'string') {
             this.password = crypto.createHash('md5').update(password).digest('hex');
         }
 
         if (join) {
             await this.addPlayer(id, user, deckService);
         }
+    }
+
+    isPasswordCorrect(password) {
+        if (typeof password !== 'string') {
+            return false;
+        }
+
+        return crypto.createHash('md5').update(password).digest('hex') === this.password;
+    }
+
+    isValidEventSpectator(user) {
+        if (!this.event || !Array.isArray(this.event.validSpectators)) {
+            return true;
+        }
+
+        return this.event.validSpectators.some(
+            (name) => typeof name === 'string' && name.toLowerCase() === user.username.toLowerCase()
+        );
     }
 
     isUserBlocked(user) {
@@ -159,10 +178,8 @@ class PendingGame {
             return 'Cannot join game';
         }
 
-        if (this.password) {
-            if (crypto.createHash('md5').update(password).digest('hex') !== this.password) {
-                return 'Incorrect game password';
-            }
+        if (this.password && !this.isPasswordCorrect(password)) {
+            return 'Incorrect game password';
         }
 
         this.addMessage('{0} has joined the game', user.username);
@@ -196,17 +213,13 @@ class PendingGame {
             return 'Cannot join game';
         }
 
-        if (this.password) {
-            if (crypto.createHash('md5').update(password).digest('hex') !== this.password) {
-                return 'Incorrect game password';
-            }
+        if (this.password && !this.isPasswordCorrect(password)) {
+            return 'Incorrect game password';
         }
 
         //check if the game has an event selected that restricts spectators
-        if (this.event && this.event.restrictSpectators && this.event.validSpectators) {
-            if (!this.event.validSpectators.includes(user.username.toLowerCase())) {
-                return 'You are not a valid spectator for this event';
-            }
+        if (!this.isValidEventSpectator(user)) {
+            return 'You are not a valid spectator for this event';
         }
 
         this.addSpectator(id, user);
@@ -411,7 +424,7 @@ class PendingGame {
             maxPlayers: this.maxPlayers,
             randomSeats: this.randomSeats,
             allowMultipleWinners: this.allowMultipleWinners,
-            event: this.event,
+            event: getPublicEvent(this.event),
             full: Object.values(this.players).length >= this.maxPlayers,
             id: this.id,
             messages: activePlayer ? this.gameChat.messages : undefined,
@@ -451,7 +464,7 @@ class PendingGame {
             const { name, user, ...rest } = playerDetails;
             players[name] = {
                 name,
-                user: user.getDetails(),
+                user: user.getGameNodeDetails(),
                 ...rest
             };
         }
@@ -461,7 +474,7 @@ class PendingGame {
             const { name, user, ...rest } = spectatorDetails;
             spectators[name] = {
                 name,
-                user: user.getDetails(),
+                user: user.getGameNodeDetails(),
                 ...rest
             };
         }
@@ -477,7 +490,7 @@ class PendingGame {
             gameType: this.gameType,
             id: this.id,
             name: this.name,
-            owner: this.owner.getDetails(),
+            owner: this.owner.getGameNodeDetails(),
             players,
             maxPlayers: this.maxPlayers,
             randomSeats: this.randomSeats,

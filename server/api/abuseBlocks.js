@@ -11,7 +11,7 @@ export const init = function (server, options) {
         passport.authenticate('jwt', { session: false }),
         wrapAsync(async (req, res) => {
             if (!req.user.permissions || !req.user.permissions.canManageBanlist) {
-                return res.status(403);
+                return res.status(403).send({ message: 'Forbidden' });
             }
 
             const blocks = await abuseService.listBlocks();
@@ -25,7 +25,7 @@ export const init = function (server, options) {
         passport.authenticate('jwt', { session: false }),
         wrapAsync(async (req, res) => {
             if (!req.user.permissions || !req.user.permissions.canManageBanlist) {
-                return res.status(403);
+                return res.status(403).send({ message: 'Forbidden' });
             }
 
             if (!req.body.value) {
@@ -52,7 +52,7 @@ export const init = function (server, options) {
         passport.authenticate('jwt', { session: false }),
         wrapAsync(async (req, res) => {
             if (!req.user.permissions || !req.user.permissions.canManageBanlist) {
-                return res.status(403);
+                return res.status(403).send({ message: 'Forbidden' });
             }
 
             await abuseService.deactivateBlock(req.params.id);

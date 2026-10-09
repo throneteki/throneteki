@@ -3,10 +3,13 @@ import Lobby from './lobby.js';
 import pmx from 'pmx';
 import monk from 'monk';
 import ServiceFactory from './services/ServiceFactory.js';
+import { checkSecrets } from './configCheck.js';
 
 let configService = ServiceFactory.configService();
 
 async function runServer() {
+    checkSecrets(configService);
+
     let options = {
         instance: configService.getValue('instance') || {}
     };

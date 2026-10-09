@@ -14,7 +14,7 @@ import GameSettings from '../Components/Profile/GameSettings';
 import BlankBg from '../assets/img/bgs/blank.png';
 import Background1 from '../assets/img/bgs/background.png';
 import Background2 from '../assets/img/bgs/background2.png';
-import { setUser } from '../redux/reducers/auth';
+import { setAuthTokens, setUser } from '../redux/reducers/auth';
 import { toast } from 'react-toastify';
 import CardSizeSettings from '../Components/Profile/CardSizeSettings';
 import Page from './Page';
@@ -91,6 +91,7 @@ const Profile = () => {
             .string()
             .email('Please enter a valid email address')
             .required('You must specify an email address'),
+        currentPassword: yup.string(),
         password: yup.string().min(6, 'Password must be at least 6 characters'),
         passwordAgain: yup
             .string()
@@ -102,6 +103,9 @@ const Profile = () => {
     const initialValues = {
         enableGravatar: !!user.enableGravatar,
         email: user.email,
+        currentPassword: '',
+        password: '',
+        passwordAgain: '',
         actionWindows: user.promptedActionWindows || defaultActionWindows,
         chooseOrder: !!settings.keywordSettings.chooseOrder,
         chooseCards: !!settings.keywordSettings.chooseCards,
@@ -123,7 +127,8 @@ const Profile = () => {
                             username: user.username,
                             profile: {
                                 email: values.email,
-                                password: values.newPassword,
+                                currentPassword: values.currentPassword,
+                                password: values.password,
                                 promptedActionWindows: values.actionWindows,
                                 enableGravatar: values.enableGravatar,
                                 settings: {
@@ -144,10 +149,14 @@ const Profile = () => {
                         }).unwrap();
                         toast.success('Profile saved successfully');
 
-                        dispatch(setUser(ret.user));
+                        dispatch(setUser(ret.data?.user ?? ret.user));
+                        if (ret.data?.token && ret.data?.refreshToken) {
+                            dispatch(setAuthTokens(ret.data.token, ret.data.refreshToken));
+                        }
                     } catch (err) {
                         toast.error(
-                            err.message ||
+                            err.data?.message ||
+                                err.message ||
                                 'An error occured saving your profile. Please try again later.'
                         );
                     }

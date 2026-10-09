@@ -181,6 +181,22 @@ class User {
         };
     }
 
+    // Only what a game node needs to run a game; game nodes should never see emails, tokens etc.
+    getGameNodeDetails() {
+        let user = Settings.getUserWithDefaultsSet({
+            _id: this.userData._id,
+            username: this.userData.username,
+            settings: this.userData.settings,
+            promptedActionWindows: this.userData.promptedActionWindows,
+            permissions: this.userData.permissions,
+            blockList: this.userData.blockList
+        });
+
+        user.role = this.role;
+
+        return user;
+    }
+
     getDetails() {
         let user = Object.assign({}, this.userData);
 
