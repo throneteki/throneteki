@@ -10,7 +10,7 @@ export const init = function (server, options) {
         passport.authenticate('jwt', { session: false }),
         wrapAsync(async function (req, res) {
             if (!req.user.permissions || !req.user.permissions.canManageBanlist) {
-                return res.status(403);
+                return res.status(403).send({ message: 'Forbidden' });
             }
 
             let banlist = await banlistService.getBanList();
@@ -24,7 +24,7 @@ export const init = function (server, options) {
         passport.authenticate('jwt', { session: false }),
         wrapAsync(async function (req, res) {
             if (!req.user.permissions || !req.user.permissions.canManageBanlist) {
-                return res.status(403);
+                return res.status(403).send({ message: 'Forbidden' });
             }
 
             let entry = await banlistService.getEntryByIp(req.body.ip);
@@ -57,7 +57,7 @@ export const init = function (server, options) {
         passport.authenticate('jwt', { session: false }),
         wrapAsync(async function (req, res) {
             if (!req.user.permissions || !req.user.permissions.canManageBanlist) {
-                return res.status(403);
+                return res.status(403).send({ message: 'Forbidden' });
             }
 
             await banlistService.removeBanlistEntry(req.params.id);

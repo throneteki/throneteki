@@ -52,7 +52,8 @@ class GameRouter extends EventEmitter {
     }
 
     addSpectator(game, user) {
-        this.sendCommand(game.node.identity, 'SPECTATOR', { game: game, user: user });
+        // The node only needs to know which game; the pending game holds full user records
+        this.sendCommand(game.node.identity, 'SPECTATOR', { game: { id: game.id }, user: user });
     }
 
     getNextAvailableGameNode() {

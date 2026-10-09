@@ -9,6 +9,8 @@ import ServiceFactory from './services/ServiceFactory.js';
 import User from './models/User.js';
 import { sortBy } from './Array.js';
 
+const MaxChatMessageLength = 512;
+
 class Lobby {
     constructor(server, options = {}) {
         this.instance = options.instance;
@@ -171,6 +173,11 @@ class Lobby {
                     this.userService
                         .getUserById(user._id)
                         .then((dbUser) => {
+                            if (!dbUser) {
+                                ioSocket.emit('authfailed');
+                                return;
+                            }
+
                             let socket = this.sockets[ioSocket.id];
                             if (!socket) {
                                 logger.error(
@@ -432,6 +439,11 @@ class Lobby {
         this.userService
             .getUserById(user._id)
             .then((dbUser) => {
+                if (!dbUser || dbUser.disabled) {
+                    socket.disconnect();
+                    return;
+                }
+
                 this.users[dbUser.username] = dbUser;
                 socket.user = dbUser;
 
@@ -484,6 +496,10 @@ class Lobby {
             return;
         }
 
+        if (!gameDetails || typeof gameDetails !== 'object') {
+            return;
+        }
+
         let existingGame = this.findGameForUser(socket.user.username);
         if (existingGame) {
             return;
@@ -526,35 +542,68 @@ class Lobby {
         const eventResult =
             !gameDetails.eventId || gameDetails.eventId === 'none'
                 ? Promise.resolve({ _id: 'none' })
-                : this.eventService.getEventById(gameDetails.eventId);
+                : this.eventService.getEventById(String(gameDetails.eventId));
 
         return Promise.all([eventResult, restrictedListsResult]).then(
             async ([event, restrictedLists]) => {
+                if (!event) {
+                    socket.send('gameerror', 'The selected event could not be found.');
+                    return;
+                }
+
+                if (
+                    Array.isArray(event.validTableCreators) &&
+                    !event.validTableCreators.some(
+                        (name) =>
+                            typeof name === 'string' &&
+                            name.toLowerCase() === socket.user.username.toLowerCase()
+                    )
+                ) {
+                    socket.send(
+                        'gameerror',
+                        'You are not permitted to create games for this event.'
+                    );
+                    return;
+                }
+
+                // The event and restricted list must come from the server, never from the client
+                // eslint-disable-next-line no-unused-vars
+                const { event: _event, restrictedList: _restrictedList, ...details } = gameDetails;
+
+                if (event._id !== 'none') {
+                    details.gameFormat = event.format;
+                    details.gameVariant = event.variant;
+                    details.gameLegality = event.legality;
+                    details.gameType = event.gameType;
+
+                    if (event.useEventGameOptions && event.eventGameOptions) {
+                        Object.assign(details, event.eventGameOptions);
+                    }
+                }
+
                 let restrictedList;
-                if (gameDetails.gameLegality === 'custom') {
+                if (details.gameLegality === 'custom') {
                     restrictedList = event.customLegality;
-                } else if (gameDetails.gameLegality === 'latest') {
+                } else if (details.gameLegality === 'latest') {
                     restrictedList = restrictedLists.find(
                         (rl) =>
-                            rl.format === gameDetails.gameFormat &&
-                            rl.variant === gameDetails.gameVariant &&
+                            rl.format === details.gameFormat &&
+                            rl.variant === details.gameVariant &&
                             rl.active
                     );
                 } else {
-                    restrictedList = restrictedLists.find(
-                        (l) => l._id === gameDetails.gameLegality
-                    );
+                    restrictedList = restrictedLists.find((l) => l._id === details.gameLegality);
                 }
 
                 let game = new PendingGame(socket.user, this.instance, {
+                    ...details,
                     event,
-                    restrictedList,
-                    ...gameDetails
+                    restrictedList
                 });
                 await game.newGame(
                     socket.id,
                     socket.user,
-                    gameDetails.password,
+                    details.password,
                     true,
                     this.deckService
                 );
@@ -632,7 +681,12 @@ class Lobby {
         for (let player of Object.values(game.getPlayersAndSpectators())) {
             let socket = this.sockets[player.id];
 
-            if (game.event?.lockDecks && !player.deck.eventId) {
+            if (
+                game.event?.lockDecks &&
+                player.deck &&
+                !player.deck.eventId &&
+                player.deck.username === player.name
+            ) {
                 await this.deckService.useDeckForEvent(
                     player.deck._id.toString(),
                     game.event._id.toString()
@@ -691,7 +745,7 @@ class Lobby {
         socket.joinChannel(game.id);
 
         if (game.started) {
-            this.router.addSpectator(game, socket.user.getDetails());
+            this.router.addSpectator(game, socket.user.getGameNodeDetails());
             this.sendHandoff(socket, game.node, game.id);
         } else {
             this.sendGameState(game);
@@ -718,6 +772,12 @@ class Lobby {
     }
 
     onPendingGameChat(socket, message) {
+        if (typeof message !== 'string') {
+            return;
+        }
+
+        message = message.substring(0, MaxChatMessageLength);
+
         let game = this.findGameForUser(socket.user.username);
         if (!game) {
             return;
@@ -728,6 +788,15 @@ class Lobby {
     }
 
     async onLobbyChat(socket, message) {
+        if (typeof message !== 'string') {
+            return;
+        }
+
+        message = message.trim().substring(0, MaxChatMessageLength);
+        if (!message) {
+            return;
+        }
+
         if (this.isUserRestricted(socket.user)) {
             socket.send('nochat');
             return;
@@ -762,12 +831,22 @@ class Lobby {
             return;
         }
 
-        const deck = await this.deckService.getById(deckId, {
+        if (!deckId || (typeof deckId !== 'string' && typeof deckId !== 'object')) {
+            return;
+        }
+
+        const deck = await this.deckService.getById(deckId.toString(), {
             format: game.gameFormat,
             variant: game.gameVariant,
             legality: game.restrictedList,
             eventId: game.event?._id
         });
+
+        // Players may only use their own decks, or the shared standalone decks
+        if (!deck || (deck.username !== socket.user.username && !deck.standaloneDeckId)) {
+            return;
+        }
+
         game.selectDeck(socket.user.username, deck);
 
         this.sendGameState(game);
@@ -836,7 +915,7 @@ class Lobby {
         }
 
         let newMotd =
-            motd && motd.message
+            motd && typeof motd.message === 'string' && motd.message
                 ? {
                       message: motd.message,
                       motdType: motd.motdType,
@@ -977,7 +1056,13 @@ class Lobby {
     }
 
     onClearSessions(socket, username) {
-        this.userService.clearUserSessions(username).then((success) => {
+        if (!socket.user.permissions.canManageUsers || typeof username !== 'string') {
+            return;
+        }
+
+        logger.info('%s cleared sessions for %s', socket.user.username, username);
+
+        return this.userService.clearUserSessions(username).then((success) => {
             if (!success) {
                 logger.error(`Failed to clear sessions for user ${username}`, username);
                 return;

@@ -1,6 +1,7 @@
 import EventEmitter from 'events';
 import AttachmentValidityCheck from './AttachmentValidityCheck.js';
 import ChatCommands from './chatcommands.js';
+import GameCommands from './GameCommands.js';
 import GameChat from './gamechat.js';
 import DynamicKeywordsEffect from './DynamicKeywordsEffect.js';
 import EffectEngine from './effectengine.js';
@@ -68,6 +69,7 @@ class Game extends EventEmitter {
         this.playerCards = {};
         this.gameChat = new GameChat();
         this.chatCommands = new ChatCommands(this);
+        this.commands = new GameCommands(this);
         this.pipeline = new GamePipeline();
         this.id = details.id;
         this.name = details.name;
@@ -1248,8 +1250,17 @@ class Game extends EventEmitter {
         }
 
         //check if the game has an event selected that restricts spectators
-        if (this.event && this.event.restrictSpectators && this.event.validSpectators) {
-            if (!this.event.validSpectators.includes(user.username.toLowerCase())) {
+        if (
+            this.event &&
+            Array.isArray(this.event.validSpectators) &&
+            !user.permissions?.canManageGames
+        ) {
+            const username = user.username.toLowerCase();
+            if (
+                !this.event.validSpectators.some(
+                    (name) => typeof name === 'string' && name.toLowerCase() === username
+                )
+            ) {
                 return false;
             }
         }

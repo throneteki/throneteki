@@ -371,17 +371,15 @@ class UserService extends EventEmitter {
         return expiredSessions.length;
     }
 
-    clearUserSessions(username) {
-        return new Promise((resolve, reject) => {
-            const user = this.getUserByUsername(username);
-            if (!user) {
-                return reject('User not found');
-            }
+    async clearUserSessions(username) {
+        const user = await this.getUserByUsername(username);
+        if (!user) {
+            return false;
+        }
 
-            this.users.update({ username: username }, { $set: { tokens: [] } }).then(() => {
-                resolve(true);
-            });
-        });
+        await this.users.update({ username: user.username }, { $set: { tokens: [] } });
+
+        return true;
     }
 
     addRefreshToken(username, token, ip) {
@@ -420,11 +418,24 @@ class UserService extends EventEmitter {
             });
     }
 
-    verifyRefreshToken(username, refreshToken) {
+    verifyRefreshToken(username, refreshToken, providedToken) {
+        if (typeof providedToken !== 'string' || typeof refreshToken.token !== 'string') {
+            return false;
+        }
+
         let hmac = crypto.createHmac('sha512', this.configService.getValue('hmacSecret'));
         let encodedToken = hmac.update(`REFRESH ${username} ${refreshToken._id}`).digest('hex');
 
         if (encodedToken !== refreshToken.token) {
+            return false;
+        }
+
+        let providedBuffer = Buffer.from(providedToken);
+        let storedBuffer = Buffer.from(refreshToken.token);
+        if (
+            providedBuffer.length !== storedBuffer.length ||
+            !crypto.timingSafeEqual(providedBuffer, storedBuffer)
+        ) {
             return false;
         }
 

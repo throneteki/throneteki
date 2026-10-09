@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import Panel from '../Site/Panel';
 import { useUnlinkPatreonMutation, useUpdateAvatarMutation } from '../../redux/middleware/api';
 import { setUser } from '../../redux/reducers/auth';
+import { PatreonStateKey } from '../../util';
 
 import PatreonImage from '../../assets/img/Patreon_Mark_Coral.jpg';
 
@@ -63,11 +64,26 @@ const ProfileMain = ({ user, formProps }) => {
             return undefined;
         }
 
+        // Ties the OAuth callback to this browser session so a link started elsewhere is rejected
+        let state;
+        try {
+            state = window.sessionStorage.getItem(PatreonStateKey);
+            if (!state) {
+                state = Array.from(window.crypto.getRandomValues(new Uint8Array(16)), (byte) =>
+                    byte.toString(16).padStart(2, '0')
+                ).join('');
+                window.sessionStorage.setItem(PatreonStateKey, state);
+            }
+        } catch {
+            return undefined;
+        }
+
         const params = new URLSearchParams({
             response_type: 'code',
             client_id: clientId,
             redirect_uri: callbackUrl,
-            scope: 'identity identity.memberships'
+            scope: 'identity identity.memberships',
+            state
         });
 
         return `https://www.patreon.com/oauth2/authorize?${params.toString()}`;
@@ -88,7 +104,14 @@ const ProfileMain = ({ user, formProps }) => {
                         errorMessage={formProps.errors.email}
                     />
                     <Input
-                        label='Password'
+                        label='Current password'
+                        description='Required to change your email or password'
+                        {...formProps.getFieldProps('currentPassword')}
+                        type='password'
+                        autoComplete='current-password'
+                    />
+                    <Input
+                        label='New password'
                         {...formProps.getFieldProps('password')}
                         isInvalid={formProps.errors.password && formProps.touched.password}
                         errorMessage={formProps.errors.password}

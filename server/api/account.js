@@ -8,8 +8,18 @@ import logger from '../log.js';
 import { wrapAsync } from '../util.js';
 import { writeFile } from 'fs/promises';
 import ServiceFactory from '../services/ServiceFactory.js';
+import {
+    accountTokenLimiter,
+    loginIpLimiter,
+    loginUserLimiter,
+    lookupLimiter,
+    refreshIpLimiter,
+    registerLimiter
+} from '../rateLimits.js';
 const configService = ServiceFactory.configService();
 const appName = configService.getValue('appName');
+// Links in emails must use the configured origin, never the request's Host header
+const siteOrigin = (configService.getValue('origin') || '').replace(/\/+$/, '');
 
 let userService;
 let abuseService;
@@ -165,7 +175,8 @@ function tokensMatch(left, right) {
 }
 
 function shouldExposeActivationToken() {
-    return configService.getValue('env') !== 'production';
+    // Only ever hand activation tokens back over the API in local development
+    return configService.getValue('env') === 'development';
 }
 
 function validateUserName(username) {
@@ -212,21 +223,88 @@ function validatePassword(password) {
     return undefined;
 }
 
+const PromptedActionWindowNames = [
+    'plot',
+    'draw',
+    'challengeBegin',
+    'attackersDeclared',
+    'defendersDeclared',
+    'dominance',
+    'standing',
+    'taxation'
+];
+
+function pickBooleans(source, keys) {
+    let result = {};
+
+    if (!source || typeof source !== 'object') {
+        return result;
+    }
+
+    for (let key of keys) {
+        if (Object.hasOwn(source, key)) {
+            result[key] = !!source[key];
+        }
+    }
+
+    return result;
+}
+
+function pickString(value, pattern) {
+    return typeof value === 'string' && pattern.test(value) ? value : undefined;
+}
+
+function sanitizeSettings(settings) {
+    if (!settings || typeof settings !== 'object') {
+        return {};
+    }
+
+    let result = {
+        keywordSettings: pickBooleans(settings.keywordSettings, ['chooseOrder', 'chooseCards']),
+        timerSettings: pickBooleans(settings.timerSettings, ['events', 'abilities'])
+    };
+
+    if (Object.hasOwn(settings, 'promptDupes')) {
+        result.promptDupes = !!settings.promptDupes;
+    }
+
+    let windowTimer = Number(settings.windowTimer);
+    if (Number.isFinite(windowTimer)) {
+        result.windowTimer = Math.min(Math.max(Math.round(windowTimer), 0), 60);
+    }
+
+    let background = pickString(settings.background, /^[A-Za-z0-9_-]{1,32}$/);
+    if (background) {
+        result.background = background;
+    }
+
+    let customBackgroundUrl = pickString(
+        settings.customBackgroundUrl,
+        /^[A-Za-z0-9_-]{1,64}\.(png|jpe?g|gif|webp)$/i
+    );
+    if (customBackgroundUrl) {
+        result.customBackgroundUrl = customBackgroundUrl;
+    }
+
+    let cardSize = pickString(settings.cardSize, /^[a-z-]{1,16}$/);
+    if (cardSize) {
+        result.cardSize = cardSize;
+    }
+
+    return result;
+}
+
+function sanitizePromptedActionWindows(windows) {
+    return pickBooleans(windows, PromptedActionWindowNames);
+}
+
+const DummyPasswordHash = bcrypt.hashSync(crypto.randomBytes(16).toString('hex'), 10);
+
 const DefaultEmailHash = crypto.createHash('md5').update('noreply@theironthrone.net').digest('hex');
 
 function getRequestIp(req) {
-    let ip = req.ip || req.get('x-real-ip') || req.headers['x-forwarded-for'];
-
-    if (Array.isArray(ip)) {
-        [ip] = ip;
-    }
-
-    if (typeof ip === 'string') {
-        [ip] = ip.split(',');
-        ip = ip.trim();
-    }
-
-    return ip || req.socket?.remoteAddress || req.connection?.remoteAddress;
+    // req.ip already honours the 'trust proxy' setting, so never read forwarding headers directly
+    return req.ip || req.socket?.remoteAddress;
 }
 
 function getSignupFingerprint(req) {
@@ -341,6 +419,7 @@ export const init = function (server, options) {
 
     server.post(
         '/api/account/preflight-register',
+        registerLimiter,
         wrapAsync(async (req, res) => {
             let message = validateEmail(req.body.email);
             if (message) {
@@ -421,6 +500,7 @@ export const init = function (server, options) {
 
     server.post(
         '/api/account/register',
+        registerLimiter,
         wrapAsync(async (req, res) => {
             let message = validateUserName(req.body.username);
             if (message) {
@@ -651,9 +731,9 @@ export const init = function (server, options) {
                 requiresVerification: requireActivation
             });
             if (requireActivation) {
-                let url = `${req.protocol}://${req.get('host')}/activation?id=${user._id}&token=${activationTokenValue}`;
+                let url = `${siteOrigin}/activation?id=${user._id}&token=${activationTokenValue}`;
                 let emailText =
-                    `Hi,\n\nSomeone, hopefully you, has requested an account to be created on ${appName} (${req.protocol}://${req.get('host')}).  If this was you, click this link ${url} to complete the process.\n\n` +
+                    `Hi,\n\nSomeone, hopefully you, has requested an account to be created on ${appName} (${siteOrigin}).  If this was you, click this link ${url} to complete the process.\n\n` +
                     'If you did not request this please disregard this email.\n' +
                     'Kind regards,\n\n' +
                     `${appName} team`;
@@ -688,8 +768,9 @@ export const init = function (server, options) {
 
     server.post(
         '/api/account/activate',
+        accountTokenLimiter,
         wrapAsync(async (req, res) => {
-            if (!req.body.id || !req.body.token) {
+            if (typeof req.body.id !== 'string' || typeof req.body.token !== 'string') {
                 return res.status(400).send({ success: false, message: 'Invalid parameters' });
             }
 
@@ -733,7 +814,7 @@ export const init = function (server, options) {
             let providedToken = user.activationTokenHash ? hashedToken : req.body.token;
 
             if (!tokensMatch(expectedToken, providedToken)) {
-                logger.error('Invalid activation token', user.username, req.body.token);
+                logger.error('Invalid activation token for %s', user.username);
 
                 return res.send({
                     success: false,
@@ -750,6 +831,7 @@ export const init = function (server, options) {
 
     server.post(
         '/api/account/check-username',
+        lookupLimiter,
         wrapAsync(async (req, res) => {
             let user = await userService.getUserByUsername(req.body.username);
             if (user) {
@@ -822,21 +904,22 @@ export const init = function (server, options) {
 
     server.post(
         '/api/account/login',
+        loginIpLimiter,
+        loginUserLimiter,
         wrapAsync(async (req, res) => {
-            if (!req.body.username) {
+            if (!req.body.username || typeof req.body.username !== 'string') {
                 return res.send({ success: false, message: 'Username must be specified' });
             }
 
-            if (!req.body.password) {
+            if (!req.body.password || typeof req.body.password !== 'string') {
                 return res.send({ success: false, message: 'Password must be specified' });
             }
 
             let user = await userService.getUserByUsername(req.body.username);
-            if (!user) {
-                return res.send({ success: false, message: 'Invalid username/password' });
-            }
+            if (!user || user.disabled) {
+                // Do the same amount of work as a real login so response times don't reveal which accounts exist
+                await bcrypt.compare(req.body.password, DummyPasswordHash);
 
-            if (user.disabled) {
                 return res.send({ success: false, message: 'Invalid username/password' });
             }
 
@@ -900,6 +983,7 @@ export const init = function (server, options) {
                 });
             }
 
+            res.locals.requestSucceeded = true;
             res.send({
                 success: true,
                 data: {
@@ -918,12 +1002,22 @@ export const init = function (server, options) {
 
     server.post(
         '/api/account/token',
+        refreshIpLimiter,
         wrapAsync(async (req, res) => {
             if (!req.body.token) {
                 return res.send({ success: false, message: 'Refresh token must be specified' });
             }
 
             let token = req.body.token;
+
+            if (
+                typeof token !== 'object' ||
+                typeof token.username !== 'string' ||
+                typeof token.id !== 'string' ||
+                typeof token.token !== 'string'
+            ) {
+                return res.send({ success: false, message: 'Invalid refresh token' });
+            }
 
             let user = await userService.getUserByUsername(token.username);
             if (!user) {
@@ -937,14 +1031,14 @@ export const init = function (server, options) {
                 return res.send({ success: false, message: 'Invalid refresh token' });
             }
 
-            let refreshToken = user.tokens.find((t) => {
+            let refreshToken = (user.tokens || []).find((t) => {
                 return t._id.toString() === token.id;
             });
             if (!refreshToken) {
                 return res.send({ success: false, message: 'Invalid refresh token' });
             }
 
-            if (!userService.verifyRefreshToken(user.username, refreshToken)) {
+            if (!userService.verifyRefreshToken(user.username, refreshToken, token.token)) {
                 return res.send({ success: false, message: 'Invalid refresh token' });
             }
 
@@ -965,7 +1059,7 @@ export const init = function (server, options) {
                 expiresIn: '5m'
             });
 
-            await userService.updateRefreshTokenUsage(refreshToken.id, ip);
+            await userService.updateRefreshTokenUsage(refreshToken._id, ip);
             await abuseService.updateUserSessionMetadata(user.username, { ip, subnet });
 
             res.send({ success: true, data: { user: userObj, token: authToken } });
@@ -974,8 +1068,13 @@ export const init = function (server, options) {
 
     server.post(
         '/api/account/password-reset-finish',
+        accountTokenLimiter,
         wrapAsync(async (req, res) => {
-            if (!req.body.id || !req.body.token || !req.body.newPassword) {
+            if (
+                typeof req.body.id !== 'string' ||
+                typeof req.body.token !== 'string' ||
+                typeof req.body.newPassword !== 'string'
+            ) {
                 return res.send({ success: false, message: 'Invalid parameters' });
             }
 
@@ -1028,7 +1127,7 @@ export const init = function (server, options) {
             let providedToken = user.resetTokenHash ? hashedToken : req.body.token;
 
             if (!tokensMatch(expectedToken, providedToken)) {
-                logger.error('Invalid reset token %s %s', user.username, req.body.token);
+                logger.error('Invalid reset token for %s', user.username);
 
                 return res.send({
                     success: false,
@@ -1040,6 +1139,7 @@ export const init = function (server, options) {
             let passwordHash = await hashPassword(req.body.newPassword, 10);
             await userService.setPassword(user, passwordHash);
             await userService.clearResetToken(user);
+            await userService.clearUserSessions(user.username);
 
             res.send({ success: true });
         })
@@ -1047,6 +1147,7 @@ export const init = function (server, options) {
 
     server.post(
         '/api/account/password-reset',
+        accountTokenLimiter,
         wrapAsync(async (req, res) => {
             const captchaResult = await verifyCaptchaToken(req.body.captcha);
             if (!captchaResult.success) {
@@ -1068,9 +1169,9 @@ export const init = function (server, options) {
             let resetToken = createResetToken();
 
             await userService.setResetToken(user, resetToken.tokenHash, resetToken.expiresAt);
-            let url = `${req.protocol}://${req.get('host')}/reset-password?id=${user._id}&token=${resetToken.token}`;
+            let url = `${siteOrigin}/reset-password?id=${user._id}&token=${resetToken.token}`;
             let emailText =
-                `Hi,\n\nSomeone, hopefully you, has requested their password on ${appName} (${req.protocol}://${req.get('host')}) to be reset.  If this was you, click this link ${url} to complete the process.\n\n` +
+                `Hi,\n\nSomeone, hopefully you, has requested their password on ${appName} (${siteOrigin}) to be reset.  If this was you, click this link ${url} to complete the process.\n\n` +
                 'If you did not request this reset, do not worry, your account has not been affected and your password has not been changed, just ignore this email.\n' +
                 'Kind regards,\n\n' +
                 `${appName} team`;
@@ -1094,17 +1195,73 @@ export const init = function (server, options) {
                 return res.status(404).send({ message: 'Not found' });
             }
 
+            let passwordHash = user.password;
             user = user.getDetails();
 
-            user.email = userToSet.email;
-            user.settings = userToSet.settings;
-            user.promptedActionWindows = userToSet.promptedActionWindows;
+            let newEmail = typeof userToSet.email === 'string' ? userToSet.email.trim() : '';
+            let emailChanged = newEmail.toLowerCase() !== (user.email || '').toLowerCase();
+            let passwordChanged =
+                typeof userToSet.password === 'string' && userToSet.password !== '';
 
-            if (userToSet.password && userToSet.password !== '') {
+            if (emailChanged || passwordChanged) {
+                let currentPasswordValid = false;
+                if (typeof userToSet.currentPassword === 'string' && userToSet.currentPassword) {
+                    currentPasswordValid = await bcrypt.compare(
+                        userToSet.currentPassword,
+                        passwordHash
+                    );
+                }
+
+                if (!currentPasswordValid) {
+                    return res.status(400).send({
+                        success: false,
+                        message:
+                            'You must enter your current password to change your email address or password'
+                    });
+                }
+            }
+
+            if (emailChanged) {
+                let message = validateEmail(newEmail);
+                if (message) {
+                    return res.status(400).send({ success: false, message });
+                }
+
+                let existingUser = await userService.getUserByEmail(newEmail);
+                if (existingUser && existingUser.username !== user.username) {
+                    return res.status(400).send({
+                        success: false,
+                        message: 'An account with that email already exists, please use another'
+                    });
+                }
+
+                let emailRisk = await disposableEmailService.evaluateRegistrationEmail(newEmail);
+                if (emailRisk.verdict === 'deny') {
+                    return res.status(400).send({
+                        success: false,
+                        message:
+                            'One time use email services are not permitted on this site.  Please use a real email address'
+                    });
+                }
+
+                user.email = newEmail;
+                user.emailDomain = abuseService.getEmailDomain(newEmail);
+            }
+
+            if (passwordChanged) {
+                let message = validatePassword(userToSet.password);
+                if (message) {
+                    return res.status(400).send({ success: false, message });
+                }
+
                 user.password = await hashPassword(userToSet.password, 10);
             }
 
-            user.enableGravatar = userToSet.enableGravatar;
+            user.settings = sanitizeSettings(userToSet.settings);
+            user.promptedActionWindows = sanitizePromptedActionWindows(
+                userToSet.promptedActionWindows
+            );
+            user.enableGravatar = !!userToSet.enableGravatar;
 
             await downloadAvatar(user);
 
@@ -1113,6 +1270,7 @@ export const init = function (server, options) {
             let updatedUser = await userService.getUserById(user._id);
             let safeUser = updatedUser.getWireSafeDetails();
             let authToken;
+            let refreshToken;
 
             if (!safeUser.disabled && !safeUser.verified) {
                 authToken = jwt.sign(safeUser, configService.getValue('secret'), {
@@ -1120,10 +1278,30 @@ export const init = function (server, options) {
                 });
             }
 
+            if (passwordChanged) {
+                // Changing the password signs out every other session, so hand this one a fresh session
+                await userService.clearUserSessions(user.username);
+
+                authToken = jwt.sign(safeUser, configService.getValue('secret'), {
+                    expiresIn: '5m'
+                });
+                refreshToken = await userService.addRefreshToken(
+                    user.username,
+                    authToken,
+                    getRequestIp(req)
+                );
+            }
+
             res.send(
                 Object.assign(
                     { success: true },
-                    { data: { user: updatedUser.getWireSafeDetails(), token: authToken } }
+                    {
+                        data: {
+                            user: updatedUser.getWireSafeDetails(),
+                            token: authToken,
+                            refreshToken
+                        }
+                    }
                 )
             );
         })

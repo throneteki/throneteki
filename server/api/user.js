@@ -13,7 +13,7 @@ export const init = function (server, options) {
         passport.authenticate('jwt', { session: false }),
         wrapAsync(async (req, res) => {
             if (!req.user.permissions || !req.user.permissions.canManageUsers) {
-                return res.status(403);
+                return res.status(403).send({ message: 'Forbidden' });
             }
 
             let user;
@@ -54,7 +54,7 @@ export const init = function (server, options) {
         passport.authenticate('jwt', { session: false }),
         function (req, res) {
             if (!req.user.permissions || !req.user.permissions.canManageUsers) {
-                return res.status(403);
+                return res.status(403).send({ message: 'Forbidden' });
             }
 
             let userToSet = req.body;
@@ -94,7 +94,7 @@ export const init = function (server, options) {
         passport.authenticate('jwt', { session: false }),
         wrapAsync(async (req, res) => {
             if (!req.user.permissions || !req.user.permissions.canManageUsers) {
-                return res.status(403);
+                return res.status(403).send({ message: 'Forbidden' });
             }
 
             let user = await userService.getUserByUsername(req.params.username);
@@ -113,7 +113,7 @@ export const init = function (server, options) {
         passport.authenticate('jwt', { session: false }),
         wrapAsync(async (req, res) => {
             if (!req.user.permissions || !req.user.permissions.canManageUsers) {
-                return res.status(403);
+                return res.status(403).send({ message: 'Forbidden' });
             }
 
             let user = await userService.getUserByUsername(req.params.username);
@@ -136,7 +136,7 @@ export const init = function (server, options) {
         passport.authenticate('jwt', { session: false }),
         wrapAsync(async (req, res) => {
             if (!req.user.permissions || !req.user.permissions.canManageUsers) {
-                return res.status(403);
+                return res.status(403).send({ message: 'Forbidden' });
             }
 
             let user = await userService.getUserByUsername(req.params.username);
@@ -162,7 +162,7 @@ export const init = function (server, options) {
         passport.authenticate('jwt', { session: false }),
         wrapAsync(async (req, res) => {
             if (!req.user.permissions || !req.user.permissions.canManageUsers) {
-                return res.status(403);
+                return res.status(403).send({ message: 'Forbidden' });
             }
 
             let user = await userService.getUserByUsername(req.params.username);

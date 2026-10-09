@@ -4,6 +4,23 @@ import qs from 'qs';
 import { wrapAsync } from '../util.js';
 import ServiceFactory from '../services/ServiceFactory.js';
 
+// Query values can be parsed into objects, which must never reach a database query
+function stringOrUndefined(value) {
+    return typeof value === 'string' ? value : undefined;
+}
+
+function getDeckQueryOptions(query) {
+    const options = qs.parse(query || '', { allowDots: true, comma: true });
+
+    return {
+        ...options,
+        eventId: stringOrUndefined(options.eventId),
+        format: stringOrUndefined(options.format),
+        variant: stringOrUndefined(options.variant),
+        legality: stringOrUndefined(options.legality)
+    };
+}
+
 export const init = async function (server, options) {
     const deckService = ServiceFactory.deckService(options.db);
 
@@ -17,13 +34,11 @@ export const init = async function (server, options) {
                 return res.status(404).send({ message: 'No such deck' });
             }
 
-            let { eventId, format, variant, legality } = req.query;
-
             const deck = await deckService.getById(req.params.id, {
-                eventId,
-                format,
-                variant,
-                legality
+                eventId: stringOrUndefined(req.query.eventId),
+                format: stringOrUndefined(req.query.format),
+                variant: stringOrUndefined(req.query.variant),
+                legality: stringOrUndefined(req.query.legality)
             });
 
             if (!deck) {
@@ -44,7 +59,7 @@ export const init = async function (server, options) {
         wrapAsync(async function (req, res) {
             let decks = await deckService.findByUserName(
                 req.user.username,
-                qs.parse(decodeURIComponent(req._parsedUrl.query), { allowDots: true, comma: true })
+                getDeckQueryOptions(decodeURIComponent(req._parsedUrl.query || ''))
             );
             res.send(decks);
         })
@@ -64,7 +79,8 @@ export const init = async function (server, options) {
                 return res.status(401).send({ message: 'Unauthorized' });
             }
 
-            const data = Object.assign({ id: req.params.id }, req.body);
+            // The id must come from the (ownership checked) url, never the body
+            const data = Object.assign({}, req.body, { id: req.params.id });
 
             await deckService.update(data);
 
@@ -121,6 +137,10 @@ export const init = async function (server, options) {
         wrapAsync(async function (req, res) {
             const deckIds = req.body.deckIds;
 
+            if (!Array.isArray(deckIds) || deckIds.some((deckId) => typeof deckId !== 'string')) {
+                return res.status(400).send({ success: false, message: 'Invalid deck ids' });
+            }
+
             for (const deckId of deckIds) {
                 const deck = await deckService.getById(deckId);
 
@@ -161,9 +181,7 @@ export const init = async function (server, options) {
 
     server.get('/api/standalone-decks', function (req, res, next) {
         deckService
-            .getStandaloneDecks(
-                qs.parse(decodeURIComponent(req._parsedUrl.query), { allowDots: true, comma: true })
-            )
+            .getStandaloneDecks(getDeckQueryOptions(decodeURIComponent(req._parsedUrl.query || '')))
             .then((decks) => {
                 res.send({ success: true, data: decks });
             })

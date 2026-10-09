@@ -1,5 +1,5 @@
 import passport from 'passport';
-import { wrapAsync } from '../util.js';
+import { getPublicEvent, wrapAsync } from '../util.js';
 import ServiceFactory from '../services/ServiceFactory.js';
 
 function extractEventFromRequest(req) {
@@ -57,7 +57,7 @@ export const init = async function (server, options) {
         wrapAsync(async function (req, res) {
             const events = await eventService.getEvents();
 
-            return res.send({ success: true, data: events });
+            return res.send({ success: true, data: events.map(getPublicEvent) });
         })
     );
 
