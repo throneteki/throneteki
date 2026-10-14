@@ -3,7 +3,7 @@ describe('assault', function () {
         beforeEach(function () {
             const deck1 = this.buildDeck('greyjoy', [
                 'Trading with the Pentoshi',
-                'The Iron Fleet',
+                'The Iron Fleet (FtR)',
                 'Dagmer Cleftjaw (TS)',
                 'Thenns (FtR)',
                 'Foamdrinker'

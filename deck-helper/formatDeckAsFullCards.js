@@ -14,6 +14,7 @@ export function formatDeckAsFullCards(deck, { cards = [], factions = [] }) {
         eventId: deck.eventId,
         locked: deck.locked,
         format: deck.format,
+        variant: deck.variant,
         name: deck.name,
         username: deck.username,
         lastUpdated: deck.lastUpdated,
@@ -34,6 +35,7 @@ export function formatDeckAsFullCards(deck, { cards = [], factions = [] }) {
     newDeck.draftedCards = deck.draftedCards ?? [];
     newDeck.drawCards = processCardCounts(deck.drawCards ?? [], cards);
     newDeck.plotCards = processCardCounts(deck.plotCards ?? [], cards);
+    newDeck.pool = deck.pool ? processCardCounts(deck.pool, cards) : undefined;
 
     newDeck.plotCount = newDeck.plotCards.reduce((total, curr) => (total += curr.count), 0);
     newDeck.drawCount = newDeck.drawCards.reduce((total, curr) => (total += curr.count), 0);

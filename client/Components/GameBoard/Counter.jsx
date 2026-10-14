@@ -26,6 +26,7 @@ const Counter = ({ name, cancel, fade, icon, shortName, value, className }) => {
                 'bg-gray-400/85': name === 'tale',
                 'bg-teal-600/85': name === 'venom',
                 'bg-black/85': name === 'challenge-icon' || name === 'faction',
+                'bg-amber-600/85': name === 'pie',
                 'cancel relative': cancel,
                 'fade-out': fade
             },
