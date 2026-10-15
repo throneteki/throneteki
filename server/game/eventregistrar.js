@@ -71,6 +71,7 @@ class EventRegistrar {
         let event = this.events.find((event) => event.name === eventName);
         if (event) {
             this.game.removeListener(eventName, event.handler);
+            this.events = this.events.filter((e) => e !== event);
         }
     }
 }

@@ -4,6 +4,7 @@ import ReferenceCountedSetProperty from './PropertyTypes/ReferenceCountedSetProp
 import StandardPlayActions from './PlayActions/StandardActions.js';
 import CardStat from './cardStat.js';
 import { Flags } from './Constants/index.js';
+import GameActions from './GameActions/index.js';
 
 const Icons = ['military', 'intrigue', 'power'];
 
@@ -279,9 +280,7 @@ class DrawCard extends BaseCard {
             applying: applying
         };
         this.game.raiseEvent('onCardStrengthChanged', params, () => {
-            if (this.isBurning && this.getStrength() <= 0) {
-                this.game.killCharacter(this, { allowSave: false, isBurn: true });
-            }
+            this.checkBurnEffects();
         });
     }
 
@@ -548,19 +547,47 @@ class DrawCard extends BaseCard {
 
     setIsBurning(burning) {
         this.isBurning = burning;
-        //register/unregister onChallengeFinished event so when the challenge is finished
-        //the burn effect gets evaluated again
-        if (burning) {
+        this.updateBurnEventRegistration();
+    }
+
+    setIsShadowBurning(burning) {
+        this.isShadowBurning = burning;
+        this.updateBurnEventRegistration();
+    }
+
+    //register/unregister onChallengeFinished event so when the challenge is finished
+    //the burn effects get evaluated again
+    updateBurnEventRegistration() {
+        const shouldRegister = !!(this.isBurning || this.isShadowBurning);
+        if (shouldRegister === !!this.burnEventRegistered) {
+            return;
+        }
+
+        if (shouldRegister) {
             this.events.register(['onChallengeFinished']);
         } else {
             this.events.unregisterHandlerForEventName('onChallengeFinished');
         }
+        this.burnEventRegistered = shouldRegister;
     }
 
-    //evaluate the burn effect again when the challenge is finished
+    //evaluate the burn effects again when the challenge is finished
     onChallengeFinished() {
-        if (this.isBurning && this.getStrength() <= 0) {
+        this.checkBurnEffects();
+    }
+
+    checkBurnEffects() {
+        if (this.getStrength() > 0) {
+            return;
+        }
+
+        if (this.isBurning) {
             this.game.killCharacter(this, { allowSave: false, isBurn: true });
+        } else if (this.isShadowBurning) {
+            this.game.addMessage('{0} is 0 STR and placed in shadows', this);
+            this.game.resolveGameAction(
+                GameActions.putIntoShadows({ allowSave: false, card: this })
+            );
         }
     }
 

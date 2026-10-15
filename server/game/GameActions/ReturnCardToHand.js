@@ -45,7 +45,8 @@ class ReturnCardToHand extends GameAction {
             'play area',
             'shadows',
             'duplicate',
-            'being played'
+            'being played',
+            'underneath'
         ].includes(card.location);
     }
 
