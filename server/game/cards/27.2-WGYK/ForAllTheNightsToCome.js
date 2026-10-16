@@ -48,7 +48,10 @@ class ForAllTheNightsToCome extends DrawCard {
     }
 
     getCharactersToGainPower(context) {
-        return [context.targets.builder, context.targets.ranger, context.targets.steward];
+        // A character with multiple of the traits may fill multiple slots, but only gains 1 power
+        return [
+            ...new Set([context.targets.builder, context.targets.ranger, context.targets.steward])
+        ];
     }
 }
 
