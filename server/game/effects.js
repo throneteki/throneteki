@@ -593,6 +593,17 @@ const Effects = {
     killByDynamicStrength: function (calculate) {
         return [Effects.burn, Effects.dynamicDecreaseStrength(calculate)];
     },
+    shadowBurn: {
+        apply: function (card) {
+            card.setIsShadowBurning(true);
+        },
+        unapply: function (card) {
+            card.setIsShadowBurning(false);
+        }
+    },
+    putInShadowsByStrength: function (value) {
+        return [Effects.shadowBurn, Effects.modifyStrength(value)];
+    },
     blankExcludingTraits: {
         apply: function (card) {
             card.setBlank(Flags.blanks.excludingTraits);

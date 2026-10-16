@@ -357,6 +357,19 @@ const agendaRules = {
             }
         ]
     },
+    // Sentinels of the Realm
+    27040: {
+        mayInclude: (card) => card.type === 'character' && hasTrait(card, 'Guard') && !card.loyal,
+        rules: [
+            {
+                message: 'Must contain 12 or more Guard characters',
+                condition: (deck) =>
+                    deck.countDrawCards(
+                        (card) => card.type === 'character' && hasTrait(card, 'Guard')
+                    ) >= 12
+            }
+        ]
+    },
     // Draft Agendas
     // The Power of Wealth
     '00001': {
