@@ -9,9 +9,7 @@ class KingsLandingSepton extends DrawCard {
                 onCardAbilityInitiated: (event) =>
                     event.source.controller !== this.controller &&
                     event.ability.isTriggeredAbility() &&
-                    (event.source.getType() === 'character' ||
-                        event.source.getType() === 'location' ||
-                        event.source.getType() === 'attachment')
+                    ['character', 'location', 'attachment'].includes(event.source.getType())
             },
             cost: ability.costs.returnSelfToHand(),
             message: {

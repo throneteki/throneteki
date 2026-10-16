@@ -11,7 +11,7 @@ class PriestOnTheDocks extends DrawCard {
             target: {
                 cardCondition: (card) =>
                     card.location === 'play area' &&
-                    (card.getType() === 'location' || card.getType() === 'attachment') &&
+                    ['location', 'attachment'].includes(card.getType()) &&
                     !card.hasKeyword('limited') &&
                     card.getPrintedCost() <= 3 &&
                     GameActions.discardCard({ card }).allow()
