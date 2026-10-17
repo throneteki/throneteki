@@ -117,16 +117,35 @@ jobs:
                     patreonSecret: "${{ secrets.PATREON_SECRET }}"
                   EOF
 
+                  # Postgres, only once the environment has been given its database secrets.
+                  # Setting nodeConfig.db is also what makes the migrate job run schema migrations.
+                  : > /tmp/lobby-db.yaml
+                  if [ -n "${{ secrets.DB_HOST }}" ]; then
+                    cat > /tmp/lobby-db.yaml <<EOF
+                  nodeConfig:
+                    db:
+                      host: "${{ secrets.DB_HOST }}"
+                      port: ${{ vars.DB_PORT || 5432 }}
+                      database: "${{ vars.DB_DATABASE || 'throneteki' }}"
+                      user: "${{ secrets.DB_USER }}"
+                      password: "${{ secrets.DB_PASSWORD }}"
+                  dbMigrator:
+                    user: "${{ secrets.DB_MIGRATOR_USER }}"
+                    password: "${{ secrets.DB_MIGRATOR_PASSWORD }}"
+                  EOF
+                  fi
+
                   helm upgrade --install throneteki-lobby ./infrastructure/lobby \
                     --set namespace=$NAMESPACE \
                     --set environment=$ENV_SUBDOMAIN \
                     --set deployTime=$DEPLOY_TIME \
                     $HELM_IMAGE_FLAGS \
                     -f /tmp/lobby-secrets.yaml \
+                    -f /tmp/lobby-db.yaml \
                     -n $NAMESPACE
 
-                  # Clean up secrets file
-                  rm /tmp/lobby-secrets.yaml
+                  # Clean up secrets files
+                  rm /tmp/lobby-secrets.yaml /tmp/lobby-db.yaml
 
                   # Verify rollout
                   kubectl rollout status deployment/throneteki-lobby -n $NAMESPACE

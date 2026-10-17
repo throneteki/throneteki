@@ -13,6 +13,12 @@ deployTime: '0'
 
 nodeConfig: {}
 
+# Credentials for the Postgres role that owns the schema, used only by the migrate job.
+# Migrations run when nodeConfig.db is set.
+dbMigrator: {}
+#   user: throneteki_migrator
+#   password: ...
+
 storage:
     className: local-path
     cardImages: 5Gi
