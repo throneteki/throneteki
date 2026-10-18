@@ -1,9 +1,7 @@
 /*eslint no-console:0 */
 import commandLineArgs from 'command-line-args';
 
-import monk from 'monk';
 import path from 'path';
-import ServiceFactory from '../services/ServiceFactory.js';
 import CardImport from './fetchdata/CardImport.js';
 import CardgameDbImageSource from './fetchdata/CardgameDbImageSource.js';
 import JsonCardSource from './fetchdata/JsonCardSource.js';
@@ -53,10 +51,8 @@ function createImageSource(options) {
 
 let options = commandLineArgs(optionsDefinition);
 
-let configService = ServiceFactory.configService();
-let db = monk(configService.getValue('dbPath'));
 let dataSource = createDataSource(options);
 let imageSource = createImageSource(options);
-let cardImport = new CardImport(db, dataSource, imageSource, options['image-dir']);
+let cardImport = new CardImport(dataSource, imageSource, options['image-dir']);
 
 cardImport.import();

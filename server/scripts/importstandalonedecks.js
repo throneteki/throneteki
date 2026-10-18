@@ -3,17 +3,15 @@
 import fs from 'fs';
 
 import path from 'path';
-import monk from 'monk';
 import ServiceFactory from '../services/ServiceFactory.js';
+import db from '../db/index.js';
 
 const __dirname = import.meta.dirname;
 
 class ImportStandaloneDecks {
     constructor() {
-        let configService = ServiceFactory.configService();
-        this.db = monk(configService.getValue('dbPath'));
-        this.cardService = ServiceFactory.cardService(this.db);
-        this.deckService = ServiceFactory.deckService(this.db);
+        this.cardService = ServiceFactory.cardService();
+        this.deckService = ServiceFactory.deckService();
     }
 
     async import() {
@@ -33,7 +31,7 @@ class ImportStandaloneDecks {
         } catch (err) {
             console.error('Could not finish import', err);
         } finally {
-            this.db.close();
+            await db.shutdown();
         }
     }
 

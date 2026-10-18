@@ -47,8 +47,8 @@ function extractEventFromRequest(req) {
     };
 }
 
-export const init = async function (server, options) {
-    const eventService = ServiceFactory.eventService(options.db);
+export const init = async function (server) {
+    const eventService = ServiceFactory.eventService();
 
     await eventService.init();
 

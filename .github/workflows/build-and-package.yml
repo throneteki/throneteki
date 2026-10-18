@@ -35,11 +35,72 @@ jobs:
             - run: npm ci
             - run: npm run lint
             - run: npm test
+    database:
+        name: Database migrations
+        runs-on: ubuntu-latest
+        services:
+            postgres:
+                image: postgres:16
+                env:
+                    POSTGRES_USER: throneteki
+                    POSTGRES_PASSWORD: throneteki
+                    POSTGRES_DB: throneteki
+                ports:
+                    - 5432:5432
+                options: >-
+                    --health-cmd pg_isready
+                    --health-interval 5s
+                    --health-timeout 5s
+                    --health-retries 10
+        env:
+            NODE_CONFIG: '{"db":{"host":"localhost","port":5432,"database":"throneteki","user":"throneteki","password":"throneteki"}}'
+        steps:
+            - name: Checkout source and submodules
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: '0'
+                  submodules: recursive
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 22.x
+                  cache: 'npm'
+            - run: npm ci
+            - name: Check merged migrations are unchanged
+              if: ${{ github.event_name == 'pull_request' }}
+              run: |
+                  changed=$(git diff --diff-filter=MDR --name-only origin/${{ github.base_ref }}...HEAD -- server/db/migrations)
+                  if [ -n "$changed" ]; then
+                      echo "::error::Migrations that are already merged must not be changed, add a new migration instead:"
+                      echo "$changed"
+                      exit 1
+                  fi
+            - name: Apply all migrations to an empty database
+              run: npm run db:migrate
+            - name: Revert all migrations
+              run: npm run db:migrate:down -- all
+            - name: Re-apply all migrations
+              run: npm run db:migrate
+            - name: Check server/db/schema.sql is up to date
+              run: |
+                  docker exec ${{ job.services.postgres.id }} pg_dump -U throneteki --schema-only --no-owner --no-privileges throneteki | node ./server/db/dump-schema.js
+                  # status rather than diff, so a schema.sql that was never committed also fails
+                  if [ -n "$(git status --porcelain -- server/db/schema.sql)" ]; then
+                      git diff -- server/db/schema.sql
+                      echo "::error::server/db/schema.sql does not match the migrations, run 'npm run db:schema:dump' and commit the result"
+                      exit 1
+                  fi
+            - name: Create the test database
+              run: docker exec ${{ job.services.postgres.id }} createdb -U throneteki throneteki_test
+            - name: Database integration tests
+              env:
+                  # No database here, so config/test.json5 picks throneteki_test
+                  NODE_CONFIG: '{"db":{"host":"localhost","port":5432,"user":"throneteki","password":"throneteki"}}'
+              run: npm run test:db
     package:
         name: Push Package
         if: ${{ github.repository == vars.PACKAGEABLE_REPOSITORY && (github.ref_name == 'master' || github.ref_name == 'playtesting') && github.event_name == 'push' }}
         runs-on: ubuntu-latest
-        needs: 'build'
+        needs: ['build', 'database']
         steps:
             - name: Checkout source and submodules
               uses: actions/checkout@v4

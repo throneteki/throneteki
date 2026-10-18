@@ -6,6 +6,18 @@ on:
                 type: environment
                 description: Select the environment
                 default: Production
+            stop_lobby:
+                type: boolean
+                description: Scale the lobby down to no pods
+                default: false
+            copy_from_mongo:
+                type: boolean
+                description: Run the MongoDB to Postgres copy job
+                default: false
+            copy_from_mongo_args:
+                type: string
+                description: Arguments for the copy, e.g. --collections games abuse_events --since 2026-11-01
+                default: ''
 jobs:
     deploy:
         runs-on: self-hosted
@@ -117,16 +129,42 @@ jobs:
                     patreonSecret: "${{ secrets.PATREON_SECRET }}"
                   EOF
 
+                  : > /tmp/lobby-db.yaml
+                  if [ -n "${{ secrets.DB_HOST }}" ]; then
+                    cat > /tmp/lobby-db.yaml <<EOF
+                  nodeConfig:
+                    db:
+                      host: "${{ secrets.DB_HOST }}"
+                      port: ${{ vars.DB_PORT || 5432 }}
+                      database: "${{ vars.DB_DATABASE || 'throneteki' }}"
+                      user: "${{ secrets.DB_USER }}"
+                      password: "${{ secrets.DB_PASSWORD }}"
+                  dbMigrator:
+                    user: "${{ secrets.DB_MIGRATOR_USER }}"
+                    password: "${{ secrets.DB_MIGRATOR_PASSWORD }}"
+                  EOF
+                  fi
+
+                  ETL_ARGS="["
+                  for arg in ${{ inputs.copy_from_mongo_args }}; do
+                    ETL_ARGS+="\"$arg\","
+                  done
+                  ETL_ARGS="${ETL_ARGS%,}]"
+
                   helm upgrade --install throneteki-lobby ./infrastructure/lobby \
                     --set namespace=$NAMESPACE \
                     --set environment=$ENV_SUBDOMAIN \
                     --set deployTime=$DEPLOY_TIME \
                     $HELM_IMAGE_FLAGS \
                     -f /tmp/lobby-secrets.yaml \
+                    -f /tmp/lobby-db.yaml \
+                    --set replicas=${{ inputs.stop_lobby && '0' || '1' }} \
+                    --set etl.enabled=${{ inputs.copy_from_mongo }} \
+                    --set-json "etl.args=$ETL_ARGS" \
                     -n $NAMESPACE
 
-                  # Clean up secrets file
-                  rm /tmp/lobby-secrets.yaml
+                  # Clean up secrets files
+                  rm /tmp/lobby-secrets.yaml /tmp/lobby-db.yaml
 
                   # Verify rollout
                   kubectl rollout status deployment/throneteki-lobby -n $NAMESPACE

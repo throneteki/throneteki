@@ -27,6 +27,9 @@ let disposableEmailService;
 let ipQualityScoreService;
 let proxyCheckService;
 let emailService;
+const UserIdPattern = /^([a-f\d]{24}|\d+)$/i;
+const EmailInUseMessage = 'An account with that email already exists, please use another';
+const UsernameInUseMessage = 'An account with that name already exists, please choose another';
 const ActivationTokenLifetimeDays = 7;
 const ResetTokenLifetimeHours = 4;
 
@@ -402,10 +405,10 @@ async function verifyCaptchaToken(captcha) {
     return { success: true };
 }
 
-export const init = function (server, options) {
-    userService = ServiceFactory.userService(options.db, configService);
-    let banlistService = ServiceFactory.banlistService(options.db);
-    abuseService = ServiceFactory.abuseService(options.db, configService);
+export const init = function (server) {
+    userService = ServiceFactory.userService(configService);
+    let banlistService = ServiceFactory.banlistService();
+    abuseService = ServiceFactory.abuseService(configService);
     disposableEmailService = ServiceFactory.disposableEmailService(configService);
     ipQualityScoreService = ServiceFactory.ipQualityScoreService(configService);
     proxyCheckService = ServiceFactory.proxyCheckService(configService);
@@ -526,7 +529,7 @@ export const init = function (server, options) {
             if (user) {
                 return res.status(400).send({
                     success: false,
-                    message: 'An account with that email already exists, please use another'
+                    message: EmailInUseMessage
                 });
             }
 
@@ -534,7 +537,7 @@ export const init = function (server, options) {
             if (user) {
                 return res.status(400).send({
                     success: false,
-                    message: 'An account with that name already exists, please choose another'
+                    message: UsernameInUseMessage
                 });
             }
 
@@ -716,7 +719,20 @@ export const init = function (server, options) {
                 });
             }
 
-            user = await userService.addUser(newUser);
+            try {
+                user = await userService.addUser(newUser);
+            } catch (err) {
+                if (!err.duplicateField) {
+                    throw err;
+                }
+
+                return res.status(400).send({
+                    success: false,
+                    message:
+                        err.duplicateField === 'email' ? EmailInUseMessage : UsernameInUseMessage
+                });
+            }
+
             logger.info({
                 event: 'registration_completed',
                 userId: user?._id?.toString?.() || user?._id,
@@ -774,7 +790,7 @@ export const init = function (server, options) {
                 return res.status(400).send({ success: false, message: 'Invalid parameters' });
             }
 
-            if (!req.body.id.match(/^[a-f\d]{24}$/i)) {
+            if (!UserIdPattern.test(req.body.id)) {
                 return res.send({ success: false, message: 'Invalid parameters' });
             }
 
@@ -837,7 +853,7 @@ export const init = function (server, options) {
             if (user) {
                 return res.status(400).send({
                     success: false,
-                    data: 'An account with that name already exists, please choose another'
+                    data: UsernameInUseMessage
                 });
             }
 
@@ -1078,7 +1094,7 @@ export const init = function (server, options) {
                 return res.send({ success: false, message: 'Invalid parameters' });
             }
 
-            if (!req.body.id.match(/^[a-f\d]{24}$/i)) {
+            if (!UserIdPattern.test(req.body.id)) {
                 return res.send({ success: false, message: 'Invalid parameters' });
             }
 
@@ -1231,7 +1247,7 @@ export const init = function (server, options) {
                 if (existingUser && existingUser.username !== user.username) {
                     return res.status(400).send({
                         success: false,
-                        message: 'An account with that email already exists, please use another'
+                        message: EmailInUseMessage
                     });
                 }
 

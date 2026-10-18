@@ -19,6 +19,16 @@
     //patreonCallbackUrl: 'http://localhost:4000/patreon',
 
     dbPath: 'mongodb://mongo:27017/throneteki',
+    db: {
+        host: 'postgres',
+        port: 5432,
+        database: 'throneteki',
+        user: 'throneteki',
+        password: 'throneteki'
+        //ssl: { rejectUnauthorized: false },
+        //poolSize: 10,
+        //migrator: { user: 'throneteki_migrator', password: '...' }
+    },
     // This is the host/port of the Zero MQ server which does the node load balancing
     requireActivation: false,
     appName: 'The Iron Throne',

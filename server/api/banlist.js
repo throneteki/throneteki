@@ -2,8 +2,8 @@ import passport from 'passport';
 import { wrapAsync } from '../util.js';
 import ServiceFactory from '../services/ServiceFactory.js';
 
-export const init = function (server, options) {
-    let banlistService = ServiceFactory.banlistService(options.db);
+export const init = function (server) {
+    let banlistService = ServiceFactory.banlistService();
 
     server.get(
         '/api/banlist',

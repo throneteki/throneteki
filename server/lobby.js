@@ -19,13 +19,12 @@ class Lobby {
         this.users = {};
         this.games = {};
         this.configService = options.configService || ServiceFactory.configService();
-        this.messageService = options.messageService || ServiceFactory.messageService(options.db);
-        this.cardService = options.cardService || ServiceFactory.cardService(options.db);
-        this.deckService = options.deckService || ServiceFactory.deckService(options.db);
-        this.eventService = options.eventService || ServiceFactory.eventService(options.db);
-        this.userService =
-            options.userService || ServiceFactory.userService(options.db, this.configService);
-        this.router = options.router || new GameRouter(options.db);
+        this.messageService = options.messageService || ServiceFactory.messageService();
+        this.cardService = options.cardService || ServiceFactory.cardService();
+        this.deckService = options.deckService || ServiceFactory.deckService();
+        this.eventService = options.eventService || ServiceFactory.eventService();
+        this.userService = options.userService || ServiceFactory.userService(this.configService);
+        this.router = options.router || new GameRouter();
 
         this.router.on('onGameClosed', this.onGameClosed.bind(this));
         this.router.on('onGameRematch', this.onGameRematch.bind(this));
