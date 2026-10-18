@@ -11,13 +11,15 @@ service:
 
 deployTime: '0'
 
+replicas: 1
+
+etl:
+    enabled: false
+    args: []
+
 nodeConfig: {}
 
-# Credentials for the Postgres role that owns the schema, used only by the migrate job.
-# Migrations run when nodeConfig.db is set.
 dbMigrator: {}
-#   user: throneteki_migrator
-#   password: ...
 
 storage:
     className: local-path

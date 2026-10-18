@@ -42,7 +42,7 @@ const routes = [
     { path: '/decks', action: () => <Decks key='decks' /> },
     { path: '/decks/new', action: () => <AddDeck key='adddecks' /> },
     {
-        path: '/decks/edit/:id([a-f\\d]{24})',
+        path: '/decks/edit/:id([a-f\\d]{24}|\\d+)',
         action: (context) => <EditDeck key='editdeck' deckId={context.params.id} />
     },
     { path: '/forgot', action: () => <ForgotPassword key='forgotpassword' /> },

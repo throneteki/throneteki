@@ -1,7 +1,5 @@
-// Maps environment variables onto config values (see https://github.com/node-config/node-config/wiki/Environment-Variables)
 {
     db: {
-        // Only the migrate job is given these, so the lobby never holds schema-owning credentials
         migrator: {
             user: 'DB_MIGRATOR_USER',
             password: 'DB_MIGRATOR_PASSWORD'

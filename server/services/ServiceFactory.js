@@ -13,13 +13,15 @@ import MaintenanceService from './MaintenanceService.js';
 import EmailService from './EmailService.js';
 import CardService from './CardService.js';
 import DeckService from './DeckService.js';
+import GameService from './GameService.js';
+import NewsService from './NewsService.js';
 
 let services = {};
 
-export default {
-    messageService: (db) => {
+const factory = {
+    messageService: () => {
         if (!services.messageService) {
-            services.messageService = new MessageService(db);
+            services.messageService = new MessageService();
         }
 
         return services.messageService;
@@ -38,9 +40,9 @@ export default {
 
         return services.emailService;
     },
-    userService: (db, configService) => {
+    userService: (configService = factory.configService()) => {
         if (!services.userService) {
-            services.userService = new UserService(db, configService);
+            services.userService = new UserService(configService);
         }
 
         return services.userService;
@@ -57,47 +59,64 @@ export default {
 
         return services.patreonService;
     },
-    banlistService: (db) => {
+    banlistService: () => {
         if (!services.banlistService) {
-            services.banlistService = new BanlistService(db);
+            services.banlistService = new BanlistService();
         }
 
         return services.banlistService;
     },
-    abuseService: (db, configService) => {
+    abuseService: (configService = factory.configService()) => {
         if (!services.abuseService) {
-            services.abuseService = new AbuseService(db, configService);
+            services.abuseService = new AbuseService(
+                configService,
+                factory.userService(configService)
+            );
         }
 
         return services.abuseService;
     },
-    cardService: (db) => {
+    cardService: () => {
         if (!services.cardService) {
-            services.cardService = new CardService(db);
+            services.cardService = new CardService();
         }
 
         return services.cardService;
     },
-    deckService: (db) => {
+    deckService: () => {
         if (!services.deckService) {
-            services.deckService = new DeckService(db);
+            services.deckService = new DeckService(factory.cardService(), factory.eventService());
         }
 
         return services.deckService;
     },
-    eventService: (db) => {
+    eventService: () => {
         if (!services.eventService) {
-            services.eventService = new EventService(db);
+            services.eventService = new EventService();
         }
 
         return services.eventService;
     },
-    draftCubeService: (db) => {
+    draftCubeService: () => {
         if (!services.draftCubeService) {
-            services.draftCubeService = new DraftCubeService(db);
+            services.draftCubeService = new DraftCubeService();
         }
 
         return services.draftCubeService;
+    },
+    gameService: () => {
+        if (!services.gameService) {
+            services.gameService = new GameService();
+        }
+
+        return services.gameService;
+    },
+    newsService: () => {
+        if (!services.newsService) {
+            services.newsService = new NewsService();
+        }
+
+        return services.newsService;
     },
     disposableEmailService: (configService) => {
         if (!services.disposableEmailService) {
@@ -132,3 +151,5 @@ export default {
         return services.maintenanceService;
     }
 };
+
+export default factory;

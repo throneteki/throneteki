@@ -21,8 +21,8 @@ function getDeckQueryOptions(query) {
     };
 }
 
-export const init = async function (server, options) {
-    const deckService = ServiceFactory.deckService(options.db);
+export const init = async function (server) {
+    const deckService = ServiceFactory.deckService();
 
     await deckService.init();
 

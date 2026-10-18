@@ -5,6 +5,8 @@ import RematchPrompt from './gamesteps/RematchPrompt.js';
 import { Flags, Tokens } from './Constants/index.js';
 import Effects from './effects.js';
 
+const MaxPower = 99;
+
 class ChatCommands {
     constructor(game) {
         this.game = game;
@@ -71,7 +73,7 @@ class ChatCommands {
     }
 
     power(player, args) {
-        var num = this.getNumberOrDefault(args[1], 1);
+        var num = Math.min(this.getNumberOrDefault(args[1], 1), MaxPower);
         this.game.promptForSelect(player, {
             activePromptTitle: 'Select a card to set power for',
             waitingPromptTitle: 'Waiting for opponent to set power',

@@ -2,9 +2,9 @@ import passport from 'passport';
 import { wrapAsync } from '../util.js';
 import ServiceFactory from '../services/ServiceFactory.js';
 
-export const init = function (server, options) {
+export const init = function (server) {
     const configService = ServiceFactory.configService();
-    const abuseService = ServiceFactory.abuseService(options.db, configService);
+    const abuseService = ServiceFactory.abuseService(configService);
 
     server.get(
         '/api/abuse-blocks',

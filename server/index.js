@@ -1,7 +1,6 @@
 import Server from './server.js';
 import Lobby from './lobby.js';
 import pmx from 'pmx';
-import monk from 'monk';
 import ServiceFactory from './services/ServiceFactory.js';
 import { checkSecrets } from './configCheck.js';
 
@@ -14,16 +13,12 @@ async function runServer() {
         instance: configService.getValue('instance') || {}
     };
 
-    await monk(configService.getValue('dbPath')).then((db) => {
-        options.db = db;
-    });
-
-    options.cardService = ServiceFactory.cardService(options.db);
+    options.cardService = ServiceFactory.cardService();
     let server = new Server(process.env.NODE_ENV !== 'production');
     let httpServer = await server.init(options);
     let lobby = new Lobby(httpServer, options);
-    let userService = ServiceFactory.userService(options.db, configService);
-    let abuseService = ServiceFactory.abuseService(options.db, configService);
+    let userService = ServiceFactory.userService(configService);
+    let abuseService = ServiceFactory.abuseService(configService);
     let maintenanceService = ServiceFactory.maintenanceService(
         userService,
         abuseService,

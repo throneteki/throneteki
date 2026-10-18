@@ -20,12 +20,9 @@ spec:
                 - name: migrate
                   image: '{{ .Values.image.repository }}:{{ .Values.image.tag }}'
                   command:
-                      - sh
-                      - -c
-                      - |
-                          node server/scripts/convertevents.js && \
-                          node server/scripts/convertdecks.js{{ if .Values.nodeConfig.db }} && \
-                          node server/db/migrate.js up{{ end }}
+                      - node
+                      - server/db/migrate.js
+                      - up
                   env:
                       - name: NODE_CONFIG
                         valueFrom:
@@ -33,7 +30,6 @@ spec:
                                 name: throneteki-lobby-secret
                                 key: node_config
 {{- if .Values.dbMigrator.user }}
-                      # Schema-owning credentials are only given to this job, never to the lobby
                       - name: DB_MIGRATOR_USER
                         valueFrom:
                             secretKeyRef:

@@ -3,10 +3,10 @@ import { wrapAsync } from '../util.js';
 import ServiceFactory from '../services/ServiceFactory.js';
 import logger from '../log.js';
 
-export const init = function (server, options) {
+export const init = function (server) {
     const configService = ServiceFactory.configService();
-    let userService = ServiceFactory.userService(options.db, configService);
-    let abuseService = ServiceFactory.abuseService(options.db, configService);
+    let userService = ServiceFactory.userService(configService);
+    let abuseService = ServiceFactory.abuseService(configService);
 
     server.get(
         '/api/user/:username',

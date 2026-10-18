@@ -1,7 +1,8 @@
 # Database
 
-The lobby is moving from MongoDB to PostgreSQL. Until that move is finished both are configured:
-`dbPath` is the Mongo connection the services still use, and `db` is the Postgres connection.
+The lobby stores everything in PostgreSQL, configured by `db`. `dbPath`, the old MongoDB
+connection, is only used by the one-off copy from MongoDB (see
+[Moving the data from MongoDB](#moving-the-data-from-mongodb)).
 
 | Path                                             | What it is                                                                    |
 | ------------------------------------------------ | ----------------------------------------------------------------------------- |
@@ -24,6 +25,55 @@ npm run db:migrate:down         # revert the last migration (or: -- 3, -- all)
 npm run db:migrate:create -- add-deck-notes   # new server/db/migrations/<timestamp>_add-deck-notes.sql
 npm run db:schema:dump          # regenerate server/db/schema.sql from the compose database
 ```
+
+## Services
+
+| Service            | Tables                                                                     |
+| ------------------ | -------------------------------------------------------------------------- |
+| `UserService`      | `users`, `user_permissions`, `refresh_tokens`, `user_blocks`               |
+| `AbuseService`     | `abuse_blocks`, `abuse_events`, `banlist`, and users through `UserService` |
+| `BanlistService`   | `banlist`                                                                  |
+| `CardService`      | `cards`, `packs`                                                           |
+| `DeckService`      | `decks`, `deck_cards`                                                      |
+| `EventService`     | `events`                                                                   |
+| `DraftCubeService` | `draft_cubes`                                                              |
+| `GameService`      | `games`, `game_players`                                                    |
+| `MessageService`   | `messages`, `motd`                                                         |
+| `NewsService`      | `news`                                                                     |
+
+The services return the same shapes the MongoDB versions did, so the models, API responses and
+client didn't change when they moved. Things worth knowing when working with them:
+
+- **ids are numeric strings.** `_id` is the row id as a string, so it passes the same
+  `typeof === 'string'` checks a MongoDB ObjectId did. Lookups by id also accept a 24 character
+  ObjectId and find the row by `mongo_id`, for links, sessions and auth tokens from before the move.
+- **decks are card pointers.** Card lists are stored as code and count in `deck_cards`, and come
+  back as `{ cardcode, count }` (banners as codes). Factions are stored as their code.
+- **missing fields stay missing.** Columns that are NULL are left off the returned objects, as
+  those fields were missing from the MongoDB documents.
+- **ips and subnets are normalised.** Postgres stores IPv6 subnets compressed
+  (`2001:0db8:0000:0000::/64` reads back as `2001:db8::/64`), so compare them in SQL, where they
+  compare as addresses, not as strings in JavaScript. `UserService.findLinkedUsers` does this.
+  Values that aren't a valid ip or subnet are stored as missing.
+- **permissions are checked.** Permissions not in the `user_permissions` constraint are dropped
+  with a warning instead of being stored.
+- **usernames and emails are unique, ignoring case.** Registration checks first, and if two
+  registrations race, the second gets the same "already exists" message from the unique index.
+
+## Integration tests
+
+Tests that need a database live under
+[test/server/db-integration/](../test/server/db-integration) and run with `npm run test:db`,
+not `npm test`. That applies the migrations and runs the tests against `throneteki_test`
+(`config/test.json5`). Every test empties the tables, so the tests refuse to run against a
+database whose name doesn't end in `_test`.
+
+```sh
+docker compose exec postgres createdb -U throneteki throneteki_test   # once
+npm run test:db
+```
+
+The CI `database` job runs them on every push and pull request.
 
 ## Writing a migration
 
@@ -76,7 +126,7 @@ both once per environment as a superuser:
 ```sql
 CREATE ROLE throneteki_migrator LOGIN PASSWORD '...';
 CREATE ROLE throneteki_app LOGIN PASSWORD '...';
-CREATE DATABASE throneteki OWNER throneteki_migrator;
+CREATE DATABASE throneteki OWNER throneteki_migrator ENCODING 'UTF8' TEMPLATE template0;
 
 \c throneteki
 REVOKE ALL ON DATABASE throneteki FROM PUBLIC;
@@ -91,26 +141,27 @@ ALTER DEFAULT PRIVILEGES FOR ROLE throneteki_migrator IN SCHEMA public
 ```
 
 On PostgreSQL 15 and later the `public` schema belongs to the database owner, so the migrator can
-create tables in it and no other role can.
+create tables in it and no other role can. The database must be UTF8: card text and chat contain
+characters other encodings can't store.
 
 ## Deployment
 
-The lobby chart's [migrate job](../infrastructure/lobby/templates/migrate-job.yaml) runs as a
-`pre-install,pre-upgrade` hook. When `nodeConfig.db` is set it runs `node server/db/migrate.js up`,
-and if that fails the upgrade stops and the running release is left alone.
+The lobby chart's [migrate job](../infrastructure/lobby/templates/migrate-job.yaml) runs
+`node server/db/migrate.js up` as a `pre-install,pre-upgrade` hook. If it fails, the upgrade
+stops and the running release is left alone.
 
-The [deploy workflow](../.github/workflows/deploy-lobby.yml) only sets `nodeConfig.db` once the
-environment has the database secrets:
+The [deploy workflow](../.github/workflows/deploy-lobby.yml) needs these on the GitHub
+environment:
 
-| Name                   | Kind     | Notes                          |
-| ---------------------- | -------- | ------------------------------ |
-| `DB_HOST`              | secret   | Setting this turns Postgres on |
-| `DB_USER`              | secret   | The application role           |
-| `DB_PASSWORD`          | secret   |                                |
-| `DB_MIGRATOR_USER`     | secret   | The migrator role              |
-| `DB_MIGRATOR_PASSWORD` | secret   |                                |
-| `DB_PORT`              | variable | Defaults to 5432               |
-| `DB_DATABASE`          | variable | Defaults to `throneteki`       |
+| Name                   | Kind     | Notes                    |
+| ---------------------- | -------- | ------------------------ |
+| `DB_HOST`              | secret   |                          |
+| `DB_USER`              | secret   | The application role     |
+| `DB_PASSWORD`          | secret   |                          |
+| `DB_MIGRATOR_USER`     | secret   | The migrator role        |
+| `DB_MIGRATOR_PASSWORD` | secret   |                          |
+| `DB_PORT`              | variable | Defaults to 5432         |
+| `DB_DATABASE`          | variable | Defaults to `throneteki` |
 
 The migrator credentials go into their own Kubernetes secret, which only the migrate job is given,
 as `DB_MIGRATOR_USER` and `DB_MIGRATOR_PASSWORD` (mapped onto `db.migrator` by
@@ -119,3 +170,66 @@ as `DB_MIGRATOR_USER` and `DB_MIGRATOR_PASSWORD` (mapped onto `db.migrator` by
 Production runs PostgreSQL 16. Keep `docker-compose.yml` and the CI `database` job on the same
 major version, so migrations are tested against what they'll run on and `schema.sql` is generated
 the same way everywhere.
+
+## Moving the data from MongoDB
+
+[server/scripts/migrate-from-mongo.js](../server/scripts/migrate-from-mongo.js) copies everything
+from MongoDB (`dbPath`) into Postgres (`db`), except the legacy `sessions` collection. Cards and
+packs aren't copied either: the fetchdata job loads them from the json data.
+
+```sh
+node server/scripts/migrate-from-mongo.js
+node server/scripts/migrate-from-mongo.js --collections games abuse_events --since 2026-11-01
+```
+
+- Every row keeps its ObjectId in `mongo_id`, and running the copy again updates rows in place,
+  so it can be re-run after a failure or to catch up.
+- `--since` only applies to `games` (by `startedAt`) and `abuse_events` (by `createdAt`).
+- Rows that can't be copied are skipped, and rows that had to be changed are noted, with the reason
+  and some example ids, in the log and in the report file (`--report`, by default
+  `migrate-from-mongo-report.json`).
+- Refresh tokens keep their ids, so people stay logged in across the move.
+
+A rehearsal against the 12 October 2026 backup took about six and a half minutes and found:
+
+- **Duplicate accounts.** Where usernames or emails clash once case is ignored, the account most
+  likely to be in use is kept: the one last used (refresh token, deck saved, game played or chat
+  message), then the one used most, then the oldest.
+    - 139 accounts whose username clashes are skipped. Most came from a 2017 bug where trying to
+      register a taken name still created an account (with no password); the rest from people
+      submitting the registration form twice.
+    - 1,541 accounts whose email clashes, and which haven't been used in five years, are skipped.
+      Most date from before July 2017, when registration started allowing one account per email.
+    - 9 accounts whose email clashes but which were used in the last five years are kept without
+      their email (it's kept in `legacy.removedDuplicateEmail`).
+    - 2,234 decks belonging to skipped accounts are skipped with them.
+- **83 decks whose owner no longer exists**, skipped.
+- **26 decks with impossible card counts** (from the old free-text deck editor), whose bad entries
+  are dropped. Zero-count entries, of which there are about 47,000, are dropped too; the validator
+  counts them as in the deck, so a few old decks become valid.
+- **445 decks with rookery cards**, which are dropped as nothing uses them any more.
+- **59 games with an impossible player power**, which is stored as missing. They came from the
+  `/power` chat command, which now sets at most 99.
+- **725 legacy reset tokens and 19 legacy activation tokens**, dropped; they had long expired.
+
+### Cutover
+
+The release with the Postgres services only runs on Postgres, so the current MongoDB release keeps
+serving until the first deploy below, and that deploy is the start of the downtime.
+
+1. **Set up the database.** Create the roles and database (see [Roles](#roles)) and add the
+   database secrets to the GitHub environment.
+2. **Rehearse.** Restore a copy of the production MongoDB, run the copy into a scratch Postgres
+   database, and read the report. Time it.
+3. **Note the running image tag**, so you can go back to it.
+4. **Stop the lobby and copy.** Run the deploy workflow with _stop lobby_ and _copy from mongo_
+   ticked. The migrate job creates the schema, the lobby is scaled to no pods, the copy runs, and
+   the fetchdata job loads the cards into Postgres. Follow the copy with
+   `kubectl logs -f job/throneteki-copy-from-mongo-<deployTime> -n <namespace>` and check the
+   skipped and changed rows it lists at the end.
+5. **Start the lobby.** Run the deploy workflow again with nothing ticked.
+6. **Check.** Log in, refresh the page (which uses the refresh token), open and save a deck, start
+   a game, chat, and set the message of the day.
+
+To go back, deploy the image tag from step 3 (the `LOBBY_IMAGE` variable). MongoDB is left as it
+was at step 4, so anything changed on Postgres since is lost.

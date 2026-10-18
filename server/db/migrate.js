@@ -42,7 +42,6 @@ async function migrate(args) {
     const isProduction =
         process.env.NODE_ENV === 'production' || configService.getValue('env') === 'production';
 
-    // Production is rolled forward with a new migration rather than back
     if (direction === 'down' && isProduction && !args.includes('--allow-production-down')) {
         console.error(
             'Refusing to revert migrations in production, write a new migration instead. ' +

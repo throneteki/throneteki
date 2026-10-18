@@ -94,6 +94,39 @@ describe('ChatCommands', function () {
             });
         });
 
+        describe('with a /power command', function () {
+            beforeEach(function () {
+                this.gameSpy.promptForSelect = jasmine.createSpy('promptForSelect');
+                this.card = { power: 2, getType: () => 'character' };
+
+                this.setPower = (args) => {
+                    this.chatCommands.executeCommand(this.playerSpy, '/power', args);
+                    this.gameSpy.promptForSelect.calls
+                        .mostRecent()
+                        .args[1].onSelect(this.playerSpy, this.card);
+                };
+            });
+
+            it('should set the power of the selected card', function () {
+                this.setPower(['/power', '5']);
+
+                expect(this.card.power).toBe(5);
+            });
+
+            it('should set the power to at most 99', function () {
+                this.setPower(['/power', '1111111111111111000000000000000']);
+
+                expect(this.card.power).toBe(99);
+                expect(this.gameSpy.addAlert).toHaveBeenCalledWith(
+                    'danger',
+                    jasmine.any(String),
+                    this.playerSpy,
+                    this.card,
+                    99
+                );
+            });
+        });
+
         describe('with a /discard command', function () {
             describe('with no arguments', function () {
                 it('should discard 1 card', function () {

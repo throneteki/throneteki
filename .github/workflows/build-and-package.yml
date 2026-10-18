@@ -40,7 +40,6 @@ jobs:
         runs-on: ubuntu-latest
         services:
             postgres:
-                # Keep the major version in step with the k8s cluster and docker-compose.yml
                 image: postgres:16
                 env:
                     POSTGRES_USER: throneteki
@@ -56,10 +55,11 @@ jobs:
         env:
             NODE_CONFIG: '{"db":{"host":"localhost","port":5432,"database":"throneteki","user":"throneteki","password":"throneteki"}}'
         steps:
-            - name: Checkout source
+            - name: Checkout source and submodules
               uses: actions/checkout@v4
               with:
                   fetch-depth: '0'
+                  submodules: recursive
             - uses: actions/setup-node@v4
               with:
                   node-version: 22.x
@@ -89,6 +89,13 @@ jobs:
                       echo "::error::server/db/schema.sql does not match the migrations, run 'npm run db:schema:dump' and commit the result"
                       exit 1
                   fi
+            - name: Create the test database
+              run: docker exec ${{ job.services.postgres.id }} createdb -U throneteki throneteki_test
+            - name: Database integration tests
+              env:
+                  # No database here, so config/test.json5 picks throneteki_test
+                  NODE_CONFIG: '{"db":{"host":"localhost","port":5432,"user":"throneteki","password":"throneteki"}}'
+              run: npm run test:db
     package:
         name: Push Package
         if: ${{ github.repository == vars.PACKAGEABLE_REPOSITORY && (github.ref_name == 'master' || github.ref_name == 'playtesting') && github.event_name == 'push' }}

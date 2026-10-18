@@ -6,7 +6,6 @@ services:
     volumes:
       - mongodb:/data/db
   postgres:
-    # Keep the major version in step with the k8s cluster and the CI database job
     image: postgres:16
     environment:
       POSTGRES_USER: throneteki

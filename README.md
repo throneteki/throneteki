@@ -51,18 +51,19 @@ Run and Debug configurations are available to debug the client, lobby & game nod
 #### Required Software:
 - Git
 - Node.js 20.x
-- MongoDB 4.0 or higher
+- PostgreSQL 16
 - Redis 7.2.x or higher
 
-Create `config/local.json5` by copying `config/default.json5` and change the following values to match your configured mongodb & redis ports:
+Create `config/local.json5` by copying `config/default.json5` and change the following values to match your configured postgres & redis servers:
 ```
-dbPath: 'mongodb://localhost:{MONGODB_PORT}/throneteki',
+db: { host: 'localhost', port: {POSTGRES_PORT}, database: 'throneteki', user: '...', password: '...' },
 ```
 ```
 redisUrl: "redis://localhost:{REDIS_PORT}/",
 ```
-Run the following commands to fetch data:
+Run the following commands to create the database tables and fetch data:
 ```
+npm run db:migrate
 node server\scripts\fetchdata.js
 node server\scripts\importstandalonedecks.js
 ```

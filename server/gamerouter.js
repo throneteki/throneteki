@@ -1,18 +1,17 @@
 import redis from 'redis';
 import logger from './log.js';
 import EventEmitter from 'events';
-import GameService from './services/GameService.js';
 import ServiceFactory from './services/ServiceFactory.js';
 import { detectBinary } from './util.js';
 
 class GameRouter extends EventEmitter {
-    constructor(db) {
+    constructor() {
         super();
 
         let configService = ServiceFactory.configService();
 
         this.workers = {};
-        this.gameService = new GameService(db);
+        this.gameService = ServiceFactory.gameService();
 
         this.subscriber = redis.createClient(configService.getValue('redisUrl'));
         this.keyPrefix = configService.getValue('redisKeyPrefix');

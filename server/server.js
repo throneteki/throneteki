@@ -22,7 +22,7 @@ class Server {
     }
 
     async init(options) {
-        this.userService = ServiceFactory.userService(options.db, this.configService);
+        this.userService = ServiceFactory.userService(this.configService);
         this.server = http.Server(app);
         // Only trust the X-Forwarded-* headers added by our own reverse proxy (Traefik), so clients
         // can't spoof their IP address to get around bans and abuse checks

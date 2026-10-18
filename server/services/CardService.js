@@ -1,8 +1,9 @@
 import fs from 'fs';
 import path from 'path';
 import moment from 'moment';
-import logger from '../log.js';
 import startCase from 'lodash.startcase';
+import defaultDb from '../db/index.js';
+import logger from '../log.js';
 
 const __dirname = import.meta.dirname;
 
@@ -13,49 +14,8 @@ const defaultVariant = {
 };
 
 class CardService {
-    constructor(db) {
-        this.cards = db.get('cards');
-        this.packs = db.get('packs');
-    }
-
-    replaceCards(cards) {
-        return this.cards.remove({}).then(() => this.cards.insert(cards));
-    }
-
-    replacePacks(cards) {
-        return this.packs.remove({}).then(() => this.packs.insert(cards));
-    }
-
-    getAllCards() {
-        return this.cards
-            .find({})
-            .then((result) => {
-                let cards = {};
-
-                for (let card of result) {
-                    cards[card.code] = card;
-                }
-
-                return cards;
-            })
-            .catch((err) => {
-                logger.info(err);
-            });
-    }
-
-    getTitleCards() {
-        return this.cards.find({ type: 'title' }).then((cards) => {
-            return cards.reduce((memo, card) => {
-                memo[card.code] = card;
-                return memo;
-            }, {});
-        });
-    }
-
-    getAllPacks() {
-        return this.packs.find({}).catch((err) => {
-            logger.info(err);
-        });
+    constructor(db = defaultDb) {
+        this.db = db;
     }
 
     getRestrictedList() {
@@ -130,6 +90,7 @@ class CardService {
 
         return compiled;
     }
+
     setActiveLists(compiled) {
         const today = moment().startOf('day');
 
@@ -151,6 +112,52 @@ class CardService {
         }
 
         return compiled;
+    }
+
+    replaceCards(cards) {
+        return this.replaceAll('cards', cards);
+    }
+
+    replacePacks(packs) {
+        return this.replaceAll('packs', packs);
+    }
+
+    replaceAll(table, items) {
+        return this.db.transaction(async (tx) => {
+            await tx.query(`DELETE FROM ${table}`);
+            await tx.query(
+                `INSERT INTO ${table} (code, data) SELECT item->>'code', item FROM jsonb_array_elements($1::jsonb) AS item`,
+                [JSON.stringify(items)]
+            );
+        });
+    }
+
+    async getAllCards() {
+        try {
+            const rows = await this.db.query('SELECT data FROM cards');
+
+            return Object.fromEntries(rows.map((row) => [row.data.code, row.data]));
+        } catch (err) {
+            logger.info(err);
+        }
+    }
+
+    async getTitleCards() {
+        const rows = await this.db.query("SELECT data FROM cards WHERE data->>'type' = 'title'");
+
+        return Object.fromEntries(rows.map((row) => [row.data.code, row.data]));
+    }
+
+    async getAllPacks() {
+        try {
+            const rows = await this.db.query(
+                "SELECT data FROM packs ORDER BY data->>'releaseDate' NULLS LAST, code"
+            );
+
+            return rows.map((row) => row.data);
+        } catch (err) {
+            logger.info(err);
+        }
     }
 }
 

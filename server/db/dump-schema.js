@@ -4,13 +4,11 @@ import path from 'path';
 
 const __dirname = import.meta.dirname;
 
-// Reads `pg_dump --schema-only` output on stdin and writes it to server/db/schema.sql without the
-// lines that change between runs or server versions, so the file only changes when the schema does.
 const UnstableLines = [
     /^-- Dumped (from|by) /,
-    /^\\(un)?restrict /, // random per-dump key added in pg_dump 17.6 / 16.10
+    /^\\(un)?restrict /,
     /^SET transaction_timeout = /,
-    /^SET client_encoding = / // follows the server's encoding, which differs between machines
+    /^SET client_encoding = /
 ];
 
 let input = '';

@@ -2,8 +2,8 @@ import passport from 'passport';
 import ServiceFactory from '../services/ServiceFactory.js';
 import logger from '../log.js';
 
-export const init = function (server, options) {
-    let messageService = ServiceFactory.messageService(options.db);
+export const init = function (server) {
+    let messageService = ServiceFactory.messageService();
 
     server.delete(
         '/api/messages/:messageId',

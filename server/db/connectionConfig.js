@@ -1,12 +1,3 @@
-/**
- * Builds the pg connection options from the 'db' config section. The lobby connects as the
- * application role, which can only read and write rows. Schema migrations connect as the
- * migrator role, which owns the schema, when one is configured.
- *
- * @param {object} dbConfig - the 'db' config section
- * @param {object} [options]
- * @param {boolean} [options.migrator] - connect with the migrator credentials
- */
 export function getConnectionConfig(dbConfig, { migrator = false } = {}) {
     if (!dbConfig || !dbConfig.host || !dbConfig.database) {
         throw new Error("Postgres is not configured, set 'db.host' and 'db.database'");

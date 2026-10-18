@@ -7,6 +7,7 @@
     "scripts": {
         "test": "npm run jasmine",
         "jasmine": "cross-env JASMINE_CONFIG_PATH=./jasmine.json jasmine",
+        "test:db": "cross-env NODE_ENV=test node ./server/db/migrate.js up && cross-env NODE_ENV=test JASMINE_CONFIG_PATH=./jasmine.db.json jasmine",
         "cover": "cross-env JASMINE_CONFIG_PATH=./jasmine.json istanbul cover --include-all-sources jasmine",
         "lint": "eslint server/**/*.js client/**/*.jsx",
         "pack-lobby": "node ./pack.js",
