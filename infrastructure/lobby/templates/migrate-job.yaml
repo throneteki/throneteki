@@ -27,17 +27,17 @@ spec:
                       - name: NODE_CONFIG
                         valueFrom:
                             secretKeyRef:
-                                name: throneteki-lobby-secret
+                                name: throneteki-migrate-secret
                                 key: node_config
 {{- if .Values.dbMigrator.user }}
                       - name: DB_MIGRATOR_USER
                         valueFrom:
                             secretKeyRef:
-                                name: throneteki-db-migrator-secret
-                                key: user
+                                name: throneteki-migrate-secret
+                                key: migrator_user
                       - name: DB_MIGRATOR_PASSWORD
                         valueFrom:
                             secretKeyRef:
-                                name: throneteki-db-migrator-secret
-                                key: password
+                                name: throneteki-migrate-secret
+                                key: migrator_password
 {{- end }}

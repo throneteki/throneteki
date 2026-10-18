@@ -163,9 +163,11 @@ environment:
 | `DB_PORT`              | variable | Defaults to 5432         |
 | `DB_DATABASE`          | variable | Defaults to `throneteki` |
 
-The migrator credentials go into their own Kubernetes secret, which only the migrate job is given,
-as `DB_MIGRATOR_USER` and `DB_MIGRATOR_PASSWORD` (mapped onto `db.migrator` by
-`config/custom-environment-variables.json5`). The lobby pods never see them.
+The migrate job reads its config and the migrator credentials from `throneteki-migrate-secret`,
+which is created as a hook just before it. It can't use `throneteki-lobby-secret`, because Helm
+only updates that after the pre-upgrade hooks have run. The credentials reach the job as
+`DB_MIGRATOR_USER` and `DB_MIGRATOR_PASSWORD` (mapped onto `db.migrator` by
+`config/custom-environment-variables.json5`); the lobby pods never see them.
 
 Production runs PostgreSQL 16. Keep `docker-compose.yml` and the CI `database` job on the same
 major version, so migrations are tested against what they'll run on and `schema.sql` is generated
