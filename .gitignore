@@ -6,10 +6,8 @@ public/img/bgs
 typings
 coverage
 *.log
-*.json
-!.vscode/launch.json
-!.vscode/tasks.json
-!.devcontainer/devcontainer.json
+.vscode/mcp.json
+migrate-from-mongo-report.json
 nodeconfig.js
 server/events.txt
 server/logs/*.gz
