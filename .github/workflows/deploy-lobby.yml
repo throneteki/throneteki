@@ -86,6 +86,17 @@ jobs:
                     fi
                   fi
 
+                  MISSING=""
+                  [ -n "${{ secrets.DB_HOST }}" ] || MISSING+=" DB_HOST"
+                  [ -n "${{ secrets.DB_USER }}" ] || MISSING+=" DB_USER"
+                  [ -n "${{ secrets.DB_PASSWORD }}" ] || MISSING+=" DB_PASSWORD"
+                  [ -n "${{ secrets.DB_MIGRATOR_USER }}" ] || MISSING+=" DB_MIGRATOR_USER"
+                  [ -n "${{ secrets.DB_MIGRATOR_PASSWORD }}" ] || MISSING+=" DB_MIGRATOR_PASSWORD"
+                  if [ -n "$MISSING" ]; then
+                    echo "::error::The ${{ github.event.inputs.environment }} environment is missing the database secrets:$MISSING"
+                    exit 1
+                  fi
+
                   # Create values file with secrets
                   cat > /tmp/lobby-secrets.yaml <<EOF
                   nodeConfig:
@@ -129,9 +140,7 @@ jobs:
                     patreonSecret: "${{ secrets.PATREON_SECRET }}"
                   EOF
 
-                  : > /tmp/lobby-db.yaml
-                  if [ -n "${{ secrets.DB_HOST }}" ]; then
-                    cat > /tmp/lobby-db.yaml <<EOF
+                  cat > /tmp/lobby-db.yaml <<EOF
                   nodeConfig:
                     db:
                       host: "${{ secrets.DB_HOST }}"
@@ -143,7 +152,6 @@ jobs:
                     user: "${{ secrets.DB_MIGRATOR_USER }}"
                     password: "${{ secrets.DB_MIGRATOR_PASSWORD }}"
                   EOF
-                  fi
 
                   ETL_ARGS="["
                   for arg in ${{ inputs.copy_from_mongo_args }}; do
