@@ -13,10 +13,6 @@ deployTime: '0'
 
 replicas: 1
 
-etl:
-    enabled: false
-    args: []
-
 nodeConfig: {}
 
 dbMigrator: {}

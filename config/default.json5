@@ -18,7 +18,6 @@
     //patreonSecret: 'your-client-secret',
     //patreonCallbackUrl: 'http://localhost:4000/patreon',
 
-    dbPath: 'mongodb://mongo:27017/throneteki',
     db: {
         host: 'postgres',
         port: 5432,

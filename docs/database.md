@@ -1,8 +1,7 @@
 # Database
 
-The lobby stores everything in PostgreSQL, configured by `db`. `dbPath`, the old MongoDB
-connection, is only used by the one-off copy from MongoDB (see
-[Moving the data from MongoDB](#moving-the-data-from-mongodb)).
+The lobby stores everything in PostgreSQL, configured by `db`. It used MongoDB until October 2026
+(see [The move from MongoDB](#the-move-from-mongodb)).
 
 | Path                                             | What it is                                                                    |
 | ------------------------------------------------ | ----------------------------------------------------------------------------- |
@@ -102,8 +101,7 @@ The rules, most of which CI enforces:
    `migrate.js down` refuses to run in production unless given `--allow-production-down`.
 5. **Commit the regenerated `schema.sql`** with every migration. CI fails if it doesn't match.
 6. **Schema only.** Data changes belong in a migration only when they're plain SQL over data
-   already in Postgres. Anything that needs another system, such as the one-off copy from Mongo,
-   is a script under `server/scripts`.
+   already in Postgres. Anything that needs another system is a script under `server/scripts`.
 
 Conventions:
 
@@ -173,65 +171,30 @@ Production runs PostgreSQL 16. Keep `docker-compose.yml` and the CI `database` j
 major version, so migrations are tested against what they'll run on and `schema.sql` is generated
 the same way everywhere.
 
-## Moving the data from MongoDB
+## The move from MongoDB
 
-[server/scripts/migrate-from-mongo.js](../server/scripts/migrate-from-mongo.js) copies everything
-from MongoDB (`dbPath`) into Postgres (`db`), except the legacy `sessions` collection. Cards and
-packs aren't copied either: the fetchdata job loads them from the json data.
+Production moved to Postgres on 19 October 2026, copied from MongoDB by a one-off script (removed
+afterwards; see the history of `server/scripts/migrate-from-mongo.js`). Every copied row keeps its
+ObjectId in `mongo_id`, so old links and refresh tokens still work. Cards and packs weren't copied:
+the fetchdata job loads them from the json data.
 
-```sh
-node server/scripts/migrate-from-mongo.js
-node server/scripts/migrate-from-mongo.js --collections games abuse_events --since 2026-11-01
-```
+Some old data couldn't be copied as it was:
 
-- Every row keeps its ObjectId in `mongo_id`, and running the copy again updates rows in place,
-  so it can be re-run after a failure or to catch up.
-- `--since` only applies to `games` (by `startedAt`) and `abuse_events` (by `createdAt`).
-- Rows that can't be copied are skipped, and rows that had to be changed are noted, with the reason
-  and some example ids, in the log and in the report file (`--report`, by default
-  `migrate-from-mongo-report.json`).
-- Refresh tokens keep their ids, so people stay logged in across the move.
-
-A rehearsal against the 12 October 2026 backup took about six and a half minutes and found:
-
-- **Duplicate accounts.** Where usernames or emails clash once case is ignored, the account most
-  likely to be in use is kept: the one last used (refresh token, deck saved, game played or chat
+- **Duplicate accounts.** Where usernames or emails clashed once case was ignored, the account most
+  likely to be in use was kept: the one last used (refresh token, deck saved, game played or chat
   message), then the one used most, then the oldest.
-    - 139 accounts whose username clashes are skipped. Most came from a 2017 bug where trying to
-      register a taken name still created an account (with no password); the rest from people
-      submitting the registration form twice.
-    - 1,541 accounts whose email clashes, and which haven't been used in five years, are skipped.
-      Most date from before July 2017, when registration started allowing one account per email.
-    - 9 accounts whose email clashes but which were used in the last five years are kept without
-      their email (it's kept in `legacy.removedDuplicateEmail`).
-    - 2,234 decks belonging to skipped accounts are skipped with them.
-- **83 decks whose owner no longer exists**, skipped.
-- **26 decks with impossible card counts** (from the old free-text deck editor), whose bad entries
-  are dropped. Zero-count entries, of which there are about 47,000, are dropped too; the validator
-  counts them as in the deck, so a few old decks become valid.
-- **445 decks with rookery cards**, which are dropped as nothing uses them any more.
-- **59 games with an impossible player power**, which is stored as missing. They came from the
-  `/power` chat command, which now sets at most 99.
-- **725 legacy reset tokens and 19 legacy activation tokens**, dropped; they had long expired.
-
-### Cutover
-
-The release with the Postgres services only runs on Postgres, so the current MongoDB release keeps
-serving until the first deploy below, and that deploy is the start of the downtime.
-
-1. **Set up the database.** Create the roles and database (see [Roles](#roles)) and add the
-   database secrets to the GitHub environment.
-2. **Rehearse.** Restore a copy of the production MongoDB, run the copy into a scratch Postgres
-   database, and read the report. Time it.
-3. **Note the running image tag**, so you can go back to it.
-4. **Stop the lobby and copy.** Run the deploy workflow with _stop lobby_ and _copy from mongo_
-   ticked. The migrate job creates the schema, the lobby is scaled to no pods, the copy runs, and
-   the fetchdata job loads the cards into Postgres. Follow the copy with
-   `kubectl logs -f job/throneteki-copy-from-mongo-<deployTime> -n <namespace>` and check the
-   skipped and changed rows it lists at the end.
-5. **Start the lobby.** Run the deploy workflow again with nothing ticked.
-6. **Check.** Log in, refresh the page (which uses the refresh token), open and save a deck, start
-   a game, chat, and set the message of the day.
-
-To go back, deploy the image tag from step 3 (the `LOBBY_IMAGE` variable). MongoDB is left as it
-was at step 4, so anything changed on Postgres since is lost.
+    - Accounts whose username clashed were dropped, about 140. Most came from a 2017 bug where
+      trying to register a taken name still created an account (with no password); the rest from
+      people submitting the registration form twice.
+    - Accounts whose email clashed and which hadn't been used in five years were dropped, about
+      1,500. Most date from before July 2017, when registration started allowing one account per
+      email.
+    - Accounts whose email clashed but which had been used in the last five years were kept
+      without their email, which is in `legacy.removedDuplicateEmail`.
+    - Decks belonging to dropped accounts were dropped with them, as were decks whose owner no
+      longer existed.
+- **Impossible card counts** (from the old free-text deck editor) and zero-count entries were
+  dropped from decks, as were rookery cards.
+- **Impossible player powers** in games, from the `/power` chat command before it was capped at
+  99, are stored as missing.
+- **Legacy reset and activation tokens**, long expired, were dropped.
