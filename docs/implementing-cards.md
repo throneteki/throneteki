@@ -465,6 +465,30 @@ this.action({
 });
 ```
 
+#### Targets with a game action
+
+Most targeted abilities do one thing to the chosen card. Combine the `target` with a `gameAction`
+that acts on `context.target` instead of writing a handler:
+
+```javascript
+// Filthy Accusations: When Revealed: Choose and kneel a character.
+this.whenRevealed({
+    target: {
+        cardCondition: (card) => card.location === 'play area' && card.getType() === 'character'
+    },
+    message: '{player} uses {source} to kneel {target}',
+    gameAction: GameActions.kneelCard((context) => ({ card: context.target }))
+});
+```
+
+A card is only a valid target if the game action could change the game state for it, so the
+`cardCondition` doesn't need to repeat what the action already checks: here, kneeling characters
+and characters that can't be knelt are excluded automatically. With a multi-card target
+(`mode`, `numCards`), each card is checked on its own, as a one-card array.
+
+The check only applies to a single `target`. Abilities with several `targets`, or a `choosePlayer`
+or `chooseOpponent`, still resolve their `gameAction` but don't filter choices by it.
+
 #### Non-targeting card choices
 
 Some abilities such as Tears of Lys require selecting a target but do not count as targeting because the ability does not use the word 'choose'. These abilities can be implemented using the target API but should specify the `type` property as `'select'`. This will prevent immunity from being checked as well as properly interact with cards that modify targeting.

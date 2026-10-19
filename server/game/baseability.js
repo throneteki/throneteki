@@ -51,7 +51,11 @@ class BaseAbility {
 
     buildTargets(properties) {
         if (properties.target) {
-            return [AbilityTarget.create('target', properties.target)];
+            const gameActionFilter = properties.gameAction
+                ? (selection, context) =>
+                      BaseAbility.allowsTarget(properties.gameAction, selection, context)
+                : undefined;
+            return [AbilityTarget.create('target', { ...properties.target, gameActionFilter })];
         }
 
         if (properties.targets) {
@@ -62,16 +66,29 @@ class BaseAbility {
         return [];
     }
 
+    /**
+     * Whether a game action could change the game state if the selection were chosen as the
+     * ability's target. Used to rule out targets the ability could do nothing to.
+     */
+    static allowsTarget(gameAction, selection, context) {
+        const candidate = Object.create(context);
+        candidate.target = selection;
+        candidate.targets = Object.create(context.targets);
+        candidate.targets.target = selection;
+        return gameAction.allow(candidate);
+    }
+
     buildGameAction(properties) {
         if (properties.gameAction) {
-            if (
+            // Choices are made after the ability is checked, so whether the game action can change
+            // the game state depends on what is chosen. A single target is filtered by the action
+            // instead; other choices are not checked.
+            this.gameActionDependsOnChoices = !!(
                 properties.target ||
                 properties.targets ||
                 properties.chooseOpponent ||
                 properties.choosePlayer
-            ) {
-                throw new Error('Cannot use gameAction with abilities with choices');
-            }
+            );
 
             return properties.gameAction;
         }
@@ -246,6 +263,10 @@ class BaseAbility {
      * @returns {Boolean}
      */
     isGameActionAllowed(context) {
+        if (this.gameActionDependsOnChoices) {
+            return true;
+        }
+
         return this.executeWithTemporaryContext(context, 'effect', () =>
             this.gameAction.allow(context)
         );

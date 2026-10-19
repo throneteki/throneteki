@@ -161,7 +161,7 @@ class CardAction extends BaseAbility {
             this.canResolvePlayer(context) &&
             this.canPayCosts(context) &&
             this.canResolveTargets(context) &&
-            this.gameAction.allow(context)
+            (this.gameActionDependsOnChoices || this.gameAction.allow(context))
         );
     }
 

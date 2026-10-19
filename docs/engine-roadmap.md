@@ -97,17 +97,21 @@ LIMIT 50;
 
 ### Phase 1: engine fundamentals
 
-1. **Targets with game actions.** Remove the restriction in `BaseAbility.buildGameAction`. A card is a
-   legal target only if its `cardCondition` passes and the bound game action is allowed for it, so
-   immunity, "cannot" and game state checks apply automatically.
+1. **Targets with game actions.** _Done for a single `target`._ An ability can combine a `target`
+   with a `gameAction`; a card is only a legal target if its `cardCondition` passes and the game
+   action could change the game state for it, so immunity, "cannot" and game state checks apply
+   automatically. Abilities with several `targets` resolve a `gameAction` but don't yet filter by
+   it; that needs per-target game actions.
 2. **Game state check for triggered abilities.** `meetsRequirements` checks that the ability could
    change the game state. Handler abilities can declare a `gameAction` or `condition` hint until they
    are migrated.
-3. **One way to change state.** Every state change goes through a `GameAction`. `takeControl` becomes
-   one; `changeStat`, `/power` and the faction card standing go through actions. Legacy helpers are
-   deprecated, and an ESLint rule for `server/game/cards/**` bans direct state writes and legacy
-   helpers, starting from a baseline count that can only fall.
-4. **Simultaneity.** The standing phase stands every player's cards in one batch. Attachments and
+3. **One way to change state.** _The ratchet is in place: `npm run card-rules` (run in CI) fails
+   if a card file uses more legacy helpers, direct state writes, `addMessage` or `promptForSelect`
+   than its baseline (on 2026-10-19: 578, 5, 1,207 and 115 uses in 1,065 files). The faction card
+   now stands through an event._ Still to do: every state change goes through a `GameAction`;
+   `takeControl` becomes one, and `changeStat` and `/power` go through actions.
+4. **Simultaneity.** _The standing phase is done: every player's cards, faction cards included, stand
+   as one event._ The standing phase stands every player's cards in one batch. Attachments and
    duplicates leaving play become child events of the card leaving play.
 5. **Event catalogue.** A constants module with a JSDoc type for each event's parameters. In test and
    development builds, raising or listening to an unknown event, or using the wrong parameters, throws.

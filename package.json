@@ -11,6 +11,7 @@
         "spec:coverage": "node test/tools/spec-coverage.js",
         "spec:new": "node test/tools/new-spec.js",
         "card": "node test/tools/card.js",
+        "card-rules": "node test/tools/card-rules.js",
         "lint": "eslint server/**/*.js client/**/*.jsx",
         "pack-lobby": "node ./pack.js",
         "start": "node ./index.js",

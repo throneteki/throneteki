@@ -25,9 +25,11 @@ against the rules, which is what lets a game run with manual mode off
       exists for what the card needs, add one under `server/game/GameActions` rather than working
       around it.
 2. **Prefer declarative abilities.** Use `gameAction`, `choices`, `.then(...)` and `message` instead of
-   a `handler` wherever the API allows it. Today an ability can't combine `target` with `gameAction`
-   (phase 1 of the roadmap removes this), so targeted abilities still use a `handler` that resolves a
-   `GameAction` against `context.target`.
+   a `handler` wherever the API allows it. A `target` can be combined with a `gameAction` that acts
+   on `context.target`: cards the game action couldn't change are then not valid targets, so the
+   `cardCondition` shouldn't repeat checks the action already makes (standing, immunity, location).
+   See [Confiscation.js](01-Core/Confiscation.js). Only abilities with more than one target, or whose
+   card text allows choosing a card the effect can't change, still need a `handler`.
 3. **"Choose" means target.** Use the `target` / `targets` property, not `promptForSelect` inside a
    handler, so immunity and target validation apply. Use `type: 'select'` for selections that the card
    text doesn't phrase as "choose".
@@ -45,6 +47,12 @@ against the rules, which is what lets a game run with manual mode off
    punctuation.
 8. **No manual workarounds.** Don't leave parts of a card for players to handle with chat commands. If
    something can't be implemented properly, stop and say what engine support is missing.
+
+## Checks
+
+`npm run card-rules` counts the patterns above that are being phased out, per card file, and CI
+fails if any file uses more of them than it did before. When a change removes some, run
+`npm run card-rules -- --update` to lock the lower count in.
 
 ## File layout
 

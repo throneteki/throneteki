@@ -1,0 +1,3772 @@
+{
+    "server/game/cards/00-VDS/BlackcrownKnights.js": {
+        "add-message": 1
+    },
+    "server/game/cards/00-VDS/CompelledByTheKing.js": {
+        "legacy-helper": 1,
+        "add-message": 2
+    },
+    "server/game/cards/00-VDS/DeadlyKhalasar.js": {
+        "add-message": 1
+    },
+    "server/game/cards/00-VDS/FeastOrFamine.js": {
+        "add-message": 2
+    },
+    "server/game/cards/00-VDS/HollowHill.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/00-VDS/HouseBannerman.js": {
+        "add-message": 1
+    },
+    "server/game/cards/00-VDS/ProtectorsOfTheRealm.js": {
+        "add-message": 1
+    },
+    "server/game/cards/00-VDS/SupportOfSaltcliffe.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/00-VDS/TheNightfort.js": {
+        "add-message": 1
+    },
+    "server/game/cards/00-VDS/ThePaleMare.js": {
+        "add-message": 2,
+        "legacy-helper": 1
+    },
+    "server/game/cards/00-VDS/ThePowerOfWealth.js": {
+        "add-message": 1
+    },
+    "server/game/cards/00-VDS/TheVipersRage.js": {
+        "add-message": 1
+    },
+    "server/game/cards/00-VDS/Treaty.js": {
+        "legacy-helper": 2,
+        "add-message": 3,
+        "prompt-for-select": 1
+    },
+    "server/game/cards/00-VDS/TyrionLannister.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/AClashOfKings.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/AFeastForCrows.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/01-Core/AMeagerContribution.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/AeronDamphair.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/AreoHotah.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/AryaStark.js": {
+        "direct-state-write": 1,
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/AshaGreyjoy.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/BenjenStark.js": {
+        "add-message": 1,
+        "legacy-helper": 2
+    },
+    "server/game/cards/01-Core/BodyGuard.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/BranStark.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/CallingTheBanners.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/CalmOverWesteros.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/CastleBlack.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/ChamberOfThePaintedTable.js": {
+        "prompt-for-select": 1,
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/01-Core/Confinement.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/ConsolidationOfPower.js": {
+        "add-message": 2,
+        "legacy-helper": 1,
+        "prompt-for-select": 1
+    },
+    "server/game/cards/01-Core/CountingCoppers.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/DoransGame.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/DornishParamour.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/DothrakiSea.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/Dracarys.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/EddardStark.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/EdricDayne.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/EuronCrowsEye.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/Fealty.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/FieryFollowers.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/FireAndBlood.js": {
+        "add-message": 2,
+        "legacy-helper": 1
+    },
+    "server/game/cards/01-Core/ForTheNorth.js": {
+        "add-message": 2,
+        "legacy-helper": 1
+    },
+    "server/game/cards/01-Core/GhastonGrey.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/Ghost.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/GoldCloaks.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/GreenbloodTrader.js": {
+        "legacy-helper": 3,
+        "add-message": 2
+    },
+    "server/game/cards/01-Core/GreyWind.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/GrowingStrong.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/HandMaiden.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/HeadsOnSpikes.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/HearMeRoar.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/Heartsbane.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/Highgarden.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/Ice.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/IronFleetScout.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/JoffreyBaratheon.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/Lannisport.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/Lightbringer.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/LikeWarmRain.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/LittleFinger.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/LordsportShipright.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/MaesterAemon.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/MaesterCaleotte.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/MaesterCressen.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/MaesterLomys.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/MagisterIllyrio.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/01-Core/MarchedToTheWall.js": {
+        "legacy-helper": 1
+    },
+    "server/game/cards/01-Core/MargaeryTyrell.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/Melisandre.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/MessengerRaven.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/OldBearMormont.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/OldForestHunter.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/OlennasInformant.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/OursIsTheFury.js": {
+        "add-message": 2,
+        "legacy-helper": 1
+    },
+    "server/game/cards/01-Core/PlazaOfPunishment.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/PowerBehindTheThrone.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/01-Core/PutToTheSword.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/PutToTheTorch.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/RandyllTarly.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/01-Core/RattleshirtsRaiders.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/Rebuilding.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/Reinforcement.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/Rhaegal.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/RisenFromTheSea.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/RobbStark.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/SansaStark.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/SealOfTheHand.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/01-Core/SeenInFlames.js": {
+        "add-message": 2,
+        "prompt-for-select": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/01-Core/SelyseBaratheon.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/SerDavosSeaworth.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/01-Core/SerJorahMormont.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/SerWaymarRoyce.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/ShireenBaratheon.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/Summer.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/Sunspear.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/SuperiorClaim.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/SupportingTheFaith.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/TakeTheBlack.js": {
+        "legacy-helper": 1
+    },
+    "server/game/cards/01-Core/TheBearAndTheMaidenFair.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/TheHandsJudgment.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/TheKingsroad.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/TheKrakensGrasp.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/TheMander.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/TheQueenOfThorns.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/TheQueensAssassin.js": {
+        "prompt-for-select": 1,
+        "add-message": 2,
+        "legacy-helper": 1
+    },
+    "server/game/cards/01-Core/TheRedKeep.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/TheRedViper.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/TheSwordInTheDarkness.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/TheThingsIDoForLove.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/TheTickler.js": {
+        "add-message": 2,
+        "prompt-for-select": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/01-Core/TheWall.js": {
+        "add-message": 2,
+        "legacy-helper": 2
+    },
+    "server/game/cards/01-Core/TheonGreyjoy.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/ThrowingAxe.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/Treachery.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/TyrionLannister.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/UnbowedUnbentUnbroken.js": {
+        "add-message": 1,
+        "legacy-helper": 2
+    },
+    "server/game/cards/01-Core/VanguardLancer.js": {
+        "add-message": 2
+    },
+    "server/game/cards/01-Core/Varys.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/VerteranBuilder.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/01-Core/ViserysTargaryen.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/WakingTheDragon.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/WeDoNotSow.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/WildfireAssault.js": {
+        "add-message": 2,
+        "legacy-helper": 1
+    },
+    "server/game/cards/01-Core/WildlingHorde.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/WinterIsComing.js": {
+        "add-message": 1
+    },
+    "server/game/cards/01-Core/Yoren.js": {
+        "add-message": 1
+    },
+    "server/game/cards/02.1-TtB/ArborKnight.js": {
+        "add-message": 1
+    },
+    "server/game/cards/02.1-TtB/BastardDaughter.js": {
+        "add-message": 1
+    },
+    "server/game/cards/02.1-TtB/KingRobertsWarhammer.js": {
+        "legacy-helper": 1,
+        "add-message": 2
+    },
+    "server/game/cards/02.1-TtB/Lady.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/02.1-TtB/PleasureBarge.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/02.1-TtB/RiseOfTheKraken.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/02.1-TtB/StreetOfTheSisters.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/02.1-TtB/TheHound.js": {
+        "add-message": 2
+    },
+    "server/game/cards/02.1-TtB/TheLongPlan.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/02.1-TtB/TheSeastoneChair.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/02.1-TtB/VaesDothrak.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/02.1-TtB/Will.js": {
+        "add-message": 1
+    },
+    "server/game/cards/02.2-TRtW/BrandonsGift.js": {
+        "add-message": 1
+    },
+    "server/game/cards/02.2-TRtW/BrothelMadame.js": {
+        "add-message": 4,
+        "legacy-helper": 1
+    },
+    "server/game/cards/02.2-TRtW/InDoransName.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/02.2-TRtW/InTheNameOfYourKing.js": {
+        "add-message": 1
+    },
+    "server/game/cards/02.2-TRtW/LadyInWaiting.js": {
+        "add-message": 1
+    },
+    "server/game/cards/02.2-TRtW/LadySansasRose.js": {
+        "add-message": 1
+    },
+    "server/game/cards/02.2-TRtW/NymeriaSand.js": {
+        "add-message": 1
+    },
+    "server/game/cards/02.2-TRtW/PoliticalDisaster.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/02.2-TRtW/RaidingLongship.js": {
+        "add-message": 1
+    },
+    "server/game/cards/02.2-TRtW/Rakharo.js": {
+        "add-message": 1
+    },
+    "server/game/cards/02.2-TRtW/RoyalEntourage.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/02.2-TRtW/SyrioForel.js": {
+        "add-message": 1
+    },
+    "server/game/cards/02.2-TRtW/TheReader.js": {
+        "add-message": 1
+    },
+    "server/game/cards/02.2-TRtW/TradingWithThePentoshi.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/02.2-TRtW/UnswornApprentice.js": {
+        "add-message": 1
+    },
+    "server/game/cards/02.2-TRtW/WardensOfTheWest.js": {
+        "prompt-for-select": 1,
+        "add-message": 2,
+        "legacy-helper": 1
+    },
+    "server/game/cards/02.2-TRtW/WinterfellKennelMaster.js": {
+        "add-message": 1
+    },
+    "server/game/cards/02.3-TKP/CroneOfVaesDothrak.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/02.3-TKP/INeverBetAgainstMyFamily.js": {
+        "prompt-for-select": 1,
+        "add-message": 2
+    },
+    "server/game/cards/02.3-TKP/MareInHeat.js": {
+        "add-message": 1
+    },
+    "server/game/cards/02.3-TKP/MoonBoy.js": {
+        "add-message": 1
+    },
+    "server/game/cards/02.3-TKP/NewlyMadeLord.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/02.3-TKP/SerAlliserThorne.js": {
+        "add-message": 1
+    },
+    "server/game/cards/02.3-TKP/SerGregorClegane.js": {
+        "legacy-helper": 2,
+        "add-message": 2,
+        "prompt-for-select": 1
+    },
+    "server/game/cards/02.3-TKP/TheBoneway.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/02.3-TKP/TheKingsPeace.js": {
+        "add-message": 4,
+        "legacy-helper": 2
+    },
+    "server/game/cards/02.3-TKP/TheLordOfTheCrossing.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/02.4-NMG/Gendry.js": {
+        "add-message": 2,
+        "prompt-for-select": 1
+    },
+    "server/game/cards/02.4-NMG/Halder.js": {
+        "add-message": 1
+    },
+    "server/game/cards/02.4-NMG/Loot.js": {
+        "add-message": 1
+    },
+    "server/game/cards/02.4-NMG/MaesterOfStarfall.js": {
+        "add-message": 1
+    },
+    "server/game/cards/02.4-NMG/PaidOff.js": {
+        "legacy-helper": 3,
+        "add-message": 3
+    },
+    "server/game/cards/02.4-NMG/RedCloaks.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/02.4-NMG/SerHorasRedwyne.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/02.4-NMG/TheWatcherOnTheWalls.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/02.4-NMG/TobhoMottsArmory.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/02.4-NMG/WardensOfTheNorth.js": {
+        "add-message": 1
+    },
+    "server/game/cards/02.4-NMG/WildlingScout.js": {
+        "add-message": 1
+    },
+    "server/game/cards/02.5-COW/BloodMagicRitual.js": {
+        "add-message": 1
+    },
+    "server/game/cards/02.5-COW/Bronn.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/02.5-COW/Chett.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/02.5-COW/IronMines.js": {
+        "add-message": 1
+    },
+    "server/game/cards/02.5-COW/Kingswood.js": {
+        "add-message": 1
+    },
+    "server/game/cards/02.5-COW/MirriMazDuur.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/02.5-COW/Nightmares.js": {
+        "add-message": 1
+    },
+    "server/game/cards/02.5-COW/NorthernRookery.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/02.5-COW/StinkingDrunk.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/02.5-COW/TheEyrie.js": {
+        "add-message": 1
+    },
+    "server/game/cards/02.5-COW/TrialByCombat.js": {
+        "add-message": 1
+    },
+    "server/game/cards/02.5-COW/VengeanceForElia.js": {
+        "add-message": 1
+    },
+    "server/game/cards/02.5-COW/WinterfellCrypt.js": {
+        "add-message": 1
+    },
+    "server/game/cards/02.6-TS/AGiftOfArborRed.js": {
+        "prompt-for-select": 1,
+        "add-message": 1
+    },
+    "server/game/cards/02.6-TS/Butterbumps.js": {
+        "add-message": 1
+    },
+    "server/game/cards/02.6-TS/CloseCall.js": {
+        "prompt-for-select": 1,
+        "legacy-helper": 2,
+        "add-message": 2
+    },
+    "server/game/cards/02.6-TS/DagmerCleftjaw.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/02.6-TS/FuneralPyre.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/02.6-TS/MaestersChain.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/02.6-TS/SerBarristanSelmy.js": {
+        "add-message": 1
+    },
+    "server/game/cards/02.6-TS/SerIlynPayne.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/02.6-TS/SmallCouncilChamber.js": {
+        "add-message": 1
+    },
+    "server/game/cards/02.6-TS/Ward.js": {
+        "legacy-helper": 1
+    },
+    "server/game/cards/03-WotN/Aggo.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/03-WotN/AheadOfTheTide.js": {
+        "add-message": 2,
+        "legacy-helper": 1
+    },
+    "server/game/cards/03-WotN/AryaStark.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/03-WotN/AryasGift.js": {
+        "prompt-for-select": 1,
+        "add-message": 1
+    },
+    "server/game/cards/03-WotN/AsHardAsWinter.js": {
+        "add-message": 1
+    },
+    "server/game/cards/03-WotN/CatelynStark.js": {
+        "add-message": 1
+    },
+    "server/game/cards/03-WotN/CrossroadsSellsword.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/03-WotN/DragonSight.js": {
+        "add-message": 1
+    },
+    "server/game/cards/03-WotN/EddardStark.js": {
+        "add-message": 1
+    },
+    "server/game/cards/03-WotN/EvenHandedJustice.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/03-WotN/FallenFromFavor.js": {
+        "add-message": 1
+    },
+    "server/game/cards/03-WotN/GreenDreams.js": {
+        "add-message": 3,
+        "legacy-helper": 1
+    },
+    "server/game/cards/03-WotN/HealingExpertise.js": {
+        "add-message": 1
+    },
+    "server/game/cards/03-WotN/HisViperEyes.js": {
+        "add-message": 2,
+        "prompt-for-select": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/03-WotN/HouseFlorentKnight.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/03-WotN/HouseTullySepton.js": {
+        "add-message": 1
+    },
+    "server/game/cards/03-WotN/JonSnow.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/03-WotN/JoryCassel.js": {
+        "add-message": 1
+    },
+    "server/game/cards/03-WotN/KingRobbsHost.js": {
+        "prompt-for-select": 1,
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/03-WotN/Motley.js": {
+        "add-message": 1
+    },
+    "server/game/cards/03-WotN/Needle.js": {
+        "add-message": 1
+    },
+    "server/game/cards/03-WotN/Nymeria.js": {
+        "add-message": 1
+    },
+    "server/game/cards/03-WotN/OldNan.js": {
+        "add-message": 1
+    },
+    "server/game/cards/03-WotN/Osha.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/03-WotN/QuentynMartell.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/03-WotN/RickonStark.js": {
+        "add-message": 1
+    },
+    "server/game/cards/03-WotN/RiverrunMinstrel.js": {
+        "add-message": 1
+    },
+    "server/game/cards/03-WotN/Stonesnake.js": {
+        "add-message": 1
+    },
+    "server/game/cards/03-WotN/TheLongWinter.js": {
+        "add-message": 3,
+        "prompt-for-select": 1
+    },
+    "server/game/cards/03-WotN/ThePackSurvives.js": {
+        "add-message": 2
+    },
+    "server/game/cards/03-WotN/TheShadowTower.js": {
+        "add-message": 1
+    },
+    "server/game/cards/03-WotN/Tithe.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/03-WotN/ToTheRoseBanner.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/03-WotN/TourneyGrounds.js": {
+        "add-message": 1
+    },
+    "server/game/cards/03-WotN/TowerOfTheHand.js": {
+        "add-message": 1
+    },
+    "server/game/cards/03-WotN/Winterfell.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/03-WotN/WolvesOfTheNorth.js": {
+        "add-message": 1
+    },
+    "server/game/cards/04.1-AtSK/Arry.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/04.1-AtSK/BitterbridgeEncampment.js": {
+        "legacy-helper": 1,
+        "add-message": 2,
+        "prompt-for-select": 1
+    },
+    "server/game/cards/04.1-AtSK/CaptainsDaughter.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/04.1-AtSK/JanosSlynt.js": {
+        "add-message": 1
+    },
+    "server/game/cards/04.1-AtSK/LeviesAtTheRock.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/04.1-AtSK/Pyke.js": {
+        "add-message": 1
+    },
+    "server/game/cards/04.1-AtSK/Pyromancers.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/04.1-AtSK/Riverrun.js": {
+        "add-message": 1
+    },
+    "server/game/cards/04.1-AtSK/RobbStark.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/04.1-AtSK/RubyOfRhllor.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/04.1-AtSK/ShierakQiya.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/04.1-AtSK/TheDragonsTail.js": {
+        "legacy-helper": 2,
+        "add-message": 1
+    },
+    "server/game/cards/04.1-AtSK/TowerOfTheSun.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/04.1-AtSK/VaryssRiddle.js": {
+        "add-message": 1
+    },
+    "server/game/cards/04.1-AtSK/ViserysTargaryen.js": {
+        "add-message": 1
+    },
+    "server/game/cards/04.1-AtSK/WhiteRaven.js": {
+        "add-message": 2,
+        "legacy-helper": 1
+    },
+    "server/game/cards/04.1-AtSK/WhiteTree.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/04.2-CtA/BalonGreyjoy.js": {
+        "add-message": 1
+    },
+    "server/game/cards/04.2-CtA/BeggarKing.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/04.2-CtA/DolorousEdd.js": {
+        "add-message": 3
+    },
+    "server/game/cards/04.2-CtA/OursIsTheOldWay.js": {
+        "add-message": 2
+    },
+    "server/game/cards/04.2-CtA/Shae.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/04.2-CtA/StarfallCavalry.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/04.2-CtA/TheBoyKing.js": {
+        "add-message": 1
+    },
+    "server/game/cards/04.2-CtA/WinterFestival.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/04.3-FFH/AsshaiPriestess.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/04.3-FFH/BearIsland.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/04.3-FFH/CrownOfGoldenRoses.js": {
+        "add-message": 1
+    },
+    "server/game/cards/04.3-FFH/Dissension.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/04.3-FFH/Harrenhal.js": {
+        "add-message": 1
+    },
+    "server/game/cards/04.3-FFH/HotPie.js": {
+        "add-message": 1
+    },
+    "server/game/cards/04.3-FFH/KingOfSaltAndRock.js": {
+        "add-message": 1
+    },
+    "server/game/cards/04.3-FFH/LordsportFisherman.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/04.3-FFH/NightGathers.js": {
+        "add-message": 1
+    },
+    "server/game/cards/04.3-FFH/SerEdmureTully.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/04.3-FFH/Spearmaiden.js": {
+        "add-message": 1
+    },
+    "server/game/cards/04.3-FFH/TheScorpionsSting.js": {
+        "prompt-for-select": 1,
+        "add-message": 1
+    },
+    "server/game/cards/04.3-FFH/ThorenSmallwood.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/04.4-TIMC/AeronDamphair.js": {
+        "legacy-helper": 2,
+        "add-message": 2
+    },
+    "server/game/cards/04.4-TIMC/BurningOnTheSand.js": {
+        "add-message": 1
+    },
+    "server/game/cards/04.4-TIMC/CaswellsKeep.js": {
+        "legacy-helper": 2,
+        "add-message": 1
+    },
+    "server/game/cards/04.4-TIMC/EliaSand.js": {
+        "add-message": 1
+    },
+    "server/game/cards/04.4-TIMC/IsleOfRavens.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/04.4-TIMC/JaqenHGhar.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/04.4-TIMC/KingBalonsSolar.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/04.4-TIMC/StannisBaratheon.js": {
+        "add-message": 1
+    },
+    "server/game/cards/04.4-TIMC/TandaStokeworth.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/04.4-TIMC/TheHauntedForest.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/04.4-TIMC/VaesTolorro.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/04.4-TIMC/ValarMorghulis.js": {
+        "legacy-helper": 1
+    },
+    "server/game/cards/04.4-TIMC/WithoutHisBeard.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/04.5-GoH/BlessHimWithSalt.js": {
+        "add-message": 2,
+        "legacy-helper": 1
+    },
+    "server/game/cards/04.5-GoH/ChatayasBrothel.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/04.5-GoH/Craster.js": {
+        "add-message": 1
+    },
+    "server/game/cards/04.5-GoH/GhostsOfHarrenhal.js": {
+        "add-message": 1
+    },
+    "server/game/cards/04.5-GoH/Harrenhal.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/04.5-GoH/JoffreyBaratheon.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/04.5-GoH/MotherOfDragons.js": {
+        "add-message": 1
+    },
+    "server/game/cards/04.5-GoH/OfferOfAPeach.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/04.5-GoH/QuietAsAShadow.js": {
+        "add-message": 1
+    },
+    "server/game/cards/04.5-GoH/RitualOfRhllor.js": {
+        "prompt-for-select": 1,
+        "add-message": 1
+    },
+    "server/game/cards/04.5-GoH/RooseBolton.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/04.5-GoH/SerDavosSeaworth.js": {
+        "legacy-helper": 2,
+        "add-message": 2
+    },
+    "server/game/cards/04.5-GoH/TheFrostfangs.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/04.5-GoH/ThePrincesPass.js": {
+        "add-message": 3,
+        "legacy-helper": 1
+    },
+    "server/game/cards/04.5-GoH/XaroXhoanDaxos.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/04.6-TC/BattleOfTheBlackwater.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/04.6-TC/HouseOfTheUndying.js": {
+        "add-message": 1
+    },
+    "server/game/cards/04.6-TC/PodrickPayne.js": {
+        "add-message": 2,
+        "prompt-for-select": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/04.6-TC/QhorinHalfhand.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/04.6-TC/QuaitheOfTheShadow.js": {
+        "add-message": 1
+    },
+    "server/game/cards/04.6-TC/RenlysPavilion.js": {
+        "add-message": 1
+    },
+    "server/game/cards/04.6-TC/SalladhorSaan.js": {
+        "add-message": 1
+    },
+    "server/game/cards/04.6-TC/SeaBitch.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/04.6-TC/SerArysOakheart.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/04.6-TC/TarredHeads.js": {
+        "add-message": 1
+    },
+    "server/game/cards/04.6-TC/TheValyrian.js": {
+        "add-message": 1
+    },
+    "server/game/cards/04.6-TC/TyrionsChain.js": {
+        "add-message": 1
+    },
+    "server/game/cards/04.6-TC/WolfInTheNight.js": {
+        "add-message": 1
+    },
+    "server/game/cards/05-LoCR/ALannisterAlwaysPaysHisDebts.js": {
+        "add-message": 1
+    },
+    "server/game/cards/05-LoCR/ARoseOfGold.js": {
+        "add-message": 3,
+        "legacy-helper": 2
+    },
+    "server/game/cards/05-LoCR/Alayaya.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/05-LoCR/BridgeOfSkulls.js": {
+        "add-message": 1
+    },
+    "server/game/cards/05-LoCR/DaringRescue.js": {
+        "add-message": 2,
+        "prompt-for-select": 1
+    },
+    "server/game/cards/05-LoCR/EdricStorm.js": {
+        "add-message": 1
+    },
+    "server/game/cards/05-LoCR/HighSepton.js": {
+        "add-message": 1
+    },
+    "server/game/cards/05-LoCR/InsidiousScheme.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/05-LoCR/JeyneWesterling.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/05-LoCR/LannisportGuard.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/05-LoCR/LannisportTreasury.js": {
+        "legacy-helper": 2,
+        "add-message": 2
+    },
+    "server/game/cards/05-LoCR/LastHearthScouts.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/05-LoCR/LionsOfTheRock.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/05-LoCR/MoonBrothers.js": {
+        "add-message": 1
+    },
+    "server/game/cards/05-LoCR/MountainsOfTheMoon.js": {
+        "add-message": 1
+    },
+    "server/game/cards/05-LoCR/OceanRoad.js": {
+        "add-message": 1
+    },
+    "server/game/cards/05-LoCR/OldWyk.js": {
+        "add-message": 3
+    },
+    "server/game/cards/05-LoCR/RedKeepSpy.js": {
+        "add-message": 1
+    },
+    "server/game/cards/05-LoCR/SerBarristanSelmy.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/05-LoCR/SerGregorsMarauders.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/05-LoCR/SerJaimeLannister.js": {
+        "add-message": 1
+    },
+    "server/game/cards/05-LoCR/SerKevanLannister.js": {
+        "add-message": 1
+    },
+    "server/game/cards/05-LoCR/ShaggaSonOfDolf.js": {
+        "add-message": 2,
+        "legacy-helper": 1
+    },
+    "server/game/cards/05-LoCR/TaenaMerryweather.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/05-LoCR/TheCouncilConsents.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/05-LoCR/TheRainsOfCastamere.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/05-LoCR/TimettSonOfTimett.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/05-LoCR/TrystaneMartell.js": {
+        "add-message": 1
+    },
+    "server/game/cards/05-LoCR/TyrionLannister.js": {
+        "add-message": 1
+    },
+    "server/game/cards/05-LoCR/TywinLannister.js": {
+        "add-message": 1
+    },
+    "server/game/cards/05-LoCR/VictarionGreyjoy.js": {
+        "add-message": 1
+    },
+    "server/game/cards/05-LoCR/YouMurderedHerChildren.js": {
+        "add-message": 1
+    },
+    "server/game/cards/06.1-AMAF/AllMenAreFools.js": {
+        "add-message": 1
+    },
+    "server/game/cards/06.1-AMAF/AttackFromTheMountains.js": {
+        "add-message": 1
+    },
+    "server/game/cards/06.1-AMAF/DrownedDisciple.js": {
+        "add-message": 1
+    },
+    "server/game/cards/06.1-AMAF/EastwatchByTheSea.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/06.1-AMAF/EastwatchCarpenter.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/06.1-AMAF/FickleBannerman.js": {
+        "add-message": 2,
+        "legacy-helper": 1
+    },
+    "server/game/cards/06.1-AMAF/GhiscariElite.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/06.1-AMAF/LateSummerFeast.js": {
+        "add-message": 3,
+        "legacy-helper": 1
+    },
+    "server/game/cards/06.1-AMAF/SlaversBayPort.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/06.1-AMAF/StoneCrows.js": {
+        "prompt-for-select": 1,
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/06.1-AMAF/StormsEnd.js": {
+        "add-message": 1
+    },
+    "server/game/cards/06.1-AMAF/ThePrincesPlan.js": {
+        "add-message": 2,
+        "legacy-helper": 1
+    },
+    "server/game/cards/06.1-AMAF/TheTumblestone.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/06.2-GtR/ADragonIsNoSlave.js": {
+        "add-message": 2,
+        "legacy-helper": 1
+    },
+    "server/game/cards/06.2-GtR/BearIslandHost.js": {
+        "add-message": 1
+    },
+    "server/game/cards/06.2-GtR/Gilly.js": {
+        "add-message": 1
+    },
+    "server/game/cards/06.2-GtR/GreatHall.js": {
+        "add-message": 1
+    },
+    "server/game/cards/06.2-GtR/GuardingTheRealm.js": {
+        "add-message": 2,
+        "legacy-helper": 1
+    },
+    "server/game/cards/06.2-GtR/IronIslandsMarket.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/06.2-GtR/KnightOfTheReach.js": {
+        "add-message": 1
+    },
+    "server/game/cards/06.2-GtR/LightOfTheLord.js": {
+        "legacy-helper": 2,
+        "add-message": 1
+    },
+    "server/game/cards/06.2-GtR/LordRenlysRide.js": {
+        "add-message": 1
+    },
+    "server/game/cards/06.2-GtR/MarriagePact.js": {
+        "add-message": 1
+    },
+    "server/game/cards/06.2-GtR/Melisandre.js": {
+        "add-message": 2,
+        "prompt-for-select": 1,
+        "legacy-helper": 2
+    },
+    "server/game/cards/06.2-GtR/OrphanOfTheGreenblood.js": {
+        "add-message": 1
+    },
+    "server/game/cards/06.2-GtR/Polliver.js": {
+        "add-message": 1
+    },
+    "server/game/cards/06.2-GtR/ScorchingDeserts.js": {
+        "add-message": 1
+    },
+    "server/game/cards/06.2-GtR/SecondSons.js": {
+        "add-message": 2
+    },
+    "server/game/cards/06.2-GtR/TheAnnalsOfCastleBlack.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/06.2-GtR/TheDornishmansWife.js": {
+        "add-message": 1
+    },
+    "server/game/cards/06.2-GtR/TheHandsSolar.js": {
+        "add-message": 1
+    },
+    "server/game/cards/06.2-GtR/WexPyke.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/06.3-TFoA/Astapor.js": {
+        "add-message": 1
+    },
+    "server/game/cards/06.3-TFoA/CorsairsDirk.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/06.3-TFoA/DornishFiefdom.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/06.3-TFoA/Duel.js": {
+        "add-message": 3,
+        "prompt-for-select": 2,
+        "legacy-helper": 2
+    },
+    "server/game/cards/06.3-TFoA/FeverDreams.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/06.3-TFoA/FreyLordling.js": {
+        "add-message": 1
+    },
+    "server/game/cards/06.3-TFoA/GreyWorm.js": {
+        "add-message": 1
+    },
+    "server/game/cards/06.3-TFoA/LaySiege.js": {
+        "legacy-helper": 2,
+        "add-message": 1
+    },
+    "server/game/cards/06.3-TFoA/MaesterOfSunspear.js": {
+        "add-message": 1
+    },
+    "server/game/cards/06.3-TFoA/RecruiterForTheWatch.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/06.3-TFoA/SpearsOfTheMerlingKing.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/06.3-TFoA/TheNorthRemembers.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/06.3-TFoA/UndergroundVault.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/06.4-TRW/ArborVineyard.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/06.4-TRW/BreakerOfChains.js": {
+        "add-message": 1
+    },
+    "server/game/cards/06.4-TRW/EllariaSand.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/06.4-TRW/FreyBastard.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/06.4-TRW/FreyHospitality.js": {
+        "prompt-for-select": 1,
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/06.4-TRW/ImprovedFortifications.js": {
+        "add-message": 1
+    },
+    "server/game/cards/06.4-TRW/OldtownInformer.js": {
+        "legacy-helper": 2,
+        "add-message": 2,
+        "prompt-for-select": 1
+    },
+    "server/game/cards/06.4-TRW/OthellYarwyck.js": {
+        "add-message": 1
+    },
+    "server/game/cards/06.4-TRW/Plunder.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/06.4-TRW/SavingTheKingdom.js": {
+        "legacy-helper": 2,
+        "add-message": 2
+    },
+    "server/game/cards/06.4-TRW/SecretSchemes.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/06.4-TRW/SerAxellFlorent.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/06.4-TRW/SerOsmundKettleblack.js": {
+        "add-message": 1
+    },
+    "server/game/cards/06.4-TRW/SilencesCrew.js": {
+        "add-message": 1
+    },
+    "server/game/cards/06.4-TRW/StrongBelwas.js": {
+        "add-message": 1
+    },
+    "server/game/cards/06.4-TRW/TheRedWedding.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/06.4-TRW/TywinsStratagem.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/06.4-TRW/WinterfellArcheryRange.js": {
+        "add-message": 1
+    },
+    "server/game/cards/06.5-OR/ATaskForEveryTool.js": {
+        "add-message": 1
+    },
+    "server/game/cards/06.5-OR/BeggingBrother.js": {
+        "add-message": 1
+    },
+    "server/game/cards/06.5-OR/BranStark.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/06.5-OR/DornishRevenge.js": {
+        "add-message": 3,
+        "prompt-for-select": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/06.5-OR/FleaBottom.js": {
+        "add-message": 1
+    },
+    "server/game/cards/06.5-OR/IronVictory.js": {
+        "add-message": 1
+    },
+    "server/game/cards/06.5-OR/Irri.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/06.5-OR/KayceMerchant.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/06.5-OR/MutinyAtCrastersKeep.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/06.5-OR/NorthernEncampment.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/06.5-OR/NuteTheBarber.js": {
+        "legacy-helper": 2,
+        "add-message": 2
+    },
+    "server/game/cards/06.5-OR/OlennasMachinations.js": {
+        "add-message": 2,
+        "legacy-helper": 1
+    },
+    "server/game/cards/06.5-OR/OverthrowingTheMasters.js": {
+        "add-message": 1
+    },
+    "server/game/cards/06.5-OR/PassingTheBlackGate.js": {
+        "add-message": 1
+    },
+    "server/game/cards/06.5-OR/SerGarlanTyrell.js": {
+        "add-message": 1
+    },
+    "server/game/cards/06.5-OR/StannissCavalry.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/06.5-OR/TheIronBankWillHaveItsDue.js": {
+        "legacy-helper": 1,
+        "add-message": 2
+    },
+    "server/game/cards/06.6-TBWB/BericDondarrion.js": {
+        "add-message": 1
+    },
+    "server/game/cards/06.6-TBWB/DonalNoye.js": {
+        "add-message": 1
+    },
+    "server/game/cards/06.6-TBWB/DornishSpy.js": {
+        "add-message": 1
+    },
+    "server/game/cards/06.6-TBWB/FavorsFromTheCrown.js": {
+        "add-message": 1
+    },
+    "server/game/cards/06.6-TBWB/Freedmen.js": {
+        "add-message": 1
+    },
+    "server/game/cards/06.6-TBWB/GennaFrey.js": {
+        "add-message": 1
+    },
+    "server/game/cards/06.6-TBWB/HighgardenMinstrel.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/06.6-TBWB/HornHill.js": {
+        "add-message": 1
+    },
+    "server/game/cards/06.6-TBWB/KingsBlood.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/06.6-TBWB/LockedAway.js": {
+        "add-message": 1
+    },
+    "server/game/cards/06.6-TBWB/NorthernKeep.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/06.6-TBWB/PayTheIronPrice.js": {
+        "add-message": 2,
+        "legacy-helper": 1
+    },
+    "server/game/cards/06.6-TBWB/RangersBow.js": {
+        "add-message": 1
+    },
+    "server/game/cards/06.6-TBWB/StonyShoreRaider.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/06.6-TBWB/TheBrotherhoodWithoutBanners.js": {
+        "add-message": 1
+    },
+    "server/game/cards/06.6-TBWB/TheGoldRoad.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/06.6-TBWB/UnbridledGenerosity.js": {
+        "add-message": 1
+    },
+    "server/game/cards/07-WotW/AbandonedStronghold.js": {
+        "add-message": 1
+    },
+    "server/game/cards/07-WotW/BlackBetha.js": {
+        "add-message": 1
+    },
+    "server/game/cards/07-WotW/BuilderAtTheWall.js": {
+        "add-message": 1
+    },
+    "server/game/cards/07-WotW/CatapultOnTheWall.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/07-WotW/CotterPyke.js": {
+        "add-message": 1
+    },
+    "server/game/cards/07-WotW/Dalla.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/07-WotW/Ghost.js": {
+        "add-message": 1
+    },
+    "server/game/cards/07-WotW/Grenn.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/07-WotW/IShallWinNoGlory.js": {
+        "add-message": 1
+    },
+    "server/game/cards/07-WotW/JeynePoole.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/07-WotW/JonSnow.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/07-WotW/LingeringVenom.js": {
+        "legacy-helper": 1
+    },
+    "server/game/cards/07-WotW/LostRanger.js": {
+        "add-message": 1
+    },
+    "server/game/cards/07-WotW/MaesterAemon.js": {
+        "add-message": 1
+    },
+    "server/game/cards/07-WotW/MaryaSeaworth.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/07-WotW/NameDayTourney.js": {
+        "add-message": 1
+    },
+    "server/game/cards/07-WotW/NowMyWatchBegins.js": {
+        "add-message": 1
+    },
+    "server/game/cards/07-WotW/OldBearMormont.js": {
+        "add-message": 1
+    },
+    "server/game/cards/07-WotW/PlazaOfPride.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/07-WotW/Pyp.js": {
+        "add-message": 1
+    },
+    "server/game/cards/07-WotW/Queenscrown.js": {
+        "prompt-for-select": 1,
+        "add-message": 2
+    },
+    "server/game/cards/07-WotW/SaltWife.js": {
+        "add-message": 1
+    },
+    "server/game/cards/07-WotW/Satin.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/07-WotW/ScalingTheWall.js": {
+        "add-message": 1
+    },
+    "server/game/cards/07-WotW/SouthronMessenger.js": {
+        "add-message": 1
+    },
+    "server/game/cards/07-WotW/Summer.js": {
+        "add-message": 2
+    },
+    "server/game/cards/07-WotW/TheFrozenShore.js": {
+        "prompt-for-select": 1,
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/07-WotW/TheHoneywine.js": {
+        "add-message": 1
+    },
+    "server/game/cards/07-WotW/TheLastOfTheGiants.js": {
+        "add-message": 1
+    },
+    "server/game/cards/07-WotW/TheNewGift.js": {
+        "legacy-helper": 2,
+        "add-message": 2
+    },
+    "server/game/cards/07-WotW/TheWhiteShadows.js": {
+        "add-message": 1
+    },
+    "server/game/cards/07-WotW/ThereAreNoMenLikeMe.js": {
+        "add-message": 1
+    },
+    "server/game/cards/07-WotW/UlfSonOfUmar.js": {
+        "add-message": 1
+    },
+    "server/game/cards/07-WotW/WeirwoodBow.js": {
+        "add-message": 1
+    },
+    "server/game/cards/07-WotW/WhisperCampaign.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/08.1-TAK/AcolyteOfTheWaves.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/08.1-TAK/AtNightTheyHowl.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/08.1-TAK/BloodyArakh.js": {
+        "add-message": 1
+    },
+    "server/game/cards/08.1-TAK/DaarioNaharis.js": {
+        "legacy-helper": 1
+    },
+    "server/game/cards/08.1-TAK/DoreaSand.js": {
+        "add-message": 1
+    },
+    "server/game/cards/08.1-TAK/DreadfortMaester.js": {
+        "add-message": 1
+    },
+    "server/game/cards/08.1-TAK/MaesterAtTheRock.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/08.1-TAK/NaggasRibs.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/08.1-TAK/QueensMen.js": {
+        "add-message": 2,
+        "prompt-for-select": 2,
+        "legacy-helper": 2
+    },
+    "server/game/cards/08.1-TAK/SeptaNysterica.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/08.1-TAK/TheIronBank.js": {
+        "add-message": 1
+    },
+    "server/game/cards/08.1-TAK/TheRatCook.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/08.1-TAK/TheWaterGardens.js": {
+        "add-message": 1
+    },
+    "server/game/cards/08.1-TAK/ValarDohaeris.js": {
+        "add-message": 2
+    },
+    "server/game/cards/08.1-TAK/YoungBuilder.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/08.2-JtO/ArianneMartell.js": {
+        "add-message": 1
+    },
+    "server/game/cards/08.2-JtO/BlackEars.js": {
+        "add-message": 1
+    },
+    "server/game/cards/08.2-JtO/BlackWind.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/08.2-JtO/BrightwaterKnight.js": {
+        "add-message": 1
+    },
+    "server/game/cards/08.2-JtO/ChangeOfPlans.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/08.2-JtO/ConsumingFlames.js": {
+        "add-message": 1
+    },
+    "server/game/cards/08.2-JtO/Dareon.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/08.2-JtO/JourneyToOldtown.js": {
+        "add-message": 1
+    },
+    "server/game/cards/08.2-JtO/Kingslayer.js": {
+        "legacy-helper": 2,
+        "add-message": 2
+    },
+    "server/game/cards/08.2-JtO/StannissWrath.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/08.2-JtO/Stormcrows.js": {
+        "prompt-for-select": 1,
+        "add-message": 1
+    },
+    "server/game/cards/08.2-JtO/TheHouseOfBlackAndWhite.js": {
+        "legacy-helper": 2,
+        "add-message": 2
+    },
+    "server/game/cards/08.2-JtO/TheHouseWithTheRedDoor.js": {
+        "direct-state-write": 1
+    },
+    "server/game/cards/08.2-JtO/ThorosOfMyr.js": {
+        "add-message": 1
+    },
+    "server/game/cards/08.2-JtO/TrisBotley.js": {
+        "legacy-helper": 1,
+        "add-message": 2
+    },
+    "server/game/cards/08.3-Km/Darkstar.js": {
+        "add-message": 1
+    },
+    "server/game/cards/08.3-Km/Jhiqui.js": {
+        "add-message": 1
+    },
+    "server/game/cards/08.3-Km/Kingsmoot.js": {
+        "add-message": 1
+    },
+    "server/game/cards/08.3-Km/LaughingLord.js": {
+        "add-message": 1
+    },
+    "server/game/cards/08.3-Km/LyseniPirate.js": {
+        "legacy-helper": 2,
+        "add-message": 2,
+        "prompt-for-select": 1
+    },
+    "server/game/cards/08.3-Km/MolesTown.js": {
+        "legacy-helper": 1,
+        "add-message": 2
+    },
+    "server/game/cards/08.3-Km/RaffTheSweetling.js": {
+        "add-message": 1
+    },
+    "server/game/cards/08.3-Km/SerHyleHunt.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/08.3-Km/SparringInSecret.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/08.3-Km/TheBountyOfHighgarden.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/08.3-Km/TheDreadfort.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/08.3-Km/TheSkahazadhan.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/08.3-Km/TomOfSevenstreams.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/08.4-FotOG/CoastalReaver.js": {
+        "add-message": 2,
+        "prompt-for-select": 1
+    },
+    "server/game/cards/08.4-FotOG/DragonstoneCastle.js": {
+        "add-message": 1
+    },
+    "server/game/cards/08.4-FotOG/GarrisonOnTheWall.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/08.4-FotOG/HightowerSpy.js": {
+        "add-message": 1
+    },
+    "server/game/cards/08.4-FotOG/Nymeria.js": {
+        "add-message": 1
+    },
+    "server/game/cards/08.4-FotOG/ObsidianArrows.js": {
+        "add-message": 1
+    },
+    "server/game/cards/08.4-FotOG/PlankyTownTrader.js": {
+        "add-message": 2
+    },
+    "server/game/cards/08.4-FotOG/SeizedByTheGuard.js": {
+        "add-message": 2
+    },
+    "server/game/cards/08.4-FotOG/SelyseBaratheon.js": {
+        "legacy-helper": 2,
+        "add-message": 2
+    },
+    "server/game/cards/08.4-FotOG/SerBalonSwann.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/08.4-FotOG/Shandystone.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/08.4-FotOG/SupportOfHarlaw.js": {
+        "add-message": 1
+    },
+    "server/game/cards/08.4-FotOG/WarriorsSons.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/08.4-FotOG/WiseMaster.js": {
+        "add-message": 1
+    },
+    "server/game/cards/08.4-FotOG/Yunkai.js": {
+        "add-message": 2
+    },
+    "server/game/cards/08.5-TFM/ArborQueen.js": {
+        "add-message": 1
+    },
+    "server/game/cards/08.5-TFM/CerseisInformer.js": {
+        "legacy-helper": 2,
+        "add-message": 2,
+        "prompt-for-select": 1
+    },
+    "server/game/cards/08.5-TFM/Coldhands.js": {
+        "add-message": 1
+    },
+    "server/game/cards/08.5-TFM/CompelledByTheFaith.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/08.5-TFM/DaenerysTargaryen.js": {
+        "add-message": 1
+    },
+    "server/game/cards/08.5-TFM/GivenToTheDrownedGod.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/08.5-TFM/HouseYronwoodKnight.js": {
+        "add-message": 1
+    },
+    "server/game/cards/08.5-TFM/IAmNoOne.js": {
+        "add-message": 1
+    },
+    "server/game/cards/08.5-TFM/KingsMen.js": {
+        "add-message": 1
+    },
+    "server/game/cards/08.5-TFM/TheBayOfSeals.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/08.5-TFM/TheFaithMilitant.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/08.5-TFM/TheSongOfTheSeven.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/08.6-SAT/APlotAgainstTheQueen.js": {
+        "add-message": 1
+    },
+    "server/game/cards/08.6-SAT/DriftwoodCudgel.js": {
+        "add-message": 1
+    },
+    "server/game/cards/08.6-SAT/Godswood.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/08.6-SAT/HostOfTheRiverlands.js": {
+        "add-message": 1
+    },
+    "server/game/cards/08.6-SAT/KingAtTheWall.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/08.6-SAT/MyaStone.js": {
+        "add-message": 1
+    },
+    "server/game/cards/08.6-SAT/Qyburn.js": {
+        "legacy-helper": 2,
+        "add-message": 2,
+        "prompt-for-select": 1
+    },
+    "server/game/cards/08.6-SAT/SaltcliffeSailor.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/08.6-SAT/SeptonCellador.js": {
+        "prompt-for-select": 1,
+        "legacy-helper": 1,
+        "add-message": 2
+    },
+    "server/game/cards/08.6-SAT/SomeoneAlwaysTells.js": {
+        "add-message": 1
+    },
+    "server/game/cards/08.6-SAT/TheBastardOfNightsong.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/08.6-SAT/TheCrowIsATricksyBird.js": {
+        "add-message": 2
+    },
+    "server/game/cards/08.6-SAT/TheGreatSeptOfBaelor.js": {
+        "add-message": 1
+    },
+    "server/game/cards/08.6-SAT/TheSevenPointedStar.js": {
+        "add-message": 1
+    },
+    "server/game/cards/08.6-SAT/YouWinOrYouDie.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/09-HoT/ArchmaesterEbrose.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/09-HoT/BendTheKnee.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/09-HoT/BrienneOfTarth.js": {
+        "prompt-for-select": 1,
+        "legacy-helper": 2,
+        "add-message": 1
+    },
+    "server/game/cards/09-HoT/BrokenVows.js": {
+        "legacy-helper": 2,
+        "prompt-for-select": 1,
+        "add-message": 2
+    },
+    "server/game/cards/09-HoT/CorpseLake.js": {
+        "add-message": 1
+    },
+    "server/game/cards/09-HoT/DesmeraRedwyne.js": {
+        "add-message": 2
+    },
+    "server/game/cards/09-HoT/DrownedGodsApostle.js": {
+        "add-message": 1
+    },
+    "server/game/cards/09-HoT/EmissaryOfTheHightower.js": {
+        "add-message": 1
+    },
+    "server/game/cards/09-HoT/FacelessMan.js": {
+        "add-message": 1
+    },
+    "server/game/cards/09-HoT/Hellholt.js": {
+        "add-message": 1
+    },
+    "server/game/cards/09-HoT/HiddenThorns.js": {
+        "prompt-for-select": 1,
+        "legacy-helper": 2,
+        "add-message": 1
+    },
+    "server/game/cards/09-HoT/HighgardenCourtier.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/09-HoT/LastHearth.js": {
+        "add-message": 1
+    },
+    "server/game/cards/09-HoT/LionsTooth.js": {
+        "add-message": 1
+    },
+    "server/game/cards/09-HoT/MaceTyrell.js": {
+        "add-message": 2
+    },
+    "server/game/cards/09-HoT/MaesterBallabar.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/09-HoT/MargaeryTyrell.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/09-HoT/MeleeAtBitterbridge.js": {
+        "prompt-for-select": 1,
+        "add-message": 1
+    },
+    "server/game/cards/09-HoT/NothingBurnsLikeTheCold.js": {
+        "legacy-helper": 1
+    },
+    "server/game/cards/09-HoT/NowItComesToWar.js": {
+        "add-message": 2
+    },
+    "server/game/cards/09-HoT/Qotho.js": {
+        "add-message": 1
+    },
+    "server/game/cards/09-HoT/QueenOfTheSevenKingdoms.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/09-HoT/SerDontosHollard.js": {
+        "add-message": 1
+    },
+    "server/game/cards/09-HoT/SerGarlanTyrell.js": {
+        "add-message": 1
+    },
+    "server/game/cards/09-HoT/SixMaidsInAPool.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/09-HoT/TheBastardOfGodsgrace.js": {
+        "add-message": 1
+    },
+    "server/game/cards/09-HoT/TheConclave.js": {
+        "add-message": 1
+    },
+    "server/game/cards/09-HoT/TheHightower.js": {
+        "legacy-helper": 2,
+        "add-message": 1
+    },
+    "server/game/cards/09-HoT/TheHound.js": {
+        "add-message": 1
+    },
+    "server/game/cards/09-HoT/TheKnightOfFlowers.js": {
+        "add-message": 1
+    },
+    "server/game/cards/09-HoT/TheSpidersWeb.js": {
+        "add-message": 1
+    },
+    "server/game/cards/09-HoT/TradeRoutes.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/09-HoT/WardensOfTheSouth.js": {
+        "add-message": 1
+    },
+    "server/game/cards/09-HoT/WillasTyrell.js": {
+        "legacy-helper": 2,
+        "add-message": 1
+    },
+    "server/game/cards/09-HoT/WordsAreWind.js": {
+        "add-message": 3,
+        "legacy-helper": 1
+    },
+    "server/game/cards/10-SoD/AreoHotah.js": {
+        "add-message": 1
+    },
+    "server/game/cards/10-SoD/AtPrinceDoransBehest.js": {
+        "add-message": 1
+    },
+    "server/game/cards/10-SoD/BeaconOfTheSouth.js": {
+        "add-message": 1
+    },
+    "server/game/cards/10-SoD/Beguiled.js": {
+        "add-message": 1
+    },
+    "server/game/cards/10-SoD/BeyondReproach.js": {
+        "add-message": 1
+    },
+    "server/game/cards/10-SoD/BreakingTies.js": {
+        "add-message": 1
+    },
+    "server/game/cards/10-SoD/BrothersRobes.js": {
+        "add-message": 1
+    },
+    "server/game/cards/10-SoD/DoranMartell.js": {
+        "add-message": 2
+    },
+    "server/game/cards/10-SoD/Dorne.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/10-SoD/EllariaSand.js": {
+        "add-message": 1
+    },
+    "server/game/cards/10-SoD/Extortion.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/10-SoD/FalsePlans.js": {
+        "add-message": 2
+    },
+    "server/game/cards/10-SoD/FalseSpring.js": {
+        "prompt-for-select": 2,
+        "add-message": 1
+    },
+    "server/game/cards/10-SoD/FleetFromPyke.js": {
+        "add-message": 1
+    },
+    "server/game/cards/10-SoD/GreatjonUmber.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/10-SoD/HotahsAxe.js": {
+        "add-message": 1
+    },
+    "server/game/cards/10-SoD/JadeSeaDromond.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/10-SoD/LeytonHightower.js": {
+        "add-message": 1
+    },
+    "server/game/cards/10-SoD/LorezaSand.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/10-SoD/MaesterKedry.js": {
+        "add-message": 1
+    },
+    "server/game/cards/10-SoD/Missandei.js": {
+        "add-message": 1
+    },
+    "server/game/cards/10-SoD/NymeriaSand.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/10-SoD/NymeriasGuard.js": {
+        "add-message": 1
+    },
+    "server/game/cards/10-SoD/ObaraSand.js": {
+        "add-message": 1
+    },
+    "server/game/cards/10-SoD/ObellaSand.js": {
+        "add-message": 2,
+        "legacy-helper": 2
+    },
+    "server/game/cards/10-SoD/OffToGulltown.js": {
+        "add-message": 2,
+        "legacy-helper": 1
+    },
+    "server/game/cards/10-SoD/OldtownScholar.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/10-SoD/Patience.js": {
+        "add-message": 1
+    },
+    "server/game/cards/10-SoD/Plundered.js": {
+        "legacy-helper": 2,
+        "add-message": 2
+    },
+    "server/game/cards/10-SoD/Qarth.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/10-SoD/QuentynMartell.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/10-SoD/SeaDragonTower.js": {
+        "add-message": 1
+    },
+    "server/game/cards/10-SoD/SeptonMeribald.js": {
+        "legacy-helper": 1
+    },
+    "server/game/cards/10-SoD/SerCortnayPenrose.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/10-SoD/ShadowCityBastard.js": {
+        "add-message": 1
+    },
+    "server/game/cards/10-SoD/SpareBoot.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/10-SoD/Starfall.js": {
+        "add-message": 1
+    },
+    "server/game/cards/10-SoD/TasteForFlesh.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/10-SoD/TheRedViper.js": {
+        "add-message": 1
+    },
+    "server/game/cards/10-SoD/Turncloak.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/10-SoD/TyeneSand.js": {
+        "add-message": 1
+    },
+    "server/game/cards/10-SoD/Val.js": {
+        "add-message": 1
+    },
+    "server/game/cards/11.1-TSC/BeneathTheBridgeOfDream.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/11.1-TSC/BoltonFlayer.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/11.1-TSC/BurningTheDead.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/11.1-TSC/ExchangeOfInformation.js": {
+        "prompt-for-select": 1
+    },
+    "server/game/cards/11.1-TSC/JanosSlynt.js": {
+        "add-message": 1
+    },
+    "server/game/cards/11.1-TSC/MargaerysInfluence.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/11.1-TSC/NefariousAcolyte.js": {
+        "add-message": 1
+    },
+    "server/game/cards/11.1-TSC/NighttimeMarauders.js": {
+        "legacy-helper": 1,
+        "add-message": 2
+    },
+    "server/game/cards/11.1-TSC/NorthernArmory.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/11.1-TSC/SchemingSepton.js": {
+        "legacy-helper": 3,
+        "add-message": 2
+    },
+    "server/game/cards/11.1-TSC/SeizeTheInitiative.js": {
+        "add-message": 1
+    },
+    "server/game/cards/11.1-TSC/SerGerrisDrinkwater.js": {
+        "legacy-helper": 2,
+        "add-message": 1
+    },
+    "server/game/cards/11.1-TSC/SerRobertStrong.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/11.1-TSC/ShadowPriestess.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/11.1-TSC/StormlandsFiefdom.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/11.1-TSC/TheShadowCity.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/11.1-TSC/UnexpectedReturn.js": {
+        "add-message": 1
+    },
+    "server/game/cards/11.1-TSC/VaramyrSixskins.js": {
+        "add-message": 4
+    },
+    "server/game/cards/11.2-TMoW/CityGates.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/11.2-TMoW/HagensDaughter.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/11.2-TMoW/HizdahrZoLoraq.js": {
+        "add-message": 1
+    },
+    "server/game/cards/11.2-TMoW/MaidenOfPoisons.js": {
+        "add-message": 1
+    },
+    "server/game/cards/11.2-TMoW/MarchOnWinterfell.js": {
+        "add-message": 2
+    },
+    "server/game/cards/11.2-TMoW/Meereen.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/11.2-TMoW/OldtownUndercity.js": {
+        "legacy-helper": 3,
+        "add-message": 1
+    },
+    "server/game/cards/11.2-TMoW/SerJustinMassey.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/11.2-TMoW/ServeObeyProtect.js": {
+        "add-message": 1
+    },
+    "server/game/cards/11.2-TMoW/TheQueenOfThorns.js": {
+        "add-message": 1
+    },
+    "server/game/cards/11.2-TMoW/TheWall.js": {
+        "add-message": 2,
+        "prompt-for-select": 1
+    },
+    "server/game/cards/11.2-TMoW/TychoNestoris.js": {
+        "add-message": 1
+    },
+    "server/game/cards/11.3-SoKL/BlackwaterBay.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/11.3-SoKL/Catspaw.js": {
+        "add-message": 1
+    },
+    "server/game/cards/11.3-SoKL/Dragonbinder.js": {
+        "prompt-for-select": 1,
+        "add-message": 1
+    },
+    "server/game/cards/11.3-SoKL/DrownedGodFanatic.js": {
+        "add-message": 2
+    },
+    "server/game/cards/11.3-SoKL/GlassCandle.js": {
+        "add-message": 2
+    },
+    "server/game/cards/11.3-SoKL/GoldMine.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/11.3-SoKL/GrowingAmbition.js": {
+        "prompt-for-select": 1,
+        "add-message": 1
+    },
+    "server/game/cards/11.3-SoKL/HiredAssassin.js": {
+        "add-message": 2,
+        "prompt-for-select": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/11.3-SoKL/KingsLanding.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/11.3-SoKL/LazyLeo.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/11.3-SoKL/PoorFellows.js": {
+        "add-message": 3,
+        "legacy-helper": 1
+    },
+    "server/game/cards/11.3-SoKL/Queensguard.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/11.3-SoKL/SerArchibaldYronwood.js": {
+        "prompt-for-select": 1,
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/11.3-SoKL/UmberLoyalist.js": {
+        "legacy-helper": 2,
+        "add-message": 2,
+        "prompt-for-select": 1
+    },
+    "server/game/cards/11.3-SoKL/UneasyTruce.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/11.3-SoKL/ValyriansCrew.js": {
+        "add-message": 1
+    },
+    "server/game/cards/11.3-SoKL/WhiteHarbor.js": {
+        "prompt-for-select": 1
+    },
+    "server/game/cards/11.4-MoD/AMissionInEssos.js": {
+        "legacy-helper": 3,
+        "direct-state-write": 1,
+        "add-message": 1
+    },
+    "server/game/cards/11.4-MoD/GreyGhost.js": {
+        "prompt-for-select": 1,
+        "add-message": 1
+    },
+    "server/game/cards/11.4-MoD/LordCommander.js": {
+        "add-message": 1
+    },
+    "server/game/cards/11.4-MoD/MeeraReed.js": {
+        "add-message": 2
+    },
+    "server/game/cards/11.4-MoD/MeereeneseMarket.js": {
+        "add-message": 1
+    },
+    "server/game/cards/11.4-MoD/PrivilegedPosition.js": {
+        "add-message": 1
+    },
+    "server/game/cards/11.4-MoD/Rhaegal.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/11.4-MoD/Shaggydog.js": {
+        "add-message": 3,
+        "prompt-for-select": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/11.4-MoD/ShireenBaratheon.js": {
+        "add-message": 1
+    },
+    "server/game/cards/11.4-MoD/TheFreeFolk.js": {
+        "add-message": 1
+    },
+    "server/game/cards/11.4-MoD/TitheCollector.js": {
+        "add-message": 1
+    },
+    "server/game/cards/11.4-MoD/VictarionGreyjoy.js": {
+        "prompt-for-select": 1,
+        "legacy-helper": 2,
+        "add-message": 3
+    },
+    "server/game/cards/11.4-MoD/WunWun.js": {
+        "add-message": 1
+    },
+    "server/game/cards/11.5-IDP/APinchOfPowder.js": {
+        "add-message": 1
+    },
+    "server/game/cards/11.5-IDP/BrightwaterHost.js": {
+        "add-message": 2,
+        "prompt-for-select": 1
+    },
+    "server/game/cards/11.5-IDP/Drogon.js": {
+        "add-message": 1
+    },
+    "server/game/cards/11.5-IDP/Glamor.js": {
+        "add-message": 1
+    },
+    "server/game/cards/11.5-IDP/Hardhome.js": {
+        "add-message": 2,
+        "prompt-for-select": 1
+    },
+    "server/game/cards/11.5-IDP/HeCallsItThinking.js": {
+        "add-message": 2
+    },
+    "server/game/cards/11.5-IDP/InDaznaksPit.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/11.5-IDP/MaesterMyles.js": {
+        "add-message": 1
+    },
+    "server/game/cards/11.5-IDP/OldBillBone.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/11.5-IDP/PaintedDogs.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/11.5-IDP/StormsEndMaester.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/11.5-IDP/TheInnAtTheCrossroads.js": {
+        "legacy-helper": 2,
+        "add-message": 1
+    },
+    "server/game/cards/11.5-IDP/TheMightOfTheReach.js": {
+        "add-message": 1
+    },
+    "server/game/cards/11.5-IDP/ThreeFingerHobb.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/11.5-IDP/WalkOfAtonement.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/11.6-DitD/ArborMarket.js": {
+        "add-message": 1
+    },
+    "server/game/cards/11.6-DitD/AssaultFromTheShadows.js": {
+        "add-message": 1
+    },
+    "server/game/cards/11.6-DitD/BanishedFromTheLight.js": {
+        "add-message": 1
+    },
+    "server/game/cards/11.6-DitD/BloodOfTheViper.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/11.6-DitD/BrazenBeast.js": {
+        "add-message": 1
+    },
+    "server/game/cards/11.6-DitD/CerseiLannister.js": {
+        "add-message": 1
+    },
+    "server/game/cards/11.6-DitD/CunningDiplomat.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/11.6-DitD/DaggersInTheDark.js": {
+        "prompt-for-select": 1,
+        "legacy-helper": 1,
+        "add-message": 2
+    },
+    "server/game/cards/11.6-DitD/RavagesOfWar.js": {
+        "add-message": 1
+    },
+    "server/game/cards/11.6-DitD/RhymesWithMeek.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/11.6-DitD/SerJasonMallister.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/11.6-DitD/StarfallSpy.js": {
+        "add-message": 1
+    },
+    "server/game/cards/11.6-DitD/TheBastardsLetter.js": {
+        "add-message": 2,
+        "legacy-helper": 2
+    },
+    "server/game/cards/11.6-DitD/Varys.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/12-KotI/AeronDamphair.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/12-KotI/AndrikTheUnsmiling.js": {
+        "prompt-for-select": 1,
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/12-KotI/BronzeYohnRoyce.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/12-KotI/CitadelArchivist.js": {
+        "legacy-helper": 1
+    },
+    "server/game/cards/12-KotI/CoordinatedAttack.js": {
+        "add-message": 1
+    },
+    "server/game/cards/12-KotI/DesertRaider.js": {
+        "add-message": 1
+    },
+    "server/game/cards/12-KotI/Fury.js": {
+        "legacy-helper": 1
+    },
+    "server/game/cards/12-KotI/GoldenStorm.js": {
+        "legacy-helper": 2,
+        "add-message": 2
+    },
+    "server/game/cards/12-KotI/GreatWyk.js": {
+        "prompt-for-select": 1,
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/12-KotI/GunthorSonOfGurn.js": {
+        "prompt-for-select": 1,
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/12-KotI/KhoraneSathmantes.js": {
+        "add-message": 1,
+        "legacy-helper": 2
+    },
+    "server/game/cards/12-KotI/MaesterMurenmure.js": {
+        "add-message": 1
+    },
+    "server/game/cards/12-KotI/MaesterVyman.js": {
+        "add-message": 1
+    },
+    "server/game/cards/12-KotI/MaidensBane.js": {
+        "legacy-helper": 2,
+        "add-message": 1
+    },
+    "server/game/cards/12-KotI/NighttimeRaid.js": {
+        "add-message": 1
+    },
+    "server/game/cards/12-KotI/OldGreyGull.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/12-KotI/QarlTheMaid.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/12-KotI/RedRain.js": {
+        "add-message": 1
+    },
+    "server/game/cards/12-KotI/ReturnToTheFields.js": {
+        "legacy-helper": 2,
+        "add-message": 1
+    },
+    "server/game/cards/12-KotI/RogueWildling.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/12-KotI/SecretsOfTheConclave.js": {
+        "legacy-helper": 3,
+        "add-message": 1
+    },
+    "server/game/cards/12-KotI/SerTalbertSerry.js": {
+        "add-message": 1
+    },
+    "server/game/cards/12-KotI/StolenMessage.js": {
+        "add-message": 1
+    },
+    "server/game/cards/12-KotI/TheStarrySept.js": {
+        "add-message": 2,
+        "legacy-helper": 1
+    },
+    "server/game/cards/12-KotI/VanquishTheUnbelievers.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/12-KotI/VindictiveRanger.js": {
+        "add-message": 1
+    },
+    "server/game/cards/12-KotI/WeTakeWesteros.js": {
+        "add-message": 1
+    },
+    "server/game/cards/12-KotI/WestwatchByTheBridge.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/12-KotI/WhatIsDeadMayNeverDie.js": {
+        "add-message": 1
+    },
+    "server/game/cards/13.1-AtG/DragonGate.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/13.1-AtG/GateOfTheGods.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/13.1-AtG/IronGate.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/13.1-AtG/KingsGate.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/13.1-AtG/LionGate.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/13.1-AtG/Littlefinger.js": {
+        "add-message": 2,
+        "prompt-for-select": 1,
+        "legacy-helper": 2
+    },
+    "server/game/cards/13.1-AtG/OldGate.js": {
+        "add-message": 1
+    },
+    "server/game/cards/13.1-AtG/RhllorInfiltrator.js": {
+        "legacy-helper": 2
+    },
+    "server/game/cards/13.1-AtG/RiverGate.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/13.1-AtG/SerMandonMoore.js": {
+        "prompt-for-select": 2,
+        "add-message": 2,
+        "legacy-helper": 2
+    },
+    "server/game/cards/13.1-AtG/TheKnightOfFlowers.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/13.2-CoS/ACityBesieged.js": {
+        "prompt-for-select": 1,
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/13.2-CoS/AlannysGreyjoy.js": {
+        "legacy-helper": 1
+    },
+    "server/game/cards/13.2-CoS/GhostOfHighHeart.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/13.2-CoS/ShadowOfTheWall.js": {
+        "legacy-helper": 2,
+        "add-message": 2
+    },
+    "server/game/cards/13.2-CoS/ShadowOftheEast.js": {
+        "legacy-helper": 2,
+        "add-message": 2
+    },
+    "server/game/cards/13.2-CoS/ShadowOftheSouth.js": {
+        "add-message": 2,
+        "legacy-helper": 1
+    },
+    "server/game/cards/13.3-PoS/ArianneMartell.js": {
+        "add-message": 1
+    },
+    "server/game/cards/13.3-PoS/Chiswyck.js": {
+        "legacy-helper": 1
+    },
+    "server/game/cards/13.3-PoS/EddardStark.js": {
+        "legacy-helper": 1
+    },
+    "server/game/cards/13.3-PoS/MaesterMullin.js": {
+        "add-message": 1
+    },
+    "server/game/cards/13.3-PoS/MelleonsTome.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/13.3-PoS/ShadowOfTheThrone.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/13.3-PoS/TheFaithsDecree.js": {
+        "add-message": 1
+    },
+    "server/game/cards/13.3-PoS/UnexpectedGuile.js": {
+        "add-message": 1
+    },
+    "server/game/cards/13.4-BtRK/AdvisorToTheCrown.js": {
+        "add-message": 1
+    },
+    "server/game/cards/13.4-BtRK/AlyceGraceford.js": {
+        "add-message": 1
+    },
+    "server/game/cards/13.4-BtRK/CityOfSpiders.js": {
+        "prompt-for-select": 1,
+        "add-message": 1
+    },
+    "server/game/cards/13.4-BtRK/GoroldGoodbrother.js": {
+        "add-message": 1
+    },
+    "server/game/cards/13.4-BtRK/KnightsOfTheMind.js": {
+        "add-message": 1
+    },
+    "server/game/cards/13.4-BtRK/PublicExecution.js": {
+        "legacy-helper": 1
+    },
+    "server/game/cards/13.4-BtRK/SarellaSand.js": {
+        "add-message": 1
+    },
+    "server/game/cards/13.4-BtRK/ShadowOfTheIsles.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/13.4-BtRK/ShadowblackAssassin.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/13.4-BtRK/TheMaidenvault.js": {
+        "add-message": 2
+    },
+    "server/game/cards/13.4-BtRK/TowerOfTheHand.js": {
+        "legacy-helper": 1
+    },
+    "server/game/cards/13.4-BtRK/TunnelsOfTheRedKeep.js": {
+        "add-message": 1
+    },
+    "server/game/cards/13.4-BtRK/WhiteHarborWatchman.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/13.5-TB/AVeryLargeShadow.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/13.5-TB/BlackwaterRush.js": {
+        "add-message": 1
+    },
+    "server/game/cards/13.5-TB/BoundForTheWall.js": {
+        "prompt-for-select": 1,
+        "add-message": 2,
+        "legacy-helper": 1
+    },
+    "server/game/cards/13.5-TB/HighgardenJester.js": {
+        "prompt-for-select": 1,
+        "add-message": 2,
+        "legacy-helper": 2
+    },
+    "server/game/cards/13.5-TB/MaesterKerwin.js": {
+        "add-message": 1
+    },
+    "server/game/cards/13.5-TB/SerPrestonGreenfield.js": {
+        "prompt-for-select": 1,
+        "add-message": 1
+    },
+    "server/game/cards/13.5-TB/ShadowOfTheNorth.js": {
+        "add-message": 2,
+        "legacy-helper": 1
+    },
+    "server/game/cards/13.5-TB/Sparrows.js": {
+        "prompt-for-select": 1,
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/13.5-TB/TheMountainsSkull.js": {
+        "add-message": 1
+    },
+    "server/game/cards/13.5-TB/TyrionLannister.js": {
+        "add-message": 1
+    },
+    "server/game/cards/13.5-TB/WhiteCloak.js": {
+        "add-message": 1
+    },
+    "server/game/cards/13.5-TB/Yoren.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/13.6-LMHR/AlchemistsGuildhall.js": {
+        "add-message": 1
+    },
+    "server/game/cards/13.6-LMHR/AryaStark.js": {
+        "add-message": 2
+    },
+    "server/game/cards/13.6-LMHR/BlackwaterRaiders.js": {
+        "add-message": 1
+    },
+    "server/game/cards/13.6-LMHR/BloodOfTheFirstMen.js": {
+        "add-message": 1
+    },
+    "server/game/cards/13.6-LMHR/FishmongersSquare.js": {
+        "legacy-helper": 2,
+        "add-message": 1
+    },
+    "server/game/cards/13.6-LMHR/FriendsAtCourt.js": {
+        "add-message": 2,
+        "prompt-for-select": 1
+    },
+    "server/game/cards/13.6-LMHR/Huntress.js": {
+        "add-message": 1
+    },
+    "server/game/cards/13.6-LMHR/LongMayHeReign.js": {
+        "add-message": 1
+    },
+    "server/game/cards/13.6-LMHR/PoisonedDagger.js": {
+        "prompt-for-select": 1,
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/13.6-LMHR/RecruitFromTheDungeons.js": {
+        "add-message": 2,
+        "legacy-helper": 1
+    },
+    "server/game/cards/13.6-LMHR/Rimegate.js": {
+        "add-message": 1
+    },
+    "server/game/cards/13.6-LMHR/RobertBaratheon.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/13.6-LMHR/SerJorahMormont.js": {
+        "add-message": 1
+    },
+    "server/game/cards/13.6-LMHR/TheIronThrone.js": {
+        "add-message": 1
+    },
+    "server/game/cards/13.6-LMHR/TheQueensRetinue.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/13.6-LMHR/ValyrianSteel.js": {
+        "add-message": 1
+    },
+    "server/game/cards/14-FotS/ACaskOfAle.js": {
+        "prompt-for-select": 1,
+        "add-message": 1
+    },
+    "server/game/cards/14-FotS/AcolyteOfTheFlame.js": {
+        "add-message": 1
+    },
+    "server/game/cards/14-FotS/AlesterFlorent.js": {
+        "legacy-helper": 1
+    },
+    "server/game/cards/14-FotS/BastardOfRobert.js": {
+        "legacy-helper": 1
+    },
+    "server/game/cards/14-FotS/Kingsgrave.js": {
+        "add-message": 2,
+        "legacy-helper": 1
+    },
+    "server/game/cards/14-FotS/Melisandre.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/14-FotS/NightfireVision.js": {
+        "add-message": 2,
+        "legacy-helper": 1
+    },
+    "server/game/cards/14-FotS/ParleyAtStormsEnd.js": {
+        "add-message": 1
+    },
+    "server/game/cards/14-FotS/RobertBaratheon.js": {
+        "add-message": 1
+    },
+    "server/game/cards/14-FotS/SalladhorSaan.js": {
+        "legacy-helper": 2,
+        "add-message": 1
+    },
+    "server/game/cards/14-FotS/SerGregorClegane.js": {
+        "legacy-helper": 1
+    },
+    "server/game/cards/14-FotS/SiegePreparations.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/14-FotS/StannisBaratheon.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/14-FotS/TheHandsTourney.js": {
+        "add-message": 1
+    },
+    "server/game/cards/14-FotS/ThePrinceThatWasPromised.js": {
+        "add-message": 1
+    },
+    "server/game/cards/14-FotS/WilySmuggler.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/15-DotE/BlueGraces.js": {
+        "legacy-helper": 1
+    },
+    "server/game/cards/15-DotE/Braavos.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/15-DotE/CageOfRavens.js": {
+        "add-message": 1
+    },
+    "server/game/cards/15-DotE/ChoosingTheSpear.js": {
+        "add-message": 2,
+        "prompt-for-select": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/15-DotE/Clydas.js": {
+        "legacy-helper": 1
+    },
+    "server/game/cards/15-DotE/DragonstoneConvert.js": {
+        "add-message": 1
+    },
+    "server/game/cards/15-DotE/FightToTheLast.js": {
+        "add-message": 1
+    },
+    "server/game/cards/15-DotE/FuryOfTheKhalasar.js": {
+        "add-message": 1
+    },
+    "server/game/cards/15-DotE/Incinerate.js": {
+        "prompt-for-select": 1,
+        "add-message": 1
+    },
+    "server/game/cards/15-DotE/Jhogo.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/15-DotE/Khaleesi.js": {
+        "add-message": 1
+    },
+    "server/game/cards/15-DotE/OverwhelmingNumbers.js": {
+        "add-message": 1
+    },
+    "server/game/cards/15-DotE/Rakharo.js": {
+        "add-message": 1
+    },
+    "server/game/cards/15-DotE/Rhaegal.js": {
+        "add-message": 1
+    },
+    "server/game/cards/15-DotE/SerMerynTrant.js": {
+        "legacy-helper": 1
+    },
+    "server/game/cards/15-DotE/SpottedSylva.js": {
+        "add-message": 1
+    },
+    "server/game/cards/15-DotE/TenTowersGalley.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/15-DotE/TheRedKeep.js": {
+        "add-message": 1
+    },
+    "server/game/cards/15-DotE/TheShavepate.js": {
+        "add-message": 1
+    },
+    "server/game/cards/15-DotE/TheTitansBastard.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/15-DotE/TormundGiantsbane.js": {
+        "add-message": 1
+    },
+    "server/game/cards/15-DotE/WombOfTheWorld.js": {
+        "prompt-for-select": 1,
+        "add-message": 2
+    },
+    "server/game/cards/16-TTWDFL/Conquer.js": {
+        "legacy-helper": 1
+    },
+    "server/game/cards/16-TTWDFL/HeadsOnPikes.js": {
+        "add-message": 1
+    },
+    "server/game/cards/16-TTWDFL/MadKingAerys.js": {
+        "legacy-helper": 1
+    },
+    "server/game/cards/16-TTWDFL/MelisandresFavor.js": {
+        "legacy-helper": 1
+    },
+    "server/game/cards/16-TTWDFL/NarrowEscape.js": {
+        "add-message": 1
+    },
+    "server/game/cards/16-TTWDFL/SamwellTarly.js": {
+        "add-message": 1
+    },
+    "server/game/cards/16-TTWDFL/SkyCell.js": {
+        "legacy-helper": 1
+    },
+    "server/game/cards/16-TTWDFL/TheGatheringStorm.js": {
+        "add-message": 2,
+        "legacy-helper": 1
+    },
+    "server/game/cards/16-TTWDFL/TheHatchlingsFeast.js": {
+        "prompt-for-select": 1,
+        "add-message": 1
+    },
+    "server/game/cards/16-TTWDFL/ValeRefugee.js": {
+        "add-message": 2
+    },
+    "server/game/cards/17.1-R/AbandonedStronghold.js": {
+        "add-message": 1
+    },
+    "server/game/cards/17.1-R/BoundForTheWall.js": {
+        "add-message": 2,
+        "prompt-for-select": 1
+    },
+    "server/game/cards/17.1-R/BreakingTies.js": {
+        "add-message": 1
+    },
+    "server/game/cards/17.1-R/Clydas.js": {
+        "legacy-helper": 1
+    },
+    "server/game/cards/17.1-R/DesertRaider.js": {
+        "add-message": 1
+    },
+    "server/game/cards/17.1-R/DoransGame.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/17.1-R/Dorne.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/17.1-R/Drogon.js": {
+        "add-message": 1
+    },
+    "server/game/cards/17.1-R/DrownedDisciple.js": {
+        "add-message": 1
+    },
+    "server/game/cards/17.1-R/DrownedGodFanatic.js": {
+        "add-message": 2
+    },
+    "server/game/cards/17.1-R/EuronCrowsEye.js": {
+        "prompt-for-select": 1,
+        "add-message": 1
+    },
+    "server/game/cards/17.1-R/FleaBottom.js": {
+        "add-message": 1
+    },
+    "server/game/cards/17.1-R/ForcedMarch.js": {
+        "prompt-for-select": 1,
+        "add-message": 1
+    },
+    "server/game/cards/17.1-R/GreatHall.js": {
+        "add-message": 1
+    },
+    "server/game/cards/17.1-R/HizdahrZoLoraq.js": {
+        "add-message": 1
+    },
+    "server/game/cards/17.1-R/IAmNoOne.js": {
+        "add-message": 1
+    },
+    "server/game/cards/17.1-R/IronMines.js": {
+        "add-message": 1
+    },
+    "server/game/cards/17.1-R/MaceTyrell.js": {
+        "add-message": 2
+    },
+    "server/game/cards/17.1-R/MeeraReed.js": {
+        "add-message": 2
+    },
+    "server/game/cards/17.1-R/Meereen.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/17.1-R/NighttimeMarauders.js": {
+        "legacy-helper": 1,
+        "add-message": 2
+    },
+    "server/game/cards/17.1-R/OldtownInformer.js": {
+        "legacy-helper": 2,
+        "add-message": 2,
+        "prompt-for-select": 1
+    },
+    "server/game/cards/17.1-R/Qotho.js": {
+        "add-message": 1
+    },
+    "server/game/cards/17.1-R/ReturnToTheFields.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/17.1-R/TaenaMerryweather.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/17.1-R/TheAnnalsOfCastleBlack.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/17.1-R/TheDragonsTail.js": {
+        "legacy-helper": 2,
+        "add-message": 1
+    },
+    "server/game/cards/17.1-R/TheIronBank.js": {
+        "add-message": 1
+    },
+    "server/game/cards/17.1-R/TheQueensRetinue.js": {
+        "legacy-helper": 1,
+        "add-message": 2
+    },
+    "server/game/cards/17.1-R/TheRedKeep.js": {
+        "add-message": 1
+    },
+    "server/game/cards/17.1-R/ThreeFingerHobb.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/17.1-R/ToTheRoseBanner.js": {
+        "add-message": 1
+    },
+    "server/game/cards/17.1-R/TradeRoutes.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/17.1-R/UnexpectedGuile.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/17.1-R/ValyrianSteel.js": {
+        "add-message": 1
+    },
+    "server/game/cards/17.1-R/VictarionGreyjoy.js": {
+        "legacy-helper": 2,
+        "add-message": 3,
+        "prompt-for-select": 1
+    },
+    "server/game/cards/17.1-R/Ward.js": {
+        "legacy-helper": 1
+    },
+    "server/game/cards/17.1-R/WeTakeWesteros.js": {
+        "prompt-for-select": 1,
+        "add-message": 1
+    },
+    "server/game/cards/17.1-R/WombOfTheWorld.js": {
+        "prompt-for-select": 1,
+        "add-message": 1
+    },
+    "server/game/cards/17.1-R/Yoren.js": {
+        "add-message": 1,
+        "prompt-for-select": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/17.2-R2/DaenerysTargaryen.js": {
+        "add-message": 1
+    },
+    "server/game/cards/17.2-R2/Pyke.js": {
+        "add-message": 2,
+        "legacy-helper": 1
+    },
+    "server/game/cards/17.2-R2/Queensguard.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/17.2-R2/RandyllTarly.js": {
+        "prompt-for-select": 1,
+        "add-message": 1
+    },
+    "server/game/cards/17.2-R2/SecretSchemes.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/17.2-R2/SerBalonSwann.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/17.2-R2/SomeoneAlwaysTells.js": {
+        "add-message": 1
+    },
+    "server/game/cards/18-FH/Balerion.js": {
+        "add-message": 1
+    },
+    "server/game/cards/18-FH/FreeCompanies.js": {
+        "add-message": 1
+    },
+    "server/game/cards/18-FH/GodryTheGiantslayer.js": {
+        "add-message": 1
+    },
+    "server/game/cards/18-FH/HaldonHalfmaester.js": {
+        "prompt-for-select": 1,
+        "add-message": 1
+    },
+    "server/game/cards/18-FH/Harwin.js": {
+        "add-message": 1
+    },
+    "server/game/cards/18-FH/LeftHandLucasCodd.js": {
+        "prompt-for-select": 1,
+        "add-message": 1
+    },
+    "server/game/cards/18-FH/OrtonMerryweather.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/18-FH/ReznakMoReznak.js": {
+        "add-message": 2
+    },
+    "server/game/cards/18-FH/RickardKarstark.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/18-FH/SerAddamMarbrand.js": {
+        "add-message": 2,
+        "legacy-helper": 1
+    },
+    "server/game/cards/18-FH/SerEmmonCuy.js": {
+        "add-message": 2,
+        "legacy-helper": 1
+    },
+    "server/game/cards/18-FH/SerHarysSwyft.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/18-FH/ThePointyEnd.js": {
+        "add-message": 2,
+        "legacy-helper": 2
+    },
+    "server/game/cards/18-FH/VargoHoat.js": {
+        "add-message": 2,
+        "legacy-helper": 1
+    },
+    "server/game/cards/19-JS/Brimstone.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/19-JS/CityFestival.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/19-JS/GreywaterWatch.js": {
+        "add-message": 1
+    },
+    "server/game/cards/19-JS/KingsLandingSmuggler.js": {
+        "add-message": 1
+    },
+    "server/game/cards/19-JS/LeftHandLew.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/19-JS/MilkSnakes.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/19-JS/RandyllTarly.js": {
+        "prompt-for-select": 1,
+        "add-message": 1
+    },
+    "server/game/cards/19-JS/SupportFromTheIronBank.js": {
+        "add-message": 1
+    },
+    "server/game/cards/19-JS/TheWinterMaid.js": {
+        "add-message": 2,
+        "legacy-helper": 1
+    },
+    "server/game/cards/19-JS/TyrionLannister.js": {
+        "add-message": 1
+    },
+    "server/game/cards/19-JS/Wraith.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/20-HMW/ALionStillHasClaws.js": {
+        "add-message": 1
+    },
+    "server/game/cards/20-HMW/AMummersFarce.js": {
+        "add-message": 1
+    },
+    "server/game/cards/20-HMW/BeholdOurBounty.js": {
+        "add-message": 1
+    },
+    "server/game/cards/20-HMW/BeneaththeGoldtheBitterSteel.js": {
+        "add-message": 1
+    },
+    "server/game/cards/20-HMW/BlackLorren.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/20-HMW/Bronn.js": {
+        "add-message": 2,
+        "legacy-helper": 1
+    },
+    "server/game/cards/20-HMW/CornCornCorn.js": {
+        "add-message": 1
+    },
+    "server/game/cards/20-HMW/EdricDayne.js": {
+        "add-message": 1
+    },
+    "server/game/cards/20-HMW/FamilyDutyHonor.js": {
+        "add-message": 1
+    },
+    "server/game/cards/20-HMW/FirstInBattle.js": {
+        "add-message": 1
+    },
+    "server/game/cards/20-HMW/FirstRanger.js": {
+        "legacy-helper": 1
+    },
+    "server/game/cards/20-HMW/GoldenCompany.js": {
+        "add-message": 1
+    },
+    "server/game/cards/20-HMW/KindlyMan.js": {
+        "add-message": 1
+    },
+    "server/game/cards/20-HMW/LadyStoneheart.js": {
+        "add-message": 3
+    },
+    "server/game/cards/20-HMW/LordSteward.js": {
+        "legacy-helper": 1
+    },
+    "server/game/cards/20-HMW/MinaRedwyne.js": {
+        "legacy-helper": 1
+    },
+    "server/game/cards/20-HMW/MountainsMan.js": {
+        "legacy-helper": 1
+    },
+    "server/game/cards/20-HMW/NoGodlessMan.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/20-HMW/OurBladesAreSharp.js": {
+        "add-message": 1
+    },
+    "server/game/cards/20-HMW/Reek.js": {
+        "add-message": 2,
+        "prompt-for-select": 1
+    },
+    "server/game/cards/20-HMW/Saltcliffe.js": {
+        "add-message": 2,
+        "prompt-for-select": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/20-HMW/Sellsails.js": {
+        "legacy-helper": 1
+    },
+    "server/game/cards/20-HMW/SeptaLemore.js": {
+        "legacy-helper": 1
+    },
+    "server/game/cards/20-HMW/SerGuyardMorrigen.js": {
+        "prompt-for-select": 1,
+        "add-message": 2
+    },
+    "server/game/cards/20-HMW/SerLancelLannister.js": {
+        "add-message": 1
+    },
+    "server/game/cards/20-HMW/SerRichardHorpe.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/20-HMW/SetDownOurDeeds.js": {
+        "add-message": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/20-HMW/TheDragonHasThreeHeads.js": {
+        "add-message": 1
+    },
+    "server/game/cards/20-HMW/TheManyFacedGod.js": {
+        "add-message": 1
+    },
+    "server/game/cards/20-HMW/TheMother.js": {
+        "legacy-helper": 1
+    },
+    "server/game/cards/20-HMW/TheSmith.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/20-HMW/TheStranger.js": {
+        "legacy-helper": 1
+    },
+    "server/game/cards/20-HMW/WeGuardtheWay.js": {
+        "prompt-for-select": 1,
+        "add-message": 1
+    },
+    "server/game/cards/20-HMW/WeLightTheWay.js": {
+        "add-message": 1
+    },
+    "server/game/cards/20-HMW/WeStandTogether.js": {
+        "legacy-helper": 2,
+        "add-message": 2
+    },
+    "server/game/cards/21-FtR/BattleoftheTrident.js": {
+        "add-message": 2
+    },
+    "server/game/cards/21-FtR/FairIsle.js": {
+        "prompt-for-select": 1,
+        "add-message": 3,
+        "legacy-helper": 1
+    },
+    "server/game/cards/21-FtR/Foamdrinker.js": {
+        "add-message": 1
+    },
+    "server/game/cards/21-FtR/GreyWind.js": {
+        "add-message": 2
+    },
+    "server/game/cards/21-FtR/GriffinsRoost.js": {
+        "add-message": 1
+    },
+    "server/game/cards/21-FtR/LordAndersHost.js": {
+        "add-message": 1
+    },
+    "server/game/cards/21-FtR/LordTywinsHost.js": {
+        "prompt-for-select": 1,
+        "add-message": 1
+    },
+    "server/game/cards/21-FtR/MagnarofThenn.js": {
+        "add-message": 1
+    },
+    "server/game/cards/21-FtR/OldBearsRaven.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/21-FtR/Sandstone.js": {
+        "add-message": 1
+    },
+    "server/game/cards/21-FtR/SerBarristanSelmy.js": {
+        "add-message": 2
+    },
+    "server/game/cards/21-FtR/Squire.js": {
+        "add-message": 1
+    },
+    "server/game/cards/21-FtR/TheIronFleet.js": {
+        "add-message": 1
+    },
+    "server/game/cards/21-FtR/Windblown.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/22-BtB/BranStark.js": {
+        "add-message": 2,
+        "prompt-for-select": 1,
+        "legacy-helper": 1
+    },
+    "server/game/cards/22-BtB/BrienneTheBlue.js": {
+        "add-message": 1
+    },
+    "server/game/cards/22-BtB/CastleBlack.js": {
+        "legacy-helper": 1,
+        "add-message": 2
+    },
+    "server/game/cards/22-BtB/FlorianAndJonquil.js": {
+        "add-message": 1
+    },
+    "server/game/cards/22-BtB/Gendry.js": {
+        "add-message": 1
+    },
+    "server/game/cards/22-BtB/Highgarden.js": {
+        "add-message": 2
+    },
+    "server/game/cards/22-BtB/Lady.js": {
+        "add-message": 1
+    },
+    "server/game/cards/22-BtB/Pyke.js": {
+        "add-message": 2,
+        "legacy-helper": 1
+    },
+    "server/game/cards/22-BtB/SamwellTarly.js": {
+        "prompt-for-select": 1,
+        "add-message": 1
+    },
+    "server/game/cards/22-BtB/SerRollyDuckfield.js": {
+        "add-message": 1
+    },
+    "server/game/cards/22-BtB/StormsEnd.js": {
+        "add-message": 1
+    },
+    "server/game/cards/22-BtB/TheGreatPyramid.js": {
+        "add-message": 1
+    },
+    "server/game/cards/22-BtB/TheHornOfWinter.js": {
+        "add-message": 2,
+        "legacy-helper": 1
+    },
+    "server/game/cards/22-BtB/TheMadKingsCommand.js": {
+        "add-message": 2
+    },
+    "server/game/cards/22-BtB/TrystaneMartell.js": {
+        "add-message": 1
+    },
+    "server/game/cards/22-BtB/WarlockOfQarth.js": {
+        "add-message": 1
+    },
+    "server/game/cards/22-BtB/WinterfellCastle.js": {
+        "add-message": 1
+    },
+    "server/game/cards/22-BtB/ZolloTheFat.js": {
+        "legacy-helper": 1,
+        "add-message": 1
+    },
+    "server/game/cards/23-AHaH/Crannogmen.js": {
+        "legacy-helper": 1
+    },
+    "server/game/cards/23-AHaH/LysasLetter.js": {
+        "add-message": 1
+    },
+    "server/game/cards/23-AHaH/MaesterColemon.js": {
+        "prompt-for-select": 1
+    },
+    "server/game/cards/23-AHaH/TheBloodyGate.js": {
+        "prompt-for-select": 1,
+        "add-message": 1
+    },
+    "server/game/cards/23-AHaH/TheReadersSepton.js": {
+        "legacy-helper": 2
+    },
+    "server/game/cards/23-AHaH/TheSeedIsStrong.js": {
+        "prompt-for-select": 1,
+        "add-message": 1
+    },
+    "server/game/cards/23-AHaH/WingedKnight.js": {
+        "legacy-helper": 1
+    },
+    "server/game/cards/24-TSoW/SerDavenLannister.js": {
+        "prompt-for-select": 1,
+        "add-message": 1
+    },
+    "server/game/cards/24-TSoW/TheTrident.js": {
+        "prompt-for-select": 1,
+        "add-message": 1
+    },
+    "server/game/cards/25.1-ATT/VictarionGreyjoy.js": {
+        "add-message": 1
+    },
+    "server/game/cards/25.2-ChoS/TheGoldPrice.js": {
+        "add-message": 3,
+        "direct-state-write": 1
+    },
+    "server/game/cards/25.3-FUtG/BelligerentHeir.js": {
+        "add-message": 1
+    },
+    "server/game/cards/25.3-FUtG/Greyscale.js": {
+        "prompt-for-select": 1,
+        "add-message": 1
+    },
+    "server/game/cards/25.3-FUtG/LegacyOfTheWatch.js": {
+        "prompt-for-select": 1,
+        "add-message": 1
+    },
+    "server/game/cards/25.3-FUtG/TheDrownedGodWakes.js": {
+        "legacy-helper": 1
+    },
+    "server/game/cards/25.3-FUtG/VultureKing.js": {
+        "add-message": 1
+    },
+    "server/game/cards/25.4-TTS/AllardSeaworth.js": {
+        "legacy-helper": 1
+    },
+    "server/game/cards/25.4-TTS/BowenMarsh.js": {
+        "add-message": 1
+    },
+    "server/game/cards/25.4-TTS/Varys.js": {
+        "add-message": 1
+    },
+    "server/game/cards/25.5-TIC/BoltonLoyalist.js": {
+        "prompt-for-select": 1,
+        "add-message": 1
+    },
+    "server/game/cards/25.5-TIC/EnemiesInEveryShadow.js": {
+        "add-message": 1
+    },
+    "server/game/cards/25.5-TIC/GilbertOfTheVines.js": {
+        "prompt-for-select": 1,
+        "add-message": 2
+    },
+    "server/game/cards/25.5-TIC/SavedByTheWatch.js": {
+        "legacy-helper": 1
+    },
+    "server/game/cards/25.6-WK/TheDornishWars.js": {
+        "add-message": 1
+    },
+    "server/game/cards/25.6-WK/Winterfell.js": {
+        "legacy-helper": 1
+    },
+    "server/game/cards/26.1-WAID/BenjenStark.js": {
+        "add-message": 1
+    },
+    "server/game/cards/26.1-WAID/Lannisport.js": {
+        "prompt-for-select": 1,
+        "add-message": 2
+    },
+    "server/game/cards/26.1-WAID/SerClaytonSuggs.js": {
+        "add-message": 2
+    },
+    "server/game/cards/26.2-WoW/AToastToTheKing.js": {
+        "add-message": 1
+    },
+    "server/game/cards/26.2-WoW/BeneathThePetals.js": {
+        "add-message": 1
+    },
+    "server/game/cards/26.2-WoW/GhostHillElite.js": {
+        "add-message": 2
+    },
+    "server/game/cards/26.2-WoW/OathswornWildling.js": {
+        "add-message": 1
+    },
+    "server/game/cards/26.2-WoW/QueenOfMeereen.js": {
+        "prompt-for-select": 1
+    },
+    "server/game/cards/26.3-MaV/BattleBeneathTheWall.js": {
+        "add-message": 1
+    },
+    "server/game/cards/26.3-MaV/NorthernEnvoy.js": {
+        "prompt-for-select": 1,
+        "add-message": 1
+    },
+    "server/game/cards/26.3-MaV/SerGulianQorgyle.js": {
+        "add-message": 1
+    },
+    "server/game/cards/26.3-MaV/Stormlord.js": {
+        "prompt-for-select": 1,
+        "add-message": 1
+    },
+    "server/game/cards/26.3-MaV/TakingTheShieldIslands.js": {
+        "prompt-for-select": 1,
+        "add-message": 1
+    },
+    "server/game/cards/26.4 LotW/DornishSloop.js": {
+        "add-message": 1
+    },
+    "server/game/cards/26.4 LotW/GylesRosby.js": {
+        "add-message": 1
+    },
+    "server/game/cards/26.4 LotW/SerHarryStrickland.js": {
+        "add-message": 1
+    },
+    "server/game/cards/26.5-JfE/BaelorBrightsmile.js": {
+        "direct-state-write": 1
+    },
+    "server/game/cards/26.5-JfE/NorthernPatriarch.js": {
+        "prompt-for-select": 1,
+        "add-message": 2
+    },
+    "server/game/cards/26.5-JfE/TheDoomOfValyria.js": {
+        "add-message": 1
+    },
+    "server/game/cards/26.6-NCbT/TheStallionWhoMountsTheWorld.js": {
+        "prompt-for-select": 1,
+        "add-message": 1
+    },
+    "server/game/cards/26.6-NCbT/WolvesInTheHills.js": {
+        "add-message": 1
+    },
+    "server/game/cards/27.2-WGYK/AGameOfCyvasse.js": {
+        "add-message": 1
+    },
+    "server/game/cards/27.2-WGYK/Hornvale.js": {
+        "add-message": 1
+    },
+    "server/game/cards/27.2-WGYK/SuperstitiousSteward.js": {
+        "add-message": 3,
+        "prompt-for-select": 1
+    },
+    "server/game/cards/27.2-WGYK/TheRiverroad.js": {
+        "add-message": 1
+    },
+    "server/game/cards/27.2-WGYK/WoodsWitch.js": {
+        "prompt-for-select": 1,
+        "add-message": 1
+    },
+    "server/game/cards/reducer.js": {
+        "add-message": 2
+    },
+    "server/game/cards/titles/CrownRegent.js": {
+        "add-message": 1
+    }
+}
