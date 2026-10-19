@@ -159,6 +159,13 @@ depend on information their opponents can see.**
 
 How that works:
 
+_Steps 1 and 2 are built but not yet used by the ability windows:
+[PossibleResponders.js](../server/game/PossibleResponders.js) answers "could this player respond
+from a hidden zone" from public information, with
+[specs](../test/server/PossibleResponders.spec.js) showing the answer doesn't depend on the
+player's hand. Building a player's full pool takes well under a second. Format legality isn't
+applied, which only makes the pool larger._
+
 1. **Possible responders.** At game start, build each player's candidate pool: every card their deck
    could legally contain (faction, neutral, agenda-allowed cards, the format's legal pool) that has an
    ability usable from a hidden zone (hand, shadows). Cards in open zones are public and are
