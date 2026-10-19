@@ -236,7 +236,8 @@ CREATE TABLE public.game_players (
     agendas text[] DEFAULT '{}'::text[] NOT NULL,
     power integer,
     eliminated boolean DEFAULT false NOT NULL,
-    details jsonb DEFAULT '{}'::jsonb NOT NULL
+    details jsonb DEFAULT '{}'::jsonb NOT NULL,
+    stats jsonb
 );
 
 --

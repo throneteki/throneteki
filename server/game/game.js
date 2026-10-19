@@ -34,6 +34,7 @@ import SimultaneousEvents from './SimultaneousEvents.js';
 import ChooseGoldSourceAmounts from './gamesteps/ChooseGoldSourceAmounts.js';
 import DropCommand from './ServerCommands/DropCommand.js';
 import CardVisibility from './CardVisibility.js';
+import GameStats from './GameStats.js';
 import PlainTextGameChatFormatter from './PlainTextGameChatFormatter.js';
 import GameActions from './GameActions/index.js';
 import EndRound from './GameActions/EndRound.js';
@@ -111,6 +112,7 @@ class Game extends EventEmitter {
         this.restrictedListData = options.restrictedListData || [];
         this.remainingPhases = [];
         this.cardVisibility = new CardVisibility(this);
+        this.stats = new GameStats(this);
         this.winnerOfDominanceInLastRound = undefined;
         this.triggerOnLosing = {};
         this.prizedKeywordListener = new PrizedKeywordListener(this);
@@ -1429,6 +1431,7 @@ class Game extends EventEmitter {
                 standing: player.standing,
                 eliminated: player.eliminated,
                 eliminatedReason: player.eliminatedReason,
+                stats: this.stats.getPlayerStats(player),
                 playtested: this.isPlaytesting()
                     ? player.preparedDeck.allCards
                           .filter((card) => !!card.version)
