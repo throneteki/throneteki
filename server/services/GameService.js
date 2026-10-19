@@ -31,7 +31,7 @@ function fromWinners(winners) {
 
 export function playerRows(players) {
     return (players || []).map((player, position) => {
-        const { name, faction, agendas, power, eliminated, ...details } = player;
+        const { name, faction, agendas, power, eliminated, stats, ...details } = player;
 
         return {
             position,
@@ -40,7 +40,8 @@ export function playerRows(players) {
             agendas: agendas || [],
             power: Number.isInteger(power) && Math.abs(power) <= MaxPower ? power : null,
             eliminated: !!eliminated,
-            details
+            details,
+            stats: stats ?? null
         };
     });
 }
@@ -53,11 +54,11 @@ class GameService {
     async savePlayers(tx, gameId, players) {
         await tx.query('DELETE FROM game_players WHERE game_id = $1', [gameId]);
         await tx.query(
-            `INSERT INTO game_players (game_id, position, name, user_id, faction, agendas, power, eliminated, details)
+            `INSERT INTO game_players (game_id, position, name, user_id, faction, agendas, power, eliminated, details, stats)
             SELECT $1, p.position, p.name, (SELECT id FROM users WHERE lower(username) = lower(p.name)),
-                p.faction, p.agendas, p.power, p.eliminated, p.details
+                p.faction, p.agendas, p.power, p.eliminated, p.details, p.stats
             FROM jsonb_to_recordset($2::jsonb)
-                AS p(position integer, name text, faction text, agendas text[], power integer, eliminated boolean, details jsonb)`,
+                AS p(position integer, name text, faction text, agendas text[], power integer, eliminated boolean, details jsonb, stats jsonb)`,
             [gameId, JSON.stringify(playerRows(players))]
         );
     }
@@ -124,7 +125,7 @@ class GameService {
                     COALESCE((
                         SELECT json_agg(json_build_object(
                             'name', p.name, 'faction', p.faction, 'agendas', p.agendas, 'power', p.power,
-                            'eliminated', p.eliminated, 'details', p.details
+                            'eliminated', p.eliminated, 'details', p.details, 'stats', p.stats
                         ) ORDER BY p.position)
                         FROM game_players p WHERE p.game_id = g.id
                     ), '[]') AS players
@@ -144,7 +145,11 @@ class GameService {
                 finishedAt: row.finished_at,
                 winner: fromWinners(row.winners),
                 winReason: row.win_reason ?? undefined,
-                players: row.players.map(({ details, ...player }) => ({ ...details, ...player }))
+                players: row.players.map(({ details, stats, ...player }) => ({
+                    ...details,
+                    ...player,
+                    ...(stats ? { stats } : {})
+                }))
             }));
         } catch (err) {
             logger.error('Unable to get all games from %s to %s %s', from, to, err);

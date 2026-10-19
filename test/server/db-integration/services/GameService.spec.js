@@ -115,6 +115,24 @@ describe('Postgres GameService', function () {
         expect(game.winner).toBeUndefined();
     });
 
+    it('should store player stats in their own column and return them', async function () {
+        const stats = { cardsMarshalled: 3, challengesWon: { military: 1 }, cards: {} };
+        const state = saveState();
+        state.players[0].stats = stats;
+
+        await this.service.create(state);
+
+        const rows = await db.query('SELECT stats, details FROM game_players ORDER BY position');
+        const [game] = await this.service.getAllGames();
+
+        expect(rows).toEqual([
+            { stats, details: { standing: 2 } },
+            { stats: null, details: { eliminatedReason: 'decked' } }
+        ]);
+        expect(game.players[0].stats).toEqual(stats);
+        expect(game.players[1].stats).toBeUndefined();
+    });
+
     it('should only return games started in the given range', async function () {
         await this.service.create(saveState({ gameId: 'a', startedAt: new Date('2026-01-15') }));
         await this.service.create(saveState({ gameId: 'b', startedAt: new Date('2026-02-15') }));
