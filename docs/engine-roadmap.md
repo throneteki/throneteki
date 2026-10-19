@@ -97,14 +97,22 @@ LIMIT 50;
 
 ### Phase 1: engine fundamentals
 
-1. **Targets with game actions.** _Done for a single `target`._ An ability can combine a `target`
-   with a `gameAction`; a card is only a legal target if its `cardCondition` passes and the game
-   action could change the game state for it, so immunity, "cannot" and game state checks apply
-   automatically. Abilities with several `targets` resolve a `gameAction` but don't yet filter by
-   it; that needs per-target game actions.
-2. **Game state check for triggered abilities.** `meetsRequirements` checks that the ability could
-   change the game state. Handler abilities can declare a `gameAction` or `condition` hint until they
-   are migrated.
+1. **Targets with game actions.** _Done._ An ability can combine a `target` with a `gameAction`, and
+   each of several `targets` can have its own `gameAction` (resolved simultaneously). A card is
+   only a legal target if its `cardCondition` passes and its game action could change the game
+   state for it ("a card is not an eligible target for an ability if the resolution of that
+   ability's effect could not affect the target at all"), so immunity, "cannot" and game state
+   checks apply automatically. `chooseOpponent` and `choosePlayer` are filtered the same way when
+   there are no card targets. String target actions (`gameAction: 'kill'`) only name the action
+   checked for immunity and can't be used to filter, because the rest of the effect may still
+   affect the card. Ser Gerris Drinkwater is the first card migrated to per-target actions.
+2. **Game state check for triggered abilities.** _Done for abilities that declare a game action:_
+   `canResolve` rules them out when the action could not change the game state, and offers only
+   targets and players it could affect. Abilities with a `handler` (841 triggered abilities and
+   498 actions on 2026-10-19) can't be checked; rather than adding a hint that could drift from the
+   handler, they are migrated to game actions in phase 5. Lasting effects (`untilEndOfPhase` and
+   so on) have no game action yet, which blocks migrating cards like Renly's Pavilion; that needs
+   one.
 3. **One way to change state.** _The ratchet is in place: `npm run card-rules` (run in CI) fails
    if a card file uses more legacy helpers, direct state writes, `addMessage` or `promptForSelect`
    than its baseline (on 2026-10-19: 578, 5, 1,207 and 115 uses in 1,065 files). The faction card

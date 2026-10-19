@@ -4,6 +4,7 @@ import AbilityMessage from './AbilityMessage.js';
 import AbilityTarget from './AbilityTarget.js';
 import ChooseGameAction from './GameActions/ChooseGameAction.js';
 import HandlerGameActionWrapper from './GameActions/HandlerGameActionWrapper.js';
+import SimultaneousActions from './GameActions/SimultaneousActions.js';
 import StackProperty from './PropertyTypes/StackProperty.js';
 import { Requirements } from './Constants/index.js';
 
@@ -51,39 +52,65 @@ class BaseAbility {
     }
 
     buildTargets(properties) {
-        if (properties.target) {
-            const gameActionFilter = properties.gameAction
+        const definitions = properties.target
+            ? [['target', properties.target]]
+            : Object.entries(properties.targets || {});
+        const singleTarget = !!properties.target;
+
+        this.targetGameActions = [];
+
+        return definitions.map(([name, targetProperties]) => {
+            let { gameAction, ...rest } = targetProperties;
+            let filterAction = singleTarget ? properties.gameAction : undefined;
+
+            // A target's own game action is what the ability does to that target. A string
+            // only names the action checked for immunity.
+            if (gameAction && typeof gameAction === 'object') {
+                this.targetGameActions.push(gameAction);
+                filterAction = gameAction;
+                gameAction = undefined;
+            }
+
+            const gameActionFilter = filterAction
                 ? (selection, context) =>
-                      BaseAbility.allowsTarget(properties.gameAction, selection, context)
+                      BaseAbility.allowsTarget(filterAction, selection, context, name)
                 : undefined;
-            return [AbilityTarget.create('target', { ...properties.target, gameActionFilter })];
-        }
 
-        if (properties.targets) {
-            let targetPairs = Object.entries(properties.targets);
-            return targetPairs.map(([name, properties]) => AbilityTarget.create(name, properties));
-        }
-
-        return [];
+            return AbilityTarget.create(name, { ...rest, gameAction, gameActionFilter });
+        });
     }
 
     /**
      * Whether a game action could change the game state if the selection were chosen as the
-     * ability's target. Used to rule out targets the ability could do nothing to.
+     * named target. Used to rule out targets the ability could do nothing to.
      */
-    static allowsTarget(gameAction, selection, context) {
+    static allowsTarget(gameAction, selection, context, name = 'target') {
         const candidate = Object.create(context);
-        candidate.target = selection;
         candidate.targets = Object.create(context.targets);
-        candidate.targets.target = selection;
+        candidate.targets[name] = selection;
+        if (name === 'target') {
+            candidate.target = selection;
+        }
         return gameAction.allow(candidate);
     }
 
     buildGameAction(properties) {
+        if (this.targetGameActions.length > 0) {
+            if (properties.gameAction || properties.handler || properties.choices) {
+                throw new Error(
+                    'An ability whose targets have their own game actions cannot also have a gameAction, handler or choices'
+                );
+            }
+
+            this.gameActionDependsOnChoices = true;
+            return new SimultaneousActions(this.targetGameActions);
+        }
+
         if (properties.gameAction) {
             // Choices are made after the ability is checked, so whether the game action can change
-            // the game state depends on what is chosen. A single target is filtered by the action
-            // instead; other choices are not checked.
+            // the game state depends on what is chosen. A single target, or the chosen player, is
+            // filtered by the action instead; several targets are only filtered by their own
+            // game actions.
             this.gameActionDependsOnChoices = !!(
                 properties.target ||
                 properties.targets ||

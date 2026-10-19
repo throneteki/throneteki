@@ -80,6 +80,95 @@ describe('BaseAbility with a target and a game action', function () {
         expect(this.context.targets.target).toBeUndefined();
     });
 
+    describe('with several targets that have their own game actions', function () {
+        beforeEach(function () {
+            this.forTarget = (name) => ({
+                allow: (context) => context.targets[name] !== this.kneeling,
+                createEvent: vi.fn()
+            });
+            this.ability = new BaseAbility({
+                targets: {
+                    first: { cardCondition: () => true, gameAction: this.forTarget('first') },
+                    second: { cardCondition: () => true, gameAction: 'kill' }
+                }
+            });
+        });
+
+        it("rules out candidates the target's own game action could not change", function () {
+            const selector = CardSelector.for({
+                ...this.ability.targets[0].properties,
+                context: this.context
+            });
+
+            expect(selector.canTarget(this.standing, this.context)).toBe(true);
+            expect(selector.canTarget(this.kneeling, this.context)).toBe(false);
+        });
+
+        it('leaves targets that only name an action for immunity alone', function () {
+            const selector = CardSelector.for({
+                ...this.ability.targets[1].properties,
+                context: this.context
+            });
+
+            expect(this.ability.targets[1].properties.gameAction).toBe('kill');
+            expect(selector.canTarget(this.kneeling, this.context)).toBe(true);
+        });
+
+        it("resolves the targets' game actions together", function () {
+            expect(this.ability.gameAction.resolveActions(this.context)).toEqual([
+                this.ability.targetGameActions[0]
+            ]);
+            expect(this.ability.isGameActionAllowed(this.context)).toBe(true);
+        });
+
+        it('cannot also have a handler or game action', function () {
+            const targets = {
+                first: { cardCondition: () => true, gameAction: this.forTarget('first') }
+            };
+
+            expect(() => new BaseAbility({ targets, handler: () => true })).toThrow();
+            expect(() => new BaseAbility({ targets, gameAction: this.gameAction })).toThrow();
+        });
+    });
+
+    describe('with a chosen opponent', function () {
+        beforeEach(function () {
+            this.player = { name: 'player' };
+            this.canDiscard = { name: 'canDiscard' };
+            this.emptyHand = { name: 'emptyHand' };
+            this.context = {
+                player: this.player,
+                targets: {},
+                game: { getPlayers: () => [this.player, this.canDiscard, this.emptyHand] }
+            };
+        });
+
+        it('only offers opponents the game action could affect', function () {
+            const ability = new BaseAbility({
+                chooseOpponent: true,
+                gameAction: { allow: (context) => context.opponent === this.canDiscard }
+            });
+
+            expect(ability.choosePlayerDefinition.eligibleChoices(this.context)).toEqual([
+                this.canDiscard
+            ]);
+            expect(this.context.opponent).toBeUndefined();
+        });
+
+        it('does not filter players when the action also depends on a card target', function () {
+            const ability = new BaseAbility({
+                chooseOpponent: true,
+                target: { cardCondition: () => true },
+                gameAction: { allow: (context) => context.opponent === this.canDiscard }
+            });
+
+            expect(ability.choosePlayerDefinition.eligibleChoices(this.context)).toEqual([
+                this.canDiscard,
+                this.emptyHand
+            ]);
+        });
+    });
+
     it('leaves the game state check to the target when the action depends on it', function () {
         const ability = new BaseAbility({
             target: { cardCondition: () => true },

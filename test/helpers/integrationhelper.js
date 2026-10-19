@@ -62,7 +62,8 @@ export function install() {
 
     afterEach(function () {
         if (process.env.DEBUG_TEST && this.game) {
-            console.info(this.game.getPlainTextLog());
+            // The default reporter drops console output from passing tests.
+            process.stdout.write(this.game.getPlainTextLog() + '\n');
         }
     });
 

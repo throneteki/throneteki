@@ -2317,10 +2317,6 @@
     "server/game/cards/11.1-TSC/SeizeTheInitiative.js": {
         "add-message": 1
     },
-    "server/game/cards/11.1-TSC/SerGerrisDrinkwater.js": {
-        "legacy-helper": 2,
-        "add-message": 1
-    },
     "server/game/cards/11.1-TSC/SerRobertStrong.js": {
         "add-message": 1,
         "legacy-helper": 1

@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SerGerrisDrinkwater extends DrawCard {
     setupCardAbilities() {
@@ -9,28 +10,32 @@ class SerGerrisDrinkwater extends DrawCard {
             targets: {
                 plotCard: {
                     activePromptTitle: 'Select a plot card',
-                    cardCondition: (card) =>
-                        card.controller === this.controller && card.location === 'plot deck',
-                    cardType: 'plot'
+                    cardCondition: (card, context) =>
+                        card.controller === context.player && card.location === 'plot deck',
+                    cardType: 'plot',
+                    gameAction: GameActions.placeCard((context) => ({
+                        card: context.targets.plotCard,
+                        location: 'revealed plots'
+                    }))
                 },
                 usedPlotCard: {
                     type: 'select',
                     activePromptTitle: 'Select a used plot card',
-                    cardCondition: (card) =>
-                        card.controller === this.controller && card.location === 'revealed plots',
-                    cardType: 'plot'
+                    cardCondition: (card, context) =>
+                        card.controller === context.player && card.location === 'revealed plots',
+                    cardType: 'plot',
+                    gameAction: GameActions.placeCard((context) => ({
+                        card: context.targets.usedPlotCard,
+                        location: 'plot deck'
+                    }))
                 }
             },
-            handler: (context) => {
-                this.controller.moveCard(context.targets.plotCard, 'revealed plots');
-                this.controller.moveCard(context.targets.usedPlotCard, 'plot deck');
-                this.game.addMessage(
-                    '{0} uses {1} to switch {2} from their plot deck with {3} in their used pile',
-                    this.controller,
-                    this,
-                    context.targets.plotCard,
-                    context.targets.usedPlotCard
-                );
+            message: {
+                format: '{player} uses {source} to switch {plotCard} from their plot deck with {usedPlotCard} in their used pile',
+                args: {
+                    plotCard: (context) => context.targets.plotCard,
+                    usedPlotCard: (context) => context.targets.usedPlotCard
+                }
             }
         });
     }

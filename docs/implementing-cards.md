@@ -486,8 +486,48 @@ A card is only a valid target if the game action could change the game state for
 and characters that can't be knelt are excluded automatically. With a multi-card target
 (`mode`, `numCards`), each card is checked on its own, as a one-card array.
 
-The check only applies to a single `target`. Abilities with several `targets`, or a `choosePlayer`
-or `chooseOpponent`, still resolve their `gameAction` but don't filter choices by it.
+When an ability chooses several cards, give each target its own `gameAction` acting on
+`context.targets.<name>`. Each target's candidates are filtered by its own action, and the actions
+resolve simultaneously; the ability can't also have a `gameAction`, `handler` or `choices`:
+
+```javascript
+// Ser Gerris Drinkwater: choose a card in your plot deck and switch it with a card in your used pile.
+targets: {
+    plotCard: {
+        cardType: 'plot',
+        cardCondition: (card, context) =>
+            card.controller === context.player && card.location === 'plot deck',
+        gameAction: GameActions.placeCard((context) => ({
+            card: context.targets.plotCard,
+            location: 'revealed plots'
+        }))
+    },
+    usedPlotCard: {
+        type: 'select',
+        cardType: 'plot',
+        cardCondition: (card, context) =>
+            card.controller === context.player && card.location === 'revealed plots',
+        gameAction: GameActions.placeCard((context) => ({
+            card: context.targets.usedPlotCard,
+            location: 'plot deck'
+        }))
+    }
+},
+message: {
+    format: '{player} uses {source} to switch {plotCard} from their plot deck with {usedPlotCard} in their used pile',
+    args: {
+        plotCard: (context) => context.targets.plotCard,
+        usedPlotCard: (context) => context.targets.usedPlotCard
+    }
+}
+```
+
+A string `gameAction` on a target (`gameAction: 'kill'`) is different: it only names the action
+checked for immunity, and doesn't filter or resolve anything.
+
+With `chooseOpponent` or `choosePlayer` and no card targets, only players the `gameAction` could
+affect can be chosen. An ability with several targets and a single top-level `gameAction` still
+resolves it, but doesn't filter the targets by it.
 
 #### Non-targeting card choices
 
