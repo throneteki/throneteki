@@ -174,8 +174,12 @@ How that works:
     - A candidate could respond but the player has nothing: they see no prompt; the game waits a
       random delay drawn from the same range as a short decision, then passes for them. To the
       opponent this looks identical to a player who looked and passed.
-4. **Pausing is a real opt-out.** "Don't ask again until end of round" means the player is not prompted
-   even when they hold a legal cancel, so pausing reveals nothing.
+4. **Pausing is a real opt-out.** _Done._ "Don't ask again until end of round" means the player is
+   not offered the windows the cancel timer covers until the next round, even when they hold a
+   legal cancel, so pausing reveals nothing
+   ([CancelTimerPause.spec.js](../test/server/gamesteps/CancelTimerPause.spec.js)). A player who
+   turns the timer off in their settings still leaks, since they are only prompted when they hold
+   a cancel; steps 1 to 3 fix that.
 5. **Player stops stay as an override.** A player can still choose to always stop at a window, for
    example to bluff. That choice does not depend on their hand, so it leaks nothing.
 6. **Tests run with zero delay** through an injected delay function.

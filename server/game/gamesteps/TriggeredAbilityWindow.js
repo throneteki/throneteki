@@ -40,12 +40,14 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
     }
 
     /**
-     * Filters out players who are no longer playing, have cancelled their timer, or have no valid choices
+     * Filters out players who are no longer playing, have paused the timer for this window, or
+     * have no valid choices
      */
     filterPlayers(players) {
         return players.filter(
             (player) =>
                 player.isPlaying() &&
+                !this.cancelTimer.isPausedFor(player) &&
                 (this.cancelTimer.isEnabled(player) ||
                     this.abilityChoices.some((abilityChoice) => abilityChoice.player === player))
         );

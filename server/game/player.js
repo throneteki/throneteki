@@ -789,6 +789,7 @@ class Player extends Spectator {
 
         if (this.resetTimerAtEndOfRound) {
             this.noTimer = false;
+            this.timerPausedForRound = false;
         }
 
         this.gainedGold = 0;
@@ -1359,6 +1360,7 @@ class Player extends Spectator {
 
     disableTimerForRound() {
         this.noTimer = true;
+        this.timerPausedForRound = true;
         this.resetTimerAtEndOfRound = true;
     }
 

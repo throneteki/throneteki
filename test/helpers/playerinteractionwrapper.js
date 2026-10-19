@@ -153,7 +153,7 @@ class PlayerInteractionWrapper {
     clickPrompt(text) {
         let currentPrompt = this.player.currentPrompt();
         let promptButton = currentPrompt.buttons.find(
-            (button) => button.text.toLowerCase() === text.toLowerCase()
+            (button) => button.text && button.text.toLowerCase() === text.toLowerCase()
         );
 
         if (!promptButton) {
