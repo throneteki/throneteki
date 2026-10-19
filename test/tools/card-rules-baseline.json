@@ -634,10 +634,6 @@
     "server/game/cards/02.5-COW/BloodMagicRitual.js": {
         "add-message": 1
     },
-    "server/game/cards/02.5-COW/Bronn.js": {
-        "add-message": 1,
-        "legacy-helper": 1
-    },
     "server/game/cards/02.5-COW/Chett.js": {
         "legacy-helper": 1,
         "add-message": 1

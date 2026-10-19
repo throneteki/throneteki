@@ -142,7 +142,14 @@ export const Events = Object.freeze({
     onCardSaved: { params: { card: 'BaseCard' } },
     onCardStood: { params: { card: 'BaseCard' } },
     onCardStrengthChanged: { params: { amount: 'number', applying: 'boolean', card: 'DrawCard' } },
-    onCardTakenControl: { params: { card: 'BaseCard' } },
+    onCardTakenControl: {
+        params: {
+            card: 'BaseCard',
+            oldController: 'Player',
+            player: 'Player',
+            source: 'BaseCard'
+        }
+    },
     onCardsDrawn: {
         params: {
             cards: 'DrawCard[]',

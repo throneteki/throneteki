@@ -39,6 +39,7 @@ import ManualActions from './ManualActions.js';
 import PlainTextGameChatFormatter from './PlainTextGameChatFormatter.js';
 import GameActions from './GameActions/index.js';
 import EndRound from './GameActions/EndRound.js';
+import TakeControl from './GameActions/TakeControl.js';
 import TimeLimit from './timeLimit.js';
 import PrizedKeywordListener from './PrizedKeywordListener.js';
 import GameOverPrompt from './gamesteps/GameOverPrompt.js';
@@ -1199,43 +1200,48 @@ class Game extends EventEmitter {
     }
 
     takeControl(player, card, source = null) {
-        var oldController = card.controller;
-        var newController = player;
+        return this.resolveGameAction(TakeControl, { player, card, source });
+    }
 
-        if (oldController === newController) {
-            return;
-        }
-
-        if (card.location !== 'play area' && !newController.canPutIntoPlay(card)) {
-            return;
-        }
-
-        if (card.location === 'play area' && !newController.canControl(card)) {
+    /**
+     * Changes control for a lasting effect. Effects apply outside the event pipeline, so the
+     * change happens at once and `onCardTakenControl` is raised afterwards.
+     */
+    takeControlByEffect(player, card, source) {
+        if (!TakeControl.canChangeGameState({ player, card })) {
             return;
         }
 
         this.applyGameAction('takeControl', card, (card) => {
-            if (card.parent) {
-                card.takeControl(newController, source);
-            } else {
-                oldController.removeCardFromPile(card);
-                card.takeControl(newController, source);
-                newController.cardsInPlay.push(card);
-            }
-
-            if (card.location !== 'play area') {
-                let originalLocation = card.location;
-                card.moveTo('play area');
-                card.applyPersistentEffects();
-                this.raiseEvent('onCardEntersPlay', {
-                    card: card,
-                    playingType: 'play',
-                    originalLocation: originalLocation
-                });
-            }
-
-            this.handleControlChange(card);
+            const oldController = card.controller;
+            this.changeController(player, card, source);
+            this.raiseControlChangedEvent(card, oldController, source);
         });
+    }
+
+    changeController(newController, card, source) {
+        const oldController = card.controller;
+
+        if (card.parent) {
+            card.takeControl(newController, source);
+        } else {
+            oldController.removeCardFromPile(card);
+            card.takeControl(newController, source);
+            newController.cardsInPlay.push(card);
+        }
+
+        if (card.location !== 'play area') {
+            let originalLocation = card.location;
+            card.moveTo('play area');
+            card.applyPersistentEffects();
+            this.raiseEvent('onCardEntersPlay', {
+                card: card,
+                playingType: 'play',
+                originalLocation: originalLocation
+            });
+        }
+
+        this.removeFromChallengeOnControlChange(card);
     }
 
     revertControl(card, source) {
@@ -1243,20 +1249,29 @@ class Game extends EventEmitter {
             return;
         }
 
+        const oldController = card.controller;
         card.controller.removeCardFromPile(card);
         card.revertControl(source);
         card.controller.cardsInPlay.push(card);
 
-        this.handleControlChange(card);
+        this.removeFromChallengeOnControlChange(card);
+        this.raiseControlChangedEvent(card, oldController, source);
     }
 
-    handleControlChange(card) {
+    removeFromChallengeOnControlChange(card) {
         if (this.currentChallenge && this.currentChallenge.isParticipating(card)) {
             this.addMessage('{0} is removed from the challenge because control has changed', card);
             this.currentChallenge.removeFromChallenge(card);
         }
+    }
 
-        this.raiseEvent('onCardTakenControl', { card: card });
+    raiseControlChangedEvent(card, oldController, source) {
+        this.raiseEvent('onCardTakenControl', {
+            card,
+            oldController,
+            player: card.controller,
+            source
+        });
     }
 
     applyGameAction(actionType, cards, func, options = {}) {

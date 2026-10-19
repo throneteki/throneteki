@@ -11,13 +11,25 @@ class TakeControl extends GameAction {
     }
 
     canChangeGameState({ player, card }) {
+        if (!player || card.controller === player) {
+            return false;
+        }
+
+        if (card.location !== 'play area') {
+            return player.canPutIntoPlay(card);
+        }
+
         return player.canControl(card);
     }
 
-    createEvent({ player, card, context }) {
-        return this.event('__PLACEHOLDER_EVENT__', { player, card }, (event) => {
-            context.game.takeControl(event.player, event.card, context.source);
-        });
+    createEvent({ player, card, context, source = context && context.source }) {
+        return this.event(
+            'onCardTakenControl',
+            { card, oldController: card.controller, player, source },
+            (event) => {
+                event.card.game.changeController(event.player, event.card, event.source);
+            }
+        );
     }
 }
 

@@ -116,8 +116,13 @@ LIMIT 50;
 3. **One way to change state.** _The ratchet is in place: `npm run card-rules` (run in CI) fails
    if a card file uses more legacy helpers, direct state writes, `addMessage` or `promptForSelect`
    than its baseline (on 2026-10-19: 578, 5, 1,207 and 115 uses in 1,065 files). The faction card
-   now stands through an event._ Still to do: every state change goes through a `GameAction`;
-   `takeControl` becomes one, and `changeStat` and `/power` go through actions.
+   now stands through an event. Taking control is a real event: `GameActions.takeControl` (and the
+   legacy `game.takeControl`, which now resolves it) raises `onCardTakenControl` before control
+   changes, with `oldController`, `player` and `source`, so interrupts can see it. Lasting
+   "take control" effects change control at once through `game.takeControlByEffect` and raise the
+   event afterwards._ Still to do: every state change goes through a `GameAction`. Whether manual
+   corrections (`changeStat`, `/power`, `/token`) should raise events is an open question: they
+   are corrections, and raising events would trigger reactions to them.
 4. **Simultaneity.** _The standing phase is done: every player's cards, faction cards included, stand
    as one event._ The standing phase stands every player's cards in one batch. Attachments and
    duplicates leaving play become child events of the card leaving play.
