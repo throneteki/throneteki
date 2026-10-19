@@ -1,6 +1,7 @@
 import BaseAbility from '../baseability.js';
 import Costs from '../costs.js';
 import Message from '../Message.js';
+import { Requirements } from '../Constants/index.js';
 
 class AmbushCardAction extends BaseAbility {
     constructor() {
@@ -14,14 +15,24 @@ class AmbushCardAction extends BaseAbility {
         return true;
     }
 
-    meetsRequirements(context) {
-        return (
-            context.game.currentPhase === 'challenge' &&
-            context.source.isAmbush() &&
-            context.player.isCardInPlayableLocation(context.source, 'ambush') &&
-            context.player.canPutIntoPlay(context.source, 'ambush') &&
-            context.source.getType() !== 'event'
-        );
+    getUnmetRequirement(context) {
+        if (context.game.currentPhase !== 'challenge') {
+            return Requirements.phase;
+        }
+
+        if (!context.source.isAmbush() || context.source.getType() === 'event') {
+            return Requirements.condition;
+        }
+
+        if (!context.player.isCardInPlayableLocation(context.source, 'ambush')) {
+            return Requirements.location;
+        }
+
+        if (!context.player.canPutIntoPlay(context.source, 'ambush')) {
+            return Requirements.restriction;
+        }
+
+        return undefined;
     }
 
     executeHandler(context) {

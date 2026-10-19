@@ -213,6 +213,28 @@ class PlayerInteractionWrapper {
         return items.some((item) => !item.disabled);
     }
 
+    /**
+     * Returns why this player can't use the card's action now, as one of the `Requirements`
+     * reasons, or undefined if they can. Pass the action's title when the card has several.
+     */
+    actionUnavailableReason(card, title) {
+        if (typeof card === 'string') {
+            card = this.findCardByName(card);
+        }
+
+        const actions = card.abilities.actions.filter(
+            (action) => title === undefined || action.title === title
+        );
+        if (actions.length !== 1) {
+            throw new Error(
+                `${card.name} has ${actions.length} actions${title ? ` titled "${title}"` : ''}; pass the title of one`
+            );
+        }
+
+        const [action] = actions;
+        return action.getUnmetRequirement(action.createContext(this.player));
+    }
+
     triggerAbility(cardOrCardName) {
         if (!this.game.hasOpenInterruptOrReactionWindow()) {
             throw new Error(

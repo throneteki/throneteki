@@ -113,11 +113,21 @@ LIMIT 50;
 4. **Simultaneity.** _The standing phase is done: every player's cards, faction cards included, stand
    as one event._ The standing phase stands every player's cards in one batch. Attachments and
    duplicates leaving play become child events of the card leaving play.
-5. **Event catalogue.** A constants module with a JSDoc type for each event's parameters. In test and
-   development builds, raising or listening to an unknown event, or using the wrong parameters, throws.
-6. **Requirement reasons.** `meetsRequirements` returns a reason (`'phase'`, `'limit'`, `'cost'`,
-   `'target'`, `'noEffect'`, ...) instead of a boolean. Tests can assert why something is unavailable
-   and the client can show it.
+5. **Event catalogue.** _Done._ [Constants/Events.js](../server/game/Constants/Events.js) lists
+   every event with its parameters and their types. Outside production, `Game.on` and `Game.emit`
+   throw on an unknown event or window suffix, and on an event raised with missing or unexpected
+   parameters; a spec checks that every card only listens for catalogued events. The catalogue was
+   built from the events the suite raises, plus a review of the five events it never raises
+   (`onAddedToChallenge`, `onBeforeDeckSearch`, `onDupeEntersPlay`, `onLookAtShadows`,
+   `onTokenDiscarded`); those five need engine specs. `onCardsDrawn` from `DrawSpecific` lacks the
+   `amount` that `DrawCards` gives it, so listeners can't rely on it.
+6. **Requirement reasons.** _Done on the server._ Abilities implement `getUnmetRequirement`, which
+   returns one of the [Requirements](../server/game/Constants/Requirements.js) reasons (`'phase'`,
+   `'limit'`, `'cost'`, `'target'`, `'noEffect'`, ...) or undefined; `meetsRequirements` and
+   `canResolve` wrap it. Specs assert why an action is unavailable with
+   `this.player1.actionUnavailableReason(card)`, and card menu items carry a `disabledReason`.
+   Still to do: the client showing the reason, and reasons for triggered abilities that are not
+   offered.
 
 ### Phase 2: prompts without leaking hidden information
 

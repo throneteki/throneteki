@@ -50,6 +50,9 @@ When a run fails, read the full output rather than piping it through `grep` or `
 - Each `it(...)` describes the specific scenario it checks. Not "works" or "ability".
 - Cover the positive case, the negative case (the condition isn't met, so nothing happens), and
   boundaries for any number in the text (exactly N, N - 1, N + 1).
+- **Unavailable actions:** when an action can't be used, assert why with
+  `this.player1.actionUnavailableReason(card)` (`'phase'`, `'cost'`, `'target'`, `'limit'`, ...), so
+  the test fails if it becomes unavailable for some other reason.
 - **Targets:** when an ability chooses a card, assert `toBeAbleToSelect` /
   `not.toBeAbleToSelect` for every card in the setup before clicking. The setup must include
   cards that fail each part of the target condition (wrong type, wrong controller, wrong trait,

@@ -5,6 +5,7 @@ import AbilityTarget from './AbilityTarget.js';
 import ChooseGameAction from './GameActions/ChooseGameAction.js';
 import HandlerGameActionWrapper from './GameActions/HandlerGameActionWrapper.js';
 import StackProperty from './PropertyTypes/StackProperty.js';
+import { Requirements } from './Constants/index.js';
 
 /**
  * Base class representing an ability that can be done by the player. This
@@ -105,17 +106,48 @@ class BaseAbility {
     }
 
     canResolve(context) {
-        return (
-            this.meetsRequirements(context) &&
-            this.canResolvePlayer(context) &&
-            this.canPayCosts(context) &&
-            this.canResolveTargets(context) &&
-            this.isGameActionAllowed(context)
-        );
+        return !this.getUnresolvableReason(context);
     }
 
-    meetsRequirements() {
-        return true;
+    /**
+     * Returns why the ability can't be resolved, as one of the `Requirements` reasons, or
+     * undefined if it can be.
+     */
+    getUnresolvableReason(context) {
+        return this.getUnmetRequirement(context) || this.getResolutionFailure(context);
+    }
+
+    meetsRequirements(context) {
+        return !this.getUnmetRequirement(context);
+    }
+
+    /**
+     * Returns the first requirement for using the ability that isn't met, as one of the
+     * `Requirements` reasons, or undefined if they all are. Subclasses override this rather than
+     * `meetsRequirements`.
+     */
+    getUnmetRequirement() {
+        return undefined;
+    }
+
+    getResolutionFailure(context, { checkGameAction = true } = {}) {
+        if (!this.canResolvePlayer(context)) {
+            return Requirements.player;
+        }
+
+        if (!this.canPayCosts(context)) {
+            return Requirements.cost;
+        }
+
+        if (!this.canResolveTargets(context)) {
+            return Requirements.target;
+        }
+
+        if (checkGameAction && !this.isGameActionAllowed(context)) {
+            return Requirements.noEffect;
+        }
+
+        return undefined;
     }
 
     /**

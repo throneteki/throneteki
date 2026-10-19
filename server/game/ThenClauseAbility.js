@@ -1,5 +1,6 @@
 import BaseAbility from './baseability.js';
 import AbilityContext from './AbilityContext.js';
+import { Requirements } from './Constants/index.js';
 
 class ThenClauseAbility extends BaseAbility {
     constructor(properties) {
@@ -25,8 +26,8 @@ class ThenClauseAbility extends BaseAbility {
         return context;
     }
 
-    meetsRequirements(context) {
-        return this.condition(context);
+    getUnmetRequirement(context) {
+        return this.condition(context) ? undefined : Requirements.condition;
     }
 }
 

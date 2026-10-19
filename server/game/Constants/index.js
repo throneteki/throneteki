@@ -1,4 +1,5 @@
 export { Flags } from './Flags.js';
+export { Requirements } from './Requirements.js';
 export { Tokens } from './Tokens.js';
 
 export const DrawPhaseCards = 2;

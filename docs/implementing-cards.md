@@ -565,13 +565,13 @@ Triggered abilities include all card abilities that have **Interrupt**, **Forced
 
 #### Defining the triggering condition
 
-Each triggered ability has an associated triggering condition. This is done using the `when` property. This should be an object whose sub-property is the name of the event, and whose value is a function with the parameters of that event. When the function returns `true`, the ability will be executed.
+Each triggered ability has an associated triggering condition. This is done using the `when` property. This should be an object whose sub-property is the name of the event, and whose value is a function called with the event and the ability context. When the function returns `true`, the ability will be executed. The events and the parameters each one carries are listed in [server/game/Constants/Events.js](../server/game/Constants/Events.js); outside production, listening for an event that isn't listed throws.
 
 ```javascript
 this.interrupt({
     when: {
-	    // when the challenges phase ends and the card is not kneeled
-        onPhaseEnded: (e, phase) => phase === 'challenge' && !this.kneeled
+        // when the challenges phase ends and the card is not kneeled
+        onPhaseEnded: (event) => event.phase === 'challenge' && !this.kneeled
     },
     handler: () => {
         // handler code.

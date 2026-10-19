@@ -48,10 +48,14 @@ import StartRound from './GameActions/StartRound.js';
 import GameOverHandler from './GameHandlers/GameOverHandler.js';
 import DisconnectHandler from './GameHandlers/DisconnectHandler.js';
 import { Flags } from './Constants/index.js';
+import { EventValidator } from './EventValidator.js';
 
 class Game extends EventEmitter {
     constructor(details, options = {}) {
         super();
+
+        const validateEvents = options.validateEvents ?? process.env.NODE_ENV !== 'production';
+        this.eventValidator = validateEvents ? new EventValidator() : null;
 
         this.instance = details.instance;
         this.event = details.event;
@@ -158,6 +162,16 @@ class Game extends EventEmitter {
 
     get isGameOver() {
         return this.gameOverHandler.isGameOver;
+    }
+
+    on(eventName, listener) {
+        this.eventValidator?.checkListener(eventName);
+        return super.on(eventName, listener);
+    }
+
+    emit(eventName, ...args) {
+        this.eventValidator?.checkEmit(eventName, args[0]);
+        return super.emit(eventName, ...args);
     }
 
     isPlaytesting() {

@@ -1,4 +1,5 @@
 import BaseAbility from '../baseability.js';
+import { Requirements } from '../Constants/index.js';
 
 class CustomPlayAction extends BaseAbility {
     constructor(properties) {
@@ -8,8 +9,8 @@ class CustomPlayAction extends BaseAbility {
         this.title = properties.title;
     }
 
-    meetsRequirements(context) {
-        return this.condition(context);
+    getUnmetRequirement(context) {
+        return this.condition(context) ? undefined : Requirements.condition;
     }
 
     executeHandler(context) {

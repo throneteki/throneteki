@@ -2,6 +2,7 @@ import PutIntoShadows from '../GameActions/PutIntoShadows.js';
 import BaseAbility from '../baseability.js';
 import Costs from '../costs.js';
 import { OpenInformationLocations } from '../CardVisibility.js';
+import { Requirements } from '../Constants/index.js';
 
 class MarshalIntoShadowsAction extends BaseAbility {
     constructor() {
@@ -16,15 +17,26 @@ class MarshalIntoShadowsAction extends BaseAbility {
         return true;
     }
 
-    meetsRequirements(context) {
-        let { game, player, source } = context;
+    getUnmetRequirement(context) {
+        const { game, player, source } = context;
 
-        return (
-            game.currentPhase === 'marshal' &&
-            source.isShadow() &&
-            player.allowMarshal &&
-            player.isCardInPlayableLocation(source, 'marshalIntoShadows')
-        );
+        if (game.currentPhase !== 'marshal') {
+            return Requirements.phase;
+        }
+
+        if (!source.isShadow()) {
+            return Requirements.condition;
+        }
+
+        if (!player.isCardInPlayableLocation(source, 'marshalIntoShadows')) {
+            return Requirements.location;
+        }
+
+        if (!player.allowMarshal) {
+            return Requirements.restriction;
+        }
+
+        return undefined;
     }
 
     executeHandler(context) {

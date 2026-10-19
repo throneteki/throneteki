@@ -223,6 +223,10 @@ expect(this.player1).toBeAbleToSelect(this.bodyguard); // exact card
 expect(this.player1).not.toBeAbleToSelect(this.eddardStark);
 expect(this.player2).toAllowAbilityTrigger("The Hand's Judgment");
 
+// Why an action can't be used: 'phase', 'cost', 'target', 'limit', ... or undefined
+// (the reasons are in server/game/Constants/Requirements.js)
+expect(this.player1.actionUnavailableReason(this.greyWind)).toBe('cost');
+
 // Card state
 expect(this.eddardStark.location).toBe('dead pile');
 expect(this.eddardStark.kneeled).toBe(false);
@@ -276,6 +280,10 @@ the first player is chosen (see [Confiscation.spec.js](../test/server/cards/01-C
 this.player1.clickMenu(this.card, 'Menu item text'); // menu actions
 this.player1.clickCard(this.card); // actions activated by clicking the card
 ```
+
+When an action shouldn't be available, assert the reason with `actionUnavailableReason` rather
+than only checking that nothing happened: it shows the action failed for the right reason, not
+because, say, a target was missing. Pass the action's title when the card has more than one.
 
 ### Reactions and interrupts
 

@@ -14,11 +14,16 @@ rules are in [cards/CLAUDE.md](cards/CLAUDE.md).
 - **Events** ([event.js](event.js), [gamesteps/eventwindow.js](gamesteps/eventwindow.js),
   [gamesteps/InterruptWindow.js](gamesteps/InterruptWindow.js)): every state change is an event.
   The window opens cancel interrupts, saves, forced interrupts and interrupts, runs the handler,
-  then opens When Revealed, forced reactions and reactions.
+  then opens When Revealed, forced reactions and reactions. Every event and its parameters are
+  listed in [Constants/Events.js](Constants/Events.js); outside production the game throws on
+  events that aren't listed or don't match, so add an entry when you add or change an event.
 - **Abilities** ([baseability.js](baseability.js), [cardaction.js](cardaction.js),
   [triggeredability.js](triggeredability.js),
   [gamesteps/abilityresolver.js](gamesteps/abilityresolver.js)): costs are paid, then targets are
   chosen, then `onCardAbilityInitiated` opens the window for cancels before the effect resolves.
+  Whether an ability can be used comes from `getUnmetRequirement`, which returns a reason from
+  [Constants/Requirements.js](Constants/Requirements.js); override it rather than
+  `meetsRequirements`, which only wraps it.
 - **GameActions** ([GameActions](GameActions)): the only supported way to change game state. Each
   action has `allow` (could this change the game state), `createEvent` and `message`.
 - **Effects** ([effect.js](effect.js), [effectengine.js](effectengine.js), [effects.js](effects.js)):
