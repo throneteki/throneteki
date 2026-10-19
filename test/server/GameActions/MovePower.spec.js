@@ -2,13 +2,13 @@ import MovePower from '../../../server/game/GameActions/MovePower.js';
 
 describe('MovePower', function () {
     beforeEach(function () {
-        this.gameSpy = jasmine.createSpyObj('game', ['']);
-        this.fromCardSpy = jasmine.createSpyObj('from', ['allowGameAction']);
+        this.gameSpy = {};
+        this.fromCardSpy = { allowGameAction: vi.fn() };
         this.fromCardSpy.controller = 'FROM_PLAYER_OBJ';
         this.fromCardSpy.game = this.gameSpy;
         this.fromCardSpy.location = 'play area';
         this.fromCardSpy.power = 1;
-        this.toCardSpy = jasmine.createSpyObj('to', ['allowGameAction']);
+        this.toCardSpy = { allowGameAction: vi.fn() };
         this.toCardSpy.controller = 'TO_PLAYER_OBJ';
         this.toCardSpy.location = 'play area';
         this.toCardSpy.game = this.gameSpy;
@@ -18,7 +18,7 @@ describe('MovePower', function () {
 
     describe('allow()', function () {
         beforeEach(function () {
-            this.fromCardSpy.allowGameAction.and.returnValue(true);
+            this.fromCardSpy.allowGameAction.mockReturnValue(true);
         });
 
         for (let location of ['active plot', 'faction', 'play area']) {

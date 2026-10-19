@@ -26,7 +26,7 @@ describe('the GamePipeline', function () {
         describe('when the step returns false', () => {
             beforeEach(() => {
                 pipeline.initialise([step]);
-                spyOn(step, 'onMenuCommand').and.returnValue(false);
+                vi.spyOn(step, 'onMenuCommand').mockReturnValue(false);
             });
 
             it('should call the onMenuCommand handler', () => {
@@ -42,7 +42,7 @@ describe('the GamePipeline', function () {
         describe('when the step returns true', () => {
             beforeEach(() => {
                 pipeline.initialise([step]);
-                spyOn(step, 'onMenuCommand').and.returnValue(true);
+                vi.spyOn(step, 'onMenuCommand').mockReturnValue(true);
             });
 
             it('should call the onMenuCommand handler', () => {

@@ -2,15 +2,15 @@ import DiscardCard from '../../../server/game/GameActions/DiscardCard.js';
 
 describe('DiscardCard', function () {
     beforeEach(function () {
-        this.playerSpy = jasmine.createSpyObj('player', ['']);
-        this.cardSpy = jasmine.createSpyObj('card', ['allowGameAction', 'createSnapshot']);
+        this.playerSpy = {};
+        this.cardSpy = { allowGameAction: vi.fn(), createSnapshot: vi.fn() };
         this.cardSpy.controller = this.playerSpy;
         this.props = { card: this.cardSpy };
     });
 
     describe('allow()', function () {
         beforeEach(function () {
-            this.cardSpy.allowGameAction.and.returnValue(true);
+            this.cardSpy.allowGameAction.mockReturnValue(true);
         });
 
         for (let location of ['draw deck', 'hand', 'play area', 'shadows', 'duplicate']) {
@@ -38,7 +38,7 @@ describe('DiscardCard', function () {
 
     describe('createEvent()', function () {
         beforeEach(function () {
-            this.cardSpy.createSnapshot.and.returnValue('snapshot');
+            this.cardSpy.createSnapshot.mockReturnValue('snapshot');
             this.event = DiscardCard.createEvent(this.props);
         });
 

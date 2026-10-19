@@ -1,11 +1,16 @@
-/* global jasmine */
-
+import fs from 'fs';
+import path from 'path';
 import range from 'lodash.range';
 
 import Game from '../../server/game/game.js';
 import PlayerInteractionWrapper from './playerinteractionwrapper.js';
 import Settings from '../../server/settings.js';
-import corePack from '../../throneteki-json-data/packs/Core.json' with { type: 'json' };
+const corePack = JSON.parse(
+    fs.readFileSync(
+        path.join(import.meta.dirname, '../../throneteki-json-data/packs/Core.json'),
+        'utf8'
+    )
+);
 const titleCardData = createTitleCardLookup(corePack.cards);
 
 function createTitleCardLookup(cards) {
@@ -20,49 +25,59 @@ function createTitleCardLookup(cards) {
 const defaultNumOfPlayers = {
     melee: 3,
     joust: 2
-}
+};
 
 class GameFlowWrapper {
     constructor(options) {
-        const gameRouter = jasmine.createSpyObj('gameRouter', [
-            'gameOver',
-            'handleError',
-            'playerLeft'
-        ]);
-        gameRouter.handleError.and.callFake((game, error) => {
-            throw error;
-        });
-        const numOfPlayers = options.numOfPlayers || defaultNumOfPlayers[options.gameFormat || 'joust'];
+        const gameRouter = options.router || {
+            gameOver: () => true,
+            handleError: (game, error) => {
+                throw error;
+            },
+            playerLeft: () => true
+        };
+        const numOfPlayers =
+            options.numOfPlayers || defaultNumOfPlayers[options.gameFormat || 'joust'];
+        const players = this.generatePlayerDetails(numOfPlayers, options.users);
+        const owner = players[0].user;
         const details = {
-            name: "player1's game",
-            id: 12345,
-            owner: { username: 'player1' },
-            saveGameId: 12345,
+            name: `${owner.username}'s game`,
+            id: options.gameId || 12345,
+            owner,
+            saveGameId: options.gameId || 12345,
             gameFormat: options.gameFormat,
             noTitleSetAside: true,
             maxPlayers: options.maxPlayers || numOfPlayers,
-            players: this.generatePlayerDetails(numOfPlayers)
+            players
         };
-        this.game = new Game(details, { router: gameRouter, titleCardData: titleCardData });
+        this.game = new Game(details, {
+            router: gameRouter,
+            titleCardData: titleCardData,
+            ...options.gameOptions
+        });
         this.game.started = true;
 
         this.game.disableWinning = options.disableWinning ?? true;
         this.game.disableRevealAcknowledgement = options.disableRevealAcknowledgement ?? true;
 
-        this.allPlayers = this.game
-            .getPlayers()
-            .map((player) => new PlayerInteractionWrapper(this.game, player));
+        this.allPlayers = this.game.getPlayers().map(
+            (player, index) =>
+                new PlayerInteractionWrapper(this.game, player, {
+                    key: `player${index + 1}`,
+                    keepUser: !!options.users
+                })
+        );
         this.playerToPlayerWrapperIndex = this.allPlayers.reduce((index, playerWrapper) => {
             index[playerWrapper.player.name] = playerWrapper;
             return index;
         }, {});
     }
 
-    generatePlayerDetails(numOfPlayers) {
+    generatePlayerDetails(numOfPlayers, users = []) {
         return range(1, numOfPlayers + 1).map((i) => {
             return {
                 id: i.toString(),
-                user: Settings.getUserWithDefaultsSet({ username: `player${i}` }),
+                user: Settings.getUserWithDefaultsSet(users[i - 1] || { username: `player${i}` }),
                 seatNo: i
             };
         });
@@ -136,11 +151,21 @@ class GameFlowWrapper {
     }
 
     completeRound() {
-        if (this.game.currentPhase === 'marshal') { this.completeMarshalPhase() }
-        if (this.game.currentPhase === 'challenge') { this.completeChallengesPhase() }
-        if (this.game.currentPhase === 'dominance') { this.completeDominancePhase() }
-        if (this.game.currentPhase === 'standing') { this.completeStandingPhase() }
-        if (this.game.currentPhase === 'taxation') { this.completeTaxationPhase() }
+        if (this.game.currentPhase === 'marshal') {
+            this.completeMarshalPhase();
+        }
+        if (this.game.currentPhase === 'challenge') {
+            this.completeChallengesPhase();
+        }
+        if (this.game.currentPhase === 'dominance') {
+            this.completeDominancePhase();
+        }
+        if (this.game.currentPhase === 'standing') {
+            this.completeStandingPhase();
+        }
+        if (this.game.currentPhase === 'taxation') {
+            this.completeTaxationPhase();
+        }
     }
 
     skipActionWindow() {

@@ -3,38 +3,38 @@ import Event from '../../../server/game/event.js';
 
 describe('CardReaction', function () {
     beforeEach(function () {
-        this.gameSpy = jasmine.createSpyObj('game', [
-            'on',
-            'popAbilityContext',
-            'pushAbilityContext',
-            'queueStep',
-            'removeListener',
-            'registerAbility',
-            'resolveGameAction'
-        ]);
-        this.cardSpy = jasmine.createSpyObj('card', [
-            'getPrintedType',
-            'getPrintedType',
-            'isAnyBlank',
-            'createSnapshot'
-        ]);
+        this.gameSpy = {
+            on: vi.fn(),
+            popAbilityContext: vi.fn(),
+            pushAbilityContext: vi.fn(),
+            queueStep: vi.fn(),
+            removeListener: vi.fn(),
+            registerAbility: vi.fn(),
+            resolveGameAction: vi.fn()
+        };
+        this.cardSpy = {
+            getPrintedType: vi.fn(),
+            getPrintedType: vi.fn(),
+            isAnyBlank: vi.fn(),
+            createSnapshot: vi.fn()
+        };
         this.cardSpy.location = 'play area';
-        this.cardSpy.createSnapshot.and.returnValue(this.cardSpy);
-        this.limitSpy = jasmine.createSpyObj('limit', [
-            'increment',
-            'isAtMax',
-            'registerEvents',
-            'unregisterEvents'
-        ]);
+        this.cardSpy.createSnapshot.mockReturnValue(this.cardSpy);
+        this.limitSpy = {
+            increment: vi.fn(),
+            isAtMax: vi.fn(),
+            registerEvents: vi.fn(),
+            unregisterEvents: vi.fn()
+        };
 
         this.properties = {
             when: {
-                onSomething: jasmine.createSpy('when condition')
+                onSomething: vi.fn()
             },
-            handler: jasmine.createSpy('handler')
+            handler: vi.fn()
         };
 
-        this.properties.when.onSomething.and.returnValue(true);
+        this.properties.when.onSomething.mockReturnValue(true);
 
         this.createReaction = () => {
             return new CardReaction(this.gameSpy, this.cardSpy, this.properties);
@@ -49,19 +49,19 @@ describe('CardReaction', function () {
             });
 
             it('should default to agenda for cards with type agenda', function () {
-                this.cardSpy.getPrintedType.and.returnValue('agenda');
+                this.cardSpy.getPrintedType.mockReturnValue('agenda');
                 this.action = new CardReaction(this.gameSpy, this.cardSpy, this.properties);
                 expect(this.action.location).toContain('agenda');
             });
 
             it('should default to active plot for cards with type plot', function () {
-                this.cardSpy.getPrintedType.and.returnValue('plot');
+                this.cardSpy.getPrintedType.mockReturnValue('plot');
                 this.action = new CardReaction(this.gameSpy, this.cardSpy, this.properties);
                 expect(this.action.location).toContain('active plot');
             });
 
             it('should default to hand for cards with type event', function () {
-                this.cardSpy.getPrintedType.and.returnValue('event');
+                this.cardSpy.getPrintedType.mockReturnValue('event');
                 this.action = new CardReaction(this.gameSpy, this.cardSpy, this.properties);
                 expect(this.action.location).toContain('hand');
             });
@@ -118,13 +118,13 @@ describe('CardReaction', function () {
             this.executeEventHandler();
             expect(this.properties.when.onSomething).toHaveBeenCalledWith(
                 this.event,
-                jasmine.anything()
+                expect.anything()
             );
         });
 
         describe('when the singular condition returns false', function () {
             beforeEach(function () {
-                this.properties.when.onSomething.and.returnValue(false);
+                this.properties.when.onSomething.mockReturnValue(false);
                 this.executeEventHandler();
             });
 
@@ -149,14 +149,14 @@ describe('CardReaction', function () {
 
         describe('when the singular condition returns true', function () {
             beforeEach(function () {
-                this.properties.when.onSomething.and.returnValue(true);
+                this.properties.when.onSomething.mockReturnValue(true);
                 this.executeEventHandler();
             });
 
             it('should register the ability', function () {
                 expect(this.gameSpy.registerAbility).toHaveBeenCalledWith(
                     this.reaction,
-                    jasmine.objectContaining({
+                    expect.objectContaining({
                         ability: this.reaction,
                         event: this.event,
                         game: this.gameSpy,
@@ -181,11 +181,11 @@ describe('CardReaction', function () {
             it('should only register the one ability', function () {
                 expect(this.gameSpy.registerAbility).toHaveBeenCalledWith(
                     this.reaction,
-                    jasmine.objectContaining({
-                        events: jasmine.arrayContaining([this.childEvent1])
+                    expect.objectContaining({
+                        events: expect.arrayContaining([this.childEvent1])
                     })
                 );
-                expect(this.gameSpy.registerAbility.calls.count()).toBe(1);
+                expect(this.gameSpy.registerAbility.mock.calls.length).toBe(1);
             });
         });
 
@@ -204,19 +204,19 @@ describe('CardReaction', function () {
             it('should register each ability grouped by aggregate', function () {
                 expect(this.gameSpy.registerAbility).toHaveBeenCalledWith(
                     this.reaction,
-                    jasmine.objectContaining({
-                        aggregate: jasmine.objectContaining({ arg1: 'val1', arg2: 'val2' }),
-                        events: jasmine.arrayContaining([this.childEvent1])
+                    expect.objectContaining({
+                        aggregate: expect.objectContaining({ arg1: 'val1', arg2: 'val2' }),
+                        events: expect.arrayContaining([this.childEvent1])
                     })
                 );
                 expect(this.gameSpy.registerAbility).toHaveBeenCalledWith(
                     this.reaction,
-                    jasmine.objectContaining({
-                        aggregate: jasmine.objectContaining({ arg1: 'val1', arg2: 'val3' }),
-                        events: jasmine.arrayContaining([this.childEvent2, this.childEvent3])
+                    expect.objectContaining({
+                        aggregate: expect.objectContaining({ arg1: 'val1', arg2: 'val3' }),
+                        events: expect.arrayContaining([this.childEvent2, this.childEvent3])
                     })
                 );
-                expect(this.gameSpy.registerAbility.calls.count()).toBe(2);
+                expect(this.gameSpy.registerAbility.mock.calls.length).toBe(2);
             });
         });
     });
@@ -235,7 +235,7 @@ describe('CardReaction', function () {
             this.meetsRequirements();
             expect(this.properties.when.onSomething).toHaveBeenCalledWith(
                 this.event,
-                jasmine.anything()
+                expect.anything()
             );
         });
 
@@ -251,7 +251,7 @@ describe('CardReaction', function () {
 
         describe('when the card has been blanked', function () {
             beforeEach(function () {
-                this.cardSpy.isAnyBlank.and.returnValue(true);
+                this.cardSpy.isAnyBlank.mockReturnValue(true);
             });
 
             it('should return false', function () {
@@ -261,7 +261,7 @@ describe('CardReaction', function () {
 
         describe('when the singular condition returns false', function () {
             beforeEach(function () {
-                this.properties.when.onSomething.and.returnValue(false);
+                this.properties.when.onSomething.mockReturnValue(false);
             });
 
             it('should return false', function () {
@@ -272,8 +272,8 @@ describe('CardReaction', function () {
         describe('when the aggregate condition returns false', function () {
             beforeEach(function () {
                 this.properties.when.onSomething = {
-                    aggregateBy: jasmine.createSpy().and.returnValue({}),
-                    condition: jasmine.createSpy().and.returnValue(false)
+                    aggregateBy: vi.fn().mockReturnValue({}),
+                    condition: vi.fn().mockReturnValue(false)
                 };
             });
 
@@ -309,7 +309,7 @@ describe('CardReaction', function () {
 
             describe('and the limit has been reached', function () {
                 beforeEach(function () {
-                    this.limitSpy.isAtMax.and.returnValue(true);
+                    this.limitSpy.isAtMax.mockReturnValue(true);
                 });
 
                 it('should return false', function () {
@@ -319,7 +319,7 @@ describe('CardReaction', function () {
 
             describe('and the limit has not been reached', function () {
                 beforeEach(function () {
-                    this.limitSpy.isAtMax.and.returnValue(false);
+                    this.limitSpy.isAtMax.mockReturnValue(false);
                 });
 
                 it('should return true', function () {
@@ -330,13 +330,13 @@ describe('CardReaction', function () {
 
         describe('when the reaction has a cost', function () {
             beforeEach(function () {
-                this.cost = jasmine.createSpyObj('cost', ['canPay']);
+                this.cost = { canPay: vi.fn() };
                 this.properties.cost = this.cost;
             });
 
             describe('and the cost can be paid', function () {
                 beforeEach(function () {
-                    this.cost.canPay.and.returnValue(true);
+                    this.cost.canPay.mockReturnValue(true);
                 });
 
                 it('should return true', function () {
@@ -346,7 +346,7 @@ describe('CardReaction', function () {
 
             describe('and the cost cannot be paid', function () {
                 beforeEach(function () {
-                    this.cost.canPay.and.returnValue(false);
+                    this.cost.canPay.mockReturnValue(false);
                 });
 
                 it('should return false', function () {
@@ -363,7 +363,7 @@ describe('CardReaction', function () {
                 when: {
                     onSomething: () => true
                 },
-                handler: jasmine.createSpy('handler')
+                handler: vi.fn()
             };
             this.reaction = this.createReaction();
             this.reaction.executeHandler(this.context);
@@ -371,7 +371,7 @@ describe('CardReaction', function () {
 
         it('resolves the game action', function () {
             expect(this.gameSpy.resolveGameAction).toHaveBeenCalledWith(
-                jasmine.any(Object),
+                expect.any(Object),
                 this.context
             );
         });
@@ -395,18 +395,18 @@ describe('CardReaction', function () {
         });
 
         it('should register all when event handlers with the proper event type suffix', function () {
-            expect(this.gameSpy.on).toHaveBeenCalledWith('onFoo:reaction', jasmine.any(Function));
-            expect(this.gameSpy.on).toHaveBeenCalledWith('onBar:reaction', jasmine.any(Function));
+            expect(this.gameSpy.on).toHaveBeenCalledWith('onFoo:reaction', expect.any(Function));
+            expect(this.gameSpy.on).toHaveBeenCalledWith('onBar:reaction', expect.any(Function));
         });
 
         it('should register a singular event with no suffix for aggregates', function () {
-            expect(this.gameSpy.on).toHaveBeenCalledWith('reaction', jasmine.any(Function));
+            expect(this.gameSpy.on).toHaveBeenCalledWith('reaction', expect.any(Function));
         });
 
         it('should not reregister events already registered', function () {
-            expect(this.gameSpy.on.calls.count()).toBe(3);
+            expect(this.gameSpy.on.mock.calls.length).toBe(3);
             this.reaction.registerEvents();
-            expect(this.gameSpy.on.calls.count()).toBe(3);
+            expect(this.gameSpy.on.mock.calls.length).toBe(3);
         });
     });
 
@@ -431,15 +431,15 @@ describe('CardReaction', function () {
             this.reaction.unregisterEvents();
             expect(this.gameSpy.removeListener).toHaveBeenCalledWith(
                 'onFoo:reaction',
-                jasmine.any(Function)
+                expect.any(Function)
             );
             expect(this.gameSpy.removeListener).toHaveBeenCalledWith(
                 'onBar:reaction',
-                jasmine.any(Function)
+                expect.any(Function)
             );
             expect(this.gameSpy.removeListener).toHaveBeenCalledWith(
                 'reaction',
-                jasmine.any(Function)
+                expect.any(Function)
             );
         });
 
@@ -451,9 +451,9 @@ describe('CardReaction', function () {
         it('should not unregister events already unregistered', function () {
             this.reaction.registerEvents();
             this.reaction.unregisterEvents();
-            expect(this.gameSpy.removeListener.calls.count()).toBe(3);
+            expect(this.gameSpy.removeListener.mock.calls.length).toBe(3);
             this.reaction.unregisterEvents();
-            expect(this.gameSpy.removeListener.calls.count()).toBe(3);
+            expect(this.gameSpy.removeListener.mock.calls.length).toBe(3);
         });
     });
 });

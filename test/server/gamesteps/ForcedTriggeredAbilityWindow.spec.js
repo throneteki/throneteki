@@ -2,26 +2,26 @@ import ForcedTriggeredAbilityWindow from '../../../server/game/gamesteps/ForcedT
 
 describe('ForcedTriggeredAbilityWindow', function () {
     beforeEach(function () {
-        this.player1Spy = jasmine.createSpyObj('player', ['isTimerEnabled']);
+        this.player1Spy = { isTimerEnabled: vi.fn() };
         this.player1Spy.name = 'player1';
-        this.player2Spy = jasmine.createSpyObj('player', ['isTimerEnabled']);
+        this.player2Spy = { isTimerEnabled: vi.fn() };
         this.player2Spy.name = 'player2';
 
-        this.gameSpy = jasmine.createSpyObj('game', [
-            'getFirstPlayer',
-            'promptWithMenu',
-            'resolveAbility'
-        ]);
-        this.gameSpy.getFirstPlayer.and.returnValue(this.player1Spy);
+        this.gameSpy = {
+            getFirstPlayer: vi.fn(),
+            promptWithMenu: vi.fn(),
+            resolveAbility: vi.fn()
+        };
+        this.gameSpy.getFirstPlayer.mockReturnValue(this.player1Spy);
 
-        this.eventSpy = jasmine.createSpyObj('event', [
-            'emitTo',
-            'getConcurrentEvents',
-            'getPrimaryEvents'
-        ]);
+        this.eventSpy = {
+            emitTo: vi.fn(),
+            getConcurrentEvents: vi.fn(),
+            getPrimaryEvents: vi.fn()
+        };
         this.eventSpy.attachedEvents = [];
-        this.eventSpy.getConcurrentEvents.and.returnValue([this.eventSpy]);
-        this.eventSpy.getPrimaryEvents.and.returnValue([this.eventSpy]);
+        this.eventSpy.getConcurrentEvents.mockReturnValue([this.eventSpy]);
+        this.eventSpy.getPrimaryEvents.mockReturnValue([this.eventSpy]);
 
         this.window = new ForcedTriggeredAbilityWindow(this.gameSpy, {
             event: this.eventSpy,
@@ -29,16 +29,16 @@ describe('ForcedTriggeredAbilityWindow', function () {
         });
 
         function createCard(properties) {
-            let cardSpy = jasmine.createSpyObj('card', ['getSummary']);
+            let cardSpy = { getSummary: vi.fn() };
             Object.assign(cardSpy, properties);
             return cardSpy;
         }
 
         function createAbility(card) {
-            let ability = jasmine.createSpyObj('ability', ['getChoices', 'canResolve']);
+            let ability = { getChoices: vi.fn(), canResolve: vi.fn() };
             ability.card = card;
-            ability.getChoices.and.returnValue([{ choice: 'default' }]);
-            ability.canResolve.and.returnValue(true);
+            ability.getChoices.mockReturnValue([{ choice: 'default' }]);
+            ability.canResolve.mockReturnValue(true);
             return ability;
         }
 
@@ -62,8 +62,8 @@ describe('ForcedTriggeredAbilityWindow', function () {
         });
         this.ability3Spy = createAbility(this.abilityCard3);
 
-        spyOn(this.window, 'gatherChoices');
-        spyOn(this.window, 'resolveAbility');
+        vi.spyOn(this.window, 'gatherChoices').mockImplementation(() => {});
+        vi.spyOn(this.window, 'resolveAbility').mockImplementation(() => {});
     });
 
     describe('continue()', function () {
@@ -83,7 +83,7 @@ describe('ForcedTriggeredAbilityWindow', function () {
 
         describe('when there is only 1 choice', function () {
             beforeEach(function () {
-                this.window.gatherChoices.and.callFake(() => {
+                this.window.gatherChoices.mockImplementation(() => {
                     this.window.registerAbility(this.ability1Spy, this.context1);
                 });
 
@@ -114,7 +114,7 @@ describe('ForcedTriggeredAbilityWindow', function () {
 
         describe('when there are multiple choices', function () {
             beforeEach(function () {
-                this.window.gatherChoices.and.callFake(() => {
+                this.window.gatherChoices.mockImplementation(() => {
                     this.window.registerAbility(this.ability1Spy, this.context1);
                     this.window.registerAbility(this.ability2Spy, this.context2);
                     this.window.registerAbility(this.ability3Spy, this.context3);
@@ -126,23 +126,23 @@ describe('ForcedTriggeredAbilityWindow', function () {
                 expect(this.gameSpy.promptWithMenu).toHaveBeenCalledWith(
                     this.player1Spy,
                     this.window,
-                    jasmine.objectContaining({
+                    expect.objectContaining({
                         activePrompt: {
-                            menuTitle: jasmine.any(String),
+                            menuTitle: expect.any(String),
                             buttons: [
-                                jasmine.objectContaining({
+                                expect.objectContaining({
                                     text: 'player1 - The Card',
-                                    arg: jasmine.any(String),
+                                    arg: expect.any(String),
                                     method: 'chooseAbility'
                                 }),
-                                jasmine.objectContaining({
+                                expect.objectContaining({
                                     text: 'player1 - The Card 2',
-                                    arg: jasmine.any(String),
+                                    arg: expect.any(String),
                                     method: 'chooseAbility'
                                 }),
-                                jasmine.objectContaining({
+                                expect.objectContaining({
                                     text: 'player2 - Their Card',
-                                    arg: jasmine.any(String),
+                                    arg: expect.any(String),
                                     method: 'chooseAbility'
                                 })
                             ]

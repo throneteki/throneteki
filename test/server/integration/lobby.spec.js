@@ -2,33 +2,33 @@ import Lobby from '../../../server/lobby.js';
 
 describe('lobby', function () {
     beforeEach(function () {
-        this.socketSpy = jasmine.createSpyObj('socket', ['joinChannel', 'send']);
-        this.ioSpy = jasmine.createSpyObj('io', ['set', 'use', 'on', 'emit']);
-        this.routerSpy = jasmine.createSpyObj('router', ['on']);
-        this.userSpy = jasmine.createSpyObj('User', ['getDetails', 'hasUserBlocked']);
+        this.socketSpy = { joinChannel: vi.fn(), send: vi.fn() };
+        this.ioSpy = { set: vi.fn(), use: vi.fn(), on: vi.fn(), emit: vi.fn() };
+        this.routerSpy = { on: vi.fn() };
+        this.userSpy = { getDetails: vi.fn(), hasUserBlocked: vi.fn() };
         this.userSpy.username = 'test';
-        this.userSpy.getDetails.and.returnValue({ username: 'test' });
-        this.userSpy.hasUserBlocked.and.returnValue(false);
+        this.userSpy.getDetails.mockReturnValue({ username: 'test' });
+        this.userSpy.hasUserBlocked.mockReturnValue(false);
 
         this.socketSpy.user = this.userSpy;
         this.socketSpy.id = 'socket1';
 
-        this.cardService = jasmine.createSpyObj('cardService', [
-            'getTitleCards',
-            'getAllCards',
-            'getRestrictedList'
-        ]);
-        this.cardService.getTitleCards.and.returnValue(Promise.resolve([]));
-        this.cardService.getAllCards.and.returnValue(Promise.resolve([]));
-        this.cardService.getRestrictedList.and.returnValue(
+        this.cardService = {
+            getTitleCards: vi.fn(),
+            getAllCards: vi.fn(),
+            getRestrictedList: vi.fn()
+        };
+        this.cardService.getTitleCards.mockReturnValue(Promise.resolve([]));
+        this.cardService.getAllCards.mockReturnValue(Promise.resolve([]));
+        this.cardService.getRestrictedList.mockReturnValue(
             Promise.resolve([{ name: 'Default RL', banned: [], restricted: [] }])
         );
 
-        this.userService = jasmine.createSpyObj('userService', ['on']);
+        this.userService = { on: vi.fn() };
 
-        this.messageService = jasmine.createSpyObj('messageService', ['on']);
+        this.messageService = { on: vi.fn() };
 
-        this.eventService = jasmine.createSpyObj('eventService', ['getEventById']);
+        this.eventService = { getEventById: vi.fn() };
 
         this.lobby = new Lobby(
             {},
@@ -48,10 +48,8 @@ describe('lobby', function () {
 
     describe('onNewGame', function () {
         describe('when called once', function () {
-            beforeEach(function (done) {
-                this.lobby.onNewGame(this.socketSpy, { eventId: 'none' }).then(() => {
-                    done();
-                });
+            beforeEach(async function () {
+                await this.lobby.onNewGame(this.socketSpy, { eventId: 'none' });
             });
 
             it('should create a new game with the player in it', function () {
@@ -64,15 +62,9 @@ describe('lobby', function () {
         });
 
         describe('when called twice', function () {
-            beforeEach(function (done) {
-                this.lobby
-                    .onNewGame(this.socketSpy, { eventId: 'none' })
-                    .then(() => {
-                        return this.lobby.onNewGame(this.socketSpy, { eventId: 'none' });
-                    })
-                    .then(() => {
-                        done();
-                    });
+            beforeEach(async function () {
+                await this.lobby.onNewGame(this.socketSpy, { eventId: 'none' });
+                await this.lobby.onNewGame(this.socketSpy, { eventId: 'none' });
             });
 
             it('should only create 1 game', function () {

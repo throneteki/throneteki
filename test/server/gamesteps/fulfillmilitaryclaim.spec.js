@@ -2,14 +2,10 @@ import FulfillMilitaryClaim from '../../../server/game/gamesteps/challenge/fulfi
 
 describe('FulfillMilitaryClaim', function () {
     beforeEach(function () {
-        this.game = jasmine.createSpyObj('game', [
-            'killCharacters',
-            'promptForSelect',
-            'addMessage'
-        ]);
-        this.loser = jasmine.createSpyObj('loser', ['getNumberOfCardsInPlay', 'filterCardsInPlay']);
-        this.loser.getNumberOfCardsInPlay.and.returnValue(0);
-        this.loser.filterCardsInPlay.and.returnValue([]);
+        this.game = { killCharacters: vi.fn(), promptForSelect: vi.fn(), addMessage: vi.fn() };
+        this.loser = { getNumberOfCardsInPlay: vi.fn(), filterCardsInPlay: vi.fn() };
+        this.loser.getNumberOfCardsInPlay.mockReturnValue(0);
+        this.loser.filterCardsInPlay.mockReturnValue([]);
         this.loser.mustChooseAsClaim = [];
 
         this.step = new FulfillMilitaryClaim(this.game, this.loser, 1);
@@ -21,7 +17,7 @@ describe('FulfillMilitaryClaim', function () {
         });
 
         it('should prompt the loser to select cards for claim', function () {
-            expect(this.game.promptForSelect).toHaveBeenCalledWith(this.loser, jasmine.any(Object));
+            expect(this.game.promptForSelect).toHaveBeenCalledWith(this.loser, expect.any(Object));
         });
 
         it('should return true', function () {
@@ -31,8 +27,8 @@ describe('FulfillMilitaryClaim', function () {
 
     describe('fulfillClaim()', function () {
         function makeCard(controller, type) {
-            var card = jasmine.createSpyObj('card', ['getType']);
-            card.getType.and.returnValue(type);
+            var card = { getType: vi.fn() };
+            card.getType.mockReturnValue(type);
             card.controller = controller;
             return card;
         }
@@ -41,7 +37,7 @@ describe('FulfillMilitaryClaim', function () {
             this.card2 = makeCard(this.loser, 'character');
             this.card3 = makeCard(this.loser, 'location');
 
-            this.loser.getNumberOfCardsInPlay.and.returnValue(2);
+            this.loser.getNumberOfCardsInPlay.mockReturnValue(2);
         });
 
         describe('when the claim is 1', function () {

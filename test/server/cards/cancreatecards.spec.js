@@ -2,14 +2,14 @@ import cards from '../../../server/game/cards/index.js';
 
 describe('All Cards', function () {
     beforeEach(function () {
-        this.gameSpy = jasmine.createSpyObj('game', [
-            'on',
-            'removeListener',
-            'addPower',
-            'addMessage',
-            'addEffect'
-        ]);
-        this.playerSpy = jasmine.createSpyObj('player', ['registerAbilityMax']);
+        this.gameSpy = {
+            on: vi.fn(),
+            removeListener: vi.fn(),
+            addPower: vi.fn(),
+            addMessage: vi.fn(),
+            addEffect: vi.fn()
+        };
+        this.playerSpy = { registerAbilityMax: vi.fn() };
         this.playerSpy.game = this.gameSpy;
     });
 

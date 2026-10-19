@@ -2,14 +2,14 @@ import EventRegistrar from '../../server/game/eventregistrar.js';
 
 describe('EventRegistrar', function () {
     beforeEach(function () {
-        this.gameSpy = jasmine.createSpyObj('game', ['on', 'removeListener']);
+        this.gameSpy = { on: vi.fn(), removeListener: vi.fn() };
         this.context = {
             method: function () {},
             anotherMethod: function () {},
             finalMethod: function () {}
         };
         this.boundHandler = {};
-        spyOn(this.context.method, 'bind').and.returnValue(this.boundHandler);
+        vi.spyOn(this.context.method, 'bind').mockReturnValue(this.boundHandler);
         this.events = new EventRegistrar(this.gameSpy, this.context);
     });
 
@@ -33,14 +33,14 @@ describe('EventRegistrar', function () {
         it('should handle multiple events', function () {
             this.events.register(['method', 'anotherMethod']);
             expect(this.gameSpy.on).toHaveBeenCalledWith('method', this.boundHandler);
-            expect(this.gameSpy.on).toHaveBeenCalledWith('anotherMethod', jasmine.any(Function));
+            expect(this.gameSpy.on).toHaveBeenCalledWith('anotherMethod', expect.any(Function));
         });
 
         it('should accept an event-to-method mapping', function () {
             this.events.register(['anotherMethod', { foo: 'method', bar: 'finalMethod' }]);
             expect(this.gameSpy.on).toHaveBeenCalledWith('foo', this.boundHandler);
-            expect(this.gameSpy.on).toHaveBeenCalledWith('bar', jasmine.any(Function));
-            expect(this.gameSpy.on).toHaveBeenCalledWith('anotherMethod', jasmine.any(Function));
+            expect(this.gameSpy.on).toHaveBeenCalledWith('bar', expect.any(Function));
+            expect(this.gameSpy.on).toHaveBeenCalledWith('anotherMethod', expect.any(Function));
         });
     });
 
@@ -54,15 +54,15 @@ describe('EventRegistrar', function () {
             expect(this.gameSpy.removeListener).toHaveBeenCalledWith('method', this.boundHandler);
             expect(this.gameSpy.removeListener).toHaveBeenCalledWith(
                 'anotherMethod',
-                jasmine.any(Function)
+                expect.any(Function)
             );
         });
 
         it('should not unregister multiple times', function () {
             this.events.unregisterAll();
-            this.gameSpy.removeListener.calls.reset();
+            this.gameSpy.removeListener.mockClear();
             this.events.unregisterAll();
-            expect(this.gameSpy.removeListener.calls.count()).toBe(0);
+            expect(this.gameSpy.removeListener.mock.calls.length).toBe(0);
         });
     });
 });

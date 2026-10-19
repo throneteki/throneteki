@@ -2,8 +2,8 @@ import GainGold from '../../../server/game/GameActions/GainGold.js';
 
 describe('GainGold', function () {
     beforeEach(function () {
-        this.playerSpy = jasmine.createSpyObj('player', ['getGoldToGain', 'modifyGold']);
-        this.playerSpy.getGoldToGain.and.returnValue(2);
+        this.playerSpy = { getGoldToGain: vi.fn(), modifyGold: vi.fn() };
+        this.playerSpy.getGoldToGain.mockReturnValue(2);
         this.playerSpy.gainedGold = 0;
         this.props = { player: this.playerSpy, amount: 3 };
     });
@@ -11,7 +11,7 @@ describe('GainGold', function () {
     describe('allow()', function () {
         describe('when the player can gain gold', function () {
             beforeEach(function () {
-                this.playerSpy.getGoldToGain.and.returnValue(1);
+                this.playerSpy.getGoldToGain.mockReturnValue(1);
             });
 
             it('returns true', function () {
@@ -21,7 +21,7 @@ describe('GainGold', function () {
 
         describe('when the player cannot gain gold', function () {
             beforeEach(function () {
-                this.playerSpy.getGoldToGain.and.returnValue(0);
+                this.playerSpy.getGoldToGain.mockReturnValue(0);
             });
 
             it('returns false', function () {

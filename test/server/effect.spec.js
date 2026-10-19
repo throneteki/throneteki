@@ -1,40 +1,40 @@
 import Effect from '../../server/game/effect.js';
 
 function createTarget(properties = {}) {
-    let card = jasmine.createSpyObj('card', ['allowGameAction', 'getGameElementType']);
-    card.allowGameAction.and.returnValue(true);
-    card.getGameElementType.and.returnValue('card');
+    let card = { allowGameAction: vi.fn(), getGameElementType: vi.fn() };
+    card.allowGameAction.mockReturnValue(true);
+    card.getGameElementType.mockReturnValue('card');
     Object.assign(card, properties);
     return card;
 }
 
 function createPlayerTarget(properties = {}) {
-    let player = jasmine.createSpyObj('player', ['getGameElementType']);
-    player.getGameElementType.and.returnValue('player');
+    let player = { getGameElementType: vi.fn() };
+    player.getGameElementType.mockReturnValue('player');
     Object.assign(player, properties);
     return player;
 }
 
 function resetEffectDefinitionCalls(effectDefinition) {
-    effectDefinition.apply.calls.reset();
-    effectDefinition.unapply.calls.reset();
+    effectDefinition.apply.mockClear();
+    effectDefinition.unapply.mockClear();
 }
 
 describe('Effect', function () {
     beforeEach(function () {
-        this.gameSpy = jasmine.createSpyObj('game', ['']);
-        this.sourceSpy = jasmine.createSpyObj('source', ['getType', 'isAnyBlank']);
+        this.gameSpy = {};
+        this.sourceSpy = { getType: vi.fn(), isAnyBlank: vi.fn() };
         this.effectDefinition = {
-            apply: jasmine.createSpy('apply'),
-            unapply: jasmine.createSpy('unapply')
+            apply: vi.fn(),
+            unapply: vi.fn()
         };
         this.properties = {
-            match: jasmine.createSpy('match'),
+            match: vi.fn(),
             duration: 'persistent',
             effect: this.effectDefinition
         };
 
-        this.properties.match.and.returnValue(true);
+        this.properties.match.mockReturnValue(true);
 
         this.effect = new Effect(this.gameSpy, this.sourceSpy, this.properties);
     });
@@ -48,19 +48,19 @@ describe('Effect', function () {
             this.matchingCard = createTarget({ good: true, location: 'play area' });
             this.nonMatchingCard = createTarget({ bad: true, location: 'play area' });
 
-            this.properties.match.and.callFake((card) => card === this.matchingCard);
+            this.properties.match.mockImplementation((card) => card === this.matchingCard);
         });
 
         describe('when the effect has a condition', function () {
             beforeEach(function () {
                 this.effect.active = true;
-                this.properties.condition = jasmine.createSpy('condition');
+                this.properties.condition = vi.fn();
                 this.effect = new Effect(this.gameSpy, this.sourceSpy, this.properties);
             });
 
             describe('and the condition returns true', function () {
                 beforeEach(function () {
-                    this.properties.condition.and.returnValue(true);
+                    this.properties.condition.mockReturnValue(true);
                     this.effect.addTargets([this.nonMatchingCard, this.matchingCard]);
                 });
 
@@ -77,7 +77,7 @@ describe('Effect', function () {
                     });
                     expect(this.effectDefinition.apply).not.toHaveBeenCalledWith(
                         this.nonMatchingCard,
-                        jasmine.any(Object)
+                        expect.any(Object)
                     );
                 });
             });
@@ -86,7 +86,7 @@ describe('Effect', function () {
                 beforeEach(function () {
                     this.existingTarget = { target: 1 };
                     this.effect.targets = [this.existingTarget];
-                    this.properties.condition.and.returnValue(false);
+                    this.properties.condition.mockReturnValue(false);
                     this.effect.addTargets([this.nonMatchingCard, this.matchingCard]);
                 });
 
@@ -98,11 +98,11 @@ describe('Effect', function () {
                 it('should not apply the effect to the matching card', function () {
                     expect(this.effectDefinition.apply).not.toHaveBeenCalledWith(
                         this.matchingCard,
-                        jasmine.any(Object)
+                        expect.any(Object)
                     );
                     expect(this.effectDefinition.apply).not.toHaveBeenCalledWith(
                         this.nonMatchingCard,
-                        jasmine.any(Object)
+                        expect.any(Object)
                     );
                 });
             });
@@ -127,7 +127,7 @@ describe('Effect', function () {
                 });
                 expect(this.effectDefinition.apply).not.toHaveBeenCalledWith(
                     this.nonMatchingCard,
-                    jasmine.any(Object)
+                    expect.any(Object)
                 );
             });
         });
@@ -145,7 +145,7 @@ describe('Effect', function () {
             it('should not apply the effect to the matching card', function () {
                 expect(this.effectDefinition.apply).not.toHaveBeenCalledWith(
                     this.matchingCard,
-                    jasmine.any(Object)
+                    expect.any(Object)
                 );
             });
         });
@@ -172,7 +172,7 @@ describe('Effect', function () {
 
             describe('when the source cannot apply an effect to the target', function () {
                 beforeEach(function () {
-                    this.matchingCard.allowGameAction.and.returnValue(false);
+                    this.matchingCard.allowGameAction.mockReturnValue(false);
                 });
 
                 it('should allow the target', function () {
@@ -345,7 +345,7 @@ describe('Effect', function () {
 
         describe('when the effect target type is player', function () {
             beforeEach(function () {
-                this.properties.match.and.returnValue(true);
+                this.properties.match.mockReturnValue(true);
                 this.effect.targetType = 'player';
                 this.effect.active = true;
                 this.player = createPlayerTarget();
@@ -404,11 +404,11 @@ describe('Effect', function () {
 
         describe('when the effect target type is game', function () {
             beforeEach(function () {
-                this.properties.match.and.returnValue(true);
+                this.properties.match.mockReturnValue(true);
                 this.effect.targetType = 'game';
                 this.effect.active = true;
-                this.gameTarget = jasmine.createSpyObj('game', ['getGameElementType']);
-                this.gameTarget.getGameElementType.and.returnValue('game');
+                this.gameTarget = { getGameElementType: vi.fn() };
+                this.gameTarget.getGameElementType.mockReturnValue('game');
                 this.player = createPlayerTarget();
                 this.sourceSpy.controller = this.player;
             });
@@ -665,35 +665,35 @@ describe('Effect', function () {
 
                 describe('and the effect has a reapply method', function () {
                     beforeEach(function () {
-                        this.effectDefinition.reapply = jasmine.createSpy('reapply');
+                        this.effectDefinition.reapply = vi.fn();
                         this.effect.reapply(this.newTargets);
                     });
 
                     it('should reapply the effect for existing targets', function () {
                         expect(this.effectDefinition.reapply).toHaveBeenCalledWith(
                             this.target,
-                            jasmine.any(Object)
+                            expect.any(Object)
                         );
                     });
 
                     it('should not unapply the effect for existing targets', function () {
                         expect(this.effectDefinition.unapply).not.toHaveBeenCalledWith(
                             this.target,
-                            jasmine.any(Object)
+                            expect.any(Object)
                         );
                     });
 
                     it('should not apply the effect for existing targets', function () {
                         expect(this.effectDefinition.apply).not.toHaveBeenCalledWith(
                             this.target,
-                            jasmine.any(Object)
+                            expect.any(Object)
                         );
                     });
 
                     it('should not apply the effect to new targets', function () {
                         expect(this.effectDefinition.apply).not.toHaveBeenCalledWith(
                             this.newTarget,
-                            jasmine.any(Object)
+                            expect.any(Object)
                         );
                     });
                 });
@@ -706,21 +706,21 @@ describe('Effect', function () {
                     it('should unapply the effect for existing targets', function () {
                         expect(this.effectDefinition.unapply).toHaveBeenCalledWith(
                             this.target,
-                            jasmine.any(Object)
+                            expect.any(Object)
                         );
                     });
 
                     it('should apply the effect for existing targets', function () {
                         expect(this.effectDefinition.apply).toHaveBeenCalledWith(
                             this.target,
-                            jasmine.any(Object)
+                            expect.any(Object)
                         );
                     });
 
                     it('should not apply the effect to new targets', function () {
                         expect(this.effectDefinition.apply).not.toHaveBeenCalledWith(
                             this.newTarget,
-                            jasmine.any(Object)
+                            expect.any(Object)
                         );
                     });
                 });
@@ -730,7 +730,7 @@ describe('Effect', function () {
         describe('when the effect is conditional', function () {
             beforeEach(function () {
                 this.effect.isConditional = true;
-                this.effect.condition = jasmine.createSpy('condition');
+                this.effect.condition = vi.fn();
             });
 
             describe('when the effect is inactive', function () {
@@ -754,29 +754,29 @@ describe('Effect', function () {
                     this.matchingTarget = createTarget({ target: 3, location: 'play area' });
                     this.effect.targets = [this.target, this.matchingTarget];
                     this.effect.active = true;
-                    this.effect.condition.and.returnValue(true);
-                    this.properties.match.and.callFake((card) => card !== this.target);
+                    this.effect.condition.mockReturnValue(true);
+                    this.properties.match.mockImplementation((card) => card !== this.target);
                     this.effect.reapply(this.newTargets);
                 });
 
                 it('should apply the effect to new targets', function () {
                     expect(this.effectDefinition.apply).toHaveBeenCalledWith(
                         this.newTarget,
-                        jasmine.any(Object)
+                        expect.any(Object)
                     );
                 });
 
                 it('should not unapply the effect from targets that still match', function () {
                     expect(this.effectDefinition.unapply).not.toHaveBeenCalledWith(
                         this.matchingTarget,
-                        jasmine.any(Object)
+                        expect.any(Object)
                     );
                 });
 
                 it('should unapply the effect from targets that no longer match', function () {
                     expect(this.effectDefinition.unapply).toHaveBeenCalledWith(
                         this.target,
-                        jasmine.any(Object)
+                        expect.any(Object)
                     );
                 });
 
@@ -789,14 +789,14 @@ describe('Effect', function () {
                 beforeEach(function () {
                     this.effect.targets = [this.target];
                     this.effect.active = true;
-                    this.effect.condition.and.returnValue(false);
+                    this.effect.condition.mockReturnValue(false);
                     this.effect.reapply(this.newTargets);
                 });
 
                 it('should unapply the effect from existing targets', function () {
                     expect(this.effectDefinition.unapply).toHaveBeenCalledWith(
                         this.target,
-                        jasmine.any(Object)
+                        expect.any(Object)
                     );
                 });
 

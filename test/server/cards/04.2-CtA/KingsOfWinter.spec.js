@@ -3,22 +3,22 @@ import CardStat from '../../../../server/game/cardStat.js';
 
 describe('Kings Of Winter', function () {
     beforeEach(function () {
-        this.gameSpy = jasmine.createSpyObj('game', ['addMessage', 'getPlayers', 'on']);
+        this.gameSpy = { addMessage: vi.fn(), getPlayers: vi.fn(), on: vi.fn() };
 
-        this.plot1 = jasmine.createSpyObj('plot1', ['hasTrait']);
+        this.plot1 = { hasTrait: vi.fn() };
         this.plot1.income = new CardStat(0);
         this.plot1.reserve = new CardStat(0);
-        this.plot2 = jasmine.createSpyObj('plot2', ['hasTrait']);
+        this.plot2 = { hasTrait: vi.fn() };
         this.plot2.income = new CardStat(0);
         this.plot2.reserve = new CardStat(0);
-        this.plot3 = jasmine.createSpyObj('plot3', ['hasTrait']);
+        this.plot3 = { hasTrait: vi.fn() };
         this.plot3.income = new CardStat(0);
         this.plot3.reserve = new CardStat(0);
 
-        this.plot1.hasTrait.and.callFake((trait) => {
+        this.plot1.hasTrait.mockImplementation((trait) => {
             return trait === 'Summer';
         });
-        this.plot2.hasTrait.and.returnValue(false);
+        this.plot2.hasTrait.mockReturnValue(false);
 
         this.player1Fake = {};
         this.player1Fake.game = this.gameSpy;
@@ -31,7 +31,7 @@ describe('Kings Of Winter', function () {
         this.player2Fake.activePlot = this.plot2;
         this.plot2.controller = this.player2Fake;
 
-        this.gameSpy.getPlayers.and.returnValue([this.player1Fake, this.player2Fake]);
+        this.gameSpy.getPlayers.mockReturnValue([this.player1Fake, this.player2Fake]);
 
         this.context = {};
 
@@ -71,7 +71,7 @@ describe('Kings Of Winter', function () {
 
         describe('when the current player does not have a Winter', function () {
             beforeEach(function () {
-                this.plot1.hasTrait.and.returnValue(false);
+                this.plot1.hasTrait.mockReturnValue(false);
             });
 
             it('should not pass the activation condition', function () {
@@ -81,12 +81,12 @@ describe('Kings Of Winter', function () {
 
         describe('when the current player has a Winter plot', function () {
             beforeEach(function () {
-                this.plot1.hasTrait.and.callFake((trait) => trait === 'Winter');
+                this.plot1.hasTrait.mockImplementation((trait) => trait === 'Winter');
             });
 
             describe('and opponent has a Summer plot', function () {
                 beforeEach(function () {
-                    this.plot2.hasTrait.and.callFake((trait) => trait === 'Summer');
+                    this.plot2.hasTrait.mockImplementation((trait) => trait === 'Summer');
                 });
 
                 it('should pass the activation condition', function () {
@@ -100,7 +100,7 @@ describe('Kings Of Winter', function () {
 
             describe('and opponent does not have a Summer plot', function () {
                 beforeEach(function () {
-                    this.plot2.hasTrait.and.returnValue(false);
+                    this.plot2.hasTrait.mockReturnValue(false);
                 });
 
                 it('should pass the activation condition', function () {

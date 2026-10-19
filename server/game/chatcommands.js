@@ -6,6 +6,14 @@ import { Flags, Tokens } from './Constants/index.js';
 import Effects from './effects.js';
 
 const MaxPower = 99;
+const NonManualCommands = [
+    '/add-chess-clock-time',
+    '/challenge-str',
+    '/disconnectme',
+    '/mute-spectators',
+    '/pause-clock',
+    '/rematch'
+];
 
 class ChatCommands {
     constructor(game) {
@@ -56,7 +64,36 @@ class ChatCommands {
             return false;
         }
 
-        return this.commands[command].call(this, player, args) !== false;
+        if (!NonManualCommands.includes(command)) {
+            this.currentManualAction = this.game.manualActions.record(player, command, {
+                args: args.slice(1)
+            });
+        }
+
+        try {
+            return this.commands[command].call(this, player, args) !== false;
+        } finally {
+            this.currentManualAction = null;
+        }
+    }
+
+    promptForSelect(player, properties) {
+        const manualAction = this.currentManualAction;
+        this.game.promptForSelect(player, {
+            ...properties,
+            onSelect: (selectingPlayer, selected) => {
+                this.game.manualActions.addCards(
+                    manualAction,
+                    Array.isArray(selected) ? selected : [selected]
+                );
+                this.currentManualAction = manualAction;
+                try {
+                    return properties.onSelect(selectingPlayer, selected);
+                } finally {
+                    this.currentManualAction = null;
+                }
+            }
+        });
     }
 
     draw(player, args) {
@@ -74,7 +111,7 @@ class ChatCommands {
 
     power(player, args) {
         var num = Math.min(this.getNumberOrDefault(args[1], 1), MaxPower);
-        this.game.promptForSelect(player, {
+        this.promptForSelect(player, {
             activePromptTitle: 'Select a card to set power for',
             waitingPromptTitle: 'Waiting for opponent to set power',
             cardCondition: (card) =>
@@ -102,7 +139,7 @@ class ChatCommands {
     }
 
     kill(player) {
-        this.game.promptForSelect(player, {
+        this.promptForSelect(player, {
             activePromptTitle: 'Select a character',
             waitingPromptTitle: 'Waiting for opponent to kill character',
             cardCondition: (card) =>
@@ -120,7 +157,7 @@ class ChatCommands {
     }
 
     blank(player) {
-        this.game.promptForSelect(player, {
+        this.promptForSelect(player, {
             activePromptTitle: 'Select a card',
             waitingPromptTitle: 'Waiting for opponent to blank card',
             cardCondition: (card) => card.location === 'play area' && card.controller === player,
@@ -134,7 +171,7 @@ class ChatCommands {
     }
 
     unblank(player) {
-        this.game.promptForSelect(player, {
+        this.promptForSelect(player, {
             activePromptTitle: 'Select a card',
             waitingPromptTitle: 'Waiting for opponent to unblank card',
             cardCondition: (card) => card.location === 'play area' && card.controller === player,
@@ -159,7 +196,7 @@ class ChatCommands {
             return false;
         }
 
-        this.game.promptForSelect(player, {
+        this.promptForSelect(player, {
             activePromptTitle: 'Select a card',
             waitingPromptTitle: 'Waiting for opponent to add trait to card',
             cardCondition: (card) => card.location === 'play area' && card.controller === player,
@@ -184,7 +221,7 @@ class ChatCommands {
             return false;
         }
 
-        this.game.promptForSelect(player, {
+        this.promptForSelect(player, {
             activePromptTitle: 'Select a card',
             waitingPromptTitle: 'Waiting for opponent to remove trait remove card',
             cardCondition: (card) => card.location === 'play area' && card.controller === player,
@@ -209,7 +246,7 @@ class ChatCommands {
             return false;
         }
 
-        this.game.promptForSelect(player, {
+        this.promptForSelect(player, {
             activePromptTitle: 'Select a card',
             waitingPromptTitle: 'Waiting for opponent to add keyword to card',
             cardCondition: (card) => card.location === 'play area' && card.controller === player,
@@ -234,7 +271,7 @@ class ChatCommands {
             return false;
         }
 
-        this.game.promptForSelect(player, {
+        this.promptForSelect(player, {
             activePromptTitle: 'Select a card',
             waitingPromptTitle: 'Waiting for opponent to add keyword to card',
             cardCondition: (card) => card.location === 'play area' && card.controller === player,
@@ -281,7 +318,7 @@ class ChatCommands {
     strength(player, args) {
         let num = this.getNumberOrDefault(args[1], 1);
 
-        this.game.promptForSelect(player, {
+        this.promptForSelect(player, {
             activePromptTitle: 'Select a card to set strength for',
             waitingPromptTitle: 'Waiting for opponent to set strength',
             cardCondition: (card) =>
@@ -320,7 +357,7 @@ class ChatCommands {
             return false;
         }
 
-        this.game.promptForSelect(player, {
+        this.promptForSelect(player, {
             activePromptTitle: 'Select a character',
             waitingPromptTitle: 'Waiting for opponent to give icon',
             cardCondition: (card) =>
@@ -355,7 +392,7 @@ class ChatCommands {
             return false;
         }
 
-        this.game.promptForSelect(player, {
+        this.promptForSelect(player, {
             activePromptTitle: 'Select a character',
             waitingPromptTitle: 'Waiting for opponent to remove icon',
             cardCondition: (card) =>
@@ -384,7 +421,7 @@ class ChatCommands {
     }
 
     giveControl(player) {
-        this.game.promptForSelect(player, {
+        this.promptForSelect(player, {
             activePromptTitle: 'Select a character',
             waitingPromptTitle: 'Waiting for opponent to give control',
             cardCondition: (card) =>
@@ -467,7 +504,7 @@ class ChatCommands {
             return false;
         }
 
-        this.game.promptForSelect(player, {
+        this.promptForSelect(player, {
             activePromptTitle: 'Select a card',
             waitingPromptTitle: 'Waiting for opponent to set token',
             cardCondition: (card) =>
@@ -499,7 +536,7 @@ class ChatCommands {
             return false;
         }
 
-        this.game.promptForSelect(player, {
+        this.promptForSelect(player, {
             activePromptTitle: 'Select a card to bestow ' + num + ' gold',
             waitingPromptTitle: 'Waiting for opponent to bestow',
             cardCondition: (card) => card.location === 'play area' && card.controller === player,
@@ -528,7 +565,7 @@ class ChatCommands {
             return false;
         }
 
-        this.game.promptForSelect(player, {
+        this.promptForSelect(player, {
             activePromptTitle: 'Select a card',
             waitingPromptTitle: 'Waiting for opponent to add faction to card',
             cardCondition: (card) => card.location === 'play area' && card.controller === player,
@@ -553,7 +590,7 @@ class ChatCommands {
             return false;
         }
 
-        this.game.promptForSelect(player, {
+        this.promptForSelect(player, {
             activePromptTitle: 'Select a card',
             waitingPromptTitle: 'Waiting for opponent to add faction to card',
             cardCondition: (card) => card.location === 'play area' && card.controller === player,
@@ -573,7 +610,7 @@ class ChatCommands {
     }
 
     moveBottom(player) {
-        this.game.promptForSelect(player, {
+        this.promptForSelect(player, {
             activePromptTitle: 'Select a card',
             waitingPromptTitle: 'Waiting for opponent to place a card on the bottom of their deck',
             cardCondition: (card) => card.controller === player && card.owner === player,
@@ -591,7 +628,7 @@ class ChatCommands {
     }
 
     moveShadows(player) {
-        this.game.promptForSelect(player, {
+        this.promptForSelect(player, {
             activePromptTitle: 'Select a card',
             waitingPromptTitle: 'Waiting for opponent to move a card to their shadows area',
             cardCondition: (card) => card.controller === player && card.owner === player,
@@ -608,12 +645,12 @@ class ChatCommands {
     }
 
     placeUnder(player) {
-        this.game.promptForSelect(player, {
+        this.promptForSelect(player, {
             activePromptTitle: 'Select a card to place',
             waitingPromptTitle: 'Waiting for opponent to select a card to place',
             cardCondition: (card) => card.controller === player && card.owner === player,
             onSelect: (p, card) => {
-                this.game.promptForSelect(player, {
+                this.promptForSelect(player, {
                     activePromptTitle: 'Select a card to place the chosen card under',
                     waitingPromptTitle:
                         'Waiting for opponent to select a card to place the selected card under',
@@ -651,7 +688,7 @@ class ChatCommands {
     }
 
     removeFromGame(player) {
-        this.game.promptForSelect(player, {
+        this.promptForSelect(player, {
             activePromptTitle: 'Select a card',
             waitingPromptTitle: 'Waiting for opponent to remove a card from the game',
             cardCondition: (card) =>

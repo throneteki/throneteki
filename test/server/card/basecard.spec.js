@@ -11,9 +11,9 @@ describe('BaseCard', function () {
         };
         this.limitedCard = { code: '1234', text: 'Limited.', faction: 'neutral' };
         this.nonLimitedCard = { code: '2222', text: 'Stealth.', faction: 'neutral' };
-        this.game = jasmine.createSpyObj('game', ['isCardVisible', 'raiseEvent']);
-        this.owner = jasmine.createSpyObj('owner', ['getCardSelectionState', 'isSpectator']);
-        this.owner.getCardSelectionState.and.returnValue({});
+        this.game = { isCardVisible: vi.fn(), raiseEvent: vi.fn() };
+        this.owner = { getCardSelectionState: vi.fn(), isSpectator: vi.fn() };
+        this.owner.getCardSelectionState.mockReturnValue({});
         this.owner.game = this.game;
         this.card = new BaseCard(this.owner, this.testCard);
     });
@@ -90,8 +90,8 @@ describe('BaseCard', function () {
 
         describe('when there are actions for the card', function () {
             beforeEach(function () {
-                this.actionSpy1 = jasmine.createSpyObj('action', ['execute']);
-                this.actionSpy2 = jasmine.createSpyObj('action', ['execute']);
+                this.actionSpy1 = { execute: vi.fn() };
+                this.actionSpy2 = { execute: vi.fn() };
                 this.card.abilities.actions = [this.actionSpy1, this.actionSpy2];
             });
 
@@ -111,7 +111,7 @@ describe('BaseCard', function () {
     describe('getSummary', function () {
         describe('when is visible to the active player', function () {
             beforeEach(function () {
-                this.game.isCardVisible.and.returnValue(true);
+                this.game.isCardVisible.mockReturnValue(true);
                 this.summary = this.card.getSummary(this.owner);
             });
 
@@ -147,9 +147,9 @@ describe('BaseCard', function () {
 
         describe('when is not visible to active player', function () {
             beforeEach(function () {
-                this.game.isCardVisible.and.returnValue(false);
-                this.anotherPlayer = jasmine.createSpyObj('owner', ['getCardSelectionState']);
-                this.anotherPlayer.getCardSelectionState.and.returnValue({});
+                this.game.isCardVisible.mockReturnValue(false);
+                this.anotherPlayer = { getCardSelectionState: vi.fn() };
+                this.anotherPlayer.getCardSelectionState.mockReturnValue({});
                 this.summary = this.card.getSummary(this.anotherPlayer);
             });
 
@@ -200,12 +200,12 @@ describe('BaseCard', function () {
         describe('when there are restrictions', function () {
             beforeEach(function () {
                 this.game.currentAbilityContext = { context: 1 };
-                this.restrictionSpy1 = jasmine.createSpyObj('restriction', ['isMatch', 'isActive']);
+                this.restrictionSpy1 = { isMatch: vi.fn(), isActive: vi.fn() };
                 this.restrictionSpy1.name = 'restriction1';
-                this.restrictionSpy1.isActive.and.returnValue(true);
-                this.restrictionSpy2 = jasmine.createSpyObj('restriction', ['isMatch', 'isActive']);
+                this.restrictionSpy1.isActive.mockReturnValue(true);
+                this.restrictionSpy2 = { isMatch: vi.fn(), isActive: vi.fn() };
                 this.restrictionSpy2.name = 'restriction2';
-                this.restrictionSpy2.isActive.and.returnValue(true);
+                this.restrictionSpy2.isActive.mockReturnValue(true);
                 this.card.addAbilityRestriction(this.restrictionSpy1);
                 this.card.addAbilityRestriction(this.restrictionSpy2);
             });
@@ -230,7 +230,7 @@ describe('BaseCard', function () {
 
             describe('and at least one matches', function () {
                 beforeEach(function () {
-                    this.restrictionSpy2.isMatch.and.returnValue(true);
+                    this.restrictionSpy2.isMatch.mockReturnValue(true);
                 });
 
                 it('should return false', function () {
@@ -241,10 +241,10 @@ describe('BaseCard', function () {
             describe('but a restriction type is lost', function () {
                 beforeEach(function () {
                     this.card.flags.add('restriction1');
-                    this.restrictionSpy1.isActive.and.callFake(
+                    this.restrictionSpy1.isActive.mockImplementation(
                         (card) => !card.hasFlag('restriction1')
                     );
-                    this.restrictionSpy2.isActive.and.callFake(
+                    this.restrictionSpy2.isActive.mockImplementation(
                         (card) => !card.hasFlag('restriction2')
                     );
                     this.card.markAsDirty();

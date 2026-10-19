@@ -9,7 +9,7 @@ describe('the Game', () => {
     var spectator = new Spectator('3', 'Spectator 1');
 
     beforeEach(() => {
-        var gameService = jasmine.createSpyObj('gameService', ['save']);
+        var gameService = { save: vi.fn() };
         game = new Game({ name: 'Test Game', owner: {} }, { gameService: gameService });
     });
 

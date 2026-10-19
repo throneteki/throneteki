@@ -12,11 +12,11 @@ class DropCommand {
 
     execute() {
         if (this.originalLocation === this.targetLocation || this.card.controller !== this.player) {
-            return;
+            return false;
         }
 
         if (!this.isValidDropCombination()) {
-            return;
+            return false;
         }
 
         if (this.targetLocation === 'play area') {
@@ -37,6 +37,8 @@ class DropCommand {
         }
 
         this.addGameMessage();
+
+        return true;
     }
 
     isValidDropCombination() {

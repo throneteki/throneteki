@@ -2,24 +2,24 @@ import EventWindow from '../../../server/game/gamesteps/eventwindow.js';
 
 describe('EventWindow', function () {
     beforeEach(function () {
-        this.gameSpy = jasmine.createSpyObj('game', [
-            'refreshGameState',
-            'openAbilityWindow',
-            'openInterruptWindowForAttachedEvents',
-            'saveWithDupe'
-        ]);
-        this.eventSpy = jasmine.createSpyObj('event', [
-            'allowAutomaticSave',
-            'cancel',
-            'clearAttachedEvents',
-            'emitTo',
-            'checkExecuteValidity',
-            'executeHandler',
-            'executePostHandler',
-            'getConcurrentEvents'
-        ]);
+        this.gameSpy = {
+            refreshGameState: vi.fn(),
+            openAbilityWindow: vi.fn(),
+            openInterruptWindowForAttachedEvents: vi.fn(),
+            saveWithDupe: vi.fn()
+        };
+        this.eventSpy = {
+            allowAutomaticSave: vi.fn(),
+            cancel: vi.fn(),
+            clearAttachedEvents: vi.fn(),
+            emitTo: vi.fn(),
+            checkExecuteValidity: vi.fn(),
+            executeHandler: vi.fn(),
+            executePostHandler: vi.fn(),
+            getConcurrentEvents: vi.fn()
+        };
         this.eventSpy.attachedEvents = [];
-        this.eventSpy.getConcurrentEvents.and.returnValue([]);
+        this.eventSpy.getConcurrentEvents.mockReturnValue([]);
         this.eventWindow = new EventWindow(this.gameSpy, this.eventSpy);
     });
 
@@ -61,16 +61,16 @@ describe('EventWindow', function () {
 
         describe('when a concurrent event can be saved', function () {
             beforeEach(function () {
-                this.concurrentEventSpy = jasmine.createSpyObj('concurrentEvent', [
-                    'allowAutomaticSave',
-                    'cancel',
-                    'clearAttachedEvents'
-                ]);
-                this.concurrentEventSpy.allowAutomaticSave.and.returnValue(true);
+                this.concurrentEventSpy = {
+                    allowAutomaticSave: vi.fn(),
+                    cancel: vi.fn(),
+                    clearAttachedEvents: vi.fn()
+                };
+                this.concurrentEventSpy.allowAutomaticSave.mockReturnValue(true);
                 this.concurrentEventSpy.attachedEvents = [];
                 this.concurrentEventSpy.card = { card: 1 };
                 this.eventSpy.card = { card: 2 };
-                this.eventSpy.getConcurrentEvents.and.returnValue([
+                this.eventSpy.getConcurrentEvents.mockReturnValue([
                     this.eventSpy,
                     this.concurrentEventSpy
                 ]);
@@ -93,7 +93,7 @@ describe('EventWindow', function () {
 
             describe('when the card cannot be saved with a dupe', function () {
                 beforeEach(function () {
-                    this.gameSpy.saveWithDupe.and.returnValue(false);
+                    this.gameSpy.saveWithDupe.mockReturnValue(false);
                     this.eventWindow.continue();
                 });
 
@@ -104,7 +104,7 @@ describe('EventWindow', function () {
 
             describe('when the card can be saved with a dupe', function () {
                 beforeEach(function () {
-                    this.gameSpy.saveWithDupe.and.returnValue(true);
+                    this.gameSpy.saveWithDupe.mockReturnValue(true);
                     this.eventWindow.continue();
                 });
 
@@ -148,7 +148,7 @@ describe('EventWindow', function () {
 
             describe('and another step has been queued on the event', function () {
                 beforeEach(function () {
-                    this.anotherStep = jasmine.createSpyObj('step', ['continue']);
+                    this.anotherStep = { continue: vi.fn() };
                     this.eventWindow.queueStep(this.anotherStep);
                 });
 
@@ -161,7 +161,7 @@ describe('EventWindow', function () {
 
         describe('when an event handler cancels the event', function () {
             beforeEach(function () {
-                this.eventSpy.executeHandler.and.callFake(() => {
+                this.eventSpy.executeHandler.mockImplementation(() => {
                     this.eventSpy.cancelled = true;
                 });
                 this.eventWindow.continue();

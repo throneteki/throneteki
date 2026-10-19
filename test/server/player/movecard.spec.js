@@ -4,7 +4,7 @@ import DrawCard from '../../../server/game/drawcard.js';
 describe('Player', function () {
     describe('moveCard', function () {
         beforeEach(function () {
-            this.gameSpy = jasmine.createSpyObj('game', ['raiseEvent', 'on']);
+            this.gameSpy = { raiseEvent: vi.fn(), on: vi.fn() };
             this.player = new Player(
                 '1',
                 { username: 'Player 1', settings: {} },
@@ -13,13 +13,13 @@ describe('Player', function () {
             );
             this.player.initialise();
 
-            this.gameSpy.raiseEvent.and.callFake((name, params, handler) => {
+            this.gameSpy.raiseEvent.mockImplementation((name, params, handler) => {
                 if (handler) {
                     handler(params);
                 }
             });
             this.card = new DrawCard(this.player, { code: '1', name: 'Test' });
-            spyOn(this.card, 'leavesPlay');
+            vi.spyOn(this.card, 'leavesPlay').mockImplementation(() => {});
         });
 
         describe('when the card is not in a pile', function () {
@@ -75,8 +75,8 @@ describe('Player', function () {
             it('should not to raise the left play event', function () {
                 expect(this.gameSpy.raiseEvent).not.toHaveBeenCalledWith(
                     'onCardLeftPlay',
-                    jasmine.any(Object),
-                    jasmine.any(Object)
+                    expect.any(Object),
+                    expect.any(Object)
                 );
             });
         });
@@ -103,7 +103,7 @@ describe('Player', function () {
                     this.attachment.parent = this.card;
                     this.attachment.location = 'play area';
                     this.card.attachments.push(this.attachment);
-                    spyOn(this.player, 'removeAttachment');
+                    vi.spyOn(this.player, 'removeAttachment').mockImplementation(() => {});
 
                     this.player.moveCard(this.card, 'hand');
                 });
@@ -122,7 +122,7 @@ describe('Player', function () {
                     this.attachment.parent = this.card;
                     this.attachment.location = 'play area';
                     this.card.attachments.push(this.attachment);
-                    spyOn(this.player, 'removeAttachment');
+                    vi.spyOn(this.player, 'removeAttachment').mockImplementation(() => {});
 
                     this.player.moveCard(this.attachment, 'hand');
                 });
@@ -142,7 +142,7 @@ describe('Player', function () {
                     this.dupe = new DrawCard(this.player, {});
                     this.card.addDuplicate(this.dupe);
 
-                    spyOn(this.player, 'discardCards');
+                    vi.spyOn(this.player, 'discardCards').mockImplementation(() => {});
 
                     this.player.moveCard(this.card, 'hand');
                 });
@@ -187,14 +187,14 @@ describe('Player', function () {
         describe('when moving a controlled card', function () {
             beforeEach(function () {
                 this.options = { options: 1 };
-                this.callback = jasmine.createSpy('callback');
+                this.callback = vi.fn();
                 this.opponent = new Player(
                     '2',
                     { username: 'Player 2', settings: {} },
                     true,
                     this.gameSpy
                 );
-                spyOn(this.opponent, 'moveCard');
+                vi.spyOn(this.opponent, 'moveCard').mockImplementation(() => {});
                 this.card.owner = this.opponent;
             });
 
@@ -220,7 +220,7 @@ describe('Player', function () {
                     expect(this.opponent.moveCard).toHaveBeenCalledWith(
                         this.card,
                         'discard pile',
-                        jasmine.objectContaining(this.options),
+                        expect.objectContaining(this.options),
                         this.callback
                     );
                 });
@@ -237,7 +237,7 @@ describe('Player', function () {
                     expect(this.opponent.moveCard).toHaveBeenCalledWith(
                         this.card,
                         'hand',
-                        jasmine.objectContaining(this.options),
+                        expect.objectContaining(this.options),
                         this.callback
                     );
                 });

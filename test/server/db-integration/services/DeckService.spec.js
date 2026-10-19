@@ -94,11 +94,11 @@ describe('Postgres deck, card and event services', function () {
                 validSpectators: null
             });
 
-            expect(created._id).toEqual(jasmine.any(String));
+            expect(created._id).toEqual(expect.any(String));
 
             let event = await this.eventService.getEventById(created._id);
             expect(event).toEqual(
-                jasmine.objectContaining({
+                expect.objectContaining({
                     name: 'Winter Tournament',
                     legality: 'latest',
                     lockDecks: true,
@@ -133,7 +133,7 @@ describe('Postgres deck, card and event services', function () {
             const deck = await this.deckService.getById(created._id);
 
             expect(deck).toEqual(
-                jasmine.objectContaining({
+                expect.objectContaining({
                     _id: created._id,
                     username: 'Stark',
                     name: 'Winter is Coming',
@@ -146,7 +146,7 @@ describe('Postgres deck, card and event services', function () {
                     ],
                     drawCards: [{ cardcode: '01028', count: 3 }],
                     locked: false,
-                    lastUpdated: jasmine.any(Date)
+                    lastUpdated: expect.any(Date)
                 })
             );
             expect('pool' in deck).toBe(false);
@@ -162,7 +162,7 @@ describe('Postgres deck, card and event services', function () {
                 legality: 'latest'
             });
 
-            expect(deck.status).toEqual(jasmine.objectContaining({ basicRules: false }));
+            expect(deck.status).toEqual(expect.objectContaining({ basicRules: false }));
         });
 
         it('should store card lists given as full cards, as MongoDB once did', function () {
@@ -241,10 +241,10 @@ describe('Postgres deck, card and event services', function () {
             const locked = await this.deckService.getById(created._id);
             expect(locked.locked).toBe(true);
             expect(locked.eventId).toBe(event._id);
-            await expectAsync(
+            await expect(
                 this.deckService.update({ ...newDeck(), id: created._id })
-            ).toBeRejectedWithError('Locked decks can not be updated');
-            await expectAsync(this.deckService.delete(created._id)).toBeRejectedWithError(
+            ).rejects.toThrow('Locked decks can not be updated');
+            await expect(this.deckService.delete(created._id)).rejects.toThrow(
                 'Can not delete a locked deck'
             );
             expect((await this.deckService.getDeckForEvent('Stark', event._id))._id).toBe(
@@ -260,9 +260,9 @@ describe('Postgres deck, card and event services', function () {
             const event = await this.eventService.create({ name: 'Tournament' });
             await this.deckService.create(newDeck({ eventId: event._id }));
 
-            await expectAsync(
-                this.deckService.create(newDeck({ eventId: event._id }))
-            ).toBeRejectedWithError(/already has a deck configured for event/);
+            await expect(this.deckService.create(newDeck({ eventId: event._id }))).rejects.toThrow(
+                /already has a deck configured for event/
+            );
         });
 
         it('should store standalone decks with no owner', async function () {

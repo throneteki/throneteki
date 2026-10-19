@@ -13,14 +13,14 @@ describe('EffectEngine', function () {
         this.agendaCard = { location: 'agenda' };
         this.factionCard = { location: 'faction card' };
 
-        this.gameSpy = jasmine.createSpyObj('game', [
-            'on',
-            'removeListener',
-            'getPlayers',
-            'queueSimpleStep'
-        ]);
-        this.gameSpy.getPlayers.and.returnValue([]);
-        this.gameSpy.queueSimpleStep.and.callFake((func) => func());
+        this.gameSpy = {
+            on: vi.fn(),
+            removeListener: vi.fn(),
+            getPlayers: vi.fn(),
+            queueSimpleStep: vi.fn()
+        };
+        this.gameSpy.getPlayers.mockReturnValue([]);
+        this.gameSpy.queueSimpleStep.mockImplementation((func) => func());
         this.gameSpy.allCards = [
             this.handCard,
             this.playAreaCard,
@@ -34,18 +34,18 @@ describe('EffectEngine', function () {
             this.factionCard
         ];
 
-        this.effectSpy = jasmine.createSpyObj('effect', [
-            'addTargets',
-            'clearInvalidTargets',
-            'hasEnded',
-            'isInActiveLocation',
-            'reapply',
-            'removeTarget',
-            'cancel',
-            'setActive',
-            'updateAppliedTargets'
-        ]);
-        this.effectSpy.isInActiveLocation.and.returnValue(true);
+        this.effectSpy = {
+            addTargets: vi.fn(),
+            clearInvalidTargets: vi.fn(),
+            hasEnded: vi.fn(),
+            isInActiveLocation: vi.fn(),
+            reapply: vi.fn(),
+            removeTarget: vi.fn(),
+            cancel: vi.fn(),
+            setActive: vi.fn(),
+            updateAppliedTargets: vi.fn()
+        };
+        this.effectSpy.isInActiveLocation.mockReturnValue(true);
         this.effectSpy.targetLocation = 'play area';
 
         this.engine = new EffectEngine(this.gameSpy);
@@ -62,7 +62,7 @@ describe('EffectEngine', function () {
 
         it('should add existing valid targets to the effect', function () {
             expect(this.effectSpy.addTargets).toHaveBeenCalledWith(
-                jasmine.arrayContaining([
+                expect.arrayContaining([
                     this.handCard,
                     this.playAreaCard,
                     this.discardedCard,
@@ -82,8 +82,8 @@ describe('EffectEngine', function () {
             });
 
             it('should register event handlers for the until listeners', function () {
-                expect(this.gameSpy.on).toHaveBeenCalledWith('foo', jasmine.any(Function));
-                expect(this.gameSpy.on).toHaveBeenCalledWith('bar', jasmine.any(Function));
+                expect(this.gameSpy.on).toHaveBeenCalledWith('foo', expect.any(Function));
+                expect(this.gameSpy.on).toHaveBeenCalledWith('bar', expect.any(Function));
             });
         });
     });
@@ -91,7 +91,7 @@ describe('EffectEngine', function () {
     describe('getTargets()', function () {
         beforeEach(function () {
             this.player = {};
-            this.gameSpy.getPlayers.and.returnValue([this.player]);
+            this.gameSpy.getPlayers.mockReturnValue([this.player]);
         });
 
         it('should not include cards in the revealed plots pile', function () {
@@ -128,7 +128,7 @@ describe('EffectEngine', function () {
 
             it('should reapply valid targets', function () {
                 expect(this.effectSpy.reapply).toHaveBeenCalledWith(
-                    jasmine.arrayContaining([
+                    expect.arrayContaining([
                         this.handCard,
                         this.playAreaCard,
                         this.discardedCard,
@@ -141,7 +141,7 @@ describe('EffectEngine', function () {
         describe('when an effect is state dependent but it has ended', function () {
             beforeEach(function () {
                 this.effectSpy.isStateDependent = true;
-                this.effectSpy.hasEnded.and.returnValue(true);
+                this.effectSpy.hasEnded.mockReturnValue(true);
                 this.engine.reapplyStateDependentEffects();
             });
 
@@ -186,7 +186,7 @@ describe('EffectEngine', function () {
                 it('should set the active value for the effect along with cards to target', function () {
                     expect(this.effectSpy.setActive).toHaveBeenCalledWith(
                         true,
-                        jasmine.arrayContaining([
+                        expect.arrayContaining([
                             this.handCard,
                             this.playAreaCard,
                             this.discardedCard,
@@ -385,17 +385,17 @@ describe('EffectEngine', function () {
         beforeEach(function () {
             this.effectSpy.duration = 'custom';
             this.effectSpy.until = {
-                foo: jasmine.createSpy('listener')
+                foo: vi.fn()
             };
-            this.effectSpy2 = jasmine.createSpyObj('effect', [
-                'addTargets',
-                'isInActiveLocation',
-                'reapply',
-                'removeTarget',
-                'cancel',
-                'setActive'
-            ]);
-            this.effectSpy2.isInActiveLocation.and.returnValue(true);
+            this.effectSpy2 = {
+                addTargets: vi.fn(),
+                isInActiveLocation: vi.fn(),
+                reapply: vi.fn(),
+                removeTarget: vi.fn(),
+                cancel: vi.fn(),
+                setActive: vi.fn()
+            };
+            this.effectSpy2.isInActiveLocation.mockReturnValue(true);
             this.effectSpy2.targetLocation = 'play area';
             this.effectSpy2.duration = 'custom';
             this.effectSpy2.until = { foo: () => true };
@@ -414,7 +414,7 @@ describe('EffectEngine', function () {
 
         describe('when the until listener returns true', function () {
             beforeEach(function () {
-                this.effectSpy.until.foo.and.returnValue(true);
+                this.effectSpy.until.foo.mockReturnValue(true);
                 this.event = { name: 'foo' };
                 this.handler(this.event, 1, 2, 3);
             });
@@ -430,10 +430,10 @@ describe('EffectEngine', function () {
             it('should unregister event listeners', function () {
                 expect(this.gameSpy.removeListener).toHaveBeenCalledWith(
                     'foo',
-                    jasmine.any(Function)
+                    expect.any(Function)
                 );
-                expect(this.engine.customDurationEvents).not.toContain(
-                    jasmine.objectContaining({ effect: this.effectSpy })
+                expect(this.engine.customDurationEvents).not.toContainEqual(
+                    expect.objectContaining({ effect: this.effectSpy })
                 );
             });
 
@@ -442,15 +442,15 @@ describe('EffectEngine', function () {
             });
 
             it('should not remove listeners for other effects', function () {
-                expect(this.engine.customDurationEvents).toContain(
-                    jasmine.objectContaining({ effect: this.effectSpy2 })
+                expect(this.engine.customDurationEvents).toContainEqual(
+                    expect.objectContaining({ effect: this.effectSpy2 })
                 );
             });
         });
 
         describe('when the until listener returns false', function () {
             beforeEach(function () {
-                this.effectSpy.until.foo.and.returnValue(false);
+                this.effectSpy.until.foo.mockReturnValue(false);
                 this.event = { name: 'foo' };
                 this.handler(this.event, 1, 2, 3);
             });
@@ -466,10 +466,10 @@ describe('EffectEngine', function () {
             it('should not unregister event listeners', function () {
                 expect(this.gameSpy.removeListener).not.toHaveBeenCalledWith(
                     'foo',
-                    jasmine.any(Function)
+                    expect.any(Function)
                 );
-                expect(this.engine.customDurationEvents).toContain(
-                    jasmine.objectContaining({ effect: this.effectSpy })
+                expect(this.engine.customDurationEvents).toContainEqual(
+                    expect.objectContaining({ effect: this.effectSpy })
                 );
             });
 
@@ -478,8 +478,8 @@ describe('EffectEngine', function () {
             });
 
             it('should not remove listeners for other effects', function () {
-                expect(this.engine.customDurationEvents).toContain(
-                    jasmine.objectContaining({ effect: this.effectSpy2 })
+                expect(this.engine.customDurationEvents).toContainEqual(
+                    expect.objectContaining({ effect: this.effectSpy2 })
                 );
             });
         });

@@ -2,9 +2,9 @@ import SelectCardPrompt from '../../../server/game/gamesteps/selectcardprompt.js
 
 describe('the SelectCardPrompt', function () {
     function createCardSpy(properties = {}) {
-        let card = jasmine.createSpyObj('card', ['allowGameAction', 'getType']);
-        card.getType.and.returnValue('character');
-        card.allowGameAction.and.returnValue(true);
+        let card = { allowGameAction: vi.fn(), getType: vi.fn() };
+        card.getType.mockReturnValue('character');
+        card.allowGameAction.mockReturnValue(true);
         Object.assign(card, properties);
         card.toString = function () {
             return JSON.stringify({ name: properties.name || 'card' });
@@ -13,36 +13,36 @@ describe('the SelectCardPrompt', function () {
     }
 
     beforeEach(function () {
-        this.game = jasmine.createSpyObj('game', [
-            'getPlayers',
-            'getNumberOfPlayers',
-            'allCards',
-            'isEmpty'
-        ]);
-        this.player = jasmine.createSpyObj('player1', [
-            'setPrompt',
-            'cancelPrompt',
-            'clearSelectableCards',
-            'clearSelectedCards',
-            'setSelectableCards',
-            'setSelectedCards',
-            'setIsActivePrompt',
-            'isPlaying'
-        ]);
-        this.player.isPlaying.and.returnValue(true);
+        this.game = {
+            getPlayers: vi.fn(),
+            getNumberOfPlayers: vi.fn(),
+            allCards: vi.fn(),
+            isEmpty: vi.fn()
+        };
+        this.player = {
+            setPrompt: vi.fn(),
+            cancelPrompt: vi.fn(),
+            clearSelectableCards: vi.fn(),
+            clearSelectedCards: vi.fn(),
+            setSelectableCards: vi.fn(),
+            setSelectedCards: vi.fn(),
+            setIsActivePrompt: vi.fn(),
+            isPlaying: vi.fn()
+        };
+        this.player.isPlaying.mockReturnValue(true);
         this.player.cardsInPlay = [];
-        this.otherPlayer = jasmine.createSpyObj('player2', [
-            'setPrompt',
-            'cancelPrompt',
-            'clearSelectableCards',
-            'clearSelectedCards',
-            'setSelectableCards',
-            'setSelectedCards',
-            'setIsActivePrompt',
-            'isPlaying'
-        ]);
-        this.otherPlayer.isPlaying.and.returnValue(true);
-        this.game.getPlayers.and.returnValue([this.player, this.otherPlayer]);
+        this.otherPlayer = {
+            setPrompt: vi.fn(),
+            cancelPrompt: vi.fn(),
+            clearSelectableCards: vi.fn(),
+            clearSelectedCards: vi.fn(),
+            setSelectableCards: vi.fn(),
+            setSelectedCards: vi.fn(),
+            setIsActivePrompt: vi.fn(),
+            isPlaying: vi.fn()
+        };
+        this.otherPlayer.isPlaying.mockReturnValue(true);
+        this.game.getPlayers.mockReturnValue([this.player, this.otherPlayer]);
         this.card = createCardSpy({ name: 'card', controller: this.player });
 
         this.player.cardsInPlay.push(this.card);
@@ -64,10 +64,10 @@ describe('the SelectCardPrompt', function () {
                 return true;
             }
         };
-        spyOn(this.properties, 'cardCondition');
-        spyOn(this.properties, 'onSelect');
-        spyOn(this.properties, 'onMenuCommand');
-        spyOn(this.properties, 'onCancel');
+        vi.spyOn(this.properties, 'cardCondition').mockImplementation(() => {});
+        vi.spyOn(this.properties, 'onSelect').mockImplementation(() => {});
+        vi.spyOn(this.properties, 'onMenuCommand').mockImplementation(() => {});
+        vi.spyOn(this.properties, 'onCancel').mockImplementation(() => {});
     });
 
     describe('for a single card prompt', function () {
@@ -89,7 +89,7 @@ describe('the SelectCardPrompt', function () {
 
             describe('when the card does not match the allowed condition', function () {
                 beforeEach(function () {
-                    this.properties.cardCondition.and.returnValue(false);
+                    this.properties.cardCondition.mockReturnValue(false);
                 });
 
                 it('should return false', function () {
@@ -99,7 +99,7 @@ describe('the SelectCardPrompt', function () {
 
             describe('when the specified game action is not allowed for the target', function () {
                 beforeEach(function () {
-                    this.card.allowGameAction.and.returnValue(false);
+                    this.card.allowGameAction.mockReturnValue(false);
                 });
 
                 it('should return false', function () {
@@ -109,8 +109,8 @@ describe('the SelectCardPrompt', function () {
 
             describe('when the card is not of the correct type', function () {
                 beforeEach(function () {
-                    this.properties.cardCondition.and.returnValue(true);
-                    this.card.getType.and.returnValue('character');
+                    this.properties.cardCondition.mockReturnValue(true);
+                    this.card.getType.mockReturnValue('character');
                     this.properties.cardType = ['event'];
                     this.prompt = new SelectCardPrompt(this.game, this.player, this.properties);
                 });
@@ -122,7 +122,7 @@ describe('the SelectCardPrompt', function () {
 
             describe('when the card does match the condition', function () {
                 beforeEach(function () {
-                    this.properties.cardCondition.and.returnValue(true);
+                    this.properties.cardCondition.mockReturnValue(true);
                 });
 
                 it('should call the onSelect event', function () {
@@ -132,7 +132,7 @@ describe('the SelectCardPrompt', function () {
 
                 describe('when onSelect returns true', function () {
                     beforeEach(function () {
-                        this.properties.onSelect.and.returnValue(true);
+                        this.properties.onSelect.mockReturnValue(true);
                     });
 
                     it('should complete the prompt', function () {
@@ -152,7 +152,7 @@ describe('the SelectCardPrompt', function () {
 
                 describe('when onSelect returns false', function () {
                     beforeEach(function () {
-                        this.properties.onSelect.and.returnValue(false);
+                        this.properties.onSelect.mockReturnValue(false);
                     });
 
                     it('should not complete the prompt', function () {
@@ -204,7 +204,7 @@ describe('the SelectCardPrompt', function () {
 
                     describe('when the menu handler returns false', function () {
                         beforeEach(function () {
-                            this.properties.onMenuCommand.and.returnValue(false);
+                            this.properties.onMenuCommand.mockReturnValue(false);
                         });
 
                         it('should not complete the prompt', function () {
@@ -215,7 +215,7 @@ describe('the SelectCardPrompt', function () {
 
                     describe('when the menu handler returns true', function () {
                         beforeEach(function () {
-                            this.properties.onMenuCommand.and.returnValue(true);
+                            this.properties.onMenuCommand.mockReturnValue(true);
                         });
 
                         it('should complete the prompt', function () {
@@ -251,7 +251,7 @@ describe('the SelectCardPrompt', function () {
 
             describe('when the card does not match the allowed condition', function () {
                 beforeEach(function () {
-                    this.properties.cardCondition.and.returnValue(false);
+                    this.properties.cardCondition.mockReturnValue(false);
                 });
 
                 it('should return false', function () {
@@ -261,7 +261,7 @@ describe('the SelectCardPrompt', function () {
 
             describe('when the card does match the condition', function () {
                 beforeEach(function () {
-                    this.properties.cardCondition.and.returnValue(true);
+                    this.properties.cardCondition.mockReturnValue(true);
                 });
 
                 describe('selecting a card owned by the prompted player', function () {
@@ -320,7 +320,7 @@ describe('the SelectCardPrompt', function () {
             describe('when selecting unlimited cards', function () {
                 beforeEach(function () {
                     this.properties.numCards = 0;
-                    this.properties.cardCondition.and.returnValue(true);
+                    this.properties.cardCondition.mockReturnValue(true);
                     this.prompt = new SelectCardPrompt(this.game, this.player, this.properties);
                     this.prompt.onCardClicked(this.player, this.card);
                     this.prompt.onCardClicked(this.player, this.card2);
@@ -339,7 +339,7 @@ describe('the SelectCardPrompt', function () {
 
             describe('when selecting more cards than the numCards property', function () {
                 beforeEach(function () {
-                    this.properties.cardCondition.and.returnValue(true);
+                    this.properties.cardCondition.mockReturnValue(true);
                     this.prompt.onCardClicked(this.player, this.card);
                     this.prompt.onCardClicked(this.player, this.card2);
                     this.card3 = createCardSpy();
@@ -382,7 +382,7 @@ describe('the SelectCardPrompt', function () {
 
             describe('when cards have been selected', function () {
                 beforeEach(function () {
-                    this.properties.cardCondition.and.returnValue(true);
+                    this.properties.cardCondition.mockReturnValue(true);
                     this.prompt.onCardClicked(this.player, this.card);
                     this.prompt.onCardClicked(this.player, this.card2);
                 });
@@ -402,7 +402,7 @@ describe('the SelectCardPrompt', function () {
 
                 describe('when onSelect returns true', function () {
                     beforeEach(function () {
-                        this.properties.onSelect.and.returnValue(true);
+                        this.properties.onSelect.mockReturnValue(true);
                     });
 
                     it('should complete the prompt', function () {
@@ -418,7 +418,7 @@ describe('the SelectCardPrompt', function () {
 
                 describe('when onSelect returns false', function () {
                     beforeEach(function () {
-                        this.properties.onSelect.and.returnValue(false);
+                        this.properties.onSelect.mockReturnValue(false);
                         this.prompt.onMenuCommand(this.player, 'done');
                     });
 
@@ -438,7 +438,7 @@ describe('the SelectCardPrompt', function () {
 
             describe('when cards have been selected and unselected', function () {
                 beforeEach(function () {
-                    this.properties.cardCondition.and.returnValue(true);
+                    this.properties.cardCondition.mockReturnValue(true);
                     this.prompt.onCardClicked(this.player, this.card);
                     this.prompt.onCardClicked(this.player, this.card2);
                     this.prompt.onCardClicked(this.player, this.card);
@@ -456,9 +456,9 @@ describe('the SelectCardPrompt', function () {
 
     describe('for stat-based prompts', function () {
         beforeEach(function () {
-            this.maxStatSpy = jasmine.createSpy('maxStat');
-            this.maxStatSpy.and.returnValue(1);
-            this.cardStatSpy = jasmine.createSpy('cardStat');
+            this.maxStatSpy = vi.fn();
+            this.maxStatSpy.mockReturnValue(1);
+            this.cardStatSpy = vi.fn();
             this.properties.maxStat = this.maxStatSpy;
             this.properties.cardStat = this.cardStatSpy;
             this.prompt = new SelectCardPrompt(this.game, this.player, this.properties);
@@ -466,8 +466,8 @@ describe('the SelectCardPrompt', function () {
 
         describe('checkCardCondition()', function () {
             beforeEach(function () {
-                this.properties.cardCondition.and.returnValue(true);
-                this.card.getType.and.returnValue('character');
+                this.properties.cardCondition.mockReturnValue(true);
+                this.card.getType.mockReturnValue('character');
             });
 
             describe('when the card is not selected', function () {
@@ -477,7 +477,7 @@ describe('the SelectCardPrompt', function () {
 
                 describe('and the card will not put it past the max', function () {
                     beforeEach(function () {
-                        this.cardStatSpy.and.returnValue(1);
+                        this.cardStatSpy.mockReturnValue(1);
                     });
 
                     it('should return true', function () {
@@ -487,7 +487,7 @@ describe('the SelectCardPrompt', function () {
 
                 describe('and the card will put it past the max', function () {
                     beforeEach(function () {
-                        this.cardStatSpy.and.returnValue(2);
+                        this.cardStatSpy.mockReturnValue(2);
                     });
 
                     it('should return false', function () {
@@ -503,7 +503,7 @@ describe('the SelectCardPrompt', function () {
 
                 describe('and the card will not put it past the max', function () {
                     beforeEach(function () {
-                        this.cardStatSpy.and.returnValue(1);
+                        this.cardStatSpy.mockReturnValue(1);
                     });
 
                     it('should return true', function () {
@@ -513,7 +513,7 @@ describe('the SelectCardPrompt', function () {
 
                 describe('and the card will put it past the max', function () {
                     beforeEach(function () {
-                        this.cardStatSpy.and.returnValue(2);
+                        this.cardStatSpy.mockReturnValue(2);
                     });
 
                     it('should return true', function () {
@@ -526,7 +526,7 @@ describe('the SelectCardPrompt', function () {
 
     describe('for prompts with must-select cards', function () {
         beforeEach(function () {
-            this.properties.cardCondition.and.returnValue(true);
+            this.properties.cardCondition.mockReturnValue(true);
 
             this.mustSelectCard1 = createCardSpy({ name: 'mustSelect1', controller: this.player });
             this.mustSelectCard2 = createCardSpy({ name: 'mustSelect2', controller: this.player });
@@ -647,8 +647,8 @@ describe('the SelectCardPrompt', function () {
             this.game.allCards = [this.card, this.card2];
             this.properties.mode = 'eachPlayer';
             this.properties.ifAble = true;
-            this.properties.onSelect.and.returnValue(true);
-            this.properties.cardCondition.and.returnValue(true);
+            this.properties.onSelect.mockReturnValue(true);
+            this.properties.cardCondition.mockReturnValue(true);
             this.context = {
                 costs: {},
                 game: this.game,

@@ -3,9 +3,9 @@ import Event from '../../../../server/game/event.js';
 
 describe('The Rains of Castamere', function () {
     function createPlotSpy(uuid, hasTrait) {
-        var plot = jasmine.createSpyObj('plot', ['hasTrait', 'moveTo']);
+        var plot = { hasTrait: vi.fn(), moveTo: vi.fn() };
         plot.uuid = uuid;
-        plot.hasTrait.and.callFake(hasTrait);
+        plot.hasTrait.mockImplementation(hasTrait);
         return plot;
     }
 
@@ -18,19 +18,19 @@ describe('The Rains of Castamere', function () {
     }
 
     beforeEach(function () {
-        this.gameSpy = jasmine.createSpyObj('game', [
-            'on',
-            'registerAbility',
-            'addMessage',
-            'queueStep'
-        ]);
+        this.gameSpy = {
+            on: vi.fn(),
+            registerAbility: vi.fn(),
+            addMessage: vi.fn(),
+            queueStep: vi.fn()
+        };
 
         this.plot1 = plot('1111');
         this.plot2 = plot('2222');
         this.scheme1 = scheme('3333');
         this.scheme2 = scheme('4444');
 
-        this.player = jasmine.createSpyObj('player', ['kneelCard', 'moveCard', 'hasFlag']);
+        this.player = { kneelCard: vi.fn(), moveCard: vi.fn(), hasFlag: vi.fn() };
         this.player.game = this.gameSpy;
         this.player.faction = {};
 
@@ -39,14 +39,14 @@ describe('The Rains of Castamere', function () {
 
     describe('onPlotDiscarded()', function () {
         beforeEach(function () {
-            this.plotSpy = jasmine.createSpyObj('plot', ['hasTrait']);
+            this.plotSpy = { hasTrait: vi.fn() };
             this.plotSpy.controller = this.player;
             this.event = { player: this.player, card: this.plotSpy };
         });
 
         describe('when the plot is a scheme and controlled by the player', function () {
             beforeEach(function () {
-                this.plotSpy.hasTrait.and.callFake((trait) => trait === 'Scheme');
+                this.plotSpy.hasTrait.mockImplementation((trait) => trait === 'Scheme');
                 this.agenda.onPlotDiscarded(this.event);
             });
 
@@ -57,7 +57,7 @@ describe('The Rains of Castamere', function () {
 
         describe('when the plot is a scheme and controlled by the opponent', function () {
             beforeEach(function () {
-                this.plotSpy.hasTrait.and.callFake((trait) => trait === 'Scheme');
+                this.plotSpy.hasTrait.mockImplementation((trait) => trait === 'Scheme');
                 this.plotSpy.controller = {};
                 this.agenda.onPlotDiscarded(this.event);
             });
@@ -69,7 +69,7 @@ describe('The Rains of Castamere', function () {
 
         describe('when the plot is not a scheme', function () {
             beforeEach(function () {
-                this.plotSpy.hasTrait.and.returnValue(false);
+                this.plotSpy.hasTrait.mockReturnValue(false);
                 this.agenda.onPlotDiscarded(this.event);
             });
 
@@ -130,7 +130,7 @@ describe('The Rains of Castamere', function () {
                 this.reaction.abilityTriggers[0].eventHandler(event);
                 expect(this.gameSpy.registerAbility).toHaveBeenCalledWith(
                     this.reaction,
-                    jasmine.objectContaining({
+                    expect.objectContaining({
                         ability: this.reaction,
                         event: event,
                         game: this.gameSpy,

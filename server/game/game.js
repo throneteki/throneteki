@@ -35,6 +35,7 @@ import ChooseGoldSourceAmounts from './gamesteps/ChooseGoldSourceAmounts.js';
 import DropCommand from './ServerCommands/DropCommand.js';
 import CardVisibility from './CardVisibility.js';
 import GameStats from './GameStats.js';
+import ManualActions from './ManualActions.js';
 import PlainTextGameChatFormatter from './PlainTextGameChatFormatter.js';
 import GameActions from './GameActions/index.js';
 import EndRound from './GameActions/EndRound.js';
@@ -113,6 +114,7 @@ class Game extends EventEmitter {
         this.remainingPhases = [];
         this.cardVisibility = new CardVisibility(this);
         this.stats = new GameStats(this);
+        this.manualActions = new ManualActions(this);
         this.winnerOfDominanceInLastRound = undefined;
         this.triggerOnLosing = {};
         this.prizedKeywordListener = new PrizedKeywordListener(this);
@@ -382,6 +384,8 @@ class Game extends EventEmitter {
             return;
         }
 
+        this.manualActions.record(player, card.kneeled ? 'stand' : 'kneel', { cards: [card] });
+
         let action = card.kneeled
             ? GameActions.standCard({ card, force: true })
             : GameActions.kneelCard({ card, force: true });
@@ -458,6 +462,7 @@ class Game extends EventEmitter {
             player.setDrawDeckVisibility(newValue);
 
             if (newValue) {
+                this.manualActions.record(player, 'showDrawDeck');
                 this.addAlert('danger', '{0} is looking at their deck', player);
             } else {
                 this.addAlert('info', '{0} stops looking at their deck', player);
@@ -474,7 +479,12 @@ class Game extends EventEmitter {
         }
 
         let command = new DropCommand(this, player, card, target);
-        command.execute();
+        if (command.execute()) {
+            this.manualActions.record(player, 'drop', {
+                cards: [card],
+                args: [command.originalLocation, target]
+            });
+        }
     }
 
     addPower(player, power) {
@@ -610,6 +620,8 @@ class Game extends EventEmitter {
         if (!player) {
             return;
         }
+
+        this.manualActions.record(player, 'changeStat', { args: [stat, value] });
 
         let target = player;
 
@@ -747,6 +759,7 @@ class Game extends EventEmitter {
             return;
         }
 
+        this.manualActions.record(player, 'shuffleDeck');
         this.addAlert('danger', '{0} shuffles their deck', player);
 
         player.shuffleDrawDeck();
@@ -939,6 +952,9 @@ class Game extends EventEmitter {
     markActionAsTaken(context) {
         if (this.currentActionWindow) {
             if (this.currentActionWindow.currentPlayer !== context.player) {
+                this.manualActions.record(context.player, 'actionOutOfTurn', {
+                    cards: [context.source]
+                });
                 this.addAlert(
                     'danger',
                     "{0} uses {1} during {2}'s turn in the action window",
@@ -949,6 +965,9 @@ class Game extends EventEmitter {
             }
             this.currentActionWindow.markActionAsTaken(context.player);
         } else if (this.currentPhase !== 'marshal' || this.hasOpenInterruptOrReactionWindow()) {
+            this.manualActions.record(context.player, 'actionOutsideWindow', {
+                cards: [context.source]
+            });
             this.addAlert(
                 'danger',
                 '{0} uses {1} outside of an action window',

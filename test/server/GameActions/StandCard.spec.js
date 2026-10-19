@@ -2,7 +2,7 @@ import StandCard from '../../../server/game/GameActions/StandCard.js';
 
 describe('StandCard', function () {
     beforeEach(function () {
-        this.cardSpy = jasmine.createSpyObj('card', ['allowGameAction']);
+        this.cardSpy = { allowGameAction: vi.fn() };
         this.cardSpy.kneeled = true;
         this.cardSpy.location = 'play area';
         this.props = { card: this.cardSpy };
@@ -10,7 +10,7 @@ describe('StandCard', function () {
 
     describe('allow()', function () {
         beforeEach(function () {
-            this.cardSpy.allowGameAction.and.returnValue(true);
+            this.cardSpy.allowGameAction.mockReturnValue(true);
         });
 
         for (let location of ['faction', 'play area']) {

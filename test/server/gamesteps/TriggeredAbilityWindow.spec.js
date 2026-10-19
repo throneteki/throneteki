@@ -2,65 +2,65 @@ import TriggeredAbilityWindow from '../../../server/game/gamesteps/TriggeredAbil
 
 describe('TriggeredAbilityWindow', function () {
     beforeEach(function () {
-        this.player1Spy = jasmine.createSpyObj('player', [
-            'setPrompt',
-            'cancelPrompt',
-            'user',
-            'isTimerEnabled',
-            'isPlaying'
-        ]);
-        this.player2Spy = jasmine.createSpyObj('player', [
-            'setPrompt',
-            'cancelPrompt',
-            'user',
-            'isTimerEnabled',
-            'isPlaying'
-        ]);
+        this.player1Spy = {
+            setPrompt: vi.fn(),
+            cancelPrompt: vi.fn(),
+            user: vi.fn(),
+            isTimerEnabled: vi.fn(),
+            isPlaying: vi.fn()
+        };
+        this.player2Spy = {
+            setPrompt: vi.fn(),
+            cancelPrompt: vi.fn(),
+            user: vi.fn(),
+            isTimerEnabled: vi.fn(),
+            isPlaying: vi.fn()
+        };
 
         this.player1Spy.noTimer = true;
-        this.player1Spy.isPlaying.and.returnValue(true);
+        this.player1Spy.isPlaying.mockReturnValue(true);
         this.player2Spy.noTimer = true;
-        this.player2Spy.isPlaying.and.returnValue(true);
+        this.player2Spy.isPlaying.mockReturnValue(true);
 
-        this.gameSpy = jasmine.createSpyObj('game', [
-            'getPlayersInFirstPlayerOrder',
-            'promptForSelect',
-            'resolveAbility'
-        ]);
-        this.gameSpy.getPlayersInFirstPlayerOrder.and.returnValue([
+        this.gameSpy = {
+            getPlayersInFirstPlayerOrder: vi.fn(),
+            promptForSelect: vi.fn(),
+            resolveAbility: vi.fn()
+        };
+        this.gameSpy.getPlayersInFirstPlayerOrder.mockReturnValue([
             this.player1Spy,
             this.player2Spy
         ]);
 
-        this.eventSpy = jasmine.createSpyObj('event', [
-            'emitTo',
-            'getConcurrentEvents',
-            'getPrimaryEvents'
-        ]);
+        this.eventSpy = {
+            emitTo: vi.fn(),
+            getConcurrentEvents: vi.fn(),
+            getPrimaryEvents: vi.fn()
+        };
         this.eventSpy.attachedEvents = [];
-        this.eventSpy.getConcurrentEvents.and.returnValue([this.eventSpy]);
-        this.eventSpy.getPrimaryEvents.and.returnValue([this.eventSpy]);
+        this.eventSpy.getConcurrentEvents.mockReturnValue([this.eventSpy]);
+        this.eventSpy.getPrimaryEvents.mockReturnValue([this.eventSpy]);
 
         this.window = new TriggeredAbilityWindow(this.gameSpy, {
             event: this.eventSpy,
             abilityType: 'interrupt'
         });
 
-        spyOn(this.window, 'gatherChoices');
-        spyOn(this.window, 'resolveAbility');
+        vi.spyOn(this.window, 'gatherChoices').mockImplementation(() => {});
+        vi.spyOn(this.window, 'resolveAbility').mockImplementation(() => {});
 
         function createCard(properties) {
-            let cardSpy = jasmine.createSpyObj('card', ['getSummary']);
+            let cardSpy = { getSummary: vi.fn() };
             cardSpy.location = 'play area';
             Object.assign(cardSpy, properties);
             return cardSpy;
         }
 
         function createAbility(card) {
-            let ability = jasmine.createSpyObj('ability', ['getTitle', 'hasMax', 'canResolve']);
+            let ability = { getTitle: vi.fn(), hasMax: vi.fn(), canResolve: vi.fn() };
             ability.card = card;
             ability.location = ['play area'];
-            ability.canResolve.and.returnValue(true);
+            ability.canResolve.mockReturnValue(true);
             return ability;
         }
 
@@ -93,7 +93,7 @@ describe('TriggeredAbilityWindow', function () {
         describe('when there are no remaining players', function () {
             beforeEach(function () {
                 // There are remaining choices, but both players have passed
-                this.window.gatherChoices.and.callFake(() => {
+                this.window.gatherChoices.mockImplementation(() => {
                     this.window.registerAbility(this.ability1Spy, this.context1);
                     this.window.registerAbility(this.ability2Spy, this.context2);
                     this.window.registerAbility(this.ability3Spy, this.context3);
@@ -128,7 +128,7 @@ describe('TriggeredAbilityWindow', function () {
 
         describe('when there are choices', function () {
             beforeEach(function () {
-                this.window.gatherChoices.and.callFake(() => {
+                this.window.gatherChoices.mockImplementation(() => {
                     this.window.registerAbility(this.ability1Spy, this.context1);
                     this.window.registerAbility(this.ability2Spy, this.context2);
                     this.window.registerAbility(this.ability3Spy, this.context3);
@@ -143,7 +143,7 @@ describe('TriggeredAbilityWindow', function () {
                 it('should prompt the first player', function () {
                     expect(this.gameSpy.promptForSelect).toHaveBeenCalledWith(
                         this.player1Spy,
-                        jasmine.any(Object)
+                        expect.any(Object)
                     );
                 });
 

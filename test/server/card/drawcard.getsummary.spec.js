@@ -2,14 +2,14 @@ import DrawCard from '../../../server/game/drawcard.js';
 
 describe('DrawCard', function () {
     function createPlayerSpy(name) {
-        let player = jasmine.createSpyObj('player', ['getCardSelectionState', 'isSpectator']);
+        let player = { getCardSelectionState: vi.fn(), isSpectator: vi.fn() };
         player.name = name;
         return player;
     }
 
     beforeEach(function () {
-        this.gameSpy = jasmine.createSpyObj('game', ['isCardVisible']);
-        this.gameSpy.isCardVisible.and.returnValue(true);
+        this.gameSpy = { isCardVisible: vi.fn() };
+        this.gameSpy.isCardVisible.mockReturnValue(true);
         this.testCard = {
             code: '111',
             label: 'test 1(some pack)',
@@ -57,7 +57,7 @@ describe('DrawCard', function () {
             beforeEach(function () {
                 this.testCard.strength = 5;
                 let anotherPlayer = createPlayerSpy('player2');
-                this.gameSpy.isCardVisible.and.returnValue(false);
+                this.gameSpy.isCardVisible.mockReturnValue(false);
                 this.summary = this.card.getSummary(anotherPlayer);
             });
 

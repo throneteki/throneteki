@@ -7,14 +7,14 @@ describe('GameAction', function () {
 
     describe('allow()', function () {
         beforeEach(function () {
-            this.cardSpy = jasmine.createSpyObj('card', ['allowGameAction']);
-            this.cardSpy.allowGameAction.and.returnValue(true);
+            this.cardSpy = { allowGameAction: vi.fn() };
+            this.cardSpy.allowGameAction.mockReturnValue(true);
             this.context = { context: 1 };
             this.props = { card: this.cardSpy, context: this.context };
 
             // Inheritors should override canChangeGameState, so explicitly spy
             // on it in these tests to simulate that.
-            spyOn(this.action, 'canChangeGameState').and.returnValue(true);
+            vi.spyOn(this.action, 'canChangeGameState').mockReturnValue(true);
         });
 
         describe('when game state can be changed and target is not immune', function () {
@@ -40,7 +40,7 @@ describe('GameAction', function () {
 
         describe('when game state cannot be changed', function () {
             beforeEach(function () {
-                this.action.canChangeGameState.and.returnValue(false);
+                this.action.canChangeGameState.mockReturnValue(false);
             });
 
             it('should return false', function () {
@@ -50,7 +50,7 @@ describe('GameAction', function () {
 
         describe('when the card is immune', function () {
             beforeEach(function () {
-                this.cardSpy.allowGameAction.and.returnValue(false);
+                this.cardSpy.allowGameAction.mockReturnValue(false);
             });
 
             it('should return false', function () {

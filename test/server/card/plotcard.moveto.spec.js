@@ -3,10 +3,10 @@ import PlotCard from '../../../server/game/plotcard.js';
 describe('PlotCard', function () {
     beforeEach(function () {
         this.testCard = { code: '111', label: 'test 1(some pack)', name: 'test 1' };
-        this.gameSpy = jasmine.createSpyObj('game', ['raiseEvent']);
+        this.gameSpy = { raiseEvent: vi.fn() };
         this.card = new PlotCard({ game: this.gameSpy }, this.testCard);
-        spyOn(this.card.events, 'register');
-        spyOn(this.card.events, 'unregisterAll');
+        vi.spyOn(this.card.events, 'register').mockImplementation(() => {});
+        vi.spyOn(this.card.events, 'unregisterAll').mockImplementation(() => {});
     });
 
     describe('moveTo()', function () {

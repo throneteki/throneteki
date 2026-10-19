@@ -2,34 +2,34 @@ import Player from '../../../server/game/player.js';
 
 describe('Player', function () {
     beforeEach(function () {
-        this.gameSpy = jasmine.createSpyObj('game', [
-            'queueSimpleStep',
-            'queueStep',
-            'raiseEvent',
-            'resolveEvent'
-        ]);
+        this.gameSpy = {
+            queueSimpleStep: vi.fn(),
+            queueStep: vi.fn(),
+            raiseEvent: vi.fn(),
+            resolveEvent: vi.fn()
+        };
         this.player = new Player('1', { username: 'Player 1', settings: {} }, true, this.gameSpy);
         this.player.initialise();
 
-        spyOn(this.player, 'getDuplicateInPlay');
-        spyOn(this.player, 'isCharacterDead');
-        spyOn(this.player, 'canResurrect');
+        vi.spyOn(this.player, 'getDuplicateInPlay').mockImplementation(() => {});
+        vi.spyOn(this.player, 'isCharacterDead').mockImplementation(() => {});
+        vi.spyOn(this.player, 'canResurrect').mockImplementation(() => {});
 
-        this.gameSpy.queueSimpleStep.and.callFake((func) => func());
+        this.gameSpy.queueSimpleStep.mockImplementation((func) => func());
 
-        this.cardSpy = jasmine.createSpyObj('card', [
-            'getPrintedType',
-            'getCost',
-            'hasFlag',
-            'isBestow',
-            'isUnique',
-            'applyPersistentEffects',
-            'moveTo',
-            'takeControl'
-        ]);
+        this.cardSpy = {
+            getPrintedType: vi.fn(),
+            getCost: vi.fn(),
+            hasFlag: vi.fn(),
+            isBestow: vi.fn(),
+            isUnique: vi.fn(),
+            applyPersistentEffects: vi.fn(),
+            moveTo: vi.fn(),
+            takeControl: vi.fn()
+        };
         this.cardSpy.controller = this.player;
         this.cardSpy.owner = this.player;
-        this.dupeCardSpy = jasmine.createSpyObj('dupecard', ['addDuplicate']);
+        this.dupeCardSpy = { addDuplicate: vi.fn() };
         this.player.hand.push(this.cardSpy);
         this.cardSpy.location = 'hand';
     });
@@ -38,7 +38,7 @@ describe('Player', function () {
         describe('when the playing type is marshal', function () {
             describe('and the card is not a duplicate', function () {
                 beforeEach(function () {
-                    this.player.getDuplicateInPlay.and.returnValue(null);
+                    this.player.getDuplicateInPlay.mockReturnValue(null);
                     this.player.putIntoPlay(this.cardSpy, 'marshal');
                 });
 
@@ -60,7 +60,7 @@ describe('Player', function () {
 
                 it('should raise the onCardEntersPlay event', function () {
                     expect(this.gameSpy.resolveEvent).toHaveBeenCalledWith(
-                        jasmine.objectContaining({
+                        expect.objectContaining({
                             name: 'onCardEntersPlay',
                             card: this.cardSpy,
                             playingType: 'marshal'
@@ -70,22 +70,22 @@ describe('Player', function () {
 
                 describe('when it has the Bestow keyword', function () {
                     beforeEach(function () {
-                        this.cardSpy.isBestow.and.returnValue(true);
+                        this.cardSpy.isBestow.mockReturnValue(true);
                         this.player.putIntoPlay(this.cardSpy, 'marshal');
                     });
 
                     it('should queue the bestow prompt', function () {
                         expect(this.gameSpy.queueStep).toHaveBeenCalled();
-                        expect(
-                            this.gameSpy.queueStep.calls.mostRecent().args[0].constructor.name
-                        ).toBe('BestowPrompt');
+                        expect(this.gameSpy.queueStep.mock.lastCall[0].constructor.name).toBe(
+                            'BestowPrompt'
+                        );
                     });
                 });
             });
 
             describe('and the card is a duplicate', function () {
                 beforeEach(function () {
-                    this.player.getDuplicateInPlay.and.returnValue(this.dupeCardSpy);
+                    this.player.getDuplicateInPlay.mockReturnValue(this.dupeCardSpy);
                     this.player.putIntoPlay(this.cardSpy, 'marshal');
                 });
 
@@ -100,7 +100,7 @@ describe('Player', function () {
                 it('should not raise the onCardEntersPlay event', function () {
                     expect(this.gameSpy.raiseEvent).not.toHaveBeenCalledWith(
                         'onCardEntersPlay',
-                        jasmine.objectContaining({ card: this.cardSpy })
+                        expect.objectContaining({ card: this.cardSpy })
                     );
                 });
 
@@ -110,7 +110,7 @@ describe('Player', function () {
 
                 describe('when it has the Bestow keyword', function () {
                     beforeEach(function () {
-                        this.cardSpy.isBestow.and.returnValue(true);
+                        this.cardSpy.isBestow.mockReturnValue(true);
                         this.player.putIntoPlay(this.cardSpy, 'marshal');
                     });
 
@@ -123,14 +123,14 @@ describe('Player', function () {
 
         describe('when card is an attachment', function () {
             beforeEach(function () {
-                spyOn(this.player, 'promptForAttachment');
+                vi.spyOn(this.player, 'promptForAttachment').mockImplementation(() => {});
 
-                this.cardSpy.getPrintedType.and.returnValue('attachment');
+                this.cardSpy.getPrintedType.mockReturnValue('attachment');
             });
 
             describe('and there is no duplicate out', function () {
                 beforeEach(function () {
-                    this.player.getDuplicateInPlay.and.returnValue(null);
+                    this.player.getDuplicateInPlay.mockReturnValue(null);
                     this.player.putIntoPlay(this.cardSpy, 'marshal');
                 });
 
@@ -145,7 +145,7 @@ describe('Player', function () {
 
             describe('and there is a duplicate out', function () {
                 beforeEach(function () {
-                    this.player.getDuplicateInPlay.and.returnValue(this.dupeCardSpy);
+                    this.player.getDuplicateInPlay.mockReturnValue(this.dupeCardSpy);
                     this.player.putIntoPlay(this.cardSpy, 'marshal');
                 });
 
@@ -170,7 +170,7 @@ describe('Player', function () {
         describe('when the playing type is setup', function () {
             describe('and the card is not a duplicate', function () {
                 beforeEach(function () {
-                    this.player.getDuplicateInPlay.and.returnValue(null);
+                    this.player.getDuplicateInPlay.mockReturnValue(null);
                     this.gameSpy.currentPhase = 'setup';
                     this.player.putIntoPlay(this.cardSpy, 'setup');
                 });
@@ -193,7 +193,7 @@ describe('Player', function () {
 
                 it('should raise the onCardEntersPlay event', function () {
                     expect(this.gameSpy.resolveEvent).toHaveBeenCalledWith(
-                        jasmine.objectContaining({
+                        expect.objectContaining({
                             name: 'onCardEntersPlay',
                             card: this.cardSpy,
                             playingType: 'setup'
@@ -203,7 +203,7 @@ describe('Player', function () {
 
                 describe('when it has the Bestow keyword', function () {
                     beforeEach(function () {
-                        this.cardSpy.isBestow.and.returnValue(true);
+                        this.cardSpy.isBestow.mockReturnValue(true);
                         this.player.putIntoPlay(this.cardSpy, 'setup');
                     });
 
@@ -215,7 +215,7 @@ describe('Player', function () {
 
             describe('and the card is a duplicate', function () {
                 beforeEach(function () {
-                    this.player.getDuplicateInPlay.and.returnValue(this.dupeCardSpy);
+                    this.player.getDuplicateInPlay.mockReturnValue(this.dupeCardSpy);
                     this.gameSpy.currentPhase = 'setup';
                     this.player.putIntoPlay(this.cardSpy, 'setup');
                 });
@@ -238,7 +238,7 @@ describe('Player', function () {
 
                 it('should raise the onCardEntersPlay event', function () {
                     expect(this.gameSpy.resolveEvent).toHaveBeenCalledWith(
-                        jasmine.objectContaining({
+                        expect.objectContaining({
                             name: 'onCardEntersPlay',
                             card: this.cardSpy,
                             playingType: 'setup'
@@ -255,7 +255,7 @@ describe('Player', function () {
         describe('when the playing type is ambush', function () {
             describe('and the card is not a duplicate', function () {
                 beforeEach(function () {
-                    this.player.getDuplicateInPlay.and.returnValue(null);
+                    this.player.getDuplicateInPlay.mockReturnValue(null);
                     this.player.putIntoPlay(this.cardSpy, 'ambush');
                 });
 
@@ -277,7 +277,7 @@ describe('Player', function () {
 
                 it('should raise the onCardEntersPlay event', function () {
                     expect(this.gameSpy.resolveEvent).toHaveBeenCalledWith(
-                        jasmine.objectContaining({
+                        expect.objectContaining({
                             name: 'onCardEntersPlay',
                             card: this.cardSpy,
                             playingType: 'ambush'
@@ -288,7 +288,7 @@ describe('Player', function () {
 
             describe('and the card is a duplicate', function () {
                 beforeEach(function () {
-                    this.player.getDuplicateInPlay.and.returnValue(this.dupeCardSpy);
+                    this.player.getDuplicateInPlay.mockReturnValue(this.dupeCardSpy);
                     this.player.putIntoPlay(this.cardSpy, 'ambush');
                 });
 
@@ -303,7 +303,7 @@ describe('Player', function () {
                 it('should not raise the onCardEntersPlay event', function () {
                     expect(this.gameSpy.raiseEvent).not.toHaveBeenCalledWith(
                         'onCardEntersPlay',
-                        jasmine.objectContaining({ card: this.cardSpy })
+                        expect.objectContaining({ card: this.cardSpy })
                     );
                 });
 
@@ -322,9 +322,9 @@ describe('Player', function () {
                     this.gameSpy
                 );
                 this.opponent.initialise();
-                spyOn(this.opponent, 'getDuplicateInPlay');
-                spyOn(this.opponent, 'isCharacterDead');
-                spyOn(this.opponent, 'canResurrect');
+                vi.spyOn(this.opponent, 'getDuplicateInPlay').mockImplementation(() => {});
+                vi.spyOn(this.opponent, 'isCharacterDead').mockImplementation(() => {});
+                vi.spyOn(this.opponent, 'canResurrect').mockImplementation(() => {});
                 this.cardSpy.controller = this.opponent;
                 this.cardSpy.owner = this.opponent;
                 this.opponent.hand.push(this.cardSpy);

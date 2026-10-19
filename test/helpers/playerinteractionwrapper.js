@@ -3,14 +3,17 @@ import { matchCardByNameAndPack } from './cardutil.js';
 import { detectBinary } from '../../server/util.js';
 
 class PlayerInteractionWrapper {
-    constructor(game, player) {
+    constructor(game, player, { key = player.name, keepUser = false } = {}) {
         this.game = game;
         this.player = player;
+        this.key = key;
 
         player.noTimer = true;
-        player.user = {
-            settings: {}
-        };
+        if (!keepUser) {
+            player.user = {
+                settings: {}
+            };
+        }
     }
 
     get name() {

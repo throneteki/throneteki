@@ -56,7 +56,7 @@ describe('Postgres GameService', function () {
         const [game] = await this.service.getAllGames();
 
         expect(game).toEqual({
-            _id: jasmine.any(String),
+            _id: expect.any(String),
             gameId: 'game-1',
             eventName: 'Tournament',
             startedAt: new Date('2026-03-01T12:00:00Z'),
