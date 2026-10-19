@@ -10,14 +10,6 @@ on:
                 type: boolean
                 description: Scale the lobby down to no pods
                 default: false
-            copy_from_mongo:
-                type: boolean
-                description: Run the MongoDB to Postgres copy job
-                default: false
-            copy_from_mongo_args:
-                type: string
-                description: Arguments for the copy, e.g. --collections games abuse_events --since 2026-11-01
-                default: ''
 jobs:
     deploy:
         runs-on: self-hosted
@@ -109,7 +101,6 @@ jobs:
                     sentryDsn: "${{ secrets.SENTRY_DSN }}"
                     captchaKey: "${{ secrets.CAPTCHA_KEY }}"
                     minLobbyChatTime: 3600
-                    dbPath: "${{ secrets.DB_PATH }}"
                     cookieLifetime: 604800000
                     redisKeyPrefix: "$ENV"
                     redisUrl: "${{ secrets.REDIS_URL }}"
@@ -153,12 +144,6 @@ jobs:
                     password: "${{ secrets.DB_MIGRATOR_PASSWORD }}"
                   EOF
 
-                  ETL_ARGS="["
-                  for arg in ${{ inputs.copy_from_mongo_args }}; do
-                    ETL_ARGS+="\"$arg\","
-                  done
-                  ETL_ARGS="${ETL_ARGS%,}]"
-
                   helm upgrade --install throneteki-lobby ./infrastructure/lobby \
                     --set namespace=$NAMESPACE \
                     --set environment=$ENV_SUBDOMAIN \
@@ -167,8 +152,6 @@ jobs:
                     -f /tmp/lobby-secrets.yaml \
                     -f /tmp/lobby-db.yaml \
                     --set replicas=${{ inputs.stop_lobby && '0' || '1' }} \
-                    --set etl.enabled=${{ inputs.copy_from_mongo }} \
-                    --set-json "etl.args=$ETL_ARGS" \
                     -n $NAMESPACE
 
                   # Clean up secrets files

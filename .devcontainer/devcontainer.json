@@ -9,7 +9,7 @@
 		"submodule": "git config --global --add safe.directory /workspaces/throneteki && git submodule init"
 	},
 	"postStartCommand": {
-		"fetchData": "node server/scripts/fetchdata.js && node server/scripts/importstandalonedecks.js"
+		"fetchData": "npm run db:migrate && node server/scripts/fetchdata.js && node server/scripts/importstandalonedecks.js"
 	},
 	"customizations": {
 		"vscode": {

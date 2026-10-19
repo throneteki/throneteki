@@ -76,7 +76,6 @@ jobs:
                     instance:
                       type: "$ENV"
                     sentryDsn: "${{ secrets.SENTRY_DSN }}"
-                    dbPath: "${{ secrets.DB_PATH }}"
                     redisKeyPrefix: "$ENV"
                     redisUrl: "${{ secrets.REDIS_URL }}"
                     secret: "${{ secrets.SECRET }}"
