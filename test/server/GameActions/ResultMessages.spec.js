@@ -1,6 +1,8 @@
 import Event from '../../../server/game/event.js';
 import GameAction from '../../../server/game/GameActions/GameAction.js';
+import DrawCards from '../../../server/game/GameActions/DrawCards.js';
 import GainGold from '../../../server/game/GameActions/GainGold.js';
+import GainPower from '../../../server/game/GameActions/GainPower.js';
 import Message from '../../../server/game/Message.js';
 import NullEvent from '../../../server/game/NullEvent.js';
 import SimultaneousActions from '../../../server/game/GameActions/SimultaneousActions.js';
@@ -47,6 +49,36 @@ describe('game action result messages', function () {
                 'gains ',
                 2,
                 ' gold'
+            ]);
+        });
+    });
+
+    describe('gaining power', function () {
+        it('reports the power actually gained', function () {
+            const card = { getType: () => 'character', getPowerToGain: () => 0 };
+            const event = new Event('onCardPowerGained', { card, power: 1, reason: 'ability' });
+
+            expect(
+                Message.format('{0}', GainPower.resultMessage({ card, amount: 3 }, event))
+            ).toEqual(['gains ', 1, ' power on ', card]);
+        });
+    });
+
+    describe('drawing cards', function () {
+        it('reports the number of cards actually drawn', function () {
+            const event = new Event('onCardsDrawn', {
+                amount: 1,
+                cards: [],
+                desiredAmount: 3,
+                length: 1,
+                player: {},
+                reason: 'ability',
+                source: {}
+            });
+
+            expect(Message.format('{0}', DrawCards.resultMessage({ amount: 3 }, event))).toEqual([
+                'draws ',
+                '1 card'
             ]);
         });
     });

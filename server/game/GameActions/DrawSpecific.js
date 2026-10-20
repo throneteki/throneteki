@@ -12,6 +12,12 @@ class DrawSpecific extends GameAction {
         return Message.fragment('draws {cards}', { cards: actualDraw });
     }
 
+    resultMessage(props, event) {
+        return this.hasResult(event)
+            ? Message.fragment('draws {cards}', { cards: event.cards })
+            : '';
+    }
+
     canChangeGameState({ player, cards }) {
         const drawableCards = cards.filter((card) => card.location === 'draw deck');
         return player.getNumCardsToDraw(drawableCards.length) > 0;
