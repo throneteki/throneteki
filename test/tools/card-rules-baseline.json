@@ -2736,9 +2736,6 @@
         "prompt-for-select": 1,
         "legacy-helper": 2
     },
-    "server/game/cards/13.1-AtG/OldGate.js": {
-        "add-message": 1
-    },
     "server/game/cards/13.1-AtG/RhllorInfiltrator.js": {
         "legacy-helper": 2
     },
