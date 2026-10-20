@@ -3,6 +3,7 @@ import AbilityChoosePlayerDefinition from './AbilityChoosePlayerDefinition.js';
 import AbilityMessage from './AbilityMessage.js';
 import AbilityTarget from './AbilityTarget.js';
 import ChooseGameAction from './GameActions/ChooseGameAction.js';
+import ForEachSelection from './GameActions/ForEachSelection.js';
 import HandlerGameActionWrapper from './GameActions/HandlerGameActionWrapper.js';
 import SimultaneousActions from './GameActions/SimultaneousActions.js';
 import StackProperty from './PropertyTypes/StackProperty.js';
@@ -85,7 +86,11 @@ class BaseAbility {
             // A target's own game action is what the ability does to that target. A string
             // only names the action checked for immunity.
             if (gameAction && typeof gameAction === 'object') {
-                this.targetGameActions.push(gameAction);
+                this.targetGameActions.push(
+                    targetProperties.choosingPlayer === 'each'
+                        ? new ForEachSelection(name, gameAction)
+                        : gameAction
+                );
                 filterAction = gameAction;
                 gameAction = undefined;
             }

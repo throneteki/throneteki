@@ -237,9 +237,6 @@
         "add-message": 1,
         "legacy-helper": 1
     },
-    "server/game/cards/01-Core/MarchedToTheWall.js": {
-        "legacy-helper": 1
-    },
     "server/game/cards/01-Core/MargaeryTyrell.js": {
         "add-message": 1
     },
@@ -359,9 +356,6 @@
         "add-message": 1
     },
     "server/game/cards/01-Core/TheHandsJudgment.js": {
-        "add-message": 1
-    },
-    "server/game/cards/01-Core/TheKingsroad.js": {
         "add-message": 1
     },
     "server/game/cards/01-Core/TheKrakensGrasp.js": {
@@ -650,9 +644,6 @@
     "server/game/cards/02.5-COW/MirriMazDuur.js": {
         "add-message": 1,
         "legacy-helper": 1
-    },
-    "server/game/cards/02.5-COW/Nightmares.js": {
-        "add-message": 1
     },
     "server/game/cards/02.5-COW/NorthernRookery.js": {
         "legacy-helper": 1,
@@ -1268,10 +1259,6 @@
     },
     "server/game/cards/06.1-AMAF/GhiscariElite.js": {
         "add-message": 1,
-        "legacy-helper": 1
-    },
-    "server/game/cards/06.1-AMAF/LateSummerFeast.js": {
-        "add-message": 3,
         "legacy-helper": 1
     },
     "server/game/cards/06.1-AMAF/SlaversBayPort.js": {
@@ -2011,10 +1998,6 @@
         "add-message": 1
     },
     "server/game/cards/08.6-SAT/TheSevenPointedStar.js": {
-        "add-message": 1
-    },
-    "server/game/cards/08.6-SAT/YouWinOrYouDie.js": {
-        "legacy-helper": 1,
         "add-message": 1
     },
     "server/game/cards/09-HoT/ArchmaesterEbrose.js": {

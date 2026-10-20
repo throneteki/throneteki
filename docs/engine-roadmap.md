@@ -416,6 +416,10 @@ needs them:
 | You Win Or You Die  | 08120 |    38 |
 | Milk of the Poppy   | 01035 |    38 |
 
+_The eight cards above are verified. Marched to the Wall uses a per-target game action on an
+each-player target, which now resolves once for every player's selection; 24 cards use
+each-player targets, mostly with handlers, and can move to it._
+
 After those, finish one archetype outright. The shortest published list is Stark Fealty,
 "Characters" ([decklist 16711](https://thronesdb.com/decklist/view/16711)), at 20 unverified cards.
 The three easiest Stark lists together are 39 cards, the smallest such union of any faction (the

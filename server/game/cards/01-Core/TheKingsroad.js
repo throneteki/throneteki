@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheKingsroad extends DrawCard {
     setupCardAbilities(ability) {
@@ -10,27 +11,19 @@ class TheKingsroad extends DrawCard {
             clickToActivate: true,
             phase: 'marshal',
             cost: [ability.costs.kneelSelf(), ability.costs.sacrificeSelf()],
-            handler: (context) => {
-                // Because the Kingsroad ends up in the discard pile of its owner
-                // prior to the reduction being used, we must specifically match
-                // it to the player that activated the ability. Otherwise, in
-                // cases like Euron Crow's Eye, the reduction will always go to
-                // the owner.
-                let currentController = context.player;
-                this.game.addMessage(
-                    '{0} kneels and sacrifices {1} to reduce the cost of the next character by 3',
-                    currentController,
-                    this
-                );
-                this.untilEndOfPhase((ability) => ({
-                    targetController: 'any',
-                    match: (player) => player === currentController,
-                    effect: ability.effects.reduceNextMarshalledCardCost(
-                        3,
-                        (card) => card.getType() === 'character'
-                    )
-                }));
-            }
+            message:
+                '{player} kneels and sacrifices {source} to reduce the cost of the next character they marshal this phase by 3',
+            // The Kingsroad is in its owner's discard pile by the time the reduction is used, so
+            // the reduction is matched to the player who used it, who may not be its owner.
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                targetController: 'any',
+                match: (player) => player === context.player,
+                effect: ability.effects.reduceNextMarshalledCardCost(
+                    3,
+                    (card) => card.getType() === 'character'
+                )
+            }))
         });
     }
 }

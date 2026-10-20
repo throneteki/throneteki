@@ -1,4 +1,5 @@
 import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class MarchedToTheWall extends PlotCard {
     setupCardAbilities() {
@@ -9,14 +10,11 @@ class MarchedToTheWall extends PlotCard {
                 cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.controller === context.choosingPlayer &&
-                    card.getType() === 'character' &&
-                    card.allowGameAction('discard')
-            },
-            handler: (context) => {
-                let cards = context.targets.selections
-                    .map((selection) => selection.value)
-                    .filter((card) => !!card);
-                this.game.discardFromPlay(cards, { allowSave: false });
+                    card.getType() === 'character',
+                gameAction: GameActions.discardCard((context) => ({
+                    card: context.target,
+                    allowSave: false
+                }))
             }
         });
     }
