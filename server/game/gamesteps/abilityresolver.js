@@ -26,6 +26,7 @@ class AbilityResolver extends BaseStep {
             new SimpleStep(game, () => this.waitForTargetResolution()),
             new SimpleStep(game, () => this.incrementAbilityLimit()),
             new SimpleStep(game, () => this.executeHandler()),
+            new SimpleStep(game, () => this.flushHeldMessage()),
             new SimpleStep(game, () => this.raiseCardPlayedIfEvent()),
             new SimpleStep(game, () => this.game.popAbilityContext())
         ]);
@@ -204,12 +205,18 @@ class AbilityResolver extends BaseStep {
             return;
         }
 
-        this.ability.outputMessage(this.context);
-
         // Check to make sure the ability is actually a card ability. For
         // instance, marshaling does not count as initiating a card ability and
         // thus is not subject to cancels such as Treachery.
         if (this.ability.isCardAbility()) {
+            if (this.ability.hasMessage) {
+                this.context.messageHeld = true;
+                this.context.messageAbility = this.ability;
+                this.game.holdAbilityMessage(this.context);
+            } else {
+                this.ability.outputMessage(this.context);
+            }
+
             let targets = this.context.targets.getTargets();
             // Collect cards which require validation/proof that it is actually a valid target for ability
             let targetsToValidate = this.context.targets.getTargetsToValidate();
@@ -228,7 +235,14 @@ class AbilityResolver extends BaseStep {
                 }
             );
         } else {
+            this.ability.outputMessage(this.context);
             this.ability.executeHandler(this.context);
+        }
+    }
+
+    flushHeldMessage() {
+        if (this.context.messageHeld) {
+            this.game.flushAbilityMessage(this.context);
         }
     }
 

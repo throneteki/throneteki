@@ -72,6 +72,7 @@ class Game extends EventEmitter {
             variant: details.restrictedList.variant
         };
         this.allCards = [];
+        this.pendingAbilityMessages = [];
         this.attachmentValidityCheck = new AttachmentValidityCheck(this);
         this.effectEngine = new EffectEngine(this);
         this.flags = new ReferenceCountedSetProperty();
@@ -227,11 +228,61 @@ class Game extends EventEmitter {
     }
 
     addMessage() {
+        this.flushPendingAbilityMessages();
         this.gameChat.addMessage(...arguments);
     }
 
     addAlert() {
+        this.flushPendingAbilityMessages();
         this.gameChat.addAlert(...arguments);
+    }
+
+    /**
+     * Holds back an ability's message until its effects resolve, so the log doesn't claim effects
+     * that were cancelled. If anything else is logged first, the message comes before it: as a
+     * plain line saying the ability was used while it could still be cancelled, and in full once
+     * its effects have begun.
+     */
+    holdAbilityMessage(context) {
+        this.pendingAbilityMessages.push(context);
+    }
+
+    isAbilityMessageHeld(context) {
+        return this.pendingAbilityMessages.includes(context);
+    }
+
+    markAbilityMessageResolving(context) {
+        context.messageResolving = true;
+    }
+
+    releaseAbilityMessage(context) {
+        this.pendingAbilityMessages = this.pendingAbilityMessages.filter(
+            (pending) => pending !== context
+        );
+    }
+
+    /** Logs a held ability message as a plain line if its effects never resolved. */
+    flushAbilityMessage(context) {
+        if (this.pendingAbilityMessages.includes(context)) {
+            const others = this.pendingAbilityMessages.filter((pending) => pending !== context);
+            this.pendingAbilityMessages = [context];
+            this.flushPendingAbilityMessages();
+            this.pendingAbilityMessages = others;
+        }
+    }
+
+    flushPendingAbilityMessages() {
+        const pending = this.pendingAbilityMessages;
+        this.pendingAbilityMessages = [];
+
+        for (const context of pending) {
+            if (context.messageResolving) {
+                context.messageAbility.outputMessage(context);
+            } else {
+                const verb = context.source.getPrintedType() === 'event' ? 'plays' : 'uses';
+                this.gameChat.addMessage('{0} {1} {2}', context.player, verb, context.source);
+            }
+        }
     }
 
     get messages() {

@@ -34,6 +34,7 @@ class BaseAbility {
         this.choosePlayerDefinition = AbilityChoosePlayerDefinition.create(properties);
         this.limit = properties.limit;
         this.message = AbilityMessage.create(properties.message);
+        this.hasMessage = !!properties.message;
         this.cannotBeCanceledStack = new StackProperty(!!properties.cannotBeCanceled);
         this.abilitySourceType = properties.abilitySourceType || 'card';
         this.gameAction = this.buildGameAction(properties);
@@ -344,13 +345,47 @@ class BaseAbility {
         this.message.output(context.game, context);
     }
 
+    reportsResults() {
+        return (
+            !(this.gameAction instanceof HandlerGameActionWrapper) &&
+            !(this.gameAction instanceof ChooseGameAction)
+        );
+    }
+
     /**
      * Executes the ability once all costs have been paid. Inheriting classes
      * should override this method to implement their behavior; by default it
      * does nothing.
      */
     executeHandler(context) {
-        context.game.resolveGameAction(this.gameAction, context);
+        if (!context.messageHeld) {
+            context.game.resolveGameAction(this.gameAction, context);
+            return;
+        }
+
+        // The message was held back until the effects resolve. A declarative game action logs it
+        // after the handler, so it can reflect what happened; anything else logs it now.
+        if (!this.reportsResults()) {
+            context.game.releaseAbilityMessage(context);
+            this.outputMessage(context);
+            context.game.resolveGameAction(this.gameAction, context);
+            return;
+        }
+
+        const event = context.game.resolveGameAction(this.gameAction, context);
+        event.beforeHandlers = [
+            ...(event.beforeHandlers || []),
+            () => context.game.markAbilityMessageResolving(context)
+        ];
+        event.afterHandlers = [
+            ...(event.afterHandlers || []),
+            () => {
+                if (context.game.isAbilityMessageHeld(context)) {
+                    context.game.releaseAbilityMessage(context);
+                    this.outputMessage(context);
+                }
+            }
+        ];
     }
 
     isAction() {

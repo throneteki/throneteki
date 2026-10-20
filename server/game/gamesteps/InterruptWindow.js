@@ -91,6 +91,10 @@ class InterruptWindow extends BaseStep {
             return;
         }
 
+        for (const callback of this.event.beforeHandlers || []) {
+            callback(this.event);
+        }
+
         this.event.executeHandler();
     }
 

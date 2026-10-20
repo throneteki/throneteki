@@ -12,6 +12,7 @@ class EventWindow extends BaseStep {
         this.pipeline.initialise([
             new InterruptWindow(game, event),
             new SimpleStep(game, () => this.emitBaseEvent()),
+            new SimpleStep(game, () => this.runAfterHandlers()),
             new SimpleStep(game, () => this.openWhenRevealedWindow()),
             new SimpleStep(game, () => this.openAbilityWindow('forcedreaction')),
             new SimpleStep(game, () => this.openAbilityWindow('reaction')),
@@ -60,6 +61,16 @@ class EventWindow extends BaseStep {
         }
 
         this.event.emitTo(this.game);
+    }
+
+    runAfterHandlers() {
+        if (this.event.cancelled) {
+            return;
+        }
+
+        for (const callback of this.event.afterHandlers || []) {
+            callback(this.event);
+        }
     }
 
     openWhenRevealedWindow() {
