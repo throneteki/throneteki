@@ -12,24 +12,19 @@ class SerGerrisDrinkwater extends DrawCard {
                     activePromptTitle: 'Select a plot card',
                     cardCondition: (card, context) =>
                         card.controller === context.player && card.location === 'plot deck',
-                    cardType: 'plot',
-                    gameAction: GameActions.placeCard((context) => ({
-                        card: context.targets.plotCard,
-                        location: 'revealed plots'
-                    }))
+                    cardType: 'plot'
                 },
                 usedPlotCard: {
                     type: 'select',
                     activePromptTitle: 'Select a used plot card',
                     cardCondition: (card, context) =>
                         card.controller === context.player && card.location === 'revealed plots',
-                    cardType: 'plot',
-                    gameAction: GameActions.placeCard((context) => ({
-                        card: context.targets.usedPlotCard,
-                        location: 'plot deck'
-                    }))
+                    cardType: 'plot'
                 }
             },
+            gameAction: GameActions.switch((context) => ({
+                cards: [context.targets.plotCard, context.targets.usedPlotCard]
+            })),
             message: {
                 format: '{player} uses {source} to switch {plotCard} from their plot deck with {usedPlotCard} in their used pile',
                 args: {

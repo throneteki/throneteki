@@ -386,9 +386,14 @@ This engine work comes before migrating cards in bulk, so each card is only rewr
   choice that happens after part of the effect. `ChooseGameAction` covers "choose one of these
   effects". `Search` already prompts from inside a game action. `promptForSelect` in a card file does
   not. A card whose text needs a choice the engine cannot express yet stays unverified, and the
-  missing game action is added rather than a `handler`.
+  missing game action is added rather than a `handler`. _Done: `GameActions.chooseCards` has one
+  or more players choose, each in turn, from cards the following game action could affect, then
+  resolves every choice together ([ChooseCards.spec.js](../test/server/GameActions/ChooseCards.spec.js)).
+  Woods Witch is the first card to use it._
 - `GameActions.switch`. Both sides of a switch have to exist or the ability does not resolve (Rules
-  Reference: Switch). Cards that switch stay unverified until it exists.
+  Reference: Switch). _Done ([SwitchCards.spec.js](../test/server/GameActions/SwitchCards.spec.js));
+  Ser Gerris Drinkwater uses it. The Reader's Septon, Sorrowful Man, Samwell Tarly and The
+  Conclave move to it as they are migrated._
 
 Order comes from published ThronesDB lists that are still legal in Standard v2.1 joust. On
 2026-10-20, the lists published from 2025-10-20 to 2026-10-20 were 487, of which 166

@@ -6,6 +6,7 @@ import ApplyClaim from './ApplyClaim.js';
 import ApplyLastingEffect from './ApplyLastingEffect.js';
 import CancelEffects from './CancelEffects.js';
 import CheckReserve from './CheckReserve.js';
+import ChooseCards from './ChooseCards.js';
 import ChooseGameAction from './ChooseGameAction.js';
 import DiscardAtRandom from './DiscardAtRandom.js';
 import DiscardCard from './DiscardCard.js';
@@ -46,6 +47,7 @@ import Shuffle from './Shuffle.js';
 import ShuffleIntoDeck from './ShuffleIntoDeck.js';
 import SimultaneousAction from './SimultaneousAction.js';
 import StandCard from './StandCard.js';
+import SwitchCards from './SwitchCards.js';
 import TakeControl from './TakeControl.js';
 
 const GameActions = {
@@ -55,6 +57,7 @@ const GameActions = {
     cancelEffects: (props) => new AbilityAdapter(CancelEffects, props),
     checkReserve: (props) => new AbilityAdapter(CheckReserve, props),
     choose: (props) => new ChooseGameAction(props),
+    chooseCards: (props) => new AbilityAdapter(new ChooseCards(props), (context) => ({ context })),
     delayedEffect: (props) => new AddDelayedEffect(props),
     discardAtRandom: (props) => new AbilityAdapter(DiscardAtRandom, props),
     discardCard: (props) => new AbilityAdapter(DiscardCard, props),
@@ -98,6 +101,7 @@ const GameActions = {
         return new SimultaneousAction(actions);
     },
     standCard: (props) => new AbilityAdapter(StandCard, props),
+    switch: (props) => new AbilityAdapter(SwitchCards, props),
     takeControl: (props) => new AbilityAdapter(TakeControl, props)
 };
 

@@ -150,6 +150,7 @@ export const Events = Object.freeze({
             source: 'BaseCard'
         }
     },
+    onCardsChosen: { params: { players: 'Player[]' } },
     onCardsDrawn: {
         params: {
             cards: 'DrawCard[]',
@@ -170,6 +171,7 @@ export const Events = Object.freeze({
         }
     },
     onCardsShuffledIntoDeck: { params: { cards: 'DrawCard[]' } },
+    onCardsSwitched: { params: { cards: 'BaseCard[]' } },
     onChallengeFinished: { params: { challenge: 'Challenge' } },
     onChallengeInitiated: { params: { challenge: 'Challenge' } },
     onChallengeRedirectable: { params: { challenge: 'Challenge' } },

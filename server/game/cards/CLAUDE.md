@@ -35,8 +35,8 @@ against the rules, which is what lets a game run with manual mode off
 3. **"Choose" means target.** Use the `target` / `targets` property, not `promptForSelect` inside a
    handler, so immunity and target validation apply. Use `type: 'select'` for selections that the card
    text doesn't phrase as "choose". A choice made while the effect is resolving (an opponent
-   chooses, each player chooses, a choice after part of the effect) is a game action too. If the
-   action does not exist yet, add it under `server/game/GameActions` rather than writing a `handler`.
+   chooses, each player chooses, a choice after part of the effect) is a game action too: use
+   `GameActions.chooseCards`. If the action does not exist yet, add it under `server/game/GameActions` rather than writing a `handler`.
 4. **Trigger checks have no side effects.** `when` handlers, `condition`, `cardCondition` and cost
    checks may be called many times, for hypothetical cards, or not at all. They must not change state,
    send messages, or store anything on the card instance. Keep per-resolution data on the ability

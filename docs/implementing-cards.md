@@ -339,6 +339,33 @@ gameAction: GameActions.delayedEffect({
 });
 ```
 
+### Choices made while the effect resolves
+
+When the card text has a player choose cards as part of the effect (an opponent chooses, each
+player chooses, or a choice after part of the effect), use `GameActions.chooseCards` instead of
+`promptForSelect` in a handler. Each player in `player` or `players` chooses in turn from the cards
+matching `cardCondition` that the game action could affect; `context.choosingPlayer` is the player
+choosing. Once everyone has chosen, every chosen card's game action resolves together, and each
+player's result is logged.
+
+```javascript
+// "Each player chooses a character they control and kills it."
+gameAction: GameActions.chooseCards({
+    players: (context) => context.game.getPlayersInFirstPlayerOrder(),
+    title: 'Select a character to kill',
+    cardCondition: (card, context) =>
+        card.location === 'play area' &&
+        card.getType() === 'character' &&
+        card.controller === context.choosingPlayer,
+    gameAction: (card) => GameActions.kill({ card })
+});
+```
+
+### Switching cards
+
+`GameActions.switch({ cards: [first, second] })` switches the positions of two cards. It only
+resolves when there is a card on each side (Rules Reference: Switch).
+
 ### Naming a trait
 
 `GameActions.nameTrait` prompts the player to name a trait, stores it as `context.namedTrait`,

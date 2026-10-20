@@ -50,8 +50,17 @@ describe('Woods Witch', function () {
 
                     expect(this.bastardInHiding.location).toBe('discard pile');
                     expect(this.blackWindsCrew.location).toBe('play area');
+                    expect(this.game.getPlainTextLog()).toContain(
+                        'player2 sacrifices Bastard in Hiding'
+                    );
                     expect(this.player1).isReadyToTakeAction();
                 });
+            });
+
+            it('only offers cardtypes they have a card of with that printed cost', function () {
+                expect(this.player1).toHavePromptButton('Character');
+                expect(this.player1).toHaveDisabledPromptButton('Location');
+                expect(this.player1).toHaveDisabledPromptButton('Attachment');
             });
         });
     });

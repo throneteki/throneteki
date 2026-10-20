@@ -3761,10 +3761,6 @@
     "server/game/cards/27.2-WGYK/TheRiverroad.js": {
         "add-message": 1
     },
-    "server/game/cards/27.2-WGYK/WoodsWitch.js": {
-        "prompt-for-select": 1,
-        "add-message": 1
-    },
     "server/game/cards/reducer.js": {
         "add-message": 2
     },
