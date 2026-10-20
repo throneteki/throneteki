@@ -73,10 +73,8 @@ class ChallengeFlow extends BaseStep {
             messages: {
                 autoDeclareSingular: '{0} is automatically declared as an attacker',
                 autoDeclarePlural: '{0} are automatically declared as attackers',
-                notEnoughSingular:
-                    '{0} did not declare at least {1} attacker but had characters to do so',
-                notEnoughPlural:
-                    '{0} did not declare at least {1} attackers but had characters to do so'
+                notEnoughSingular: '{0} must declare at least {1} attacker',
+                notEnoughPlural: '{0} must declare at least {1} attackers'
             },
             onSelect: (attackers) => this.chooseAttackers(attackers)
         });
@@ -118,10 +116,8 @@ class ChallengeFlow extends BaseStep {
             messages: {
                 autoDeclareSingular: '{0} is automatically declared as a defender',
                 autoDeclarePlural: '{0} are automatically declared as defenders',
-                notEnoughSingular:
-                    '{0} did not declare at least {1} defender but had characters to do so',
-                notEnoughPlural:
-                    '{0} did not declare at least {1} defenders but had characters to do so'
+                notEnoughSingular: '{0} must declare at least {1} defender',
+                notEnoughPlural: '{0} must declare at least {1} defenders'
             },
             onSelect: (defenders) => this.chooseDefenders(defenders)
         });
