@@ -1,6 +1,10 @@
 version: "3.3"
 # Contains the necessary services to run throneteki in all environments
 services:
+  mongo:
+    image: mongo
+    volumes:
+      - mongodb:/data/db
   postgres:
     image: postgres:16
     environment:
@@ -12,5 +16,6 @@ services:
   redis:
     image: redis
 volumes:
+  mongodb:
   postgres:
   node_modules:
