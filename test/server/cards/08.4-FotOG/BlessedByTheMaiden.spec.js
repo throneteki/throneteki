@@ -1,52 +1,58 @@
 describe('Blessed by the Maiden', function () {
-    integration(function () {
+    describe('when marshaled', function () {
         beforeEach(function () {
-            const deck = this.buildDeck('tyrell', [
-                'A Noble Cause',
-                'Hedge Knight',
-                'Milk of the Poppy',
-                'Blessed by the Maiden'
-            ]);
-            this.player1.selectDeck(deck);
-            this.player2.selectDeck(deck);
-            this.startGame();
-            this.keepStartingHands();
+            this.setupTest({
+                phase: 'marshal',
+                player1: {
+                    faction: 'tyrell',
+                    hand: ['Blessed by the Maiden'],
+                    inPlay: ['House Maester']
+                },
+                player2: {
+                    inPlay: ['Hedge Knight']
+                }
+            });
 
-            this.character = this.player1.findCardByName('Hedge Knight', 'hand');
-            this.attachment = this.player1.findCardByName('Milk of the Poppy', 'hand');
-
-            this.player1.clickCard(this.character);
-            this.completeSetup();
-
-            this.selectFirstPlayer(this.player1);
+            this.player1.clickCard(this.blessedByTheMaiden);
         });
 
-        describe('when attached', function () {
-            beforeEach(function () {
-                this.player1.clickCard('Blessed by the Maiden', 'hand');
-                this.player1.clickCard(this.character);
+        it('can only be attached to a character you control', function () {
+            expect(this.player1).toBeAbleToSelect(this.houseMaester);
+            expect(this.player1).not.toBeAbleToSelect(this.hedgeKnight);
+
+            this.player1.clickCard(this.houseMaester);
+
+            expect(this.houseMaester.attachments).toContain(this.blessedByTheMaiden);
+            expect(this.player1).isReadyToTakeAction();
+        });
+    });
+
+    describe('while attached', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'marshal',
+                player1: {
+                    faction: 'tyrell',
+                    hand: ['Little Bird (Core)'],
+                    inPlay: [
+                        { card: 'House Maester', attachments: ['Blessed by the Maiden'] },
+                        'Hedge Knight'
+                    ]
+                }
             });
 
-            it('should not allow non-blessing attachments', function () {
-                this.player1.clickCard(this.attachment);
-                this.player1.clickCard(this.character);
-
-                expect(this.character.attachments).not.toContain(this.attachment);
-            });
+            this.player1.clickCard(this.littleBird);
         });
 
-        describe('when a character already has attachments', function () {
-            beforeEach(function () {
-                this.player1.clickCard(this.attachment);
-                this.player1.clickCard(this.character);
-            });
+        it('gives the character The Seven trait and "No attachments except Blessing."', function () {
+            expect(this.houseMaester.hasTrait('The Seven')).toBe(true);
+            expect(this.hedgeKnight.hasTrait('The Seven')).toBe(false);
+            expect(this.player1).not.toBeAbleToSelect(this.houseMaester);
+            expect(this.player1).toBeAbleToSelect(this.hedgeKnight);
 
-            it('should discard existing attachments when attached', function () {
-                this.player1.clickCard('Blessed by the Maiden');
-                this.player1.clickCard(this.character);
+            this.player1.clickCard(this.hedgeKnight);
 
-                expect(this.attachment.location).toBe('discard pile');
-            });
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 });

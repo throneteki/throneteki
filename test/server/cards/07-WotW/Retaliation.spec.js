@@ -1,61 +1,36 @@
 describe('Retaliation', function () {
-    integration(function () {
-        beforeEach(function () {
-            const deck = this.buildDeck('greyjoy', [
-                'Retaliation',
-                'Retaliation',
-                'Sneak Attack',
-                'A Noble Cause',
-                'A Noble Cause'
-            ]);
-
-            this.player1.selectDeck(deck);
-            this.player2.selectDeck(deck);
-            this.startGame();
-            this.skipSetupPhase();
+    function setup(context, opponentPlot) {
+        context.setupTest({
+            phase: 'plot',
+            player1: { plotDeck: ['Retaliation'] },
+            player2: { plotDeck: [opponentPlot] }
         });
 
-        describe('when the player wins initiative', function () {
-            beforeEach(function () {
-                this.player1.selectPlot('Retaliation');
-                this.player2.selectPlot('A Noble Cause');
-            });
+        context.player1.selectPlot(context.retaliation);
+        context.player2.selectPlot(opponentPlot);
+    }
 
-            it('should not allow the player to select themselves to be first player', function () {
-                expect(this.player1).not.toHavePromptButton('player1');
-                expect(this.player1).toHavePromptButton('player2');
-            });
-        });
+    it('makes you choose an opponent to be first player when you win initiative', function () {
+        setup(this, 'A Noble Cause');
 
-        describe('when the player loses initiative', function () {
-            beforeEach(function () {
-                this.player1.selectPlot('Retaliation');
-                this.player2.selectPlot('Sneak Attack');
-            });
+        expect(this.player1).toHavePromptButton('player2');
+        expect(this.player1).not.toHavePromptButton('player1');
 
-            it('should allow the opponent to select the player to be first player', function () {
-                expect(this.player2).toHavePromptButton('player1');
-                expect(this.player2).toHavePromptButton('player2');
-            });
-        });
+        this.player1.clickPrompt('player2');
 
-        describe('when revealed two rounds in a row', function () {
-            beforeEach(function () {
-                this.player1.selectPlot('Retaliation');
-                this.player2.selectPlot('A Noble Cause');
-                this.selectFirstPlayer(this.player2);
+        expect(this.game.getFirstPlayer()).toBe(this.player2Object);
+        expect(this.player2).isReadyToTakeAction();
+    });
 
-                this.completeMarshalPhase();
-                this.completeChallengesPhase();
+    it('does not restrict an opponent who wins initiative', function () {
+        setup(this, 'Sneak Attack');
 
-                this.player1.selectPlot('Retaliation');
-                this.player2.selectPlot('A Noble Cause');
-            });
+        expect(this.player2).toHavePromptButton('player1');
+        expect(this.player2).toHavePromptButton('player2');
 
-            it('should not allow the player to select themselves to be first player', function () {
-                expect(this.player1).not.toHavePromptButton('player1');
-                expect(this.player1).toHavePromptButton('player2');
-            });
-        });
+        this.player2.clickPrompt('player2');
+
+        expect(this.game.getFirstPlayer()).toBe(this.player2Object);
+        expect(this.player2).isReadyToTakeAction();
     });
 });
