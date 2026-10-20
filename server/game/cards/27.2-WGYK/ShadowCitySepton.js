@@ -22,12 +22,7 @@ class ShadowCitySepton extends DrawCard {
                     opponent: (context) => context.event.winner
                 }
             },
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.returnCardToHand((context) => ({ card: context.target })),
-                    context
-                );
-            }
+            gameAction: GameActions.returnCardToHand((context) => ({ card: context.target }))
         });
     }
 }

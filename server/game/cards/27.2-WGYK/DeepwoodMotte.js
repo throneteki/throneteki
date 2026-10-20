@@ -13,23 +13,14 @@ class DeepwoodMotte extends DrawCard {
             },
             cost: ability.costs.kneelSelf(),
             target: {
-                type: 'select',
-                activePromptTitle: 'Select a character to stand',
                 cardCondition: (card) =>
                     card.location === 'play area' &&
-                    card.kneeled &&
                     card.getType() === 'character' &&
                     ((card.hasTrait('Raider') && card.controller === this.controller) ||
-                        card.name === 'Asha Greyjoy'),
-                gameAction: 'stand'
+                        card.name === 'Asha Greyjoy')
             },
-            message: '{player} uses {source} to stand {target}',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.standCard((context) => ({ card: context.target })),
-                    context
-                );
-            }
+            message: '{player} kneels {costs.kneel} to stand {target}',
+            gameAction: GameActions.standCard((context) => ({ card: context.target }))
         });
     }
 }
