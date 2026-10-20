@@ -11,8 +11,9 @@ against the rules, which is what lets a game run with manual mode off
   from memory.
 - Check the [Rules Reference](https://thronesdb.com/rulesreference) for every keyword and timing
   word in the text ("choose", "then", "cancel", "if able", "up to", "instead", "each").
-- Write or update the spec first (see [test/CLAUDE.md](../../../test/CLAUDE.md)). A card without a
-  passing spec is not verified.
+- Write or update the spec first (see [test/CLAUDE.md](../../../test/CLAUDE.md)). A card is not
+  verified until that spec passes under the rules in the engine roadmap, and the implementation has
+  no `handler` and no `card-rules` violations.
 
 ## Rules
 
@@ -28,11 +29,14 @@ against the rules, which is what lets a game run with manual mode off
    a `handler` wherever the API allows it. A `target` can be combined with a `gameAction` that acts
    on `context.target`: cards the game action couldn't change are then not valid targets, so the
    `cardCondition` shouldn't repeat checks the action already makes (standing, immunity, location).
-   See [Confiscation.js](01-Core/Confiscation.js). Only abilities with more than one target, or whose
-   card text allows choosing a card the effect can't change, still need a `handler`.
+   See [Confiscation.js](01-Core/Confiscation.js). An ability with more than one target, or that
+   chooses a card while the effect is resolving, uses a game action for that choice. A `handler`
+   leaves the card unverified.
 3. **"Choose" means target.** Use the `target` / `targets` property, not `promptForSelect` inside a
    handler, so immunity and target validation apply. Use `type: 'select'` for selections that the card
-   text doesn't phrase as "choose".
+   text doesn't phrase as "choose". A choice made while the effect is resolving (an opponent
+   chooses, each player chooses, a choice after part of the effect) is a game action too. If the
+   action does not exist yet, add it under `server/game/GameActions` rather than writing a `handler`.
 4. **Trigger checks have no side effects.** `when` handlers, `condition`, `cardCondition` and cost
    checks may be called many times, for hypothetical cards, or not at all. They must not change state,
    send messages, or store anything on the card instance. Keep per-resolution data on the ability

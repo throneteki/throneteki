@@ -1,7 +1,15 @@
 # Testing guide
 
 Every implemented card needs a spec. A card only counts as verified (see
-[docs/engine-roadmap.md](../docs/engine-roadmap.md)) when its spec passes and follows this guide.
+[docs/engine-roadmap.md](../docs/engine-roadmap.md)) when all of these hold:
+
+- The spec passes, follows this guide, and does not depend on manual mode. `setupTest` builds the
+  board. Don't kneel, move or change stats through manual actions once the test is under way.
+- The spec resolves every ability on the card.
+- The card file has no `handler` and no `card-rules` violations. `npm run spec:coverage -- --write-verified`
+  leaves the card out of `verifiedCards.json` until that is true. The two spec bars above are
+  required and are not yet checked by that command.
+
 The full reference, with examples, is [docs/testing-cards.md](../docs/testing-cards.md).
 
 ## Commands

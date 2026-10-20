@@ -49,7 +49,8 @@ export function loadImplementations() {
                 group: path.relative(cardsRoot, path.dirname(file)).split(path.sep)[0],
                 implementationPath,
                 specPath,
-                hasSpec: fs.existsSync(path.join(repoRoot, specPath))
+                hasSpec: fs.existsSync(path.join(repoRoot, specPath)),
+                hasHandler: /\bhandler\s*[:(]/.test(source)
             };
         })
         .filter((implementation) => implementation.codes.length > 0);

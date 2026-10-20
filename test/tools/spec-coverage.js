@@ -9,8 +9,9 @@
 //       card files added or changed since <base> (e.g. origin/master) that have no spec;
 //       exits with 1 if there are any, for CI
 //   node test/tools/spec-coverage.js --write-verified
-//       writes the codes of cards with specs to server/game/verifiedCards.json, which decides
-//       whether a game starts with manual mode off
+//       writes verified card codes to server/game/verifiedCards.json, which decides whether a
+//       game starts with manual mode off. A card is verified when it has a spec and its
+//       implementation has no handler and no card-rules violations (docs/engine-roadmap.md)
 //   node test/tools/spec-coverage.js --check-verified
 //       exits with 1 if server/game/verifiedCards.json is out of date, for CI
 
@@ -21,6 +22,22 @@ import { loadImplementations, repoRoot } from './cardIndex.js';
 
 const args = process.argv.slice(2);
 const implementations = loadImplementations();
+const rulesBaseline = JSON.parse(
+    fs.readFileSync(path.join(repoRoot, 'test/tools/card-rules-baseline.json'), 'utf8')
+);
+
+function isDeclarative(implementation) {
+    if (implementation.hasHandler) {
+        return false;
+    }
+
+    const counts = rulesBaseline[implementation.implementationPath];
+    return !counts || Object.values(counts).every((count) => count === 0);
+}
+
+function isVerified(implementation) {
+    return implementation.hasSpec && isDeclarative(implementation);
+}
 
 function percentage(covered, total) {
     return total === 0 ? '-' : `${((covered / total) * 100).toFixed(1)}%`;
@@ -78,7 +95,7 @@ if (args[0] === '--changed') {
 if (args[0] === '--write-verified' || args[0] === '--check-verified') {
     const verifiedPath = path.join(repoRoot, 'server/game/verifiedCards.json');
     const codes = implementations
-        .filter((implementation) => implementation.hasSpec)
+        .filter((implementation) => isVerified(implementation))
         .flatMap((implementation) => implementation.codes)
         .sort();
     const contents = JSON.stringify(codes, null, 4) + '\n';

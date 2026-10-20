@@ -9,7 +9,7 @@ const VerifiedCodes = new Set(
 /**
  * Whether players can use manual actions: chat commands that change the game, dragging cards,
  * clicking cards to kneel or stand them, changing stats. A game starts with manual mode off when
- * every card in every deck is verified (has a spec); turning it on then needs every opponent to
+ * every card in every deck is verified (see docs/engine-roadmap.md); turning it on then needs every opponent to
  * agree, and is recorded with the card the player says isn't working.
  */
 class ManualMode {
