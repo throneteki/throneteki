@@ -1,3 +1,4 @@
+import EventEmitter from 'events';
 import { formatDeckAsFullCards } from '../../deck-helper/formatDeckAsFullCards.js';
 import { validateDeck } from '../../deck-helper/index.js';
 import defaultDb from '../db/index.js';
@@ -190,8 +191,9 @@ function deckCardCodes(deck) {
     ].filter((code) => !!code);
 }
 
-class DeckService {
+class DeckService extends EventEmitter {
     constructor(cardService, eventService, db = defaultDb) {
+        super();
         this.cardService = cardService;
         this.eventService = eventService;
         this.db = db;
@@ -220,6 +222,7 @@ class DeckService {
         for (const code of deckCardCodes(deck).filter((code) => !this.cards[code])) {
             this.unknownCardCodes.add(code);
         }
+        this.emit('cardDataReloaded');
     }
 
     processDeck = async (deck, options = {}) => {

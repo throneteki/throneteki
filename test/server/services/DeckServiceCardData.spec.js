@@ -72,6 +72,16 @@ describe('DeckService card data', function () {
             expect(status).toContain('Must contain 12 or more Guard characters');
         });
 
+        it('tells listeners the card data was reloaded', async function () {
+            const listener = vi.fn();
+            this.deckService.on('cardDataReloaded', listener);
+
+            await validate(this.deckService);
+
+            expect(listener).toHaveBeenCalledTimes(1);
+            expect(this.deckService.cards[sentinels.code]).toBe(sentinels);
+        });
+
         it('only reloads the cards once for codes that do not exist', async function () {
             const getAllCards = vi.spyOn(this.cardService, 'getAllCards');
             const deck = { ...sentinelsDeck(), agenda: '99999' };
