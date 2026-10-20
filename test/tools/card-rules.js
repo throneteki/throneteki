@@ -45,6 +45,11 @@ export const Rules = {
         selector: "CallExpression[callee.property.name='addMessage']",
         message: "Use the ability's message property"
     },
+    'game-listener': {
+        selector:
+            "CallExpression[callee.property.name=/^(on|once)$/][callee.object.property.name='game']",
+        message: 'Use GameActions.delayedEffect instead of listening for game events'
+    },
     'prompt-for-select': {
         selector: "CallExpression[callee.property.name='promptForSelect']",
         message: 'Use a target instead of prompting inside a handler'

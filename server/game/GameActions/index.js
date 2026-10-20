@@ -1,7 +1,9 @@
 import AbilityAdapter from './AbilityAdapter.js';
+import AddDelayedEffect from './AddDelayedEffect.js';
 import AddToChallenge from './AddToChallenge.js';
 import AddToHand from './AddToHand.js';
 import ApplyClaim from './ApplyClaim.js';
+import ApplyLastingEffect from './ApplyLastingEffect.js';
 import CancelEffects from './CancelEffects.js';
 import CheckReserve from './CheckReserve.js';
 import ChooseGameAction from './ChooseGameAction.js';
@@ -25,6 +27,7 @@ import lookAtShadows from './LookAtShadows.js';
 import LoseIcon from './LoseIcon.js';
 import MayGameAction from './MayGameAction.js';
 import MovePower from './MovePower.js';
+import NameTrait from './NameTrait.js';
 import PlaceCard from './PlaceCard.js';
 import PlaceCardUnderneath from './PlaceCardUnderneath.js';
 import PlaceToken from './PlaceToken.js';
@@ -52,6 +55,7 @@ const GameActions = {
     cancelEffects: (props) => new AbilityAdapter(CancelEffects, props),
     checkReserve: (props) => new AbilityAdapter(CheckReserve, props),
     choose: (props) => new ChooseGameAction(props),
+    delayedEffect: (props) => new AddDelayedEffect(props),
     discardAtRandom: (props) => new AbilityAdapter(DiscardAtRandom, props),
     discardCard: (props) => new AbilityAdapter(DiscardCard, props),
     discardToken: (props) => new AbilityAdapter(DiscardToken, props),
@@ -66,12 +70,14 @@ const GameActions = {
     ifCondition: (props) => new IfGameAction(props),
     kill: (props) => new AbilityAdapter(Kill, props),
     kneelCard: (props) => new AbilityAdapter(KneelCard, props),
+    lastingEffect: (propertyFactory) => new ApplyLastingEffect(propertyFactory),
     lookAtDeck: (props) => new AbilityAdapter(LookAtDeck, props),
     lookAtHand: (props) => new AbilityAdapter(LookAtHand, props),
     lookAtShadows: (props) => new AbilityAdapter(lookAtShadows, props),
     loseIcon: (props) => new AbilityAdapter(LoseIcon, props),
     may: (props) => new MayGameAction(props),
     movePower: (props) => new AbilityAdapter(MovePower, props),
+    nameTrait: (props) => new NameTrait(props),
     placeCard: (props) => new AbilityAdapter(PlaceCard, props),
     placeCardUnderneath: (props) => new AbilityAdapter(PlaceCardUnderneath, props),
     placeToken: (props) => new AbilityAdapter(PlaceToken, props),

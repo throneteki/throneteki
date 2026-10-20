@@ -13,6 +13,7 @@ class EventWindow extends BaseStep {
             new InterruptWindow(game, event),
             new SimpleStep(game, () => this.emitBaseEvent()),
             new SimpleStep(game, () => this.runAfterHandlers()),
+            new SimpleStep(game, () => this.resolveDelayedEffects()),
             new SimpleStep(game, () => this.openWhenRevealedWindow()),
             new SimpleStep(game, () => this.openAbilityWindow('forcedreaction')),
             new SimpleStep(game, () => this.openAbilityWindow('reaction')),
@@ -71,6 +72,14 @@ class EventWindow extends BaseStep {
         for (const callback of this.event.afterHandlers || []) {
             callback(this.event);
         }
+    }
+
+    resolveDelayedEffects() {
+        if (this.event.cancelled) {
+            return;
+        }
+
+        this.game.resolveDelayedEffects(this.event);
     }
 
     openWhenRevealedWindow() {

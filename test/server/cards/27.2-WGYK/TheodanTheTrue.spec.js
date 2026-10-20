@@ -87,3 +87,52 @@ describe('Theodan the True', function () {
         });
     });
 });
+
+describe('Theodan the True, limit', function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: {
+                plot: 'The New Gods',
+                gold: 5,
+                inPlay: ['Theodan the True', 'Devout Freerider', 'Magister Illyrio']
+            },
+            player2: {
+                inPlay: ['Palace Spearman', 'Bastard in Hiding']
+            }
+        });
+
+        this.unopposedChallenge(this.player1, 'Power', this.theodanTheTrue);
+        this.player1.triggerAbility(this.theodanTheTrue);
+        this.player1.clickCard(this.devoutFreerider);
+        this.player1.clickPrompt('Renown');
+        this.player1.clickPrompt('Apply Claim');
+
+        this.unopposedChallenge(this.player1, 'Military', this.theodanTheTrue);
+        this.player1.triggerAbility(this.theodanTheTrue);
+        this.player1.clickCard(this.devoutFreerider);
+        this.player1.clickPrompt('Insight');
+        this.player1.clickPrompt('Apply Claim');
+        this.player2.clickCard(this.bastardInHiding);
+
+        this.player1.clickMenu(this.magisterIllyrio, 'Stand a character');
+        this.player1.clickCard(this.theodanTheTrue);
+        this.player1.clickPrompt('Done');
+
+        this.player2.clickPrompt('Military');
+        this.player2.clickCard(this.palaceSpearman);
+        this.player2.clickPrompt('Done');
+        this.skipActionWindow();
+        this.player1.clickCard(this.theodanTheTrue);
+        this.player1.clickPrompt('Done');
+        this.skipActionWindow();
+    });
+
+    it('cannot be triggered a third time in the phase', function () {
+        expect(this.devoutFreerider.hasKeyword('renown')).toBe(true);
+        expect(this.devoutFreerider.hasKeyword('insight')).toBe(true);
+        expect(this.game.getPlainTextLog()).toContain('player1 won a military challenge 5 vs 4');
+        expect(this.player1).not.toAllowAbilityTrigger(this.theodanTheTrue);
+        expect(this.player2).isReadyToTakeAction();
+    });
+});

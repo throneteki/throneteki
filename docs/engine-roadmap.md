@@ -110,9 +110,12 @@ LIMIT 50;
    `canResolve` rules them out when the action could not change the game state, and offers only
    targets and players it could affect. Abilities with a `handler` (841 triggered abilities and
    498 actions on 2026-10-19) can't be checked; rather than adding a hint that could drift from the
-   handler, they are migrated to game actions in phase 5. Lasting effects (`untilEndOfPhase` and
-   so on) have no game action yet, which blocks migrating cards like Renly's Pavilion; that needs
-   one.
+   handler, they are migrated to game actions in phase 5. Lasting effects have a game action,
+   `GameActions.lastingEffect`, and "if X happens later" text has `GameActions.delayedEffect`
+   ([DelayedEffect.js](../server/game/DelayedEffect.js),
+   [DelayedEffects.spec.js](../test/server/DelayedEffects.spec.js)). 20 cards still listen for
+   game events directly; `npm run card-rules` counts them (`game-listener`) and they move to
+   delayed effects in phase 5.
 3. **One way to change state.** _The ratchet is in place: `npm run card-rules` (run in CI) fails
    if a card file uses more legacy helpers, direct state writes, `addMessage` or `promptForSelect`
    than its baseline (on 2026-10-19: 578, 5, 1,207 and 115 uses in 1,065 files). The faction card
@@ -313,3 +316,5 @@ runner._
 | 2026-10-20 | Fake waits cover every prompted window for now (cancels, interrupts, reactions), to be reviewed after feedback. They last a random 1 to 3 seconds and show a Pass button. Players using the cancel timer keep it. |
 | 2026-10-20 | Action windows use the same offer, fake wait or skip decision, behind the opt-in "Strict action windows" game option until it has had feedback.                                                                   |
 | 2026-10-20 | Phase 5 order, with no game stats yet: the Core Set and the packs legal in the current format, starting with the most recent pack.                                                                                |
+| 2026-10-20 | Delayed effects resolve once, right after their event's handler and before When Revealed abilities and reactions (Rules Reference: Delayed Effects). They are not triggered abilities.                            |
+| 2026-10-20 | Deepwood Motte: "a Raider character you control or Asha Greyjoy" lets you stand any Asha Greyjoy. "You control" qualifies the Raider character only; there is no ruling saying otherwise.                         |

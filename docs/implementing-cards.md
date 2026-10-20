@@ -302,6 +302,49 @@ this.untilEndOfRound((ability) => ({
 }));
 ```
 
+#### Lasting effects as game actions
+
+`GameActions.lastingEffect` applies a lasting effect as part of an ability's `gameAction`, so it
+can be combined with other game actions and used inside delayed effects. Its factory takes the
+ability context and returns the effect properties, including the `duration`:
+
+```javascript
+gameAction: GameActions.lastingEffect((context) => ({
+    duration: 'untilEndOfPhase',
+    match: context.target,
+    effect: ability.effects.modifyStrength(-2)
+}));
+```
+
+### Delayed effects
+
+Text that sets up an effect for a later condition ("if you win that challenge", "if an opponent
+reveals a plot with that trait this phase") is a delayed effect. Use `GameActions.delayedEffect`
+rather than listening for game events with `this.game.on`. A delayed effect resolves once,
+automatically, right after the event in its `when` occurs and before reactions to it (Rules
+Reference: Delayed Effects). It resolves whether or not its source is still in play, isn't a
+triggered ability (so it can't be cancelled as one and doesn't count towards limits), and expires
+at the end of its `duration` (`untilEndOfChallenge`, `untilEndOfPhase` or `untilEndOfRound`).
+`when` conditions get the event and the context of the ability that created the effect, and must
+have no side effects. The triggering event is `context.event` when it resolves.
+
+```javascript
+gameAction: GameActions.delayedEffect({
+    duration: 'untilEndOfPhase',
+    when: {
+        afterChallenge: (event, context) => event.challenge.winner === context.player
+    },
+    message: '{player} draws 1 card for {source}',
+    gameAction: GameActions.drawCards((context) => ({ player: context.player, amount: 1 }))
+});
+```
+
+### Naming a trait
+
+`GameActions.nameTrait` prompts the player to name a trait, stores it as `context.namedTrait`,
+logs its `message` (`{trait}` is the named trait) and then resolves its `gameAction`. See
+[SuperstitiousSteward.js](../server/game/cards/27.2-WGYK/SuperstitiousSteward.js).
+
 ### Actions
 
 Actions are abilities provided by the card text that players may trigger during action windows. They are declared using the `action` method. See `/server/game/cardaction.js` for full documentation. Here are some common scenarios:

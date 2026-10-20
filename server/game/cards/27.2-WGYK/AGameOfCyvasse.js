@@ -1,69 +1,69 @@
 import DrawCard from '../../drawcard.js';
+import { ChallengeTracker } from '../../EventTrackers/ChallengeTracker.js';
+import GameActions from '../../GameActions/index.js';
 
 class AGameOfCyvasse extends DrawCard {
     setupCardAbilities(ability) {
+        this.tracker = ChallengeTracker.forPhase(this.game);
+
         this.action({
             title: 'Restrict declared characters in next intrigue challenge',
             phase: 'challenge',
             max: ability.limit.perPhase(1),
             message:
                 "{player} plays {source} so each player cannot declare more than 1 character as an attacker or defender in {player}'s next intrigue challenge this phase",
-            handler: (context) => {
-                const player = context.player;
-                let markedChallenge = null;
+            gameAction: GameActions.simultaneously((context) => {
+                const isThatChallenge = this.nextIntrigueChallengeMatcher(context.player);
 
-                this.untilEndOfPhase((ability) => ({
-                    targetController: 'any',
-                    condition: () => {
-                        const challenge = this.game.currentChallenge;
-                        if (!challenge) {
-                            return false;
-                        }
-
-                        if (
-                            !markedChallenge &&
-                            challenge.attackingPlayer === player &&
-                            challenge.challengeType === 'intrigue'
-                        ) {
-                            markedChallenge = challenge;
-                        }
-
-                        return challenge === markedChallenge;
-                    },
-                    effect: [
-                        ability.effects.setAttackerMaximum(1),
-                        ability.effects.setDefenderMaximum(1)
-                    ]
-                }));
-
-                const challengeListener = (event) => {
-                    if (!markedChallenge || event.challenge !== markedChallenge) {
-                        return;
-                    }
-
-                    this.game.removeListener('afterChallenge', challengeListener);
-                    this.game.removeListener('onPhaseEnded', cleanupListener);
-
-                    if (event.challenge.winner === player) {
-                        this.untilEndOfPhase((ability) => ({
+                return [
+                    GameActions.lastingEffect(() => ({
+                        duration: 'untilEndOfPhase',
+                        targetController: 'any',
+                        condition: () => isThatChallenge(this.game.currentChallenge),
+                        effect: [
+                            ability.effects.setAttackerMaximum(1),
+                            ability.effects.setDefenderMaximum(1)
+                        ]
+                    })),
+                    GameActions.delayedEffect({
+                        duration: 'untilEndOfPhase',
+                        when: {
+                            afterChallenge: (event) =>
+                                isThatChallenge(event.challenge) &&
+                                event.challenge.winner === context.player
+                        },
+                        message:
+                            '{player} wins the challenge and may initiate an additional intrigue challenge this phase',
+                        gameAction: GameActions.lastingEffect(() => ({
+                            duration: 'untilEndOfPhase',
                             targetController: 'any',
-                            match: (target) => target === player,
+                            match: (player) => player === context.player,
                             effect: ability.effects.mayInitiateAdditionalChallenge('intrigue')
-                        }));
-                        this.game.addMessage(
-                            '{0} wins the challenge and may initiate an additional intrigue challenge this phase',
-                            player
-                        );
-                    }
-                };
-                const cleanupListener = () => {
-                    this.game.removeListener('afterChallenge', challengeListener);
-                };
-
-                this.game.on('afterChallenge', challengeListener);
-                this.game.once('onPhaseEnded', cleanupListener);
-            }
+                        }))
+                    })
+                ];
+            })
         });
+    }
+
+    nextIntrigueChallengeMatcher(player) {
+        const current = this.game.currentChallenge;
+        const challengesBefore = current ? current.totalNumber : this.tracker.count({});
+        const isLaterIntrigueChallenge = (challenge) =>
+            challenge.isMatch({ attackingPlayer: player, challengeType: 'intrigue' }) &&
+            challenge.totalNumber > challengesBefore;
+
+        return (challenge) =>
+            !!challenge &&
+            isLaterIntrigueChallenge(challenge) &&
+            !this.tracker
+                .filter({ attackingPlayer: player, challengeType: 'intrigue' })
+                .some(
+                    (earlier) =>
+                        earlier !== challenge &&
+                        isLaterIntrigueChallenge(earlier) &&
+                        earlier.totalNumber < challenge.totalNumber
+                );
     }
 }
 

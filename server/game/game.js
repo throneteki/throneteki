@@ -461,6 +461,19 @@ class Game extends EventEmitter {
         this.addSimultaneousEffects([{ source: source, properties: properties }]);
     }
 
+    addDelayedEffect(delayedEffect) {
+        this.effectEngine.addDelayedEffect(delayedEffect);
+    }
+
+    resolveDelayedEffects(event) {
+        const triggered = this.effectEngine.takeDelayedEffectsTriggeredBy(
+            event.getConcurrentEvents().filter((concurrentEvent) => !concurrentEvent.cancelled)
+        );
+        for (const { delayedEffect, event: triggeringEvent } of triggered) {
+            this.queueSimpleStep(() => delayedEffect.resolve(triggeringEvent));
+        }
+    }
+
     addSimultaneousEffects(effectProperties) {
         let effects = effectProperties.reduce((array, effect) => {
             let flattenedProperties = Effect.flattenProperties(effect.properties);

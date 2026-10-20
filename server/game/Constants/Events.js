@@ -207,6 +207,7 @@ export const Events = Object.freeze({
             player: 'Player'
         }
     },
+    onDelayedEffectAdded: { params: { source: 'BaseCard' } },
     onDominanceDetermined: { params: {} },
     onDupeEntersPlay: { params: { card: 'DrawCard', target: 'DrawCard' } },
     onEffectsCanceled: { params: { canceledEvent: 'Event' } },
@@ -220,6 +221,7 @@ export const Events = Object.freeze({
     onIconLost: { params: { applying: 'boolean', card: 'DrawCard', icon: 'string' } },
     onIncomeCollected: { params: { player: 'Player' } },
     onInitiativeDetermined: { params: { winner: 'Player' } },
+    onLastingEffectApplied: { params: { source: 'BaseCard' } },
     onLookAtDeck: {
         params: { amount: 'number', desiredAmount: 'number', lookingAt: 'Player', player: 'Player' }
     },
@@ -265,6 +267,7 @@ export const Events = Object.freeze({
             source: 'BaseCard'
         }
     },
+    onTraitNamed: { params: { player: 'Player' }, optional: { trait: 'string' } },
     onUnopposedGain: { params: { challenge: 'Challenge' } }
 });
 

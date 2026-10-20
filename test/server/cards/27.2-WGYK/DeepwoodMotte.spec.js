@@ -19,7 +19,8 @@ describe('Deepwood Motte', function () {
                 inPlay: [
                     'Grey Cliffs',
                     "Mother's Men",
-                    { card: 'Raider from Pyke (CoW)', kneeling: true }
+                    { card: 'Raider from Pyke (CoW)', kneeling: true },
+                    { card: 'Asha Greyjoy (Core)', kneeling: true }
                 ]
             }
         });
@@ -52,7 +53,8 @@ describe('Deepwood Motte', function () {
                 this.player1.triggerAbility(this.deepwoodMotte);
             });
 
-            it('can only choose a kneeling Raider character you control', function () {
+            it('can only choose a kneeling Raider character you control, or Asha Greyjoy', function () {
+                expect(this.player1).toBeAbleToSelect(this.ashaGreyjoy);
                 expect(this.player1).toBeAbleToSelect(this.blackWindsCrew);
                 expect(this.player1).not.toBeAbleToSelect(this.orkmontReaver);
                 expect(this.player1).not.toBeAbleToSelect(this.tumblestoneKnight);

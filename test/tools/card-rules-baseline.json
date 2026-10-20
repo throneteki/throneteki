@@ -4,7 +4,8 @@
     },
     "server/game/cards/00-VDS/CompelledByTheKing.js": {
         "legacy-helper": 1,
-        "add-message": 2
+        "add-message": 2,
+        "game-listener": 1
     },
     "server/game/cards/00-VDS/DeadlyKhalasar.js": {
         "add-message": 1
@@ -147,6 +148,7 @@
         "legacy-helper": 1
     },
     "server/game/cards/01-Core/ForTheNorth.js": {
+        "game-listener": 1,
         "add-message": 2,
         "legacy-helper": 1
     },
@@ -261,6 +263,7 @@
     },
     "server/game/cards/01-Core/OursIsTheFury.js": {
         "add-message": 2,
+        "game-listener": 1,
         "legacy-helper": 1
     },
     "server/game/cards/01-Core/PlazaOfPunishment.js": {
@@ -714,6 +717,7 @@
     },
     "server/game/cards/03-WotN/AheadOfTheTide.js": {
         "add-message": 2,
+        "game-listener": 1,
         "legacy-helper": 1
     },
     "server/game/cards/03-WotN/AryaStark.js": {
@@ -910,7 +914,8 @@
         "add-message": 1
     },
     "server/game/cards/04.2-CtA/DolorousEdd.js": {
-        "add-message": 3
+        "add-message": 3,
+        "game-listener": 1
     },
     "server/game/cards/04.2-CtA/OursIsTheOldWay.js": {
         "add-message": 2
@@ -966,6 +971,7 @@
         "add-message": 1
     },
     "server/game/cards/04.3-FFH/Spearmaiden.js": {
+        "game-listener": 1,
         "add-message": 1
     },
     "server/game/cards/04.3-FFH/TheScorpionsSting.js": {
@@ -1025,6 +1031,7 @@
         "add-message": 1
     },
     "server/game/cards/04.5-GoH/BlessHimWithSalt.js": {
+        "game-listener": 1,
         "add-message": 2,
         "legacy-helper": 1
     },
@@ -1183,7 +1190,8 @@
         "add-message": 1
     },
     "server/game/cards/05-LoCR/OldWyk.js": {
-        "add-message": 3
+        "add-message": 3,
+        "game-listener": 1
     },
     "server/game/cards/05-LoCR/RedKeepSpy.js": {
         "add-message": 1
@@ -1479,6 +1487,7 @@
     },
     "server/game/cards/06.5-OR/DornishRevenge.js": {
         "add-message": 3,
+        "game-listener": 1,
         "prompt-for-select": 1,
         "legacy-helper": 1
     },
@@ -1908,7 +1917,8 @@
         "add-message": 1
     },
     "server/game/cards/08.4-FotOG/Yunkai.js": {
-        "add-message": 2
+        "add-message": 2,
+        "game-listener": 1
     },
     "server/game/cards/08.5-TFM/ArborQueen.js": {
         "add-message": 1
@@ -2588,7 +2598,8 @@
     },
     "server/game/cards/11.6-DitD/TheBastardsLetter.js": {
         "add-message": 2,
-        "legacy-helper": 2
+        "legacy-helper": 2,
+        "game-listener": 1
     },
     "server/game/cards/11.6-DitD/Varys.js": {
         "legacy-helper": 1,
@@ -2916,6 +2927,7 @@
     },
     "server/game/cards/13.6-LMHR/RecruitFromTheDungeons.js": {
         "add-message": 2,
+        "game-listener": 1,
         "legacy-helper": 1
     },
     "server/game/cards/13.6-LMHR/Rimegate.js": {
@@ -2961,6 +2973,7 @@
     },
     "server/game/cards/14-FotS/NightfireVision.js": {
         "add-message": 2,
+        "game-listener": 1,
         "legacy-helper": 1
     },
     "server/game/cards/14-FotS/ParleyAtStormsEnd.js": {
@@ -2991,6 +3004,7 @@
         "add-message": 1
     },
     "server/game/cards/14-FotS/WilySmuggler.js": {
+        "game-listener": 1,
         "add-message": 1,
         "legacy-helper": 1
     },
@@ -3006,6 +3020,7 @@
     },
     "server/game/cards/15-DotE/ChoosingTheSpear.js": {
         "add-message": 2,
+        "game-listener": 1,
         "prompt-for-select": 1,
         "legacy-helper": 1
     },
@@ -3248,6 +3263,7 @@
     },
     "server/game/cards/17.2-R2/Pyke.js": {
         "add-message": 2,
+        "game-listener": 1,
         "legacy-helper": 1
     },
     "server/game/cards/17.2-R2/Queensguard.js": {
@@ -3483,6 +3499,7 @@
     "server/game/cards/21-FtR/FairIsle.js": {
         "prompt-for-select": 1,
         "add-message": 3,
+        "game-listener": 1,
         "legacy-helper": 1
     },
     "server/game/cards/21-FtR/Foamdrinker.js": {
@@ -3550,6 +3567,7 @@
     },
     "server/game/cards/22-BtB/Pyke.js": {
         "add-message": 2,
+        "game-listener": 1,
         "legacy-helper": 1
     },
     "server/game/cards/22-BtB/SamwellTarly.js": {
@@ -3620,10 +3638,12 @@
         "add-message": 1
     },
     "server/game/cards/25.2-ChoS/TheGoldPrice.js": {
+        "game-listener": 1,
         "add-message": 3,
         "direct-state-write": 1
     },
     "server/game/cards/25.3-FUtG/BelligerentHeir.js": {
+        "game-listener": 1,
         "add-message": 1
     },
     "server/game/cards/25.3-FUtG/Greyscale.js": {
@@ -3738,15 +3758,8 @@
     "server/game/cards/26.6-NCbT/WolvesInTheHills.js": {
         "add-message": 1
     },
-    "server/game/cards/27.2-WGYK/AGameOfCyvasse.js": {
-        "add-message": 1
-    },
     "server/game/cards/27.2-WGYK/Hornvale.js": {
         "add-message": 1
-    },
-    "server/game/cards/27.2-WGYK/SuperstitiousSteward.js": {
-        "add-message": 3,
-        "prompt-for-select": 1
     },
     "server/game/cards/27.2-WGYK/TheRiverroad.js": {
         "add-message": 1

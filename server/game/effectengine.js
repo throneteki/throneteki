@@ -17,6 +17,7 @@ class EffectEngine {
             'onAtEndOfRound'
         ]);
         this.effects = [];
+        this.delayedEffects = [];
         this.customDurationEvents = [];
         this.effectsBeingRecalculated = [];
     }
@@ -161,10 +162,12 @@ class EffectEngine {
 
     onChallengeFinished() {
         this.unapplyAndRemove((effect) => effect.duration === 'untilEndOfChallenge');
+        this.expireDelayedEffects('untilEndOfChallenge');
     }
 
     onPhaseEnded() {
         this.unapplyAndRemove((effect) => effect.duration === 'untilEndOfPhase');
+        this.expireDelayedEffects('untilEndOfPhase');
     }
 
     onAtEndOfChallenge() {
@@ -177,6 +180,28 @@ class EffectEngine {
 
     onRoundEnded() {
         this.unapplyAndRemove((effect) => effect.duration === 'untilEndOfRound');
+        this.expireDelayedEffects('untilEndOfRound');
+    }
+
+    addDelayedEffect(delayedEffect) {
+        this.delayedEffects.push(delayedEffect);
+    }
+
+    takeDelayedEffectsTriggeredBy(events) {
+        const [triggered, waiting] = partition(this.delayedEffects, (delayedEffect) =>
+            events.some((event) => delayedEffect.isTriggeredBy(event))
+        );
+        this.delayedEffects = waiting;
+        return triggered.map((delayedEffect) => ({
+            delayedEffect,
+            event: events.find((event) => delayedEffect.isTriggeredBy(event))
+        }));
+    }
+
+    expireDelayedEffects(duration) {
+        this.delayedEffects = this.delayedEffects.filter(
+            (delayedEffect) => delayedEffect.duration !== duration
+        );
     }
 
     onAtEndOfRound() {

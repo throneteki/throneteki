@@ -45,7 +45,10 @@ against the rules, which is what lets a game run with manual mode off
 7. **Messages.** Use the ability's `message` property, not `this.game.addMessage`. Follow the language
    rules at the end of the implementing-cards guide: start with the player, present tense, no final
    punctuation.
-8. **No manual workarounds.** Don't leave parts of a card for players to handle with chat commands. If
+8. **Delayed effects.** For "if X happens later" text, use `GameActions.delayedEffect`; don't
+   listen for game events with `this.game.on` or `this.game.once`. Apply lasting effects inside a
+   `gameAction` with `GameActions.lastingEffect`.
+9. **No manual workarounds.** Don't leave parts of a card for players to handle with chat commands. If
    something can't be implemented properly, stop and say what engine support is missing.
 
 ## Checks

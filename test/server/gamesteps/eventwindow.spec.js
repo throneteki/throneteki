@@ -6,6 +6,7 @@ describe('EventWindow', function () {
             refreshGameState: vi.fn(),
             openAbilityWindow: vi.fn(),
             openInterruptWindowForAttachedEvents: vi.fn(),
+            resolveDelayedEffects: vi.fn(),
             saveWithDupe: vi.fn()
         };
         this.eventSpy = {
