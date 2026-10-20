@@ -1,5 +1,6 @@
 import AtomicEvent from '../AtomicEvent.js';
 import Event from '../event.js';
+import NullEvent from '../NullEvent.js';
 
 /**
  * A game action is anything that changes the state of the game, e.g. draw X
@@ -70,6 +71,18 @@ class GameAction {
 
     message() {
         return '';
+    }
+
+    /**
+     * Describes what the event created by this action actually did, for the ability's message.
+     * Nothing, if it was cancelled, prevented or never created.
+     */
+    resultMessage(props, event) {
+        return this.hasResult(event) ? this.message(props) : '';
+    }
+
+    hasResult(event) {
+        return !!event && !(event instanceof NullEvent) && !event.cancelled;
     }
 }
 

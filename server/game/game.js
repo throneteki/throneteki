@@ -244,45 +244,55 @@ class Game extends EventEmitter {
      * its effects have begun.
      */
     holdAbilityMessage(context) {
+        context.messageLogged = 'none';
         this.pendingAbilityMessages.push(context);
-    }
-
-    isAbilityMessageHeld(context) {
-        return this.pendingAbilityMessages.includes(context);
     }
 
     markAbilityMessageResolving(context) {
         context.messageResolving = true;
     }
 
-    releaseAbilityMessage(context) {
+    /** Logs a held ability message in full, unless it already has been. */
+    logAbilityMessage(context) {
+        if (!this.pendingAbilityMessages.includes(context)) {
+            return;
+        }
+
+        this.pendingAbilityMessages = this.pendingAbilityMessages.filter(
+            (pending) => pending !== context
+        );
+        context.messageAbility.outputMessage(context);
+    }
+
+    /** Logs a plain line for a held message if nothing was logged, then stops holding it. */
+    finishAbilityMessage(context) {
+        if (!this.pendingAbilityMessages.includes(context)) {
+            return;
+        }
+
+        if (context.messageLogged === 'none') {
+            this.logPlainAbilityLine(context);
+        }
+
         this.pendingAbilityMessages = this.pendingAbilityMessages.filter(
             (pending) => pending !== context
         );
     }
 
-    /** Logs a held ability message as a plain line if its effects never resolved. */
-    flushAbilityMessage(context) {
-        if (this.pendingAbilityMessages.includes(context)) {
-            const others = this.pendingAbilityMessages.filter((pending) => pending !== context);
-            this.pendingAbilityMessages = [context];
-            this.flushPendingAbilityMessages();
-            this.pendingAbilityMessages = others;
+    flushPendingAbilityMessages() {
+        for (const context of [...this.pendingAbilityMessages]) {
+            if (context.messageResolving) {
+                this.logAbilityMessage(context);
+            } else if (context.messageLogged === 'none') {
+                this.logPlainAbilityLine(context);
+            }
         }
     }
 
-    flushPendingAbilityMessages() {
-        const pending = this.pendingAbilityMessages;
-        this.pendingAbilityMessages = [];
-
-        for (const context of pending) {
-            if (context.messageResolving) {
-                context.messageAbility.outputMessage(context);
-            } else {
-                const verb = context.source.getPrintedType() === 'event' ? 'plays' : 'uses';
-                this.gameChat.addMessage('{0} {1} {2}', context.player, verb, context.source);
-            }
-        }
+    logPlainAbilityLine(context) {
+        context.messageLogged = 'plain';
+        const verb = context.source.getPrintedType() === 'event' ? 'plays' : 'uses';
+        this.gameChat.addMessage('{0} {1} {2}', context.player, verb, context.source);
     }
 
     get messages() {

@@ -9,11 +9,18 @@ class AbilityAdapter {
         this.action = action;
         this.propertyFactory = propertyFactory;
         this.thenExecuteHandlers = [];
+        this.eventProperties = new WeakMap();
     }
 
     message(context) {
         let properties = this.resolveProperties(context);
         return this.action.message(properties);
+    }
+
+    resultMessage(context, event) {
+        const properties =
+            (event && this.eventProperties.get(event)) || this.resolveProperties(context);
+        return this.action.resultMessage(properties, event);
     }
 
     allow(context) {
@@ -24,6 +31,9 @@ class AbilityAdapter {
     createEvent(context) {
         const properties = this.resolveProperties(context);
         const event = this.action.createEvent(properties);
+        if (event && typeof event === 'object') {
+            this.eventProperties.set(event, properties);
+        }
 
         for (const handler of this.thenExecuteHandlers) {
             event.thenExecute(handler);

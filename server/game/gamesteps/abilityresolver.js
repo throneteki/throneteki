@@ -242,7 +242,7 @@ class AbilityResolver extends BaseStep {
 
     flushHeldMessage() {
         if (this.context.messageHeld) {
-            this.game.flushAbilityMessage(this.context);
+            this.game.finishAbilityMessage(this.context);
         }
     }
 

@@ -19,6 +19,16 @@ class SimultaneousActions extends GameAction {
             .map((action) => action.message(context));
     }
 
+    resultMessage(context, event) {
+        if (!event || !event.actions) {
+            return super.resultMessage(context, event);
+        }
+
+        return event.actions
+            .map((action, index) => action.resultMessage(context, event.childEvents[index]))
+            .filter((message) => !!message && (!Array.isArray(message) || message.length > 0));
+    }
+
     allow(context) {
         const actions = this.resolveActions(context);
         return actions.length > 0 && actions.some((action) => action.allow(context));
@@ -27,6 +37,7 @@ class SimultaneousActions extends GameAction {
     createEvent(context) {
         let event = new SimultaneousEvents();
         const actions = this.resolveActions(context);
+        event.actions = actions;
 
         for (let action of actions) {
             if (action.allow(context)) {

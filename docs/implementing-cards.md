@@ -1,4 +1,3 @@
-
 ## Implementing Cards
 
 ### Getting started
@@ -100,7 +99,7 @@ For more complicated restrictions or restrictions that can't be checked with the
 
 ```javascript
 // Ward - character with cost 4 or less
-this.attachmentRestriction(card => card.getType() === 'character' && card.getPrintedCost() <= 4);
+this.attachmentRestriction((card) => card.getType() === 'character' && card.getPrintedCost() <= 4);
 ```
 
 ### Persistent effects
@@ -116,7 +115,7 @@ The effect declaration takes a `match` property. In most cases this will be a fu
 ```javascript
 // Each Drowned God character you control gets +1 STR.
 this.persistentEffect({
-    match: card => card.getType() === 'character' && card.hasTrait('Drowned God'),
+    match: (card) => card.getType() === 'character' && card.hasTrait('Drowned God'),
     effect: ability.effects.modifyStrength(1)
 });
 ```
@@ -166,7 +165,7 @@ To target all cards regardless of who controls them, set `targetController` to `
 ```javascript
 // Treat each character as if its printed text box were blank (except for Traits).
 this.persistentEffect({
-    match: card => card.getType() === 'character',
+    match: (card) => card.getType() === 'character',
     targetController: 'any',
     effect: ability.effects.blankExcludingTraits
 });
@@ -196,21 +195,25 @@ this.whileAttached({
 ```
 
 If the effect has an additional requirement, an optional `match` function can be passed in.
+
 ```javascript
 // If attached character is Joffrey Baratheon, he gains a military icon.
 this.whileAttached({
-    match: card => card.name === 'Joffrey Baratheon',
+    match: (card) => card.name === 'Joffrey Baratheon',
     effect: ability.effects.addIcon('military')
 });
 ```
 
 #### Applying multiple effects at once
+
 As a shorthand, it is possible to pass an array into the `effect` property to apply multiple effects that have the same conditions / matching functions.
 
 ```javascript
 // During a challenge in which you are the defending player, Bronn gains a military, an intrigue, and a power icon.
 this.persistentEffect({
-    condition: () => this.game.currentChallenge && this.game.currentChallenge.defendingPlayer === this.controller,
+    condition: () =>
+        this.game.currentChallenge &&
+        this.game.currentChallenge.defendingPlayer === this.controller,
     match: this,
     effect: [
         ability.effects.addIcon('military'),
@@ -222,14 +225,14 @@ this.persistentEffect({
 
 #### Applying effects to cards in hand
 
-By default, effects will only be applied to cards in the play area.  Certain cards effects refer to cards in your hand, such as reducing their cost or providing ambush to matching cards. In these cases, set the `targetLocation` property to `'hand'`.
+By default, effects will only be applied to cards in the play area. Certain cards effects refer to cards in your hand, such as reducing their cost or providing ambush to matching cards. In these cases, set the `targetLocation` property to `'hand'`.
 
 ```javascript
 // Each Direwolf card in your hand gains ambush (X). X is that card's printed cost.
 this.persistentEffect({
     // Explicitly target the effect to cards in hand.
     targetLocation: 'hand',
-    match: card => card.hasTrait('Direwolf'),
+    match: (card) => card.hasTrait('Direwolf'),
     effect: ability.effects.gainAmbush()
 });
 ```
@@ -255,41 +258,45 @@ this.persistentEffect({
 
 ### Lasting effects
 
-Unlike persistent effects, lasting effects are typically applied during an action, reaction or interrupt and expire after a specified period of time.  Because lasting effects can be applied almost anywhere, each method takes a factory function that provides the `ability` object and should return the effect properties. The properties returned when applying these effects are identical to those of persistent effects, but additional methods are provided to apply them immediately with the correct duration.
+Unlike persistent effects, lasting effects are typically applied during an action, reaction or interrupt and expire after a specified period of time. Because lasting effects can be applied almost anywhere, each method takes a factory function that provides the `ability` object and should return the effect properties. The properties returned when applying these effects are identical to those of persistent effects, but additional methods are provided to apply them immediately with the correct duration.
 
 **Important: These should not be used within setupCardAbilities, only within handler code for actions and triggered abilities.**
 
 To apply an effect to last until the end of the current challenge, use `untilEndOfChallenge`:
+
 ```javascript
 // Until the end of the challenge, the character this is attached to gains +3 STR
-this.untilEndOfChallenge(ability => ({
-    match: card => card === this.parent,
+this.untilEndOfChallenge((ability) => ({
+    match: (card) => card === this.parent,
     effect: ability.effects.modifyStrength(3)
 }));
 ```
 
 To apply an effect to last until the end of the current phase, use `untilEndOfPhase`:
+
 ```javascript
 // Until the end of the phase, the current player can initiate an additional power challenge.
-this.untilEndOfPhase(ability => ({
+this.untilEndOfPhase((ability) => ({
     targetController: 'current',
     effect: ability.effects.mayInitiateAdditionalChallenge('power')
 }));
 ```
 
 To apply an effect that will expire 'at the end of the phase', use `atEndOfPhase`:
+
 ```javascript
 // At the end of the phase, if card is still in play discard it from play (cannot be saved)
-this.atEndOfPhase(ability => ({
+this.atEndOfPhase((ability) => ({
     match: card,
     effect: ability.effects.discardIfStillInPlay(false)
 }));
 ```
 
 To apply an effect to last until the end of the round, use `untilEndOfRound`:
+
 ```javascript
 /// Until the end of the round, add the 'Winter' trait to the specified plot card.
-this.untilEndOfRound(ability => ({
+this.untilEndOfRound((ability) => ({
     match: plotCard,
     effect: ability.effects.addTrait('Winter')
 }));
@@ -308,7 +315,7 @@ class SealOfTheHand extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand attached character',
-            handler: context => {
+            handler: (context) => {
                 // Code to stand the parent card
             }
         });
@@ -318,7 +325,13 @@ class SealOfTheHand extends DrawCard {
 
 #### Ability messages
 
-The `message` property can be used to add a message to the game log outside of the `handler` function. By separating the message from the handler that executes the ability, messages can be added to the game log prior to prompting to cancel abilities (e.g. Treachery, Hand's Judgment, etc).
+The `message` property adds the ability's message to the game log outside of the `handler` function. The engine logs it when the ability's effects resolve, after any cancels (Treachery, The Hand's Judgment, etc.), so the log doesn't claim effects that never happened:
+
+- For an ability with a declarative `gameAction`, the message is logged after the game action's handler runs. `{gameAction}` in the message describes what actually happened: parts that were cancelled, saved or prevented are left out, and amounts are the amounts applied (e.g. gold actually gained).
+- For an ability with a `handler` or `choices`, the message is logged as its effects begin.
+- If something else is logged first, the log shows a plain "{player} uses/plays {source}" line while the ability can still be cancelled or its effect prevented, and the full message once its effects have begun. A cancelled ability, or one whose only target was saved, only gets the plain line.
+
+Prefer `{gameAction}` over spelling the effect out in the format, so the message stays accurate.
 
 The `message` property can be just a string if there are no additional arguments. `{player}` will be replaced with the player initiating the ability, `{source}` will be replaced with the card associated with the ability, and `{target}` will be replaced with the target for the ability (if any):
 
@@ -333,13 +346,14 @@ this.action({
 ```
 
 When you have additional parameters needed for the message, the `message` property can be an object with a `format` sub-property for the message format, and an `args` sub-property for the additional arguments. The keys of the `args` sub-property correspond to the replacement name, and the values correspond to a function that takes the `context` object and returns the appropriate argument value:
+
 ```javascript
 this.action({
     // ...
     message: {
-        format: '{player} uses {source} to put {target} into play from {targetOwner}\'s discard pile.',
+        format: "{player} uses {source} to put {target} into play from {targetOwner}'s discard pile.",
         args: {
-            targetOwner: context => context.target.owner
+            targetOwner: (context) => context.target.owner
         }
     },
     handler: () => {
@@ -349,10 +363,12 @@ this.action({
 ```
 
 Finally, you can pass a function to the `message` property that will be executed:
+
 ```javascript
 this.action({
     // ...
-    message: context => this.game.addMessage('{0} uses {1} to kill {2}', context.player, this, context.target),
+    message: (context) =>
+        this.game.addMessage('{0} uses {1} to kill {2}', context.player, this, context.target),
     handler: () => {
         // ...
     }
@@ -367,7 +383,7 @@ Card abilities can only be triggered if they have the potential to modify game s
 this.action({
     title: 'Stand attached character',
     // Ensure that the parent card is knelt
-    condition: () => this.parent.kneeled,
+    condition: () => this.parent.kneeled
     // ...
 });
 ```
@@ -382,7 +398,7 @@ For a full list of costs, look at `/server/game/costs.js`.
 this.action({
     title: 'Stand attached character',
     // This card must be knelt as a cost for the action.
-    cost: ability.costs.kneelSelf(),
+    cost: ability.costs.kneelSelf()
     // ...
 });
 ```
@@ -393,10 +409,7 @@ If a card has multiple costs, an array of cost objects may be sent using the `co
 this.action({
     title: 'Reduce the next character marshalled by 3',
     // This card must be knelt AND sacrificed as a cost for the action.
-    cost: [
-        ability.costs.kneelSelf(),
-        ability.costs.sacrificeSelf()
-    ],
+    cost: [ability.costs.kneelSelf(), ability.costs.sacrificeSelf()]
     // ...
 });
 ```
@@ -410,8 +423,11 @@ this.action({
     title: 'Stand a Bloodrider (if a Summer plot is revealed)',
     target: {
         // activePromptTitle: 'Select a character',  // <- default prompt message, overridable
-        cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.hasTrait('Bloodrider')
-    },
+        cardCondition: (card) =>
+            card.location === 'play area' &&
+            card.getType() === 'character' &&
+            card.hasTrait('Bloodrider')
+    }
     // ...
 });
 ```
@@ -421,7 +437,7 @@ The card that was chosen will be set on the `target` property of the context obj
 ```javascript
 this.action({
     // ...
-    handler: context => {
+    handler: (context) => {
         this.game.addMessage('{0} uses {1} to stand {2}', context.player, this, context.target);
         this.controller.standCard(context.target);
     }
@@ -436,13 +452,13 @@ this.action({
     targets: {
         toLower: {
             activePromptTitle: 'Select a character to get -1 STR',
-            cardCondition: card => this.cardCondition(card)
+            cardCondition: (card) => this.cardCondition(card)
         },
         toRaise: {
             activePromptTitle: 'Select a character to get +1 STR',
-            cardCondition: card => this.cardCondition(card)
+            cardCondition: (card) => this.cardCondition(card)
         }
-    },
+    }
     // ...
 });
 ```
@@ -452,12 +468,12 @@ Once all targets are chosen, they will be set using their specified name under t
 ```javascript
 this.action({
     // ...
-    handler: context => {
-        this.untilEndOfPhase(ability => ({
+    handler: (context) => {
+        this.untilEndOfPhase((ability) => ({
             match: context.targets.toLower,
             effect: ability.effects.modifyStrength(-1)
         }));
-        this.untilEndOfPhase(ability => ({
+        this.untilEndOfPhase((ability) => ({
             match: context.targets.toRaise,
             effect: ability.effects.modifyStrength(1)
         }));
@@ -537,9 +553,9 @@ Some abilities such as Tears of Lys require selecting a target but do not count 
 this.action({
     // ...
     target: {
-        type: 'select',
+        type: 'select'
         // ...
-    },
+    }
     // ...
 });
 ```
@@ -552,7 +568,7 @@ If after checking play requirements and paying costs an action needs to be cance
 this.action({
     title: 'Do something',
     handler: () => {
-        if(!this.canDoIt()) {
+        if (!this.canDoIt()) {
             return false;
         }
 
@@ -570,7 +586,7 @@ Some actions are limited to a specific phase by their card text (e.g. 'Challenge
 ```javascript
 this.action({
     title: 'Kneel Grey Wind to kill a character',
-    phase: 'challenge',
+    phase: 'challenge'
     // ...
 });
 ```
@@ -582,7 +598,7 @@ Some actions have text limiting the number of times they may be used in a given 
 ```javascript
 this.action({
     title: 'Put a card with printed cost of 5 or lower in play',
-    limit: ability.limit.perPhase(1),
+    limit: ability.limit.perPhase(1)
     // ...
 });
 ```
@@ -594,9 +610,9 @@ Certain actions, such as those for Dolorous Edd, can only be activated while the
 ```javascript
 this.action({
     title: 'Add Dolorous Edd as a defender',
-    location: 'hand',
+    location: 'hand'
     // ...
-})
+});
 ```
 
 ### Triggered abilities
@@ -624,8 +640,10 @@ In rare cases, there may be multiple triggering conditions for the same ability.
 ```javascript
 this.reaction({
     when: {
-        onSacrificed: (event, player, card) => this.starkCharacterSacrificedOrKilled(event, player, card),
-        onCharacterKilled: (event, player, card) => this.starkCharacterSacrificedOrKilled(event, player, card)
+        onSacrificed: (event, player, card) =>
+            this.starkCharacterSacrificedOrKilled(event, player, card),
+        onCharacterKilled: (event, player, card) =>
+            this.starkCharacterSacrificedOrKilled(event, player, card)
     },
     handler: () => {
         // gain power
@@ -634,6 +652,7 @@ this.reaction({
 ```
 
 There may also be scenarios where the triggering conditions need to be aggregated or grouped to determine whether the ability should be executed. For example, The Warden of the West draws a number of cards which are discarded simultaneously from an opponent's hand or deck. In these cases, you can `aggregateBy` within the event defined in the `when` object, with the triggering condition passed to the `condition` function. When that function returns `true` the ability will be executed, and all valid events will be accessible within `context.events`.
+
 ```javascript
 this.reaction({
     when: {
@@ -649,7 +668,7 @@ this.reaction({
                 ['hand', 'draw deck'].includes(aggregate.location)
         }
     },
-    handler: context => {
+    handler: (context) => {
         // Draw context.events.length worth of cards
     }
 });
@@ -711,7 +730,7 @@ this.interrupt({
     when: {
         // claim is applied and Mirri is attacking alone
     },
-    handler: context => {
+    handler: (context) => {
         context.replaceHandler(() => {
             // kill the chosen character
         });
@@ -829,9 +848,9 @@ Certain abilities, such as those for The Prince's Plan, can only be activated in
 
 ```javascript
 this.reaction({
-    location: 'discard pile',
+    location: 'discard pile'
     // Implementation for The Prince's Plan
-})
+});
 ```
 
 #### When revealed abilities
@@ -864,43 +883,43 @@ In each case, `x` should be the number of times the ability is allowed to be use
 
 Game messages should begin with the name of the player to ensure a uniform format and make it easy to see who triggered an ability.
 
-* **Bad**: Tyrion Lannister triggers to gain 2 gold for Player1
-* **Good**: Player1 uses Tyrion Lannister to gain 2 gold
+- **Bad**: Tyrion Lannister triggers to gain 2 gold for Player1
+- **Good**: Player1 uses Tyrion Lannister to gain 2 gold
 
 #### Game messages should not end in punctuation
 
 No game messages should end in a period, exclaimation point or question mark.
 
-* **Bad**: Player1 draws 2 cards.
-* **Good**: Player1 draws 2 cards
+- **Bad**: Player1 draws 2 cards.
+- **Good**: Player1 draws 2 cards
 
 #### Game messages should use present tense.
 
 All game messages should use present tense.
 
-* **Bad**: Player1 has used Ser Gregor Clegane to kill The Red Viper
-* **Bad**: Player1 killed The Red Viper
-* **Good**: Player1 uses Ser Gregor Clegane to kill The Red Viper
-* **Good**: Player1 kills The Red Viper
+- **Bad**: Player1 has used Ser Gregor Clegane to kill The Red Viper
+- **Bad**: Player1 killed The Red Viper
+- **Good**: Player1 uses Ser Gregor Clegane to kill The Red Viper
+- **Good**: Player1 kills The Red Viper
 
 #### Targeting prompts should use the format "Select a \<card type\>" where possible.
 
 Targeting prompts should ask the player to select a card or a card of particular type to keep prompt titles relatively short, without specifying the final goal of card selection.
 
-* **Bad**: Select a character to return to hand
-* **Good**: Select a character
+- **Bad**: Select a character to return to hand
+- **Good**: Select a character
 
 **Exception:** If a card requires the player to select multiple cards, such as Renly's Pavillion, you can add context about which one they should be selecting. Just keep it as short as reasonably possible.
 
 As valid selections are already presented to the user via visual clues, targeting prompts should not repeat selection rules in excessive details. Specifying nothing more and nothing less than the eligible card type (if any) is the good middle ground.
 
-* **Bad**: Select a Knight
-* **Good**: Select a character
+- **Bad**: Select a Knight
+- **Good**: Select a character
 
-* **Bad**: Select a defending Night's Watch character
-* **Good**: Select a character
+- **Bad**: Select a defending Night's Watch character
+- **Good**: Select a character
 
-* **Bad**: Select a card from your discard pile
-* **Good**: Select a card
+- **Bad**: Select a card from your discard pile
+- **Good**: Select a card
 
-* **Good**: Select an attachment or location
+- **Good**: Select an attachment or location

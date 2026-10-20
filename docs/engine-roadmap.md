@@ -223,6 +223,16 @@ is the same tell as at a real table, and is acceptable.
 
 ### Phase 3: messages built from results
 
+_Started. Ability messages are logged when their effects resolve rather than as the ability
+initiates: a cancelled ability, or a kill whose target is saved, only logs a plain "uses"/"plays"
+line ([AbilityMessages.spec.js](../test/server/AbilityMessages.spec.js)). `{gameAction}` is built
+from the events that actually resolved (`GameAction.resultMessage`): simultaneous actions list
+only the parts that happened, and gold gained reports the amount applied. Messages written out in
+the format (`'{player} uses {source} to kill {target}'`) are still intent, but are logged only
+when the effect happens; moving them to `{gameAction}` is part of phase 5. Still to do: result
+messages for the other capped actions (draw, tokens, power), structured log entries, and
+templates for card wording._
+
 Keyteki builds an ability's message before it resolves, so the log can claim things that did not
 happen: a kill that was cancelled, a card that was saved, an amount that was capped. Instead:
 

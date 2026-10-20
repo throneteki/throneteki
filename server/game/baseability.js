@@ -366,25 +366,20 @@ class BaseAbility {
         // The message was held back until the effects resolve. A declarative game action logs it
         // after the handler, so it can reflect what happened; anything else logs it now.
         if (!this.reportsResults()) {
-            context.game.releaseAbilityMessage(context);
-            this.outputMessage(context);
+            context.game.logAbilityMessage(context);
             context.game.resolveGameAction(this.gameAction, context);
             return;
         }
 
         const event = context.game.resolveGameAction(this.gameAction, context);
+        context.gameActionResult = { gameAction: this.gameAction, event };
         event.beforeHandlers = [
             ...(event.beforeHandlers || []),
             () => context.game.markAbilityMessageResolving(context)
         ];
         event.afterHandlers = [
             ...(event.afterHandlers || []),
-            () => {
-                if (context.game.isAbilityMessageHeld(context)) {
-                    context.game.releaseAbilityMessage(context);
-                    this.outputMessage(context);
-                }
-            }
+            () => context.game.logAbilityMessage(context)
         ];
     }
 

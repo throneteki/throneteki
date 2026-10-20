@@ -11,6 +11,14 @@ class GainGold extends GameAction {
         return Message.fragment('gains {actualAmount} gold', { actualAmount });
     }
 
+    resultMessage(props, event) {
+        if (!this.hasResult(event)) {
+            return '';
+        }
+
+        return Message.fragment('gains {amount} gold', { amount: event.amount });
+    }
+
     canChangeGameState({ player, amount }) {
         return amount > 0 && player.getGoldToGain(amount) > 0;
     }

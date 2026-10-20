@@ -100,4 +100,36 @@ describe('ability messages', function () {
             expect(lines.some((line) => line.includes('to kill Septa Mordane'))).toBe(false);
         });
     });
+
+    describe('for a game action that only partly resolves', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'challenge',
+                player1: { inPlay: ['Bastard in Hiding'] },
+                player2: { inPlay: [{ card: 'Septa Mordane', dupes: 1 }, 'House Dayne Knight'] }
+            });
+
+            this.bastardInHiding.action({
+                title: 'Kill both',
+                message: '{player} uses {source} and {gameAction}',
+                gameAction: GameActions.simultaneously(() => [
+                    GameActions.kill({ card: this.septaMordane }),
+                    GameActions.kill({ card: this.houseDayneKnight })
+                ])
+            });
+            this.marker = log(this).at(-1);
+
+            this.player1.clickMenu(this.bastardInHiding, 'Kill both');
+        });
+
+        it('only reports the parts that happened', function () {
+            const lines = linesAfter(this, this.marker);
+
+            expect(this.septaMordane.location).toBe('play area');
+            expect(this.houseDayneKnight.location).toBe('dead pile');
+            expect(lines).toContain('player1 uses Bastard in Hiding and kills House Dayne Knight');
+            expect(lines.some((line) => line.includes('kills Septa Mordane'))).toBe(false);
+            expect(this.player1).isReadyToTakeAction();
+        });
+    });
 });
