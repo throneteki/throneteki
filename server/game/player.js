@@ -18,6 +18,7 @@ import GoldSource from './GoldSource.js';
 import GameActions from './GameActions/index.js';
 import RemoveFromGame from './GameActions/RemoveFromGame.js';
 import SacrificeCard from './GameActions/SacrificeCard.js';
+import MoveCardEventGenerator from './GameActions/MoveCardEventGenerator.js';
 import ChessClock from './ChessClock.js';
 import { DrawPhaseCards, Flags, SetupGold } from './Constants/index.js';
 
@@ -1132,8 +1133,12 @@ class Player extends Spectator {
                 automaticSaveWithDupe: true
             };
 
-            this.game.raiseEvent('onCardLeftPlay', params, () => {
-                this.synchronousMoveCard(card, targetLocation, options);
+            this.game.raiseEvent('onCardLeftPlay', params, (event) => {
+                this.attachLeavePlayEvents(event, card);
+                this.synchronousMoveCard(card, targetLocation, {
+                    ...options,
+                    attachmentsHandled: true
+                });
 
                 if (callback) {
                     callback();
@@ -1148,8 +1153,26 @@ class Player extends Spectator {
         }
     }
 
+    /**
+     * Attachments and duplicates leave play with the card, in the same event window, as they do
+     * when a card leaves play through a game action.
+     */
+    attachLeavePlayEvents(event, card) {
+        for (const attachment of card.attachments) {
+            event.thenAttachEvent(
+                MoveCardEventGenerator.createRemoveAttachmentEvent(attachment, { allowSave: false })
+            );
+        }
+
+        for (const dupe of card.dupes) {
+            event.thenAttachEvent(
+                MoveCardEventGenerator.createDiscardCardEvent({ card: dupe, allowSave: false })
+            );
+        }
+    }
+
     synchronousMoveCard(card, targetLocation, options = {}) {
-        if (card.location === 'play area') {
+        if (card.location === 'play area' && !options.attachmentsHandled) {
             for (const attachment of card.attachments) {
                 this.removeAttachment(attachment, false);
             }

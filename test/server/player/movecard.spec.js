@@ -97,25 +97,6 @@ describe('Player', function () {
                 expect(this.gameSpy.raiseEvent).toHaveBeenCalled();
             });
 
-            describe('when the card has attachments', function () {
-                beforeEach(function () {
-                    this.attachment = new DrawCard(this.player, {});
-                    this.attachment.parent = this.card;
-                    this.attachment.location = 'play area';
-                    this.card.attachments.push(this.attachment);
-                    vi.spyOn(this.player, 'removeAttachment').mockImplementation(() => {});
-
-                    this.player.moveCard(this.card, 'hand');
-                });
-
-                it('should remove the attachments', function () {
-                    expect(this.player.removeAttachment).toHaveBeenCalledWith(
-                        this.attachment,
-                        false
-                    );
-                });
-            });
-
             describe('when the card is an attachment', function () {
                 beforeEach(function () {
                     this.attachment = new DrawCard(this.player, {});
@@ -134,21 +115,6 @@ describe('Player', function () {
 
                 it('should remove the attachment from the card', function () {
                     expect(this.card.attachments).not.toContain(this.attachment);
-                });
-            });
-
-            describe('when the card has duplicates', function () {
-                beforeEach(function () {
-                    this.dupe = new DrawCard(this.player, {});
-                    this.card.addDuplicate(this.dupe);
-
-                    vi.spyOn(this.player, 'discardCards').mockImplementation(() => {});
-
-                    this.player.moveCard(this.card, 'hand');
-                });
-
-                it('should discard the dupes', function () {
-                    expect(this.player.discardCards).toHaveBeenCalledWith([this.dupe], false);
                 });
             });
         });

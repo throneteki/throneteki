@@ -120,12 +120,15 @@ LIMIT 50;
    legacy `game.takeControl`, which now resolves it) raises `onCardTakenControl` before control
    changes, with `oldController`, `player` and `source`, so interrupts can see it. Lasting
    "take control" effects change control at once through `game.takeControlByEffect` and raise the
-   event afterwards._ Still to do: every state change goes through a `GameAction`. Whether manual
-   corrections (`changeStat`, `/power`, `/token`) should raise events is an open question: they
-   are corrections, and raising events would trigger reactions to them.
-4. **Simultaneity.** _The standing phase is done: every player's cards, faction cards included, stand
-   as one event._ The standing phase stands every player's cards in one batch. Attachments and
-   duplicates leaving play become child events of the card leaving play.
+   event afterwards._ Still to do: every state change goes through a `GameAction`. Manual corrections
+   (`changeStat`, `/power`, `/token`) stay plain corrections that raise no events, so fixing a
+   mistake doesn't trigger reactions; they are recorded as manual actions instead.
+4. **Simultaneity.** _Done._ The standing phase stands every player's cards, faction cards
+   included, as one event. When a card leaves play, by a game action or the legacy
+   `player.moveCard`, its attachments and duplicates are removed in the same event window, and
+   can't be saved: the Rules Reference lists them as consequences that happen "simultaneously with
+   the card leaving play", not effects
+   ([LeavePlayConsequences.spec.js](../test/server/player/LeavePlayConsequences.spec.js)).
 5. **Event catalogue.** _Done._ [Constants/Events.js](../server/game/Constants/Events.js) lists
    every event with its parameters and their types. Outside production, `Game.on` and `Game.emit`
    throw on an unknown event or window suffix, and on an event raised with missing or unexpected
@@ -259,3 +262,5 @@ likely to cause regressions.
 | 2026-10-19 | Hidden information: the priority is not revealing that a player holds a cancel. Window decisions use public information only (phase 2). |
 | 2026-10-19 | Tests move from jasmine to vitest, modelled on keyteki's harness. Target: a spec for every implemented card.                            |
 | 2026-10-19 | Keyteki is a reference, not a template. Messages in particular are built from results, not intent.                                      |
+| 2026-10-20 | Manual corrections (`/power`, `/token`, stat changes) are plain corrections and raise no game events.                                   |
+| 2026-10-20 | Attachments and duplicates removed because their card left play can't be saved (Rules Reference: Leaves Play, Save).                    |
