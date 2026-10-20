@@ -136,9 +136,6 @@
     "server/game/cards/01-Core/EuronCrowsEye.js": {
         "add-message": 1
     },
-    "server/game/cards/01-Core/Fealty.js": {
-        "add-message": 1
-    },
     "server/game/cards/01-Core/FieryFollowers.js": {
         "legacy-helper": 1,
         "add-message": 1
@@ -534,10 +531,6 @@
         "add-message": 1
     },
     "server/game/cards/02.2-TRtW/TheReader.js": {
-        "add-message": 1
-    },
-    "server/game/cards/02.2-TRtW/TradingWithThePentoshi.js": {
-        "legacy-helper": 1,
         "add-message": 1
     },
     "server/game/cards/02.2-TRtW/UnswornApprentice.js": {
@@ -3743,9 +3736,6 @@
     },
     "server/game/cards/27.2-WGYK/TheRiverroad.js": {
         "add-message": 1
-    },
-    "server/game/cards/reducer.js": {
-        "add-message": 2
     },
     "server/game/cards/titles/CrownRegent.js": {
         "add-message": 1

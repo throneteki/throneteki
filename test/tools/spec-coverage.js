@@ -31,8 +31,10 @@ function isDeclarative(implementation) {
         return false;
     }
 
-    const counts = rulesBaseline[implementation.implementationPath];
-    return !counts || Object.values(counts).every((count) => count === 0);
+    return [implementation.implementationPath, ...implementation.baseFiles].every((file) => {
+        const counts = rulesBaseline[file];
+        return !counts || Object.values(counts).every((count) => count === 0);
+    });
 }
 
 function isVerified(implementation) {

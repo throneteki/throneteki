@@ -33,6 +33,18 @@ export function specPathFor(implementationPath) {
     return toPosix(path.join(specsRoot, relative.replace(/\.js$/, '.spec.js')));
 }
 
+function cardsFolderImports(file, seen = new Set()) {
+    const source = fs.readFileSync(file, 'utf8');
+    for (const match of source.matchAll(/from\s+'(\.{1,2}\/[^']+)'/g)) {
+        const imported = path.resolve(path.dirname(file), match[1]);
+        if (imported.startsWith(cardsRoot + path.sep) && !seen.has(imported)) {
+            seen.add(imported);
+            cardsFolderImports(imported, seen);
+        }
+    }
+    return seen;
+}
+
 /**
  * Every card implementation, with its code and whether a spec exists at the matching path.
  */
@@ -44,13 +56,16 @@ export function loadImplementations() {
             const codes = [...source.matchAll(/\.code\s*=\s*'([^']+)'/g)].map((match) => match[1]);
             const implementationPath = toPosix(file);
             const specPath = specPathFor(implementationPath);
+            const baseFiles = [...cardsFolderImports(file)];
+            const sources = [source, ...baseFiles.map((base) => fs.readFileSync(base, 'utf8'))];
             return {
                 codes,
                 group: path.relative(cardsRoot, path.dirname(file)).split(path.sep)[0],
                 implementationPath,
                 specPath,
                 hasSpec: fs.existsSync(path.join(repoRoot, specPath)),
-                hasHandler: /\bhandler\s*[:(]/.test(source)
+                baseFiles: baseFiles.map(toPosix),
+                hasHandler: sources.some((text) => /\bhandler\s*[:(]/.test(text))
             };
         })
         .filter((implementation) => implementation.codes.length > 0);
