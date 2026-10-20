@@ -1,16 +1,31 @@
 import { matchCardByNameAndPack } from './cardutil.js';
 
 export const DefaultFaction = 'stark';
-export const DefaultPlot = 'A Noble Cause';
-// Spare plots so the plot phase prompts for a choice rather than revealing the only plot.
+// A Noble Cause reduces the cost of the first Lord or Lady marshaled each round, and its deck
+// limit is 2. The filler plot keeps those income, initiative, claim and reserve numbers and has
+// no text or traits, so it cannot change the card under test.
+export const DefaultPlot = 'Filler Plot';
+export const FillerPlotCard = {
+    code: 'filler-plot',
+    label: DefaultPlot,
+    type: 'plot',
+    name: DefaultPlot,
+    faction: 'neutral',
+    packCode: 'Filler',
+    deckLimit: 7,
+    plotStats: {
+        income: 5,
+        initiative: 0,
+        claim: 1,
+        reserve: 6
+    },
+    traits: [],
+    text: ''
+};
 const DefaultPlotDeck = [DefaultPlot, DefaultPlot];
-// House Maester (WotN) is a neutral character with no text, so it cannot interact with the card
-// under test and is never "in faction".
 export const FillerCard = '03041';
 const FillerCount = 20;
 
-// The dominance, standing and taxation phases have no prompt to stop at with default settings;
-// set up in the challenge phase and call completeChallengesPhase() instead.
 const PhaseOrder = ['setup', 'plot', 'marshal', 'challenge'];
 const CompletePhase = {
     marshal: 'completeMarshalPhase'
@@ -283,10 +298,6 @@ function advanceToPhase(flow, phase, options, players) {
     }
 }
 
-/**
- * Builds a joust game in the requested phase. Board state is placed during the setup phase,
- * where no abilities can trigger, and the game then advances through the real game flow.
- */
 export function applySetupTest(options, ctx) {
     const { flow, deckBuilder, registry } = ctx;
     const phase = options.phase || 'marshal';

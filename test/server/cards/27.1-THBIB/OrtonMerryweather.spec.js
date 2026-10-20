@@ -1,60 +1,59 @@
 describe('Orton Merryweather', function () {
-    integration(function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: {
+                inPlay: ['Orton Merryweather (THBIB)']
+            },
+            player2: {
+                inPlay: ['Stannis Baratheon (FotS)', 'House Maester']
+            }
+        });
+    });
+
+    it('adds your gold to your total for dominance again', function () {
+        expect(this.player1Object.gold).toBe(5);
+        expect(this.player2Object.gold).toBe(5);
+        expect(this.ortonMerryweather.getDominanceStrength()).toBe(9);
+        expect(this.player1Object.getDominance()).toBe(14);
+        expect(this.player2Object.getDominance()).toBe(14);
+        expect(this.player1).isReadyToTakeAction();
+    });
+
+    describe('when dominance is determined and you have not lost an intrigue challenge', function () {
         beforeEach(function () {
-            const deck1 = this.buildDeck('tyrell', [
-                'A Noble Cause',
-                'Orton Merryweather (THBIB)',
-                'Hedge Knight'
-            ]);
-            const deck2 = this.buildDeck('tyrell', ['A Noble Cause', 'Margaery Tyrell (Core)']);
-            this.player1.selectDeck(deck1);
-            this.player2.selectDeck(deck2);
-            this.startGame();
-            this.keepStartingHands();
-
-            this.orton = this.player1.findCardByName('Orton Merryweather', 'hand');
-            this.p2margaery = this.player2.findCardByName('Margaery Tyrell', 'hand');
-
-            this.player1.clickCard(this.orton);
-            this.player2.clickCard(this.p2margaery);
-            this.completeSetup();
-            this.selectFirstPlayer(this.player1);
-            this.completeMarshalPhase();
+            this.completeChallengesPhase();
         });
 
-        describe("the additional gold passive's contribution to dominance", function () {
-            it('should count each gold twice towards dominance (once from the pool, once from the passive)', function () {
-                this.player1Object.gold = 0;
-                this.game.refreshGameState();
-                this.game.continue();
-                const baseDominance = this.player1Object.getDominance();
+        it('gains 2 gold, which counts toward that dominance', function () {
+            this.player1.triggerAbility(this.ortonMerryweather);
 
-                this.player1Object.gold = 3;
-                this.game.refreshGameState();
-                this.game.continue();
+            expect(this.game.getPlainTextLog()).toContain(
+                'player1 uses Orton Merryweather to gain 2 gold'
+            );
+            expect(this.game.getPlainTextLog()).toContain('player1 has 18 for dominance');
+            expect(this.game.winnerOfDominanceInLastRound).toBe(this.player1Object);
+            expect(this.player1Object.faction.power).toBe(1);
+            expect(this.player1).toHavePrompt('Select a plot');
+        });
+    });
 
-                expect(this.player1Object.getDominance()).toBe(baseDominance + 6);
-            });
+    describe('when you have lost an intrigue challenge this round', function () {
+        beforeEach(function () {
+            this.player1.clickPrompt('Done');
+            this.unopposedChallenge(this.player2, 'Intrigue', this.houseMaester);
+            this.player2.clickPrompt('Apply Claim');
+            this.player2.clickPrompt('Done');
         });
 
-        describe('when the interrupt gains gold before dominance is calculated', function () {
-            beforeEach(function () {
-                // Without the interrupt: player1 = Orton's 4 STR; player2 = Margaery's 3 STR
-                // + 2 gold = 5, so player2 wins. With it, player1 gains 2 gold, worth +4
-                // dominance via the additional gold passive (2 from the pool, 2 more from
-                // the passive), taking player1 to 8 and flipping the result.
-                this.player1Object.gold = 0;
-                this.player2Object.gold = 2;
-                this.game.refreshGameState();
-                this.game.continue();
-
-                this.completeChallengesPhase();
-                this.player1.triggerAbility(this.orton);
-            });
-
-            it('should contribute to the dominance total it was gained for, flipping the winner to player1', function () {
-                expect(this.game.winnerOfDominanceInLastRound).toBe(this.player1Object);
-            });
+        it('does not gain the gold', function () {
+            expect(this.game.getPlainTextLog()).not.toContain(
+                'uses Orton Merryweather to gain 2 gold'
+            );
+            expect(this.game.getPlainTextLog()).toContain(
+                'player1 returns 5 unspent gold to the treasury'
+            );
+            expect(this.player1).toHavePrompt('Select a plot');
         });
     });
 });

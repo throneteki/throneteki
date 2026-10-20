@@ -67,8 +67,8 @@ this.setupTest({
     player1: {
         faction: 'stark', // default 'stark'
         agenda: 'Fealty', // or an array for Alliance and its banners
-        plot: 'A Noble Cause', // revealed in round 1 (default 'A Noble Cause')
-        plotDeck: ['Sneak Attack'], // the rest of the plot deck (default: two more 'A Noble Cause')
+        plot: 'Filler Plot', // revealed in round 1 (default 'Filler Plot': income 5, initiative 0, claim 1, reserve 6, no text)
+        plotDeck: ['Sneak Attack'], // the rest of the plot deck (default: two more 'Filler Plot')
         inPlay: [
             'Winterfell Steward',
             {

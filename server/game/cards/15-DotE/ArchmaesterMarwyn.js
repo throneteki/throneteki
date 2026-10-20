@@ -29,7 +29,7 @@ class ArchmaesterMarwyn extends DrawCard {
                     GameActions.placeCardUnderneath({
                         card,
                         parentCard: context.player.agenda,
-                        facedown: false
+                        facedown: true
                     })
                 )
             )

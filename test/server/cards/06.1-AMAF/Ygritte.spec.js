@@ -7,7 +7,7 @@ describe('Ygritte', function () {
                 player2: { plotDeck: ['Filthy Accusations'] }
             });
 
-            this.player1.selectPlot('A Noble Cause');
+            this.player1.selectPlot('Filler Plot');
             this.player2.selectPlot(this.filthyAccusations);
             this.selectFirstPlayer(this.player2);
         });

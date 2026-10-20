@@ -99,7 +99,7 @@ describe('Cersei Lannister (LoCR)', function () {
             });
 
             this.player1.selectPlot(this.headsOnSpikes);
-            this.player2.selectPlot('A Noble Cause');
+            this.player2.selectPlot('Filler Plot');
             this.selectFirstPlayer(this.player1);
         });
 

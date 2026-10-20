@@ -95,6 +95,31 @@ describe('setupTest', function () {
         });
     });
 
+    describe('with the default plot', function () {
+        beforeEach(function () {
+            this.setupTest({
+                player1: {
+                    hand: ['Bran Stark (Core)']
+                }
+            });
+        });
+
+        it('has no text, and marshaling a Lord pays the printed cost', function () {
+            expect(this.player1Object.activePlot.name).toBe('Filler Plot');
+            expect(this.player1Object.activePlot.getTraits()).toEqual([]);
+            expect(this.player1Object.getIncome()).toBe(5);
+            expect(this.player1Object.getReserve()).toBe(6);
+            expect(this.player1Object.getClaim()).toBe(1);
+            expect(this.player1Object.gold).toBe(5);
+
+            this.player1.clickCard(this.branStark);
+
+            expect(this.branStark.location).toBe('play area');
+            expect(this.player1Object.gold).toBe(3);
+            expect(this.player1).isReadyToTakeAction();
+        });
+    });
+
     describe('in the plot phase', function () {
         beforeEach(function () {
             this.setupTest({

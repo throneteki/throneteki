@@ -5,6 +5,7 @@ class Leathers extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) =>
+                card.controller === this.controller &&
                 card.location === 'play area' &&
                 card.getType() === 'character' &&
                 card.hasTrait('Wildling'),
@@ -13,6 +14,7 @@ class Leathers extends DrawCard {
 
         this.persistentEffect({
             match: (card) =>
+                card.controller === this.controller &&
                 card.location === 'play area' &&
                 card.getType() === 'character' &&
                 card.hasTrait('Giant'),

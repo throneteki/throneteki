@@ -1,120 +1,57 @@
 describe("Lord Protector's Retainer", function () {
-    integration(function () {
+    function revealPlot(context) {
+        context.setupTest({
+            phase: 'plot',
+            player1: {
+                inPlay: ['Edric Dayne (HMW)', 'House Maester', "Lord Protector's Retainer"]
+            },
+            player2: {
+                plot: 'Filthy Accusations'
+            }
+        });
+
+        context.player1.selectPlot('Filler Plot');
+        context.player2.selectPlot('Filthy Accusations');
+        context.selectFirstPlayer(context.player2);
+    }
+
+    describe('when an ability chooses a Lord or Lady you control as its only target', function () {
         beforeEach(function () {
-            const deck1 = this.buildDeck('martell', [
-                'A Noble Cause',
-                'Edric Dayne (HMW)',
-                "Lord Protector's Retainer"
-            ]);
-
-            const deck2 = this.buildDeck('greyjoy', [
-                'Filthy Accusations',
-                'Victarion Greyjoy (LoCR)',
-                'Maester Wendamyr'
-            ]);
-
-            this.player1.selectDeck(deck1);
-            this.player2.selectDeck(deck2);
-            this.startGame();
-            this.keepStartingHands();
-
-            this.edric = this.player1.findCardByName('Edric Dayne', 'hand');
-            this.retainer = this.player1.findCardByName("Lord Protector's Retainer", 'hand');
-            this.victarion = this.player2.findCardByName('Victarion Greyjoy (LoCR)', 'hand');
-            this.wendamyr = this.player2.findCardByName('Maester Wendamyr', 'hand');
-
-            this.player1.clickCard(this.edric);
-            this.player1.clickCard(this.retainer);
-            this.player2.clickCard(this.victarion);
-            this.player2.clickCard(this.wendamyr);
-
-            this.completeSetup();
-
-            this.selectFirstPlayer(this.player2);
+            revealPlot(this);
+            this.player2.clickCard(this.edricDayne);
         });
 
-        describe('when a plot when revealed targets a lord character', function () {
-            beforeEach(function () {
-                this.player2.clickCard(this.edric);
-            });
+        it('returns to your hand and cancels those effects', function () {
+            this.player1.triggerAbility(this.lordProtectorsRetainer);
 
-            it("should prompt to trigger Lord Protector's Retainer", function () {
-                expect(this.player1).toAllowAbilityTrigger("Lord Protector's Retainer");
-            });
-
-            describe("and when Lord Protector's Retainer is used to cancel the ability", function () {
-                beforeEach(function () {
-                    this.player1.triggerAbility("Lord Protector's Retainer");
-                });
-
-                it("should be returned to it's owners hand", function () {
-                    expect(this.retainer.location).toBe('hand');
-                });
-
-                it('should cancel the plot when revealed', function () {
-                    expect(this.edric.kneeled).toBe(false);
-                });
-            });
+            expect(this.lordProtectorsRetainer.location).toBe('hand');
+            expect(this.edricDayne.kneeled).toBe(false);
+            expect(this.houseMaester.kneeled).toBe(false);
+            expect(this.player2).isReadyToTakeAction();
         });
 
-        describe('when intimidate targets a lord character', function () {
-            beforeEach(function () {
-                this.player2.clickCard(this.edric);
-                //pass plot cancel
-                this.player1.clickPrompt('Pass');
-                //stand edric back up
-                this.player1.clickCard(this.edric);
+        it('can be declined', function () {
+            this.player1.clickPrompt('Pass');
 
-                this.completeMarshalPhase();
-                this.unopposedChallenge(this.player2, 'power', this.victarion);
-                this.player2.clickPrompt('Apply Claim');
-                this.player2.clickCard(this.edric);
-            });
+            expect(this.lordProtectorsRetainer.location).toBe('play area');
+            expect(this.edricDayne.kneeled).toBe(true);
+            expect(this.houseMaester.kneeled).toBe(false);
+            expect(this.player2).isReadyToTakeAction();
+        });
+    });
 
-            it("should prompt to trigger Lord Protector's Retainer", function () {
-                expect(this.player1).toAllowAbilityTrigger("Lord Protector's Retainer");
-            });
-
-            describe("and when Lord Protector's Retainer is used to cancel the ability", function () {
-                beforeEach(function () {
-                    this.player1.triggerAbility("Lord Protector's Retainer");
-                });
-
-                it('should cancel the intimidate keyword', function () {
-                    expect(this.edric.kneeled).toBe(false);
-                });
-            });
+    describe('when the only chosen character is not a Lord or Lady', function () {
+        beforeEach(function () {
+            revealPlot(this);
+            this.player2.clickCard(this.houseMaester);
         });
 
-        describe('when stealth targets a lord character', function () {
-            beforeEach(function () {
-                this.player2.clickCard(this.edric);
-                //pass plot cancel
-                this.player1.clickPrompt('Pass');
-                //stand edric back up
-                this.player1.clickCard(this.edric);
-
-                this.completeMarshalPhase();
-
-                this.player2.clickPrompt('power');
-                this.player2.clickCard(this.wendamyr, 'play area');
-                this.player2.clickPrompt('Done');
-                this.player2.clickCard(this.edric);
-            });
-
-            it("should prompt to trigger Lord Protector's Retainer", function () {
-                expect(this.player1).toAllowAbilityTrigger("Lord Protector's Retainer");
-            });
-
-            describe("and when Lord Protector's Retainer is used to cancel the ability", function () {
-                beforeEach(function () {
-                    this.player1.triggerAbility("Lord Protector's Retainer");
-                });
-
-                it('should cancel the stealth keyword', function () {
-                    expect(this.edric.bypassedByStealth).toBe(false);
-                });
-            });
+        it('does not cancel the effects', function () {
+            expect(this.player1).not.toAllowAbilityTrigger(this.lordProtectorsRetainer);
+            expect(this.houseMaester.kneeled).toBe(true);
+            expect(this.edricDayne.kneeled).toBe(false);
+            expect(this.lordProtectorsRetainer.location).toBe('play area');
+            expect(this.player2).isReadyToTakeAction();
         });
     });
 });

@@ -20,7 +20,7 @@ describe('Filthy Accusations', function () {
             });
 
             this.player1.selectPlot('Filthy Accusations');
-            this.player2.selectPlot('A Noble Cause');
+            this.player2.selectPlot('Filler Plot');
             this.selectFirstPlayer(this.player1);
         });
 
@@ -67,7 +67,7 @@ describe('Filthy Accusations', function () {
             });
 
             this.player1.selectPlot('Filthy Accusations');
-            this.player2.selectPlot('A Noble Cause');
+            this.player2.selectPlot('Filler Plot');
             this.selectFirstPlayer(this.player1);
         });
 

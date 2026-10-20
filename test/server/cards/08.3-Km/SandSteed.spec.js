@@ -42,7 +42,7 @@ describe('Sand Steed', function () {
             });
 
             context.completeChallengesPhase();
-            context.player2.selectPlot('A Noble Cause');
+            context.player2.selectPlot('Filler Plot');
             context.selectFirstPlayer(context.player1);
         }
 
