@@ -801,6 +801,11 @@ this.interrupt({
 });
 ```
 
+An interrupt whose trigger says "would" and that is not a save or cancel declares `would: true`,
+so it is offered before forced interrupts (Rules Reference: Triggering Condition). The
+[wouldInterrupts.spec.js](../test/server/tools/wouldInterrupts.spec.js) check fails if a card's
+declarations don't match its text.
+
 In other cases, abilities contain the word 'instead' to indicate that the event will not be cancelled, but the normal effect will be replaced. In these cases, the `context.replaceHandler` method can be used to replace the effect. It must be passed a function that will execute instead of the normal handler.
 
 ```javascript

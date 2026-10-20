@@ -1,28 +1,16 @@
 import PromptedTriggeredAbility from './promptedtriggeredability.js';
 
-function isWouldInterrupt(card, properties) {
-    if (properties.would !== undefined) {
-        return !!properties.would;
+function interruptType(properties) {
+    if (properties.canCancel) {
+        return 'cancelinterrupt';
     }
 
-    const text = card.cardData?.text || '';
-    const parts = text.split(/<b>\s*Interrupt:\s*<\/b>/i);
-    if (parts.length !== 2) {
-        return false;
-    }
-
-    const clause = parts[1].split(/<b>/i)[0];
-    return /\bwould\b/i.test(clause);
+    return properties.would ? 'wouldinterrupt' : 'interrupt';
 }
 
 class CardInterrupt extends PromptedTriggeredAbility {
     constructor(game, card, properties) {
-        const eventType = properties.canCancel
-            ? 'cancelinterrupt'
-            : isWouldInterrupt(card, properties)
-              ? 'wouldinterrupt'
-              : 'interrupt';
-        super(game, card, eventType, properties);
+        super(game, card, interruptType(properties), properties);
     }
 }
 

@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Lady extends DrawCard {
     setupCardAbilities(ability) {
@@ -8,6 +9,7 @@ class Lady extends DrawCard {
             event.card !== this &&
             (event.card.hasTrait('Direwolf') || event.card.name === 'Sansa Stark');
         this.interrupt({
+            canCancel: true,
             when: {
                 onCharacterKilled: leftPlayCondition,
                 onCardDiscarded: leftPlayCondition,
@@ -17,15 +19,11 @@ class Lady extends DrawCard {
                 onCardPutIntoShadows: leftPlayCondition
             },
             cost: ability.costs.killSelf(),
-            handler: (context) => {
-                context.event.saveCard();
-                this.game.addMessage(
-                    '{0} kills {1} to save {2}',
-                    context.player,
-                    this,
-                    context.event.card
-                );
-            }
+            message: {
+                format: '{player} kills {source} to save {card}',
+                args: { card: (context) => context.event.card }
+            },
+            gameAction: GameActions.saveCard((context) => ({ event: context.event }))
         });
     }
 }

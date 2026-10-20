@@ -34,9 +34,12 @@ the ongoing work, and it was not part of this batch.
   handler does not run. Choosing zero of "any number" is that unsuccessful path, not a cancel.
   A prevented cost ends initiation: the card is not played and the limit does not increment.
   [AbilityResolution.spec.js](../test/server/gamesteps/AbilityResolution.spec.js).
-- Interrupt order is cancel, duplicate saves, "would", forced, then other interrupts. A card with
-  exactly one Interrupt clause containing "would" is classified automatically. A card with two
-  Interrupt clauses is not; set `would` on the ability. No spec asserts that order.
+- Interrupt order is cancel, duplicate saves, "would", forced, then other interrupts
+  [InterruptOrder.spec.js](../test/server/gamesteps/InterruptOrder.spec.js). Saves and cancels
+  use `canCancel: true`. Any other interrupt whose trigger says "would" declares `would: true`;
+  the engine does not read card text for this.
+  [wouldInterrupts.spec.js](../test/server/tools/wouldInterrupts.spec.js) checks each
+  declaration against the card text.
 - Marshaling is an action window. The active player marshals on their turn. With strict windows
   on, every other player is offered an action in player order. With strict windows off, a player
   who has not set the marshaling window as a stop is skipped.
@@ -85,10 +88,9 @@ not already decided.
 4. Five catalogued events have no engine spec: `onAddedToChallenge`, `onBeforeDeckSearch`,
    `onDupeEntersPlay`, `onLookAtShadows`, `onTokenDiscarded`. `onCardsDrawn` from `DrawSpecific`
    has no `amount`.
-5. A spec that asserts "would" interrupts resolve before forced interrupts.
-6. Every state change goes through a `GameAction`. Manual corrections (`changeStat`, `/power`,
+5. Every state change goes through a `GameAction`. Manual corrections (`changeStat`, `/power`,
    `/token`) stay plain corrections and raise no events.
-7. The client showing why an action is unavailable. Server reasons already exist.
+6. The client showing why an action is unavailable. Server reasons already exist.
 
 These are decided and should stay as they are until someone asks:
 

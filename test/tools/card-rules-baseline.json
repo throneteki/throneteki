@@ -3586,9 +3586,6 @@
         "add-message": 1,
         "legacy-helper": 1
     },
-    "server/game/cards/20-HMW/FamilyDutyHonor.js": {
-        "add-message": 1
-    },
     "server/game/cards/20-HMW/FirstInBattle.js": {
         "add-message": 1
     },
@@ -3753,9 +3750,6 @@
     "server/game/cards/22-BtB/Highgarden.js": {
         "add-message": 2,
         "legacy-helper": 1
-    },
-    "server/game/cards/22-BtB/Lady.js": {
-        "add-message": 1
     },
     "server/game/cards/22-BtB/Pyke.js": {
         "add-message": 2,
