@@ -98,6 +98,10 @@ describe('ability messages', function () {
             expect(this.septaMordane.location).toBe('play area');
             expect(lines).toContain('player1 uses Bastard in Hiding');
             expect(lines.some((line) => line.includes('to kill Septa Mordane'))).toBe(false);
+            expect(this.game.logEntries.at(-1)).toEqual(
+                expect.objectContaining({ type: 'abilityInitiated' })
+            );
+            expect(this.game.logEntries.at(-1).source).toBe(this.bastardInHiding);
         });
     });
 
@@ -129,6 +133,13 @@ describe('ability messages', function () {
             expect(this.houseDayneKnight.location).toBe('dead pile');
             expect(lines).toContain('player1 uses Bastard in Hiding and kills House Dayne Knight');
             expect(lines.some((line) => line.includes('kills Septa Mordane'))).toBe(false);
+
+            const entry = this.game.logEntries.findLast((entry) => entry.type === 'ability');
+            const killed = entry.results
+                .filter((result) => result.event === 'onCharacterKilled')
+                .map((result) => result.card);
+            expect(entry.source).toBe(this.bastardInHiding);
+            expect(killed).toEqual([this.houseDayneKnight]);
             expect(this.player1).isReadyToTakeAction();
         });
     });

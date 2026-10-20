@@ -241,6 +241,18 @@ expect(this.player1.player.faction.power).toBe(2);
 expect(this.player1.player.hand.length).toBe(3);
 ```
 
+To check what an ability did, rather than how it was worded, use the structured log. Each ability
+message adds an entry to `this.game.logEntries`: `{ type, player, source, targets, results }`,
+where `type` is `'ability'` for the full message or `'abilityInitiated'` for the plain "uses/plays"
+line of an ability that was cancelled or prevented, and `results` lists the events that resolved
+(`{ event, card, player, amount }`). Compare cards with `toBe`, not `toEqual`.
+
+```javascript
+const entry = this.game.logEntries.findLast((entry) => entry.type === 'ability');
+expect(entry.source).toBe(this.bastardInHiding);
+expect(entry.results.map((result) => result.card)).toContain(this.houseDayneKnight);
+```
+
 `isReadyToTakeAction` checks there is no open ability window and that the player has the normal
 prompt for the phase: "Select a plot", "Marshal your cards", the challenge choice, or
 "Initiate an action".

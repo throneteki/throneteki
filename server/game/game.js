@@ -73,6 +73,9 @@ class Game extends EventEmitter {
         };
         this.allCards = [];
         this.pendingAbilityMessages = [];
+        // Structured entries for abilities, alongside the chat messages. Kept on the server: they
+        // hold card references regardless of what each player can see.
+        this.logEntries = [];
         this.attachmentValidityCheck = new AttachmentValidityCheck(this);
         this.effectEngine = new EffectEngine(this);
         this.flags = new ReferenceCountedSetProperty();
@@ -293,6 +296,18 @@ class Game extends EventEmitter {
         context.messageLogged = 'plain';
         const verb = context.source.getPrintedType() === 'event' ? 'plays' : 'uses';
         this.gameChat.addMessage('{0} {1} {2}', context.player, verb, context.source);
+        this.addLogEntry('abilityInitiated', context);
+    }
+
+    addLogEntry(type, context, { results = [] } = {}) {
+        this.logEntries.push({
+            type,
+            player: context.player,
+            source: context.source,
+            targets: context.targets ? context.targets.getTargets() : [],
+            results,
+            message: this.gameChat.messages.length - 1
+        });
     }
 
     get messages() {

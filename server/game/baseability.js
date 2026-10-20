@@ -343,6 +343,32 @@ class BaseAbility {
 
     outputMessage(context) {
         this.message.output(context.game, context);
+
+        if (this.hasMessage && this.isCardAbility()) {
+            context.game.addLogEntry('ability', context, {
+                results: BaseAbility.describeResults(context.gameActionResult)
+            });
+        }
+    }
+
+    /**
+     * The events an ability's game action resolved, for the structured log: one entry per event
+     * that happened, with the card, player and amount it applied to.
+     */
+    static describeResults(gameActionResult) {
+        if (!gameActionResult || !gameActionResult.event.getConcurrentEvents) {
+            return [];
+        }
+
+        return gameActionResult.event
+            .getConcurrentEvents()
+            .filter((event) => event.name && !event.name.startsWith('_') && !event.cancelled)
+            .map((event) => ({
+                event: event.name,
+                card: event.card,
+                player: event.player,
+                amount: event.amount !== undefined ? event.amount : event.power
+            }));
     }
 
     reportsResults() {

@@ -229,9 +229,11 @@ line ([AbilityMessages.spec.js](../test/server/AbilityMessages.spec.js)). `{game
 from the events that actually resolved (`GameAction.resultMessage`): simultaneous actions list
 only the parts that happened, and gold gained reports the amount applied. Messages written out in
 the format (`'{player} uses {source} to kill {target}'`) are still intent, but are logged only
-when the effect happens; moving them to `{gameAction}` is part of phase 5. Still to do: result
-messages for the other capped actions (draw, tokens, power), structured log entries, and
-templates for card wording._
+when the effect happens; moving them to `{gameAction}` is part of phase 5. Power gained and cards drawn also report what resolved. Abilities add structured entries to
+`game.logEntries` (`{ type, player, source, targets, results }`), kept on the server because they
+hold card references whatever each player can see; specs can assert on them instead of text.
+Still to do: translation (the text is still built from English formats), and moving card
+wording to `{gameAction}` as cards are migrated in phase 5._
 
 Keyteki builds an ability's message before it resolves, so the log can claim things that did not
 happen: a kill that was cancelled, a card that was saved, an amount that was capped. Instead:
