@@ -114,26 +114,23 @@ These were tried and reverted, or left alone on purpose.
 - `canCancel: false` on pile-order prompts. Done with nothing selected still cancels, and the
   cards use the default order. Setting it false broke about 24 tests.
 - Deleting `server/game/gamesteps/marshaling/MarshalCardsPrompt.js`. The window is a separate step.
-- The Meereen specs under `test/server/cards/11.2-TMoW` and `test/server/cards/17.1-R`. They were
-  edited and then restored. A non-persistent player target is dropped when that player stops being
-  the source's controller. A card target is not dropped for a controller mismatch. Nightmares
-  depends on that.
+- A lasting effect on a player stays with that player when its source changes control (Rules
+  Reference: Lasting Effects).
+  [LastingEffectPlayerTarget.spec.js](../test/server/gamesteps/LastingEffectPlayerTarget.spec.js).
+  Meereen names the player who used it and returns only cards that player owns, which is the
+  ruling its spec cites.
 - Replacing Filler Plot with A Noble Cause as the default plot. House Maester filler stays 20
   copies of `03041`. At the Gates draw-deck assertions use `.not.toBe('play area')`.
 - `GameActions.switch` already exists. Do not add it again.
 
 ## Traps in the code that just landed
 
-- Each-player targets share one `AbilityTarget.selector`. `buildPlayerSelection` stores the
-  constrained selector on the selection, and `resolveAction` restores it. Without that, only the
-  last choosing player can select. Unsuccessful resolution runs only when
-  `context.legalTargetsAtInitiation` has that target. Unit tests have no snapshot and still prompt.
+- An ability's target builds a fresh selector each time it is chosen, limited to the cards that
+  were legal when the ability initiated. Unit tests have no snapshot and still prompt.
 - `context.opponent` is not a getter. A snapshot is skipped when any choosing player is missing.
 - A faction card is not in the play area. `addEffect` on a faction card with the default location
   does nothing. Use an in-play card, or `location: 'any'`.
-- `clearInvalidTargets` removes a non-persistent card only when it left `targetLocation`, and a
-  non-persistent player only when `passesTargetController` fails. Do not apply that player check
-  to card targets.
+- `clearInvalidTargets` removes a target of a lasting effect only when it left `targetLocation`.
 - Burn specs use a real burn (Dracarys! on a defender), not a hand-set STR modifier.
 - Calling `setupTest` twice in one test does not replace a card name already on the harness. The
   property still points at the first game's card.

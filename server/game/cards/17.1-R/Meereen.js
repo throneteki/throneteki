@@ -12,6 +12,8 @@ class Meereen extends DrawCard {
                         onCardLeftPlay: (event) => event.card === this,
                         onPhaseEnded: () => true
                     },
+                    targetController: 'any',
+                    match: (player) => player === context.player,
                     effect: ability.effects.removeCardsFromHand()
                 }));
 

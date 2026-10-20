@@ -1871,7 +1871,9 @@ const Effects = {
             },
             unapply: function (player, context) {
                 player.discardCards(player.hand);
-                for (const card of context.source.underneath) {
+                for (const card of context.source.underneath.filter(
+                    (card) => card.owner === player
+                )) {
                     player.moveCard(card, 'hand');
                 }
                 context.game.addMessage(

@@ -154,9 +154,6 @@ describe('Meereen', function () {
                 this.player2.triggerAbility(this.dagmer);
                 this.player2.clickCard(this.meereen);
 
-                // Skip order of discarded cards
-                this.player1.clickPrompt('Done');
-
                 // Stand Meereen and place player 2 cards under Meereen
                 this.player2.clickCard(this.meereen);
                 this.player2.clickMenu(this.meereen, 'Place hand facedown and draw 3');
@@ -165,6 +162,7 @@ describe('Meereen', function () {
                 this.completeChallengesPhase();
 
                 // Skip order of discarded cards
+                this.player1.clickPrompt('Done');
                 this.player2.clickPrompt('Done');
             });
 

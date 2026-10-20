@@ -248,10 +248,7 @@ class Effect {
 
         for (let target of [...this.targets]) {
             if (this.duration !== 'persistent') {
-                if (
-                    this.targetLeftPlay(target) ||
-                    (this.targetType === 'player' && !this.passesTargetController(target))
-                ) {
+                if (this.targetLeftPlay(target)) {
                     this.removeTarget(target);
                 }
                 continue;
