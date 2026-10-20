@@ -6,7 +6,13 @@ class PlaceAsDuplicate extends GameAction {
         super('placeAsDuplicate');
     }
 
-    message({ card, parent }) {
+    message({ card, parent, facedown = false }) {
+        if (facedown) {
+            return Message.fragment('places a facedown card on {parent} as a duplicate', {
+                parent
+            });
+        }
+
         return Message.fragment('places {card} on {parent} as a duplicate', { card, parent });
     }
 

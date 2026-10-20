@@ -316,10 +316,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/01-Core/Summer.js": {
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/01-Core/Sunspear.js": {
         "add-message": 1
     },
@@ -808,9 +804,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/03-WotN/WolvesOfTheNorth.js": {
-        "add-message": 1
-    },
     "server/game/cards/04.1-AtSK/Arry.js": {
         "legacy-helper": 1,
         "add-message": 1
@@ -839,10 +832,6 @@
         "add-message": 1
     },
     "server/game/cards/04.1-AtSK/Riverrun.js": {
-        "add-message": 1
-    },
-    "server/game/cards/04.1-AtSK/RobbStark.js": {
-        "legacy-helper": 1,
         "add-message": 1
     },
     "server/game/cards/04.1-AtSK/RubyOfRhllor.js": {
@@ -1845,9 +1834,6 @@
         "add-message": 1
     },
     "server/game/cards/08.4-FotOG/HightowerSpy.js": {
-        "add-message": 1
-    },
-    "server/game/cards/08.4-FotOG/Nymeria.js": {
         "add-message": 1
     },
     "server/game/cards/08.4-FotOG/ObsidianArrows.js": {

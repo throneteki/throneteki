@@ -1,40 +1,41 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Nymeria extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Add Direwolfs to challenge',
-            condition: () => this.isStarkCardParticipatingInChallenge(),
+            condition: (context) =>
+                context.player.anyCardsInPlay(
+                    (card) => card.isParticipating() && card.isFaction('stark')
+                ),
             cost: [
                 ability.costs.kneelSelf(),
                 ability.costs.kneelAny(
-                    (card) =>
+                    (card, context) =>
                         card.hasTrait('Direwolf') &&
                         card.getType() === 'character' &&
-                        card !== this,
+                        card !== context.source,
                     true
                 )
             ],
-            handler: (context) => {
-                let direwolvesToAdd = context.getCostValuesFor('kneel');
-
-                for (let card of direwolvesToAdd) {
-                    this.game.currentChallenge.addParticipantToSide(context.player, card);
-                }
-
-                this.game.addMessage(
-                    '{0} kneels {1} to add them to the challenge',
-                    context.player,
-                    direwolvesToAdd
-                );
-            }
+            message: {
+                format: '{player} kneels {direwolves} to have them participate in the challenge on their side',
+                args: { direwolves: (context) => this.direwolves(context) }
+            },
+            gameAction: GameActions.simultaneously((context) =>
+                this.direwolves(context).map((card) =>
+                    GameActions.addToChallenge({ card, player: context.player })
+                )
+            )
         });
     }
 
-    isStarkCardParticipatingInChallenge() {
-        return this.controller.anyCardsInPlay((card) => {
-            return card.isParticipating() && card.isFaction('stark');
-        });
+    direwolves(context) {
+        return [
+            context.source,
+            ...context.getCostValuesFor('kneel').filter((card) => card !== context.source)
+        ];
     }
 }
 

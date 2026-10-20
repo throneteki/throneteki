@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Summer extends DrawCard {
     setupCardAbilities(ability) {
@@ -12,31 +13,15 @@ class Summer extends DrawCard {
                 onCardEntersPlay: (event) => event.card === this
             },
             target: {
-                cardCondition: (card) => this.cardCondition(card)
+                cardCondition: (card, context) =>
+                    ['dead pile', 'discard pile'].includes(card.location) &&
+                    card.controller === context.player &&
+                    card.getType() === 'character' &&
+                    card.isFaction('stark') &&
+                    card.getPrintedStrength() <= 2
             },
-            handler: (context) => {
-                let oldLocation = context.target.location;
-
-                this.controller.moveCard(context.target, 'hand');
-                this.game.addMessage(
-                    '{0} uses {1} to move {2} from their {3} to their hand',
-                    this.controller,
-                    this,
-                    context.target,
-                    oldLocation
-                );
-            }
+            gameAction: GameActions.returnCardToHand((context) => ({ card: context.target }))
         });
-    }
-
-    cardCondition(card) {
-        return (
-            (card.location === 'dead pile' || card.location === 'discard pile') &&
-            card.controller === this.controller &&
-            card.getType() === 'character' &&
-            card.isFaction('stark') &&
-            card.getPrintedStrength() <= 2
-        );
     }
 }
 

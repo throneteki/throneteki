@@ -86,6 +86,7 @@ class MoveCardEventGenerator {
         let params = {
             card: card,
             allowSave: allowSave,
+            originalLocation: card.location,
             snapshotName: 'cardStateWhenReturned'
         };
         const returnEvent = this.event('onCardReturnedToHand', params, (event) => {

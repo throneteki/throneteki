@@ -71,3 +71,39 @@ describe('Arya Stark (Core)', function () {
         });
     });
 });
+
+describe('Arya Stark (Core), when marshaled', function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'marshal',
+            player1: {
+                hand: ['Arya Stark (Core)'],
+                drawDeck: ['Hedge Knight']
+            }
+        });
+
+        this.player1.clickCard(this.aryaStark);
+    });
+
+    it('has no [military] icon without a duplicate', function () {
+        this.player1.clickPrompt('Pass');
+
+        expect(this.aryaStark.dupes).toHaveLength(0);
+        expect(this.aryaStark.hasIcon('military')).toBe(false);
+        expect(this.hedgeKnight.location).toBe('draw deck');
+        expect(this.player1).isReadyToTakeAction();
+    });
+
+    it('places the top card of the deck on her facedown as a duplicate', function () {
+        this.player1.triggerAbility(this.aryaStark);
+
+        expect(this.aryaStark.dupes).toContain(this.hedgeKnight);
+        expect(this.hedgeKnight.facedown).toBe(true);
+        expect(this.aryaStark.hasIcon('military')).toBe(true);
+        expect(this.game.getPlainTextLog()).toContain(
+            'player1 uses Arya Stark and places a facedown card on Arya Stark as a duplicate'
+        );
+        expect(this.game.getPlainTextLog()).not.toContain('Hedge Knight');
+        expect(this.player1).isReadyToTakeAction();
+    });
+});

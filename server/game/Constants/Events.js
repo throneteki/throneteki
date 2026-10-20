@@ -129,7 +129,12 @@ export const Events = Object.freeze({
         }
     },
     onCardReturnedToHand: {
-        params: { allowSave: 'boolean', card: 'DrawCard', snapshotName: 'string' }
+        params: {
+            allowSave: 'boolean',
+            card: 'DrawCard',
+            originalLocation: 'string',
+            snapshotName: 'string'
+        }
     },
     onCardRevealed: {
         params: {

@@ -5,11 +5,12 @@ import DiscardTopCards from '../../../server/game/GameActions/DiscardTopCards.js
 import DrawCards from '../../../server/game/GameActions/DrawCards.js';
 import GainGold from '../../../server/game/GameActions/GainGold.js';
 import GainPower from '../../../server/game/GameActions/GainPower.js';
-import Message from '../../../server/game/Message.js';
 import MovePower from '../../../server/game/GameActions/MovePower.js';
 import NullEvent from '../../../server/game/NullEvent.js';
+import ReturnCardToHand from '../../../server/game/GameActions/ReturnCardToHand.js';
 import ReturnGoldToTreasury from '../../../server/game/GameActions/ReturnGoldToTreasury.js';
 import SimultaneousActions from '../../../server/game/GameActions/SimultaneousActions.js';
+import { messageText } from '../../helpers/messageText.js';
 
 class NamedAction extends GameAction {
     constructor(name) {
@@ -49,22 +50,22 @@ describe('game action result messages', function () {
         it('reports the amount actually gained', function () {
             const event = new Event('onGoldGained', { amount: 2, desiredAmount: 5, player: {} });
 
-            expect(Message.format('{0}', GainGold.resultMessage({ amount: 5 }, event))).toEqual([
-                'gains ',
-                2,
-                ' gold'
-            ]);
+            expect(messageText(GainGold.resultMessage({ amount: 5 }, event))).toBe('gains 2 gold');
         });
     });
 
     describe('gaining power', function () {
         it('reports the power actually gained', function () {
-            const card = { getType: () => 'character', getPowerToGain: () => 0 };
+            const card = {
+                name: 'Hedge Knight',
+                getType: () => 'character',
+                getPowerToGain: () => 0
+            };
             const event = new Event('onCardPowerGained', { card, power: 1, reason: 'ability' });
 
-            expect(
-                Message.format('{0}', GainPower.resultMessage({ card, amount: 3 }, event))
-            ).toEqual(['gains ', 1, ' power on ', card]);
+            expect(messageText(GainPower.resultMessage({ card, amount: 3 }, event))).toBe(
+                'gains 1 power on Hedge Knight'
+            );
         });
     });
 
@@ -80,35 +81,27 @@ describe('game action result messages', function () {
                 source: {}
             });
 
-            expect(Message.format('{0}', DrawCards.resultMessage({ amount: 3 }, event))).toEqual([
-                'draws ',
-                '1 card'
-            ]);
+            expect(messageText(DrawCards.resultMessage({ amount: 3 }, event))).toBe('draws 1 card');
         });
     });
 
     describe('power and gold', function () {
         it('reports the power actually discarded and moved', function () {
-            const card = {};
+            const card = { name: 'Hedge Knight' };
             const discarded = new Event('onCardPowerDiscarded', { card, power: 1 });
             const moved = new Event('onCardPowerMoved', { source: card, target: card, power: 2 });
 
-            expect(
-                Message.format('{0}', DiscardPower.resultMessage({ card, amount: 3 }, discarded))
-            ).toEqual(['discards ', '1 power', ' from ', card]);
-            expect(Message.format('{0}', MovePower.resultMessage({}, moved))).toEqual([
-                'moves ',
-                2,
-                ' power from ',
-                card,
-                ' to ',
-                card
-            ]);
+            expect(messageText(DiscardPower.resultMessage({ card, amount: 3 }, discarded))).toBe(
+                'discards 1 power from Hedge Knight'
+            );
+            expect(messageText(MovePower.resultMessage({}, moved))).toBe(
+                'moves 2 power from Hedge Knight to Hedge Knight'
+            );
         });
 
         it("names the player whose gold is returned when it isn't the ability's player", function () {
-            const player = {};
-            const opponent = {};
+            const player = { name: 'player1' };
+            const opponent = { name: 'player2' };
             const own = new Event('onGoldReturned', { player, amount: 1, desiredAmount: 2 });
             const other = new Event('onGoldReturned', {
                 player: opponent,
@@ -117,13 +110,11 @@ describe('game action result messages', function () {
             });
             const props = { context: { player } };
 
-            expect(Message.format('{0}', ReturnGoldToTreasury.resultMessage(props, own))).toEqual([
-                'returns ',
-                1,
-                ' gold to the treasury'
-            ]);
-            expect(Message.format('{0}', ReturnGoldToTreasury.resultMessage(props, other))).toEqual(
-                ['returns ', 1, ' of ', opponent, "'s gold to the treasury"]
+            expect(messageText(ReturnGoldToTreasury.resultMessage(props, own))).toBe(
+                'returns 1 gold to the treasury'
+            );
+            expect(messageText(ReturnGoldToTreasury.resultMessage(props, other))).toBe(
+                "returns 1 of player2's gold to the treasury"
             );
         });
     });
@@ -139,9 +130,25 @@ describe('game action result messages', function () {
                 source: {}
             });
 
+            expect(messageText(DiscardTopCards.resultMessage({ context: { player } }, event))).toBe(
+                'discards the top 2 cards of their deck'
+            );
+        });
+    });
+
+    describe('returning a card to hand', function () {
+        it('reports the location the card was returned from', function () {
+            const player = {};
+            const card = { name: 'Hedge Knight', controller: player, location: 'hand' };
+            const event = new Event('onCardReturnedToHand', {
+                allowSave: true,
+                card,
+                originalLocation: 'dead pile'
+            });
+
             expect(
-                Message.format('{0}', DiscardTopCards.resultMessage({ context: { player } }, event))
-            ).toEqual(['discards the top ', '2 cards', ' of their deck']);
+                messageText(ReturnCardToHand.resultMessage({ card, context: { player } }, event))
+            ).toBe('returns Hedge Knight from their dead pile to their hand');
         });
     });
 

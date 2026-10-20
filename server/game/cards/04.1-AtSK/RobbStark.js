@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class RobbStark extends DrawCard {
     setupCardAbilities(ability) {
@@ -11,43 +12,28 @@ class RobbStark extends DrawCard {
         this.action({
             title: 'Stand and remove a character from the challenge',
             limit: ability.limit.perChallenge(1),
-            condition: () => this.isParticipatingInMilitaryChallenge(),
+            condition: (context) =>
+                this.game.isDuringChallenge({ challengeType: 'military' }) &&
+                context.source.isParticipating(),
             target: {
-                cardCondition: (card) => this.isParticipatingNonKing(card)
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    !card.hasTrait('King') &&
+                    card.isParticipating()
             },
-            handler: (context) => {
-                context.target.controller.standCard(context.target);
-                this.game.currentChallenge.removeFromChallenge(context.target);
-
-                this.game.addMessage(
-                    '{0} uses {1} to stand {2} and remove them from the challenge',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} uses {source} to stand {target} and remove them from the challenge',
+            gameAction: GameActions.simultaneously([
+                GameActions.standCard((context) => ({ card: context.target })),
+                GameActions.removeFromChallenge((context) => ({ card: context.target }))
+            ])
         });
-    }
-
-    isParticipatingInMilitaryChallenge() {
-        return this.game.isDuringChallenge({ challengeType: 'military' }) && this.isParticipating();
-    }
-
-    isParticipatingNonKing(card) {
-        return (
-            card.location === 'play area' &&
-            card.getType() === 'character' &&
-            !card.hasTrait('King') &&
-            card.isParticipating()
-        );
     }
 
     numberOfLoyalChars() {
-        let cards = this.controller.filterCardsInPlay((card) => {
-            return card.isLoyal() && card.getType() === 'character';
-        });
-
-        return cards.length;
+        return this.controller.getNumberOfCardsInPlay(
+            (card) => card.isLoyal() && card.getType() === 'character'
+        );
     }
 }
 
