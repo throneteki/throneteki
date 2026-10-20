@@ -96,6 +96,58 @@ describe('cancel windows for a player without the timer', function () {
         });
     });
 
+    describe('in a reaction window', function () {
+        function setupReaction(context, player2Hand) {
+            context.setupTest({
+                phase: 'marshal',
+                player2: { gold: 5, hand: player2Hand }
+            });
+
+            context.game.possibleResponders = new PossibleResponders(context.game, {
+                cardData: [deckBuilder.getCard("Lysa's Letter")]
+            });
+            context.scheduled = [];
+            context.game.schedule = (delay, callback) =>
+                context.scheduled.push({ delay, callback });
+
+            context.player1.clickPrompt('Done');
+            context.player2.clickPrompt('Done');
+
+            // The first player could hold the reaction too, so they consider the window first.
+            expect(context.scheduled).toHaveLength(1);
+            context.scheduled.shift().callback();
+        }
+
+        const ReactionView = { prompt: 'Waiting for opponent\n', opponentActive: true };
+
+        describe('when they hold a reaction', function () {
+            beforeEach(function () {
+                setupReaction(this, ["Lysa's Letter"]);
+            });
+
+            it('prompts them to use it', function () {
+                expect(this.player2).toAllowAbilityTrigger("Lysa's Letter");
+                expect(this.scheduled).toHaveLength(0);
+                expect(opponentView(this)).toEqual(ReactionView);
+            });
+        });
+
+        describe('when they hold none', function () {
+            beforeEach(function () {
+                setupReaction(this, []);
+            });
+
+            it('gives them a fake wait that looks the same to their opponent', function () {
+                expect(this.scheduled).toHaveLength(1);
+                expect(opponentView(this)).toEqual(ReactionView);
+
+                this.scheduled.shift().callback();
+
+                expect(this.player1).isReadyToTakeAction();
+            });
+        });
+    });
+
     describe('when no card they could hold might cancel the event', function () {
         beforeEach(function () {
             setup(this, { pool: ['Hear Me Roar!'] });

@@ -162,8 +162,8 @@ depend on information their opponents can see.**
 
 How that works:
 
-_Steps 1 to 4 and 6 are done for cancel windows: every `cancelinterrupt` window, and interrupts
-to claim being applied. [PossibleResponders.js](../server/game/PossibleResponders.js) answers
+_Steps 1 to 4 and 6 are done for every prompted window: cancel interrupts, interrupts and
+reactions. [PossibleResponders.js](../server/game/PossibleResponders.js) answers
 "could this player respond from a hidden zone" from public information
 ([specs](../test/server/PossibleResponders.spec.js) show the answer doesn't depend on the hand,
 and that every card in every faction's pool builds and checks without errors).
@@ -172,10 +172,10 @@ without the cancel timer a fake wait when a card they could hold might respond: 
 with nothing to choose and a Pass button, passed for them after a random 1 to 3 seconds
 ([PossibleResponderWindow.spec.js](../test/server/gamesteps/PossibleResponderWindow.spec.js)
 checks their opponent sees the same thing either way). Players with the timer keep the timer
-prompt. Reaction and other interrupt windows are not covered: nearly every event has some
-possible reaction in a faction's pool, so fake waits there would slow every game down. Format
-legality isn't applied to the pool, which only makes it larger. Still to do: decide whether, and
-how, to cover reactions; the client could show fake waits more clearly._
+prompt. This is on trial: nearly every event has some possible reaction in a faction's pool, so fake
+waits may slow games down noticeably, and the scope may be cut back after feedback. Format
+legality isn't applied to the pool, which only makes it larger. Still to do: review the scope after
+feedback; the client could show fake waits more clearly._
 
 1. **Possible responders.** At game start, build each player's candidate pool: every card their deck
    could legally contain (faction, neutral, agenda-allowed cards, the format's legal pool) that has an
@@ -266,12 +266,12 @@ likely to cause regressions.
 
 ## Decisions
 
-| Date       | Decision                                                                                                                                |
-| ---------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| 2026-10-19 | A card counts as verified when it has a passing spec that follows the test conventions.                                                 |
-| 2026-10-19 | Hidden information: the priority is not revealing that a player holds a cancel. Window decisions use public information only (phase 2). |
-| 2026-10-19 | Tests move from jasmine to vitest, modelled on keyteki's harness. Target: a spec for every implemented card.                            |
-| 2026-10-19 | Keyteki is a reference, not a template. Messages in particular are built from results, not intent.                                      |
-| 2026-10-20 | Manual corrections (`/power`, `/token`, stat changes) are plain corrections and raise no game events.                                   |
-| 2026-10-20 | Attachments and duplicates removed because their card left play can't be saved (Rules Reference: Leaves Play, Save).                    |
-| 2026-10-20 | Fake waits cover cancel windows only, last a random 1 to 3 seconds, and show a Pass button. Players using the cancel timer keep it.     |
+| Date       | Decision                                                                                                                                                                                                          |
+| ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-10-19 | A card counts as verified when it has a passing spec that follows the test conventions.                                                                                                                           |
+| 2026-10-19 | Hidden information: the priority is not revealing that a player holds a cancel. Window decisions use public information only (phase 2).                                                                           |
+| 2026-10-19 | Tests move from jasmine to vitest, modelled on keyteki's harness. Target: a spec for every implemented card.                                                                                                      |
+| 2026-10-19 | Keyteki is a reference, not a template. Messages in particular are built from results, not intent.                                                                                                                |
+| 2026-10-20 | Manual corrections (`/power`, `/token`, stat changes) are plain corrections and raise no game events.                                                                                                             |
+| 2026-10-20 | Attachments and duplicates removed because their card left play can't be saved (Rules Reference: Leaves Play, Save).                                                                                              |
+| 2026-10-20 | Fake waits cover every prompted window for now (cancels, interrupts, reactions), to be reviewed after feedback. They last a random 1 to 3 seconds and show a Pass button. Players using the cancel timer keep it. |

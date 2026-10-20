@@ -25,7 +25,8 @@ describe('TriggeredAbilityWindow', function () {
         this.gameSpy = {
             getPlayersInFirstPlayerOrder: vi.fn(),
             promptForSelect: vi.fn(),
-            resolveAbility: vi.fn()
+            resolveAbility: vi.fn(),
+            getPossibleResponders: () => ({ couldRespond: () => false })
         };
         this.gameSpy.getPlayersInFirstPlayerOrder.mockReturnValue([
             this.player1Spy,

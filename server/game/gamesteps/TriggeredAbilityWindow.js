@@ -57,22 +57,13 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
 
     /**
      * Whether the player must appear to consider this window although they have nothing to use:
-     * a cancel window the timer doesn't cover, where a card they could hold might respond. Since
-     * that depends only on public information, a player who really holds a cancel looks the same.
+     * the timer doesn't cover it, and a card they could hold in a hidden zone might respond. Since
+     * that depends only on public information, a player who really holds one looks the same.
      */
     isPossibleResponder(player) {
         return (
-            this.isHiddenResponseWindow() &&
             !this.cancelTimer.isEnabled(player) &&
             this.game.getPossibleResponders().couldRespond(player, this.abilityType, this.event)
-        );
-    }
-
-    isHiddenResponseWindow() {
-        return (
-            this.abilityType === 'cancelinterrupt' ||
-            (this.abilityType === 'interrupt' &&
-                this.event.getConcurrentEvents().some((event) => event.name === 'onClaimApplied'))
         );
     }
 
