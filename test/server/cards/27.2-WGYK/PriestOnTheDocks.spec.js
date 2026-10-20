@@ -13,7 +13,7 @@ describe('Priest on the Docks', function () {
                     'Grey Cliffs',
                     'The Riverroad',
                     'Horn Hill (WGYK)',
-                    { card: 'Bastard in Hiding', attachments: ['Little Bird'] }
+                    { card: 'Bastard in Hiding', attachments: ['Little Bird (Core)'] }
                 ]
             }
         });

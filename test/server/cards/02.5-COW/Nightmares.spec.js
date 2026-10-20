@@ -5,7 +5,7 @@ describe('Nightmares', function () {
             player1: { gold: 1, hand: ['Nightmares'] },
             player2: {
                 inPlay: [
-                    { card: 'Hedge Knight', attachments: ['Little Bird'] },
+                    { card: 'Hedge Knight', attachments: ['Little Bird (Core)'] },
                     'Tumblestone Knight',
                     'The Roseroad'
                 ]

@@ -314,7 +314,8 @@ export function applySetupTest(options, ctx) {
     for (const key of PlayerKeys) {
         const deck = deckBuilder.buildDeck(
             options[key].faction || DefaultFaction,
-            deckCardNames(key, options)
+            deckCardNames(key, options),
+            { strictNames: true }
         );
         players[key].selectDeck(deck);
         claims[key] = new CardClaims(players[key]);

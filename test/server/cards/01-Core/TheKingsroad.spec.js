@@ -4,7 +4,7 @@ describe('The Kingsroad', function () {
             phase: 'marshal',
             player1: {
                 plot: 'A Noble Cause',
-                hand: ['Little Bird', 'Palace Spearman', 'Hedge Knight'],
+                hand: ['Little Bird (Core)', 'Palace Spearman', 'Hedge Knight'],
                 inPlay: ['The Kingsroad', 'Tumblestone Knight']
             },
             player2: {

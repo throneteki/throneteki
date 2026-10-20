@@ -350,8 +350,8 @@ describe('the SelectCardPrompt', function () {
                     expect(this.card3.selected).toBeFalsy();
                 });
 
-                it('should return false', function () {
-                    expect(this.prompt.onCardClicked(this.player, this.card3)).toBe(false);
+                it('should consume the click', function () {
+                    expect(this.prompt.onCardClicked(this.player, this.card3)).toBe(true);
                 });
             });
         });

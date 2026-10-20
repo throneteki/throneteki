@@ -17,7 +17,7 @@ describe('when a card leaves play', function () {
                         card: 'Septa Mordane',
                         dupes: 1,
                         attachments: [
-                            'Little Bird',
+                            'Little Bird (Core)',
                             { card: 'Crown of Gold (TRtW)', owner: 'player2' }
                         ]
                     }

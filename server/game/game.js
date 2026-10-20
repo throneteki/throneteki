@@ -526,6 +526,10 @@ class Game extends EventEmitter {
             return;
         }
 
+        if (card.location !== 'play area' && !['faction', 'agenda'].includes(card.getType())) {
+            return;
+        }
+
         if (!this.manualMode.allows(player)) {
             return;
         }

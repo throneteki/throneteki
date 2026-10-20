@@ -95,7 +95,7 @@ describe('Theodan the True, limit', function () {
             player1: {
                 plot: 'The New Gods',
                 gold: 5,
-                inPlay: ['Theodan the True', 'Devout Freerider', 'Magister Illyrio']
+                inPlay: ['Theodan the True', 'Devout Freerider', 'Magister Illyrio (Core)']
             },
             player2: {
                 inPlay: ['Palace Spearman', 'Bastard in Hiding']

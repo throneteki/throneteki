@@ -11,7 +11,7 @@ describe('Ser Gerris Drinkwater', function () {
                 },
                 player2: {
                     plot: 'A Song of Summer',
-                    plotDeck: ['Jousting Contest', 'A Feast for Crows']
+                    plotDeck: ['Jousting Contest (Core)', 'A Feast for Crows']
                 }
             });
 
@@ -82,7 +82,7 @@ describe('Ser Gerris Drinkwater', function () {
                 },
                 player2: {
                     plot: 'A Song of Summer',
-                    plotDeck: ['Jousting Contest', 'A Feast for Crows']
+                    plotDeck: ['Jousting Contest (Core)', 'A Feast for Crows']
                 }
             });
 

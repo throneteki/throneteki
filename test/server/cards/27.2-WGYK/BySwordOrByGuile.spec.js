@@ -6,7 +6,7 @@ describe('By Sword or By Guile', function () {
                 faction: 'targaryen',
                 gold: 1,
                 hand: ['By Sword or By Guile'],
-                inPlay: ['Viserion', 'Host of the Boneway', 'House Dayne Knight']
+                inPlay: ['Viserion (Core)', 'Host of the Boneway', 'House Dayne Knight']
             },
             player2: {
                 power: 3,

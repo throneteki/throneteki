@@ -43,11 +43,19 @@ export function attachFlow(context, options) {
  */
 export function addSetupTest(context, flowOptions = {}) {
     context.setupTest = (options = {}) => {
+        const gameOptions = { ...flowOptions.gameOptions, ...options.gameOptions };
         attachFlow(context, {
             gameFormat: 'joust',
             ...flowOptions,
-            gameOptions: { ...flowOptions.gameOptions, ...options.gameOptions }
+            gameOptions: { manualMode: false, ...gameOptions }
         });
+        if (gameOptions.manualMode === undefined) {
+            context.game.manualMode.allows = () => {
+                throw new Error(
+                    'The test used a manual action (a chat command, dragging a card, clicking a card with no ability to use, or changing a stat). Use real cards and prompts instead.'
+                );
+            };
+        }
         applySetupTest(options, {
             flow: context.flow,
             deckBuilder,

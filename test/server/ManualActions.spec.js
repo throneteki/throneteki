@@ -1,7 +1,9 @@
 describe('ManualActions', function () {
     beforeEach(function () {
         this.setupTest({
+            gameOptions: { manualMode: true },
             player1: {
+                hand: ['Hedge Knight'],
                 inPlay: ['Winterfell Steward', 'Tumblestone Knight', 'Bastard in Hiding']
             },
             player2: {
@@ -80,6 +82,16 @@ describe('ManualActions', function () {
             })
         ]);
         expect(this.player1).isReadyToTakeAction();
+    });
+
+    it('does not kneel a card in hand that is clicked but cannot be played', function () {
+        this.player1.clickPrompt('Done');
+        this.player2.clickPrompt('Done');
+        this.player1.clickCard(this.hedgeKnight);
+
+        expect(this.hedgeKnight.location).toBe('hand');
+        expect(this.hedgeKnight.kneeled).toBe(false);
+        expect(this.manualActionsFor(this.player1)).toEqual([]);
     });
 
     it('records changing a stat', function () {

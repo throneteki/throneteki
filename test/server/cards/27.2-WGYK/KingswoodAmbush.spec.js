@@ -6,7 +6,7 @@ describe('Kingswood Ambush', function () {
                 player1: {
                     faction: 'lannister',
                     plot: 'Kingswood Ambush',
-                    hand: ['Burned Men', 'Little Bird'],
+                    hand: ['Burned Men', 'Little Bird (Core)'],
                     inPlay: ['Bastard in Hiding']
                 }
             });

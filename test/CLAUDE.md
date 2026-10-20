@@ -3,12 +3,17 @@
 Every implemented card needs a spec. A card only counts as verified (see
 [docs/engine-roadmap.md](../docs/engine-roadmap.md)) when all of these hold:
 
-- The spec passes, follows this guide, and does not depend on manual mode. `setupTest` builds the
-  board. Don't kneel, move or change stats through manual actions once the test is under way.
-- The spec resolves every ability on the card.
-- The card file has no `handler` and no `card-rules` violations. `npm run spec:coverage -- --write-verified`
-  leaves the card out of `verifiedCards.json` until that is true. The two spec bars above are
-  required and are not yet checked by that command.
+- The spec uses `setupTest`, passes, and follows this guide. `setupTest` games run with manual mode
+  off and throw if the test uses a manual action (a chat command, dragging a card, clicking a card
+  that has nothing to use, changing a stat). A spec that uses `integration(`, `buildDeck`,
+  `moveCard`, `dragCard`, mocks, or assigns `kneeled`, `power` or `gold` can never verify a card.
+- The spec resolves every ability on the card: every action, triggered ability and persistent
+  effect. For a card in `verifiedCards.json`, the run fails if any of them never resolves (or never
+  applies) during its spec.
+- The card file has no `handler` and no `card-rules` violations.
+
+`npm run spec:coverage -- --write-verified` checks the spec's style and the implementation. Don't
+carry an old spec over: if a verified card's spec is old-style, rewrite it with `setupTest`.
 
 The full reference, with examples, is [docs/testing-cards.md](../docs/testing-cards.md).
 
@@ -41,6 +46,8 @@ After adding a card spec, run `npm run spec:coverage -- --write-verified` and co
 ## Setup
 
 - Keep the setup minimal: only the cards, gold and power the test needs.
+- When a card has more than one printing, name it with its pack code (`'Grey Wind (Core)'`).
+  `setupTest` throws on a name that matches more than one card.
 - `setupTest` places cards during the setup phase, where nothing can trigger, then reaches the
   requested phase through the real game flow. Pick the phase where the card's ability is used
   (`phase: 'plot'` for plots, `'challenge'` for challenge abilities, and so on).

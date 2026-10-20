@@ -62,8 +62,9 @@ class Message {
         }
 
         const result = [this.formatArg(arg[0])];
+        const lastSeparator = arg.length === 2 ? ' and ' : ', and ';
         for (let i = 1; i < arg.length; ++i) {
-            result.push(i === arg.length - 1 ? ', and ' : ', ');
+            result.push(i === arg.length - 1 ? lastSeparator : ', ');
             result.push(this.formatArg(arg[i]));
         }
         return result;

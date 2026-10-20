@@ -29,8 +29,8 @@ class DeckBuilder {
         this.cards = Object.values(this.cardsByCode);
     }
 
-    buildDeck(faction, cardLabels) {
-        let allCards = this.createCardCounts(cardLabels);
+    buildDeck(faction, cardLabels, { strictNames = false } = {}) {
+        let allCards = this.createCardCounts(cardLabels, { strictNames });
 
         let agendas = allCards
             .filter((cardCount) => cardCount.card.type === 'agenda')
@@ -55,7 +55,7 @@ class DeckBuilder {
         };
     }
 
-    createCardCounts(cardLabels) {
+    createCardCounts(cardLabels, options) {
         let cardCounts = {};
         for (let label of cardLabels) {
             let cardName = label;
@@ -65,7 +65,7 @@ class DeckBuilder {
                 count = label.count;
             }
 
-            let cardData = this.getCard(cardName);
+            let cardData = this.getCard(cardName, options);
             if (cardCounts[cardData.code]) {
                 cardCounts[cardData.code].count += count;
             } else {
@@ -78,7 +78,7 @@ class DeckBuilder {
         return Object.values(cardCounts);
     }
 
-    getCard(codeOrLabelOrName) {
+    getCard(codeOrLabelOrName, { strictNames = false } = {}) {
         if (this.cardsByCode[codeOrLabelOrName]) {
             return this.cardsByCode[codeOrLabelOrName];
         }
@@ -94,9 +94,11 @@ class DeckBuilder {
             let matchingLabels = cardsByName
                 .map((card) => `${card.name} (${card.packCode})`)
                 .join('\n');
-            console.warn(
-                `Multiple cards match the name ${codeOrLabelOrName}. Use one of these instead:\n${matchingLabels}`
-            );
+            const message = `Multiple cards match the name ${codeOrLabelOrName}. Use one of these instead:\n${matchingLabels}`;
+            if (strictNames) {
+                throw new Error(message);
+            }
+            console.warn(message);
         }
 
         return cardsByName[0];

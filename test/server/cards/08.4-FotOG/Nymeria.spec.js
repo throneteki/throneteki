@@ -49,7 +49,7 @@ describe('Nymeria (FotOG)', function () {
             expect(this.game.currentChallenge.isAttacking(this.tumblestoneKnight)).toBe(true);
             expect(this.greyWind.isParticipating()).toBe(false);
             expect(this.game.getPlainTextLog()).toContain(
-                'player1 kneels Nymeria, and Direwolf Pup to have them participate in the challenge on their side'
+                'player1 kneels Nymeria and Direwolf Pup to have them participate in the challenge on their side'
             );
             expect(this.player2).toHavePrompt('Initiate an action');
         });

@@ -9,15 +9,22 @@ mode off, as keyteki does, because the engine can be shown to be correct.
 
 Trust is earned per card, by tests:
 
-- A card is **verified** only when all three of these hold:
-    - Its spec passes and follows [test/CLAUDE.md](../test/CLAUDE.md), with manual mode off. Setup goes
-      through `setupTest`. The spec does not kneel, move or change stats through manual actions.
-    - The spec resolves every ability on the card. A spec that skips an ability does not verify it.
-      The coverage tool does not measure this yet.
+- A card is **verified** only when all of these hold. There are no exceptions, and nothing carries
+  over from an older spec: a card whose spec does not meet the bar is rewritten, not grandfathered.
+    - Its spec uses `setupTest` and runs with manual mode off. A spec that uses any manual action
+      (chat commands, dragging cards, click-to-kneel, stat changes) or any harness shortcut once
+      the test is under way (`moveCard`, `buildDeck`, `integration(`, mocks, assigning `kneeled`,
+      `power` or `gold`) cannot verify a card. `setupTest` games throw on a manual action, and
+      `spec:coverage --write-verified` leaves out any card whose spec uses one of those patterns.
+    - The spec resolves every ability on the card: every action, triggered ability and persistent
+      effect. For a verified card the test run fails when any of its abilities never resolves (or,
+      for a persistent effect, never applies) during its spec
+      ([abilityCoverage.js](../test/helpers/abilityCoverage.js)). Resolving an ability once is the
+      floor; the spec still covers the cases in [test/CLAUDE.md](../test/CLAUDE.md).
     - The implementation has no `handler`, and no legacy helpers, direct state writes, `addMessage`,
       game listeners or `promptForSelect` (the `npm run card-rules` counts for that file are zero).
-      [verifiedCards.json](../server/game/verifiedCards.json) is built from this bar, together with the
-      spec file existing. The two spec bars above are required and are not yet checked by the tool.
+    - [verifiedCards.json](../server/game/verifiedCards.json) is built from this bar, and CI checks
+      it is current.
 - A game starts with manual mode **off** when both decks are verified and the phase 6 gate is met.
   Turning it on requires the opponent's consent and is recorded in the game stats.
 - Every other game keeps today's behaviour.
@@ -439,8 +446,8 @@ chat commands (except `/cancel-prompt`, `/manual` and the clock and rematch comm
 drop, click-to-kneel, stat changes, shuffling and looking at the deck are refused. `/manual` asks
 every opponent; if they all agree, manual mode turns on and the player is asked which card isn't
 working, and both are recorded in the game stats
-([ManualMode.spec.js](../test/server/ManualMode.spec.js)). The test harness starts games with
-manual mode on, since specs use manual actions as setup shortcuts. Actions outside action
+([ManualMode.spec.js](../test/server/ManualMode.spec.js)). `setupTest` games run with manual
+mode off and throw on any manual action; older `integration(` specs still run with it on. Actions outside action
 windows are refused when that option is on (phase 2). Still to do: refuse them whenever manual
 mode is off, whether or not the option is on; make strict action windows the default after the
 auto-pass trial has had feedback; a client toggle and indicator; and "report a problem" with a
@@ -493,3 +500,4 @@ following hold. This is the bar for switching the default, on top of both decks 
 | 2026-10-20 | Deepwood Motte: "a Raider character you control or Asha Greyjoy" lets you stand any Asha Greyjoy. "You control" qualifies the Raider character only; there is no ruling saying otherwise.                                                                                                                       |
 | 2026-10-20 | While manual mode is on, the winner may skip claim and the defender may cancel military claim, because a wrongly applied claim is hard to undo. With manual mode off, claim is applied and neither prompt is offered.                                                                                           |
 | 2026-10-20 | Phase 6 does not switch the default until the framework items in phases 1, 2, 4 and 5 each have an engine spec, and a list maps every Rules Reference entry, framework step and current FAQ ruling to a spec or an accepted decision.                                                                           |
+| 2026-10-20 | Verified means a `setupTest` spec with no manual actions or harness shortcuts that resolves every ability on the card, enforced by the generator and the test run. Specs of cards that were verified under the earlier bar are rewritten, not carried over.                                                     |

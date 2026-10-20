@@ -33,6 +33,28 @@ export function specPathFor(implementationPath) {
     return toPosix(path.join(specsRoot, relative.replace(/\.js$/, '.spec.js')));
 }
 
+const ShortcutPatterns = [
+    /\bintegration\(/,
+    /\bbuildDeck\(/,
+    /\bselectDeck\(/,
+    /\bdragCard\(/,
+    /\bsendChat\(/,
+    /\bmoveCard\(/,
+    /\bchangeStat\(/,
+    /\btoggleManualDupes\(/,
+    /\bmanualMode\b/,
+    /\bvi\.(fn|spyOn)\(/,
+    /\.(kneeled|power|gold)\s*=[^=]/
+];
+
+export function specStyleProblems(source) {
+    const problems = ShortcutPatterns.filter((pattern) => pattern.test(source)).map(String);
+    if (!/\b(this|context)\.setupTest\(/.test(source)) {
+        problems.unshift('does not use setupTest');
+    }
+    return problems;
+}
+
 function cardsFolderImports(file, seen = new Set()) {
     const source = fs.readFileSync(file, 'utf8');
     for (const match of source.matchAll(/from\s+'(\.{1,2}\/[^']+)'/g)) {

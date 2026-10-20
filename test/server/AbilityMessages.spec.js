@@ -16,7 +16,7 @@ describe('ability messages', function () {
     describe('for an event that resolves', function () {
         beforeEach(function () {
             this.setupTest({
-                player1: { hand: ['Wolf Dreams'], drawDeck: ['Grey Wind (Core)'] }
+                player1: { hand: ['Wolf Dreams (TKP)'], drawDeck: ['Grey Wind (Core)'] }
             });
             this.marker = log(this).at(-1);
 
@@ -41,7 +41,7 @@ describe('ability messages', function () {
     describe('for an event that is cancelled', function () {
         beforeEach(function () {
             this.setupTest({
-                player1: { hand: ['Wolf Dreams'], drawDeck: ['Grey Wind (Core)'] },
+                player1: { hand: ['Wolf Dreams (TKP)'], drawDeck: ['Grey Wind (Core)'] },
                 player2: { gold: 5, hand: ["The Hand's Judgment"] }
             });
             this.marker = log(this).at(-1);

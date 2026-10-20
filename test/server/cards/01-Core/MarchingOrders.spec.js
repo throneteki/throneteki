@@ -4,7 +4,7 @@ describe('Marching Orders', function () {
             phase: 'marshal',
             player1: {
                 plot: 'Marching Orders',
-                hand: ['Winterfell Steward', 'The Roseroad', 'Little Bird', 'Nightmares'],
+                hand: ['Winterfell Steward', 'The Roseroad', 'Little Bird (Core)', 'Nightmares'],
                 inPlay: ['Tumblestone Knight']
             },
             player2: { hand: ['The Kingsroad'] }

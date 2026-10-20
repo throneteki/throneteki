@@ -151,6 +151,10 @@ class SelectCardPrompt extends UiPrompt {
             return false;
         }
 
+        if (this.isBlockedOnlyByLimit(card)) {
+            return true;
+        }
+
         if (!this.checkCardCondition(card)) {
             return false;
         }
@@ -165,6 +169,17 @@ class SelectCardPrompt extends UiPrompt {
         ) {
             this.fireOnSelect();
         }
+    }
+
+    isBlockedOnlyByLimit(card) {
+        return (
+            !this.selectedCards.includes(card) &&
+            !this.onlyMustSelectMayBeChosen &&
+            this.selector.canTarget(card, this.context, this.selectedCards) &&
+            this.selector.checkForSingleController(this.selectedCards, card) &&
+            (this.selector.wouldExceedLimit(this.selectedCards, card) ||
+                this.selector.hasReachedLimit(this.selectedCards, this.numPlayers))
+        );
     }
 
     checkCardCondition(card) {

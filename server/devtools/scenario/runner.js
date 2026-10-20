@@ -161,7 +161,7 @@ export async function runScenario(scenario, options) {
         users: options.users,
         router: options.router,
         gameId: options.gameId,
-        gameOptions: options.gameOptions,
+        gameOptions: { manualMode: true, ...options.gameOptions },
         disableWinning: false
     };
 

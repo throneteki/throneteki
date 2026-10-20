@@ -18,7 +18,7 @@
 import { execFileSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
-import { loadImplementations, repoRoot } from './cardIndex.js';
+import { loadImplementations, repoRoot, specStyleProblems } from './cardIndex.js';
 
 const args = process.argv.slice(2);
 const implementations = loadImplementations();
@@ -37,8 +37,17 @@ function isDeclarative(implementation) {
     });
 }
 
+function specFollowsConventions(implementation) {
+    const source = fs.readFileSync(path.join(repoRoot, implementation.specPath), 'utf8');
+    return specStyleProblems(source).length === 0;
+}
+
 function isVerified(implementation) {
-    return implementation.hasSpec && isDeclarative(implementation);
+    return (
+        implementation.hasSpec &&
+        isDeclarative(implementation) &&
+        specFollowsConventions(implementation)
+    );
 }
 
 function percentage(covered, total) {
