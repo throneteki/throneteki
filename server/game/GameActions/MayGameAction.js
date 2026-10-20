@@ -28,6 +28,10 @@ class MayGameAction extends GameAction {
         return this.gameAction.allow(tempContext);
     }
 
+    logsOwnMessage() {
+        return true;
+    }
+
     createEvent(context) {
         return this.event('__PLACEHOLDER_EVENT__', {}, (event) => {
             const title = this.title instanceof Function ? this.title(context) : this.title;

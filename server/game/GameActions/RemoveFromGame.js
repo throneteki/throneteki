@@ -1,10 +1,15 @@
 import GameAction from './GameAction.js';
+import Message from '../Message.js';
 import LeavePlay from './LeavePlay.js';
 import MoveCardEventGenerator from './MoveCardEventGenerator.js';
 
 class RemoveFromGame extends GameAction {
     constructor() {
         super('removeFromGame');
+    }
+
+    message({ card }) {
+        return Message.fragment('removes {card} from the game', { card });
     }
 
     canChangeGameState({ card }) {

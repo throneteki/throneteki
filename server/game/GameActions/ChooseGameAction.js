@@ -36,6 +36,10 @@ class ChooseGameAction extends GameAction {
         return validChoices.length > 0;
     }
 
+    logsOwnMessage() {
+        return true;
+    }
+
     createEvent(context) {
         return this.event('onChoose', {}, (event) => {
             const choosingPlayer = this.playerFunc(context);

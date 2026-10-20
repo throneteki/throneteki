@@ -1,7 +1,6 @@
 import DrawCard from '../../drawcard.js';
 import Conditions from '../../Conditions.js';
 import GameActions from '../../GameActions/index.js';
-import TextHelper from '../../TextHelper.js';
 
 class OldGate extends DrawCard {
     setupCardAbilities(ability) {
@@ -17,14 +16,7 @@ class OldGate extends DrawCard {
             gameAction: GameActions.drawCards((context) => ({
                 player: context.player,
                 amount: 2
-            })).thenExecute((event) => {
-                this.game.addMessage(
-                    '{0} sacrifices {1} to draw {2}',
-                    event.player,
-                    this,
-                    TextHelper.count(event.cards.length, 'card')
-                );
-            })
+            }))
         });
     }
 }

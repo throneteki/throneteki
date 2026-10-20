@@ -23,6 +23,10 @@ class AbilityAdapter {
         return this.action.resultMessage(properties, event);
     }
 
+    logsOwnMessage() {
+        return this.action.logsOwnMessage();
+    }
+
     allow(context) {
         let properties = this.resolveProperties(context);
         return this.action.allow(properties);

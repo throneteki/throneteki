@@ -81,6 +81,10 @@ class GameAction {
         return this.hasResult(event) ? this.message(props) : '';
     }
 
+    logsOwnMessage() {
+        return false;
+    }
+
     hasResult(event) {
         return !!event && !(event instanceof NullEvent) && !event.cancelled;
     }

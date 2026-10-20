@@ -310,9 +310,12 @@ the format (`'{player} uses {source} to kill {target}'`) are still intent, but a
 when the effect happens; moving them to `{gameAction}` is part of phase 5. Power gained and cards drawn also report what resolved. Abilities add structured entries to
 `game.logEntries` (`{ type, player, source, targets, results }`), kept on the server because they
 hold card references whatever each player can see; specs can assert on them instead of text.
-Still to do: a default `{gameAction}` message for the common actions, before phase 5 migrates
-cards, so each card is only rewritten once. Translation, where the text is still built from
-English formats, can follow later._
+An ability with a declarative game action and no `message` gets a default one built from what
+resolved and the cards paid as costs ("player1 kneels Grey Wind and kills Eddard Stark"), and the
+common game actions all describe themselves
+([DefaultAbilityMessages.spec.js](../test/server/DefaultAbilityMessages.spec.js)). Migrated cards
+drop their `message` where the default says what they do. Still to do: translation, where the
+text is still built from English formats._
 
 Keyteki builds an ability's message before it resolves, so the log can claim things that did not
 happen: a kill that was cancelled, a card that was saved, an amount that was capped. Instead:
@@ -377,7 +380,7 @@ on every card in the format having one.
 
 This engine work comes before migrating cards in bulk, so each card is only rewritten once:
 
-- Default `{gameAction}` messages for the common actions (phase 3).
+- Default `{gameAction}` messages for the common actions (phase 3). _Done._
 - Choices made while an effect is resolving are game actions, filtered by whether the following
   action could affect the chosen card. That covers an opponent choosing, each player choosing, and a
   choice that happens after part of the effect. `ChooseGameAction` covers "choose one of these

@@ -34,6 +34,13 @@ class SimultaneousActions extends GameAction {
         return actions.length > 0 && actions.some((action) => action.allow(context));
     }
 
+    logsOwnMessage() {
+        return (
+            Array.isArray(this.actionFactory) &&
+            this.actionFactory.some((action) => action.logsOwnMessage())
+        );
+    }
+
     createEvent(context) {
         let event = new SimultaneousEvents();
         const actions = this.resolveActions(context);

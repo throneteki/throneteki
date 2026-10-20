@@ -51,6 +51,10 @@ class Search extends GameAction {
         return player.drawDeck.length > 0;
     }
 
+    logsOwnMessage() {
+        return true;
+    }
+
     createEvent({ context }) {
         const player = this.playerFunc(context);
         const searchedPlayer = this.searchedPlayerFunc(context);

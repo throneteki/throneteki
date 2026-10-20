@@ -24,6 +24,8 @@ class TriggeredAbility extends BaseAbility {
         if (this.max) {
             this.card.owner.registerAbilityMax(this.card.name, this.max);
         }
+
+        this.useDefaultMessage(card.getPrintedType() === 'event' ? 'plays' : 'uses');
     }
 
     isTriggeredAbility() {

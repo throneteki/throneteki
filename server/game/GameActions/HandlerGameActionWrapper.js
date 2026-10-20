@@ -11,6 +11,10 @@ class HandlerGameActionWrapper extends GameAction {
         return true;
     }
 
+    logsOwnMessage() {
+        return true;
+    }
+
     createEvent(context) {
         return this.event('__PLACEHOLDER_EVENT__', {}, () => {
             this.handler(context);

@@ -65,6 +65,8 @@ class CardAction extends BaseAbility {
         if (!this.gameAction) {
             throw new Error('Actions must have a `gameAction` or `handler` property.');
         }
+
+        this.useDefaultMessage(card.getPrintedType() === 'event' ? 'plays' : 'uses');
     }
 
     buildPhase(properties) {

@@ -17,6 +17,10 @@ class NameTrait extends GameAction {
         return true;
     }
 
+    logsOwnMessage() {
+        return true;
+    }
+
     createEvent(context) {
         const player = this.playerFunc(context);
 

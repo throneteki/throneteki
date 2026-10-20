@@ -7,6 +7,24 @@ import HandlerGameActionWrapper from './GameActions/HandlerGameActionWrapper.js'
 import SimultaneousActions from './GameActions/SimultaneousActions.js';
 import StackProperty from './PropertyTypes/StackProperty.js';
 import { Requirements } from './Constants/index.js';
+import Message from './Message.js';
+
+const CostVerbs = {
+    discardFromHand: 'discards {cards} from their hand',
+    discardFromPlay: 'discards {cards} from play',
+    discardFromShadows: 'discards {cards} from their shadows area',
+    kill: 'kills {cards}',
+    kneel: 'kneels {cards}',
+    placeBottom: 'places {cards} on the bottom of their deck',
+    placeInDeadPileFromHand: 'places {cards} in their dead pile',
+    putIntoShadows: 'returns {cards} to shadows',
+    removeFromChallenge: 'removes {cards} from the challenge',
+    removeFromGame: 'removes {cards} from the game',
+    returnToHand: 'returns {cards} to their hand',
+    reveal: 'reveals {cards}',
+    sacrifice: 'sacrifices {cards}',
+    stand: 'stands {cards}'
+};
 
 /**
  * Base class representing an ability that can be done by the player. This
@@ -339,6 +357,50 @@ class BaseAbility {
         if (this.limit) {
             this.limit.increment();
         }
+    }
+
+    useDefaultMessage(verb) {
+        if (
+            this.hasMessage ||
+            !this.gameAction ||
+            !this.reportsResults() ||
+            this.gameAction.logsOwnMessage() ||
+            !this.isCardAbility()
+        ) {
+            return;
+        }
+
+        this.defaultVerb = verb;
+        this.hasMessage = true;
+        this.message = AbilityMessage.create((context) => this.outputDefaultMessage(context));
+    }
+
+    outputDefaultMessage(context) {
+        const result = context.gameActionResult;
+        const effect = result && result.gameAction.resultMessage(context, result.event);
+        if (!effect || (Array.isArray(effect) && effect.length === 0)) {
+            context.game.logPlainAbilityLine(context);
+            return;
+        }
+
+        const paidCosts = Object.entries(context.costValues || {}).filter(
+            ([name, cards]) => CostVerbs[name] && cards.length > 0
+        );
+        const paidWithSource = paidCosts.some(([, cards]) => cards.includes(context.source));
+        const parts = [
+            ...(paidWithSource
+                ? []
+                : [Message.fragment(`${this.defaultVerb} {source}`, { source: context.source })]),
+            ...paidCosts.map(([name, cards]) => Message.fragment(CostVerbs[name], { cards })),
+            effect
+        ];
+        const placeholders = parts.map((part, index) => `{${index + 1}}`);
+        const list =
+            placeholders.length === 2
+                ? placeholders.join(' and ')
+                : `${placeholders.slice(0, -1).join(', ')}, and ${placeholders.at(-1)}`;
+
+        context.game.addMessage(`{0} ${list}`, context.player, ...parts);
     }
 
     outputMessage(context) {

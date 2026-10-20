@@ -376,6 +376,14 @@ The `message` property adds the ability's message to the game log outside of the
 
 Prefer `{gameAction}` over spelling the effect out in the format, so the message stays accurate.
 
+An ability with a declarative `gameAction` and no `message` gets a default one, built from what resolved and the cards paid as costs:
+
+- `player1 uses Littlefinger and draws 2 cards`
+- `player1 kneels Grey Wind and kills Eddard Stark`, when the source paid a cost
+- `player1 plays Nightmares, kneels their faction card, and blanks Robb Stark`
+
+Leave `message` out when the default says what the card does. Game actions that prompt and log their own lines (`search`, `choose`, `ifCondition`, `may`, `nameTrait`, `discardAtRandom`) don't get a default, and neither do abilities with a `handler`. If nothing resolved, only the plain "{player} uses/plays {source}" line is logged.
+
 The `message` property can be just a string if there are no additional arguments. `{player}` will be replaced with the player initiating the ability, `{source}` will be replaced with the card associated with the ability, and `{target}` will be replaced with the target for the ability (if any):
 
 ```javascript
