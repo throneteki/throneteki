@@ -206,11 +206,11 @@ class Game extends EventEmitter {
     }
 
     /**
-     * Runs the callback after the delay a player might take to consider a window, then carries on
-     * with the game and sends the new state to the players.
+     * Runs the callback after the delay, then carries on with the game and sends the new state to
+     * the players.
      */
-    afterResponseDelay(callback) {
-        this.schedule(this.responseDelay(), () => {
+    afterDelay(delay, callback) {
+        this.schedule(delay, () => {
             try {
                 callback();
                 this.continue();

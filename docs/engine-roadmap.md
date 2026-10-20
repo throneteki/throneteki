@@ -175,7 +175,8 @@ checks their opponent sees the same thing either way). Players with the timer ke
 prompt. This is on trial: nearly every event has some possible reaction in a faction's pool, so fake
 waits may slow games down noticeably, and the scope may be cut back after feedback. Format
 legality isn't applied to the pool, which only makes it larger. Still to do: review the scope after
-feedback; the client could show fake waits more clearly._
+feedback. On their own screen, the player sees "Keeping your hand hidden" with a draining bar and a
+Skip button (`response-delay` prompt control); the opponent gets none of it._
 
 1. **Possible responders.** At game start, build each player's candidate pool: every card their deck
    could legally contain (faction, neutral, agenda-allowed cards, the format's legal pool) that has an

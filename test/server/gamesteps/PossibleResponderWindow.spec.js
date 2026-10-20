@@ -66,7 +66,14 @@ describe('cancel windows for a player without the timer', function () {
 
             it('shows them the same window, with nothing to choose', function () {
                 expect(this.player2).toHavePrompt(WindowTitle);
-                expect(this.player2).toHavePromptButton('Pass');
+                expect(this.player2).toHavePromptButton('Skip');
+                expect(this.player2.player.promptState.controls).toContainEqual(
+                    expect.objectContaining({
+                        type: 'response-delay',
+                        duration: this.scheduled[0].delay
+                    })
+                );
+                expect(this.player2.player.getState(this.player1.player).controls).toBeUndefined();
                 expect(this.player2.player.promptState.isActivePrompt).toBe(true);
                 expect(this.lannisportMerchant.location).toBe('hand');
             });
@@ -84,7 +91,7 @@ describe('cancel windows for a player without the timer', function () {
             });
 
             it('lets them pass before the delay ends', function () {
-                this.player2.clickPrompt('Pass');
+                this.player2.clickPrompt('Skip');
 
                 expect(this.lannisportMerchant.location).toBe('play area');
 

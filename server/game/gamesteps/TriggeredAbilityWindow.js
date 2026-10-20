@@ -68,6 +68,7 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
     }
 
     promptPossibleResponder(player) {
+        const delay = this.game.responseDelay();
         const prompt = new SelectCardPrompt(this.game, player, {
             activePromptTitle: TriggeredAbilityWindowTitles.getTitle(
                 this.abilityType,
@@ -76,13 +77,16 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
             isCardEffect: false,
             cardCondition: () => false,
             cardType: ['agenda', 'attachment', 'character', 'event', 'location', 'plot', 'title'],
-            additionalControls: this.getAdditionalPromptControls(player),
-            doneButtonText: 'Pass',
+            additionalControls: [
+                { type: 'response-delay', duration: delay },
+                ...this.getAdditionalPromptControls(player)
+            ],
+            doneButtonText: 'Skip',
             onCancel: () => this.pass()
         });
 
         this.game.queueStep(prompt);
-        this.game.afterResponseDelay(() => {
+        this.game.afterDelay(delay, () => {
             if (!prompt.isComplete()) {
                 prompt.onMenuCommand(player, 'done');
             }

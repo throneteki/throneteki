@@ -10,6 +10,7 @@ import { Button } from '@heroui/react';
 import ThronesIcon from './ThronesIcon';
 import LoadingSpinner from '../Site/LoadingSpinner';
 import CardHoverable from '../Images/CardHoverable';
+import ResponseDelay from './ResponseDelay';
 
 const ActivePlayerPrompt = ({
     className,
@@ -153,6 +154,8 @@ const ActivePlayerPrompt = ({
                             )}
                         />
                     );
+                case 'response-delay':
+                    return <ResponseDelay key='response-delay' duration={control.duration} />;
                 case 'select-from-values':
                     return (
                         <SelectFromValuesLookup
@@ -169,6 +172,12 @@ const ActivePlayerPrompt = ({
             }
         });
     }, [controls, cards, handleLookupValueSelected]);
+
+    // A wait shown to every player who might be able to respond, so their opponents can't tell
+    // who really can.
+    if (controls && controls.some((control) => control.type === 'response-delay')) {
+        promptText = 'Keeping your hand hidden';
+    }
 
     const promptTextElement = [];
     if (promptText && promptText.includes('\n')) {
