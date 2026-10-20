@@ -1,56 +1,42 @@
-describe('A Game Of Thrones', function () {
-    integration(function () {
-        describe('when dupes are put out in the setup phase', function () {
-            beforeEach(function () {
-                const deck = this.buildDeck('baratheon', [
-                    'A Noble Cause',
-                    'A Game of Thrones',
-                    'Wildling Scout',
-                    'Stannis Baratheon (Core)'
-                ]);
-                this.player1.selectDeck(deck);
-                this.player2.selectDeck(deck);
-                this.startGame();
-                this.keepStartingHands();
+describe('A Game of Thrones', function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: {
+                plot: 'A Game of Thrones',
+                inPlay: ['House Maester', 'Tumblestone Knight']
+            },
+            player2: {
+                inPlay: ['Bastard in Hiding']
+            }
+        });
+    });
 
-                this.wildlingScout = this.player1.findCardByName('Wildling Scout', 'hand');
-                this.character = this.player1.findCardByName('Stannis Baratheon', 'hand');
+    it('stops you initiating [military] or [power] challenges before you win an [intrigue] challenge', function () {
+        expect(this.player1).toHaveDisabledPromptButton('Military');
+        expect(this.player1).toHaveDisabledPromptButton('Power');
+        expect(this.player1).not.toHaveDisabledPromptButton('Intrigue');
+        expect(this.player1).isReadyToTakeAction();
+    });
 
-                this.player1.clickCard(this.wildlingScout);
-                this.player1.clickCard(this.character);
+    describe('after you win an [intrigue] challenge', function () {
+        beforeEach(function () {
+            this.unopposedChallenge(this.player1, 'Intrigue', this.houseMaester);
+            this.player1.clickPrompt('Apply Claim');
+        });
 
-                this.completeSetup();
-                this.player1.selectPlot('A Game of Thrones');
-                this.player2.selectPlot('A Noble Cause');
-                this.selectFirstPlayer(this.player1);
+        it('lets you initiate [military] and [power] challenges', function () {
+            expect(this.player1).not.toHaveDisabledPromptButton('Military');
+            expect(this.player1).not.toHaveDisabledPromptButton('Power');
+            expect(this.player1).isReadyToTakeAction();
+        });
 
-                this.completeMarshalPhase();
-            });
+        it('still stops an opponent who has not won an [intrigue] challenge', function () {
+            this.player1.clickPrompt('Done');
 
-            describe('when the player has not won an intrigue challenge', function () {
-                it('should not allow military challenges to be declared', function () {
-                    expect(this.player1).toHaveDisabledPromptButton('Military');
-                });
-
-                it('should not allow power challenges to be declared', function () {
-                    expect(this.player1).toHaveDisabledPromptButton('Power');
-                });
-            });
-
-            describe('when the player has won an intrigue challenge', function () {
-                beforeEach(function () {
-                    this.unopposedChallenge(this.player1, 'Intrigue', this.wildlingScout);
-                    this.player1.clickPrompt('Apply Claim');
-                });
-
-                it('should allow military challenges to be declared', function () {
-                    expect(this.player1).toHavePromptButton('Military');
-                });
-
-                it('should allow power challenges to be declared', function () {
-                    expect(this.player1).toHavePromptButton('Power');
-                });
-            });
+            expect(this.player2).toHaveDisabledPromptButton('Military');
+            expect(this.player2).toHaveDisabledPromptButton('Power');
+            expect(this.player2).isReadyToTakeAction();
         });
     });
 });

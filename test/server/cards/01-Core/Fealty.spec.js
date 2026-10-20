@@ -1,39 +1,53 @@
 describe('Fealty', function () {
-    integration(function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'marshal',
+            player1: {
+                agenda: 'Fealty',
+                gold: 10,
+                hand: ['Direwolf Pup', 'Grey Wind (Core)', 'Summer (Core)']
+            }
+        });
+    });
+
+    describe('when used', function () {
         beforeEach(function () {
-            const deck = this.buildDeck('greyjoy', [
-                'Fealty',
-                'Sneak Attack',
-                'Balon Greyjoy (Core)',
-                'Theon Greyjoy (Core)'
-            ]);
-            this.player1.selectDeck(deck);
-            this.player2.selectDeck(deck);
-            this.startGame();
-            this.skipSetupPhase();
-
-            this.selectFirstPlayer(this.player1);
-
-            this.balon = this.player1.findCardByName('Balon Greyjoy (Core)', 'hand');
-            this.theon = this.player1.findCardByName('Theon Greyjoy', 'hand');
-
-            this.player1.clickMenu('Fealty', 'Kneel your faction card');
+            this.player1.clickMenu(this.fealty, 'Kneel your faction card');
         });
 
-        it('should kneel the faction card', function () {
+        it('kneels your faction card', function () {
             expect(this.player1Object.faction.kneeled).toBe(true);
+            expect(this.game.getPlainTextLog()).toContain(
+                'player1 uses Fealty to kneel their faction card and reduce the cost of the next loyal card they marshal or play this phase by 1'
+            );
+            expect(this.player1).isReadyToTakeAction();
         });
 
-        it('should reduce the cost of loyal cards by 1', function () {
-            this.player1.clickCard(this.balon);
-            expect(this.balon.location).toBe('play area');
-            expect(this.player1Object.gold).toBe(0);
-        });
+        it('reduces the cost of the next loyal card you marshal by 1, and only that one', function () {
+            this.player1.clickCard(this.direwolfPup);
 
-        it('should not reduce the cost of non-loyal cards', function () {
-            this.player1.clickCard(this.theon);
-            expect(this.theon.location).toBe('play area');
+            expect(this.player1Object.gold).toBe(8);
+
+            this.player1.clickCard(this.greyWind);
+
+            expect(this.player1Object.gold).toBe(4);
+
+            this.player1.clickCard(this.summer);
+
             expect(this.player1Object.gold).toBe(1);
+            expect(this.player1).isReadyToTakeAction();
+        });
+
+        it('expires at the end of the phase', function () {
+            this.player1.clickPrompt('Done');
+            this.player2.clickPrompt('Done');
+
+            expect(this.player1Object.getCostReduction('marshal', this.greyWind)).toBe(0);
+        });
+
+        it('cannot be used again while your faction card is kneeling', function () {
+            expect(this.player1.actionUnavailableReason(this.fealty)).toBe('cost');
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 });
