@@ -19,6 +19,7 @@ class PossibleResponders {
         this.game = game;
         this.cardData = Array.isArray(cardData) ? cardData : Object.values(cardData || {});
         this.candidatesByPlayer = new Map();
+        this.errors = [];
     }
 
     couldRespond(player, abilityType, event) {
@@ -29,9 +30,19 @@ class PossibleResponders {
             (candidates.get(name) || []).some(
                 (candidate) =>
                     candidate.ability.eventType === abilityType &&
-                    this.couldTrigger(candidate, player, event)
+                    this.safelyCouldTrigger(candidate, player, event)
             )
         );
+    }
+
+    // A check that fails is treated as a possible response: that only costs a short wait.
+    safelyCouldTrigger(candidate, player, event) {
+        try {
+            return this.couldTrigger(candidate, player, event);
+        } catch (error) {
+            this.errors.push({ code: candidate.ability.card.code, error });
+            return true;
+        }
     }
 
     couldTrigger({ ability, zone }, player, event) {
@@ -74,7 +85,14 @@ class PossibleResponders {
                 continue;
             }
 
-            const phantom = this.createPhantom(player, cardClass, cardData);
+            let phantom;
+            try {
+                phantom = this.createPhantom(player, cardClass, cardData);
+            } catch (error) {
+                this.errors.push({ code: cardData.code, error });
+                continue;
+            }
+
             for (const ability of phantom.abilities.reactions) {
                 if (ability.isForcedAbility()) {
                     continue;

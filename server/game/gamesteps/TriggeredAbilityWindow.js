@@ -1,6 +1,7 @@
 import uuid from 'uuid';
 import BaseAbilityWindow from './BaseAbilityWindow.js';
 import CancelTimer from './CancelTimer.js';
+import SelectCardPrompt from './selectcardprompt.js';
 import TriggeredAbilityWindowTitles from './TriggeredAbilityWindowTitles.js';
 
 class TriggeredAbilityWindow extends BaseAbilityWindow {
@@ -27,16 +28,74 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
 
         this.players = this.filterPlayers(this.players || this.game.getPlayersInFirstPlayerOrder());
 
-        if (
-            this.players.length === 0 ||
-            (this.abilityChoices.length === 0 && !this.forceWindowPerPlayer[this.players[0].name])
-        ) {
-            return true;
+        while (this.players.length > 0) {
+            const player = this.players[0];
+
+            if (this.shouldPrompt(player)) {
+                this.promptPlayer(player);
+                return false;
+            }
+
+            if (this.isPossibleResponder(player)) {
+                this.promptPossibleResponder(player);
+                return false;
+            }
+
+            this.players.shift();
         }
 
-        this.promptPlayer(this.players[0]);
+        return true;
+    }
 
-        return false;
+    shouldPrompt(player) {
+        return (
+            !!this.forceWindowPerPlayer[player.name] ||
+            this.abilityChoices.some((choice) => choice.player === player) ||
+            (this.abilityChoices.length > 0 && this.cancelTimer.isEnabled(player))
+        );
+    }
+
+    /**
+     * Whether the player must appear to consider this window although they have nothing to use:
+     * a cancel window the timer doesn't cover, where a card they could hold might respond. Since
+     * that depends only on public information, a player who really holds a cancel looks the same.
+     */
+    isPossibleResponder(player) {
+        return (
+            this.isHiddenResponseWindow() &&
+            !this.cancelTimer.isEnabled(player) &&
+            this.game.getPossibleResponders().couldRespond(player, this.abilityType, this.event)
+        );
+    }
+
+    isHiddenResponseWindow() {
+        return (
+            this.abilityType === 'cancelinterrupt' ||
+            (this.abilityType === 'interrupt' &&
+                this.event.getConcurrentEvents().some((event) => event.name === 'onClaimApplied'))
+        );
+    }
+
+    promptPossibleResponder(player) {
+        const prompt = new SelectCardPrompt(this.game, player, {
+            activePromptTitle: TriggeredAbilityWindowTitles.getTitle(
+                this.abilityType,
+                this.event.getPrimaryEvents()
+            ),
+            isCardEffect: false,
+            cardCondition: () => false,
+            cardType: ['agenda', 'attachment', 'character', 'event', 'location', 'plot', 'title'],
+            additionalControls: this.getAdditionalPromptControls(player),
+            doneButtonText: 'Pass',
+            onCancel: () => this.pass()
+        });
+
+        this.game.queueStep(prompt);
+        this.game.afterResponseDelay(() => {
+            if (!prompt.isComplete()) {
+                prompt.onMenuCommand(player, 'done');
+            }
+        });
     }
 
     /**
@@ -49,7 +108,8 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
                 player.isPlaying() &&
                 !this.cancelTimer.isPausedFor(player) &&
                 (this.cancelTimer.isEnabled(player) ||
-                    this.abilityChoices.some((abilityChoice) => abilityChoice.player === player))
+                    this.abilityChoices.some((abilityChoice) => abilityChoice.player === player) ||
+                    this.isPossibleResponder(player))
         );
     }
 

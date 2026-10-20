@@ -50,6 +50,10 @@ import GameOverHandler from './GameHandlers/GameOverHandler.js';
 import DisconnectHandler from './GameHandlers/DisconnectHandler.js';
 import { Flags } from './Constants/index.js';
 import { EventValidator } from './EventValidator.js';
+import PossibleResponders from './PossibleResponders.js';
+
+const MinResponseDelay = 1000;
+const MaxResponseDelay = 3000;
 
 class Game extends EventEmitter {
     constructor(details, options = {}) {
@@ -157,6 +161,12 @@ class Game extends EventEmitter {
         this.setMaxListeners(0);
 
         this.router = options.router;
+        this.schedule = options.schedule || ((delay, callback) => setTimeout(callback, delay));
+        this.responseDelay =
+            options.responseDelay ||
+            (() =>
+                MinResponseDelay +
+                Math.floor(Math.random() * (MaxResponseDelay - MinResponseDelay)));
 
         this.pushAbilityContext({ resolutionStage: 'framework' });
     }
@@ -185,6 +195,31 @@ class Game extends EventEmitter {
 
     get isMelee() {
         return this.gameFormat === 'melee';
+    }
+
+    getPossibleResponders() {
+        if (!this.possibleResponders) {
+            this.possibleResponders = new PossibleResponders(this);
+        }
+
+        return this.possibleResponders;
+    }
+
+    /**
+     * Runs the callback after the delay a player might take to consider a window, then carries on
+     * with the game and sends the new state to the players.
+     */
+    afterResponseDelay(callback) {
+        this.schedule(this.responseDelay(), () => {
+            try {
+                callback();
+                this.continue();
+            } catch (e) {
+                this.reportError(e);
+            }
+
+            this.sendGameState();
+        });
     }
 
     reportError(e) {

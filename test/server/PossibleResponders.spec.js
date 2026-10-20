@@ -101,6 +101,53 @@ describe('PossibleResponders', function () {
         });
     });
 
+    describe('for every faction', function () {
+        beforeEach(function () {
+            setup(this, []);
+            playRoar(this);
+        });
+
+        it('builds and checks every candidate without errors', function () {
+            const errors = [];
+            const factions = [
+                'baratheon',
+                'greyjoy',
+                'lannister',
+                'martell',
+                'thenightswatch',
+                'stark',
+                'targaryen',
+                'tyrell'
+            ];
+
+            for (const faction of factions) {
+                this.player2.player.faction.cardData.code = faction;
+                const responders = new PossibleResponders(this.game, {
+                    cardData: deckBuilder.cards
+                });
+                for (const abilityType of ['cancelinterrupt', 'interrupt', 'reaction']) {
+                    responders.couldRespond(this.player2.player, abilityType, this.windows[0]);
+                }
+                for (const candidates of responders.getCandidates(this.player2.player).values()) {
+                    for (const candidate of candidates) {
+                        responders.safelyCouldTrigger(
+                            candidate,
+                            this.player2.player,
+                            this.windows[0]
+                        );
+                    }
+                }
+                errors.push(
+                    ...responders.errors.map(
+                        ({ code, error }) => `${faction} ${code}: ${error.message}`
+                    )
+                );
+            }
+
+            expect(errors).toEqual([]);
+        });
+    });
+
     describe('with the full card pool', function () {
         beforeEach(function () {
             setup(this, ["The Hand's Judgment"]);

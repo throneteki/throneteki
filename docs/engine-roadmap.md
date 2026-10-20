@@ -162,12 +162,20 @@ depend on information their opponents can see.**
 
 How that works:
 
-_Steps 1 and 2 are built but not yet used by the ability windows:
-[PossibleResponders.js](../server/game/PossibleResponders.js) answers "could this player respond
-from a hidden zone" from public information, with
-[specs](../test/server/PossibleResponders.spec.js) showing the answer doesn't depend on the
-player's hand. Building a player's full pool takes well under a second. Format legality isn't
-applied, which only makes the pool larger._
+_Steps 1 to 4 and 6 are done for cancel windows: every `cancelinterrupt` window, and interrupts
+to claim being applied. [PossibleResponders.js](../server/game/PossibleResponders.js) answers
+"could this player respond from a hidden zone" from public information
+([specs](../test/server/PossibleResponders.spec.js) show the answer doesn't depend on the hand,
+and that every card in every faction's pool builds and checks without errors).
+[TriggeredAbilityWindow.js](../server/game/gamesteps/TriggeredAbilityWindow.js) gives a player
+without the cancel timer a fake wait when a card they could hold might respond: the same window,
+with nothing to choose and a Pass button, passed for them after a random 1 to 3 seconds
+([PossibleResponderWindow.spec.js](../test/server/gamesteps/PossibleResponderWindow.spec.js)
+checks their opponent sees the same thing either way). Players with the timer keep the timer
+prompt. Reaction and other interrupt windows are not covered: nearly every event has some
+possible reaction in a faction's pool, so fake waits there would slow every game down. Format
+legality isn't applied to the pool, which only makes it larger. Still to do: decide whether, and
+how, to cover reactions; the client could show fake waits more clearly._
 
 1. **Possible responders.** At game start, build each player's candidate pool: every card their deck
    could legally contain (faction, neutral, agenda-allowed cards, the format's legal pool) that has an
@@ -181,9 +189,10 @@ applied, which only makes the pool larger._
     - No candidate could respond: skip the window for that player. Their opponent can compute the
       same thing, so nothing leaks.
     - A candidate could respond and the player really has a legal ability: prompt them as normal.
-    - A candidate could respond but the player has nothing: they see no prompt; the game waits a
-      random delay drawn from the same range as a short decision, then passes for them. To the
-      opponent this looks identical to a player who looked and passed.
+    - A candidate could respond but the player has nothing: they see the window with nothing to
+      choose; the game waits a random delay drawn from the same range as a short decision, then
+      passes for them. They can pass sooner. To the opponent this looks identical to a player
+      who looked and passed.
 4. **Pausing is a real opt-out.** _Done._ "Don't ask again until end of round" means the player is
    not offered the windows the cancel timer covers until the next round, even when they hold a
    legal cancel, so pausing reveals nothing
@@ -192,7 +201,8 @@ applied, which only makes the pool larger._
    a cancel; steps 1 to 3 fix that.
 5. **Player stops stay as an override.** A player can still choose to always stop at a window, for
    example to bluff. That choice does not depend on their hand, so it leaks nothing.
-6. **Tests run with zero delay** through an injected delay function.
+6. **Tests control the delay** through the injected `schedule` and `responseDelay` game
+   options.
 
 The same mechanism can replace `promptedActionWindows` for action windows: a player who could not
 possibly act is skipped, a player who has nothing waits a short delay, and only a player with a legal
@@ -264,3 +274,4 @@ likely to cause regressions.
 | 2026-10-19 | Keyteki is a reference, not a template. Messages in particular are built from results, not intent.                                      |
 | 2026-10-20 | Manual corrections (`/power`, `/token`, stat changes) are plain corrections and raise no game events.                                   |
 | 2026-10-20 | Attachments and duplicates removed because their card left play can't be saved (Rules Reference: Leaves Play, Save).                    |
+| 2026-10-20 | Fake waits cover cancel windows only, last a random 1 to 3 seconds, and show a Pass button. Players using the cancel timer keep it.     |
