@@ -1,111 +1,40 @@
-import KingsOfSummer from '../../../../server/game/cards/04.2-CtA/KingsOfSummer.js';
-import CardStat from '../../../../server/game/cardStat.js';
-
-describe('Kings Of Summer', function () {
-    beforeEach(function () {
-        this.gameSpy = { addMessage: vi.fn(), getPlayers: vi.fn(), on: vi.fn() };
-
-        this.plot1 = { hasTrait: vi.fn() };
-        this.plot1.income = new CardStat(0);
-        this.plot1.reserve = new CardStat(0);
-        this.plot2 = { hasTrait: vi.fn() };
-        this.plot2.income = new CardStat(0);
-        this.plot2.reserve = new CardStat(0);
-        this.plot3 = { hasTrait: vi.fn() };
-        this.plot3.income = new CardStat(0);
-        this.plot3.reserve = new CardStat(0);
-
-        this.plot1.hasTrait.mockImplementation((trait) => {
-            return trait === 'Summer';
+describe('Kings of Summer', function () {
+    function setup(context, ownPlot, opponentPlot) {
+        context.setupTest({
+            phase: 'marshal',
+            player1: { agenda: 'Kings of Summer', plot: ownPlot },
+            player2: { plot: opponentPlot }
         });
-        this.plot2.hasTrait.mockReturnValue(false);
+    }
 
-        this.player1Fake = {};
-        this.player1Fake.game = this.gameSpy;
-        this.player1Fake.activePlot = this.plot1;
-        this.plot1.controller = this.player1Fake;
-        this.plot3.controller = this.player1Fake;
+    it("increases the reserve value on each player's revealed plot by 1", function () {
+        setup(this, 'A Noble Cause', 'A Noble Cause');
 
-        this.player2Fake = {};
-        this.player2Fake.game = this.gameSpy;
-        this.player2Fake.activePlot = this.plot2;
-        this.plot2.controller = this.player2Fake;
-
-        this.gameSpy.getPlayers.mockReturnValue([this.player1Fake, this.player2Fake]);
-
-        this.agenda = new KingsOfSummer(this.player1Fake, {});
-        this.context = {};
+        expect(this.player1Object.getReserve()).toBe(7);
+        expect(this.player2Object.getReserve()).toBe(7);
+        expect(this.player1).isReadyToTakeAction();
     });
 
-    describe('reserve persistent effect', function () {
-        beforeEach(function () {
-            this.reserveEffect = this.agenda.abilities.persistentEffects[0];
-        });
+    it('increases the gold value on your revealed Summer plot by 1 while no Winter plot is revealed', function () {
+        setup(this, 'A Song of Summer', 'A Noble Cause');
 
-        it('should target all players', function () {
-            expect(this.reserveEffect.targetController).toBe('any');
-        });
-
-        it('should match with active plots', function () {
-            expect(this.reserveEffect.match(this.plot1)).toBe(true);
-            // Belongs to player 1 but is not active.
-            expect(this.reserveEffect.match(this.plot3)).toBe(false);
-        });
-
-        it('should increase the plots reserve', function () {
-            this.reserveEffect.effect.apply(this.plot1, this.context);
-            expect(this.plot1.reserve.modifier).toBe(1);
-        });
+        expect(this.player1Object.getIncome()).toBe(6);
+        expect(this.player2Object.getIncome()).toBe(5);
+        expect(this.player1).isReadyToTakeAction();
     });
 
-    describe('gold persistent effect', function () {
-        beforeEach(function () {
-            this.goldEffect = this.agenda.abilities.persistentEffects[1];
-        });
+    it('does not increase the gold value of a non-Summer plot', function () {
+        setup(this, 'A Noble Cause', 'A Song of Summer');
 
-        it('should increase the gold on the plot', function () {
-            this.goldEffect.effect.apply(this.plot1, this.context);
-            expect(this.plot1.income.modifier).toBe(1);
-        });
+        expect(this.player1Object.getIncome()).toBe(5);
+        expect(this.player2Object.getIncome()).toBe(5);
+        expect(this.player1).isReadyToTakeAction();
+    });
 
-        describe('when a Winter plot is revealed', function () {
-            beforeEach(function () {
-                this.plot2.hasTrait.mockImplementation((trait) => trait === 'Winter');
-            });
+    it('does not increase the gold value while a Winter plot is revealed', function () {
+        setup(this, 'A Song of Summer', 'The Winds of Winter');
 
-            it('should not pass the activation condition', function () {
-                expect(this.goldEffect.condition()).toBe(false);
-            });
-        });
-
-        describe('when no Winter plot is revealed', function () {
-            describe('and the current player has a Summer plot', function () {
-                beforeEach(function () {
-                    this.plot1.hasTrait.mockImplementation((trait) => trait === 'Summer');
-                });
-
-                it('should pass the activation condition', function () {
-                    expect(this.goldEffect.condition()).toBe(true);
-                });
-
-                it('should match the plot', function () {
-                    expect(this.goldEffect.match(this.plot1)).toBe(true);
-                });
-            });
-
-            describe('and the current player does not have a Summer plot', function () {
-                beforeEach(function () {
-                    this.plot1.hasTrait.mockReturnValue(false);
-                });
-
-                it('should pass the activation condition', function () {
-                    expect(this.goldEffect.condition()).toBe(true);
-                });
-
-                it('should not match the plot', function () {
-                    expect(this.goldEffect.match(this.plot1)).toBe(false);
-                });
-            });
-        });
+        expect(this.player1Object.getIncome()).toBe(5);
+        expect(this.player1).isReadyToTakeAction();
     });
 });

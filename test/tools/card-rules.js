@@ -15,17 +15,34 @@ import { repoRoot } from './cardIndex.js';
 const baselineFile = path.join(repoRoot, 'test/tools/card-rules-baseline.json');
 
 const LegacyHelpers = [
+    'addDuplicate',
     'addGold',
     'addPower',
+    'attach',
+    'discardAtRandom',
     'discardCard',
     'discardCards',
+    'discardFromDraw',
     'discardFromPlay',
     'drawCardsToHand',
     'killCharacter',
     'killCharacters',
     'kneelCard',
+    'modifyGold',
+    'modifyPower',
+    'modifyToken',
     'moveCard',
     'movePower',
+    'placeCardInPile',
+    'putIntoPlay',
+    'putIntoShadows',
+    'removeAttachment',
+    'removeCardFromGame',
+    'removeCardFromPile',
+    'removeDuplicate',
+    'returnCardToHand',
+    'sacrificeCard',
+    'shuffleDrawDeck',
     'standCard',
     'takeControl',
     'transferGold'
@@ -34,7 +51,7 @@ const CardState = ['controller', 'facedown', 'gold', 'kneeled', 'location', 'pow
 
 export const Rules = {
     'legacy-helper': {
-        selector: `CallExpression[callee.type='MemberExpression'][callee.object.name!='GameActions'][callee.property.name=/^(${LegacyHelpers.join('|')})$/]`,
+        selector: `CallExpression[callee.type='MemberExpression'][callee.object.name!='GameActions'][callee.object.property.name!=/^(effects|costs)$/][callee.property.name=/^(${LegacyHelpers.join('|')})$/]`,
         message: 'Use a GameAction instead of the legacy helper'
     },
     'direct-state-write': {
@@ -49,6 +66,11 @@ export const Rules = {
         selector:
             "CallExpression[callee.property.name=/^(on|once)$/][callee.object.property.name='game']",
         message: 'Use GameActions.delayedEffect instead of listening for game events'
+    },
+    'event-registration': {
+        selector: "CallExpression[callee.property.name='registerEvents']",
+        message:
+            'Use a triggered ability or GameActions.delayedEffect instead of registering for events'
     },
     'prompt-for-select': {
         selector: "CallExpression[callee.property.name='promptForSelect']",
