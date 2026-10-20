@@ -67,10 +67,6 @@
     "server/game/cards/01-Core/AreoHotah.js": {
         "add-message": 1
     },
-    "server/game/cards/01-Core/AryaStark.js": {
-        "direct-state-write": 1,
-        "add-message": 1
-    },
     "server/game/cards/01-Core/AshaGreyjoy.js": {
         "legacy-helper": 1,
         "add-message": 1
@@ -80,9 +76,6 @@
         "legacy-helper": 2
     },
     "server/game/cards/01-Core/BodyGuard.js": {
-        "add-message": 1
-    },
-    "server/game/cards/01-Core/BranStark.js": {
         "add-message": 1
     },
     "server/game/cards/01-Core/CallingTheBanners.js": {
@@ -162,10 +155,6 @@
     "server/game/cards/01-Core/GreenbloodTrader.js": {
         "legacy-helper": 3,
         "add-message": 2
-    },
-    "server/game/cards/01-Core/GreyWind.js": {
-        "legacy-helper": 1,
-        "add-message": 1
     },
     "server/game/cards/01-Core/GrowingStrong.js": {
         "add-message": 1
@@ -298,10 +287,6 @@
         "add-message": 1
     },
     "server/game/cards/01-Core/RobbStark.js": {
-        "legacy-helper": 1,
-        "add-message": 1
-    },
-    "server/game/cards/01-Core/SansaStark.js": {
         "legacy-helper": 1,
         "add-message": 1
     },
@@ -2756,9 +2741,6 @@
         "add-message": 1
     },
     "server/game/cards/13.3-PoS/Chiswyck.js": {
-        "legacy-helper": 1
-    },
-    "server/game/cards/13.3-PoS/EddardStark.js": {
         "legacy-helper": 1
     },
     "server/game/cards/13.3-PoS/MaesterMullin.js": {

@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class GreyWind extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,29 +8,18 @@ class GreyWind extends DrawCard {
             cost: ability.costs.kneelSelf(),
             phase: 'challenge',
             target: {
-                cardCondition: (card) => this.cardCondition(card),
-                gameAction: 'kill'
+                cardCondition: (card, context) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    card.getStrength() <= this.maxStrength(context.player)
             },
-            handler: (context) => {
-                context.target.controller.killCharacter(context.target);
-                this.game.addMessage(
-                    '{0} kneels {1} to kill {2}',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} kneels {source} to kill {target}',
+            gameAction: GameActions.kill((context) => ({ card: context.target }))
         });
     }
 
-    cardCondition(card) {
-        let str = this.controller.anyCardsInPlay((card) => card.name === 'Robb Stark') ? 2 : 1;
-
-        return (
-            card.getStrength() <= str &&
-            card.location === 'play area' &&
-            card.getType() === 'character'
-        );
+    maxStrength(player) {
+        return player.anyCardsInPlay((card) => card.name === 'Robb Stark') ? 2 : 1;
     }
 }
 

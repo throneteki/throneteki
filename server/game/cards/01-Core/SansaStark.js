@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SansaStark extends DrawCard {
     setupCardAbilities(ability) {
@@ -13,15 +14,11 @@ class SansaStark extends DrawCard {
                 onCardStood: (event) => event.card === this && this.controller.canGainFactionPower()
             },
             limit: ability.limit.perRound(1),
-            handler: () => {
-                this.game.addPower(this.controller, 1);
-
-                this.game.addMessage(
-                    '{0} uses {1} to gain 1 power for their faction',
-                    this.controller,
-                    this
-                );
-            }
+            message: '{player} uses {source} to gain 1 power for their faction',
+            gameAction: GameActions.gainPower((context) => ({
+                card: context.player.faction,
+                amount: 1
+            }))
         });
     }
 }

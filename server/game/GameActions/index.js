@@ -29,6 +29,7 @@ import LoseIcon from './LoseIcon.js';
 import MayGameAction from './MayGameAction.js';
 import MovePower from './MovePower.js';
 import NameTrait from './NameTrait.js';
+import PlaceAsDuplicate from './PlaceAsDuplicate.js';
 import PlaceCard from './PlaceCard.js';
 import PlaceCardUnderneath from './PlaceCardUnderneath.js';
 import PlaceToken from './PlaceToken.js';
@@ -42,6 +43,7 @@ import ReturnGoldToTreasury from './ReturnGoldToTreasury.js';
 import RevealCards from './RevealCards.js';
 import RevealTopCards from './RevealTopCards.js';
 import SacrificeCard from './SacrificeCard.js';
+import SaveCard from './SaveCard.js';
 import Search from './Search.js';
 import Shuffle from './Shuffle.js';
 import ShuffleIntoDeck from './ShuffleIntoDeck.js';
@@ -81,6 +83,7 @@ const GameActions = {
     may: (props) => new MayGameAction(props),
     movePower: (props) => new AbilityAdapter(MovePower, props),
     nameTrait: (props) => new NameTrait(props),
+    placeAsDuplicate: (props) => new AbilityAdapter(PlaceAsDuplicate, props),
     placeCard: (props) => new AbilityAdapter(PlaceCard, props),
     placeCardUnderneath: (props) => new AbilityAdapter(PlaceCardUnderneath, props),
     placeToken: (props) => new AbilityAdapter(PlaceToken, props),
@@ -94,6 +97,7 @@ const GameActions = {
     revealCards: (props) => new AbilityAdapter(RevealCards, props),
     revealTopCards: (props) => new AbilityAdapter(RevealTopCards, props),
     sacrificeCard: (props) => new AbilityAdapter(SacrificeCard, props),
+    saveCard: (props) => new AbilityAdapter(SaveCard, props),
     search: (props) => new AbilityAdapter(new Search(props), (context) => ({ context })),
     shuffle: (props) => new AbilityAdapter(Shuffle, props),
     shuffleIntoDeck: (props) => new AbilityAdapter(ShuffleIntoDeck, props),

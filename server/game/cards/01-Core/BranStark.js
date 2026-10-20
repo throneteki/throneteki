@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class BranStark extends DrawCard {
     setupCardAbilities(ability) {
@@ -9,16 +10,11 @@ class BranStark extends DrawCard {
                     event.source.getType() === 'event' && event.player !== this.controller
             },
             cost: ability.costs.sacrificeSelf(),
-            handler: (context) => {
-                context.event.cancel();
-
-                this.game.addMessage(
-                    '{0} sacrifices {1} to cancel {2}',
-                    this.controller,
-                    this,
-                    context.event.source
-                );
-            }
+            message: {
+                format: '{player} sacrifices {source} to cancel {event}',
+                args: { event: (context) => context.event.source }
+            },
+            gameAction: GameActions.cancelEffects((context) => ({ event: context.event }))
         });
     }
 }

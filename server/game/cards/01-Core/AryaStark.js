@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class AryaStark extends DrawCard {
     setupCardAbilities(ability) {
@@ -11,25 +12,11 @@ class AryaStark extends DrawCard {
             when: {
                 onCardEntersPlay: (event) => event.card === this && event.card.canBeDuplicated()
             },
-            handler: () => {
-                let dupe = this.controller.drawDeck[0];
-
-                if (!dupe) {
-                    return true;
-                }
-
-                this.controller.removeCardFromPile(dupe);
-
-                this.addDuplicate(dupe);
-
-                dupe.facedown = true;
-
-                this.game.addMessage(
-                    '{0} places the top card of their deck on {1} as a duplicate',
-                    this.controller,
-                    this
-                );
-            }
+            gameAction: GameActions.placeAsDuplicate((context) => ({
+                card: context.player.drawDeck[0],
+                parent: context.source,
+                facedown: true
+            }))
         });
     }
 }

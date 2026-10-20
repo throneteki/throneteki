@@ -29,9 +29,7 @@ class Ghost extends DrawCard {
                 format: '{player} sacrifices {costs.sacrifice} to save {card}',
                 args: { card: (context) => context.event.card }
             },
-            handler: (context) => {
-                context.event.saveCard();
-            }
+            gameAction: GameActions.saveCard((context) => ({ event: context.event }))
         });
     }
 }
