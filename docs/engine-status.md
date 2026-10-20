@@ -1,0 +1,148 @@
+# Engine status
+
+Written 2026-10-20 so the next session can continue without the previous conversation. The plan is
+[engine-roadmap.md](engine-roadmap.md). The rules map is
+[framework-coverage.md](framework-coverage.md). Read both before changing `server/game`.
+
+Nothing from this batch is committed. Do not commit, push, or open a pull request unless asked.
+
+Last full server run, after the engine changes and before the doc edits: `npx vitest run test/server`
+from the repo root. 419 files, 4628 passed, 13 skipped. Re-run it after any further engine change.
+Do not pipe vitest through `grep` or `tail`. On PowerShell, chain with `; if ($LASTEXITCODE -eq 0)`.
+
+## Where the work is
+
+The goal is a game that can start with manual mode off. A game already does that when every card in
+both decks is verified. The phase 6 gate is not met, so that is not yet the default we trust. The
+roadmap says to hold the verified-deck check until the gate is met. That hold is not in the code,
+and it should not be added. `ManualMode.decideAtStart` already turns manual mode off for a verified
+deck.
+
+The framework batch that was in progress is implemented. Card migration of the remaining cards is
+the ongoing work, and it was not part of this batch.
+
+## Done, with specs
+
+- Setup chooses the first player, then announces factions and agendas in first-player order.
+  [Setup.spec.js](../test/server/gamesteps/Setup.spec.js). Round 1 still chooses a first player:
+  the plot phase clears the setup choice before plots are revealed.
+- Melee titles stay out of play until every player has chosen, then enter together in one
+  `onTitlesEnteredPlay`. [ChooseTitle.spec.js](../test/server/gamesteps/ChooseTitle.spec.js).
+  `player.title` is `undefined` until that event. A three-player test needs `noTitleSetAside`.
+- Targets are snapshotted before costs. An ability with a snapshot and no remaining legal target
+  resolves unsuccessfully: costs stay paid, the limit increments, the event is discarded, the
+  handler does not run. Choosing zero of "any number" is that unsuccessful path, not a cancel.
+  A prevented cost ends initiation: the card is not played and the limit does not increment.
+  [AbilityResolution.spec.js](../test/server/gamesteps/AbilityResolution.spec.js).
+- Interrupt order is cancel, duplicate saves, "would", forced, then other interrupts. A card with
+  exactly one Interrupt clause containing "would" is classified automatically. A card with two
+  Interrupt clauses is not; set `would` on the ability. No spec asserts that order.
+- Marshaling is an action window. The active player marshals on their turn. With strict windows
+  on, every other player is offered an action in player order. With strict windows off, a player
+  who has not set the marshaling window as a stop is skipped.
+  [MarshalingWindow.spec.js](../test/server/gamesteps/MarshalingWindow.spec.js).
+- An action is refused with reason `window`, whether or not strict windows are on, while a window
+  is open and it is not that player's turn, and during marshaling except on that player's turn.
+  When strict windows are off, no window is open, and the phase is not marshaling, actions are
+  still allowed. That is what lets `setupTest` play events while a challenge is being declared.
+- A lasting effect with no condition keeps the cards eligible when it was created. A card that
+  stops matching keeps the effect. An effect with a condition can gain a card that starts matching
+  (Calm Over Westeros follows the attacker's current plot; Winter Is Coming does not). An "until
+  the end of X" effect created after X has ended does nothing. End-of-phase expiry happens before
+  reactions. Losing all traits removes traits for the duration, including ones added during it,
+  and they return when the effect ends. Immunity to an opponent's event stops an effect that names
+  no game action. [LastingEffects.spec.js](../test/server/gamesteps/LastingEffects.spec.js).
+- A burn kill cannot be saved (FAQ 3.1: a save that would not remedy the 0 STR cannot be
+  initiated), so Bodyguard and duplicates are not offered.
+  [Burn.spec.js](../test/server/gamesteps/Burn.spec.js). Risen from the Sea is the exception: it
+  is offered when its +1 STR would take the character above 0.
+  A two-kill version (saveable kill, then an unsaveable one) was tried and removed: it offered
+  saves that cost the player a card and then killed the character anyway.
+- Claim, taxation, and pile order were already done:
+  [Claim.spec.js](../test/server/gamesteps/Claim.spec.js),
+  [TaxationPhase.spec.js](../test/server/gamesteps/TaxationPhase.spec.js),
+  [PileOrder.spec.js](../test/server/gamesteps/PileOrder.spec.js).
+
+The coverage list exists and is the phase 6 checkbox for that item. Its open rows are the
+remaining framework gaps.
+
+## What is left
+
+The phase 6 checkbox "framework items in phases 1, 2, 4 and 5 are done" is still open. These are
+the gaps, in the order they block that checkbox. Ask before implementing a rules reading that is
+not already decided.
+
+1. FAQ 1.6. When constant abilities or lasting effects conflict, the first player chooses the
+   order, once, and chooses again when a new conflict appears. This needs a prompt. Do not fake a
+   fixed order. The TODO on `mustShowPlotSelection` in `server/game/effects.js` is the same gap
+   for delayed effects that happen together. The first player also does not yet order kills that
+   happen together.
+2. FAQ 3.1, the general case. A save that would not remedy a terminal condition cannot be
+   initiated. For burn the kill is unsaveable and Risen from the Sea checks its own remedy. Other
+   terminal conditions are still open.
+3. The marshaling window closes when every player has passed in a row (Appendix I). Today each
+   player's marshaling turn is its own pass of the window.
+4. Five catalogued events have no engine spec: `onAddedToChallenge`, `onBeforeDeckSearch`,
+   `onDupeEntersPlay`, `onLookAtShadows`, `onTokenDiscarded`. `onCardsDrawn` from `DrawSpecific`
+   has no `amount`.
+5. A spec that asserts "would" interrupts resolve before forced interrupts.
+6. Every state change goes through a `GameAction`. Manual corrections (`changeStat`, `/power`,
+   `/token`) stay plain corrections and raise no events.
+7. The client showing why an action is unavailable. Server reasons already exist.
+
+These are decided and should stay as they are until someone asks:
+
+- Strict action windows stay behind the game option. Auto-pass for visible actions is the next
+  trial, then feedback, then making the option the default. Do not flip the default.
+- Full refusal of actions when no window is open, outside marshaling, waits until strict windows
+  are the default.
+- Do not add a hold that stops verified decks starting with manual mode off.
+
+After the framework gaps, or alongside them when a gap is blocked on a ruling, continue phase 5.
+The eight shared neutrals in the roadmap table are verified. The next archetype is Stark Fealty,
+[decklist 16711](https://thronesdb.com/decklist/view/16711). The roadmap's "20 unverified" for
+that list is stale: the list is covered, and Tumblestone Knight has no text. Recount before
+migrating, and leave that sentence alone unless asked. The other two short Stark decklist ids
+were not recorded.
+
+## Do not reapply
+
+These were tried and reverted, or left alone on purpose.
+
+- `canCancel: false` on pile-order prompts. Done with nothing selected still cancels, and the
+  cards use the default order. Setting it false broke about 24 tests.
+- Deleting `server/game/gamesteps/marshaling/MarshalCardsPrompt.js`. The window is a separate step.
+- The Meereen specs under `test/server/cards/11.2-TMoW` and `test/server/cards/17.1-R`. They were
+  edited and then restored. A non-persistent player target is dropped when that player stops being
+  the source's controller. A card target is not dropped for a controller mismatch. Nightmares
+  depends on that.
+- Replacing Filler Plot with A Noble Cause as the default plot. House Maester filler stays 20
+  copies of `03041`. At the Gates draw-deck assertions use `.not.toBe('play area')`.
+- `GameActions.switch` already exists. Do not add it again.
+
+## Traps in the code that just landed
+
+- Each-player targets share one `AbilityTarget.selector`. `buildPlayerSelection` stores the
+  constrained selector on the selection, and `resolveAction` restores it. Without that, only the
+  last choosing player can select. Unsuccessful resolution runs only when
+  `context.legalTargetsAtInitiation` has that target. Unit tests have no snapshot and still prompt.
+- `context.opponent` is not a getter. A snapshot is skipped when any choosing player is missing.
+- A faction card is not in the play area. `addEffect` on a faction card with the default location
+  does nothing. Use an in-play card, or `location: 'any'`.
+- `clearInvalidTargets` removes a non-persistent card only when it left `targetLocation`, and a
+  non-persistent player only when `passesTargetController` fails. Do not apply that player check
+  to card targets.
+- Burn specs use a real burn (Dracarys! on a defender), not a hand-set STR modifier.
+- Calling `setupTest` twice in one test does not replace a card name already on the harness. The
+  property still points at the first game's card.
+- Setting `strictActionWindows` after a window has opened does not put skipped players back. Pass
+  the option in `gameOptions` before `setupTest` advances. A character must be in play for
+  Nightmares to be an available action; otherwise that player is skipped.
+- `ActionWindow.skipCondition` ignores its player and skips everyone when strict windows are off
+  and nobody opted in. `MarshalingActionWindow` overrides it per player.
+- Timing is checked before `cannotTrigger`, `cost`, and `noEffect`. A spec that asserts one of
+  those reasons has to pass until it is that player's turn.
+- `integration(` keeps manual mode on. Those specs still click Apply Claim. `setupTest` specs must
+  not.
+- `setupTest` at phase `marshal` has collected income for the first player only. The second
+  player's gold is 0 until their marshaling turn, unless the spec sets `gold`.

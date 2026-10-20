@@ -34,7 +34,8 @@ judgement call.
 
 Verified cards do not measure the framework. Phase 6 does not switch the default until the framework
 rules named in phases 1, 2, 4 and 5 are each covered by an engine spec, and until the wider framework
-list in phase 6 is in place.
+list in phase 6 is in place. [engine-status.md](engine-status.md) is where the current work and the
+remaining gaps are written down.
 
 The rules authority is the [Rules Reference](https://thronesdb.com/rulesreference). Card text takes
 precedence over the Rules Reference where they conflict.
@@ -70,7 +71,7 @@ What stops the engine being trusted:
 | About 1,200 hand-written `addMessage` calls in cards                                                                                                      | `server/game/cards`                                                                                                                                 |
 | Event names are untyped strings with no catalogue                                                                                                         | throughout                                                                                                                                          |
 | 198 card spec files for about 1,960 implemented cards                                                                                                     | `test/server/cards`                                                                                                                                 |
-| The framework disagrees with the Rules Reference in the places named in phases 1, 2, 4, 5 and 6, and no tool measures that coverage                       | claim, saves, ability resolution, marshaling, effects, setup                                                                                        |
+| The framework still disagrees with the Rules Reference where [framework-coverage.md](framework-coverage.md) marks a gap                                  | conflicting effects, useless saves, skipped windows while strict windows are off                                                                    |
 
 ## Phases
 
@@ -146,10 +147,12 @@ LIMIT 50;
    (`changeStat`, `/power`, `/token`) stay plain corrections that raise no events, so fixing a
    mistake doesn't trigger reactions; they are recorded as manual actions instead. Terminal
    conditions are part of the same work (Rulings and Clarifications v4.0, 3.1, and the Rules
-   Reference under Save). A save is allowed when it remedies the condition, such as raising STR
-   above 0, and the first player orders kills that happen together. Burn currently kills with no
-   save at all, through the legacy `killCharacter`
-   ([drawcard.js](../server/game/drawcard.js) `checkBurnEffects`).
+   Reference under Save). Burn opens a kill that can be saved, then kills again with no save if
+   the character is still in play at 0 STR
+   ([Burn.spec.js](../test/server/gamesteps/Burn.spec.js)). A duplicate cannot save that kill. A
+   save that removes the 0 STR leaves the character in play. Still to do: refusing a save that
+   could not remedy the condition, rather than letting it resolve and then applying the second
+   kill, and the first player ordering kills that happen together.
 4. **Simultaneity.** _Done._ The standing phase stands every player's cards, faction cards
    included, as one event. When a card leaves play, by a game action or the legacy
    `player.moveCard`, its attachments and duplicates are removed in the same event window, and
@@ -171,34 +174,37 @@ LIMIT 50;
    `this.player1.actionUnavailableReason(card)`, and card menu items carry a `disabledReason`.
    Still to do: the client showing the reason, and reasons for triggered abilities that are not
    offered.
-7. **Ability resolution.** Still to do. From the Rules Reference (Costs, Target, Triggering
-   Condition) and Rulings and Clarifications v4.0 (3.3):
+7. **Ability resolution.** _Done._ From the Rules Reference (Costs, Target, Triggering Condition)
+   and Rulings and Clarifications v4.0 (3.3), locked in
+   [AbilityResolution.spec.js](../test/server/gamesteps/AbilityResolution.spec.js):
     - Choices made while initiating, including targets, stay limited to the options that were legal
-      at step 1 (3.3). Eligibility is checked when the prompt opens, and that set is not kept.
+      at step 1 (3.3). The legal cards are snapshotted before costs are paid.
     - When no legal option remains, the ability resolves unsuccessfully: its costs are paid, it has
-      no effect, and an event is placed in its owner's discard pile. There is no such resolution.
+      no effect, and an event is placed in its owner's discard pile. The limit still increments.
     - An effect that chooses "any number" of targets does not resolve when zero are chosen (Rules
-      Reference: Target).
+      Reference: Target). Choosing zero is not a cancel.
     - A cost prevented partway through payment ends initiation once every cost that can be paid has
-      been paid (Rules Reference: Costs). There is no path for that.
+      been paid (Rules Reference: Costs). The card is not played and the limit does not increment.
     - Interrupts to a triggering condition that "would" occur resolve before forced interrupts and
-      other interrupts (Rules Reference: Triggering Condition). Saves, which are one kind of
-      "would" interrupt, already come first. Any other "would" interrupt shares the ordinary
-      interrupt window.
-8. **Round structure.** Still to do. Each needs an engine spec.
+      other interrupts (Rules Reference: Triggering Condition). Saves that say "would" are in that
+      window. Duplicate saves stay ahead of them.
+8. **Round structure.** Each needs an engine spec.
     - When several cards are discarded or killed at once, their owner chooses the order they enter
-      the discard pile or dead pile (Rules Reference: Discard Pile, Dead Pile).
-      [InterruptWindowOrder.js](../server/game/gamesteps/InterruptWindowOrder.js) asks
-      `event.player`, and uses that same prompt for the draw deck and shadows.
+      the discard pile or dead pile (Rules Reference: Discard Pile, Dead Pile). _Done._ The owner
+      chooses even when another player controls one of the cards
+      ([PileOrder.spec.js](../test/server/gamesteps/PileOrder.spec.js)). Putting cards on a deck
+      or into shadows is still ordered by the player who places them.
     - Setup determines the first player, then announces factions and agendas, in that order (Rules
-      Reference: Setup). [setupphase.js](../server/game/gamesteps/setupphase.js) announces them
-      first.
+      Reference: Setup). _Done._ The announcement uses first-player order
+      ([Setup.spec.js](../test/server/gamesteps/Setup.spec.js)).
     - Each player returns unspent gold at the same time (Rules Reference, Appendix I, step 7.2).
-      [taxationphase.js](../server/game/gamesteps/taxationphase.js) returns it one player at a time.
+      _Done._ Both pools are returned in one event
+      ([TaxationPhase.spec.js](../test/server/gamesteps/TaxationPhase.spec.js)). A player who does
+      not return unspent gold is left out of that event.
     - In melee, titles are chosen in secret and enter play together (Rules Reference, Appendix I,
-      step 1.4). [ChooseTitlePrompt.js](../server/game/gamesteps/plot/ChooseTitlePrompt.js) moves
-      each title into play as that player chooses it ([TitlePool.js](../server/game/TitlePool.js)
-      `chooseFromPool`).
+      step 1.4). _Done._ Each player is told only that a title was selected, and every selected
+      title enters play in one `onTitlesEnteredPlay` event
+      ([ChooseTitle.spec.js](../test/server/gamesteps/ChooseTitle.spec.js)).
 
 ### Phase 2: prompts without leaking hidden information
 
@@ -282,18 +288,19 @@ _Implemented today, behind the "Strict action windows" game option
 prompted if they have any action they can take, including one on a card in play, or have set the
 window as a stop; they get a fake wait if a card they could hold might give them one
 (`PossibleResponders.couldAct`); they are skipped otherwise. The next step is the auto-pass above
-for visible actions, then feedback on how long the pauses feel. With the option on and manual mode
-off, an action outside that player's turn in an action window (and outside the marshaling phase) is
-refused with the `window` reason. That refusal belongs with manual mode off on its own. It does not
-depend on which windows are prompted, and it is still to be untied from this option._
+for visible actions, then feedback on how long the pauses feel. An action is refused with the `window` reason, whether or not strict windows are on, while an
+action window is open and it is not that player's turn, and throughout the marshaling phase except
+during that player's own turn in the window. When strict windows are off and no window is open,
+outside marshaling, actions are still allowed. That is what lets `setupTest` play events during a
+challenge. Refusing those as well waits until strict windows are the default._
 
-The marshaling phase is the remaining window that refusal does not cover.
-[game.js](../server/game/game.js) `isActionTimingOpenFor` treats the whole phase as open, and
-[marshalingphase.js](../server/game/gamesteps/marshalingphase.js) only prompts the active player to
-marshal. The Rules Reference (Appendix I, "Marshaling phase player action window") gives every
-player that window, in player order, and the active player marshals on their turn inside it. The
-window closes when every player has passed in a row. Model it that way, and apply the out-of-window
-refusal outside it. The current exception for the marshaling phase stays until that window exists.
+The marshaling phase uses that window
+([MarshalingActionWindow.js](../server/game/gamesteps/marshaling/MarshalingActionWindow.js),
+[MarshalingWindow.spec.js](../test/server/gamesteps/MarshalingWindow.spec.js)). The active player
+marshals on their turn. With strict windows on, every other player is offered the action window, in
+player order, before the next player marshals. With strict windows off, a player who has not set
+the marshaling window as a stop is skipped. The window does not yet close only after every player
+has passed in a row: each player's marshaling turn is its own pass of the window.
 
 What this needs from card code, required for all new and migrated cards from now on:
 
@@ -361,27 +368,32 @@ on every card in the format having one.
   [effects.js](../server/game/effects.js) is the same gap for delayed effects that happen together.
 - The cards a lasting effect applies to are the cards eligible when it is created. Cards that
   become eligible later are unaffected, and a card that stops being eligible keeps the effect for
-  its duration (Rules Reference: Lasting Effects; the Dragon Sight ruling in the current FAQ). A
-  function `match` keeps adding and dropping cards
-  ([effect.js](../server/game/effect.js) `addTargets`, `clearInvalidTargets`).
+  its duration (Rules Reference: Lasting Effects; the Dragon Sight ruling in the current FAQ).
+  _Done_ for an effect with no condition
+  ([LastingEffects.spec.js](../test/server/gamesteps/LastingEffects.spec.js)). An effect with a
+  condition still drops cards that stop matching and can apply to a card that starts matching
+  while the condition holds, which is how a claim reduction follows the attacker's current plot.
+  A player target limited to the source's controller is removed when that player stops being the
+  controller.
 - An "until the end of X" effect created after X has ended expires at once and does not affect the
-  game (Rules Reference: Lasting Effects).
+  game (Rules Reference: Lasting Effects). _Done._ The duration is marked as ending before the
+  end event resolves, and the next phase or round clears that mark.
 - End of the phase follows the sequence in the current FAQ (End of Phase Timing Sequence), and the
   same sequence ends a challenge or a round: interrupts to the end, then "until the end" and
   "during" abilities expire (that moment is the end), then "at the end" delayed effects resolve,
-  then reactions to the end. [EndPhase.js](../server/game/GameActions/EndPhase.js) raises
-  `onPhaseEnded` and then `onAtEndOfPhase`, and
-  [effectengine.js](../server/game/effectengine.js) removes both durations there, without the
-  interrupts, the reactions, or first-player order for effects created together.
+  then reactions to the end. _Done_ for the expiry order
+  ([LastingEffects.spec.js](../test/server/gamesteps/LastingEffects.spec.js)). First-player order
+  for effects created together is the open item above.
 - A card that loses all of an attribute has none of it while the effect lasts, including attributes
   another effect would give it (Rulings and Clarifications v4.0, 2.9). `losesAllTraits` is a flag
   that makes `hasTrait` and `getTraits` return nothing
   ([basecard.js](../server/game/basecard.js)); a trait added with `addTrait` during that time is
-  still stored. An engine spec needs to lock what remains when the flag is removed.
+  still stored, and both return when the effect ends
+  ([LastingEffects.spec.js](../test/server/gamesteps/LastingEffects.spec.js)).
 - Immunity stops a card being targeted or affected by the named set of effects (Rules Reference:
-  Immune). A lasting effect already on the card stays when the card gains immunity. `canApply` only
-  asks `allowGameAction` ([effect.js](../server/game/effect.js)), so an effect with no game action
-  still applies.
+  Immune). A lasting effect already on the card stays when the card gains immunity. An effect that
+  names no game action is checked as `genericEffect`, so immunity to an opponent's event stops it
+  ([LastingEffects.spec.js](../test/server/gamesteps/LastingEffects.spec.js)).
 
 ### Phase 5: card migration
 
@@ -447,28 +459,32 @@ drop, click-to-kneel, stat changes, shuffling and looking at the deck are refuse
 every opponent; if they all agree, manual mode turns on and the player is asked which card isn't
 working, and both are recorded in the game stats
 ([ManualMode.spec.js](../test/server/ManualMode.spec.js)). `setupTest` games run with manual
-mode off and throw on any manual action; older `integration(` specs still run with it on. Actions outside action
-windows are refused when that option is on (phase 2). Still to do: refuse them whenever manual
-mode is off, whether or not the option is on; make strict action windows the default after the
-auto-pass trial has had feedback; a client toggle and indicator; and "report a problem" with a
-saved game state for the scenario runner._
+mode off and throw on any manual action; older `integration(` specs still run with it on. An
+action is refused when a window is open and it is not that player's turn, and during marshaling
+except on that player's turn, whether or not strict windows are on (phase 2). Still to do: refuse
+actions whenever manual mode is off and no window is open; make strict action windows the default
+after the auto-pass trial has had feedback; a client toggle and indicator; and "report a problem"
+with a saved game state for the scenario runner._
 
 **Gate.** The verified-deck check already turns manual mode off. Hold that check until all of the
 following hold. This is the bar for switching the default, on top of both decks being verified.
 
 - The framework items in phases 1, 2, 4 and 5 are done, and each has an engine spec.
-- Claim follows the Rules Reference in that game (Appendix I, step 4.2.4: if the attacker won, "the
-  claim result of the challenge is now applied"). While manual mode is on,
-  [ClaimPrompt.js](../server/game/gamesteps/challenge/ClaimPrompt.js) still offers "Apply Claim" or
-  "Continue", and [fulfillmilitaryclaim.js](../server/game/gamesteps/challenge/fulfillmilitaryclaim.js)
-  still lets the defender cancel. That prompt exists because a wrongly applied claim is hard to
-  undo, and manual mode is how a mistake gets fixed. With manual mode off, claim is applied: the
-  winner is not asked, and military claim cannot be cancelled. The defender still chooses which
-  characters die. That kill goes through a game action rather than `game.killCharacters`.
-- A framework coverage list maps every Rules Reference glossary entry, every framework step in
-  Appendix I, and every ruling in the current FAQ (Rulings and Clarifications v4.1, January 2024)
-  to an engine spec, or to an accepted row in the decisions table. The gaps named in the phases are
-  the ones known today. The list is what finds the rest. Verified cards do not count towards it.
+- [x] Claim follows the Rules Reference in that game (Appendix I, step 4.2.4: if the attacker won,
+      "the claim result of the challenge is now applied"). While manual mode is on,
+      [ClaimPrompt.js](../server/game/gamesteps/challenge/ClaimPrompt.js) still offers "Apply Claim"
+      or "Continue", and
+      [fulfillmilitaryclaim.js](../server/game/gamesteps/challenge/fulfillmilitaryclaim.js) still
+      lets the defender cancel. That prompt exists because a wrongly applied claim is hard to undo,
+      and manual mode is how a mistake gets fixed. With manual mode off, claim is applied: the
+      winner is not asked, and military claim cannot be cancelled. The defender still chooses which
+      characters die, and that kill is `GameActions.kill`
+      ([Claim.spec.js](../test/server/gamesteps/Claim.spec.js)).
+- [x] A framework coverage list maps every Rules Reference glossary entry, every framework step in
+      Appendix I, and every ruling in the current FAQ (Rulings and Clarifications v4.1, January
+      2024) to an engine spec, or to an accepted row in the decisions table
+      ([framework-coverage.md](framework-coverage.md)). The gaps named there are still open.
+      Verified cards do not count towards it.
 
 - Manual mode becomes a game flag. Chat commands, `changeStat`, drag and drop and click-to-kneel
   require it. With manual mode off, actions outside action windows are refused.
@@ -501,3 +517,6 @@ following hold. This is the bar for switching the default, on top of both decks 
 | 2026-10-20 | While manual mode is on, the winner may skip claim and the defender may cancel military claim, because a wrongly applied claim is hard to undo. With manual mode off, claim is applied and neither prompt is offered.                                                                                           |
 | 2026-10-20 | Phase 6 does not switch the default until the framework items in phases 1, 2, 4 and 5 each have an engine spec, and a list maps every Rules Reference entry, framework step and current FAQ ruling to a spec or an accepted decision.                                                                           |
 | 2026-10-20 | Verified means a `setupTest` spec with no manual actions or harness shortcuts that resolves every ability on the card, enforced by the generator and the test run. Specs of cards that were verified under the earlier bar are rewritten, not carried over.                                                     |
+| 2026-10-20 | Glossary entries that name a card type, a zone, an icon or a printed statistic are ordinary play. They are covered by the card suite, not by a separate framework spec. [framework-coverage.md](framework-coverage.md) lists them.                                                                              |
+| 2026-10-20 | A FAQ entry that is about one card is covered by that card's spec once the card is verified. Until then it is a gap, even if the engine already plays the card.                                                                                                                                                  |
+| 2026-10-20 | While strict action windows are off and no window is open, outside the marshaling phase, actions stay available. Marshaling, and any window that is actually open, refuse an action that is not that player's turn.                                                                                             |

@@ -19,6 +19,7 @@ class AbilityResolver extends BaseStep {
             new SimpleStep(game, () => this.resolveCosts()),
             new SimpleStep(game, () => this.waitForCostResolution()),
             new SimpleStep(game, () => this.payCosts()),
+            new SimpleStep(game, () => this.endIfCostPrevented()),
             new SimpleStep(game, () => (this.context.resolutionStage = 'effect')),
             new SimpleStep(game, () => this.choosePlayer()),
             new SimpleStep(game, () => this.waitForChoosePlayerResolution()),
@@ -74,6 +75,16 @@ class AbilityResolver extends BaseStep {
         ) {
             this.context.cardStateWhenInitiated = this.context.source.createSnapshot();
         }
+
+        this.context.legalTargetsAtInitiation = new Map();
+        for (const target of this.ability.targets || []) {
+            if (target.legalCards) {
+                const cards = target.legalCards(this.context);
+                if (cards) {
+                    this.context.legalTargetsAtInitiation.set(target, cards);
+                }
+            }
+        }
     }
 
     markActionAsTaken() {
@@ -113,11 +124,48 @@ class AbilityResolver extends BaseStep {
             return;
         }
 
+        this.context.costEvents = [];
+        this.context.recordingCostEvents = true;
         this.ability.payCosts(this.context);
+        this.context.recordingCostEvents = false;
+    }
+
+    endIfCostPrevented() {
+        if (this.cancelled || !this.costWasPrevented()) {
+            return;
+        }
+
+        this.costPrevented = true;
+        const source = this.context.source;
+        if (source.location === 'being played') {
+            source.owner.moveCard(source, this.context.originalLocation || 'hand');
+        }
+
+        this.game.addMessage(
+            '{0} fails to initiate {1} because a cost was prevented',
+            this.context.player,
+            source
+        );
+    }
+
+    costWasPrevented() {
+        return (this.context.costEvents || []).some((event) => this.eventWasPrevented(event));
+    }
+
+    eventWasPrevented(event) {
+        if (!event?.name) {
+            return false;
+        }
+
+        if (event.cancelled) {
+            return true;
+        }
+
+        return (event.childEvents || []).some((child) => this.eventWasPrevented(child));
     }
 
     choosePlayer() {
-        if (this.cancelled || !this.ability.needsChoosePlayer()) {
+        if (this.cancelled || this.costPrevented || !this.ability.needsChoosePlayer()) {
             return;
         }
 
@@ -146,7 +194,7 @@ class AbilityResolver extends BaseStep {
     }
 
     resolveTargets() {
-        if (this.cancelled) {
+        if (this.cancelled || this.costPrevented) {
             return;
         }
 
@@ -154,7 +202,17 @@ class AbilityResolver extends BaseStep {
     }
 
     waitForTargetResolution() {
-        if (this.cancelled) {
+        if (this.cancelled || this.costPrevented) {
+            return;
+        }
+
+        if (this.targetResults.some((result) => result.unsuccessful)) {
+            this.unsuccessful = true;
+            this.game.addMessage(
+                "{0}'s {1} resolves unsuccessfully",
+                this.context.player,
+                this.context.source
+            );
             return;
         }
 
@@ -189,7 +247,7 @@ class AbilityResolver extends BaseStep {
     }
 
     incrementAbilityLimit() {
-        if (this.cancelled) {
+        if (this.cancelled || this.costPrevented) {
             return;
         }
 
@@ -201,7 +259,7 @@ class AbilityResolver extends BaseStep {
     }
 
     executeHandler() {
-        if (this.cancelled) {
+        if (this.cancelled || this.costPrevented || this.unsuccessful) {
             return;
         }
 
@@ -247,6 +305,10 @@ class AbilityResolver extends BaseStep {
     }
 
     raiseCardPlayedIfEvent() {
+        if (this.costPrevented) {
+            return;
+        }
+
         // An event card is considered to be played even if it has been
         // cancelled. Raising the event here will allow forced reactions and
         // reactions to fire with the appropriate timing. There are no cards

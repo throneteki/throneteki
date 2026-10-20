@@ -15,7 +15,6 @@ describe('Jon Snow (TTS)', function () {
     describe('when military claim is applied', function () {
         beforeEach(function () {
             this.unopposedChallenge(this.player1, 'Military', this.jonSnow);
-            this.player1.clickPrompt('Apply Claim');
         });
 
         it('can force kneeling characters to be chosen', function () {
@@ -49,7 +48,6 @@ describe('Jon Snow (TTS)', function () {
         beforeEach(function () {
             this.handSizeBeforeClaim = this.player2Object.hand.length;
             this.unopposedChallenge(this.player1, 'Intrigue', this.houseMaester);
-            this.player1.clickPrompt('Apply Claim');
         });
 
         it('does not trigger', function () {

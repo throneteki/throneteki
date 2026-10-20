@@ -17,11 +17,11 @@ describe('Cersei Lannister (LoCR)', function () {
 
         it('does not kneel', function () {
             expect(this.cerseiLannister.kneeled).toBe(false);
-            expect(this.player1).toHavePromptButton('Apply Claim');
+            expect(this.hedgeKnight.location).toBe('discard pile');
+            expect(this.player1).toAllowAbilityTrigger(this.cerseiLannister);
         });
 
         it('gains 1 power after a card is discarded from an opponent’s hand', function () {
-            this.player1.clickPrompt('Apply Claim');
             this.player1.triggerAbility(this.cerseiLannister);
 
             expect(this.hedgeKnight.location).toBe('discard pile');
@@ -69,7 +69,6 @@ describe('Cersei Lannister (LoCR)', function () {
             });
 
             this.unopposedChallenge(this.player1, 'Intrigue', this.cerseiLannister);
-            this.player1.clickPrompt('Apply Claim');
             this.player2.clickPrompt('Done');
         });
 
@@ -126,7 +125,6 @@ describe('Cersei Lannister (LoCR)', function () {
             });
 
             this.unopposedChallenge(this.player1, 'Intrigue', this.cerseiLannister);
-            this.player1.clickPrompt('Apply Claim');
             this.player2.triggerAbility(this.missandei);
         });
 
@@ -156,7 +154,6 @@ describe('Cersei Lannister (LoCR)', function () {
 
             this.player1.clickPrompt('Done');
             this.unopposedChallenge(this.player2, 'Intrigue', this.houseMaester);
-            this.player2.clickPrompt('Apply Claim');
         });
 
         it('cannot be triggered', function () {

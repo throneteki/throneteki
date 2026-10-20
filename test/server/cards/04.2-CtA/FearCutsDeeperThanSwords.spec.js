@@ -55,3 +55,52 @@ describe('Fear Cuts Deeper Than Swords', function () {
         });
     });
 });
+
+describe('Fear Cuts Deeper Than Swords, against keywords', function () {
+    function setup(context, attacker) {
+        context.setupTest({
+            phase: 'challenge',
+            firstPlayer: 'player2',
+            player1: {
+                gold: 2,
+                hand: ['Fear Cuts Deeper Than Swords'],
+                inPlay: ['Tumblestone Knight', 'House Maester']
+            },
+            player2: {
+                faction: 'greyjoy',
+                inPlay: [attacker]
+            }
+        });
+    }
+
+    it('cancels intimidate choosing a [stark] character you control', function () {
+        setup(this, 'Grey Wind (Core)');
+        this.player2.clickPrompt('Military');
+        this.player2.clickCard(this.greyWind);
+        this.player2.clickPrompt('Done');
+        this.skipActionWindow();
+        this.player1.clickPrompt('Done');
+        this.skipActionWindow();
+        this.player1.clickCard(this.houseMaester);
+        this.player2.clickCard(this.tumblestoneKnight);
+        this.player1.triggerAbility(this.fearCutsDeeperThanSwords);
+
+        expect(this.houseMaester.location).toBe('dead pile');
+        expect(this.tumblestoneKnight.kneeled).toBe(false);
+        expect(this.fearCutsDeeperThanSwords.location).toBe('discard pile');
+        expect(this.player2).isReadyToTakeAction();
+    });
+
+    it('cancels stealth choosing a [stark] character you control', function () {
+        setup(this, 'Maester Wendamyr');
+        this.player2.clickPrompt('Power');
+        this.player2.clickCard(this.maesterWendamyr);
+        this.player2.clickPrompt('Done');
+        this.player2.clickCard(this.tumblestoneKnight);
+        this.player1.triggerAbility(this.fearCutsDeeperThanSwords);
+
+        expect(this.tumblestoneKnight.bypassedByStealth).toBe(false);
+        expect(this.fearCutsDeeperThanSwords.location).toBe('discard pile');
+        expect(this.player2).toHavePrompt('Initiate an action');
+    });
+});

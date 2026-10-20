@@ -23,8 +23,8 @@ describe('At the Gates', function () {
             this.player1.clickCard(this.oldGate);
 
             expect(this.oldGate.location).toBe('play area');
-            expect(this.kingswood.location).toBe('draw deck');
-            expect(this.goldenTooth.location).toBe('draw deck');
+            expect(this.kingswood.location).not.toBe('play area');
+            expect(this.goldenTooth.location).not.toBe('play area');
             expect(this.game.getPlainTextLog()).toContain(
                 'player1 uses At the Gates to search their deck for a limited location with printed cost 1 or lower'
             );

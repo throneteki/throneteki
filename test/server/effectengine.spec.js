@@ -17,7 +17,8 @@ describe('EffectEngine', function () {
             on: vi.fn(),
             removeListener: vi.fn(),
             getPlayers: vi.fn(),
-            queueSimpleStep: vi.fn()
+            queueSimpleStep: vi.fn(),
+            durationHasEnded: () => false
         };
         this.gameSpy.getPlayers.mockReturnValue([]);
         this.gameSpy.queueSimpleStep.mockImplementation((func) => func());

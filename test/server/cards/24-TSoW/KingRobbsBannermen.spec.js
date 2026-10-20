@@ -53,9 +53,7 @@ describe("King Robb's Bannermen", function () {
         });
 
         it('targets a single location', function () {
-            expect(this.player1).toHavePrompt(
-                "Select assault target for King Robb's Bannermen"
-            );
+            expect(this.player1).toHavePrompt("Select assault target for King Robb's Bannermen");
             expect(this.player1).toBeAbleToSelect(this.theKingsroad);
             expect(this.player1).not.toBeAbleToSelect(this.theWall);
 

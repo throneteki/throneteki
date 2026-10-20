@@ -17,6 +17,7 @@ describe('strict action windows', function () {
         context.game.schedule = (delay, callback) => context.scheduled.push({ delay, callback });
 
         context.player1.clickPrompt('Done');
+        context.player1.clickPrompt('Pass');
         if (player2Gold !== undefined) {
             context.player2.player.gold = player2Gold;
         }
@@ -109,6 +110,7 @@ describe('strict action windows', function () {
             this.player2.togglePromptedActionWindow('challengeBegin', true);
 
             this.player1.clickPrompt('Done');
+            this.player1.clickPrompt('Pass');
             this.player2.clickPrompt('Done');
         });
 

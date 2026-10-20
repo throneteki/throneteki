@@ -55,3 +55,32 @@ describe("Lord Protector's Retainer", function () {
         });
     });
 });
+
+describe("Lord Protector's Retainer, against stealth", function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'challenge',
+            firstPlayer: 'player2',
+            player1: {
+                inPlay: ['Edric Dayne (HMW)', "Lord Protector's Retainer"]
+            },
+            player2: {
+                faction: 'greyjoy',
+                inPlay: ['Maester Wendamyr']
+            }
+        });
+
+        this.player2.clickPrompt('Power');
+        this.player2.clickCard(this.maesterWendamyr);
+        this.player2.clickPrompt('Done');
+        this.player2.clickCard(this.edricDayne);
+    });
+
+    it('cancels stealth choosing a Lord or Lady you control', function () {
+        this.player1.triggerAbility(this.lordProtectorsRetainer);
+
+        expect(this.lordProtectorsRetainer.location).toBe('hand');
+        expect(this.edricDayne.bypassedByStealth).toBe(false);
+        expect(this.player2).toHavePrompt('Initiate an action');
+    });
+});

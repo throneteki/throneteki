@@ -259,6 +259,7 @@ export const Events = Object.freeze({
         params: { challenge: 'Challenge', source: 'DrawCard', target: 'DrawCard' }
     },
     onTargetsChosen: { params: { ability: 'BaseAbility', targets: 'ResolvedTargets' } },
+    onTitlesEnteredPlay: { params: { titles: 'TitleCard[]' } },
     onTokenDiscarded: {
         params: { amount: 'number', card: 'BaseCard', desiredAmount: 'number', token: 'string' }
     },
@@ -284,6 +285,7 @@ export const Events = Object.freeze({
  */
 export const Notifications = Object.freeze([
     'cancelinterrupt',
+    'wouldinterrupt',
     'forcedinterrupt',
     'forcedreaction',
     'interrupt',

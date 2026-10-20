@@ -49,8 +49,10 @@ describe('Purple Graces', function () {
             expect(this.houseDayneKnight.getStrength()).toBe(0);
             expect(this.tumblestoneKnight.getStrength()).toBe(2);
             expect(this.bastardInHiding.getStrength()).toBe(2);
-            expect(this.player2.actionUnavailableReason(this.purpleGraces)).toBe('cost');
             expect(this.player1).toHavePrompt('Initiate an action');
+            this.player1.clickPrompt('Pass');
+            expect(this.player2.actionUnavailableReason(this.purpleGraces)).toBe('cost');
+            expect(this.player2).toHavePrompt('Initiate an action');
         });
     });
 });

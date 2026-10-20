@@ -1,0 +1,112 @@
+# Framework coverage
+
+Rules Reference glossary, Appendix I, and Rulings and Clarifications v4.1 (22 January 2024).
+An entry is covered by an engine spec, by ordinary play (the decisions table), or it is open.
+A verified card does not cover a framework entry. A FAQ note about one card is covered only
+once that card is verified.
+
+## Engine specs for the framework
+
+| Rule | Spec |
+| --- | --- |
+| Setup chooses the first player, then announces factions and agendas | [Setup.spec.js](../test/server/gamesteps/Setup.spec.js) |
+| Melee titles are chosen in secret and enter play together (Appendix I 1.4) | [ChooseTitle.spec.js](../test/server/gamesteps/ChooseTitle.spec.js) |
+| Targets are locked at initiation; no legal target resolves unsuccessfully; any number with zero chosen does not resolve; a prevented cost ends initiation (FAQ 3.3, Costs, Target) | [AbilityResolution.spec.js](../test/server/gamesteps/AbilityResolution.spec.js) |
+| A "would" interrupt is before a forced interrupt | [AbilityResolution.spec.js](../test/server/gamesteps/AbilityResolution.spec.js) does not assert the order. The window order is cancel, duplicate saves, would, forced, then other interrupts |
+| Marshaling gives the active player their turn, and with strict windows every player acts in order | [MarshalingWindow.spec.js](../test/server/gamesteps/MarshalingWindow.spec.js) |
+| Lasting-effect eligibility, until-end expiry, end-of-phase order, loses-all-traits, immunity with no named game action | [LastingEffects.spec.js](../test/server/gamesteps/LastingEffects.spec.js) |
+| Burn can be saved when the save removes the 0 STR; a duplicate cannot save it | [Burn.spec.js](../test/server/gamesteps/Burn.spec.js) |
+| Claim is applied when manual mode is off (Appendix I 4.2.4) | [Claim.spec.js](../test/server/gamesteps/Claim.spec.js) |
+| Unspent gold is returned together (Appendix I 7.2) | [TaxationPhase.spec.js](../test/server/gamesteps/TaxationPhase.spec.js) |
+| The owner orders cards entering the discard pile or dead pile | [PileOrder.spec.js](../test/server/gamesteps/PileOrder.spec.js) |
+| Attachments and duplicates leave with the card and cannot be saved | [LeavePlayConsequences.spec.js](../test/server/player/LeavePlayConsequences.spec.js) |
+| Strict windows offer, wait or skip from public information | [StrictActionWindows.spec.js](../test/server/gamesteps/StrictActionWindows.spec.js) |
+
+## Appendix I
+
+| Step | Status |
+| --- | --- |
+| 1.1 Plot phase begins, 1.5 Plot phase ends, 2.1–2.3 Draw, 3.1 and 3.4 Marshaling begins and ends, 4.1 and 4.4 Challenges begins and ends, 5.1 and 5.3 Dominance begins and ends, 6.1 and 6.3 Standing begins and ends, 7.1 and 7.5 Taxation begins and ends | Ordinary play. The phase pipeline raises the phase events. No spec asserts each boundary on its own |
+| 1.2 Choose plots, 1.3 Reveal plots (initiative, first player, when revealed) | Ordinary play. Setup's first player is cleared at the start of the plot phase, so the round still chooses again |
+| 1.4 Select titles | [ChooseTitle.spec.js](../test/server/gamesteps/ChooseTitle.spec.js) |
+| 2.2 Draw | Ordinary play |
+| 3.2 Collect income, 3.3 Next marshaling player | Ordinary play. Income is collected for the player whose marshaling turn is starting |
+| Marshaling phase player action window | [MarshalingWindow.spec.js](../test/server/gamesteps/MarshalingWindow.spec.js). Open: the window does not stay open until every player has passed in a row. Each marshaling turn is its own pass |
+| 4.2 Initiate a challenge through 4.2.3 Bonuses, 4.2.5 Keywords, 4.2.6 Challenge ends, 4.3 Next player | Ordinary play. Keyword processing order has no framework spec |
+| 4.2.4 Apply claim | [Claim.spec.js](../test/server/gamesteps/Claim.spec.js) |
+| 5.2 Determine dominance | Ordinary play |
+| 6.2 Stand cards | Ordinary play. Standing is one event, including faction cards |
+| 7.2 Return unspent gold | [TaxationPhase.spec.js](../test/server/gamesteps/TaxationPhase.spec.js) |
+| 7.3 Check reserve | Ordinary play |
+| 7.4 Return melee titles | Ordinary play. No spec |
+
+## Glossary
+
+These entries are ordinary play. The decisions table accepts that they do not each have a
+framework spec: Abilities, Actions, Active Player, Against, Agenda Cards, Ambush, Assault,
+Attachment Cards, Attacker, Base Value, Bestow, Blank, Cancel, Cannot, Cardtypes, Challenge
+Icons, Challenges Phase, Character Cards, Choose, Claim, Constant Abilities, Control, Copy,
+Costs (payment itself; the prevented-cost case is in AbilityResolution.spec.js), Dead Pile
+(the order is in PileOrder.spec.js), Deck, Deckbuilding, Deck Limits, Defender, Delayed
+Effects, Discard Pile (the order is in PileOrder.spec.js), Dominance Phase, Drawing Cards,
+Draw Phase, Duplicates, Effects, Enters Play, Event Cards, Facedown Cards, Faction, First
+Player, Forced Interrupts / Forced Reactions, For Your Faction, Framework Effects, Gains,
+Gold, Gold Modifier, In Play, Income, Influence Tokens, Initiating Abilities, Initiative,
+Initiative Modifier, Insight, Instead, Interrupts (the "would" window is engine behaviour
+without its own assertion), Intimidate, Intrigue Claim, Joust Game, Keywords, Kill, Kneel,
+Leaves Play, Limited, Limits and Maxima, Location Cards, Look, Loyal, Marshal, Marshaling
+Phase, Max X, May, Melee Game, Military Claim, Modifiers, Move, Moving Power, Mulligan,
+Negative Quantities, Nested Ability Sequences, Neutral, Next Player, No Attachments, Out of
+Play, Ownership and Control, Participating, Pass, Pillage, Play Restrictions, Player Order,
+Plot Card, Plot Deck, Plot Deck Limit, Plot Phase, Plot Value Modifiers, Power, Power Claim,
+Printed, Prized, Put into Play, Qualifiers, Reactions, Redirect, Removed from Game, Renown,
+Replacement Effects, Reserve Value, Reserve Modifier, Reveal, Revealed Plot, Rivals,
+Sacrifice, Search, Self-Referential Text, Set, Shadows (the keyword subsections), Stand,
+Standing Phase, Stealth, STR, Strength, Supports, Switch, Taxation Phase, Terminal, Then,
+Title Cards (the secret choice is in ChooseTitle.spec.js), Tokens, Traits, Treasury,
+Triggered Abilities, Unique Cards, Unopposed, Used Pile, When Revealed, Winning a Challenge,
+Winning the Game, X.
+
+These entries have a spec or an explicit gap:
+
+| Entry | Status |
+| --- | --- |
+| Immune | [LastingEffects.spec.js](../test/server/gamesteps/LastingEffects.spec.js) |
+| Lasting Effects | [LastingEffects.spec.js](../test/server/gamesteps/LastingEffects.spec.js). A conditional effect can still gain a card that starts matching |
+| Priority of Simultaneous Resolution | Open. The first player does not choose the order when constant abilities or lasting effects conflict (FAQ 1.6) |
+| Save | [Burn.spec.js](../test/server/gamesteps/Burn.spec.js) for a terminal 0 STR. Open: a save that cannot remedy the condition can still be initiated |
+| Setup | [Setup.spec.js](../test/server/gamesteps/Setup.spec.js) |
+| Target | [AbilityResolution.spec.js](../test/server/gamesteps/AbilityResolution.spec.js) |
+| Triggering Condition | The "would" window exists. No spec asserts that it is ordered before a forced interrupt |
+| The word "Would" | Same as Triggering Condition |
+
+## FAQ v4.1
+
+| Ruling | Status |
+| --- | --- |
+| 1.1 Infinite loops | Accepted: the player names a finite count. There is no prompt that asks for that count |
+| 1.2 Duplicates, 1.3 Unique cards | Ordinary play |
+| 1.4 Control of tokens, 1.5 Playing events, 1.7 Paying costs, 1.8 Then | Ordinary play |
+| 1.6 Priority of simultaneous resolution | Open. No first-player choice |
+| 1.9 Card abilities during setup | Ordinary play. No spec |
+| 2.1 Cannot, 2.2 Delayed effects and immunity, 2.3 Referential targets, 2.4 Out-of-play areas, 2.5 Positions, 2.7 You, 2.8 Spending gold, 2.10 Contributing STR | Ordinary play. No dedicated spec |
+| 2.6 Timing of terminal conditions | [Burn.spec.js](../test/server/gamesteps/Burn.spec.js) covers the kill. The general "cannot initiate a useless save" rule is open |
+| 2.9 The word "All" | [LastingEffects.spec.js](../test/server/gamesteps/LastingEffects.spec.js) for traits |
+| 3.1 Saving from a terminal condition | [Burn.spec.js](../test/server/gamesteps/Burn.spec.js). Open for saves other than raising STR, and for refusing the save up front |
+| 3.2 Saving from a cost | [AbilityResolution.spec.js](../test/server/gamesteps/AbilityResolution.spec.js) |
+| 3.3 Choices while initiating | [AbilityResolution.spec.js](../test/server/gamesteps/AbilityResolution.spec.js) |
+| 3.4 Challenge icons, 3.5 Multiple copies of the same agenda | Ordinary play |
+| Choose, Derived information, Hidden information, Open information | Hidden information is the phase 2 rule: a window is not offered based on a card an opponent cannot see |
+| Terminal condition | [Burn.spec.js](../test/server/gamesteps/Burn.spec.js) |
+| End of Phase Timing Sequence, and the same shape for a challenge or a round | [LastingEffects.spec.js](../test/server/gamesteps/LastingEffects.spec.js) |
+| Challenge Application Timing Sequence | [Claim.spec.js](../test/server/gamesteps/Claim.spec.js) for claim being applied. The rest of the sequence is ordinary play |
+| Dragon Sight | [LastingEffects.spec.js](../test/server/gamesteps/LastingEffects.spec.js) |
+| Catelyn Stark, Melisandre, The Hand's Judgment, Nymeria Sand, attachments in setup, attacking alone, limited as a duplicate, Wolves of the North, Master of Whispers, multiple take control, resolving and processing keywords, Varys's Riddle, At Prince Doran's Behest, Daenerys, Tycho, shadow cancels, Scouting Vessel, No Surprises, A Cask of Ale, Baelor Blacktyde, Time of Plenty, Dothraki Handmaiden, The Iron Throne | Card rulings. Covered when that card is verified. Until then, a gap |
+
+## Other open framework gaps
+
+- `onAddedToChallenge`, `onBeforeDeckSearch`, `onDupeEntersPlay`, `onLookAtShadows` and `onTokenDiscarded` are in the event catalogue and have no engine spec. `onCardsDrawn` from `DrawSpecific` does not include `amount`.
+- Out-of-window actions are refused during marshaling and while a window is open. They are still allowed when strict windows are off and no window is open, outside marshaling.
+- Strict action windows are not the default.
+- The client does not show why an action is unavailable.
+- Not every state change goes through a `GameAction`.

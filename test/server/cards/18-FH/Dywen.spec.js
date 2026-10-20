@@ -17,7 +17,7 @@ describe('Dywen', function () {
         expect(this.player1).isReadyToTakeAction();
     });
 
-    it('does not kneel a Night\'s Watch character with stealth declared in a military challenge', function () {
+    it("does not kneel a Night's Watch character with stealth declared in a military challenge", function () {
         this.player1.clickPrompt('Military');
         this.player1.clickCard(this.dywen);
         this.player1.clickPrompt('Done');
@@ -29,7 +29,7 @@ describe('Dywen', function () {
         expect(this.player1).toHavePrompt('Initiate an action');
     });
 
-    it('kneels a Night\'s Watch character without stealth', function () {
+    it("kneels a Night's Watch character without stealth", function () {
         this.player1.clickPrompt('Military');
         this.player1.clickCard(this.oldForestHunter);
         this.player1.clickPrompt('Done');
@@ -49,7 +49,7 @@ describe('Dywen', function () {
         expect(this.player1).toHavePrompt('Initiate an action');
     });
 
-    it('kneels a character you control that is not Night\'s Watch', function () {
+    it("kneels a character you control that is not Night's Watch", function () {
         this.player1.clickPrompt('Power');
         this.player1.clickCard(this.maesterWendamyr);
         this.player1.clickPrompt('Done');

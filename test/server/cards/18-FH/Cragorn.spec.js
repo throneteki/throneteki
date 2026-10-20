@@ -9,7 +9,12 @@ describe('Cragorn', function () {
                         { card: 'House Maester', gold: 1 },
                         'Stony Shore Raider'
                     ],
-                    drawDeck: ['Throwing Axe', 'Little Bird (Core)', 'Crown of Gold (R)', 'Hedge Knight']
+                    drawDeck: [
+                        'Throwing Axe',
+                        'Little Bird (Core)',
+                        'Crown of Gold (R)',
+                        'Hedge Knight'
+                    ]
                 },
                 player2: {
                     inPlay: [{ card: 'Stony Shore Raider', gold: 1 }]

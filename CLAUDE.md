@@ -25,6 +25,7 @@ Online implementation of A Game of Thrones: The Card Game (Second Edition).
 
 - [Engine roadmap](docs/engine-roadmap.md): the plan for running games with manual mode off. Read
   it before changing anything under `server/game` other than a single card.
+- [Engine status](docs/engine-status.md): where that work is, what is left, and what not to reapply.
 - [Engine guide](server/game/CLAUDE.md): architecture and rules for engine changes.
 - [Card guide](server/game/cards/CLAUDE.md): rules for implementing cards.
 - [Testing guide](test/CLAUDE.md): rules for specs. Reference: [docs/testing-cards.md](docs/testing-cards.md).

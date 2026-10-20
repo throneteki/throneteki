@@ -17,7 +17,7 @@ describe('Azor Ahai Reborn', function () {
         });
     });
 
-    describe('when another R\'hllor character you control is attacking', function () {
+    describe("when another R'hllor character you control is attacking", function () {
         beforeEach(function () {
             this.player1.clickPrompt('Intrigue');
             this.player1.clickCard(this.fieryFollowers);
@@ -34,7 +34,7 @@ describe('Azor Ahai Reborn', function () {
             expect(this.player1).toHavePrompt('Initiate an action');
         });
 
-        it('stops participating once no attacking R\'hllor character you control remains', function () {
+        it("stops participating once no attacking R'hllor character you control remains", function () {
             this.player1.clickPrompt('Pass');
             this.player2.clickMenu(this.highgarden, 'Remove character from challenge');
             this.player2.clickCard(this.fieryFollowers);
@@ -46,7 +46,7 @@ describe('Azor Ahai Reborn', function () {
         });
     });
 
-    describe('when no other R\'hllor character you control is attacking', function () {
+    describe("when no other R'hllor character you control is attacking", function () {
         beforeEach(function () {
             this.player1.clickPrompt('Intrigue');
             this.player1.clickCard(this.houseMaester);
@@ -68,7 +68,7 @@ describe('Azor Ahai Reborn', function () {
             this.player1.clickPrompt('Done');
         });
 
-        it('still prompts for that character\'s own stealth', function () {
+        it("still prompts for that character's own stealth", function () {
             expect(this.player1).toHavePrompt('Select stealth target for Maester Wendamyr');
 
             this.player1.clickCard(this.bastardInHiding);

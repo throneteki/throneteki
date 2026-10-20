@@ -263,6 +263,11 @@ class ChallengeFlow extends BaseStep {
     }
 
     atEndOfChallenge() {
+        this.game.beginEndingDuration('untilEndOfChallenge');
+        this.game.effectEngine.unapplyAndRemove(
+            (effect) => effect.duration === 'untilEndOfChallenge'
+        );
+        this.game.effectEngine.expireDelayedEffects('untilEndOfChallenge');
         this.game.raiseEvent('onAtEndOfChallenge', { challenge: this.challenge });
     }
 

@@ -69,7 +69,7 @@ describe('Deepwood Motte', function () {
                 expect(this.blackWindsCrew.kneeled).toBe(false);
                 expect(this.tumblestoneKnight.kneeled).toBe(true);
                 expect(this.raiderFromPyke.kneeled).toBe(true);
-                expect(this.player1).toHavePromptButton('Apply Claim');
+                expect(this.player2).toHavePrompt('Select 1 character to fulfill military claim');
             });
         });
     });

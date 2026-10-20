@@ -67,7 +67,6 @@ describe('Sentinels of the Realm', function () {
 
         it('draws 1 card fewer for each challenge type initiated against you', function () {
             this.unopposedChallenge(this.player2, 'Power', this.bastardInHiding);
-            this.player2.clickPrompt('Apply Claim');
             this.player2.clickPrompt('Done');
             this.player1.triggerAbility('Sentinels of the Realm');
 
@@ -77,9 +76,7 @@ describe('Sentinels of the Realm', function () {
 
         it('draws 1 card when two challenge types were initiated against you', function () {
             this.unopposedChallenge(this.player2, 'Power', this.bastardInHiding);
-            this.player2.clickPrompt('Apply Claim');
             this.unopposedChallenge(this.player2, 'Military', this.tumblestoneKnight);
-            this.player2.clickPrompt('Apply Claim');
             this.player1.clickCard(this.tridentGuard);
             this.player2.clickPrompt('Done');
             this.player1.triggerAbility('Sentinels of the Realm');

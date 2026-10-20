@@ -35,7 +35,6 @@ describe('Theodan the True', function () {
             it('gives the character renown until the end of the phase', function () {
                 this.player1.clickCard(this.devoutFreerider);
                 this.player1.clickPrompt('Renown');
-                this.player1.clickPrompt('Apply Claim');
 
                 expect(this.devoutFreerider.hasKeyword('renown')).toBe(true);
                 expect(this.devoutFreerider.hasKeyword('insight')).toBe(false);
@@ -50,7 +49,6 @@ describe('Theodan the True', function () {
             it('can give the character insight instead', function () {
                 this.player1.clickCard(this.silentSisters);
                 this.player1.clickPrompt('Insight');
-                this.player1.clickPrompt('Apply Claim');
 
                 expect(this.silentSisters.hasKeyword('insight')).toBe(true);
                 expect(this.silentSisters.hasKeyword('renown')).toBe(false);
@@ -62,7 +60,6 @@ describe('Theodan the True', function () {
     describe('when you win a challenge in which it is not participating', function () {
         beforeEach(function () {
             this.unopposedChallenge(this.player1, 'Power', this.devoutFreerider);
-            this.player1.clickPrompt('Apply Claim');
         });
 
         it('cannot be triggered', function () {
@@ -106,13 +103,11 @@ describe('Theodan the True, limit', function () {
         this.player1.triggerAbility(this.theodanTheTrue);
         this.player1.clickCard(this.devoutFreerider);
         this.player1.clickPrompt('Renown');
-        this.player1.clickPrompt('Apply Claim');
 
         this.unopposedChallenge(this.player1, 'Military', this.theodanTheTrue);
         this.player1.triggerAbility(this.theodanTheTrue);
         this.player1.clickCard(this.devoutFreerider);
         this.player1.clickPrompt('Insight');
-        this.player1.clickPrompt('Apply Claim');
         this.player2.clickCard(this.bastardInHiding);
 
         this.player1.clickMenu(this.magisterIllyrio, 'Stand a character');

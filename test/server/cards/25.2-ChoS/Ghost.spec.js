@@ -22,7 +22,6 @@ describe('Ghost (ChoS)', function () {
             expect(this.player1Object.hand).toHaveLength(1);
             expect(this.game.getPlainTextLog()).toContain('player1 uses Ghost to draw 1 card');
 
-            this.player1.clickPrompt('Apply Claim');
             this.player2.clickCard(this.bastardInHiding);
 
             expect(this.player1).isReadyToTakeAction();
@@ -37,7 +36,6 @@ describe('Ghost (ChoS)', function () {
         it('cannot be triggered', function () {
             expect(this.player1).not.toAllowAbilityTrigger(this.ghost);
 
-            this.player1.clickPrompt('Apply Claim');
             this.player2.clickCard(this.bastardInHiding);
 
             expect(this.player1Object.hand).toHaveLength(0);
@@ -73,7 +71,6 @@ describe('Ghost (ChoS)', function () {
             this.skipActionWindow();
             this.player1.clickPrompt('Done');
             this.skipActionWindow();
-            this.player2.clickPrompt('Apply Claim');
         });
 
         it('sacrifices Ghost to save Jon Snow', function () {

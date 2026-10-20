@@ -34,7 +34,6 @@ describe('Wolves of the North', function () {
             this.skipActionWindow();
             this.player2.clickPrompt('Done');
             this.skipActionWindow();
-            this.player1.clickPrompt('Apply Claim');
             this.player2.clickCard(this.bastardInHiding);
 
             expect(this.rangingParty.getStrength()).toBe(3);

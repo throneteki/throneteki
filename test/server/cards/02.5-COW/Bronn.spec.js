@@ -22,8 +22,10 @@ describe('Bronn (CoW)', function () {
         });
 
         it('cannot be used by the player who already controls Bronn', function () {
+            this.player2.clickPrompt('Done');
+
             expect(this.player1.actionUnavailableReason(this.bronn)).toBe('noEffect');
-            expect(this.player2).isReadyToTakeAction();
+            expect(this.player1).toHavePrompt('Marshal your cards');
         });
     });
 

@@ -87,7 +87,6 @@ describe('delayed effects', function () {
     it('expires at the end of its duration', function () {
         this.drawWhenKneeled(this.tumblestoneKnight, 'untilEndOfChallenge');
         this.unopposedChallenge(this.player1, 'Military', this.houseDayneKnight);
-        this.player1.clickPrompt('Apply Claim');
         this.player2.clickCard(this.bastardInHiding);
 
         expect(this.game.effectEngine.delayedEffects).toEqual([]);

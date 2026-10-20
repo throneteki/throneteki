@@ -35,7 +35,6 @@ describe('Trading With Qohor', function () {
                 this.player1.findCardByName('Little Bird', 'draw deck')
             ];
             this.unopposedChallenge(this.player1, 'Intrigue', this.hedgeKnight);
-            this.player1.clickPrompt('Apply Claim');
         });
 
         it('does not increase opponents’ gold while you control an attachment', function () {

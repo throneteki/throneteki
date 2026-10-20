@@ -3,7 +3,6 @@ import GameActions from '../../GameActions/index.js';
 
 class LordProtectorsRetainer extends DrawCard {
     setupCardAbilities(ability) {
-        //TODO: needs to be able to cancel stealth (along with FearCutsDeeperThanSwords)
         this.interrupt({
             canCancel: true,
             when: {

@@ -4,6 +4,9 @@
 
 - [Engine roadmap](engine-roadmap.md): where the engine is going, and why. Read this before
   changing the engine.
+- [Engine status](engine-status.md): where that work is, what is left, and what not to reapply.
+- [Framework coverage](framework-coverage.md): Rules Reference, Appendix I and FAQ entries, and
+  where each one is covered or still open.
 - [Implementing cards](implementing-cards.md): the card API, with examples.
 - [Testing cards](testing-cards.md): the test harness, `setupTest`, assertions and the coverage
   checklist.

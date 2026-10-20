@@ -18,7 +18,6 @@ describe('By Sword or By Guile', function () {
     describe('when military claim is applied while you control an attacking Dragon', function () {
         beforeEach(function () {
             this.unopposedChallenge(this.player1, 'Military', this.viserion);
-            this.player1.clickPrompt('Apply Claim');
         });
 
         it('can be triggered', function () {
@@ -38,7 +37,6 @@ describe('By Sword or By Guile', function () {
     describe('when intrigue claim is applied while you control an attacking Army', function () {
         beforeEach(function () {
             this.unopposedChallenge(this.player1, 'Intrigue', this.hostOfTheBoneway);
-            this.player1.clickPrompt('Apply Claim');
         });
 
         it('applies power claim instead', function () {
@@ -52,7 +50,6 @@ describe('By Sword or By Guile', function () {
     describe('when no attacking character is an Army or Dragon', function () {
         beforeEach(function () {
             this.unopposedChallenge(this.player1, 'Intrigue', this.houseDayneKnight);
-            this.player1.clickPrompt('Apply Claim');
         });
 
         it('cannot be triggered', function () {

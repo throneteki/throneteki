@@ -13,7 +13,6 @@ describe('Woods Witch', function () {
         });
 
         context.unopposedChallenge(context.player1, 'Intrigue', context.houseDayneKnight);
-        context.player1.clickPrompt('Apply Claim');
     }
 
     describe("when a character is discarded from an opponent's hand", function () {

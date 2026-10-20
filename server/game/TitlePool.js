@@ -44,6 +44,21 @@ class TitlePool {
         return 2;
     }
 
+    placeSelections(selections) {
+        this.game.raiseEvent(
+            'onTitlesEnteredPlay',
+            { titles: selections.map((selection) => selection.title) },
+            () => {
+                for (const selection of selections) {
+                    this.chooseFromPool(selection.player, selection.title);
+                    selection.title.facedown = false;
+                }
+
+                this.announceTitles(selections);
+            }
+        );
+    }
+
     chooseFromPool(player, card) {
         if (!this.cards.includes(card)) {
             return;
@@ -69,7 +84,6 @@ class TitlePool {
         const players = this.game.getPlayers();
 
         for (const selection of selections) {
-            selection.title.facedown = false;
             selection.title.applyPersistentEffects();
 
             const supports = players.filter((player) =>

@@ -1,6 +1,6 @@
 import Phase from './phase.js';
 import SimpleStep from './simplestep.js';
-import MarshalCardsPrompt from './marshaling/marshalcardsprompt.js';
+import MarshalingActionWindow from './marshaling/MarshalingActionWindow.js';
 
 class MarshalingPhase extends Phase {
     constructor(game) {
@@ -19,12 +19,7 @@ class MarshalingPhase extends Phase {
         let currentPlayer = this.remainingPlayers.shift();
 
         this.collectIncome(currentPlayer);
-
-        currentPlayer.allowMarshal = true;
-        this.game.queueStep(new MarshalCardsPrompt(this.game, currentPlayer));
-        this.game.queueSimpleStep(() => {
-            currentPlayer.allowMarshal = false;
-        });
+        this.game.queueStep(new MarshalingActionWindow(this.game, currentPlayer));
 
         return this.remainingPlayers.length === 0;
     }

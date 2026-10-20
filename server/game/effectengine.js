@@ -27,6 +27,10 @@ class EffectEngine {
             return;
         }
 
+        if (this.game.durationHasEnded(effect.duration)) {
+            return;
+        }
+
         this.effects.push(effect);
         this.effects = sortBy(this.effects, (effect) => effect.order);
         effect.addTargets(this.getTargets());

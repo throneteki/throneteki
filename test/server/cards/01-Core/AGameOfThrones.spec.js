@@ -22,7 +22,6 @@ describe('A Game of Thrones', function () {
     describe('after you win an [intrigue] challenge', function () {
         beforeEach(function () {
             this.unopposedChallenge(this.player1, 'Intrigue', this.houseMaester);
-            this.player1.clickPrompt('Apply Claim');
         });
 
         it('lets you initiate [military] and [power] challenges', function () {

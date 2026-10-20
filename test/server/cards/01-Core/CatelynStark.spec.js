@@ -21,9 +21,11 @@ describe('Catelyn Stark (Core)', function () {
         });
 
         it('stops opponents triggering card abilities, but not you', function () {
-            expect(this.player2.actionUnavailableReason(this.janosSlynt)).toBe('cannotTrigger');
             expect(this.player1.actionUnavailableReason(this.magisterIllyrio)).toBeUndefined();
-            expect(this.player1).toHavePrompt('Initiate an action');
+            this.player1.clickPrompt('Pass');
+
+            expect(this.player2.actionUnavailableReason(this.janosSlynt)).toBe('cannotTrigger');
+            expect(this.player2).toHavePrompt('Initiate an action');
         });
     });
 
@@ -35,8 +37,10 @@ describe('Catelyn Stark (Core)', function () {
         });
 
         it('does not stop opponents triggering card abilities', function () {
+            this.player1.clickPrompt('Pass');
+
             expect(this.player2.actionUnavailableReason(this.janosSlynt)).toBeUndefined();
-            expect(this.player1).toHavePrompt('Initiate an action');
+            expect(this.player2).toHavePrompt('Initiate an action');
         });
     });
 });

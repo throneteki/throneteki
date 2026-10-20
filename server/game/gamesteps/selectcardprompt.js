@@ -36,6 +36,8 @@ import CardSelector from '../CardSelector.js';
  *                      buttons is clicked.
  * onCancel           - a callback that is called when the player clicks the
  *                      done button without selecting any cards.
+ * canCancel          - when false, Done with nothing selected leaves the prompt
+ *                      open. Defaults to allowing that cancel.
  * source             - what is at the origin of the user prompt, usually a card;
  *                      used to provide a default waitingPromptTitle, if missing
  * gameAction         - a string representing the game action to be checked on
@@ -257,7 +259,7 @@ class SelectCardPrompt extends UiPrompt {
 
         if (this.selector.hasEnoughSelected(this.selectedCards, this.numPlayers, this.context)) {
             this.fireOnSelect();
-        } else if (this.selectedCards.length === 0) {
+        } else if (this.selectedCards.length === 0 && this.properties.canCancel !== false) {
             this.properties.onCancel(player);
             this.complete();
         }

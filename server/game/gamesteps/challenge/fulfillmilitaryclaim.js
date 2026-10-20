@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import BaseStep from '../basestep.js';
 
 class FulfillMilitaryClaim extends BaseStep {
@@ -42,7 +43,8 @@ class FulfillMilitaryClaim extends BaseStep {
                 this.mustChooseAsClaim(card),
             gameAction: 'kill',
             onSelect: (p, cards) => this.fulfillClaim(p, cards),
-            onCancel: () => this.cancelClaim()
+            onCancel: () => this.cancelClaim(),
+            canCancel: this.game.manualMode.enabled
         });
 
         return true;
@@ -80,7 +82,11 @@ class FulfillMilitaryClaim extends BaseStep {
 
         this.game.addMessage('{0} chooses {1} for claim', this.player, cards);
 
-        this.game.killCharacters(cards);
+        this.game.resolveGameAction(
+            GameActions.simultaneously(
+                cards.map((card) => GameActions.kill({ card, allowSave: true }))
+            )
+        );
 
         return true;
     }

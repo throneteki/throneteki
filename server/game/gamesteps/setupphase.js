@@ -11,9 +11,9 @@ class SetupPhase extends Phase {
     constructor(game) {
         super(game, 'setup');
         this.initialise([
+            new SimpleStep(game, () => this.randomFirstPlayer()),
             new SimpleStep(game, () => this.announceFactionAndAgenda()),
             new SimpleStep(game, () => this.prepareDecks()),
-            new SimpleStep(game, () => this.randomFirstPlayer()),
             new SimpleStep(game, () => this.turnOnEffects()),
             new SimpleStep(game, () => this.drawSetupHand()),
             new KeepOrMulliganPrompt(game),
@@ -28,7 +28,7 @@ class SetupPhase extends Phase {
     }
 
     announceFactionAndAgenda() {
-        for (const player of this.game.getPlayers()) {
+        for (const player of this.game.getPlayersInFirstPlayerOrder()) {
             player.createFactionAndAgendas();
             this.game.addMessage(
                 '{0} announces they are playing as {1} with {2}',

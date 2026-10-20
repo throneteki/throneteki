@@ -97,11 +97,7 @@ class Effect {
             return;
         }
 
-        if (
-            this.duration !== 'persistent' &&
-            typeof this.match !== 'function' &&
-            this.appliedInitialTargets
-        ) {
+        if (this.duration !== 'persistent' && !this.isConditional && this.appliedInitialTargets) {
             return;
         }
 
@@ -161,6 +157,10 @@ class Effect {
             return false;
         }
 
+        return this.passesTargetController(target);
+    }
+
+    passesTargetController(target) {
         if (this.targetType === 'card') {
             if (this.targetController === 'current') {
                 return target.controller === this.source.controller;
@@ -184,6 +184,16 @@ class Effect {
         }
 
         return true;
+    }
+
+    targetLeftPlay(target) {
+        if (!target.getGameElementType || target.getGameElementType() !== 'card') {
+            return false;
+        }
+
+        return (
+            !this.targetLocation.includes('any') && !this.targetLocation.includes(target.location)
+        );
     }
 
     removeTarget(card) {
@@ -236,7 +246,17 @@ class Effect {
             return;
         }
 
-        for (let target of this.targets) {
+        for (let target of [...this.targets]) {
+            if (this.duration !== 'persistent') {
+                if (
+                    this.targetLeftPlay(target) ||
+                    (this.targetType === 'player' && !this.passesTargetController(target))
+                ) {
+                    this.removeTarget(target);
+                }
+                continue;
+            }
+
             if (!this.isValidTarget(target)) {
                 this.removeTarget(target);
             }

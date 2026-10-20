@@ -4,6 +4,7 @@ import { Events, Notifications } from './Constants/Events.js';
 const Suffixes = new Set([
     'aggregate',
     'cancelinterrupt',
+    'wouldinterrupt',
     'forcedinterrupt',
     'forcedreaction',
     'interrupt',

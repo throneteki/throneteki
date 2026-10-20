@@ -3,7 +3,6 @@ import GameActions from '../../GameActions/index.js';
 
 class FearCutsDeeperThanSwords extends DrawCard {
     setupCardAbilities() {
-        //TODO: needs to be able to cancel stealth
         this.interrupt({
             canCancel: true,
             when: {

@@ -65,6 +65,7 @@ class DrawCard extends BaseCard {
             event.card === this.parent &&
             this.parent.canBeSaved() &&
             event.allowSave &&
+            !event.isBurn &&
             (this.controller.promptDupes || this.parent.controller !== this.controller);
 
         this.interrupt({
@@ -582,7 +583,9 @@ class DrawCard extends BaseCard {
         }
 
         if (this.isBurning) {
-            this.game.killCharacter(this, { allowSave: false, isBurn: true });
+            this.game.resolveGameAction(
+                GameActions.kill({ card: this, allowSave: false, isBurn: true })
+            );
         } else if (this.isShadowBurning) {
             this.game.addMessage('{0} is 0 STR and placed in shadows', this);
             this.game.resolveGameAction(

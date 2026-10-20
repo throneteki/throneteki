@@ -84,7 +84,6 @@ describe('Sansa Stark (Core)', function () {
             this.player1.clickCard(this.sansaStark);
             this.player1.triggerAbility(this.sansaStark);
             this.unopposedChallenge(this.player1, 'Intrigue', this.sansaStark);
-            this.player1.clickPrompt('Apply Claim');
 
             expect(this.sansaStark.kneeled).toBe(true);
             expect(this.player1Object.faction.power).toBe(2);

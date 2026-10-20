@@ -23,7 +23,6 @@ describe('Late Summer Feast', function () {
 
             expect(this.player2Object.hand).toHaveLength(this.handSize + 1);
             expect(this.game.getPlainTextLog()).toContain('player2 draws 1 card');
-            this.player1.clickPrompt('Apply Claim');
             expect(this.player1).isReadyToTakeAction();
         });
 
@@ -31,7 +30,6 @@ describe('Late Summer Feast', function () {
             this.player2.clickPrompt('No');
 
             expect(this.player2Object.hand).toHaveLength(this.handSize);
-            this.player1.clickPrompt('Apply Claim');
             expect(this.player1).isReadyToTakeAction();
         });
     });

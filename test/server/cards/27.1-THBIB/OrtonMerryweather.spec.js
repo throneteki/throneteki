@@ -42,7 +42,6 @@ describe('Orton Merryweather', function () {
         beforeEach(function () {
             this.player1.clickPrompt('Done');
             this.unopposedChallenge(this.player2, 'Intrigue', this.houseMaester);
-            this.player2.clickPrompt('Apply Claim');
             this.player2.clickPrompt('Done');
         });
 

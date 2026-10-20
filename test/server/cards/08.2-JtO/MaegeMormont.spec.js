@@ -20,8 +20,6 @@ describe('Maege Mormont', function () {
                     'player1 uses Maege Mormont to reveal the top card of their deck'
                 );
 
-                this.player1.clickPrompt('Apply Claim');
-
                 expect(this.player1).isReadyToTakeAction();
             });
         });
@@ -45,8 +43,6 @@ describe('Maege Mormont', function () {
                 expect(this.player1Object.drawDeck[0]).toBe(this.hedgeKnight);
                 expect(this.player1Object.hand).toHaveLength(0);
 
-                this.player1.clickPrompt('Apply Claim');
-
                 expect(this.player1).isReadyToTakeAction();
             });
         });
@@ -67,8 +63,6 @@ describe('Maege Mormont', function () {
 
         it('cannot be triggered', function () {
             expect(this.player1).not.toAllowAbilityTrigger(this.maegeMormont);
-
-            this.player1.clickPrompt('Apply Claim');
 
             expect(this.branStark.location).toBe('draw deck');
             expect(this.player1).isReadyToTakeAction();

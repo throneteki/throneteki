@@ -42,7 +42,6 @@ describe('Horn Hill', function () {
             this.skipActionWindow();
             this.player2.clickPrompt('Done');
             this.skipActionWindow();
-            this.player1.clickPrompt('Apply Claim');
 
             expect(this.player1Object.getClaim()).toBe(1);
             expect(this.player1).isReadyToTakeAction();
@@ -53,7 +52,6 @@ describe('Horn Hill', function () {
                 this.skipActionWindow();
                 this.player2.clickPrompt('Done');
                 this.skipActionWindow();
-                this.player1.clickPrompt('Apply Claim');
 
                 this.player1.clickPrompt('Military');
                 this.player1.clickCard(this.tumblestoneKnight);

@@ -53,7 +53,6 @@ describe('A Game of Cyvasse', function () {
                 this.skipActionWindow();
                 this.player2.clickPrompt('Done');
                 this.skipActionWindow();
-                this.player1.clickPrompt('Apply Claim');
             });
 
             it('lets you initiate an additional intrigue challenge', function () {

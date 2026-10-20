@@ -44,7 +44,6 @@ describe('Pink Graces', function () {
     describe('when a player applied military claim', function () {
         beforeEach(function () {
             this.unopposedChallenge(this.player1, 'Military', this.hedgeKnight);
-            this.player1.clickPrompt('Apply Claim');
             this.player2.clickCard(this.bastardInHiding);
             this.completeChallengesPhase();
             this.player1.triggerAbility(this.pinkGraces);

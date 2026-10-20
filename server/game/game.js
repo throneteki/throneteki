@@ -1074,6 +1074,7 @@ class Game extends EventEmitter {
     }
 
     beginRound() {
+        this.finishEndingDuration('untilEndOfRound');
         // Reset phases to the standard game flow.
         this.remainingPhases = Phases.names();
 
@@ -1214,6 +1215,22 @@ class Game extends EventEmitter {
         }
     }
 
+    beginEndingDuration(duration) {
+        if (!this.endingDurations) {
+            this.endingDurations = new Set();
+        }
+
+        this.endingDurations.add(duration);
+    }
+
+    finishEndingDuration(duration) {
+        this.endingDurations?.delete(duration);
+    }
+
+    durationHasEnded(duration) {
+        return !!this.endingDurations?.has(duration);
+    }
+
     isActionTimingOpenFor(player) {
         if (this.hasOpenInterruptOrReactionWindow()) {
             return false;
@@ -1223,14 +1240,20 @@ class Game extends EventEmitter {
             return this.currentActionWindow.currentPlayer === player;
         }
 
-        return this.currentPhase === 'marshal';
+        return false;
     }
 
     getActionTimingRequirement(player) {
+        if (this.manualMode.enabled || this.isActionTimingOpenFor(player)) {
+            return undefined;
+        }
+
+        // While action windows are not being run, play stays available outside them.
+        // A window that is open, and the marshaling phase, are refused either way.
         if (
-            !this.strictActionWindows ||
-            this.manualMode.enabled ||
-            this.isActionTimingOpenFor(player)
+            !this.strictActionWindows &&
+            !this.currentActionWindow &&
+            this.currentPhase !== 'marshal'
         ) {
             return undefined;
         }
@@ -1294,6 +1317,11 @@ class Game extends EventEmitter {
     }
 
     resolveEvent(event) {
+        const context = this.currentAbilityContext;
+        if (context?.recordingCostEvents) {
+            context.costEvents.push(event);
+        }
+
         this.queueStep(new EventWindow(this, event));
     }
 

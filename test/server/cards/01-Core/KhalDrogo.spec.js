@@ -12,7 +12,6 @@ describe('Khal Drogo (Core)', function () {
             });
 
             this.unopposedChallenge(this.player1, 'Military', this.braidedWarrior);
-            this.player1.clickPrompt('Apply Claim');
             this.player2.clickCard(this.bastardInHiding);
         });
 
@@ -20,7 +19,6 @@ describe('Khal Drogo (Core)', function () {
             expect(this.player1).not.toHaveDisabledPromptButton('Military');
 
             this.unopposedChallenge(this.player1, 'Military', this.khalDrogo);
-            this.player1.clickPrompt('Apply Claim');
             this.player2.clickCard(this.houseDayneKnight);
 
             expect(this.player1).toHaveDisabledPromptButton('Military');
@@ -41,7 +39,6 @@ describe('Khal Drogo (Core)', function () {
             });
 
             this.unopposedChallenge(this.player1, 'Military', this.braidedWarrior);
-            this.player1.clickPrompt('Apply Claim');
             this.player2.clickCard(this.khalDrogo);
         });
 

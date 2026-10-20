@@ -50,7 +50,7 @@ class RisenFromTheSea extends DrawCard {
             return false;
         }
 
-        let allowSave = event.allowSave || (event.isBurn && this.canSurviveBurn(card));
+        const allowSave = event.isBurn ? this.canSurviveBurn(card) : event.allowSave;
 
         return allowSave && card.isFaction('greyjoy') && card.controller === this.controller;
     }
