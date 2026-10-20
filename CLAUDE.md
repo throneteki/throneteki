@@ -57,6 +57,9 @@ We are working towards games that can run with manual mode off. In short:
 - Every card that is added or changed needs a spec. A card only counts as verified when it has one.
   CI fails a pull request that changes a card file without one.
 - Run a single spec with `npx vitest run test/server/cards/<pack>/<Card>.spec.js`.
+- After adding a card spec, run `npm run spec:coverage -- --write-verified` and commit
+  `server/game/verifiedCards.json`. Games where every card is verified start with manual mode
+  off, and CI checks the list is current.
 - Don't change existing tests unless asked. If a test looks wrong against the card text or the
   Rules Reference, explain why and ask first.
 

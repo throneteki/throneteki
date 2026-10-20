@@ -43,7 +43,11 @@ export function attachFlow(context, options) {
  */
 export function addSetupTest(context, flowOptions = {}) {
     context.setupTest = (options = {}) => {
-        attachFlow(context, { gameFormat: 'joust', ...flowOptions });
+        attachFlow(context, {
+            gameFormat: 'joust',
+            ...flowOptions,
+            gameOptions: { ...flowOptions.gameOptions, ...options.gameOptions }
+        });
         applySetupTest(options, {
             flow: context.flow,
             deckBuilder,

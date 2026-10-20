@@ -36,6 +36,7 @@ import DropCommand from './ServerCommands/DropCommand.js';
 import CardVisibility from './CardVisibility.js';
 import GameStats from './GameStats.js';
 import ManualActions from './ManualActions.js';
+import ManualMode from './ManualMode.js';
 import PlainTextGameChatFormatter from './PlainTextGameChatFormatter.js';
 import GameActions from './GameActions/index.js';
 import EndRound from './GameActions/EndRound.js';
@@ -128,6 +129,7 @@ class Game extends EventEmitter {
         this.cardVisibility = new CardVisibility(this);
         this.stats = new GameStats(this);
         this.manualActions = new ManualActions(this);
+        this.manualMode = new ManualMode(this, options.manualMode ?? details.manualMode ?? 'auto');
         this.winnerOfDominanceInLastRound = undefined;
         this.triggerOnLosing = {};
         this.prizedKeywordListener = new PrizedKeywordListener(this);
@@ -510,6 +512,10 @@ class Game extends EventEmitter {
             return;
         }
 
+        if (!this.manualMode.allows(player)) {
+            return;
+        }
+
         this.manualActions.record(player, card.kneeled ? 'stand' : 'kneel', { cards: [card] });
 
         let action = card.kneeled
@@ -585,6 +591,10 @@ class Game extends EventEmitter {
         }
 
         if (player.showDeck ^ newValue) {
+            if (newValue && !this.manualMode.allows(player)) {
+                return;
+            }
+
             player.setDrawDeckVisibility(newValue);
 
             if (newValue) {
@@ -601,6 +611,10 @@ class Game extends EventEmitter {
         let card = this.allCards.find((card) => card.uuid === cardId);
 
         if (!player || !card) {
+            return;
+        }
+
+        if (!this.manualMode.allows(player)) {
             return;
         }
 
@@ -747,6 +761,10 @@ class Game extends EventEmitter {
             return;
         }
 
+        if (!this.manualMode.allows(player)) {
+            return;
+        }
+
         this.manualActions.record(player, 'changeStat', { args: [stat, value] });
 
         let target = player;
@@ -882,6 +900,10 @@ class Game extends EventEmitter {
     shuffleDeck(playerName) {
         var player = this.getPlayerByName(playerName);
         if (!player) {
+            return;
+        }
+
+        if (!this.manualMode.allows(player)) {
             return;
         }
 
@@ -1632,6 +1654,7 @@ class Game extends EventEmitter {
                 gameVariant: this.gameVariant,
                 maxPlayers: this.maxPlayers,
                 cancelPromptUsed: this.cancelPromptUsed,
+                manualMode: this.manualMode.enabled,
                 useGameTimeLimit: this.useGameTimeLimit,
                 ...(this.useGameTimeLimit && {
                     gameTimeLimit: this.gameTimeLimit,

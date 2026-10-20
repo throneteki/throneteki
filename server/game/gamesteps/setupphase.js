@@ -44,6 +44,7 @@ class SetupPhase extends Phase {
             player.prepareDecks();
         }
         this.game.gatherAllCards();
+        this.game.manualMode.decideAtStart();
         this.game.raiseEvent('onDecksPrepared');
     }
 

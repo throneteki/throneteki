@@ -14,6 +14,8 @@ const NonManualCommands = [
     '/pause-clock',
     '/rematch'
 ];
+// Commands that stay available with manual mode off.
+const AlwaysAvailableCommands = [...NonManualCommands, '/cancel-prompt', '/manual'];
 
 class ChatCommands {
     constructor(game) {
@@ -35,6 +37,7 @@ class ChatCommands {
             '/give-control': this.giveControl,
             '/give-icon': this.addIcon,
             '/kill': this.kill,
+            '/manual': this.manual,
             '/move-bottom': this.moveBottom,
             '/move-shadows': this.moveShadows,
             '/place-under': this.placeUnder,
@@ -64,7 +67,11 @@ class ChatCommands {
             return false;
         }
 
-        if (!NonManualCommands.includes(command)) {
+        if (!AlwaysAvailableCommands.includes(command) && !this.game.manualMode.allows(player)) {
+            return false;
+        }
+
+        if (!NonManualCommands.includes(command) && command !== '/manual') {
             this.currentManualAction = this.game.manualActions.record(player, command, {
                 args: args.slice(1)
             });
@@ -775,6 +782,10 @@ class ChatCommands {
         }
 
         return Tokens.includes(token);
+    }
+
+    manual(player) {
+        this.game.manualMode.request(player);
     }
 
     rematch(player) {

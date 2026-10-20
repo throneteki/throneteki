@@ -18,6 +18,9 @@ When a run fails, read the full output rather than piping it through `grep` or `
 
 ## Writing card specs
 
+After adding a card spec, run `npm run spec:coverage -- --write-verified` and commit the updated
+`server/game/verifiedCards.json`. CI fails if it is out of date.
+
 - One file per card: `test/server/cards/<pack>/<CardName>.spec.js`, matching the card's
   implementation path. Example: [Confiscation.spec.js](server/cards/01-Core/Confiscation.spec.js).
 - Only create spec files under `test/`. Follow the existing patterns: no imports, `function ()`

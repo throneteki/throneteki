@@ -5,7 +5,8 @@ describe('ChatCommands', function () {
         this.gameSpy = {
             addMessage: vi.fn(),
             addAlert: vi.fn(),
-            manualActions: { record: vi.fn(), addCards: vi.fn() }
+            manualActions: { record: vi.fn(), addCards: vi.fn() },
+            manualMode: { allows: () => true }
         };
 
         this.playerSpy = {

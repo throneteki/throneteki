@@ -8,8 +8,15 @@
 //   node test/tools/spec-coverage.js --changed <base>
 //       card files added or changed since <base> (e.g. origin/master) that have no spec;
 //       exits with 1 if there are any, for CI
+//   node test/tools/spec-coverage.js --write-verified
+//       writes the codes of cards with specs to server/game/verifiedCards.json, which decides
+//       whether a game starts with manual mode off
+//   node test/tools/spec-coverage.js --check-verified
+//       exits with 1 if server/game/verifiedCards.json is out of date, for CI
 
 import { execFileSync } from 'child_process';
+import fs from 'fs';
+import path from 'path';
 import { loadImplementations, repoRoot } from './cardIndex.js';
 
 const args = process.argv.slice(2);
@@ -65,6 +72,32 @@ if (args[0] === '--changed') {
     }
 
     console.log(`All ${changed.size} changed card files have specs.`);
+    process.exit(0);
+}
+
+if (args[0] === '--write-verified' || args[0] === '--check-verified') {
+    const verifiedPath = path.join(repoRoot, 'server/game/verifiedCards.json');
+    const codes = implementations
+        .filter((implementation) => implementation.hasSpec)
+        .flatMap((implementation) => implementation.codes)
+        .sort();
+    const contents = JSON.stringify(codes, null, 4) + '\n';
+
+    if (args[0] === '--write-verified') {
+        fs.writeFileSync(verifiedPath, contents);
+        console.log(`Wrote ${codes.length} verified card codes to server/game/verifiedCards.json.`);
+        process.exit(0);
+    }
+
+    const current = fs.existsSync(verifiedPath) ? fs.readFileSync(verifiedPath, 'utf8') : '';
+    if (current !== contents) {
+        console.error(
+            'server/game/verifiedCards.json is out of date. Run "npm run spec:coverage -- --write-verified".'
+        );
+        process.exit(1);
+    }
+
+    console.log(`server/game/verifiedCards.json lists all ${codes.length} verified cards.`);
     process.exit(0);
 }
 

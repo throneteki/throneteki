@@ -53,6 +53,8 @@ class GameFlowWrapper {
         this.game = new Game(details, {
             router: gameRouter,
             titleCardData: titleCardData,
+            // Specs use manual actions as setup shortcuts; pass 'auto' to test the real default.
+            manualMode: true,
             ...options.gameOptions
         });
         this.game.started = true;
