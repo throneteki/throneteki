@@ -13,16 +13,10 @@ class PriestOnTheDocks extends DrawCard {
                     card.location === 'play area' &&
                     ['location', 'attachment'].includes(card.getType()) &&
                     !card.hasKeyword('limited') &&
-                    card.getPrintedCost() <= 3 &&
-                    GameActions.discardCard({ card }).allow()
+                    card.getPrintedCost() <= 3
             },
             message: '{player} kills {costs.kill} to discard {target}',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.discardCard((context) => ({ card: context.target })),
-                    context
-                );
-            }
+            gameAction: GameActions.discardCard((context) => ({ card: context.target }))
         });
     }
 }
