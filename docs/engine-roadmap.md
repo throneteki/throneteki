@@ -10,14 +10,14 @@ mode off, as keyteki does, because the engine can be shown to be correct.
 Trust is earned per card, by tests:
 
 - A card is **verified** only when all three of these hold:
-  - Its spec passes and follows [test/CLAUDE.md](../test/CLAUDE.md), with manual mode off. Setup goes
-    through `setupTest`. The spec does not kneel, move or change stats through manual actions.
-  - The spec resolves every ability on the card. A spec that skips an ability does not verify it.
-    The coverage tool does not measure this yet.
-  - The implementation has no `handler`, and no legacy helpers, direct state writes, `addMessage`,
-    game listeners or `promptForSelect` (the `npm run card-rules` counts for that file are zero).
-    [verifiedCards.json](../server/game/verifiedCards.json) is built from this bar, together with the
-    spec file existing. The two spec bars above are required and are not yet checked by the tool.
+    - Its spec passes and follows [test/CLAUDE.md](../test/CLAUDE.md), with manual mode off. Setup goes
+      through `setupTest`. The spec does not kneel, move or change stats through manual actions.
+    - The spec resolves every ability on the card. A spec that skips an ability does not verify it.
+      The coverage tool does not measure this yet.
+    - The implementation has no `handler`, and no legacy helpers, direct state writes, `addMessage`,
+      game listeners or `promptForSelect` (the `npm run card-rules` counts for that file are zero).
+      [verifiedCards.json](../server/game/verifiedCards.json) is built from this bar, together with the
+      spec file existing. The two spec bars above are required and are not yet checked by the tool.
 - A game starts with manual mode **off** when both decks are verified and the phase 6 gate is met.
   Turning it on requires the opponent's consent and is recorded in the game stats.
 - Every other game keeps today's behaviour.
@@ -63,7 +63,7 @@ What stops the engine being trusted:
 | About 1,200 hand-written `addMessage` calls in cards                                                                                                      | `server/game/cards`                                                                                                                                 |
 | Event names are untyped strings with no catalogue                                                                                                         | throughout                                                                                                                                          |
 | 198 card spec files for about 1,960 implemented cards                                                                                                     | `test/server/cards`                                                                                                                                 |
-| The framework disagrees with the Rules Reference in the places named in phases 1, 2, 4, 5 and 6, and no tool measures that coverage                       | claim, saves, ability resolution, marshaling, effects, setup                                                                                       |
+| The framework disagrees with the Rules Reference in the places named in phases 1, 2, 4, 5 and 6, and no tool measures that coverage                       | claim, saves, ability resolution, marshaling, effects, setup                                                                                        |
 
 ## Phases
 
@@ -397,16 +397,16 @@ Taking the most common remaining card each time finishes no list in the first 20
 153 (8.5%) after 400. The cards shared by the most lists are still first, because every later list
 needs them:
 
-| Card                    | Code  | Lists |
-| ----------------------- | ----- | ----: |
-| The Kingsroad           | 01039 |   100 |
-| The Roseroad            | 01040 |    89 |
-| Gates of the Moon       | 08038 |    45 |
-| Late Summer Feast       | 06020 |    43 |
-| Nightmares              | 02099 |    41 |
-| Marched to the Wall     | 01015 |    39 |
-| You Win Or You Die      | 08120 |    38 |
-| Milk of the Poppy       | 01035 |    38 |
+| Card                | Code  | Lists |
+| ------------------- | ----- | ----: |
+| The Kingsroad       | 01039 |   100 |
+| The Roseroad        | 01040 |    89 |
+| Gates of the Moon   | 08038 |    45 |
+| Late Summer Feast   | 06020 |    43 |
+| Nightmares          | 02099 |    41 |
+| Marched to the Wall | 01015 |    39 |
+| You Win Or You Die  | 08120 |    38 |
+| Milk of the Poppy   | 01035 |    38 |
 
 After those, finish one archetype outright. The shortest published list is Stark Fealty,
 "Characters" ([decklist 16711](https://thronesdb.com/decklist/view/16711)), at 20 unverified cards.
@@ -461,23 +461,23 @@ following hold. This is the bar for switching the default, on top of both decks 
 
 ## Decisions
 
-| Date       | Decision                                                                                                                                                                                                          |
-| ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 2026-10-19 | A card counts as verified when it has a passing spec that follows the test conventions. Superseded 2026-10-20.                                                                                                    |
-| 2026-10-19 | Hidden information: the priority is not revealing that a player holds a cancel. Window decisions use public information only (phase 2).                                                                           |
-| 2026-10-19 | Tests move from jasmine to vitest, modelled on keyteki's harness. Target: a spec for every implemented card.                                                                                                      |
-| 2026-10-19 | Keyteki is a reference, not a template. Messages in particular are built from results, not intent.                                                                                                                |
-| 2026-10-20 | Manual corrections (`/power`, `/token`, stat changes) are plain corrections and raise no game events.                                                                                                             |
-| 2026-10-20 | Attachments and duplicates removed because their card left play can't be saved (Rules Reference: Leaves Play, Save).                                                                                              |
-| 2026-10-20 | Fake waits cover every prompted window for now (cancels, interrupts, reactions), to be reviewed after feedback. They last a random 1 to 3 seconds and show a Pass button. Players using the cancel timer keep it. |
-| 2026-10-20 | Action windows use the same offer, fake wait or skip decision, behind the opt-in "Strict action windows" game option until it has had feedback. Superseded 2026-10-20.                                             |
+| Date       | Decision                                                                                                                                                                                                                                                                                                        |
+| ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-10-19 | A card counts as verified when it has a passing spec that follows the test conventions. Superseded 2026-10-20.                                                                                                                                                                                                  |
+| 2026-10-19 | Hidden information: the priority is not revealing that a player holds a cancel. Window decisions use public information only (phase 2).                                                                                                                                                                         |
+| 2026-10-19 | Tests move from jasmine to vitest, modelled on keyteki's harness. Target: a spec for every implemented card.                                                                                                                                                                                                    |
+| 2026-10-19 | Keyteki is a reference, not a template. Messages in particular are built from results, not intent.                                                                                                                                                                                                              |
+| 2026-10-20 | Manual corrections (`/power`, `/token`, stat changes) are plain corrections and raise no game events.                                                                                                                                                                                                           |
+| 2026-10-20 | Attachments and duplicates removed because their card left play can't be saved (Rules Reference: Leaves Play, Save).                                                                                                                                                                                            |
+| 2026-10-20 | Fake waits cover every prompted window for now (cancels, interrupts, reactions), to be reviewed after feedback. They last a random 1 to 3 seconds and show a Pass button. Players using the cancel timer keep it.                                                                                               |
+| 2026-10-20 | Action windows use the same offer, fake wait or skip decision, behind the opt-in "Strict action windows" game option until it has had feedback. Superseded 2026-10-20.                                                                                                                                          |
 | 2026-10-20 | Action windows auto-pass when the only legal actions are on cards in play. A blocking prompt is only for a player holding an action they can play; a player who could hold one gets the same delay. On trial, then timed in a real game before it is the default. `promptedActionWindows` is a bluff stop only. |
-| 2026-10-20 | A card is verified only when its spec passes with manual mode off and exercises every ability, and the implementation has no handler and no card-rules violations. The generator enforces the implementation bar. |
-| 2026-10-20 | Phase 5 order is the shared neutrals, then a whole archetype. Across 153 Standard v2.1 joust lists, taking the most common card each time finishes none in the first 200 cards. Stark Fealty is the shortest.       |
-| 2026-10-20 | Choices made while an effect resolves are game actions, added before the cards that need them are migrated.                                                                                                        |
-| 2026-10-20 | Default `{gameAction}` messages for the common actions are done before cards are migrated in bulk.                                                                                                                |
-| 2026-10-20 | An oscillating effect is reported and left in play. An infinite loop of optional abilities follows Rulings and Clarifications v4.0 (1.1): the player names a finite number of repetitions.                        |
-| 2026-10-20 | Delayed effects resolve once, right after their event's handler and before When Revealed abilities and reactions (Rules Reference: Delayed Effects). They are not triggered abilities.                            |
-| 2026-10-20 | Deepwood Motte: "a Raider character you control or Asha Greyjoy" lets you stand any Asha Greyjoy. "You control" qualifies the Raider character only; there is no ruling saying otherwise.                         |
-| 2026-10-20 | While manual mode is on, the winner may skip claim and the defender may cancel military claim, because a wrongly applied claim is hard to undo. With manual mode off, claim is applied and neither prompt is offered. |
-| 2026-10-20 | Phase 6 does not switch the default until the framework items in phases 1, 2, 4 and 5 each have an engine spec, and a list maps every Rules Reference entry, framework step and current FAQ ruling to a spec or an accepted decision. |
+| 2026-10-20 | A card is verified only when its spec passes with manual mode off and exercises every ability, and the implementation has no handler and no card-rules violations. The generator enforces the implementation bar.                                                                                               |
+| 2026-10-20 | Phase 5 order is the shared neutrals, then a whole archetype. Across 153 Standard v2.1 joust lists, taking the most common card each time finishes none in the first 200 cards. Stark Fealty is the shortest.                                                                                                   |
+| 2026-10-20 | Choices made while an effect resolves are game actions, added before the cards that need them are migrated.                                                                                                                                                                                                     |
+| 2026-10-20 | Default `{gameAction}` messages for the common actions are done before cards are migrated in bulk.                                                                                                                                                                                                              |
+| 2026-10-20 | An oscillating effect is reported and left in play. An infinite loop of optional abilities follows Rulings and Clarifications v4.0 (1.1): the player names a finite number of repetitions.                                                                                                                      |
+| 2026-10-20 | Delayed effects resolve once, right after their event's handler and before When Revealed abilities and reactions (Rules Reference: Delayed Effects). They are not triggered abilities.                                                                                                                          |
+| 2026-10-20 | Deepwood Motte: "a Raider character you control or Asha Greyjoy" lets you stand any Asha Greyjoy. "You control" qualifies the Raider character only; there is no ruling saying otherwise.                                                                                                                       |
+| 2026-10-20 | While manual mode is on, the winner may skip claim and the defender may cancel military claim, because a wrongly applied claim is hard to undo. With manual mode off, claim is applied and neither prompt is offered.                                                                                           |
+| 2026-10-20 | Phase 6 does not switch the default until the framework items in phases 1, 2, 4 and 5 each have an engine spec, and a list maps every Rules Reference entry, framework step and current FAQ ruling to a spec or an accepted decision.                                                                           |
