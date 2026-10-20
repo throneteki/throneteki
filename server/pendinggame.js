@@ -17,6 +17,7 @@ class PendingGame {
         this.restrictedList = details.restrictedList;
         this.allowSpectators = details.allowSpectators;
         this.showHand = details.showHand;
+        this.strictActionWindows = !!details.strictActionWindows;
         this.gamePrivate = details.gamePrivate;
         this.gameFormat = details.gameFormat;
         this.gameVariant = details.gameVariant;
@@ -440,6 +441,7 @@ class PendingGame {
                 variant: this.restrictedList.variant
             },
             showHand: this.showHand,
+            strictActionWindows: this.strictActionWindows,
             started: this.started,
             spectators: _.map(this.spectators, (spectator) => {
                 return {
@@ -497,6 +499,7 @@ class PendingGame {
             allowMultipleWinners: this.allowMultipleWinners,
             restrictedList: this.restrictedList,
             showHand: this.showHand,
+            strictActionWindows: this.strictActionWindows,
             spectators,
             useGameTimeLimit: this.useGameTimeLimit,
             gameTimeLimit: this.gameTimeLimit,

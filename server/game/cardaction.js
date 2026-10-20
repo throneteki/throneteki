@@ -119,6 +119,11 @@ class CardAction extends BaseAbility {
             return Requirements.phase;
         }
 
+        const timingRequirement = this.game.getActionTimingRequirement(context.player);
+        if (timingRequirement) {
+            return timingRequirement;
+        }
+
         if (this.isCardAbility() && !context.player.canTrigger(this)) {
             return Requirements.cannotTrigger;
         }

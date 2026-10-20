@@ -9,6 +9,10 @@ const GameOptions = ({ isDisabled }) => {
         { name: 'showHand', label: 'Show hands to spectators' },
         { name: 'muteSpectators', label: 'Mute spectators' },
         { name: 'gamePrivate', label: 'Private (requires game link)' },
+        {
+            name: 'strictActionWindows',
+            label: 'Strict action windows (trial)'
+        },
         { name: 'useGameTimeLimit', label: 'Use game time limit' },
         {
             name: 'useChessClocks',

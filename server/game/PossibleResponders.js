@@ -1,24 +1,27 @@
 import DeckValidator from '../../deck-helper/DeckValidator.js';
+import AbilityContext from './AbilityContext.js';
+import CardAction from './cardaction.js';
 import cards from './cards/index.js';
+import { Requirements } from './Constants/index.js';
+import AmbushCardAction from './PlayActions/AmbushCardAction.js';
 
 const HiddenZones = ['hand', 'shadows', 'draw deck'];
+const ActionZones = ['hand', 'shadows'];
+const UnknownReasons = [
+    Requirements.facedown,
+    Requirements.location,
+    Requirements.noEffect,
+    Requirements.target
+];
 const ListenerMethods = ['on', 'once', 'addListener', 'prependListener', 'removeListener', 'off'];
 
-/**
- * Works out whether a player could have something to respond with from a hidden zone, using only
- * information their opponents can see. A player's candidates are phantom copies of every
- * implemented card their faction and agendas allow, checked in each hidden zone they have a
- * triggered ability usable from. Phantoms are not part of the game and listen for nothing.
- *
- * The check is deliberately generous: it asks whether the ability triggers, isn't blank, and
- * (for events) whether the player has the gold to pay the printed cost. It doesn't check other
- * costs or targets, which could depend on the contents of the player's hand.
- */
 class PossibleResponders {
     constructor(game, { cardData = game.cardData } = {}) {
         this.game = game;
         this.cardData = Array.isArray(cardData) ? cardData : Object.values(cardData || {});
+        this.phantomsByPlayer = new Map();
         this.candidatesByPlayer = new Map();
+        this.actionCandidatesByPlayer = new Map();
         this.errors = [];
     }
 
@@ -35,7 +38,6 @@ class PossibleResponders {
         );
     }
 
-    // A check that fails is treated as a possible response: that only costs a short wait.
     safelyCouldTrigger(candidate, player, event) {
         try {
             return this.couldTrigger(candidate, player, event);
@@ -75,9 +77,112 @@ class PossibleResponders {
         return this.candidatesByPlayer.get(player);
     }
 
-    buildCandidates(player) {
+    couldAct(player) {
+        const zones = ActionZones.filter((zone) => player.getSourceList(zone).length > 0);
+
+        return this.getActionCandidates(player).some(
+            (candidate) => zones.includes(candidate.zone) && this.safelyCouldAct(candidate, player)
+        );
+    }
+
+    safelyCouldAct(candidate, player) {
+        try {
+            return this.couldUseAction(candidate, player);
+        } catch (error) {
+            this.errors.push({ code: candidate.card.code, error });
+            return true;
+        }
+    }
+
+    couldUseAction({ action, card, zone }, player) {
+        card.location = zone;
+        card.facedown = zone !== 'hand';
+
+        const context = new AbilityContext({
+            ability: action,
+            game: this.game,
+            player,
+            source: card
+        });
+        const isCardInPlayableLocation = player.isCardInPlayableLocation;
+        player.isCardInPlayableLocation = (target, playingType) =>
+            target === card || isCardInPlayableLocation.call(player, target, playingType);
+
+        let reason;
+        try {
+            reason = action.getUnresolvableReason(context);
+        } finally {
+            delete player.isCardInPlayableLocation;
+        }
+
+        if (!reason || UnknownReasons.includes(reason)) {
+            return true;
+        }
+
+        return (
+            reason === Requirements.cost && this.getGoldCost(action, card, player) <= player.gold
+        );
+    }
+
+    getGoldCost(action, card, player) {
+        const playingType = action instanceof AmbushCardAction ? 'ambush' : 'play';
+        const cost = playingType === 'ambush' ? card.getAmbushCost() : card.getPrintedCost();
+        if (playingType === 'play' && card.getPrintedType() !== 'event') {
+            return 0;
+        }
+
+        const printed = typeof cost === 'number' ? cost : 0;
+        return Math.max(0, printed - player.getCostReduction(playingType, card));
+    }
+
+    getActionCandidates(player) {
+        if (!this.actionCandidatesByPlayer.has(player)) {
+            this.actionCandidatesByPlayer.set(player, this.buildActionCandidates(player));
+        }
+
+        return this.actionCandidatesByPlayer.get(player);
+    }
+
+    buildActionCandidates(player) {
+        const candidates = [];
+
+        for (const card of this.getPhantoms(player)) {
+            const actions = new Set([...card.abilities.actions, ...card.getPlayActions()]);
+            for (const action of actions) {
+                for (const zone of ActionZones.filter((zone) =>
+                    this.isActionUsableFrom(action, card, zone)
+                )) {
+                    candidates.push({ action, card, zone });
+                }
+            }
+        }
+
+        return candidates;
+    }
+
+    isActionUsableFrom(action, card, zone) {
+        if (action instanceof AmbushCardAction) {
+            return zone === 'hand' && card.isAmbush();
+        }
+
+        if (!(action instanceof CardAction)) {
+            return false;
+        }
+
+        return card.getPrintedType() === 'event' || action.location === zone;
+    }
+
+    getPhantoms(player) {
+        if (!this.phantomsByPlayer.has(player)) {
+            this.phantomsByPlayer.set(player, this.buildPhantoms(player));
+        }
+
+        return this.phantomsByPlayer.get(player);
+    }
+
+    buildPhantoms(player) {
         const rules = this.getDeckRules(player);
-        const byEventName = new Map();
+        const phantoms = [];
 
         for (const cardData of this.cardData) {
             const cardClass = cards[cardData.code];
@@ -85,14 +190,20 @@ class PossibleResponders {
                 continue;
             }
 
-            let phantom;
             try {
-                phantom = this.createPhantom(player, cardClass, cardData);
+                phantoms.push(this.createPhantom(player, cardClass, cardData));
             } catch (error) {
                 this.errors.push({ code: cardData.code, error });
-                continue;
             }
+        }
 
+        return phantoms;
+    }
+
+    buildCandidates(player) {
+        const byEventName = new Map();
+
+        for (const phantom of this.getPhantoms(player)) {
             for (const ability of phantom.abilities.reactions) {
                 if (ability.isForcedAbility()) {
                     continue;

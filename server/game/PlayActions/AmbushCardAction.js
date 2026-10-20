@@ -20,6 +20,11 @@ class AmbushCardAction extends BaseAbility {
             return Requirements.phase;
         }
 
+        const timingRequirement = context.game.getActionTimingRequirement(context.player);
+        if (timingRequirement) {
+            return timingRequirement;
+        }
+
         if (!context.source.isAmbush() || context.source.getType() === 'event') {
             return Requirements.condition;
         }

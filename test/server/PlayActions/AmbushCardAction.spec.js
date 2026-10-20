@@ -2,7 +2,12 @@ import AmbushCardAction from '../../../server/game/PlayActions/AmbushCardAction.
 
 describe('AmbushCardAction', function () {
     beforeEach(function () {
-        this.gameSpy = { addMessage: vi.fn(), on: vi.fn(), removeListener: vi.fn() };
+        this.gameSpy = {
+            addMessage: vi.fn(),
+            getActionTimingRequirement: vi.fn(),
+            on: vi.fn(),
+            removeListener: vi.fn()
+        };
         this.playerSpy = {
             canPutIntoPlay: vi.fn(),
             isCardInPlayableLocation: vi.fn(),

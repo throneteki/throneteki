@@ -49,7 +49,7 @@ import shuffle from 'lodash.shuffle';
 import StartRound from './GameActions/StartRound.js';
 import GameOverHandler from './GameHandlers/GameOverHandler.js';
 import DisconnectHandler from './GameHandlers/DisconnectHandler.js';
-import { Flags } from './Constants/index.js';
+import { Flags, Requirements } from './Constants/index.js';
 import { EventValidator } from './EventValidator.js';
 import PossibleResponders from './PossibleResponders.js';
 
@@ -130,6 +130,7 @@ class Game extends EventEmitter {
         this.stats = new GameStats(this);
         this.manualActions = new ManualActions(this);
         this.manualMode = new ManualMode(this, options.manualMode ?? details.manualMode ?? 'auto');
+        this.strictActionWindows = !!(options.strictActionWindows ?? details.strictActionWindows);
         this.winnerOfDominanceInLastRound = undefined;
         this.triggerOnLosing = {};
         this.prizedKeywordListener = new PrizedKeywordListener(this);
@@ -1196,6 +1197,30 @@ class Game extends EventEmitter {
         }
     }
 
+    isActionTimingOpenFor(player) {
+        if (this.hasOpenInterruptOrReactionWindow()) {
+            return false;
+        }
+
+        if (this.currentActionWindow) {
+            return this.currentActionWindow.currentPlayer === player;
+        }
+
+        return this.currentPhase === 'marshal';
+    }
+
+    getActionTimingRequirement(player) {
+        if (
+            !this.strictActionWindows ||
+            this.manualMode.enabled ||
+            this.isActionTimingOpenFor(player)
+        ) {
+            return undefined;
+        }
+
+        return Requirements.window;
+    }
+
     hasOpenInterruptOrReactionWindow() {
         return this.abilityWindowStack.length !== 0;
     }
@@ -1655,6 +1680,7 @@ class Game extends EventEmitter {
                 maxPlayers: this.maxPlayers,
                 cancelPromptUsed: this.cancelPromptUsed,
                 manualMode: this.manualMode.enabled,
+                strictActionWindows: this.strictActionWindows,
                 useGameTimeLimit: this.useGameTimeLimit,
                 ...(this.useGameTimeLimit && {
                     gameTimeLimit: this.gameTimeLimit,

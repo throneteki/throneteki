@@ -3,6 +3,7 @@ import CardAction from '../../../server/game/cardaction.js';
 describe('CardAction', function () {
     beforeEach(function () {
         this.gameSpy = {
+            getActionTimingRequirement: vi.fn(),
             on: vi.fn(),
             popAbilityContext: vi.fn(),
             pushAbilityContext: vi.fn(),

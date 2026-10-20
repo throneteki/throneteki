@@ -31,6 +31,7 @@ const NewGame = forwardRef(function NewGame(
         spectators: yup.boolean().default(false),
         muteSpectators: yup.boolean().default(false),
         showHand: yup.boolean().default(false),
+        strictActionWindows: yup.boolean().default(false),
         useGameTimeLimit: yup.boolean().default(false),
         gameTimeLimit: yup
             .number()
@@ -89,6 +90,7 @@ const NewGame = forwardRef(function NewGame(
         useGameTimeLimit: !!defaultTimeLimit,
         gameTimeLimit: defaultTimeLimit || 55,
         gamePrivate: defaultPrivate,
+        strictActionWindows: false,
         useChessBlocks: false,
         chessClockTimeLimit: 30,
         chessClockDelay: 5,

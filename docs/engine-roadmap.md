@@ -210,6 +210,15 @@ possibly act is skipped, a player who has nothing waits a short delay, and only 
 action is asked to click. Once every player with a legal action is guaranteed a window, actions
 outside windows can be blocked.
 
+_On trial as the "Strict action windows" game option
+([actionwindow.js](../server/game/gamesteps/actionwindow.js),
+[StrictActionWindows.spec.js](../test/server/gamesteps/StrictActionWindows.spec.js)). In each
+action window, a player is prompted if they have an action they can take or have set the window as
+a stop in their settings, gets a fake wait if a card they could hold in hand or shadows might give
+them one (`PossibleResponders.couldAct`), and is skipped otherwise. With the option on and manual
+mode off, actions outside the player's turn in an action window (or the marshaling phase) are
+refused with the `window` reason._
+
 What this needs from card code, required for all new and migrated cards from now on:
 
 - Trigger checks (`when`, `condition`, cost `canPay`) must have no side effects and must work on a
@@ -278,9 +287,9 @@ drop, click-to-kneel, stat changes, shuffling and looking at the deck are refuse
 every opponent; if they all agree, manual mode turns on and the player is asked which card isn't
 working, and both are recorded in the game stats
 ([ManualMode.spec.js](../test/server/ManualMode.spec.js)). The test harness starts games with
-manual mode on, since specs use manual actions as setup shortcuts. Still to do: refusing actions
-outside action windows (needs every player with a legal action to be offered a window first), a
-client toggle and indicator, and "report a problem" with a saved game state for the scenario
+manual mode on, since specs use manual actions as setup shortcuts. Actions outside action
+windows are refused in games with the "Strict action windows" option (phase 2). Still to do:
+making that the default after feedback, a client toggle and indicator, and "report a problem" with a saved game state for the scenario
 runner._
 
 - Manual mode becomes a game flag. Chat commands, `changeStat`, drag and drop and click-to-kneel
@@ -302,3 +311,5 @@ runner._
 | 2026-10-20 | Manual corrections (`/power`, `/token`, stat changes) are plain corrections and raise no game events.                                                                                                             |
 | 2026-10-20 | Attachments and duplicates removed because their card left play can't be saved (Rules Reference: Leaves Play, Save).                                                                                              |
 | 2026-10-20 | Fake waits cover every prompted window for now (cancels, interrupts, reactions), to be reviewed after feedback. They last a random 1 to 3 seconds and show a Pass button. Players using the cancel timer keep it. |
+| 2026-10-20 | Action windows use the same offer, fake wait or skip decision, behind the opt-in "Strict action windows" game option until it has had feedback.                                                                   |
+| 2026-10-20 | Phase 5 order, with no game stats yet: the Core Set and the packs legal in the current format, starting with the most recent pack.                                                                                |

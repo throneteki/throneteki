@@ -963,6 +963,7 @@ class Lobby {
             restrictedList: game.restrictedList,
             allowSpectators: game.allowSpectators,
             showHand: game.showHand,
+            strictActionWindows: game.strictActionWindows,
             gamePrivate: game.gamePrivate,
             gameFormat: game.gameFormat,
             gameVariant: game.gameVariant,
