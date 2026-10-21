@@ -8,14 +8,16 @@ class TheVipersSpear extends DrawCard {
     setupCardAbilities(ability) {
         this.attachmentRestriction({ trait: 'Sand Snake' }, { name: 'The Red Viper' });
         this.whileAttached({
-            condition: () => this.game.isDuringChallenge({ challengeType: 'military' }),
+            condition: (context) => context.game.isDuringChallenge({ challengeType: 'military' }),
             match: this.parent,
             effect: ability.effects.modifyStrength(3)
         });
         this.whileAttached({
-            condition: () =>
-                this.game.isDuringChallenge({ challengeType: 'military' }) &&
-                this.hasFewerCharactersThanDefender(this.game.currentChallenge.defendingPlayer),
+            condition: (context) =>
+                context.game.isDuringChallenge({ challengeType: 'military' }) &&
+                context.source.hasFewerCharactersThanDefender(
+                    context.game.currentChallenge.defendingPlayer
+                ),
             match: this.parent,
             effect: ability.effects.doesNotKneelAsAttacker()
         });

@@ -7,10 +7,10 @@ class HornHillVanguard extends DrawCard {
     // you control.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.isAttacking(),
+            condition: (context) => context.source.isAttacking(),
             match: this,
-            effect: ability.effects.dynamicStrength(() =>
-                this.controller.getNumberOfCardsInPlay({
+            effect: ability.effects.dynamicStrength((card, context) =>
+                context.source.controller.getNumberOfCardsInPlay({
                     faction: 'tyrell',
                     type: 'character',
                     kneeled: false

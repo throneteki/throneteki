@@ -9,8 +9,8 @@ class ShadowblackLane extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
                     event.challenge.challengeType === 'intrigue'
             },
             cost: ability.costs.kneelFactionCard(),
@@ -21,7 +21,8 @@ class ShadowblackLane extends DrawCard {
                 title: 'Select an event',
                 match: {
                     type: 'event',
-                    condition: (card) => card.isFaction(this.controller.getFaction())
+                    condition: (card, context) =>
+                        card.isFaction(context.source.controller.getFaction())
                 },
                 message: '{player} {gameAction}',
                 gameAction: GameActions.addToHand((context) => ({

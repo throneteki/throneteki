@@ -6,9 +6,9 @@ class KingsmootClaimant extends DrawCard {
     // gains the King trait and renown.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () =>
-                this.isAttacking() &&
-                !this.game.currentChallenge.defendingPlayer.anyCardsInPlay(
+            condition: (context) =>
+                context.source.isAttacking() &&
+                !context.game.currentChallenge.defendingPlayer.anyCardsInPlay(
                     (card) => card.getType() === 'character' && card.hasTrait('King')
                 ),
             match: this,

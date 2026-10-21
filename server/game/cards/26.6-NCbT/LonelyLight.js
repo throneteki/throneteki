@@ -11,7 +11,7 @@ class LonelyLight extends DrawCard {
         });
         this.persistentEffect({
             targetController: 'any',
-            condition: () => !this.kneeled,
+            condition: (context) => !context.source.kneeled,
             effect: ability.effects.increaseCost({
                 playingTypes: ['outOfShadows'],
                 amount: 1

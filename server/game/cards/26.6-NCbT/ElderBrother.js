@@ -6,8 +6,9 @@ class ElderBrother extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,
-            condition: () =>
-                this.controller.activePlot && this.controller.activePlot.hasTrait('The Seven'),
+            condition: (context) =>
+                context.source.controller.activePlot &&
+                context.source.controller.activePlot.hasTrait('The Seven'),
             effect: ability.effects.cannotBeKilled()
         });
     }

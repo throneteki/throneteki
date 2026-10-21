@@ -11,10 +11,10 @@ class JoffreysCrossbow extends DrawCard {
             effect: ability.effects.addKeyword('Intimidate')
         });
         this.persistentEffect({
-            condition: () =>
-                this.game.isDuringChallenge({ challengeType: 'military' }) &&
-                this.parent &&
-                this.parent.isAttacking(),
+            condition: (context) =>
+                context.game.isDuringChallenge({ challengeType: 'military' }) &&
+                context.source.parent &&
+                context.source.parent.isAttacking(),
             targetController: 'any',
             match: (card) => card.getType() === 'character' && card.isUnique(),
             effect: ability.effects.mustChooseAsClaim()

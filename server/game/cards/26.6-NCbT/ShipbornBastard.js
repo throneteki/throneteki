@@ -10,7 +10,7 @@ class ShipbornBastard extends DrawCard {
         });
         this.persistentEffect({
             match: this,
-            effect: ability.effects.dynamicStrength(() => this.getSTR())
+            effect: ability.effects.dynamicStrength((card, context) => context.source.getSTR())
         });
     }
 

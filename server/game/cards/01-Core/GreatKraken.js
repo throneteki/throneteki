@@ -13,8 +13,9 @@ class GreatKraken extends DrawCard {
         });
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    this.controller === event.challenge.winner && event.challenge.isUnopposed()
+                afterChallenge: (event, context) =>
+                    context.source.controller === event.challenge.winner &&
+                    event.challenge.isUnopposed()
             },
             limit: ability.limit.perRound(2),
             choices: {

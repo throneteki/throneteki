@@ -12,9 +12,14 @@ class ReaversGreataxe extends DrawCard {
             effect: ability.effects.addTrait('Raider')
         });
         this.whileAttached({
-            condition: () =>
-                this.game.isDuringChallenge({ attackingPlayer: this.controller, number: 1 }) &&
-                this.hasMoreAttachmentsThanDefender(this.game.currentChallenge.defendingPlayer),
+            condition: (context) =>
+                context.game.isDuringChallenge({
+                    attackingPlayer: context.source.controller,
+                    number: 1
+                }) &&
+                context.source.hasMoreAttachmentsThanDefender(
+                    context.game.currentChallenge.defendingPlayer
+                ),
             match: this.parent,
             effect: ability.effects.doesNotKneelAsAttacker()
         });

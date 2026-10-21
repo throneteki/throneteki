@@ -105,6 +105,9 @@ function contextPosition(arrow) {
             if (owner.key.name === 'args') {
                 return [0, []];
             }
+            if (owner.key.name === 'match' && parent.key.name === 'condition') {
+                return [1, ['card']];
+            }
         }
         return PropertyIndex[parent.key.name];
     }

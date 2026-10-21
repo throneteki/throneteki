@@ -13,7 +13,10 @@ class SummonedByTheConclave extends PlotCard {
             gameAction: GameActions.search({
                 topCards: 10,
                 title: 'Select a card',
-                match: { condition: (card) => card.isFaction(this.controller.getFaction()) },
+                match: {
+                    condition: (card, context) =>
+                        card.isFaction(context.source.controller.getFaction())
+                },
                 message: '{player} {gameAction}',
                 gameAction: GameActions.addToHand((context) => ({
                     card: context.searchTarget

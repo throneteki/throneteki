@@ -34,9 +34,6 @@
         "add-message": 1,
         "this-in-ability": 4
     },
-    "server/game/cards/00-VDS/SummonedByTheConclave.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/00-VDS/SupportOfSaltcliffe.js": {
         "this-in-ability": 8,
         "legacy-helper": 1,
@@ -209,9 +206,6 @@
         "this-in-ability": 7,
         "legacy-helper": 1,
         "add-message": 1
-    },
-    "server/game/cards/01-Core/GreatKraken.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/01-Core/GreenbloodTrader.js": {
         "this-in-ability": 9,
@@ -583,9 +577,6 @@
         "add-message": 1,
         "legacy-helper": 1
     },
-    "server/game/cards/02.1-TtB/CerseisWheelhouse.js": {
-        "this-in-ability": 3
-    },
     "server/game/cards/02.1-TtB/KingRobertsWarhammer.js": {
         "this-in-ability": 11,
         "legacy-helper": 2,
@@ -610,9 +601,6 @@
         "this-in-ability": 7,
         "legacy-helper": 1,
         "add-message": 1
-    },
-    "server/game/cards/02.1-TtB/SupportOfThePeople.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/02.1-TtB/TheHound.js": {
         "this-in-ability": 10,
@@ -694,9 +682,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/02.2-TRtW/ShadowblackLane.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/02.2-TRtW/SyrioForel.js": {
         "add-message": 1,
         "this-in-ability": 4
@@ -756,9 +741,6 @@
         "legacy-helper": 2,
         "add-message": 2,
         "prompt-for-select": 1
-    },
-    "server/game/cards/02.3-TKP/SerHobberRedwyne.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/02.3-TKP/TheBoneway.js": {
         "this-in-ability": 9,
@@ -5884,9 +5866,6 @@
     "server/game/cards/26.1-WAID/TheMinstrelsMuse.js": {
         "this-in-ability": 2
     },
-    "server/game/cards/26.1-WAID/TridentGuard.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/26.1-WAID/WhenAllIsDarkest.js": {
         "this-in-ability": 1
     },
@@ -5908,21 +5887,12 @@
         "this-in-ability": 13,
         "add-message": 2
     },
-    "server/game/cards/26.2-WoW/HornHillVanguard.js": {
-        "this-in-ability": 2
-    },
-    "server/game/cards/26.2-WoW/JoffreysCrossbow.js": {
-        "this-in-ability": 3
-    },
     "server/game/cards/26.2-WoW/QueenOfMeereen.js": {
         "prompt-for-select": 1,
         "this-in-ability": 5
     },
     "server/game/cards/26.2-WoW/RalfTheLimper.js": {
         "this-in-ability": 2
-    },
-    "server/game/cards/26.2-WoW/RedKeepServant.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/26.2-WoW/Reinstatement.js": {
         "this-in-ability": 1
@@ -5960,12 +5930,6 @@
     },
     "server/game/cards/26.3-MaV/DubiousLoyalties.js": {
         "this-in-ability": 3
-    },
-    "server/game/cards/26.3-MaV/GreyGalley.js": {
-        "this-in-ability": 1
-    },
-    "server/game/cards/26.3-MaV/LysaArryn.js": {
-        "this-in-ability": 4
     },
     "server/game/cards/26.3-MaV/NarrowSeaDromond.js": {
         "this-in-ability": 2
@@ -6032,9 +5996,6 @@
     "server/game/cards/26.4 LotW/QartheenGalleas.js": {
         "this-in-ability": 2
     },
-    "server/game/cards/26.4 LotW/ReaversGreataxe.js": {
-        "this-in-ability": 4
-    },
     "server/game/cards/26.4 LotW/RedwyneMerchanter.js": {
         "this-in-ability": 2
     },
@@ -6053,9 +6014,6 @@
     },
     "server/game/cards/26.4 LotW/TradingWithBraavos.js": {
         "this-in-ability": 1
-    },
-    "server/game/cards/26.4 LotW/TytosBlackwood.js": {
-        "this-in-ability": 2
     },
     "server/game/cards/26.5-JfE/AllerasTheSphinx.js": {
         "this-in-ability": 2
@@ -6084,9 +6042,6 @@
     "server/game/cards/26.5-JfE/PoisonedLocusts.js": {
         "this-in-ability": 2
     },
-    "server/game/cards/26.5-JfE/SerOsfrydKettleblack.js": {
-        "this-in-ability": 3
-    },
     "server/game/cards/26.5-JfE/SlanderAndLies.js": {
         "this-in-ability": 4
     },
@@ -6099,9 +6054,6 @@
     },
     "server/game/cards/26.5-JfE/TheRedViper.js": {
         "this-in-ability": 3
-    },
-    "server/game/cards/26.5-JfE/TheVipersSpear.js": {
-        "this-in-ability": 4
     },
     "server/game/cards/26.5-JfE/TheonGreyjoy.js": {
         "this-in-ability": 2
@@ -6126,17 +6078,11 @@
         "event-registration": 1,
         "this-in-ability": 4
     },
-    "server/game/cards/26.6-NCbT/ElderBrother.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/26.6-NCbT/GrowingInfluence.js": {
         "this-in-ability": 1
     },
     "server/game/cards/26.6-NCbT/HiddenInShadow.js": {
         "this-in-ability": 3
-    },
-    "server/game/cards/26.6-NCbT/LonelyLight.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/26.6-NCbT/Melisandre.js": {
         "this-in-ability": 2
@@ -6144,14 +6090,8 @@
     "server/game/cards/26.6-NCbT/NoCrownButTruth.js": {
         "this-in-ability": 2
     },
-    "server/game/cards/26.6-NCbT/SerManfreyMartell.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/26.6-NCbT/SeventyNineSentinels.js": {
         "this-in-ability": 2
-    },
-    "server/game/cards/26.6-NCbT/ShipbornBastard.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/26.6-NCbT/TheStallionWhoMountsTheWorld.js": {
         "this-in-ability": 5,
@@ -6174,9 +6114,6 @@
     "server/game/cards/27.1-THBIB/AlysKarstark.js": {
         "this-in-ability": 3
     },
-    "server/game/cards/27.1-THBIB/BloodOfValyria.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/27.1-THBIB/CaptainOfTheIronFleet.js": {
         "this-in-ability": 5
     },
@@ -6188,9 +6125,6 @@
     },
     "server/game/cards/27.1-THBIB/JeweledTiara.js": {
         "this-in-ability": 5
-    },
-    "server/game/cards/27.1-THBIB/KingsmootClaimant.js": {
-        "this-in-ability": 2
     },
     "server/game/cards/27.1-THBIB/LordOfWinterfell.js": {
         "this-in-ability": 5
@@ -6212,9 +6146,6 @@
     },
     "server/game/cards/27.1-THBIB/Sigorn.js": {
         "this-in-ability": 6
-    },
-    "server/game/cards/27.1-THBIB/SkirlingPass.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/27.1-THBIB/SonsOfTheHarpy.js": {
         "this-in-ability": 2

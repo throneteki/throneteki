@@ -8,9 +8,9 @@ class SupportOfThePeople extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     event.challenge.challengeType === 'power' &&
-                    event.challenge.winner === this.controller &&
+                    event.challenge.winner === context.source.controller &&
                     event.challenge.strengthDifference >= 5
             },
             max: ability.limit.perChallenge(1),

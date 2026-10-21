@@ -6,8 +6,11 @@ class RedKeepServant extends DrawCard {
     // cannot be bypassed by stealth.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () =>
-                this.controller.anyCardsInPlay({ type: 'location', trait: "King's Landing" }),
+            condition: (context) =>
+                context.source.controller.anyCardsInPlay({
+                    type: 'location',
+                    trait: "King's Landing"
+                }),
             match: this,
             effect: [
                 ability.effects.addIcon('intrigue'),

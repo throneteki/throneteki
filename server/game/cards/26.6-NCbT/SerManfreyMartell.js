@@ -7,7 +7,7 @@ class SerManfreyMartell extends DrawCard {
     // losing player instead of the winning player.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.isParticipating(),
+            condition: (context) => context.source.isParticipating(),
             effect: [
                 ability.effects.triggerChallengeKeywordOnLosing('renown'),
                 ability.effects.triggerChallengeKeywordOnLosing('insight')
