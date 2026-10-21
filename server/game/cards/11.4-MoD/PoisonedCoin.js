@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class PoisonedCoin extends DrawCard {
@@ -11,25 +12,24 @@ class PoisonedCoin extends DrawCard {
         this.reaction({
             max: ability.limit.perChallenge(1),
             when: {
-                afterChallenge: (event) =>
-                    this.controller === event.challenge.winner &&
+                afterChallenge: (event, context) =>
+                    context.source.controller === event.challenge.winner &&
                     event.challenge.isUnopposed() &&
                     event.challenge.attackers.some((card) => card.isShadow() && card.isAttacking())
             },
             target: {
                 type: 'select',
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
-                    card.controller === this.game.currentChallenge.loser &&
+                    card.controller === context.game.currentChallenge.loser &&
                     card.getType() === 'character' &&
                     !card.isShadow()
             },
-            handler: (context) => {
-                this.atEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.poison
-                }));
-            }
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'atEndOfPhase',
+                match: context.target,
+                effect: ability.effects.poison
+            }))
         });
     }
 }

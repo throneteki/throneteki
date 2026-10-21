@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class DragonstoneProselyte extends DrawCard {
@@ -17,12 +18,11 @@ class DragonstoneProselyte extends DrawCard {
             },
             message:
                 '{player} kneels {costs.kneel} to prevent {target} from standing until the end of the round',
-            handler: (context) => {
-                this.untilEndOfRound((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.cannotBeStood()
-                }));
-            }
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfRound',
+                match: context.target,
+                effect: ability.effects.cannotBeStood()
+            }))
         });
     }
 }

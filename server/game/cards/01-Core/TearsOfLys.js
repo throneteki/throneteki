@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class TearsOfLys extends DrawCard {
@@ -10,25 +11,24 @@ class TearsOfLys extends DrawCard {
         this.reaction({
             max: ability.limit.perChallenge(1),
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.attackingPlayer === this.controller &&
-                    event.challenge.winner === this.controller &&
+                afterChallenge: (event, context) =>
+                    event.challenge.attackingPlayer === context.source.controller &&
+                    event.challenge.winner === context.source.controller &&
                     event.challenge.challengeType === 'intrigue'
             },
             target: {
                 type: 'select',
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
-                    card.controller === this.game.currentChallenge.loser &&
+                    card.controller === context.game.currentChallenge.loser &&
                     card.getType() === 'character' &&
                     !card.hasIcon('intrigue')
             },
-            handler: (context) => {
-                this.atEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.poison
-                }));
-            }
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'atEndOfPhase',
+                match: context.target,
+                effect: ability.effects.poison
+            }))
         });
     }
 }

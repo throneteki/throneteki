@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class SnowCastle extends DrawCard {
@@ -18,12 +19,11 @@ class SnowCastle extends DrawCard {
                 format: '{player} kneels {source} to give {target} +{strength} STR',
                 args: { strength }
             },
-            handler: (context) => {
-                this.untilEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.modifyStrength(strength(context))
-                }));
-            }
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: ability.effects.modifyStrength(strength(context))
+            }))
         });
     }
 }

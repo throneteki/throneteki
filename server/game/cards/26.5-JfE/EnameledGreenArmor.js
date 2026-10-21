@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class EnameledGreenArmor extends DrawCard {
@@ -15,7 +16,7 @@ class EnameledGreenArmor extends DrawCard {
 
         this.action({
             title: 'Choose participating character',
-            condition: () => this.parent.isParticipating(),
+            condition: (context) => context.source.parent.isParticipating(),
             cost: ability.costs.kneelSelf(),
             target: {
                 cardCondition: {
@@ -24,12 +25,11 @@ class EnameledGreenArmor extends DrawCard {
                 }
             },
             message: '{player} kneels {source} to have {target} contribute STR to their side',
-            handler: (context) => {
-                this.untilEndOfChallenge((ability) => ({
-                    targetController: 'current',
-                    effect: ability.effects.contributeCharacterStrength(context.target)
-                }));
-            }
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfChallenge',
+                targetController: 'current',
+                effect: ability.effects.contributeCharacterStrength(context.target)
+            }))
         });
     }
 }

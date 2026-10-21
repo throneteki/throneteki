@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class DefensiveDebris extends DrawCard {
@@ -24,19 +25,18 @@ class DefensiveDebris extends DrawCard {
                 format: '{player} discards 1 gold from {source} and chooses {target} to prevent cards with printed cost {printedCost} from being played or entering play until the end of the phase',
                 args: { printedCost: (context) => context.target.getPrintedCost() }
             },
-            handler: (context) => {
-                this.untilEndOfPhase((ability) => ({
-                    targetController: 'any',
-                    effect: [
-                        ability.effects.cannotPutIntoPlay(
-                            (card) => card.getPrintedCost() === context.target.getPrintedCost()
-                        ),
-                        ability.effects.cannotPlay(
-                            (card) => card.getPrintedCost() === context.target.getPrintedCost()
-                        )
-                    ]
-                }));
-            }
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                targetController: 'any',
+                effect: [
+                    ability.effects.cannotPutIntoPlay(
+                        (card) => card.getPrintedCost() === context.target.getPrintedCost()
+                    ),
+                    ability.effects.cannotPlay(
+                        (card) => card.getPrintedCost() === context.target.getPrintedCost()
+                    )
+                ]
+            }))
         });
     }
 }

@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class RedMountains extends DrawCard {
@@ -19,20 +20,19 @@ class RedMountains extends DrawCard {
                 format: '{player} kneels and sacrifices {source} to force {opponent} to initiate their next challenge as a {challengeType} challenge against {player}, if able',
                 args: { challengeType: () => 'military' }
             },
-            handler: (context) => {
-                this.lastingEffect((ability) => ({
-                    until: {
-                        onChallengeInitiated: (event) =>
-                            event.challenge.isMatch({ initiatingPlayer: context.opponent }),
-                        onPhaseEnded: () => true
-                    },
-                    match: context.opponent,
-                    effect: ability.effects.mustInitiateNextChallenge(
-                        'military',
-                        (player) => player === context.player
-                    )
-                }));
-            }
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'custom',
+                until: {
+                    onChallengeInitiated: (event) =>
+                        event.challenge.isMatch({ initiatingPlayer: context.opponent }),
+                    onPhaseEnded: () => true
+                },
+                match: context.opponent,
+                effect: ability.effects.mustInitiateNextChallenge(
+                    'military',
+                    (player) => player === context.player
+                )
+            }))
         });
     }
 }

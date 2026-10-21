@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class Viserion extends DrawCard {
@@ -8,8 +9,9 @@ class Viserion extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller && this.isAttacking()
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
+                    context.source.isAttacking()
             },
             cost: [ability.costs.discardFromHand()],
             message: {
@@ -18,12 +20,11 @@ class Viserion extends DrawCard {
                     discardCost: (context) => context.costs.discardFromHand
                 }
             },
-            handler: (context) => {
-                this.untilEndOfChallenge((ability) => ({
-                    match: context.this,
-                    effect: [ability.effects.addKeyword('Intimidate')]
-                }));
-            }
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfChallenge',
+                match: context.this,
+                effect: [ability.effects.addKeyword('Intimidate')]
+            }))
         });
     }
 }

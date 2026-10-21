@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class TheRedViper extends DrawCard {
@@ -10,16 +11,15 @@ class TheRedViper extends DrawCard {
         this.action({
             title: 'Raise claim',
             limit: ability.limit.perChallenge(1),
-            condition: () => this.isAttacking(),
+            condition: (context) => context.source.isAttacking(),
             cost: ability.costs.discardFromShadows(),
             message:
                 '{player} uses {source} and discards {costs.discardFromShadows} from shadows to raise the claim value on their revealed plot card by 1 until the end of the challenge',
-            handler: () => {
-                this.untilEndOfChallenge((ability) => ({
-                    match: (card) => card === this.controller.activePlot,
-                    effect: ability.effects.modifyClaim(1)
-                }));
-            }
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfChallenge',
+                match: (card) => card === context.player.activePlot,
+                effect: ability.effects.modifyClaim(1)
+            }))
         });
     }
 }

@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class VenomousBlade extends DrawCard {
@@ -14,7 +15,7 @@ class VenomousBlade extends DrawCard {
         });
         this.reaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this
+                onCardEntersPlay: (event, context) => event.card === context.source
             },
             target: {
                 type: 'select',
@@ -23,12 +24,11 @@ class VenomousBlade extends DrawCard {
                     card.getType() === 'character' &&
                     card.getPrintedStrength() <= 2
             },
-            handler: (context) => {
-                this.atEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.poison
-                }));
-            }
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'atEndOfPhase',
+                match: context.target,
+                effect: ability.effects.poison
+            }))
         });
     }
 }

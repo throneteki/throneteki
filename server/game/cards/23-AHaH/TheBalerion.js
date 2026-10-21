@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class TheBalerion extends DrawCard {
@@ -7,7 +8,8 @@ class TheBalerion extends DrawCard {
     // character. Until the end of the phase, that character gets +2 STR and gains assault.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: (card) => card.name === 'Captain Groleo' && card.controller === this.controller,
+            match: (card, context) =>
+                card.name === 'Captain Groleo' && card.controller === context.source.controller,
             effect: [ability.effects.addIcon('power'), ability.effects.addKeyword('stealth')]
         });
         this.action({
@@ -19,15 +21,11 @@ class TheBalerion extends DrawCard {
             phase: 'challenge',
             message:
                 '{player} kneels {source} and shuffles it into their deck to give {target} +2 STR and assault until the end of the phase',
-            handler: (context) => {
-                this.untilEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: [
-                        ability.effects.modifyStrength(2),
-                        ability.effects.addKeyword('assault')
-                    ]
-                }));
-            }
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: [ability.effects.modifyStrength(2), ability.effects.addKeyword('assault')]
+            }))
         });
     }
 }

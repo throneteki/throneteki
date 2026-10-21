@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class OlennasWheelhouse extends DrawCard {
@@ -15,16 +16,15 @@ class OlennasWheelhouse extends DrawCard {
             },
             message:
                 '{player} kneels {costs.kneel} and discards 1 gold from it to remove {target} from the game until the beginning of the next phase',
-            handler: (context) => {
-                this.lastingEffect((ability) => ({
-                    until: {
-                        onPhaseStarted: () => true
-                    },
-                    match: context.target,
-                    targetLocation: ['play area', 'out of game'],
-                    effect: ability.effects.removeFromGame()
-                }));
-            }
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'custom',
+                until: {
+                    onPhaseStarted: () => true
+                },
+                match: context.target,
+                targetLocation: ['play area', 'out of game'],
+                effect: ability.effects.removeFromGame()
+            }))
         });
     }
 }

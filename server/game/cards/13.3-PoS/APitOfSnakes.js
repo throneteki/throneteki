@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class APitOfSnakes extends DrawCard {
@@ -15,12 +16,11 @@ class APitOfSnakes extends DrawCard {
                     card.getType() === 'character' &&
                     card.getNumberOfIcons() === 0
             },
-            handler: (context) => {
-                this.atEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.poison
-                }));
-            },
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'atEndOfPhase',
+                match: context.target,
+                effect: ability.effects.poison
+            })),
             max: ability.limit.perPhase(1)
         });
     }

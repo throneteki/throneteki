@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class ThereIsMyClaim extends DrawCard {
@@ -10,7 +11,7 @@ class ThereIsMyClaim extends DrawCard {
             title: 'Raise claim value by 1',
             max: ability.limit.perChallenge(1),
             phase: 'challenge',
-            condition: () => this.game.isDuringChallenge(),
+            condition: (context) => context.game.isDuringChallenge(),
             cost: ability.costs.revealCards(
                 4,
                 (card) =>
@@ -20,12 +21,11 @@ class ThereIsMyClaim extends DrawCard {
             ),
             message:
                 '{player} plays {source} and reveals {costs.reveal} from their hand to raise their claim value by 1 until the end of the challenge',
-            handler: () => {
-                this.untilEndOfChallenge((ability) => ({
-                    match: (card) => card === this.controller.activePlot,
-                    effect: ability.effects.modifyClaim(1)
-                }));
-            }
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfChallenge',
+                match: (card) => card === context.player.activePlot,
+                effect: ability.effects.modifyClaim(1)
+            }))
         });
     }
 }

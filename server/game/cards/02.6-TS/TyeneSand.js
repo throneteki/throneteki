@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class TyeneSand extends DrawCard {
@@ -5,13 +6,13 @@ class TyeneSand extends DrawCard {
     // Reaction: After you win an [intrigue] challenge in which Tyene Sand is participating as an
     // attacker, place a poison token on a character without an [intrigue] icon. At the end of the
     // phase, if that character still has the poison token, remove it and kill that character.
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     event.challenge.challengeType === 'intrigue' &&
-                    event.challenge.winner === this.controller &&
-                    this.isAttacking()
+                    event.challenge.winner === context.source.controller &&
+                    context.source.isAttacking()
             },
             target: {
                 type: 'select',
@@ -20,12 +21,11 @@ class TyeneSand extends DrawCard {
                     card.getType() === 'character' &&
                     !card.hasIcon('intrigue')
             },
-            handler: (context) => {
-                this.atEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.poison
-                }));
-            }
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'atEndOfPhase',
+                match: context.target,
+                effect: ability.effects.poison
+            }))
         });
     }
 }

@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class TheBlackCells extends DrawCard {
@@ -8,7 +9,8 @@ class TheBlackCells extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardOutOfShadows: (event) => event.card.controller === this.controller
+                onCardOutOfShadows: (event, context) =>
+                    event.card.controller === context.source.controller
             },
             cost: ability.costs.kneelSelf(),
             target: {
@@ -18,12 +20,11 @@ class TheBlackCells extends DrawCard {
                     card.controller !== context.player
             },
             message: '{player} kneels {source} to prevent {target} from standing or kneeling',
-            handler: (context) => {
-                this.untilEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: [ability.effects.cannotBeStood(), ability.effects.cannotBeKneeled()]
-                }));
-            }
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: [ability.effects.cannotBeStood(), ability.effects.cannotBeKneeled()]
+            }))
         });
     }
 }

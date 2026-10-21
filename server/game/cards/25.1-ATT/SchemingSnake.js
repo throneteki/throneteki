@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class SchemingSnake extends DrawCard {
@@ -6,10 +7,10 @@ class SchemingSnake extends DrawCard {
     // Reaction: After Scheming Snake enters play during a challenge, choose a participating
     // character with fewer than 2 challenge icons. That character does not contribute its STR to
     // this challenge.
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this
+                onCardEntersPlay: (event, context) => event.card === context.source
             },
             target: {
                 cardCondition: (card) =>
@@ -19,12 +20,11 @@ class SchemingSnake extends DrawCard {
             },
             message:
                 "{player} uses {source} to have {target} not contribute it's STR to this challenge",
-            handler: (context) => {
-                this.untilEndOfChallenge((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.doesNotContributeStrength()
-                }));
-            }
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfChallenge',
+                match: context.target,
+                effect: ability.effects.doesNotContributeStrength()
+            }))
         });
     }
 }

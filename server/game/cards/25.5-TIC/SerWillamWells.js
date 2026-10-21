@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class SerWillamWells extends DrawCard {
@@ -14,16 +15,15 @@ class SerWillamWells extends DrawCard {
             },
             message:
                 '{player} kills {costs.kill} to remove a military, an intrigue, and a power icon from {target} until the end of the phase',
-            handler: (context) => {
-                this.untilEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: [
-                        ability.effects.removeIcon('military'),
-                        ability.effects.removeIcon('intrigue'),
-                        ability.effects.removeIcon('power')
-                    ]
-                }));
-            }
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: [
+                    ability.effects.removeIcon('military'),
+                    ability.effects.removeIcon('intrigue'),
+                    ability.effects.removeIcon('power')
+                ]
+            }))
         });
     }
 }

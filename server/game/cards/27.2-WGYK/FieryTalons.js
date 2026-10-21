@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class FieryTalons extends DrawCard {
@@ -18,12 +19,11 @@ class FieryTalons extends DrawCard {
             },
             message:
                 '{player} kneels {costs.kneel} to give {target} -1 STR until the end of the phase, placing it in shadows if its STR is 0',
-            handler: (context) => {
-                this.untilEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.putInShadowsByStrength(-1)
-                }));
-            }
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: ability.effects.putInShadowsByStrength(-1)
+            }))
         });
     }
 }

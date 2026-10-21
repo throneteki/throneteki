@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class Mord extends DrawCard {
@@ -20,18 +21,17 @@ class Mord extends DrawCard {
             },
             message:
                 '{player} kneels {source} to treat the text box of {target} as blank until {source} stands or leaves play',
-            handler: (context) => {
-                this.lastingEffect((ability) => ({
-                    until: {
-                        onCardStood: (event) => event.card === this,
-                        onCardLeftPlay: (event) =>
-                            event.card === this || event.card === context.target
-                    },
-                    targetLocation: 'any',
-                    match: context.target,
-                    effect: ability.effects.blankExcludingTraits
-                }));
-            }
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'custom',
+                until: {
+                    onCardStood: (event) => event.card === context.source,
+                    onCardLeftPlay: (event) =>
+                        event.card === context.source || event.card === context.target
+                },
+                targetLocation: 'any',
+                match: context.target,
+                effect: ability.effects.blankExcludingTraits
+            }))
         });
     }
 }
