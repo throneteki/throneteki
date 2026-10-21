@@ -11,8 +11,8 @@ class SacrificedToTheRedGod extends DrawCard {
             title: 'Search for a character',
             phase: 'marshal',
             cost: ability.costs.sacrifice((card) => card.getType() === 'character'),
-            condition: () =>
-                this.controller.anyCardsInPlay(
+            condition: (context) =>
+                context.source.controller.anyCardsInPlay(
                     (card) => card.hasTrait("R'hllor") && card.getType() === 'character'
                 ),
             gameAction: GameActions.search({

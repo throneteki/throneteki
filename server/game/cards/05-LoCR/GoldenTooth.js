@@ -9,15 +9,15 @@ class GoldenTooth extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Gain gold',
-            condition: () => this.controller.canGainGold(),
+            condition: (context) => context.source.controller.canGainGold(),
             cost: ability.costs.kneelSelf(),
             message: {
                 format: '{player} kneels {source} to gain {amount} gold',
-                args: { amount: () => this.getAmount() }
+                args: { amount: (context) => context.source.getAmount() }
             },
             gameAction: GameActions.gainGold((context) => ({
                 player: context.player,
-                amount: this.getAmount()
+                amount: context.source.getAmount()
             }))
         });
     }

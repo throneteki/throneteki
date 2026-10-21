@@ -8,8 +8,8 @@ class ThisMustBeAnsweredFiercely extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onChallengeInitiated: (event) =>
-                    event.challenge.initiatedAgainstPlayer === this.controller &&
+                onChallengeInitiated: (event, context) =>
+                    event.challenge.initiatedAgainstPlayer === context.source.controller &&
                     event.challenge.attackers.length >= 3
             },
             message: '{player} plays {source} to search their deck for a Tyrell character',

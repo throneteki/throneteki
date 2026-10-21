@@ -9,7 +9,7 @@ class Darkstar extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Return each participating character to hand',
-            condition: () => this.isAttacking(),
+            condition: (context) => context.source.isAttacking(),
             cost: ability.costs.sacrificeSelf(),
             message: {
                 format: "{player} sacrifices {costs.sacrifice} to return {participants} to its owner's hand",

@@ -9,8 +9,9 @@ class StreetOfSilk extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller && this.hasParticipatingLordOrLady()
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
+                    context.source.hasParticipatingLordOrLady()
             },
             cost: ability.costs.kneelFactionCard(),
             message:

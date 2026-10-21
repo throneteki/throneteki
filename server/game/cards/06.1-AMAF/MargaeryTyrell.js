@@ -10,11 +10,11 @@ class MargaeryTyrell extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCharacterKilled: (event) =>
+                onCharacterKilled: (event, context) =>
                     event.card.isUnique() &&
                     (event.cardStateWhenKilled.hasTrait('King') ||
                         event.cardStateWhenKilled.hasTrait('Lord')) &&
-                    event.cardStateWhenKilled.controller === this.controller
+                    event.cardStateWhenKilled.controller === context.source.controller
             },
             limit: ability.limit.perRound(1),
             message: '{player} uses {source} to search their deck for a King or Lord character',

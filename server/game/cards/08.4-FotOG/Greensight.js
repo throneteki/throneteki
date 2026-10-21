@@ -24,7 +24,7 @@ class Greensight extends AgendaCard {
                         },
                         gameAction: GameActions.simultaneously((context) =>
                             context.parentContext.revealed.map((card) =>
-                                GameActions.discardCard({ card, source: this })
+                                GameActions.discardCard({ card, source: context.source })
                             )
                         )
                     })

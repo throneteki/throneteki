@@ -7,9 +7,9 @@ class RangersCache extends PlotCard {
     setupCardAbilities() {
         this.interrupt({
             when: {
-                onPhaseEnded: (event) =>
+                onPhaseEnded: (event, context) =>
                     event.phase === 'taxation' &&
-                    (this.controller.canGainGold() || this.controller.canDraw())
+                    (context.source.controller.canGainGold() || context.source.controller.canDraw())
             },
             choices: {
                 'Gain 3 gold': {

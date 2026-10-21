@@ -21,7 +21,11 @@ class ToGoForwardYouMustGoBack extends DrawCard {
                             args: { selectingPlayer: () => player }
                         },
                         gameAction: GameActions.shuffleIntoDeck({ cards: player.hand }).then({
-                            gameAction: GameActions.drawCards({ player, amount: 5, source: this })
+                            gameAction: GameActions.drawCards({
+                                player,
+                                amount: 5,
+                                source: context.source
+                            })
                         })
                     })
                 )

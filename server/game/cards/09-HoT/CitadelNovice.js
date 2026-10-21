@@ -11,7 +11,7 @@ class CitadelNovice extends DrawCard {
             card.isMatch({ type: 'character', trait: 'Maester' });
         this.reaction({
             when: {
-                onCardKneeled: (event) => event.card === this
+                onCardKneeled: (event, context) => event.card === context.source
             },
             limit: ability.limit.perPhase(1),
             message: '{player} uses {source} to reveal the top card of their deck',

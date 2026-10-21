@@ -9,8 +9,9 @@ class PyatPree extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller && this.isParticipating()
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
+                    context.source.isParticipating()
             },
             message: {
                 format: '{player} uses {source} to search the top {numCards} cards of their deck for a Targaryen attachment',

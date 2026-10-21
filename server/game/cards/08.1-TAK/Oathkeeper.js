@@ -14,10 +14,10 @@ class Oathkeeper extends DrawCard {
 
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
                     event.challenge.strengthDifference >= 5 &&
-                    event.challenge.isParticipating(this.parent)
+                    event.challenge.isParticipating(context.source.parent)
             },
             cost: ability.costs.sacrificeSelf(),
             message:

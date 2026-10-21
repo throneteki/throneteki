@@ -8,7 +8,7 @@ class TheBlueBard extends DrawCard {
     setupCardAbilities() {
         this.interrupt({
             when: {
-                onCardLeftPlay: (event) => event.card === this
+                onCardLeftPlay: (event, context) => event.card === context.source
             },
             message:
                 '{player} uses {source} to search the top 10 cards of their deck for any number of Song events',

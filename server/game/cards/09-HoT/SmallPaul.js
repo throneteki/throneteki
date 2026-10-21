@@ -10,11 +10,11 @@ class SmallPaul extends DrawCard {
     setupCardAbilities() {
         this.interrupt({
             when: {
-                onCharacterKilled: (event) => event.card === this
+                onCharacterKilled: (event, context) => event.card === context.source
             },
             message: {
                 format: '{player} uses {source} to search the top {reserve} cards of their deck for any number of Steward characters',
-                args: { reserve: () => this.controller.getReserve() }
+                args: { reserve: (context) => context.source.controller.getReserve() }
             },
             gameAction: GameActions.search({
                 title: 'Select any number of characters',

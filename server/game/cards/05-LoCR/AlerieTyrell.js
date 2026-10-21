@@ -9,7 +9,7 @@ class AlerieTyrell extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this
+                onCardEntersPlay: (event, context) => event.card === context.source
             },
             message:
                 '{player} uses {source} to search the top 10 cards of their deck for a Tyrell character with printed cost 3 or lower',

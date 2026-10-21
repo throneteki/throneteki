@@ -10,7 +10,7 @@ class Ashemark extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onPhaseStarted: () => this.hasToken(Tokens.gold)
+                onPhaseStarted: (event, context) => context.source.hasToken(Tokens.gold)
             },
             cost: [ability.costs.kneelSelf(), ability.costs.sacrificeSelf()],
             message: {
