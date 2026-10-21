@@ -11,7 +11,7 @@ class GreyCliffs extends DrawCard {
         });
         this.interrupt({
             when: {
-                onSacrificed: (event) => event.card === this
+                onSacrificed: (event, context) => event.card === context.source
             },
             message: '{player} uses {source} to draw 1 card',
             gameAction: GameActions.drawCards((context) => ({ player: context.player, amount: 1 }))

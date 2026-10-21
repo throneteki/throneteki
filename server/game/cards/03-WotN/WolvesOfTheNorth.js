@@ -9,26 +9,26 @@ class WolvesOfTheNorth extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onBypassedByStealth: (event) => event.source === this
+                onBypassedByStealth: (event, context) => event.source === context.source
             },
             message: {
                 format: '{player} uses {source} to give {character} -{amount} STR until the end of the phase',
                 args: {
                     character: (context) => context.event.target,
-                    amount: (context) => this.direwolfCount(context.player)
+                    amount: (context) => direwolfCount(context.player)
                 }
             },
             gameAction: GameActions.lastingEffect((context) => ({
                 duration: 'untilEndOfPhase',
                 match: context.event.target,
-                effect: ability.effects.modifyStrength(-this.direwolfCount(context.player))
+                effect: ability.effects.modifyStrength(-direwolfCount(context.player))
             }))
         });
     }
+}
 
-    direwolfCount(player) {
-        return player.getNumberOfCardsInPlay((card) => card.hasTrait('Direwolf'));
-    }
+function direwolfCount(player) {
+    return player.getNumberOfCardsInPlay((card) => card.hasTrait('Direwolf'));
 }
 
 WolvesOfTheNorth.code = '03006';

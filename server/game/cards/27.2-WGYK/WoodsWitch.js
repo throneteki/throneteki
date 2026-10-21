@@ -11,10 +11,10 @@ class WoodsWitch extends DrawCard {
 
         this.reaction({
             when: {
-                onCardDiscarded: (event) =>
+                onCardDiscarded: (event, context) =>
                     event.cardStateWhenDiscarded.location === 'hand' &&
                     event.card.getType() === 'character' &&
-                    event.cardStateWhenDiscarded.controller !== this.controller
+                    event.cardStateWhenDiscarded.controller !== context.player
             },
             cost: ability.costs.sacrificeSelf(),
             gameAction: GameActions.choose({

@@ -19,16 +19,16 @@ class Harrenhal extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCardAbilityInitiated: (event) =>
+                onCardAbilityInitiated: (event, context) =>
                     event.ability.isTriggeredAbility() &&
                     !['agenda', 'plot'].includes(event.source.getType()) &&
-                    (event.ability.isForcedAbility() || event.source.controller !== this.controller)
+                    (event.ability.isForcedAbility() || event.source.controller !== context.player)
             },
             cost: ability.costs.kill(
-                (card) =>
+                (card, context) =>
                     card.getType() === 'character' &&
-                    card.controller === this.controller &&
-                    card.owner === this.controller
+                    card.controller === context.player &&
+                    card.owner === context.player
             ),
             message: {
                 format: '{player} uses {source} and kills {killedCharacter} to cancel {event} and place a ghost token on {source}',
@@ -41,7 +41,7 @@ class Harrenhal extends DrawCard {
                 GameActions.cancelEffects({ event: context.event }),
                 GameActions.placeToken({
                     amount: 1,
-                    card: this,
+                    card: context.source,
                     token: Tokens.ghost
                 })
             ])

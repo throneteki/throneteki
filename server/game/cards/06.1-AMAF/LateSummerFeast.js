@@ -9,8 +9,8 @@ class LateSummerFeast extends PlotCard {
 
         this.forcedReaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller && event.challenge.loser.canDraw()
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.player && event.challenge.loser.canDraw()
             },
             message: {
                 format: '{player} is forced by {source} to let {loser} draw 1 card',

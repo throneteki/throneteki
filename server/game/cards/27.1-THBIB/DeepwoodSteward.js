@@ -8,7 +8,8 @@ class DeepwoodSteward extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this && event.playingType === 'marshal'
+                onCardEntersPlay: (event, context) =>
+                    event.card === context.source && event.playingType === 'marshal'
             },
             message:
                 '{player} uses {source} to search the top 10 cards of their deck for a The North or out-of-faction location',

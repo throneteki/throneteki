@@ -17,8 +17,8 @@ class SerJorahMormont extends DrawCard {
 
         this.forcedReaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller && this.isParticipating()
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.player && context.source.isParticipating()
             },
             message: '{player} is forced to place 1 betrayal token on {source}',
             gameAction: GameActions.placeToken((context) => ({

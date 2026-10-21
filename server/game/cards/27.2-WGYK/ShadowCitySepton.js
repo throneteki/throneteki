@@ -9,7 +9,8 @@ class ShadowCitySepton extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onDominanceDetermined: (event) => event.winner && event.winner !== this.controller
+                onDominanceDetermined: (event, context) =>
+                    event.winner && event.winner !== context.player
             },
             cost: ability.costs.putSelfIntoShadows(),
             target: {

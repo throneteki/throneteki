@@ -11,11 +11,11 @@ class SentinelsOfTheRealm extends AgendaCard {
     // Interrupt: When the challenges phase ends, draw 1 card for each challenge type that has not
     // been initiated against you this phase.
     setupCardAbilities(ability) {
-        this.tracker = ChallengeTracker.forPhase(this.game);
+        const tracker = ChallengeTracker.forPhase(this.game);
 
         const drawAmount = (context) => {
             const challengeTypes = new Set(
-                this.tracker
+                tracker
                     .filter({ initiatedAgainstPlayer: context.player })
                     .map((challenge) => challenge.challengeType)
             );
@@ -23,7 +23,8 @@ class SentinelsOfTheRealm extends AgendaCard {
         };
 
         this.persistentEffect({
-            condition: () => !this.controller.anyCardsInPlay({ type: 'character', trait: 'Guard' }),
+            condition: (context) =>
+                !context.source.controller.anyCardsInPlay({ type: 'character', trait: 'Guard' }),
             targetController: 'current',
             effect: ability.effects.cannotPlay((card) => card.getType() === 'event')
         });

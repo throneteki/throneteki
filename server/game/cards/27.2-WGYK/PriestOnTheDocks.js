@@ -8,7 +8,7 @@ class PriestOnTheDocks extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onDominanceDetermined: (event) => event.winner === this.controller
+                onDominanceDetermined: (event, context) => event.winner === context.player
             },
             cost: ability.costs.killSelf(),
             target: {

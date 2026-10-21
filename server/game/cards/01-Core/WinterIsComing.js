@@ -10,7 +10,7 @@ class WinterIsComing extends DrawCard {
         this.action({
             title: 'Raise claim by 1',
             max: ability.limit.perChallenge(1),
-            condition: () => this.game.isDuringChallenge(),
+            condition: (context) => context.game.isDuringChallenge(),
             message:
                 '{player} plays {source} to raise the claim value on their revealed plot card by 1 until the end of the challenge',
             gameAction: GameActions.lastingEffect((context) => ({

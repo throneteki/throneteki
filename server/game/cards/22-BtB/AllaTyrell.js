@@ -7,14 +7,14 @@ class AllaTyrell extends DrawCard {
     setupCardAbilities() {
         this.interrupt({
             when: {
-                onCardRevealed: (event) =>
-                    event.card === this &&
+                onCardRevealed: (event, context) =>
+                    event.card === context.source &&
                     ['draw deck', 'hand'].includes(event.card.location) &&
-                    this.controller.canPutIntoPlay(this)
+                    context.player.canPutIntoPlay(context.source)
             },
             location: ['draw deck', 'hand'],
             message: '{player} uses {source} to put {source} into play',
-            gameAction: GameActions.putIntoPlay(() => ({ card: this }))
+            gameAction: GameActions.putIntoPlay((context) => ({ card: context.source }))
         });
     }
 }

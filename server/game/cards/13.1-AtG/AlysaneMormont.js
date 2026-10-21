@@ -9,9 +9,9 @@ class AlysaneMormont extends DrawCard {
     // challenge.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () =>
-                Conditions.allCharactersAreStark({ player: this.controller }) &&
-                this.game.isDuringChallenge({ challengeType: 'military' }),
+            condition: (context) =>
+                Conditions.allCharactersAreStark({ player: context.source.controller }) &&
+                context.game.isDuringChallenge({ challengeType: 'military' }),
             match: this,
             effect: [
                 ability.effects.addKeyword('stealth'),

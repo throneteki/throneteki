@@ -8,9 +8,9 @@ class ScoutingVessel extends DrawCard {
     setupCardAbilities(ability) {
         this.interrupt({
             when: {
-                onTopCardsDiscarded: (event) =>
+                onTopCardsDiscarded: (event, context) =>
                     event.source.getType() === 'character' &&
-                    event.source.controller === this.controller &&
+                    event.source.controller === context.player &&
                     event.isPillage
             },
             cost: [ability.costs.kneelSelf(), ability.costs.sacrificeSelf()],

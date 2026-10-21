@@ -9,11 +9,11 @@ class GreatjonUmber extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     event.challenge.challengeType === 'military' &&
-                    event.challenge.winner === this.controller &&
-                    this.isAttacking() &&
-                    this.controller.getNumberOfUsedPlots() < 3
+                    event.challenge.winner === context.player &&
+                    context.source.isAttacking() &&
+                    context.player.getNumberOfUsedPlots() < 3
             },
             message: '{player} uses {source} to stand {source}',
             gameAction: GameActions.standCard((context) => ({ card: context.source }))

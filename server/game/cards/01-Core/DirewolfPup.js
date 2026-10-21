@@ -6,15 +6,13 @@ class DirewolfPup extends DrawCard {
     // Direwolf Pup gets +1 STR for each other Direwolf card you control.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: (card) => card === this,
-            effect: ability.effects.dynamicStrength(() => this.getNumberOfOtherDirewolves())
+            match: (card, context) => card === context.source,
+            effect: ability.effects.dynamicStrength((pup) =>
+                pup.controller.getNumberOfCardsInPlay(
+                    (card) => card !== pup && card.hasTrait('Direwolf')
+                )
+            )
         });
-    }
-
-    getNumberOfOtherDirewolves() {
-        return this.controller.getNumberOfCardsInPlay(
-            (card) => card !== this && card.hasTrait('Direwolf')
-        );
     }
 }
 

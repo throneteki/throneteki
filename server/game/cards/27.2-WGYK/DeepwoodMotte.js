@@ -11,17 +11,17 @@ class DeepwoodMotte extends DrawCard {
         this.plotModifiers({ initiative: -2 });
         this.reaction({
             when: {
-                onCardKneeled: (event) =>
+                onCardKneeled: (event, context) =>
                     event.reason === 'assault' &&
                     event.card.getType() === 'location' &&
-                    this.game.isDuringChallenge({ attackingPlayer: this.controller })
+                    context.game.isDuringChallenge({ attackingPlayer: context.player })
             },
             cost: ability.costs.kneelSelf(),
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
-                    ((card.hasTrait('Raider') && card.controller === this.controller) ||
+                    ((card.hasTrait('Raider') && card.controller === context.player) ||
                         card.name === 'Asha Greyjoy')
             },
             message: '{player} kneels {costs.kneel} to stand {target}',

@@ -13,30 +13,30 @@ class TheCrag extends DrawCard {
         });
         this.reaction({
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     event.challenge.isMatch({
                         challengeType: 'military',
-                        winner: this.controller,
-                        attackingPlayer: this.controller
+                        winner: context.player,
+                        attackingPlayer: context.player
                     })
             },
             limit: ability.limit.perPhase(2),
             message: {
                 format: '{player} uses {source} to have {source} gain {amount} power',
-                args: { amount: (context) => this.getAmount(context) }
+                args: { amount: (context) => getAmount(context) }
             },
             gameAction: GameActions.gainPower((context) => ({
-                card: this,
-                amount: this.getAmount(context)
+                card: context.source,
+                amount: getAmount(context)
             }))
         });
     }
+}
 
-    getAmount(context) {
-        return context.player.anyCardsInPlay({ type: 'character', faction: 'stark', trait: 'King' })
-            ? 2
-            : 1;
-    }
+function getAmount(context) {
+    return context.player.anyCardsInPlay({ type: 'character', faction: 'stark', trait: 'King' })
+        ? 2
+        : 1;
 }
 
 TheCrag.code = '24018';

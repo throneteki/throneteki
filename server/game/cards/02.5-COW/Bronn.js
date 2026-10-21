@@ -16,11 +16,12 @@ class Bronn extends DrawCard {
             message: '{player} pays 1 gold to take control of {source}',
             gameAction: GameActions.takeControl((context) => ({
                 player: context.player,
-                card: this
+                card: context.source
             }))
         });
         this.persistentEffect({
-            condition: () => this.game.isDuringChallenge({ defendingPlayer: this.controller }),
+            condition: (context) =>
+                context.game.isDuringChallenge({ defendingPlayer: context.source.controller }),
             match: this,
             effect: [
                 ability.effects.addIcon('military'),

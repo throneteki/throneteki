@@ -12,17 +12,17 @@ class Ygritte extends DrawCard {
             )
         });
         this.persistentEffect({
-            condition: () => this.controlsAnotherWildling(),
+            condition: (context) => controlsAnotherWildling(context.source),
             match: this,
             effect: ability.effects.addKeyword('stealth')
         });
     }
+}
 
-    controlsAnotherWildling() {
-        return this.controller.anyCardsInPlay(
-            (card) => card !== this && card.getType() === 'character' && card.hasTrait('Wildling')
-        );
-    }
+function controlsAnotherWildling(ygritte) {
+    return ygritte.controller.anyCardsInPlay(
+        (card) => card !== ygritte && card.getType() === 'character' && card.hasTrait('Wildling')
+    );
 }
 
 Ygritte.code = '06017';

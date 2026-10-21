@@ -19,7 +19,9 @@ function reducerAbility(card, ability, { kind, matches }) {
             duration: 'untilEndOfPhase',
             condition: () => !context.abilityDeactivated,
             targetController: 'current',
-            effect: ability.effects.reduceNextMarshalledCardCost(card.reduceBy, matches)
+            effect: ability.effects.reduceNextMarshalledCardCost(card.reduceBy, (target) =>
+                matches(target, card)
+            )
         }))
     };
 }
@@ -36,7 +38,7 @@ export class FactionCostReducer extends DrawCard {
         this.action(
             reducerAbility(this, ability, {
                 kind: 'card',
-                matches: (card) => card.isFaction(this.faction)
+                matches: (card, reducer) => card.isFaction(reducer.faction)
             })
         );
     }
@@ -54,7 +56,8 @@ export class FactionCharacterCostReducer extends DrawCard {
         this.action(
             reducerAbility(this, ability, {
                 kind: 'character',
-                matches: (card) => card.getType() === 'character' && card.isFaction(this.faction)
+                matches: (card, reducer) =>
+                    card.getType() === 'character' && card.isFaction(reducer.faction)
             })
         );
     }

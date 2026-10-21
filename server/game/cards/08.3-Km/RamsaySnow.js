@@ -7,7 +7,7 @@ class RamsaySnow extends DrawCard {
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this
+                onCardEntersPlay: (event, context) => event.card === context.source
             },
             target: {
                 choosingPlayer: 'each',

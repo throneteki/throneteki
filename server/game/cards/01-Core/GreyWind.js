@@ -15,16 +15,16 @@ class GreyWind extends DrawCard {
                 cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
-                    card.getStrength() <= this.maxStrength(context.player)
+                    card.getStrength() <= maxStrength(context.player)
             },
             message: '{player} kneels {source} to kill {target}',
             gameAction: GameActions.kill((context) => ({ card: context.target }))
         });
     }
+}
 
-    maxStrength(player) {
-        return player.anyCardsInPlay((card) => card.name === 'Robb Stark') ? 2 : 1;
-    }
+function maxStrength(player) {
+    return player.anyCardsInPlay((card) => card.name === 'Robb Stark') ? 2 : 1;
 }
 
 GreyWind.code = '01145';

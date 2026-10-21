@@ -8,7 +8,8 @@ class SheBear extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this && event.playingType === 'marshal'
+                onCardEntersPlay: (event, context) =>
+                    event.card === context.source && event.playingType === 'marshal'
             },
             target: {
                 activePromptTitle: 'Select a card',

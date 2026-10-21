@@ -12,8 +12,8 @@ class KingsOfSummer extends AgendaCard {
             effect: ability.effects.modifyReserve(1)
         });
         this.persistentEffect({
-            condition: () =>
-                this.game
+            condition: (context) =>
+                context.game
                     .getPlayers()
                     .every((player) => player.activePlot && !player.activePlot.hasTrait('Winter')),
             match: (card) => card === card.controller.activePlot && card.hasTrait('Summer'),

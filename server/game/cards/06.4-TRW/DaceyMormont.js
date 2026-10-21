@@ -7,14 +7,13 @@ class DaceyMormont extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,
-            effect: ability.effects.dynamicStrength(() => this.getSTR())
+            effect: ability.effects.dynamicStrength((card) =>
+                card.controller.getNumberOfCardsInPlay(
+                    (character) =>
+                        character.getType() === 'character' && character.isFaction('stark')
+                )
+            )
         });
-    }
-
-    getSTR() {
-        return this.controller.getNumberOfCardsInPlay(
-            (card) => card.getType() === 'character' && card.isFaction('stark')
-        );
     }
 }
 

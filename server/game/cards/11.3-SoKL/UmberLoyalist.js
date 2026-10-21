@@ -8,14 +8,14 @@ class UmberLoyalist extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this
+                onCardEntersPlay: (event, context) => event.card === context.source
             },
             gameAction: GameActions.drawCards((context) => ({ player: context.player, amount: 2 }))
         });
 
         this.forcedInterrupt({
             when: {
-                onCardLeftPlay: (event) => event.card === this
+                onCardLeftPlay: (event, context) => event.card === context.source
             },
             message: '{player} is forced by {source} to choose and discard 2 cards from their hand',
             gameAction: GameActions.chooseCards({

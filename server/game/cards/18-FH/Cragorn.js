@@ -14,10 +14,10 @@ class Cragorn extends DrawCard {
             limit: ability.limit.perPhase(1),
             cost: ability.costs.discardGoldFromCard(
                 1,
-                (card) =>
+                (card, context) =>
                     card.getType() === 'character' &&
                     card.hasTrait('Raider') &&
-                    card.controller === this.controller
+                    card.controller === context.player
             ),
             message:
                 '{player} discards 1 gold from {costs.discardToken} to search the top 10 cards of their deck for an Item or Weapon attachment',

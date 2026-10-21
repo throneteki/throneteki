@@ -14,8 +14,8 @@ class Dywen extends DrawCard {
         this.persistentEffect({
             //the condition is somehow necessary to reapply the effect to cards entering play after Dywen
             condition: () => true,
-            match: (card) =>
-                card.controller === this.controller &&
+            match: (card, context) =>
+                card.controller === context.source.controller &&
                 card.isFaction('thenightswatch') &&
                 card.getType() === 'character' &&
                 card.hasKeyword('Stealth'),

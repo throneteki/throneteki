@@ -21,19 +21,19 @@ class ValarDohaeris extends PlotCard {
                     card.getType() === 'character'
             },
             gameAction: GameActions.simultaneously((context) =>
-                this.toBeMoved(context).map((card) =>
+                toBeMoved(context).map((card) =>
                     GameActions.returnCardToDeck({ card, bottom: true, allowSave: false })
                 )
             )
         });
     }
+}
 
-    toBeMoved(context) {
-        const targets = context.targets.getTargets();
-        return this.game.filterCardsInPlay(
-            (card) => card.getType() === 'character' && !targets.includes(card)
-        );
-    }
+function toBeMoved(context) {
+    const targets = context.targets.getTargets();
+    return context.game.filterCardsInPlay(
+        (card) => card.getType() === 'character' && !targets.includes(card)
+    );
 }
 
 ValarDohaeris.code = '08020';

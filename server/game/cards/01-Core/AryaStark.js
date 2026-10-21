@@ -9,13 +9,14 @@ class AryaStark extends DrawCard {
     // duplicate.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.dupes.length >= 1,
+            condition: (context) => context.source.dupes.length >= 1,
             match: this,
             effect: ability.effects.addIcon('military')
         });
         this.reaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this && event.card.canBeDuplicated()
+                onCardEntersPlay: (event, context) =>
+                    event.card === context.source && event.card.canBeDuplicated()
             },
             gameAction: GameActions.placeAsDuplicate((context) => ({
                 card: context.player.drawDeck[0],

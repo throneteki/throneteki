@@ -6,30 +6,25 @@ class SerLancelLannister extends DrawCard {
     // gets +X STR. X is that character's STR.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.getSingleOtherLannisterLordOrLady(),
+            condition: (context) => !!singleOtherLannisterLordOrLady(context.source),
             match: this,
-            effect: ability.effects.dynamicStrength(() =>
-                this.getSingleOtherLannisterLordOrLady().getStrength()
+            effect: ability.effects.dynamicStrength((lancel) =>
+                singleOtherLannisterLordOrLady(lancel).getStrength()
             )
         });
     }
+}
 
-    getSingleOtherLannisterLordOrLady() {
-        let cards = this.controller.filterCardsInPlay((card) => {
-            return (
-                card.isFaction('lannister') &&
-                (card.hasTrait('Lord') || card.hasTrait('Lady')) &&
-                card.getType() === 'character' &&
-                card !== this
-            );
-        });
+function singleOtherLannisterLordOrLady(lancel) {
+    const cards = lancel.controller.filterCardsInPlay(
+        (card) =>
+            card.isFaction('lannister') &&
+            (card.hasTrait('Lord') || card.hasTrait('Lady')) &&
+            card.getType() === 'character' &&
+            card !== lancel
+    );
 
-        if (cards.length === 1) {
-            return cards[0];
-        }
-
-        return;
-    }
+    return cards.length === 1 ? cards[0] : undefined;
 }
 
 SerLancelLannister.code = '05014';

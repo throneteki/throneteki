@@ -8,8 +8,9 @@ class Missandei extends DrawCard {
     setupCardAbilities() {
         this.interrupt({
             when: {
-                onCardDiscarded: (event) =>
-                    event.card === this && ['draw deck', 'hand'].includes(event.originalLocation)
+                onCardDiscarded: (event, context) =>
+                    event.card === context.source &&
+                    ['draw deck', 'hand'].includes(event.originalLocation)
             },
             location: ['hand', 'draw deck'],
             message:

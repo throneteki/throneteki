@@ -58,7 +58,11 @@ against the rules, which is what lets a game run with manual mode off
    `when`, `condition`, `match`, targets and game action properties, not `this`, `this.controller`
    or `this.game`. Control of a card can change, and the context always has the current controller.
    `when` handlers take `(event, context)`; persistent effect conditions and matches get a context
-   with `game` and `source`. Put helpers that need no card state in plain functions outside the class.
+   with `game` and `source`, and so do the callbacks passed to effects such as `canMarshal`,
+   `canPlay`, `dynamicStrength`, `dynamicKeywordSources`, `immuneTo` and `canSelectAsFirstPlayer`.
+   Keep trackers in a `const` inside `setupCardAbilities` rather than on the card, and put helpers
+   in plain functions outside the class. `npm run card-rules` reports any `this` inside an arrow
+   function (`this-in-ability`).
 10. **No manual workarounds.** Don't leave parts of a card for players to handle with chat commands. If
     something can't be implemented properly, stop and say what engine support is missing.
 

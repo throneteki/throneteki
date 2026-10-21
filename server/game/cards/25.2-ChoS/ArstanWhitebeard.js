@@ -14,8 +14,11 @@ class ArstanWhitebeard extends DrawCard {
         });
 
         this.persistentEffect({
-            condition: () =>
-                !this.controller.anyCardsInPlay({ type: 'character', trait: ['Lord', 'Lady'] }),
+            condition: (context) =>
+                !context.source.controller.anyCardsInPlay({
+                    type: 'character',
+                    trait: ['Lord', 'Lady']
+                }),
             match: this,
             effect: ability.effects.cannotBeKneeled()
         });

@@ -9,8 +9,8 @@ class Leathers extends DrawCard {
     // add it to your hand. Shuffle your deck.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: (card) =>
-                card.controller === this.controller &&
+            match: (card, context) =>
+                card.controller === context.source.controller &&
                 card.location === 'play area' &&
                 card.getType() === 'character' &&
                 card.hasTrait('Wildling'),
@@ -18,8 +18,8 @@ class Leathers extends DrawCard {
         });
 
         this.persistentEffect({
-            match: (card) =>
-                card.controller === this.controller &&
+            match: (card, context) =>
+                card.controller === context.source.controller &&
                 card.location === 'play area' &&
                 card.getType() === 'character' &&
                 card.hasTrait('Giant'),
@@ -28,7 +28,7 @@ class Leathers extends DrawCard {
 
         this.reaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this
+                onCardEntersPlay: (event, context) => event.card === context.source
             },
             message: '{player} uses {source} to search their deck for a Giant character',
             gameAction: GameActions.search({

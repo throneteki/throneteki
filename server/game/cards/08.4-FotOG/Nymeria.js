@@ -26,22 +26,22 @@ class Nymeria extends DrawCard {
             ],
             message: {
                 format: '{player} kneels {direwolves} to have them participate in the challenge on their side',
-                args: { direwolves: (context) => this.direwolves(context) }
+                args: { direwolves }
             },
             gameAction: GameActions.simultaneously((context) =>
-                this.direwolves(context).map((card) =>
+                direwolves(context).map((card) =>
                     GameActions.addToChallenge({ card, player: context.player })
                 )
             )
         });
     }
+}
 
-    direwolves(context) {
-        return [
-            context.source,
-            ...context.getCostValuesFor('kneel').filter((card) => card !== context.source)
-        ];
-    }
+function direwolves(context) {
+    return [
+        context.source,
+        ...context.getCostValuesFor('kneel').filter((card) => card !== context.source)
+    ];
 }
 
 Nymeria.code = '08061';

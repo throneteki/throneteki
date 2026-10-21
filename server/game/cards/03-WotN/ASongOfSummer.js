@@ -5,8 +5,8 @@ class ASongOfSummer extends PlotCard {
     // While there are no Winter plot cards revealed, each character you control gets +1 STR.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () =>
-                this.game
+            condition: (context) =>
+                context.game
                     .getPlayers()
                     .every((player) => !player.activePlot || !player.activePlot.hasTrait('Winter')),
             match: (card) => card.getType() === 'character',

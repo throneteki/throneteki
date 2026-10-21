@@ -10,16 +10,20 @@ class RobbStark extends DrawCard {
     // challenge.)
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.game.isDuringChallenge({ challengeType: 'military' }),
+            condition: (context) => context.game.isDuringChallenge({ challengeType: 'military' }),
             match: this,
-            effect: ability.effects.dynamicStrength(() => this.numberOfLoyalChars())
+            effect: ability.effects.dynamicStrength((robb) =>
+                robb.controller.getNumberOfCardsInPlay(
+                    (card) => card.isLoyal() && card.getType() === 'character'
+                )
+            )
         });
 
         this.action({
             title: 'Stand and remove a character from the challenge',
             limit: ability.limit.perChallenge(1),
             condition: (context) =>
-                this.game.isDuringChallenge({ challengeType: 'military' }) &&
+                context.game.isDuringChallenge({ challengeType: 'military' }) &&
                 context.source.isParticipating(),
             target: {
                 cardCondition: (card) =>
@@ -34,12 +38,6 @@ class RobbStark extends DrawCard {
                 GameActions.removeFromChallenge((context) => ({ card: context.target }))
             ])
         });
-    }
-
-    numberOfLoyalChars() {
-        return this.controller.getNumberOfCardsInPlay(
-            (card) => card.isLoyal() && card.getType() === 'character'
-        );
     }
 }
 

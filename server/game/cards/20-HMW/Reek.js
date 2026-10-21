@@ -18,10 +18,10 @@ class Reek extends DrawCard {
 
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.player &&
                     event.challenge.isUnopposed() &&
-                    this.controller.anyCardsInPlay({
+                    context.player.anyCardsInPlay({
                         type: 'character',
                         trait: 'House Bolton',
                         attacking: true

@@ -17,16 +17,12 @@ class MilkwaterCrossing extends DrawCard {
             cost: [ability.costs.kneelSelf(), ability.costs.sacrificeSelf()],
             message:
                 '{player} kneels and sacrifices {costs.sacrifice} to have each character lose all keywords and immunities until the end of the phase',
-            gameAction: GameActions.genericHandler(() => {
-                this.untilEndOfPhase((ability) => ({
-                    targetController: 'any',
-                    match: this.game.filterCardsInPlay((card) => card.getType() === 'character'),
-                    effect: [
-                        ability.effects.losesAllKeywords(),
-                        ability.effects.losesAllImmunities()
-                    ]
-                }));
-            })
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                targetController: 'any',
+                match: context.game.filterCardsInPlay((card) => card.getType() === 'character'),
+                effect: [ability.effects.losesAllKeywords(), ability.effects.losesAllImmunities()]
+            }))
         });
     }
 }

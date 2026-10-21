@@ -8,16 +8,16 @@ class Esgred extends DrawCard {
     // Esgred may bypass an additional character using stealth.
     setupCardAbilities(ability) {
         this.stateCheck({
-            condition: (context) => !!this.getAsha(context.player),
+            condition: (context) => !!getAsha(context.player),
             message: '{player} sacrifices {source} as they control Asha Greyjoy',
             gameAction: GameActions.sacrificeCard((context) => ({ card: context.source })).then({
-                condition: (context) => !!this.getAsha(context.player),
+                condition: (context) => !!getAsha(context.player),
                 message: {
                     format: 'Then, {asha} gains 1 power',
-                    args: { asha: (context) => this.getAsha(context.player) }
+                    args: { asha: (context) => getAsha(context.player) }
                 },
                 gameAction: GameActions.gainPower((context) => ({
-                    card: this.getAsha(context.player),
+                    card: getAsha(context.player),
                     amount: 1
                 }))
             })
@@ -28,12 +28,12 @@ class Esgred extends DrawCard {
             effect: ability.effects.modifyKeywordTriggerAmount('stealth', 1)
         });
     }
+}
 
-    getAsha(player) {
-        return player.cardsInPlay.find(
-            (card) => card.name === 'Asha Greyjoy' && card.getType() === 'character'
-        );
-    }
+function getAsha(player) {
+    return player.cardsInPlay.find(
+        (card) => card.name === 'Asha Greyjoy' && card.getType() === 'character'
+    );
 }
 
 Esgred.code = '04111';

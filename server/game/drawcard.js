@@ -427,7 +427,7 @@ class DrawCard extends BaseCard {
             return card.getType() === 'character';
         }
 
-        let context = { player: player };
+        let context = { player: player, source: this };
 
         return attachmentRestrictions.some((restriction) => restriction(card, context));
     }

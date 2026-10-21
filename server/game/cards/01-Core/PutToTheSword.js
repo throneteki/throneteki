@@ -9,10 +9,10 @@ class PutToTheSword extends DrawCard {
         this.reaction({
             max: ability.limit.perChallenge(1),
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     event.challenge.challengeType === 'military' &&
-                    event.challenge.winner === this.controller &&
-                    event.challenge.attackingPlayer === this.controller &&
+                    event.challenge.winner === context.player &&
+                    event.challenge.attackingPlayer === context.player &&
                     event.challenge.strengthDifference >= 5
             },
             target: {

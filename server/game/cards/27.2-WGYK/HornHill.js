@@ -10,9 +10,12 @@ class HornHill extends DrawCard {
             initiative: 1
         });
         this.persistentEffect({
-            condition: () =>
-                this.game.isDuringChallenge({ attackingPlayer: this.controller, number: 1 }),
-            match: (card) => card === this.controller.activePlot,
+            condition: (context) =>
+                context.game.isDuringChallenge({
+                    attackingPlayer: context.source.controller,
+                    number: 1
+                }),
+            match: (card, context) => card === context.source.controller.activePlot,
             effect: ability.effects.modifyClaim(1)
         });
     }

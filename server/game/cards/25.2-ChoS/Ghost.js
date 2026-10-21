@@ -10,9 +10,9 @@ class Ghost extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
-                    this.controller.anyCardsInPlay(
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.player &&
+                    context.player.anyCardsInPlay(
                         (card) =>
                             card.isAttacking() &&
                             card.hasTrait('Direwolf') &&

@@ -15,7 +15,7 @@ class Summer extends DrawCard {
 
         this.reaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this
+                onCardEntersPlay: (event, context) => event.card === context.source
             },
             target: {
                 cardCondition: (card, context) =>

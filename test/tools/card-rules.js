@@ -72,6 +72,11 @@ export const Rules = {
         message:
             'Use a triggered ability or GameActions.delayedEffect instead of registering for events'
     },
+    'this-in-ability': {
+        selector: 'ArrowFunctionExpression ThisExpression',
+        message:
+            'Use context.source, context.player or context.game instead of this, so the ability follows the card when control changes'
+    },
     'prompt-for-select': {
         selector: "CallExpression[callee.property.name='promptForSelect']",
         message: 'Use a target instead of prompting inside a handler'

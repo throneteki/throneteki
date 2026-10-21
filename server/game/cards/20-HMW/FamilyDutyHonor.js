@@ -6,11 +6,11 @@ class FamilyDutyHonor extends DrawCard {
     // Interrupt: When a House Tully character you control would leave play, discard 1 power from
     // that character to save it.
     setupCardAbilities(ability) {
-        let leftPlayCondition = (event) =>
+        let leftPlayCondition = (event, context) =>
             event.allowSave &&
             event.card.canBeSaved() &&
             event.card.hasTrait('House Tully') &&
-            event.card.controller === this.controller &&
+            event.card.controller === context.player &&
             event.card.getPower() > 0;
         this.interrupt({
             canCancel: true,

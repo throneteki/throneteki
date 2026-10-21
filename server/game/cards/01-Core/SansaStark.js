@@ -14,7 +14,8 @@ class SansaStark extends DrawCard {
         });
         this.reaction({
             when: {
-                onCardStood: (event) => event.card === this && this.controller.canGainFactionPower()
+                onCardStood: (event, context) =>
+                    event.card === context.source && context.player.canGainFactionPower()
             },
             limit: ability.limit.perRound(1),
             message: '{player} uses {source} to gain 1 power for their faction',

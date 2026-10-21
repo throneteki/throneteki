@@ -227,9 +227,11 @@ class BaseCard {
      */
     whileAttached(properties) {
         this.persistentEffect({
-            condition: () => !!this.parent && (!properties.condition || properties.condition()),
+            condition: (context) =>
+                !!context.source.parent && (!properties.condition || properties.condition(context)),
             match: (card, context) =>
-                card === this.parent && (!properties.match || properties.match(card, context)),
+                card === context.source.parent &&
+                (!properties.match || properties.match(card, context)),
             targetController: 'any',
             effect: properties.effect
         });

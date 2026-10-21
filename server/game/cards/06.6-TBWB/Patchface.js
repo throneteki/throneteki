@@ -11,29 +11,31 @@ class Patchface extends DrawCard {
             match: this,
             effect: [
                 ability.effects.dynamicKeywordSources(
-                    (card) => card.isMatch({ type: 'character', trait: 'Fool' }) && card !== this
+                    (card, context) =>
+                        card.isMatch({ type: 'character', trait: 'Fool' }) &&
+                        card !== context.source
                 ),
-                ability.effects.dynamicIcons(() => this.getFoolIcons())
+                ability.effects.dynamicIcons((patchface) => foolIcons(patchface))
             ]
         });
     }
+}
 
-    getFoolIcons() {
-        let foolIcons = [];
-        let fools = this.game.filterCardsInPlay(
-            (card) => card.getType() === 'character' && card.hasTrait('Fool') && card !== this
-        );
+function foolIcons(patchface) {
+    let foolIcons = [];
+    let fools = patchface.game.filterCardsInPlay(
+        (card) => card.getType() === 'character' && card.hasTrait('Fool') && card !== patchface
+    );
 
-        for (let card of fools) {
-            for (let icon of Icons) {
-                if (card.hasIcon(icon)) {
-                    foolIcons.push(icon);
-                }
+    for (let card of fools) {
+        for (let icon of Icons) {
+            if (card.hasIcon(icon)) {
+                foolIcons.push(icon);
             }
         }
-
-        return foolIcons;
     }
+
+    return foolIcons;
 }
 
 Patchface.code = '06107';

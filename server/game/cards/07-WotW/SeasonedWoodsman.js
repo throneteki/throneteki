@@ -8,10 +8,10 @@ class SeasonedWoodsman extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardAttached: (event) =>
-                    event.attachment.controller === this.controller &&
-                    event.target === this &&
-                    (this.controller.canGainGold() || this.controller.canDraw())
+                onCardAttached: (event, context) =>
+                    event.attachment.controller === context.player &&
+                    event.target === context.source &&
+                    (context.player.canGainGold() || context.player.canDraw())
             },
             limit: ability.limit.perPhase(2),
             choices: {

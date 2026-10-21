@@ -56,6 +56,27 @@ function modifyFlagEffect(flagOrFunc, options = {}) {
     };
 }
 
+function playableLocationEffect(playingType, predicate) {
+    const matcher = CardMatcher.createMatcher(predicate);
+    return {
+        targetType: 'player',
+        apply: function (player, context) {
+            const playableLocation = new PlayableLocation(playingType, (card) =>
+                matcher(card, context)
+            );
+            context.playableLocations = context.playableLocations || {};
+            context.playableLocations[player.name] = playableLocation;
+            player.playableLocations.push(playableLocation);
+        },
+        unapply: function (player, context) {
+            player.playableLocations = player.playableLocations.filter(
+                (l) => l !== context.playableLocations[player.name]
+            );
+            delete context.playableLocations[player.name];
+        }
+    };
+}
+
 function modifyPlayerFlagEffect(flag) {
     return modifyFlagEffect(flag, { targetType: 'player' });
 }
@@ -498,13 +519,18 @@ const Effects = {
     },
     dynamicKeywordSources: function (sourceFunc) {
         return {
-            apply: function (card) {
-                card.keywordSources.push(sourceFunc);
+            apply: function (card, context) {
+                const boundFunc = (source) => sourceFunc(source, context);
+                context.dynamicKeywordSources = context.dynamicKeywordSources || {};
+                context.dynamicKeywordSources[card.uuid] = boundFunc;
+                card.keywordSources.push(boundFunc);
             },
-            unapply: function (card) {
+            unapply: function (card, context) {
+                const boundFunc = context.dynamicKeywordSources[card.uuid];
                 card.keywordSources = card.keywordSources.filter(
-                    (existingSourceFunc) => existingSourceFunc !== sourceFunc
+                    (existingSourceFunc) => existingSourceFunc !== boundFunc
                 );
+                delete context.dynamicKeywordSources[card.uuid];
             }
         };
     },
@@ -933,7 +959,10 @@ const Effects = {
     immuneTo: function (cardCondition) {
         return {
             apply: function (card, context) {
-                const restriction = new ImmunityRestriction(cardCondition, context.source);
+                const restriction = new ImmunityRestriction(
+                    (source, abilityContext) => cardCondition(source, abilityContext, context),
+                    context.source
+                );
                 context.immuneTo = context.immuneTo || {};
                 context.immuneTo[card.uuid] = restriction;
                 card.addAbilityRestriction(restriction);
@@ -1343,52 +1372,13 @@ const Effects = {
         };
     },
     canPlay: function (predicate) {
-        let playableLocation = new PlayableLocation('play', predicate);
-        return {
-            targetType: 'player',
-            apply: function (player) {
-                player.playableLocations.push(playableLocation);
-            },
-            unapply: function (player) {
-                player.playableLocations = player.playableLocations.filter(
-                    (l) => l !== playableLocation
-                );
-            }
-        };
+        return playableLocationEffect('play', predicate);
     },
     canMarshal: function (predicate) {
-        let playableLocation = new PlayableLocation(
-            'marshal',
-            CardMatcher.createMatcher(predicate)
-        );
-        return {
-            targetType: 'player',
-            apply: function (player) {
-                player.playableLocations.push(playableLocation);
-            },
-            unapply: function (player) {
-                player.playableLocations = player.playableLocations.filter(
-                    (l) => l !== playableLocation
-                );
-            }
-        };
+        return playableLocationEffect('marshal', predicate);
     },
     canMarshalIntoShadows: function (predicate) {
-        let playableLocation = new PlayableLocation(
-            'marshalIntoShadows',
-            CardMatcher.createMatcher(predicate)
-        );
-        return {
-            targetType: 'player',
-            apply: function (player) {
-                player.playableLocations.push(playableLocation);
-            },
-            unapply: function (player) {
-                player.playableLocations = player.playableLocations.filter(
-                    (l) => l !== playableLocation
-                );
-            }
-        };
+        return playableLocationEffect('marshalIntoShadows', predicate);
     },
     canPlayFromOwn: function (location) {
         return {
@@ -1411,26 +1401,15 @@ const Effects = {
         };
     },
     canAmbush: function (predicate) {
-        let playableLocation = new PlayableLocation('ambush', CardMatcher.createMatcher(predicate));
-        return {
-            targetType: 'player',
-            apply: function (player) {
-                player.playableLocations.push(playableLocation);
-            },
-            unapply: function (player) {
-                player.playableLocations = player.playableLocations.filter(
-                    (l) => l !== playableLocation
-                );
-            }
-        };
+        return playableLocationEffect('ambush', predicate);
     },
     cannotBeFirstPlayer: modifyPlayerFlagEffect(Flags.player.cannotBeFirstPlayer),
     cannotGainDominancePower: modifyPlayerFlagEffect(Flags.player.cannotGainDominancePower),
     canSelectAsFirstPlayer: function (condition) {
         return {
             targetType: 'player',
-            apply: function (player) {
-                player.firstPlayerSelectCondition = condition;
+            apply: function (player, context) {
+                player.firstPlayerSelectCondition = (candidate) => condition(candidate, context);
             },
             unapply: function (player) {
                 player.firstPlayerSelectCondition = null;

@@ -8,10 +8,10 @@ class CitadelArchivist extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardPlaced: (event) =>
-                    event.card === this &&
+                onCardPlaced: (event, context) =>
+                    event.card === context.source &&
                     event.card.location === 'discard pile' &&
-                    event.player === this.controller
+                    event.player === context.player
             },
             location: 'discard pile',
             message: "{player} uses {source} to shuffle each player's discard pile into their deck",

@@ -9,10 +9,10 @@ class FearCutsDeeperThanSwords extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCardAbilityInitiated: (event) =>
+                onCardAbilityInitiated: (event, context) =>
                     event.ability.targets.some((target) => target.type === 'choose') &&
                     event.targets.length === 1 &&
-                    event.targets[0].controller === this.controller &&
+                    event.targets[0].controller === context.player &&
                     event.targets[0].isMatch({ type: 'character', faction: 'stark' })
             },
             message: {

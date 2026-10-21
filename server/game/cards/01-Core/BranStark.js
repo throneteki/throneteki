@@ -9,8 +9,8 @@ class BranStark extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCardAbilityInitiated: (event) =>
-                    event.source.getType() === 'event' && event.player !== this.controller
+                onCardAbilityInitiated: (event, context) =>
+                    event.source.getType() === 'event' && event.player !== context.player
             },
             cost: ability.costs.sacrificeSelf(),
             message: {

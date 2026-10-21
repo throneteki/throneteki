@@ -17,7 +17,7 @@ class MeeraReed extends DrawCard {
         });
         this.reaction({
             when: {
-                onCardOutOfShadows: (event) => event.card === this
+                onCardOutOfShadows: (event, context) => event.card === context.source
             },
             target: {
                 cardCondition: { type: 'character', location: 'play area' }

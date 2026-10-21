@@ -7,10 +7,10 @@ class Lady extends DrawCard {
     // Interrupt: When another Direwolf card or Sansa Stark would leave play, kill Lady to save that
     // card.
     setupCardAbilities(ability) {
-        let leftPlayCondition = (event) =>
+        let leftPlayCondition = (event, context) =>
             event.allowSave &&
             event.card.canBeSaved() &&
-            event.card !== this &&
+            event.card !== context.source &&
             (event.card.hasTrait('Direwolf') || event.card.name === 'Sansa Stark');
         this.interrupt({
             canCancel: true,

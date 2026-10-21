@@ -9,8 +9,10 @@ class TradingWithQohor extends AgendaCard {
     // your deck for a different attachment with equal or lower printed cost and put it into play.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () =>
-                !this.controller.anyCardsInPlay((card) => card.getType() === 'attachment'),
+            condition: (context) =>
+                !context.source.controller.anyCardsInPlay(
+                    (card) => card.getType() === 'attachment'
+                ),
             match: (card) => card === card.controller.activePlot,
             targetController: 'opponent',
             effect: ability.effects.modifyGold(1)
@@ -18,7 +20,8 @@ class TradingWithQohor extends AgendaCard {
 
         this.reaction({
             when: {
-                onClaimApplied: (event) => event.challenge && event.player === this.controller
+                onClaimApplied: (event, context) =>
+                    event.challenge && event.player === context.player
             },
             cost: ability.costs.sacrifice(
                 (card) => card.getType() === 'attachment' && card.hasPrintedCost()

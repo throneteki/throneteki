@@ -128,7 +128,10 @@ In some cases, an effect should be applied to a specific card. While you could w
 ```javascript
 // While you control another Bloodrider character, Jhogo gains stealth.
 this.persistentEffect({
-    condition: () => this.getNumberOfBloodriders() >= 1,
+    condition: (context) =>
+        context.source.controller.anyCardsInPlay(
+            (card) => card !== context.source && card.hasTrait('Bloodrider')
+        ),
     match: this,
     effect: ability.effects.addKeyword('stealth')
 });
@@ -158,8 +161,12 @@ To target only opponent cards, set `targetController` to `'opponent'`:
 ```javascript
 // While Unsullied is attacking, each defending character gets -1 STR.
 this.persistentEffect({
-    condition: () => this.game.currentChallenge && this.game.currentChallenge.isAttacking(this),
-    match: (card) => this.game.currentChallenge && this.game.currentChallenge.isDefending(card),
+    condition: (context) =>
+        context.game.isDuringChallenge({
+            match: (challenge) => challenge.isAttacking(context.source)
+        }),
+    match: (card, context) =>
+        context.game.isDuringChallenge({ match: (challenge) => challenge.isDefending(card) }),
     targetController: 'opponent',
     effect: ability.effects.modifyStrength(-1)
 });
@@ -184,7 +191,7 @@ A few cards provide strength bonuses based on game state. For example, Core Tywi
 // Tywin Lannister gets +1 STR for each gold in your gold pool.
 this.persistentEffect({
     match: this,
-    effect: ability.effects.dynamicStrength(() => this.controller.gold)
+    effect: ability.effects.dynamicStrength((card) => card.controller.gold)
 });
 ```
 
@@ -216,9 +223,8 @@ As a shorthand, it is possible to pass an array into the `effect` property to ap
 ```javascript
 // During a challenge in which you are the defending player, Bronn gains a military, an intrigue, and a power icon.
 this.persistentEffect({
-    condition: () =>
-        this.game.currentChallenge &&
-        this.game.currentChallenge.defendingPlayer === this.controller,
+    condition: (context) =>
+        context.game.isDuringChallenge({ defendingPlayer: context.source.controller }),
     match: this,
     effect: [
         ability.effects.addIcon('military'),
@@ -508,7 +514,7 @@ Card abilities can only be triggered if they have the potential to modify game s
 this.action({
     title: 'Stand attached character',
     // Ensure that the parent card is knelt
-    condition: () => this.parent.kneeled
+    condition: (context) => context.source.parent.kneeled
     // ...
 });
 ```
@@ -577,11 +583,11 @@ this.action({
     targets: {
         toLower: {
             activePromptTitle: 'Select a character to get -1 STR',
-            cardCondition: (card) => this.cardCondition(card)
+            cardCondition: (card) => isCharacterInPlay(card)
         },
         toRaise: {
             activePromptTitle: 'Select a character to get +1 STR',
-            cardCondition: (card) => this.cardCondition(card)
+            cardCondition: (card) => isCharacterInPlay(card)
         }
     }
     // ...
@@ -752,7 +758,7 @@ Each triggered ability has an associated triggering condition. This is done usin
 this.interrupt({
     when: {
         // when the challenges phase ends and the card is not kneeled
-        onPhaseEnded: (event) => event.phase === 'challenge' && !this.kneeled
+        onPhaseEnded: (event, context) => event.phase === 'challenge' && !context.source.kneeled
     },
     handler: () => {
         // handler code.
@@ -765,10 +771,8 @@ In rare cases, there may be multiple triggering conditions for the same ability.
 ```javascript
 this.reaction({
     when: {
-        onSacrificed: (event, player, card) =>
-            this.starkCharacterSacrificedOrKilled(event, player, card),
-        onCharacterKilled: (event, player, card) =>
-            this.starkCharacterSacrificedOrKilled(event, player, card)
+        onSacrificed: (event) => isStarkCharacter(event.card),
+        onCharacterKilled: (event) => isStarkCharacter(event.card)
     },
     handler: () => {
         // gain power

@@ -7,8 +7,8 @@ class KingRobbsBannermen extends DrawCard {
     // location using assault.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () =>
-                this.controller.anyCardsInPlay(
+            condition: (context) =>
+                context.source.controller.anyCardsInPlay(
                     (card) => card.isFaction('stark') && card.hasTrait('King')
                 ),
             match: this,

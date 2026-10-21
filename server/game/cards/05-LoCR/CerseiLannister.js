@@ -19,7 +19,7 @@ class CerseiLannister extends DrawCard {
                         location: event.cardStateWhenDiscarded.location
                     }),
                     condition: (aggregate, events, context) =>
-                        aggregate.controller !== this.controller &&
+                        aggregate.controller !== context.player &&
                         aggregate.location === 'hand' &&
                         !context.player.isSupporter(aggregate.controller)
                 }

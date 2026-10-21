@@ -12,8 +12,7 @@ class KingsOfWinter extends AgendaCard {
             effect: ability.effects.modifyReserve(-1)
         });
         this.persistentEffect({
-            condition: () =>
-                this.controller.activePlot && this.controller.activePlot.hasTrait('Winter'),
+            condition: (context) => !!context.source.controller.activePlot?.hasTrait('Winter'),
             targetController: 'opponent',
             match: (card) => card === card.controller.activePlot && !card.hasTrait('Summer'),
             effect: ability.effects.modifyGold(-1)

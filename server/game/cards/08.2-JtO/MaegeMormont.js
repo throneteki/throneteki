@@ -9,8 +9,11 @@ class MaegeMormont extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller && this.hasParticipatingMormont()
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.player &&
+                    context.player.anyCardsInPlay(
+                        (card) => card.isParticipating() && card.hasTrait('House Mormont')
+                    )
             },
             message: '{player} uses {source} to reveal the top card of their deck',
             gameAction: GameActions.revealTopCards((context) => ({
@@ -24,12 +27,6 @@ class MaegeMormont extends DrawCard {
                 }))
             })
         });
-    }
-
-    hasParticipatingMormont() {
-        return this.controller.anyCardsInPlay(
-            (card) => card.isParticipating() && card.hasTrait('House Mormont')
-        );
     }
 }
 

@@ -6,12 +6,11 @@ class AGameOfThrones extends PlotCard {
     // A player cannot initiate a [military] or [power] challenge unless he or she has won an
     // [intrigue] challenge that phase.
     setupCardAbilities(ability) {
-        this.tracker = ChallengeTracker.forPhase(this.game);
+        const tracker = ChallengeTracker.forPhase(this.game);
 
         this.persistentEffect({
             targetController: 'any',
-            match: (player) =>
-                this.tracker.count({ winner: player, challengeType: 'intrigue' }) < 1,
+            match: (player) => tracker.count({ winner: player, challengeType: 'intrigue' }) < 1,
             effect: [
                 ability.effects.cannotInitiateChallengeType('military'),
                 ability.effects.cannotInitiateChallengeType('power')
