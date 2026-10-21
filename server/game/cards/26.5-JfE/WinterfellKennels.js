@@ -28,25 +28,20 @@ class WinterfellKennels extends DrawCard {
                 }
             },
             message: '{player} kneels {source} to put {target} into play',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.simultaneously([
-                        GameActions.putIntoPlay((context) => ({
-                            card: context.target
-                        })),
-                        GameActions.genericHandler((context) => {
-                            this.atEndOfPhase((ability) => ({
-                                match: context.target,
-                                condition: () =>
-                                    ['play area', 'duplicate'].includes(context.target.location),
-                                targetLocation: 'any',
-                                effect: ability.effects.moveToBottomOfDeckIfStillInPlay(true)
-                            }));
-                        })
-                    ]),
-                    context
-                );
-            }
+            gameAction: GameActions.simultaneously((context) => [
+                GameActions.putIntoPlay((context) => ({
+                    card: context.target
+                })),
+                GameActions.genericHandler((context) => {
+                    context.source.atEndOfPhase((ability) => ({
+                        match: context.target,
+                        condition: () =>
+                            ['play area', 'duplicate'].includes(context.target.location),
+                        targetLocation: 'any',
+                        effect: ability.effects.moveToBottomOfDeckIfStillInPlay(true)
+                    }));
+                })
+            ])
         });
     }
 }

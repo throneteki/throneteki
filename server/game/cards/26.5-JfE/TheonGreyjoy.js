@@ -10,7 +10,7 @@ class TheonGreyjoy extends DrawCard {
     setupCardAbilities() {
         this.forcedInterrupt({
             when: {
-                onCardLeftPlay: (event) => event.card === this
+                onCardLeftPlay: (event, context) => event.card === context.source
             },
             message: '{player} is forced by {source} to have each opponent gain 2 power',
             gameAction: GameActions.simultaneously((context) =>
@@ -37,12 +37,7 @@ class TheonGreyjoy extends DrawCard {
                 format: '{choosingPlayer} is forced by {source} to kill {target}',
                 args: { choosingPlayer: (context) => context.event.player }
             },
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.kill((context) => ({ card: context.target })),
-                    context
-                );
-            }
+            gameAction: GameActions.kill((context) => ({ card: context.target }))
         });
     }
 }

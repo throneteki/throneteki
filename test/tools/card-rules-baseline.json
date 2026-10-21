@@ -5333,9 +5333,6 @@
         "this-in-ability": 8,
         "add-message": 1
     },
-    "server/game/cards/26.3-MaV/SteelshanksWalton.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/26.3-MaV/Stormlord.js": {
         "prompt-for-select": 1,
         "this-in-ability": 4,
@@ -5349,9 +5346,6 @@
     "server/game/cards/26.3-MaV/TheRegentsCouncil.js": {
         "this-in-ability": 4
     },
-    "server/game/cards/26.3-MaV/TheWhisperingSound.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/26.3-MaV/WanderingDisciple.js": {
         "this-in-ability": 3
     },
@@ -5359,24 +5353,12 @@
         "this-in-ability": 7,
         "add-message": 1
     },
-    "server/game/cards/26.4 LotW/KingsLandingDromond.js": {
-        "this-in-ability": 2
-    },
-    "server/game/cards/26.4 LotW/OrkmontElite.js": {
-        "this-in-ability": 5
-    },
-    "server/game/cards/26.4 LotW/QartheenGalleas.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/26.4 LotW/RedwyneMerchanter.js": {
         "this-in-ability": 2
     },
     "server/game/cards/26.4 LotW/SerHarryStrickland.js": {
         "this-in-ability": 8,
         "add-message": 1
-    },
-    "server/game/cards/26.4 LotW/SouthronInformant.js": {
-        "this-in-ability": 4
     },
     "server/game/cards/26.4 LotW/TheWarOfTheFiveKings.js": {
         "this-in-ability": 2
@@ -5415,18 +5397,9 @@
     "server/game/cards/26.5-JfE/TheRedViper.js": {
         "this-in-ability": 3
     },
-    "server/game/cards/26.5-JfE/TheonGreyjoy.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/26.5-JfE/WhiteGraces.js": {
         "this-in-ability": 6,
         "legacy-helper": 2
-    },
-    "server/game/cards/26.5-JfE/WinterfellKennels.js": {
-        "this-in-ability": 2
-    },
-    "server/game/cards/26.6-NCbT/AlchemistApprentice.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/26.6-NCbT/ArmedToTheTeeth.js": {
         "event-registration": 1,
@@ -5434,9 +5407,6 @@
     },
     "server/game/cards/26.6-NCbT/GrowingInfluence.js": {
         "this-in-ability": 1
-    },
-    "server/game/cards/26.6-NCbT/Melisandre.js": {
-        "this-in-ability": 2
     },
     "server/game/cards/26.6-NCbT/NoCrownButTruth.js": {
         "this-in-ability": 2
@@ -5459,9 +5429,6 @@
         "this-in-ability": 7,
         "add-message": 1
     },
-    "server/game/cards/27.1-THBIB/AlysKarstark.js": {
-        "this-in-ability": 3
-    },
     "server/game/cards/27.1-THBIB/CaptainOfTheIronFleet.js": {
         "this-in-ability": 5
     },
@@ -5471,20 +5438,8 @@
     "server/game/cards/27.1-THBIB/Morningstar.js": {
         "this-in-ability": 6
     },
-    "server/game/cards/27.1-THBIB/NymellaToland.js": {
-        "this-in-ability": 2
-    },
-    "server/game/cards/27.1-THBIB/PaxterRedwyne.js": {
-        "this-in-ability": 3
-    },
     "server/game/cards/27.1-THBIB/SearchingTheArchives.js": {
         "this-in-ability": 1
-    },
-    "server/game/cards/27.1-THBIB/ShadowskinCloak.js": {
-        "this-in-ability": 1
-    },
-    "server/game/cards/27.1-THBIB/Sigorn.js": {
-        "this-in-ability": 6
     },
     "server/game/cards/27.1-THBIB/SonsOfTheHarpy.js": {
         "this-in-ability": 2
@@ -5501,12 +5456,8 @@
     "server/game/cards/27.2-WGYK/FieryTalons.js": {
         "this-in-ability": 1
     },
-    "server/game/cards/27.2-WGYK/ForAllTheNightsToCome.js": {
-        "this-in-ability": 7
-    },
     "server/game/cards/27.2-WGYK/Hornvale.js": {
         "event-registration": 1,
-        "this-in-ability": 3,
         "add-message": 1
     },
     "server/game/cards/27.2-WGYK/PurpleGraces.js": {

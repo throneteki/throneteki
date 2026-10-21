@@ -13,19 +13,14 @@ class NymellaToland extends DrawCard {
                     location: 'play area',
                     type: 'character',
                     condition: (card) =>
-                        this.game.isDuringChallenge({
+                        card.game.isDuringChallenge({
                             or: [{ attackingAlone: card }, { defendingAlone: card }]
                         })
                 }
             },
             limit: ability.limit.perRound(1),
             message: '{player} uses {source} to remove {target} from the challenge',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.removeFromChallenge((context) => ({ card: context.target })),
-                    context
-                );
-            }
+            gameAction: GameActions.removeFromChallenge((context) => ({ card: context.target }))
         });
     }
 }

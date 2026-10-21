@@ -9,8 +9,8 @@ class TheWhisperingSound extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) =>
-                    this.game.currentPhase === 'challenge' && event.card.getType() === 'location'
+                onCardEntersPlay: (event, context) =>
+                    context.game.currentPhase === 'challenge' && event.card.getType() === 'location'
             },
             cost: ability.costs.kneelSelf(),
             gameAction: GameActions.drawCards((context) => ({
@@ -22,14 +22,9 @@ class TheWhisperingSound extends DrawCard {
                     cardCondition: { location: 'hand', controller: 'current' }
                 },
                 message: 'Then {player} places a card on top of their deck',
-                handler: (context) => {
-                    this.game.resolveGameAction(
-                        GameActions.returnCardToDeck((context) => ({
-                            card: context.target
-                        })),
-                        context
-                    );
-                }
+                gameAction: GameActions.returnCardToDeck((context) => ({
+                    card: context.target
+                }))
             })
         });
     }

@@ -15,9 +15,9 @@ class Hornvale extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     event.challenge.challengeType === 'intrigue' &&
-                    event.challenge.winner === this.controller
+                    event.challenge.winner === context.source.controller
             },
             cost: ability.costs.kneelSelf(),
 
@@ -32,16 +32,11 @@ class Hornvale extends DrawCard {
                     loser: (context) => context.event.challenge.loser
                 }
             },
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.placeCardUnderneath({
-                        card: context.target,
-                        parentCard: this,
-                        facedown: true
-                    }),
-                    context
-                );
-            }
+            gameAction: GameActions.placeCardUnderneath((context) => ({
+                card: context.target,
+                parentCard: context.source,
+                facedown: true
+            }))
         });
     }
 

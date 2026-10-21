@@ -10,8 +10,9 @@ class PaxterRedwyne extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller && this.isParticipating()
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
+                    context.source.isParticipating()
             },
             target: {
                 cardCondition: {
@@ -21,32 +22,27 @@ class PaxterRedwyne extends DrawCard {
                 }
             },
             limit: ability.limit.perPhase(2),
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.ifCondition({
-                        condition: (context) => !context.target.hasTrait('Warship'),
-                        thenAction: {
-                            message: '{player} uses {source} to {gameAction}',
-                            gameAction: GameActions.returnCardToHand((context) => ({
-                                card: context.target
-                            }))
-                        },
-                        elseAction: GameActions.choose({
-                            title: 'Place location in shadows?',
-                            message: '{player} uses {source} to {gameAction}',
-                            choices: {
-                                'Return to hand': GameActions.returnCardToHand((context) => ({
-                                    card: context.target
-                                })),
-                                'Put in shadows': GameActions.putIntoShadows((context) => ({
-                                    card: context.target
-                                }))
-                            }
-                        })
-                    }),
-                    context
-                );
-            }
+            gameAction: GameActions.ifCondition({
+                condition: (context) => !context.target.hasTrait('Warship'),
+                thenAction: {
+                    message: '{player} uses {source} to {gameAction}',
+                    gameAction: GameActions.returnCardToHand((context) => ({
+                        card: context.target
+                    }))
+                },
+                elseAction: GameActions.choose({
+                    title: 'Place location in shadows?',
+                    message: '{player} uses {source} to {gameAction}',
+                    choices: {
+                        'Return to hand': GameActions.returnCardToHand((context) => ({
+                            card: context.target
+                        })),
+                        'Put in shadows': GameActions.putIntoShadows((context) => ({
+                            card: context.target
+                        }))
+                    }
+                })
+            })
         });
     }
 }

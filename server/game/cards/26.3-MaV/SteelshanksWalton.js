@@ -19,15 +19,10 @@ class SteelshanksWalton extends DrawCard {
                         GameActions.takeControl({ card, player: context.player }).allow()
                 }
             },
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.takeControl((context) => ({
-                        card: context.target,
-                        player: context.player
-                    })),
-                    context
-                );
-            }
+            gameAction: GameActions.takeControl((context) => ({
+                card: context.target,
+                player: context.player
+            }))
         });
     }
 }

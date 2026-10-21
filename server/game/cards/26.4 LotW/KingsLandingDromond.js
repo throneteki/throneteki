@@ -13,7 +13,7 @@ class KingsLandingDromond extends DrawCard {
         });
         this.reaction({
             when: {
-                onCardOutOfShadows: (event) => event.card === this
+                onCardOutOfShadows: (event, context) => event.card === context.source
             },
             target: {
                 cardCondition: {
@@ -24,12 +24,7 @@ class KingsLandingDromond extends DrawCard {
                 }
             },
             message: "{player} uses {source} to return {target} to its owner's hand",
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.returnCardToHand((context) => ({ card: context.target })),
-                    context
-                );
-            }
+            gameAction: GameActions.returnCardToHand((context) => ({ card: context.target }))
         });
     }
 }

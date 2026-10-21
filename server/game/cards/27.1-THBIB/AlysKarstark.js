@@ -8,7 +8,7 @@ class AlysKarstark extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardStood: (event) => event.card === this
+                onCardStood: (event, context) => event.card === context.source
             },
             target: {
                 activePromptTitle: 'Select a character',
@@ -17,7 +17,8 @@ class AlysKarstark extends DrawCard {
                     location: 'play area',
                     controller: 'current',
                     trait: 'Wildling',
-                    condition: (card) => card !== this && GameActions.gainPower({ card }).allow()
+                    condition: (card, context) =>
+                        card !== context.source && GameActions.gainPower({ card }).allow()
                 }
             },
             message: {
@@ -28,21 +29,16 @@ class AlysKarstark extends DrawCard {
                 }
             },
             limit: ability.limit.perRound(2),
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.simultaneously([
-                        GameActions.gainPower((context) => ({ card: context.target })),
-                        GameActions.ifCondition({
-                            condition: (context) => context.target.name === 'Sigorn',
-                            thenAction: GameActions.drawCards((context) => ({
-                                player: context.player,
-                                amount: 1
-                            }))
-                        })
-                    ]),
-                    context
-                );
-            }
+            gameAction: GameActions.simultaneously([
+                GameActions.gainPower((context) => ({ card: context.target })),
+                GameActions.ifCondition({
+                    condition: (context) => context.target.name === 'Sigorn',
+                    thenAction: GameActions.drawCards((context) => ({
+                        player: context.player,
+                        amount: 1
+                    }))
+                })
+            ])
         });
     }
 }

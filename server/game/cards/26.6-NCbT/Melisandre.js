@@ -9,7 +9,7 @@ class Melisandre extends DrawCard {
     // once per phase.)
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.game.isDuringChallenge(),
+            condition: (context) => context.game.isDuringChallenge(),
             match: (card) => card.isParticipating() && !card.isShadow(),
             targetController: 'any',
             effect: ability.effects.modifyStrength(-1)
@@ -28,12 +28,7 @@ class Melisandre extends DrawCard {
                 }
             },
             message: '{player} uses {source} to place {target} in shadows',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.putIntoShadows((context) => ({ card: context.target })),
-                    context
-                );
-            }
+            gameAction: GameActions.putIntoShadows((context) => ({ card: context.target }))
         });
     }
 }

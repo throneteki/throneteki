@@ -9,11 +9,11 @@ class Sigorn extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     event.challenge.isMatch({
                         challengeType: 'military',
-                        winner: this.controller
-                    }) && this.isAttacking()
+                        winner: context.source.controller
+                    }) && context.source.isAttacking()
             },
             target: {
                 cardCondition: {
@@ -21,22 +21,20 @@ class Sigorn extends DrawCard {
                     location: 'play area',
                     controller: 'current',
                     trait: 'Wildling',
-                    condition: (card) => card !== this && GameActions.standCard({ card }).allow()
+                    condition: (card, context) =>
+                        card !== context.source && GameActions.standCard({ card }).allow()
                 }
             },
             message: '{player} uses {source} to stand {target}',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.standCard({ card: context.target }).then({
-                        condition: () =>
-                            context.target.name === 'Alys Karstark' &&
-                            GameActions.standCard({ card: this }).allow(),
-                        message: 'Then, {player} stands {source}',
-                        gameAction: GameActions.standCard({ card: this })
-                    }),
-                    context
-                );
-            }
+            gameAction: GameActions.standCard((context) => ({ card: context.target })).then(
+                (context) => ({
+                    condition: () =>
+                        context.target.name === 'Alys Karstark' &&
+                        GameActions.standCard({ card: context.source }).allow(),
+                    message: 'Then, {player} stands {source}',
+                    gameAction: GameActions.standCard({ card: context.source })
+                })
+            )
         });
     }
 }
