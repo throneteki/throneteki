@@ -17,7 +17,6 @@ import SimpleStep from './gamesteps/simplestep.js';
 import ChoosePlayerPrompt from './gamesteps/ChoosePlayerPrompt.js';
 import ChooseResolutionOrder from './gamesteps/ChooseResolutionOrder.js';
 import CardNamePrompt from './gamesteps/CardNamePrompt.js';
-import DeckSearchPrompt from './gamesteps/DeckSearchPrompt.js';
 import MenuPrompt from './gamesteps/menuprompt.js';
 import IconPrompt from './gamesteps/iconprompt.js';
 import SelectCardPrompt from './gamesteps/selectcardprompt.js';
@@ -956,16 +955,6 @@ class Game extends EventEmitter {
 
     promptForSelect(player, properties) {
         this.queueStep(new SelectCardPrompt(this, player, properties));
-    }
-
-    promptForDeckSearch(player, properties) {
-        this.raiseEvent(
-            'onBeforeDeckSearch',
-            { source: properties.source, player: player },
-            (event) => {
-                this.queueStep(new DeckSearchPrompt(this, event.player, properties));
-            }
-        );
     }
 
     promptForOpponentChoice(

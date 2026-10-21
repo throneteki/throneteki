@@ -104,7 +104,6 @@ These entries have a spec or an explicit gap:
 
 ## Other open framework gaps
 
-- `onAddedToChallenge`, `onBeforeDeckSearch`, `onDupeEntersPlay`, `onLookAtShadows` and `onTokenDiscarded` are in the event catalogue and have no engine spec. `onCardsDrawn` from `DrawSpecific` does not include `amount`.
 - Out-of-window actions are refused during marshaling and while a window is open. They are still allowed when strict windows are off and no window is open, outside marshaling.
 - Strict action windows are not the default.
 - The client does not show why an action is unavailable.

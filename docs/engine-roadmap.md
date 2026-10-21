@@ -163,10 +163,14 @@ LIMIT 50;
    every event with its parameters and their types. Outside production, `Game.on` and `Game.emit`
    throw on an unknown event or window suffix, and on an event raised with missing or unexpected
    parameters; a spec checks that every card only listens for catalogued events. The catalogue was
-   built from the events the suite raises, plus a review of the five events it never raises
-   (`onAddedToChallenge`, `onBeforeDeckSearch`, `onDupeEntersPlay`, `onLookAtShadows`,
-   `onTokenDiscarded`); those five need engine specs. `onCardsDrawn` from `DrawSpecific` lacks the
-   `amount` that `DrawCards` gives it, so listeners can't rely on it.
+   built from the events the suite raises, plus a review of the five events it never raised.
+   _Done:_ `onAddedToChallenge`, `onLookAtShadows`, `onTokenDiscarded` and `onCardsDrawn` from
+   `DrawSpecific` (now with `amount`) have specs in
+   [CataloguedEvents.spec.js](../test/server/gamesteps/CataloguedEvents.spec.js), and
+   `onDupeEntersPlay` in [Duplicates.spec.js](../test/server/gamesteps/Duplicates.spec.js).
+   Marshaling or ambushing a duplicate now raises `onDupeEntersPlay`, and token costs raise
+   `onTokenDiscarded`. `onBeforeDeckSearch` was only raised by an unused legacy search prompt,
+   which was removed with it.
 6. **Requirement reasons.** _Done on the server._ Abilities implement `getUnmetRequirement`, which
    returns one of the [Requirements](../server/game/Constants/Requirements.js) reasons (`'phase'`,
    `'limit'`, `'cost'`, `'target'`, `'noEffect'`, ...) or undefined; `meetsRequirements` and

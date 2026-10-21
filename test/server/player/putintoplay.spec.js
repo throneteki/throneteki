@@ -104,10 +104,6 @@ describe('Player', function () {
                     );
                 });
 
-                it('should add as a duplicate', function () {
-                    expect(this.dupeCardSpy.addDuplicate).toHaveBeenCalledWith(this.cardSpy);
-                });
-
                 describe('when it has the Bestow keyword', function () {
                     beforeEach(function () {
                         this.cardSpy.isBestow.mockReturnValue(true);
@@ -151,14 +147,6 @@ describe('Player', function () {
 
                 it('should not prompt for attachment target', function () {
                     expect(this.player.promptForAttachment).not.toHaveBeenCalled();
-                });
-
-                it('should remove the card from hand', function () {
-                    expect(this.player.hand).not.toContain(this.cardSpy);
-                });
-
-                it('should add a duplicate to the existing card in play', function () {
-                    expect(this.dupeCardSpy.addDuplicate).toHaveBeenCalledWith(this.cardSpy);
                 });
 
                 it('should not add a new card to play', function () {
@@ -305,10 +293,6 @@ describe('Player', function () {
                         'onCardEntersPlay',
                         expect.objectContaining({ card: this.cardSpy })
                     );
-                });
-
-                it('should add as a duplicate', function () {
-                    expect(this.dupeCardSpy.addDuplicate).toHaveBeenCalledWith(this.cardSpy);
                 });
             });
         });

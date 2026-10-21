@@ -26,7 +26,6 @@ export const Events = Object.freeze({
             player: 'Player'
         }
     },
-    onBeforeDeckSearch: { params: { player: 'Player', source: 'BaseCard' } },
     onBeginRound: { params: { game: 'Game' } },
     onBypassedByStealth: {
         params: { challenge: 'Challenge', source: 'DrawCard', target: 'DrawCard' }
@@ -158,13 +157,14 @@ export const Events = Object.freeze({
     onCardsChosen: { params: { players: 'Player[]' } },
     onCardsDrawn: {
         params: {
+            amount: 'number',
             cards: 'DrawCard[]',
+            desiredAmount: 'number',
             length: 'number',
             player: 'Player',
             reason: 'string',
             source: 'BaseCard'
-        },
-        optional: { amount: 'number', desiredAmount: 'number' }
+        }
     },
     onCardsRevealed: {
         params: {

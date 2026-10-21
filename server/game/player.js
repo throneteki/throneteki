@@ -19,6 +19,7 @@ import GameActions from './GameActions/index.js';
 import RemoveFromGame from './GameActions/RemoveFromGame.js';
 import SacrificeCard from './GameActions/SacrificeCard.js';
 import MoveCardEventGenerator from './GameActions/MoveCardEventGenerator.js';
+import PutIntoPlay from './GameActions/PutIntoPlay.js';
 import ChessClock from './ChessClock.js';
 import { DrawPhaseCards, Flags, SetupGold } from './Constants/index.js';
 
@@ -694,16 +695,9 @@ class Player extends Spectator {
         let needsShadowEvent = card.location === 'shadows';
 
         if (dupeCard && playingType !== 'setup') {
-            this.removeCardFromPile(card);
-            dupeCard.addDuplicate(card);
-
-            if (needsShadowEvent) {
-                this.game.raiseEvent('onCardOutOfShadows', {
-                    player: this,
-                    card: card,
-                    type: 'dupe'
-                });
-            }
+            this.game.resolveEvent(
+                PutIntoPlay.createEvent({ player: this, card, playingType, dupeIsValid: true })
+            );
         } else {
             // Attachments placed in setup should not be considered to be 'played',
             // as it will cause then to double their effects when attached later.

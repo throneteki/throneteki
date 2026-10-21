@@ -65,6 +65,11 @@ the ongoing work, and it was not part of this batch.
   values are not a conflict: the most recent set modifier wins (Rules Reference: Modifiers), which
   `CardStat` already does. Legacy `atEndOfPhase` effects still resolve in a fixed order; they get
   the prompt when they move to `GameActions.delayedEffect`.
+- Every catalogued event is raised and specced:
+  [CataloguedEvents.spec.js](../test/server/gamesteps/CataloguedEvents.spec.js),
+  [Duplicates.spec.js](../test/server/gamesteps/Duplicates.spec.js). A duplicate marshaled or
+  ambushed goes through the `PutIntoPlay` event, token costs go through `GameActions.discardToken`,
+  and `DrawSpecific` draws only what the draw limit allows and reports `amount`.
 - Terminal conditions (FAQ 3.1). The card pool has two: burn and state checks. Both refuse saves
   up front. The "if still in play" effects are one-off delayed effects, not terminal conditions,
   so they can be saved from. A new terminal condition whose save could remedy it would need its
@@ -105,13 +110,10 @@ not already decided.
    both apply, so the first player should choose which does. Today the newest wins. No spec covers
    it yet. `GameActions.chooseCards` asks players in the order the card lists them; no card passes
    more than one player yet, but one that does should ask in first-player order.
-2. Five catalogued events have no engine spec: `onAddedToChallenge`, `onBeforeDeckSearch`,
-   `onDupeEntersPlay`, `onLookAtShadows`, `onTokenDiscarded`. `onCardsDrawn` from `DrawSpecific`
-   has no `amount`.
-3. Every state change goes through a `GameAction`. Manual corrections (`changeStat`, `/power`,
+2. Every state change goes through a `GameAction`. Manual corrections (`changeStat`, `/power`,
    `/token`) stay plain corrections and raise no events.
-4. The client showing why an action is unavailable. Server reasons already exist.
-5. Alayne Stone needs a ruling before it moves to a state check: when she becomes Sansa's
+3. The client showing why an action is unavailable. Server reasons already exist.
+4. Alayne Stone needs a ruling before it moves to a state check: when she becomes Sansa's
    duplicate, does she leave play (losing power, tokens and attachments, and raising leave-play
    events)? The FAQ only says the placement is automatic and cannot be saved from.
    `PlaceAsDuplicate` refuses a card that is already in play.

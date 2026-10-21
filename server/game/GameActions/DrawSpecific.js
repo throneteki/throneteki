@@ -27,14 +27,17 @@ class DrawSpecific extends GameAction {
         const drawableCards = cards.filter((card) => card.location === 'draw deck');
         const actualDraw = drawableCards.slice(0, player.getNumCardsToDraw(drawableCards.length));
         const eventProps = {
+            amount: actualDraw.length,
             cards: actualDraw,
+            desiredAmount: cards.length,
+            isFullyResolved: (event) => event.amount === event.desiredAmount,
             length: actualDraw.length, // Needed for legacy reason
             player,
             reason,
             source
         };
         return this.event('onCardsDrawn', eventProps, (event) => {
-            for (const card of cards) {
+            for (const card of event.cards) {
                 event.thenAttachEvent(
                     this.event(
                         'onCardDrawn',
@@ -46,8 +49,6 @@ class DrawSpecific extends GameAction {
                     )
                 );
             }
-
-            event.cards = cards;
         });
     }
 }
