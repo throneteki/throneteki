@@ -11,12 +11,12 @@ describe('Antler Men (BtB)', function () {
         });
 
         this.unopposedChallenge(this.player1, 'Power', this.tumblestoneKnight);
-        this.gold = this.player1Object.gold;
+        this.startingGold = this.player1Object.gold;
         this.player1.triggerAbility(this.antlerMen);
     });
 
     it('gains 1 gold after power is moved to your faction card', function () {
-        expect(this.player1Object.gold).toBe(this.gold + 1);
+        expect(this.player1Object.gold).toBe(this.startingGold + 1);
         expect(this.player1).isReadyToTakeAction();
     });
 });
