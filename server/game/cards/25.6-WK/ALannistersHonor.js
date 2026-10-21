@@ -9,10 +9,10 @@ class ALannistersHonor extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     event.challenge.isMatch({
-                        winner: this.controller,
-                        attackingPlayer: this.controller,
+                        winner: context.source.controller,
+                        attackingPlayer: context.source.controller,
                         challengeType: 'intrigue'
                     })
             },
@@ -24,7 +24,7 @@ class ALannistersHonor extends DrawCard {
                     controller: 'choosingPlayer',
                     condition: (card, context) =>
                         card.getStrength() ===
-                            this.getLowestStrInPlay(context.event.challenge.loser) &&
+                            context.source.getLowestStrInPlay(context.event.challenge.loser) &&
                         GameActions.kill({ card }).allow()
                 }
             },
@@ -33,12 +33,7 @@ class ALannistersHonor extends DrawCard {
                 format: '{player} plays {source} to have {loser} choose and kill a character they control with the lowest STR',
                 args: { loser: (context) => context.event.challenge.loser }
             },
-            handler: (context) => {
-                context.game.resolveGameAction(
-                    GameActions.kill((context) => ({ card: context.target })),
-                    context
-                );
-            }
+            gameAction: GameActions.kill((context) => ({ card: context.target }))
         });
     }
 

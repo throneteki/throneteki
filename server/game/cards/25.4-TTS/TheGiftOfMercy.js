@@ -12,7 +12,8 @@ class TheGiftOfMercy extends AgendaCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) => event.challenge.winner === this.controller
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller
             },
             target: {
                 cardCondition: {
@@ -22,15 +23,10 @@ class TheGiftOfMercy extends AgendaCard {
                 }
             },
             message: '{player} uses {source} to place a Valar Morghulis token on {target}',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.placeToken((context) => ({
-                        card: context.target,
-                        token: Tokens.valarmorghulis
-                    })),
-                    context
-                );
-            }
+            gameAction: GameActions.placeToken((context) => ({
+                card: context.target,
+                token: Tokens.valarmorghulis
+            }))
         });
 
         this.interrupt({
@@ -42,14 +38,15 @@ class TheGiftOfMercy extends AgendaCard {
             message: {
                 format: '{player} uses {source} to have {players} gain 2 power for their faction from {card} leaving play',
                 args: {
-                    players: (context) => this.getPlayersNotControlling(context.event.card),
+                    players: (context) =>
+                        context.source.getPlayersNotControlling(context.event.card),
                     card: (context) => context.event.card
                 }
             },
             gameAction: GameActions.simultaneously((context) =>
-                this.getPlayersNotControlling(context.event.card).map((player) =>
-                    GameActions.gainPower({ card: player.faction, amount: 2 })
-                )
+                context.source
+                    .getPlayersNotControlling(context.event.card)
+                    .map((player) => GameActions.gainPower({ card: player.faction, amount: 2 }))
             )
         });
     }

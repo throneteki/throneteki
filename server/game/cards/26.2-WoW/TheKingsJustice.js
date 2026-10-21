@@ -10,8 +10,8 @@ class TheKingsJustice extends DrawCard {
         this.attachmentRestriction({ unique: true });
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
                     event.challenge.challengeType === 'power'
             },
             cost: ability.costs.kneelParent(),
@@ -23,12 +23,7 @@ class TheKingsJustice extends DrawCard {
                 }
             },
             message: '{player} uses {source} and kneels {costs.kneel} to kill {target}',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.kill((context) => ({ card: context.target })),
-                    context
-                );
-            }
+            gameAction: GameActions.kill((context) => ({ card: context.target }))
         });
     }
 }

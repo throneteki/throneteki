@@ -15,14 +15,15 @@ class TheLaughingStorm extends DrawCard {
             unique: true
         });
         this.persistentEffect({
-            condition: () => !this.kneeled,
+            condition: (context) => !context.source.kneeled,
             targetLocation: 'hand',
             effect: ability.effects.cannotBeDiscardedAtRandom()
         });
 
         this.reaction({
             when: {
-                afterChallenge: (event) => event.challenge.winner === this.controller
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller
             },
             target: {
                 cardCondition: (card, context) =>
@@ -34,12 +35,7 @@ class TheLaughingStorm extends DrawCard {
             },
             cost: ability.costs.kneelSelf(),
             message: '{player} kneels {source} to kneel {target}',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.kneelCard((context) => ({ card: context.target })),
-                    context
-                );
-            }
+            gameAction: GameActions.kneelCard((context) => ({ card: context.target }))
         });
     }
 }

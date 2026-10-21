@@ -8,16 +8,16 @@ class TheSackOfKingsLanding extends PlotCard {
     // kill a character they control with the same printed cost.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.game.isDuringChallenge({ challengeType: 'intrigue' }),
+            condition: (context) => context.game.isDuringChallenge({ challengeType: 'intrigue' }),
             match: (card) => card.getType() === 'character' && card.isFaction('lannister'),
             effect: ability.effects.addKeyword('pillage')
         });
 
         this.reaction({
             when: {
-                onCardPlaced: (event) =>
+                onCardPlaced: (event, context) =>
                     event.card.getType() === 'location' &&
-                    event.card.controller !== this.controller &&
+                    event.card.controller !== context.source.controller &&
                     event.location === 'discard pile' &&
                     event.card.hasPrintedCost()
             },
@@ -35,15 +35,10 @@ class TheSackOfKingsLanding extends PlotCard {
                 format: '{player} uses {source} to have {choosingPlayer} choose and kill {target}',
                 args: { choosingPlayer: (context) => context.choosingPlayer }
             },
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.kill((context) => ({
-                        card: context.target,
-                        player: context.choosingPlayer
-                    })),
-                    context
-                );
-            }
+            gameAction: GameActions.kill((context) => ({
+                card: context.target,
+                player: context.choosingPlayer
+            }))
         });
     }
 }

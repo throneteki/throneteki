@@ -14,16 +14,18 @@ class TheBlackGate extends DrawCard {
                 ability.costs.sacrifice({ faction: 'thenightswatch', type: 'character' })
             ],
             target: {
-                location: ['hand', 'shadow'],
-                controller: 'current',
-                type: 'character',
-                condition: (card, context) =>
-                    GameActions.putIntoPlay({ card }).allow(context) &&
-                    (!context.costs.sacrifice ||
-                        (card
-                            .getTraits()
-                            .some((trait) => context.costs.sacrifice.hasTrait(trait)) &&
-                            card.getPrintedCost() <= context.costs.sacrifice.getPrintedCost()))
+                cardCondition: {
+                    location: ['hand', 'shadows'],
+                    controller: 'current',
+                    type: 'character',
+                    condition: (card, context) =>
+                        GameActions.putIntoPlay({ card }).allow(context) &&
+                        (!context.costs.sacrifice ||
+                            (card
+                                .getTraits()
+                                .some((trait) => context.costs.sacrifice.hasTrait(trait)) &&
+                                card.getPrintedCost() <= context.costs.sacrifice.getPrintedCost()))
+                }
             },
             message: {
                 format: '{player} kneels {costs.kneel} and sacrifices {costs.sacrifice} to put {target} into play from {location}',
@@ -32,12 +34,7 @@ class TheBlackGate extends DrawCard {
                         context.target.location === 'hand' ? 'their hand' : 'shadows'
                 }
             },
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.putIntoPlay((context) => ({ card: context.target })),
-                    context
-                );
-            }
+            gameAction: GameActions.putIntoPlay((context) => ({ card: context.target }))
         });
     }
 }

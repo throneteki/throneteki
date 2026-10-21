@@ -18,7 +18,8 @@ class TheMoonDoor extends DrawCard {
         });
         this.reaction({
             when: {
-                onCardKneeled: (event) => event.card === this && this.game.isDuringChallenge()
+                onCardKneeled: (event, context) =>
+                    event.card === context.source && context.game.isDuringChallenge()
             },
             target: {
                 cardCondition: {
@@ -28,12 +29,7 @@ class TheMoonDoor extends DrawCard {
                     printedStrengthOrLower: 3
                 }
             },
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.kill((context) => ({ card: context.target })),
-                    context
-                );
-            }
+            gameAction: GameActions.kill((context) => ({ card: context.target }))
         });
     }
 }

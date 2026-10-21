@@ -5138,12 +5138,6 @@
         "add-message": 3,
         "direct-state-write": 1
     },
-    "server/game/cards/25.2-ChoS/TheMoonDoor.js": {
-        "this-in-ability": 3
-    },
-    "server/game/cards/25.2-ChoS/TheThroneOfDorne.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/25.3-FUtG/BelligerentHeir.js": {
         "this-in-ability": 5,
         "game-listener": 1,
@@ -5166,18 +5160,9 @@
     "server/game/cards/25.3-FUtG/NaughtButAshes.js": {
         "this-in-ability": 3
     },
-    "server/game/cards/25.3-FUtG/TarleTheThriceDrowned.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/25.3-FUtG/TheDrownedGodWakes.js": {
         "this-in-ability": 3,
         "legacy-helper": 1
-    },
-    "server/game/cards/25.3-FUtG/TheLaughingStorm.js": {
-        "this-in-ability": 3
-    },
-    "server/game/cards/25.3-FUtG/TheSackOfKingsLanding.js": {
-        "this-in-ability": 3
     },
     "server/game/cards/25.3-FUtG/VultureKing.js": {
         "this-in-ability": 7,
@@ -5197,12 +5182,6 @@
         "this-in-ability": 5
     },
     "server/game/cards/25.4-TTS/OlennasWheelhouse.js": {
-        "this-in-ability": 1
-    },
-    "server/game/cards/25.4-TTS/TheGiftOfMercy.js": {
-        "this-in-ability": 4
-    },
-    "server/game/cards/25.4-TTS/TheHourOfTheWolf.js": {
         "this-in-ability": 1
     },
     "server/game/cards/25.4-TTS/Varys.js": {
@@ -5229,12 +5208,6 @@
     "server/game/cards/25.5-TIC/HarrenTheBlack.js": {
         "this-in-ability": 3
     },
-    "server/game/cards/25.5-TIC/LittleBird.js": {
-        "this-in-ability": 2
-    },
-    "server/game/cards/25.5-TIC/MargaeryTyrell.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/25.5-TIC/Qyburn.js": {
         "this-in-ability": 2
     },
@@ -5257,9 +5230,6 @@
     "server/game/cards/25.5-TIC/TheLastGreenseer.js": {
         "this-in-ability": 2
     },
-    "server/game/cards/25.6-WK/ALannistersHonor.js": {
-        "this-in-ability": 3
-    },
     "server/game/cards/25.6-WK/AThousandEyesAndOne.js": {
         "this-in-ability": 1
     },
@@ -5272,18 +5242,9 @@
     "server/game/cards/25.6-WK/BurningTheBooks.js": {
         "this-in-ability": 4
     },
-    "server/game/cards/25.6-WK/DeepwoodMotte.js": {
-        "this-in-ability": 3
-    },
-    "server/game/cards/25.6-WK/DesperateDeserter.js": {
-        "this-in-ability": 3
-    },
     "server/game/cards/25.6-WK/TheDornishWars.js": {
         "this-in-ability": 6,
         "add-message": 1
-    },
-    "server/game/cards/25.6-WK/TyeneSand.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/25.6-WK/Winterfell.js": {
         "this-in-ability": 3
@@ -5297,9 +5258,6 @@
     },
     "server/game/cards/26.1-WAID/CityOfShadows.js": {
         "this-in-ability": 4
-    },
-    "server/game/cards/26.1-WAID/HarrenhalCupbearer.js": {
-        "this-in-ability": 3
     },
     "server/game/cards/26.1-WAID/HighgardenDestrier.js": {
         "this-in-ability": 2
@@ -5341,29 +5299,14 @@
         "prompt-for-select": 1,
         "this-in-ability": 5
     },
-    "server/game/cards/26.2-WoW/RalfTheLimper.js": {
-        "this-in-ability": 2
-    },
-    "server/game/cards/26.2-WoW/Reinstatement.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/26.2-WoW/SorrowfulMan.js": {
         "this-in-ability": 5
     },
     "server/game/cards/26.2-WoW/SwiftLongship.js": {
         "this-in-ability": 2
     },
-    "server/game/cards/26.2-WoW/TheBlackGate.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/26.2-WoW/TheImpsAgent.js": {
         "this-in-ability": 3
-    },
-    "server/game/cards/26.2-WoW/TheKingsJustice.js": {
-        "this-in-ability": 2
-    },
-    "server/game/cards/26.2-WoW/TheSmallCouncil.js": {
-        "this-in-ability": 2
     },
     "server/game/cards/26.2-WoW/WhiteHarborGalley.js": {
         "this-in-ability": 6
@@ -5372,17 +5315,11 @@
         "this-in-ability": 4,
         "add-message": 1
     },
-    "server/game/cards/26.3-MaV/Butterbumps.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/26.3-MaV/CrawnSonOfCalor.js": {
         "this-in-ability": 1
     },
     "server/game/cards/26.3-MaV/DubiousLoyalties.js": {
         "this-in-ability": 3
-    },
-    "server/game/cards/26.3-MaV/NarrowSeaDromond.js": {
-        "this-in-ability": 2
     },
     "server/game/cards/26.3-MaV/NorthernEnvoy.js": {
         "this-in-ability": 6,

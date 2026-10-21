@@ -14,21 +14,12 @@ class TheHourOfTheWolf extends PlotCard {
                     type: 'character',
                     loyal: false,
                     controller: 'choosingPlayer'
-                }
+                },
+                gameAction: GameActions.sacrificeCard((context) => ({ card: context.target }))
             },
             message: {
                 format: '{player} uses {source} to have each player sacrifice {targets}',
                 args: { targets: (context) => context.targets.getTargets() }
-            },
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.simultaneously((context) =>
-                        context.targets
-                            .getTargets()
-                            .map((card) => GameActions.sacrificeCard({ card }))
-                    ),
-                    context
-                );
             }
         });
     }

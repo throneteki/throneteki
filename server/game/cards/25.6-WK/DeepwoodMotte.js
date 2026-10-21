@@ -17,16 +17,14 @@ class DeepwoodMotte extends DrawCard {
                     type: 'location',
                     location: 'play area',
                     limited: false,
-                    condition: (card) => card !== this
+                    condition: (card, context) => card !== context.source
                 }
             },
             message: '{player} kneels {costs.kneel} to kneel {target}',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.kneelCard((context) => ({ card: context.target, source: this })),
-                    context
-                );
-            }
+            gameAction: GameActions.kneelCard((context) => ({
+                card: context.target,
+                source: context.source
+            }))
         });
     }
 }

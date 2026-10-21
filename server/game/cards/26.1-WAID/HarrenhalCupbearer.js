@@ -10,8 +10,9 @@ class HarrenhalCupbearer extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller && this.isParticipating()
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
+                    context.source.isParticipating()
             },
             cost: ability.costs.putSelfIntoShadows(),
             target: {
@@ -22,12 +23,7 @@ class HarrenhalCupbearer extends DrawCard {
                     GameActions.kneelCard({ card }).allow()
             },
             message: '{player} returns {costs.putIntoShadows} to shadows to kneel {target}',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.kneelCard((context) => ({ card: context.target })),
-                    context
-                );
-            }
+            gameAction: GameActions.kneelCard((context) => ({ card: context.target }))
         });
     }
 }

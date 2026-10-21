@@ -14,20 +14,16 @@ class DesperateDeserter extends DrawCard {
         });
         this.reaction({
             when: {
-                onCardOutOfShadows: (event) => event.card.controller === this.controller
+                onCardOutOfShadows: (event, context) =>
+                    event.card.controller === context.source.controller
             },
             chooseOpponent: true,
             message: '{player} uses {source} to give control of {source} to {opponent}',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.takeControl((context) => ({
-                        player: context.opponent,
-                        card: this,
-                        context
-                    })),
-                    context
-                );
-            }
+            gameAction: GameActions.takeControl((context) => ({
+                player: context.opponent,
+                card: context.source,
+                context
+            }))
         });
     }
 }
