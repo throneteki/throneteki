@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class BrothersRobes extends DrawCard {
@@ -5,11 +6,11 @@ class BrothersRobes extends DrawCard {
     // The Seven character only.
     // Reaction: After attached character is knelt, choose a location or attachment. Until the end
     // of the phase, treat that card as if its printed text box were blank (except for Traits).
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.attachmentRestriction({ trait: 'The Seven' });
         this.reaction({
             when: {
-                onCardKneeled: (event) => event.card === this.parent
+                onCardKneeled: (event, context) => event.card === context.source.parent
             },
             target: {
                 activePrompTitle: 'Select a location or attachment',
@@ -17,19 +18,13 @@ class BrothersRobes extends DrawCard {
                     card.location === 'play area' &&
                     ['location', 'attachment'].includes(card.getType())
             },
-            handler: (context) => {
-                this.untilEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.blankExcludingTraits
-                }));
-
-                this.game.addMessage(
-                    '{0} uses {1} to treat the text box of {2} as blank until the end of the phase',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message:
+                '{player} uses {source} to treat the text box of {target} as blank until the end of the phase',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: ability.effects.blankExcludingTraits
+            }))
         });
     }
 }

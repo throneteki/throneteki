@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class Drogon extends DrawCard {
@@ -6,32 +7,26 @@ class Drogon extends DrawCard {
     // Reaction: After you win a challenge in which Drogon is attacking, choose a character without
     // attachments controlled by the losing opponent. Until the end of the phase, that character
     // gets -3 STR and is killed if its STR is 0.
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller && this.isAttacking()
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
+                    context.source.isAttacking()
             },
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
-                    card.controller === this.game.currentChallenge.loser &&
+                    card.controller === context.game.currentChallenge.loser &&
                     card.getType() === 'character' &&
                     card.attachments.length === 0
             },
-            handler: (context) => {
-                this.untilEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.killByStrength(-3)
-                }));
-
-                this.game.addMessage(
-                    '{0} uses {1} to give {2} -3 STR until the end of the phase',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} uses {source} to give {target} -3 STR until the end of the phase',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: ability.effects.killByStrength(-3)
+            }))
         });
     }
 }

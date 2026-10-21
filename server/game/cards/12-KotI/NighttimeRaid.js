@@ -1,10 +1,11 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class RedRain extends DrawCard {
     // Nighttime Raid (12024)
     // Action: Choose up to 3 characters with pillage and/or the Raider trait. Until the end of the
     // phase, each of those characters gains stealth.
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.action({
             title: 'Give stealth',
             target: {
@@ -15,18 +16,13 @@ class RedRain extends DrawCard {
                     card.getType() === 'character' &&
                     (card.hasKeyword('Pillage') || card.hasTrait('Raider'))
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} plays {1} to have {2} gain stealth until the end of the phase',
-                    context.player,
-                    this,
-                    context.target
-                );
-                this.untilEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.addKeyword('Stealth')
-                }));
-            }
+            message:
+                '{player} plays {source} to have {target} gain stealth until the end of the phase',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: ability.effects.addKeyword('Stealth')
+            }))
         });
     }
 }

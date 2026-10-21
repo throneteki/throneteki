@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class Huntress extends DrawCard {
@@ -8,12 +9,12 @@ class Huntress extends DrawCard {
     // +3 STR until the end of the phase.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => !this.kneeled,
-            match: (card) =>
+            condition: (context) => !context.source.kneeled,
+            match: (card, context) =>
                 card.isFaction('tyrell') &&
                 card.getType() === 'character' &&
                 card.getPrintedCost() <= 3 &&
-                card.controller === this.controller,
+                card.controller === context.source.controller,
             effect: ability.effects.modifyStrength(1)
         });
         this.action({
@@ -26,18 +27,12 @@ class Huntress extends DrawCard {
                     card.isFaction('tyrell') &&
                     card.getPrintedCost() <= 3
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} kneels {1} to give {2} +3 STR until the end of the phase',
-                    this.controller,
-                    this,
-                    context.target
-                );
-                this.untilEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.modifyStrength(3)
-                }));
-            }
+            message: '{player} kneels {source} to give {target} +3 STR until the end of the phase',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: ability.effects.modifyStrength(3)
+            }))
         });
     }
 }

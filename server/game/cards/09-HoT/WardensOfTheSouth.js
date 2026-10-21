@@ -1,30 +1,29 @@
+import GameActions from '../../GameActions/index.js';
 import PlotCard from '../../plotcard.js';
 
 class WardensOfTheSouth extends PlotCard {
     // Wardens of the South (09046)
     // Reaction: After a [tyrell] character you control is declared as an attacker or defender, that
     // character gets +2 STR until the end of the challenge.
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onDeclaredAsAttacker: (event) =>
-                    event.card.controller === this.controller && event.card.isFaction('tyrell'),
-                onDeclaredAsDefender: (event) =>
-                    event.card.controller === this.controller && event.card.isFaction('tyrell')
+                onDeclaredAsAttacker: (event, context) =>
+                    event.card.controller === context.source.controller &&
+                    event.card.isFaction('tyrell'),
+                onDeclaredAsDefender: (event, context) =>
+                    event.card.controller === context.source.controller &&
+                    event.card.isFaction('tyrell')
             },
-            handler: (context) => {
-                this.untilEndOfChallenge((ability) => ({
-                    match: context.event.card,
-                    effect: ability.effects.modifyStrength(2)
-                }));
-
-                this.game.addMessage(
-                    '{0} uses {1} to give {2} +2 STR until the end of the challenge',
-                    this.controller,
-                    this,
-                    context.event.card
-                );
-            }
+            message: {
+                format: '{player} uses {source} to give {card} +2 STR until the end of the challenge',
+                args: { card: (context) => context.event.card }
+            },
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfChallenge',
+                match: context.event.card,
+                effect: ability.effects.modifyStrength(2)
+            }))
         });
     }
 }

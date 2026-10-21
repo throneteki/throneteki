@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class MaesterKedry extends DrawCard {
@@ -8,18 +9,13 @@ class MaesterKedry extends DrawCard {
         this.action({
             title: 'Reduce next event by 2',
             cost: ability.costs.kneelSelf(),
-            handler: (context) => {
-                this.untilEndOfPhase((ability) => ({
-                    targetController: 'current',
-                    effect: ability.effects.reduceNextPlayedCardCost(2)
-                }));
-
-                this.game.addMessage(
-                    '{0} kneels {1} to reduce the cost of the next event they play this phase by 2',
-                    context.player,
-                    this
-                );
-            }
+            message:
+                '{player} kneels {source} to reduce the cost of the next event they play this phase by 2',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                targetController: 'current',
+                effect: ability.effects.reduceNextPlayedCardCost(2)
+            }))
         });
     }
 }

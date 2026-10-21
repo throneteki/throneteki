@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import PlotCard from '../../plotcard.js';
 
 class TheSpidersWeb extends PlotCard {
@@ -9,28 +10,26 @@ class TheSpidersWeb extends PlotCard {
         this.reaction({
             limit: ability.limit.perPhase(1),
             when: {
-                onClaimApplied: (event) =>
+                onClaimApplied: (event, context) =>
                     event.challenge &&
-                    event.player === this.controller &&
+                    event.player === context.source.controller &&
                     event.challenge.challengeType === 'intrigue'
             },
-            handler: () => {
-                this.game.addMessage(
-                    '{0} uses {1} to be able to initiate an additional {2} challenge with claim raised by 1',
-                    this.controller,
-                    this,
-                    'intrigue'
-                );
-                this.untilEndOfPhase((ability) => ({
+            message:
+                '{player} uses {source} to be able to initiate an additional intrigue challenge with claim raised by 1',
+            gameAction: GameActions.simultaneously([
+                GameActions.lastingEffect((context) => ({
+                    duration: 'untilEndOfPhase',
                     targetController: 'current',
                     effect: ability.effects.mayInitiateAdditionalChallenge('intrigue')
-                }));
-                this.untilEndOfPhase((ability) => ({
-                    condition: () => this.game.isDuringChallenge({ challengeType: 'intrigue' }),
-                    match: (card) => card === this.controller.activePlot,
+                })),
+                GameActions.lastingEffect((context) => ({
+                    duration: 'untilEndOfPhase',
+                    condition: () => context.game.isDuringChallenge({ challengeType: 'intrigue' }),
+                    match: (card) => card === context.player.activePlot,
                     effect: ability.effects.modifyClaim(1)
-                }));
-            }
+                }))
+            ])
         });
     }
 }

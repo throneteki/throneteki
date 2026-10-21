@@ -2529,21 +2529,9 @@
         "add-message": 1,
         "legacy-helper": 1
     },
-    "server/game/cards/09-HoT/TheKnightOfFlowers.js": {
-        "this-in-ability": 6,
-        "add-message": 1
-    },
-    "server/game/cards/09-HoT/TheSpidersWeb.js": {
-        "this-in-ability": 8,
-        "add-message": 1
-    },
     "server/game/cards/09-HoT/TradeRoutes.js": {
         "legacy-helper": 1,
         "this-in-ability": 3,
-        "add-message": 1
-    },
-    "server/game/cards/09-HoT/WardensOfTheSouth.js": {
-        "this-in-ability": 6,
         "add-message": 1
     },
     "server/game/cards/09-HoT/WillasTyrell.js": {
@@ -2582,10 +2570,6 @@
         "add-message": 1,
         "this-in-ability": 2
     },
-    "server/game/cards/10-SoD/BrothersRobes.js": {
-        "this-in-ability": 4,
-        "add-message": 1
-    },
     "server/game/cards/10-SoD/DoranMartell.js": {
         "this-in-ability": 12,
         "add-message": 2
@@ -2593,10 +2577,6 @@
     "server/game/cards/10-SoD/Dorne.js": {
         "this-in-ability": 9,
         "legacy-helper": 1,
-        "add-message": 1
-    },
-    "server/game/cards/10-SoD/EllariaSand.js": {
-        "this-in-ability": 5,
         "add-message": 1
     },
     "server/game/cards/10-SoD/Extortion.js": {
@@ -2642,10 +2622,6 @@
     "server/game/cards/10-SoD/LorezaSand.js": {
         "this-in-ability": 4,
         "legacy-helper": 1,
-        "add-message": 1
-    },
-    "server/game/cards/10-SoD/MaesterKedry.js": {
-        "this-in-ability": 3,
         "add-message": 1
     },
     "server/game/cards/10-SoD/NoUseForGrief.js": {
@@ -2701,10 +2677,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/10-SoD/SeaDragonTower.js": {
-        "this-in-ability": 3,
-        "add-message": 1
-    },
     "server/game/cards/10-SoD/SeptonMeribald.js": {
         "legacy-helper": 1
     },
@@ -2714,10 +2686,6 @@
     "server/game/cards/10-SoD/SerCortnayPenrose.js": {
         "this-in-ability": 5,
         "legacy-helper": 1,
-        "add-message": 1
-    },
-    "server/game/cards/10-SoD/ShadowCityBastard.js": {
-        "this-in-ability": 3,
         "add-message": 1
     },
     "server/game/cards/10-SoD/SpareBoot.js": {
@@ -2784,10 +2752,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/11.1-TSC/NefariousAcolyte.js": {
-        "this-in-ability": 4,
-        "add-message": 1
-    },
     "server/game/cards/11.1-TSC/NighttimeMarauders.js": {
         "this-in-ability": 6,
         "legacy-helper": 1,
@@ -2839,10 +2803,6 @@
     "server/game/cards/11.2-TMoW/HagensDaughter.js": {
         "this-in-ability": 5,
         "legacy-helper": 1,
-        "add-message": 1
-    },
-    "server/game/cards/11.2-TMoW/HizdahrZoLoraq.js": {
-        "this-in-ability": 3,
         "add-message": 1
     },
     "server/game/cards/11.2-TMoW/MaidenOfPoisons.js": {
@@ -3013,10 +2973,6 @@
         "prompt-for-select": 1,
         "legacy-helper": 2
     },
-    "server/game/cards/11.4-MoD/ShireenBaratheon.js": {
-        "this-in-ability": 8,
-        "add-message": 1
-    },
     "server/game/cards/11.4-MoD/TheFreeFolk.js": {
         "this-in-ability": 5,
         "add-message": 1
@@ -3046,10 +3002,6 @@
         "add-message": 2,
         "legacy-helper": 2,
         "prompt-for-select": 1
-    },
-    "server/game/cards/11.5-IDP/Drogon.js": {
-        "this-in-ability": 6,
-        "add-message": 1
     },
     "server/game/cards/11.5-IDP/Glamor.js": {
         "this-in-ability": 3,
@@ -3095,10 +3047,6 @@
         "this-in-ability": 4,
         "add-message": 1
     },
-    "server/game/cards/11.5-IDP/TheMightOfTheReach.js": {
-        "add-message": 1,
-        "this-in-ability": 3
-    },
     "server/game/cards/11.5-IDP/ThreeFingerHobb.js": {
         "this-in-ability": 5,
         "legacy-helper": 1,
@@ -3108,10 +3056,6 @@
         "this-in-ability": 6,
         "add-message": 1,
         "legacy-helper": 2
-    },
-    "server/game/cards/11.6-DitD/ArborMarket.js": {
-        "this-in-ability": 5,
-        "add-message": 1
     },
     "server/game/cards/11.6-DitD/AssaultFromTheShadows.js": {
         "this-in-ability": 4,
@@ -3260,10 +3204,6 @@
     "server/game/cards/12-KotI/MyMindIsMyWeapon.js": {
         "this-in-ability": 3
     },
-    "server/game/cards/12-KotI/NighttimeRaid.js": {
-        "add-message": 1,
-        "this-in-ability": 3
-    },
     "server/game/cards/12-KotI/OldGreyGull.js": {
         "this-in-ability": 5,
         "legacy-helper": 2,
@@ -3295,10 +3235,6 @@
     "server/game/cards/12-KotI/SecretsOfTheConclave.js": {
         "this-in-ability": 6,
         "legacy-helper": 3,
-        "add-message": 1
-    },
-    "server/game/cards/12-KotI/SerTalbertSerry.js": {
-        "this-in-ability": 5,
         "add-message": 1
     },
     "server/game/cards/12-KotI/StolenMessage.js": {
@@ -3494,14 +3430,6 @@
         "legacy-helper": 2,
         "add-message": 1
     },
-    "server/game/cards/13.4-BtRK/AdvisorToTheCrown.js": {
-        "add-message": 1,
-        "this-in-ability": 4
-    },
-    "server/game/cards/13.4-BtRK/AlyceGraceford.js": {
-        "this-in-ability": 4,
-        "add-message": 1
-    },
     "server/game/cards/13.4-BtRK/Blackbird.js": {
         "this-in-ability": 3
     },
@@ -3524,10 +3452,6 @@
     "server/game/cards/13.4-BtRK/PublicExecution.js": {
         "legacy-helper": 1,
         "this-in-ability": 1
-    },
-    "server/game/cards/13.4-BtRK/SarellaSand.js": {
-        "this-in-ability": 7,
-        "add-message": 1
     },
     "server/game/cards/13.4-BtRK/ShadowOfTheIsles.js": {
         "this-in-ability": 5,
@@ -3628,10 +3552,6 @@
         "this-in-ability": 4,
         "add-message": 1
     },
-    "server/game/cards/13.5-TB/Yoren.js": {
-        "this-in-ability": 6,
-        "add-message": 1
-    },
     "server/game/cards/13.6-LMHR/AlchemistsGuildhall.js": {
         "this-in-ability": 4,
         "add-message": 1
@@ -3666,10 +3586,6 @@
         "this-in-ability": 6,
         "add-message": 2,
         "prompt-for-select": 1
-    },
-    "server/game/cards/13.6-LMHR/Huntress.js": {
-        "this-in-ability": 6,
-        "add-message": 1
     },
     "server/game/cards/13.6-LMHR/LongMayHeReign.js": {
         "this-in-ability": 7,
@@ -4030,10 +3946,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/17.1-R/Drogon.js": {
-        "this-in-ability": 6,
-        "add-message": 1
-    },
     "server/game/cards/17.1-R/DrownedDisciple.js": {
         "this-in-ability": 4,
         "legacy-helper": 1,
@@ -4060,14 +3972,6 @@
     },
     "server/game/cards/17.1-R/Halder.js": {
         "this-in-ability": 1
-    },
-    "server/game/cards/17.1-R/HizdahrZoLoraq.js": {
-        "this-in-ability": 3,
-        "add-message": 1
-    },
-    "server/game/cards/17.1-R/IAmNoOne.js": {
-        "this-in-ability": 4,
-        "add-message": 1
     },
     "server/game/cards/17.1-R/IronMines.js": {
         "this-in-ability": 4,
@@ -4141,10 +4045,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/17.1-R/ToTheRoseBanner.js": {
-        "this-in-ability": 6,
-        "add-message": 1
-    },
     "server/game/cards/17.1-R/TradeRoutes.js": {
         "legacy-helper": 1,
         "this-in-ability": 3,
@@ -4191,10 +4091,6 @@
     },
     "server/game/cards/17.2-R2/CleverFeint.js": {
         "this-in-ability": 1
-    },
-    "server/game/cards/17.2-R2/DaenerysTargaryen.js": {
-        "this-in-ability": 4,
-        "add-message": 1
     },
     "server/game/cards/17.2-R2/Goldengrove.js": {
         "this-in-ability": 2
@@ -4347,10 +4243,6 @@
     "server/game/cards/19-JS/SerBorosBlount.js": {
         "this-in-ability": 2
     },
-    "server/game/cards/19-JS/SupportFromTheIronBank.js": {
-        "this-in-ability": 3,
-        "add-message": 1
-    },
     "server/game/cards/19-JS/TheWinterMaid.js": {
         "this-in-ability": 3,
         "add-message": 2,
@@ -4373,10 +4265,6 @@
     "server/game/cards/20-HMW/AMummersFarce.js": {
         "this-in-ability": 9,
         "legacy-helper": 1,
-        "add-message": 1
-    },
-    "server/game/cards/20-HMW/BeholdOurBounty.js": {
-        "this-in-ability": 5,
         "add-message": 1
     },
     "server/game/cards/20-HMW/BeneaththeGoldtheBitterSteel.js": {

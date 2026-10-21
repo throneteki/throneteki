@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class SarellaSand extends DrawCard {
@@ -7,26 +8,23 @@ class SarellaSand extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.loser === this.controller &&
-                    this.isParticipating() &&
-                    event.challenge.attackingPlayer === this.controller
+                afterChallenge: (event, context) =>
+                    event.challenge.loser === context.source.controller &&
+                    context.source.isParticipating() &&
+                    event.challenge.attackingPlayer === context.source.controller
             },
             limit: ability.limit.perPhase(1),
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} uses {1} to be able to initiate an additional {2} challenge this phase',
-                    this.controller,
-                    this,
+            message: {
+                format: '{player} uses {source} to be able to initiate an additional {challengeType} challenge this phase',
+                args: { challengeType: (context) => context.event.challenge.challengeType }
+            },
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                targetController: 'current',
+                effect: ability.effects.mayInitiateAdditionalChallenge(
                     context.event.challenge.challengeType
-                );
-                this.untilEndOfPhase((ability) => ({
-                    targetController: 'current',
-                    effect: ability.effects.mayInitiateAdditionalChallenge(
-                        context.event.challenge.challengeType
-                    )
-                }));
-            }
+                )
+            }))
         });
     }
 }

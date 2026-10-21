@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class SeaDragonTower extends DrawCard {
@@ -13,20 +14,12 @@ class SeaDragonTower extends DrawCard {
                 cardCondition: (card) =>
                     card.location === 'play area' && card.getType() === 'character'
             },
-            handler: (context) => {
-                this.untilEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.addIcon('power')
-                }));
-
-                this.game.addMessage(
-                    '{0} kneels {1} to give a {2} icon to {3}',
-                    context.player,
-                    this,
-                    'power',
-                    context.target
-                );
-            }
+            message: '{player} kneels {source} to give a power icon to {target}',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: ability.effects.addIcon('power')
+            }))
         });
     }
 }

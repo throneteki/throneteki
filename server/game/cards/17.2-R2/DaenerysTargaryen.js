@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class DaenerysTargaryen extends DrawCard {
@@ -15,8 +16,9 @@ class DaenerysTargaryen extends DrawCard {
         });
         this.reaction({
             when: {
-                onCardPlayed: (event) =>
-                    event.card.controller === this.controller && event.card.isFaction('targaryen')
+                onCardPlayed: (event, context) =>
+                    event.card.controller === context.source.controller &&
+                    event.card.isFaction('targaryen')
             },
             limit: ability.limit.perRound(3),
             target: {
@@ -25,19 +27,12 @@ class DaenerysTargaryen extends DrawCard {
                     card.getType() === 'character' &&
                     card.isParticipating()
             },
-            handler: (context) => {
-                this.untilEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.killByStrength(-1)
-                }));
-
-                this.game.addMessage(
-                    '{0} uses {1} to give {2} -1 STR until the end of the phase',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} uses {source} to give {target} -1 STR until the end of the phase',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: ability.effects.killByStrength(-1)
+            }))
         });
     }
 }

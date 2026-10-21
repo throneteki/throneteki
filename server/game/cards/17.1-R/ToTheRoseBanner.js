@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class ToTheRoseBanner extends DrawCard {
@@ -9,29 +10,24 @@ class ToTheRoseBanner extends DrawCard {
             title: 'Remove character from game',
             cost: ability.costs.kneelFactionCard(),
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
-                    card.controller === this.controller &&
-                    card !== this &&
+                    card.controller === context.source.controller &&
+                    card !== context.source &&
                     card.isFaction('tyrell') &&
                     card.getType() === 'character'
             },
-            handler: (context) => {
-                this.lastingEffect((ability) => ({
-                    until: {
-                        onPhaseStarted: () => true
-                    },
-                    match: context.target,
-                    targetLocation: ['play area', 'out of game'],
-                    effect: ability.effects.removeFromGame()
-                }));
-                this.game.addMessage(
-                    '{0} uses {1} and kneels their faction card to remove {2} from the game',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message:
+                '{player} uses {source} and kneels their faction card to remove {target} from the game',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'custom',
+                until: {
+                    onPhaseStarted: () => true
+                },
+                match: context.target,
+                targetLocation: ['play area', 'out of game'],
+                effect: ability.effects.removeFromGame()
+            }))
         });
     }
 }
