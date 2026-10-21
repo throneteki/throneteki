@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import PlotCard from '../../plotcard.js';
 
 class VaryssRiddle extends PlotCard {
@@ -59,13 +60,7 @@ class VaryssRiddle extends PlotCard {
         );
         this.resolving = true;
 
-        let whenRevealed = plot.getWhenRevealedAbility();
-        if (whenRevealed) {
-            // Attach the current When Revealed event to the new context
-            let context = whenRevealed.createContext(this.context.event);
-            context.player = this.context.player;
-            this.game.resolveAbility(whenRevealed, context);
-        }
+        this.game.resolveGameAction(GameActions.initiateWhenRevealed({ plot }), this.context);
         this.game.queueSimpleStep(() => {
             this.resolving = false;
         });

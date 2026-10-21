@@ -21,6 +21,7 @@ import GainIcon from './GainIcon.js';
 import GainPower from './GainPower.js';
 import HandlerGameActionWrapper from './HandlerGameActionWrapper.js';
 import IfGameAction from './IfGameAction.js';
+import InitiateWhenRevealed from './InitiateWhenRevealed.js';
 import Kill from './Kill.js';
 import KneelCard from './KneelCard.js';
 import LookAtDeck from './LookAtDeck.js';
@@ -77,6 +78,7 @@ const GameActions = {
     gainPower: (props) => new AbilityAdapter(GainPower, props),
     genericHandler: (handler) => new HandlerGameActionWrapper({ handler }),
     ifCondition: (props) => new IfGameAction(props),
+    initiateWhenRevealed: (props) => new AbilityAdapter(InitiateWhenRevealed, props),
     kill: (props) => new AbilityAdapter(Kill, props),
     kneelCard: (props) => new AbilityAdapter(KneelCard, props),
     lastingEffect: (propertyFactory) => new ApplyLastingEffect(propertyFactory),

@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 import { Flags } from '../../Constants/index.js';
 
@@ -9,10 +10,10 @@ class TasteTheBlood extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.player &&
                     event.challenge.challengeType === 'intrigue' &&
-                    this.controller.anyCardsInPlay(
+                    context.player.anyCardsInPlay(
                         (card) =>
                             card.getType() === 'character' &&
                             card.hasTrait('Old Gods') &&
@@ -23,21 +24,14 @@ class TasteTheBlood extends DrawCard {
                 activePromptTitle: 'Select a plot',
                 cardCondition: (card) =>
                     card.location === 'revealed plots' &&
-                    !card.hasFlag(Flags.card.notConsideredToBeInPlotDeck),
+                    !card.hasFlag(Flags.card.notConsideredToBeInPlotDeck) &&
+                    !!card.getWhenRevealedAbility(),
                 cardType: 'plot'
             },
             cost: ability.costs.kneelFactionCard(),
             message:
                 '{player} kneels their faction card and plays {source} to initiate the when revealed ability of {target}',
-            handler: (context) => {
-                let whenRevealed = context.target.getWhenRevealedAbility();
-                if (whenRevealed) {
-                    // Attach the current When Revealed event to the new context
-                    let newContext = whenRevealed.createContext(context.event);
-                    newContext.player = context.player;
-                    this.game.resolveAbility(whenRevealed, newContext);
-                }
-            }
+            gameAction: GameActions.initiateWhenRevealed((context) => ({ plot: context.target }))
         });
     }
 }

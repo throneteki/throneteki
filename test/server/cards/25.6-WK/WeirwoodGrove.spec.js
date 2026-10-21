@@ -18,3 +18,23 @@ describe('Weirwood Grove', function () {
         expect(this.player1).isReadyToTakeAction();
     });
 });
+
+describe('Weirwood Grove against an Omen plot', function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'plot',
+            player1: { inPlay: ['Weirwood Grove'] },
+            player2: { plotDeck: ['Ghosts of Harrenhal'] }
+        });
+
+        this.player1.selectPlot('Filler Plot');
+        this.player2.selectPlot('Ghosts of Harrenhal');
+        this.selectFirstPlayer(this.player1);
+    });
+
+    it('cannot be triggered', function () {
+        expect(this.weirwoodGrove.location).toBe('play area');
+        expect(this.player1Object.faction.kneeled).toBe(false);
+        expect(this.player1).isReadyToTakeAction();
+    });
+});

@@ -14,8 +14,7 @@ class SummonedByTheConclave extends PlotCard {
                 topCards: 10,
                 title: 'Select a card',
                 match: {
-                    condition: (card, context) =>
-                        card.isFaction(context.source.controller.getFaction())
+                    condition: (card, context) => card.isFaction(context.player.getFaction())
                 },
                 message: '{player} {gameAction}',
                 gameAction: GameActions.addToHand((context) => ({

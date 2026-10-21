@@ -429,6 +429,14 @@ logs its `message` (`{trait}` is the named trait) and then resolves its `gameAct
 card, stores it as `context.namedCard`, and its `message` uses `{cardName}`. See
 [TheIronThrone.js](../server/game/cards/13.6-LMHR/TheIronThrone.js).
 
+### Initiating another plot's When Revealed ability
+
+For "initiate the when revealed ability on that card as if you had just revealed it", use
+`GameActions.initiateWhenRevealed({ plot })`. It resolves the plot's When Revealed ability for
+`context.player` (or `player`, if given). The ability's source is still the copied plot, so a When
+Revealed ability must use `context.player` rather than its own controller. See
+[PullingTheStrings.js](../server/game/cards/02.5-COW/PullingTheStrings.js).
+
 ### Actions
 
 Actions are abilities provided by the card text that players may trigger during action windows. They are declared using the `action` method. See `/server/game/cardaction.js` for full documentation. Here are some common scenarios:

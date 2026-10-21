@@ -848,9 +848,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/02.5-COW/PullingTheStrings.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/02.5-COW/StinkingDrunk.js": {
         "this-in-ability": 3,
         "add-message": 1,
@@ -1480,10 +1477,6 @@
         "add-message": 1
     },
     "server/game/cards/04.6-TC/TheValyrian.js": {
-        "this-in-ability": 7,
-        "add-message": 1
-    },
-    "server/game/cards/04.6-TC/TyrionsChain.js": {
         "this-in-ability": 7,
         "add-message": 1
     },
@@ -3867,11 +3860,6 @@
         "this-in-ability": 3,
         "legacy-helper": 1
     },
-    "server/game/cards/13.4-BtRK/CityOfSpiders.js": {
-        "this-in-ability": 6,
-        "prompt-for-select": 1,
-        "add-message": 1
-    },
     "server/game/cards/13.4-BtRK/DoubtingSepta.js": {
         "this-in-ability": 2
     },
@@ -5344,9 +5332,6 @@
     },
     "server/game/cards/25.2-ChoS/KingRobertsLegacy.js": {
         "this-in-ability": 4
-    },
-    "server/game/cards/25.2-ChoS/TasteTheBlood.js": {
-        "this-in-ability": 3
     },
     "server/game/cards/25.2-ChoS/TheGoldPrice.js": {
         "event-registration": 1,

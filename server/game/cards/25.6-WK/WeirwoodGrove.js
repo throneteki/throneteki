@@ -19,13 +19,9 @@ class WeirwoodGrove extends DrawCard {
                 format: '{player} kneels their faction card and removes {costs.removeFromGame} from the game to initiate the when revealed ability of {plot}',
                 args: { plot: (context) => context.event.plot }
             },
-            gameAction: GameActions.genericHandler((context) => {
-                let whenRevealed = context.event.plot.getWhenRevealedAbility();
-                // Attach the current When Revealed event to the new context
-                let newContext = whenRevealed.createContext(context.event);
-                newContext.player = context.player;
-                context.game.resolveAbility(whenRevealed, newContext);
-            })
+            gameAction: GameActions.initiateWhenRevealed((context) => ({
+                plot: context.event.plot
+            }))
         });
     }
 }
