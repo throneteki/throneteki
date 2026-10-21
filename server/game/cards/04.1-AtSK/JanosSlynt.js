@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class JanosSlynt extends DrawCard {
@@ -8,17 +9,12 @@ class JanosSlynt extends DrawCard {
         this.action({
             title: 'Pay 1 gold to give Janos Slynt +2 strength',
             cost: ability.costs.payGold(1),
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} pays 1 gold to give {1} +2 STR until the end of the phase',
-                    context.player,
-                    this
-                );
-                this.untilEndOfPhase((ability) => ({
-                    match: this,
-                    effect: ability.effects.modifyStrength(2)
-                }));
-            }
+            message: '{player} pays 1 gold to give {source} +2 STR until the end of the phase',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.source,
+                effect: ability.effects.modifyStrength(2)
+            }))
         });
     }
 }

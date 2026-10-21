@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class SelyseBaratheon extends DrawCard {
@@ -15,19 +16,12 @@ class SelyseBaratheon extends DrawCard {
                     card.isFaction('baratheon') &&
                     card.getType() === 'character'
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} uses {1} to give {2} an {3} icon',
-                    context.player,
-                    this,
-                    context.target,
-                    'intrigue'
-                );
-                this.untilEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.addIcon('intrigue')
-                }));
-            }
+            message: '{player} uses {source} to give {target} an intrigue icon',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: ability.effects.addIcon('intrigue')
+            }))
         });
     }
 }

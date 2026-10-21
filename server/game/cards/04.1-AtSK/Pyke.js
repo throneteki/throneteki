@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class Pyke extends DrawCard {
@@ -12,19 +13,13 @@ class Pyke extends DrawCard {
                 cardCondition: (card) =>
                     card.getType() === 'character' && card.location === 'play area'
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} kneels {1} to have {2} gain stealth until the end of the phase',
-                    this.controller,
-                    this,
-                    context.target
-                );
-
-                this.untilEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.addKeyword('Stealth')
-                }));
-            }
+            message:
+                '{player} kneels {source} to have {target} gain stealth until the end of the phase',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: ability.effects.addKeyword('Stealth')
+            }))
         });
     }
 }

@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class WildlingScout extends DrawCard {
@@ -12,18 +13,12 @@ class WildlingScout extends DrawCard {
                 cardCondition: (card) =>
                     card.getType() === 'character' && card.location === 'play area'
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} sacrifices {1} to make {2} gain stealth',
-                    context.player,
-                    this,
-                    context.target
-                );
-                this.untilEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.addKeyword('Stealth')
-                }));
-            }
+            message: '{player} sacrifices {source} to make {target} gain stealth',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: ability.effects.addKeyword('Stealth')
+            }))
         });
     }
 }

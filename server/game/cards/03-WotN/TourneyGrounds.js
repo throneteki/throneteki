@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class TourneyGrounds extends DrawCard {
@@ -8,22 +9,17 @@ class TourneyGrounds extends DrawCard {
             title: 'Kneel to reduce event',
             clickToActivate: true,
             cost: ability.costs.kneelSelf(),
-            handler: (context) => {
-                this.untilEndOfPhase((ability) => ({
-                    condition: () => !context.abilityDeactivated,
-                    targetController: 'current',
-                    effect: ability.effects.reduceNextPlayedCardCost(
-                        1,
-                        (card) => card.getType() === 'event'
-                    )
-                }));
-
-                this.game.addMessage(
-                    '{0} kneels {1} to reduce the cost of the next event they play this phase by 1',
-                    this.controller,
-                    this
-                );
-            }
+            message:
+                '{player} kneels {source} to reduce the cost of the next event they play this phase by 1',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                condition: () => !context.abilityDeactivated,
+                targetController: 'current',
+                effect: ability.effects.reduceNextPlayedCardCost(
+                    1,
+                    (card) => card.getType() === 'event'
+                )
+            }))
         });
     }
 }

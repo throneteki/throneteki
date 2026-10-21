@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class HotPie extends DrawCard {
@@ -11,21 +12,15 @@ class HotPie extends DrawCard {
             cost: ability.costs.kneel(
                 (card) => card.hasTrait('Companion') && card.getType() === 'character'
             ),
-            handler: (context) => {
-                this.untilEndOfPhase((ability) => ({
-                    effect: ability.effects.reduceNextMarshalledCardCost(
-                        1,
-                        (card) => card.isUnique() && card.getType() === 'character'
-                    )
-                }));
-
-                this.game.addMessage(
-                    '{0} uses {1} and kneels {2} to reduce the cost of the next unique character they marshal this phase by 1',
-                    context.player,
-                    this,
-                    context.costs.kneel
-                );
-            }
+            message:
+                '{player} uses {source} and kneels {costs.kneel} to reduce the cost of the next unique character they marshal this phase by 1',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                effect: ability.effects.reduceNextMarshalledCardCost(
+                    1,
+                    (card) => card.isUnique() && card.getType() === 'character'
+                )
+            }))
         });
     }
 }

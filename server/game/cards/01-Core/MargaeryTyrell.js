@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class MargaeryTyrell extends DrawCard {
@@ -13,18 +14,12 @@ class MargaeryTyrell extends DrawCard {
                 cardCondition: (card) =>
                     card.location === 'play area' && card.getType() === 'character'
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} kneels {1} to give {2} +3 STR until the end of the phase',
-                    this.controller,
-                    this,
-                    context.target
-                );
-                this.untilEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.modifyStrength(3)
-                }));
-            }
+            message: '{player} kneels {source} to give {target} +3 STR until the end of the phase',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: ability.effects.modifyStrength(3)
+            }))
         });
     }
 }

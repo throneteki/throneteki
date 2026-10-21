@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class Heartsbane extends DrawCard {
@@ -9,20 +10,18 @@ class Heartsbane extends DrawCard {
         this.attachmentRestriction({ faction: 'tyrell' });
         this.action({
             title: 'Give attached character +3 STR',
-            condition: () => this.parent && this.parent.isParticipating(),
+            condition: (context) =>
+                context.source.parent && context.source.parent.isParticipating(),
             cost: ability.costs.kneelSelf(),
-            handler: () => {
-                this.untilEndOfChallenge((ability) => ({
-                    match: this.parent,
-                    effect: ability.effects.modifyStrength(3)
-                }));
-                this.game.addMessage(
-                    '{0} kneels {1} to give {2} +3 STR until the end of the challenge',
-                    this.controller,
-                    this,
-                    this.parent
-                );
-            }
+            message: {
+                format: '{player} kneels {source} to give {parent} +3 STR until the end of the challenge',
+                args: { parent: (context) => context.source.parent }
+            },
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfChallenge',
+                match: context.source.parent,
+                effect: ability.effects.modifyStrength(3)
+            }))
         });
     }
 }

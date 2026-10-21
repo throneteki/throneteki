@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class ArborKnight extends DrawCard {
@@ -16,18 +17,13 @@ class ArborKnight extends DrawCard {
                     card.hasTrait('House Redwyne') &&
                     card.isParticipating()
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} uses {1} to pay 1 gold and give {2} +1 STR until the end of the challenge',
-                    this.controller,
-                    this,
-                    context.target
-                );
-                this.untilEndOfChallenge((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.modifyStrength(1)
-                }));
-            }
+            message:
+                '{player} uses {source} to pay 1 gold and give {target} +1 STR until the end of the challenge',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfChallenge',
+                match: context.target,
+                effect: ability.effects.modifyStrength(1)
+            }))
         });
     }
 }

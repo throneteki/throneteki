@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class YouMurderedHerChildren extends DrawCard {
@@ -5,34 +6,31 @@ class YouMurderedHerChildren extends DrawCard {
     // Challenges Action: Choose a [martell] character you control. Until the end of the phase,
     // double that character's STR. At the end of the phase, if that character is still in play,
     // kill it.
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.action({
             title: 'Double character strength',
             phase: 'challenge',
             target: {
                 activePromptTitle: 'Choose character',
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.getType() === 'character' &&
                     card.isFaction('martell') &&
-                    card.controller === this.controller
+                    card.controller === context.source.controller
             },
-            handler: (context) => {
-                this.untilEndOfPhase((ability) => ({
+            message: '{player} uses {source} to double the strength of {target}',
+            gameAction: GameActions.simultaneously([
+                GameActions.lastingEffect((context) => ({
+                    duration: 'untilEndOfPhase',
                     match: context.target,
                     effect: ability.effects.modifyStrengthMultiplier(2)
-                }));
-                this.atEndOfPhase((ability) => ({
+                })),
+                GameActions.lastingEffect((context) => ({
+                    duration: 'atEndOfPhase',
                     match: context.target,
                     condition: () => 'play area' === context.target.location,
                     effect: ability.effects.killIfStillInPlay(true)
-                }));
-                this.game.addMessage(
-                    '{0} uses {1} to double the strength of {2}',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+                }))
+            ])
         });
     }
 }

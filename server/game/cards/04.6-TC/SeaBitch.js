@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class SeaBitch extends DrawCard {
@@ -10,21 +11,15 @@ class SeaBitch extends DrawCard {
             cost: ability.costs.sacrificeSelf(),
             target: {
                 activePromptTitle: 'Select a location',
-                cardCondition: (card, context) => this.cardCondition(card, context)
+                cardCondition: (card, context) => context.source.cardCondition(card, context)
             },
-            handler: (context) => {
-                this.untilEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.takeControl(context.player)
-                }));
-
-                this.game.addMessage(
-                    '{0} sacrifices {1} to take control of {2} until the end of the phase',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message:
+                '{player} sacrifices {source} to take control of {target} until the end of the phase',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: ability.effects.takeControl(context.player)
+            }))
         });
     }
 

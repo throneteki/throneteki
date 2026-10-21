@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class WildlingHorde extends DrawCard {
@@ -11,24 +12,19 @@ class WildlingHorde extends DrawCard {
             phase: 'challenge',
             cost: ability.costs.kneelFactionCard(),
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
-                    card.controller === this.controller &&
+                    card.controller === context.source.controller &&
                     card.hasTrait('Wildling') &&
                     card.isParticipating()
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} uses {1} to kneel their faction card and increase the strength of {2} by 2 until the end of the challenge',
-                    this.controller,
-                    this,
-                    context.target
-                );
-                this.untilEndOfChallenge((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.modifyStrength(2)
-                }));
-            }
+            message:
+                '{player} uses {source} to kneel their faction card and increase the strength of {target} by 2 until the end of the challenge',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfChallenge',
+                match: context.target,
+                effect: ability.effects.modifyStrength(2)
+            }))
         });
     }
 }

@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class PlazaOfPunishment extends DrawCard {
@@ -8,8 +9,8 @@ class PlazaOfPunishment extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
                     event.challenge.challengeType === 'power'
             },
             cost: ability.costs.kneelSelf(),
@@ -19,19 +20,13 @@ class PlazaOfPunishment extends DrawCard {
                     card.getType() === 'character' &&
                     card.attachments.length === 0
             },
-            handler: (context) => {
-                this.untilEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.killByStrength(-2)
-                }));
-
-                this.game.addMessage(
-                    '{0} kneels {1} to give {2} -2 STR until the end of the phase and kill it if its STR is 0',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message:
+                '{player} kneels {source} to give {target} -2 STR until the end of the phase and kill it if its STR is 0',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: ability.effects.killByStrength(-2)
+            }))
         });
     }
 }

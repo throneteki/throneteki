@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class EmissaryOfTheHightower extends DrawCard {
@@ -6,31 +7,28 @@ class EmissaryOfTheHightower extends DrawCard {
     // Reaction: After Emissary of the Hightower enters play, choose an event in your discard pile.
     // Until the end of the phase, you may play that event as if it were in your hand. If you do,
     // remove it from the game instead of placing it into your discard pile.
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this
+                onCardEntersPlay: (event, context) => event.card === context.source
             },
             target: {
                 activePromptTitle: 'Select a card',
-                cardCondition: (card) =>
-                    card.controller === this.controller &&
+                cardCondition: (card, context) =>
+                    card.controller === context.source.controller &&
                     card.getType() === 'event' &&
                     card.location === 'discard pile'
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} uses {1} to allow {2} to be played as if it were in their hand',
-                    this.controller,
-                    this,
-                    context.target
-                );
-                this.untilEndOfPhase((ability) => ({
+            message:
+                '{player} uses {source} to allow {target} to be played as if it were in their hand',
+            gameAction: GameActions.simultaneously([
+                GameActions.lastingEffect((context) => ({
+                    duration: 'untilEndOfPhase',
                     targetController: 'current',
                     effect: ability.effects.canPlay((card) => card === context.target)
-                }));
-
-                this.lastingEffect((ability) => ({
+                })),
+                GameActions.lastingEffect((context) => ({
+                    duration: 'custom',
                     until: {
                         onCardPlayed: (event) => event.card === context.target,
                         onPhaseEnded: () => true
@@ -38,8 +36,8 @@ class EmissaryOfTheHightower extends DrawCard {
                     targetLocation: 'any',
                     match: context.target,
                     effect: ability.effects.setEventPlacementLocation('out of game')
-                }));
-            }
+                }))
+            ])
         });
     }
 }

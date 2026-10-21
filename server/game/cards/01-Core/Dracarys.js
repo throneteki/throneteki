@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class Dracarys extends DrawCard {
@@ -7,7 +8,7 @@ class Dracarys extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Reduce character STR by 4',
-            condition: () => this.game.isDuringChallenge(),
+            condition: (context) => context.game.isDuringChallenge(),
             cost: ability.costs.kneel(
                 (card) =>
                     card.name === 'Daenerys Targaryen' ||
@@ -16,19 +17,13 @@ class Dracarys extends DrawCard {
             target: {
                 cardCondition: (card) => card.location === 'play area' && card.isParticipating()
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} plays {1} to kneel {2} and give {3} -4 STR until the end of the phase',
-                    context.player,
-                    this,
-                    context.costs.kneel,
-                    context.target
-                );
-                this.untilEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.killByStrength(-4)
-                }));
-            }
+            message:
+                '{player} plays {source} to kneel {costs.kneel} and give {target} -4 STR until the end of the phase',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: ability.effects.killByStrength(-4)
+            }))
         });
     }
 }

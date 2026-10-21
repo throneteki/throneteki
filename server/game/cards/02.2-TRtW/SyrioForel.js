@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class SyrioForel extends DrawCard {
@@ -14,22 +15,13 @@ class SyrioForel extends DrawCard {
                 cardCondition: (card) =>
                     card.location === 'play area' && card.getType() === 'character'
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} uses {1} to give {2} a {3} icon and stealth until the end of the phase',
-                    this.controller,
-                    this,
-                    context.target,
-                    'military'
-                );
-                this.untilEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: [
-                        ability.effects.addIcon('military'),
-                        ability.effects.addKeyword('Stealth')
-                    ]
-                }));
-            }
+            message:
+                '{player} uses {source} to give {target} a military icon and stealth until the end of the phase',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: [ability.effects.addIcon('military'), ability.effects.addKeyword('Stealth')]
+            }))
         });
     }
 }

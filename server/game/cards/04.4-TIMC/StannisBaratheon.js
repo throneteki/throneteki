@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class StannisBaratheon extends DrawCard {
@@ -7,7 +8,7 @@ class StannisBaratheon extends DrawCard {
     // during the standing phase this round.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.game.isDuringChallenge({ challengeType: 'power' }),
+            condition: (context) => context.game.isDuringChallenge({ challengeType: 'power' }),
             match: (card) => card.isParticipating() && !card.hasTrait('King'),
             targetController: 'any',
             effect: ability.effects.modifyStrength(-1)
@@ -15,7 +16,8 @@ class StannisBaratheon extends DrawCard {
 
         this.reaction({
             when: {
-                onDominanceDetermined: (event) => this.controller === event.winner
+                onDominanceDetermined: (event, context) =>
+                    context.source.controller === event.winner
             },
             target: {
                 cardCondition: (card) =>
@@ -23,20 +25,14 @@ class StannisBaratheon extends DrawCard {
                     card.getType() === 'character' &&
                     !card.isLoyal()
             },
-            handler: (context) => {
-                this.untilEndOfRound((ability) => ({
-                    condition: () => this.game.currentPhase === 'standing',
-                    match: context.target,
-                    effect: ability.effects.cannotBeStood()
-                }));
-
-                this.game.addMessage(
-                    '{0} uses {1} to make {2} unable to stand during the standing phase this round',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message:
+                '{player} uses {source} to make {target} unable to stand during the standing phase this round',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfRound',
+                condition: () => context.game.currentPhase === 'standing',
+                match: context.target,
+                effect: ability.effects.cannotBeStood()
+            }))
         });
     }
 }

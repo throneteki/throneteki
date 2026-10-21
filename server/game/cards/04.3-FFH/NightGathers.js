@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class NightGathers extends DrawCard {
@@ -5,28 +6,23 @@ class NightGathers extends DrawCard {
     // Marshaling Action: Choose an opponent whose reserve value is lower than yours. Until the end
     // of the phase, you may marshal characters from that player's discard pile as if they were in
     // your hand.
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.action({
             title: 'Allow marshaling from opponent discard',
             phase: 'marshal',
             chooseOpponent: (opponent) => opponent.getReserve() < this.controller.getReserve(),
-            handler: (context) => {
-                this.game.addMessage(
-                    "{0} plays {1} to allow cards from {2}'s discard pile to be marshaled",
-                    this.controller,
-                    this,
-                    context.opponent
-                );
-                this.untilEndOfPhase((ability) => ({
-                    targetController: 'current',
-                    effect: ability.effects.canMarshal(
-                        (card) =>
-                            card.controller === context.opponent &&
-                            card.location === 'discard pile' &&
-                            card.getType() === 'character'
-                    )
-                }));
-            }
+            message:
+                "{player} plays {source} to allow cards from {opponent}'s discard pile to be marshaled",
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                targetController: 'current',
+                effect: ability.effects.canMarshal(
+                    (card) =>
+                        card.controller === context.opponent &&
+                        card.location === 'discard pile' &&
+                        card.getType() === 'character'
+                )
+            }))
         });
     }
 }

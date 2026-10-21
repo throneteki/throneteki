@@ -1,35 +1,27 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class WolfInTheNight extends DrawCard {
     // "Wolf in the Night" (04102)
     // Action: Choose a [stark] character that is attacking alone. Until the end of the challenge,
     // that character gets +3 STR and gains renown.
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.action({
             title: 'Give +3 STR and renown to character',
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
                     card.isFaction('stark') &&
-                    this.game.isDuringChallenge({ attackingAlone: card })
+                    context.game.isDuringChallenge({ attackingAlone: card })
             },
-            handler: (context) => {
-                this.untilEndOfChallenge((ability) => ({
-                    match: context.target,
-                    effect: [
-                        ability.effects.modifyStrength(3),
-                        ability.effects.addKeyword('Renown')
-                    ]
-                }));
-
-                this.game.addMessage(
-                    '{0} uses {1} to give {2} +3 STR and renown until the end of the challenge',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message:
+                '{player} uses {source} to give {target} +3 STR and renown until the end of the challenge',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfChallenge',
+                match: context.target,
+                effect: [ability.effects.modifyStrength(3), ability.effects.addKeyword('Renown')]
+            }))
         });
     }
 }

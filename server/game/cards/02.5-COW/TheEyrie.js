@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class TheEyrie extends DrawCard {
@@ -14,20 +15,15 @@ class TheEyrie extends DrawCard {
                 cardCondition: (card) =>
                     card.location === 'play area' && card.getType() === 'character'
             },
-            handler: (context) => {
-                this.untilEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.cannotBeKilled()
-                }));
-
-                this.game.addMessage(
-                    '{0} kneels {1} to make {2} unkillable until the end of the {3} phase',
-                    this.controller,
-                    this,
-                    context.target,
-                    this.game.currentPhase
-                );
-            }
+            message: {
+                format: '{player} kneels {source} to make {target} unkillable until the end of the {currentPhase} phase',
+                args: { currentPhase: (context) => context.game.currentPhase }
+            },
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: ability.effects.cannotBeKilled()
+            }))
         });
     }
 }

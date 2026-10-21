@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class WinterfellCrypt extends DrawCard {
@@ -9,8 +10,10 @@ class WinterfellCrypt extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onSacrificed: (event) => this.triggerCondition(event.cardStateWhenSacrificed),
-                onCharacterKilled: (event) => this.triggerCondition(event.cardStateWhenKilled)
+                onSacrificed: (event, context) =>
+                    context.source.triggerCondition(event.cardStateWhenSacrificed),
+                onCharacterKilled: (event, context) =>
+                    context.source.triggerCondition(event.cardStateWhenKilled)
             },
             cost: ability.costs.sacrificeSelf(),
             target: {
@@ -19,20 +22,13 @@ class WinterfellCrypt extends DrawCard {
                     card.getType() === 'character' &&
                     card.getPrintedStrength() <= context.event.card.getPrintedStrength()
             },
-            handler: (context) => {
-                this.atEndOfPhase((ability) => ({
-                    match: context.target,
-                    condition: () => ['play area', 'duplicate'].includes(context.target.location),
-                    effect: ability.effects.shuffleIntoDeckIfStillInPlay()
-                }));
-
-                this.game.addMessage(
-                    '{0} sacrifices {1} to choose {2}',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} sacrifices {source} to choose {target}',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'atEndOfPhase',
+                match: context.target,
+                condition: () => ['play area', 'duplicate'].includes(context.target.location),
+                effect: ability.effects.shuffleIntoDeckIfStillInPlay()
+            }))
         });
     }
 
