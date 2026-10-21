@@ -52,9 +52,15 @@ against the rules, which is what lets a game run with manual mode off
 8. **Delayed effects.** For "if X happens later" text, use `GameActions.delayedEffect`; don't
    listen for game events with `this.game.on` or `this.game.once`. Apply lasting effects inside a
    `gameAction` with `GameActions.lastingEffect`. For "If X, Y" text with no trigger, use
-   `this.stateCheck`, not `registerEvents`.
-9. **No manual workarounds.** Don't leave parts of a card for players to handle with chat commands. If
-   something can't be implemented properly, stop and say what engine support is missing.
+   `this.stateCheck`, not `registerEvents`. For agenda text that starts "After all agendas are
+   announced", use `this.afterAgendasAnnounced`.
+9. **No `this` inside abilities.** Use `context.source`, `context.player` and `context.game` in
+   `when`, `condition`, `match`, targets and game action properties, not `this`, `this.controller`
+   or `this.game`. Control of a card can change, and the context always has the current controller.
+   `when` handlers take `(event, context)`; persistent effect conditions and matches get a context
+   with `game` and `source`. Put helpers that need no card state in plain functions outside the class.
+10. **No manual workarounds.** Don't leave parts of a card for players to handle with chat commands. If
+    something can't be implemented properly, stop and say what engine support is missing.
 
 ## Checks
 

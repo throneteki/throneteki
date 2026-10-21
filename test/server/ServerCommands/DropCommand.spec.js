@@ -42,6 +42,22 @@ describe('DropCommand', () => {
                 });
             }
 
+            describe('during setup', function () {
+                beforeEach(function () {
+                    this.gameSpy.currentPhase = 'setup';
+
+                    this.executeForLocation('play area');
+                });
+
+                it('should set the card up', function () {
+                    expect(this.playerSpy.putIntoPlay).toHaveBeenCalledWith(
+                        this.cardSpy,
+                        'setup',
+                        expect.objectContaining({ force: true })
+                    );
+                });
+            });
+
             describe('when the card is in hand and an event', function () {
                 beforeEach(function () {
                     this.cardSpy.getType.mockReturnValue('event');

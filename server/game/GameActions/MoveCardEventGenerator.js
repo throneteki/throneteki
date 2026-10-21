@@ -142,7 +142,7 @@ class MoveCardEventGenerator {
                     playingType === 'setup' && event.card.getPrintedType() === 'attachment';
 
                 let originalFacedownState = event.card.facedown;
-                event.card.facedown = game.currentPhase === 'setup';
+                event.card.facedown = playingType === 'setup';
                 event.card.new = true;
                 player.placeCardInPile({
                     card: event.card,

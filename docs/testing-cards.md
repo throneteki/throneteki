@@ -83,6 +83,7 @@ this.setupTest({
         ],
         hand: ['Winter Is Coming'], // exactly these cards
         drawDeck: ['Robb Stark (Core)'], // placed on top of the deck in this order
+        deck: ['The Crag (TSoW)'], // in the deck but not arranged, for agendas that search it
         discard: [],
         deadPile: [],
         shadows: [],
@@ -92,6 +93,10 @@ this.setupTest({
     },
     player2: {
         // same options
+    },
+    beforeMulligan() {
+        // answer prompts from agendas that resolve "after all agendas are announced"
+        this.player1.clickCard(this.theCrag);
     }
 });
 ```
@@ -115,6 +120,10 @@ Things to know:
   start.
 - `phase: 'setup'` stops at "Select setup cards" with your `hand` arranged; `inPlay` isn't allowed,
   because placing setup cards is what such a test is for.
+- An agenda that resolves "after all agendas are announced" (The House With the Red Door) prompts
+  before the mulligan. Answer it in `beforeMulligan`, where the agendas and each player's `deck`
+  cards are already named; `setupTest` throws if that prompt is left open or there is no
+  `beforeMulligan`. The setup then continues as normal, to any phase.
 - Only joust is supported. For melee, use the older `integration({ gameFormat: 'melee' }, ...)`
   style for now.
 

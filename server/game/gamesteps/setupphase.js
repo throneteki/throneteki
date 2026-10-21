@@ -1,6 +1,7 @@
 import sample from 'lodash.sample';
 import Phase from './phase.js';
 import SimpleStep from './simplestep.js';
+import ChooseResolutionOrder from './ChooseResolutionOrder.js';
 import KeepOrMulliganPrompt from './setup/keepormulliganprompt.js';
 import SetupCardsPrompt from './setup/setupcardsprompt.js';
 import CheckAttachmentsPrompt from './setup/checkattachmentsprompt.js';
@@ -15,6 +16,7 @@ class SetupPhase extends Phase {
             new SimpleStep(game, () => this.announceFactionAndAgenda()),
             new SimpleStep(game, () => this.prepareDecks()),
             new SimpleStep(game, () => this.turnOnEffects()),
+            new SimpleStep(game, () => this.resolveAgendaSetupAbilities()),
             new SimpleStep(game, () => this.drawSetupHand()),
             new KeepOrMulliganPrompt(game),
             new SimpleStep(game, () => this.startGame()),
@@ -64,6 +66,25 @@ class SetupPhase extends Phase {
         }
     }
 
+    resolveAgendaSetupAbilities() {
+        const abilities = this.game
+            .getPlayers()
+            .flatMap((player) => player.agendas || [])
+            .flatMap((agenda) => agenda.abilities.agendaSetup);
+
+        this.game.queueStep(
+            new ChooseResolutionOrder(
+                this.game,
+                abilities.map((ability) => ({
+                    player: ability.card.controller,
+                    source: ability.card,
+                    canResolve: () => ability.canResolve(ability.createContext()),
+                    resolve: () => this.game.resolveAbility(ability, ability.createContext())
+                }))
+            )
+        );
+    }
+
     drawSetupHand() {
         for (const player of this.game.getPlayers()) {
             player.drawCardsToHand(StartingHandSize);
@@ -80,7 +101,7 @@ class SetupPhase extends Phase {
     announceSetupCards() {
         for (const player of this.game.getPlayers()) {
             let cardsInShadow = player.shadows.length;
-            let cards = [...player.cardsInPlay];
+            let cards = player.cardsInPlay.filter((card) => card.facedown);
             player.flipSetupCardsFaceUp();
 
             if (cardsInShadow > 0) {

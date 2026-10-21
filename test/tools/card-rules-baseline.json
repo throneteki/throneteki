@@ -1170,10 +1170,6 @@
         "legacy-helper": 2,
         "add-message": 2
     },
-    "server/game/cards/05-LoCR/LastHearthScouts.js": {
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/05-LoCR/LionsOfTheRock.js": {
         "legacy-helper": 1,
         "add-message": 1
@@ -1836,10 +1832,6 @@
     "server/game/cards/08.2-JtO/TheHouseOfBlackAndWhite.js": {
         "legacy-helper": 2,
         "add-message": 2
-    },
-    "server/game/cards/08.2-JtO/TheHouseWithTheRedDoor.js": {
-        "event-registration": 1,
-        "direct-state-write": 1
     },
     "server/game/cards/08.2-JtO/ThorosOfMyr.js": {
         "add-message": 1
@@ -2645,10 +2637,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/11.6-DitD/SerJasonMallister.js": {
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/11.6-DitD/StarfallSpy.js": {
         "add-message": 1,
         "legacy-helper": 1
@@ -3272,10 +3260,6 @@
     },
     "server/game/cards/17.1-R/FleaBottom.js": {
         "legacy-helper": 1,
-        "add-message": 1
-    },
-    "server/game/cards/17.1-R/ForcedMarch.js": {
-        "prompt-for-select": 1,
         "add-message": 1
     },
     "server/game/cards/17.1-R/GreatHall.js": {

@@ -71,8 +71,59 @@ const Decks = [
             '06061': 3,
             '08041': 1
         }
+    },
+    {
+        name: 'Stark The House With the Red Door, "One Crag to rule them all - Hungarian Champion 2025"',
+        url: 'https://thronesdb.com/decklist/view/16273',
+        plot: 'A Storm of Swords',
+        beforeMulligan: chooseStartingLocation('The Crag'),
+        cards: {
+            '01027': 1,
+            '08039': 1,
+            '01005': 2,
+            '06020': 1,
+            '08020': 1,
+            '08120': 1,
+            17154: 1,
+            20056: 1,
+            10033: 3,
+            11003: 3,
+            11041: 3,
+            11101: 1,
+            13001: 3,
+            13002: 2,
+            14033: 3,
+            17123: 2,
+            17124: 3,
+            24018: 1,
+            '01039': 2,
+            '01040': 3,
+            '01141': 3,
+            '01142': 2,
+            '01148': 1,
+            '01150': 2,
+            '01152': 3,
+            '01156': 3,
+            '01159': 3,
+            '04002': 3,
+            '04062': 3,
+            '04118': 3,
+            '05034': 2,
+            '06061': 3
+        }
     }
 ];
+
+function chooseStartingLocation(name) {
+    return function () {
+        this.flow.eachPlayerInFirstPlayerOrder((player) => {
+            if (player.hasPrompt('Choose which effect resolves next')) {
+                player.clickPrompt(`${player.name} - The House With the Red Door`);
+            }
+            player.clickCard(player.findCardByName(name, 'draw deck'));
+        });
+    };
+}
 
 for (const deckList of Decks) {
     describe(`${deckList.name} mirror`, function () {
@@ -86,6 +137,9 @@ for (const deckList of Decks) {
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
                 this.startGame();
+                if (deckList.beforeMulligan) {
+                    deckList.beforeMulligan.call(this);
+                }
                 this.keepStartingHands();
             });
 

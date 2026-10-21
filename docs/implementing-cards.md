@@ -138,11 +138,13 @@ this.persistentEffect({
 
 Some effects have a 'when', 'while' or 'if' clause within their text. These cards can be implemented by passing a `condition` function into the persistent effect declaration. The effect will only be applied when the function returns `true`. If the function returns `false` later on, the effect will be automatically unapplied from the cards it matched.
 
+The condition gets a context with `game` and `source`, so it can use the card without `this`.
+
 ```javascript
 // While Arya Stark has a duplicate, she gains a military icon.
 this.persistentEffect({
-    condition: () => this.dupes.length >= 1,
-    match: this,
+    condition: (context) => context.source.dupes.length >= 1,
+    match: (card, context) => card === context.source,
     effect: ability.effects.addIcon('military')
 });
 ```
@@ -362,6 +364,26 @@ this.stateCheck({
 });
 ```
 
+### After all agendas are announced
+
+Agenda text that starts "After all agendas are announced" (The House With the Red Door) uses
+`this.afterAgendasAnnounced`. The setup phase resolves it once the decks are prepared, before
+setup hands are drawn; when several are pending, the first player chooses the order. It isn't a
+triggered ability, so it can't be cancelled. A card put into play by it, or by any effect during
+setup, enters faceup and is not a setup card.
+
+```javascript
+this.afterAgendasAnnounced({
+    message: '{player} uses {source} to search their deck for a location',
+    gameAction: GameActions.search({
+        title: 'Select a location',
+        match: { type: 'location', printedCostOrLower: 3 },
+        message: '{player} {gameAction}',
+        gameAction: GameActions.putIntoPlay((context) => ({ card: context.searchTarget }))
+    })
+});
+```
+
 ### Choices made while the effect resolves
 
 When the card text has a player choose cards as part of the effect (an opponent chooses, each
@@ -369,7 +391,9 @@ player chooses, or a choice after part of the effect), use `GameActions.chooseCa
 `promptForSelect` in a handler. Each player in `player` or `players` chooses in turn from the cards
 matching `cardCondition` that the game action could affect; `context.choosingPlayer` is the player
 choosing. Once everyone has chosen, every chosen card's game action resolves together, and each
-player's result is logged.
+player's result is logged. `numCards` and `title` can be functions of the context, for a number
+that comes from an earlier part of the effect (Forced March). With `mode: 'exactly'`, a player
+who can't choose that many chooses as many as they can, and a number of 0 skips the choice.
 
 ```javascript
 // "Each player chooses a character they control and kills it."

@@ -1,5 +1,6 @@
 import uuid from 'uuid';
 import AbilityDsl from './abilitydsl.js';
+import AgendaSetupAbility from './AgendaSetupAbility.js';
 import CardAction from './cardaction.js';
 import CardForcedInterrupt from './cardforcedinterrupt.js';
 import CardForcedReaction from './cardforcedreaction.js';
@@ -75,7 +76,8 @@ class BaseCard {
             reactions: [],
             persistentEffects: [],
             playActions: [],
-            stateChecks: []
+            stateChecks: [],
+            agendaSetup: []
         };
 
         this.setupCardTextProperties(AbilityDsl);
@@ -172,6 +174,10 @@ class BaseCard {
 
     stateCheck(properties) {
         this.abilities.stateChecks.push(new StateCheckAbility(this.game, this, properties));
+    }
+
+    afterAgendasAnnounced(properties) {
+        this.abilities.agendaSetup.push(new AgendaSetupAbility(this.game, this, properties));
     }
 
     /**

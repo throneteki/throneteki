@@ -77,7 +77,12 @@ function asArray(value) {
 function deckCardNames(playerKey, options) {
     const own = options[playerKey];
     const plotDeck = own.plotDeck ?? DefaultPlotDeck;
-    const names = [own.plot || DefaultPlot, ...asArray(plotDeck), ...asArray(own.agenda)];
+    const names = [
+        own.plot || DefaultPlot,
+        ...asArray(plotDeck),
+        ...asArray(own.agenda),
+        ...asArray(own.deck)
+    ];
 
     for (const spec of asArray(own.inPlay).map(normaliseCardSpec)) {
         names.push(spec.card);
@@ -298,6 +303,45 @@ function advanceToPhase(flow, phase, options, players) {
     }
 }
 
+function isAtMulligan(players) {
+    return PlayerKeys.every((key) => players[key].hasPrompt('Keep Starting Hand?'));
+}
+
+// An agenda that resolves "after all agendas are announced" prompts before the mulligan. The test
+// answers it in `beforeMulligan`, where the agendas and each player's `deck` cards are named.
+function resolveBeforeMulligan(options, players, registry) {
+    if (isAtMulligan(players)) {
+        return;
+    }
+
+    if (!options.beforeMulligan) {
+        throw new Error(
+            'An agenda is prompting before the mulligan. Answer it in the `beforeMulligan` option.'
+        );
+    }
+
+    for (const key of PlayerKeys) {
+        const player = players[key].player;
+        const named = [
+            ...asArray(options[key].deck).map((name) => findOwnedCard(player, name, ['draw deck'])),
+            ...(player.agendas || [])
+        ].filter(Boolean);
+
+        for (const card of named) {
+            const name = cardReferenceName(card.name);
+            if (!(name in registry)) {
+                registry[name] = card;
+            }
+        }
+    }
+
+    options.beforeMulligan.call(registry);
+
+    if (!isAtMulligan(players)) {
+        throw new Error('`beforeMulligan` left a prompt open before the mulligan.');
+    }
+}
+
 export function applySetupTest(options, ctx) {
     const { flow, deckBuilder, registry } = ctx;
     const phase = options.phase || 'marshal';
@@ -333,6 +377,8 @@ export function applySetupTest(options, ctx) {
     }
 
     flow.startGame();
+
+    resolveBeforeMulligan(options, players, registry);
     flow.keepStartingHands();
 
     const specsByPlayer = {};

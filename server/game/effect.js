@@ -16,7 +16,8 @@ import { flatten } from '../Array.js';
  *                    corresponding values should be handler functions for those
  *                    events that return true when the effect should be
  *                    cancelled.
- * condition        - function that returns a boolean determining whether the
+ * condition        - function that takes the effect's context ({ game, source })
+ *                    and returns a boolean determining whether the
  *                    effect can be applied. Use with cards that have a
  *                    condition that must be met before applying a persistent
  *                    effect (e.g. "when there are more Summer plots revealed
@@ -88,12 +89,14 @@ class Effect {
 
     hasEnded() {
         return (
-            this.duration === 'custom' && Object.keys(this.until).length === 0 && !this.condition()
+            this.duration === 'custom' &&
+            Object.keys(this.until).length === 0 &&
+            !this.condition(this.context)
         );
     }
 
     addTargets(targets) {
-        if (!this.active || !this.condition()) {
+        if (!this.active || !this.condition(this.context)) {
             return;
         }
 
@@ -241,7 +244,7 @@ class Effect {
     }
 
     clearInvalidTargets() {
-        if (!this.condition()) {
+        if (!this.condition(this.context)) {
             this.cancel();
             return;
         }
@@ -287,7 +290,7 @@ class Effect {
         }
 
         if (this.isConditional) {
-            let newCondition = this.condition();
+            let newCondition = this.condition(this.context);
 
             if (!newCondition) {
                 this.cancel();

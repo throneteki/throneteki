@@ -4,6 +4,7 @@ import BaseCard from '../../server/game/basecard.js';
 import DrawCard from '../../server/game/drawcard.js';
 import Effect from '../../server/game/effect.js';
 import Game from '../../server/game/game.js';
+import AgendaSetupAbility from '../../server/game/AgendaSetupAbility.js';
 import StateCheckAbility from '../../server/game/StateCheckAbility.js';
 
 const repoRoot = path.join(import.meta.dirname, '../..');
@@ -23,7 +24,8 @@ function countAbilities(card) {
         actions: card.abilities.actions.length,
         reactions: card.abilities.reactions.length,
         persistentEffects: card.abilities.persistentEffects.length,
-        stateChecks: card.abilities.stateChecks.length
+        stateChecks: card.abilities.stateChecks.length,
+        agendaSetup: card.abilities.agendaSetup.length
     };
 }
 
@@ -53,11 +55,13 @@ function patch() {
         return emit.call(this, eventName, ...args);
     };
 
-    const executeStateCheck = StateCheckAbility.prototype.executeHandler;
-    StateCheckAbility.prototype.executeHandler = function (...args) {
-        state.resolved.add(this);
-        return executeStateCheck.apply(this, args);
-    };
+    for (const abilityClass of [StateCheckAbility, AgendaSetupAbility]) {
+        const execute = abilityClass.prototype.executeHandler;
+        abilityClass.prototype.executeHandler = function (...args) {
+            state.resolved.add(this);
+            return execute.apply(this, args);
+        };
+    }
 
     for (const method of ['addTargets', 'updateAppliedTargets', 'reapply', 'setActive']) {
         const original = Effect.prototype[method];
@@ -89,6 +93,10 @@ function cardAbilities(card) {
             })),
         ...card.abilities.stateChecks.slice(start.stateChecks).map((ability) => ({
             kind: 'state check',
+            covered: state.resolved.has(ability)
+        })),
+        ...card.abilities.agendaSetup.slice(start.agendaSetup).map((ability) => ({
+            kind: 'after agendas are announced',
             covered: state.resolved.has(ability)
         })),
         ...card.abilities.persistentEffects.slice(start.persistentEffects).map((properties) => ({

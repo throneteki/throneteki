@@ -22,7 +22,7 @@ class ChooseCards extends GameAction {
                 ? cardCondition
                 : CardMatcher.createMatcher(cardCondition);
         this.mode = mode;
-        this.numCards = numCards;
+        this.numCardsFunc = typeof numCards === 'function' ? numCards : () => numCards;
         this.titleFunc = typeof title === 'function' ? title : () => title;
         this.gameActionFactory = gameAction;
     }
@@ -32,8 +32,11 @@ class ChooseCards extends GameAction {
     }
 
     canChangeGameState({ context }) {
-        return this.playersFunc(context).some(
-            (player) => this.getChoosableCards(player, context).length > 0
+        return (
+            this.numCardsFunc(context) > 0 &&
+            this.playersFunc(context).some(
+                (player) => this.getChoosableCards(player, context).length > 0
+            )
         );
     }
 
@@ -70,15 +73,15 @@ class ChooseCards extends GameAction {
 
     promptPlayer(player, context, chosen) {
         const choosable = this.getChoosableCards(player, context);
-        if (choosable.length === 0) {
+        const numCards = this.numCardsFunc(context);
+        if (choosable.length === 0 || numCards === 0) {
             return;
         }
 
         context.game.promptForSelect(player, {
             activePromptTitle: this.titleFunc({ ...context, choosingPlayer: player }),
             mode: this.mode,
-            numCards:
-                this.mode === 'exactly' ? Math.min(this.numCards, choosable.length) : this.numCards,
+            numCards: this.mode === 'exactly' ? Math.min(numCards, choosable.length) : numCards,
             multiSelect: true,
             cardType: AllCardTypes,
             cardCondition: (card) => choosable.includes(card),

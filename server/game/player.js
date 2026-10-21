@@ -49,7 +49,6 @@ class Player extends Spectator {
 
         this.setupGold = SetupGold;
         this.drawPhaseCards = DrawPhaseCards;
-        this.cardsInPlayBeforeSetup = [];
         this.deck = {};
         this.challenges = new AllowedChallenges(this);
         this.minReserve = 0;
@@ -437,29 +436,12 @@ class Player extends Spectator {
         this.challenges.removeRestriction(restriction);
     }
 
-    resetCardPile(pile) {
-        for (const card of pile) {
-            if (pile !== this.cardsInPlay || !this.cardsInPlayBeforeSetup.includes(card)) {
-                card.moveTo('draw deck');
-                this.drawDeck.push(card);
-            }
-        }
-    }
-
     resetDrawDeck() {
-        this.resetCardPile(this.hand);
+        for (const card of this.hand) {
+            card.moveTo('draw deck');
+            this.drawDeck.push(card);
+        }
         this.hand = [];
-
-        this.resetCardPile(this.cardsInPlay);
-        this.cardsInPlay = this.cardsInPlay.filter((card) =>
-            this.cardsInPlayBeforeSetup.includes(card)
-        );
-
-        this.resetCardPile(this.discardPile);
-        this.discardPile = [];
-
-        this.resetCardPile(this.deadPile);
-        this.deadPile = [];
     }
 
     prepareDecks() {
@@ -707,7 +689,7 @@ class Player extends Spectator {
             let originalLocation = card.location;
 
             let originalFacedownState = card.facedown;
-            card.facedown = this.game.currentPhase === 'setup';
+            card.facedown = playingType === 'setup';
             card.new = true;
             this.moveCard(card, 'play area', {
                 isDupe: !!dupeCard,

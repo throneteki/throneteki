@@ -93,6 +93,13 @@ the ongoing work, and it was not part of this batch.
   [StateChecks.spec.js](../test/server/gamesteps/StateChecks.spec.js). Esgred, Reek, Arry, Arstan
   Whitebeard, Oathsworn Wildling, Gyles Rosby, Ser Jorah Mormont (Core) and Harrenhal (TTWDFL) use
   it.
+- "After all agendas are announced" is `this.afterAgendasAnnounced`
+  (`server/game/AgendaSetupAbility.js`), resolved by the setup phase before setup hands are drawn,
+  in first-player order. The House With the Red Door uses it; The Prince that was Promised and
+  Armed to the Teeth still use `registerEvents('onDecksPrepared')`. Only setup placements
+  (`playingType: 'setup'`, including dragging a card into play during setup) enter play facedown,
+  and a mulligan only shuffles the hand back, so cards put into play before it stay.
+  [Setup.spec.js](../test/server/gamesteps/Setup.spec.js).
 - Military claim only prompts for characters that can be killed. A loser with none is not
   prompted, and characters that must be chosen for claim (Joffrey's Crossbow) are chosen
   automatically when there are no other characters left to choose.
@@ -133,12 +140,15 @@ These are decided and should stay as they are until someone asks:
 After the framework gaps, or alongside them when a gap is blocked on a ruling, continue phase 5.
 The eight shared neutrals in the roadmap table are verified, and so is Stark Fealty,
 [decklist 16711](https://thronesdb.com/decklist/view/16711): a mirror starts with manual mode off
-([PlayableDecks.spec.js](../test/server/decks/PlayableDecks.spec.js)), and Stark Fealty
-[decklist 16272](https://thronesdb.com/decklist/view/16272). On 2026-10-21, of 233 legal unique
+([PlayableDecks.spec.js](../test/server/decks/PlayableDecks.spec.js)), as are Stark Fealty
+[decklist 16272](https://thronesdb.com/decklist/view/16272) and Stark The House With the Red Door
+[decklist 16273](https://thronesdb.com/decklist/view/16273). On 2026-10-21, of 233 legal unique
 Standard v2.1 joust lists published in the last year, the next closest is
-[16273](https://thronesdb.com/decklist/view/16273) (Stark, The House with the Red Door), at 5
-unverified cards: Relentless Assault, Last Hearth Scouts, Ser Jason Mallister, Forced March and
-The House with the Red Door. Add each finished list to `PlayableDecks.spec.js`.
+[16651](https://thronesdb.com/decklist/view/16651) (Stark Fealty), at 12 unverified cards: Bolton
+Flayer, No Surprises, The Iron Throne, Ward, The Father, The Mad King's Command, House Umber
+Berserkers, Strained Reserves, Northern Patriarch, Winterfell, Frozen Solid and Arya Stark. Four
+Lord of the Crossing lists are at 15, blocked on the agenda (see above). Add each finished list
+to `PlayableDecks.spec.js`.
 
 ## Do not reapply
 
