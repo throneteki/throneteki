@@ -36,6 +36,10 @@ describe('Leathers', function () {
             expect(this.player1).toBeAbleToSelect(this.wunWun);
             expect(this.player1).not.toBeAbleToSelect(this.hedgeKnight);
             expect(this.player1).not.toBeAbleToSelect(this.magTheMighty);
+
+            this.player1.clickCard(this.wunWun);
+
+            expect(this.player1).isReadyToTakeAction();
         });
 
         it('adds the Giant to your hand, and only your Wildling and Giant characters change', function () {

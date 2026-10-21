@@ -25,6 +25,11 @@ describe('Gifts for the Widow (R)', function () {
             expect(this.player1).toBeAbleToSelect(this.nobleLineage);
             expect(this.player1).toBeAbleToSelect(this.syriosTraining);
             expect(this.player1).not.toBeAbleToSelect(this.valyrianSteelDagger);
+
+            this.player1.clickCard(this.nobleLineage);
+            this.player1.clickCard(this.houseMaester);
+
+            expect(this.player1).isReadyToTakeAction();
         });
 
         it('puts it into play attached to a character you control', function () {

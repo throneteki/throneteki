@@ -44,6 +44,8 @@ describe('Northern Armory', function () {
 
             expect(this.houseMaester.kneeled).toBe(false);
             expect(this.northernArmory.kneeled).toBe(true);
+            expect(this.player1).isReadyToTakeAction();
+            expect(this.player2).isReadyToTakeAction();
         });
     });
 });

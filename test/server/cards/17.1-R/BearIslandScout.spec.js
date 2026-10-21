@@ -23,6 +23,10 @@ describe('Bear Island Scout (R)', function () {
             expect(this.player1).toBeAbleToSelect(this.daceyMormont);
             expect(this.player1).not.toBeAbleToSelect(this.hedgeKnight);
             expect(this.player1).not.toBeAbleToSelect(this.maegeMormont);
+
+            this.player1.clickCard(this.daceyMormont);
+
+            expect(this.player1).isReadyToTakeAction();
         });
 
         it('adds the card to your hand', function () {

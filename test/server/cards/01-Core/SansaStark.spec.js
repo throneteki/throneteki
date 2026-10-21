@@ -16,6 +16,8 @@ describe('Sansa Stark (Core)', function () {
             expect(this.sansaStark.location).toBe('play area');
             expect(this.sansaStark.kneeled).toBe(false);
             expect(this.player1).toHavePrompt('Select a plot');
+            expect(this.player1).isReadyToTakeAction();
+            expect(this.player2).isReadyToTakeAction();
         });
     });
 
@@ -94,6 +96,8 @@ describe('Sansa Stark (Core)', function () {
             expect(this.player1Object.faction.power).toBe(2);
             expect(this.game.currentPhase).toBe('plot');
             expect(this.player1).toHavePrompt('Select a plot');
+            expect(this.player1).isReadyToTakeAction();
+            expect(this.player2).isReadyToTakeAction();
         });
     });
 });

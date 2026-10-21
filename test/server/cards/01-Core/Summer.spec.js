@@ -25,6 +25,10 @@ describe('Summer', function () {
             expect(this.player1).not.toBeAbleToSelect(this.robbStark);
             expect(this.player1).not.toBeAbleToSelect(this.tumblestoneKnight);
             expect(this.player1).not.toBeAbleToSelect(this.summer);
+
+            this.player1.clickCard(this.branStark);
+
+            expect(this.player1).isReadyToTakeAction();
         });
 
         it('returns a character from your discard pile to your hand', function () {

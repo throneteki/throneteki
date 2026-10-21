@@ -21,7 +21,7 @@ describe('Wildling Bandit', function () {
         this.player1.clickPrompt('Done');
 
         expect(this.wildlingBandit.getStrength()).toBe(3);
-        expect(this.player1).toHavePrompt('Initiate an action');
+        expect(this.player1).isReadyToTakeAction();
     });
 
     it('gets no STR while attacking an opponent with the same gold as you', function () {
@@ -31,6 +31,6 @@ describe('Wildling Bandit', function () {
         this.player1.clickPrompt('Done');
 
         expect(this.wildlingBandit.getStrength()).toBe(1);
-        expect(this.player1).toHavePrompt('Initiate an action');
+        expect(this.player1).isReadyToTakeAction();
     });
 });

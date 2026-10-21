@@ -26,6 +26,10 @@ describe('Ser Gerris Drinkwater', function () {
         it('can be triggered after it comes out of shadows', function () {
             expect(this.serGerrisDrinkwater.location).toBe('play area');
             expect(this.player1).toAllowAbilityTrigger(this.serGerrisDrinkwater);
+
+            this.player1.clickPrompt('Pass');
+
+            expect(this.player1).isReadyToTakeAction();
         });
 
         describe('and it is triggered', function () {
@@ -40,6 +44,11 @@ describe('Ser Gerris Drinkwater', function () {
                 expect(this.player1).not.toBeAbleToSelect(this.aFeastForCrows);
                 expect(this.player1).not.toBeAbleToSelect(this.aSongOfSummer);
                 expect(this.player1).not.toBeAbleToSelect(this.joustingContest);
+
+                this.player1.clickCard(this.sneakAttack);
+                this.player1.clickCard(this.aNobleCause);
+
+                expect(this.player1).isReadyToTakeAction();
             });
 
             describe('and a card in your plot deck is chosen', function () {
@@ -54,6 +63,10 @@ describe('Ser Gerris Drinkwater', function () {
                     expect(this.player1).not.toBeAbleToSelect(this.aFeastForCrows);
                     expect(this.player1).not.toBeAbleToSelect(this.aSongOfSummer);
                     expect(this.player1).not.toBeAbleToSelect(this.joustingContest);
+
+                    this.player1.clickCard(this.aNobleCause);
+
+                    expect(this.player1).isReadyToTakeAction();
                 });
 
                 it('switches the two cards', function () {

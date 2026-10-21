@@ -43,7 +43,7 @@ describe('Wardens of the East', function () {
 
             expect(this.player2.actionUnavailableReason(this.hearMeRoar)).toBe('cost');
             expect(this.hearMeRoar.location).toBe('hand');
-            expect(this.player2).toHavePrompt('Initiate an action');
+            expect(this.player2).isReadyToTakeAction();
         });
     });
 
@@ -65,7 +65,7 @@ describe('Wardens of the East', function () {
             this.player1.clickPrompt('Done');
 
             expect(this.player1.actionUnavailableReason(this.winterIsComing)).toBeUndefined();
-            expect(this.player1).toHavePrompt('Initiate an action');
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 });

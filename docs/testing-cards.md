@@ -263,8 +263,8 @@ expect(entry.results.map((result) => result.card)).toContain(this.houseDayneKnig
 ```
 
 `isReadyToTakeAction` checks there is no open ability window and that the player has the normal
-prompt for the phase: "Select a plot", "Marshal your cards", the challenge choice, or
-"Initiate an action".
+prompt for the phase: "Select a plot", "Marshal your cards", the challenge choice (or the action
+window while a challenge is under way), or "Initiate an action".
 
 ## Coverage checklist
 

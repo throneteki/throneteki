@@ -16,6 +16,10 @@ describe('Late Summer Feast', function () {
         it('lets the losing opponent choose to draw 1 card', function () {
             expect(this.player2).toHavePrompt('Draw 1 card from Late Summer Feast?');
             expect(this.player1).not.toHavePrompt('Draw 1 card from Late Summer Feast?');
+
+            this.player2.clickPrompt('Yes');
+
+            expect(this.player1).isReadyToTakeAction();
         });
 
         it('draws them 1 card if they choose to', function () {
@@ -43,6 +47,10 @@ describe('Late Summer Feast', function () {
         it('has no effect', function () {
             expect(this.player1).not.toHavePrompt('Draw 1 card from Late Summer Feast?');
             expect(this.player2).not.toHavePrompt('Draw 1 card from Late Summer Feast?');
+
+            this.player1.clickCard(this.tumblestoneKnight);
+
+            expect(this.player2).isReadyToTakeAction();
         });
     });
 });

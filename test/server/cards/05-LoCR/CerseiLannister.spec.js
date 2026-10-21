@@ -19,6 +19,10 @@ describe('Cersei Lannister (LoCR)', function () {
             expect(this.cerseiLannister.kneeled).toBe(false);
             expect(this.hedgeKnight.location).toBe('discard pile');
             expect(this.player1).toAllowAbilityTrigger(this.cerseiLannister);
+
+            this.player1.clickPrompt('Pass');
+
+            expect(this.player1).isReadyToTakeAction();
         });
 
         it('gains 1 power after a card is discarded from an opponent’s hand', function () {
@@ -50,7 +54,7 @@ describe('Cersei Lannister (LoCR)', function () {
 
         it('kneels', function () {
             expect(this.cerseiLannister.kneeled).toBe(true);
-            expect(this.player1).toHavePrompt('Initiate an action');
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 

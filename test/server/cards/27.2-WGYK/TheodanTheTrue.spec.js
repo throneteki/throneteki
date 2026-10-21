@@ -18,6 +18,8 @@ describe('Theodan the True', function () {
 
         it('can be triggered', function () {
             expect(this.player1).toAllowAbilityTrigger(this.theodanTheTrue);
+            this.player1.clickPrompt('Pass');
+            expect(this.player1).isReadyToTakeAction();
         });
 
         describe('and it is triggered', function () {
@@ -30,6 +32,9 @@ describe('Theodan the True', function () {
                 expect(this.player1).toBeAbleToSelect(this.devoutFreerider);
                 expect(this.player1).toBeAbleToSelect(this.silentSisters);
                 expect(this.player1).not.toBeAbleToSelect(this.tumblestoneKnight);
+                this.player1.clickCard(this.devoutFreerider);
+                this.player1.clickPrompt('Renown');
+                expect(this.player1).isReadyToTakeAction();
             });
 
             it('gives the character renown until the end of the phase', function () {
@@ -44,6 +49,8 @@ describe('Theodan the True', function () {
                 this.completeChallengesPhase();
 
                 expect(this.devoutFreerider.hasKeyword('renown')).toBe(false);
+                expect(this.player1).isReadyToTakeAction();
+                expect(this.player2).isReadyToTakeAction();
             });
 
             it('can give the character insight instead', function () {
@@ -81,6 +88,7 @@ describe('Theodan the True', function () {
 
         it('cannot be triggered', function () {
             expect(this.player1).not.toAllowAbilityTrigger(this.theodanTheTrue);
+            expect(this.player2).isReadyToTakeAction();
         });
     });
 });

@@ -31,6 +31,7 @@ describe('Robb Stark (AtSK)', function () {
         it('gets +1 STR for each loyal character you control', function () {
             expect(this.robbStark.getStrength()).toBe(7);
             expect(this.robertBaratheon.getStrength()).toBe(5);
+            expect(this.player1).isReadyToTakeAction();
         });
 
         describe('when his action is used', function () {
@@ -48,6 +49,10 @@ describe('Robb Stark (AtSK)', function () {
                 expect(this.player1).not.toBeAbleToSelect(this.robbStark);
                 expect(this.player1).not.toBeAbleToSelect(this.rangingParty);
                 expect(this.player1).not.toBeAbleToSelect(this.tumblestoneKnight);
+
+                this.player1.clickCard(this.bastardInHiding);
+
+                expect(this.player2).isReadyToTakeAction();
             });
 
             it('stands the character and removes it from the challenge', function () {
@@ -60,7 +65,7 @@ describe('Robb Stark (AtSK)', function () {
                 expect(this.game.getPlainTextLog()).toContain(
                     'player1 uses Robb Stark to stand Bastard in Hiding and remove them from the challenge'
                 );
-                expect(this.player2).toHavePrompt('Initiate an action');
+                expect(this.player2).isReadyToTakeAction();
             });
 
             it('cannot be used again in the same challenge', function () {
@@ -68,7 +73,7 @@ describe('Robb Stark (AtSK)', function () {
                 this.player2.clickPrompt('Pass');
 
                 expect(this.player1.actionUnavailableReason(this.robbStark)).toBe('limit');
-                expect(this.player1).toHavePrompt('Initiate an action');
+                expect(this.player1).isReadyToTakeAction();
             });
         });
     });
@@ -83,7 +88,7 @@ describe('Robb Stark (AtSK)', function () {
         it('cannot be used', function () {
             expect(this.robbStark.getStrength()).toBe(7);
             expect(this.player1.actionUnavailableReason(this.robbStark)).toBe('condition');
-            expect(this.player1).toHavePrompt('Initiate an action');
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 
@@ -97,7 +102,7 @@ describe('Robb Stark (AtSK)', function () {
         it('cannot be used and gets no STR', function () {
             expect(this.robbStark.getStrength()).toBe(5);
             expect(this.player1.actionUnavailableReason(this.robbStark)).toBe('condition');
-            expect(this.player1).toHavePrompt('Initiate an action');
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 });

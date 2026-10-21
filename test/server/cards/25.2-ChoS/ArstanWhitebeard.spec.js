@@ -62,6 +62,11 @@ describe('Arstan Whitebeard', function () {
         it('cannot kneel, so cannot be declared as an attacker', function () {
             expect(this.player1).not.toBeAbleToSelect(this.arstanWhitebeard);
             expect(this.player1).toBeAbleToSelect(this.houseMaester);
+
+            this.player1.clickCard(this.houseMaester);
+            this.player1.clickPrompt('Done');
+
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 
@@ -83,6 +88,7 @@ describe('Arstan Whitebeard', function () {
         it('kneels to attack', function () {
             expect(this.arstanWhitebeard.kneeled).toBe(true);
             expect(this.arstanWhitebeard.isAttacking()).toBe(true);
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 });

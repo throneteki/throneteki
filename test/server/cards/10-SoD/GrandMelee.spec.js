@@ -22,7 +22,7 @@ describe('Grand Melee', function () {
 
         expect(this.game.currentChallenge.attackerStrength).toBe(0);
         expect(this.game.currentChallenge.defenderStrength).toBe(0);
-        expect(this.player1).toHavePrompt('Initiate an action');
+        expect(this.player1).isReadyToTakeAction();
     });
 
     it('lets characters that are not alone contribute their STR', function () {
@@ -37,6 +37,6 @@ describe('Grand Melee', function () {
 
         expect(this.game.currentChallenge.attackerStrength).toBe(4);
         expect(this.game.currentChallenge.defenderStrength).toBe(4);
-        expect(this.player1).toHavePrompt('Initiate an action');
+        expect(this.player1).isReadyToTakeAction();
     });
 });

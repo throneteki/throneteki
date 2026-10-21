@@ -16,6 +16,10 @@ describe('Ice (Core)', function () {
         it('can only be attached to a [stark] character', function () {
             expect(this.player1).toBeAbleToSelect(this.tumblestoneKnight);
             expect(this.player1).not.toBeAbleToSelect(this.houseMaester);
+
+            this.player1.clickCard(this.tumblestoneKnight);
+
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 
@@ -55,6 +59,10 @@ describe('Ice (Core)', function () {
             expect(this.game.getPlainTextLog()).toContain(
                 'player1 sacrifices Ice to kill House Maester'
             );
+
+            this.player2.clickCard(this.bastardInHiding);
+
+            expect(this.player1).isReadyToTakeAction();
         });
 
         it('cannot be triggered when the attached character is not participating', function () {

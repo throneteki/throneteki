@@ -25,6 +25,6 @@ describe('At the Palace of Sorrows', function () {
 
         expect(this.hedgeKnight.getStrength()).toBe(1);
         expect(this.bastardInHiding.getStrength()).toBe(3);
-        expect(this.player1).toHavePrompt('Initiate an action');
+        expect(this.player1).isReadyToTakeAction();
     });
 });

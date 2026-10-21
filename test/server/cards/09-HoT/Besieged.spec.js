@@ -27,7 +27,7 @@ describe('Besieged', function () {
         this.player2.clickPrompt('Done');
 
         expect(this.game.currentChallenge.defenders).toEqual([this.bastardInHiding]);
-        expect(this.player1).toHavePrompt('Initiate an action');
+        expect(this.player1).isReadyToTakeAction();
     });
 });
 
@@ -54,6 +54,6 @@ describe('Besieged, when no character can defend', function () {
         this.player2.clickPrompt('Done');
 
         expect(this.game.currentChallenge.defenders).toEqual([]);
-        expect(this.player1).toHavePrompt('Initiate an action');
+        expect(this.player1).isReadyToTakeAction();
     });
 });

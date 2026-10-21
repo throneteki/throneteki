@@ -101,6 +101,6 @@ describe('Fear Cuts Deeper Than Swords, against keywords', function () {
 
         expect(this.tumblestoneKnight.bypassedByStealth).toBe(false);
         expect(this.fearCutsDeeperThanSwords.location).toBe('discard pile');
-        expect(this.player2).toHavePrompt('Initiate an action');
+        expect(this.player2).isReadyToTakeAction();
     });
 });

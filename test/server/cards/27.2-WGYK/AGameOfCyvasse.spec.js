@@ -35,6 +35,7 @@ describe('A Game of Cyvasse', function () {
             this.player1.clickPrompt('Done');
 
             expect(this.game.currentChallenge.attackers).toHaveLength(1);
+            expect(this.player1).isReadyToTakeAction();
         });
 
         it('stops the defender declaring more than 1 defender', function () {
@@ -45,6 +46,7 @@ describe('A Game of Cyvasse', function () {
             this.player2.clickPrompt('Done');
 
             expect(this.game.currentChallenge.defenders).toHaveLength(1);
+            expect(this.player1).isReadyToTakeAction();
         });
 
         describe('when you win it', function () {
@@ -64,6 +66,11 @@ describe('A Game of Cyvasse', function () {
                 this.player1.clickPrompt('Intrigue');
 
                 expect(this.player1).toHavePrompt('Select challenge attackers');
+
+                this.player1.clickCard(this.houseDayneKnight);
+                this.player1.clickPrompt('Done');
+
+                expect(this.player1).isReadyToTakeAction();
             });
         });
 
@@ -90,6 +97,11 @@ describe('A Game of Cyvasse', function () {
 
         it('does not restrict attackers', function () {
             expect(this.player1).toHavePrompt('Select challenge attackers');
+
+            this.player1.clickCard(this.houseDayneKnight);
+            this.player1.clickPrompt('Done');
+
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 });

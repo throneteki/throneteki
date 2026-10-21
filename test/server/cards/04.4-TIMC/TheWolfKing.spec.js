@@ -16,6 +16,10 @@ describe('The Wolf King', function () {
         it('can only be attached to a [stark] character', function () {
             expect(this.player1).toBeAbleToSelect(this.tumblestoneKnight);
             expect(this.player1).not.toBeAbleToSelect(this.houseMaester);
+
+            this.player1.clickCard(this.tumblestoneKnight);
+
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 
@@ -42,6 +46,7 @@ describe('The Wolf King', function () {
 
             expect(this.tumblestoneKnight.isAttacking()).toBe(true);
             expect(this.tumblestoneKnight.kneeled).toBe(false);
+            expect(this.player1).isReadyToTakeAction();
         });
 
         it('still kneels it in other challenges', function () {
@@ -50,6 +55,7 @@ describe('The Wolf King', function () {
             this.player1.clickPrompt('Done');
 
             expect(this.tumblestoneKnight.kneeled).toBe(true);
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 });

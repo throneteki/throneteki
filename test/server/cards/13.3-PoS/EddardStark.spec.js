@@ -31,6 +31,10 @@ describe('Eddard Stark (PoS)', function () {
                 expect(this.player1).toBeAbleToSelect(this.tumblestoneKnight);
                 expect(this.player1).not.toBeAbleToSelect(this.magisterIllyrio);
                 expect(this.player1).not.toBeAbleToSelect(this.eddardStark);
+
+                this.player1.clickCard(this.rangingParty);
+
+                expect(this.player2).isReadyToTakeAction();
             });
 
             it('kneels Eddard Stark and kills the character', function () {

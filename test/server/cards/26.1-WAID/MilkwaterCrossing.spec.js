@@ -23,6 +23,10 @@ describe('Milkwater Crossing', function () {
         expect(this.player1Object.getInitiative()).toBe(1);
         expect(this.player2Object.getInitiative()).toBe(0);
         expect(this.maesterWendamyr.hasKeyword('stealth')).toBe(true);
+
+        this.player1.clickPrompt('Pass');
+
+        expect(this.player1).isReadyToTakeAction();
     });
 
     describe('after a phase begins', function () {

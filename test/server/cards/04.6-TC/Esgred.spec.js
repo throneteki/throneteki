@@ -98,6 +98,7 @@ describe('Esgred', function () {
 
             expect(this.tumblestoneKnight.bypassedByStealth).toBe(true);
             expect(this.houseMaester.bypassedByStealth).toBe(true);
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 });

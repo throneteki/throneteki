@@ -21,6 +21,11 @@ describe('Marched to the Wall', function () {
         it('has each player choose a character they control', function () {
             expect(this.player1).toBeAbleToSelect(this.tumblestoneKnight);
             expect(this.player1).not.toBeAbleToSelect(this.hedgeKnight);
+
+            this.player1.clickCard(this.tumblestoneKnight);
+            this.player2.clickCard(this.hedgeKnight);
+
+            expect(this.player1).isReadyToTakeAction();
         });
 
         it('discards the chosen characters, which cannot be saved', function () {

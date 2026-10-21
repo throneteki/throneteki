@@ -36,6 +36,8 @@ describe('Stannis Baratheon (Core)', function () {
         expect(this.bastardInHiding.kneeled).toBe(true);
         expect(this.theRoseroad.kneeled).toBe(false);
         expect(this.player1).toHavePrompt('Select a plot');
+        expect(this.player1).isReadyToTakeAction();
+        expect(this.player2).isReadyToTakeAction();
     });
 
     it('stands every character of a player with 2 or fewer kneeling', function () {
@@ -46,5 +48,7 @@ describe('Stannis Baratheon (Core)', function () {
         expect(this.hedgeKnight.kneeled).toBe(false);
         expect(this.houseMaester.kneeled).toBe(false);
         expect(this.player2).toHavePrompt('Select a plot');
+        expect(this.player1).isReadyToTakeAction();
+        expect(this.player2).isReadyToTakeAction();
     });
 });

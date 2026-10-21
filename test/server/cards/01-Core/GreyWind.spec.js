@@ -20,6 +20,10 @@ describe('Grey Wind (Core)', function () {
             expect(this.player1).not.toBeAbleToSelect(this.tumblestoneKnight);
             expect(this.player1).not.toBeAbleToSelect(this.robbStark);
             expect(this.player1).not.toBeAbleToSelect(this.greyWind);
+
+            this.player1.clickCard(this.samwellTarly);
+
+            expect(this.player1).isReadyToTakeAction();
         });
 
         it('kneels Grey Wind and kills the character', function () {
@@ -58,6 +62,10 @@ describe('Grey Wind (Core)', function () {
             expect(this.player1).not.toBeAbleToSelect(this.braidedWarrior);
             expect(this.player1).not.toBeAbleToSelect(this.robbStark);
             expect(this.player1).not.toBeAbleToSelect(this.greyWind);
+
+            this.player1.clickCard(this.bastardInHiding);
+
+            expect(this.player1).isReadyToTakeAction();
         });
 
         it('kills a STR 2 character', function () {

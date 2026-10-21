@@ -39,6 +39,10 @@ describe('Trading With Qohor', function () {
 
         it('does not increase opponents’ gold while you control an attachment', function () {
             expect(this.player2Object.getIncome()).toBe(5);
+
+            this.player1.clickPrompt('Pass');
+
+            expect(this.player1).isReadyToTakeAction();
         });
 
         describe('and it is triggered', function () {
@@ -53,6 +57,11 @@ describe('Trading With Qohor', function () {
                 expect(this.player1).toBeAbleToSelect(this.syriosTraining);
                 expect(this.player1).not.toBeAbleToSelect(this.valyrianSteelDagger);
                 expect(this.player1).not.toBeAbleToSelect(this.deckBird);
+
+                this.player1.clickCard(this.syriosTraining);
+                this.player1.clickCard(this.hedgeKnight);
+
+                expect(this.player1).isReadyToTakeAction();
             });
 
             it('puts it into play', function () {

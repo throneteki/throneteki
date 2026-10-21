@@ -30,6 +30,9 @@ function idlePromptDescription(playerWrapper) {
         case 'marshal':
             return prompt.menuTitle === 'Marshal your cards' && 'marshal cards';
         case 'challenge':
+            if (playerWrapper.game.currentChallenge) {
+                return prompt.menuTitle === 'Initiate an action' && 'initiate an action';
+            }
             return (
                 ChallengeTypeButtons.every((text) => buttons.includes(text)) &&
                 buttons.includes('Done') &&

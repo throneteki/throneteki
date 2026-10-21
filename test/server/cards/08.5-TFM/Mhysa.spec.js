@@ -47,7 +47,7 @@ describe('Mhysa', function () {
             expect(this.taenaMerryweather.kneeled).toBe(false);
             expect(this.houseMaester.kneeled).toBe(true);
             expect(this.taenaMerryweather.getStrength()).toBe(4);
-            expect(this.player1).toHavePrompt('Initiate an action');
+            expect(this.player1).isReadyToTakeAction();
         });
 
         it('has no effect in other challenges', function () {
@@ -57,7 +57,7 @@ describe('Mhysa', function () {
 
             expect(this.taenaMerryweather.kneeled).toBe(true);
             expect(this.taenaMerryweather.getStrength()).toBe(2);
-            expect(this.player1).toHavePrompt('Initiate an action');
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 });

@@ -35,6 +35,12 @@ describe('Nymeria (FotOG)', function () {
             expect(this.player1).not.toBeAbleToSelect(this.nymeria);
             expect(this.player1).not.toBeAbleToSelect(this.tumblestoneKnight);
             expect(this.player1).not.toBeAbleToSelect(this.bastardInHiding);
+
+            this.player1.clickCard(this.direwolfPup);
+            this.player1.clickCard(this.greyWind);
+            this.player1.clickPrompt('Done');
+
+            expect(this.player2).isReadyToTakeAction();
         });
 
         it('has Nymeria and each knelt Direwolf participate on your side', function () {
@@ -51,7 +57,7 @@ describe('Nymeria (FotOG)', function () {
             expect(this.game.getPlainTextLog()).toContain(
                 'player1 kneels Nymeria and Direwolf Pup to have them participate in the challenge on their side'
             );
-            expect(this.player2).toHavePrompt('Initiate an action');
+            expect(this.player2).isReadyToTakeAction();
         });
 
         it('has only Nymeria participate when no other Direwolf is knelt', function () {
@@ -60,7 +66,7 @@ describe('Nymeria (FotOG)', function () {
             expect(this.nymeria.kneeled).toBe(true);
             expect(this.game.currentChallenge.isAttacking(this.nymeria)).toBe(true);
             expect(this.direwolfPup.isParticipating()).toBe(false);
-            expect(this.player2).toHavePrompt('Initiate an action');
+            expect(this.player2).isReadyToTakeAction();
         });
     });
 
@@ -74,7 +80,7 @@ describe('Nymeria (FotOG)', function () {
 
         it('cannot be used', function () {
             expect(this.player1.actionUnavailableReason(this.nymeria)).toBe('condition');
-            expect(this.player1).toHavePrompt('Initiate an action');
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 });

@@ -42,6 +42,8 @@ describe('Wolves of the North', function () {
             this.completeChallengesPhase();
 
             expect(this.rangingParty.getStrength()).toBe(5);
+            expect(this.player1).isReadyToTakeAction();
+            expect(this.player2).isReadyToTakeAction();
         });
     });
 
@@ -56,7 +58,7 @@ describe('Wolves of the North', function () {
         it('cannot be triggered', function () {
             expect(this.player1).not.toAllowAbilityTrigger(this.wolvesOfTheNorth);
             expect(this.rangingParty.getStrength()).toBe(5);
-            expect(this.player1).toHavePrompt('Initiate an action');
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 });

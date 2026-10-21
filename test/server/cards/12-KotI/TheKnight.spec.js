@@ -20,7 +20,7 @@ describe('The Knight (KotI)', function () {
         expect(this.theKnight.hasKeyword('stealth')).toBe(true);
         expect(this.theKnight.hasKeyword('renown')).toBe(true);
         expect(this.houseMaester.hasKeyword('renown')).toBe(false);
-        expect(this.player1).toHavePrompt('Initiate an action');
+        expect(this.player1).isReadyToTakeAction();
     });
 
     it('gains nothing while attacking with another character', function () {
@@ -31,6 +31,6 @@ describe('The Knight (KotI)', function () {
 
         expect(this.theKnight.hasKeyword('stealth')).toBe(false);
         expect(this.theKnight.hasKeyword('renown')).toBe(false);
-        expect(this.player1).toHavePrompt('Initiate an action');
+        expect(this.player1).isReadyToTakeAction();
     });
 });

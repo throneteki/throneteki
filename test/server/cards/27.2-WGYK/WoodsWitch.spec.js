@@ -23,6 +23,8 @@ describe('Woods Witch', function () {
         it('can be triggered', function () {
             expect(this.hedgeKnight.location).toBe('discard pile');
             expect(this.player1).toAllowAbilityTrigger(this.woodsWitch);
+            this.player1.clickPrompt('Pass');
+            expect(this.player1).isReadyToTakeAction();
         });
 
         describe('and it is triggered', function () {
@@ -32,6 +34,9 @@ describe('Woods Witch', function () {
 
             it('sacrifices Woods Witch', function () {
                 expect(this.woodsWitch.location).toBe('discard pile');
+                this.player1.clickPrompt('Character');
+                this.player2.clickCard(this.bastardInHiding);
+                expect(this.player1).isReadyToTakeAction();
             });
 
             describe('and a cardtype is named', function () {
@@ -60,6 +65,9 @@ describe('Woods Witch', function () {
                 expect(this.player1).toHavePromptButton('Character');
                 expect(this.player1).toHaveDisabledPromptButton('Location');
                 expect(this.player1).toHaveDisabledPromptButton('Attachment');
+                this.player1.clickPrompt('Character');
+                this.player2.clickCard(this.bastardInHiding);
+                expect(this.player1).isReadyToTakeAction();
             });
         });
     });

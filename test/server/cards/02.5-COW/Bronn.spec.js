@@ -92,7 +92,7 @@ describe('Bronn (CoW)', function () {
             this.player1.clickPrompt('Done');
 
             expect(this.game.currentChallenge.defenders).toEqual([this.bronn]);
-            expect(this.player1).toHavePrompt('Initiate an action');
+            expect(this.player1).isReadyToTakeAction();
         });
 
         it('does not gain icons when you are the attacking player', function () {
@@ -102,7 +102,7 @@ describe('Bronn (CoW)', function () {
 
             expect(this.bronn.hasIcon('intrigue')).toBe(false);
             expect(this.bronn.hasIcon('power')).toBe(false);
-            expect(this.player1).toHavePrompt('Initiate an action');
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 });

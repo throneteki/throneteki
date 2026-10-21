@@ -35,6 +35,8 @@ describe('Orton Merryweather', function () {
             expect(this.game.winnerOfDominanceInLastRound).toBe(this.player1Object);
             expect(this.player1Object.faction.power).toBe(1);
             expect(this.player1).toHavePrompt('Select a plot');
+            expect(this.player1).isReadyToTakeAction();
+            expect(this.player2).isReadyToTakeAction();
         });
     });
 
@@ -53,6 +55,8 @@ describe('Orton Merryweather', function () {
                 'player1 returns 5 unspent gold to the treasury'
             );
             expect(this.player1).toHavePrompt('Select a plot');
+            expect(this.player1).isReadyToTakeAction();
+            expect(this.player2).isReadyToTakeAction();
         });
     });
 });

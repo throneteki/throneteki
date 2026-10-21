@@ -28,6 +28,9 @@ describe('Grey Cliffs', function () {
         expect(this.player1Object.getInitiative()).toBe(
             this.player1Object.activePlot.cardData.plotStats.initiative + 1
         );
+        this.player1.clickCard(this.theRiverroad);
+        this.player1.clickCard(this.bastardInHiding);
+        expect(this.player1).isReadyToTakeAction();
     });
 
     describe('when it is sacrificed', function () {
@@ -37,6 +40,9 @@ describe('Grey Cliffs', function () {
 
         it('can be triggered', function () {
             expect(this.player1).toAllowAbilityTrigger(this.greyCliffs);
+            this.player1.clickPrompt('Pass');
+            this.player1.clickCard(this.bastardInHiding);
+            expect(this.player1).isReadyToTakeAction();
         });
 
         it('draws 1 card', function () {

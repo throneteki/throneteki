@@ -27,13 +27,13 @@ describe('scenario runner', function () {
     });
 
     it('leaves the game where the test left it', async function () {
-        const { game } = await runScenario(`${specPath}#allows any attachment`, {
+        const { game } = await runScenario(`${breakPath}#leaves a prompt open`, {
             users,
             logger: silentLogger
         });
 
         expect(game.getPlayerByName('alice').currentPrompt().menuTitle).toBe(
-            'Select an attachment'
+            'Select target for attachment'
         );
     });
 

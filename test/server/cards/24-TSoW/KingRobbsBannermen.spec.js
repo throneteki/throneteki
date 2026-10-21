@@ -42,7 +42,7 @@ describe("King Robb's Bannermen", function () {
             expect(this.theKingsroad.targetedByAssault).toBe(true);
             expect(this.heartTreeGrove.targetedByAssault).toBe(true);
             expect(this.theWall.targetedByAssault).toBe(false);
-            expect(this.player1).toHavePrompt('Initiate an action');
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 
@@ -60,7 +60,7 @@ describe("King Robb's Bannermen", function () {
             this.player1.clickCard(this.theKingsroad);
 
             expect(this.theKingsroad.targetedByAssault).toBe(true);
-            expect(this.player1).toHavePrompt('Initiate an action');
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 });

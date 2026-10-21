@@ -180,18 +180,38 @@ describe('The Rains of Castamere', function () {
             this.player1.clickCard(this.wardens);
 
             expect(this.player1Object.activePlot).toBe(this.wardens);
+
+            this.player1.clickPrompt('Pass');
+
+            this.player1.clickPrompt('Apply Claim');
+
+            this.player1.clickPrompt('Pass');
+
+            expect(this.player1).isReadyToTakeAction();
         });
 
         it('should allow reactions in the current reaction window to trigger', function () {
             this.player1.clickCard(this.wardens);
 
             expect(this.player1).toAllowAbilityTrigger('Wardens of the West');
+
+            this.player1.clickPrompt('Pass');
+
+            this.player1.clickPrompt('Apply Claim');
+
+            this.player1.clickPrompt('Pass');
+
+            expect(this.player1).isReadyToTakeAction();
         });
 
         it('should not allow interrupts in the current window to trigger since the current window is for reactions only', function () {
             this.player1.clickCard(this.wedding);
 
             expect(this.player1).not.toAllowAbilityTrigger('The Red Wedding');
+
+            this.player1.clickPrompt('Apply Claim');
+
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 
@@ -279,6 +299,11 @@ describe('The Rains of Castamere', function () {
             this.player2.triggerAbility(this.nym);
             this.player2.clickCard(this.martellScheme);
             expect(this.martellScheme.location).toBe('active plot');
+
+            this.player2.clickPrompt('Pass');
+            this.player2.clickPrompt('Apply Claim');
+
+            expect(this.player2).isReadyToTakeAction();
         });
 
         it("should not prevent Nymeria of Ny Sar from revealing a scheme plot indirectly with At Prince Doran's Behest", function () {
@@ -297,6 +322,11 @@ describe('The Rains of Castamere', function () {
             this.player2.clickCard(this.behest);
             this.player2.clickCard(this.neutralScheme);
             expect(this.neutralScheme.location).toBe('active plot');
+
+            this.player2.clickPrompt('Pass');
+            this.player2.clickPrompt('Apply Claim');
+
+            expect(this.player2).isReadyToTakeAction();
         });
 
         it('should recycle plots immediately when its reaction causes the plot deck to be exhausted', function () {

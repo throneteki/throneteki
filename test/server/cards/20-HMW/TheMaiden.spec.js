@@ -34,6 +34,10 @@ describe('The Maiden', function () {
             expect(this.player1Object.getInitiative()).toBe(2);
             expect(this.player1Object.getReserve()).toBe(6);
             expect(this.player2Object.getInitiative()).toBe(0);
+
+            this.selectFirstPlayer(this.player1);
+
+            expect(this.player1).isReadyToTakeAction();
         });
 
         it('also raises the reserve on your revealed The Seven plot by 2', function () {
@@ -42,6 +46,10 @@ describe('The Maiden', function () {
 
             expect(this.player1Object.getInitiative()).toBe(2);
             expect(this.player1Object.getReserve()).toBe(6);
+
+            this.selectFirstPlayer(this.player1);
+
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 });

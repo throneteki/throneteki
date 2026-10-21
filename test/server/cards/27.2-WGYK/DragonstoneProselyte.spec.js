@@ -31,6 +31,10 @@ describe('Dragonstone Proselyte', function () {
             expect(this.player1).toBeAbleToSelect(this.bastardInHiding);
             expect(this.player1).toBeAbleToSelect(this.dragonstoneProselyte);
             expect(this.player1).not.toBeAbleToSelect(this.palaceSpearman);
+
+            this.player1.clickCard(this.blackWindsCrew);
+
+            expect(this.player1).isReadyToTakeAction();
         });
 
         describe('and a character is chosen', function () {
@@ -51,6 +55,8 @@ describe('Dragonstone Proselyte', function () {
                 expect(this.dragonstoneProselyte.kneeled).toBe(false);
                 expect(this.palaceSpearman.kneeled).toBe(false);
                 expect(this.player1).toHavePrompt('Select a plot');
+                expect(this.player1).isReadyToTakeAction();
+                expect(this.player2).isReadyToTakeAction();
             });
         });
     });

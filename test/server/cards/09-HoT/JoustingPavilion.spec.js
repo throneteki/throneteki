@@ -25,7 +25,7 @@ describe('Jousting Pavilion', function () {
         expect(this.tumblestoneKnight.getStrength()).toBe(3);
         expect(this.houseDayneKnight.getStrength()).toBe(2);
         expect(this.hedgeKnight.getStrength()).toBe(2);
-        expect(this.player1).toHavePrompt('Initiate an action');
+        expect(this.player1).isReadyToTakeAction();
     });
 
     it('gives no STR while the Knight is not attacking alone', function () {
@@ -36,7 +36,7 @@ describe('Jousting Pavilion', function () {
 
         expect(this.tumblestoneKnight.getStrength()).toBe(2);
         expect(this.houseDayneKnight.getStrength()).toBe(2);
-        expect(this.player1).toHavePrompt('Initiate an action');
+        expect(this.player1).isReadyToTakeAction();
     });
 
     it('gives a Knight you control +1 STR while it is defending alone', function () {
@@ -50,6 +50,6 @@ describe('Jousting Pavilion', function () {
 
         expect(this.houseDayneKnight.getStrength()).toBe(3);
         expect(this.hedgeKnight.getStrength()).toBe(2);
-        expect(this.player1).toHavePrompt('Initiate an action');
+        expect(this.player1).isReadyToTakeAction();
     });
 });

@@ -148,6 +148,20 @@ describe('Meereen', function () {
             it('should return the owners cards to hand', function () {
                 expect(this.player1Object.hand.length).toBe(9);
                 expect(this.player1Object.discardPile.length).toBe(3);
+
+                for (const card of this.player2Object.hand.slice(0, 3)) {
+                    this.player2.clickCard(card);
+                }
+                this.player2.clickPrompt('Done');
+                this.player2.clickPrompt('Done');
+                for (const card of this.player1Object.hand.slice(0, 3)) {
+                    this.player1.clickCard(card);
+                }
+                this.player1.clickPrompt('Done');
+                this.player1.clickPrompt('Done');
+
+                expect(this.player1).isReadyToTakeAction();
+                expect(this.player2).isReadyToTakeAction();
             });
 
             it("should return the other player's cards to hand", function () {
@@ -158,6 +172,20 @@ describe('Meereen', function () {
                 // returned to hand before the discard effect.
                 expect(this.player2Object.hand.length).toBe(9);
                 expect(this.player2Object.discardPile.length).toBe(3);
+
+                for (const card of this.player2Object.hand.slice(0, 3)) {
+                    this.player2.clickCard(card);
+                }
+                this.player2.clickPrompt('Done');
+                this.player2.clickPrompt('Done');
+                for (const card of this.player1Object.hand.slice(0, 3)) {
+                    this.player1.clickCard(card);
+                }
+                this.player1.clickPrompt('Done');
+                this.player1.clickPrompt('Done');
+
+                expect(this.player1).isReadyToTakeAction();
+                expect(this.player2).isReadyToTakeAction();
             });
         });
     });

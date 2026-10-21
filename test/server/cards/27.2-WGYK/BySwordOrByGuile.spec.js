@@ -22,6 +22,11 @@ describe('By Sword or By Guile', function () {
 
         it('can be triggered', function () {
             expect(this.player1).toAllowAbilityTrigger(this.bySwordOrByGuile);
+
+            this.player1.clickPrompt('Pass');
+            this.player2.clickCard(this.bastardInHiding);
+
+            expect(this.player1).isReadyToTakeAction();
         });
 
         it('applies power claim instead', function () {

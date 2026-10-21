@@ -23,6 +23,9 @@ describe('Shadow City Septon', function () {
 
         it('can be triggered', function () {
             expect(this.player1).toAllowAbilityTrigger(this.shadowCitySepton);
+            this.player1.clickPrompt('Pass');
+            expect(this.player1).isReadyToTakeAction();
+            expect(this.player2).isReadyToTakeAction();
         });
 
         describe('and it is triggered', function () {
@@ -32,6 +35,9 @@ describe('Shadow City Septon', function () {
 
             it('returns itself to shadows', function () {
                 expect(this.shadowCitySepton.location).toBe('shadows');
+                this.player2.clickCard(this.palaceSpearman);
+                expect(this.player1).isReadyToTakeAction();
+                expect(this.player2).isReadyToTakeAction();
             });
 
             it('has the winning opponent choose a standing character they control', function () {
@@ -39,6 +45,9 @@ describe('Shadow City Septon', function () {
                 expect(this.player2).not.toBeAbleToSelect(this.bastardInHiding);
                 expect(this.player2).not.toBeAbleToSelect(this.tumblestoneKnight);
                 expect(this.player1).not.toBeAbleToSelect(this.palaceSpearman);
+                this.player2.clickCard(this.palaceSpearman);
+                expect(this.player1).isReadyToTakeAction();
+                expect(this.player2).isReadyToTakeAction();
             });
 
             it("returns that character to its owner's hand", function () {
@@ -48,6 +57,8 @@ describe('Shadow City Septon', function () {
                 expect(this.bastardInHiding.location).toBe('play area');
                 expect(this.tumblestoneKnight.location).toBe('play area');
                 expect(this.player1).toHavePrompt('Select a plot');
+                expect(this.player1).isReadyToTakeAction();
+                expect(this.player2).isReadyToTakeAction();
             });
         });
     });
@@ -60,6 +71,8 @@ describe('Shadow City Septon', function () {
         it('cannot be triggered', function () {
             expect(this.player1).not.toAllowAbilityTrigger(this.shadowCitySepton);
             expect(this.player1).toHavePrompt('Select a plot');
+            expect(this.player1).isReadyToTakeAction();
+            expect(this.player2).isReadyToTakeAction();
         });
     });
 });

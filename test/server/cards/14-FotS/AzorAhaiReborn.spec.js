@@ -31,7 +31,7 @@ describe('Azor Ahai Reborn', function () {
             expect(this.houseMaester.isParticipating()).toBe(true);
             expect(this.rhllorInfiltrator.isParticipating()).toBe(false);
             expect(this.player1).not.toHavePrompt('Select stealth target for Maester Wendamyr');
-            expect(this.player1).toHavePrompt('Initiate an action');
+            expect(this.player1).isReadyToTakeAction();
         });
 
         it("stops participating once no attacking R'hllor character you control remains", function () {
@@ -42,7 +42,7 @@ describe('Azor Ahai Reborn', function () {
             expect(this.fieryFollowers.isParticipating()).toBe(false);
             expect(this.maesterWendamyr.isParticipating()).toBe(false);
             expect(this.houseMaester.isParticipating()).toBe(true);
-            expect(this.player1).toHavePrompt('Initiate an action');
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 
@@ -57,7 +57,7 @@ describe('Azor Ahai Reborn', function () {
             expect(this.maesterWendamyr.isParticipating()).toBe(false);
             expect(this.houseMaester.isParticipating()).toBe(true);
             expect(this.fieryFollowers.isParticipating()).toBe(false);
-            expect(this.player1).toHavePrompt('Initiate an action');
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 
@@ -75,7 +75,7 @@ describe('Azor Ahai Reborn', function () {
 
             expect(this.maesterWendamyr.isParticipating()).toBe(true);
             expect(this.bastardInHiding.kneeled).toBe(false);
-            expect(this.player1).toHavePrompt('Initiate an action');
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 });

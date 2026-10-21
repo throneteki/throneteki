@@ -38,7 +38,7 @@ describe('Ygritte', function () {
 
         it('still kneels, because that is not a card effect', function () {
             expect(this.ygritte.kneeled).toBe(true);
-            expect(this.player1).toHavePrompt('Initiate an action');
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 

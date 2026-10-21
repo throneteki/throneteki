@@ -44,6 +44,10 @@ describe('Put to the Sword', function () {
             expect(this.game.getPlainTextLog()).toContain(
                 'player1 plays Put to the Sword to kill House Maester'
             );
+
+            this.player2.clickCard(this.winterfellSteward);
+
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 
@@ -54,6 +58,10 @@ describe('Put to the Sword', function () {
 
         it('cannot be played', function () {
             expect(this.player1).not.toAllowAbilityTrigger(this.putToTheSword);
+
+            this.player2.clickCard(this.winterfellSteward);
+
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 });

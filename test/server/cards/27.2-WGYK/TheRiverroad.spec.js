@@ -27,6 +27,9 @@ describe('The Riverroad', function () {
             expect(this.player1).toBeAbleToSelect(this.tumblestoneKnight);
             expect(this.player1).toBeAbleToSelect(this.houseDayneKnight);
             expect(this.player1).not.toBeAbleToSelect(this.theRiverroad);
+            this.player1.clickCard(this.tumblestoneKnight);
+            this.player1.clickPrompt('Intrigue');
+            expect(this.player1).isReadyToTakeAction();
         });
 
         describe('and a character and icon are chosen', function () {

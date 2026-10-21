@@ -57,6 +57,8 @@ describe('Oathsworn Wildling', function () {
         it('is sacrificed once setup is finished', function () {
             expect(this.oathswornWildling.location).toBe('discard pile');
             expect(this.player1).toHavePrompt('Select a plot');
+            expect(this.player1).isReadyToTakeAction();
+            expect(this.player2).isReadyToTakeAction();
         });
     });
 

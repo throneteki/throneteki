@@ -26,6 +26,10 @@ describe('Deepwood Steward', function () {
 
     it('can be triggered after it is marshaled', function () {
         expect(this.player1).toAllowAbilityTrigger(this.deepwoodSteward);
+
+        this.player1.clickPrompt('Pass');
+
+        expect(this.player1).isReadyToTakeAction();
     });
 
     describe('when triggered', function () {
@@ -40,6 +44,10 @@ describe('Deepwood Steward', function () {
             expect(this.player1).not.toBeAbleToSelect(this.dragonstonePort);
             expect(this.player1).not.toBeAbleToSelect(this.winterfellSteward);
             expect(this.player1).not.toBeAbleToSelect(this.skirlingPass);
+
+            this.player1.clickCard(this.greyCliffs);
+
+            expect(this.player1).isReadyToTakeAction();
         });
 
         it('adds the chosen location to your hand', function () {

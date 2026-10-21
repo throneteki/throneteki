@@ -22,7 +22,7 @@ describe('Alysane Mormont', function () {
             expect(this.alysaneMormont.kneeled).toBe(false);
             expect(this.alysaneMormont.hasKeyword('stealth')).toBe(true);
             expect(this.tumblestoneKnight.hasKeyword('stealth')).toBe(false);
-            expect(this.player1).toHavePrompt('Initiate an action');
+            expect(this.player1).isReadyToTakeAction();
         });
 
         it('kneels when declared as an attacker in a [power] challenge', function () {
@@ -32,7 +32,7 @@ describe('Alysane Mormont', function () {
 
             expect(this.alysaneMormont.kneeled).toBe(true);
             expect(this.alysaneMormont.hasKeyword('stealth')).toBe(false);
-            expect(this.player1).toHavePrompt('Initiate an action');
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 
@@ -53,7 +53,7 @@ describe('Alysane Mormont', function () {
         it('kneels and gains no stealth', function () {
             expect(this.alysaneMormont.kneeled).toBe(true);
             expect(this.alysaneMormont.hasKeyword('stealth')).toBe(false);
-            expect(this.player1).toHavePrompt('Initiate an action');
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 });

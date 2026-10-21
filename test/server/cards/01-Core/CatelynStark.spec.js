@@ -25,7 +25,7 @@ describe('Catelyn Stark (Core)', function () {
             this.player1.clickPrompt('Pass');
 
             expect(this.player2.actionUnavailableReason(this.janosSlynt)).toBe('cannotTrigger');
-            expect(this.player2).toHavePrompt('Initiate an action');
+            expect(this.player2).isReadyToTakeAction();
         });
     });
 
@@ -40,7 +40,7 @@ describe('Catelyn Stark (Core)', function () {
             this.player1.clickPrompt('Pass');
 
             expect(this.player2.actionUnavailableReason(this.janosSlynt)).toBeUndefined();
-            expect(this.player2).toHavePrompt('Initiate an action');
+            expect(this.player2).isReadyToTakeAction();
         });
     });
 });

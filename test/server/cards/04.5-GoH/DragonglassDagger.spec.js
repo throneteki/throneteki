@@ -64,7 +64,7 @@ describe('Dragonglass Dagger', function () {
                 this.player2.clickCard(this.samwellTarly);
 
                 expect(this.samwellTarly.kneeled).toBe(false);
-                expect(this.player1).toHavePrompt('Initiate an action');
+                expect(this.player1).isReadyToTakeAction();
             });
         });
     });

@@ -30,6 +30,10 @@ describe('Confiscation', function () {
             expect(this.player1).not.toBeAbleToSelect(this.serJaimeLannister);
             expect(this.player1).not.toBeAbleToSelect(this.eddardStark);
             expect(this.player1).not.toBeAbleToSelect(this.winterfellSteward);
+
+            this.player1.clickCard(this.littleBird);
+
+            expect(this.player1).isReadyToTakeAction();
         });
 
         it("discards the chosen opponent's attachment", function () {

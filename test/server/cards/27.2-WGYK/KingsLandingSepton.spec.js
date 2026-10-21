@@ -27,6 +27,10 @@ describe("King's Landing Septon", function () {
 
         it('can be triggered', function () {
             expect(this.player1).toAllowAbilityTrigger(this.kingsLandingSepton);
+            this.player1.clickPrompt('Pass');
+            this.player2.clickPrompt('Done');
+            expect(this.player1).isReadyToTakeAction();
+            expect(this.player2).isReadyToTakeAction();
         });
 
         it('returns itself to hand to cancel the effects', function () {
@@ -39,6 +43,8 @@ describe("King's Landing Septon", function () {
 
             expect(this.tumblestoneKnight.kneeled).toBe(false);
             expect(this.player1).toHavePrompt('Select a plot');
+            expect(this.player1).isReadyToTakeAction();
+            expect(this.player2).isReadyToTakeAction();
         });
 
         it('lets the effects resolve when it is not triggered', function () {
@@ -50,6 +56,8 @@ describe("King's Landing Septon", function () {
 
             expect(this.tumblestoneKnight.kneeled).toBe(true);
             expect(this.player1).toHavePrompt('Select a plot');
+            expect(this.player1).isReadyToTakeAction();
+            expect(this.player2).isReadyToTakeAction();
         });
     });
 
@@ -63,6 +71,7 @@ describe("King's Landing Septon", function () {
         it('cannot be triggered', function () {
             expect(this.player1).not.toAllowAbilityTrigger(this.kingsLandingSepton);
             expect(this.nightmares.location).toBe('discard pile');
+            expect(this.player2).isReadyToTakeAction();
         });
     });
 

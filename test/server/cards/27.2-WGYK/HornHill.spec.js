@@ -38,6 +38,7 @@ describe('Horn Hill', function () {
         it('raises the claim on their plot by 1', function () {
             expect(this.player1Object.getClaim()).toBe(2);
             expect(this.player2Object.getClaim()).toBe(1);
+            expect(this.player1).isReadyToTakeAction();
         });
 
         it('stops raising it once the challenge ends', function () {
@@ -62,6 +63,7 @@ describe('Horn Hill', function () {
 
             it('does not raise the claim', function () {
                 expect(this.player1Object.getClaim()).toBe(1);
+                expect(this.player1).isReadyToTakeAction();
             });
         });
     });
@@ -77,6 +79,7 @@ describe('Horn Hill', function () {
         it('does not raise the claim on either plot', function () {
             expect(this.player1Object.getClaim()).toBe(1);
             expect(this.player2Object.getClaim()).toBe(1);
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 });

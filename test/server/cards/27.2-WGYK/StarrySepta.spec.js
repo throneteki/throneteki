@@ -40,6 +40,8 @@ describe('Starry Septa', function () {
             expect(this.player1).not.toBeAbleToSelect(this.starrySepta);
             expect(this.player1).not.toBeAbleToSelect(this.blackWindsCrew);
             expect(this.player1).not.toBeAbleToSelect(this.palaceSpearman);
+            this.player1.clickCard(this.tumblestoneKnight);
+            expect(this.player2).isReadyToTakeAction();
         });
 
         it('kneels Starry Septa to stand the character and remove it from the challenge', function () {
@@ -50,7 +52,7 @@ describe('Starry Septa', function () {
             expect(this.tumblestoneKnight.isParticipating()).toBe(false);
             expect(this.houseDayneKnight.kneeled).toBe(true);
             expect(this.houseDayneKnight.isAttacking()).toBe(true);
-            expect(this.player2).toHavePrompt('Initiate an action');
+            expect(this.player2).isReadyToTakeAction();
         });
     });
 
@@ -71,6 +73,8 @@ describe('Starry Septa', function () {
             expect(this.player1).toBeAbleToSelect(this.blackWindsCrew);
             expect(this.player1).not.toBeAbleToSelect(this.palaceSpearman);
             expect(this.player1).not.toBeAbleToSelect(this.houseDayneKnight);
+            this.player1.clickCard(this.blackWindsCrew);
+            expect(this.player2).isReadyToTakeAction();
         });
 
         it('stands it and removes it from the challenge', function () {
@@ -80,7 +84,7 @@ describe('Starry Septa', function () {
             expect(this.blackWindsCrew.isParticipating()).toBe(false);
             expect(this.palaceSpearman.kneeled).toBe(true);
             expect(this.palaceSpearman.isDefending()).toBe(true);
-            expect(this.player2).toHavePrompt('Initiate an action');
+            expect(this.player2).isReadyToTakeAction();
         });
     });
 });

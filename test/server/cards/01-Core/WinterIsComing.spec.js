@@ -56,6 +56,7 @@ describe('Winter Is Coming', function () {
             this.player2.clickPrompt('Pass');
 
             expect(this.player1.actionUnavailableReason(this.second)).toBe('limit');
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 });

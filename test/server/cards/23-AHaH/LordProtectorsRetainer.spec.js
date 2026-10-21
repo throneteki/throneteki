@@ -81,6 +81,6 @@ describe("Lord Protector's Retainer, against stealth", function () {
 
         expect(this.lordProtectorsRetainer.location).toBe('hand');
         expect(this.edricDayne.bypassedByStealth).toBe(false);
-        expect(this.player2).toHavePrompt('Initiate an action');
+        expect(this.player2).isReadyToTakeAction();
     });
 });

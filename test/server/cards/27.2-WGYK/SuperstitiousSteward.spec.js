@@ -35,6 +35,10 @@ describe('Superstitious Steward', function () {
         this.player1.clickPrompt('Pass');
         completeChallengesPhase(this);
         expect(this.player1).toAllowAbilityTrigger(this.superstitiousSteward);
+        passUntilPlotPhase(this);
+        this.player1.clickPrompt('Pass');
+        expect(this.player1).isReadyToTakeAction();
+        expect(this.player2).isReadyToTakeAction();
     });
 
     describe('when it names a trait at the start of the plot phase', function () {
@@ -55,6 +59,9 @@ describe('Superstitious Steward', function () {
 
             it('lets you sacrifice it', function () {
                 expect(this.player1).toHavePrompt('Sacrifice Superstitious Steward?');
+                this.player1.clickPrompt('Yes');
+                this.player2.clickCard(this.palaceSpearman);
+                expect(this.player1).isReadyToTakeAction();
             });
 
             describe('and you sacrifice it', function () {
@@ -68,6 +75,8 @@ describe('Superstitious Steward', function () {
                     expect(this.player2).toBeAbleToSelect(this.palaceSpearman);
                     expect(this.player2).not.toBeAbleToSelect(this.tumblestoneKnight);
                     expect(this.player1).not.toBeAbleToSelect(this.bastardInHiding);
+                    this.player2.clickCard(this.palaceSpearman);
+                    expect(this.player1).isReadyToTakeAction();
                 });
 
                 it('discards that character from play', function () {
@@ -89,6 +98,9 @@ describe('Superstitious Steward', function () {
                     expect(this.superstitiousSteward.location).toBe('play area');
                     expect(this.palaceSpearman.location).toBe('play area');
                     expect(this.bastardInHiding.location).toBe('play area');
+                    this.player1.clickPrompt('Pass');
+                    this.player1.clickPrompt('Pass');
+                    expect(this.player1).isReadyToTakeAction();
                 });
             });
         });
@@ -103,6 +115,9 @@ describe('Superstitious Steward', function () {
             it('does not let you sacrifice it', function () {
                 expect(this.player1).not.toHavePrompt('Sacrifice Superstitious Steward?');
                 expect(this.superstitiousSteward.location).toBe('play area');
+                this.player1.clickPrompt('Pass');
+                this.player1.clickPrompt('Pass');
+                expect(this.player1).isReadyToTakeAction();
             });
         });
 
@@ -116,6 +131,7 @@ describe('Superstitious Steward', function () {
             it('does not let you sacrifice it', function () {
                 expect(this.player1).not.toHavePrompt('Sacrifice Superstitious Steward?');
                 expect(this.superstitiousSteward.location).toBe('play area');
+                expect(this.player1).isReadyToTakeAction();
             });
         });
     });
@@ -135,6 +151,9 @@ describe('Superstitious Steward', function () {
         it('does not let you sacrifice it when the plot is revealed in a later phase', function () {
             expect(this.player1).not.toHavePrompt('Sacrifice Superstitious Steward?');
             expect(this.superstitiousSteward.location).toBe('play area');
+            this.player1.clickPrompt('Pass');
+            this.player1.clickPrompt('Pass');
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 });

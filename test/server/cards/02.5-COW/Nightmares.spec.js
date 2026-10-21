@@ -19,6 +19,10 @@ describe('Nightmares', function () {
         expect(this.player1).toBeAbleToSelect(this.hedgeKnight);
         expect(this.player1).toBeAbleToSelect(this.theRoseroad);
         expect(this.player1).not.toBeAbleToSelect(this.littleBird);
+
+        this.player1.clickCard(this.hedgeKnight);
+
+        expect(this.player1).isReadyToTakeAction();
     });
 
     describe('when a character is chosen', function () {
@@ -37,6 +41,8 @@ describe('Nightmares', function () {
             this.completeChallengesPhase();
 
             expect(this.hedgeKnight.getStrength()).toBe(3);
+            expect(this.player1).isReadyToTakeAction();
+            expect(this.player2).isReadyToTakeAction();
         });
     });
 });

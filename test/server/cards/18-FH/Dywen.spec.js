@@ -26,7 +26,7 @@ describe('Dywen', function () {
         expect(this.dywen.isParticipating()).toBe(true);
         expect(this.dywen.kneeled).toBe(false);
         expect(this.oldForestHunter.kneeled).toBe(false);
-        expect(this.player1).toHavePrompt('Initiate an action');
+        expect(this.player1).isReadyToTakeAction();
     });
 
     it("kneels a Night's Watch character without stealth", function () {
@@ -36,7 +36,7 @@ describe('Dywen', function () {
 
         expect(this.oldForestHunter.kneeled).toBe(true);
         expect(this.dywen.kneeled).toBe(false);
-        expect(this.player1).toHavePrompt('Initiate an action');
+        expect(this.player1).isReadyToTakeAction();
     });
 
     it('kneels him outside a military challenge', function () {
@@ -46,7 +46,7 @@ describe('Dywen', function () {
         this.player1.clickCard(this.hedgeKnight);
 
         expect(this.dywen.kneeled).toBe(true);
-        expect(this.player1).toHavePrompt('Initiate an action');
+        expect(this.player1).isReadyToTakeAction();
     });
 
     it("kneels a character you control that is not Night's Watch", function () {
@@ -57,6 +57,6 @@ describe('Dywen', function () {
 
         expect(this.maesterWendamyr.kneeled).toBe(true);
         expect(this.dywen.kneeled).toBe(false);
-        expect(this.player1).toHavePrompt('Initiate an action');
+        expect(this.player1).isReadyToTakeAction();
     });
 });

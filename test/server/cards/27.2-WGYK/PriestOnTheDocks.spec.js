@@ -28,6 +28,9 @@ describe('Priest on the Docks', function () {
 
         it('can be triggered', function () {
             expect(this.player1).toAllowAbilityTrigger(this.priestOnTheDocks);
+            this.player1.clickPrompt('Pass');
+            expect(this.player1).isReadyToTakeAction();
+            expect(this.player2).isReadyToTakeAction();
         });
 
         describe('and it is triggered', function () {
@@ -42,6 +45,9 @@ describe('Priest on the Docks', function () {
                 expect(this.player1).not.toBeAbleToSelect(this.hornHill);
                 expect(this.player1).not.toBeAbleToSelect(this.bastardInHiding);
                 expect(this.player1).not.toBeAbleToSelect(this.priestOnTheDocks);
+                this.player1.clickCard(this.greyCliffs);
+                expect(this.player1).isReadyToTakeAction();
+                expect(this.player2).isReadyToTakeAction();
             });
 
             it('kills Priest on the Docks to discard the card', function () {
@@ -53,6 +59,8 @@ describe('Priest on the Docks', function () {
                 expect(this.theRiverroad.location).toBe('play area');
                 expect(this.hornHill.location).toBe('play area');
                 expect(this.player1).toHavePrompt('Select a plot');
+                expect(this.player1).isReadyToTakeAction();
+                expect(this.player2).isReadyToTakeAction();
             });
 
             it('can discard an attachment', function () {
@@ -61,6 +69,8 @@ describe('Priest on the Docks', function () {
                 expect(this.littleBird.location).toBe('discard pile');
                 expect(this.bastardInHiding.location).toBe('play area');
                 expect(this.player1).toHavePrompt('Select a plot');
+                expect(this.player1).isReadyToTakeAction();
+                expect(this.player2).isReadyToTakeAction();
             });
         });
     });
@@ -73,6 +83,8 @@ describe('Priest on the Docks', function () {
         it('cannot be triggered', function () {
             expect(this.player1).not.toAllowAbilityTrigger(this.priestOnTheDocks);
             expect(this.player1).toHavePrompt('Select a plot');
+            expect(this.player1).isReadyToTakeAction();
+            expect(this.player2).isReadyToTakeAction();
         });
     });
 });

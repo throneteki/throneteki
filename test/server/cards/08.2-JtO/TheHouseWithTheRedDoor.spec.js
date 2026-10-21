@@ -35,6 +35,10 @@ describe('The House With the Red Door', function () {
             );
             expect(this.game.getPlainTextLog()).toContain('player1 puts The Crag into play');
             expect(this.game.getPlainTextLog()).toContain('player1 shuffles their deck');
+
+            this.completeSetup();
+
+            expect(this.player1).isReadyToTakeAction();
         });
 
         it('keeps the location in play through setup and does not count it as a setup card', function () {

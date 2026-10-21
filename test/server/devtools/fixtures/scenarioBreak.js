@@ -20,3 +20,15 @@ describe('Scenario break', function () {
         this.player1.clickPrompt('No such button');
     });
 });
+
+describe('Scenario with an open prompt', function () {
+    beforeEach(function () {
+        this.setupTest({
+            player1: { inPlay: ['Tumblestone Knight'], hand: ['Little Bird (Core)'] }
+        });
+    });
+
+    it('leaves a prompt open', function () {
+        this.player1.clickCard(this.littleBird);
+    });
+});

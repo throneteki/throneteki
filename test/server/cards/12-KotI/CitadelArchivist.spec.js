@@ -61,6 +61,10 @@ describe('Citadel Archivist (KotI)', function () {
         it('still lets reactions to the discard trigger', function () {
             expect(this.citadelArchivist.location).toBe('draw deck');
             expect(this.player2).toAllowAbilityTrigger(this.corpseLake);
+
+            this.player2.clickPrompt('Pass');
+
+            expect(this.player2).isReadyToTakeAction();
         });
     });
 

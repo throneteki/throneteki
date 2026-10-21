@@ -31,6 +31,10 @@ describe('Filthy Accusations', function () {
             expect(this.player1).not.toBeAbleToSelect(this.bastardInHiding);
             expect(this.player1).not.toBeAbleToSelect(this.courtesanOfTheRose);
             expect(this.player1).not.toBeAbleToSelect(this.theKingsroad);
+
+            this.player1.clickCard(this.tumblestoneKnight);
+
+            expect(this.player1).isReadyToTakeAction();
         });
 
         it("kneels the chosen opponent's character", function () {

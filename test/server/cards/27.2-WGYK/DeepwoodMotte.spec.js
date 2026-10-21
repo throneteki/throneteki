@@ -47,6 +47,11 @@ describe('Deepwood Motte', function () {
         it('can be triggered', function () {
             expect(this.greyCliffs.kneeled).toBe(true);
             expect(this.player1).toAllowAbilityTrigger(this.deepwoodMotte);
+
+            this.player1.clickPrompt('Pass');
+            this.player2.clickCard(this.raiderFromPyke);
+
+            expect(this.player1).isReadyToTakeAction();
         });
 
         describe('and it is triggered', function () {
@@ -61,6 +66,11 @@ describe('Deepwood Motte', function () {
                 expect(this.player1).not.toBeAbleToSelect(this.tumblestoneKnight);
                 expect(this.player1).not.toBeAbleToSelect(this.raiderFromPyke);
                 expect(this.player1).not.toBeAbleToSelect(this.mothersMen);
+
+                this.player1.clickCard(this.blackWindsCrew);
+                this.player2.clickCard(this.raiderFromPyke);
+
+                expect(this.player1).isReadyToTakeAction();
             });
 
             it('kneels Deepwood Motte to stand the character', function () {
@@ -71,6 +81,10 @@ describe('Deepwood Motte', function () {
                 expect(this.tumblestoneKnight.kneeled).toBe(true);
                 expect(this.raiderFromPyke.kneeled).toBe(true);
                 expect(this.player2).toHavePrompt('Select 1 character to fulfill military claim');
+
+                this.player2.clickCard(this.raiderFromPyke);
+
+                expect(this.player1).isReadyToTakeAction();
             });
         });
     });
@@ -90,6 +104,10 @@ describe('Deepwood Motte', function () {
         it('cannot be triggered', function () {
             expect(this.theRiverroad.kneeled).toBe(true);
             expect(this.player1).not.toAllowAbilityTrigger(this.deepwoodMotte);
+
+            this.player1.clickCard(this.tumblestoneKnight);
+
+            expect(this.player2).isReadyToTakeAction();
         });
     });
 });

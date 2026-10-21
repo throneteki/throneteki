@@ -31,11 +31,19 @@ describe('Greatjon Umber', function () {
         this.unopposedChallenge(this.player1, 'Power', this.greatjonUmber);
 
         expect(this.player1).not.toAllowAbilityTrigger(this.greatjonUmber);
+
+        this.player1.clickCard(this.houseMaester);
+
+        expect(this.player1).isReadyToTakeAction();
     });
 
     it('cannot be triggered when he is not attacking', function () {
         this.unopposedChallenge(this.player1, 'Military', this.tumblestoneKnight);
 
         expect(this.player1).not.toAllowAbilityTrigger(this.greatjonUmber);
+
+        this.player2.clickCard(this.bastardInHiding);
+
+        expect(this.player1).isReadyToTakeAction();
     });
 });

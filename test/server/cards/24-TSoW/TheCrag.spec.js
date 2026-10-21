@@ -39,6 +39,10 @@ describe('The Crag', function () {
         this.player1.triggerAbility(this.theCrag);
 
         expect(this.theCrag.power).toBe(2);
+
+        this.player2.clickCard(this.bastardInHiding);
+
+        expect(this.player1).isReadyToTakeAction();
     });
 
     it('cannot be triggered after a [power] challenge', function () {

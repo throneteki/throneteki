@@ -40,12 +40,22 @@ describe('Queenscrown', function () {
             it('should kneel itself as a cost', function () {
                 this.player1.clickMenu(this.queenscrown, "Reveal top 3 cards of opponent's deck");
                 expect(this.queenscrown.kneeled).toBe(true);
+
+                this.player1.clickPrompt('Done');
+                this.player1.clickPrompt('Done');
+
+                expect(this.player1).isReadyToTakeAction();
             });
 
             it("should reveal the top 3 cards of the opponent's deck", function () {
                 vi.spyOn(GameActions, 'revealTopCards');
                 this.player1.clickMenu(this.queenscrown, "Reveal top 3 cards of opponent's deck");
                 expect(GameActions.revealTopCards).toHaveBeenCalledWith(expect.any(Function));
+
+                this.player1.clickPrompt('Done');
+                this.player1.clickPrompt('Done');
+
+                expect(this.player1).isReadyToTakeAction();
             });
         });
 

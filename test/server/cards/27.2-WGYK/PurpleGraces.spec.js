@@ -24,6 +24,7 @@ describe('Purple Graces', function () {
         this.player1.clickPrompt('Pass');
 
         expect(this.player2.actionUnavailableReason(this.purpleGraces)).toBe('condition');
+        expect(this.player2).isReadyToTakeAction();
     });
 
     describe('during a military challenge', function () {
@@ -41,6 +42,8 @@ describe('Purple Graces', function () {
             expect(this.player2).not.toBeAbleToSelect(this.tumblestoneKnight);
             expect(this.player2).not.toBeAbleToSelect(this.purpleGraces);
             expect(this.player2).not.toBeAbleToSelect(this.bastardInHiding);
+            this.player2.clickCard(this.houseDayneKnight);
+            expect(this.player1).isReadyToTakeAction();
         });
 
         it('kneels Purple Graces to give the attacker -2 STR', function () {
@@ -53,7 +56,7 @@ describe('Purple Graces', function () {
             expect(this.player1).toHavePrompt('Initiate an action');
             this.player1.clickPrompt('Pass');
             expect(this.player2.actionUnavailableReason(this.purpleGraces)).toBe('cost');
-            expect(this.player2).toHavePrompt('Initiate an action');
+            expect(this.player2).isReadyToTakeAction();
         });
     });
 });

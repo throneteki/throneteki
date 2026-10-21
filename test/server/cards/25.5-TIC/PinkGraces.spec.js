@@ -29,6 +29,8 @@ describe('Pink Graces', function () {
             expect(this.nightmares.location).toBe('hand');
             expect(this.tithe.location).toBe('hand');
             expect(this.player1).toHavePrompt('Select a plot');
+            expect(this.player1).isReadyToTakeAction();
+            expect(this.player2).isReadyToTakeAction();
         });
 
         it('can be declined', function () {
@@ -38,6 +40,8 @@ describe('Pink Graces', function () {
             expect(this.nightmares.location).toBe('draw deck');
             expect(this.tithe.location).toBe('draw deck');
             expect(this.player1).toHavePrompt('Select a plot');
+            expect(this.player1).isReadyToTakeAction();
+            expect(this.player2).isReadyToTakeAction();
         });
     });
 
@@ -56,6 +60,8 @@ describe('Pink Graces', function () {
             expect(this.tithe.location).toBe('hand');
             expect(this.nightmares.location).toBe('draw deck');
             expect(this.player1).toHavePrompt('Select a plot');
+            expect(this.player1).isReadyToTakeAction();
+            expect(this.player2).isReadyToTakeAction();
         });
     });
 });

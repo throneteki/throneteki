@@ -22,6 +22,7 @@ describe('A Storm of Swords', function () {
 
         expect(this.game.currentChallenge.challengeType).toBe('military');
         expect(this.game.currentChallenge.number).toBe(2);
+        expect(this.player1).isReadyToTakeAction();
     });
 
     it('does not let you initiate a third', function () {

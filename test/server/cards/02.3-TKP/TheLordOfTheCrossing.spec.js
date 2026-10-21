@@ -25,6 +25,7 @@ describe('The Lord of the Crossing', function () {
                 expect(this.tumblestoneKnight.getStrength()).toBe(1);
                 expect(this.game.currentChallenge.attackerStrength).toBe(1);
                 expect(this.houseMaester.getStrength()).toBe(2);
+                expect(this.player1).isReadyToTakeAction();
             });
 
             it('ends with the challenge', function () {
@@ -51,6 +52,7 @@ describe('The Lord of the Crossing', function () {
 
                 expect(this.houseMaester.getStrength()).toBe(2);
                 expect(this.game.currentChallenge.attackerStrength).toBe(2);
+                expect(this.player1).isReadyToTakeAction();
             });
 
             describe('during the third', function () {
@@ -65,6 +67,7 @@ describe('The Lord of the Crossing', function () {
                 it('gives each of your participating characters +2 STR', function () {
                     expect(this.bastardInHiding.getStrength()).toBe(4);
                     expect(this.game.currentChallenge.attackerStrength).toBe(4);
+                    expect(this.player1).isReadyToTakeAction();
                 });
 
                 it('gains 1 power for your faction if you win', function () {
@@ -103,6 +106,7 @@ describe('The Lord of the Crossing', function () {
         it('gives it -1 STR too', function () {
             expect(this.jonSnow.isParticipating()).toBe(true);
             expect(this.jonSnow.getStrength()).toBe(3);
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 });

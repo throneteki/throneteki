@@ -63,6 +63,8 @@ describe('Sentinels of the Realm', function () {
             expect(this.player1Object.hand.length).toBe(3);
             expect(this.player2Object.hand).toEqual([]);
             expect(this.player1).toHavePrompt('Select a plot');
+            expect(this.player1).isReadyToTakeAction();
+            expect(this.player2).isReadyToTakeAction();
         });
 
         it('draws 1 card fewer for each challenge type initiated against you', function () {
@@ -72,6 +74,8 @@ describe('Sentinels of the Realm', function () {
 
             expect(this.player1Object.hand.length).toBe(2);
             expect(this.player1).toHavePrompt('Select a plot');
+            expect(this.player1).isReadyToTakeAction();
+            expect(this.player2).isReadyToTakeAction();
         });
 
         it('draws 1 card when two challenge types were initiated against you', function () {
@@ -83,6 +87,8 @@ describe('Sentinels of the Realm', function () {
 
             expect(this.player1Object.hand.length).toBe(1);
             expect(this.player1).toHavePrompt('Select a plot');
+            expect(this.player1).isReadyToTakeAction();
+            expect(this.player2).isReadyToTakeAction();
         });
     });
 });
