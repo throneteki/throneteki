@@ -7,11 +7,11 @@ class WillasTyrell extends DrawCard {
     // control is attacking or defending alone.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () =>
-                this.controller.anyCardsInPlay(
+            condition: (context) =>
+                context.source.controller.anyCardsInPlay(
                     (card) =>
-                        this.game.isDuringChallenge({ attackingAlone: card }) ||
-                        this.game.isDuringChallenge({ defendingAlone: card })
+                        context.game.isDuringChallenge({ attackingAlone: card }) ||
+                        context.game.isDuringChallenge({ defendingAlone: card })
                 ),
             effect: ability.effects.contributeCharacterStrength(this)
         });

@@ -6,7 +6,7 @@ class GalbartGlover extends DrawCard {
     // the first character each opponent marshals or ambushes each phase by 1.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.moreWinterThanSummerPlotsRevealed(),
+            condition: (context) => context.source.moreWinterThanSummerPlotsRevealed(),
             targetController: 'opponent',
             effect: ability.effects.increaseCost({
                 playingTypes: ['marshal', 'ambush'],

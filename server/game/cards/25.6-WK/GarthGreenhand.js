@@ -16,9 +16,9 @@ class GarthGreenhand extends DrawCard {
             gold: 1
         });
         this.persistentEffect({
-            condition: () => this.game.isDuringChallenge(),
-            match: (card) =>
-                card.controller === this.controller &&
+            condition: (context) => context.game.isDuringChallenge(),
+            match: (card, context) =>
+                card.controller === context.source.controller &&
                 card.isUnique() &&
                 card.isParticipating() &&
                 card.isFaction('tyrell'),

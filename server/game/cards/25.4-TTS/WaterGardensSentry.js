@@ -6,15 +6,15 @@ class WaterGardensSentry extends DrawCard {
     // a defender during [intrigue] challenges in which you are the defending player.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () =>
-                this.controller.anyCardsInPlay({
+            condition: (context) =>
+                context.source.controller.anyCardsInPlay({
                     type: 'character',
                     faction: 'martell',
                     trait: ['Lord', 'Lady']
                 }) &&
-                this.game.isDuringChallenge({
+                context.game.isDuringChallenge({
                     challengeType: 'intrigue',
-                    defendingPlayer: this.controller
+                    defendingPlayer: context.source.controller
                 }),
             match: this,
             effect: [ability.effects.canBeDeclaredWithoutIcon()]

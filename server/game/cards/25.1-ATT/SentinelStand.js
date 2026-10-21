@@ -6,7 +6,7 @@ class SentinelStand extends DrawCard {
     // gets +2 STR.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => !this.kneeled,
+            condition: (context) => !context.source.kneeled,
             match: (card) => card.getType() === 'character' && card.getNumberOfIcons() <= 1,
             effect: ability.effects.modifyStrength(2)
         });

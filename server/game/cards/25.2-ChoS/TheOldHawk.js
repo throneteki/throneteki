@@ -7,7 +7,7 @@ class TheOldHawk extends DrawCard {
     // or higher gains renown.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.game.anyPlotHasTrait('Summer'),
+            condition: (context) => context.game.anyPlotHasTrait('Summer'),
             match: (card) =>
                 card.getType() === 'character' &&
                 card.isFaction('martell') &&

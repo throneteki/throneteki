@@ -7,8 +7,8 @@ class RalfKenning extends DrawCard {
     // opponent's revealed plot card by 1.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () =>
-                this.game
+            condition: (context) =>
+                context.game
                     .getPlayers()
                     .some((player) => player.activePlot && player.activePlot.hasTrait('Winter')),
             match: (card) => card === card.controller.activePlot,

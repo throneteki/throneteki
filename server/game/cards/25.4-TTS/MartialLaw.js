@@ -10,8 +10,11 @@ class MartialLaw extends DrawCard {
 
         this.attachmentRestriction({ type: 'location', limited: false });
         this.whileAttached({
-            condition: () =>
-                !this.tracker.some({ winner: this.parent.controller, challengeType: 'power' }),
+            condition: (context) =>
+                !context.source.tracker.some({
+                    winner: context.source.parent.controller,
+                    challengeType: 'power'
+                }),
             effect: ability.effects.cannotBeStood()
         });
     }

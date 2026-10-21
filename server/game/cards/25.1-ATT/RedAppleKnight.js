@@ -6,9 +6,11 @@ class RedAppleKnight extends DrawCard {
     // is that character's STR.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.getSingleKnight(),
+            condition: (context) => context.source.getSingleKnight(),
             match: this,
-            effect: ability.effects.dynamicStrength(() => this.getSingleKnight().getStrength())
+            effect: ability.effects.dynamicStrength((card, context) =>
+                context.source.getSingleKnight().getStrength()
+            )
         });
     }
 

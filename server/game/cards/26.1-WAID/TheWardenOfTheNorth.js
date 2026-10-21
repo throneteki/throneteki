@@ -13,8 +13,9 @@ class TheWardenOfTheNorth extends DrawCard {
             effect: [ability.effects.addTrait('Commander'), ability.effects.addKeyword('Renown')]
         });
 
-        this.whileAttached({
-            condition: () => this.parent.isParticipating(),
+        this.persistentEffect({
+            condition: (context) =>
+                !!context.source.parent && context.source.parent.isParticipating(),
             targetController: 'any',
             effect: [
                 ability.effects.cannotPutIntoPlay((card) => card.location === 'shadows'),

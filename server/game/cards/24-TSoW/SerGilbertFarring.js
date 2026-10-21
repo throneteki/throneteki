@@ -6,8 +6,8 @@ class SerGilbertFarring extends DrawCard {
     // +1 STR and gains renown.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () =>
-                this.game.anyCardsInPlay((card) => card.isParticipating() && card.isAssault()),
+            condition: (context) =>
+                context.game.anyCardsInPlay((card) => card.isParticipating() && card.isAssault()),
             match: this,
             effect: [ability.effects.modifyStrength(1), ability.effects.addKeyword('Renown')]
         });

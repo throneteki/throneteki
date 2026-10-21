@@ -10,7 +10,7 @@ class GreyWormsSpear extends DrawCard {
             effect: [ability.effects.addIcon('power'), ability.effects.addKeyword('intimidate')]
         });
         this.persistentEffect({
-            condition: () => this.parent && this.parent.isAttacking(),
+            condition: (context) => context.source.parent && context.source.parent.isAttacking(),
             match: (card) => card.isDefending(),
             targetController: 'any',
             effect: ability.effects.modifyStrength(-1)

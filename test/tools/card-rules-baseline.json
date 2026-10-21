@@ -5507,17 +5507,11 @@
     "server/game/cards/24-TSoW/Dragonstone.js": {
         "this-in-ability": 3
     },
-    "server/game/cards/24-TSoW/FormerChampion.js": {
-        "this-in-ability": 3
-    },
     "server/game/cards/24-TSoW/Hero.js": {
         "this-in-ability": 4
     },
     "server/game/cards/24-TSoW/HighgardenSept.js": {
         "this-in-ability": 5
-    },
-    "server/game/cards/24-TSoW/IronEmmett.js": {
-        "this-in-ability": 2
     },
     "server/game/cards/24-TSoW/MaceTyrell.js": {
         "this-in-ability": 2
@@ -5531,9 +5525,6 @@
     "server/game/cards/24-TSoW/OneTwoThree.js": {
         "this-in-ability": 2
     },
-    "server/game/cards/24-TSoW/OxcrossSurvivors.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/24-TSoW/SalladhorSaansLyseni.js": {
         "this-in-ability": 5
     },
@@ -5541,12 +5532,6 @@
         "this-in-ability": 5,
         "prompt-for-select": 1,
         "add-message": 1
-    },
-    "server/game/cards/24-TSoW/SerGilbertFarring.js": {
-        "this-in-ability": 1
-    },
-    "server/game/cards/24-TSoW/StalwartShields.js": {
-        "this-in-ability": 2
     },
     "server/game/cards/24-TSoW/TheBastardsBoys.js": {
         "this-in-ability": 1
@@ -5599,23 +5584,14 @@
         "this-in-ability": 7,
         "legacy-helper": 1
     },
-    "server/game/cards/25.1-ATT/LonelyHills.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/25.1-ATT/MyrcellaBaratheon.js": {
         "this-in-ability": 3
     },
     "server/game/cards/25.1-ATT/OpenRevolt.js": {
         "this-in-ability": 2
     },
-    "server/game/cards/25.1-ATT/RedAppleKnight.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/25.1-ATT/SchemingSnake.js": {
         "this-in-ability": 2
-    },
-    "server/game/cards/25.1-ATT/SentinelStand.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/25.1-ATT/VictarionGreyjoy.js": {
         "this-in-ability": 6,
@@ -5623,9 +5599,6 @@
     },
     "server/game/cards/25.2-ChoS/ASouthronPeace.js": {
         "this-in-ability": 5
-    },
-    "server/game/cards/25.2-ChoS/AcolyteOfTheShadow.js": {
-        "this-in-ability": 2
     },
     "server/game/cards/25.2-ChoS/HighbornRecruit.js": {
         "this-in-ability": 2
@@ -5638,15 +5611,6 @@
     },
     "server/game/cards/25.2-ChoS/KingRobertsLegacy.js": {
         "this-in-ability": 4
-    },
-    "server/game/cards/25.2-ChoS/OldCaptain.js": {
-        "this-in-ability": 1
-    },
-    "server/game/cards/25.2-ChoS/RalfKenning.js": {
-        "this-in-ability": 1
-    },
-    "server/game/cards/25.2-ChoS/SerParmenCrane.js": {
-        "this-in-ability": 2
     },
     "server/game/cards/25.2-ChoS/TasteTheBlood.js": {
         "this-in-ability": 3
@@ -5661,9 +5625,6 @@
     "server/game/cards/25.2-ChoS/TheMoonDoor.js": {
         "this-in-ability": 3
     },
-    "server/game/cards/25.2-ChoS/TheOldHawk.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/25.2-ChoS/TheThroneOfDorne.js": {
         "this-in-ability": 1
     },
@@ -5677,9 +5638,6 @@
     },
     "server/game/cards/25.3-FUtG/DaenerysTargaryen.js": {
         "this-in-ability": 5
-    },
-    "server/game/cards/25.3-FUtG/GalbartGlover.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/25.3-FUtG/Greyscale.js": {
         "this-in-ability": 12,
@@ -5699,9 +5657,6 @@
         "this-in-ability": 3
     },
     "server/game/cards/25.3-FUtG/SerAndrewEstermont.js": {
-        "this-in-ability": 1
-    },
-    "server/game/cards/25.3-FUtG/SerArysOakheart.js": {
         "this-in-ability": 1
     },
     "server/game/cards/25.3-FUtG/TarleTheThriceDrowned.js": {
@@ -5730,20 +5685,11 @@
     "server/game/cards/25.3-FUtG/WarriorsSons.js": {
         "this-in-ability": 2
     },
-    "server/game/cards/25.3-FUtG/WillasTyrell.js": {
-        "this-in-ability": 3
-    },
-    "server/game/cards/25.4-TTS/AegonTheConqueror.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/25.4-TTS/AllardSeaworth.js": {
         "this-in-ability": 1
     },
     "server/game/cards/25.4-TTS/BattleOnTheGreenFork.js": {
         "this-in-ability": 4
-    },
-    "server/game/cards/25.4-TTS/BlackBalaq.js": {
-        "this-in-ability": 2
     },
     "server/game/cards/25.4-TTS/BowenMarsh.js": {
         "this-in-ability": 8,
@@ -5757,9 +5703,6 @@
     },
     "server/game/cards/25.4-TTS/Kingswood.js": {
         "this-in-ability": 1
-    },
-    "server/game/cards/25.4-TTS/MartialLaw.js": {
-        "this-in-ability": 2
     },
     "server/game/cards/25.4-TTS/Nightfall.js": {
         "this-in-ability": 3
@@ -5782,9 +5725,6 @@
     "server/game/cards/25.4-TTS/Varys.js": {
         "this-in-ability": 2,
         "add-message": 1
-    },
-    "server/game/cards/25.4-TTS/WaterGardensSentry.js": {
-        "this-in-ability": 3
     },
     "server/game/cards/25.5-TIC/BlackhavenRider.js": {
         "this-in-ability": 2
@@ -5873,12 +5813,6 @@
     "server/game/cards/25.6-WK/DesperateDeserter.js": {
         "this-in-ability": 3
     },
-    "server/game/cards/25.6-WK/GarthGreenhand.js": {
-        "this-in-ability": 2
-    },
-    "server/game/cards/25.6-WK/GreyWormsSpear.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/25.6-WK/MaesterCressen.js": {
         "this-in-ability": 2
     },
@@ -5887,9 +5821,6 @@
     },
     "server/game/cards/25.6-WK/RooseBolton.js": {
         "this-in-ability": 3
-    },
-    "server/game/cards/25.6-WK/SeptaUnella.js": {
-        "this-in-ability": 2
     },
     "server/game/cards/25.6-WK/TheDornishWars.js": {
         "this-in-ability": 6,
@@ -5940,9 +5871,6 @@
     "server/game/cards/26.1-WAID/NavalBombardment.js": {
         "this-in-ability": 3
     },
-    "server/game/cards/26.1-WAID/RedLamb.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/26.1-WAID/RoastBoar.js": {
         "this-in-ability": 1
     },
@@ -5955,9 +5883,6 @@
     },
     "server/game/cards/26.1-WAID/TheMinstrelsMuse.js": {
         "this-in-ability": 2
-    },
-    "server/game/cards/26.1-WAID/TheWardenOfTheNorth.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/26.1-WAID/TridentGuard.js": {
         "this-in-ability": 2

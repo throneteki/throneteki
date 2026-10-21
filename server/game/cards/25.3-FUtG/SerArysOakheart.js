@@ -7,7 +7,7 @@ class SerArysOakheart extends DrawCard {
     // able.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.isAttacking(),
+            condition: (context) => context.source.isAttacking(),
             targetController: 'any',
             effect: ability.effects.setDefenderMinimum(1)
         });

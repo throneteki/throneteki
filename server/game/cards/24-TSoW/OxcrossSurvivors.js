@@ -7,8 +7,8 @@ class OxcrossSurvivors extends DrawCard {
     // and gains assault.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () =>
-                this.controller.anyCardsInPlay({
+            condition: (context) =>
+                context.source.controller.anyCardsInPlay({
                     faction: 'lannister',
                     type: 'character',
                     trait: ['Lord', 'Commander']

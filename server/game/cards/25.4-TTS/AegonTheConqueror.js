@@ -13,14 +13,14 @@ class AegonTheConqueror extends DrawCard {
             unique: true
         });
         this.persistentEffect({
-            condition: () =>
-                this.controller.anyCardsInPlay({
+            condition: (context) =>
+                context.source.controller.anyCardsInPlay({
                     type: 'character',
                     attacking: true,
                     trait: 'Dragon',
                     printedCostOrHigher: 7
                 }),
-            match: (card) => card === this.controller.activePlot,
+            match: (card, context) => card === context.source.controller.activePlot,
             effect: ability.effects.modifyClaim(1)
         });
     }

@@ -8,10 +8,12 @@ class BlackBalaq extends DrawCard {
     // Black Balaq has.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.isAttacking(),
+            condition: (context) => context.source.isAttacking(),
             match: (card) => card.isDefending(),
             targetController: 'opponent',
-            effect: ability.effects.dynamicStrength(() => -this.tokens[Tokens.gold])
+            effect: ability.effects.dynamicStrength(
+                (card, context) => -context.source.tokens[Tokens.gold]
+            )
         });
     }
 }

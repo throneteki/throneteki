@@ -5,7 +5,7 @@ class OldCaptain extends DrawCard {
     // While Old Captain is standing, it gains pillage and renown.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => !this.kneeled,
+            condition: (context) => !context.source.kneeled,
             match: this,
             effect: [ability.effects.addKeyword('pillage'), ability.effects.addKeyword('renown')]
         });

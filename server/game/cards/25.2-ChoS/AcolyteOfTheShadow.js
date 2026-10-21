@@ -5,9 +5,9 @@ class AcolyteOfTheShadow extends DrawCard {
     // While an opponent controls a card in shadows, Acolyte of the Shadow gains insight.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () =>
-                this.game
-                    .getOpponents(this.controller)
+            condition: (context) =>
+                context.game
+                    .getOpponents(context.source.controller)
                     .some((opponent) => opponent.shadows.length > 0),
             match: this,
             effect: ability.effects.addKeyword('insight')

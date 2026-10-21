@@ -6,7 +6,8 @@ class LonelyHills extends DrawCard {
     // pile.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => !this.kneeled && this.controller.plotDeck.length > 1,
+            condition: (context) =>
+                !context.source.kneeled && context.source.controller.plotDeck.length > 1,
             targetController: 'current',
             // TODO: Non-dynamic used plots effect
             effect: ability.effects.dynamicUsedPlots(() => -1)
