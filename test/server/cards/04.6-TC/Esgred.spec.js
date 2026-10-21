@@ -1,83 +1,103 @@
 describe('Esgred', function () {
-    integration(function () {
+    describe('when Asha Greyjoy enters play while Esgred is in play', function () {
         beforeEach(function () {
-            const deck1 = this.buildDeck('greyjoy', [
-                'Trading with the Pentoshi',
-                'Esgred',
-                'Asha Greyjoy (Core)'
-            ]);
-            const deck2 = this.buildDeck('lannister', [
-                'Trading with the Pentoshi',
-                'Hedge Knight',
-                'Hedge Knight'
-            ]);
-            this.player1.selectDeck(deck1);
-            this.player2.selectDeck(deck2);
-            this.startGame();
-            this.keepStartingHands();
+            this.setupTest({
+                phase: 'marshal',
+                player1: {
+                    faction: 'greyjoy',
+                    gold: 7,
+                    hand: ['Asha Greyjoy (Core)'],
+                    inPlay: ['Esgred']
+                }
+            });
 
-            this.asha = this.player1.findCardByName('Asha Greyjoy', 'hand');
-            this.esgred = this.player1.findCardByName('Esgred', 'hand');
-            [this.knight1, this.knight2] = this.player2.filterCardsByName('Hedge Knight', 'hand');
-
-            this.player2.clickCard(this.knight1);
-            this.player2.clickCard(this.knight2);
-            this.completeSetup();
-
-            this.selectFirstPlayer(this.player1);
-            this.selectPlotOrder(this.player1);
+            this.player1.clickCard(this.ashaGreyjoy);
         });
 
-        describe('when declaring Esgred as an attacker', function () {
-            beforeEach(function () {
-                this.player1.clickCard(this.esgred);
-                this.player1.clickPrompt('Done');
-                this.player2.clickPrompt('Done');
+        it('sacrifices Esgred, then Asha gains 1 power', function () {
+            expect(this.esgred.location).toBe('discard pile');
+            expect(this.ashaGreyjoy.power).toBe(1);
+            expect(this.game.getPlainTextLog()).toContain(
+                'player1 sacrifices Esgred as they control Asha Greyjoy'
+            );
+            expect(this.game.getPlainTextLog()).toContain('Then, Asha Greyjoy gains 1 power');
+            expect(this.player1).isReadyToTakeAction();
+        });
+    });
 
-                this.player1.clickPrompt('Military');
-                this.player1.clickCard(this.esgred);
-                this.player1.clickPrompt('Done');
+    describe('when Esgred enters play while you control Asha Greyjoy', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'marshal',
+                player1: {
+                    faction: 'greyjoy',
+                    gold: 5,
+                    hand: ['Esgred'],
+                    inPlay: ['Asha Greyjoy (Core)']
+                }
             });
 
-            it('should allow 2 characters to be bypassed by stealth', function () {
-                expect(this.player1).toHavePrompt('Select up to 2 stealth targets for Esgred');
-                this.player1.clickCard(this.knight1);
-                this.player1.clickCard(this.knight2);
-                this.player1.clickPrompt('Done');
-
-                expect(this.knight1.bypassedByStealth).toBe(true);
-                expect(this.knight2.bypassedByStealth).toBe(true);
-            });
+            this.player1.clickCard(this.esgred);
         });
 
-        describe('when Esgred is in play and Asha enters play', function () {
-            beforeEach(function () {
-                this.player1.clickCard(this.esgred);
-                this.player1.clickCard(this.asha);
+        it('sacrifices Esgred, then Asha gains 1 power', function () {
+            expect(this.esgred.location).toBe('discard pile');
+            expect(this.ashaGreyjoy.power).toBe(1);
+            expect(this.player1).isReadyToTakeAction();
+        });
+    });
+
+    describe('when an opponent controls Asha Greyjoy', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'marshal',
+                player1: {
+                    faction: 'greyjoy',
+                    gold: 5,
+                    hand: ['Esgred']
+                },
+                player2: {
+                    inPlay: ['Asha Greyjoy (Core)']
+                }
             });
 
-            it('should have Asha gain power', function () {
-                expect(this.asha.power).toBe(1);
-            });
-
-            it('should sacrifice Esgred', function () {
-                expect(this.esgred.location).toBe('discard pile');
-            });
+            this.player1.clickCard(this.esgred);
         });
 
-        describe('when Asha is in play and Esgred enters play', function () {
-            beforeEach(function () {
-                this.player1.clickCard(this.asha);
-                this.player1.clickCard(this.esgred);
+        it('stays in play', function () {
+            expect(this.esgred.location).toBe('play area');
+            expect(this.ashaGreyjoy.power).toBe(0);
+            expect(this.player1).isReadyToTakeAction();
+        });
+    });
+
+    describe('when attacking', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'challenge',
+                player1: {
+                    faction: 'greyjoy',
+                    inPlay: ['Esgred']
+                },
+                player2: {
+                    inPlay: ['Tumblestone Knight', 'House Maester']
+                }
             });
 
-            it('should have Asha gain power', function () {
-                expect(this.asha.power).toBe(1);
-            });
+            this.player1.clickPrompt('Military');
+            this.player1.clickCard(this.esgred);
+            this.player1.clickPrompt('Done');
+        });
 
-            it('should sacrifice Esgred', function () {
-                expect(this.esgred.location).toBe('discard pile');
-            });
+        it('may bypass an additional character using stealth', function () {
+            expect(this.player1).toHavePrompt('Select up to 2 stealth targets for Esgred');
+
+            this.player1.clickCard(this.tumblestoneKnight);
+            this.player1.clickCard(this.houseMaester);
+            this.player1.clickPrompt('Done');
+
+            expect(this.tumblestoneKnight.bypassedByStealth).toBe(true);
+            expect(this.houseMaester.bypassedByStealth).toBe(true);
         });
     });
 });

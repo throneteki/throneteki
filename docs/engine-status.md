@@ -4,7 +4,7 @@ Written 2026-10-20 so the next session can continue without the previous convers
 [engine-roadmap.md](engine-roadmap.md). The rules map is
 [framework-coverage.md](framework-coverage.md). Read both before changing `server/game`.
 
-Nothing from this batch is committed. Do not commit, push, or open a pull request unless asked.
+The work is committed on `feature/engine-test-framework`. Do not push or open a pull request unless asked.
 
 Last full server run, after the engine changes and before the doc edits: `npx vitest run test/server`
 from the repo root. 419 files, 4628 passed, 13 skipped. Re-run it after any further engine change.
@@ -61,6 +61,14 @@ the ongoing work, and it was not part of this batch.
   is offered when its +1 STR would take the character above 0.
   A two-kill version (saveable kill, then an unsaveable one) was tried and removed: it offered
   saves that cost the player a card and then killed the character anyway.
+- "If X, Y" text with no trigger is a state check (`this.stateCheck`, `server/game/StateChecks.js`).
+  `refreshGameState` checks it after every event and resolves its game action while the
+  condition holds. It is off while the card is blank or facedown and during setup, and it is not a
+  triggered ability, so it cannot be cancelled. A kill no save could remedy passes
+  `allowSave: false` (Gyles Rosby, FAQ 3.1).
+  [StateChecks.spec.js](../test/server/gamesteps/StateChecks.spec.js). Esgred, Reek, Arry, Arstan
+  Whitebeard, Oathsworn Wildling, Gyles Rosby, Ser Jorah Mormont (Core) and Harrenhal (TTWDFL) use
+  it.
 - Claim, taxation, and pile order were already done:
   [Claim.spec.js](../test/server/gamesteps/Claim.spec.js),
   [TaxationPhase.spec.js](../test/server/gamesteps/TaxationPhase.spec.js),
@@ -91,6 +99,10 @@ not already decided.
 5. Every state change goes through a `GameAction`. Manual corrections (`changeStat`, `/power`,
    `/token`) stay plain corrections and raise no events.
 6. The client showing why an action is unavailable. Server reasons already exist.
+7. Alayne Stone needs a ruling before it moves to a state check: when she becomes Sansa's
+   duplicate, does she leave play (losing power, tokens and attachments, and raising leave-play
+   events)? The FAQ only says the placement is automatic and cannot be saved from.
+   `PlaceAsDuplicate` refuses a card that is already in play.
 
 These are decided and should stay as they are until someone asks:
 
@@ -132,6 +144,8 @@ These were tried and reverted, or left alone on purpose.
   does nothing. Use an in-play card, or `location: 'any'`.
 - `clearInvalidTargets` removes a target of a lasting effect only when it left `targetLocation`.
 - Burn specs use a real burn (Dracarys! on a defender), not a hand-set STR modifier.
+- `setupTest` refreshes the game state after placing cards, so state checks resolve before the
+  test starts: Esgred and Asha both `inPlay` leaves Esgred in the discard pile.
 - Calling `setupTest` twice in one test does not replace a card name already on the harness. The
   property still points at the first game's card.
 - Setting `strictActionWindows` after a window has opened does not put skipped players back. Pass

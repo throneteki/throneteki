@@ -1,5 +1,6 @@
 import EventEmitter from 'events';
 import AttachmentValidityCheck from './AttachmentValidityCheck.js';
+import StateChecks from './StateChecks.js';
 import ChatCommands from './chatcommands.js';
 import GameCommands from './GameCommands.js';
 import GameChat from './gamechat.js';
@@ -78,6 +79,7 @@ class Game extends EventEmitter {
         // hold card references regardless of what each player can see.
         this.logEntries = [];
         this.attachmentValidityCheck = new AttachmentValidityCheck(this);
+        this.stateChecks = new StateChecks(this);
         this.effectEngine = new EffectEngine(this);
         this.flags = new ReferenceCountedSetProperty();
         this.playersAndSpectators = {};
@@ -1343,6 +1345,7 @@ class Game extends EventEmitter {
         this.effectEngine.recalculateDirtyTargets();
         this.effectEngine.reapplyStateDependentEffects();
         this.attachmentValidityCheck.enforceValidity();
+        this.stateChecks.enforce();
         this.gameOverHandler.checkConditions();
     }
 

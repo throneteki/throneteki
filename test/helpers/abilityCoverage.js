@@ -4,6 +4,7 @@ import BaseCard from '../../server/game/basecard.js';
 import DrawCard from '../../server/game/drawcard.js';
 import Effect from '../../server/game/effect.js';
 import Game from '../../server/game/game.js';
+import StateCheckAbility from '../../server/game/StateCheckAbility.js';
 
 const repoRoot = path.join(import.meta.dirname, '../..');
 const verifiedCodes = new Set(
@@ -21,7 +22,8 @@ function countAbilities(card) {
     return {
         actions: card.abilities.actions.length,
         reactions: card.abilities.reactions.length,
-        persistentEffects: card.abilities.persistentEffects.length
+        persistentEffects: card.abilities.persistentEffects.length,
+        stateChecks: card.abilities.stateChecks.length
     };
 }
 
@@ -49,6 +51,12 @@ function patch() {
             state.resolved.add(args[0].ability);
         }
         return emit.call(this, eventName, ...args);
+    };
+
+    const executeStateCheck = StateCheckAbility.prototype.executeHandler;
+    StateCheckAbility.prototype.executeHandler = function (...args) {
+        state.resolved.add(this);
+        return executeStateCheck.apply(this, args);
     };
 
     for (const method of ['addTargets', 'updateAppliedTargets', 'reapply', 'setActive']) {
@@ -79,6 +87,10 @@ function cardAbilities(card) {
                 title: ability.title,
                 covered: state.resolved.has(ability)
             })),
+        ...card.abilities.stateChecks.slice(start.stateChecks).map((ability) => ({
+            kind: 'state check',
+            covered: state.resolved.has(ability)
+        })),
         ...card.abilities.persistentEffects.slice(start.persistentEffects).map((properties) => ({
             kind: 'persistent effect',
             covered: [properties.effect].flat(Infinity).every((effect) => state.applied.has(effect))

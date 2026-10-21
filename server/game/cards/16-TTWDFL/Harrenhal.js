@@ -4,16 +4,10 @@ import { Tokens } from '../../Constants/index.js';
 
 class Harrenhal extends DrawCard {
     setupCardAbilities(ability) {
-        // TODO: Technically this should not be reaction
-        this.forcedReaction({
-            cannotBeCanceled: true,
-            when: {
-                onTokenPlaced: (event) => event.card === this && this.tokens[Tokens.ghost] >= 3
-            },
-            message: '{player} is forced to sacrifice {source}',
-            gameAction: GameActions.sacrificeCard({
-                card: this
-            })
+        this.stateCheck({
+            condition: (context) => context.source.tokens[Tokens.ghost] >= 3,
+            message: '{player} sacrifices {source} as it has 3 or more ghost tokens',
+            gameAction: GameActions.sacrificeCard((context) => ({ card: context.source }))
         });
 
         this.interrupt({

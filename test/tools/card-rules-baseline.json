@@ -319,9 +319,6 @@
         "add-message": 1,
         "legacy-helper": 1
     },
-    "server/game/cards/01-Core/SerJorahMormont.js": {
-        "add-message": 1
-    },
     "server/game/cards/01-Core/SerWaymarRoyce.js": {
         "add-message": 1,
         "legacy-helper": 1
@@ -849,10 +846,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/04.1-AtSK/Arry.js": {
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/04.1-AtSK/BitterbridgeEncampment.js": {
         "legacy-helper": 2,
         "add-message": 2,
@@ -1103,10 +1096,6 @@
     "server/game/cards/04.6-TC/BattleOfTheBlackwater.js": {
         "add-message": 1,
         "legacy-helper": 1
-    },
-    "server/game/cards/04.6-TC/Esgred.js": {
-        "event-registration": 1,
-        "legacy-helper": 2
     },
     "server/game/cards/04.6-TC/HouseOfTheUndying.js": {
         "legacy-helper": 1,
@@ -3615,12 +3604,6 @@
     "server/game/cards/20-HMW/OurBladesAreSharp.js": {
         "add-message": 1
     },
-    "server/game/cards/20-HMW/Reek.js": {
-        "event-registration": 1,
-        "legacy-helper": 1,
-        "add-message": 2,
-        "prompt-for-select": 1
-    },
     "server/game/cards/20-HMW/Saltcliffe.js": {
         "legacy-helper": 2,
         "add-message": 2,
@@ -3837,9 +3820,6 @@
     "server/game/cards/25.1-ATT/VictarionGreyjoy.js": {
         "add-message": 1
     },
-    "server/game/cards/25.2-ChoS/ArstanWhitebeard.js": {
-        "event-registration": 1
-    },
     "server/game/cards/25.2-ChoS/TheGoldPrice.js": {
         "event-registration": 1,
         "game-listener": 1,
@@ -3907,10 +3887,6 @@
     "server/game/cards/26.2-WoW/GhostHillElite.js": {
         "add-message": 2
     },
-    "server/game/cards/26.2-WoW/OathswornWildling.js": {
-        "event-registration": 1,
-        "add-message": 1
-    },
     "server/game/cards/26.2-WoW/QueenOfMeereen.js": {
         "prompt-for-select": 1
     },
@@ -3933,10 +3909,6 @@
         "add-message": 1
     },
     "server/game/cards/26.4 LotW/DornishSloop.js": {
-        "add-message": 1
-    },
-    "server/game/cards/26.4 LotW/GylesRosby.js": {
-        "event-registration": 1,
         "add-message": 1
     },
     "server/game/cards/26.4 LotW/SerHarryStrickland.js": {

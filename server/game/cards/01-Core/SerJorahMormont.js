@@ -4,29 +4,22 @@ import { Tokens } from '../../Constants/index.js';
 
 class SerJorahMormont extends DrawCard {
     setupCardAbilities() {
+        this.stateCheck({
+            condition: (context) => context.source.tokens[Tokens.betrayal] >= 3,
+            message: '{player} sacrifices {source} as it has 3 or more betrayal tokens',
+            gameAction: GameActions.sacrificeCard((context) => ({ card: context.source }))
+        });
+
         this.forcedReaction({
             when: {
                 afterChallenge: (event) =>
                     event.challenge.winner === this.controller && this.isParticipating()
             },
             message: '{player} is forced to place 1 betrayal token on {source}',
-            handler: (context) => {
-                this.game
-                    .resolveGameAction(
-                        GameActions.placeToken(() => ({ card: this, token: Tokens.betrayal })),
-                        context
-                    )
-                    .thenExecute(() => {
-                        if (this.tokens[Tokens.betrayal] >= 3) {
-                            this.game.addMessage(
-                                '{0} sacrifices {1} as it has 3 or more betrayal tokens',
-                                context.player,
-                                this
-                            );
-                            this.game.resolveGameAction(GameActions.sacrificeCard({ card: this }));
-                        }
-                    });
-            }
+            gameAction: GameActions.placeToken((context) => ({
+                card: context.source,
+                token: Tokens.betrayal
+            }))
         });
     }
 }

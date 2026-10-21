@@ -1,21 +1,20 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Arry extends DrawCard {
     setupCardAbilities(ability) {
-        // TODO: If you control Arya, sacrifice Arry.
+        this.stateCheck({
+            condition: (context) =>
+                context.player.anyCardsInPlay({ type: 'character', name: 'Arya Stark' }),
+            message: '{player} sacrifices {source} as they control Arya Stark',
+            gameAction: GameActions.sacrificeCard((context) => ({ card: context.source }))
+        });
+
         this.action({
             title: 'Draw 1 card',
             cost: ability.costs.returnSelfToHand(),
-            condition: () => this.controller.canDraw(),
-            handler: (context) => {
-                context.player.drawCardsToHand(1);
-
-                this.game.addMessage(
-                    '{0} returns {1} to their hand and draws 1 card',
-                    context.player,
-                    this
-                );
-            }
+            message: '{player} returns {source} to their hand to draw 1 card',
+            gameAction: GameActions.drawCards((context) => ({ player: context.player, amount: 1 }))
         });
     }
 }

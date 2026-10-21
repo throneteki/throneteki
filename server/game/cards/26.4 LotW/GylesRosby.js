@@ -2,48 +2,18 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class GylesRosby extends DrawCard {
-    constructor(owner, cardData) {
-        super(owner, cardData);
-
-        // TODO: Update all gold movements to encompass a single event name
-        this.registerEvents([
-            'onPhaseStarted',
-            'onGoldTransferred',
-            'onCardEntersPlay',
-            'onCardAbilityInitiated'
-        ]);
-    }
     setupCardAbilities() {
+        this.stateCheck({
+            condition: (context) =>
+                this.game.currentPhase === 'challenge' && context.player.gold === 0,
+            message: '{player} kills {source} as they have no gold in their gold pool',
+            // No save can remedy an empty gold pool, so none can be initiated (FAQ 3.1).
+            gameAction: GameActions.kill((context) => ({ card: context.source, allowSave: false }))
+        });
+
         this.plotModifiers({
             gold: 2
         });
-    }
-
-    onPhaseStarted() {
-        this.checkKill();
-    }
-
-    onGoldTransferred() {
-        this.checkKill();
-    }
-
-    onCardEntersPlay() {
-        this.checkKill();
-    }
-
-    onCardAbilityInitiated() {
-        this.checkKill();
-    }
-
-    checkKill() {
-        if (this.game.currentPhase === 'challenge' && this.controller.gold === 0) {
-            this.game.resolveGameAction(GameActions.kill({ card: this }));
-            this.game.addMessage(
-                '{0} is forced to kill {1} due to having no gold in their gold pool',
-                this.controller,
-                this
-            );
-        }
     }
 }
 

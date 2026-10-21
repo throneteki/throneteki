@@ -1,27 +1,21 @@
-import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class ArstanWhitebeard extends DrawCard {
-    constructor(owner, cardData) {
-        super(owner, cardData);
-
-        this.registerEvents(['onCardEntersPlay']);
-    }
-
     setupCardAbilities(ability) {
+        this.stateCheck({
+            condition: (context) =>
+                context.player.anyCardsInPlay({ type: 'character', name: 'Ser Barristan Selmy' }),
+            message: '{player} sacrifices {source} as they control Ser Barristan Selmy',
+            gameAction: GameActions.sacrificeCard((context) => ({ card: context.source }))
+        });
+
         this.persistentEffect({
             condition: () =>
                 !this.controller.anyCardsInPlay({ type: 'character', trait: ['Lord', 'Lady'] }),
             match: this,
             effect: ability.effects.cannotBeKneeled()
         });
-    }
-
-    onCardEntersPlay(event) {
-        let card = event.card;
-        if (card.controller === this.controller && card.name === 'Ser Barristan Selmy') {
-            this.game.resolveGameAction(GameActions.sacrificeCard({ card: this }));
-        }
     }
 }
 

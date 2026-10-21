@@ -11,6 +11,7 @@ import EventRegistrar from './eventregistrar.js';
 import GameActions from './GameActions/index.js';
 import KeywordsProperty from './PropertyTypes/KeywordsProperty.js';
 import ReferenceCountedSetProperty from './PropertyTypes/ReferenceCountedSetProperty.js';
+import StateCheckAbility from './StateCheckAbility.js';
 import XValueDefinition from './XValueDefinition.js';
 import { Flags, Tokens } from './Constants/index.js';
 import StackProperty from './PropertyTypes/StackProperty.js';
@@ -69,7 +70,13 @@ class BaseCard {
         this.abilityRestrictions = [];
         this.events = new EventRegistrar(this.game, this);
 
-        this.abilities = { actions: [], reactions: [], persistentEffects: [], playActions: [] };
+        this.abilities = {
+            actions: [],
+            reactions: [],
+            persistentEffects: [],
+            playActions: [],
+            stateChecks: []
+        };
 
         this.setupCardTextProperties(AbilityDsl);
         this.setupCardAbilities(AbilityDsl);
@@ -161,6 +168,10 @@ class BaseCard {
     forcedInterrupt(properties) {
         var reaction = new CardForcedInterrupt(this.game, this, properties);
         this.abilities.reactions.push(reaction);
+    }
+
+    stateCheck(properties) {
+        this.abilities.stateChecks.push(new StateCheckAbility(this.game, this, properties));
     }
 
     /**

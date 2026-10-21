@@ -339,6 +339,26 @@ gameAction: GameActions.delayedEffect({
 });
 ```
 
+### State checks
+
+Text of the form "If <condition>, <effect>." with no bold trigger (Esgred, Oathsworn Wildling,
+Ser Jorah Mormont) is a state check. Use `this.stateCheck` rather than listening for game events
+with `registerEvents`. The game checks the `condition` whenever the game state is refreshed (after
+each event resolves) and applies the `gameAction` as soon as it holds, while the card is in play,
+faceup and not blank, and outside setup. It isn't a triggered ability, so it can't be cancelled
+or declined as one. The context's `player` is the card's controller and `source` is the card. The
+`condition` must have no side effects, like any other trigger check. If the effect is a kill or a
+discard that no save could remedy (Gyles Rosby), pass `allowSave: false` (FAQ 3.1).
+
+```javascript
+this.stateCheck({
+    condition: (context) =>
+        context.player.anyCardsInPlay({ type: 'character', name: 'Arya Stark' }),
+    message: '{player} sacrifices {source} as they control Arya Stark',
+    gameAction: GameActions.sacrificeCard((context) => ({ card: context.source }))
+});
+```
+
 ### Choices made while the effect resolves
 
 When the card text has a player choose cards as part of the effect (an opponent chooses, each
