@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class FleaBottom extends DrawCard {
     // Flea Bottom (06098)
@@ -10,31 +11,29 @@ class FleaBottom extends DrawCard {
             title: 'Put character into play',
             phase: 'challenge',
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'discard pile' &&
-                    card.controller === this.controller &&
+                    card.controller === context.source.controller &&
                     card.getType() === 'character' &&
                     card.getPrintedCost() <= 3 &&
-                    this.controller.canPutIntoPlay(card)
+                    context.source.controller.canPutIntoPlay(card)
             },
             cost: [ability.costs.payGold(1), ability.costs.kneelSelf()],
-            handler: (context) => {
-                context.player.putIntoPlay(context.target);
-
-                this.atEndOfPhase((ability) => ({
+            message:
+                '{player} kneels {source} and pays 1 gold to put {target} into play from their discard pile',
+            gameAction: GameActions.simultaneously([
+                GameActions.putIntoPlay((context) => ({
+                    player: context.player,
+                    card: context.target
+                })),
+                GameActions.lastingEffect((context) => ({
+                    duration: 'atEndOfPhase',
                     match: context.target,
                     condition: () => ['play area', 'duplicate'].includes(context.target.location),
                     targetLocation: 'any',
                     effect: ability.effects.moveToBottomOfDeckIfStillInPlay(true)
-                }));
-
-                this.game.addMessage(
-                    '{0} kneels {1} and pays 1 gold to put {2} into play from their discard pile',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+                }))
+            ])
         });
     }
 }

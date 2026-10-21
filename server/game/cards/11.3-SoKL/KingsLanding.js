@@ -1,5 +1,6 @@
 import DrawCard from '../../drawcard.js';
 import GenericTracker from '../../EventTrackers/GenericTracker.js';
+import GameActions from '../../GameActions/index.js';
 
 class KingsLanding extends DrawCard {
     // King's Landing (11058)
@@ -28,15 +29,9 @@ class KingsLanding extends DrawCard {
                 ability.costs.kneelSelf(),
                 ability.costs.discardFromHand((card) => card.getType() === 'location')
             ],
-            handler: (context) => {
-                context.player.drawCardsToHand(1);
-                this.game.addMessage(
-                    '{0} kneels {1} and discards {2} from their hand to draw 1 card',
-                    context.player,
-                    this,
-                    context.costs.discardFromHand
-                );
-            }
+            message:
+                '{player} kneels {source} and discards {costs.discardFromHand} from their hand to draw 1 card',
+            gameAction: GameActions.drawCards((context) => ({ player: context.player, amount: 1 }))
         });
     }
 

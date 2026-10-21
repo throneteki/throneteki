@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class HighgardenCourtier extends DrawCard {
     // Highgarden Courtier (09015)
@@ -7,24 +8,20 @@ class HighgardenCourtier extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardStrengthChanged: (event) =>
-                    event.card !== this &&
-                    event.card.controller === this.controller &&
+                onCardStrengthChanged: (event, context) =>
+                    event.card !== context.source &&
+                    event.card.controller === context.source.controller &&
                     event.amount > 0 &&
                     event.applying &&
                     event.card.kneeled
             },
             cost: ability.costs.kneelSelf(),
             limit: ability.limit.perPhase(1),
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} kneels {1} to stand {2}',
-                    this.controller,
-                    this,
-                    context.event.card
-                );
-                this.controller.standCard(context.event.card);
-            }
+            message: {
+                format: '{player} kneels {source} to stand {card}',
+                args: { card: (context) => context.event.card }
+            },
+            gameAction: GameActions.standCard((context) => ({ card: context.event.card }))
         });
     }
 }

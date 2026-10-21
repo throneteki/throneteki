@@ -30,16 +30,14 @@ class ValyrianSteel extends AgendaCard {
                     (context.xValue === undefined || card.getPrintedCost() === context.xValue) &&
                     context.player.canPutIntoPlay(card)
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} uses {1}, kneels their faction card and pays {2} to put {3} into play',
-                    context.player,
-                    this,
-                    context.xValue,
-                    context.target
-                );
-                context.player.putIntoPlay(context.target);
-            }
+            message: {
+                format: '{player} uses {source}, kneels their faction card and pays {xValue} to put {target} into play',
+                args: { xValue: (context) => context.xValue }
+            },
+            gameAction: GameActions.putIntoPlay((context) => ({
+                player: context.player,
+                card: context.target
+            }))
         });
 
         this.reaction({
