@@ -9,8 +9,8 @@ class TywinsWhisperer extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardReturnedToHand: (event) =>
-                    event.card.controller !== this.controller &&
+                onCardReturnedToHand: (event, context) =>
+                    event.card.controller !== context.source.controller &&
                     event.card.isMatch({ type: 'character', printedCostOrLower: 2 })
             },
             location: 'hand',
@@ -18,9 +18,9 @@ class TywinsWhisperer extends DrawCard {
                 '{player} uses {source} to put {source} into play from their hand, and have it gain a power icon and stealth until the end of the phase',
             gameAction: GameActions.simultaneously([
                 GameActions.putIntoPlay({ card: this }),
-                GameActions.genericHandler(() => {
-                    this.untilEndOfPhase((ability) => ({
-                        match: this,
+                GameActions.genericHandler((context) => {
+                    context.source.untilEndOfPhase((ability) => ({
+                        match: context.source,
                         effect: [
                             ability.effects.addIcon('power'),
                             ability.effects.addKeyword('stealth')

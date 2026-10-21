@@ -11,8 +11,8 @@ class WidowsFord extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardPlaced: (event) =>
-                    event.card.controller === this.controller &&
+                onCardPlaced: (event, context) =>
+                    event.card.controller === context.source.controller &&
                     event.card.isMatch({
                         location: 'discard pile',
                         type: ['attachment', 'location']
@@ -22,23 +22,23 @@ class WidowsFord extends DrawCard {
                 format: '{player} plays {source} to place {card} in shadows with a shadow token on it',
                 args: { card: (context) => context.event.card }
             },
-            gameAction: GameActions.simultaneously([
-                GameActions.putIntoShadows((context) => ({ card: context.event.card })),
-                GameActions.placeToken((context) => ({
-                    card: context.event.card,
-                    token: Tokens.shadow
-                })),
-                GameActions.genericHandler((context) => {
-                    this.lastingEffect((ability) => ({
-                        condition: () => context.event.card.location === 'shadows',
-                        targetLocation: 'any',
-                        match: context.event.card,
-                        effect: ability.effects.addKeyword(
-                            `Shadow (${context.event.card.translateXValue(context.event.card.getPrintedCost())})`
-                        )
-                    }));
-                })
-            ])
+            gameAction: GameActions.putIntoShadows((context) => ({
+                card: context.event.card
+            })).then((context) => ({
+                gameAction: GameActions.simultaneously([
+                    GameActions.placeToken({ card: context.event.card, token: Tokens.shadow }),
+                    GameActions.genericHandler(() => {
+                        context.source.lastingEffect((ability) => ({
+                            condition: () => context.event.card.location === 'shadows',
+                            targetLocation: 'any',
+                            match: context.event.card,
+                            effect: ability.effects.addKeyword(
+                                `Shadow (${context.event.card.translateXValue(context.event.card.getPrintedCost())})`
+                            )
+                        }));
+                    })
+                ])
+            }))
         });
     }
 }

@@ -9,14 +9,15 @@ class AgentOfTheCitadel extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller && this.isParticipating()
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
+                    context.source.isParticipating()
             },
             cost: ability.costs.revealSpecific((context) => context.player.drawDeck[0]),
             message:
                 '{player} uses {source} and reveals the top card of their deck to reduce the cost of the next card they bring out of shadows this phase by 2',
-            gameAction: GameActions.genericHandler(() => {
-                this.untilEndOfPhase((ability) => ({
+            gameAction: GameActions.genericHandler((context) => {
+                context.source.untilEndOfPhase((ability) => ({
                     targetController: 'current',
                     effect: ability.effects.reduceNextOutOfShadowsCardCost(2)
                 }));

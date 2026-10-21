@@ -8,15 +8,12 @@ class Godsgrace extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardPowerGained: (event) =>
-                    event.card.isMatch({
-                        type: 'character',
-                        faction: 'martell',
-                        controller: 'current'
-                    })
+                onCardPowerGained: (event, context) =>
+                    event.card.controller === context.source.controller &&
+                    event.card.isMatch({ type: 'character', faction: 'martell' })
             },
-            condition: () =>
-                this.game.getPlayers().some((player) => player.activePlot.hasTrait('Summer')),
+            condition: (context) =>
+                context.game.getPlayers().some((player) => player.activePlot?.hasTrait('Summer')),
             cost: ability.costs.kneelSelf(),
             message: {
                 format: '{player} kneels {costs.kneel} to have {character} gain 1 power',

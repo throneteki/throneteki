@@ -9,8 +9,9 @@ class AllerasTheSphinx extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.loser === this.controller && this.isParticipating()
+                afterChallenge: (event, context) =>
+                    event.challenge.loser === context.source.controller &&
+                    context.source.isParticipating()
             },
             gameAction: GameActions.search({
                 topCards: 10,

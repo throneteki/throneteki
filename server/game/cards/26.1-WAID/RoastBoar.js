@@ -10,12 +10,11 @@ class RoastBoar extends DrawCard {
     setupCardAbilities(ability) {
         this.attachmentRestriction({ controller: 'opponent' });
         this.whileAttached({
-            match: this.parent,
             effect: ability.effects.optionalStandDuringStanding()
         });
         this.reaction({
             when: {
-                onCardStood: (event) => event.card === this.parent
+                onCardStood: (event, context) => event.card === context.source.parent
             },
             cost: ability.costs.sacrificeSelf(),
             message: '{player} sacrifices {source} to draw 3 cards',

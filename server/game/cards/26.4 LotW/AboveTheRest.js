@@ -12,9 +12,9 @@ class AboveTheRest extends DrawCard {
                     aggregateBy: (event) => ({
                         card: event.card
                     }),
-                    condition: (aggregate, events) =>
+                    condition: (aggregate, events, context) =>
                         events.length === 1 &&
-                        aggregate.card.controller === this.controller &&
+                        aggregate.card.controller === context.source.controller &&
                         aggregate.card.getType() === 'character'
                 }
             },

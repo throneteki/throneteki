@@ -9,9 +9,9 @@ class ANewHand extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardLeftPlay: (event) =>
+                onCardLeftPlay: (event, context) =>
                     event.cardStateWhenLeftPlay.hasTrait('Small Council') &&
-                    event.cardStateWhenLeftPlay.controller === this.controller
+                    event.cardStateWhenLeftPlay.controller === context.source.controller
             },
             max: ability.limit.perPhase(1),
             gameAction: GameActions.search({

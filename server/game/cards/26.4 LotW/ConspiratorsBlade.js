@@ -10,19 +10,21 @@ class ConspiratorsBlade extends DrawCard {
     // you bring out of shadows this phase by 2.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.parent && this.parent.isParticipating(),
+            condition: (context) =>
+                context.source.parent && context.source.parent.isParticipating(),
             targetLocation: 'any',
-            match: (card) => card.getType() === 'event' && card.controller === this.controller,
+            match: (card, context) =>
+                card.getType() === 'event' && card.controller === context.source.controller,
             effect: ability.effects.cannotBeCanceled()
         });
         this.reaction({
             when: {
-                onCardOutOfShadows: (event) => event.card === this
+                onCardOutOfShadows: (event, context) => event.card === context.source
             },
             message:
                 '{player} uses {source} to reduce the cost of the next card they bring out of shadows this phase by 2',
-            gameAction: GameActions.genericHandler(() => {
-                this.untilEndOfPhase((ability) => ({
+            gameAction: GameActions.genericHandler((context) => {
+                context.source.untilEndOfPhase((ability) => ({
                     targetController: 'current',
                     effect: ability.effects.reduceNextOutOfShadowsCardCost(2)
                 }));

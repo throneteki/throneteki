@@ -9,11 +9,12 @@ class RooseBolton extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardOutOfShadows: (event) => event.card === this && this.game.isDuringChallenge()
+                onCardOutOfShadows: (event, context) =>
+                    event.card === context.source && context.game.isDuringChallenge()
             },
             message: '{player} uses {source} to kill each participating loyal character',
-            gameAction: GameActions.simultaneously(() =>
-                this.game
+            gameAction: GameActions.simultaneously((context) =>
+                context.game
                     .filterCardsInPlay(
                         (card) =>
                             card.getType() === 'character' &&

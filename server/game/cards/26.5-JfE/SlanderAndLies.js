@@ -15,15 +15,18 @@ class SlanderAndLies extends DrawCard {
 
         this.forcedReaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.loser === this.controller &&
-                    event.challenge.isParticipating(this.parent)
+                afterChallenge: (event, context) =>
+                    event.challenge.loser === context.source.controller &&
+                    event.challenge.isParticipating(context.source.parent)
             },
             message: {
                 format: '{player} is forced to have {parent} gain 1 power',
-                args: { parent: () => this.parent }
+                args: { parent: (context) => context.source.parent }
             },
-            gameAction: GameActions.gainPower(() => ({ card: this.parent, amount: 1 }))
+            gameAction: GameActions.gainPower((context) => ({
+                card: context.source.parent,
+                amount: 1
+            }))
         });
     }
 }

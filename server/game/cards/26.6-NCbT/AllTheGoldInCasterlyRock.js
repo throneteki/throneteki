@@ -9,17 +9,17 @@ class AllTheGoldInCasterlyRock extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
                     event.challenge.challengeType === 'intrigue'
             },
             message: {
                 format: '{player} plays {source} to gain {amount} gold',
-                args: { amount: (context) => this.getAmount(context) }
+                args: { amount: (context) => context.source.getAmount(context) }
             },
             gameAction: GameActions.gainGold((context) => ({
                 player: context.player,
-                amount: this.getAmount(context)
+                amount: context.source.getAmount(context)
             }))
         });
     }

@@ -9,10 +9,10 @@ class WhenAllIsDarkest extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardOutOfShadows: (event) =>
+                onCardOutOfShadows: (event, context) =>
                     event.card.getType() === 'character' &&
                     GameActions.takeControl({
-                        player: this.controller,
+                        player: context.source.controller,
                         card: event.card
                     }).allow()
             },

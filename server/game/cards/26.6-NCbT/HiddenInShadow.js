@@ -13,16 +13,19 @@ class HiddenInShadow extends DrawCard {
             cost: ability.costs.sacrificeSelf(),
             message: {
                 format: '{player} sacrifices {costs.sacrifice} to return {parent} to shadows',
-                args: { parent: (context) => this.parent || context.cardStateWhenInitiated.parent }
+                args: {
+                    parent: (context) =>
+                        context.source.parent || context.cardStateWhenInitiated.parent
+                }
             },
             gameAction: GameActions.putIntoShadows((context) => ({
-                card: this.parent || context.cardStateWhenInitiated.parent
+                card: context.source.parent || context.cardStateWhenInitiated.parent
             }))
         });
         this.reaction({
             when: {
-                onCardDiscarded: (event) =>
-                    event.card === this && event.originalLocation === 'shadows'
+                onCardDiscarded: (event, context) =>
+                    event.card === context.source && event.originalLocation === 'shadows'
             },
             location: ['discard pile'],
             message: '{player} uses {source} to draw 1 card',

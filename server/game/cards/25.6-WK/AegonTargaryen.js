@@ -9,8 +9,8 @@ class AegonTargaryen extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) =>
-                    this.game.currentPhase === 'challenge' &&
+                onCardEntersPlay: (event, context) =>
+                    context.game.currentPhase === 'challenge' &&
                     event.card.isMatch({ type: 'character', loyal: false, faction: 'targaryen' })
             },
             limit: ability.limit.perPhase(2),

@@ -9,9 +9,10 @@ class MaesterCressen extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardOutOfShadows: (event) =>
-                    event.card === this && event.card.location === 'play area',
-                onCardPlaced: (event) => event.card === this && event.card.location === 'dead pile'
+                onCardOutOfShadows: (event, context) =>
+                    event.card === context.source && event.card.location === 'play area',
+                onCardPlaced: (event, context) =>
+                    event.card === context.source && event.card.location === 'dead pile'
             },
             location: ['dead pile', 'play area'],
             message:

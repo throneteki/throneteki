@@ -9,10 +9,10 @@ class Biter extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardKneeled: (event) =>
-                    event.source === this &&
+                onCardKneeled: (event, context) =>
+                    event.source === context.source &&
                     event.reason === 'intimidate' &&
-                    event.card.getStrength() < this.getStrength()
+                    event.card.getStrength() < context.source.getStrength()
             },
             cost: ability.costs.sacrificeSelf(),
             message: {

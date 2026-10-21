@@ -9,9 +9,9 @@ class TorchAndOil extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardDrawn: (event) => event.player !== this.controller,
-                onCardPutIntoShadows: (event) =>
-                    event.player !== this.controller && event.reason === 'marshal'
+                onCardDrawn: (event, context) => event.player !== context.source.controller,
+                onCardPutIntoShadows: (event, context) =>
+                    event.player !== context.source.controller && event.reason === 'marshal'
             },
             cost: ability.costs.kneelSelf(),
             message: {

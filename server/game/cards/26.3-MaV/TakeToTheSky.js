@@ -10,9 +10,10 @@ class TakeToTheSky extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCharacterKilled: (event) => this.canBeSavedAndReturned(event),
-                onCardDiscarded: (event) =>
-                    event.card.location == 'play area' && this.canBeSavedAndReturned(event)
+                onCharacterKilled: (event, context) => context.source.canBeSavedAndReturned(event),
+                onCardDiscarded: (event, context) =>
+                    event.card.location == 'play area' &&
+                    context.source.canBeSavedAndReturned(event)
             },
             message: {
                 format: '{player} plays {source} to save {card} and return it to hand',

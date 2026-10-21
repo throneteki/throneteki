@@ -11,7 +11,8 @@ class TradingWithBraavos extends AgendaCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onClaimApplied: (event) => event.challenge && event.player === this.controller
+                onClaimApplied: (event, context) =>
+                    event.challenge && event.player === context.source.controller
             },
             cost: ability.costs.kneelFactionCard(),
             message:

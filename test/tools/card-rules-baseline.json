@@ -5480,9 +5480,6 @@
     "server/game/cards/25.6-WK/AThousandEyesAndOne.js": {
         "this-in-ability": 1
     },
-    "server/game/cards/25.6-WK/AegonTargaryen.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/25.6-WK/BlackwaterForces.js": {
         "this-in-ability": 3
     },
@@ -5498,15 +5495,6 @@
     "server/game/cards/25.6-WK/DesperateDeserter.js": {
         "this-in-ability": 3
     },
-    "server/game/cards/25.6-WK/MaesterCressen.js": {
-        "this-in-ability": 2
-    },
-    "server/game/cards/25.6-WK/MaesterJoseran.js": {
-        "this-in-ability": 2
-    },
-    "server/game/cards/25.6-WK/RooseBolton.js": {
-        "this-in-ability": 3
-    },
     "server/game/cards/25.6-WK/TheDornishWars.js": {
         "this-in-ability": 6,
         "add-message": 1
@@ -5514,16 +5502,7 @@
     "server/game/cards/25.6-WK/TyeneSand.js": {
         "this-in-ability": 1
     },
-    "server/game/cards/25.6-WK/TywinsWhisperer.js": {
-        "this-in-ability": 3
-    },
-    "server/game/cards/25.6-WK/WeirwoodGrove.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/25.6-WK/Winterfell.js": {
-        "this-in-ability": 3
-    },
-    "server/game/cards/26.1-WAID/AgentOfTheCitadel.js": {
         "this-in-ability": 3
     },
     "server/game/cards/26.1-WAID/AshemarkCouncilor.js": {
@@ -5547,17 +5526,11 @@
         "prompt-for-select": 1,
         "add-message": 2
     },
-    "server/game/cards/26.1-WAID/MaesterOfTheTor.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/26.1-WAID/Moqorro.js": {
         "this-in-ability": 2
     },
     "server/game/cards/26.1-WAID/NavalBombardment.js": {
         "this-in-ability": 3
-    },
-    "server/game/cards/26.1-WAID/RoastBoar.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/26.1-WAID/SerClaytonSuggs.js": {
         "this-in-ability": 8,
@@ -5565,12 +5538,6 @@
     },
     "server/game/cards/26.1-WAID/SlaversBay.js": {
         "this-in-ability": 3
-    },
-    "server/game/cards/26.1-WAID/TheMinstrelsMuse.js": {
-        "this-in-ability": 2
-    },
-    "server/game/cards/26.1-WAID/WhenAllIsDarkest.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/26.1-WAID/Yronwood.js": {
         "this-in-ability": 1
@@ -5582,9 +5549,6 @@
     "server/game/cards/26.2-WoW/BeneathThePetals.js": {
         "this-in-ability": 5,
         "add-message": 1
-    },
-    "server/game/cards/26.2-WoW/Biter.js": {
-        "this-in-ability": 2
     },
     "server/game/cards/26.2-WoW/GhostHillElite.js": {
         "this-in-ability": 13,
@@ -5657,9 +5621,6 @@
         "this-in-ability": 4,
         "add-message": 1
     },
-    "server/game/cards/26.3-MaV/TakeToTheSky.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/26.3-MaV/TakingTheShieldIslands.js": {
         "this-in-ability": 7,
         "prompt-for-select": 1,
@@ -5668,23 +5629,11 @@
     "server/game/cards/26.3-MaV/TheRegentsCouncil.js": {
         "this-in-ability": 4
     },
-    "server/game/cards/26.3-MaV/TheWardenOfTheEast.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/26.3-MaV/TheWhisperingSound.js": {
         "this-in-ability": 2
     },
     "server/game/cards/26.3-MaV/WanderingDisciple.js": {
         "this-in-ability": 3
-    },
-    "server/game/cards/26.4 LotW/ANewHand.js": {
-        "this-in-ability": 1
-    },
-    "server/game/cards/26.4 LotW/AboveTheRest.js": {
-        "this-in-ability": 1
-    },
-    "server/game/cards/26.4 LotW/ConspiratorsBlade.js": {
-        "this-in-ability": 5
     },
     "server/game/cards/26.4 LotW/DornishSloop.js": {
         "this-in-ability": 7,
@@ -5709,16 +5658,7 @@
     "server/game/cards/26.4 LotW/SouthronInformant.js": {
         "this-in-ability": 4
     },
-    "server/game/cards/26.4 LotW/TheBastardOfDriftmark.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/26.4 LotW/TheWarOfTheFiveKings.js": {
-        "this-in-ability": 2
-    },
-    "server/game/cards/26.4 LotW/TradingWithBraavos.js": {
-        "this-in-ability": 1
-    },
-    "server/game/cards/26.5-JfE/AllerasTheSphinx.js": {
         "this-in-ability": 2
     },
     "server/game/cards/26.5-JfE/BaelorBrightsmile.js": {
@@ -5745,9 +5685,6 @@
     "server/game/cards/26.5-JfE/PoisonedLocusts.js": {
         "this-in-ability": 2
     },
-    "server/game/cards/26.5-JfE/SlanderAndLies.js": {
-        "this-in-ability": 4
-    },
     "server/game/cards/26.5-JfE/Smiler.js": {
         "this-in-ability": 8
     },
@@ -5761,9 +5698,6 @@
     "server/game/cards/26.5-JfE/TheonGreyjoy.js": {
         "this-in-ability": 2
     },
-    "server/game/cards/26.5-JfE/TorchAndOil.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/26.5-JfE/WhiteGraces.js": {
         "this-in-ability": 6,
         "legacy-helper": 2
@@ -5774,18 +5708,12 @@
     "server/game/cards/26.6-NCbT/AlchemistApprentice.js": {
         "this-in-ability": 1
     },
-    "server/game/cards/26.6-NCbT/AllTheGoldInCasterlyRock.js": {
-        "this-in-ability": 3
-    },
     "server/game/cards/26.6-NCbT/ArmedToTheTeeth.js": {
         "event-registration": 1,
         "this-in-ability": 4
     },
     "server/game/cards/26.6-NCbT/GrowingInfluence.js": {
         "this-in-ability": 1
-    },
-    "server/game/cards/26.6-NCbT/HiddenInShadow.js": {
-        "this-in-ability": 3
     },
     "server/game/cards/26.6-NCbT/Melisandre.js": {
         "this-in-ability": 2
@@ -5807,9 +5735,6 @@
     "server/game/cards/26.6-NCbT/WickWhittlestick.js": {
         "this-in-ability": 3
     },
-    "server/game/cards/26.6-NCbT/WidowsFord.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/26.6-NCbT/WolvesInTheHills.js": {
         "this-in-ability": 7,
         "add-message": 1
@@ -5820,17 +5745,8 @@
     "server/game/cards/27.1-THBIB/CaptainOfTheIronFleet.js": {
         "this-in-ability": 5
     },
-    "server/game/cards/27.1-THBIB/Godsgrace.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/27.1-THBIB/IntoTheLists.js": {
         "this-in-ability": 4
-    },
-    "server/game/cards/27.1-THBIB/JeweledTiara.js": {
-        "this-in-ability": 5
-    },
-    "server/game/cards/27.1-THBIB/LordOfWinterfell.js": {
-        "this-in-ability": 5
     },
     "server/game/cards/27.1-THBIB/Morningstar.js": {
         "this-in-ability": 6

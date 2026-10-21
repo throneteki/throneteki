@@ -9,8 +9,9 @@ class WeirwoodGrove extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onPlotRevealed: (event) =>
-                    event.plot.controller !== this.controller &&
+                onPlotRevealed: (event, context) =>
+                    event.plot.controller !== context.source.controller &&
+                    !event.plot.hasTrait('Omen') &&
                     !!event.plot.getWhenRevealedAbility()
             },
             cost: [ability.costs.kneelFactionCard(), ability.costs.removeSelfFromGame()],
@@ -23,7 +24,7 @@ class WeirwoodGrove extends DrawCard {
                 // Attach the current When Revealed event to the new context
                 let newContext = whenRevealed.createContext(context.event);
                 newContext.player = context.player;
-                this.game.resolveAbility(whenRevealed, newContext);
+                context.game.resolveAbility(whenRevealed, newContext);
             })
         });
     }

@@ -22,8 +22,8 @@ class TheWardenOfTheEast extends DrawCard {
                             event.cardStateWhenRevealed.location
                         )
                     }),
-                    condition: (aggregate) =>
-                        aggregate.controller !== this.controller &&
+                    condition: (aggregate, events, context) =>
+                        aggregate.controller !== context.source.controller &&
                         aggregate.isCharacter &&
                         aggregate.isValidLocation
                 }
@@ -31,9 +31,12 @@ class TheWardenOfTheEast extends DrawCard {
             limit: ability.limit.perRound(3),
             message: {
                 format: '{player} uses {source} to have {parent} gain 1 power',
-                args: { parent: () => this.parent }
+                args: { parent: (context) => context.source.parent }
             },
-            gameAction: GameActions.gainPower({ card: this.parent, amount: 1 })
+            gameAction: GameActions.gainPower((context) => ({
+                card: context.source.parent,
+                amount: 1
+            }))
         });
     }
 }

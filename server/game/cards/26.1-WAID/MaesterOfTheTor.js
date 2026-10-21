@@ -9,7 +9,7 @@ class MaesterOfTheTor extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardOutOfShadows: (event) => event.card === this
+                onCardOutOfShadows: (event, context) => event.card === context.source
             },
             message: '{player} uses {source} to place the top card of their deck into shadows',
             gameAction: GameActions.placeCard((context) => ({

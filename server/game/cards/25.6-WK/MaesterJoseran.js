@@ -8,12 +8,13 @@ class MaesterJoseran extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onFirstPlayerDetermined: (event) => this.controller === event.player
+                onFirstPlayerDetermined: (event, context) =>
+                    context.source.controller === event.player
             },
             message:
                 '{player} uses {source} to have each player put the top card of their deck facedown under their agenda',
-            gameAction: GameActions.simultaneously(() =>
-                this.game.getPlayers().map((player) =>
+            gameAction: GameActions.simultaneously((context) =>
+                context.game.getPlayers().map((player) =>
                     GameActions.placeCardUnderneath({
                         card: player.drawDeck[0],
                         parentCard: player.agenda,
