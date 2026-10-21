@@ -8,11 +8,11 @@ class KingdomOfShadows extends AgendaCard {
     // into shadows by 1.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () =>
-                !this.controller.anyCardsInPlay(
+            condition: (context) =>
+                !context.source.controller.anyCardsInPlay(
                     (card) =>
                         card.getType() === 'character' &&
-                        card.isFaction(this.controller.faction.getPrintedFaction())
+                        card.isFaction(context.source.controller.faction.getPrintedFaction())
                 ),
             targetController: 'current',
             effect: ability.effects.increaseCost({

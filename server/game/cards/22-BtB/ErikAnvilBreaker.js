@@ -6,7 +6,7 @@ class ErikAnvilBreaker extends DrawCard {
     // Erik Anvil-Breaker cannot stand during the standing phase.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.game.currentPhase === 'standing',
+            condition: (context) => context.game.currentPhase === 'standing',
             match: this,
             effect: ability.effects.cannotBeStood()
         });

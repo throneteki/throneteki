@@ -6,7 +6,7 @@ class TheWarrior extends PlotCard {
     // value on The Warrior by 1.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.hasAttackingSeven(),
+            condition: (context) => context.source.hasAttackingSeven(),
             match: this,
             effect: ability.effects.modifyClaim(1)
         });

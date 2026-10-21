@@ -11,7 +11,7 @@ class SerRobarRoyce extends DrawCard {
         });
 
         this.persistentEffect({
-            condition: () => this.game.isDuringChallenge({ number: 1 }),
+            condition: (context) => context.game.isDuringChallenge({ number: 1 }),
             match: this,
             effect: [
                 ability.effects.cannotBeDeclaredAsAttacker(),

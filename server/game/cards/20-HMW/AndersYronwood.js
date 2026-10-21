@@ -10,13 +10,13 @@ class AndersYronwood extends DrawCard {
         this.tracker = ChallengeTracker.forPhase(this.game);
 
         this.persistentEffect({
-            match: (card) =>
+            match: (card, context) =>
                 card.getType() === 'character' &&
                 card.hasTrait('House Yronwood') &&
-                card.controller === this.controller,
-            condition: () =>
-                !this.controller.firstPlayer &&
-                !this.tracker.some({ attackingPlayer: this.controller }),
+                card.controller === context.source.controller,
+            condition: (context) =>
+                !context.source.controller.firstPlayer &&
+                !context.source.tracker.some({ attackingPlayer: context.source.controller }),
             effect: ability.effects.doesNotKneelAsAttacker()
         });
     }

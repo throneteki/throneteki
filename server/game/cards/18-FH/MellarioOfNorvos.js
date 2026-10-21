@@ -11,7 +11,8 @@ class MellarioOfNorvos extends DrawCard {
         this.persistentEffect({
             match: (card) => card.name === 'Doran Martell',
             effect: ability.effects.immuneTo(
-                (card) => card.controller !== this.controller && card.getType() === 'plot'
+                (card, arg, context) =>
+                    card.controller !== context.source.controller && card.getType() === 'plot'
             )
         });
 

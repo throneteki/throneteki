@@ -8,7 +8,7 @@ class TheWarsToCome extends AgendaCard {
     // 1.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.controller.getNumberOfUsedPlots() >= 3,
+            condition: (context) => context.source.controller.getNumberOfUsedPlots() >= 3,
             match: (card) => card.getType() === 'plot' && !card.hasTrait('War'),
             effect: ability.effects.addKeyword('Prized 1')
         });

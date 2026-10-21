@@ -6,7 +6,7 @@ class TheQueenOfThorns extends DrawCard {
     // against you.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => !this.kneeled,
+            condition: (context) => !context.source.kneeled,
             targetController: 'opponent',
             effect: ability.effects.cannotInitiateChallengeType('intrigue')
         });

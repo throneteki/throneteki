@@ -7,7 +7,8 @@ class Longtable extends DrawCard {
     // of shadows each phase by 1.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: (card) => card.hasTrait('Small Council') && card.controller === this.controller,
+            match: (card, context) =>
+                card.hasTrait('Small Council') && card.controller === context.source.controller,
             effect: ability.effects.modifyStrength(1)
         });
 

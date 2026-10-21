@@ -7,9 +7,9 @@ class FleetFromTenTowers extends DrawCard {
     // gets +3 STR and gains renown.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () =>
-                this.isAttacking() &&
-                this.game.isDuringChallenge({
+            condition: (context) =>
+                context.source.isAttacking() &&
+                context.game.isDuringChallenge({
                     match: (challenge) => challenge.defendingPlayer.getReserve() <= 4
                 }),
             match: this,

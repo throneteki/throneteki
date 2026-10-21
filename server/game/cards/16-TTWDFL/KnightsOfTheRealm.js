@@ -8,13 +8,13 @@ class KnightsOfTheRealm extends AgendaCard {
     // you draw in the draw phase by 1.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.controlsMoreKnights(),
+            condition: (context) => context.source.controlsMoreKnights(),
             targetController: 'current',
             effect: ability.effects.modifyDrawPhaseCards(1)
         });
 
         this.persistentEffect({
-            condition: () => this.controlsFewerKnights(),
+            condition: (context) => context.source.controlsFewerKnights(),
             targetController: 'current',
             effect: ability.effects.modifyDrawPhaseCards(-1)
         });

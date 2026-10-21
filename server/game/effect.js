@@ -50,7 +50,8 @@ class Effect {
         this.targets = [];
         this.appliedTargets = new Set();
         this.context = { game: game, source: source, effect: this };
-        this.active = !source.facedown;
+        this.active =
+            !source.facedown && !(this.duration === 'persistent' && source.isAnyBlank?.());
         this.isConditional =
             !!properties.condition ||
             (this.targetType === 'player' && typeof properties.match === 'function');

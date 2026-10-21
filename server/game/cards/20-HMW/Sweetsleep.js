@@ -7,9 +7,11 @@ class Sweetsleep extends DrawCard {
     // were blank (except for Traits).
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => !!this.parent,
-            match: (card) =>
-                card.parent === this.parent && card.getType() === 'attachment' && card !== this,
+            condition: (context) => !!context.source.parent,
+            match: (card, context) =>
+                card.parent === context.source.parent &&
+                card.getType() === 'attachment' &&
+                card !== context.source,
             targetController: 'any',
             effect: ability.effects.blankExcludingTraits
         });

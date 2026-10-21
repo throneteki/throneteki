@@ -11,7 +11,7 @@ class OlennasStudy extends DrawCard {
         });
 
         this.persistentEffect({
-            condition: () => this.game.isDuringChallenge({ challengeType: 'intrigue' }),
+            condition: (context) => context.game.isDuringChallenge({ challengeType: 'intrigue' }),
             match: (card) => card.isMatch({ type: 'character', unique: false }),
             targetController: 'any',
             effect: [

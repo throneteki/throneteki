@@ -216,7 +216,7 @@ class EffectEngine {
         let targets = this.getTargets();
         let persistentEffects = this.effects.filter((effect) => effect.duration === 'persistent');
         for (let effect of persistentEffects) {
-            effect.setActive(true, targets);
+            effect.setActive(!effect.source?.isAnyBlank?.(), targets);
         }
     }
 

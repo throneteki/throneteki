@@ -13,11 +13,11 @@ class BannerOfTheFalcon extends AgendaCard {
         });
 
         this.persistentEffect({
-            condition: () =>
-                this.controller.filterCardsInPlay((card) => card.hasTrait('House Arryn')).length >
-                this.controller.getInitiative(),
-            match: (card) =>
-                card.controller === this.controller &&
+            condition: (context) =>
+                context.source.controller.filterCardsInPlay((card) => card.hasTrait('House Arryn'))
+                    .length > context.source.controller.getInitiative(),
+            match: (card, context) =>
+                card.controller === context.source.controller &&
                 card.getType() === 'character' &&
                 card.isLoyal(),
             effect: ability.effects.modifyStrength(1)

@@ -8,7 +8,7 @@ class Conquer extends DrawCard {
         this.attachmentRestriction({ type: 'location' });
 
         this.whileAttached({
-            effect: ability.effects.takeControl(() => this.controller)
+            effect: ability.effects.takeControl((context) => context.source.controller)
         });
     }
 }

@@ -12,8 +12,9 @@ class KingStannisHost extends DrawCard {
         });
 
         this.persistentEffect({
-            condition: () => this.game.isDuringChallenge({ challengeType: 'power' }),
-            match: (card) => card.isParticipating() && card.controller !== this.controller,
+            condition: (context) => context.game.isDuringChallenge({ challengeType: 'power' }),
+            match: (card, context) =>
+                card.isParticipating() && card.controller !== context.source.controller,
             targetController: 'any',
             effect: ability.effects.modifyStrength(-1)
         });

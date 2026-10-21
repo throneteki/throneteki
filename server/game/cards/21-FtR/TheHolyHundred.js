@@ -6,10 +6,10 @@ class TheHolyHundred extends DrawCard {
     // Each The Seven character you control gets +1 STR.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: (card) =>
+            match: (card, context) =>
                 card.getType() === 'character' &&
                 card.hasTrait('The Seven') &&
-                card.controller === this.controller,
+                card.controller === context.source.controller,
             effect: ability.effects.modifyStrength(1)
         });
     }
