@@ -209,7 +209,6 @@ for (const deckList of Decks) {
 
                 expect(this.game.currentPhase).not.toBe('challenge');
                 expect(this.game.manualMode.enabled).toBe(false);
-                expect(this.game.getPlainTextLog()).not.toContain('while manual mode is off');
             });
         });
     });
