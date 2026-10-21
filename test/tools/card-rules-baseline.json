@@ -2265,10 +2265,6 @@
     "server/game/cards/10-SoD/MaesterKedry.js": {
         "add-message": 1
     },
-    "server/game/cards/10-SoD/Missandei.js": {
-        "add-message": 1,
-        "legacy-helper": 1
-    },
     "server/game/cards/10-SoD/NymeriaSand.js": {
         "legacy-helper": 2,
         "add-message": 1
@@ -2708,9 +2704,6 @@
     "server/game/cards/12-KotI/BronzeYohnRoyce.js": {
         "add-message": 1,
         "legacy-helper": 1
-    },
-    "server/game/cards/12-KotI/CitadelArchivist.js": {
-        "legacy-helper": 2
     },
     "server/game/cards/12-KotI/CoordinatedAttack.js": {
         "add-message": 1

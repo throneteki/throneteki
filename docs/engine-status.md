@@ -69,6 +69,10 @@ the ongoing work, and it was not part of this batch.
   [StateChecks.spec.js](../test/server/gamesteps/StateChecks.spec.js). Esgred, Reek, Arry, Arstan
   Whitebeard, Oathsworn Wildling, Gyles Rosby, Ser Jorah Mormont (Core) and Harrenhal (TTWDFL) use
   it.
+- Military claim only prompts for characters that can be killed. A loser with none is not
+  prompted, and characters that must be chosen for claim (Joffrey's Crossbow) are chosen
+  automatically when there are no other characters left to choose.
+  [Claim.spec.js](../test/server/gamesteps/Claim.spec.js).
 - Claim, taxation, and pile order were already done:
   [Claim.spec.js](../test/server/gamesteps/Claim.spec.js),
   [TaxationPhase.spec.js](../test/server/gamesteps/TaxationPhase.spec.js),

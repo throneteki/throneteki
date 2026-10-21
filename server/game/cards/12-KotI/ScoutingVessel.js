@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class ScoutingVessel extends DrawCard {
     setupCardAbilities(ability) {
@@ -12,9 +13,10 @@ class ScoutingVessel extends DrawCard {
             cost: [ability.costs.kneelSelf(), ability.costs.sacrificeSelf()],
             message:
                 '{player} kneels and sacrifices {source} to discard 3 cards with pillage instead of 1',
-            handler: (context) => {
-                context.event.amount += 2;
-            }
+            gameAction: GameActions.changeEventAmount((context) => ({
+                event: context.event,
+                amount: context.event.amount + 2
+            }))
         });
     }
 }

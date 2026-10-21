@@ -5,6 +5,7 @@ import AddToHand from './AddToHand.js';
 import ApplyClaim from './ApplyClaim.js';
 import ApplyLastingEffect from './ApplyLastingEffect.js';
 import CancelEffects from './CancelEffects.js';
+import ChangeEventAmount from './ChangeEventAmount.js';
 import CheckReserve from './CheckReserve.js';
 import ChooseCards from './ChooseCards.js';
 import ChooseGameAction from './ChooseGameAction.js';
@@ -37,6 +38,7 @@ import PutIntoShadows from './PutIntoShadows.js';
 import PutIntoPlay from './PutIntoPlay.js';
 import RemoveFromChallenge from './RemoveFromChallenge.js';
 import RemoveFromGame from './RemoveFromGame.js';
+import ReplaceEvent from './ReplaceEvent.js';
 import ReturnCardToDeck from './ReturnCardToDeck.js';
 import ReturnCardToHand from './ReturnCardToHand.js';
 import ReturnGoldToTreasury from './ReturnGoldToTreasury.js';
@@ -57,6 +59,7 @@ const GameActions = {
     addToHand: (props) => new AbilityAdapter(AddToHand, props),
     applyClaim: (props) => new AbilityAdapter(ApplyClaim, props),
     cancelEffects: (props) => new AbilityAdapter(CancelEffects, props),
+    changeEventAmount: (props) => new AbilityAdapter(ChangeEventAmount, props),
     checkReserve: (props) => new AbilityAdapter(CheckReserve, props),
     choose: (props) => new ChooseGameAction(props),
     chooseCards: (props) => new AbilityAdapter(new ChooseCards(props), (context) => ({ context })),
@@ -91,6 +94,7 @@ const GameActions = {
     putIntoShadows: (props) => new AbilityAdapter(PutIntoShadows, props),
     removeFromChallenge: (props) => new AbilityAdapter(RemoveFromChallenge, props),
     removeFromGame: (props) => new AbilityAdapter(RemoveFromGame, props),
+    replaceEvent: (props) => new AbilityAdapter(ReplaceEvent, props),
     returnCardToDeck: (props) => new AbilityAdapter(ReturnCardToDeck, props),
     returnCardToHand: (props) => new AbilityAdapter(ReturnCardToHand, props),
     returnGoldToTreasury: (props) => new AbilityAdapter(ReturnGoldToTreasury, props),

@@ -826,20 +826,27 @@ so it is offered before forced interrupts (Rules Reference: Triggering Condition
 [wouldInterrupts.spec.js](../test/server/tools/wouldInterrupts.spec.js) check fails if a card's
 declarations don't match its text.
 
-In other cases, abilities contain the word 'instead' to indicate that the event will not be cancelled, but the normal effect will be replaced. In these cases, the `context.replaceHandler` method can be used to replace the effect. It must be passed a function that will execute instead of the normal handler.
+When the text says "instead", the event still happens but its effect is replaced. Use
+`GameActions.replaceEvent` with the game action that happens instead. The ability is only offered
+when the replacement could change the game state.
 
 ```javascript
 this.interrupt({
     when: {
-        // claim is applied and Mirri is attacking alone
+        onCardDiscarded: (event) => event.card === this
     },
-    handler: (context) => {
-        context.replaceHandler(() => {
-            // kill the chosen character
-        });
-    }
+    location: ['hand', 'draw deck'],
+    message:
+        '{player} uses {source} to put {source} into play instead of placing it in their discard pile',
+    gameAction: GameActions.replaceEvent((context) => ({
+        event: context.event,
+        replacement: GameActions.putIntoPlay({ card: context.source })
+    }))
 });
 ```
+
+When only the event's amount changes ("discard 3 cards instead"), use
+`GameActions.changeEventAmount({ event, amount })`, as Scouting Vessel does.
 
 #### Yes / no reactions and interrupts
 
