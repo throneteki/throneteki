@@ -93,9 +93,6 @@
         "this-in-ability": 6,
         "add-message": 1
     },
-    "server/game/cards/01-Core/ArianneMartell.js": {
-        "this-in-ability": 3
-    },
     "server/game/cards/01-Core/AshaGreyjoy.js": {
         "this-in-ability": 8,
         "legacy-helper": 1,
@@ -222,7 +219,6 @@
         "this-in-ability": 2
     },
     "server/game/cards/01-Core/HeadsOnSpikes.js": {
-        "this-in-ability": 2,
         "add-message": 1
     },
     "server/game/cards/01-Core/HearMeRoar.js": {
@@ -2210,9 +2206,6 @@
         "prompt-for-select": 1,
         "add-message": 2
     },
-    "server/game/cards/07-WotW/RaidingTheBayOfIce.js": {
-        "this-in-ability": 4
-    },
     "server/game/cards/07-WotW/SaltWife.js": {
         "this-in-ability": 3,
         "add-message": 1
@@ -2294,9 +2287,6 @@
         "this-in-ability": 6,
         "legacy-helper": 1,
         "add-message": 1
-    },
-    "server/game/cards/08.1-TAK/DaarioNaharis.js": {
-        "this-in-ability": 5
     },
     "server/game/cards/08.1-TAK/DoreaSand.js": {
         "this-in-ability": 5,
@@ -2418,9 +2408,6 @@
     "server/game/cards/08.3-Km/Darkstar.js": {
         "this-in-ability": 6,
         "add-message": 1
-    },
-    "server/game/cards/08.3-Km/ForgottenByHistory.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/08.3-Km/Jhiqui.js": {
         "this-in-ability": 4,
@@ -2635,9 +2622,6 @@
         "this-in-ability": 9,
         "legacy-helper": 1,
         "add-message": 1
-    },
-    "server/game/cards/08.6-SAT/MaceTyrell.js": {
-        "this-in-ability": 2
     },
     "server/game/cards/08.6-SAT/MyaStone.js": {
         "this-in-ability": 5,
@@ -3189,9 +3173,6 @@
         "this-in-ability": 4,
         "add-message": 1
     },
-    "server/game/cards/11.2-TMoW/WymanManderly.js": {
-        "this-in-ability": 6
-    },
     "server/game/cards/11.3-SoKL/BlackwaterBay.js": {
         "this-in-ability": 4,
         "legacy-helper": 1,
@@ -3280,9 +3261,6 @@
         "add-message": 1
     },
     "server/game/cards/11.4-MoD/BondsOfChivalry.js": {
-        "this-in-ability": 2
-    },
-    "server/game/cards/11.4-MoD/CleverFeint.js": {
         "this-in-ability": 2
     },
     "server/game/cards/11.4-MoD/GreyGhost.js": {
@@ -3458,12 +3436,6 @@
         "legacy-helper": 1,
         "add-message": 2
     },
-    "server/game/cards/11.6-DitD/Moqorro.js": {
-        "this-in-ability": 2
-    },
-    "server/game/cards/11.6-DitD/OnAMistyMorn.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/11.6-DitD/RavagesOfWar.js": {
         "this-in-ability": 4,
         "add-message": 1
@@ -3553,9 +3525,6 @@
     "server/game/cards/12-KotI/GwynesseHarlaw.js": {
         "this-in-ability": 2
     },
-    "server/game/cards/12-KotI/HeirToTheIronThrone.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/12-KotI/KhoraneSathmantes.js": {
         "add-message": 1,
         "this-in-ability": 1,
@@ -3619,9 +3588,6 @@
         "this-in-ability": 5,
         "add-message": 1
     },
-    "server/game/cards/12-KotI/Silence.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/12-KotI/StolenMessage.js": {
         "add-message": 1,
         "this-in-ability": 3
@@ -3655,9 +3621,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/12-KotI/WhenIWoke.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/13.1-AtG/BaelorBlacktyde.js": {
         "this-in-ability": 1
     },
@@ -3668,9 +3631,6 @@
         "this-in-ability": 3,
         "legacy-helper": 1,
         "add-message": 1
-    },
-    "server/game/cards/13.1-AtG/FleaBottomAlley.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/13.1-AtG/GateOfTheGods.js": {
         "this-in-ability": 3,
@@ -3795,12 +3755,6 @@
     },
     "server/game/cards/13.3-PoS/GuardDuty.js": {
         "this-in-ability": 7
-    },
-    "server/game/cards/13.3-PoS/HandsOfGold.js": {
-        "this-in-ability": 4
-    },
-    "server/game/cards/13.3-PoS/JonConnington.js": {
-        "this-in-ability": 2
     },
     "server/game/cards/13.3-PoS/KingsLandingProselyte.js": {
         "this-in-ability": 2,

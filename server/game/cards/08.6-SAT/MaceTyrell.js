@@ -9,7 +9,7 @@ class MaceTyrell extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardKneeled: (event) => event.card === this
+                onCardKneeled: (event, context) => event.card === context.source
             },
             message: '{player} uses {source} to draw 2 cards',
             gameAction: GameActions.drawCards((context) => ({
@@ -21,14 +21,9 @@ class MaceTyrell extends DrawCard {
                     cardCondition: { location: 'hand', controller: 'current' }
                 },
                 message: 'Then {player} places a card on top of their deck',
-                handler: (context) => {
-                    this.game.resolveGameAction(
-                        GameActions.returnCardToDeck((context) => ({
-                            card: context.target
-                        })),
-                        context
-                    );
-                }
+                gameAction: GameActions.returnCardToDeck((context) => ({
+                    card: context.target
+                }))
             })
         });
         this.plotModifiers({

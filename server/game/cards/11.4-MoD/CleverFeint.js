@@ -11,20 +11,15 @@ class CleverFeint extends DrawCard {
             cost: ability.costs.kneelFactionCard(),
             target: {
                 mode: 'unlimited',
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
-                    card.controller === this.controller &&
+                    card.controller === context.source.controller &&
                     card.isShadow()
             },
             message: '{player} plays {source} to return {target} to shadows',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.simultaneously((context) =>
-                        context.target.map((card) => GameActions.putIntoShadows({ card }))
-                    ),
-                    context
-                );
-            }
+            gameAction: GameActions.simultaneously((context) =>
+                context.target.map((card) => GameActions.putIntoShadows({ card }))
+            )
         });
     }
 }

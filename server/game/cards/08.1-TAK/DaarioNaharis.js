@@ -10,33 +10,29 @@ class DaarioNaharis extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller && this.isAttacking()
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
+                    context.source.isAttacking()
             },
             target: {
                 cardCondition: {
                     type: 'character',
                     location: 'play area',
                     trait: ['Ally', 'Companion', 'Mercenary'],
-                    condition: (card) => card !== this
+                    condition: (card, context) => card !== context.source
                 }
             },
             message:
                 '{player} uses {source} to stand and take control of {target} until the end of the phase',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.simultaneously([
-                        GameActions.standCard((context) => ({ card: context.target })),
-                        GameActions.genericHandler((context) => {
-                            this.untilEndOfPhase((ability) => ({
-                                match: context.target,
-                                effect: ability.effects.takeControl(context.player)
-                            }));
-                        })
-                    ]),
-                    context
-                );
-            }
+            gameAction: GameActions.simultaneously((context) => [
+                GameActions.standCard((context) => ({ card: context.target })),
+                GameActions.genericHandler((context) => {
+                    context.source.untilEndOfPhase((ability) => ({
+                        match: context.target,
+                        effect: ability.effects.takeControl(context.player)
+                    }));
+                })
+            ])
         });
     }
 }

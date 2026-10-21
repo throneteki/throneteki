@@ -32,12 +32,7 @@ class HeirToTheIronThrone extends PlotCard {
                     gameAction: 'sacrifice'
                 },
                 message: 'Then, {player} sacrifices {target}',
-                handler: (context) => {
-                    this.game.resolveGameAction(
-                        GameActions.sacrificeCard((context) => ({ card: context.target })),
-                        context
-                    );
-                }
+                gameAction: GameActions.sacrificeCard((context) => ({ card: context.target }))
             })
         });
     }

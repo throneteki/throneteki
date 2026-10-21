@@ -9,28 +9,23 @@ class HandsOfGold extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     event.challenge.isMatch({
-                        attackingPlayer: this.controller,
-                        winner: this.controller,
+                        attackingPlayer: context.source.controller,
+                        winner: context.source.controller,
                         challengeType: 'intrigue',
                         by5: true
                     })
             },
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
-                    card.controller === this.game.currentChallenge.loser,
+                    card.controller === context.game.currentChallenge.loser,
                 gameAction: 'returnToHand'
             },
             message: '{player} plays {source} to return {target} to hand',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.returnCardToHand((context) => ({ card: context.target })),
-                    context
-                );
-            },
+            gameAction: GameActions.returnCardToHand((context) => ({ card: context.target })),
             max: ability.limit.perChallenge(1)
         });
     }

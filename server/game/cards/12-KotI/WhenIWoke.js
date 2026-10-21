@@ -18,14 +18,9 @@ class WhenIWoke extends DrawCard {
             },
             message: "{player} plays {source} to place {target} on top of its owner's deck",
             max: ability.limit.perChallenge(1),
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.returnCardToDeck((context) => ({
-                        card: context.target
-                    })),
-                    context
-                );
-            }
+            gameAction: GameActions.returnCardToDeck((context) => ({
+                card: context.target
+            }))
         });
     }
 }

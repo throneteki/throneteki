@@ -30,24 +30,19 @@ class Silence extends DrawCard {
                 }
             },
             message: '{player} uses and kneels {source} to put {target} into play',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.putIntoPlay((context) => ({
-                        player: context.player,
-                        card: context.target
-                    })).then({
-                        condition: (context) => !!getEuron(context.player),
-                        message: {
-                            format: 'Then {player} stands {euron}',
-                            args: { euron: (context) => getEuron(context.player) }
-                        },
-                        gameAction: GameActions.standCard((context) => ({
-                            card: getEuron(context.player)
-                        }))
-                    }),
-                    context
-                );
-            }
+            gameAction: GameActions.putIntoPlay((context) => ({
+                player: context.player,
+                card: context.target
+            })).then((context) => ({
+                condition: (context) => !!getEuron(context.player),
+                message: {
+                    format: 'Then {player} stands {euron}',
+                    args: { euron: (context) => getEuron(context.player) }
+                },
+                gameAction: GameActions.standCard((context) => ({
+                    card: getEuron(context.player)
+                }))
+            }))
         });
     }
 }

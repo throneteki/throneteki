@@ -9,21 +9,16 @@ class Moqorro extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardOutOfShadows: (event) => event.card === this
+                onCardOutOfShadows: (event, context) => event.card === context.source
             },
             target: {
                 cardCondition: (card) =>
                     card.isDefending() && GameActions.returnCardToDeck({ card }).allow()
             },
             message: "{player} uses {source} to place {target} on top of its owner's deck",
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.returnCardToDeck((context) => ({
-                        card: context.target
-                    })),
-                    context
-                );
-            }
+            gameAction: GameActions.returnCardToDeck((context) => ({
+                card: context.target
+            }))
         });
     }
 }

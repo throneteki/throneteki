@@ -9,31 +9,26 @@ class RaidingTheBayOfIce extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
-                    event.challenge.attackingPlayer === this.controller
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
+                    event.challenge.attackingPlayer === context.source.controller
             },
             cost: ability.costs.kneel(
                 (card) => card.hasTrait('Warship') && card.getType() === 'location'
             ),
             target: {
                 activePromptTitle: 'Select a location',
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     !card.isLimited() &&
                     card.getType() === 'location' &&
-                    card.controller === this.game.currentChallenge.loser &&
+                    card.controller === context.game.currentChallenge.loser &&
                     GameActions.returnCardToDeck({ card }).allow()
             },
             message: "{player} plays {source} to place {target} on top of its owner's deck",
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.returnCardToDeck((context) => ({
-                        card: context.target
-                    })),
-                    context
-                );
-            }
+            gameAction: GameActions.returnCardToDeck((context) => ({
+                card: context.target
+            }))
         });
     }
 }

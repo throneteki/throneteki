@@ -22,12 +22,7 @@ class ForgottenByHistory extends DrawCard {
                 format: "{player} plays {source} to shuffle {target} into {owner}'s deck",
                 args: { owner: (context) => context.target.owner }
             },
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.shuffleIntoDeck((context) => ({ cards: [context.target] })),
-                    context
-                );
-            }
+            gameAction: GameActions.shuffleIntoDeck((context) => ({ cards: [context.target] }))
         });
     }
 }
