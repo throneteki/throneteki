@@ -63,7 +63,11 @@ the ongoing work, and it was not part of this batch.
   whoever controls them, and an effect that can no longer do anything is dropped.
   [SimultaneousResolution.spec.js](../test/server/gamesteps/SimultaneousResolution.spec.js). Set
   values are not a conflict: the most recent set modifier wins (Rules Reference: Modifiers), which
-  `CardStat` already does. Legacy `atEndOfPhase` effects still resolve in a fixed order; they get
+  `CardStat` already does. Take-control effects are not a conflict either: the FAQ entry Multiple
+  "Take Control" Effects says control follows the most recent one and reverts to the next most
+  recent when it ends, which is what `controllerStack` does.
+  [MultipleTakeControl.spec.js](../test/server/gamesteps/MultipleTakeControl.spec.js). Legacy
+  `atEndOfPhase` effects still resolve in a fixed order; they get
   the prompt when they move to `GameActions.delayedEffect`.
 - Every catalogued event is raised and specced:
   [CataloguedEvents.spec.js](../test/server/gamesteps/CataloguedEvents.spec.js),
@@ -130,13 +134,10 @@ The phase 6 checkbox "framework items in phases 1, 2, 4 and 5 are done" is still
 the gaps, in the order they block that checkbox. Ask before implementing a rules reading that is
 not already decided.
 
-1. FAQ 1.6, control. Two take-control effects on the same card (both players' Ward, say) cannot
-   both apply, so the first player should choose which does. Today the newest wins. No spec covers
-   it yet.
-2. Every state change goes through a `GameAction`. Manual corrections (`changeStat`, `/power`,
+1. Every state change goes through a `GameAction`. Manual corrections (`changeStat`, `/power`,
    `/token`) stay plain corrections and raise no events.
-3. The client showing why an action is unavailable. Server reasons already exist.
-4. Alayne Stone needs a ruling before it moves to a state check: when she becomes Sansa's
+2. The client showing why an action is unavailable. Server reasons already exist.
+3. Alayne Stone needs a ruling before it moves to a state check: when she becomes Sansa's
    duplicate, does she leave play (losing power, tokens and attachments, and raising leave-play
    events)? The FAQ only says the placement is automatic and cannot be saved from.
    `PlaceAsDuplicate` refuses a card that is already in play.

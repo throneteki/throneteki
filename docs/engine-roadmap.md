@@ -372,7 +372,9 @@ on every card in the format having one.
   for delayed effects and state checks that resolve together
   ([SimultaneousResolution.spec.js](../test/server/gamesteps/SimultaneousResolution.spec.js)).
   Set values are not a conflict: the most recent set modifier wins (Rules Reference: Modifiers).
-  Still to do: conflicting take-control effects.
+  Take-control effects are not a conflict either: control follows the most recent one and reverts
+  to the next most recent when it ends (FAQ, Multiple "Take Control" Effects). _Done_
+  ([MultipleTakeControl.spec.js](../test/server/gamesteps/MultipleTakeControl.spec.js)).
 - The cards a lasting effect applies to are the cards eligible when it is created. Cards that
   become eligible later are unaffected, and a card that stops being eligible keeps the effect for
   its duration (Rules Reference: Lasting Effects; the Dragon Sight ruling in the current FAQ).
