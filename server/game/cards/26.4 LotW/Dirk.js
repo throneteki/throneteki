@@ -8,7 +8,9 @@ class Dirk extends DrawCard {
         this.forcedReaction({
             when: {
                 onCardDiscarded: (event) =>
-                    event.card.getType() === 'character' && event.card.location === 'play area'
+                    event.card.getType() === 'character' &&
+                    event.originalLocation === 'play area' &&
+                    event.card.location === 'discard pile'
             },
             message: {
                 format: '{controller} is forced by {source} to place {card} in their dead pile',
