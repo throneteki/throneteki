@@ -6,7 +6,9 @@ class TheGreenblood extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) => card.getType() === 'character' && card.isFaction('martell'),
-            effect: ability.effects.dynamicStrength(() => this.numOfSummerPlotsRevealed())
+            effect: ability.effects.dynamicStrength((card, context) =>
+                context.source.numOfSummerPlotsRevealed()
+            )
         });
     }
 

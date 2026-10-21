@@ -6,9 +6,10 @@ class TheonGreyjoy extends DrawCard {
     // contribute its STR to the challenge.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.game.isDuringChallenge({ attackingAlone: this }),
-            match: (card) =>
-                card.getType() === 'character' && card.getStrength() > this.getStrength(),
+            condition: (context) =>
+                context.game.isDuringChallenge({ attackingAlone: context.source }),
+            match: (card, context) =>
+                card.getType() === 'character' && card.getStrength() > context.source.getStrength(),
             targetController: 'any',
             effect: ability.effects.doesNotContributeStrength()
         });

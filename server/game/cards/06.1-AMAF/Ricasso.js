@@ -8,7 +8,9 @@ class Ricasso extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetController: 'current',
-            effect: ability.effects.dynamicUsedPlots(() => this.tokens[Tokens.gold])
+            effect: ability.effects.dynamicUsedPlots(
+                (card, context) => context.source.tokens[Tokens.gold]
+            )
         });
     }
 }

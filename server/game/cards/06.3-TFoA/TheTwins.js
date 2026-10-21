@@ -6,10 +6,12 @@ class TheTwins extends DrawCard {
     // character, raise the claim value on your revealed plot card by 1.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () =>
-                this.game.isDuringChallenge({ attackingPlayer: this.controller, number: 3 }) &&
-                this.hasAttackingFrey(),
-            match: (card) => card === this.controller.activePlot,
+            condition: (context) =>
+                context.game.isDuringChallenge({
+                    attackingPlayer: context.source.controller,
+                    number: 3
+                }) && context.source.hasAttackingFrey(),
+            match: (card, context) => card === context.source.controller.activePlot,
             effect: ability.effects.modifyClaim(1)
         });
     }

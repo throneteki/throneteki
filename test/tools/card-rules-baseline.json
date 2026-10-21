@@ -1473,9 +1473,6 @@
     "server/game/cards/04.6-TC/FistOfTheFirstMen.js": {
         "this-in-ability": 2
     },
-    "server/game/cards/04.6-TC/HouseManderlyKnight.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/04.6-TC/HouseOfTheUndying.js": {
         "this-in-ability": 1,
         "legacy-helper": 1,
@@ -1521,9 +1518,6 @@
         "this-in-ability": 2,
         "add-message": 1
     },
-    "server/game/cards/04.6-TC/TheGreenblood.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/04.6-TC/TheValyrian.js": {
         "this-in-ability": 7,
         "add-message": 1
@@ -1561,17 +1555,11 @@
     "server/game/cards/05-LoCR/ChellaDaughterOfCheyk.js": {
         "this-in-ability": 6
     },
-    "server/game/cards/05-LoCR/DaenerysFavor.js": {
-        "this-in-ability": 3
-    },
     "server/game/cards/05-LoCR/DaringRescue.js": {
         "this-in-ability": 12,
         "legacy-helper": 2,
         "add-message": 2,
         "prompt-for-select": 1
-    },
-    "server/game/cards/05-LoCR/DevoutFreerider.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/05-LoCR/DisputedClaim.js": {
         "this-in-ability": 2
@@ -1582,9 +1570,6 @@
     },
     "server/game/cards/05-LoCR/GoldenTooth.js": {
         "this-in-ability": 3
-    },
-    "server/game/cards/05-LoCR/GossipAndLies.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/05-LoCR/HighSepton.js": {
         "this-in-ability": 6,
@@ -1666,9 +1651,6 @@
     "server/game/cards/05-LoCR/SummonedToCourt.js": {
         "this-in-ability": 2
     },
-    "server/game/cards/05-LoCR/SweetDonnelHill.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/05-LoCR/TaenaMerryweather.js": {
         "this-in-ability": 6,
         "legacy-helper": 1,
@@ -1704,9 +1686,6 @@
     },
     "server/game/cards/05-LoCR/UnexpectedDelay.js": {
         "this-in-ability": 3
-    },
-    "server/game/cards/05-LoCR/ValyrianSteelDagger.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/05-LoCR/VictarionGreyjoy.js": {
         "this-in-ability": 6,
@@ -1751,16 +1730,7 @@
         "add-message": 1,
         "legacy-helper": 1
     },
-    "server/game/cards/06.1-AMAF/HosterTully.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/06.1-AMAF/MargaeryTyrell.js": {
-        "this-in-ability": 1
-    },
-    "server/game/cards/06.1-AMAF/MoatCailin.js": {
-        "this-in-ability": 1
-    },
-    "server/game/cards/06.1-AMAF/Ricasso.js": {
         "this-in-ability": 1
     },
     "server/game/cards/06.1-AMAF/SlaversBayPort.js": {
@@ -1797,9 +1767,6 @@
     "server/game/cards/06.2-GtR/BearIslandHost.js": {
         "this-in-ability": 4,
         "add-message": 1
-    },
-    "server/game/cards/06.2-GtR/BlackWalder.js": {
-        "this-in-ability": 3
     },
     "server/game/cards/06.2-GtR/Gilly.js": {
         "this-in-ability": 5,
@@ -1884,9 +1851,6 @@
         "this-in-ability": 5,
         "add-message": 1
     },
-    "server/game/cards/06.3-TFoA/CerseisAttendant.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/06.3-TFoA/CorsairsDirk.js": {
         "this-in-ability": 7,
         "legacy-helper": 1,
@@ -1907,9 +1871,6 @@
         "this-in-ability": 6,
         "legacy-helper": 1,
         "add-message": 1
-    },
-    "server/game/cards/06.3-TFoA/FleaBottomBastard.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/06.3-TFoA/FreyLordling.js": {
         "this-in-ability": 6,
@@ -1933,12 +1894,6 @@
         "add-message": 1,
         "this-in-ability": 7
     },
-    "server/game/cards/06.3-TFoA/RoamingWolfpack.js": {
-        "this-in-ability": 1
-    },
-    "server/game/cards/06.3-TFoA/SilverHairNet.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/06.3-TFoA/SpearsOfTheMerlingKing.js": {
         "this-in-ability": 4,
         "add-message": 1,
@@ -1948,12 +1903,6 @@
         "this-in-ability": 7,
         "add-message": 1,
         "legacy-helper": 1
-    },
-    "server/game/cards/06.3-TFoA/TheTwins.js": {
-        "this-in-ability": 4
-    },
-    "server/game/cards/06.3-TFoA/TheonGreyjoy.js": {
-        "this-in-ability": 3
     },
     "server/game/cards/06.3-TFoA/UndergroundVault.js": {
         "this-in-ability": 5,
@@ -2044,9 +1993,6 @@
         "add-message": 1,
         "legacy-helper": 1
     },
-    "server/game/cards/06.4-TRW/WalderFrey.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/06.4-TRW/WinterfellArcheryRange.js": {
         "this-in-ability": 5,
         "add-message": 1
@@ -2064,9 +2010,6 @@
         "this-in-ability": 7,
         "legacy-helper": 1,
         "add-message": 1
-    },
-    "server/game/cards/06.5-OR/DefenderOfTheWall.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/06.5-OR/DornishRevenge.js": {
         "this-in-ability": 10,
@@ -2137,9 +2080,6 @@
         "legacy-helper": 1,
         "add-message": 2
     },
-    "server/game/cards/06.5-OR/TheRedViper.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/06.5-OR/WheelsWithinWheels.js": {
         "this-in-ability": 1
     },
@@ -2204,9 +2144,6 @@
         "this-in-ability": 4,
         "add-message": 1
     },
-    "server/game/cards/06.6-TBWB/SansasMaid.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/06.6-TBWB/StonyShoreRaider.js": {
         "legacy-helper": 1,
         "add-message": 1,
@@ -2237,9 +2174,6 @@
         "this-in-ability": 6,
         "add-message": 1
     },
-    "server/game/cards/07-WotW/BowenMarsh.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/07-WotW/BuilderAtTheWall.js": {
         "add-message": 1,
         "this-in-ability": 4
@@ -2253,16 +2187,10 @@
         "this-in-ability": 6,
         "add-message": 1
     },
-    "server/game/cards/07-WotW/CrowKillers.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/07-WotW/Dalla.js": {
         "this-in-ability": 6,
         "legacy-helper": 1,
         "add-message": 1
-    },
-    "server/game/cards/07-WotW/DothrakiHonorGuard.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/07-WotW/Ghost.js": {
         "this-in-ability": 5,
@@ -2339,9 +2267,6 @@
     },
     "server/game/cards/07-WotW/RaidingTheBayOfIce.js": {
         "this-in-ability": 4
-    },
-    "server/game/cards/07-WotW/Rattleshirt.js": {
-        "this-in-ability": 2
     },
     "server/game/cards/07-WotW/SaltWife.js": {
         "this-in-ability": 3,

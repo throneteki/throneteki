@@ -6,7 +6,7 @@ class SweetDonnelHill extends DrawCard {
     // While Sweet Donnel Hill is defending, each attacking character loses all keywords.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.isDefending(),
+            condition: (context) => context.source.isDefending(),
             match: (card) => card.isAttacking() && card.getType() === 'character',
             targetController: 'any',
             effect: ability.effects.losesAllKeywords()

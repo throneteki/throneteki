@@ -10,7 +10,7 @@ class GossipAndLies extends PlotCard {
 
         this.persistentEffect({
             match: (card) => card.getType() === 'character',
-            condition: () => this.isAttackingInFirstIntrigueChallenge(),
+            condition: (context) => context.source.isAttackingInFirstIntrigueChallenge(),
             effect: ability.effects.doesNotKneelAsAttacker({ challengeType: 'intrigue' })
         });
     }

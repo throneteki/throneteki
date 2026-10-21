@@ -6,7 +6,7 @@ class CerseisAttendant extends DrawCard {
     // his or her hand, Cersei's Attendant gains insight.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.opponentHasNoCardsInHand(),
+            condition: (context) => context.source.opponentHasNoCardsInHand(),
             match: this,
             effect: ability.effects.addKeyword('insight')
         });

@@ -6,7 +6,8 @@ class Rattleshirt extends DrawCard {
     // as a defender.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.game.isDuringChallenge({ attackingAlone: this }),
+            condition: (context) =>
+                context.game.isDuringChallenge({ attackingAlone: context.source }),
             match: (card) => card.getType() === 'character' && card.attachments.length === 0,
             targetController: 'opponent',
             effect: ability.effects.cannotBeDeclaredAsDefender()

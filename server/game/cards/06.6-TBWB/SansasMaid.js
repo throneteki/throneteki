@@ -8,7 +8,9 @@ class SansasMaid extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) => card.hasTrait('Lady') && card.getType() === 'character',
-            effect: ability.effects.dynamicStrength(() => this.tokens[Tokens.gold])
+            effect: ability.effects.dynamicStrength(
+                (card, context) => context.source.tokens[Tokens.gold]
+            )
         });
     }
 }

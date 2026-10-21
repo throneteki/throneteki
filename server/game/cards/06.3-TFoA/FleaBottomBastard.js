@@ -5,7 +5,7 @@ class FleaBottomBastard extends DrawCard {
     // During the dominance phase, Flea Bottom Bastard gets +3 STR.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.game.currentPhase === 'dominance',
+            condition: (context) => context.game.currentPhase === 'dominance',
             match: this,
             effect: ability.effects.modifyStrength(3)
         });

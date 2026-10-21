@@ -7,7 +7,9 @@ class DothrakiHonorGuard extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,
-            effect: ability.effects.dynamicDecreaseStrength(() => this.controller.getHandCount())
+            effect: ability.effects.dynamicDecreaseStrength((card, context) =>
+                context.source.controller.getHandCount()
+            )
         });
     }
 }

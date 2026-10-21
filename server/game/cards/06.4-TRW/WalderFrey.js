@@ -7,9 +7,11 @@ class WalderFrey extends DrawCard {
     // considered to be attacking.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.isAttacking(),
-            match: (card) =>
-                card !== this && card.hasTrait('House Frey') && card.getType() === 'character',
+            condition: (context) => context.source.isAttacking(),
+            match: (card, context) =>
+                card !== context.source &&
+                card.hasTrait('House Frey') &&
+                card.getType() === 'character',
             effect: ability.effects.consideredToBeAttacking()
         });
     }

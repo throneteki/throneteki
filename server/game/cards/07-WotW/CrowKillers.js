@@ -6,7 +6,7 @@ class CrowKillers extends DrawCard {
     // value is higher than yours.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.opponentHasHigherReserve(),
+            condition: (context) => context.source.opponentHasHigherReserve(),
             match: this,
             effect: ability.effects.doesNotKneelAsAttacker()
         });

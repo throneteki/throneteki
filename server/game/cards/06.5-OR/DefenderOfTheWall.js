@@ -6,7 +6,7 @@ class DefenderOfTheWall extends DrawCard {
     // While Defender of the Wall is defending, it gets +2 STR.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.isDefending(),
+            condition: (context) => context.source.isDefending(),
             match: this,
             effect: ability.effects.modifyStrength(2)
         });
