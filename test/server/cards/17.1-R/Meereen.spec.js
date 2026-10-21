@@ -174,10 +174,8 @@ describe('Meereen', function () {
                 this.player2.clickCard(this.player2Object.hand[0]);
                 this.player2.clickCard(this.player2Object.hand[1]);
                 this.player2.clickPrompt('Done');
-                this.player2.clickPrompt('Done');
                 this.player1.clickCard(this.player1Object.hand[0]);
                 this.player1.clickCard(this.player1Object.hand[1]);
-                this.player1.clickPrompt('Done');
                 this.player1.clickPrompt('Done');
 
                 expect(this.player1).isReadyToTakeAction();
@@ -196,10 +194,8 @@ describe('Meereen', function () {
                 this.player2.clickCard(this.player2Object.hand[0]);
                 this.player2.clickCard(this.player2Object.hand[1]);
                 this.player2.clickPrompt('Done');
-                this.player2.clickPrompt('Done');
                 this.player1.clickCard(this.player1Object.hand[0]);
                 this.player1.clickCard(this.player1Object.hand[1]);
-                this.player1.clickPrompt('Done');
                 this.player1.clickPrompt('Done');
 
                 expect(this.player1).isReadyToTakeAction();

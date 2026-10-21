@@ -68,7 +68,7 @@ class ChatCommands {
         }
 
         if (!AlwaysAvailableCommands.includes(command) && !this.game.manualMode.allows(player)) {
-            return false;
+            return true;
         }
 
         if (!NonManualCommands.includes(command) && command !== '/manual') {

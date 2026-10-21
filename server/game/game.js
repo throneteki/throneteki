@@ -1810,6 +1810,15 @@ class Game extends EventEmitter {
         };
     }
 
+    toggleManualMode(playerName) {
+        let player = this.getPlayerByName(playerName);
+        if (!player) {
+            return;
+        }
+
+        this.manualMode.request(player);
+    }
+
     toggleMuteSpectators(playerName) {
         let player = this.getPlayerByName(playerName);
         if (!player) {

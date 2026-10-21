@@ -29,6 +29,26 @@ describe('manual mode', function () {
             expect(this.player1).isReadyToTakeAction();
         });
 
+        it('refuses manual actions without a message', function () {
+            const gold = this.player1.player.gold;
+            this.player1.clickCard(this.houseMaester);
+            this.player1.sendChat('/draw 2');
+            this.game.changeStat(this.player1.player.name, 'gold', 1);
+
+            expect(this.player1.player.gold).toBe(gold);
+            expect(this.game.getPlainTextLog()).not.toContain('manual mode is off.');
+            expect(this.game.getPlainTextLog()).not.toContain('/draw');
+            expect(this.player1).isReadyToTakeAction();
+        });
+
+        it('can be asked for with the manual mode command', function () {
+            this.game.commands.toggleManualMode(this.player1.player.name);
+            this.game.continue();
+
+            expect(this.player2).toHavePromptButton('Allow');
+            expect(this.player2).toHavePromptButton('Refuse');
+        });
+
         describe('and a player asks to turn it on', function () {
             beforeEach(function () {
                 this.player1.sendChat('/manual');

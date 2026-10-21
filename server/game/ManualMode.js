@@ -37,7 +37,7 @@ class ManualMode {
         if (!this.enabled) {
             this.game.addAlert(
                 'info',
-                'Every card in this game is verified, so manual mode is off. Use /manual to ask to turn it on'
+                'Every card in this game is verified, so manual mode is off'
             );
         }
     }
@@ -46,17 +46,8 @@ class ManualMode {
         return ManualMode.isVerified(card.cardData || {});
     }
 
-    allows(player) {
-        if (this.enabled) {
-            return true;
-        }
-
-        this.game.addAlert(
-            'warning',
-            '{0} cannot do that while manual mode is off. Use /manual to ask to turn it on',
-            player
-        );
-        return false;
+    allows() {
+        return this.enabled;
     }
 
     request(player) {

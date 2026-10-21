@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import classNames from 'classnames';
+import { useSelector } from 'react-redux';
 import { useDraggable } from '@dnd-kit/core';
 import CardMenu from './CardMenu';
 import CardCounters from './CardCounters';
@@ -56,8 +57,10 @@ const Card = ({
 
     const standardisedSize = standardiseCardSize(size);
 
+    const manualMode = useSelector((state) => state.lobby.currentGame?.manualMode);
     const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
         id: useUniqueId(key),
+        disabled: !manualMode,
         data: { type: ItemTypes.CARD, card, orientation, source, key: key }
     });
 

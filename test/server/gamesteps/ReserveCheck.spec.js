@@ -56,4 +56,26 @@ describe('the reserve check', function () {
             );
         });
     });
+
+    describe('when more than one card must be discarded', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'challenge',
+                player1: {
+                    hand: Array(8).fill('Hedge Knight')
+                }
+            });
+
+            this.completeChallengesPhase();
+            [this.first, this.second] = this.player1Object.hand;
+            this.player1.clickCard(this.first);
+            this.player1.clickCard(this.second);
+            this.player1.clickPrompt('Done');
+        });
+
+        it('places them in the order chosen, without asking again', function () {
+            expect(this.player1Object.discardPile).toEqual([this.second, this.first]);
+            expect(this.player1).isReadyToTakeAction();
+        });
+    });
 });

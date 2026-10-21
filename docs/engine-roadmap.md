@@ -467,15 +467,16 @@ when every card in every deck is verified (listed in
 `npm run spec:coverage -- --write-verified` and checked in CI), or has no text. That check is held
 until the gate below is met. With it off,
 chat commands (except `/cancel-prompt`, `/manual` and the clock and rematch commands), drag and
-drop, click-to-kneel, stat changes, shuffling and looking at the deck are refused. `/manual` asks
-every opponent; if they all agree, manual mode turns on and the player is asked which card isn't
+drop, click-to-kneel, stat changes, shuffling and looking at the deck are refused without a
+message, and the client hides the controls for them and does not let cards be dragged. `/manual`
+or the Manual Mode button asks every opponent; if they all agree, manual mode turns on and the player is asked which card isn't
 working, and both are recorded in the game stats
 ([ManualMode.spec.js](../test/server/ManualMode.spec.js)). `setupTest` games run with manual
 mode off and throw on any manual action; older `integration(` specs still run with it on. An
 action is refused when a window is open and it is not that player's turn, and during marshaling
 except on that player's turn, whether or not strict windows are on (phase 2). Still to do: refuse
 actions whenever manual mode is off and no window is open; make strict action windows the default
-after the auto-pass trial has had feedback; a client toggle and indicator; and "report a problem"
+after the auto-pass trial has had feedback; and "report a problem"
 with a saved game state for the scenario runner._
 
 **Gate.** The verified-deck check already turns manual mode off. Hold that check until all of the
