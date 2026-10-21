@@ -87,7 +87,7 @@ class BaseAbility {
             // only names the action checked for immunity.
             if (gameAction && typeof gameAction === 'object') {
                 this.targetGameActions.push(
-                    targetProperties.choosingPlayer === 'each'
+                    BaseAbility.choosesPerPlayer(targetProperties)
                         ? new ForEachSelection(name, gameAction)
                         : gameAction
                 );
@@ -102,6 +102,14 @@ class BaseAbility {
 
             return AbilityTarget.create(name, { ...rest, gameAction, gameActionFilter });
         });
+    }
+
+    static choosesPerPlayer(targetProperties) {
+        const choosingPlayer = targetProperties.choosingPlayer;
+        return (
+            ['each', 'eachOpponent'].includes(choosingPlayer) ||
+            typeof choosingPlayer === 'function'
+        );
     }
 
     /**

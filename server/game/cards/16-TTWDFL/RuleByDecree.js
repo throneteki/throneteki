@@ -1,7 +1,14 @@
 import PlotCard from '../../plotcard.js';
 import GameActions from '../../GameActions/index.js';
 import Message from '../../Message.js';
-import { flatten } from '../../../Array.js';
+
+function cardsNotKept(player, keptCards) {
+    return player.hand.filter((card) => !(keptCards || []).includes(card));
+}
+
+function getHighestHandSize(game) {
+    return Math.max(...game.getPlayers().map((player) => player.hand.length));
+}
 
 class RuleByDegree extends PlotCard {
     // Rule By Decree (16033)
@@ -10,58 +17,32 @@ class RuleByDegree extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
             target: {
-                choosingPlayer: (player) =>
-                    player.hand.length > 4 && player.getHandCount() === this.getHighestHandSize(),
+                choosingPlayer: (player, context) =>
+                    player.hand.length > 4 &&
+                    player.getHandCount() === getHighestHandSize(context.game),
                 activePromptTitle: 'Select 4 cards to keep',
                 mode: 'exactly',
-                cardCondition: (card, context) =>
-                    card.isMatch({ location: 'hand', controller: context.choosingPlayer }),
-                numCards: 4
+                numCards: 4,
+                cardCondition: { location: 'hand', controller: 'choosingPlayer' },
+                gameAction: GameActions.simultaneously((context) =>
+                    cardsNotKept(context.choosingPlayer, context.target).map((card) =>
+                        GameActions.discardCard({ card })
+                    )
+                )
             },
             message: {
                 format: '{player} uses {source} to have {fragments}',
-                args: { fragments: (context) => this.getMessageFragments(context) }
-            },
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.simultaneously((context) => [
-                        ...this.getCardsToDiscard(context).map((card) =>
-                            GameActions.discardCard({ card })
+                args: {
+                    fragments: (context) =>
+                        context.targets.selections.map((selection) =>
+                            Message.fragment('{player} discard {cards}', {
+                                player: selection.choosingPlayer,
+                                cards: cardsNotKept(selection.choosingPlayer, selection.value)
+                            })
                         )
-                    ]),
-                    context
-                );
+                }
             }
         });
-    }
-
-    getMessageFragments(context) {
-        const fragments = [];
-        for (const [player, cards] of this.getPlayerCardMapping(context)) {
-            fragments.push(Message.fragment('{player} discard {cards}', { player, cards }));
-        }
-        return fragments;
-    }
-
-    getPlayerCardMapping(context) {
-        let cardsToDiscard = new Map();
-        for (let selection of context.targets.selections) {
-            const player = selection.choosingPlayer;
-            const selectedCards = selection.value || [];
-            const remainingCards = player.hand.filter((card) => !selectedCards.includes(card));
-
-            cardsToDiscard.set(player, remainingCards);
-        }
-
-        return cardsToDiscard;
-    }
-
-    getCardsToDiscard(context) {
-        return flatten([...this.getPlayerCardMapping(context)]);
-    }
-
-    getHighestHandSize() {
-        return Math.max(...this.game.getPlayers().map((player) => player.hand.length));
     }
 }
 

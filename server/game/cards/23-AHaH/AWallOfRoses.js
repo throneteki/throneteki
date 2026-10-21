@@ -11,8 +11,8 @@ class AWallOfRoses extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onChallengeInitiated: (event) =>
-                    event.challenge.initiatedAgainstPlayer === this.controller
+                onChallengeInitiated: (event, context) =>
+                    event.challenge.initiatedAgainstPlayer === context.source.controller
             },
             message: '{player} plays {source} to reveal their hand',
             max: ability.limit.perChallenge(1),
@@ -26,21 +26,14 @@ class AWallOfRoses extends DrawCard {
                     cardCondition: { type: 'character', attacking: true }
                 },
                 message: 'Then, {player} stands and removes {target} from the challenge',
-                handler: (context) => {
-                    this.game.resolveGameAction(
-                        GameActions.simultaneously((context) =>
-                            flatten(
-                                context.targets
-                                    .getTargets()
-                                    .map((target) => [
-                                        GameActions.standCard({ card: target }),
-                                        GameActions.removeFromChallenge({ card: target })
-                                    ])
-                            )
-                        ),
-                        context
-                    );
-                }
+                gameAction: GameActions.simultaneously((context) =>
+                    flatten(
+                        context.target.map((card) => [
+                            GameActions.standCard({ card }),
+                            GameActions.removeFromChallenge({ card })
+                        ])
+                    )
+                )
             })
         });
     }

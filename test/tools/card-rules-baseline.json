@@ -3624,9 +3624,6 @@
     "server/game/cards/13.1-AtG/BaelorBlacktyde.js": {
         "this-in-ability": 1
     },
-    "server/game/cards/13.1-AtG/CityOfSecrets.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/13.1-AtG/DragonGate.js": {
         "this-in-ability": 3,
         "legacy-helper": 1,
@@ -4270,9 +4267,6 @@
     "server/game/cards/16-TTWDFL/NarrowEscape.js": {
         "this-in-ability": 6,
         "add-message": 1
-    },
-    "server/game/cards/16-TTWDFL/RuleByDecree.js": {
-        "this-in-ability": 4
     },
     "server/game/cards/16-TTWDFL/SamwellTarly.js": {
         "add-message": 1,
@@ -5016,9 +5010,6 @@
     "server/game/cards/23-AHaH/ATraitorsWhisper.js": {
         "this-in-ability": 1
     },
-    "server/game/cards/23-AHaH/AWallOfRoses.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/23-AHaH/AnyaWaynwood.js": {
         "this-in-ability": 3
     },
@@ -5124,9 +5115,6 @@
         "this-in-ability": 1
     },
     "server/game/cards/25.1-ATT/DanceOfTheDragons.js": {
-        "this-in-ability": 2
-    },
-    "server/game/cards/25.1-ATT/KarstarkLancer.js": {
         "this-in-ability": 2
     },
     "server/game/cards/25.1-ATT/LadyMarya.js": {

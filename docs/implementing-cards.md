@@ -684,6 +684,13 @@ message: {
 A string `gameAction` on a target (`gameAction: 'kill'`) is different: it only names the action
 checked for immunity, and doesn't filter or resolve anything.
 
+When more than one player chooses (`choosingPlayer: 'each'`, `'eachOpponent'` or a function), put
+the `gameAction` on the target. It resolves once for each player's selection, with
+`context.target` set to that player's cards and `context.choosingPlayer` to that player. A
+top-level `gameAction` can't see the separate selections, so it would filter each candidate
+against the wrong player. See [KarstarkLancer.js](../server/game/cards/25.1-ATT/KarstarkLancer.js)
+and [RuleByDecree.js](../server/game/cards/16-TTWDFL/RuleByDecree.js).
+
 With `chooseOpponent` or `choosePlayer` and no card targets, only players the `gameAction` could
 affect can be chosen. An ability with several targets and a single top-level `gameAction` still
 resolves it, but doesn't filter the targets by it.

@@ -131,6 +131,30 @@ describe('BaseAbility with a target and a game action', function () {
         });
     });
 
+    describe("with a target's own game action", function () {
+        const resolvedPerSelection = (choosingPlayer) => {
+            const ability = new BaseAbility({
+                target: {
+                    choosingPlayer,
+                    cardCondition: () => true,
+                    gameAction: { allow: () => true }
+                }
+            });
+            return ability.targetGameActions[0].name === 'forEachSelection';
+        };
+
+        it('resolves it once per selection when more than one player can choose', function () {
+            expect(resolvedPerSelection('each')).toBe(true);
+            expect(resolvedPerSelection('eachOpponent')).toBe(true);
+            expect(resolvedPerSelection((player) => !!player)).toBe(true);
+        });
+
+        it('resolves it directly when a single player chooses', function () {
+            expect(resolvedPerSelection(undefined)).toBe(false);
+            expect(resolvedPerSelection('opponent')).toBe(false);
+        });
+    });
+
     describe('with a chosen opponent', function () {
         beforeEach(function () {
             this.player = { name: 'player' };
