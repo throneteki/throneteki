@@ -1,35 +1,30 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class MaesterCaleotte extends DrawCard {
     // Maester Caleotte (01107)
     // Reaction: After you lose a challenge in which Maester Caleotte is participating, choose a
     // character. That character loses a challenge icon of your choice until the end of the phase.
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.loser === this.controller && this.isParticipating()
+                afterChallenge: (event, context) =>
+                    event.challenge.loser === context.source.controller &&
+                    context.source.isParticipating()
             },
             target: {
                 cardCondition: (card) =>
                     card.location === 'play area' && card.getType() === 'character'
             },
-            handler: (context) => {
-                this.game.promptForIcon(this.controller, this, (icon) => {
-                    this.untilEndOfPhase((ability) => ({
+            gameAction: GameActions.chooseIcon({
+                message: '{player} uses {source} to remove {icon} icon from {target}',
+                gameAction: (icon) =>
+                    GameActions.lastingEffect((context) => ({
+                        duration: 'untilEndOfPhase',
                         match: context.target,
                         effect: ability.effects.removeIcon(icon)
-                    }));
-                    this.game.addMessage(
-                        '{0} uses {1} to remove {2} {3} icon from {4}',
-                        this.controller,
-                        this,
-                        icon === 'intrigue' ? 'an' : 'a',
-                        icon,
-                        context.target
-                    );
-                });
-            }
+                    }))
+            })
         });
     }
 }

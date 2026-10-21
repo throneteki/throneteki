@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class UnswornApprentice extends DrawCard {
@@ -10,22 +11,16 @@ class UnswornApprentice extends DrawCard {
             title: 'Gain icon',
             phase: 'challenge',
             limit: ability.limit.perPhase(1),
-            handler: () => {
-                this.game.promptForIcon(this.controller, this, (icon) => {
-                    this.untilEndOfPhase((ability) => ({
-                        match: this,
+            gameAction: GameActions.chooseIcon({
+                message:
+                    '{player} uses {source} to have {source} gain {icon} icon until the end of the phase',
+                gameAction: (icon) =>
+                    GameActions.lastingEffect((context) => ({
+                        duration: 'untilEndOfPhase',
+                        match: context.source,
                         effect: ability.effects.addIcon(icon)
-                    }));
-
-                    this.game.addMessage(
-                        '{0} uses {1} to have {1} gain {2} {3} icon until the end of the phase',
-                        this.controller,
-                        this,
-                        icon === 'intrigue' ? 'an' : 'a',
-                        icon
-                    );
-                });
-            }
+                    }))
+            })
         });
     }
 }

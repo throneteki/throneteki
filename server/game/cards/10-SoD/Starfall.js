@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class Starfall extends DrawCard {
@@ -13,23 +14,15 @@ class Starfall extends DrawCard {
                 cardCondition: (card) =>
                     card.location === 'play area' && card.getType() === 'character'
             },
-            handler: (context) => {
-                this.game.promptForIcon(context.player, this, (icon) => {
-                    this.untilEndOfPhase((ability) => ({
+            gameAction: GameActions.chooseIcon({
+                message: '{player} kneels {source} to remove {icon} icon from {target}',
+                gameAction: (icon) =>
+                    GameActions.lastingEffect((context) => ({
+                        duration: 'untilEndOfPhase',
                         match: context.target,
                         effect: ability.effects.removeIcon(icon)
-                    }));
-
-                    this.game.addMessage(
-                        '{0} kneels {1} to remove {2} {3} icon from {4}',
-                        context.player,
-                        this,
-                        icon === 'intrigue' ? 'an' : 'a',
-                        icon,
-                        context.target
-                    );
-                });
-            }
+                    }))
+            })
         });
     }
 }

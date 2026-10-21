@@ -327,6 +327,25 @@ gameAction: GameActions.lastingEffect((context) => ({
 }));
 ```
 
+#### Choosing an icon
+
+For text that has a player choose a challenge icon ("gains an icon of your choice", "loses a
+[military], an [intrigue] or a [power] icon"), use `GameActions.chooseIcon`. It prompts with one
+button per icon and resolves the game action that `gameAction` returns for the chosen icon. In the
+`message`, `{icon}` becomes the icon with its article ("a military", "an intrigue"):
+
+```javascript
+gameAction: GameActions.chooseIcon({
+    message: '{player} uses {source} to give {target} {icon} icon until the end of the phase',
+    gameAction: (icon) =>
+        GameActions.lastingEffect((context) => ({
+            duration: 'untilEndOfPhase',
+            match: context.target,
+            effect: ability.effects.addIcon(icon)
+        }))
+});
+```
+
 ### Delayed effects
 
 Text that sets up an effect for a later condition ("if you win that challenge", "if an opponent
