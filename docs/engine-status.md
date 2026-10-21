@@ -133,8 +133,12 @@ These are decided and should stay as they are until someone asks:
 After the framework gaps, or alongside them when a gap is blocked on a ruling, continue phase 5.
 The eight shared neutrals in the roadmap table are verified, and so is Stark Fealty,
 [decklist 16711](https://thronesdb.com/decklist/view/16711): a mirror starts with manual mode off
-([StarkFealtyMirror.spec.js](../test/server/decks/StarkFealtyMirror.spec.js)). The next lists are
-the other short Stark lists; their ids were not recorded, so pick them by recounting.
+([PlayableDecks.spec.js](../test/server/decks/PlayableDecks.spec.js)), and Stark Fealty
+[decklist 16272](https://thronesdb.com/decklist/view/16272). On 2026-10-21, of 233 legal unique
+Standard v2.1 joust lists published in the last year, the next closest is
+[16273](https://thronesdb.com/decklist/view/16273) (Stark, The House with the Red Door), at 5
+unverified cards: Relentless Assault, Last Hearth Scouts, Ser Jason Mallister, Forced March and
+The House with the Red Door. Add each finished list to `PlayableDecks.spec.js`.
 
 ## Do not reapply
 

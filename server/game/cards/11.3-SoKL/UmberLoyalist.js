@@ -1,49 +1,29 @@
 import DrawCard from '../../drawcard.js';
-import TextHelper from '../../TextHelper.js';
+import GameActions from '../../GameActions/index.js';
 
 class UmberLoyalist extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this && this.controller.canDraw()
+                onCardEntersPlay: (event) => event.card === this
             },
-            handler: (context) => {
-                let numDrawn = context.player.drawCardsToHand(2).length;
-                this.game.addMessage(
-                    '{0} uses {1} to draw {2}',
-                    context.player,
-                    this,
-                    TextHelper.count(numDrawn, 'card')
-                );
-            }
+            gameAction: GameActions.drawCards((context) => ({ player: context.player, amount: 2 }))
         });
+
         this.forcedInterrupt({
             when: {
-                onCardLeftPlay: (event) => event.card === this && this.controller.hand.length >= 2
+                onCardLeftPlay: (event) => event.card === this
             },
-            handler: (context) => {
-                this.game.promptForSelect(context.player, {
-                    activePromptTitle: 'Select 2 cards',
-                    numCards: 2,
-                    mode: 'exactly',
-                    cardCondition: (card) =>
-                        card.controller === context.player && card.location === 'hand',
-                    onSelect: (player, cards) => this.onCardsSelected(player, cards),
-                    onCancel: (player) => this.cancelResolution(player)
-                });
-            }
+            message: '{player} is forced by {source} to choose and discard 2 cards from their hand',
+            gameAction: GameActions.chooseCards({
+                title: 'Select 2 cards to discard',
+                mode: 'exactly',
+                numCards: 2,
+                cardCondition: (card, context) =>
+                    card.location === 'hand' && card.controller === context.choosingPlayer,
+                gameAction: (card) => GameActions.discardCard({ card })
+            })
         });
-    }
-
-    onCardsSelected(player, cards) {
-        player.discardCards(cards);
-        this.game.addMessage('{0} is forced by {1} to discard {2}', player, this, cards);
-        return true;
-    }
-
-    cancelResolution(player) {
-        this.game.addAlert('danger', '{0} cancels resolution of {1}', player, this);
-        return true;
     }
 }
 

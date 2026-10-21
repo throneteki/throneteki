@@ -13,22 +13,11 @@ class RamsaySnow extends DrawCard {
                 cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.controller === context.choosingPlayer &&
-                    card.getType() === 'character'
-            },
-            handler: (context) => {
-                let selections = context.targets.selections.filter(
-                    (selection) => !!selection.value
-                );
-                this.game.resolveGameAction(
-                    GameActions.simultaneously(
-                        selections.map((selection) =>
-                            GameActions.sacrificeCard({
-                                player: selection.choosingPlayer,
-                                card: selection.value
-                            })
-                        )
-                    )
-                );
+                    card.getType() === 'character',
+                gameAction: GameActions.sacrificeCard((context) => ({
+                    card: context.target,
+                    player: context.target.controller
+                }))
             }
         });
     }

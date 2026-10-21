@@ -184,10 +184,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/01-Core/Ice.js": {
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/01-Core/IronFleetScout.js": {
         "add-message": 1
     },
@@ -266,10 +262,6 @@
     "server/game/cards/01-Core/PowerBehindTheThrone.js": {
         "add-message": 1,
         "legacy-helper": 1
-    },
-    "server/game/cards/01-Core/PutToTheSword.js": {
-        "legacy-helper": 1,
-        "add-message": 1
     },
     "server/game/cards/01-Core/PutToTheTorch.js": {
         "legacy-helper": 1,
@@ -435,9 +427,6 @@
         "legacy-helper": 1
     },
     "server/game/cards/01-Core/WildlingHorde.js": {
-        "add-message": 1
-    },
-    "server/game/cards/01-Core/WinterIsComing.js": {
         "add-message": 1
     },
     "server/game/cards/01-Core/Yoren.js": {
@@ -1799,9 +1788,6 @@
     "server/game/cards/08.1-TAK/TheWaterGardens.js": {
         "add-message": 1
     },
-    "server/game/cards/08.1-TAK/ValarDohaeris.js": {
-        "add-message": 2
-    },
     "server/game/cards/08.1-TAK/YoungBuilder.js": {
         "legacy-helper": 1,
         "add-message": 1
@@ -2242,10 +2228,6 @@
     "server/game/cards/10-SoD/FleetFromPyke.js": {
         "add-message": 1
     },
-    "server/game/cards/10-SoD/GreatjonUmber.js": {
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/10-SoD/HotahsAxe.js": {
         "legacy-helper": 1,
         "add-message": 1
@@ -2374,10 +2356,6 @@
     "server/game/cards/11.1-TSC/NighttimeMarauders.js": {
         "legacy-helper": 1,
         "add-message": 2
-    },
-    "server/game/cards/11.1-TSC/NorthernArmory.js": {
-        "legacy-helper": 1,
-        "add-message": 1
     },
     "server/game/cards/11.1-TSC/SchemingSepton.js": {
         "legacy-helper": 3,
@@ -2508,11 +2486,6 @@
         "prompt-for-select": 1,
         "legacy-helper": 1,
         "add-message": 1
-    },
-    "server/game/cards/11.3-SoKL/UmberLoyalist.js": {
-        "legacy-helper": 2,
-        "add-message": 2,
-        "prompt-for-select": 1
     },
     "server/game/cards/11.3-SoKL/UneasyTruce.js": {
         "add-message": 1,
@@ -3128,9 +3101,6 @@
     "server/game/cards/14-FotS/SerGregorClegane.js": {
         "legacy-helper": 1
     },
-    "server/game/cards/14-FotS/SheBear.js": {
-        "legacy-helper": 1
-    },
     "server/game/cards/14-FotS/SiegePreparations.js": {
         "legacy-helper": 1,
         "add-message": 1
@@ -3323,10 +3293,6 @@
     "server/game/cards/17.1-R/MaceTyrell.js": {
         "legacy-helper": 1,
         "add-message": 2
-    },
-    "server/game/cards/17.1-R/MeeraReed.js": {
-        "add-message": 2,
-        "legacy-helper": 1
     },
     "server/game/cards/17.1-R/Meereen.js": {
         "legacy-helper": 1,

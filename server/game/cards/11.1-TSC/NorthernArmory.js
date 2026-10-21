@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class NorthernArmory extends DrawCard {
     setupCardAbilities(ability) {
@@ -13,21 +14,11 @@ class NorthernArmory extends DrawCard {
             title: 'Stand a character',
             cost: ability.costs.kneelSelf(),
             target: {
-                cardCondition: (card) =>
-                    card.location === 'play area' &&
-                    card.getType() === 'character' &&
-                    card.isFaction('stark'),
+                cardCondition: { location: 'play area', type: 'character', faction: 'stark' },
                 gameAction: 'stand'
             },
-            handler: (context) => {
-                this.controller.standCard(context.target);
-                this.game.addMessage(
-                    '{0} kneels {1} to stand {2}',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} kneels {source} to stand {target}',
+            gameAction: GameActions.standCard((context) => ({ card: context.target }))
         });
     }
 }

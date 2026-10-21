@@ -450,7 +450,7 @@ After those, finish one archetype outright. The shortest published list is Stark
 "Characters" ([decklist 16711](https://thronesdb.com/decklist/view/16711)), at 20 unverified cards.
 _Done on 2026-10-21: every card in it is verified (Tumblestone Knight has no text), and a mirror
 starts with manual mode off
-([StarkFealtyMirror.spec.js](../test/server/decks/StarkFealtyMirror.spec.js))._
+([PlayableDecks.spec.js](../test/server/decks/PlayableDecks.spec.js))._
 The three easiest Stark lists together are 39 cards, the smallest such union of any faction (the
 others run from 49 to 77). A mirror of a finished list is the first game that starts with manual
 mode off, once the phase 6 gate is met. Refresh this order when the restricted list changes.

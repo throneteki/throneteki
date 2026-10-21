@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SheBear extends DrawCard {
     setupCardAbilities() {
@@ -8,19 +9,17 @@ class SheBear extends DrawCard {
             },
             target: {
                 activePromptTitle: 'Select a card',
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'hand' &&
-                    card.controller === this.controller &&
+                    card.controller === context.player &&
                     ['character', 'attachment'].includes(card.getType()) &&
                     card.isFaction('stark') &&
                     card.hasPrintedCost() &&
-                    card.getPrintedCost() <= 3 &&
-                    this.controller.canPutIntoPlay(card)
+                    card.getPrintedCost() <= 3,
+                gameAction: 'putIntoPlay'
             },
             message: '{player} uses {source} to put {target} into play',
-            handler: (context) => {
-                context.player.putIntoPlay(context.target);
-            }
+            gameAction: GameActions.putIntoPlay((context) => ({ card: context.target }))
         });
     }
 }

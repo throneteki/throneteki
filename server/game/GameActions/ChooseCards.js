@@ -77,7 +77,8 @@ class ChooseCards extends GameAction {
         context.game.promptForSelect(player, {
             activePromptTitle: this.titleFunc({ ...context, choosingPlayer: player }),
             mode: this.mode,
-            numCards: this.numCards,
+            numCards:
+                this.mode === 'exactly' ? Math.min(this.numCards, choosable.length) : this.numCards,
             multiSelect: true,
             cardType: AllCardTypes,
             cardCondition: (card) => choosable.includes(card),

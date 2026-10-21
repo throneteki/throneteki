@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class GreatjonUmber extends DrawCard {
     setupCardAbilities() {
@@ -8,13 +9,10 @@ class GreatjonUmber extends DrawCard {
                     event.challenge.challengeType === 'military' &&
                     event.challenge.winner === this.controller &&
                     this.isAttacking() &&
-                    this.controller.getNumberOfUsedPlots() < 3 &&
-                    this.kneeled
+                    this.controller.getNumberOfUsedPlots() < 3
             },
-            handler: (context) => {
-                context.player.standCard(this);
-                this.game.addMessage('{0} stands {1}', context.player, this);
-            }
+            message: '{player} uses {source} to stand {source}',
+            gameAction: GameActions.standCard((context) => ({ card: context.source }))
         });
     }
 }

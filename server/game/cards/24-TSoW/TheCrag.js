@@ -29,9 +29,7 @@ class TheCrag extends DrawCard {
     }
 
     getAmount(context) {
-        return context.player.anyCardsInPlay(
-            (card) => card.isFaction('stark') && card.hasTrait('King')
-        )
+        return context.player.anyCardsInPlay({ type: 'character', faction: 'stark', trait: 'King' })
             ? 2
             : 1;
     }

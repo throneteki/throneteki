@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Ice extends DrawCard {
     setupCardAbilities(ability) {
@@ -15,21 +16,14 @@ class Ice extends DrawCard {
             },
             cost: ability.costs.sacrificeSelf(),
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
-                    card.controller === this.game.currentChallenge.loser &&
+                    card.controller === context.event.challenge.loser &&
                     card.getType() === 'character',
                 gameAction: 'kill'
             },
-            handler: (context) => {
-                context.target.owner.killCharacter(context.target);
-                this.game.addMessage(
-                    '{0} sacrifices {1} to kill {2}',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} sacrifices {source} to kill {target}',
+            gameAction: GameActions.kill((context) => ({ card: context.target }))
         });
     }
 }
