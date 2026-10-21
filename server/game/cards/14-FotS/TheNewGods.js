@@ -10,7 +10,7 @@ class TheNewGods extends PlotCard {
 
         this.persistentEffect({
             match: (card) => card.getType() === 'character' && card.hasTrait('The Seven'),
-            condition: () => this.isAttackingInFirstChallenge(),
+            condition: (context) => context.source.isAttackingInFirstChallenge(),
             effect: ability.effects.doesNotKneelAsAttacker()
         });
     }

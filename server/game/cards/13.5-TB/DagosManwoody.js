@@ -6,7 +6,7 @@ class DagosManwoody extends DrawCard {
     // gains renown and stealth.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.numOfTraitsInUsedPile() >= 5,
+            condition: (context) => context.source.numOfTraitsInUsedPile() >= 5,
             match: this,
             effect: [ability.effects.addKeyword('Stealth'), ability.effects.addKeyword('Renown')]
         });

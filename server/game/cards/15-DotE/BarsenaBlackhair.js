@@ -6,10 +6,10 @@ class BarsenaBlackhair extends DrawCard {
     // While there is a Weapon attachment attached to Barsena Blackhair, she gets +3 STR.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () =>
-                this.controller.anyCardsInPlay(
+            condition: (context) =>
+                context.source.controller.anyCardsInPlay(
                     (card) =>
-                        card.parent === this &&
+                        card.parent === context.source &&
                         card.getType() === 'attachment' &&
                         card.hasTrait('Weapon')
                 ),

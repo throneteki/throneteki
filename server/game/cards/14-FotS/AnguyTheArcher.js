@@ -6,8 +6,8 @@ class AnguyTheArcher extends DrawCard {
     // attacker or defender in a [military] challenge.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () =>
-                !this.controller.anyCardsInPlay(
+            condition: (context) =>
+                !context.source.controller.anyCardsInPlay(
                     (card) => card.getType() === 'character' && card.isLoyal()
                 ),
             match: this,

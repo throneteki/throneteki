@@ -7,7 +7,7 @@ class OwenTheOaf extends DrawCard {
     // icon does not contribute its STR to the challenge.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.isParticipating(),
+            condition: (context) => context.source.isParticipating(),
             match: (card) =>
                 card.isParticipating() &&
                 card.getType() === 'character' &&

@@ -5,7 +5,7 @@ class PitFightersBlade extends DrawCard {
     // Attached character gains renown during [military] challenges.
     setupCardAbilities(ability) {
         this.whileAttached({
-            condition: () => this.game.isDuringChallenge({ challengeType: 'military' }),
+            condition: (context) => context.game.isDuringChallenge({ challengeType: 'military' }),
             effect: ability.effects.addKeyword('Renown')
         });
     }

@@ -6,7 +6,8 @@ class PriestOfOldWyk extends DrawCard {
     // STR to your total for dominance even while kneeling.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.controller.deadPile.some((card) => card.hasTrait('Drowned God')),
+            condition: (context) =>
+                context.source.controller.deadPile.some((card) => card.hasTrait('Drowned God')),
             match: this,
             effect: ability.effects.contributesToDominanceWhileKneeling()
         });

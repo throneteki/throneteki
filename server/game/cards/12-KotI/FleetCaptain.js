@@ -7,7 +7,9 @@ class FleetCaptain extends DrawCard {
     setupCardAbilities(ability) {
         this.whileAttached({
             effect: [
-                ability.effects.dynamicStrength(() => this.calculateStrength()),
+                ability.effects.dynamicStrength((card, context) =>
+                    context.source.calculateStrength()
+                ),
                 ability.effects.addTrait('captain')
             ]
         });

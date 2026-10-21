@@ -7,14 +7,17 @@ class TheDragonpit extends DrawCard {
         this.persistentEffect({
             // Add an explicit condition so the effect gets recalculated as the
             // number of shadow cards change.
-            condition: () =>
-                this.game
+            condition: (context) =>
+                context.game
                     .getOpponents()
-                    .some((opponent) => opponent.shadows.length < this.controller.shadows.length),
-            match: (card) =>
+                    .some(
+                        (opponent) =>
+                            opponent.shadows.length < context.source.controller.shadows.length
+                    ),
+            match: (card, context) =>
                 card.location === 'play area' &&
                 card.getType() === 'character' &&
-                this.controllerHasFewerShadows(card),
+                context.source.controllerHasFewerShadows(card),
             targetController: 'any',
             effect: ability.effects.modifyStrength(-1)
         });

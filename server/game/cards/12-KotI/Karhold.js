@@ -7,9 +7,9 @@ class Karhold extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => true,
-            match: (card) =>
+            match: (card, context) =>
                 ['character', 'location'].includes(card.getType()) &&
-                !this.hasWinterPlotRevealed(card.controller),
+                !context.source.hasWinterPlotRevealed(card.controller),
             targetController: 'any',
             effect: ability.effects.cannotGainPower()
         });

@@ -7,7 +7,7 @@ class ProtectorsOfTheRealm extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,
-            effect: ability.effects.dynamicStrength(() => this.getSTR())
+            effect: ability.effects.dynamicStrength((card, context) => context.source.getSTR())
         });
     }
 

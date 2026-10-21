@@ -5,8 +5,8 @@ class UnlikelyChampion extends DrawCard {
     // While you control a Lord or Lady character, Unlikely Champion gains a [power] icon.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () =>
-                this.controller.anyCardsInPlay(
+            condition: (context) =>
+                context.source.controller.anyCardsInPlay(
                     (card) => card.hasTrait('Lord') || card.hasTrait('Lady')
                 ),
             match: this,

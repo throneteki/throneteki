@@ -7,7 +7,7 @@ class LoanFromTheIronBank extends PlotCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             location: 'any',
-            condition: () => this.location === 'revealed plots',
+            condition: (context) => context.source.location === 'revealed plots',
             match: (card) => card === card.controller.activePlot,
             targetController: 'current',
             effect: ability.effects.modifyGold(-1)

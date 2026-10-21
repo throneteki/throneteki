@@ -6,7 +6,7 @@ class LadyForlorn extends DrawCard {
     // If attached character is Lyn Corbray, he gains a [power] icon.
     setupCardAbilities(ability) {
         this.whileAttached({
-            effect: ability.effects.dynamicStrength(() => this.getSTR())
+            effect: ability.effects.dynamicStrength((card, context) => context.source.getSTR())
         });
 
         this.whileAttached({

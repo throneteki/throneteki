@@ -7,7 +7,7 @@ class DragonSkull extends DrawCard {
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'targaryen' });
         this.whileAttached({
-            condition: () => this.areNoDragonsInPlay(),
+            condition: (context) => context.source.areNoDragonsInPlay(),
             effect: [ability.effects.addKeyword('Intimidate'), ability.effects.addKeyword('Renown')]
         });
     }

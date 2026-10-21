@@ -7,8 +7,8 @@ class SmalljonUmber extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,
-            effect: ability.effects.dynamicDecreaseStrength(() =>
-                this.controller.getNumberOfUsedPlots()
+            effect: ability.effects.dynamicDecreaseStrength((card, context) =>
+                context.source.controller.getNumberOfUsedPlots()
             )
         });
     }

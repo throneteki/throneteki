@@ -6,7 +6,9 @@ class UnderhandedMethods extends DrawCard {
     // Attached character gets +1 STR for each card you control in shadows.
     setupCardAbilities(ability) {
         this.whileAttached({
-            effect: ability.effects.dynamicStrength(() => this.controller.shadows.length)
+            effect: ability.effects.dynamicStrength(
+                (card, context) => context.source.controller.shadows.length
+            )
         });
     }
 }

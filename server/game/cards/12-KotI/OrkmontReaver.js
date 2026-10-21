@@ -7,9 +7,9 @@ class OrkmontReaver extends DrawCard {
     // stealth.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () =>
-                this.game
-                    .getOpponents(this.controller)
+            condition: (context) =>
+                context.game
+                    .getOpponents(context.source.controller)
                     .some((opponent) => opponent.discardPile.length >= 10),
             match: this,
             effect: ability.effects.addKeyword('stealth')

@@ -13,7 +13,7 @@ class Viserion extends DrawCard {
         });
 
         this.persistentEffect({
-            condition: () => this.isAttacking(),
+            condition: (context) => context.source.isAttacking(),
             match: (card) =>
                 card.isParticipating() &&
                 card.getType() === 'character' &&

@@ -7,7 +7,7 @@ class TheBloodroyal extends DrawCard {
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'martell' });
         this.whileAttached({
-            condition: () => !this.controller.firstPlayer,
+            condition: (context) => !context.source.controller.firstPlayer,
             effect: [ability.effects.addKeyword('stealth'), ability.effects.addKeyword('renown')]
         });
     }

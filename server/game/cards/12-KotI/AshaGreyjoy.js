@@ -6,8 +6,8 @@ class AshaGreyjoy extends DrawCard {
     // Each other unique Ironborn character you control gains stealth.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: (card) =>
-                card !== this &&
+            match: (card, context) =>
+                card !== context.source &&
                 card.isUnique() &&
                 card.hasTrait('ironborn') &&
                 card.getType() === 'character',
