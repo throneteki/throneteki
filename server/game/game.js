@@ -528,7 +528,49 @@ class Game extends EventEmitter {
             return;
         }
 
+        if (!this.manualMode.enabled && this.useCardAction(player, card)) {
+            return;
+        }
+
         this.defaultCardClick(player, card);
+    }
+
+    useCardAction(player, card) {
+        const usable = card.abilities.actions
+            .map((action, index) => ({ action, index }))
+            .filter(
+                ({ action }) =>
+                    action.allowPlayer(player) &&
+                    action.allowMenu() &&
+                    action.meetsRequirements(action.createContext(player))
+            );
+
+        if (usable.length === 0) {
+            return false;
+        }
+
+        if (usable.length === 1) {
+            return usable[0].action.execute(player, usable[0].index);
+        }
+
+        const handlers = { cancel: () => true };
+        const buttons = usable.map(({ action, index }) => {
+            const method = `action${index}`;
+            handlers[method] = () => {
+                action.execute(player, index);
+                return true;
+            };
+            return { text: action.title, method };
+        });
+
+        this.promptWithMenu(player, handlers, {
+            activePrompt: {
+                menuTitle: 'Choose an action',
+                buttons: [...buttons, { text: 'Cancel', method: 'cancel' }]
+            },
+            source: card
+        });
+        return true;
     }
 
     defaultCardClick(player, card) {

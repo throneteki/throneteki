@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import classNames from 'classnames';
 import { useSelector } from 'react-redux';
 import { useDraggable } from '@dnd-kit/core';
@@ -14,6 +14,10 @@ import CardHoverable from '../Images/CardHoverable';
 import CardImage from '../Images/CardImage';
 import { cardClass, standardiseCardSize } from '../../util';
 import { Tooltip } from '@heroui/react';
+
+// Opening one card menu closes any other that is open.
+const cardMenus = new EventTarget();
+let nextMenuId = 0;
 
 const Card = ({
     card,
@@ -32,6 +36,35 @@ const Card = ({
     cardStackIndex = 200
 }) => {
     const [showMenu, setShowMenu] = useState(false);
+    const menuIdRef = useRef(null);
+    const cardRef = useRef(null);
+    if (menuIdRef.current === null) {
+        menuIdRef.current = ++nextMenuId;
+    }
+
+    useEffect(() => {
+        if (!showMenu) {
+            return;
+        }
+
+        const onOtherMenuOpened = (event) => {
+            if (event.detail !== menuIdRef.current) {
+                setShowMenu(false);
+            }
+        };
+        const onDocumentMouseDown = (event) => {
+            if (!cardRef.current?.contains(event.target)) {
+                setShowMenu(false);
+            }
+        };
+
+        cardMenus.addEventListener('open', onOtherMenuOpened);
+        document.addEventListener('mousedown', onDocumentMouseDown);
+        return () => {
+            cardMenus.removeEventListener('open', onOtherMenuOpened);
+            document.removeEventListener('mousedown', onDocumentMouseDown);
+        };
+    }, [showMenu]);
 
     const key = `card-${card.uuid}-${source}`;
 
@@ -100,6 +133,9 @@ const Card = ({
             event.stopPropagation();
 
             if (shouldShowMenu()) {
+                if (!showMenu) {
+                    cardMenus.dispatchEvent(new CustomEvent('open', { detail: menuIdRef.current }));
+                }
                 setShowMenu(!showMenu);
                 return;
             }
@@ -356,7 +392,7 @@ const Card = ({
             className
         );
         return (
-            <div className={wrapperClass}>
+            <div className={wrapperClass} ref={cardRef}>
                 {disableHover ? (
                     image
                 ) : (

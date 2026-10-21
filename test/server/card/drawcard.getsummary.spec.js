@@ -8,7 +8,7 @@ describe('DrawCard', function () {
     }
 
     beforeEach(function () {
-        this.gameSpy = { isCardVisible: vi.fn() };
+        this.gameSpy = { isCardVisible: vi.fn(), manualMode: { enabled: true } };
         this.gameSpy.isCardVisible.mockReturnValue(true);
         this.testCard = {
             code: '111',

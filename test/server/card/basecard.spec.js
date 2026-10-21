@@ -11,7 +11,12 @@ describe('BaseCard', function () {
         };
         this.limitedCard = { code: '1234', text: 'Limited.', faction: 'neutral' };
         this.nonLimitedCard = { code: '2222', text: 'Stealth.', faction: 'neutral' };
-        this.game = { canTakeActionsNow: vi.fn(), isCardVisible: vi.fn(), raiseEvent: vi.fn() };
+        this.game = {
+            canTakeActionsNow: vi.fn(),
+            isCardVisible: vi.fn(),
+            manualMode: { enabled: true },
+            raiseEvent: vi.fn()
+        };
         this.owner = { getCardSelectionState: vi.fn(), isSpectator: vi.fn() };
         this.owner.getCardSelectionState.mockReturnValue({});
         this.owner.game = this.game;

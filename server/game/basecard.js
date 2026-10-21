@@ -920,7 +920,7 @@ class BaseCard {
             controlled: this.owner !== this.controller && this.getType() !== 'title',
             facedown: this.facedown,
             factionStatus: this.getFactionStatus(),
-            menu: this.getMenu(activePlayer),
+            menu: this.game.manualMode.enabled ? this.getMenu(activePlayer) : undefined,
             name: this.cardData.label,
             new: this.new,
             power: this.power,
