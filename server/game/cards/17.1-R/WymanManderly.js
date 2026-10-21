@@ -1,6 +1,13 @@
 import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
+function buildAggregate(card) {
+    return {
+        type: card.getType(),
+        controller: card.controller
+    };
+}
+
 class WymanManderly extends DrawCard {
     // Wyman Manderly (17122)
     // Action: Kill a standing character you control.
@@ -11,32 +18,29 @@ class WymanManderly extends DrawCard {
             title: 'Kill a character',
             target: {
                 type: 'select',
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
-                    card.controller === this.controller &&
+                    card.controller === context.player &&
                     card.getType() === 'character' &&
                     !card.kneeled &&
                     GameActions.kill({ card }).allow()
             },
             message: '{player} uses {source} to kill {target}',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.kill((context) => ({ card: context.target })),
-                    context
-                );
-            }
+            gameAction: GameActions.kill((context) => ({ card: context.target }))
         });
         this.reaction({
             when: {
                 onSacrificed: {
-                    aggregateBy: (event) => this.buildAggregate(event.cardStateWhenSacrificed),
-                    condition: (aggregate) =>
-                        aggregate.type === 'character' && aggregate.controller === this.controller
+                    aggregateBy: (event) => buildAggregate(event.cardStateWhenSacrificed),
+                    condition: (aggregate, events, context) =>
+                        aggregate.type === 'character' &&
+                        aggregate.controller === context.source.controller
                 },
                 onCharacterKilled: {
-                    aggregateBy: (event) => this.buildAggregate(event.cardStateWhenKilled),
-                    condition: (aggregate) =>
-                        aggregate.type === 'character' && aggregate.controller === this.controller
+                    aggregateBy: (event) => buildAggregate(event.cardStateWhenKilled),
+                    condition: (aggregate, events, context) =>
+                        aggregate.type === 'character' &&
+                        aggregate.controller === context.source.controller
                 }
             },
             limit: ability.limit.perPhase(1),
@@ -46,13 +50,6 @@ class WymanManderly extends DrawCard {
                 GameActions.drawCards((context) => ({ player: context.player, amount: 1 }))
             ])
         });
-    }
-
-    buildAggregate(card) {
-        return {
-            type: card.getType(),
-            controller: card.controller
-        };
     }
 }
 

@@ -8,9 +8,9 @@ class KingRobertsLegacy extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
-                    this.controller.anyCardsInPlay({
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
+                    context.source.controller.anyCardsInPlay({
                         attacking: true,
                         trait: 'King',
                         type: 'character'
@@ -25,18 +25,13 @@ class KingRobertsLegacy extends DrawCard {
                 },
                 gameAction: 'takeControl'
             },
-            max: ability.limit.perRound(1),
+            max: ability.limit.perPhase(1),
             message: '{player} uses {source} to take control of {target}',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.takeControl((context) => ({
-                        player: this.controller,
-                        card: context.target,
-                        context
-                    })),
-                    context
-                );
-            }
+            gameAction: GameActions.takeControl((context) => ({
+                player: context.source.controller,
+                card: context.target,
+                context
+            }))
         });
     }
 }

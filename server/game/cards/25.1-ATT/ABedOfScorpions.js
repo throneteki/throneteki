@@ -8,8 +8,11 @@ class ABedOfScorpions extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.isMatch({ winner: this.controller, challengeType: 'intrigue' })
+                afterChallenge: (event, context) =>
+                    event.challenge.isMatch({
+                        winner: context.source.controller,
+                        challengeType: 'intrigue'
+                    })
             },
             target: {
                 cardCondition: {
@@ -20,12 +23,7 @@ class ABedOfScorpions extends DrawCard {
             },
             max: ability.limit.perChallenge(1),
             message: '{player} plays {source} to kill {target}',
-            handler: (context) => {
-                context.game.resolveGameAction(
-                    GameActions.kill((context) => ({ card: context.target })),
-                    context
-                );
-            }
+            gameAction: GameActions.kill((context) => ({ card: context.target }))
         });
     }
 }

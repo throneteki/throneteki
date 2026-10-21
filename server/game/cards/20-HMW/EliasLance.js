@@ -17,8 +17,9 @@ class EliasLance extends DrawCard {
 
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.loser === this.controller && this.parent.isAttacking()
+                afterChallenge: (event, context) =>
+                    event.challenge.loser === context.source.controller &&
+                    context.source.parent.isAttacking()
             },
             target: {
                 choosingPlayer: (player, context) => player === context.event.challenge.winner,
@@ -32,12 +33,7 @@ class EliasLance extends DrawCard {
                 format: '{player} uses {source} to have {winner} return {target} to their hand',
                 args: { winner: (context) => context.event.challenge.winner }
             },
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.returnCardToHand((context) => ({ card: context.target })),
-                    context
-                );
-            }
+            gameAction: GameActions.returnCardToHand((context) => ({ card: context.target }))
         });
     }
 }

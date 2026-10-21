@@ -30,23 +30,18 @@ class DefendingTheWall extends DrawCard {
                         )
                 }
             },
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.simultaneously([
-                        GameActions.removeFromChallenge((context) => ({
-                            card: context.target
-                        })),
-                        GameActions.ifCondition({
-                            condition: (context) =>
-                                context.target.isMatch({ not: { trait: ['Army', 'Wildling'] } }),
-                            thenAction: GameActions.standCard((context) => ({
-                                card: context.target
-                            }))
-                        })
-                    ]),
-                    context
-                );
-            }
+            gameAction: GameActions.simultaneously([
+                GameActions.removeFromChallenge((context) => ({
+                    card: context.target
+                })),
+                GameActions.ifCondition({
+                    condition: (context) =>
+                        context.target.isMatch({ not: { trait: ['Army', 'Wildling'] } }),
+                    thenAction: GameActions.standCard((context) => ({
+                        card: context.target
+                    }))
+                })
+            ])
         });
     }
 }

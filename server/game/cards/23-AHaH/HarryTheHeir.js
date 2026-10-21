@@ -8,14 +8,16 @@ class HarryTheHeir extends DrawCard {
     // neutral location you control. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: (card) => card.name === 'Anya Waynwood' && card.controller === this.controller,
-            effect: ability.effects.dynamicStrength(() => this.power)
+            match: (card, context) =>
+                card.name === 'Anya Waynwood' && card.controller === context.source.controller,
+            effect: ability.effects.dynamicStrength((card, context) => context.source.power)
         });
 
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    this.isAttacking() && event.challenge.isMatch({ winner: this.controller })
+                afterChallenge: (event, context) =>
+                    context.source.isAttacking() &&
+                    event.challenge.isMatch({ winner: context.source.controller })
             },
             target: {
                 activePromptTitle: 'Select a location',
@@ -29,14 +31,9 @@ class HarryTheHeir extends DrawCard {
             },
             message: '{player} uses {source} to stand {target}',
             limit: ability.limit.perPhase(1),
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.standCard((context) => ({
-                        card: context.target
-                    })),
-                    context
-                );
-            }
+            gameAction: GameActions.standCard((context) => ({
+                card: context.target
+            }))
         });
     }
 }

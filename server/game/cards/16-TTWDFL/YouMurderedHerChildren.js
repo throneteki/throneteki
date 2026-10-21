@@ -9,10 +9,10 @@ class YouMurderedHerChildren extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     event.challenge.isMatch({
-                        loser: this.controller,
-                        defendingPlayer: this.controller
+                        loser: context.source.controller,
+                        defendingPlayer: context.source.controller
                     })
             },
             target: {
@@ -20,35 +20,28 @@ class YouMurderedHerChildren extends DrawCard {
                 gameAction: 'discard'
             },
             message: '{player} plays {source} to discard {target}',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.discardCard((context) => ({
-                        card: context.target,
-                        allowSave: false
-                    })).then((context) => ({
-                        gameAction: GameActions.search({
-                            title: 'Select characters',
-                            searchedPlayer: () => context.event.challenge.attackingPlayer,
-                            location: ['draw deck', 'hand'],
-                            match: { name: context.target.name },
-                            numToSelect: 2,
-                            message: {
-                                format: "Then {player} searches {attackingPlayer}'s hand and deck to discard {searchTarget}",
-                                args: {
-                                    attackingPlayer: (thenContext) =>
-                                        thenContext.parentContext.event.challenge.attackingPlayer
-                                }
-                            },
-                            gameAction: GameActions.simultaneously((thenContext) =>
-                                thenContext.searchTarget.map((card) =>
-                                    GameActions.discardCard({ card })
-                                )
-                            )
-                        })
-                    })),
-                    context
-                );
-            }
+            gameAction: GameActions.discardCard((context) => ({
+                card: context.target,
+                allowSave: false
+            })).then((context) => ({
+                gameAction: GameActions.search({
+                    title: 'Select characters',
+                    searchedPlayer: () => context.event.challenge.attackingPlayer,
+                    location: ['draw deck', 'hand'],
+                    match: { name: context.target.name },
+                    numToSelect: 2,
+                    message: {
+                        format: "Then {player} searches {attackingPlayer}'s hand and deck to discard {searchTarget}",
+                        args: {
+                            attackingPlayer: (thenContext) =>
+                                thenContext.parentContext.event.challenge.attackingPlayer
+                        }
+                    },
+                    gameAction: GameActions.simultaneously((thenContext) =>
+                        thenContext.searchTarget.map((card) => GameActions.discardCard({ card }))
+                    )
+                })
+            }))
         });
     }
 }

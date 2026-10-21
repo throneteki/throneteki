@@ -10,7 +10,7 @@ class WintertimeMarauders extends DrawCard {
     // discard it from play.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.hasMorePlotsWithTraitThan('Summer', 'Winter'),
+            condition: (context) => context.source.hasMorePlotsWithTraitThan('Summer', 'Winter'),
             match: this,
             effect: [
                 ability.effects.cannotBeDeclaredAsAttacker(),
@@ -20,10 +20,10 @@ class WintertimeMarauders extends DrawCard {
 
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
-                    this.isParticipating() &&
-                    this.hasMorePlotsWithTraitThan('Winter', 'Summer')
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
+                    context.source.isParticipating() &&
+                    context.source.hasMorePlotsWithTraitThan('Winter', 'Summer')
             },
             target: {
                 activePromptTitle: 'Select a card',
@@ -36,14 +36,9 @@ class WintertimeMarauders extends DrawCard {
                 gameAction: 'discard'
             },
             message: '{player} uses {source} to discard {target} from play',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.discardCard((context) => ({
-                        card: context.target
-                    })),
-                    context
-                );
-            }
+            gameAction: GameActions.discardCard((context) => ({
+                card: context.target
+            }))
         });
     }
 

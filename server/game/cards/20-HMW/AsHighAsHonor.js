@@ -23,26 +23,20 @@ class AsHighAsHonor extends DrawCard {
                     context.player.canPutIntoPlay(card)
             },
             message: '{player} plays {source} to put {target} into play from their hand',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.putIntoPlay((context) => ({
-                        player: context.player,
-                        card: context.target,
-                        kneeled: true
-                    })).then({
-                        condition: (context) =>
-                            context.parentContext.target.hasTrait('House Arryn'),
-                        message: {
-                            format: 'Then {player} stands {originalTarget}',
-                            args: { originalTarget: (context) => context.parentContext.target }
-                        },
-                        gameAction: GameActions.standCard((context) => ({
-                            card: context.parentContext.target
-                        }))
-                    }),
-                    context
-                );
-            }
+            gameAction: GameActions.putIntoPlay((context) => ({
+                player: context.player,
+                card: context.target,
+                kneeled: true
+            })).then({
+                condition: (context) => context.parentContext.target.hasTrait('House Arryn'),
+                message: {
+                    format: 'Then {player} stands {originalTarget}',
+                    args: { originalTarget: (context) => context.parentContext.target }
+                },
+                gameAction: GameActions.standCard((context) => ({
+                    card: context.parentContext.target
+                }))
+            })
         });
     }
 }

@@ -8,7 +8,8 @@ class TheLateLordFrey extends PlotCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onChallengeInitiated: (event) => event.challenge.attackingPlayer === this.controller
+                onChallengeInitiated: (event, context) =>
+                    event.challenge.attackingPlayer === context.source.controller
             },
             target: {
                 type: 'select',
@@ -22,15 +23,10 @@ class TheLateLordFrey extends PlotCard {
                 format: '{player} uses {source} to put {target} into play from their {originalLocation}',
                 args: { originalLocation: (context) => context.target.location }
             },
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.putIntoPlay((context) => ({
-                        player: context.player,
-                        card: context.target
-                    })),
-                    context
-                );
-            }
+            gameAction: GameActions.putIntoPlay((context) => ({
+                player: context.player,
+                card: context.target
+            }))
         });
     }
 }

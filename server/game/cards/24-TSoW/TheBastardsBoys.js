@@ -23,12 +23,7 @@ class TheBastardsBoys extends DrawCard {
             cost: ability.costs.sacrificeSelf(),
             message:
                 '{player} sacrifices {costs.sacrifice} to put {target} into play from their hand',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.putIntoPlay({ card: context.target }),
-                    context
-                );
-            }
+            gameAction: GameActions.putIntoPlay((context) => ({ card: context.target }))
         });
     }
 }

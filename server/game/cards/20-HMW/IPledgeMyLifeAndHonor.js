@@ -9,9 +9,9 @@ class IPledgeMyLifeAndHonor extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
-                    event.challenge.defendingPlayer === this.controller
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
+                    event.challenge.defendingPlayer === context.source.controller
             },
             message:
                 '{player} plays {source} to search the top 10 cards of their deck for a The Nights Watch character',
@@ -38,12 +38,7 @@ class IPledgeMyLifeAndHonor extends DrawCard {
                         }
                     },
                     message: 'Then, {player} sacrifices {target}',
-                    handler: (context) => {
-                        this.game.resolveGameAction(
-                            GameActions.sacrificeCard((context) => ({ card: context.target })),
-                            context
-                        );
-                    }
+                    gameAction: GameActions.sacrificeCard((context) => ({ card: context.target }))
                 })
             })
         });

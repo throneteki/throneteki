@@ -9,12 +9,12 @@ class CleverFeint extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Return cards to shadows',
-            condition: () => this.controller.anyCardsInPlay((card) => card.isShadow()),
+            condition: (context) => context.player.anyCardsInPlay((card) => card.isShadow()),
             cost: [
                 ability.costs.kneelFactionCard(),
                 ability.costs.payXGold(
                     () => 1,
-                    () => this.getShadowCardCount()
+                    (context) => context.source.getShadowCardCount()
                 )
             ],
             target: {
@@ -22,23 +22,18 @@ class CleverFeint extends DrawCard {
                     `Select ${TextHelper.count(context.xValue ?? 1, 'card')}`,
                 mode: 'exactly',
                 numCards: (context) => context.xValue ?? 1,
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
-                    card.controller === this.controller &&
+                    card.controller === context.player &&
                     card.isShadow()
             },
             message: {
                 format: '{player} plays {source}, kneels their faction card and pays {xValue} to return {target} to shadows',
                 args: { xValue: (context) => context.xValue }
             },
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.simultaneously((context) =>
-                        context.target.map((card) => GameActions.putIntoShadows({ card }))
-                    ),
-                    context
-                );
-            }
+            gameAction: GameActions.simultaneously((context) =>
+                context.target.map((card) => GameActions.putIntoShadows({ card }))
+            )
         });
     }
 
