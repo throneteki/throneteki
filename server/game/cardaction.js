@@ -153,7 +153,7 @@ class CardAction extends BaseAbility {
             return Requirements.location;
         }
 
-        if (this.card.isAnyBlank()) {
+        if (!this.gained && this.card.isAnyBlank()) {
             return Requirements.blank;
         }
 
