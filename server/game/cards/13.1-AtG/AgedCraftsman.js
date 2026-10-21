@@ -10,7 +10,7 @@ class AgedCraftsman extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this
+                onCardEntersPlay: (event, context) => event.card === context.source
             },
             message:
                 '{player} uses {source} to search the top 10 cards of their deck for a location',

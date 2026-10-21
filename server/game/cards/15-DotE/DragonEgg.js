@@ -14,8 +14,8 @@ class DragonEgg extends DrawCard {
 
         this.reaction({
             when: {
-                onPhaseStarted: (event) =>
-                    event.phase === 'marshal' && this.parent.name === 'Daenerys Targaryen'
+                onPhaseStarted: (event, context) =>
+                    event.phase === 'marshal' && context.source.parent.name === 'Daenerys Targaryen'
             },
             cost: ability.costs.sacrificeSelf(),
             message: '{player} uses {source} to search their deck for a Hatchling character',

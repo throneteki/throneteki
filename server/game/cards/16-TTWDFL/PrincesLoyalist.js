@@ -11,10 +11,11 @@ class PrincesLoyalist extends DrawCard {
             canCancel: true,
             when: {
                 //Restrict triggering on own triggered abilities to forced triggered abilities
-                onCardAbilityInitiated: (event) =>
+                onCardAbilityInitiated: (event, context) =>
                     event.ability.isTriggeredAbility() &&
                     event.source.getType() === 'character' &&
-                    (event.ability.isForcedAbility() || event.source.controller !== this.controller)
+                    (event.ability.isForcedAbility() ||
+                        event.source.controller !== context.source.controller)
             },
             cost: ability.costs.payGold(2),
             message: {

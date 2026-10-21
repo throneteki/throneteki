@@ -10,8 +10,8 @@ class TheHollowHill extends DrawCard {
         this.action({
             title: 'Search your deck',
             phase: 'dominance',
-            condition: () =>
-                !this.controller.anyCardsInPlay(
+            condition: (context) =>
+                !context.source.controller.anyCardsInPlay(
                     (card) => card.getType() === 'character' && card.isLoyal()
                 ),
             cost: ability.costs.kneelSelf(),

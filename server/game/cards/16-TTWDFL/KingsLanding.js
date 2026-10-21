@@ -7,8 +7,8 @@ class KingsLanding extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) =>
-                    event.card.controller === this.controller &&
+                onCardEntersPlay: (event, context) =>
+                    event.card.controller === context.source.controller &&
                     event.card.getType() === 'location' &&
                     event.playingType === 'marshal'
             },

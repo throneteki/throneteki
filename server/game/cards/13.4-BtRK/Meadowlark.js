@@ -10,7 +10,8 @@ class Meadowlark extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onPlotRevealed: (event) => event.plot.controller === this.controller
+                onPlotRevealed: (event, context) =>
+                    event.plot.controller === context.source.controller
             },
             message: '{player} uses {source} to place 1 journey token on {source}',
             gameAction: GameActions.placeToken({
@@ -24,14 +25,14 @@ class Meadowlark extends DrawCard {
             cost: ability.costs.sacrificeSelf(),
             message: {
                 format: '{player} sacrifices {costs.sacrifice} to search their deck for a character with printed cost {tokens} or lower',
-                args: { tokens: (context) => this.numberOfJourneyTokens(context) }
+                args: { tokens: (context) => context.source.numberOfJourneyTokens(context) }
             },
             gameAction: GameActions.search({
                 title: 'Select a character',
                 match: {
                     type: 'character',
                     condition: (card, context) =>
-                        card.getPrintedCost() <= this.numberOfJourneyTokens(context)
+                        card.getPrintedCost() <= context.source.numberOfJourneyTokens(context)
                 },
                 reveal: false,
                 message: '{player} {gameAction}',

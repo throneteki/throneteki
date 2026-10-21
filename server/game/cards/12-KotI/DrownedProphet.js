@@ -8,7 +8,7 @@ class DrownedProphet extends DrawCard {
     setupCardAbilities(ability) {
         this.interrupt({
             when: {
-                onCharacterKilled: (event) => event.card === this
+                onCharacterKilled: (event, context) => event.card === context.source
             },
             limit: ability.limit.perPhase(1),
             message:

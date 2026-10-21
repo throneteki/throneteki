@@ -34,8 +34,11 @@ class SteelRain extends DrawCard {
                         availableToPair(
                             context.costs.sacrifice || [],
                             context.selectedCards,
-                            (sacrificed, card) => this.isSelectableLocationFor(sacrificed, card)
-                        ).some((available) => this.isSelectableLocationFor(available, card))
+                            (sacrificed, card) =>
+                                context.source.isSelectableLocationFor(sacrificed, card)
+                        ).some((available) =>
+                            context.source.isSelectableLocationFor(available, card)
+                        )
                 },
                 reveal: false,
                 message: '{player} puts {searchTarget} into play from their draw deck',

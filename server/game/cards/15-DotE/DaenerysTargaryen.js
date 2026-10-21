@@ -19,7 +19,7 @@ class DaenerysTargaryen extends DrawCard {
                 gameAction: GameActions.ifCondition({
                     condition: (context) =>
                         context.searchTarget.getPrintedCost() > 3 ||
-                        !this.controller.canPutIntoPlay(context.searchTarget),
+                        !context.source.controller.canPutIntoPlay(context.searchTarget),
                     thenAction: {
                         message: '{player} {gameAction}',
                         gameAction: GameActions.addToHand((context) => ({

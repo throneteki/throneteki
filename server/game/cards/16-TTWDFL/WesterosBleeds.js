@@ -10,10 +10,12 @@ class WesterosBleeds extends DrawCard {
             phase: 'dominance',
             message: {
                 format: '{player} plays {source} to discard {characters}',
-                args: { characters: () => this.getCharactersInPlay() }
+                args: { characters: (context) => context.source.getCharactersInPlay() }
             },
-            gameAction: GameActions.simultaneously(() =>
-                this.getCharactersInPlay().map((card) => GameActions.discardCard({ card }))
+            gameAction: GameActions.simultaneously((context) =>
+                context.source
+                    .getCharactersInPlay()
+                    .map((card) => GameActions.discardCard({ card }))
             )
         });
     }

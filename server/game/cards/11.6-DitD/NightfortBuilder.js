@@ -8,7 +8,7 @@ class NightfortBuilder extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardKneeled: (event) => event.card === this
+                onCardKneeled: (event, context) => event.card === context.source
             },
             message: '{player} uses {source} to reveal the top card of their deck',
             gameAction: GameActions.revealTopCards((context) => ({

@@ -8,10 +8,10 @@ class Pentos extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardDrawn: (event) =>
-                    event.player === this.controller &&
+                onCardDrawn: (event, context) =>
+                    event.player === context.source.controller &&
                     event.card.getType() === 'attachment' &&
-                    this.controller.canPutIntoPlay(event.card)
+                    context.source.controller.canPutIntoPlay(event.card)
             },
             cost: ability.costs.kneelSelf(),
             message: {

@@ -9,9 +9,9 @@ class SerMarkMullendore extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
-                    event.challenge.isParticipating(this)
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
+                    event.challenge.isParticipating(context.source)
             },
             message: '{player} uses {source} to reveal the top card of their deck',
             gameAction: GameActions.revealTopCards((context) => ({

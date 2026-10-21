@@ -10,7 +10,7 @@ class BlackMarketMerchant extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardOutOfShadows: (event) => event.card === this
+                onCardOutOfShadows: (event, context) => event.card === context.source
             },
             message:
                 '{player} uses {source} to search the top 10 cards of their deck for an attachment',

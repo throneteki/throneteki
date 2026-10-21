@@ -12,12 +12,12 @@ class Rioting extends PlotCard {
             },
             message: {
                 format: '{player} is forced by {source} to discard {characters} from play',
-                args: { characters: () => this.getKneelingCharacters() }
+                args: { characters: (context) => context.source.getKneelingCharacters() }
             },
-            gameAction: GameActions.simultaneously(() =>
-                this.getKneelingCharacters().map((card) =>
-                    GameActions.discardCard({ card, allowSave: false })
-                )
+            gameAction: GameActions.simultaneously((context) =>
+                context.source
+                    .getKneelingCharacters()
+                    .map((card) => GameActions.discardCard({ card, allowSave: false }))
             )
         });
     }

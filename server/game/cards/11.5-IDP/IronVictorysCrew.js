@@ -10,7 +10,7 @@ class IronVictorysCrew extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this
+                onCardEntersPlay: (event, context) => event.card === context.source
             },
             message: '{player} uses {source} to search their deck for a Warship location',
             gameAction: GameActions.search({

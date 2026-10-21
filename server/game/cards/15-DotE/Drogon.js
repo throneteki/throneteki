@@ -15,8 +15,9 @@ class Drogon extends DrawCard {
 
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller && this.isAttacking()
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
+                    context.source.isAttacking()
             },
             message: {
                 format: '{player} uses {source} to kill each character {defendingPlayer} controls with STR 1 or lower',

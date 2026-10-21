@@ -9,7 +9,7 @@ class MelisandresFavor extends DrawCard {
     // canceled.)
     setupCardAbilities(ability) {
         this.whileAttached({
-            effect: ability.effects.takeControl(() => this.controller)
+            effect: ability.effects.takeControl((context) => context.source.controller)
         });
 
         this.forcedInterrupt({
