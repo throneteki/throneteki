@@ -12,6 +12,7 @@ describe('Old Gate', function () {
         it('gives +1 income', function () {
             expect(this.player1Object.getIncome()).toBe(6);
             expect(this.player2Object.getIncome()).toBe(5);
+            expect(this.player1).isReadyToTakeAction();
         });
 
         it('sacrifices itself to draw 2 cards', function () {

@@ -17,6 +17,7 @@ describe('The Crag', function () {
 
         expect(this.player1).toHaveDisabledPromptButton('Intrigue');
         expect(this.player1).toHavePromptButton('Military');
+        expect(this.player1).isReadyToTakeAction();
     });
 
     it('gains 1 power after you win a [military] challenge as the attacking player', function () {
@@ -45,5 +46,6 @@ describe('The Crag', function () {
         this.unopposedChallenge(this.player1, 'Power', this.tumblestoneKnight);
 
         expect(this.player1).not.toAllowAbilityTrigger(this.theCrag);
+        expect(this.player1).isReadyToTakeAction();
     });
 });

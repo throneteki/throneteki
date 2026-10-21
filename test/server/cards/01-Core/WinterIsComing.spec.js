@@ -18,6 +18,7 @@ describe('Winter Is Coming', function () {
 
     it('cannot be played outside a challenge', function () {
         expect(this.player1.actionUnavailableReason(this.first)).toBe('condition');
+        expect(this.player1).isReadyToTakeAction();
     });
 
     describe('during a challenge', function () {
@@ -48,6 +49,7 @@ describe('Winter Is Coming', function () {
             expect(this.bastardInHiding.location).toBe('dead pile');
             expect(this.houseMaester.location).toBe('dead pile');
             expect(this.player1Object.getClaim()).toBe(1);
+            expect(this.player1).isReadyToTakeAction();
         });
 
         it('can only be played once per challenge', function () {

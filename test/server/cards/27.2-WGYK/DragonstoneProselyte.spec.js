@@ -6,6 +6,7 @@ describe('Dragonstone Proselyte', function () {
         });
 
         expect(this.player1.actionUnavailableReason(this.dragonstoneProselyte)).toBe('phase');
+        expect(this.player1).isReadyToTakeAction();
     });
 
     describe('during the challenges phase', function () {

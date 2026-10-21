@@ -21,5 +21,6 @@ describe('Milk of the Poppy', function () {
 
     it('is discarded when the attached character leaves play', function () {
         expect(this.milkOfThePoppy.hasKeyword('terminal')).toBe(true);
+        expect(this.player1).isReadyToTakeAction();
     });
 });

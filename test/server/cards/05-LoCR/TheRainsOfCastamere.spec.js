@@ -325,6 +325,7 @@ describe('The Rains of Castamere', function () {
             this.player2.clickPrompt('Apply Claim');
 
             expect(this.player2Object.getNumberOfUsedPlots()).toBe(0);
+            expect(this.player2).isReadyToTakeAction();
         });
     });
 });

@@ -17,5 +17,6 @@ describe('Trading with the Pentoshi', function () {
         expect(this.game.getPlainTextLog()).toContain(
             'player1 uses Trading with the Pentoshi to have each opponent gain 3 gold'
         );
+        expect(this.player1).isReadyToTakeAction();
     });
 });

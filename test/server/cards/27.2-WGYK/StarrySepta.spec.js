@@ -20,6 +20,7 @@ describe('Starry Septa', function () {
 
     it('cannot be used when no participating character has gold or power', function () {
         expect(this.player1.actionUnavailableReason(this.starrySepta)).toBe('target');
+        expect(this.player1).isReadyToTakeAction();
     });
 
     describe('after attackers are declared', function () {

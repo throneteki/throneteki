@@ -18,6 +18,7 @@ describe('Maester Gormon', function () {
             expect(this.game.isCardVisible(this.hedgeKnight, this.player1Object)).toBe(true);
             expect(this.game.isCardVisible(this.nightmares, this.player1Object)).toBe(false);
             expect(this.game.isCardVisible(this.hedgeKnight, this.player2Object)).toBe(false);
+            expect(this.player1).isReadyToTakeAction();
         });
 
         it('lets you marshal it, once per phase', function () {

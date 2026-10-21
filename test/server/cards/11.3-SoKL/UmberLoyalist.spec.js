@@ -59,6 +59,7 @@ describe('Umber Loyalist', function () {
             expect(this.game.getPlainTextLog()).toContain(
                 'player1 is forced by Umber Loyalist to choose and discard 2 cards from their hand'
             );
+            expect(this.player2).isReadyToTakeAction();
         });
 
         it('discards as many as it can when you have fewer than 2 cards', function () {
@@ -70,6 +71,7 @@ describe('Umber Loyalist', function () {
 
             expect(this.hedgeKnight.location).toBe('discard pile');
             expect(this.umberLoyalist.location).toBe('dead pile');
+            expect(this.player2).isReadyToTakeAction();
         });
     });
 });

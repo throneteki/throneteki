@@ -16,6 +16,7 @@ describe('Eddard Stark (PoS)', function () {
 
         it('cannot be used outside the dominance phase', function () {
             expect(this.player1.actionUnavailableReason(this.eddardStark)).toBe('phase');
+            expect(this.player1).isReadyToTakeAction();
         });
 
         describe('when used in the dominance phase', function () {

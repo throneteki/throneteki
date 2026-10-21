@@ -15,6 +15,7 @@ describe('The Kingsroad', function () {
 
     it('gives its controller +1 initiative', function () {
         expect(this.player1Object.getInitiative()).toBe(1);
+        expect(this.player1).isReadyToTakeAction();
     });
 
     it('cannot be used outside the marshaling phase', function () {
@@ -22,6 +23,7 @@ describe('The Kingsroad', function () {
         this.player2.clickPrompt('Done');
 
         expect(this.player1.actionUnavailableReason(this.theKingsroad)).toBe('phase');
+        expect(this.player1).isReadyToTakeAction();
     });
 
     describe('when used', function () {
@@ -34,6 +36,7 @@ describe('The Kingsroad', function () {
             expect(this.game.getPlainTextLog()).toContain(
                 'player1 kneels and sacrifices The Kingsroad to reduce the cost of the next character they marshal this phase by 3'
             );
+            expect(this.player1).isReadyToTakeAction();
         });
 
         it('reduces the cost of the next character you marshal this phase by 3, and only that one', function () {
@@ -58,6 +61,7 @@ describe('The Kingsroad', function () {
             this.player2.clickPrompt('Done');
 
             expect(this.player1Object.getCostReduction('marshal', this.palaceSpearman)).toBe(0);
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 });

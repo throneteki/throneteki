@@ -16,5 +16,6 @@ describe('You Win Or You Die', function () {
         expect(this.game.getPlainTextLog()).toContain(
             'player1 uses You Win Or You Die and draws 2 cards'
         );
+        expect(this.player1).isReadyToTakeAction();
     });
 });

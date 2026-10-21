@@ -55,6 +55,7 @@ describe('Queenscrown', function () {
                 this.player1.clickCard(this.character);
                 this.player1.clickPrompt('Done');
                 expect(this.character.location).toBe('discard pile');
+                expect(this.player2).isReadyToTakeAction();
             });
 
             it('should place Missandei into the discard pile without triggering her ability', function () {
@@ -65,6 +66,7 @@ describe('Queenscrown', function () {
 
                 expect(this.player2).not.toAllowAbilityTrigger('Missandei');
                 expect(this.missandei.location).toBe('discard pile');
+                expect(this.player1).isReadyToTakeAction();
             });
         });
 
@@ -83,6 +85,7 @@ describe('Queenscrown', function () {
                 expect(this.player2Object.drawDeck[length - 1].name).toBe('Saving the Kingdom');
                 expect(this.player2Object.drawDeck[length - 2].name).toBe('Nightmares');
                 expect(this.player2Object.drawDeck[length - 3].name).toBe('Milk of the Poppy');
+                expect(this.player1).isReadyToTakeAction();
             });
         });
     });

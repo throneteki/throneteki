@@ -32,6 +32,7 @@ describe('The Wolf King', function () {
 
         it('gives the King trait', function () {
             expect(this.tumblestoneKnight.hasTrait('King')).toBe(true);
+            expect(this.player1).isReadyToTakeAction();
         });
 
         it('stops the character kneeling when declared as an attacker in a [military] challenge', function () {

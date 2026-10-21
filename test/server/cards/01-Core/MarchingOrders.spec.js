@@ -15,6 +15,7 @@ describe('Marching Orders', function () {
         this.player1.clickCard(this.winterfellSteward);
 
         expect(this.winterfellSteward.location).toBe('play area');
+        expect(this.player1).isReadyToTakeAction();
     });
 
     it('stops you marshaling locations or attachments', function () {
@@ -38,5 +39,6 @@ describe('Marching Orders', function () {
         this.player2.clickCard(this.theKingsroad);
 
         expect(this.theKingsroad.location).toBe('play area');
+        expect(this.player2).isReadyToTakeAction();
     });
 });

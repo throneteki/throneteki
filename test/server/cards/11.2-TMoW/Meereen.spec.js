@@ -60,6 +60,7 @@ describe('Meereen', function () {
                 // second instance of the ability.
                 expect(this.player1Object.hand.length).toBe(0);
                 expect(this.player1Object.discardPile.length).toBe(15);
+                expect(this.player1).isReadyToTakeAction();
             });
         });
 

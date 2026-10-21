@@ -20,6 +20,7 @@ describe('Ygritte', function () {
 
             expect(this.houseMaester.kneeled).toBe(true);
             expect(this.ygritte.kneeled).toBe(false);
+            expect(this.player2).isReadyToTakeAction();
         });
     });
 

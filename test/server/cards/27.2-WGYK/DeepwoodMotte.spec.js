@@ -30,6 +30,7 @@ describe('Deepwood Motte', function () {
         expect(this.player1Object.getInitiative()).toBe(
             this.aSongOfSummer.cardData.plotStats.initiative - 2
         );
+        expect(this.player1).isReadyToTakeAction();
     });
 
     describe('when a location is knelt by assault in a challenge you initiate', function () {

@@ -28,5 +28,6 @@ describe('A Storm of Swords', function () {
         this.unopposedChallenge(this.player1, 'Military', this.hedgeKnight);
 
         expect(this.player1).toHaveDisabledPromptButton('Military');
+        expect(this.player1).isReadyToTakeAction();
     });
 });

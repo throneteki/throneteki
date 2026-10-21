@@ -42,5 +42,6 @@ describe('Valar Dohaeris', function () {
         expect(this.game.getPlainTextLog()).toContain(
             "player1 uses Valar Dohaeris and places Winterfell Steward on the bottom of its owner's deck and places House Maester on the bottom of its owner's deck"
         );
+        expect(this.player1).isReadyToTakeAction();
     });
 });

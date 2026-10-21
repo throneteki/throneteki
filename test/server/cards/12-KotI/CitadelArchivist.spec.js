@@ -84,6 +84,7 @@ describe('Citadel Archivist (KotI)', function () {
         it('cannot be triggered', function () {
             expect(this.citadelArchivist.location).toBe('dead pile');
             expect(this.player1).not.toAllowAbilityTrigger(this.citadelArchivist);
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 });

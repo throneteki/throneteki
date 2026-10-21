@@ -31,6 +31,7 @@ describe('Marched to the Wall', function () {
             expect(this.hedgeKnight.location).toBe('discard pile');
             expect(this.tumblestoneKnight.location).toBe('play area');
             expect(this.houseDayneKnight.location).toBe('play area');
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 
@@ -51,6 +52,7 @@ describe('Marched to the Wall', function () {
             this.player2.clickCard(this.hedgeKnight);
 
             expect(this.hedgeKnight.location).toBe('discard pile');
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 });

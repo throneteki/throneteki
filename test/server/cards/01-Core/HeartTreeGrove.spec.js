@@ -14,6 +14,7 @@ describe('Heart Tree Grove', function () {
         this.player2.clickPrompt('Done');
 
         expect(this.player1.actionUnavailableReason(this.heartTreeGrove)).toBe('phase');
+        expect(this.player1).isReadyToTakeAction();
     });
 
     describe('when used', function () {
@@ -26,6 +27,7 @@ describe('Heart Tree Grove', function () {
             expect(this.game.getPlainTextLog()).toContain(
                 'player1 kneels Heart Tree Grove to reduce the cost of the next stark card they marshal this phase by 1'
             );
+            expect(this.player1).isReadyToTakeAction();
         });
 
         it('reduces the cost of the next [stark] card you marshal by 1, and only that one', function () {

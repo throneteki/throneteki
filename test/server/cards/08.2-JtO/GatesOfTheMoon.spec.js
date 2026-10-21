@@ -10,6 +10,7 @@ describe('Gates of the Moon', function () {
 
     it('gives its controller +2 income', function () {
         expect(this.player1Object.gold).toBe(7);
+        expect(this.player2).isReadyToTakeAction();
     });
 
     it("increases the gold value on each opponent's revealed plot by 1", function () {

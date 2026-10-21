@@ -15,6 +15,7 @@ describe('Northern Armory', function () {
 
     it('gives +1 income', function () {
         expect(this.player1Object.gold).toBe(6);
+        expect(this.player1).isReadyToTakeAction();
     });
 
     describe('when used', function () {

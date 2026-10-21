@@ -48,6 +48,7 @@ describe('Gyles Rosby', function () {
 
             expect(this.player1Object.gold).toBe(0);
             expect(this.gylesRosby.location).toBe('dead pile');
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 
@@ -61,5 +62,6 @@ describe('Gyles Rosby', function () {
         });
 
         expect(this.player1Object.gold).toBe(7);
+        expect(this.player1).isReadyToTakeAction();
     });
 });

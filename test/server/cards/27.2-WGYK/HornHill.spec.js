@@ -20,10 +20,12 @@ describe('Horn Hill', function () {
         expect(this.player2Object.getInitiative()).toBe(
             this.aSongOfSummer.cardData.plotStats.initiative
         );
+        expect(this.player1).isReadyToTakeAction();
     });
 
     it('does not raise claim outside a challenge', function () {
         expect(this.player1Object.getClaim()).toBe(1);
+        expect(this.player1).isReadyToTakeAction();
     });
 
     describe('during the first challenge its controller initiates', function () {

@@ -76,6 +76,7 @@ describe('Superstitious Steward', function () {
                     expect(this.palaceSpearman.location).toBe('discard pile');
                     expect(this.bastardInHiding.location).toBe('play area');
                     expect(this.tumblestoneKnight.location).toBe('play area');
+                    expect(this.player1).isReadyToTakeAction();
                 });
             });
 

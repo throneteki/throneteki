@@ -38,6 +38,7 @@ describe('Ice (Core)', function () {
 
         it('gives +2 STR', function () {
             expect(this.tumblestoneKnight.getStrength()).toBe(4);
+            expect(this.player1).isReadyToTakeAction();
         });
 
         it('can be sacrificed to kill a character controlled by the losing opponent after you win a [military] challenge in which the attached character is participating', function () {
@@ -60,6 +61,7 @@ describe('Ice (Core)', function () {
             this.unopposedChallenge(this.player1, 'Power', this.winterfellSteward);
 
             expect(this.player1).not.toAllowAbilityTrigger(this.ice);
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 });

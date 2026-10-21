@@ -34,5 +34,6 @@ describe('Winterfell Steward', function () {
         this.completeMarshalPhase();
 
         expect(this.player1Object.getCostReduction('marshal', this.tumblestoneKnight)).toBe(0);
+        expect(this.player1).isReadyToTakeAction();
     });
 });

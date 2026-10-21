@@ -14,6 +14,7 @@ describe('Purple Graces', function () {
 
     it('cannot be used outside a challenge', function () {
         expect(this.player2.actionUnavailableReason(this.purpleGraces)).toBe('condition');
+        expect(this.player1).isReadyToTakeAction();
     });
 
     it('cannot be used during an intrigue challenge', function () {

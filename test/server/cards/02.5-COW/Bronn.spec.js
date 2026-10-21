@@ -26,6 +26,7 @@ describe('Bronn (CoW)', function () {
 
             expect(this.player1.actionUnavailableReason(this.bronn)).toBe('noEffect');
             expect(this.player1).toHavePrompt('Marshal your cards');
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 

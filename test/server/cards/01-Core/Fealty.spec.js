@@ -43,6 +43,7 @@ describe('Fealty', function () {
             this.player2.clickPrompt('Done');
 
             expect(this.player1Object.getCostReduction('marshal', this.greyWind)).toBe(0);
+            expect(this.player1).isReadyToTakeAction();
         });
 
         it('cannot be used again while your faction card is kneeling', function () {

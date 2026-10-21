@@ -7,6 +7,7 @@ describe('The Maiden', function () {
 
         expect(this.player1Object.getInitiative()).toBe(1);
         expect(this.player1Object.getReserve()).toBe(6);
+        expect(this.player1).isReadyToTakeAction();
     });
 
     describe('while it is in your used pile', function () {

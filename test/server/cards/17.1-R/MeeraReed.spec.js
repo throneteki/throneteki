@@ -22,6 +22,7 @@ describe('Meera Reed (R)', function () {
             expect(this.game.getPlainTextLog()).toContain(
                 'player1 is forced to return Meera Reed to shadows'
             );
+            expect(this.player2).isReadyToTakeAction();
         });
     });
 
@@ -42,6 +43,7 @@ describe('Meera Reed (R)', function () {
 
         it('stays in play', function () {
             expect(this.meeraReed.location).toBe('play area');
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 
@@ -76,6 +78,7 @@ describe('Meera Reed (R)', function () {
             this.completeMarshalPhase();
 
             expect(this.direwolfPup.isBlankExcludingTraits()).toBe(false);
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 });

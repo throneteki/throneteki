@@ -13,6 +13,7 @@ describe('Robb Stark (AtSK)', function () {
 
     it('does not get STR outside [military] challenges', function () {
         expect(this.robbStark.getStrength()).toBe(5);
+        expect(this.player1).isReadyToTakeAction();
     });
 
     describe('during a [military] challenge in which he is participating', function () {
