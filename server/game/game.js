@@ -1726,6 +1726,7 @@ class Game extends EventEmitter {
                 maxPlayers: this.maxPlayers,
                 cancelPromptUsed: this.cancelPromptUsed,
                 manualMode: this.manualMode.enabled,
+                scenario: !!this.scenario,
                 strictActionWindows: this.strictActionWindows,
                 useGameTimeLimit: this.useGameTimeLimit,
                 ...(this.useGameTimeLimit && {
@@ -1788,6 +1789,7 @@ class Game extends EventEmitter {
             name: this.name,
             owner: this.owner,
             players: playerSummaries,
+            scenario: !!this.scenario,
             showHand: this.showHand,
             started: this.started,
             startedAt: this.startedAt,
