@@ -273,6 +273,9 @@ const Card = ({
         if (card.selectable) {
             return 'shadow-[0_0_8px_4px] shadow-slate-300';
         }
+        if (card.canPlay) {
+            return 'shadow-[0_0_8px_3px] shadow-green-500';
+        }
         if (card.inChallenge) {
             return 'shadow-[0_0_1px_2px] shadow-red-500';
         }
@@ -311,7 +314,9 @@ const Card = ({
             ),
             getHighlightClass(),
             {
-                'grayscale brightness-75': card.unselectable
+                'grayscale brightness-75': card.unselectable,
+                'brightness-75 saturate-75':
+                    card.canPlay === false && !card.selected && !card.selectable
             }
         );
         const isFaceup = forceFaceup || (!card.facedown && card.code);

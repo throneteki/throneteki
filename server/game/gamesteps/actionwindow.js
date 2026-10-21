@@ -1,4 +1,3 @@
-import AbilityContext from '../AbilityContext.js';
 import PlayerOrderPrompt from './playerorderprompt.js';
 
 class ActionWindow extends PlayerOrderPrompt {
@@ -69,30 +68,12 @@ class ActionWindow extends PlayerOrderPrompt {
     hasAvailableAction(player) {
         return this.game.allCards.some((card) => {
             try {
-                return this.hasAvailableActionOn(card, player);
+                return card.hasUsableAction(player);
             } catch (error) {
                 this.game.reportError(error);
                 return true;
             }
         });
-    }
-
-    hasAvailableActionOn(card, player) {
-        return (
-            card.abilities.actions.some(
-                (action) =>
-                    action.allowPlayer(player) &&
-                    action.meetsRequirements(action.createContext(player))
-            ) ||
-            card.getPlayActions().some((action) => {
-                const context = new AbilityContext({ game: this.game, player, source: card });
-                return (
-                    action.meetsRequirements(context) &&
-                    action.canPayCosts(context) &&
-                    action.canResolveTargets(context)
-                );
-            })
-        );
     }
 
     passAfterDelay(offer) {

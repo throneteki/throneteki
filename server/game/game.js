@@ -1243,6 +1243,15 @@ class Game extends EventEmitter {
         return false;
     }
 
+    canTakeActionsNow(player) {
+        return (
+            !player.isSpectator() &&
+            this.isActionTimingOpenFor(player) &&
+            player.promptState.isActivePrompt &&
+            !player.promptState.selectCard
+        );
+    }
+
     getActionTimingRequirement(player) {
         if (this.manualMode.enabled || this.isActionTimingOpenFor(player)) {
             return undefined;

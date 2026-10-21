@@ -1,4 +1,5 @@
 import uuid from 'uuid';
+import AbilityContext from './AbilityContext.js';
 import AbilityDsl from './abilitydsl.js';
 import AgendaSetupAbility from './AgendaSetupAbility.js';
 import CardAction from './cardaction.js';
@@ -360,6 +361,24 @@ class BaseCard {
 
     getPlayActions() {
         return [];
+    }
+
+    hasUsableAction(player) {
+        return (
+            this.abilities.actions.some(
+                (action) =>
+                    action.allowPlayer(player) &&
+                    action.meetsRequirements(action.createContext(player))
+            ) ||
+            this.getPlayActions().some((action) => {
+                const context = new AbilityContext({ game: this.game, player, source: this });
+                return (
+                    action.meetsRequirements(context) &&
+                    action.canPayCosts(context) &&
+                    action.canResolveTargets(context)
+                );
+            })
+        );
     }
 
     get controller() {
@@ -896,6 +915,7 @@ class BaseCard {
         }
 
         let state = {
+            canPlay: this.getCanPlayState(activePlayer),
             code: this.cardData.code,
             controlled: this.owner !== this.controller && this.getType() !== 'title',
             facedown: this.facedown,
@@ -911,6 +931,19 @@ class BaseCard {
         };
 
         return Object.assign(state, selectionState);
+    }
+
+    getCanPlayState(player) {
+        if (this.controller !== player || !this.game.canTakeActionsNow(player)) {
+            return undefined;
+        }
+
+        try {
+            return this.hasUsableAction(player);
+        } catch (error) {
+            this.game.reportError(error);
+            return undefined;
+        }
     }
 }
 
