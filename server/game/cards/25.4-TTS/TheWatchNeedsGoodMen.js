@@ -8,19 +8,19 @@ class TheWatchNeedsGoodMen extends PlotCard {
         this.persistentEffect({
             targetController: 'current',
             effect: [
-                ability.effects.canMarshal(this.characterCondition),
-                ability.effects.canAmbush(this.characterCondition)
+                ability.effects.canMarshal(isOpponentsDiscardedCharacter),
+                ability.effects.canAmbush(isOpponentsDiscardedCharacter)
             ]
         });
     }
+}
 
-    characterCondition(card) {
-        return (
-            card.controller !== this.controller &&
-            card.location === 'discard pile' &&
-            card.getType() === 'character'
-        );
-    }
+function isOpponentsDiscardedCharacter(card, context) {
+    return (
+        card.controller !== context.source.controller &&
+        card.location === 'discard pile' &&
+        card.getType() === 'character'
+    );
 }
 
 TheWatchNeedsGoodMen.code = '25070';
