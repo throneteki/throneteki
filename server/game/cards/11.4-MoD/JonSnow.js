@@ -8,19 +8,19 @@ class JonSnow extends DrawCard {
     // - Steward character, Jon Snow gains insight.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.hasCharacterWithTrait('builder'),
+            condition: (context) => context.source.hasCharacterWithTrait('builder'),
             match: this,
             effect: ability.effects.addKeyword('stealth')
         });
 
         this.persistentEffect({
-            condition: () => this.hasCharacterWithTrait('ranger'),
+            condition: (context) => context.source.hasCharacterWithTrait('ranger'),
             match: this,
             effect: ability.effects.addKeyword('intimidate')
         });
 
         this.persistentEffect({
-            condition: () => this.hasCharacterWithTrait('steward'),
+            condition: (context) => context.source.hasCharacterWithTrait('steward'),
             match: this,
             effect: ability.effects.addKeyword('insight')
         });

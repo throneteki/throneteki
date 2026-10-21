@@ -6,7 +6,8 @@ class NaiveScout extends DrawCard {
     // While there is a card in shadows, Naive Scout cannot be declared as a defender.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.game.getPlayers().some((player) => player.shadows.length > 0),
+            condition: (context) =>
+                context.game.getPlayers().some((player) => player.shadows.length > 0),
             match: this,
             effect: ability.effects.cannotBeDeclaredAsDefender()
         });

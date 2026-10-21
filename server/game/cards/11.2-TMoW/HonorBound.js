@@ -6,11 +6,11 @@ class HonorBound extends DrawCard {
     // Attached character cannot be declared as an attacker or defender in [intrigue] challenges.
     setupCardAbilities(ability) {
         this.whileAttached({
-            condition: () => this.game.isDuringChallenge({ challengeType: 'military' }),
+            condition: (context) => context.game.isDuringChallenge({ challengeType: 'military' }),
             effect: ability.effects.modifyStrength(2)
         });
         this.whileAttached({
-            condition: () => this.game.isDuringChallenge({ challengeType: 'intrigue' }),
+            condition: (context) => context.game.isDuringChallenge({ challengeType: 'intrigue' }),
             effect: [
                 ability.effects.cannotBeDeclaredAsAttacker(),
                 ability.effects.cannotBeDeclaredAsDefender()

@@ -6,9 +6,9 @@ class SamwellTarly extends DrawCard {
     // non-Steward character as if its printed text box were blank (except for Traits).
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.isParticipating(),
-            match: (card) =>
-                card !== this &&
+            condition: (context) => context.source.isParticipating(),
+            match: (card, context) =>
+                card !== context.source &&
                 card.isParticipating() &&
                 !card.hasTrait('Steward') &&
                 card.getType() === 'character',

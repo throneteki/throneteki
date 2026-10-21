@@ -7,7 +7,7 @@ class Strangler extends DrawCard {
     // do not raise or lower its STR.)
     setupCardAbilities(ability) {
         this.whileAttached({
-            condition: () => this.parent.isParticipating(),
+            condition: (context) => context.source.parent.isParticipating(),
             effect: ability.effects.setStrength(1)
         });
     }

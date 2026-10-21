@@ -7,10 +7,13 @@ class Penny extends DrawCard {
     // and stealth.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () =>
-                this.game
-                    .getOpponents(this.controller)
-                    .every((opponent) => opponent.shadows.length < this.controller.shadows.length),
+            condition: (context) =>
+                context.game
+                    .getOpponents(context.source.controller)
+                    .every(
+                        (opponent) =>
+                            opponent.shadows.length < context.source.controller.shadows.length
+                    ),
             match: this,
             effect: [ability.effects.addIcon('intrigue'), ability.effects.addKeyword('stealth')]
         });

@@ -7,7 +7,9 @@ class HostOfTheBoneway extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,
-            effect: ability.effects.dynamicStrength(() => this.controller.getNumberOfUsedPlots())
+            effect: ability.effects.dynamicStrength((card, context) =>
+                context.source.controller.getNumberOfUsedPlots()
+            )
         });
     }
 }

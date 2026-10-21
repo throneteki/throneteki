@@ -5,8 +5,8 @@ class LemLemoncloak extends DrawCard {
     // While you control no loyal characters, Lem Lemoncloak gets +2 STR and gains a [power] icon.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () =>
-                !this.controller.anyCardsInPlay(
+            condition: (context) =>
+                !context.source.controller.anyCardsInPlay(
                     (card) => card.getType() === 'character' && card.isLoyal()
                 ),
             match: this,

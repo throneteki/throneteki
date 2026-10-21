@@ -6,9 +6,9 @@ class JoustingKnight extends DrawCard {
     // defending alone.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () =>
-                !this.game.isDuringChallenge({ attackingAlone: this }) &&
-                !this.game.isDuringChallenge({ defendingAlone: this }),
+            condition: (context) =>
+                !context.game.isDuringChallenge({ attackingAlone: context.source }) &&
+                !context.game.isDuringChallenge({ defendingAlone: context.source }),
             match: this,
             effect: ability.effects.doesNotContributeStrength()
         });

@@ -12,7 +12,7 @@ class HauntedForestScout extends DrawCard {
             effect: ability.effects.cannotBeDeclaredAsDefender()
         });
         this.persistentEffect({
-            condition: () => this.getNumberOfRangers() >= 3,
+            condition: (context) => context.source.getNumberOfRangers() >= 3,
             match: this,
             effect: ability.effects.doesNotKneelAsAttacker()
         });

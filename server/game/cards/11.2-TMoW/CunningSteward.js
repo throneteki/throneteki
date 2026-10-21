@@ -6,7 +6,8 @@ class CunningSteward extends DrawCard {
     // While you are the defending player, Cunning Steward gains a [military] and a [power] icon.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.game.isDuringChallenge({ defendingPlayer: this.controller }),
+            condition: (context) =>
+                context.game.isDuringChallenge({ defendingPlayer: context.source.controller }),
             match: this,
             effect: [ability.effects.addIcon('military'), ability.effects.addIcon('power')]
         });

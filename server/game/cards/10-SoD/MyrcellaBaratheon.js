@@ -6,7 +6,7 @@ class MyrcellaBaratheon extends DrawCard {
     // cards in his or her hand than you.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.opponentHoldsLessCards(),
+            condition: (context) => context.source.opponentHoldsLessCards(),
             match: this,
             effect: ability.effects.doesNotKneelAsAttacker()
         });

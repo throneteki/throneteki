@@ -6,7 +6,7 @@ class HouseManwoodyGuard extends DrawCard {
     // declared as a defender.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => !this.controller.firstPlayer,
+            condition: (context) => !context.source.controller.firstPlayer,
             match: (card) => card.getType() === 'character' && card.hasTrait('Guard'),
             effect: ability.effects.doesNotKneelAsDefender()
         });
