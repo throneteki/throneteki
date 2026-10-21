@@ -14,7 +14,8 @@ class Farlen extends DrawCard {
 
         this.reaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this && event.playingType === 'marshal'
+                onCardEntersPlay: (event, context) =>
+                    event.card === context.source && event.playingType === 'marshal'
             },
             message:
                 '{player} uses {source} to search their hand, deck and discard pile for The Wolfswood',

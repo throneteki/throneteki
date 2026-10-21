@@ -13,13 +13,16 @@ class BraveCompanions extends DrawCard {
     setupCardAbilities(ability) {
         const selectableTraits = ['Army', 'Commander', 'Mercenary'];
         this.persistentEffect({
-            match: (card) => card === this,
-            effect: ability.effects.dynamicStrength(() => this.calculateStrength())
+            match: (card, context) => card === context.source,
+            effect: ability.effects.dynamicStrength((card, context) =>
+                context.source.calculateStrength()
+            )
         });
 
         this.reaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this && event.playingType === 'marshal'
+                onCardEntersPlay: (event, context) =>
+                    event.card === context.source && event.playingType === 'marshal'
             },
             message:
                 '{player} uses {source} to search the top 10 cards of their deck for an Army character, a Commander character and a Mercenary character',

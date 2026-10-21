@@ -12,9 +12,9 @@ class KingsLanding extends DrawCard {
             phase: 'marshal',
             limit: ability.limit.perPhase(2),
             cost: ability.costs.kneel(
-                (card) =>
+                (card, context) =>
                     card.location === 'play area' &&
-                    card.controller === this.controller &&
+                    card.controller === context.source.controller &&
                     card.getType() === 'location' &&
                     card.hasTrait("King's Landing")
             ),
@@ -27,8 +27,8 @@ class KingsLanding extends DrawCard {
 
         this.reaction({
             when: {
-                onCardEntersPlay: (event) =>
-                    event.card.controller === this.controller &&
+                onCardEntersPlay: (event, context) =>
+                    event.card.controller === context.source.controller &&
                     event.card.getType() === 'location' &&
                     event.card.hasTrait("King's Landing")
             },

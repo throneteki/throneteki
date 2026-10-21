@@ -10,14 +10,14 @@ class MothersMen extends DrawCard {
         this.reaction({
             when: {
                 onCharacterKilled: (event, context) =>
-                    !this.game.claim.isApplying &&
+                    !context.game.claim.isApplying &&
                     event.card.controller !== context.player &&
-                    context.player.canPutIntoPlay(this)
+                    context.player.canPutIntoPlay(context.source)
             },
             location: 'discard pile',
             gameAction: GameActions.putIntoPlay((context) => ({
                 player: context.player,
-                card: this
+                card: context.source
             })),
             message: '{player} puts {source} into play from their discard pile'
         });

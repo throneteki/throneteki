@@ -8,7 +8,8 @@ class BranTheBuilder extends PlotCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) => event.challenge.winner === this.controller
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller
             },
             limit: ability.limit.perPhase(2),
             message:

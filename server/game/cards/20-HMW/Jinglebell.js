@@ -8,7 +8,7 @@ class Jinglebell extends DrawCard {
     setupCardAbilities() {
         this.interrupt({
             when: {
-                onCharacterKilled: (event) => event.card === this
+                onCharacterKilled: (event, context) => event.card === context.source
             },
             message:
                 '{player} uses {source} to search their deck for a card that shares a Trait with him',
@@ -16,7 +16,8 @@ class Jinglebell extends DrawCard {
                 title: 'Select a card',
                 match: {
                     type: 'character',
-                    condition: (card) => card.getTraits().some((trait) => this.hasTrait(trait))
+                    condition: (card, context) =>
+                        card.getTraits().some((trait) => context.source.hasTrait(trait))
                 },
                 message: '{player} {gameAction}',
                 gameAction: GameActions.addToHand((context) => ({

@@ -9,8 +9,9 @@ class HighgardenSept extends DrawCard {
     // (Limit once per phase.)
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () =>
-                this.controller.getHandCount() >= 7 && this.game.currentPhase === 'challenge',
+            condition: (context) =>
+                context.source.controller.getHandCount() >= 7 &&
+                context.game.currentPhase === 'challenge',
             targetController: 'any',
             effect: ability.effects.cannotPutIntoPlay(
                 (card) => card.getType() === 'character' && !card.hasTrait('The Seven')
@@ -18,15 +19,15 @@ class HighgardenSept extends DrawCard {
         });
         this.reaction({
             when: {
-                onCardPowerGained: (event) => this.isValidCard(event.card),
-                onCardPowerMoved: (event) => this.isValidCard(event.target)
+                onCardPowerGained: (event, context) => context.source.isValidCard(event.card),
+                onCardPowerMoved: (event, context) => context.source.isValidCard(event.target)
             },
             limit: ability.limit.perPhase(1),
             message: '{player} uses {source} to draw 1 card',
             gameAction: GameActions.drawCards((context) => ({
                 amount: 1,
                 player: context.player,
-                source: this
+                source: context.source
             }))
         });
     }

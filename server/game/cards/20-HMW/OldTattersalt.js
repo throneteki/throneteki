@@ -18,7 +18,7 @@ class OldTattersalt extends DrawCard {
 
         this.reaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this
+                onCardEntersPlay: (event, context) => event.card === context.source
             },
             message: {
                 format: '{player} uses {source} to search the top {reserve} cards of their deck for a card with printed cost 1 or lower',

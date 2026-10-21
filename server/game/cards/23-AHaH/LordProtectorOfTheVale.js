@@ -20,10 +20,10 @@ class LordProtectorOfTheVale extends DrawCard {
             title: 'Contribute attached STR',
             phase: 'challenge',
             cost: ability.costs.kneelSelf(),
-            condition: () =>
-                this.game.isDuringChallenge() &&
-                this.game.currentChallenge.challengeType === 'power' &&
-                this.controller.anyCardsInPlay({
+            condition: (context) =>
+                context.game.isDuringChallenge() &&
+                context.game.currentChallenge.challengeType === 'power' &&
+                context.source.controller.anyCardsInPlay({
                     trait: 'House Arryn',
                     type: 'character',
                     participating: true
@@ -31,14 +31,14 @@ class LordProtectorOfTheVale extends DrawCard {
             message: {
                 format: "{player} kneels {source} to have {parent} contribute its STR (currently {str}) to {player}'s side of the challenge",
                 args: {
-                    parent: () => this.parent,
-                    str: () => this.parent.getStrength()
+                    parent: (context) => context.source.parent,
+                    str: (context) => context.source.parent.getStrength()
                 }
             },
-            gameAction: GameActions.genericHandler(() => {
-                this.untilEndOfChallenge((ability) => ({
+            gameAction: GameActions.genericHandler((context) => {
+                context.source.untilEndOfChallenge((ability) => ({
                     targetController: 'current',
-                    effect: ability.effects.contributeCharacterStrength(this.parent)
+                    effect: ability.effects.contributeCharacterStrength(context.source.parent)
                 }));
             })
         });

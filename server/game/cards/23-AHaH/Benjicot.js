@@ -10,7 +10,7 @@ class Benjicot extends DrawCard {
         this.forcedReaction({
             when: {
                 onCardStood: (event, context) =>
-                    event.card === this &&
+                    event.card === context.source &&
                     context.game.getPlayers().every((player) => player.drawDeck.length > 0)
             },
             message:
@@ -22,7 +22,7 @@ class Benjicot extends DrawCard {
             })).then({
                 message: '{player} {gameAction}',
                 gameAction: GameActions.simultaneously((context) =>
-                    this.buildGameActions(context.parentContext.revealed)
+                    context.source.buildGameActions(context.parentContext.revealed)
                 )
             })
         });

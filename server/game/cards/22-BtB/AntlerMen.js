@@ -7,9 +7,9 @@ class AntlerMen extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardPowerMoved: (event) =>
+                onCardPowerMoved: (event, context) =>
                     event.target.getType() === 'faction' &&
-                    event.target.controller === this.controller
+                    event.target.controller === context.source.controller
             },
             limit: ability.limit.perRound(2),
             message: '{player} uses {source} to gain 1 gold',

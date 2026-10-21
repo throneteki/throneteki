@@ -9,10 +9,10 @@ class ThoughAllMenDoDespiseUs extends DrawCard {
         this.reaction({
             max: ability.limit.perChallenge(1),
             when: {
-                onDefendersDeclared: (event) =>
-                    event.player !== this.controller &&
+                onDefendersDeclared: (event, context) =>
+                    event.player !== context.source.controller &&
                     event.numOfDefendingCharacters === 0 &&
-                    this.hasAttackingRaider()
+                    context.source.hasAttackingRaider()
             },
             message: '{player} uses {source} to have each attacking Raider character gain 1 power',
             gameAction: GameActions.simultaneously((context) =>

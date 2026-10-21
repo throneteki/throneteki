@@ -105,6 +105,15 @@ function contextPosition(arrow) {
             if (owner.key.name === 'args') {
                 return [0, []];
             }
+            const eventOwner = owner.parent && owner.parent.parent;
+            if (
+                parent.key.name === 'condition' &&
+                eventOwner &&
+                eventOwner.type === 'Property' &&
+                eventOwner.key.name === 'when'
+            ) {
+                return [2, ['aggregate', 'events']];
+            }
             if (owner.key.name === 'match' && parent.key.name === 'condition') {
                 return [1, ['card']];
             }

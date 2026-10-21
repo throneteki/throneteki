@@ -15,7 +15,7 @@ class JonArryn extends DrawCard {
 
         this.forcedInterrupt({
             when: {
-                onCharacterKilled: (event) => event.card === this
+                onCharacterKilled: (event, context) => event.card === context.source
             },
             message:
                 '{player} is forced by {source} to allow each player to either draw 2 cards or gain 1 power for their faction',
@@ -29,7 +29,7 @@ class JonArryn extends DrawCard {
                                 gameAction: GameActions.drawCards((context) => ({
                                     player: context.choosingPlayer,
                                     amount: 2,
-                                    source: this
+                                    source: context.source
                                 }))
                             },
                             'Gain 1 power': {

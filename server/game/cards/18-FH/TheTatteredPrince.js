@@ -10,8 +10,9 @@ class TheTatteredPrince extends DrawCard {
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                onCardPlaced: (event) =>
-                    event.location === 'revealed plots' && event.player === this.controller
+                onCardPlaced: (event, context) =>
+                    event.location === 'revealed plots' &&
+                    event.player === context.source.controller
             },
             gameAction: GameActions.ifCondition({
                 condition: (context) => context.source.hasToken(Tokens.gold),

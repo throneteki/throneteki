@@ -10,10 +10,10 @@ class AshaGreyjoy extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardDiscarded: (event) =>
+                onCardDiscarded: (event, context) =>
                     event.isPillage &&
-                    event.source === this &&
-                    this.game.currentChallenge.loser.discardPile.length >= 1
+                    event.source === context.source &&
+                    context.game.currentChallenge.loser.discardPile.length >= 1
             },
             message: {
                 format: '{player} uses {source} to search the top {amount} cards of their deck for a card',

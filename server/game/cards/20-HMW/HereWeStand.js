@@ -11,7 +11,7 @@ class HereWeStand extends DrawCard {
         this.action({
             title: 'Search for Mormont cards',
             phase: 'dominance',
-            condition: () => this.hasStandingMormontCharacter(),
+            condition: (context) => context.source.hasStandingMormontCharacter(),
             message:
                 '{player} plays {source} to search the top 10 cards of their deck for any number of Bear Island, Bearskin Cloak, and House Mormont cards',
             gameAction: GameActions.search({

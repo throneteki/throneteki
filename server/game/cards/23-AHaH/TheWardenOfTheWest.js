@@ -22,9 +22,11 @@ class TheWardenOfTheWest extends DrawCard {
                         controller: event.cardStateWhenDiscarded.controller,
                         location: event.cardStateWhenDiscarded.location
                     }),
-                    condition: (aggregate) =>
-                        aggregate.controller !== this.controller &&
-                        ['hand', 'draw deck'].includes(aggregate.location)
+                    condition: (aggregate, events, context) =>
+                        aggregate.controller !== context.source.controller &&
+                        ['hand', 'draw deck'].includes(aggregate.location) &&
+                        !!context.source.parent &&
+                        context.source.parent.isParticipating()
                 }
             },
             limit: ability.limit.perRound(1),

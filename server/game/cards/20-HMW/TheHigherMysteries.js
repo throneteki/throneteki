@@ -8,8 +8,9 @@ class TheHigherMysteries extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller && this.hasParticipatingMaester()
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
+                    context.source.hasParticipatingMaester()
             },
             message: '{player} plays {source} to reveal the top card of their deck',
             gameAction: GameActions.revealTopCards((context) => ({

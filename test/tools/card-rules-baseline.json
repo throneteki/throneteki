@@ -4651,9 +4651,6 @@
     "server/game/cards/17.2-R2/AegonTargaryen.js": {
         "this-in-ability": 2
     },
-    "server/game/cards/17.2-R2/AshaGreyJoy.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/17.2-R2/CasterlyRock.js": {
         "this-in-ability": 5
     },
@@ -4666,9 +4663,6 @@
     },
     "server/game/cards/17.2-R2/Goldengrove.js": {
         "this-in-ability": 2
-    },
-    "server/game/cards/17.2-R2/GreatRanging.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/17.2-R2/Nightflyer.js": {
         "this-in-ability": 3
@@ -4771,9 +4765,6 @@
         "this-in-ability": 6,
         "legacy-helper": 3
     },
-    "server/game/cards/18-FH/TheTatteredPrince.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/18-FH/VargoHoat.js": {
         "this-in-ability": 13,
         "add-message": 2,
@@ -4865,9 +4856,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/20-HMW/BraveCompanions.js": {
-        "this-in-ability": 3
-    },
     "server/game/cards/20-HMW/Bronn.js": {
         "this-in-ability": 8,
         "add-message": 2,
@@ -4893,9 +4881,6 @@
     "server/game/cards/20-HMW/EliasLance.js": {
         "this-in-ability": 3
     },
-    "server/game/cards/20-HMW/Farlen.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/20-HMW/FirstInBattle.js": {
         "this-in-ability": 5,
         "add-message": 1
@@ -4908,14 +4893,8 @@
         "this-in-ability": 5,
         "add-message": 1
     },
-    "server/game/cards/20-HMW/HereWeStand.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/20-HMW/IPledgeMyLifeAndHonor.js": {
         "this-in-ability": 3
-    },
-    "server/game/cards/20-HMW/Jinglebell.js": {
-        "this-in-ability": 2
     },
     "server/game/cards/20-HMW/KindlyMan.js": {
         "this-in-ability": 5,
@@ -4944,9 +4923,6 @@
     },
     "server/game/cards/20-HMW/NoSongSoSweet.js": {
         "this-in-ability": 3
-    },
-    "server/game/cards/20-HMW/OldTattersalt.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/20-HMW/OurBladesAreSharp.js": {
         "this-in-ability": 4,
@@ -4995,9 +4971,6 @@
         "this-in-ability": 5,
         "add-message": 1
     },
-    "server/game/cards/20-HMW/TheHigherMysteries.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/20-HMW/TheLateLordFrey.js": {
         "this-in-ability": 2
     },
@@ -5017,9 +4990,6 @@
     "server/game/cards/20-HMW/TheStranger.js": {
         "this-in-ability": 3,
         "legacy-helper": 1
-    },
-    "server/game/cards/20-HMW/ThoughAllMenDoDespiseUs.js": {
-        "this-in-ability": 2
     },
     "server/game/cards/20-HMW/WeGuardtheWay.js": {
         "this-in-ability": 4,
@@ -5054,9 +5024,6 @@
     "server/game/cards/21-FtR/Goldengrove.js": {
         "this-in-ability": 2
     },
-    "server/game/cards/21-FtR/GreatRanging.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/21-FtR/GreyWind.js": {
         "add-message": 2,
         "this-in-ability": 7,
@@ -5080,9 +5047,6 @@
     "server/game/cards/21-FtR/MagnarofThenn.js": {
         "this-in-ability": 5,
         "add-message": 1
-    },
-    "server/game/cards/21-FtR/MothersMen.js": {
-        "this-in-ability": 3
     },
     "server/game/cards/21-FtR/OldBearsRaven.js": {
         "legacy-helper": 1,
@@ -5123,17 +5087,11 @@
     "server/game/cards/21-FtR/YouKnowNothing.js": {
         "this-in-ability": 1
     },
-    "server/game/cards/22-BtB/AntlerMen.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/22-BtB/BranStark.js": {
         "this-in-ability": 9,
         "add-message": 2,
         "prompt-for-select": 1,
         "legacy-helper": 1
-    },
-    "server/game/cards/22-BtB/BranTheBuilder.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/22-BtB/BrienneTheBlue.js": {
         "this-in-ability": 5,
@@ -5146,9 +5104,6 @@
         "this-in-ability": 7,
         "legacy-helper": 1,
         "add-message": 2
-    },
-    "server/game/cards/22-BtB/FirstBuilder.js": {
-        "this-in-ability": 7
     },
     "server/game/cards/22-BtB/FlorianAndJonquil.js": {
         "this-in-ability": 14,
@@ -5164,9 +5119,6 @@
         "add-message": 2,
         "legacy-helper": 1
     },
-    "server/game/cards/22-BtB/KingsLanding.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/22-BtB/Pyke.js": {
         "this-in-ability": 7,
         "add-message": 2,
@@ -5179,9 +5131,6 @@
         "add-message": 1
     },
     "server/game/cards/22-BtB/ScorpionKnight.js": {
-        "this-in-ability": 2
-    },
-    "server/game/cards/22-BtB/SerJaimeLannister.js": {
         "this-in-ability": 2
     },
     "server/game/cards/22-BtB/SerRollyDuckfield.js": {
@@ -5233,9 +5182,6 @@
     "server/game/cards/23-AHaH/AnyaWaynwood.js": {
         "this-in-ability": 3
     },
-    "server/game/cards/23-AHaH/Benjicot.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/23-AHaH/Crannogmen.js": {
         "this-in-ability": 3,
         "legacy-helper": 1
@@ -5252,16 +5198,10 @@
     "server/game/cards/23-AHaH/HarryTheHeir.js": {
         "this-in-ability": 5
     },
-    "server/game/cards/23-AHaH/JonArryn.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/23-AHaH/KnightsOfTheVale.js": {
         "this-in-ability": 4
     },
     "server/game/cards/23-AHaH/Littlefinger.js": {
-        "this-in-ability": 7
-    },
-    "server/game/cards/23-AHaH/LordProtectorOfTheVale.js": {
         "this-in-ability": 7
     },
     "server/game/cards/23-AHaH/LysasLetter.js": {
@@ -5300,9 +5240,6 @@
     "server/game/cards/23-AHaH/TheHalfmansHorde.js": {
         "this-in-ability": 5
     },
-    "server/game/cards/23-AHaH/TheHighroad.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/23-AHaH/TheReadersSepton.js": {
         "legacy-helper": 2
     },
@@ -5313,12 +5250,6 @@
     },
     "server/game/cards/23-AHaH/TheValeOfArryn.js": {
         "this-in-ability": 4
-    },
-    "server/game/cards/23-AHaH/TheWardenOfTheWest.js": {
-        "this-in-ability": 1
-    },
-    "server/game/cards/23-AHaH/TheWolfsDen.js": {
-        "this-in-ability": 3
     },
     "server/game/cards/23-AHaH/TorrhensSquare.js": {
         "this-in-ability": 1
@@ -5347,9 +5278,6 @@
     },
     "server/game/cards/24-TSoW/Hero.js": {
         "this-in-ability": 4
-    },
-    "server/game/cards/24-TSoW/HighgardenSept.js": {
-        "this-in-ability": 5
     },
     "server/game/cards/24-TSoW/MaceTyrell.js": {
         "this-in-ability": 2

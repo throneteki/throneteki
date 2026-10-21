@@ -10,10 +10,11 @@ class TheWolfsDen extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onSacrificed: (event) =>
+                onSacrificed: (event, context) =>
                     event.card.getType() === 'character' &&
-                    event.card.controller === this.controller,
-                onCharacterKilled: (event) => event.card.controller === this.controller
+                    event.card.controller === context.source.controller,
+                onCharacterKilled: (event, context) =>
+                    event.card.controller === context.source.controller
             },
             cost: ability.costs.kneelSelf(),
             message: '{player} kneels {source} to put the bottom card of their deck into shadows',
@@ -27,7 +28,7 @@ class TheWolfsDen extends DrawCard {
                         tokens: Tokens.shadow
                     })),
                     GameActions.genericHandler((context) => {
-                        this.lastingEffect((ability) => ({
+                        context.source.lastingEffect((ability) => ({
                             condition: () => context.event.card.location === 'shadows',
                             targetLocation: 'any',
                             match: context.event.card,
