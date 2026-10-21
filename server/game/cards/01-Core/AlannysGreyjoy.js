@@ -6,7 +6,7 @@ class AlannysGreyjoy extends DrawCard {
     // card by 1.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.controller.firstPlayer,
+            condition: (context) => context.source.controller.firstPlayer,
             match: (card) => card === card.controller.activePlot,
             targetController: 'opponent',
             effect: ability.effects.modifyReserve(-1)

@@ -7,7 +7,8 @@ class TheKnightOfFlowers extends DrawCard {
     // 1 character as a defender.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.game.isDuringChallenge({ attackingAlone: this }),
+            condition: (context) =>
+                context.game.isDuringChallenge({ attackingAlone: context.source }),
             targetController: 'opponent',
             effect: ability.effects.setDefenderMaximum(1)
         });

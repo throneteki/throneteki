@@ -21,9 +21,6 @@
         "this-in-ability": 5,
         "add-message": 2
     },
-    "server/game/cards/00-VDS/HoldingTheTrident.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/00-VDS/HollowHill.js": {
         "this-in-ability": 7,
         "legacy-helper": 1,
@@ -95,9 +92,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/01-Core/AlannysGreyjoy.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/01-Core/AreoHotah.js": {
         "this-in-ability": 6,
         "add-message": 1
@@ -109,9 +103,6 @@
         "this-in-ability": 8,
         "legacy-helper": 1,
         "add-message": 1
-    },
-    "server/game/cards/01-Core/BalonGreyjoy.js": {
-        "this-in-ability": 2
     },
     "server/game/cards/01-Core/BenjenStark.js": {
         "this-in-ability": 11,
@@ -136,9 +127,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/01-Core/CerseiLannister.js": {
-        "this-in-ability": 3
-    },
     "server/game/cards/01-Core/ChamberOfThePaintedTable.js": {
         "this-in-ability": 8,
         "prompt-for-select": 1,
@@ -160,15 +148,6 @@
         "add-message": 1,
         "this-in-ability": 2
     },
-    "server/game/cards/01-Core/DaenerysTargaryen.js": {
-        "this-in-ability": 1
-    },
-    "server/game/cards/01-Core/Dawn.js": {
-        "this-in-ability": 1
-    },
-    "server/game/cards/01-Core/DoranMartell.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/01-Core/DoransGame.js": {
         "this-in-ability": 8,
         "legacy-helper": 1,
@@ -186,12 +165,6 @@
     "server/game/cards/01-Core/Dracarys.js": {
         "this-in-ability": 4,
         "add-message": 1
-    },
-    "server/game/cards/01-Core/DrogosArakh.js": {
-        "this-in-ability": 2
-    },
-    "server/game/cards/01-Core/DrownedMen.js": {
-        "this-in-ability": 2
     },
     "server/game/cards/01-Core/EddardStark.js": {
         "this-in-ability": 7,
@@ -292,9 +265,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/01-Core/Left.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/01-Core/Lightbringer.js": {
         "this-in-ability": 7,
         "legacy-helper": 1,
@@ -352,9 +322,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/01-Core/ObaraSand.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/01-Core/OldBearMormont.js": {
         "this-in-ability": 10,
         "legacy-helper": 1,
@@ -377,9 +344,6 @@
         "add-message": 2,
         "game-listener": 1,
         "legacy-helper": 1
-    },
-    "server/game/cards/01-Core/PalaceSpearman.js": {
-        "this-in-ability": 3
     },
     "server/game/cards/01-Core/PlazaOfPunishment.js": {
         "this-in-ability": 5,
@@ -420,9 +384,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/01-Core/Right.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/01-Core/RisenFromTheSea.js": {
         "this-in-ability": 15,
         "legacy-helper": 1,
@@ -455,9 +416,6 @@
         "this-in-ability": 8,
         "add-message": 1,
         "legacy-helper": 1
-    },
-    "server/game/cards/01-Core/SerJaimeLannister.js": {
-        "this-in-ability": 2
     },
     "server/game/cards/01-Core/SerWaymarRoyce.js": {
         "this-in-ability": 6,
@@ -497,9 +455,6 @@
     "server/game/cards/01-Core/TheHandsJudgment.js": {
         "this-in-ability": 5,
         "add-message": 1
-    },
-    "server/game/cards/01-Core/TheKnightOfFlowers.js": {
-        "this-in-ability": 2
     },
     "server/game/cards/01-Core/TheKrakensGrasp.js": {
         "this-in-ability": 5,
@@ -570,24 +525,15 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/01-Core/TywinLannister.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/01-Core/UnbowedUnbentUnbroken.js": {
         "this-in-ability": 9,
         "add-message": 1,
         "legacy-helper": 2
     },
-    "server/game/cards/01-Core/Unsullied.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/01-Core/VanguardLancer.js": {
         "this-in-ability": 8,
         "add-message": 2,
         "legacy-helper": 1
-    },
-    "server/game/cards/01-Core/VanguardOfTheNorth.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/01-Core/Varys.js": {
         "this-in-ability": 7,
@@ -608,9 +554,6 @@
         "this-in-ability": 5,
         "legacy-helper": 1,
         "add-message": 1
-    },
-    "server/game/cards/01-Core/WardensOfTheReach.js": {
-        "this-in-ability": 2
     },
     "server/game/cards/01-Core/WeDoNotSow.js": {
         "this-in-ability": 4,
@@ -652,15 +595,6 @@
         "this-in-ability": 9,
         "legacy-helper": 2,
         "add-message": 1
-    },
-    "server/game/cards/02.1-TtB/MaesterLuwin.js": {
-        "this-in-ability": 1
-    },
-    "server/game/cards/02.1-TtB/MerchantPrince.js": {
-        "this-in-ability": 1
-    },
-    "server/game/cards/02.1-TtB/MusterTheRealm.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/02.1-TtB/PleasureBarge.js": {
         "this-in-ability": 9,
@@ -785,9 +719,6 @@
         "this-in-ability": 5,
         "add-message": 1
     },
-    "server/game/cards/02.3-TKP/ATourneyForTheKing.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/02.3-TKP/CroneOfVaesDothrak.js": {
         "this-in-ability": 4,
         "legacy-helper": 1,
@@ -829,9 +760,6 @@
     "server/game/cards/02.3-TKP/SerHobberRedwyne.js": {
         "this-in-ability": 1
     },
-    "server/game/cards/02.3-TKP/SerRodrikCassel.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/02.3-TKP/TheBoneway.js": {
         "this-in-ability": 9,
         "legacy-helper": 1,
@@ -856,9 +784,6 @@
     },
     "server/game/cards/02.4-NMG/DothrakiOutriders.js": {
         "this-in-ability": 1
-    },
-    "server/game/cards/02.4-NMG/ForTheWatch.js": {
-        "this-in-ability": 3
     },
     "server/game/cards/02.4-NMG/Gendry.js": {
         "this-in-ability": 14,

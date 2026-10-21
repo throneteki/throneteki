@@ -8,7 +8,9 @@ class TywinLannister extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,
-            effect: ability.effects.dynamicStrength(() => this.controller.gold)
+            effect: ability.effects.dynamicStrength(
+                (card, context) => context.source.controller.gold
+            )
         });
         this.plotModifiers({
             gold: 2

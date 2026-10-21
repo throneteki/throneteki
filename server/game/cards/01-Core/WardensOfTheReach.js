@@ -6,8 +6,10 @@ class WardensOfTheReach extends DrawCard {
     // Wardens of the Reach gets +1 STR for each The Reach location you control.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: (card) => card === this,
-            effect: ability.effects.dynamicStrength(() => this.calculateStrength())
+            match: (card, context) => card === context.source,
+            effect: ability.effects.dynamicStrength((card, context) =>
+                context.source.calculateStrength()
+            )
         });
     }
 

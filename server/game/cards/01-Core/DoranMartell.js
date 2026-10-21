@@ -7,11 +7,13 @@ class DoranMartell extends DrawCard {
     // your used pile.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: (card) =>
+            match: (card, context) =>
                 card.isFaction('martell') &&
-                card !== this &&
+                card !== context.source &&
                 (card.hasTrait('Lord') || card.hasTrait('Lady')),
-            effect: ability.effects.dynamicStrength(() => this.controller.getNumberOfUsedPlots())
+            effect: ability.effects.dynamicStrength((card, context) =>
+                context.source.controller.getNumberOfUsedPlots()
+            )
         });
     }
 }

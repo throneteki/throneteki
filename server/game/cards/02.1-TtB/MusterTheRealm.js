@@ -6,7 +6,7 @@ class MusterTheRealm extends PlotCard {
     // Muster the Realm by 1.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.hasAttackingArmy(),
+            condition: (context) => context.source.hasAttackingArmy(),
             match: this,
             effect: ability.effects.modifyClaim(1)
         });

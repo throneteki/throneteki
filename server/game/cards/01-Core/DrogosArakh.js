@@ -15,8 +15,11 @@ class DrogosArakh extends DrawCard {
             effect: ability.effects.modifyStrength(2)
         });
         this.whileAttached({
-            condition: () =>
-                !this.tracker.some({ attackingPlayer: this.controller, challengeType: 'military' }),
+            condition: (context) =>
+                !context.source.tracker.some({
+                    attackingPlayer: context.source.controller,
+                    challengeType: 'military'
+                }),
             match: (card) => card.name === 'Khal Drogo',
             effect: ability.effects.doesNotKneelAsAttacker({ challengeType: 'military' })
         });

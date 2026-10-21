@@ -9,9 +9,9 @@ class ForTheWatch extends PlotCard {
         this.tracker = ChallengeTracker.forPhase(this.game);
 
         this.persistentEffect({
-            condition: () =>
-                this.game.isDuringChallenge({ defendingPlayer: this.controller }) &&
-                this.numOfChallengesInitiatedAgainst() <= 1,
+            condition: (context) =>
+                context.game.isDuringChallenge({ defendingPlayer: context.source.controller }) &&
+                context.source.numOfChallengesInitiatedAgainst() <= 1,
             targetController: 'opponent',
             effect: ability.effects.cannotWinChallenge()
         });

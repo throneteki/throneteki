@@ -6,10 +6,10 @@ class ObaraSand extends DrawCard {
     // defending player, even while kneeling.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () =>
-                this.game.isDuringChallenge({
+            condition: (context) =>
+                context.game.isDuringChallenge({
                     challengeType: 'power',
-                    defendingPlayer: this.controller
+                    defendingPlayer: context.source.controller
                 }),
             match: this,
             effect: [

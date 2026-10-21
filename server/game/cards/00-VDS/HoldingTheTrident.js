@@ -7,7 +7,7 @@ class HoldingTheTrident extends PlotCard {
     // Draft format only.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.controlsFewerCharactersThanOpponent(),
+            condition: (context) => context.source.controlsFewerCharactersThanOpponent(),
             match: (card) => card.getType() === 'character',
             effect: ability.effects.modifyStrength(2)
         });

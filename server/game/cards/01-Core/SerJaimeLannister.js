@@ -10,9 +10,9 @@ class SerJaimeLannister extends DrawCard {
             effect: [ability.effects.doesNotKneelAsAttacker({ challengeType: 'military' })]
         });
         this.persistentEffect({
-            condition: () =>
-                this.game.isDuringChallenge({ challengeType: 'military' }) &&
-                this.isParticipating(),
+            condition: (context) =>
+                context.game.isDuringChallenge({ challengeType: 'military' }) &&
+                context.source.isParticipating(),
             match: this,
             effect: [ability.effects.addKeyword('Renown')]
         });

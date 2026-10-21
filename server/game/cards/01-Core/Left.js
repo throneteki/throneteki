@@ -7,7 +7,8 @@ class Left extends DrawCard {
     // declared as a defender.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.controller.anyCardsInPlay((card) => card.name === 'Right'),
+            condition: (context) =>
+                context.source.controller.anyCardsInPlay((card) => card.name === 'Right'),
             match: this,
             effect: [
                 ability.effects.modifyStrength(1),

@@ -10,7 +10,8 @@ class ATourneyForTheKing extends PlotCard {
             effect: [
                 ability.effects.addKeyword('Renown'),
                 ability.effects.immuneTo(
-                    (card) => card.controller !== this.controller && card.getType() === 'event'
+                    (card, arg, context) =>
+                        card.controller !== context.source.controller && card.getType() === 'event'
                 )
             ]
         });

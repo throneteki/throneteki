@@ -6,7 +6,7 @@ class Unsullied extends DrawCard {
     // While Unsullied is attacking, each defending character gets -1 STR.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.isAttacking(),
+            condition: (context) => context.source.isAttacking(),
             match: (card) => card.isDefending(),
             targetController: 'opponent',
             effect: ability.effects.modifyStrength(-1)

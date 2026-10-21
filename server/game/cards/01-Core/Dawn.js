@@ -6,7 +6,9 @@ class Dawn extends DrawCard {
     // While attached character has the House Dayne trait, it gains intimidate.
     setupCardAbilities(ability) {
         this.whileAttached({
-            effect: ability.effects.dynamicStrength(() => this.controller.getNumberOfUsedPlots())
+            effect: ability.effects.dynamicStrength((card, context) =>
+                context.source.controller.getNumberOfUsedPlots()
+            )
         });
         this.whileAttached({
             match: (card) => card.hasTrait('House Dayne'),
