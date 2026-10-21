@@ -47,7 +47,10 @@ class ChooseCards extends GameAction {
     }
 
     createEvent({ context }) {
-        const players = this.playersFunc(context);
+        const listed = this.playersFunc(context);
+        const players = context.game
+            .getPlayersInFirstPlayerOrder()
+            .filter((player) => listed.includes(player));
 
         return this.event('onCardsChosen', { players }, (event) => {
             const chosen = new Map();
@@ -78,6 +81,7 @@ class ChooseCards extends GameAction {
             multiSelect: true,
             cardType: AllCardTypes,
             cardCondition: (card) => choosable.includes(card),
+            canCancel: context.game.manualMode.enabled,
             onSelect: (selectingPlayer, cards) => {
                 chosen.set(player, Array.isArray(cards) ? cards : [cards]);
                 return true;

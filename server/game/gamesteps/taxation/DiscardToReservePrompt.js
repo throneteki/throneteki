@@ -34,6 +34,7 @@ class DiscardToReservePrompt extends BaseStep {
             cardCondition: (card) => card.location === 'hand' && card.controller === currentPlayer,
             onSelect: (player, cards) => this.discardCards(player, cards),
             onCancel: (player) => this.cancelSelection(player),
+            canCancel: this.game.manualMode.enabled,
             source: this.source
         });
     }

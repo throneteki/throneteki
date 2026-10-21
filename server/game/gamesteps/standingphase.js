@@ -66,6 +66,7 @@ class StandingPhase extends Phase {
             activePromptTitle: 'Select ' + restriction.max + ' cards to stand',
             gameAction: 'stand',
             cardCondition: (card) => restriction.cards.includes(card),
+            canCancel: this.game.manualMode.enabled,
             onSelect: (player, cards) => {
                 // The player must select as many cards as possible to stand
                 // because standing during the standing phase is mandatory.

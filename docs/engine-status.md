@@ -70,6 +70,11 @@ the ongoing work, and it was not part of this batch.
   [Duplicates.spec.js](../test/server/gamesteps/Duplicates.spec.js). A duplicate marshaled or
   ambushed goes through the `PutIntoPlay` event, token costs go through `GameActions.discardToken`,
   and `DrawSpecific` draws only what the draw limit allows and reports `amount`.
+- Mandatory prompts cannot be skipped with manual mode off: the reserve discard, standing
+  restrictions (Stannis Baratheon), military claim, and `GameActions.chooseCards`, which also asks
+  players in first-player order. With manual mode on, Done with nothing selected still skips them.
+  [ReserveCheck.spec.js](../test/server/gamesteps/ReserveCheck.spec.js),
+  [StandingRestrictions.spec.js](../test/server/gamesteps/StandingRestrictions.spec.js).
 - Terminal conditions (FAQ 3.1). The card pool has two: burn and state checks. Both refuse saves
   up front. The "if still in play" effects are one-off delayed effects, not terminal conditions,
   so they can be saved from. A new terminal condition whose save could remedy it would need its
@@ -108,8 +113,7 @@ not already decided.
 
 1. FAQ 1.6, control. Two take-control effects on the same card (both players' Ward, say) cannot
    both apply, so the first player should choose which does. Today the newest wins. No spec covers
-   it yet. `GameActions.chooseCards` asks players in the order the card lists them; no card passes
-   more than one player yet, but one that does should ask in first-player order.
+   it yet.
 2. Every state change goes through a `GameAction`. Manual corrections (`changeStat`, `/power`,
    `/token`) stay plain corrections and raise no events.
 3. The client showing why an action is unavailable. Server reasons already exist.

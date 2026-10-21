@@ -63,6 +63,27 @@ describe('chooseCards game action', function () {
         });
     });
 
+    describe('when the card lists the players out of player order', function () {
+        beforeEach(function () {
+            this.game.resolveGameAction(
+                this.chooseAndKneel(() => [this.player2Object, this.player1Object]),
+                this.context
+            );
+            this.game.continue();
+        });
+
+        it('still asks the first player first', function () {
+            expect(this.player1).toHavePrompt('Select a character to kneel');
+            expect(this.player2).not.toHavePrompt('Select a character to kneel');
+        });
+
+        it('does not let a player skip the choice', function () {
+            this.player1.clickPrompt('Done');
+
+            expect(this.player1).toHavePrompt('Select a character to kneel');
+        });
+    });
+
     describe('when a player has nothing the action could affect', function () {
         beforeEach(function () {
             this.game.resolveGameAction(
