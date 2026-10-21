@@ -127,11 +127,10 @@ These are decided and should stay as they are until someone asks:
 - Do not add a hold that stops verified decks starting with manual mode off.
 
 After the framework gaps, or alongside them when a gap is blocked on a ruling, continue phase 5.
-The eight shared neutrals in the roadmap table are verified. The next archetype is Stark Fealty,
-[decklist 16711](https://thronesdb.com/decklist/view/16711). The roadmap's "20 unverified" for
-that list is stale: the list is covered, and Tumblestone Knight has no text. Recount before
-migrating, and leave that sentence alone unless asked. The other two short Stark decklist ids
-were not recorded.
+The eight shared neutrals in the roadmap table are verified, and so is Stark Fealty,
+[decklist 16711](https://thronesdb.com/decklist/view/16711): a mirror starts with manual mode off
+([StarkFealtyMirror.spec.js](../test/server/decks/StarkFealtyMirror.spec.js)). The next lists are
+the other short Stark lists; their ids were not recorded, so pick them by recounting.
 
 ## Do not reapply
 
