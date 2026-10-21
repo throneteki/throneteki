@@ -6,8 +6,8 @@ Written 2026-10-20 so the next session can continue without the previous convers
 
 The work is committed on `feature/engine-test-framework`. Do not push or open a pull request unless asked.
 
-Last full server run, after the engine changes and before the doc edits: `npx vitest run test/server`
-from the repo root. 419 files, 4628 passed, 13 skipped. Re-run it after any further engine change.
+Last full server run, 2026-10-21: `npx vitest run test/server` from the repo root. 458 files,
+4756 passed, 13 skipped. Re-run it after any further engine change.
 Do not pipe vitest through `grep` or `tail`. On PowerShell, chain with `; if ($LASTEXITCODE -eq 0)`.
 
 ## Where the work is
@@ -104,6 +104,18 @@ the ongoing work, and it was not part of this batch.
   prompted, and characters that must be chosen for claim (Joffrey's Crossbow) are chosen
   automatically when there are no other characters left to choose.
   [Claim.spec.js](../test/server/gamesteps/Claim.spec.js).
+- The `this-in-ability` card-rules check (`test/tools/card-rules.js`) flags `this` inside an arrow
+  function in a card. Abilities use `context.source`, `context.player` and `context.game`.
+  Persistent effects that build matchers (`canPlay`, `canMarshal`, `canMarshalIntoShadows`,
+  `canAmbush`, `dynamicKeywordSources`, `immuneTo`, `canSelectAsFirstPlayer`) pass the effect
+  context to the card predicate. [EffectContext.spec.js](../test/server/effects/EffectContext.spec.js).
+- `toBeReadyToTakeAction` passes in the challenges phase when the player has the
+  "Initiate an action" window open during a challenge, as well as the phase's idle prompt.
+  [matchers.spec.js](../test/server/helpers/matchers.spec.js). Card specs end their flows with
+  `isReadyToTakeAction`, except 8 older unit-style tests in TheRainsOfCastamere.spec.js.
+- Scenario games (`SCENARIO` and `SCENARIO_USERS` on the game node) send `scenario: true` in the
+  game state and summary, and the client navigates the players to `/play` for them.
+  [scenarioRunner.spec.js](../test/server/devtools/scenarioRunner.spec.js).
 - Claim, taxation, and pile order were already done:
   [Claim.spec.js](../test/server/gamesteps/Claim.spec.js),
   [TaxationPhase.spec.js](../test/server/gamesteps/TaxationPhase.spec.js),
@@ -188,5 +200,8 @@ These were tried and reverted, or left alone on purpose.
   those reasons has to pass until it is that player's turn.
 - `integration(` keeps manual mode on. Those specs still click Apply Claim. `setupTest` specs must
   not.
+- `DeckBuilder.buildDeck` throws when a deck has several agendas and none is Alliance. Before, such
+  a deck silently had no agenda: the Red Door list in `PlayableDecks.spec.js` had Fealty copied in,
+  so its mirror failed whenever The Crag was drawn into a starting hand.
 - `setupTest` at phase `marshal` has collected income for the first player only. The second
   player's gold is 0 until their marshaling turn, unless the spec sets `gold`.

@@ -78,7 +78,6 @@ const Decks = [
         plot: 'A Storm of Swords',
         beforeMulligan: chooseStartingLocation('The Crag'),
         cards: {
-            '01027': 1,
             '08039': 1,
             '01005': 2,
             '06020': 1,
@@ -120,7 +119,9 @@ function chooseStartingLocation(name) {
             if (player.hasPrompt('Choose which effect resolves next')) {
                 player.clickPrompt(`${player.name} - The House With the Red Door`);
             }
-            player.clickCard(player.findCardByName(name, 'draw deck'));
+            const location = player.findCardByName(name, 'draw deck');
+            player.clickCard(location);
+            expect(location.location).toBe('play area');
         });
     };
 }

@@ -41,6 +41,11 @@ class DeckBuilder {
         if (agendas.length > 1) {
             // Assume multi-agenda decks are Alliance
             agenda = agendas.find((card) => card.name === 'Alliance');
+            if (!agenda) {
+                throw new Error(
+                    `A deck with several agendas needs Alliance: ${agendas.map((card) => card.name).join(', ')}`
+                );
+            }
             bannerCards = agendas.filter((card) => card.name !== 'Alliance');
         }
 

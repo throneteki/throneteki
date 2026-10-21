@@ -138,7 +138,6 @@ describe('Tyrion Lannister', function () {
         describe('when putting a Shadow card into shadows with a lower printed cost than the printed shadow cost', function () {
             beforeEach(function () {
                 const deck = this.buildDeck('lannister', [
-                    'Fealty',
                     'Banner of the Kraken',
                     'Late Summer Feast',
                     'Moqorro (DitD)',
