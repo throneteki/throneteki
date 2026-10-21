@@ -5830,11 +5830,6 @@
     "server/game/cards/23-AHaH/AWallOfRoses.js": {
         "this-in-ability": 2
     },
-    "server/game/cards/23-AHaH/AlayneStone.js": {
-        "event-registration": 1,
-        "legacy-helper": 2,
-        "this-in-ability": 2
-    },
     "server/game/cards/23-AHaH/AnyaWaynwood.js": {
         "this-in-ability": 3
     },

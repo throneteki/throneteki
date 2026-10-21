@@ -61,6 +61,7 @@ export const Events = Object.freeze({
         params: { card: 'BaseCard', originalLocation: 'string', playingType: 'string' }
     },
     onCardKneeled: { params: { card: 'BaseCard', reason: 'string', source: 'BaseCard' } },
+    onCardPlacedAsDuplicate: { params: { card: 'DrawCard', target: 'DrawCard' } },
     onCardNamed: { params: { player: 'Player' }, optional: { cardName: 'string' } },
     onCardLeftPlay: {
         params: { allowSave: 'boolean', automaticSaveWithDupe: 'boolean', card: 'BaseCard' },

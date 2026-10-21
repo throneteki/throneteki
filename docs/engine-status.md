@@ -120,6 +120,11 @@ the ongoing work, and it was not part of this batch.
 - Scenario games (`SCENARIO` and `SCENARIO_USERS` on the game node) send `scenario: true` in the
   game state and summary, and the client navigates the players to `/play` for them.
   [scenarioRunner.spec.js](../test/server/devtools/scenarioRunner.spec.js).
+- Alayne Stone is a state check. Ruling (2026-10-21): duplicates are in play and can have tokens,
+  so becoming Sansa's duplicate does not leave play. `PlaceAsDuplicate` moves a card that is in
+  play without leave-play events (`onCardPlacedAsDuplicate`), keeping its power and tokens, and
+  the attachment validity check discards its attachments.
+  [AlayneStone.spec.js](../test/server/cards/23-AHaH/AlayneStone.spec.js).
 - Claim, taxation, and pile order were already done:
   [Claim.spec.js](../test/server/gamesteps/Claim.spec.js),
   [TaxationPhase.spec.js](../test/server/gamesteps/TaxationPhase.spec.js),
@@ -137,10 +142,6 @@ not already decided.
 1. Every state change goes through a `GameAction`. Manual corrections (`changeStat`, `/power`,
    `/token`) stay plain corrections and raise no events.
 2. The client showing why an action is unavailable. Server reasons already exist.
-3. Alayne Stone moves to a state check. Ruling (2026-10-21): duplicates are in play and can have
-   tokens, so becoming Sansa's duplicate does not leave play. She keeps her power and tokens, and
-   power on a duplicate counts. Her attachments are discarded by the attachment validity check.
-   `PlaceAsDuplicate` refuses a card that is already in play.
 
 These are decided and should stay as they are until someone asks:
 
