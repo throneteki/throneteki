@@ -43,7 +43,10 @@ the ongoing work, and it was not part of this batch.
 - Marshaling is an action window. The active player marshals on their turn. With strict windows
   on, every other player is offered an action in player order. With strict windows off, a player
   who has not set the marshaling window as a stop is skipped.
-  [MarshalingWindow.spec.js](../test/server/gamesteps/MarshalingWindow.spec.js).
+  [MarshalingWindow.spec.js](../test/server/gamesteps/MarshalingWindow.spec.js). Each active
+  player has their own window, the first player acts first in it, and it closes only after every
+  player has passed in a row (Appendix I, 3.2): marshaling a card is an action, so it rotates
+  the order like any other.
 - An action is refused with reason `window`, whether or not strict windows are on, while a window
   is open and it is not that player's turn, and during marshaling except on that player's turn.
   When strict windows are off, no window is open, and the phase is not marshaling, actions are
@@ -96,15 +99,13 @@ not already decided.
    fixed order. The TODO on `mustShowPlotSelection` in `server/game/effects.js` is the same gap
    for delayed effects that happen together. The first player also does not yet order kills that
    happen together.
-2. The marshaling window closes when every player has passed in a row (Appendix I). Today each
-   player's marshaling turn is its own pass of the window.
-3. Five catalogued events have no engine spec: `onAddedToChallenge`, `onBeforeDeckSearch`,
+2. Five catalogued events have no engine spec: `onAddedToChallenge`, `onBeforeDeckSearch`,
    `onDupeEntersPlay`, `onLookAtShadows`, `onTokenDiscarded`. `onCardsDrawn` from `DrawSpecific`
    has no `amount`.
-4. Every state change goes through a `GameAction`. Manual corrections (`changeStat`, `/power`,
+3. Every state change goes through a `GameAction`. Manual corrections (`changeStat`, `/power`,
    `/token`) stay plain corrections and raise no events.
-5. The client showing why an action is unavailable. Server reasons already exist.
-6. Alayne Stone needs a ruling before it moves to a state check: when she becomes Sansa's
+4. The client showing why an action is unavailable. Server reasons already exist.
+5. Alayne Stone needs a ruling before it moves to a state check: when she becomes Sansa's
    duplicate, does she leave play (losing power, tokens and attachments, and raising leave-play
    events)? The FAQ only says the placement is automatic and cannot be saved from.
    `PlaceAsDuplicate` refuses a card that is already in play.

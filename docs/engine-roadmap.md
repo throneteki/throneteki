@@ -71,7 +71,7 @@ What stops the engine being trusted:
 | About 1,200 hand-written `addMessage` calls in cards                                                                                                      | `server/game/cards`                                                                                                                                 |
 | Event names are untyped strings with no catalogue                                                                                                         | throughout                                                                                                                                          |
 | 198 card spec files for about 1,960 implemented cards                                                                                                     | `test/server/cards`                                                                                                                                 |
-| The framework still disagrees with the Rules Reference where [framework-coverage.md](framework-coverage.md) marks a gap                                  | conflicting effects, useless saves, skipped windows while strict windows are off                                                                    |
+| The framework still disagrees with the Rules Reference where [framework-coverage.md](framework-coverage.md) marks a gap                                   | conflicting effects, useless saves, skipped windows while strict windows are off                                                                    |
 
 ## Phases
 
@@ -299,8 +299,9 @@ The marshaling phase uses that window
 [MarshalingWindow.spec.js](../test/server/gamesteps/MarshalingWindow.spec.js)). The active player
 marshals on their turn. With strict windows on, every other player is offered the action window, in
 player order, before the next player marshals. With strict windows off, a player who has not set
-the marshaling window as a stop is skipped. The window does not yet close only after every player
-has passed in a row: each player's marshaling turn is its own pass of the window.
+the marshaling window as a stop is skipped. Each active player has their own window, the first
+player always has the first opportunity, and marshaling a card is an action, so the window closes
+only after every player has passed in a row (Appendix I, 3.2).
 
 What this needs from card code, required for all new and migrated cards from now on:
 
@@ -481,8 +482,7 @@ following hold. This is the bar for switching the default, on top of both decks 
       characters die, and that kill is `GameActions.kill`
       ([Claim.spec.js](../test/server/gamesteps/Claim.spec.js)).
 - [x] A framework coverage list maps every Rules Reference glossary entry, every framework step in
-      Appendix I, and every ruling in the current FAQ (Rulings and Clarifications v4.1, January
-      2024) to an engine spec, or to an accepted row in the decisions table
+      Appendix I, and every ruling in the current FAQ (Rulings and Clarifications v4.1, January 2024) to an engine spec, or to an accepted row in the decisions table
       ([framework-coverage.md](framework-coverage.md)). The gaps named there are still open.
       Verified cards do not count towards it.
 
@@ -518,5 +518,5 @@ following hold. This is the bar for switching the default, on top of both decks 
 | 2026-10-20 | Phase 6 does not switch the default until the framework items in phases 1, 2, 4 and 5 each have an engine spec, and a list maps every Rules Reference entry, framework step and current FAQ ruling to a spec or an accepted decision.                                                                           |
 | 2026-10-20 | Verified means a `setupTest` spec with no manual actions or harness shortcuts that resolves every ability on the card, enforced by the generator and the test run. Specs of cards that were verified under the earlier bar are rewritten, not carried over.                                                     |
 | 2026-10-20 | Glossary entries that name a card type, a zone, an icon or a printed statistic are ordinary play. They are covered by the card suite, not by a separate framework spec. [framework-coverage.md](framework-coverage.md) lists them.                                                                              |
-| 2026-10-20 | A FAQ entry that is about one card is covered by that card's spec once the card is verified. Until then it is a gap, even if the engine already plays the card.                                                                                                                                                  |
+| 2026-10-20 | A FAQ entry that is about one card is covered by that card's spec once the card is verified. Until then it is a gap, even if the engine already plays the card.                                                                                                                                                 |
 | 2026-10-20 | While strict action windows are off and no window is open, outside the marshaling phase, actions stay available. Marshaling, and any window that is actually open, refuse an action that is not that player's turn.                                                                                             |
