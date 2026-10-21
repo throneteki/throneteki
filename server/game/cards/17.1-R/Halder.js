@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class Halder extends DrawCard {
@@ -28,14 +29,11 @@ class Halder extends DrawCard {
                     strBoost: (context) => context.costs.kneel.length
                 }
             },
-            handler: (context) => {
-                let strBoost = context.costs.kneel.length;
-
-                this.untilEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.modifyStrength(strBoost)
-                }));
-            }
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: ability.effects.modifyStrength(context.costs.kneel.length)
+            }))
         });
     }
 }

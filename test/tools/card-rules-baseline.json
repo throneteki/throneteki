@@ -31,10 +31,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/00-VDS/TheNightfort.js": {
-        "this-in-ability": 5,
-        "add-message": 1
-    },
     "server/game/cards/00-VDS/ThePaleMare.js": {
         "add-message": 2,
         "this-in-ability": 5,
@@ -205,10 +201,6 @@
     "server/game/cards/01-Core/Highgarden.js": {
         "legacy-helper": 1,
         "this-in-ability": 4,
-        "add-message": 1
-    },
-    "server/game/cards/01-Core/IronFleetScout.js": {
-        "this-in-ability": 5,
         "add-message": 1
     },
     "server/game/cards/01-Core/JoffreyBaratheon.js": {
@@ -1115,10 +1107,6 @@
     "server/game/cards/04.3-FFH/BloodOfMyBlood.js": {
         "this-in-ability": 1
     },
-    "server/game/cards/04.3-FFH/CrownOfGoldenRoses.js": {
-        "this-in-ability": 8,
-        "add-message": 1
-    },
     "server/game/cards/04.3-FFH/Dissension.js": {
         "legacy-helper": 1,
         "add-message": 1,
@@ -1169,10 +1157,6 @@
         "legacy-helper": 2,
         "add-message": 2,
         "this-in-ability": 6
-    },
-    "server/game/cards/04.4-TIMC/BurningOnTheSand.js": {
-        "this-in-ability": 5,
-        "add-message": 1
     },
     "server/game/cards/04.4-TIMC/CaswellsKeep.js": {
         "this-in-ability": 9,
@@ -1330,10 +1314,6 @@
     },
     "server/game/cards/04.6-TC/TarredHeads.js": {
         "this-in-ability": 2,
-        "add-message": 1
-    },
-    "server/game/cards/04.6-TC/TheValyrian.js": {
-        "this-in-ability": 7,
         "add-message": 1
     },
     "server/game/cards/05-LoCR/ALannisterAlwaysPaysHisDebts.js": {
@@ -2454,10 +2434,6 @@
     "server/game/cards/09-HoT/HighgardenHonorGuard.js": {
         "this-in-ability": 1
     },
-    "server/game/cards/09-HoT/LastHearth.js": {
-        "this-in-ability": 5,
-        "add-message": 1
-    },
     "server/game/cards/09-HoT/LionsTooth.js": {
         "this-in-ability": 4,
         "add-message": 1,
@@ -2815,9 +2791,7 @@
         "add-message": 2
     },
     "server/game/cards/11.2-TMoW/Meereen.js": {
-        "this-in-ability": 4,
-        "legacy-helper": 1,
-        "add-message": 1
+        "legacy-helper": 1
     },
     "server/game/cards/11.2-TMoW/OldtownUndercity.js": {
         "this-in-ability": 7,
@@ -3648,9 +3622,6 @@
     "server/game/cards/14-FotS/DothrakiSteed.js": {
         "this-in-ability": 3
     },
-    "server/game/cards/14-FotS/EveryCaptainIsAKing.js": {
-        "this-in-ability": 6
-    },
     "server/game/cards/14-FotS/GriffinsRoostKnight.js": {
         "this-in-ability": 5
     },
@@ -3753,9 +3724,6 @@
     },
     "server/game/cards/15-DotE/ChampionsChallenge.js": {
         "this-in-ability": 2
-    },
-    "server/game/cards/15-DotE/ChampionsFavor.js": {
-        "this-in-ability": 4
     },
     "server/game/cards/15-DotE/ChoosingTheSpear.js": {
         "this-in-ability": 11,
@@ -3970,9 +3938,6 @@
         "add-message": 1,
         "this-in-ability": 3
     },
-    "server/game/cards/17.1-R/Halder.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/17.1-R/IronMines.js": {
         "this-in-ability": 4,
         "add-message": 1
@@ -3983,9 +3948,7 @@
         "add-message": 2
     },
     "server/game/cards/17.1-R/Meereen.js": {
-        "this-in-ability": 4,
-        "legacy-helper": 1,
-        "add-message": 1
+        "legacy-helper": 1
     },
     "server/game/cards/17.1-R/NighttimeMarauders.js": {
         "this-in-ability": 7,
@@ -4501,10 +4464,6 @@
         "prompt-for-select": 1,
         "legacy-helper": 1
     },
-    "server/game/cards/22-BtB/BrienneTheBlue.js": {
-        "this-in-ability": 5,
-        "add-message": 1
-    },
     "server/game/cards/22-BtB/CasterlyRock.js": {
         "this-in-ability": 4
     },
@@ -4517,10 +4476,6 @@
         "this-in-ability": 14,
         "add-message": 1,
         "legacy-helper": 1
-    },
-    "server/game/cards/22-BtB/Gendry.js": {
-        "this-in-ability": 5,
-        "add-message": 1
     },
     "server/game/cards/22-BtB/Highgarden.js": {
         "this-in-ability": 15,
@@ -4936,9 +4891,6 @@
     "server/game/cards/26.6-NCbT/WolvesInTheHills.js": {
         "this-in-ability": 7,
         "add-message": 1
-    },
-    "server/game/cards/27.1-THBIB/CaptainOfTheIronFleet.js": {
-        "this-in-ability": 5
     },
     "server/game/cards/27.1-THBIB/IntoTheLists.js": {
         "this-in-ability": 4

@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class BrienneTheBlue extends DrawCard {
@@ -5,32 +6,34 @@ class BrienneTheBlue extends DrawCard {
     // Action: Choose a character that is attacking or defending alone. Until the end of the
     // challenge, that character gets +5 STR. (+10 STR instead if it is a Rainbow Guard character or
     // Brienne of Tarth.)
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.action({
             title: 'Select a character',
             target: {
-                cardCondition: (card) =>
-                    this.game.isDuringChallenge({ attackingAlone: card }) ||
-                    this.game.isDuringChallenge({ defendingAlone: card })
+                cardCondition: (card, context) =>
+                    context.game.isDuringChallenge({ attackingAlone: card }) ||
+                    context.game.isDuringChallenge({ defendingAlone: card })
             },
-            handler: (context) => {
-                let strBoost =
+            message: {
+                format: '{player} plays {source} to give {target} +{strBoost} STR until the end of the challenge',
+                args: {
+                    strBoost: (context) =>
+                        context.target.name === 'Brienne of Tarth' ||
+                        context.target.hasTrait('Rainbow Guard')
+                            ? 10
+                            : 5
+                }
+            },
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfChallenge',
+                match: context.target,
+                effect: ability.effects.modifyStrength(
                     context.target.name === 'Brienne of Tarth' ||
-                    context.target.hasTrait('Rainbow Guard')
+                        context.target.hasTrait('Rainbow Guard')
                         ? 10
-                        : 5;
-                this.untilEndOfChallenge((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.modifyStrength(strBoost)
-                }));
-                this.game.addMessage(
-                    '{0} plays {1} to give {2} +{3} STR until the end of the challenge',
-                    context.player,
-                    this,
-                    context.target,
-                    strBoost
-                );
-            }
+                        : 5
+                )
+            }))
         });
     }
 }

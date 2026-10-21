@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class TheNightfort extends DrawCard {
@@ -8,8 +9,8 @@ class TheNightfort extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Give character +STR',
-            condition: () =>
-                this.game.isDuringChallenge({
+            condition: (context) =>
+                context.game.isDuringChallenge({
                     match: (challenge) => challenge.attackers.length >= 1
                 }),
             phase: 'challenge',
@@ -21,21 +22,17 @@ class TheNightfort extends DrawCard {
                     card.isDefending() &&
                     card.isFaction('thenightswatch')
             },
-            handler: (context) => {
-                let strBoost = this.game.currentChallenge.attackers.length;
-                this.untilEndOfChallenge((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.modifyStrength(strBoost)
-                }));
-
-                this.game.addMessage(
-                    '{0} kneels {1} to give {2} +{3} STR until the end of the challenge',
-                    context.player,
-                    this,
-                    context.target,
-                    strBoost
-                );
-            }
+            message: {
+                format: '{player} kneels {source} to give {target} +{strBoost} STR until the end of the challenge',
+                args: { strBoost: (context) => context.game.currentChallenge.attackers.length }
+            },
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfChallenge',
+                match: context.target,
+                effect: ability.effects.modifyStrength(
+                    context.game.currentChallenge.attackers.length
+                )
+            }))
         });
     }
 }

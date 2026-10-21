@@ -1,28 +1,31 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class EveryCaptainIsAKing extends DrawCard {
     // Every Captain is a King (14026)
     // Action: Until the end of the phase, each Captain character you control gains the King trait
     // and does not kneel when declared as an attacker in [power] challenges.
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.action({
             title: 'Grant King trait',
-            condition: () => this.getCaptains(this.controller).length > 0,
+            condition: (context) =>
+                context.source.getCaptains(context.source.controller).length > 0,
             message: {
                 format: '{player} plays {source} to have {captains} gain the King trait',
-                args: { captains: (context) => this.getCaptains(context.player) }
+                args: { captains: (context) => context.source.getCaptains(context.player) }
             },
-            handler: (context) => {
-                let captains = this.getCaptains(context.player);
-                this.untilEndOfPhase((ability) => ({
-                    match: captains,
+            gameAction: GameActions.simultaneously([
+                GameActions.lastingEffect((context) => ({
+                    duration: 'untilEndOfPhase',
+                    match: context.source.getCaptains(context.player),
                     effect: ability.effects.addTrait('King')
-                }));
-                this.untilEndOfPhase((ability) => ({
-                    match: captains,
+                })),
+                GameActions.lastingEffect((context) => ({
+                    duration: 'untilEndOfPhase',
+                    match: context.source.getCaptains(context.player),
                     effect: ability.effects.doesNotKneelAsAttacker({ challengeType: 'power' })
-                }));
-            }
+                }))
+            ])
         });
     }
 

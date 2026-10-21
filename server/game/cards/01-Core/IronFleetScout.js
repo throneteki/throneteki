@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class IronFleetScout extends DrawCard {
@@ -16,21 +17,15 @@ class IronFleetScout extends DrawCard {
                     card.isParticipating() &&
                     card.isFaction('greyjoy')
             },
-            handler: (context) => {
-                let strBoost = this.controller.firstPlayer ? 2 : 1;
-                this.game.addMessage(
-                    '{0} kneels {1} to give {2} +{3} STR until the end of the challenge',
-                    this.controller,
-                    this,
-                    context.target,
-                    strBoost
-                );
-
-                this.untilEndOfChallenge((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.modifyStrength(strBoost)
-                }));
-            }
+            message: {
+                format: '{player} kneels {source} to give {target} +{strBoost} STR until the end of the challenge',
+                args: { strBoost: (context) => (context.player.firstPlayer ? 2 : 1) }
+            },
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfChallenge',
+                match: context.target,
+                effect: ability.effects.modifyStrength(context.player.firstPlayer ? 2 : 1)
+            }))
         });
     }
 }

@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 import TextHelper from '../../TextHelper.js';
 
@@ -10,25 +11,23 @@ class Meereen extends DrawCard {
         this.action({
             title: 'Place hand facedown and draw 3',
             cost: ability.costs.kneelSelf(),
-            handler: (context) => {
-                this.lastingEffect((ability) => ({
-                    until: {
-                        onCardLeftPlay: (event) => event.card === this,
-                        onPhaseEnded: () => true
-                    },
-                    targetController: 'any',
-                    match: (player) => player === context.player,
-                    effect: ability.effects.removeCardsFromHand()
-                }));
-
-                let numDrawn = context.player.drawCardsToHand(3).length;
-                this.game.addMessage(
-                    '{0} kneels {1} to place their hand facedown under {1} and draw {2}',
-                    context.player,
-                    this,
-                    TextHelper.count(numDrawn, 'card')
-                );
-            }
+            message: {
+                format: '{player} kneels {source} to place their hand facedown under {source} and draw {textHelperPlayer}',
+                args: {
+                    textHelperPlayer: (context) =>
+                        TextHelper.count(context.player.drawCardsToHand(3).length, 'card')
+                }
+            },
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'custom',
+                until: {
+                    onCardLeftPlay: (event) => event.card === context.source,
+                    onPhaseEnded: () => true
+                },
+                targetController: 'any',
+                match: (player) => player === context.player,
+                effect: ability.effects.removeCardsFromHand()
+            }))
         });
     }
 }

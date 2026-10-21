@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class ChampionsFavor extends DrawCard {
@@ -19,17 +20,15 @@ class ChampionsFavor extends DrawCard {
             message: {
                 format: '{player} uses {source} and kneels {parent} to give {target} +{strength} STR until the end of the challenge',
                 args: {
-                    parent: () => this.parent,
-                    strength: () => this.parent.getStrength() + 2
+                    parent: (context) => context.source.parent,
+                    strength: (context) => context.source.parent.getStrength() + 2
                 }
             },
-            handler: (context) => {
-                let str = this.parent.getStrength() + 2;
-                this.untilEndOfChallenge((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.modifyStrength(str)
-                }));
-            }
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfChallenge',
+                match: context.target,
+                effect: ability.effects.modifyStrength(context.source.parent.getStrength() + 2)
+            }))
         });
     }
 }

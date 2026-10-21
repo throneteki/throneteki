@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class Gendry extends DrawCard {
@@ -8,8 +9,8 @@ class Gendry extends DrawCard {
     // keywords.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () =>
-                !this.controller.anyCardsInPlay(
+            condition: (context) =>
+                !context.source.controller.anyCardsInPlay(
                     (card) => card.getType() === 'character' && card.isLoyal()
                 ),
             match: this,
@@ -26,23 +27,20 @@ class Gendry extends DrawCard {
                     !card.isLoyal() &&
                     card.attachments.some((attachment) => attachment.hasTrait('Weapon'))
             },
-            handler: (context) => {
-                let keywords = this.getKeywords();
-                this.untilEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: [
-                        ability.effects.modifyStrength(2),
-                        ...keywords.map((keyword) => ability.effects.addKeyword(keyword))
-                    ]
-                }));
-                this.game.addMessage(
-                    "{0} uses {1} to have {2} gain +2 STR and each of {1}'s keywords: {3}",
-                    context.player,
-                    this,
-                    context.target,
-                    keywords
-                );
-            }
+            message: {
+                format: "{player} uses {source} to have {target} gain +2 STR and each of {source}'s keywords: {keywords}",
+                args: { keywords: (context) => context.source.getKeywords() }
+            },
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: [
+                    ability.effects.modifyStrength(2),
+                    ...context.source
+                        .getKeywords()
+                        .map((keyword) => ability.effects.addKeyword(keyword))
+                ]
+            }))
         });
     }
 }

@@ -1,30 +1,27 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class BurningOnTheSand extends DrawCard {
     // Burning on the Sand (04076)
     // Reaction: After you lose an unopposed challenge, set the claim value on the winning
     // opponent's revealed plot card to 0 until the end of the challenge.
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.loser === this.controller && event.challenge.isUnopposed()
+                afterChallenge: (event, context) =>
+                    event.challenge.loser === context.source.controller &&
+                    event.challenge.isUnopposed()
             },
-            handler: (context) => {
-                let opponent = context.event.challenge.winner;
-                this.untilEndOfChallenge((ability) => ({
-                    match: (card) => card === card.controller.activePlot,
-                    targetController: opponent,
-                    effect: ability.effects.setClaim(0)
-                }));
-
-                this.game.addMessage(
-                    "{0} plays {1} to set the claim value on {2}'s revealed plot card to 0 until the end of the challenge",
-                    this.controller,
-                    this,
-                    opponent
-                );
-            }
+            message: {
+                format: "{player} plays {source} to set the claim value on {opponent}'s revealed plot card to 0 until the end of the challenge",
+                args: { opponent: (context) => context.event.challenge.winner }
+            },
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfChallenge',
+                match: (card) => card === card.controller.activePlot,
+                targetController: context.event.challenge.winner,
+                effect: ability.effects.setClaim(0)
+            }))
         });
     }
 }

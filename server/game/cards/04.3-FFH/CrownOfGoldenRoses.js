@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class CrownOfGoldenRoses extends DrawCard {
@@ -15,26 +16,21 @@ class CrownOfGoldenRoses extends DrawCard {
 
         this.action({
             title: 'Give attached character +STR',
-            condition: () => this.parent.getNumberOfIcons() >= 1,
+            condition: (context) => context.source.parent.getNumberOfIcons() >= 1,
             limit: ability.limit.perRound(2),
             cost: ability.costs.discardFromHand(),
-            handler: (context) => {
-                let strBoost = this.parent.getNumberOfIcons();
-
-                this.untilEndOfPhase((ability) => ({
-                    match: this.parent,
-                    effect: ability.effects.modifyStrength(strBoost)
-                }));
-
-                this.game.addMessage(
-                    '{0} uses {1} and discards {2} from their hand to give +{3} STR to {4} until the end of the phase',
-                    this.controller,
-                    this,
-                    context.costs.discardFromHand,
-                    strBoost,
-                    this.parent
-                );
-            }
+            message: {
+                format: '{player} uses {source} and discards {costs.discardFromHand} from their hand to give +{strBoost} STR to {parent} until the end of the phase',
+                args: {
+                    strBoost: (context) => context.source.parent.getNumberOfIcons(),
+                    parent: (context) => context.source.parent
+                }
+            },
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.source.parent,
+                effect: ability.effects.modifyStrength(context.source.parent.getNumberOfIcons())
+            }))
         });
     }
 }
