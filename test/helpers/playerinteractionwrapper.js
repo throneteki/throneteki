@@ -128,6 +128,21 @@ class PlayerInteractionWrapper {
         this.checkUnserializableGameState();
     }
 
+    nameCard(cardName) {
+        let currentPrompt = this.player.currentPrompt();
+        let nameControl = currentPrompt.controls.find((control) => control.type === 'card-name');
+
+        if (!nameControl) {
+            throw new Error(
+                `Couldn't name a card for ${this.player.name}. Current prompt is:\n${this.formatPrompt()}`
+            );
+        }
+
+        this.game.menuButton(this.player.name, cardName, nameControl.method, nameControl.promptId);
+        this.game.continue();
+        this.checkUnserializableGameState();
+    }
+
     selectValue(value) {
         let currentPrompt = this.player.currentPrompt();
         let selectValueControl = currentPrompt.controls.find(

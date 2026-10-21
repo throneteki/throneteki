@@ -27,6 +27,7 @@ class DeckBuilder {
 
         this.cardsByCode = cards;
         this.cards = Object.values(this.cardsByCode);
+        addLabels(this.cards);
     }
 
     buildDeck(faction, cardLabels, { strictNames = false } = {}) {
@@ -107,6 +108,18 @@ class DeckBuilder {
         }
 
         return cardsByName[0];
+    }
+}
+
+function addLabels(cards) {
+    const countsByName = new Map();
+    for (const card of cards) {
+        countsByName.set(card.name, (countsByName.get(card.name) || 0) + 1);
+    }
+
+    for (const card of cards) {
+        card.label =
+            countsByName.get(card.name) > 1 ? `${card.name} (${card.packCode})` : card.name;
     }
 }
 

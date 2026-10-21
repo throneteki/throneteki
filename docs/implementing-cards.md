@@ -419,11 +419,15 @@ gameAction: GameActions.chooseCards({
 `GameActions.switch({ cards: [first, second] })` switches the positions of two cards. It only
 resolves when there is a card on each side (Rules Reference: Switch).
 
-### Naming a trait
+### Naming a trait or card
 
 `GameActions.nameTrait` prompts the player to name a trait, stores it as `context.namedTrait`,
 logs its `message` (`{trait}` is the named trait) and then resolves its `gameAction`. See
 [SuperstitiousSteward.js](../server/game/cards/27.2-WGYK/SuperstitiousSteward.js).
+
+`GameActions.nameCard` works the same way for a card name. It only accepts the name of a real
+card, stores it as `context.namedCard`, and its `message` uses `{cardName}`. See
+[TheIronThrone.js](../server/game/cards/13.6-LMHR/TheIronThrone.js).
 
 ### Actions
 
@@ -462,7 +466,7 @@ An ability with a declarative `gameAction` and no `message` gets a default one, 
 - `player1 kneels Grey Wind and kills Eddard Stark`, when the source paid a cost
 - `player1 plays Nightmares, kneels their faction card, and blanks Robb Stark`
 
-Leave `message` out when the default says what the card does. Game actions that prompt and log their own lines (`search`, `choose`, `ifCondition`, `may`, `nameTrait`, `discardAtRandom`) don't get a default, and neither do abilities with a `handler`. If nothing resolved, only the plain "{player} uses/plays {source}" line is logged.
+Leave `message` out when the default says what the card does. Game actions that prompt and log their own lines (`search`, `choose`, `ifCondition`, `may`, `nameTrait`, `nameCard`, `discardAtRandom`) don't get a default, and neither do abilities with a `handler`. If nothing resolved, only the plain "{player} uses/plays {source}" line is logged.
 
 The `message` property can be just a string if there are no additional arguments. `{player}` will be replaced with the player initiating the ability, `{source}` will be replaced with the card associated with the ability, and `{target}` will be replaced with the target for the ability (if any):
 

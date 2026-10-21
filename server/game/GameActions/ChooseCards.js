@@ -2,7 +2,16 @@ import CardMatcher from '../CardMatcher.js';
 import GameAction from './GameAction.js';
 import SimultaneousActions from './SimultaneousActions.js';
 
-const AllCardTypes = ['agenda', 'attachment', 'character', 'event', 'location', 'plot', 'title'];
+const AllCardTypes = [
+    'agenda',
+    'attachment',
+    'character',
+    'event',
+    'faction',
+    'location',
+    'plot',
+    'title'
+];
 
 class ChooseCards extends GameAction {
     constructor({

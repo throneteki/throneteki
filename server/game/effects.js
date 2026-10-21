@@ -978,7 +978,7 @@ const Effects = {
         return {
             apply: function (card, context) {
                 let finalController =
-                    typeof newController === 'function' ? newController() : newController;
+                    typeof newController === 'function' ? newController(context) : newController;
                 context.game.takeControlByEffect(finalController, card, context.source);
                 context.game.addMessage(
                     '{0} uses {1} to take control of {2}',

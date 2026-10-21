@@ -195,6 +195,7 @@ this.skipActionWindow(); // each player passes the current action window
 
 // Other prompts
 this.player1.nameTrait('Knight');
+this.player1.nameCard('Tithe');
 this.player1.selectValue('3');
 this.player1.discardToReserve();
 ```

@@ -1238,11 +1238,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/03-WotN/Winterfell.js": {
-        "this-in-ability": 7,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/03-WotN/WinterfellHeartTree.js": {
         "this-in-ability": 1
     },
@@ -2877,9 +2872,6 @@
         "this-in-ability": 4,
         "add-message": 1
     },
-    "server/game/cards/08.5-TFM/AryaStark.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/08.5-TFM/CerseisInformer.js": {
         "this-in-ability": 7,
         "legacy-helper": 2,
@@ -3442,11 +3434,6 @@
         "this-in-ability": 11,
         "add-message": 1,
         "legacy-helper": 1
-    },
-    "server/game/cards/11.1-TSC/BoltonFlayer.js": {
-        "this-in-ability": 5,
-        "legacy-helper": 1,
-        "add-message": 1
     },
     "server/game/cards/11.1-TSC/BurningTheDead.js": {
         "this-in-ability": 5,
@@ -4211,9 +4198,6 @@
     "server/game/cards/13.2-CoS/Nightflyer.js": {
         "this-in-ability": 3
     },
-    "server/game/cards/13.2-CoS/NoSurprises.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/13.2-CoS/OwenTheOaf.js": {
         "this-in-ability": 1
     },
@@ -4554,10 +4538,6 @@
     },
     "server/game/cards/13.6-LMHR/TheBastardOfDriftmark.js": {
         "this-in-ability": 3
-    },
-    "server/game/cards/13.6-LMHR/TheIronThrone.js": {
-        "this-in-ability": 2,
-        "add-message": 1
     },
     "server/game/cards/13.6-LMHR/TheQueensRetinue.js": {
         "this-in-ability": 7,
@@ -5206,9 +5186,6 @@
         "add-message": 3,
         "prompt-for-select": 1
     },
-    "server/game/cards/17.1-R/Ward.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/17.1-R/WeTakeWesteros.js": {
         "prompt-for-select": 1,
         "this-in-ability": 4,
@@ -5594,9 +5571,6 @@
         "this-in-ability": 5,
         "add-message": 1
     },
-    "server/game/cards/20-HMW/TheFather.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/20-HMW/TheHigherMysteries.js": {
         "this-in-ability": 2
     },
@@ -5830,10 +5804,6 @@
         "this-in-ability": 7,
         "add-message": 2,
         "legacy-helper": 1
-    },
-    "server/game/cards/22-BtB/TheMadKingsCommand.js": {
-        "this-in-ability": 7,
-        "add-message": 2
     },
     "server/game/cards/22-BtB/TrystaneMartell.js": {
         "this-in-ability": 3,
@@ -6547,9 +6517,6 @@
         "this-in-ability": 4,
         "add-message": 1
     },
-    "server/game/cards/26.3-MaV/StrainedReserves.js": {
-        "this-in-ability": 5
-    },
     "server/game/cards/26.3-MaV/TakeToTheSky.js": {
         "this-in-ability": 2
     },
@@ -6637,11 +6604,6 @@
     "server/game/cards/26.5-JfE/LivingShadow.js": {
         "this-in-ability": 9,
         "legacy-helper": 1
-    },
-    "server/game/cards/26.5-JfE/NorthernPatriarch.js": {
-        "this-in-ability": 12,
-        "prompt-for-select": 1,
-        "add-message": 2
     },
     "server/game/cards/26.5-JfE/NorthernPyre.js": {
         "this-in-ability": 2

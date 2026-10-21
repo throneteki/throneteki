@@ -8,32 +8,25 @@ class TheFather extends PlotCard {
     setupCardAbilities() {
         this.forcedInterrupt({
             when: {
-                onPhaseEnded: (event) =>
+                onPhaseEnded: (event, context) =>
                     event.phase === 'dominance' &&
-                    this.game.anyCardsInPlay(
-                        (card) => card.getType() === 'character' && card.isUnique()
-                    )
+                    context.game.anyCardsInPlay(isUniqueNonArmyCharacter)
             },
             target: {
-                cardCondition: (card) =>
+                choosingPlayer: 'each',
+                ifAble: true,
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
-                    card.getType() === 'character' &&
-                    card.isUnique() &&
-                    !card.hasTrait('Army'),
-                mode: 'eachPlayer',
-                gameAction: 'returnToHand'
-            },
-            message: "{player} uses {source} to return {target} to its owner's hands",
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.simultaneously(
-                        context.target.map((card) => GameActions.returnCardToHand({ card }))
-                    ),
-                    context
-                );
+                    isUniqueNonArmyCharacter(card) &&
+                    card.controller === context.choosingPlayer,
+                gameAction: GameActions.returnCardToHand((context) => ({ card: context.target }))
             }
         });
     }
+}
+
+function isUniqueNonArmyCharacter(card) {
+    return card.getType() === 'character' && card.isUnique() && !card.hasTrait('Army');
 }
 
 TheFather.code = '20054';

@@ -3,8 +3,10 @@ import path from 'path';
 import range from 'lodash.range';
 
 import Game from '../../server/game/game.js';
+import PossibleResponders from '../../server/game/PossibleResponders.js';
 import PlayerInteractionWrapper from './playerinteractionwrapper.js';
 import Settings from '../../server/settings.js';
+import { deckBuilder } from './cards.js';
 const corePack = JSON.parse(
     fs.readFileSync(
         path.join(import.meta.dirname, '../../throneteki-json-data/packs/Core.json'),
@@ -53,11 +55,14 @@ class GameFlowWrapper {
         this.game = new Game(details, {
             router: gameRouter,
             titleCardData: titleCardData,
+            cardData: deckBuilder.cardsByCode,
             // Specs use manual actions as setup shortcuts; pass 'auto' to test the real default.
             manualMode: true,
             ...options.gameOptions
         });
         this.game.started = true;
+        // Card data is for naming cards. Specs that test hidden responders set their own pool.
+        this.game.possibleResponders = new PossibleResponders(this.game, { cardData: [] });
 
         this.game.disableWinning = options.disableWinning ?? true;
         this.game.disableRevealAcknowledgement = options.disableRevealAcknowledgement ?? true;

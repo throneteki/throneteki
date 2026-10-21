@@ -7,39 +7,36 @@ class StrainedReserves extends PlotCard {
     // this round. (4 characters, locations, or attachments instead if that player has a Summer plot
     // card revealed.)
     setupCardAbilities(ability) {
-        this.enterPlayTracker = CardEntersPlayTracker.forRound(this.game);
+        const tracker = CardEntersPlayTracker.forRound(this.game);
+        const isRestricted = (card) =>
+            isLimitedType(card) && hasReachedLimit(tracker, card.controller);
 
         this.persistentEffect({
             targetController: 'any',
             effect: [
-                ability.effects.cannotMarshal(
-                    (card) => this.isTargetCardType(card) && this.hasReachedLimit(card.controller)
-                ),
-                ability.effects.cannotPutIntoPlay(
-                    (card) => this.isTargetCardType(card) && this.hasReachedLimit(card.controller)
-                )
+                ability.effects.cannotMarshal(isRestricted),
+                ability.effects.cannotPutIntoPlay(isRestricted)
             ]
         });
     }
+}
 
-    isTargetCardType(card) {
-        return ['character', 'location', 'attachment'].includes(card.getType());
-    }
+function isLimitedType(card) {
+    return ['character', 'location', 'attachment'].includes(card.getType());
+}
 
-    hasReachedLimit(player) {
-        return (
-            this.enterPlayTracker.events.filter(
-                (event) =>
-                    event.card.controller === player &&
-                    this.isTargetCardType(event.card) &&
-                    ['marshal', 'ambush', 'outOfShadows', 'play'].includes(event.playingType)
-            ).length >= this.getLimit(player)
-        );
-    }
+function hasReachedLimit(tracker, player) {
+    const entered = tracker.events.filter(
+        (event) =>
+            event.card.controller === player &&
+            isLimitedType(event.card) &&
+            ['marshal', 'ambush', 'outOfShadows', 'play'].includes(event.playingType)
+    );
+    return entered.length >= getLimit(player);
+}
 
-    getLimit(player) {
-        return player.activePlot && player.activePlot.hasTrait('Summer') ? 4 : 2;
-    }
+function getLimit(player) {
+    return player.activePlot && player.activePlot.hasTrait('Summer') ? 4 : 2;
 }
 
 StrainedReserves.code = '26060';

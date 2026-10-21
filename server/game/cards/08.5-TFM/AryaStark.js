@@ -5,7 +5,7 @@ class AryaStark extends DrawCard {
     // While Arya Stark is standing, characters cannot be saved.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => !this.kneeled,
+            condition: (context) => !context.source.kneeled,
             targetController: 'any',
             match: (card) => card.getType() === 'character',
             effect: ability.effects.cannotBeSaved()

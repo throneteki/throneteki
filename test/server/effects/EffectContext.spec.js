@@ -64,6 +64,20 @@ describe('effect callbacks', function () {
         });
     });
 
+    describe('takeControl', function () {
+        it('passes the effect context to the controller function', function () {
+            const newController = { name: 'new controller' };
+            const takeControlByEffect = vi.fn();
+            this.source.controller = newController;
+            this.context.game = { takeControlByEffect, addMessage: () => {} };
+            const effect = Effects.takeControl((context) => context.source.controller);
+
+            effect.apply(this.card, this.context);
+
+            expect(takeControlByEffect).toHaveBeenCalledWith(newController, this.card, this.source);
+        });
+    });
+
     describe('dynamicKeywordSources', function () {
         beforeEach(function () {
             this.keywordSource = { name: 'keyword source' };

@@ -5,7 +5,7 @@ class NoSurprises extends DrawCard {
     // No Surprises (13022)
     // Action: Reveal your hand (of at least 1 card). Then, until the end of the phase, each
     // opponent cannot play events or bring cards out of shadows.
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.action({
             title: 'Reveal your hand',
             condition: (context) => context.player.hand.length > 1,
@@ -18,21 +18,15 @@ class NoSurprises extends DrawCard {
                     format: 'Then, until the end of the phase, {opponents} cannot play events or bring cards out of shadows',
                     args: { opponents: (context) => context.game.getOpponents(context.player) }
                 },
-                handler: (context) => {
-                    for (const opponent of context.game.getOpponents(context.player)) {
-                        this.untilEndOfPhase((ability) => ({
-                            match: opponent,
-                            effect: [
-                                ability.effects.cannotPutIntoPlay(
-                                    (card) => card.location === 'shadows'
-                                ),
-                                ability.effects.cannotPlay(
-                                    (card) => card.getPrintedType() === 'event'
-                                )
-                            ]
-                        }));
-                    }
-                }
+                gameAction: GameActions.lastingEffect((context) => ({
+                    duration: 'untilEndOfPhase',
+                    targetController: 'any',
+                    match: (player) => player !== context.player,
+                    effect: [
+                        ability.effects.cannotPutIntoPlay((card) => card.location === 'shadows'),
+                        ability.effects.cannotPlay((card) => card.getPrintedType() === 'event')
+                    ]
+                }))
             })
         });
     }

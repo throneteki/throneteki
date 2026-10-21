@@ -110,6 +110,46 @@ const Decks = [
             '05034': 2,
             '06061': 3
         }
+    },
+    {
+        name: 'Stark Fealty, "2nd Place Online Worlds 26 - Modern Police"',
+        url: 'https://thronesdb.com/decklist/view/16651',
+        plot: 'Barring the Gates',
+        cards: {
+            '01015': 1,
+            '01027': 1,
+            '01039': 2,
+            '01143': 3,
+            '01148': 1,
+            '01153': 2,
+            '01156': 3,
+            '01159': 3,
+            '02099': 3,
+            '03017': 3,
+            '03021': 3,
+            '05034': 3,
+            '06019': 1,
+            '08020': 1,
+            '08081': 3,
+            10033: 3,
+            11002: 3,
+            11003: 3,
+            11041: 3,
+            11101: 3,
+            13001: 3,
+            13002: 3,
+            13022: 2,
+            13117: 1,
+            14033: 3,
+            17123: 2,
+            17126: 1,
+            20054: 1,
+            20056: 1,
+            22030: 1,
+            26031: 1,
+            26060: 1,
+            26091: 2
+        }
     }
 ];
 
@@ -144,9 +184,9 @@ for (const deckList of Decks) {
                 this.keepStartingHands();
             });
 
-            it('is a legal 60-card, 7-plot deck', function () {
+            it('is a legal deck of at least 60 cards and 7 plots', function () {
                 for (const player of [this.player1Object, this.player2Object]) {
-                    expect(player.preparedDeck.drawCards).toHaveLength(60);
+                    expect(player.preparedDeck.drawCards.length).toBeGreaterThanOrEqual(60);
                     expect(player.preparedDeck.plotCards).toHaveLength(7);
                 }
             });

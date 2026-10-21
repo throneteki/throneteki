@@ -29,6 +29,7 @@ import lookAtShadows from './LookAtShadows.js';
 import LoseIcon from './LoseIcon.js';
 import MayGameAction from './MayGameAction.js';
 import MovePower from './MovePower.js';
+import NameCard from './NameCard.js';
 import NameTrait from './NameTrait.js';
 import PlaceAsDuplicate from './PlaceAsDuplicate.js';
 import PlaceCard from './PlaceCard.js';
@@ -85,6 +86,7 @@ const GameActions = {
     loseIcon: (props) => new AbilityAdapter(LoseIcon, props),
     may: (props) => new MayGameAction(props),
     movePower: (props) => new AbilityAdapter(MovePower, props),
+    nameCard: (props) => new NameCard(props),
     nameTrait: (props) => new NameTrait(props),
     placeAsDuplicate: (props) => new AbilityAdapter(PlaceAsDuplicate, props),
     placeCard: (props) => new AbilityAdapter(PlaceCard, props),

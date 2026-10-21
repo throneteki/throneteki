@@ -10,7 +10,7 @@ class Ward extends DrawCard {
         this.attachmentRestriction({ unique: true, printedCostOrLower: 4 });
 
         this.whileAttached({
-            effect: ability.effects.takeControl(() => this.controller)
+            effect: ability.effects.takeControl((context) => context.source.controller)
         });
 
         this.whileAttached({

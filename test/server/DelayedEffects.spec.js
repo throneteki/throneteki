@@ -180,3 +180,48 @@ describe('name a trait game action', function () {
         expect(this.player1).isReadyToTakeAction();
     });
 });
+
+describe('name a card game action', function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: { inPlay: ['House Dayne Knight'] }
+        });
+
+        this.context = new AbilityContext({
+            game: this.game,
+            player: this.player1Object,
+            source: this.houseDayneKnight
+        });
+        this.game.resolveGameAction(
+            GameActions.nameCard({
+                message: '{player} names {cardName}',
+                gameAction: GameActions.drawCards((context) => ({
+                    player: context.player,
+                    amount: context.namedCard === 'Hedge Knight' ? 2 : 1
+                }))
+            }),
+            this.context
+        );
+        this.game.continue();
+    });
+
+    it('prompts the player to name a card', function () {
+        expect(this.player1).toHavePrompt('Name a card');
+    });
+
+    it('does not accept a name that is not a card', function () {
+        this.player1.nameCard('Not A Card');
+
+        expect(this.player1).toHavePrompt('Name a card');
+    });
+
+    it('resolves its game action with the named card', function () {
+        this.player1.nameCard('Hedge Knight');
+
+        expect(this.context.namedCard).toBe('Hedge Knight');
+        expect(this.player1Object.hand).toHaveLength(2);
+        expect(this.game.getPlainTextLog()).toContain('player1 names Hedge Knight');
+        expect(this.player1).isReadyToTakeAction();
+    });
+});

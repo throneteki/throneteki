@@ -137,9 +137,9 @@ not already decided.
 1. Every state change goes through a `GameAction`. Manual corrections (`changeStat`, `/power`,
    `/token`) stay plain corrections and raise no events.
 2. The client showing why an action is unavailable. Server reasons already exist.
-3. Alayne Stone needs a ruling before it moves to a state check: when she becomes Sansa's
-   duplicate, does she leave play (losing power, tokens and attachments, and raising leave-play
-   events)? The FAQ only says the placement is automatic and cannot be saved from.
+3. Alayne Stone moves to a state check. Ruling (2026-10-21): duplicates are in play and can have
+   tokens, so becoming Sansa's duplicate does not leave play. She keeps her power and tokens, and
+   power on a duplicate counts. Her attachments are discarded by the attachment validity check.
    `PlaceAsDuplicate` refuses a card that is already in play.
 
 These are decided and should stay as they are until someone asks:
@@ -154,14 +154,14 @@ After the framework gaps, or alongside them when a gap is blocked on a ruling, c
 The eight shared neutrals in the roadmap table are verified, and so is Stark Fealty,
 [decklist 16711](https://thronesdb.com/decklist/view/16711): a mirror starts with manual mode off
 ([PlayableDecks.spec.js](../test/server/decks/PlayableDecks.spec.js)), as are Stark Fealty
-[decklist 16272](https://thronesdb.com/decklist/view/16272) and Stark The House With the Red Door
+[decklists 16272](https://thronesdb.com/decklist/view/16272) and
+[16651](https://thronesdb.com/decklist/view/16651), and Stark The House With the Red Door
 [decklist 16273](https://thronesdb.com/decklist/view/16273). On 2026-10-21, of 233 legal unique
 Standard v2.1 joust lists published in the last year, the next closest is
-[16651](https://thronesdb.com/decklist/view/16651) (Stark Fealty), at 12 unverified cards: Bolton
-Flayer, No Surprises, The Iron Throne, Ward, The Father, The Mad King's Command, House Umber
-Berserkers, Strained Reserves, Northern Patriarch, Winterfell, Frozen Solid and Arya Stark. Four
-Lord of the Crossing lists are at 15, blocked on the agenda (see above). Add each finished list
-to `PlayableDecks.spec.js`.
+[16389](https://thronesdb.com/decklist/view/16389) (Stark Fealty), at 9 unverified cards: The
+First Snow of Winter, Winter Festival, House Manderly Knight, Northern Keep, White Harbor, Winter
+Reserves, Shadow of the North, The Stranger and Crannogmen. The Lord of the Crossing lists are
+blocked on the agenda (see above). Add each finished list to `PlayableDecks.spec.js`.
 
 ## Do not reapply
 
