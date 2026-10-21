@@ -5,7 +5,7 @@ class SerAmoryLorch extends DrawCard {
     // While an opponent controls 3 or fewer characters, Ser Amory Lorch gains renown.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.opponentHasThreeOrFewerChars(),
+            condition: (context) => context.source.opponentHasThreeOrFewerChars(),
             match: this,
             effect: ability.effects.addKeyword('Renown')
         });

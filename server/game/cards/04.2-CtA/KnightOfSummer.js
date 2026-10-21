@@ -6,7 +6,7 @@ class KnightOfSummer extends DrawCard {
     // +2 STR and gains renown.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.moreSummerThanWinterPlots(),
+            condition: (context) => context.source.moreSummerThanWinterPlots(),
             match: this,
             effect: [ability.effects.addKeyword('Renown'), ability.effects.modifyStrength(2)]
         });

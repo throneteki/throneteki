@@ -6,10 +6,11 @@ class BearIslandLoyalist extends DrawCard {
     // character you control gains "immune to opponents' events."
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.isParticipating(),
-            match: (card) => this.isOtherParticipatingStark(card),
+            condition: (context) => context.source.isParticipating(),
+            match: (card, context) => context.source.isOtherParticipatingStark(card),
             effect: ability.effects.immuneTo(
-                (card) => card.controller !== this.controller && card.getType() === 'event'
+                (card, arg, context) =>
+                    card.controller !== context.source.controller && card.getType() === 'event'
             )
         });
     }

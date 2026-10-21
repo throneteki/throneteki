@@ -6,7 +6,7 @@ class RoseroadPatrol extends DrawCard {
     // While you control a character with the highest STR in play, Roseroad Patrol gains stealth.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.hasCharacterWithHighestSTR(),
+            condition: (context) => context.source.hasCharacterWithHighestSTR(),
             match: this,
             effect: ability.effects.addKeyword('Stealth')
         });

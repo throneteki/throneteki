@@ -7,7 +7,7 @@ class GreatjonsVanguard extends DrawCard {
     // gains renown.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.controller.getNumberOfUsedPlots() <= 2,
+            condition: (context) => context.source.controller.getNumberOfUsedPlots() <= 2,
             match: this,
             effect: [ability.effects.modifyStrength(2), ability.effects.addKeyword('Renown')]
         });

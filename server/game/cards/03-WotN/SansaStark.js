@@ -6,12 +6,14 @@ class SansaStark extends DrawCard {
     // While Sansa Stark's STR is 0, she gains insight.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: (card) => card === this,
-            effect: ability.effects.dynamicDecreaseStrength(() => this.calculateStrength())
+            match: (card, context) => card === context.source,
+            effect: ability.effects.dynamicDecreaseStrength((card, context) =>
+                context.source.calculateStrength()
+            )
         });
         this.persistentEffect({
-            condition: () => this.getStrength() === 0,
-            match: (card) => card === this,
+            condition: (context) => context.source.getStrength() === 0,
+            match: (card, context) => card === context.source,
             effect: ability.effects.addKeyword('Insight')
         });
     }

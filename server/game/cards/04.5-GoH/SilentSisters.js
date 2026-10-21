@@ -6,7 +6,9 @@ class SilentSisters extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,
-            effect: ability.effects.dynamicStrength(() => this.controller.deadPile.length)
+            effect: ability.effects.dynamicStrength(
+                (card, context) => context.source.controller.deadPile.length
+            )
         });
     }
 }

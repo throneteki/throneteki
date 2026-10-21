@@ -13,11 +13,11 @@ class KingBeyondTheWall extends DrawCard {
         });
 
         this.persistentEffect({
-            condition: () =>
-                this.game.currentChallenge &&
-                this.game.currentChallenge.isAttacking(this.parent) &&
-                this.hasLessTotalPower(this.game.currentChallenge.defendingPlayer),
-            match: (card) => card === this.controller.activePlot,
+            condition: (context) =>
+                context.game.currentChallenge &&
+                context.game.currentChallenge.isAttacking(context.source.parent) &&
+                context.source.hasLessTotalPower(context.game.currentChallenge.defendingPlayer),
+            match: (card, context) => card === context.source.controller.activePlot,
             effect: ability.effects.modifyClaim(1)
         });
     }

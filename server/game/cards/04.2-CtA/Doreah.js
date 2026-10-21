@@ -6,7 +6,7 @@ class Doreah extends DrawCard {
     // insight.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.hasParticipatingLordOrLady(),
+            condition: (context) => context.source.hasParticipatingLordOrLady(),
             match: this,
             effect: ability.effects.addKeyword('Insight')
         });

@@ -8,7 +8,9 @@ class RedGodsBlessing extends DrawCard {
         this.whileAttached({
             effect: [
                 ability.effects.addTrait("R'hllor"),
-                ability.effects.dynamicStrength(() => this.getNumberOfCardsWithRhllor())
+                ability.effects.dynamicStrength((card, context) =>
+                    context.source.getNumberOfCardsWithRhllor()
+                )
             ]
         });
     }

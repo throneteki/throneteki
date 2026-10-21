@@ -33,6 +33,28 @@ describe('effect callbacks', function () {
         });
     }
 
+    describe('cannot effects', function () {
+        it('pass the ability context and the effect context to the condition', function () {
+            const restrictions = [];
+            this.card.addAbilityRestriction = (restriction) => restrictions.push(restriction);
+            this.card.removeAbilityRestriction = (restriction) =>
+                restrictions.splice(restrictions.indexOf(restriction), 1);
+            const abilityContext = { source: { name: 'event' } };
+            const effect = Effects.cannotTarget(
+                (targetingContext, effectContext) =>
+                    targetingContext === abilityContext && effectContext.source === this.source
+            );
+
+            effect.apply(this.card, this.context);
+
+            expect(restrictions[0].isMatch('target', abilityContext)).toBe(true);
+
+            effect.unapply(this.card, this.context);
+
+            expect(restrictions).toEqual([]);
+        });
+    });
+
     describe('immuneTo', function () {
         it('passes the effect context to the condition', function () {
             const restrictions = [];

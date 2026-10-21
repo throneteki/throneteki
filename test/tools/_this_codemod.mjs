@@ -68,6 +68,11 @@ function walk(node, parent, visit) {
 }
 
 const EffectContext = contextIndexes('server/game/effects.js');
+for (const match of fs
+    .readFileSync('server/game/effects.js', 'utf8')
+    .matchAll(/^    (\w+): cannotEffect\(/gm)) {
+    EffectContext[match[1]] = 1;
+}
 const PropertyIndex = {
     condition: [0, []],
     handler: [0, []],
@@ -148,44 +153,44 @@ function transform(path) {
         }
 
         let name;
+        let unresolved = false;
+        const inner = [];
         for (const arrow of arrows) {
-            const pending = newParams.get(arrow);
-            const existing = arrow.params.find(
-                (param) => param.type === 'Identifier' && param.name === 'context'
-            );
-            if (existing || pending) {
-                name = 'context';
-                break;
-            }
-        }
-
-        if (!name) {
-            for (const arrow of arrows) {
-                const position = contextPosition(arrow);
-                if (!position) {
-                    continue;
-                }
+            const position = contextPosition(arrow);
+            if (position) {
                 const [index, placeholders] = position;
-                const param = arrow.params[index];
-                if (param) {
+                const pending = newParams.get(arrow);
+                const param = pending ? undefined : arrow.params[index];
+                if (pending) {
+                    name = pending[index];
+                } else if (param) {
                     if (param.type !== 'Identifier') {
+                        unresolved = true;
                         break;
                     }
                     name = param.name;
+                } else if (arrow.params.some((p) => p.type !== 'Identifier')) {
+                    unresolved = true;
                     break;
+                } else {
+                    const names = arrow.params.map((p) => p.name);
+                    while (names.length < index) {
+                        names.push(placeholders[names.length] || `arg${names.length}`);
+                    }
+                    names.push(names.includes('context') ? 'effectContext' : 'context');
+                    newParams.set(arrow, names);
+                    name = names[index];
                 }
-                if (arrow.params.some((p) => p.type !== 'Identifier')) {
-                    break;
+                const shadowed = inner.some((innerArrow) =>
+                    (newParams.get(innerArrow) || innerArrow.params.map((p) => p.name)).includes(name)
+                );
+                if (shadowed) {
+                    name = undefined;
+                    unresolved = true;
                 }
-                const names = arrow.params.map((p) => p.name);
-                while (names.length < index) {
-                    names.push(placeholders[names.length] || `arg${names.length}`);
-                }
-                names.push('context');
-                newParams.set(arrow, names);
-                name = 'context';
                 break;
             }
+            inner.push(arrow);
         }
 
         if (!name) {

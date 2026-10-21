@@ -16,13 +16,19 @@ import PowerAsGoldSource from './PowerAsGoldSource.js';
 
 function cannotEffect(type) {
     return function (predicate) {
-        const restriction = new CannotRestriction(type, predicate);
+        const restrictions = new Map();
         return {
-            apply: function (card) {
+            apply: function (card, context) {
+                const restriction = new CannotRestriction(
+                    type,
+                    predicate && ((abilityContext) => predicate(abilityContext, context))
+                );
+                restrictions.set(card, restriction);
                 card.addAbilityRestriction(restriction);
             },
             unapply: function (card) {
-                card.removeAbilityRestriction(restriction);
+                card.removeAbilityRestriction(restrictions.get(card));
+                restrictions.delete(card);
             }
         };
     };

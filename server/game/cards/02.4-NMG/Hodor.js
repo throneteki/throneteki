@@ -7,7 +7,8 @@ class Hodor extends DrawCard {
     // Hodor does not contribute his STR to your total for dominance.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => !this.controller.anyCardsInPlay((card) => card.name === 'Bran Stark'),
+            condition: (context) =>
+                !context.source.controller.anyCardsInPlay((card) => card.name === 'Bran Stark'),
             match: this,
             effect: ability.effects.cannotBeDeclaredAsAttacker()
         });

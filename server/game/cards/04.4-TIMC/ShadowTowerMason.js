@@ -7,7 +7,7 @@ class ShadowTowerMason extends DrawCard {
     // gains a [military] and an [intrigue] icon.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.getCardCount() >= 3,
+            condition: (context) => context.source.getCardCount() >= 3,
             match: this,
             effect: [ability.effects.addIcon('military'), ability.effects.addIcon('intrigue')]
         });

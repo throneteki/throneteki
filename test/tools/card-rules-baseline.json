@@ -795,9 +795,6 @@
         "add-message": 1,
         "this-in-ability": 4
     },
-    "server/game/cards/02.4-NMG/Hodor.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/02.4-NMG/Loot.js": {
         "this-in-ability": 6,
         "legacy-helper": 1,
@@ -850,9 +847,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/02.5-COW/GreatjonsVanguard.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/02.5-COW/IronMines.js": {
         "this-in-ability": 3,
         "add-message": 1
@@ -861,9 +855,6 @@
         "this-in-ability": 8,
         "add-message": 1,
         "legacy-helper": 1
-    },
-    "server/game/cards/02.5-COW/KnightsOfTheSun.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/02.5-COW/MirriMazDuur.js": {
         "this-in-ability": 6,
@@ -876,9 +867,6 @@
         "add-message": 1
     },
     "server/game/cards/02.5-COW/PullingTheStrings.js": {
-        "this-in-ability": 1
-    },
-    "server/game/cards/02.5-COW/RoseroadPatrol.js": {
         "this-in-ability": 1
     },
     "server/game/cards/02.5-COW/StinkingDrunk.js": {
@@ -929,12 +917,6 @@
         "add-message": 1,
         "legacy-helper": 1
     },
-    "server/game/cards/02.6-TS/DrownedGodsBlessing.js": {
-        "this-in-ability": 2
-    },
-    "server/game/cards/02.6-TS/ForgottenPlans.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/02.6-TS/FuneralPyre.js": {
         "this-in-ability": 5,
         "legacy-helper": 1,
@@ -947,9 +929,6 @@
         "legacy-helper": 1,
         "add-message": 1,
         "this-in-ability": 3
-    },
-    "server/game/cards/02.6-TS/SeptaMordane.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/02.6-TS/SerBarristanSelmy.js": {
         "this-in-ability": 4,
@@ -970,9 +949,6 @@
     },
     "server/game/cards/02.6-TS/TyeneSand.js": {
         "this-in-ability": 3
-    },
-    "server/game/cards/02.6-TS/Ward.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/03-WotN/Aggo.js": {
         "this-in-ability": 4,
@@ -1001,9 +977,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/03-WotN/BearIslandLoyalist.js": {
-        "this-in-ability": 3
-    },
     "server/game/cards/03-WotN/CatelynStark.js": {
         "this-in-ability": 7,
         "add-message": 1,
@@ -1031,9 +1004,6 @@
     "server/game/cards/03-WotN/FallenFromFavor.js": {
         "legacy-helper": 1,
         "add-message": 1,
-        "this-in-ability": 2
-    },
-    "server/game/cards/03-WotN/Fishwhiskers.js": {
         "this-in-ability": 2
     },
     "server/game/cards/03-WotN/GreenDreams.js": {
@@ -1076,9 +1046,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/03-WotN/ManceRayder.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/03-WotN/Motley.js": {
         "this-in-ability": 7,
         "legacy-helper": 1,
@@ -1119,9 +1086,6 @@
         "this-in-ability": 4,
         "legacy-helper": 1,
         "add-message": 1
-    },
-    "server/game/cards/03-WotN/SansaStark.js": {
-        "this-in-ability": 4
     },
     "server/game/cards/03-WotN/Stonesnake.js": {
         "this-in-ability": 7,
@@ -1208,9 +1172,6 @@
         "add-message": 1,
         "legacy-helper": 1
     },
-    "server/game/cards/04.1-AtSK/SerColenOfGreenpools.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/04.1-AtSK/ShierakQiya.js": {
         "this-in-ability": 4,
         "legacy-helper": 1,
@@ -1260,12 +1221,6 @@
         "legacy-helper": 2,
         "game-listener": 1
     },
-    "server/game/cards/04.2-CtA/Doreah.js": {
-        "this-in-ability": 1
-    },
-    "server/game/cards/04.2-CtA/KnightOfSummer.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/04.2-CtA/OursIsTheOldWay.js": {
         "this-in-ability": 4,
         "add-message": 2
@@ -1288,9 +1243,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/04.2-CtA/TheStoneDrum.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/04.2-CtA/ThereIsMyClaim.js": {
         "this-in-ability": 3
     },
@@ -1306,9 +1258,6 @@
         "this-in-ability": 5,
         "legacy-helper": 1,
         "add-message": 1
-    },
-    "server/game/cards/04.3-FFH/BattleOfOxcross.js": {
-        "this-in-ability": 2
     },
     "server/game/cards/04.3-FFH/BearIsland.js": {
         "this-in-ability": 7,
@@ -1352,9 +1301,6 @@
     },
     "server/game/cards/04.3-FFH/RenlyBaratheon.js": {
         "this-in-ability": 3
-    },
-    "server/game/cards/04.3-FFH/SerAmoryLorch.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/04.3-FFH/SerEdmureTully.js": {
         "legacy-helper": 1,
@@ -1413,20 +1359,8 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/04.4-TIMC/KingBeyondTheWall.js": {
-        "this-in-ability": 6
-    },
-    "server/game/cards/04.4-TIMC/KingRenlySHost.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/04.4-TIMC/PyatPree.js": {
         "this-in-ability": 2
-    },
-    "server/game/cards/04.4-TIMC/RedGodsBlessing.js": {
-        "this-in-ability": 1
-    },
-    "server/game/cards/04.4-TIMC/ShadowTowerMason.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/04.4-TIMC/StannisBaratheon.js": {
         "this-in-ability": 7,
@@ -1462,9 +1396,6 @@
         "add-message": 2,
         "legacy-helper": 1
     },
-    "server/game/cards/04.5-GoH/BrienneOfTarth.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/04.5-GoH/ChatayasBrothel.js": {
         "this-in-ability": 3,
         "legacy-helper": 1,
@@ -1494,9 +1425,6 @@
         "this-in-ability": 10,
         "add-message": 1
     },
-    "server/game/cards/04.5-GoH/MyrcellaBaratheon.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/04.5-GoH/OfferOfAPeach.js": {
         "this-in-ability": 5,
         "legacy-helper": 1,
@@ -1521,9 +1449,6 @@
         "this-in-ability": 12,
         "legacy-helper": 2,
         "add-message": 2
-    },
-    "server/game/cards/04.5-GoH/SilentSisters.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/04.5-GoH/TheFrostfangs.js": {
         "this-in-ability": 6,

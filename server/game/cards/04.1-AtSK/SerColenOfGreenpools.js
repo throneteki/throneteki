@@ -5,7 +5,7 @@ class SerColenOfGreenpools extends DrawCard {
     // During [power] challenges, Ser Colen of Greenpools gets +3 STR.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.game.isDuringChallenge({ challengeType: 'power' }),
+            condition: (context) => context.game.isDuringChallenge({ challengeType: 'power' }),
             match: this,
             effect: ability.effects.modifyStrength(3)
         });

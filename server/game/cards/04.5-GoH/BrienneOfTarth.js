@@ -7,8 +7,8 @@ class BrienneOfTarth extends DrawCard {
     // declared as a defender.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () =>
-                this.controller.anyCardsInPlay(
+            condition: (context) =>
+                context.source.controller.anyCardsInPlay(
                     (card) => card.hasTrait('King') || card.name === 'Catelyn Stark'
                 ),
             match: this,

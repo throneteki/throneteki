@@ -16,7 +16,8 @@ class SeptaMordane extends DrawCard {
             effect: [
                 ability.effects.addIcon('intrigue'),
                 ability.effects.immuneTo(
-                    (card) => card.controller !== this.controller && card.getType() === 'plot'
+                    (card, arg, context) =>
+                        card.controller !== context.source.controller && card.getType() === 'plot'
                 )
             ]
         });

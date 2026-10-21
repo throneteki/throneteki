@@ -6,8 +6,11 @@ class BattleOfOxcross extends PlotCard {
     // first challenge you initiate this round.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () =>
-                this.game.isDuringChallenge({ attackingPlayer: this.controller, number: 1 }),
+            condition: (context) =>
+                context.game.isDuringChallenge({
+                    attackingPlayer: context.source.controller,
+                    number: 1
+                }),
             match: (card) => card.getType() === 'character' && card.getPrintedCost() >= 4,
             targetController: 'opponent',
             effect: ability.effects.cannotBeDeclaredAsDefender()

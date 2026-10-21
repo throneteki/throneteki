@@ -6,7 +6,7 @@ class ForgottenPlans extends PlotCard {
     // if it were blank (except for Traits).
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.game.currentPhase !== 'plot',
+            condition: (context) => context.game.currentPhase !== 'plot',
             match: (card) => card.getType() === 'plot' && !card.hasTrait('Scheme'),
             targetController: 'any',
             effect: ability.effects.blankExcludingTraits

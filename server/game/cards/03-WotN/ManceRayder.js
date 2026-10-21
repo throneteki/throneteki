@@ -13,8 +13,8 @@ class ManceRayder extends DrawCard {
             effect: ability.effects.gainAmbush()
         });
         this.persistentEffect({
-            condition: () =>
-                this.game
+            condition: (context) =>
+                context.game
                     .getPlayers()
                     .some((player) => player.activePlot && player.activePlot.hasTrait('Winter')),
             targetController: 'current',

@@ -6,7 +6,7 @@ class KnightsOfTheSun extends DrawCard {
     // While there are 3 or more plot cards in your used pile, Knights of the Sun gains renown.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.controller.getNumberOfUsedPlots() >= 3,
+            condition: (context) => context.source.controller.getNumberOfUsedPlots() >= 3,
             match: this,
             effect: ability.effects.addKeyword('Renown')
         });

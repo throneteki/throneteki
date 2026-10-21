@@ -6,13 +6,13 @@ class MyrcellaBaratheon extends DrawCard {
     // kneel when declared as a defender in a [power] challenge.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.areNoKingsInPlay(),
+            condition: (context) => context.source.areNoKingsInPlay(),
             match: this,
             effect: ability.effects.doesNotKneelAsDefender({ challengeType: 'power' })
         });
 
         this.persistentEffect({
-            condition: () => this.areNoKingsInPlay(),
+            condition: (context) => context.source.areNoKingsInPlay(),
             match: this,
             effect: ability.effects.addKeyword('Renown')
         });

@@ -6,7 +6,7 @@ class TheStoneDrum extends DrawCard {
     // card by 1.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.game.anyPlotHasTrait('Kingdom'),
+            condition: (context) => context.game.anyPlotHasTrait('Kingdom'),
             match: (card) => card === card.controller.activePlot,
             effect: ability.effects.modifyGold(1)
         });
