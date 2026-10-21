@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class SerJaimeLannister extends DrawCard {
@@ -7,8 +8,9 @@ class SerJaimeLannister extends DrawCard {
     // gains an [intrigue] icon. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () =>
-                this.game.currentChallenge && this.game.currentChallenge.attackers.length === 1,
+            condition: (context) =>
+                context.game.currentChallenge &&
+                context.game.currentChallenge.attackers.length === 1,
             match: (card) => card.hasTrait('Knight') && card.isAttacking(),
             effect: ability.effects.addKeyword('Renown')
         });
@@ -19,21 +21,14 @@ class SerJaimeLannister extends DrawCard {
             phase: 'challenge',
             target: {
                 activePromptTitle: 'Select character',
-                cardCondition: (card) => this.isKingsguardCharacter(card)
+                cardCondition: (card, context) => context.source.isKingsguardCharacter(card)
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} uses {1} to give {2} an {3} icon',
-                    context.player,
-                    this,
-                    context.target,
-                    'intrigue'
-                );
-                this.untilEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.addIcon('intrigue')
-                }));
-            }
+            message: '{player} uses {source} to give {target} an intrigue icon',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: ability.effects.addIcon('intrigue')
+            }))
         });
     }
 

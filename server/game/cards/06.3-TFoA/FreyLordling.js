@@ -1,26 +1,22 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class FreyLordling extends DrawCard {
     // Frey Lordling (06057)
     // Reaction: After you initiate a challenge, Frey Lordling gets +1 STR until the end of the
     // phase.
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onChallengeInitiated: (event) => event.challenge.attackingPlayer === this.controller
+                onChallengeInitiated: (event, context) =>
+                    event.challenge.attackingPlayer === context.source.controller
             },
-            handler: () => {
-                this.untilEndOfPhase((ability) => ({
-                    match: this,
-                    effect: ability.effects.modifyStrength(1)
-                }));
-
-                this.game.addMessage(
-                    '{0} uses {1} to give {1} +1 STR until the end of the phase',
-                    this.controller,
-                    this
-                );
-            }
+            message: '{player} uses {source} to give {source} +1 STR until the end of the phase',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.source,
+                effect: ability.effects.modifyStrength(1)
+            }))
         });
     }
 }

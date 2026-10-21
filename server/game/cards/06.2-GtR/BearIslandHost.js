@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class BearIslandHost extends DrawCard {
@@ -16,19 +17,13 @@ class BearIslandHost extends DrawCard {
                     card.hasTrait('House Mormont') &&
                     card.getType() === 'character'
             },
-            handler: (context) => {
-                this.untilEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.doesNotKneelAsAttacker({ challengeType: 'military' })
-                }));
-
-                this.game.addMessage(
-                    '{0} discards a gold from {1} to make {2} not kneel as an attacker in a military challenge',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message:
+                '{player} discards a gold from {source} to make {target} not kneel as an attacker in a military challenge',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: ability.effects.doesNotKneelAsAttacker({ challengeType: 'military' })
+            }))
         });
     }
 }

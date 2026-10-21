@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class BrightWaterKnight extends DrawCard {
@@ -11,20 +12,15 @@ class BrightWaterKnight extends DrawCard {
             phase: 'marshal',
             limit: ability.limit.perPhase(1),
             cost: ability.costs.discardGold(),
-            handler: (context) => {
-                this.untilEndOfPhase((ability) => ({
-                    effect: ability.effects.reduceNextMarshalledCardCost(
-                        2,
-                        (card) => card.getType() === 'character' && card.hasTrait('Knight')
-                    )
-                }));
-
-                this.game.addMessage(
-                    '{0} discards 1 gold from {1} to reduce the next knight character they marshal this phase by 2',
-                    context.player,
-                    this
-                );
-            }
+            message:
+                '{player} discards 1 gold from {source} to reduce the next knight character they marshal this phase by 2',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                effect: ability.effects.reduceNextMarshalledCardCost(
+                    2,
+                    (card) => card.getType() === 'character' && card.hasTrait('Knight')
+                )
+            }))
         });
     }
 }

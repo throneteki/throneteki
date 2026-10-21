@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class Gilly extends DrawCard {
@@ -10,25 +11,19 @@ class Gilly extends DrawCard {
             title: 'Discard 1 gold from ' + this.name,
             cost: ability.costs.discardGold(),
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
-                    card.controller === this.controller &&
+                    card.controller === context.source.controller &&
                     card.hasTrait('Steward') &&
                     card.getType() === 'character'
             },
-            handler: (context) => {
-                this.untilEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.addKeyword('stealth')
-                }));
-
-                this.game.addMessage(
-                    '{0} discards 1 gold from {1} to have {2} gain stealth until the end of the phase',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message:
+                '{player} discards 1 gold from {source} to have {target} gain stealth until the end of the phase',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: ability.effects.addKeyword('stealth')
+            }))
         });
     }
 }

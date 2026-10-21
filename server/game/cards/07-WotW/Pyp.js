@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class Pyp extends DrawCard {
@@ -5,33 +6,28 @@ class Pyp extends DrawCard {
     // No attachments except Weapon.
     // Reaction: After you win a challenge in which Pyp is attacking, choose another attacking
     // [thenightswatch] character. That character gains insight until the end of the phase.
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller && this.isAttacking()
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
+                    context.source.isAttacking()
             },
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
-                    card !== this &&
+                    card !== context.source &&
                     card.isAttacking() &&
                     card.isFaction('thenightswatch') &&
                     card.getType() === 'character'
             },
-            handler: (context) => {
-                this.untilEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.addKeyword('Insight')
-                }));
-
-                this.game.addMessage(
-                    '{0} uses {1} to have {2} gain insight until the end of the phase',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message:
+                '{player} uses {source} to have {target} gain insight until the end of the phase',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: ability.effects.addKeyword('Insight')
+            }))
         });
     }
 }

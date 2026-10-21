@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class IAmNoOne extends DrawCard {
@@ -9,31 +10,24 @@ class IAmNoOne extends DrawCard {
         this.action({
             title: 'Give character stealth/insight',
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
                     card.getPrintedCost() <= 3 &&
-                    card.controller === this.controller
+                    card.controller === context.source.controller
             },
-            handler: (context) => {
-                this.untilEndOfPhase(() => ({
-                    match: context.target,
-                    effect: [
-                        ability.effects.losesAllFactions(),
-                        ability.effects.losesAllTraits(),
-                        ability.effects.addKeyword('stealth'),
-                        ability.effects.addKeyword('insight'),
-                        ability.effects.doesNotKneelAsAttacker()
-                    ]
-                }));
-
-                this.game.addMessage(
-                    '{0} plays {1} and chooses {2} as its target',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} plays {source} and chooses {target} as its target',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: [
+                    ability.effects.losesAllFactions(),
+                    ability.effects.losesAllTraits(),
+                    ability.effects.addKeyword('stealth'),
+                    ability.effects.addKeyword('insight'),
+                    ability.effects.doesNotKneelAsAttacker()
+                ]
+            }))
         });
     }
 }

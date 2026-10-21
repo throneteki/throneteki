@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class TheHandsSolar extends DrawCard {
@@ -12,20 +13,13 @@ class TheHandsSolar extends DrawCard {
                 cardCondition: (card) =>
                     card.location === 'play area' && card.getType() === 'character'
             },
-            handler: (context) => {
-                this.untilEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.addIcon('intrigue')
-                }));
-
-                this.game.addMessage(
-                    '{0} kneels {1} to give {2} an {3} icon until the end of the phase',
-                    this.controller,
-                    this,
-                    context.target,
-                    'intrigue'
-                );
-            }
+            message:
+                '{player} kneels {source} to give {target} an intrigue icon until the end of the phase',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: ability.effects.addIcon('intrigue')
+            }))
         });
     }
 }

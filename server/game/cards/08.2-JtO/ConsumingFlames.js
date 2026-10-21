@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class ConsumingFlames extends DrawCard {
@@ -9,7 +10,7 @@ class ConsumingFlames extends DrawCard {
         this.action({
             title: 'Give character -3 STR',
             cost: ability.costs.discardFromHand(
-                (card) => card !== this && card.isFaction('targaryen')
+                (card, context) => card !== context.source && card.isFaction('targaryen')
             ),
             target: {
                 cardCondition: (card) =>
@@ -17,20 +18,13 @@ class ConsumingFlames extends DrawCard {
                     card.getType() === 'character' &&
                     card.isParticipating()
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} plays {1} and discards {2} from their hand to give {3} -3 STR until the end of the phase',
-                    context.player,
-                    this,
-                    context.costs.discardFromHand,
-                    context.target
-                );
-
-                this.untilEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.killByStrength(-3)
-                }));
-            }
+            message:
+                '{player} plays {source} and discards {costs.discardFromHand} from their hand to give {target} -3 STR until the end of the phase',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: ability.effects.killByStrength(-3)
+            }))
         });
     }
 }

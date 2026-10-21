@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class ArborQueen extends DrawCard {
@@ -24,24 +25,25 @@ class ArborQueen extends DrawCard {
                         !card.isFaction('tyrell')
                 }
             },
-            handler: (context) => {
-                this.untilEndOfPhase((ability) => ({
+            message: {
+                format: '{player} kneels {source} to give +2 STR to {first} and {second}',
+                args: {
+                    first: (context) => context.targets.first,
+                    second: (context) => context.targets.second
+                }
+            },
+            gameAction: GameActions.simultaneously([
+                GameActions.lastingEffect((context) => ({
+                    duration: 'untilEndOfPhase',
                     match: context.targets.first,
                     effect: ability.effects.modifyStrength(2)
-                }));
-                this.untilEndOfPhase((ability) => ({
+                })),
+                GameActions.lastingEffect((context) => ({
+                    duration: 'untilEndOfPhase',
                     match: context.targets.second,
                     effect: ability.effects.modifyStrength(2)
-                }));
-
-                this.game.addMessage(
-                    '{0} kneels {1} to give +2 STR to {2} and {3}',
-                    context.player,
-                    this,
-                    context.targets.first,
-                    context.targets.second
-                );
-            }
+                }))
+            ])
         });
     }
 }
