@@ -9,8 +9,8 @@ class WarriorsSons extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardPowerGained: (event) => event.card === this,
-                onCardPowerMoved: (event) => event.target === this
+                onCardPowerGained: (event, context) => event.card === context.source,
+                onCardPowerMoved: (event, context) => event.target === context.source
             },
             limit: ability.limit.perPhase(1),
             message: '{player} uses {source} to stand {source}',

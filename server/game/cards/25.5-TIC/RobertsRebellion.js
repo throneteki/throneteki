@@ -11,17 +11,20 @@ class RobertsRebellion extends PlotCard {
 
         this.forcedInterrupt({
             when: {
-                onPhaseEnded: (event) =>
+                onPhaseEnded: (event, context) =>
                     event.phase === 'challenge' &&
-                    this.tracker.some({ loser: this.controller, challengeType: 'power' })
+                    context.source.tracker.some({
+                        loser: context.source.controller,
+                        challengeType: 'power'
+                    })
             },
             message: {
                 format: '{player} is forced to discard {amount} power from their faction card for {source}',
-                args: { amount: (context) => this.getPowerAmount(context) }
+                args: { amount: (context) => context.source.getPowerAmount(context) }
             },
             gameAction: GameActions.discardPower((context) => ({
                 card: context.player.faction,
-                amount: this.getPowerAmount(context)
+                amount: context.source.getPowerAmount(context)
             }))
         });
     }

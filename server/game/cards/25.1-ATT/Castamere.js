@@ -8,10 +8,10 @@ class Castamere extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onClaimApplied: (event) =>
+                onClaimApplied: (event, context) =>
                     event.challenge &&
                     event.challenge.isMatch({
-                        winner: this.controller,
+                        winner: context.source.controller,
                         challengeType: 'intrigue',
                         by5: true
                     })
@@ -22,7 +22,7 @@ class Castamere extends DrawCard {
             gameAction: GameActions.applyClaim((context) => {
                 const claim = context.event.claim.clone();
                 claim.challengeType = 'military';
-                return { player: context.player, claim, game: this.game };
+                return { player: context.player, claim, game: context.game };
             })
         });
     }

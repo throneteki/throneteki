@@ -14,7 +14,9 @@ class Gared extends DrawCard {
             gameAction: GameActions.simultaneously((context) =>
                 context.game
                     .getOpponents(context.player)
-                    .map((player) => GameActions.kneelCard({ card: player.faction, source: this }))
+                    .map((player) =>
+                        GameActions.kneelCard({ card: player.faction, source: context.source })
+                    )
             )
         });
     }

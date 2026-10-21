@@ -18,9 +18,12 @@ class OpenRevolt extends PlotCard {
                 : 2;
         this.interrupt({
             when: {
-                onPhaseEnded: (event) =>
+                onPhaseEnded: (event, context) =>
                     event.phase === 'challenge' &&
-                    this.tracker.count({ challengeType: 'intrigue', loser: this.controller }) === 0
+                    context.source.tracker.count({
+                        challengeType: 'intrigue',
+                        loser: context.source.controller
+                    }) === 0
             },
             message: {
                 format: '{player} uses {source} to gain {amount} power',

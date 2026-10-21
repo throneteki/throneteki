@@ -9,10 +9,10 @@ class SerAndrewEstermont extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCharacterKilled: (event) =>
+                onCharacterKilled: (event, context) =>
                     event.allowSave &&
                     event.card.canBeSaved() &&
-                    event.card.controller === this.controller &&
+                    event.card.controller === context.source.controller &&
                     event.card.isUnique() &&
                     event.card.isFaction('baratheon')
             },

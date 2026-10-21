@@ -8,8 +8,8 @@ class RaventreeHall extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardPowerGained: (event) => this.isCharacter(event.card),
-                onCardPowerMoved: (event) => this.isCharacter(event.target)
+                onCardPowerGained: (event, context) => context.source.isCharacter(event.card),
+                onCardPowerMoved: (event, context) => context.source.isCharacter(event.target)
             },
             limit: ability.limit.perPhase(1),
             message: '{player} uses {source} to gain 1 gold',

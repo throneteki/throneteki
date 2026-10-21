@@ -9,17 +9,18 @@ class TywinLannister extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller && this.isParticipating()
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
+                    context.source.isParticipating()
             },
             message: {
                 format: '{player} uses {source} to have {source} gain {amount} power',
-                args: { amount: (context) => this.getPowerAmount(context) }
+                args: { amount: (context) => context.source.getPowerAmount(context) }
             },
             limit: ability.limit.perPhase(1),
             gameAction: GameActions.gainPower((context) => ({
-                card: this,
-                amount: this.getPowerAmount(context)
+                card: context.source,
+                amount: context.source.getPowerAmount(context)
             }))
         });
     }

@@ -9,17 +9,18 @@ class SalladhorSaansLyseni extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller && this.isAttacking()
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
+                    context.source.isAttacking()
             },
             limit: ability.limit.perPhase(1),
             message: {
                 format: '{player} uses {source} to have {source} gain {amount} power',
-                args: { amount: (context) => this.getAmount(context) }
+                args: { amount: (context) => context.source.getAmount(context) }
             },
             gameAction: GameActions.gainPower((context) => ({
-                card: this,
-                amount: this.getAmount(context)
+                card: context.source,
+                amount: context.source.getAmount(context)
             }))
         });
     }

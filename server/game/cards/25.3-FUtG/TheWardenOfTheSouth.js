@@ -16,15 +16,18 @@ class TheWardenOfTheSouth extends DrawCard {
 
         this.reaction({
             when: {
-                onCardStrengthChanged: (event) =>
-                    this.parent && event.card === this.parent && event.amount > 0 && event.applying
+                onCardStrengthChanged: (event, context) =>
+                    context.source.parent &&
+                    event.card === context.source.parent &&
+                    event.amount > 0 &&
+                    event.applying
             },
             cost: ability.costs.kneelSelf(),
             message: {
                 format: '{player} kneels {costs.kneel} to stand {parent}',
-                args: { parent: () => this.parent }
+                args: { parent: (context) => context.source.parent }
             },
-            gameAction: GameActions.standCard(() => ({ card: this.parent }))
+            gameAction: GameActions.standCard((context) => ({ card: context.source.parent }))
         });
     }
 }

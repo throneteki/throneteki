@@ -11,9 +11,9 @@ class OneTwoThree extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     event.challenge.isMatch({
-                        winner: this.controller,
+                        winner: context.source.controller,
                         challengeType: 'intrigue'
                     })
             },
@@ -40,7 +40,7 @@ class OneTwoThree extends DrawCard {
                     message:
                         '{player} plays {source} to have {target} gain insight until the end of the phase',
                     gameAction: GameActions.genericHandler((context) => {
-                        this.untilEndOfPhase((ability) => ({
+                        context.source.untilEndOfPhase((ability) => ({
                             match: context.target,
                             effect: ability.effects.addKeyword('insight')
                         }));

@@ -14,10 +14,10 @@ class Nightfall extends DrawCard {
 
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
-                    this.parent &&
-                    this.parent.isParticipating()
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
+                    context.source.parent &&
+                    context.source.parent.isParticipating()
             },
             cost: ability.costs.kneelSelf(),
             message: '{player} kneels {costs.kneel} to have each player check for reserve',

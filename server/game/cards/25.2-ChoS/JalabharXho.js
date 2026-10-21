@@ -15,7 +15,7 @@ class JalabharXho extends DrawCard {
                 '{player} discards 1 power from their faction card to take control of {source}',
             gameAction: GameActions.takeControl((context) => ({
                 player: context.player,
-                card: this,
+                card: context.source,
                 context
             }))
         });

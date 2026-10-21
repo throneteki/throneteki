@@ -9,8 +9,9 @@ class MyrcellaBaratheon extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller && this.isParticipating()
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
+                    context.source.isParticipating()
             },
             max: ability.limit.perPhase(1),
             message: '{player} returns {source} to their hand',
@@ -20,7 +21,7 @@ class MyrcellaBaratheon extends DrawCard {
                     args: { opponent: (context) => context.parentContext.event.challenge.loser }
                 },
                 gameAction: GameActions.genericHandler((context) => {
-                    this.untilEndOfPhase((ability) => ({
+                    context.source.untilEndOfPhase((ability) => ({
                         targetController: 'current',
                         effect: ability.effects.mayInitiateAdditionalChallenge(
                             'intrigue',

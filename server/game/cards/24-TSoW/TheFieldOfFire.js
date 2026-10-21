@@ -12,11 +12,11 @@ class TheFieldOfFire extends DrawCard {
             phase: 'challenge',
             message: {
                 format: '{player} plays {source} to have each non-Dragon character without attachments get {reduction} STR until the end of the phase',
-                args: { reduction: (context) => this.getReductionAmount(context.player) }
+                args: { reduction: (context) => context.source.getReductionAmount(context.player) }
             },
             max: ability.limit.perPhase(1),
             gameAction: GameActions.genericHandler((context) => {
-                this.untilEndOfPhase((ability) => ({
+                context.source.untilEndOfPhase((ability) => ({
                     match: context.game.filterCardsInPlay(
                         (card) =>
                             card.getType() === 'character' &&
@@ -24,7 +24,9 @@ class TheFieldOfFire extends DrawCard {
                             card.attachments.length === 0
                     ),
                     targetController: 'any',
-                    effect: ability.effects.modifyStrength(this.getReductionAmount(context.player))
+                    effect: ability.effects.modifyStrength(
+                        context.source.getReductionAmount(context.player)
+                    )
                 }));
             })
         });

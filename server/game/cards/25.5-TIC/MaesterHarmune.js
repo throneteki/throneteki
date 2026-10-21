@@ -9,10 +9,10 @@ class MaesterHarmune extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onGoldTransferred: (event) =>
+                onGoldTransferred: (event, context) =>
                     event.source.getGameElementType() === 'player' &&
-                    event.source !== this.controller &&
-                    event.target === this.controller
+                    event.source !== context.source.controller &&
+                    event.target === context.source.controller
             },
             limit: ability.limit.perRound(2),
             message: {
@@ -32,7 +32,7 @@ class MaesterHarmune extends DrawCard {
                         GameActions.drawCards((context) => ({
                             player: context.player,
                             amount: 1,
-                            source: this
+                            source: context.source
                         }))
                     ])
                 })

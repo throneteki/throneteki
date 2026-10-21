@@ -16,9 +16,9 @@ class LannTheClever extends DrawCard {
         });
         this.reaction({
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     event.challenge.challengeType === 'intrigue' &&
-                    event.challenge.winner === this.controller
+                    event.challenge.winner === context.source.controller
             },
             cost: [
                 ability.costs.kneelSelf(),

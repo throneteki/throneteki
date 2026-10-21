@@ -9,18 +9,18 @@ class Insubordination extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onChallengeInitiated: (event) =>
+                onChallengeInitiated: (event, context) =>
                     event.challenge.isMatch({
-                        initiatedAgainstPlayer: this.controller,
-                        attackingAlone: this.parent
+                        initiatedAgainstPlayer: context.source.controller,
+                        attackingAlone: context.source.parent
                     })
             },
             cost: ability.costs.kneelSelf(),
             message: {
                 format: '{player} kneels {costs.kneel} to kill {parent}',
-                args: { parent: () => this.parent }
+                args: { parent: (context) => context.source.parent }
             },
-            gameAction: GameActions.kill(() => ({ card: this.parent }))
+            gameAction: GameActions.kill((context) => ({ card: context.source.parent }))
         });
     }
 }

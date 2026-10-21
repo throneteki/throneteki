@@ -12,9 +12,9 @@ class TheRedFork extends DrawCard {
         });
         this.reaction({
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     event.challenge.isMatch({
-                        winner: this.controller,
+                        winner: context.source.controller,
                         by5: true,
                         challengeType: 'military'
                     })
