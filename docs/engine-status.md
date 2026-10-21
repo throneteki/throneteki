@@ -55,6 +55,10 @@ the ongoing work, and it was not part of this batch.
   reactions. Losing all traits removes traits for the duration, including ones added during it,
   and they return when the effect ends. Immunity to an opponent's event stops an effect that names
   no game action. [LastingEffects.spec.js](../test/server/gamesteps/LastingEffects.spec.js).
+- Terminal conditions (FAQ 3.1). The card pool has two: burn and state checks. Both refuse saves
+  up front. The "if still in play" effects are one-off delayed effects, not terminal conditions,
+  so they can be saved from. A new terminal condition whose save could remedy it would need its
+  own check, as Risen from the Sea has for burn.
 - A burn kill cannot be saved (FAQ 3.1: a save that would not remedy the 0 STR cannot be
   initiated), so Bodyguard and duplicates are not offered.
   [Burn.spec.js](../test/server/gamesteps/Burn.spec.js). Risen from the Sea is the exception: it
@@ -92,18 +96,15 @@ not already decided.
    fixed order. The TODO on `mustShowPlotSelection` in `server/game/effects.js` is the same gap
    for delayed effects that happen together. The first player also does not yet order kills that
    happen together.
-2. FAQ 3.1, the general case. A save that would not remedy a terminal condition cannot be
-   initiated. For burn the kill is unsaveable and Risen from the Sea checks its own remedy. Other
-   terminal conditions are still open.
-3. The marshaling window closes when every player has passed in a row (Appendix I). Today each
+2. The marshaling window closes when every player has passed in a row (Appendix I). Today each
    player's marshaling turn is its own pass of the window.
-4. Five catalogued events have no engine spec: `onAddedToChallenge`, `onBeforeDeckSearch`,
+3. Five catalogued events have no engine spec: `onAddedToChallenge`, `onBeforeDeckSearch`,
    `onDupeEntersPlay`, `onLookAtShadows`, `onTokenDiscarded`. `onCardsDrawn` from `DrawSpecific`
    has no `amount`.
-5. Every state change goes through a `GameAction`. Manual corrections (`changeStat`, `/power`,
+4. Every state change goes through a `GameAction`. Manual corrections (`changeStat`, `/power`,
    `/token`) stay plain corrections and raise no events.
-6. The client showing why an action is unavailable. Server reasons already exist.
-7. Alayne Stone needs a ruling before it moves to a state check: when she becomes Sansa's
+5. The client showing why an action is unavailable. Server reasons already exist.
+6. Alayne Stone needs a ruling before it moves to a state check: when she becomes Sansa's
    duplicate, does she leave play (losing power, tokens and attachments, and raising leave-play
    events)? The FAQ only says the placement is automatic and cannot be saved from.
    `PlaceAsDuplicate` refuses a card that is already in play.
