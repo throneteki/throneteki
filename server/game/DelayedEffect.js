@@ -20,12 +20,18 @@ class DelayedEffect {
         return !!condition && condition(event, this.context);
     }
 
+    createContext(event) {
+        return Object.assign(Object.create(Object.getPrototypeOf(this.context)), this.context, {
+            event
+        });
+    }
+
+    canResolve(event) {
+        return this.gameAction.allow(this.createContext(event));
+    }
+
     resolve(event) {
-        const context = Object.assign(
-            Object.create(Object.getPrototypeOf(this.context)),
-            this.context,
-            { event }
-        );
+        const context = this.createContext(event);
 
         if (!this.gameAction.allow(context)) {
             return;

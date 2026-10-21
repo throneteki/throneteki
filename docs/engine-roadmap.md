@@ -364,9 +364,11 @@ on every card in the format having one.
 - Removes the `order: 0/1000` and reverse-cancel workarounds.
 - Conflicting constant abilities and lasting effects are ordered by the first player, once, when
   they would first apply. A new conflict lets the first player choose again (Rulings and
-  Clarifications v4.0, 1.6, and the Rules Reference: Priority of Simultaneous Resolution). This is
-  not implemented. The TODO on `mustShowPlotSelection` in
-  [effects.js](../server/game/effects.js) is the same gap for delayed effects that happen together.
+  Clarifications v4.0, 1.6, and the Rules Reference: Priority of Simultaneous Resolution). _Done_
+  for delayed effects and state checks that resolve together
+  ([SimultaneousResolution.spec.js](../test/server/gamesteps/SimultaneousResolution.spec.js)).
+  Set values are not a conflict: the most recent set modifier wins (Rules Reference: Modifiers).
+  Still to do: conflicting take-control effects.
 - The cards a lasting effect applies to are the cards eligible when it is created. Cards that
   become eligible later are unaffected, and a card that stops being eligible keeps the effect for
   its duration (Rules Reference: Lasting Effects; the Dragon Sight ruling in the current FAQ).

@@ -58,6 +58,13 @@ the ongoing work, and it was not part of this batch.
   reactions. Losing all traits removes traits for the duration, including ones added during it,
   and they return when the effect ends. Immunity to an opponent's event stops an effect that names
   no game action. [LastingEffects.spec.js](../test/server/gamesteps/LastingEffects.spec.js).
+- Simultaneous resolution (FAQ 1.6). Delayed effects or state checks that would resolve at the
+  same time go through `ChooseResolutionOrder`: the first player picks which resolves next,
+  whoever controls them, and an effect that can no longer do anything is dropped.
+  [SimultaneousResolution.spec.js](../test/server/gamesteps/SimultaneousResolution.spec.js). Set
+  values are not a conflict: the most recent set modifier wins (Rules Reference: Modifiers), which
+  `CardStat` already does. Legacy `atEndOfPhase` effects still resolve in a fixed order; they get
+  the prompt when they move to `GameActions.delayedEffect`.
 - Terminal conditions (FAQ 3.1). The card pool has two: burn and state checks. Both refuse saves
   up front. The "if still in play" effects are one-off delayed effects, not terminal conditions,
   so they can be saved from. A new terminal condition whose save could remedy it would need its
@@ -94,11 +101,10 @@ The phase 6 checkbox "framework items in phases 1, 2, 4 and 5 are done" is still
 the gaps, in the order they block that checkbox. Ask before implementing a rules reading that is
 not already decided.
 
-1. FAQ 1.6. When constant abilities or lasting effects conflict, the first player chooses the
-   order, once, and chooses again when a new conflict appears. This needs a prompt. Do not fake a
-   fixed order. The TODO on `mustShowPlotSelection` in `server/game/effects.js` is the same gap
-   for delayed effects that happen together. The first player also does not yet order kills that
-   happen together.
+1. FAQ 1.6, control. Two take-control effects on the same card (both players' Ward, say) cannot
+   both apply, so the first player should choose which does. Today the newest wins. No spec covers
+   it yet. `GameActions.chooseCards` asks players in the order the card lists them; no card passes
+   more than one player yet, but one that does should ask in first-player order.
 2. Five catalogued events have no engine spec: `onAddedToChallenge`, `onBeforeDeckSearch`,
    `onDupeEntersPlay`, `onLookAtShadows`, `onTokenDiscarded`. `onCardsDrawn` from `DrawSpecific`
    has no `amount`.

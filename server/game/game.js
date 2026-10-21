@@ -15,6 +15,7 @@ import GamePipeline from './gamepipeline.js';
 import Phases from './gamesteps/Phases.js';
 import SimpleStep from './gamesteps/simplestep.js';
 import ChoosePlayerPrompt from './gamesteps/ChoosePlayerPrompt.js';
+import ChooseResolutionOrder from './gamesteps/ChooseResolutionOrder.js';
 import CardNamePrompt from './gamesteps/CardNamePrompt.js';
 import DeckSearchPrompt from './gamesteps/DeckSearchPrompt.js';
 import MenuPrompt from './gamesteps/menuprompt.js';
@@ -471,9 +472,17 @@ class Game extends EventEmitter {
         const triggered = this.effectEngine.takeDelayedEffectsTriggeredBy(
             event.getConcurrentEvents().filter((concurrentEvent) => !concurrentEvent.cancelled)
         );
-        for (const { delayedEffect, event: triggeringEvent } of triggered) {
-            this.queueSimpleStep(() => delayedEffect.resolve(triggeringEvent));
-        }
+        this.queueStep(
+            new ChooseResolutionOrder(
+                this,
+                triggered.map(({ delayedEffect, event: triggeringEvent }) => ({
+                    player: delayedEffect.context.player,
+                    source: delayedEffect.context.source,
+                    canResolve: () => delayedEffect.canResolve(triggeringEvent),
+                    resolve: () => delayedEffect.resolve(triggeringEvent)
+                }))
+            )
+        );
     }
 
     addSimultaneousEffects(effectProperties) {
